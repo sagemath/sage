@@ -8210,7 +8210,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             return b
 
-    def is_lorentzian_polynomial(self):
+    def is_lorentzian_polynomial(self, give_reason=False):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
 
@@ -8244,10 +8244,33 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             TypeError: Lorentzian polynomials must have real coefficients
+
+        The method can give a reason for a polynomial failing to be Lorentzian::
+
+            sage: p = x^2 + 2*x
+            sage: p.is_lorentzian_polynomial(give_reason=True)
+            (False, 'inhomogeneous')
+
+        REFERENCES:
+
+        For full definitions and related discussion, see [BrHu2019] and
+        [HMMS2019].
         """
+        def result(val, explanation=None):
+            if give_reason:
+                return (val, explanation)
+            else:
+                return val
         if not self.base_ring().is_subring(RealField()):
             raise TypeError("Lorentzian polynomials must have real coefficients")
-        return self.is_zero() or (self.is_homogeneous() and self.coefficients()[0] > 0)
+        if self.is_zero():
+            return result(True)
+        elif not self.is_homogeneous():
+            return result(False, "inhomogeneous")
+        elif not self.coefficients()[0] > 0:
+            return result(False, "negative coefficient")
+        else:
+            return result(True)
 
     def variable_name(self):
         """
