@@ -1191,11 +1191,12 @@ class PlanePartitions_SPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
-        def componentwise_comparer(thing1,thing2):
-            if len(thing1) == len(thing2):
-                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-                    return True
-            return False
+#        def componentwise_comparer(thing1,thing2):
+#            if len(thing1) == len(thing2):
+#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+#                    return True
+#            return False
+        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1207,7 +1208,7 @@ class PlanePartitions_SPP(PlanePartitions):
                             pl.append((x,y,z))
 
 
-        pocp = Poset((pl,componentwise_comparer))
+        pocp = Poset((pl,cmp))
 
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
             #iterate through each antichain of product of chains poset with paramaters (a,b,c)
@@ -1237,13 +1238,14 @@ class PlanePartitions_SPP(PlanePartitions):
                             ppMatrix[i][j] = max(iValue,jValue)
                         elif j>i:
                             ppMatrix[i][j] = ppMatrix[j][i]
+            yield self.element_class(self, ppMatrix)
 
-            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
-        matrixList.sort()
-        current = 0
-        while current < len(matrixList):
-            yield self.element_class(self, matrixList[current])
-            current += 1
+#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+#        matrixList.sort()
+#        current = 0
+#        while current < len(matrixList):
+#            yield self.element_class(self, matrixList[current])
+#            current += 1
 
 
 #Class 3
@@ -1279,19 +1281,19 @@ class PlanePartitions_CSPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
-        def componentwise_comparer(thing1,thing2):
-            if len(thing1) == len(thing2):
-                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-                    return True
-            return False
-        def componentwise_comparer2(thing1,thing2):
-            x = thing2[0]
-            y = thing2[1]
-            z = thing2[2]
+#        def componentwise_comparer(thing1,thing2):
+#            if len(thing1) == len(thing2):
+#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+#                    return True
+#            return False
+#        def componentwise_comparer2(thing1,thing2):
+#            x = thing2[0]
+#            y = thing2[1]
+#            z = thing2[2]
 
-            if componentwise_comparer(thing1,(x,y,z)) or componentwise_comparer(thing1,(z,x,y)) or componentwise_comparer(thing1,(y,z,x)):
-                return True
-            return False
+#            if componentwise_comparer(thing1,(x,y,z)) or componentwise_comparer(thing1,(z,x,y)) or componentwise_comparer(thing1,(y,z,x)):
+#                return True
+#            return False
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
