@@ -1228,6 +1228,9 @@ ext_modules = [
     Extension('sage.rings.ring',
               sources = ['sage/rings/ring.pyx']),
 
+    Extension('sage.rings.algebra_from_morphism_element',
+              sources = ['sage/rings/algebra_from_morphism_element.pyx']),
+
     Extension('*', ['sage/rings/convert/*.pyx']),
 
     ################################

@@ -230,9 +230,6 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-cdef class AlgebraFMElement(CommutativeAlgebraElement):
-    cdef Element _element
-
 cdef class InfinityElement(RingElement):
     pass
 
