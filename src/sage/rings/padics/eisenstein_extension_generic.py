@@ -40,25 +40,6 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         #self._precompute()
 
-    def _extension_type(self):
-        """
-        Return the type (``Unramified``, ``Eisenstein``) of this 
-        extension as a string, if any.
-
-        Used for printing.
-
-        EXAMPLES::
-
-            sage: K.<a> = Qq(5^3)
-            sage: K._extension_type()
-            'Unramified'
-
-            sage: L.<pi> = Qp(5).extension(x^2 - 5)
-            sage: L._extension_type()
-            'Eisenstein'
-        """
-        return "Eisenstein"
-
     def absolute_e(self):
         """
         Return the absolute ramification index of this ring or field

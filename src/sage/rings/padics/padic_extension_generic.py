@@ -103,13 +103,37 @@ class pAdicExtensionGeneric(pAdicGeneric):
                     from sage.rings.padics.relative_ramified_FM import pAdicCoercion_FM_frac_field as coerce_map
             return coerce_map(R, self)
 
+    def is_unramified(self):
+        return self.relative_e() == 1
+
+    def is_totally_ramified(self):
+        return self.relative_f() == 1
+
+    def is_tamely_ramified(self):
+        p = self.prime()
+        return self.relative_e() % p != 0
+
+    def is_wildly_ramified(self):
+        p = self.prime()
+        return self.relative_e().is_power_of(p)
+
+    def is_totally_tamely_ramified(self):
+        return self.is_totally_ramified(self) and self.is_tamely_ramified(self)
+
+    def is_totally_wildly_ramified(self):
+        return self.is_totally_ramified(self) and self.is_wildly_ramified(self)
+
+    def is_eisenstein(self):
+        f = self.defining_polynomial()
+        n = f.degree()
+        return f[n].valuation() == 0 and f[0].valuation() == 1 and all(f[i].valuation() >= 1 for i in range(1,n))
+
     def _extension_type(self):
         """
-        Return the type (``Unramified``, ``Eisenstein``) of this 
-        extension as a string, if any. 
+        Return the type (``Unramified``, ``Eisenstein``, ``Trivial``) of this
+        extension as a string, or the empty string if none apply.
 
         Used for printing.
-
         EXAMPLES::
 
             sage: K.<a> = Qq(5^3)
@@ -120,7 +144,14 @@ class pAdicExtensionGeneric(pAdicGeneric):
             sage: L._extension_type()
             'Eisenstein'
         """
-        return ""
+        if self.degree() == 1:
+            return "Trivial"
+        elif self.is_unramified():
+            return "Unramified"
+        elif self.is_eisenstein():
+            return "Eisenstein"
+        else:
+            return ""
 
     def _repr_(self, do_latex=False):
         """

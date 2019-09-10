@@ -98,7 +98,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-rel'
 
     def is_capped_absolute(self):
         """
@@ -123,7 +123,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-abs'
 
     def is_fixed_mod(self):
         """
@@ -150,7 +150,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7,absprec=9)
             5^7 + O(5^9)
         """
-        return False
+        return self._prec_type() == 'fixed-mod'
 
     def is_floating_point(self):
         """
@@ -175,7 +175,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7
         """
-        return False
+        return self._prec_type() == 'floating-point'
 
     def is_lattice_prec(self):
         """
@@ -204,7 +204,7 @@ class LocalGeneric(CommutativeRing):
             sage: x - x
             O(5^30)
         """
-        return False
+        return self._prec_type().startswith('lattice-')
 
     def is_lazy(self):
         """

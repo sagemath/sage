@@ -572,53 +572,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         deprecation(14825, "list is deprecated. Please use expansion instead.")
         return list(self.expansion(lift_mode=lift_mode, start_val=start_val))
 
-    def teichmuller_expansion(self, n = None):
-        r"""
-        Returns an iterator over coefficients `a_0, a_1, \dots, a_n` such that
-
-        - `a_i^q = a_i`, where `q` is the cardinality of the residue field,
-
-        - this element can be expressed as
-
-        .. MATH::
-
-            \pi^v \cdot \sum_{i=0}^\infty a_i \pi^i
-
-        where `v` is the valuation of this element when the parent is
-        a field, and `v = 0` otherwise.
-
-        - if `a_i \ne 0`, the precision of `a_i` is `i` less
-          than the precision of this element (relative in the case that
-          the parent is a field, absolute otherwise)
-
-        .. NOTE::
-
-            The coefficients will lie in the ring of integers of the
-            maximal unramified subextension.
-
-        INPUT:
-
-        - ``n`` -- integer (default ``None``).  If given, returns the
-          coefficient of `\pi^n` in the expansion.
-
-        EXAMPLES:
-
-        For fields, the expansion starts at the valuation::
-
-            sage: R = Qp(5,5); list(R(70).teichmuller_expansion())
-            [4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + O(5^5),
-            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4),
-            2 + 5 + 2*5^2 + O(5^3),
-            1 + O(5^2),
-            4 + O(5)]
-
-        But if you specify ``n``, you get the coefficient of `\pi^n`::
-
-            sage: R(70).teichmuller_expansion(2)
-            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)
-        """
-        return self.expansion(n, lift_mode='teichmuller')
-
     def teichmuller_list(self):
         r"""
         Returns the list of coefficients in the Teichmuller expansion of this element.
