@@ -1,4 +1,4 @@
-"""
+r"""
 Relative extensions of `p`-adic rings
 
 We represent general extensions of p-adic rings as a two-step extension:

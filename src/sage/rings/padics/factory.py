@@ -3084,8 +3084,6 @@ class pAdicExtension_class(UniqueFactory):
 
         if show_prec is None:
             show_prec = base._printer._show_prec()
-        if polytype == 'p':
-            raise NotImplementedError("Extensions by general polynomials not yet supported.  Please use an unramified or Eisenstein polynomial.")
         T = ext_table[polytype, type(base.ground_ring_of_tower()).__base__]
         return T(exact_modulus, approx_modulus, prec,
                  {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,

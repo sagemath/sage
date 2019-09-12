@@ -1,8 +1,19 @@
-"""
-General extensions of p-adic rings and fields; the base ring may also be an extension.
+r"""
+General extensions of p-adic rings and fields; the base ring may also be an
+extension.
 
 These are implemented as proxy parents, backed by an absolute extension.
 """
+#*****************************************************************************
+#       Copyright (C) 2019 David Roe <roed.math@gmail.com>
+#                          Julian Rüth <julian.rueth@fsfe.org>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from .extension_element import pAdicGenericExtensionElement
@@ -13,12 +24,43 @@ class pAdicGeneralExtension(AlgebraFromMorphism, pAdicExtensionGeneric):
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         self._exact_modulus = exact_modulus
         self._shift_seed = shift_seed
-        self._implementation = 'General'
+        self._implementation = 'proxy'
         defining_morphism = None # NotImplementedError
         AlgebraFromMorphism.__init__(self, defining_morphism, False)
         pAdicGeneric.__init__(self, poly, prec, print_mode, names, pAdicGenericExtensionElement)
         # Fix the following
         self._gen = None
+
+    @cached_method
+    def f(self):
+        r"""
+        Return the residual degree of this ring over its base ring.
+
+        EXAMPLES::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.f()
+            2
+
+        """
+        v = self.base_ring().valuation()
+        w = v.mac_lane_approximants(self.modulus(), assume_squarefree=True, require_final_EF=True)
+        if len(w) != 1:
+            raise ValueError("defining polynomial is not irreducible")
+        return w[0].F()
+
+    def e(self):
+        r"""
+        Return the ramification degree of this ring over its base ring.
+
+        EXAMPLES::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.e()
+            1
+
+        """
+        return self.relative_degree() // self.f()
 
     def teichmuller(self, x, prec=None):
         R = self._backend()
