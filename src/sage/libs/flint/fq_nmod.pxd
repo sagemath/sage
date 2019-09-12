@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fq_nmod.h
 
 from sage.libs.flint.types cimport fq_nmod_ctx_t, fq_nmod_t, fmpz_t, nmod_poly_t, slong, ulong
 
-cdef extern from "flint/fq_nmod.h":
+# flint/fq_nmod.h
+cdef extern from "flint_wrap.h":
     void fq_nmod_ctx_init(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     void fq_nmod_ctx_init_conway(fq_nmod_ctx_t ctx, const fmpz_t p, slong d, const char *var)
     void fq_nmod_ctx_init_modulus(fq_nmod_ctx_t ctx,

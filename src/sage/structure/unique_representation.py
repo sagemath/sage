@@ -153,7 +153,7 @@ result in the cache. This has the following implications:
     decorator to the definition; see :class:`staticmethod`.
 
     For more on Python's ``__get__()`` method, see:
-    http://docs.python.org/2/howto/descriptor.html
+    https://docs.python.org/2/howto/descriptor.html
 
 .. WARNING::
 
@@ -557,7 +557,7 @@ accordingly, for example by inheriting from
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #******************************************************************************
 from __future__ import print_function
 
@@ -565,6 +565,7 @@ from sage.misc import six
 from sage.misc.cachefunc import weak_cached_function
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.fast_methods import WithEqualityById
+
 
 class CachedRepresentation(six.with_metaclass(ClasscallMetaclass)):
     """
@@ -1237,10 +1238,15 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
 
     This nice behaviour is not available when one just uses a factory::
 
-        sage: isinstance(GF(7), GF)
+        sage: isinstance(GF(7), GF)  # py2
         Traceback (most recent call last):
         ...
         TypeError: isinstance() arg 2 must be a class, type, or tuple of classes and types
+        sage: isinstance(GF(7), GF)  # py3
+        Traceback (most recent call last):
+        ...
+        TypeError: isinstance() arg 2 must be a type or tuple of types
+
         sage: isinstance(GF, sage.structure.factory.UniqueFactory)
         True
 

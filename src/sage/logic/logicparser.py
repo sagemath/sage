@@ -496,10 +496,10 @@ def tokenize(s):
             i += 1
 
         if len(tok) > 0:
-            if tok[0] not in string.letters:
+            if tok[0] not in string.ascii_letters:
                 valid = 0
             for c in tok:
-                if c not in string.letters and c not in string.digits and c != '_':
+                if c not in string.ascii_letters and c not in string.digits and c != '_':
                     valid = 0
 
         if valid == 1:

@@ -145,8 +145,8 @@ class Tarball(object):
                 # Garbage in the upstream directory? Ignore it.
                 # Don't delete it because maybe somebody just forgot to
                 # update the checksum (Trac #23972).
-                log.warn('Invalid checksum; ignoring cached file {destination}'
-                         .format(destination=destination))
+                log.warning('Invalid checksum; ignoring cached file {destination}'
+                            .format(destination=destination))
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
         for mirror in MirrorList():

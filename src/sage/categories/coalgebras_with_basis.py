@@ -11,9 +11,11 @@ Coalgebras with basis
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.all import ModulesWithBasis, tensor, Hom
 from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.filtered_modules import FilteredModulesCategory
 
 class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -31,6 +33,13 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         sage: TestSuite(CoalgebrasWithBasis(ZZ)).run()
     """
+    Graded = LazyImport('sage.categories.graded_coalgebras_with_basis',
+                        'GradedCoalgebrasWithBasis')
+
+    class Filtered(FilteredModulesCategory):
+        """
+        Category of filtered coalgebras.
+        """
 
     class ParentMethods:
 
@@ -196,4 +205,15 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return self.coproduct().apply_multilinear_morphism(split)
 
     class Super(SuperModulesCategory):
-        pass
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: C = Coalgebras(ZZ).WithBasis().Super()
+                sage: sorted(C.super_categories(), key=str)  # indirect doctest
+                [Category of graded coalgebras with basis over Integer Ring,
+                 Category of super coalgebras over Integer Ring,
+                 Category of super modules with basis over Integer Ring]
+            """
+            return [self.base_category().Graded()]
+

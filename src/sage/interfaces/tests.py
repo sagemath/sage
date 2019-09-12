@@ -33,8 +33,8 @@ Test that write errors to stderr are handled gracefully by GAP
     sage: kwds = dict(shell=True, stdout=f, stderr=f)
     sage: subprocess.call("echo syntax error | ecl", **kwds)
     0
-    sage: subprocess.call("echo syntax error | gap", **kwds)
-    0
+    sage: subprocess.call("echo syntax error | gap", **kwds) in (0, 1)
+    True
     sage: subprocess.call("echo syntax error | gp", **kwds)
     0
     sage: subprocess.call("echo syntax error | ipython", **kwds) in (0, 1, 120)

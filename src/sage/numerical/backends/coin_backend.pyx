@@ -17,7 +17,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from __future__ import print_function, absolute_import
@@ -28,6 +28,8 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.numerical.mip import MIPSolverException
 from copy import copy
 
+from sage.cpython.string cimport str_to_bytes
+from sage.cpython.string import FS_ENCODING
 from sage.parallel.ncpus import ncpus
 
 
@@ -76,8 +78,8 @@ cdef class CoinBackend(GenericBackend):
         r"""
         Destructor function
         """
-        del self.si
         del self.model
+        del self.si
 
     cpdef int add_variable(self, lower_bound=0.0, upper_bound=None, binary=False, continuous=False, integer=False, obj=0.0, name=None) except -1:
         r"""
@@ -130,7 +132,7 @@ cdef class CoinBackend(GenericBackend):
             1.0
         """
 
-        # for some reason, Cython is not accepting the line below, which appeare
+        # for some reason, Cython is not accepting the line below, which appears
         #cdef int vtype = int(bool(binary)) + int(bool(continuous)) + int(bool(integer))
         cdef int vtype = int(binary) + int(continuous) + int(integer)
         if  vtype == 0:
@@ -531,7 +533,7 @@ cdef class CoinBackend(GenericBackend):
         cdef int i
         cdef double c
         cdef CoinPackedVector* row
-        row = new_CoinPackedVector();
+        row = new CoinPackedVector();
 
 
         for i,c in coefficients:
@@ -544,6 +546,7 @@ cdef class CoinBackend(GenericBackend):
             self.row_names.append(name)
         else:
             self.row_names.append("")
+        del *row
 
     cpdef row(self, int index):
         r"""
@@ -663,7 +666,7 @@ cdef class CoinBackend(GenericBackend):
         return (lb[i] if lb[i] != - self.si.getInfinity() else None,
                 ub[i] if ub[i] != + self.si.getInfinity() else None)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         r"""
         Adds a column.
 
@@ -698,18 +701,33 @@ cdef class CoinBackend(GenericBackend):
             5
         """
 
-        cdef int n = len(indices)
+        cdef list list_indices
+        cdef list list_coeffs
+
+        if type(indices) is not list:
+            list_indices = list(indices)
+        else:
+            list_indices = <list>indices
+
+        if type(coeffs) is not list:
+            list_coeffs = list(coeffs)
+        else:
+            list_coeffs = <list>coeffs
+
+        cdef int n = len(list_indices)
         cdef int * c_indices = <int*>check_malloc(n*sizeof(int))
         cdef double * c_values  = <double*>check_malloc(n*sizeof(double))
         cdef int i
 
         for 0<= i< n:
-            c_indices[i] = indices[i]
-            c_values[i] = coeffs[i]
+            c_indices[i] = list_indices[i]
+            c_values[i] = list_coeffs[i]
 
         self.si.addCol (n, c_indices, c_values, 0, self.si.getInfinity(), 0)
 
         self.col_names.append("")
+        sig_free(c_indices)
+        sig_free(c_values)
 
 
     cpdef int solve(self) except -1:
@@ -1070,7 +1088,7 @@ cdef class CoinBackend(GenericBackend):
         else:
             self.si.setColLower(index, value if value is not None else -self.si.getInfinity())
 
-    cpdef write_mps(self, char * filename, int modern):
+    cpdef write_mps(self, filename, int modern):
         r"""
         Writes the problem to a .mps file
 
@@ -1090,9 +1108,10 @@ cdef class CoinBackend(GenericBackend):
         """
 
         cdef char * mps = "mps"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         self.si.writeMps(filename, mps, -1 if self.is_maximization() else 1)
 
-    cpdef write_lp(self, char * filename):
+    cpdef write_lp(self, filename):
         r"""
         Writes the problem to a .lp file
 
@@ -1112,16 +1131,17 @@ cdef class CoinBackend(GenericBackend):
         """
 
         cdef char * lp = "lp"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         self.si.writeLp(filename, lp, 0.00001, 10, 5, -1 if self.is_maximization() else 1, 1)
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         r"""
         Returns or defines the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -1131,7 +1151,7 @@ cdef class CoinBackend(GenericBackend):
             sage: print(p.problem_name())                       # optional - cbc
             There once was a french fry
         """
-        if name == NULL:
+        if name is None:
             if self.prob_name is not None:
                 return self.prob_name
             else:

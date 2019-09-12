@@ -2,7 +2,7 @@
 Quiver Paths
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012    Jim Stark <jstarx@gmail.com>
 #                2013/14 Simon King <simon.king@uni-jena.de>
 #
@@ -15,8 +15,8 @@ Quiver Paths
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function
 
@@ -468,7 +468,7 @@ cdef class QuiverPath(MonoidElement):
         # return an iterator for _path as a list
         cdef mp_size_t i
         cdef tuple E = self._parent._sorted_edges
-        for i in range(0,self._path.length):
+        for i in range(self._path.length):
             yield E[biseq_getitem(self._path, i)]
 
     cpdef _mul_(self, other):
@@ -617,9 +617,9 @@ cdef class QuiverPath(MonoidElement):
         Return a pair ``(a,b)`` of paths s.t. ``self==a*subpath*b``,
         or ``(None, None)`` if ``subpath`` is not a subpath of this path.
 
-        NOTE:
+        .. NOTE::
 
-        ``a`` is chosen of minimal length.
+            ``a`` is chosen of minimal length.
 
         EXAMPLES::
 

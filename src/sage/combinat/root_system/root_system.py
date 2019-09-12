@@ -207,13 +207,13 @@ class RootSystem(UniqueRepresentation, SageObject):
         sage: W = L.weyl_group()
         sage: S3 = [ w.action(id) for w in W.classical() ]
         sage: [L.classical()(x) for x in S3]
-        [(1, 2, 3), (3, 2, 1), (3, 1, 2), (2, 1, 3), (2, 3, 1), (1, 3, 2)]
+        [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
         sage: s = W.simple_reflections()
         sage: [L.classical()(s[0].action(x)) for x in S3]
-        [(0, 2, 4), (-2, 2, 6), (-1, 1, 6), (0, 1, 5), (-2, 3, 5), (-1, 3, 4)]
+        [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::
 

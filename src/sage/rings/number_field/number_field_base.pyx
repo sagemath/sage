@@ -36,6 +36,15 @@ from sage.rings.ring cimport Field
 cdef class NumberField(Field):
     r"""
     Base class for all number fields.
+
+    TESTS::
+
+        sage: z = polygen(QQ)
+        sage: K.<theta, beta> = NumberField([z^3 - 3, z^2 + 1])
+        sage: K.is_finite()
+        False
+        sage: K.order()
+        +Infinity
     """
     # This token docstring is mostly there to prevent Sphinx from pasting in
     # the docstring of the __init__ method inherited from IntegralDomain, which
@@ -52,12 +61,12 @@ cdef class NumberField(Field):
             sage: cm.explain(K,L,operator.add)
             Coercion on left operand via
                 Generic morphism:
-                  From: Number Field in a with defining polynomial x^2 - 3
+                  From: Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
                   To:   Algebraic Real Field
                   Defn: a -> 1.732050807568878?
             Coercion on right operand via
                 Generic morphism:
-                  From: Number Field in b with defining polynomial x^2 - 2
+                  From: Number Field in b with defining polynomial x^2 - 2 with b = 1.414213562373095?
                   To:   Algebraic Real Field
                   Defn: b -> 1.414213562373095?
             Arithmetic performed after coercions.
@@ -120,21 +129,6 @@ cdef class NumberField(Field):
         """
         raise NotImplementedError
 
-    def is_finite(self):
-        """
-        Return False since number fields are not finite.
-
-        EXAMPLES::
-
-            sage: z = polygen(QQ)
-            sage: K.<theta, beta> = NumberField([z^3 - 3, z^2 + 1])
-            sage: K.is_finite()
-            False
-            sage: K.order()
-            +Infinity
-        """
-        return False
-
     def is_absolute(self):
         """
         Return True if self is viewed as a single extension over Q.
@@ -189,8 +183,9 @@ cdef class NumberField(Field):
 
     def minkowski_bound(self):
         r"""
-        Return the Minkowski bound associated to this number field,
-        which is a bound B so that every integral ideal is equivalent
+        Return the Minkowski bound associated to this number field.
+
+        This is a bound B so that every integral ideal is equivalent
         modulo principal fractional ideals to an integral ideal of
         norm at most B.
 
@@ -264,6 +259,7 @@ cdef class NumberField(Field):
     def bach_bound(self):
         r"""
         Return the Bach bound associated to this number field.
+
         Assuming the General Riemann Hypothesis, this is a bound B so
         that every integral ideal is equivalent modulo principal
         fractional ideals to an integral ideal of norm at most B.
@@ -393,4 +389,3 @@ cdef class NumberField(Field):
             return self._gen_approx[i]
         else:
             raise ValueError("No embedding set. You need to specify a a real embedding.")
-

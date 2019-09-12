@@ -178,7 +178,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             try:
                 precision = ZZ(sigma.precision())
             except AttributeError:
-                pass
+                return 53
         precision = max(53, precision)
         return precision
 

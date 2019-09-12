@@ -368,7 +368,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
             NotImplementedError: Frobenius automorphism only implemented for unramified extensions
         """
         R = self.parent()
-        if R.e() != 1:
+        if R.absolute_e() != 1:
             raise NotImplementedError("Frobenius automorphism only implemented for unramified extensions")
         if self.is_zero(): return self
         L = self.teichmuller_expansion()
@@ -376,7 +376,7 @@ cdef class pAdicExtElement(pAdicGenericElement):
         if arithmetic:
             exp = R.prime()
         else:
-            exp = R.prime()**(R.degree()-1)
+            exp = R.prime()**(R.absolute_degree()-1)
         ans = ppow * L[0]**exp
         for m in range(1,len(L)):
             ppow = ppow << 1

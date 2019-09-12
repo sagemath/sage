@@ -33,37 +33,37 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: A = k^3; V = A.span([[1,0,i], [2,i,0]])
         sage: W = A.span([[3,i,i]])
         sage: U = V/W; U
-        Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 where
-        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I where
+        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: U.V()
-        Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
         sage: U.W()
-        Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: U.quotient_map()
         Vector space morphism represented by the matrix:
         [  1]
         [3*i]
-        Domain: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Domain: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        Codomain: Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 where
-        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Codomain: Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I where
+        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: Z = V.quotient(W)

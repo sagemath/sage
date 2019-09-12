@@ -111,10 +111,6 @@ class FGP_Element(ModuleElement):
             sage: A = (ZZ^1)/span([[100]], ZZ); A
             Finitely generated module V/W over Integer Ring with invariants (100)
             sage: x = A([5]); x
-            doctest:...: DeprecationWarning: The default behaviour changed!
-             If you *really* want a linear combination of smith generators,
-             use .linear_combination_of_smith_form_gens.
-            See http://trac.sagemath.org/16261 for details.
             (5)
             sage: v = x.lift(); v
             (5)

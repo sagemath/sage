@@ -97,7 +97,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         """
         if self.level() == 0: return
         v = self.parent().subgroup_gens(self.level())
-        if all([self(x) == 1 for x in v]):
+        if all(self(x) == 1 for x in v):
             new_gens = self.parent().unit_gens(self.level() - 1)
             new_values = [self(x) for x in new_gens]
             self._values_on_gens = Sequence(new_values, universe=self.base_ring(), immutable=True)
@@ -194,7 +194,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
             sage: chi(QuadraticField(-1,'i').gen())
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Number Field in i with defining polynomial x^2 + 1 to Rational Field
+            TypeError: no canonical coercion from Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Rational Field
             sage: chi(0)
             Traceback (most recent call last):
             ...
@@ -425,9 +425,26 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
         """
         return not (self == other)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        TESTS::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp
+            sage: G = SmoothCharacterGroupQp(3, QQ)
+            sage: hash(G) == hash(SmoothCharacterGroupQp(3, QQ[I]))
+            False
+            sage: hash(G) == hash(SmoothCharacterGroupQp(7, QQ))
+            False
+            sage: hash(G) == hash(SmoothCharacterGroupQp(3, QQ))
+            True
+        """
+        return hash((self.prime(), self.number_field(), self.base_ring()))
+
     def _coerce_map_from_(self, other):
         r"""
-        Return True if self has a canonical coerce map from other.
+        Return ``True`` if ``self`` has a canonical coerce map from ``other``.
 
         EXAMPLES::
 
@@ -444,7 +461,7 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
             sage: G.coerce(GK.character(0, [4]))
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Group of smooth characters of Q_3* with values in Number Field in i with defining polynomial x^2 + 1 to Group of smooth characters of Q_3* with values in Rational Field
+            TypeError: no canonical coercion from Group of smooth characters of Q_3* with values in Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Group of smooth characters of Q_3* with values in Rational Field
             sage: G.character(0, [4]) in GK # indirect doctest
             True
 
@@ -737,8 +754,8 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
             gens = self.unit_gens(c)
             exps = self.exponents(c)
             T.assertTrue(exps[-1] == 0)
-            T.assertTrue(all([u != 0 for u in exps[:-1]]))
-            T.assertTrue(all([u.parent() is self.number_field() for u in gens]))
+            T.assertTrue(all(u != 0 for u in exps[:-1]))
+            T.assertTrue(all(u.parent() is self.number_field() for u in gens))
 
             I = self.ideal(c)
             for i in range(len(exps[:-1])):
@@ -773,7 +790,7 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
         for c in range(1, 6):
             sgs = self.subgroup_gens(c)
             I2 = self.ideal(c-1)
-            T.assertTrue(all([x-1 in I2 for x in sgs]), "Kernel gens at level %s not in kernel!" % c)
+            T.assertTrue(all(x - 1 in I2 for x in sgs), "Kernel gens at level %s not in kernel!" % c)
 
             # now find the exponent of the kernel
 

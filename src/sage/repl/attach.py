@@ -58,15 +58,15 @@ character-by-character::
     sage: detach(src)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import os
@@ -168,6 +168,12 @@ def load_attach_path(path=None, replace=False):
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
         sage: _ = open(fullpath, 'w').write("print(37 * 3)")
+
+    We put SAGE_TMP on the attach path for testing (otherwise this will
+    load ``test.py`` from the current working directory if that happens
+    to exist)::
+
+        sage: load_attach_path(SAGE_TMP, replace=True)
         sage: attach('test.py')
         Traceback (most recent call last):
         ...
@@ -180,6 +186,7 @@ def load_attach_path(path=None, replace=False):
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path() == ['.']
         True
+        sage: load_attach_path(SAGE_TMP, replace=True)
         sage: load('test.py')
         Traceback (most recent call last):
         ...
@@ -205,7 +212,7 @@ def load_attach_path(path=None, replace=False):
     if path is None:
         return search_paths
     else:
-        if isinstance(path, six.string_types):
+        if not isinstance(path, list):
             path = [path]
         if replace:
             search_paths = path
@@ -432,7 +439,7 @@ def detach(filename):
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
         sage: _ = open(fullpath, 'w').write("print(37 * 3)")
-        sage: load_attach_path(t_dir)
+        sage: load_attach_path(t_dir, replace=True)
         sage: attach('test.py')
         111
         sage: attached_files() == [os.path.normpath(fullpath)]
@@ -525,8 +532,8 @@ def modified_file_iterator():
         [('/.../tmp_....py', time.struct_time(...))]
     """
     global attached
-    modified = dict()
-    for filename in attached.keys():
+    modified = {}
+    for filename in list(attached):
         old_tm = attached[filename]
         if not os.path.exists(filename):
             print('### detaching file {0} because it does not exist (deleted?) ###'.format(filename))
@@ -540,7 +547,7 @@ def modified_file_iterator():
         return
     time.sleep(0.1)  # sleep 100ms to give the editor time to finish saving
 
-    for filename in modified.keys():
+    for filename in list(modified):
         old_tm = modified[filename]
         new_tm = os.path.getmtime(filename)
         if new_tm == old_tm:

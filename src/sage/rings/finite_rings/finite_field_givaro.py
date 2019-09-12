@@ -319,13 +319,17 @@ class FiniteField_givaro(FiniteField):
         PARI elements are interpreted as finite field elements; this PARI
         flexibility is (absurdly!) liberal::
 
-            sage: k = GF(2**8, 'a')
+            sage: k.<a> = GF(2^8)
             sage: k(pari('Mod(1,2)'))
             1
             sage: k(pari('Mod(2,3)'))
             a
             sage: k(pari('Mod(1,3)*a^20'))
             a^7 + a^5 + a^4 + a^2
+            sage: k(pari('O(x)'))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert PARI t_SER to Finite Field in a of size 2^8
 
         We can coerce from PARI finite field implementations::
 

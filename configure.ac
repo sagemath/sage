@@ -196,6 +196,8 @@ esac
 # Check general programs
 ###############################################################################
 
+AC_PROG_SED
+
 AC_CHECK_PROG(found_ar, ar, yes, no)
 if test x$found_ar != xyes
 then
@@ -213,6 +215,18 @@ then
     AC_MSG_NOTICE([See also http://www.gnu.org/software/m4/])
     AC_MSG_ERROR([Exiting, as the macro processor 'm4' can not be found.])
 fi
+
+m4_ifndef([PKG_PROG_PKG_CONFIG], [m4_errprint(
+[Error: could not locate the pkg-config autoconf macros. These are
+usually located in /usr/share/aclocal/pkg.m4. If your macros are
+in a different location, try setting the environment variable
+ACLOCAL="aclocal -I/other/macro/dir" before running ./bootstrap
+])
+dnl Exit autoconf with exit code 16 in this case. This will be
+dnl caught by the bootstrap script.
+m4_exit(16)])
+
+PKG_PROG_PKG_CONFIG
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -285,9 +299,9 @@ fi
 AC_CHECK_PROG(found_latex, latex, yes, no)
 if test x$found_latex != xyes
 then
-    AC_MSG_WARN([You do not have 'latex', which is recommended, but not])
-    AC_MSG_WARN([required. Latex is only really used for building pdf])
-    AC_MSG_WARN([documents and for %latex mode in the AC_PACKAGE_NAME notebook.])
+    AC_MSG_NOTICE([You do not have 'latex', which is recommended, but not])
+    AC_MSG_NOTICE([required. Latex is only really used for building pdf])
+    AC_MSG_NOTICE([documents and for %latex mode in the AC_PACKAGE_NAME notebook.])
 fi
 
 # Check that perl is available, with version 5.8.0 or later.
@@ -299,99 +313,9 @@ AX_PROG_PERL_VERSION([5.8.0],[],[
     AC_MSG_ERROR([Exiting, since AC_PACKAGE_NAME requires perl-5.8.0 or later])
 ])
 
-# Check whether git works by executing "git --version"
-need_to_install_git=no
-AC_CACHE_CHECK([for git], [ac_cv_path_GIT], [
-    AC_PATH_PROGS_FEATURE_CHECK([GIT], [git],
-    [${ac_path_GIT} --version >/dev/null 2>/dev/null && ac_cv_path_GIT=${ac_path_GIT}],
-    [need_to_install_git=yes; ac_cv_path_GIT=no])])
-
-# Yasm is only needed on x86(_64) systems; check also for system yasm
-# which must support "adox" (new Skylake instruction)
-need_to_install_yasm=no
-AC_CACHE_CHECK([for yasm], [ac_cv_path_YASM],
-    AS_CASE("$host_cpu",
-        [i@<:@0-9@:>@86|x86_64], [
-        AC_PATH_PROGS_FEATURE_CHECK([YASM], [yasm],
-        [[{ echo "BITS 64"; echo "adox rax, rax"; } | ${ac_path_YASM} - -o /dev/null >/dev/null 2>/dev/null && ac_cv_path_YASM=${ac_path_YASM}]],
-        [need_to_install_yasm=yes; ac_cv_path_YASM=no])],
-        [ac_cv_path_YASM="not needed for $host_cpu"]))
-
 ###############################################################################
 # Check C/C++/Fortran compilers
 ###############################################################################
-
-dnl Usage: SAGE_SHOULD_INSTALL_GCC(reason)
-dnl
-dnl Use this macro to indicate that we SHOULD install GCC.
-dnl In this case, GCC will be installed unless SAGE_INSTALL_GCC=no.
-dnl In the latter case, a warning is given.
-AC_DEFUN([SAGE_SHOULD_INSTALL_GCC], [
-    if test x$SAGE_INSTALL_GCC = xexists; then
-        true  # Do nothing if already installed
-    elif test x$SAGE_INSTALL_GCC = xno; then
-        AC_MSG_WARN([$1])
-    else
-        AC_MSG_NOTICE([Installing GCC because $1])
-        need_to_install_gcc=yes
-    fi
-])
-
-dnl Usage: SAGE_MUST_INSTALL_GCC(reason)
-dnl
-dnl Use this macro to indicate that we MUST install GCC.
-dnl In this case, it is an error if SAGE_INSTALL_GCC=no.
-AC_DEFUN([SAGE_MUST_INSTALL_GCC], [
-    if test x$SAGE_INSTALL_GCC = xexists; then
-        true  # Do nothing if already installed
-    elif test x$SAGE_INSTALL_GCC = xno; then
-        AC_MSG_ERROR([SAGE_INSTALL_GCC is set to 'no', but $1])
-    else
-        AC_MSG_NOTICE([Installing GCC because $1])
-        need_to_install_gcc=yes
-    fi
-])
-
-
-# By default, do not install GCC
-need_to_install_gcc=no
-# or GFORTRAN
-need_to_install_gfortran=no
-
-if test -f "$SAGE_LOCAL/bin/gcc"; then
-    # Special value for SAGE_INSTALL_GCC if GCC is already installed
-    SAGE_INSTALL_GCC=exists
-
-    # Check whether it actually works...
-    # See https://trac.sagemath.org/ticket/24599
-    if test -x "$SAGE_LOCAL/bin/g++"; then
-        echo '#include <complex>' >conftest.cpp
-        echo 'auto inf = 1.0 / std::complex<double>();' >>conftest.cpp
-
-        if ! bash -c "source '$SAGE_SRC/bin/sage-env' && g++ -O3 -c -o conftest.o conftest.cpp"; then
-            # Pretend that GCC is not installed: remove the gcc and g++
-            # binaries and remove the "installed" file such that GCC
-            # will be built as if it was never installed before.
-            rm -f "$SAGE_LOCAL"/bin/gcc
-            rm -f "$SAGE_LOCAL"/bin/g++
-            rm -f "$SAGE_SPKG_INST"/gcc-*
-            SAGE_INSTALL_GCC=yes
-            SAGE_MUST_INSTALL_GCC([installed g++ is broken])
-        fi
-        rm -f conftest.*
-    fi
-elif test -n "$SAGE_INSTALL_GCC"; then
-    # Check the value of the environment variable SAGE_INSTALL_GCC
-    case "$SAGE_INSTALL_GCC" in
-        yes)
-            SAGE_MUST_INSTALL_GCC([SAGE_INSTALL_GCC is set to 'yes']);;
-        no)
-            true;;
-        *)
-            AC_MSG_ERROR([SAGE_INSTALL_GCC should be set to 'yes' or 'no'. You can also leave it unset to install GCC when needed]);;
-    esac
-fi
-
 
 AC_PROG_CC()
 AC_PROG_CPP()
@@ -399,15 +323,7 @@ AC_PROG_CXX()
 AC_PROG_FC()
 
 AC_SUBST(CC)
-AC_SUBST(CXX)
 AC_SUBST(FC)
-
-# Figuring out if we are using clang instead of gcc.
-AX_COMPILER_VENDOR()
-IS_REALLY_GCC=no
-if test "x$ax_cv_c_compiler_vendor" = xgnu ; then
-    IS_REALLY_GCC=yes
-fi
 
 # On darwin, also set the objective C/C++ compilers
 # Checking on all platforms doesn't hurt and stops
@@ -417,159 +333,19 @@ AC_PROG_OBJCXX()
 AC_SUBST(OBJC)
 AC_SUBST(OBJCXX)
 
-if test "x$CXX" = x
-then
-    AC_MSG_ERROR([a C++ compiler is missing])
-fi
-
-###############################################################################
-# Check libraries
-###############################################################################
-
-# Only install curl (and libcurl) if we cannot find version 7.22 or
-# later, since that is what R needs.
-need_to_install_curl=no
-AC_CACHE_CHECK([for curl 7.22], [ac_cv_path_CURL], [
-    AC_PATH_PROGS_FEATURE_CHECK(CURL, [curl],
-    [${ac_path_CURL}-config --checkfor 7.22 >/dev/null 2>/dev/null && ac_cv_path_CURL=${ac_path_CURL}],
-    [need_to_install_curl=yes; ac_cv_path_CURL=no])])
+AS_IF([test "x$CXX" = x], [AC_MSG_ERROR([a C++ compiler is missing])])
 
 
 ###############################################################################
 # Check header files
 ###############################################################################
 
-# If (lib)curl is installed, we need to check for the curl header
-# file, too.
-if test $need_to_install_curl = no;
-then
-    AC_CHECK_HEADER([curl/curl.h], [], [need_to_install_curl=yes])
-fi
 
 # complex.h is one that might not exist on older systems.
 AC_LANG(C++)
 AC_CHECK_HEADER([complex.h],[],[
     AC_MSG_ERROR([Exiting, since you do not have the 'complex.h' header file.])
 ])
-
-
-###############################################################################
-# Check types/structures
-###############################################################################
-
-# None needed
-
-
-###############################################################################
-# Check compiler characteristics
-###############################################################################
-
-AX_CXX_COMPILE_STDCXX_11([], optional)
-if test $HAVE_CXX11 != 1; then
-    SAGE_MUST_INSTALL_GCC([your C++ compiler does not support C++11])
-fi
-
-AC_LANG(C)
-if test -z "$CC"; then
-    SAGE_MUST_INSTALL_GCC([a C compiler is missing])
-else
-    # Save compiler before checking for C99 support
-    save_CC=$CC
-    # Check that we can compile C99 code
-    AC_PROG_CC_C99()
-    if test "x$ac_cv_prog_cc_c99" = xno
-    then
-        SAGE_MUST_INSTALL_GCC([your C compiler cannot compile C99 code])
-    fi
-    # restore original CC
-    CC=$save_CC
-fi
-
-# Check that the Fortran compiler accepts free-format source code
-# (as opposed to the older fixed-format style from Fortran 77).
-# This helps verify the compiler works too, so if some idiot
-# sets FC to /usr/bin/ls, we will at least know it's
-# not a working Fortran compiler.
-AC_LANG(Fortran)
-if test -z "$FC"; then
-    need_to_install_gfortran=yes
-else
-   # see http://www.gnu.org/software/hello/manual/autoconf/Fortran-Compiler.html
-   AC_FC_FREEFORM([],
-   [
-   AC_MSG_NOTICE([Your Fortran compiler does not accept free-format source code])
-   AC_MSG_NOTICE([which means the compiler is either seriously broken, or])
-   AC_MSG_NOTICE([is too old to build Sage.])
-   need_to_install_gfortran=yes
-   ])
-fi
-
-
-# Check compiler versions
-
-if test x$GXX != xyes; then
-    SAGE_SHOULD_INSTALL_GCC([your C++ compiler isn't GCC (GNU C++)])
-elif test $need_to_install_gcc = yes; then
-    # If we're installing GCC anyway, skip the rest of these version
-    # checks.
-    true
-elif test x$GCC != xyes; then
-    SAGE_SHOULD_INSTALL_GCC([your C compiler isn't GCC (GNU C)])
-elif test x$GFC != xyes; then
-    need_to_install_gfortran=yes
-else
-    # Since need_to_install_gcc is "no", we know that
-    # at least C, C++ and Fortran compilers are available.
-    # We also know that all compilers are GCC.
-
-    # Find out the compiler versions:
-    AX_GCC_VERSION()
-    AX_GXX_VERSION()
-
-    if test $IS_REALLY_GCC = yes ; then
-        # Add the .0 because Debian/Ubuntu gives version numbers like
-        # 4.6 instead of 4.6.4 (Trac #18885)
-        case "$GXX_VERSION.0" in
-            [[0-3]].*|4.[[0-7]].*)
-                # Install our own GCC if the system-provided one is older than gcc-4.8.
-                SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old]);;
-        esac
-    fi
-
-    # The following tests check that the version of the compilers
-    # are all the same.
-    if test "$GCC_VERSION" != "$GXX_VERSION"; then
-        SAGE_SHOULD_INSTALL_GCC([$CC ($GCC_VERSION) and $CXX ($GXX_VERSION) are not the same version])
-    fi
-
-    # assuming gfortran does work.
-fi
-
-
-# Check that the assembler and linker used by $CXX match $AS and $LD.
-# See http://trac.sagemath.org/sage_trac/ticket/14296
-if test -n "$AS"; then
-    CXX_as=`$CXX -print-file-name=as 2>/dev/null`
-    CXX_as=`command -v $CXX_as 2>/dev/null`
-    cmd_AS=`command -v $AS`
-
-    if test "$CXX_as" != "" -a "$CXX_as" != "$cmd_AS"; then
-        SAGE_SHOULD_INSTALL_GCC([there is a mismatch of assemblers])
-        AC_MSG_NOTICE([  $CXX uses $CXX_as])
-        AC_MSG_NOTICE([  \$AS equal to $AS])
-    fi
-fi
-if test -n "$LD"; then
-    CXX_ld=`$CXX -print-file-name=ld 2>/dev/null`
-    CXX_ld=`command -v $CXX_ld 2>/dev/null`
-    cmd_LD=`command -v $LD`
-
-    if test "$CXX_ld" != "" -a "$CXX_ld" != "$cmd_LD"; then
-        SAGE_SHOULD_INSTALL_GCC([there is a mismatch of linkers])
-        AC_MSG_NOTICE([  $CXX uses $CXX_ld])
-        AC_MSG_NOTICE([  \$LD equal to $LD])
-    fi
-fi
 
 
 ###############################################################################
@@ -601,13 +377,6 @@ AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
 
 SAGE_CHECK_OSX_SUPPORTED()
 
-# if GCC needs to be installed GFORTRAN shouldn't be installed.
-# if GCC is already installed GFORTRAN shouldn't be installed either.
-# GCC will provide GFORTRAN in both cases.
-if test x$need_to_install_gcc = xyes -o x$SAGE_INSTALL_GCC = xexists ; then
-    need_to_install_gfortran=no
-fi
-
 ###############################################################################
 # Collect substitutions for build/make/Makefile.in
 ###############################################################################
@@ -631,31 +400,6 @@ esac
 AC_MSG_RESULT([$SAGE_PYTHON_VERSION])
 AC_SUBST(SAGE_PYTHON_VERSION)
 
-
-# Sage MP library
-AC_MSG_CHECKING([multiprecision library])
-AC_ARG_WITH([mp],
-[AS_HELP_STRING([--with-mp=mpir],
-    [use MPIR as multiprecision library (default)])]
-[AS_HELP_STRING([--with-mp=gmp],
-    [use GMP as multiprecision library])])
-
-case "$with_mp" in
-    MPIR|mpir) with_mp=MPIR;;
-    GMP|gmp) with_mp=GMP;;
-    "") with_mp=${SAGE_MP_LIBRARY:-MPIR};;
-    *)
-        AC_MSG_ERROR([allowed values for --with-mp are MPIR and GMP]) ;;
-esac
-
-AC_MSG_RESULT([$with_mp])
-
-if test $with_mp = MPIR; then
-    AC_SUBST([SAGE_MP_LIBRARY], [mpir])
-else
-    AC_SUBST([SAGE_MP_LIBRARY], [gmp])
-fi
-
 # BLAS library
 AC_MSG_CHECKING([BLAS library])
 AC_ARG_WITH([blas],
@@ -668,7 +412,7 @@ AC_ARG_WITH([blas],
 
 case "$with_blas" in
     openblas) true;;
-    atlas) need_to_install_openblas=no;;
+    atlas) sage_spkg_install_openblas=no;;
     *) AC_MSG_ERROR([allowed values for --with-blas are 'atlas' and 'openblas']);;
 esac
 

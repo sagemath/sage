@@ -111,8 +111,8 @@ cdef class TimeSeries:
 
             sage: import numpy
             sage: v = numpy.array([[1,2], [3,4]], dtype=float); v
-            array([[ 1.,  2.],
-                   [ 3.,  4.]])
+            array([[1., 2.],
+                   [3., 4.]])
             sage: finance.TimeSeries(v)
             [1.0000, 2.0000, 3.0000, 4.0000]
             sage: finance.TimeSeries(v[:,0])
@@ -2100,14 +2100,14 @@ cdef class TimeSeries:
 
             sage: w[0] = 20
             sage: w
-            array([ 20. ,  -3. ,   4.5,  -2. ])
+            array([20. , -3. ,  4.5, -2. ])
             sage: v
             [20.0000, -3.0000, 4.5000, -2.0000]
 
         If you want a separate copy do not give the ``copy=False`` option. ::
 
             sage: z = v.numpy(); z
-            array([ 20. ,  -3. ,   4.5,  -2. ])
+            array([20. , -3. ,  4.5, -2. ])
             sage: z[0] = -10
             sage: v
             [20.0000, -3.0000, 4.5000, -2.0000]

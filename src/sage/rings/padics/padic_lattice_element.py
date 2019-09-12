@@ -15,13 +15,22 @@ tests because they take a few minutes as of mid 2018, see :trac:`25431`::
     See http://trac.sagemath.org/23505 for details.
     sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 
-    sage: R = ZpLF(2)
+    sage: R = ZpLF(2) # py2
+    sage: R = ZpLF(2) # py3
+    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+    See http://trac.sagemath.org/23505 for details.
     sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 
-    sage: R = QpLC(2)
+    sage: R = QpLC(2) # py2
+    sage: R = QpLC(2) # py3
+    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+    See http://trac.sagemath.org/23505 for details.
     sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 
-    sage: R = QpLF(2)
+    sage: R = QpLF(2) # py2
+    sage: R = QpLF(2) # py3
+    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
+    See http://trac.sagemath.org/23505 for details.
     sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 """
 
@@ -791,8 +800,8 @@ class pAdicLatticeElement(pAdicGenericElement):
         with the same parent.
 
         When ``infer_precision`` is set to ``False``, the precision on the
-        newly created variable is independant as if the variable were created
-        by hand by setting independantly the value of the absolute precision.
+        newly created variable is independent as if the variable were created
+        by hand by setting independently the value of the absolute precision.
         In particular, if ``self`` used to share diffused digits of precision 
         with other variables, they are not preserved.
 
@@ -909,7 +918,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         its absolute precision.
         If a rational is returned, its denominator will be a power of `p`.
 
-        EXAMPLES:
+        EXAMPLES::
 
            sage: R = ZpLC(7)
            sage: a = R(8); a.lift()

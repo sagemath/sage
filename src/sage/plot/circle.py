@@ -305,7 +305,7 @@ def circle(center, radius, **options):
     Here we make a more complicated plot, with many circles of different colors::
 
         sage: g = Graphics()
-        sage: step=6; ocur=1/5; paths=16;
+        sage: step=6; ocur=1/5; paths=16
         sage: PI = math.pi    # numerical for speed -- fine for graphics
         sage: for r in range(1,paths+1):
         ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:

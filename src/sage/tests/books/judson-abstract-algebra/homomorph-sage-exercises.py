@@ -60,7 +60,6 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: G = DihedralGroup(20)
-    sage: [H.order() for H in G.normal_subgroups()]
+    sage: l=[H.order() for H in G.normal_subgroups()]; l.sort(); l
     [1, 2, 4, 5, 10, 20, 20, 20, 40]
-
 """

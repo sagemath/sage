@@ -194,7 +194,7 @@ class FreeAlgebraFactory(UniqueFactory):
 
     By :trac:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
-    wrapper allows for chosing positive integral degree weights for the
+    wrapper allows for choosing positive integral degree weights for the
     generators of the free algebra. However, only (weighted) homogenous
     elements are supported. Of course, isomorphic algebras in different
     implementations are not identical::
@@ -420,7 +420,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
         EXAMPLES::
 
-            sage: F.<x,y,z> = FreeAlgebra(QQ, 3); F # indirect doctet
+            sage: F.<x,y,z> = FreeAlgebra(QQ, 3); F # indirect doctest
             Free Algebra on 3 generators (x, y, z) over Rational Field
 
         TESTS:
@@ -714,7 +714,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
             sage: F = FreeAlgebra(ZZ,3,'x,y,z')
             sage: F.algebra_generators()
-            Finite family {'y': y, 'x': x, 'z': z}
+            Finite family {'x': x, 'y': y, 'z': z}
         """
         ret = {}
         for i in range(self.__ngens):
@@ -809,6 +809,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     def g_algebra(self, relations, names=None, order='degrevlex', check=True):
         """
         The `G`-Algebra derived from this algebra by relations.
+
         By default is assumed, that two variables commute.
 
         .. TODO::

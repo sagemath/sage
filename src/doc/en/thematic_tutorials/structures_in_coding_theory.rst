@@ -429,7 +429,7 @@ We will implement a very naive channel which works only for words over
 :math:`\GF{2}` and flips as many bits as requested by the user.
 
 As channels are not directly related to code families, but more to
-vectors and words, we have a specific file, ``channel_constructions.py``
+vectors and words, we have a specific file, ``channel.py``
 to store them.
 
 So we will just add our new class in this file.
@@ -447,7 +447,7 @@ Plus, in our case, as this channel only works for vectors
 over :math:`\GF{2}`, the input and output spaces are the same.
 Let us write the constructor of our new channel class::
 
-    sage: from sage.coding.channel_constructions import Channel
+    sage: from sage.coding.channel import Channel
     sage: class BinaryStaticErrorRateChannel(Channel):
     ....:     def __init__(self, space, number_errors):
     ....:         if space.base_ring() is not GF(2):
@@ -457,7 +457,7 @@ Let us write the constructor of our new channel class::
     ....:         super(BinaryStaticErrorRateChannel, self).__init__(space, space)
     ....:         self._number_errors = number_errors
 
-Remember to inherit from :class:`sage.coding.channel_constructions.Channel`!
+Remember to inherit from :class:`sage.coding.channel.Channel`!
 
 We also want to override representation methods ``_repr_`` and ``_latex_``::
 
@@ -494,7 +494,7 @@ So we only need to override ``transmit_unsafe``! Let us do it::
     ....:     number_err = self.number_errors()
     ....:     V = self.input_space()
     ....:     F = GF(2)
-    ....:     for i in sample(xrange(V.dimension()), number_err):
+    ....:     for i in sample(range(V.dimension()), number_err):
     ....:         w[i] += F.one()
     ....:     return w
 
@@ -503,8 +503,10 @@ That is it, we now have our new channel class ready to use!
 Summary of the implementation for channels
 ------------------------------------------
 
-1. Inherit from :class:`sage.coding.channel_constructions.Channel`.
-2. Add this line in the class' constructor::
+1. Inherit from :class:`sage.coding.channel.Channel`.
+2. Add this line in the class' constructor:
+
+   .. CODE-BLOCK:: python
 
       super(ClassName, self).__init__(input_space, output_space)
 
@@ -533,21 +535,29 @@ catalog file instead of coding theory folder's ``all.py``.
 
 Here it means the following:
 
-- add the following in ``codes_catalog.py``::
+- add the following in ``codes_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCode
 
-- add the following in ``encoders_catalog.py``::
+- add the following in ``encoders_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeGeneratorMatrixEncoder
 
-- add the following in ``decoders_catalog.py``::
+- add the following in ``decoders_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
 
-- add the following in ``channels_catalog.py``::
+- add the following in ``channels_catalog.py``:
 
-    from sage.coding.channel_constructions import BinaryStaticErrorRateChannel
+   .. CODE-BLOCK:: python
+
+    from sage.coding.channel import BinaryStaticErrorRateChannel
 
 VII. Complete code of this tutorial
 ===================================
@@ -555,7 +565,9 @@ VII. Complete code of this tutorial
 If you need some base code to start from, feel free to copy-paste and
 derive from the one that follows.
 
-``repetition_code.py`` (with two encoders)::
+``repetition_code.py`` (with two encoders):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.linear_code import AbstractLinearCode
     from sage.coding.encoder import Encoder
@@ -671,7 +683,9 @@ derive from the one that follows.
     BinaryRepetitionCode._registered_decoders["MajorityVoteDecoder"] = BinaryRepetitionCodeMajorityVoteDecoder
     BinaryRepetitionCodeMajorityVoteDecoder._decoder_type = {"hard-decision", "unique"}
 
-``channel_constructions.py`` (continued)::
+``channel.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     class BinaryStaticErrorRateChannel(Channel):
 
@@ -699,24 +713,32 @@ derive from the one that follows.
             number_err = self.number_errors()
             V = self.input_space()
             F = GF(2)
-            for i in sample(xrange(V.dimension()), number_err):
+            for i in sample(range(V.dimension()), number_err):
                 w[i] += F.one()
             return w
 
-``codes_catalog.py`` (continued)::
+``codes_catalog.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     :class:`sage.coding.repetition_code.BinaryRepetitionCode <sage.coding.repetition_code.BinaryRepetitionCode>`
     #the line above creates a link to the class in the html documentation of coding theory library
     from sage.coding.repetition_code import BinaryRepetitionCode
 
-``encoders_catalog.py`` (continued)::
+``encoders_catalog.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import (BinaryRepetitionCodeGeneratorMatrixEncoder, BinaryRepetitionCodeStraightforwardEncoder)
 
-``decoders_catalog.py`` (continued)::
+``decoders_catalog.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
 
-``channels_catalog.py`` (continued)::
+``channels_catalog.py`` (continued):
 
-    from sage.coding.channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)
+.. CODE-BLOCK:: python
+
+    from sage.coding.channel import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)

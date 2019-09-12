@@ -42,6 +42,7 @@ Named associative algebras
    :maxdepth: 2
 
    sage/algebras/affine_nil_temperley_lieb
+   sage/algebras/askey_wilson
    sage/combinat/diagram_algebras
    sage/algebras/clifford_algebra
    sage/algebras/cluster_algebra

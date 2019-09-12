@@ -1,9 +1,11 @@
-# distutils: libraries = gmp flint arb
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = acb_calc.h
 
 from sage.libs.arb.types cimport *
 from sage.libs.flint.types cimport fmpz_t, fmpq_t
 
-cdef extern from "acb_calc.h":
+# acb_calc.h
+cdef extern from "arb_wrap.h":
 
     void acb_calc_integrate_opt_init(acb_calc_integrate_opt_t options)
 

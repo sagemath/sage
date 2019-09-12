@@ -1,0 +1,72 @@
+diff --git a/configure b/configure
+index 4a047e6..e3c8bdf 100755
+--- a/configure
++++ b/configure
+@@ -6102,6 +6102,12 @@ $as_echo "$ac_cv_no_strict_aliasing_ok" >&6; }
+     Darwin*)
+         # -Wno-long-double, -no-cpp-precomp, and -mno-fused-madd
+         # used to be here, but non-Apple gcc doesn't accept them.
++
++cat >>confdefs.h <<_ACEOF
++#define Py_MACOS_SYSROOT `xcrun --show-sdk-path`
++_ACEOF
++
++
+         if test "${CC}" = gcc
+         then
+             { $as_echo "$as_me:${as_lineno-$LINENO}: checking which compiler should be used" >&5
+diff --git a/configure.ac b/configure.ac
+index 913d546..6cb1f28 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1155,6 +1155,7 @@ yes)
+     Darwin*)
+         # -Wno-long-double, -no-cpp-precomp, and -mno-fused-madd
+         # used to be here, but non-Apple gcc doesn't accept them.
++        AC_DEFINE_UNQUOTED([Py_MACOS_SYSROOT], [`xcrun --show-sdk-path`], [Get the root dir of XCode])
+         if test "${CC}" = gcc
+         then
+             AC_MSG_CHECKING(which compiler should be used)
+diff --git a/pyconfig.h.in b/pyconfig.h.in
+index 11c4a66..a4e12a2 100644
+--- a/pyconfig.h.in
++++ b/pyconfig.h.in
+@@ -1016,6 +1016,9 @@
+ /* Defined if Python is built as a shared library. */
+ #undef Py_ENABLE_SHARED
+ 
++/* Get the root dir of XCode */
++#undef Py_MACOS_SYSROOT
++
+ /* Define as the size of the unicode type. */
+ #undef Py_UNICODE_SIZE
+ 
+diff --git a/setup.py b/setup.py
+index 33cecc6..5d6a411 100644
+--- a/setup.py
++++ b/setup.py
+@@ -50,7 +50,7 @@ def macosx_sdk_root():
+     cflags = sysconfig.get_config_var('CFLAGS')
+     m = re.search(r'-isysroot\s+(\S+)', cflags)
+     if m is None:
+-        sysroot = '/'
++        sysroot = sysconfig.get_config_var('Py_MACOS_SYSROOT')
+     else:
+         sysroot = m.group(1)
+     return sysroot
+@@ -92,7 +92,6 @@ def find_file(filename, std_dirs, paths):
+     # Check the additional directories
+     for dir in paths:
+         f = os.path.join(dir, filename)
+-
+         if host_platform == 'darwin' and is_macosx_sdk_path(dir):
+             f = os.path.join(sysroot, dir[1:], filename)
+ 
+@@ -557,6 +556,7 @@ class PyBuildExt(build_ext):
+             #   NOTE: using shlex.split would technically be more correct, but
+             # also gives a bootstrap problem. Let's hope nobody uses directories
+             # with whitespace in the name to store libraries.
++            inc_dirs += ['/usr/include']
+             cflags, ldflags = sysconfig.get_config_vars(
+                     'CFLAGS', 'LDFLAGS')
+             for item in cflags.split():

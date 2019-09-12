@@ -219,15 +219,25 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             try:
                 fmpz_poly_init2(self.modulus, length)
                 try:
-                    for i in range(1,cache_limit+2):
+                    fmpz_poly_init2(self.powhelper_oneunit, length)
+                    try:
+                        fmpz_poly_init2(self.powhelper_teichdiff, length)
                         try:
-                            fmpz_poly_init2(self._moduli[i], length)
+                            for i in range(1,cache_limit+2):
+                                try:
+                                    fmpz_poly_init2(self._moduli[i], length)
+                                except BaseException:
+                                    i-=1
+                                    while i:
+                                        fmpz_poly_clear(self._moduli[i])
+                                        i-=1
+                                    raise
                         except BaseException:
-                            i-=1
-                            while i:
-                                fmpz_poly_clear(self._moduli[i])
-                                i-=1
+                            fmpz_poly_clear(self.powhelper_teichdiff)
                             raise
+                    except BaseException:
+                        fmpz_poly_clear(self.powhelper_oneunit)
+                        raise
                 except BaseException:
                     fmpz_poly_clear(self.modulus)
                     raise
@@ -285,6 +295,8 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         if self.__allocated >= 8:
             fmpz_clear(self.q)
             fmpz_poly_clear(self.modulus)
+            fmpz_poly_clear(self.powhelper_oneunit)
+            fmpz_poly_clear(self.powhelper_teichdiff)
             for i in range(1, self.cache_limit + 1):
                 fmpz_poly_clear(self._moduli[i])
             sig_free(self._moduli)

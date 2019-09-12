@@ -185,12 +185,6 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         The order of this torsion subgroup.
 
-        REFERENCE:
-
-        .. [CES2003] Brian Conrad, Bas Edixhoven, William Stein
-           `J_1(p)` Has Connected Fibers
-           Documenta Math.  8 (2003) 331--408
-
         EXAMPLES::
 
             sage: A = J0(11)

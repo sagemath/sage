@@ -305,9 +305,9 @@ class PseudoRiemannianManifold(DifferentiableManifold):
       diagonal writing of the metric components; if ``signature`` is not
       provided, `S` is set to the manifold's dimension (Riemannian
       signature)
-    - ``ambient`` -- (default: ``None``) if not ``None``, must be a
+    - ``base_manifold`` -- (default: ``None``) if not ``None``, must be a
       differentiable manifold; the created object is then an open subset of
-      ``ambient``
+      ``base_manifold``
     - ``diff_degree`` -- (default: ``infinity``) degree `k` of
       differentiability
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to

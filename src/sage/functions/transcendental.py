@@ -2,7 +2,7 @@
 Number-Theoretic Functions
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Number-Theoretic Functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 import sage.rings.complex_field as complex_field
@@ -27,7 +27,6 @@ from sage.rings.real_mpfr import (RealField, is_RealNumber)
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 
 import sage.libs.mpmath.utils as mpmath_utils
-from sage.misc.superseded import deprecation
 from sage.combinat.combinat import bernoulli_polynomial
 
 from .gamma import psi
@@ -125,6 +124,15 @@ class Function_zeta(GinacFunction):
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
             zeta(2*I*pi)
+
+        Check that :trac:`20102` is fixed::
+
+            sage: (zeta(x)^2).series(x==1, 1)
+            1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
+            + (euler_gamma^2 - 2*stieltjes(1)) + Order(x - 1)
+            sage: (zeta(x)^4).residue(x==1)
+            4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
+            - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
 
         Check that the right infinities are returned (:trac:`19439`)::
 
@@ -261,12 +269,12 @@ class Function_HurwitzZeta(BuiltinFunction):
 hurwitz_zeta_func = Function_HurwitzZeta()
 
 
-def hurwitz_zeta(s, x, prec=None, **kwargs):
+def hurwitz_zeta(s, x, **kwargs):
     r"""
     The Hurwitz zeta function `\zeta(s, x)`, where `s` and `x` are complex.
 
     The Hurwitz zeta function is one of the many zeta functions. It
-    defined as
+    is defined as
 
     .. MATH::
 
@@ -274,7 +282,7 @@ def hurwitz_zeta(s, x, prec=None, **kwargs):
 
 
     When `x = 1`, this coincides with Riemann's zeta function.
-    The Dirichlet L-functions may be expressed as a linear combination
+    The Dirichlet L-functions may be expressed as linear combinations
     of Hurwitz zeta functions.
 
     EXAMPLES:
@@ -307,11 +315,6 @@ def hurwitz_zeta(s, x, prec=None, **kwargs):
 
     - :wikipedia:`Hurwitz_zeta_function`
     """
-    if prec:
-        deprecation(15095, 'the syntax hurwitz_zeta(s, x, prec) has been '
-                           'deprecated. Use hurwitz_zeta(s, x).n(digits=prec) '
-                           'instead.')
-        return hurwitz_zeta_func(s, x).n(digits=prec)
     return hurwitz_zeta_func(s, x, **kwargs)
 
 

@@ -8,10 +8,10 @@ in finite type.
 AUTHORS:
 
 - Dinakar Muthiah (2015-05): initial version
-- Travis Scrimshaw (2016-06): simplfied code and converted to Cython
+- Travis Scrimshaw (2016-06): simplified code and converted to Cython
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Dinakar Muthiah <muthiah at ualberta.ca>
 #                          Travis Scrimshaw <tscrimsh at umn.edu>
 #
@@ -19,8 +19,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 #from sage.misc.lazy_attribute import lazy_attribute
@@ -284,7 +284,7 @@ class PBWData(object): # UniqueRepresentation?
 @cython.wraparound(False)
 cpdef tuple compute_new_lusztig_datum(list enhanced_braid_chain, initial_lusztig_datum):
     """
-    Return the lusztig datum obtained by applying tropical Plücker
+    Return the Lusztig datum obtained by applying tropical Plücker
     relations along ``enhanced_braid_chain`` starting with
     ``initial_lusztig_datum``.
 

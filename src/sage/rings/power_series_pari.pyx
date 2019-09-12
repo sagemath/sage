@@ -678,7 +678,8 @@ cdef class PowerSeries_pari(PowerSeries):
             g = g.truncate()
         if typ(g.g) == t_POL and varn(g.g) == vn:
             # t_POL has 2 codewords.  Use new_ref instead of g[i] for speed.
-            return [R(g.new_ref(gel(g.g, i))) for i in range(2, lg(g.g))]
+            G = g.fixGEN()
+            return [R(g.new_ref(gel(G, i))) for i in range(2, lg(G))]
         else:
             return [R(g)]
 
@@ -729,6 +730,7 @@ cdef class PowerSeries_pari(PowerSeries):
             return []
 
         cdef pari_gen g = self.g
+        g.fixGEN()
         cdef long l, m
 
         R = self.base_ring()

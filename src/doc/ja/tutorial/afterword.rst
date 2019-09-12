@@ -129,12 +129,12 @@ Sageプロジェクトに助力いただけるのなら，たいへん有難い�
 Sageを引用するには
 ==================
 
-Sageを使って論文を書く場合は，Sageによる計算が行なわれたことを明記するため，以下の一文を参考文献として引用していただきたい(Version 4.3の部分は実際に使用したバージョン番号に修正してください．):
+Sageを使って論文を書く場合は，Sageによる計算が行なわれたことを明記するため，以下の一文を参考文献として引用していただきたい(Version 8.7の部分は実際に使用したバージョン番号に修正してください．):
 
 ::
 
-    [Sage] William A. Stein et al., Sage Mathematics Software (Version 4.3).
-           The Sage Development Team, 2009, http://www.sagemath.org.
+    [Sage] Sage Mathematics Software (Version 8.7).
+           The Sage Development Team, 2019, https://www.sagemath.org.
 
 さらに，Sageを構成するPARI，GAP，Singular，Maximaなどのシステムの内，どれを計算に利用したのかを特定してそのシステムも引用していただけるようお願いする．
 もし計算に使ったソフトウェアがどれなのか確信がもてない場合は， Googleグループ ``sage-devel`` で気軽に尋ねてみよう．

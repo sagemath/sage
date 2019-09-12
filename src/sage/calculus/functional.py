@@ -207,12 +207,12 @@ def integral(f, *args, **kwds):
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
 
-    Sage is unable to do anything with the following integral::
+    Sage is now (:trac:`27958`) able to compute the following integral::
 
-        sage: integral( exp(-x^2)*log(x), x )
-        integrate(e^(-x^2)*log(x), x)
+        sage: integral(exp(-x^2)*log(x), x)
+        1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
 
-    Note, however, that::
+    and its value::
 
         sage: integral( exp(-x^2)*ln(x), x, 0, oo)
         -1/4*sqrt(pi)*(euler_gamma + 2*log(2))
@@ -222,7 +222,7 @@ def integral(f, *args, **kwds):
         sage: integral( ln(x)/x, x, 1, 2)
         1/2*log(2)^2
 
-    Sage can't do this elliptic integral (yet)::
+    Sage cannot do this elliptic integral (yet)::
 
         sage: integral(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
         integrate(1/sqrt(2*t^4 - 3*t^2 - 2), t, 2, 3)
@@ -416,9 +416,9 @@ def expand(x, *args, **kwds):
 
     TESTS::
 
-        sage: t1 = (sqrt(3)-3)*(sqrt(3)+1)/6;
-        sage: tt1 = -1/sqrt(3);
-        sage: t2 = sqrt(3)/6;
+        sage: t1 = (sqrt(3)-3)*(sqrt(3)+1)/6
+        sage: tt1 = -1/sqrt(3)
+        sage: t2 = sqrt(3)/6
         sage: float(t1)
         -0.577350269189625...
         sage: float(tt1)

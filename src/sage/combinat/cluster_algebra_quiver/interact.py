@@ -1,5 +1,5 @@
 import ipywidgets as widgets
-from sage.misc.all import html, latex
+from sage.misc.all import latex
 from sage.repl.rich_output.pretty_print import pretty_print
 from IPython.display import clear_output
 
@@ -48,28 +48,32 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
                                        style={'button_width':'initial'},
                                        description='Mutate at: ')
 
+    which_plot = widgets.Dropdown(options=['circular', 'spring'],
+                                  value='circular' if circular else "spring",
+                                  description='Display style:')
+
     out = widgets.Output()
 
     seq = []
 
     def print_data():
         if show_seq.value:
-            pretty_print(html("Mutation sequence: ${}$".format(seq)))
+            pretty_print("Mutation sequence: ", seq)
 
         if show_vars.value and kind == 'seed':
-            pretty_print(html("Cluster variables:"))
-            table = "$\\begin{align*}\n"
+            pretty_print("Cluster variables:")
+            table = "\\begin{align*}\n"
             for i in range(self._n):
                 table += "\tv_{%s} &= " % i + latex(self.cluster_variable(i)) + "\\\\ \\\\\n"
-            table += "\\end{align*}$"
-            pretty_print(html(table))
+            table += "\\end{align*}"
+            pretty_print(table)
 
         if show_matrix.value:
-            pretty_print(html("B-Matrix:"))
-            pretty_print(html(self._M))
+            pretty_print("B-Matrix: ", self._M)
 
     def refresh(w):
         k = mut_buttons.value
+        circular = bool(which_plot.value == "circular")
         with out:
             clear_output(wait=True)
             if show_lastmutation.value:
@@ -80,8 +84,12 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     def do_mutation(*args, **kwds):
         k = mut_buttons.value
+        circular = bool(which_plot.value == "circular")
         self.mutate(k)
-        seq.append(k)
+        if seq and seq[-1] == k:
+            seq.pop()
+        else:
+            seq.append(k)
         with out:
             clear_output(wait=True)
             if show_lastmutation.value:
@@ -97,6 +105,7 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
         show_vars.observe(refresh, 'value')
     show_matrix.observe(refresh, 'value')
     show_lastmutation.observe(refresh, 'value')
+    which_plot.observe(refresh, 'value')
 
     mut_buttons.on_displayed(refresh)
 
@@ -105,6 +114,7 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
     else:
         top = widgets.HBox([show_seq])
 
-    return widgets.VBox([top,
+    return widgets.VBox([which_plot,
+                         top,
                          widgets.HBox([show_matrix, show_lastmutation]),
                          mut_buttons, out])

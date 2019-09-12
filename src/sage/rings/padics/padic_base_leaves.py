@@ -1,7 +1,7 @@
-"""
+r"""
 `p`-Adic Base Leaves
 
-Implementations of `\mathbb{Z}_p` and `\mathbb{Q}_p`
+Implementations of `\ZZ_p` and `\QQ_p`
 
 AUTHORS:
 
@@ -99,20 +99,20 @@ when cast into the ring.::
     <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
 The fixed modulus type is the leanest of the p-adic rings: it is
-basically just a wrapper around `\mathbb{Z} / p^n \mathbb{Z}`
+basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though
 it's not all that much faster than other `p`-adic types).  It does not
 track precision of elements.::
 
     sage: R = ZpFM(5, 5); a = R(4005); a
-    5 + 2*5^3 + 5^4 + O(5^5)
+    5 + 2*5^3 + 5^4
     sage: a // 5
-    1 + 2*5^2 + 5^3 + O(5^5)
+    1 + 2*5^2 + 5^3
 
 `p`-Adic rings and fields should be created using the creation
 functions ``Zp`` and ``Qp`` as above.  This will ensure that there is
-only one instance of `\mathbb{Z}_p` and `\mathbb{Q}_p` of a given
+only one instance of `\ZZ_p` and `\QQ_p` of a given
 type, `p`, print mode and precision.  It also saves typing very long
 class names.::
 
@@ -125,7 +125,7 @@ class names.::
 
 Once one has a `p`-Adic ring or field, one can cast elements into it
 in the standard way.  Integers, ints, longs, Rationals, other `p`-Adic
-types, pari `p`-adics and elements of `\mathbb{Z} / p^n \mathbb{Z}`
+types, pari `p`-adics and elements of `\ZZ / p^n \ZZ`
 can all be cast into a `p`-Adic field.::
 
     sage: R = Qp(5, 5, 'capped-rel','series'); a = R(16); a
@@ -133,7 +133,7 @@ can all be cast into a `p`-Adic field.::
     sage: b = R(23/15); b
     5^-1 + 3 + 3*5 + 5^2 + 3*5^3 + O(5^4)
     sage: S = Zp(5, 5, 'fixed-mod','val-unit'); c = S(Mod(75,125)); c
-    5^2 * 3 + O(5^5)
+    5^2 * 3
     sage: R(c)
     3*5^2 + O(5^5)
 
@@ -275,7 +275,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
             sage: K.has_coerce_map_from(ZpCA(17,40))
             False
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
@@ -371,7 +371,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
             sage: K.has_coerce_map_from(Zp(17,40))
             True
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             return True
@@ -554,7 +554,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
 
             sage: K = ZpFM(17)
             sage: K(1) + 1 #indirect doctest
-            2 + O(17^20)
+            2
             sage: K.has_coerce_map_from(ZZ)
             True
             sage: K.has_coerce_map_from(int)
@@ -572,7 +572,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             sage: K.has_coerce_map_from(Zp(17,40))
             False
         """
-        #if isistance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingFixedMod) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():

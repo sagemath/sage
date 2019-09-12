@@ -284,7 +284,7 @@ def WorldMap():
 
     REFERENCE:
 
-    .. [CIA] CIA Factbook 09 https://www.cia.gov/library/publications/the-world-factbook/
+    [CIA]_
     """
     edges = [
         ('Afghanistan', 'China', None), ('Afghanistan', 'Iran', None),

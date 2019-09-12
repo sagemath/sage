@@ -197,7 +197,6 @@ class SimplicialSetHomset(Homset):
             ...
             ValueError: codomain is not pointed, so specify a target for the constant map
         """
-        domain = self.domain()
         codomain = self.codomain()
         if point is None:
             if codomain.is_pointed():
@@ -229,7 +228,6 @@ class SimplicialSetHomset(Homset):
             sage: Hom(K,L)(d) == Hom(K,L).an_element()
             True
         """
-        domain = self.domain()
         codomain = self.codomain()
         if codomain.is_pointed():
             target = codomain.base_point()
@@ -300,7 +298,7 @@ class SimplicialSetHomset(Homset):
                 pass
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -417,8 +415,6 @@ class SimplicialSetMorphism(Morphism):
             sage: one
             Simplicial set endomorphism of S^5
               Defn: Identity map
-            sage: one._dictionary
-            {v_0: v_0, sigma_5: sigma_5}
 
         TESTS:
 
@@ -1167,10 +1163,9 @@ class SimplicialSetMorphism(Morphism):
             sage: g.coproduct(g).is_bijective()
             False
         """
-        domain = self.domain().coproduct(*[g.domain() for g in others])
         codomain = self.codomain().coproduct(*[g.codomain() for g in others])
         factors = []
-        for (i,f) in enumerate([self] + list(others)):
+        for i, f in enumerate([self] + list(others)):
             factors.append(codomain.inclusion_map(i) * f)
         return codomain.universal_property(*factors)
 
@@ -1396,9 +1391,9 @@ class SimplicialSetMorphism(Morphism):
             [0|2]
             sage: g3 = f.induced_homology_morphism(base_ring=GF(3), cohomology=True)
             sage: g3.to_matrix()
-            [2|0]
+            [1|0]
             [-+-]
-            [0|1]
+            [0|2]
         """
         return InducedHomologyMorphism(self, base_ring, cohomology)
 

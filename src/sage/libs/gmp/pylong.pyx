@@ -28,7 +28,7 @@ AUTHORS:
 from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_FromLong
 from cpython.long cimport PyLong_FromLong
-from cpython.longintrepr cimport _PyLong_New, PyLongObject, digit, PyLong_SHIFT
+from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
 from .mpz cimport *
 
 cdef extern from *:
@@ -54,7 +54,7 @@ cdef mpz_get_pylong_large(mpz_srcptr z):
     cdef size_t nbits = mpz_sizeinbase(z, 2)
     cdef size_t pylong_size = (nbits + PyLong_SHIFT - 1) // PyLong_SHIFT
     L = _PyLong_New(pylong_size)
-    mpz_export((<PyLongObject*>L).ob_digit, NULL,
+    mpz_export(L.ob_digit, NULL,
             -1, sizeof(digit), 0, PyLong_nails, z)
     if mpz_sgn(z) < 0:
         # Set correct size (use a pointer to hack around Cython's
@@ -91,7 +91,7 @@ cdef int mpz_set_pylong(mpz_ptr z, L) except -1:
     if pylong_size < 0:
         pylong_size = -pylong_size
     mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails,
-            (<PyLongObject*>L).ob_digit)
+            (<py_long>L).ob_digit)
     if Py_SIZE(L) < 0:
         mpz_neg(z, z)
 
@@ -133,6 +133,11 @@ cdef Py_hash_t mpz_pythonhash(mpz_srcptr z):
             # type
             if r > 2 * hash_bits - limb_bits:
                 y += (x >> (2 * hash_bits - r))
+            # At this point, y <= 2 * modulus, so y did not overflow, but we
+            # need y <= modulus. We use > instead of >= on the line below
+            # because it generates more efficient code.
+            if y > modulus:
+                y -= modulus
 
         # Safely compute h = (h + y) % modulus knowing that h < modulus
         # and y <= modulus

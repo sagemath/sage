@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-packaging:
 
 ==========================
@@ -89,7 +91,9 @@ As an example, let us consider a hypothetical FoO project. They
 (upstream) distribute a tarball ``FoO-1.3.tar.gz`` (that will be
 automatically placed in ``SAGE_ROOT/upstream`` during the installation
 process). To package it in Sage, we create a subdirectory containing as
-a minimum the following files::
+a minimum the following files:
+
+.. CODE-BLOCK:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- checksums.ini
@@ -99,7 +103,9 @@ a minimum the following files::
     |-- SPKG.txt
     `-- type
 
-The following are some additional files which can be added::
+The following are some additional files which can be added:
+
+.. CODE-BLOCK:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- patches
@@ -129,12 +135,13 @@ build and/or install the package.  If no ``spkg-build`` exists, then the
 ``spkg-install`` is responsible for both steps, though separating them is
 encouraged where possible.
 
-It is also possible to include a similar script named ``spkg-postinst`` to run
-additional steps after the package has been installed into ``$SAGE_LOCAL``. It
-is encouraged to put such steps in a separate ``spkg-postinst`` script rather
-than combinging them with ``spkg-install``.  This is because since
-:trac:`24106`, ``spkg-install`` does not necessarily install packages directly
-to ``$SAGE_LOCAL``.  However, by the time ``spkg-postinst`` is run, the
+It is also possible to include similar scripts named ``spkg-preinst`` or
+``spkg-postinst`` to run additional steps before or after the package has been
+installed into ``$SAGE_LOCAL``. It is encouraged to put steps which modify
+already installed files in a separate ``spkg-postinst`` script rather than
+combinging them with ``spkg-install``.  This is because since :trac:`24106`,
+``spkg-install`` does not necessarily install packages directly to
+``$SAGE_LOCAL``.  However, by the time ``spkg-postinst`` is run, the
 installation to ``$SAGE_LOCAL`` is complete.
 
 These scripts should *not* be prefixed with a shebang line (``#!...``) and
@@ -146,7 +153,9 @@ installing that package.
 
 In the best case, the upstream project can simply be installed by the
 usual configure / make / make install steps. In that case, the build
-script would simply consist of::
+script would simply consist of:
+
+.. CODE-BLOCK:: bash
 
     cd src
 
@@ -162,7 +171,9 @@ script would simply consist of::
         exit 1
     fi
 
-The install script would consist of::
+The install script would consist of:
+
+.. CODE-BLOCK:: bash
 
     cd src
     $MAKE install
@@ -177,7 +188,9 @@ scripts, so you can just use ``cd src`` instead of ``cd foo-1.3``.
 
 If there is any meaningful documentation included but not installed by
 ``make install``, then you can add something like the following to
-install it::
+install it:
+
+.. CODE-BLOCK:: bash
 
     if [ "$SAGE_SPKG_INSTALL_DOCS" = yes ] ; then
         $MAKE doc
@@ -199,7 +212,9 @@ install it::
 
     Build/install scripts may still be written in Python, but the Python
     code should go in a separate file (e.g. ``spkg-install.py``), and can
-    then be executed from the real ``spkg-install`` like::
+    then be executed from the real ``spkg-install`` like:
+
+    .. CODE-BLOCK:: text
 
         exec sage-python23 spkg-install.py
 
@@ -231,7 +246,9 @@ same as ``spkg-build`` and ``spkg-install``.  It is run after building and
 installing if the ``SAGE_CHECK`` environment variable is set, see the Sage
 installation guide. Ideally, upstream has some sort of tests suite that can
 be run with the standard ``make check`` target. In that case, the
-``spkg-check`` script would simply contain::
+``spkg-check`` script would simply contain:
+
+.. CODE-BLOCK:: bash
 
     cd src
     $MAKE check
@@ -243,7 +260,9 @@ Python-based packages
 ---------------------
 
 The best way to install a Python-based package is to use pip, in which
-case the ``spkg-install`` script might just consist of ::
+case the ``spkg-install`` script might just consist of
+
+.. CODE-BLOCK:: bash
 
     cd src && sdh_pip_install .
 
@@ -256,7 +275,9 @@ will, then the ``spkg-install`` script should call ``sage-python23``
 rather than ``python``. This will ensure that the correct version of
 Python is used to build and install the package. The same holds for
 ``spkg-check`` scripts; for example, the ``scipy`` ``spkg-check``
-file contains the line ::
+file contains the line
+
+.. CODE-BLOCK:: bash
 
     exec sage-python23 spkg-check.py
 
@@ -266,7 +287,9 @@ file contains the line ::
 The SPKG.txt File
 -----------------
 
-The ``SPKG.txt`` file should follow this pattern::
+The ``SPKG.txt`` file should follow this pattern:
+
+.. CODE-BLOCK:: text
 
      = PACKAGE_NAME =
 
@@ -308,7 +331,9 @@ Package dependencies
 Many packages depend on other packages. Consider for example the
 ``eclib`` package for elliptic curves. This package uses the libraries
 PARI, NTL and FLINT. So the following is the ``dependencies`` file
-for ``eclib``::
+for ``eclib``:
+
+.. CODE-BLOCK:: text
 
     pari ntl flint
 
@@ -316,7 +341,9 @@ for ``eclib``::
     All lines of this file are ignored except the first.
     It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.
 
-If there are no dependencies, you can use ::
+If there are no dependencies, you can use
+
+.. CODE-BLOCK:: text
 
     # no dependencies
 
@@ -326,7 +353,9 @@ If there are no dependencies, you can use ::
 
 There are actually two kinds of dependencies: there are normal
 dependencies and order-only dependencies, which are weaker. The syntax
-for the ``dependencies`` file is ::
+for the ``dependencies`` file is
+
+.. CODE-BLOCK:: text
 
     normal dependencies | order-only dependencies
 
@@ -366,7 +395,9 @@ patch is distributed with Sage, so you can rely on it being available. Patches
 must include documentation in their header (before the first diff hunk), and
 must have only one "prefix" level in the paths (that is, only one path level
 above the root of the upstream sources being patched).  So a typical patch file
-should look like this::
+should look like this:
+
+.. CODE-BLOCK:: diff
 
     Add autodoc_builtin_argspec config option
 
@@ -392,7 +423,9 @@ before running the ``spkg-install`` script (so long as they have the ``.patch``
 extension).  If you need to apply patches conditionally (such as only on
 a specifically platform), you can place those patches in a subdirectory of
 ``patches/`` and apply them manually using the ``sage-apply-patches`` script.
-For example, considering the layout::
+For example, considering the layout:
+
+.. CODE-BLOCK:: text
 
     SAGE_ROOT/build/pkgs/foo
     |-- patches
@@ -404,7 +437,9 @@ For example, considering the layout::
 The patches ``bar.patch`` and ``baz.patch`` are applied to the unpacked
 upstream sources in ``src/`` before running ``spkg-install``.  To conditionally
 apply the patch for Solaris the ``spkg-install`` should contain a section like
-this::
+this:
+
+.. CODE-BLOCK:: bash
 
     if [ $UNAME == "SunOS" ]; then
         sage-apply-patches -d solaris
@@ -422,7 +457,9 @@ When to patch, when to repackage, when to autoconfiscate
 - Use unpatched original upstream tarball when possible.
 
   Sometimes it may seem as if you need to patch a (hand-written)
-  ``Makefile`` because it "hard-codes" some paths or compiler flags::
+  ``Makefile`` because it "hard-codes" some paths or compiler flags:
+
+  .. CODE-BLOCK:: diff
 
       --- a/Makefile
       +++ b/Makefile
@@ -437,7 +474,9 @@ When to patch, when to repackage, when to autoconfiscate
        LIBDIR   = $(DESTDIR)/lib
 
   Don't use patching for that.  Makefile variables can be overridden
-  from the command-line.  Just use the following in ``spkg-install``::
+  from the command-line.  Just use the following in ``spkg-install``:
+
+  .. CODE-BLOCK:: bash
 
       $(MAKE) DESTDIR="$SAGE_ROOT/local"
 
@@ -483,7 +522,9 @@ We recommend the following workflow for maintaining a set of patches.
 
 - Make the changes and commit them to the branch.
 
-- Generate the patches against the ``upstream`` branch::
+- Generate the patches against the ``upstream`` branch:
+
+  .. CODE-BLOCK:: bash
 
       rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
       mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
@@ -491,11 +532,13 @@ We recommend the following workflow for maintaining a set of patches.
   
 - Optionally, create an ``spkg-src`` file in the Sage package's
   directory that regenerates the patch directory using the above
-  commmands.
+  commands.
 
 - When a new upstream version becomes available, merge (or import) it
   into ``upstream``, then create a new branch and rebase in on top of
-  the updated upstream::
+  the updated upstream:
+
+  .. CODE-BLOCK:: bash
 
       git checkout sage_package_OLDVERSION
       git checkout -b sage_package_NEWVERSION
@@ -560,7 +603,9 @@ Checksums
 The ``checksums.ini`` file contains the filename pattern of the
 upstream tarball (without the actual version) and its checksums. So if
 upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
-``$SAGE_ROOT/build/pkgs/foo/checksums.ini`` containing only::
+``$SAGE_ROOT/build/pkgs/foo/checksums.ini`` containing only:
+
+.. CODE-BLOCK:: bash
 
     tarball=FoO-VERSION.tar.gz
 

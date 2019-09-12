@@ -145,8 +145,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: c = [Conic(QQ, a) for a in l if a != [0,0,0] and a != (0,0,0,0,0,0)]
             sage: d = []
             sage: d = [[C]+[C.has_rational_point(algorithm = algorithm, read_cache = False, obstruction = (algorithm != 'rnfisnorm'), point = (algorithm != 'local')) for algorithm in ['local', 'qfsolve', 'rnfisnorm']] for C in c[::10]] # long time: 7 seconds
-            sage: assert all([e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d])
-            sage: assert all([e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0]])
+            sage: assert all(e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d)
+            sage: assert all(e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0])
         """
         if read_cache:
             if self._rational_point is not None:

@@ -118,8 +118,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [Littelmann95] \P. Littelmann, Paths and root operators in representation
-       theory. Ann. of Math. (2) 142 (1995), no. 3, 499-525.
+    .. [Li1995b]_
     """
 
     @staticmethod
@@ -1028,12 +1027,6 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
             For more information, see [LNSSS2013]_.
 
-            REFERENCES:
-
-            .. [LNSSS2013] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, M. Shimozono,
-               *A uniform model for Kirillov-Reshetikhin crystals. Extended abstract.*
-               DMTCS proc, to appear ( :arXiv:`1211.6019` )
-
             .. NOTE::
 
                 In the dual-of-untwisted case the parabolic quantum
@@ -1193,10 +1186,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [LZ11] Bin Li and Hechun Zhang.
-       *Path realization of crystal* `B(\infty)`.
-       Front. Math. China, **6** (4), (2011) pp. 689--706.
-       :doi:`10.1007/s11464-010-0073-x`
+    - [LZ2011]_
     """
     @staticmethod
     def __classcall_private__(cls, cartan_type):

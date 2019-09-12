@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 
@@ -43,7 +44,7 @@ class SageTimeitResult(object):
 
     ::
 
-        sage: units = ["s", "ms", "\xc2\xb5s", "ns"]
+        sage: units = [u"s", u"ms", u"μs", u"ns"]
         sage: scaling = [1, 1e3, 1e6, 1e9]
         sage: number = 7
         sage: repeat = 13
@@ -90,7 +91,11 @@ class SageTimeitResult(object):
             sage: SageTimeitResult(stats)           #indirect doctest
             1 loops, best of 2: 3.14 ns per loop
         """
-        return "%d loops, best of %d: %.*g %s per loop" % self.stats
+        s =  u"%d loops, best of %d: %.*g %s per loop" % self.stats
+        if isinstance(s, str):
+            return s
+        return s.encode("utf-8")
+
 
 def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, precision=3, seconds=False):
     """nodetex
@@ -210,7 +215,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     if stmt == "":
         return ''
 
-    units = ["s", "ms", "\xc2\xb5s", "ns"]
+    units = [u"s", u"ms", u"μs", u"ns"]
     scaling = [1, 1e3, 1e6, 1e9]
 
     timer = timeit_.Timer()

@@ -32,7 +32,7 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2010 Joris Vankerschaver <joris.vankerschaver@gmail.com>
@@ -41,13 +41,14 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+
 
 class DiffForm(TensorField):
     r"""
@@ -129,7 +130,7 @@ class DiffForm(TensorField):
 
     A 1-form on ``M``::
 
-        sage: a = M.one_form('a') ; a
+        sage: a = M.one_form(name='a') ; a
         1-form a on the 2-dimensional differentiable manifold M
         sage: a.parent()
         Module Omega^1(M) of 1-forms on the 2-dimensional differentiable
@@ -146,6 +147,13 @@ class DiffForm(TensorField):
         sage: a.display(eV)
         a = 1/2*v du - 1/2*u dv
 
+    It is also possible to set the components at the 1-form definition, via
+    a dictionary whose keys are the vector frames::
+
+        sage: a1 = M.one_form({eU: [-y, x], eV: [v/2, -u/2]}, name='a')
+        sage: a1 == a
+        True
+
     The exterior derivative of the 1-form is a 2-form::
 
         sage: da = a.exterior_derivative() ; da
@@ -155,10 +163,14 @@ class DiffForm(TensorField):
         sage: da.display(eV)
         da = -du/\dv
 
-    Another 1-form::
+    Another 1-form defined by its components in ``eU``::
 
-        sage: b = M.one_form('b')
-        sage: b[eU,:] = [1+x*y, x^2]
+        sage: b = M.one_form(1+x*y, x^2, frame=eU, name='b')
+
+    Since ``eU`` is the default vector frame on ``M``, it can be omitted
+    in the definition::
+
+        sage: b = M.one_form(1+x*y, x^2, name='b')
         sage: b.add_comp_by_continuation(eV, W, c_uv)
 
     Adding two 1-forms results in another 1-form::
@@ -210,8 +222,7 @@ class DiffForm(TensorField):
 
     A 1-form on ``M``::
 
-        sage: a = M.one_form('a')
-        sage: a[eU,:] = [-y, x]
+        sage: a = M.one_form(-y, x, name='a')
         sage: a.add_comp_by_continuation(eV, W, c_uv)
         sage: a.display(eU)
         a = -y dx + x dy
@@ -228,8 +239,7 @@ class DiffForm(TensorField):
 
     Another 1-form::
 
-        sage: b = M.one_form('b')
-        sage: b[eU,:] = [1+x*y, x^2]
+        sage: b = M.one_form(1+x*y, x^2, name='b')
         sage: b.add_comp_by_continuation(eV, W, c_uv)
 
     Adding two 1-forms::
@@ -299,10 +309,10 @@ class DiffForm(TensorField):
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
 
         """
-        TensorField.__init__(self, vector_field_module, (0,degree), name=name,
+        TensorField.__init__(self, vector_field_module, (0, degree), name=name,
                              latex_name=latex_name, antisym=range(degree),
                              parent=vector_field_module.dual_exterior_power(degree))
-        self._init_derived() # initialization of derived quantities
+        self._init_derived()  # initialization of derived quantities
 
     def _repr_(self):
         r"""
@@ -389,8 +399,7 @@ class DiffForm(TensorField):
 
         The 1-form::
 
-            sage: a = M.diff_form(1, name='a')
-            sage: a[e_xy,:] = -y^2, x^2
+            sage: a = M.one_form({e_xy: [-y^2, x^2]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, U.intersection(V), c_uv)
             sage: a.display(e_xy)
             a = -y^2 dx + x^2 dy
@@ -423,8 +432,7 @@ class DiffForm(TensorField):
 
         Let us check Cartan's identity::
 
-            sage: v = M.vector_field(name='v')
-            sage: v[e_xy, :] = -y, x
+            sage: v = M.vector_field({e_xy: [-y, x]}, name='v')
             sage: v.add_comp_by_continuation(e_uv, U.intersection(V), c_uv)
             sage: a.lie_der(v) == v.contract(xder(a)) + xder(a(v))  # long time
             True
@@ -432,10 +440,10 @@ class DiffForm(TensorField):
         """
         from sage.tensor.modules.format_utilities import (format_unop_txt,
                                                           format_unop_latex)
-        vmodule = self._vmodule # shortcut
+        vmodule = self._vmodule  # shortcut
         rname = format_unop_txt('d', self._name)
         rlname = format_unop_latex(r'\mathrm{d}', self._latex_name)
-        resu = vmodule.alternating_form(self._tensor_rank+1, name=rname,
+        resu = vmodule.alternating_form(self._tensor_rank + 1, name=rname,
                                         latex_name=rlname)
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = rst.exterior_derivative()
@@ -458,7 +466,6 @@ class DiffForm(TensorField):
 
         Exterior product of two 1-forms on the 2-sphere::
 
-
             sage: M = Manifold(2, 'S^2', start_index=1) # the 2-dimensional sphere S^2
             sage: U = M.open_subset('U') ; V = M.open_subset('V')
             sage: M.declare_union(U,V)   # S^2 is the union of U and V
@@ -469,11 +476,9 @@ class DiffForm(TensorField):
             sage: uv_to_xy = xy_to_uv.inverse()
             sage: W = U.intersection(V) # The complement of the two poles
             sage: e_xy = c_xy.frame() ; e_uv = c_uv.frame()
-            sage: a = M.diff_form(1, name='a')
-            sage: a[e_xy,:] = y, x
+            sage: a = M.one_form({e_xy: [y, x]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
-            sage: b = M.diff_form(1, name='b')
-            sage: b[e_xy,:] = x^2 + y^2, y
+            sage: b = M.one_form({e_xy: [x^2 + y^2, y]}, name='b')
             sage: b.add_comp_by_continuation(e_uv, W, c_uv)
             sage: c = a.wedge(b); c
             2-form a/\b on the 2-dimensional differentiable manifold S^2
@@ -481,6 +486,24 @@ class DiffForm(TensorField):
             a/\b = (-x^3 - (x - 1)*y^2) dx/\dy
             sage: c.display(e_uv)
             a/\b = -(v^2 - u)/(u^8 + 4*u^6*v^2 + 6*u^4*v^4 + 4*u^2*v^6 + v^8) du/\dv
+
+        If one of the two operands is unnamed, the result is unnamed too::
+
+            sage: b1 = M.diff_form(1)  # no name set
+            sage: b1[e_xy,:] = x^2 + y^2, y
+            sage: b1.add_comp_by_continuation(e_uv, W, c_uv)
+            sage: c1 = a.wedge(b1); c1
+            2-form on the 2-dimensional differentiable manifold S^2
+            sage: c1.display(e_xy)
+            (-x^3 - (x - 1)*y^2) dx/\dy
+
+        To give a name to the result, one shall use the method
+        :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.set_name`::
+
+            sage: c1.set_name('c');  c1
+            2-form c on the 2-dimensional differentiable manifold S^2
+            sage: c1.display(e_xy)
+            c = (-x^3 - (x - 1)*y^2) dx/\dy
 
         """
         from sage.tensor.modules.format_utilities import is_atomic
@@ -498,6 +521,7 @@ class DiffForm(TensorField):
             # call of the FreeModuleAltForm version:
             return FreeModuleAltForm.wedge(self_r, other_r)
         # otherwise, the result is created here:
+        resu_name = None
         if self._name is not None and other._name is not None:
             sname = self._name
             oname = other._name
@@ -506,6 +530,7 @@ class DiffForm(TensorField):
             if not is_atomic(oname):
                 oname = '(' + oname + ')'
             resu_name = sname + '/\\' + oname
+        resu_latex_name = None
         if self._latex_name is not None and other._latex_name is not None:
             slname = self._latex_name
             olname = other._latex_name
@@ -600,8 +625,7 @@ class DiffForm(TensorField):
 
         Then we construct the 1-form and take its Hodge dual w.r.t. `g`::
 
-            sage: a = M.one_form(name='a')
-            sage: a[eU,:] = -y, x
+            sage: a = M.one_form({eU: [-y, x]}, name='a')
             sage: a.add_comp_by_continuation(eV, W, c_uv)
             sage: a.display(eU)
             a = -y dx + x dy
@@ -706,8 +730,7 @@ class DiffForm(TensorField):
             sage: uv_to_xy = xy_to_uv.inverse()
             sage: W = U.intersection(V) # The complement of the two poles
             sage: e_xy = c_xy.frame() ; e_uv = c_uv.frame()
-            sage: a = M.one_form(name='a')
-            sage: a[e_xy,:] = y, x
+            sage: a = M.one_form({e_xy: [y, x]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
             sage: b = M.multivector_field(2, name='b')
             sage: b[e_xy,1,2] = x*y
@@ -758,8 +781,8 @@ class DiffForm(TensorField):
         self_r = self.restrict(dom_resu)
         qvect_r = qvect.restrict(dom_resu)
         if ambient_dom_resu.is_manifestly_parallelizable():
-            # call of the AlternatingContrTensor version:
-            return AlternatingContrTensor.interior_product(self_r, qvect_r)
+            # call of the FreeModuleAltForm version:
+            return FreeModuleAltForm.interior_product(self_r, qvect_r)
         # Otherwise, the result is created here:
         # Name of the result
         resu_name = None
@@ -792,14 +815,15 @@ class DiffForm(TensorField):
                     self_r._restrictions[dom].interior_product(
                                                     qvect_r._restrictions[dom])
         if resu_degree == 0:
-            if not resu._express: # only the restrictions to subdomains have
-                                  # been initialized
+            if not resu._express:  # only the restrictions to subdomains have
+                                   # been initialized
                 for chart in dom_resu.top_charts():
                     resu._express[chart] = \
                             resu.restrict(chart.domain()).coord_function(chart)
         return resu
 
-#******************************************************************************
+# *****************************************************************************
+
 
 class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
     r"""
@@ -852,7 +876,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
         sage: M = Manifold(4, 'M')
         sage: c_txyz.<t,x,y,z> = M.chart()
-        sage: a = M.diff_form(2, 'a') ; a
+        sage: a = M.diff_form(2, name='a') ; a
         2-form a on the 4-dimensional differentiable manifold M
         sage: a.parent()
         Free module Omega^2(M) of 2-forms on the 4-dimensional differentiable
@@ -921,9 +945,9 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
     An example of 3-form is the volume element on `\RR^3` in Cartesian
     coordinates::
 
-        sage: M = Manifold(3, 'R3', '\RR^3', start_index=1)
+        sage: M = Manifold(3, 'R3', latex_name=r'\RR^3', start_index=1)
         sage: c_cart.<x,y,z> = M.chart()
-        sage: eps = M.diff_form(3, 'epsilon', r'\epsilon')
+        sage: eps = M.diff_form(3, name='epsilon', latex_name=r'\epsilon')
         sage: eps[1,2,3] = 1  # the only independent component
         sage: eps[:] # all the components are set from the previous line:
         [[[0, 0, 0], [0, 0, 1], [0, -1, 0]], [[0, 0, -1], [0, 0, 0], [1, 0, 0]],
@@ -939,6 +963,14 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
         ....:                [r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)])
         sage: cart_to_spher = spher_to_cart.set_inverse(sqrt(x^2+y^2+z^2),
         ....:                              atan2(sqrt(x^2+y^2),z), atan2(y, x))
+        Check of the inverse coordinate transformation:
+          r == r  *passed*
+          th == arctan2(r*sin(th), r*cos(th))  **failed**
+          ph == arctan2(r*sin(ph)*sin(th), r*cos(ph)*sin(th))  **failed**
+          x == x  *passed*
+          y == y  *passed*
+          z == z  *passed*
+        NB: a failed report can reflect a mere lack of simplification.
         sage: eps.comp(c_spher.frame()) # computation of the components in the spherical frame
         Fully antisymmetric 3-indices components w.r.t. Coordinate frame
          (R3, (d/dr,d/dth,d/dph))
@@ -949,13 +981,19 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
         sage: eps.display(c_spher.frame(), c_spher)
         epsilon = r^2*sin(th) dr/\dth/\dph
 
+    As a shortcut of the above command, on can pass just the chart ``c_spher``
+    to ``display``, the vector frame being then assumed to be the coordinate
+    frame associated with the chart::
+
+        sage: eps.display(c_spher)
+        epsilon = r^2*sin(th) dr/\dth/\dph
+
+
     The exterior product of two differential forms is performed via the method
     :meth:`~sage.tensor.modules.free_module_alt_form.FreeModuleAltForm.wedge`::
 
-        sage: a = M.one_form('A')
-        sage: a[:] = (x*y*z, -z*x, y*z)
-        sage: b = M.one_form('B')
-        sage: b[:] = (cos(z), sin(x), cos(y))
+        sage: a = M.one_form(x*y*z, -z*x, y*z, name='A')
+        sage: b = M.one_form(cos(z), sin(x), cos(y), name='B')
         sage: ab = a.wedge(b) ; ab
         2-form A/\B on the 3-dimensional differentiable manifold R3
         sage: ab[:]
@@ -1013,8 +1051,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
     The Lie derivative of a 2-form is a 2-form::
 
-        sage: v = M.vector_field('v')
-        sage: v[:] = (y*z, -x*z, x*y)
+        sage: v = M.vector_field(y*z, -x*z, x*y, name='v')
         sage: ab.lie_der(v)  # long time
         2-form on the 3-dimensional differentiable manifold R3
 
@@ -1027,7 +1064,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
     A 1-form on a `\RR^3`::
 
-        sage: om = M.one_form('omega', r'\omega') ; om
+        sage: om = M.one_form(name='omega', latex_name=r'\omega'); om
         1-form omega on the 3-dimensional differentiable manifold R3
 
     A 1-form is of course a differential form::
@@ -1050,8 +1087,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
     A 1-form acts on vector fields::
 
-        sage: v = M.vector_field('V')
-        sage: v[:] = (x, 2*y, 3*z)
+        sage: v = M.vector_field(x, 2*y, 3*z, name='V')
         sage: om(v)
         Scalar field omega(V) on the 3-dimensional differentiable manifold R3
         sage: om(v).display()
@@ -1064,10 +1100,8 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
     The tensor product of two 1-forms is a tensor field of type `(0,2)`::
 
-        sage: a = M.one_form('A')
-        sage: a[:] = (1, 2, 3)
-        sage: b = M.one_form('B')
-        sage: b[:] = (6, 5, 4)
+        sage: a = M.one_form(1, 2, 3, name='A')
+        sage: b = M.one_form(6, 5, 4, name='B')
         sage: c = a*b ; c
         Tensor field A*B of type (0,2) on the 3-dimensional differentiable
          manifold R3
@@ -1107,6 +1141,12 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
             sage: a1.parent() is a.parent()
             True
 
+        Initializing the components at the construction::
+
+            sage: a = M.diff_form(2, [[0, x*y], [-x*y, 0]], name='a')
+            sage: a.display()
+            a = x*y dx/\dy
+
         """
         FreeModuleAltForm.__init__(self, vector_field_module, degree,
                                    name=name, latex_name=latex_name)
@@ -1114,8 +1154,6 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
         self._vmodule = vector_field_module
         self._domain = vector_field_module._domain
         self._ambient_domain = vector_field_module._ambient_domain
-        self._extensions_graph = {self._domain: self}
-        self._restrictions_graph = {self._domain: self}
         # initialization of derived quantities:
         self._init_derived()
 
@@ -1213,10 +1251,8 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
             sage: a[0,1] = x*y
             sage: a.display()
             a = x*y dx/\dy
-            sage: u = M.vector_field(name='u')
-            sage: u[:] = [1+x, 2-y]
-            sage: v = M.vector_field(name='v')
-            sage: v[:] = [-y, x]
+            sage: u = M.vector_field(1+x, 2-y, name='u')
+            sage: v = M.vector_field(-y, x, name='v')
             sage: s = a.__call__(u,v); s
             Scalar field a(u,v) on the 2-dimensional differentiable manifold M
             sage: s.display()
@@ -1246,8 +1282,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
             sage: M = Manifold(4, 'M')
             sage: c_txyz.<t,x,y,z> = M.chart()
-            sage: a = M.one_form('A')
-            sage: a[:] = (t*x*y*z, z*y**2, x*z**2, x**2 + y**2)
+            sage: a = M.one_form(t*x*y*z, z*y**2, x*z**2, x**2 + y**2, name='A')
             sage: da = a.exterior_derivative() ; da
             2-form dA on the 4-dimensional differentiable manifold M
             sage: da.display()
@@ -1282,13 +1317,11 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
         Let us check Cartan's identity::
 
-            sage: v = M.vector_field(name='v')
-            sage: v[:] = -y, x, t, z
+            sage: v = M.vector_field(-y, x, t, z, name='v')
             sage: a.lie_der(v) == v.contract(xder(a)) + xder(a(v)) # long time
             True
 
         """
-        from sage.calculus.functional import diff
         from sage.tensor.modules.format_utilities import (format_unop_txt,
                                                           format_unop_latex)
         from sage.tensor.modules.comp import CompFullyAntiSym
@@ -1365,8 +1398,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
             sage: M = Manifold(3, 'M', start_index=1)
             sage: X.<x,y,z> = M.chart()
-            sage: a = M.one_form(name='a')
-            sage: a[:] = [2, 1+x, y*z]
+            sage: a = M.one_form(2, 1+x, y*z, name='a')
             sage: b = M.diff_form(2, name='b')
             sage: b[1,2], b[1,3], b[2,3] = y^2, z+x, z^2
             sage: a.display()
@@ -1434,10 +1466,9 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
             sage: X.<x,y,z> = M.chart()
             sage: g = M.metric('g')  # the Euclidean metric
             sage: g[1,1], g[2,2], g[3,3] = 1, 1, 1
-            sage: a = M.one_form('A')
             sage: var('Ax Ay Az')
             (Ax, Ay, Az)
-            sage: a[:] = (Ax, Ay, Az)
+            sage: a = M.one_form(Ax, Ay, Az, name='A')
             sage: sa = a.hodge_dual(g) ; sa
             2-form *A on the 3-dimensional differentiable manifold M
             sage: sa.display()
@@ -1514,8 +1545,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
 
             sage: M = Manifold(3, 'M', start_index=1)
             sage: X.<x,y,z> = M.chart()
-            sage: a = M.one_form(name='a')
-            sage: a[:] = [2, 1+x, y*z]
+            sage: a = M.one_form(2, 1+x, y*z, name='a')
             sage: b = M.multivector_field(2, name='b')
             sage: b[1,2], b[1,3], b[2,3] = y^2, z+x, -z^2
             sage: s = a.interior_product(b); s

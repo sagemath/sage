@@ -184,13 +184,13 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         sage: from sage.rings.number_field.number_field_morphisms import EmbeddedNumberFieldMorphism
         sage: EmbeddedNumberFieldMorphism(K,L,CDF)
         Generic morphism:
-          From: Number Field in i with defining polynomial x^2 + 1
-          To:   Number Field in i with defining polynomial x^2 + 1
+          From: Number Field in i with defining polynomial x^2 + 1 with i = I
+          To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
           Defn: i -> -i
         sage: EmbeddedNumberFieldMorphism(K,L,QQbar)
         Generic morphism:
-          From: Number Field in i with defining polynomial x^2 + 1
-          To:   Number Field in i with defining polynomial x^2 + 1
+          From: Number Field in i with defining polynomial x^2 + 1 with i = I
+          To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
           Defn: i -> -i
 
     """
@@ -227,7 +227,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             sage: F1.gen() + F2.gen()
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Number Field in a with defining polynomial x^3 + 2' and 'Number Field in a with defining polynomial x^3 + 2'
+            TypeError: unsupported operand parent(s) for +: 'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and 'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
         The following was fixed to raise a ``TypeError`` in :trac:`15331`::
 

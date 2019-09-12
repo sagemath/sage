@@ -207,7 +207,7 @@ class CCInterpreter(StackInterpreter):
                        code='mpc_set(o0, i0, MPC_RNDNN);'),
             InstrSpec('return', pg('S', ''),
                        code='mpc_set(retval, i0, MPC_RNDNN);\nreturn 1;\n'),
-            InstrSpec('py_call', pg('P[D]S@D', 'S'),    
+            InstrSpec('py_call', pg('P[D]S@D', 'S'),
                        uses_error_handler=True,
                        code="""
   if (!cc_py_call_helper(domain, i0, n_i1, i1, o0)) {

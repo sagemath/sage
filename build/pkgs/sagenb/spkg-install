@@ -1,17 +1,23 @@
 cd src
 
-# Install a flat package (not an egg), which is the same as how pip
-# installs packages.
 sdh_pip_install .
 
-# let sagenb use mathjax
-if [ "$SAGE_PYTHON3" = yes ]; then
-    PYTHON=python3
-else
-    PYTHON=python2
-fi
-PYTHON_VERSION=$("$SAGE_LOCAL/bin/$PYTHON" -c 'import sys; print("%d.%d" % sys.version_info[:2])')
-cd "${SAGE_DESTDIR}${SAGE_LOCAL}/lib/python$PYTHON_VERSION/site-packages/sagenb/data" || \
-    sdh_die "Cannot find SageNB data directory."
-ln -s -n "$SAGE_SHARE/mathjax/" mathjax || \
+cd doc
+$MAKE html || sdh_die "Error building the documentation"
+docdir="$SAGE_LOCAL/share/doc/sagenb"
+rm -rf "$docdir"
+mv build/html "$docdir"
+
+cd "${SAGE_DESTDIR}"
+
+# SageNB installation path, relative either to / (for real install)
+# or to SAGE_DESTDIR.
+SAGENB_INSTALL=$(echo ."$SAGE_LOCAL"/lib/python*/site-packages/sagenb)
+
+# Completely remove the old sagenb installation, including bad mathjax
+# installations.
+( cd / && rm -rf "$SAGENB_INSTALL" )
+
+# Let sagenb use mathjax
+ln -s -n "$SAGE_SHARE/mathjax/" "$SAGENB_INSTALL/data/mathjax" || \
     sdh_die "Error: Cannot symlink mathjax into the SageNB data directory."

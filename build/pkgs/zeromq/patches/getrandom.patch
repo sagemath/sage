@@ -1,0 +1,39 @@
+Patch taken from upstream git repo
+and after running aclocal && autoconf
+and removing changes to autotools input files
+
+commit 4ff814f204ee38177a392526cf12c8c0019b480f
+Author: Luca Boccassi <luca.boccassi@gmail.com>
+Date:   Wed May 9 10:41:20 2018 +0100
+
+    Problem: getrandom test does not check if it's working
+
+    Solution: check return value in autoconf and CMake. On some platforms
+    the function is available but not implemented (eg: GNU/Hurd).
+
+diff -ru zeromq-4.2.5//builds/cmake/Modules/ZMQSourceRunChecks.cmake b/builds/cmake/Modules/ZMQSourceRunChecks.cmake
+--- zeromq-4.2.5//builds/cmake/Modules/ZMQSourceRunChecks.cmake	2018-03-23 20:33:36.000000000 +0100
++++ b/builds/cmake/Modules/ZMQSourceRunChecks.cmake	2018-07-24 12:39:23.340035053 +0200
+@@ -287,7 +287,8 @@
+ int main (int argc, char *argv [])
+ {
+     char buf[4];
+-    getrandom(buf, 4, 0);
++    int rc = getrandom(buf, 4, 0);
++    return rc == -1 ? 1 : 0;
+ }
+ "
+     ZMQ_HAVE_GETRANDOM)
+diff -ru zeromq-4.2.5//configure b/configure
+--- zeromq-4.2.5//configure	2018-03-23 20:34:18.000000000 +0100
++++ b/configure	2018-07-24 12:39:49.018035120 +0200
+@@ -23315,7 +23315,8 @@
+ int main (int argc, char *argv [])
+ {
+     char buf[4];
+-    getrandom(buf, 4, 0);
++    int rc = getrandom(buf, 4, 0);
++    return rc == -1 ? 1 : 0;
+ }
+ 
+ _ACEOF

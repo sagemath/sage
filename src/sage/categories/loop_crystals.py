@@ -1,15 +1,15 @@
 r"""
 Loop Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015   Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function, division, absolute_import
 
@@ -117,7 +117,7 @@ class LoopCrystals(Category_singleton):
                 sage: G = C.digraph()
                 sage: G.latex_options()  # optional - dot2tex
                 LaTeX options for Digraph on 29 vertices:
-                {...'edge_options': <function <lambda> at 0x...>,...}
+                {...'edge_options': <function ... at ...>...}
                 sage: view(G, tightpage=True)  # optional - dot2tex graphviz, not tested (opens external window)
             """
             G = Crystals().parent_class.digraph(self, subset, index_set)

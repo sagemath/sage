@@ -56,6 +56,24 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
           x^2 - y*z
     """
+    def __init__(self, A, polynomials, embedding_center=None,
+                 embedding_codomain=None, embedding_images=None):
+        """
+        EXAMPLES::
+
+            sage: A.<x,y,z> = AffineSpace(QQ, 3)
+            sage: A.subscheme([y^2-x*z-x*y])
+            Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+              -x*y + y^2 - x*z
+        """
+        AlgebraicScheme_subscheme.__init__(self, A, polynomials)
+        if embedding_images is not None:
+            self._embedding_morphism = self.hom(embedding_images, embedding_codomain)
+        elif A._ambient_projective_space is not None:
+            self._embedding_morphism = self.projective_embedding \
+                (A._default_embedding_index, A._ambient_projective_space)
+        if embedding_center is not None:
+            self._embedding_center = self.point(embedding_center)
 
     def _morphism(self, *args, **kwds):
         r"""
@@ -180,16 +198,32 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x : y : z : 1)
 
+        When taking a closed subscheme of an affine space with a
+        projective embedding, the subscheme inherits the embedding::
+
+            sage: A.<u,v> = AffineSpace(2, QQ, default_embedding_index=1)
+            sage: X = A.subscheme(u - v)
+            sage: X.projective_embedding()
+            Scheme morphism:
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              u - v
+              To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x0 - x2
+              Defn: Defined on coordinates by sending (u, v) to
+                    (u : 1 : v)
+            sage: phi = X.projective_embedding()
+            sage: psi = A.projective_embedding()
+            sage: phi(X(2, 2)) == psi(A(X(2, 2)))
+            True
         """
         AA = self.ambient_space()
         n = AA.dimension_relative()
         if i is None:
             try:
-                i = self._default_embedding_index
+                return self._embedding_morphism
             except AttributeError:
-                i = int(n)
-        else:
-            i = int(i)
+                i = n
+        i = int(i)
         if i < 0 or i > n:
             raise ValueError("Argument i (=%s) must be between 0 and %s, inclusive"%(i, n))
         try:
@@ -451,6 +485,14 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: Q2 = A([0,0,0,-a,0])
             sage: X.multiplicity(Q2)
             7
+
+        Check that :trac:`27479` is fixed:: 
+
+            sage: A1.<x> = AffineSpace(QQ, 1)
+            sage: X = A1.subscheme([x^1789 + x])
+            sage: Q = X([0])
+            sage: X.multiplicity(Q)
+            1
         """
         if not self.base_ring() in Fields():
             raise TypeError("subscheme must be defined over a field")

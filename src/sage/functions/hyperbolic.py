@@ -23,7 +23,7 @@ REFERENCES:
 
 - :wikipedia:`Inverse hyperbolic functions`
 
-- R. Roy, F. W. J. Olver, Elementary Functions, http://dlmf.nist.gov/4
+- R. Roy, F. W. J. Olver, Elementary Functions, https://dlmf.nist.gov/4
 """
 from __future__ import division
 
@@ -214,7 +214,7 @@ class Function_coth(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: coth(a)
-            array([ 1.03731472,  1.00496982,  1.00067115])
+            array([1.03731472, 1.00496982, 1.00067115])
         """
         return 1.0 / tanh(x)
 
@@ -267,7 +267,7 @@ class Function_sech(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: sech(a)
-            array([ 0.26580223,  0.09932793,  0.03661899])
+            array([0.26580223, 0.09932793, 0.03661899])
         """
         return 1.0 / cosh(x)
 
@@ -318,7 +318,7 @@ class Function_csch(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: csch(a)
-            array([ 0.27572056,  0.09982157,  0.03664357])
+            array([0.27572056, 0.09982157, 0.03664357])
         """
         return 1.0 / sinh(x)
 
@@ -586,7 +586,7 @@ class Function_arccoth(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2,5)
             sage: acoth(a)
-            array([ 0.54930614,  0.34657359,  0.25541281])
+            array([0.54930614, 0.34657359, 0.25541281])
         """
         return arctanh(1.0 / x)
 

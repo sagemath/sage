@@ -13,9 +13,7 @@ EXAMPLES::
     sage: M = Matrix(ZZ, [[0,1], [1,0]])
     sage: IntegralLattice(M)
     Lattice of degree 2 and rank 2 over Integer Ring
-    Basis matrix:
-    [1 0]
-    [0 1]
+    Standard basis
     Inner product matrix:
     [0 1]
     [1 0]
@@ -31,10 +29,7 @@ ambient space and a basis::
     Basis matrix:
     [ 1 -1  0]
     [ 0  1 -1]
-    Inner product matrix:
-    [1 0 0]
-    [0 1 0]
-    [0 0 1]
+    Standard scalar product
 
     sage: L.gram_matrix()
     [ 2 -1]
@@ -46,15 +41,15 @@ AUTHORS:
 - Paolo Menegatti (2018-03): Added IntegralLatticeDirectSum, IntegralLatticeGluing
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Simon Brandhorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 from sage.rings.integer_ring import ZZ
@@ -88,7 +83,7 @@ def IntegralLattice(data, basis=None):
     - ``data`` -- can be one of the following:
 
       * a symmetric matrix over the rationals -- the inner product matrix
-      * an integer -- the dimension for a euclidian lattice
+      * an integer -- the dimension for an Euclidean lattice
       * a symmetric Cartan type or anything recognized by
         :class:`CartanMatrix` (see also
         :mod:`Cartan types <sage.combinat.root_system.cartan_type>`)
@@ -108,9 +103,7 @@ def IntegralLattice(data, basis=None):
         sage: H5 = Matrix(ZZ, 2, [2,1,1,-2])
         sage: IntegralLattice(H5)
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [ 2  1]
         [ 1 -2]
@@ -125,20 +118,15 @@ def IntegralLattice(data, basis=None):
         [ 2  1]
         [ 1 -2]
 
-    We can define a Euclidian lattice just by its dimension::
+    We can define an Euclidean lattice just by its dimension::
 
         sage: IntegralLattice(3)
         Lattice of degree 3 and rank 3 over Integer Ring
-        Basis matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
-        Inner product matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard basis
+        Standard scalar product
 
-    Here is an example of the `A_2` root lattice in Euclidian space::
+
+    Here is an example of the `A_2` root lattice in Euclidean space::
 
         sage: basis = Matrix([[1,-1,0], [0,1,-1]])
         sage: A2 = IntegralLattice(3, basis)
@@ -147,10 +135,7 @@ def IntegralLattice(data, basis=None):
         Basis matrix:
         [ 1 -1  0]
         [ 0  1 -1]
-        Inner product matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard scalar product
         sage: A2.gram_matrix()
         [ 2 -1]
         [-1  2]
@@ -160,9 +145,7 @@ def IntegralLattice(data, basis=None):
         sage: L1 = IntegralLattice("U")
         sage: L1
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [0 1]
         [1 0]
@@ -175,14 +158,7 @@ def IntegralLattice(data, basis=None):
 
         sage: IntegralLattice(["E", 7])
         Lattice of degree 7 and rank 7 over Integer Ring
-        Basis matrix:
-        [1 0 0 0 0 0 0]
-        [0 1 0 0 0 0 0]
-        [0 0 1 0 0 0 0]
-        [0 0 0 1 0 0 0]
-        [0 0 0 0 1 0 0]
-        [0 0 0 0 0 1 0]
-        [0 0 0 0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2  0 -1  0  0  0  0]
         [ 0  2  0 -1  0  0  0]
@@ -193,29 +169,20 @@ def IntegralLattice(data, basis=None):
         [ 0  0  0  0  0 -1  2]
         sage: IntegralLattice(["A", 2])
         Lattice of degree 2 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 0]
-        [0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1]
         [-1  2]
         sage: IntegralLattice("D3")
         Lattice of degree 3 and rank 3 over Integer Ring
-        Basis matrix:
-        [1 0 0]
-        [0 1 0]
-        [0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1 -1]
         [-1  2  0]
         [-1  0  2]
         sage: IntegralLattice(["D", 4])
         Lattice of degree 4 and rank 4 over Integer Ring
-        Basis matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1  0  0]
         [-1  2 -1 -1]
@@ -245,11 +212,7 @@ def IntegralLattice(data, basis=None):
         Lattice of degree 4 and rank 1 over Integer Ring
         Basis matrix:
         [1 1 1 1]
-        Inner product matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard scalar product
         sage: IntegralLattice("A2", [[1,1]])
         Lattice of degree 2 and rank 1 over Integer Ring
         Basis matrix:
@@ -347,11 +310,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
 
         sage: IntegralLatticeDirectSum([IntegralLattice("D4")])
         Lattice of degree 4 and rank 4 over Integer Ring
-        Basis matrix:
-        [1 0 0 0]
-        [0 1 0 0]
-        [0 0 1 0]
-        [0 0 0 1]
+        Standard basis
         Inner product matrix:
         [ 2 -1  0  0]
         [-1  2 -1 -1]
@@ -447,8 +406,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
          [4], [Free module morphism defined by the matrix
           [2]
           Domain: Lattice of degree 1 and rank 1 over Integer Ring
-          Basis matrix:
-          [1]
+          Standard basis
           Inner product matrix:
           [4]
           Codomain: Lattice of degree 1 and rank 1 over Integer Ring
@@ -631,11 +589,9 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
     for i in range(N):
         ALi = Lattices[i].discriminant_group()
         for g in glue:
-            try:
-                ALi(g[i])
-            except:
-                raise ValueError("the gluing vectors must be in the"
-                                 "corresponding discriminant groups")
+            # Check that the gluing vectors are in the
+            # corresponding discriminant groups
+            ALi(g[i])
     generators = [sum(phi[i](g[i].lift()*g[i].order())/g[i].order()
                       for i in range(N))
                   for g in glue]
@@ -741,23 +697,26 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A2 = IntegralLattice("A2")
             sage: A2
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
+            Standard basis
             Inner product matrix:
             [ 2 -1]
             [-1  2]
         """
+        s = ""
         if self.is_sparse():
-            s = "Sparse lattice of degree %s and rank %s over %s\n"%(
-                self.degree(), self.rank(), self.base_ring()) + \
-                "Basis matrix:\n%s\n" % self.basis_matrix() + \
-                "Inner product matrix:\n%s" % self.inner_product_matrix()
+            s += "Sparse lattice "
         else:
-            s = "Lattice of degree %s and rank %s over %s\n"%(
-                self.degree(), self.rank(), self.base_ring()) + \
-                "Basis matrix:\n%s\n" % self.basis_matrix() + \
-                "Inner product matrix:\n%s" % self.inner_product_matrix()
+            s += "Lattice "
+        s += "of degree %s and rank %s over %s\n" % (
+              self.degree(), self.rank(), self.base_ring())
+        if self.basis_matrix().is_one():
+            s += "Standard basis \n"
+        else:
+            s += "Basis matrix:\n%s\n" % self.basis_matrix()
+        if self.inner_product_matrix().is_one():
+            s += "Standard scalar product"
+        else:
+            s += "Inner product matrix:\n%s" % self.inner_product_matrix()
         return s
 
     @cached_method
@@ -898,12 +857,8 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: A = IntegralLattice(1)
             sage: A.direct_sum(A)
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
-            Inner product matrix:
-            [1 0]
-            [0 1]
+            Standard basis
+            Standard scalar product
         """
         IM = matrix.block_diagonal([self.inner_product_matrix(),
                                     M.inner_product_matrix()])
@@ -976,9 +931,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Lattice of degree 2 and rank 1 over Integer Ring
             Basis matrix:
             [0 1]
-            Inner product matrix:
-            [1 0]
-            [0 1]
+            Standard scalar product
         """
         from sage.modules.free_module import FreeModule_generic
         if not isinstance(M,FreeModule_generic):
@@ -1112,7 +1065,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: conj = Aut.conjugacy_classes_representatives()
             sage: len(conj)
             14
-            sage: Aut.structure_description()   # optional - database_gap
+            sage: Aut.structure_description()
             'C2 x S5'
 
         The lattice can live in a larger ambient space::
@@ -1167,16 +1120,16 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         sig = self.signature_pair()
         if gens is None:
             gens = []
-            if sig[1]==0 or sig[0]==0: #definite
+            if sig[1] == 0 or sig[0] == 0:  # definite
                 from sage.quadratic_forms.quadratic_form import QuadraticForm
                 is_finite = True
                 # Compute transformation matrix to the ambient module.
                 L = self.overlattice(self.ambient_module().gens())
                 Orthogonal = L.orthogonal_complement(self)
                 B = self.basis_matrix().stack(Orthogonal.basis_matrix())
-                if sig[0] == 0: #negative definite
+                if sig[0] == 0:  # negative definite
                     q = QuadraticForm(ZZ, -2*self.gram_matrix())
-                else:    # positve definite
+                else:  # positive definite
                     q = QuadraticForm(ZZ, 2*self.gram_matrix())
                 identity = matrix.identity(Orthogonal.rank())
                 for g in q.automorphism_group().gens():
@@ -1185,7 +1138,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
                     g = matrix.block_diagonal([g, identity])
                     g = B.inverse()*g*B
                     gens.append(g)
-            else: #indefinite
+            else:  # indefinite
                 raise NotImplementedError(
                     "currently, we can only compute generators "
                     "for orthogonal groups over definite lattices.")
@@ -1219,6 +1172,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Genus of
             [0 1]
             [1 0]
+            Signature:  (1, 1)
             Genus symbol at 2:    1^2
         """
         from sage.quadratic_forms.genera.genus import Genus
@@ -1263,11 +1217,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [  4  -8  -8  16]
             sage: L2
             Lattice of degree 4 and rank 4 over Integer Ring
-            Basis matrix:
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
+            Standard basis
             Inner product matrix:
             [ 36 -12 -12   4]
             [-12  24   4  -8]
@@ -1305,11 +1255,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice("A4")
             sage: L.twist(3)
             Lattice of degree 4 and rank 4 over Integer Ring
-            Basis matrix:
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
+            Standard basis
             Inner product matrix:
             [ 6 -3  0  0]
             [-3  6 -3  0]
@@ -1321,33 +1267,25 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Basis matrix:
             [2 1 0]
             [0 1 1]
-            Inner product matrix:
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
+            Standard scalar product
             sage: L.twist(1)
             Lattice of degree 3 and rank 2 over Integer Ring
             Basis matrix:
             [2 1 0]
             [0 1 1]
-            Inner product matrix:
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
+            Standard scalar product
             sage: L.twist(1, True)
             Lattice of degree 2 and rank 2 over Integer Ring
-            Basis matrix:
-            [1 0]
-            [0 1]
+            Standard basis
             Inner product matrix:
             [5 1]
             [1 2]
         """
         try:
             s = self.base_ring()(s)
-        except:
-            ValueError("the scaling factor must be an element of the base ring.")
-        if (s==0):
+        except TypeError:
+            raise ValueError("the scaling factor must be an element of the base ring.")
+        if s==0:
             raise ValueError("the scaling factor must be non zero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
@@ -1356,4 +1294,3 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             inner_product_matrix = s * self.inner_product_matrix()
             ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
             return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
-

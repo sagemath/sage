@@ -272,11 +272,11 @@ class RankMatroid(Matroid):
             sage: M.groundset() is N.groundset()
             True
         """
-        from copy import copy
         N = RankMatroid(groundset=[], rank_function=None)
         N._groundset = self._groundset
         N._rank_function = self._rank_function
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
+        if getattr(self, '__custom_name') is not None:
+            # because of name wrangling, this is not caught by the default copy
             N.rename(getattr(self, '__custom_name'))
         return N
 

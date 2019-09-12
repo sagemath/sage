@@ -13,7 +13,7 @@ and repeat. Every 500 iterations the error estimates from the
 processes are collected using Gather. you can compare the output of
 this with the solver we wrote in the section on f2py.
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy

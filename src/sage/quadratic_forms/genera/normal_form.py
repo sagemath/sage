@@ -77,15 +77,15 @@ AUTHORS:
 - Simon Brandhorst (2018-01): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Simon Branhdorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import Zp, ZZ, GF
 from sage.matrix.constructor import Matrix
@@ -253,10 +253,10 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
     # continue with the non-degenerate part
     G = nondeg * G * nondeg.T * p**d
-    if precision == None:
+    if precision is None:
         # in Zp(2) we have to calculate at least mod 8 for things to make sense.
         precision = G.det().valuation(p) + 4
-    R = Zp(p, prec = precision, type = 'fixed-mod')
+    R = Zp(p, prec=precision, type='fixed-mod')
     G = G.change_ring(R)
     G.set_immutable() # is not changed during computation
     D = copy(G)    # is transformed into jordan form
@@ -266,7 +266,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
         return G.parent().zero(), G.parent().zero()
     # the transformation matrix is called B
     B = Matrix.identity(R, n)
-    if(p == 2):
+    if p == 2:
         D, B = _jordan_2_adic(G)
     else:
         D, B = _jordan_odd_adic(G)
@@ -274,7 +274,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     B = B1 * B
     # we have reached a normal form for p != 2
     # for p == 2 extra work is necessary
-    if p==2:
+    if p == 2:
         D, B1 = _two_adic_normal_forms(D, partial=partial)
         B = B1 * B
     nondeg = B * nondeg
@@ -282,11 +282,12 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     D = Matrix.block_diagonal([D, Matrix.zero(kernel.nrows())])
     if debug:
         assert B.determinant().valuation() == 0     # B is invertible!
-        if p==2:
+        if p == 2:
             assert B*G*B.T == Matrix.block_diagonal(collect_small_blocks(D))
         else:
             assert B*G*B.T == Matrix.diagonal(D.diagonal())
     return D/p**d, B
+
 
 def _find_min_p(G, cnt, lower_bound=0):
     r"""
@@ -716,7 +717,7 @@ def _jordan_2_adic(G):
                     eqn_mat = D[cnt:cnt+2, cnt:cnt+2].list()
                     eqn_mat = Matrix(R, 2, 2, [e // content for e in eqn_mat])
                     # calculate the inverse without using division
-                    inv = eqn_mat.adjoint() * eqn_mat.det().inverse_of_unit()
+                    inv = eqn_mat.adjugate() * eqn_mat.det().inverse_of_unit()
                     B1 = B[cnt:cnt+2, :]
                     B2 = D[cnt+2:, cnt:cnt+2] * inv
                     for i in range(B2.nrows()):
@@ -931,7 +932,7 @@ def _normalize_2x2(G):
         # Find a point of norm 2
         # solve: 2 == D[1,1]*x^2 + 2*D[1,0]*x + D[0,0]
         pol = (D[1,1]*x**2 + 2*D[1,0]*x + D[0,0]-2) // 2
-        # somehow else pari can get a hickup see `trac`:#24065
+        # somehow else pari can get a hickup see trac #24065
         pol = pol // pol.leading_coefficient()
         sol = pol.roots()[0][0]
         B[0, 1] = sol
@@ -944,7 +945,7 @@ def _normalize_2x2(G):
         if D[1, 1] != 2:
             v = vector([x, -2*x + 1])
             pol = (v*D*v - 2) // 2
-            # somehow else pari can get a hickup `trac`:#24065
+            # somehow else pari can get a hickup see trac #24065
             pol = pol // pol.leading_coefficient()
             sol = pol.roots()[0][0]
             B[1, :] = sol * B[0,:] + (-2*sol + 1)*B[1, :]
@@ -958,7 +959,7 @@ def _normalize_2x2(G):
         # Find a point representing 0
         # solve: 0 == D[1,1]*x^2 + 2*D[1,0]*x + D[0,0]
         pol = (D[1,1]*x**2 + 2*D[1,0]*x + D[0,0])//2
-        # somehow else pari can get a hickup, see  `trac`:#24065
+        # somehow else pari can get a hickup, see trac #24065
         pol = pol // pol.leading_coefficient()
         sol = pol.roots()[0][0]
         B[0,:] += sol*B[1, :]
@@ -972,6 +973,7 @@ def _normalize_2x2(G):
         # check the result
         assert D == Matrix(G.parent(), 2, 2, [0, 1, 1, 0]), "D2 \n %r" %D
     return B
+
 
 def _normalize_odd_2x2(G):
     r"""
@@ -1120,7 +1122,7 @@ def _relations(G,n):
     OUTPUT:
 
     - square matrix ``B`` such that ``B * G * B.T`` is the right side of the
-      relation which consits of blocks of types `U`, `V`, `W` again
+      relation which consists of blocks of types `U`, `V`, `W` again
 
     EXAMPLES::
 
@@ -1434,8 +1436,8 @@ def _two_adic_normal_forms(G, partial=False):
             if not partial:
                 Dk, B1k = _homogeneous_normal_form(Dk, wk)
                 B[h[i]:h[i+1],:] = B1k * B[h[i]:h[i+1], :]
-            UVlist.append(range(h[i], h[i+1] - wk))
-            Wlist.append(range(h[i+1]-wk, h[i+1]))
+            UVlist.append(list(range(h[i], h[i+1] - wk)))
+            Wlist.append(list(range(h[i+1]-wk, h[i+1])))
         else:
             UVlist.append([])
             Wlist.append([])
@@ -1444,7 +1446,7 @@ def _two_adic_normal_forms(G, partial=False):
         return D, B
     # use relations descending in k
     # we never leave partial normal form
-    # but the homogneneous normal form may be destroyed
+    # but the homogeneous normal form may be destroyed
     # it is restored at the end.
     for k in range(len(UVlist)-1,2,-1):
         # setup notation
@@ -1493,7 +1495,7 @@ def _two_adic_normal_forms(G, partial=False):
                     R = Wm + [w]
                     B[R,:] = _relations(D[R,R],9) * B[R,:]
         D = B * G * B.T
-        # condition a) - stay in homogneneous normal form
+        # condition a) - stay in homogeneous normal form
         R = UV + W
         Dk = D[R,R]
         Bk = _homogeneous_normal_form(Dk, len(W))[1]

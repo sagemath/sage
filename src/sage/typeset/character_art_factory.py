@@ -100,11 +100,11 @@ class CharacterArtFactory(SageObject):
 
             sage: n = var('n')
             sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))
-             /        __________    \
-            -\2*x + \/ -4*x + 1  - 1/
-            --------------------------
-                       __________
-                 2*x*\/ -4*x + 1
+             /        _________    \
+            -\2*x + \/ 1 - 4*x  - 1/
+            -------------------------
+                       _________
+                 2*x*\/ 1 - 4*x
             sage: ascii_art(list(DyckWords(3)))
             [                                   /\   ]
             [            /\    /\      /\/\    /  \  ]

@@ -287,7 +287,7 @@ class AsymptoticExpansionGenerators(SageObject):
         if precision is None:
             precision = series_precision()
 
-        from sage.functions.log import log
+        log = A.locals()['log']
         result = A.zero()
         if precision >= 1:
             result += n * log(n)
@@ -442,7 +442,7 @@ class AsymptoticExpansionGenerators(SageObject):
         if precision is None:
             precision = series_precision()
 
-        from sage.functions.log import log
+        log = A.locals()['log']
         result = A.zero()
         if precision >= 1:
             result += log(n)
@@ -570,7 +570,7 @@ class AsymptoticExpansionGenerators(SageObject):
         from sage.rings.rational_field import QQ
 
         P = S.parent().change_parameter(
-                growth_group='QQ^{n} * {n}^QQ'.format(n=var),
+                growth_group='(QQ_+)^{n} * {n}^QQ'.format(n=var),
                 coefficient_ring=QQ)
         n = P.gen()
 
@@ -618,7 +618,7 @@ class AsymptoticExpansionGenerators(SageObject):
 
         - ``zeta`` -- (default: `1`) the location of the singularity.
 
-        - ``alpha`` -- (default: `0`) the pole order of the singularty.
+        - ``alpha`` -- (default: `0`) the pole order of the singularity.
 
         - ``beta`` -- (default: `0`) the order of the logarithmic singularity.
 
@@ -759,14 +759,14 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:     'n', alpha=0)
             Traceback (most recent call last):
             ...
-            NotImplementedOZero: The error term in the result is O(0)
-            which means 0 for sufficiently large n.
+            NotImplementedOZero: got O(0)
+            The error term O(0) means 0 for sufficiently large n.
             sage: asymptotic_expansions.SingularityAnalysis(
             ....:     'n', alpha=-1)
             Traceback (most recent call last):
             ...
-            NotImplementedOZero: The error term in the result is O(0)
-            which means 0 for sufficiently large n.
+            NotImplementedOZero: got O(0)
+            The error term O(0) means 0 for sufficiently large n.
 
         ::
 
@@ -790,7 +790,7 @@ class AsymptoticExpansionGenerators(SageObject):
             sage: asymptotic_expansions.SingularityAnalysis(
             ....:     'n', alpha=1, zeta=CyclotomicField(3).gen(),
             ....:      precision=3)
-            (-zeta3 - 1)^n
+            (e^(I*arg(-zeta3 - 1)))^n
             sage: asymptotic_expansions.SingularityAnalysis(
             ....:     'n', alpha=4, zeta=2, precision=3)
             1/6*(1/2)^n*n^3 + (1/2)^n*n^2 + 11/6*(1/2)^n*n + O((1/2)^n)
@@ -798,8 +798,8 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:     'n', alpha=-1, zeta=2, precision=3)
             Traceback (most recent call last):
             ...
-            NotImplementedOZero: The error term in the result is O(0)
-            which means 0 for sufficiently large n.
+            NotImplementedOZero: got O(0)
+            The error term O(0) means 0 for sufficiently large n.
             sage: asymptotic_expansions.SingularityAnalysis(
             ....:     'n', alpha=1/2, zeta=2, precision=3)
             1/sqrt(pi)*(1/2)^n*n^(-1/2) - 1/8/sqrt(pi)*(1/2)^n*n^(-3/2)
@@ -876,11 +876,23 @@ class AsymptoticExpansionGenerators(SageObject):
             Traceback (most recent call last):
             ...
             NotImplementedError: not implemented for delta!=0
+
+        ::
+
+            sage: from sage.groups.misc_gps.argument_groups import SignGroup
+            sage: Signs = SignGroup()
+            sage: asymptotic_expansions.SingularityAnalysis(
+            ....:     'n', Signs(-1), alpha=2, beta=1, precision=5,
+            ....:     normalized=False)
+            n*log(n)*(-1)^n + (euler_gamma - 1)*n*(-1)^n + log(n)*(-1)^n
+            + (euler_gamma + 1/2)*(-1)^n + O(n^(-1)*(-1)^n)
+            sage: _.parent()
+            Asymptotic Ring <n^ZZ * log(n)^ZZ * Signs^n> over Symbolic Constants Subring
         """
         from itertools import islice, count
         from .asymptotic_ring import AsymptoticRing
         from .growth_group import ExponentialGrowthGroup, \
-                MonomialGrowthGroup
+                MonomialGrowthGroup, GenericNonGrowthGroup
         from sage.arith.all import falling_factorial
         from sage.categories.cartesian_product import cartesian_product
         from sage.functions.other import binomial
@@ -888,7 +900,6 @@ class AsymptoticExpansionGenerators(SageObject):
         from sage.calculus.calculus import limit
         from sage.misc.cachefunc import cached_function
         from sage.arith.srange import srange
-        from sage.rings.rational_field import QQ
         from sage.rings.integer_ring import ZZ
         from sage.symbolic.ring import SR
 
@@ -938,13 +949,19 @@ class AsymptoticExpansionGenerators(SageObject):
             raise NotImplementedError("not implemented for delta!=0")
 
         groups = []
+        non_growth_groups = []
         if zeta != 1:
-            groups.append(ExponentialGrowthGroup((1/zeta).parent(), var))
-
+            E = ExponentialGrowthGroup.factory((~zeta).parent(), var,
+                                               return_factors=True)
+            for factor in E:
+                if isinstance(factor, GenericNonGrowthGroup):
+                    non_growth_groups.append(factor)
+                else:
+                    groups.append(factor)
         groups.append(MonomialGrowthGroup(alpha.parent(), var))
         if beta != 0:
             groups.append(MonomialGrowthGroup(beta.parent(), 'log({})'.format(var)))
-
+        groups.extend(non_growth_groups)
         group = cartesian_product(groups)
         A = AsymptoticRing(growth_group=group, coefficient_ring=coefficient_ring,
                            default_prec=precision)
@@ -953,7 +970,18 @@ class AsymptoticExpansionGenerators(SageObject):
         if zeta == 1:
             exponential_factor = 1
         else:
-            exponential_factor = n.rpow(1/zeta)
+            exponential_factor = A(n.rpow(~zeta))
+
+        polynomial_factor = A(n**(alpha-1))
+
+        if beta != 0:
+            log_n = n.log()
+            logarithmic_factor = log_n**beta
+        else:
+            # avoid construction of log(n)
+            # because it does not exist in growth group.
+            log_n = 1
+            logarithmic_factor = 1
 
         if beta in ZZ and beta >= 0:
             it = ((k, r)
@@ -965,14 +993,7 @@ class AsymptoticExpansionGenerators(SageObject):
                   for r in count())
             k_max = 0
 
-        if beta != 0:
-            log_n = n.log()
-        else:
-            # avoid construction of log(n)
-            # because it does not exist in growth group.
-            log_n = 1
-
-        it = reversed(list(islice(it, precision+1)))
+        it = reversed(list(islice(it, int(precision) + 1)))
         if normalized:
             beta_denominator = beta
         else:
@@ -986,7 +1007,7 @@ class AsymptoticExpansionGenerators(SageObject):
                 result = A(0)
             elif alpha <= 0 and precision > 0:
                 from .misc import NotImplementedOZero
-                raise NotImplementedOZero(A)
+                raise NotImplementedOZero(A, exact_part=A.zero())
 
         for (k, r) in it:
             result += binomial(beta, r) * \
@@ -996,7 +1017,7 @@ class AsymptoticExpansionGenerators(SageObject):
                     if (k, ell) in L) * \
                 n**(-k) * log_n**(-r)
 
-        result *= exponential_factor * n**(alpha-1) * log_n**beta
+        result *= exponential_factor * polynomial_factor * logarithmic_factor
 
         return result
 
@@ -1095,7 +1116,7 @@ class AsymptoticExpansionGenerators(SageObject):
             sage: asymptotic_expansions.ImplicitExpansion('Z', phi=lambda u: 1 + 2*u + u^2, tau=2, precision=5)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Symbolic division by zero
+            ZeroDivisionError: symbolic division by zero
             sage: asymptotic_expansions.ImplicitExpansion('Z', phi=lambda u: 1 + 2*u + u^2, tau=3, precision=5)
             3 - 4*I*sqrt(3)*Z^(-1/2) + 6*I*sqrt(3)*Z^(-3/2) + O(Z^(-2))
 
@@ -1164,7 +1185,7 @@ class AsymptoticExpansionGenerators(SageObject):
         for k in srange(2, precision-1):
             coef = z_expansion.monomial_coefficient((1/Z)**((k+1) * one_half))
             current_var = SR('d{k}'.format(k=k))
-            solution_dict[current_var] = coef.subs(solution_dict).solve(current_var)[0].rhs()
+            solution_dict[current_var] = coef.subs(solution_dict).simplify_rational().solve(current_var)[0].rhs()
 
         return A(tau) + ansatz(prec=precision-1).map_coefficients(lambda term: term.subs(solution_dict).simplify_rational())
 
@@ -1246,9 +1267,6 @@ class AsymptoticExpansionGenerators(SageObject):
             2 - 2*Z^(-1/2) + 2*Z^(-1) - 2*Z^(-3/2) + 2*Z^(-2) - 2*Z^(-5/2) + O(Z^(-3))
 
         """
-        from sage.symbolic.ring import SR
-        u = SR('u')
-
         if tau is None:
             tau = _fundamental_constant_implicit_function_(phi=phi)
 
@@ -1319,6 +1337,7 @@ class AsymptoticExpansionGenerators(SageObject):
         expansions for the number of binary trees of size `n` obtained via
         `C_n` and obtained via the analysis of `B(z)`::
 
+            sage: assume(SR.an_element() > 0)
             sage: A.<n> = AsymptoticRing('QQ^n * n^QQ', SR)
             sage: binomial_expansion = asymptotic_expansions.Binomial_kn_over_n(n, k=2, precision=3)
             sage: catalan_expansion = binomial_expansion / (n+1)
@@ -1343,6 +1362,8 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:                                               tau=1, precision=8)
             1/sqrt(pi)*4^n*n^(-3/2) - 9/8/sqrt(pi)*4^n*n^(-5/2)
             + 145/128/sqrt(pi)*4^n*n^(-7/2) + O(4^n*n^(-9/2))
+
+            sage: forget()
 
         .. SEEALSO::
 

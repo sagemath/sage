@@ -84,7 +84,7 @@ well as take slices
     sage: l[3]
     3.0
     sage: l[3:6]
-    array([ 3.,  4.,  5.])
+    array([3., 4., 5.])
 
 You can do basic arithmetic operations
 
@@ -147,11 +147,11 @@ also do matrix vector multiplication, and matrix addition
     sage: n = numpy.matrix([[1,2],[3,4]],dtype=float)
     sage: v = numpy.array([[1],[2]],dtype=float)
     sage: n*v
-    matrix([[  5.],
-            [ 11.]])
+    matrix([[ 5.],
+            [11.]])
     sage: n+n
-    matrix([[ 2.,  4.],
-            [ 6.,  8.]])
+    matrix([[2., 4.],
+            [6., 8.]])
 
 If ``n`` was created with :meth:`numpy.array`, then to do matrix vector
 multiplication, you would use ``numpy.dot(n,v)``.
@@ -170,11 +170,11 @@ to manipulate
             22.,  23.,  24.])
     sage: n.shape=(5,5)
     sage: n
-    array([[  0.,   1.,   2.,   3.,   4.],
-           [  5.,   6.,   7.,   8.,   9.],
-           [ 10.,  11.,  12.,  13.,  14.],
-           [ 15.,  16.,  17.,  18.,  19.],
-           [ 20.,  21.,  22.,  23.,  24.]])
+    array([[ 0.,  1.,  2.,  3.,  4.],
+           [ 5.,  6.,  7.,  8.,  9.],
+           [10., 11., 12., 13., 14.],
+           [15., 16., 17., 18., 19.],
+           [20., 21., 22., 23., 24.]])
 
 This changes the one-dimensional array into a `5\times 5` array.
 
@@ -187,8 +187,8 @@ NumPy arrays can be sliced as well
     sage: n=numpy.array(range(25),dtype=float)
     sage: n.shape=(5,5)
     sage: n[2:4,1:3]
-    array([[ 11.,  12.],
-           [ 16.,  17.]])
+    array([[11., 12.],
+           [16., 17.]])
 
 It is important to note that the sliced matrices are references to
 the original
@@ -224,8 +224,8 @@ Some particularly useful commands are
 
     sage: x=numpy.arange(0,2,.1,dtype=float)
     sage: x
-    array([ 0. ,  0.1,  0.2,  0.3,  0.4,  0.5,  0.6,  0.7,  0.8,  0.9,  1. ,
-            1.1,  1.2,  1.3,  1.4,  1.5,  1.6,  1.7,  1.8,  1.9])
+    array([0. , 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2,
+           1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9])
 
 You can see that :meth:`numpy.arange` creates an array of floats increasing by 0.1
 from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained by example
@@ -240,10 +240,11 @@ from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained b
     sage: Integer=int
     sage: n=r_[0.0:5.0]
     sage: n
-    array([ 0.,  1.,  2.,  3.,  4.])
+    array([0., 1., 2., 3., 4.])
     sage: n=r_[0.0:5.0, [0.0]*5]
     sage: n
-    array([ 0.,  1.,  2.,  3.,  4.,  0.,  0.,  0.,  0.,  0.])
+    array([0., 1., 2., 3., 4., 0., 0., 0., 0., 0.])
+
 
 :meth:`numpy.r_` provides a shorthand for constructing NumPy arrays efficiently.
 Note in the above ``0.0:5.0`` was shorthand for ``0.0, 1.0, 2.0, 3.0, 4.0``.
@@ -255,7 +256,7 @@ intervals. We can do this as follows
 ::
 
     sage: r_[0.0:5.0:11*j]
-    array([ 0. ,  0.5,  1. ,  1.5,  2. ,  2.5,  3. ,  3.5,  4. ,  4.5,  5. ])
+    array([0. , 0.5, 1. , 1.5, 2. , 2.5, 3. , 3.5, 4. , 4.5, 5. ])
 
 The notation ``0.0:5.0:11*j`` expands to a list of 11 equally space
 points between 0 and 5 including both endpoints. Note that ``j`` is the
@@ -287,23 +288,23 @@ an equally spaced grid with `\Delta x = \Delta y = .25` for
     sage: y=numpy.r_[0.0:1.0:5*j]
     sage: xx,yy= meshgrid(x,y)
     sage: xx
-    array([[ 0.  ,  0.25,  0.5 ,  0.75,  1.  ],
-           [ 0.  ,  0.25,  0.5 ,  0.75,  1.  ],
-           [ 0.  ,  0.25,  0.5 ,  0.75,  1.  ],
-           [ 0.  ,  0.25,  0.5 ,  0.75,  1.  ],
-           [ 0.  ,  0.25,  0.5 ,  0.75,  1.  ]])
+    array([[0.  , 0.25, 0.5 , 0.75, 1.  ],
+           [0.  , 0.25, 0.5 , 0.75, 1.  ],
+           [0.  , 0.25, 0.5 , 0.75, 1.  ],
+           [0.  , 0.25, 0.5 , 0.75, 1.  ],
+           [0.  , 0.25, 0.5 , 0.75, 1.  ]])
     sage: yy
-    array([[ 0.  ,  0.  ,  0.  ,  0.  ,  0.  ],
-           [ 0.25,  0.25,  0.25,  0.25,  0.25],
-           [ 0.5 ,  0.5 ,  0.5 ,  0.5 ,  0.5 ],
-           [ 0.75,  0.75,  0.75,  0.75,  0.75],
-           [ 1.  ,  1.  ,  1.  ,  1.  ,  1.  ]])
+    array([[0.  , 0.  , 0.  , 0.  , 0.  ],
+           [0.25, 0.25, 0.25, 0.25, 0.25],
+           [0.5 , 0.5 , 0.5 , 0.5 , 0.5 ],
+           [0.75, 0.75, 0.75, 0.75, 0.75],
+           [1.  , 1.  , 1.  , 1.  , 1.  ]])
     sage: f(xx,yy)
-    array([[ 0.    ,  0.0625,  0.25  ,  0.5625,  1.    ],
-           [ 0.0625,  0.125 ,  0.3125,  0.625 ,  1.0625],
-           [ 0.25  ,  0.3125,  0.5   ,  0.8125,  1.25  ],
-           [ 0.5625,  0.625 ,  0.8125,  1.125 ,  1.5625],
-           [ 1.    ,  1.0625,  1.25  ,  1.5625,  2.    ]])
+    array([[0.    , 0.0625, 0.25  , 0.5625, 1.    ],
+           [0.0625, 0.125 , 0.3125, 0.625 , 1.0625],
+           [0.25  , 0.3125, 0.5   , 0.8125, 1.25  ],
+           [0.5625, 0.625 , 0.8125, 1.125 , 1.5625],
+           [1.    , 1.0625, 1.25  , 1.5625, 2.    ]])
 
 You can see that :meth:`numpy.meshgrid` produces a pair of matrices, here denoted
 `xx` and `yy`, such that `(xx[i,j],yy[i,j])` has coordinates
@@ -324,7 +325,7 @@ equation `Ax=b` do
     sage: b=numpy.array(range(1,6))
     sage: x=linalg.solve(A,b)
     sage: numpy.dot(A,x)
-    array([ 1.,  2.,  3.,  4., 5.])
+    array([1., 2., 3., 4., 5.])
 
 This creates a random 5x5 matrix ``A``, and solves `Ax=b` where
 ``b=[0.0,1.0,2.0,3.0,4.0]``. There are many other routines in the :mod:`numpy.linalg`

@@ -644,7 +644,9 @@ It can be fun to type in fairly complicated math, like this:
 
    \zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)\; .
 
-One just types things like::
+One just types things like:
+
+.. CODE-BLOCK:: latex
 
    $$\zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)$$
 
@@ -731,7 +733,9 @@ worksheet being on the web.
 
        \zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)\; .
 
- - One just types things like::
+ - One just types things like:
+
+   .. CODE-BLOCK:: latex
 
        $$\zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)$$
 

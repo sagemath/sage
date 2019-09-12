@@ -29,17 +29,16 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import division
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import division, absolute_import
 
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -53,14 +52,12 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import (number_field_elements_from_algebraics,
                               QQbar)
 from sage.rings.rational_field import is_RationalField
-from sage.schemes.affine.affine_space import AffineSpace
+from sage.rings.integer import Integer
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 
 from . import point
 
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
-from sage.schemes.projective.projective_space import (is_ProjectiveSpace,
-                                                      ProjectiveSpace)
 
 from .curve import Curve_generic
 
@@ -102,11 +99,11 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
         """
         if not is_ProjectiveSpace(A):
-            raise TypeError("A (=%s) must be a projective space"%A)
+            raise TypeError("A (=%s) must be a projective space" % A)
         Curve_generic.__init__(self, A, X)
         d = self.dimension()
         if d != 1:
-            raise ValueError("defining equations (=%s) define a scheme of dimension %s != 1"%(X,d))
+            raise ValueError("defining equations (=%s) define a scheme of dimension %s != 1" % (X, d))
 
     def affine_patch(self, i, AA=None):
         r"""
@@ -117,7 +114,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         - ``i`` -- affine coordinate chart of the projective ambient space of this curve to compute affine patch
           with respect to.
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed if it is not given.
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed if it is not given.
 
         OUTPUT:
 
@@ -129,14 +126,14 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             sage: C = Curve([y*z - x^2, w^2 - x*y], P)
             sage: C.affine_patch(0)
             Affine Curve over Complex Field with 53 bits of precision defined by
-            x0*x1 - 1.00000000000000, x2^2 - x0
+            y*z - 1.00000000000000, w^2 - y
 
         ::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^3 - x^2*y + y^3 - x^2*z, P)
             sage: C.affine_patch(1)
-            Affine Plane Curve over Rational Field defined by x0^3 - x0^2*x1 - x0^2 + 1
+            Affine Plane Curve over Rational Field defined by x^3 - x^2*z - x^2 + 1
 
         ::
 
@@ -159,10 +156,10 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point not on this curve that will be used to define the projection map;
+        - ``P`` -- (default: ``None``) a point not on this curve that will be used to define the projection map;
           this is constructed if not specified.
 
-        - ``PS`` -- (default: None) the projective space the projected curve will be defined in. This space must
+        - ``PS`` -- (default: ``None``) the projective space the projected curve will be defined in. This space must
           be defined over the same base ring as this curve, and must have dimension one less than that of the
           ambient space of this curve. This space will be constructed if not specified.
 
@@ -291,11 +288,11 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             raise TypeError("this curve must be defined over a field")
         if not PS is None:
             if not is_ProjectiveSpace(PS):
-                raise TypeError("(=%s) must be a projective space"%PS)
+                raise TypeError("(=%s) must be a projective space" % PS)
             if PS.dimension_relative() != n - 1:
-                raise TypeError("(=%s) must have dimension (=%s)"%(PS,n - 1))
+                raise TypeError("(=%s) must have dimension (=%s)" % (PS, n - 1))
             if PS.base_ring() != PP.base_ring():
-                raise TypeError("(=%s) must be defined over the same base field as this curve"%PS)
+                raise TypeError("(=%s) must be defined over the same base field as this curve" % PS)
         if P is None:
             # find a point not on the curve if not given
             if self.base_ring().characteristic() == 0:
@@ -334,11 +331,11 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             except TypeError:
                 pass
             if not Q is None:
-                raise TypeError("(=%s) must be a point not on this curve"%P)
+                raise TypeError("(=%s) must be a point not on this curve" % P)
             try:
                 Q = self.ambient_space()(P)
             except TypeError:
-                raise TypeError("(=%s) must be a point in the ambient space of this curve"%P)
+                raise TypeError("(=%s) must be a point in the ambient space of this curve" % P)
         # in order to create the change of coordinates map, need to find a coordinate of Q that is nonzero
         j = 0
         while Q[j] == 0:
@@ -452,7 +449,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         r"""
         Return the arithmetic genus of this projective curve.
 
-        This is the arithmetic genus `g_a(C)` as defined in [Hartshorne]_. If `P` is the
+        This is the arithmetic genus `g_a(C)` as defined in [Har1977]_. If `P` is the
         Hilbert polynomial of the defining ideal of this curve, then the arithmetic genus
         of this curve is `1 - P(0)`. This curve must be irreducible.
 
@@ -478,7 +475,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
     def is_complete_intersection(self):
         r"""
-        Return whether this projective curve is or is not a complete intersection.
+        Return whether this projective curve is a complete intersection.
 
         OUTPUT: Boolean.
 
@@ -505,6 +502,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
         I = singular.simplify(self.defining_ideal(), 10)
         L = singular.is_ci(I).sage()
         return len(self.ambient_space().gens()) - len(I.sage().gens()) == L[-1]
+
 
 class ProjectivePlaneCurve(ProjectiveCurve):
 
@@ -548,7 +546,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         r"""
         Return the arithmetic genus of this projective curve.
 
-        This is the arithmetic genus `g_a(C)` as defined in [Hartshorne]_. For a projective
+        This is the arithmetic genus `g_a(C)` as defined in [Har1977]_. For a projective
         plane curve of degree `d`, this is simply `(d-1)(d-2)/2`. It need *not* equal
         the geometric genus (the genus of the normalization of the curve). This curve must be
         irreducible.
@@ -571,15 +569,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: C = Curve([y^3*x - x^2*y*z - 7*z^4])
             sage: C.arithmetic_genus()
             3
-
-        REFERENCES:
-
-        ..  [Hartshorne] \R. Hartshorne. Algebraic Geometry. Springer-Verlag, New York, 1977.
         """
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
         d = self.defining_polynomial().total_degree()
-        return int((d-1)*(d-2)/2)
+        return Integer(d - 1).binomial(2)
 
     def divisor_of_function(self, r):
         """
@@ -621,27 +615,23 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 # What is the '5' in this line and the 'r()' in the next???
                 lcs = self.local_coordinates(P,5)
                 ldg = degree_lowest_rational_function(r(lcs[0],lcs[1]),z)
-                if ldg[0] != 0:
-                    divf.append([ldg[0],P])
+                if ldg != 0:
+                    divf.append([ldg, P])
         return divf
-
 
     def local_coordinates(self, pt, n):
         r"""
         Return local coordinates to precision n at the given point.
 
-            Behaviour is flaky - some choices of `n` are worst that
-            others.
-
+        Behaviour is flaky - some choices of `n` are worse than
+        others.
 
         INPUT:
-
 
         -  ``pt`` - an F-rational point on X which is not a
            point of ramification for the projection (x,y) - x.
 
         -  ``n`` - the number of terms desired
-
 
         OUTPUT: x = x0 + t y = y0 + power series in t
 
@@ -676,21 +666,19 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         cmd = 'matrix c = coeffs ('+str(ft)+',t)'
         S.eval(cmd)
         N = int(S.eval('size(c)'))
-        b = ["c["+str(i)+",1]," for i in range(2, N//2 - 4)]
-        b = ''.join(b)
-        b = b[:len(b)-1] #to cut off the trailing comma
-        cmd = 'ideal I = '+b
+        b = ','.join("c[{},1]".format(i) for i in range(2, N//2 - 4))
+        cmd = 'ideal I = ' + b
         S.eval(cmd)
         c = S.eval('slimgb(I)')
         d = c.split("=")
         d = d[1:]
         d[len(d)-1] += "\n"
-        e = [x[:x.index("\n")] for x in d]
+        e = [xx[:xx.index("\n")] for xx in d]
         vals = []
         for x in e:
             for y in vars0:
                 if str(y) in x:
-                    if len(x.replace(str(y),"")) != 0:
+                    if len(x.replace(str(y),"")):
                         i = x.find("-")
                         if i>0:
                             vals.append([eval(x[1:i]),x[:i],F(eval(x[i+1:]))])
@@ -700,9 +688,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     else:
                         vals.append([eval(str(y)[1:]),str(y),F(0)])
         vals.sort()
-        k = len(vals)
-        v = [x0+t,y0+add([vals[i][2]*t**(i+1) for i in range(k)])]
-        return v
+        return [x0 + t, y0 + add(v[2] * t**(j+1) for j, v in enumerate(vals))]
 
     def plot(self, *args, **kwds):
         """
@@ -780,7 +766,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve.
+        - ``P`` -- (default: ``None``) a point on this curve.
 
         OUTPUT:
 
@@ -868,76 +854,76 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         return self.defining_polynomial().degree()
 
     def tangents(self, P, factor=True):
-            r"""
-            Return the tangents of this projective plane curve at the point ``P``.
+        r"""
+        Return the tangents of this projective plane curve at the point ``P``.
 
-            These are found by homogenizing the tangents of an affine patch of this curve
-            containing ``P``. The point ``P`` must be a point on this curve.
+        These are found by homogenizing the tangents of an affine patch of this curve
+        containing ``P``. The point ``P`` must be a point on this curve.
 
-            INPUT:
+        INPUT:
 
-            - ``P`` -- a point on this curve.
+        - ``P`` -- a point on this curve.
 
-            - ``factor`` -- (default: True) whether to attempt computing the polynomials of the individual tangent
-              lines over the base field of this curve, or to just return the polynomial corresponding to the union
-              of the tangent lines (which requires fewer computations).
+        - ``factor`` -- (default: ``True``) whether to attempt computing the polynomials of the individual tangent
+          lines over the base field of this curve, or to just return the polynomial corresponding to the union
+          of the tangent lines (which requires fewer computations).
 
-            OUTPUT:
+        OUTPUT:
 
-            - a list of polynomials in the coordinate ring of the ambient space of this curve.
+        - a list of polynomials in the coordinate ring of the ambient space of this curve.
 
-            EXAMPLES::
+        EXAMPLES::
 
-                sage: set_verbose(-1)
-                sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
-                sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3 + x^3*z + 7*x^2*y*z + 14*x*y^2*z + 9*y^3*z], P)
-                sage: Q = P([0,0,1])
-                sage: C.tangents(Q)
-                [x + 4.147899035704788?*y, x + (1.426050482147607? + 0.3689894074818041?*I)*y,
-                x + (1.426050482147607? - 0.3689894074818041?*I)*y]
-                sage: C.tangents(Q, factor=False)
-                [6*x^3 + 42*x^2*y + 84*x*y^2 + 54*y^3]
+            sage: set_verbose(-1)
+            sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
+            sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3 + x^3*z + 7*x^2*y*z + 14*x*y^2*z + 9*y^3*z], P)
+            sage: Q = P([0,0,1])
+            sage: C.tangents(Q)
+            [x + 4.147899035704788?*y, x + (1.426050482147607? + 0.3689894074818041?*I)*y,
+            x + (1.426050482147607? - 0.3689894074818041?*I)*y]
+            sage: C.tangents(Q, factor=False)
+            [6*x^3 + 42*x^2*y + 84*x*y^2 + 54*y^3]
 
-            ::
+        ::
 
-                sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-                sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 - 4*x^4*y^2*z^3 + 3*y^7*z^2 +\
-                10*x^2*y^5*z^2 + 9*x^4*y^3*z^2 + 5*x^6*y*z^2 - 3*y^8*z - 9*x^2*y^6*z - 11*x^4*y^4*z -\
-                7*x^6*y^2*z - 2*x^8*z + y^9 + 2*x^2*y^7 + 3*x^4*y^5 + 4*x^6*y^3 + 2*x^8*y])
-                sage: Q = P([0,1,1])
-                sage: C.tangents(Q)
-                [-y + z, 3*x^2 - y^2 + 2*y*z - z^2]
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: C = P.curve([x^2*y^3*z^4 - y^6*z^3 - 4*x^2*y^4*z^3 - 4*x^4*y^2*z^3 + 3*y^7*z^2 +\
+            10*x^2*y^5*z^2 + 9*x^4*y^3*z^2 + 5*x^6*y*z^2 - 3*y^8*z - 9*x^2*y^6*z - 11*x^4*y^4*z -\
+            7*x^6*y^2*z - 2*x^8*z + y^9 + 2*x^2*y^7 + 3*x^4*y^5 + 4*x^6*y^3 + 2*x^8*y])
+            sage: Q = P([0,1,1])
+            sage: C.tangents(Q)
+            [-y + z, 3*x^2 - y^2 + 2*y*z - z^2]
 
-            ::
+        ::
 
-                sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-                sage: C = P.curve([z^3*x + y^4 - x^2*z^2])
-                sage: Q = P([1,1,1])
-                sage: C.tangents(Q)
-                Traceback (most recent call last):
-                ...
-                TypeError: (=(1 : 1 : 1)) is not a point on (=Projective Plane Curve
-                over Rational Field defined by y^4 - x^2*z^2 + x*z^3)
-            """
-            PP = self.ambient_space()
-            # Check whether P is a point on this curve
-            try:
-                P = self(P)
-            except TypeError:
-                raise TypeError("(=%s) is not a point on (=%s)"%(P,self))
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: C = P.curve([z^3*x + y^4 - x^2*z^2])
+            sage: Q = P([1,1,1])
+            sage: C.tangents(Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: (=(1 : 1 : 1)) is not a point on (=Projective Plane Curve
+            over Rational Field defined by y^4 - x^2*z^2 + x*z^3)
+        """
+        PP = self.ambient_space()
+        # Check whether P is a point on this curve
+        try:
+            P = self(P)
+        except TypeError:
+            raise TypeError("(=%s) is not a point on (=%s)" % (P, self))
 
-            # Find an affine chart of the ambient space of self that contains P
-            i = 0
-            while(P[i] == 0):
-                i = i + 1
-            C = self.affine_patch(i)
-            L = C.tangents(C(P.dehomogenize(i)), factor)
-            R = PP.coordinate_ring()
-            H = Hom(C.ambient_space().coordinate_ring(), R)
-            G = list(R.gens())
-            x = G.pop(i)
-            phi = H(G)
-            return [phi(g).homogenize(x) for g in L]
+        # Find an affine chart of the ambient space of self that contains P
+        i = 0
+        while P[i] == 0:
+            i += 1
+        C = self.affine_patch(i)
+        L = C.tangents(C(P.dehomogenize(i)), factor)
+        R = PP.coordinate_ring()
+        H = Hom(C.ambient_space().coordinate_ring(), R)
+        G = list(R.gens())
+        x = G.pop(i)
+        phi = H(G)
+        return [phi(g).homogenize(x) for g in L]
 
     def is_ordinary_singularity(self, P):
         r"""
@@ -992,8 +978,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         # Find an affine chart of the ambient space of self that contains P
         i = 0
-        while(P[i] == 0):
-            i = i + 1
+        while P[i] == 0:
+            i += 1
         C = self.affine_patch(i)
         return C.is_ordinary_singularity(C(P.dehomogenize(i)))
 
@@ -1060,7 +1046,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         r"""
         Return a transformation of this curve into one in excellent position with respect to the point ``Q``.
 
-        Here excellent position is defined as in [Fulton89]_. A curve `C` of degree `d` containing the point
+        Here excellent position is defined as in [Ful1989]_. A curve `C` of degree `d` containing the point
         `(0 : 0 : 1)` with multiplicity `r` is said to be in excellent position if none of the coordinate lines
         are tangent to `C` at any of the fundamental points `(1 : 0 : 0)`, `(0 : 1 : 0)`, and `(0 : 0 : 1)`, and
         if the two coordinate lines containing `(0 : 0 : 1)` intersect `C` transversally in `d - r` distinct
@@ -1135,25 +1121,20 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             (-2.828427124746190?)*x^3 + (-2)*x^2*y + 2*y^3 + (-2)*x^2*z + 2*y^2*z
               Defn: Defined on coordinates by sending (x : y : z) to
                     (1/2*x + 1/2*y : (-1/2)*x + 1/2*y : 1/2*x + (-1/2)*y + z)
-
-        REFERENCES:
-
-        ..  [Fulton89] \W. Fulton. Algebraic curves: an introduction to algebraic geometry. Addison-Wesley,
-            Redwood City CA (1989).
         """
         PP = self.ambient_space()
         # check that Q is on this curve
         try:
             Q = self(Q)
         except TypeError:
-            raise TypeError("(=%s) must be a point on this curve"%Q)
+            raise TypeError("(=%s) must be a point on this curve" % Q)
         r = self.multiplicity(Q)
         d = self.degree()
         # first move Q to (0 : 0 : 1), (1 : 0 : 0), or (0 : 1 : 0)
         # this makes it easier to construct the main transformation
         i = 0
         while Q[i] == 0:
-            i = i + 1
+            i += 1
         coords = [PP.gens()[j] + Q[j]/Q[i]*PP.gens()[i] for j in range(3)]
         coords[i] = PP.gens()[i]
         accoords = [PP.gens()[j] - Q[j]/Q[i]*PP.gens()[i] for j in range(3)] # coords used in map construction
@@ -1190,8 +1171,8 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             coords = [sum([M.row(j)[k]*PP.gens()[k] for k in range(3)]) for j in range(3)]
             C = PP.curve(baseC.defining_polynomial()(coords))
             # check tangents at (0 : 0 : 1)
-            T = C.tangents(PP([0,0,1]), factor=False)[0]
-            if all([e[0] > 0 for e in T.exponents()]) or all([e[1] > 0 for e in T.exponents()]):
+            T = C.tangents(PP([0, 0, 1]), factor=False)[0]
+            if all(e[0] > 0 for e in T.exponents()) or all(e[1] > 0 for e in T.exponents()):
                 continue
             # check that the other intersections of C with the exceptional lines are correct
             need_continue = False
@@ -1286,16 +1267,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: C = Curve([x^5 - K.0*y*z^4], P)
             sage: C.ordinary_model()
             Scheme morphism:
-              From: Projective Plane Curve over Number Field in a with defining
-            polynomial x^2 - 3 defined by x^5 + (-a)*y*z^4
-              To:   Projective Plane Curve over Number Field in a with defining
-            polynomial x^2 - 3 defined by (-a)*x^5*y + (-4*a)*x^4*y^2 +
-            (-6*a)*x^3*y^3 + (-4*a)*x^2*y^4 + (-a)*x*y^5 + (-a - 1)*x^5*z + (-4*a +
-            5)*x^4*y*z + (-6*a - 10)*x^3*y^2*z + (-4*a + 10)*x^2*y^3*z + (-a -
-            5)*x*y^4*z + y^5*z
+              From: Projective Plane Curve over Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878? defined by x^5 + (-a)*y*z^4
+              To:   Projective Plane Curve over Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878? defined by (-a)*x^5*y + (-4*a)*x^4*y^2 + (-6*a)*x^3*y^3 + (-4*a)*x^2*y^4 + (-a)*x*y^5 + (-a - 1)*x^5*z + (-4*a + 5)*x^4*y*z + (-6*a - 10)*x^3*y^2*z + (-4*a + 10)*x^2*y^3*z + (-a - 5)*x*y^4*z + y^5*z
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (-1/4*x^2 - 1/2*x*y + 1/2*x*z + 1/2*y*z - 1/4*z^2 : 1/4*x^2 +
-            1/2*x*y + 1/2*y*z - 1/4*z^2 : -1/4*x^2 + 1/4*z^2)
+                    (-1/4*x^2 - 1/2*x*y + 1/2*x*z + 1/2*y*z - 1/4*z^2 : 1/4*x^2 + 1/2*x*y + 1/2*y*z - 1/4*z^2 : -1/4*x^2 + 1/4*z^2)
 
         ::
 
@@ -1319,7 +1294,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             -1/64*x^4 + 3/64*x^2*y^2 - 1/32*x*y^3 + 1/16*x*y^2*z - 1/16*y^3*z +
             1/16*y^2*z^2 : 3/64*x^4 - 3/32*x^3*y + 3/64*x^2*y^2 + 1/16*x^3*z -
             3/16*x^2*y*z + 1/8*x*y^2*z - 1/8*x*y*z^2 + 1/16*y^2*z^2)
-            sage: all([D.codomain().is_ordinary_singularity(Q) for Q in D.codomain().singular_points()]) # long time
+            sage: all(D.codomain().is_ordinary_singularity(Q) for Q in D.codomain().singular_points()) # long time
             True
 
         ::
@@ -1484,7 +1459,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             True
         """
         if not self.intersects_at(C, P):
-            raise TypeError("(=%s) must be a point in the intersection of (=%s) and this curve"%(P,C))
+            raise TypeError("(=%s) must be a point in the intersection of (=%s) and this curve" % (P, C))
         if self.is_singular(P) or C.is_singular(P):
             return False
 
@@ -1524,7 +1499,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         .. WARNING::
 
-            This functionality requires the sirocco package to be installed.
+            This functionality requires the ``sirocco`` package to be installed.
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group
         F = self.base_ring()
@@ -1587,7 +1562,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
               Defn: Defined on coordinates by sending (s : t) to
                     ((-a)*s^2 + (-a)*t^2 : s^2 - t^2 : 2*s*t)
         """
-        if self.genus() != 0:
+        if self.genus():
             raise TypeError("this curve must have geometric genus zero")
         if not is_RationalField(self.base_ring()):
             raise TypeError("this curve must be defined over the rational field")
@@ -1601,21 +1576,23 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         return H(param)
 
     def riemann_surface(self,**kwargs):
-        r"""Return the complex riemann surface determined by this curve
+        r"""
+        Return the complex Riemann surface determined by this curve
 
         OUTPUT:
 
-         - RiemannSurface object
+        - RiemannSurface object
 
         EXAMPLES::
 
             sage: R.<x,y,z>=QQ[]
             sage: C=Curve(x^3+3*y^3+5*z^3)
             sage: C.riemann_surface()
-            Riemann surface defined by polynomial f = x0^3 + 3*x1^3 + 5 = 0, with 53 bits of precision
+            Riemann surface defined by polynomial f = x^3 + 3*y^3 + 5 = 0, with 53 bits of precision
 
         """
         return self.affine_patch(2).riemann_surface(**kwargs)
+
 
 class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve):
 
@@ -1706,8 +1683,8 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve):
 
         # the point with  Z = 0 = Y
         try:
-            t = self.point([one,zero,zero])
-            yield(t)
+            t = self.point([one, zero, zero])
+            yield t
         except TypeError:
             pass
 
@@ -1741,7 +1718,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve):
           use.  Currently this is ignored.
 
         - ``sort`` (boolean, default ``True``) -- whether the output
-          points should be sorted.  If False, the order of the output
+          points should be sorted.  If ``False``, the order of the output
           is non-deterministic.
 
         OUTPUT:
@@ -1793,6 +1770,7 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve):
             points.sort()
         return points
 
+
 class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field):
     def _points_via_singular(self, sort=True):
         r"""
@@ -1802,8 +1780,8 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
         INPUT:
 
 
-        -  ``sort`` - bool (default: True), if True return the
-           point list sorted. If False, returns the points in the order
+        -  ``sort`` - bool (default: ``True``), if ``True`` return the
+           point list sorted. If ``False``, returns the points in the order
            computed by Singular.
 
 
@@ -1824,9 +1802,9 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
 
         .. note::
 
-           The Brill-Noether package does not always work (i.e., the
-           'bn' algorithm. When it fails a RuntimeError exception is
-           raised.
+            The Brill-Noether package does not always work (i.e., the
+            'bn' algorithm. When it fails a RuntimeError exception is
+            raised.
         """
         f = self.defining_polynomial()._singular_()
         singular = f.parent()
@@ -1925,14 +1903,12 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
         v = singular('POINTS').sage_flattened_str_list()
         coords = [self(int(v[3*i]), int(v[3*i+1]), int(v[3*i+2])) for i in range(len(v)//3)]
         # build correct representation of D for singular
-        Dsupport = D.support()
         Dcoeffs = []
         for x in pnts:
             if x[0] == 1:
                 Dcoeffs.append(D.coefficient(coords[x[1]]))
             else:
                 Dcoeffs.append(0)
-        Dstr = str(tuple(Dcoeffs))
         G = singular(','.join([str(x) for x in Dcoeffs]), type='intvec')
         # call singular's brill noether routine and return
         T = X2[1][2]
@@ -1978,9 +1954,9 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
 
         .. note::
 
-           The Brill-Noether package does not always work (i.e., the
-           'bn' algorithm. When it fails a RuntimeError exception is
-           raised.
+            The Brill-Noether package does not always work (i.e., the
+            'bn' algorithm. When it fails a RuntimeError exception is
+            raised.
         """
         if algorithm == "enum":
 
@@ -2004,7 +1980,8 @@ class ProjectivePlaneCurve_prime_finite_field(ProjectivePlaneCurve_finite_field)
 
         else:
 
-            raise ValueError("No algorithm '%s' known"%algorithm)
+            raise ValueError("No algorithm '%s' known" % algorithm)
+
 
 def Hasse_bounds(q, genus=1):
     r"""
@@ -2029,7 +2006,7 @@ def Hasse_bounds(q, genus=1):
         sage: Hasse_bounds(next_prime(10^30))
         (999999999999998000000000000058, 1000000000000002000000000000058)
     """
-    if genus==1:
+    if genus == 1:
         rq = (4*q).isqrt()
     else:
         rq = (4*(genus**2)*q).isqrt()

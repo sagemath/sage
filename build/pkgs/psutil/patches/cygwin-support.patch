@@ -205,7 +205,7 @@ new file mode 100644
 index 0000000..ffba639
 --- /dev/null
 +++ b/psutil/_pscygwin.py
-@@ -0,0 +1,908 @@
+@@ -0,0 +1,891 @@
 +"""Cygwin platform implementation."""
 +
 +# TODO: Large chunks of this module are copy/pasted from the Linux module;
@@ -252,23 +252,6 @@ index 0000000..ffba639
 +# =====================================================================
 +# --- constants
 +# =====================================================================
-+
-+_cygwin_version_re = re.compile(r'(?P<major>\d+)\.(?P<minor>\d+)\.'
-+                                '(?P<micro>\d+)\((?P<api_major>\d+)\.'
-+                                '(?P<api_minor>\d+)/(?P<shared_data>\d+)/'
-+                                '(?P<mount_registry>\d+)\)')
-+_cygwin_version = _cygwin_version_re.match(os.uname()[2]).groupdict()
-+
-+CYGWIN_VERSION = (int(_cygwin_version['major']),
-+                  int(_cygwin_version['minor']),
-+                  int(_cygwin_version['micro']))
-+
-+CYGWIN_VERSION_API = (int(_cygwin_version['api_major']),
-+                      int(_cygwin_version['api_minor']))
-+
-+CYGWIN_VERSION_SHARED_DATA = int(_cygwin_version['shared_data'])
-+
-+CYGWIN_VERSION_MOUNT_REGISTRY = int(_cygwin_version['mount_registry'])
 +
 +
 +if enum is None:

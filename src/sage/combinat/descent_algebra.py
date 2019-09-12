@@ -53,7 +53,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     We follow the notations and conventions in [GR1989]_, apart from the
     order of multiplication being different from the one used in that
-    article. Schocker's exposition [Schocker2004]_, in turn, uses the
+    article. Schocker's exposition [Sch2004]_, in turn, uses the
     same order of multiplication as we are, but has different notations
     for the bases.
 
@@ -65,22 +65,13 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [GR1989] \C. Reutenauer, A. M. Garsia. *A decomposition of Solomon's
-       descent algebra.* Adv. Math. **77** (1989).
-       http://www.lacim.uqam.ca/~christo/Publi%C3%A9s/1989/Decomposition%20Solomon.pdf
+    - [GR1989]_
 
-    .. [Atkinson] \M. D. Atkinson. *Solomon's descent algebra revisited.*
-       Bull. London Math. Soc. 24 (1992) 545-551.
-       http://www.cs.otago.ac.nz/staffpriv/mike/Papers/Descent/DescAlgRevisited.pdf
+    - [At1992]_
 
-    .. [MR-Desc] \C. Malvenuto, C. Reutenauer, *Duality between
-       quasi-symmetric functions and the Solomon descent algebra*,
-       Journal of Algebra 177 (1995), no. 3, 967-982.
-       http://www.lacim.uqam.ca/~christo/Publi%C3%A9s/1995/Duality.pdf
+    - [MR1995]_
 
-    .. [Schocker2004] Manfred Schocker, *The descent algebra of the
-       symmetric group*. Fields Inst. Comm. 40 (2004), pp. 145-161.
-       http://www.mathematik.uni-bielefeld.de/~ringel/schocker-neu.ps
+    - [Sch2004]_
 
     EXAMPLES::
 
@@ -186,7 +177,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
         The basis element corresponding to a composition `p` (or to
         the subset of `\{1, 2, \ldots, n-1\}`) is denoted `\Delta^p`
-        in [Schocker2004]_.
+        in [Sch2004]_.
 
         EXAMPLES::
 
@@ -399,7 +390,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         (where `i_1 < i_2 < \cdots < i_k`), which is what Sage uses to
         index the basis.
 
-        The basis element `B_p` is denoted `\Xi^p` in [Schocker2004]_.
+        The basis element `B_p` is denoted `\Xi^p` in [Sch2004]_.
 
         By using compositions of `n`, the product `B_p B_q` becomes a
         sum over the non-negative-integer matrices `M` with row sum `p`

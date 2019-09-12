@@ -134,7 +134,6 @@ from sage.structure.nonexact import Nonexact
 from sage.interfaces.magma import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.sage_eval import sage_eval
-from sage.misc.superseded import deprecation
     
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import normalize_names
@@ -458,8 +457,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 use_lazy_mpoly_ring=None, implementation=None,
-                 category=None):
+                 implementation=None, category=None):
         """
         Initializes a power series ring.
 
@@ -479,9 +477,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
           ``'pari'``.  The default is ``'pari'`` if the base field is
           a PARI finite field, and ``'poly'`` otherwise.
 
-        - ``use_lazy_mpoly_ring`` -- This option is deprecated; use
-          ``implementation='mpoly'`` instead.
-
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
         multivariate polynomials instead of a univariate polynomial
@@ -493,7 +488,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         printing).
 
         EXAMPLES:
-    
+
         This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
         Since :trac:`11900`, it is also initialised as such, and since :trac:`14084`
         it is actually initialised as an integral domain::
@@ -502,11 +497,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R.category()
             Category of integral domains
             sage: TestSuite(R).run()
-    
+
         When the base ring `k` is a field, the ring `k[[x]]` is not only a
         commutative ring, but also a complete discrete valuation ring (CDVR).
         The appropriate (sub)category is automatically set in this case::
-    
+
             sage: k = GF(11)
             sage: R.<x> = k[[]]
             sage: R.category()
@@ -522,17 +517,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ValueError: default_prec (= -5) must be non-negative
 
         """
-        if use_lazy_mpoly_ring is not None:
-            deprecation(15601, 'The option use_lazy_mpoly_ring is deprecated; use implementation="mpoly" instead')
-
         from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
 
         if implementation is None:
             if isinstance(base_ring, FiniteField_pari_ffelt):
                 implementation = 'pari'
-            elif use_lazy_mpoly_ring and (is_MPolynomialRing(base_ring) or
-                                          is_PolynomialRing(base_ring)):
-                implementation = 'mpoly'
             else:
                 implementation = 'poly'
 
@@ -805,7 +794,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                 return self.element_class(self, f.list(),
                                       f.degree(f.default_variable()), check=check)
             else:
-                raise TypeError("Can only convert series into ring with same variable name.")            
+                raise TypeError("Can only convert series into ring with same variable name.")
         return self.element_class(self, f, prec, check=check)
 
     def construction(self):
@@ -939,13 +928,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         return self.__poly_ring
 
-    def _mpoly_ring(self):
-        """
-        Return the polynomial ring that we use if ``use_lazy_mpoly_ring``
-        was set.
-        """
-        return self.__mpoly_ring
-
     def base_extend(self, R):
         """
         Return the power series ring over R in the same variable as self,
@@ -983,7 +965,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ...
             TypeError: no base extension defined
             sage: R.base_extend(QuadraticField(3,'a'))
-            Power Series Ring in T over Number Field in a with defining polynomial x^2 - 3
+            Power Series Ring in T over Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
         """
         return PowerSeriesRing(R, name = self.variable_name(), default_prec = self.default_prec())
 
@@ -1004,7 +986,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         Return False since the ring of power series over any ring is not
         exact.
-        
+
         EXAMPLES::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
@@ -1159,7 +1141,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         Return False since the ring of power series over any ring is never
         a field.
-        
+
         EXAMPLES::
 
             sage: R.<t> = PowerSeriesRing(ZZ)
@@ -1275,4 +1257,3 @@ def unpickle_power_series_ring_v0(base_ring, name, default_prec, sparse):
         True
     """
     return PowerSeriesRing(base_ring, name=name, default_prec = default_prec, sparse=sparse)
-

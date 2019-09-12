@@ -1571,7 +1571,7 @@ cdef class SkewPolynomial(AlgebraElement):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: a = t^2 + 1/2*x*t;
+            sage: a = t^2 + 1/2*x*t
             sage: a._repr_()
             '(1/2*t + 1/2)*x + t^2'
             sage: a._repr_(name='y')
@@ -1621,7 +1621,7 @@ cdef class SkewPolynomial(AlgebraElement):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
-            sage: a = t^2 + 1/2*x*t;
+            sage: a = t^2 + 1/2*x*t
             sage: a._latex_()
             '\\left(\\frac{1}{2} t + \\frac{1}{2}\\right) x + t^{2}'
             sage: a._latex_(name='y')
@@ -2251,7 +2251,7 @@ cdef class SkewPolynomial_generic_dense(SkewPolynomial):
         Return the generic dense skew polynomial corresponding to the
         current parameters provided ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])

@@ -224,9 +224,9 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: A.coproduct_on_basis(g)
                 (1,2,3,4,5,6) # (1,2,3,4,5,6)
                 sage: a = A.an_element(); a
-                () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
+                () + (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4)
                 sage: a.coproduct()
-                () # () + 3*(1,2,3,4,5,6) # (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) # (1,3,5)(2,4,6)
+                () # () + (1,2,3,4,5,6) # (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) # (1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4) # (1,5,3)(2,6,4)
             """
             from sage.categories.tensor import tensor
             g = self.term(g)
@@ -249,9 +249,9 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: A.antipode_on_basis(g)
                 (1,6,5,4,3,2)
                 sage: a = A.an_element(); a
-                () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
+                () + (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4)
                 sage: a.antipode()
-                () + 3*(1,5,3)(2,6,4) + 3*(1,6,5,4,3,2)
+                () + 2*(1,3,5)(2,4,6) + 3*(1,5,3)(2,6,4) + (1,6,5,4,3,2)
             """
             return self.term(~g)
 
@@ -287,7 +287,7 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: A = CyclicPermutationGroup(6).algebra(ZZ); A
                 Algebra of Cyclic group of order 6 as a permutation group over Integer Ring
                 sage: a = A.an_element(); a
-                () + 3*(1,2,3,4,5,6) + 3*(1,3,5)(2,4,6)
+                () + (1,2,3,4,5,6) + 3*(1,3,5)(2,4,6) + 2*(1,5,3)(2,6,4)
                 sage: a.counit()
                 7
             """

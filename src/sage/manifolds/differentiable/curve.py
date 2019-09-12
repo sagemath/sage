@@ -268,17 +268,13 @@ class DifferentiableCurve(DiffMap):
             sage: TestSuite(c).run()
 
         """
-        domain = parent.domain()
-        codomain = parent.codomain()
         if coord_expression is None:
             coord_functions = None
         else:
             if not isinstance(coord_expression, dict):
                 raise TypeError("{} is not a dictionary".format(
                                                              coord_expression))
-            param_chart = domain.canonical_chart()
-            codom_atlas = codomain.atlas()
-            n = codomain.manifold().dim()
+            param_chart = parent.domain().canonical_chart()
             coord_functions = {}
             for chart, expr in coord_expression.items():
                 if isinstance(chart, tuple):
@@ -370,6 +366,12 @@ class DifferentiableCurve(DiffMap):
             sage: # Links between spherical coordinates and Cartesian ones:
             sage: ch_cart_spher = c_cart.transition_map(c_spher, [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
+            Check of the inverse coordinate transformation:
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: R.<t> = RealLine()
             sage: c = U.curve({c_spher: (1,t)}, (t, 0, 2*pi), name='c')
             sage: c.coord_expr(c_spher)
@@ -382,7 +384,7 @@ class DifferentiableCurve(DiffMap):
             sage: c.coord_expr()
             (cos(t), sin(t))
 
-        Cartesian expression of a cardiod::
+        Cartesian expression of a cardioid::
 
             sage: c = U.curve({c_spher: (2*(1+cos(t)), t)}, (t, 0, 2*pi), name='c')
             sage: c.coord_expr(c_cart)

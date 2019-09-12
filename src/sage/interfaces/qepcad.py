@@ -604,8 +604,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 from six import string_types
 
 from sage.env import SAGE_LOCAL
@@ -618,7 +617,8 @@ from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction, AsciiArtString
+from .expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -1686,7 +1686,7 @@ def qepcad_console(memcells=None):
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
-        raise RuntimeError('Can use the console only in the terminal. Try %%qepcat magics instead.')
+        raise RuntimeError('Can use the console only in the terminal. Try %%qepcad magics instead.')
     # This will only spawn local processes
     os.system(_qepcad_cmd(memcells))
 

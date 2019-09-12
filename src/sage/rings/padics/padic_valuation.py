@@ -921,7 +921,7 @@ class pAdicValuation_padic(pAdicValuation_base):
         v = QQ(v)
         if v not in self.value_semigroup():
             raise ValueError("%r is not in the value semigroup of %r"%(v, self))
-        v = ZZ(v * self.domain().ramification_index())
+        v = ZZ(v * self.domain().absolute_e())
         return self.domain().one() << v
 
     def _repr_(self):
@@ -972,7 +972,7 @@ class pAdicValuation_padic(pAdicValuation_base):
         power of the uniformizer `\pi`.
 
         For negative ``s``, it does the same but when not over a field, it
-        drops coefficients in the `\pi`-adic expension which have negative
+        drops coefficients in the `\pi`-adic expansion which have negative
         valuation.
 
         EXAMPLES::
@@ -1182,6 +1182,18 @@ class pAdicValuation_int(pAdicValuation_base):
             sage: v.simplify(6, error=0, force=True)
             0
 
+        In this example, the usual rational reconstruction misses a good answer
+        for some moduli (because the absolute value of the numerator is not
+        bounded by the square root of the modulus)::
+
+            sage: v = QQ.valuation(2)
+            sage: v.simplify(110406, error=16, force=True)
+            562/19
+            sage: Qp(2, 16)(110406).rational_reconstruction()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: rational reconstruction of 55203 (mod 65536) does not exist
+
         """
         if not force and self._relative_size(x) <= size_heuristic_bound:
             return x
@@ -1196,23 +1208,39 @@ class pAdicValuation_int(pAdicValuation_base):
             return x
         if error < v:
             return self.domain().zero()
+
         from sage.rings.all import QQ
-        error = QQ(error).ceil()
-        
         from sage.rings.all import Qp
-        precision_ring = Qp(self.p(), error + 1 - v)
+        precision_ring = Qp(self.p(), QQ(error).floor() + 1 - v)
         reduced = precision_ring(x)
-        if error - v >= 5:
-            # If there is not much relative precision left, it is better to
-            # just go with the integer/rational lift. The rational
-            # reconstruction is likely not smaller.
-            try:
-                reconstruction = reduced.rational_reconstruction()
-                if reconstruction in self.domain():
-                    return self.domain()(reconstruction)
-            except ArithmeticError:pass
-        
-        return self.domain()(reduced.lift())
+        lift = (reduced >> v).lift()
+        best = self.domain()(lift) * self.p()**v
+
+        if self._relative_size(x) < self._relative_size(best):
+            best = x
+
+        # We implement a modified version of the usual rational reconstruction
+        # algorithm (based on the extended Euclidean algorithm) here. We do not
+        # get the uniqueness properties but we do not need them actually.
+        # This is certainly slower than the implementation in Cython.
+        from sage.categories.all import Fields
+        m = self.p()**(QQ(error).floor() + 1 - v)
+        if self.domain() in Fields():
+            r = (m, lift)
+            s = (0, 1)
+            while r[1]:
+                qq, rr = r[0].quo_rem(r[1])
+                r = r[1], rr
+                s = s[1], s[0] - qq*s[1]
+                from sage.arith.all import gcd
+                if s[1] != 0 and gcd(s[1], r[1]) == 1:
+                    rational = self.domain()(r[1]) / self.domain()(s[1]) * self.p()**v
+                    if self._relative_size(rational) < self._relative_size(best):
+                        best = rational
+
+        assert(self(x-best)>error)
+
+        return best
 
     def inverse(self, x, precision):
         r"""
@@ -1282,7 +1310,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
     incorrect, see :trac:`23971`::
 
         sage: v.shift(1, -1).parent()
-        Number Field in I with defining polynomial x^2 + 1
+        Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
     """
     def __init__(self, parent, approximant, G, approximants):

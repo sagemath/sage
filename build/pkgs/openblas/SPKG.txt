@@ -2,7 +2,7 @@
 
 == Description ==
 
-OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version
+OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version.
 
 == License ==
 
@@ -10,7 +10,9 @@ OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version
 
 == SPKG Repository ==
 
- https://github.com/xianyi/OpenBLAS
+GitHub page: https://github.com/xianyi/OpenBLAS
+
+Releases: https://github.com/xianyi/OpenBLAS/releases
 
 == Upstream Contact ==
 

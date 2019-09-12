@@ -149,7 +149,7 @@ class VirtualCrystal(Subcrystal):
 
     REFERENCES:
 
-    - [FOS09]_
+    - [FOS2009]_
     - [OSS03]_
     - [OSS2003]_
     """

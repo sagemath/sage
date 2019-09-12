@@ -292,7 +292,6 @@ class qsieve_nonblock:
         except pexpect.TIMEOUT:
             pass
         except pexpect.EOF:
-            pass
             self._done = True
             self._p.close()
         self._out += bytes_to_str(e.before)

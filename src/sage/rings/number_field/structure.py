@@ -14,15 +14,15 @@ Both produce the same extension of `\QQ`. However, they should not be
 identical because `M` carries additional information::
 
     sage: L.structure()
-    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2,
-     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2)
+    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
+     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)
     sage: M.structure()
     (Isomorphism given by variable name change map:
-      From: Number Field in a with defining polynomial x^2 - 2
-      To:   Number Field in a with defining polynomial x^2 - 2,
+       From: Number Field in a with defining polynomial x^2 - 2
+       To:   Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
      Isomorphism given by variable name change map:
-      From: Number Field in a with defining polynomial x^2 - 2
-      To:   Number Field in a with defining polynomial x^2 - 2)
+       From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+       To:   Number Field in a with defining polynomial x^2 - 2)
 
 This used to cause trouble with caching and made (absolute) number fields not
 unique when they should have been. The underlying technical problem is that the
@@ -270,13 +270,13 @@ class RelativeFromAbsolute(NumberFieldStructure):
             sage: M.<b,a_> = K.relativize(-a)
             sage: M.structure() # indirect doctest
             (Relative number field morphism:
-             From: Number Field in b with defining polynomial x + a_ over its base field
-             To:   Number Field in a with defining polynomial x^2 - 2
-             Defn: -a_ |--> a
-                   a_ |--> -a, Ring morphism:
-             From: Number Field in a with defining polynomial x^2 - 2
-             To:   Number Field in b with defining polynomial x + a_ over its base field
-             Defn: a |--> -a_)
+               From: Number Field in b with defining polynomial x + a_ over its base field
+               To:   Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               Defn: -a_ |--> a
+                     a_ |--> -a, Ring morphism:
+               From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               To:   Number Field in b with defining polynomial x + a_ over its base field
+               Defn: a |--> -a_)
 
         """
         # other     field

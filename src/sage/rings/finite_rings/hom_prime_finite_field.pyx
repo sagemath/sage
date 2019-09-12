@@ -79,7 +79,6 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
         FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check,
                                                  section_class)
 
-
     cpdef Element _call_(self, x):
         """
         TESTS::

@@ -1,0 +1,3 @@
+# Force uninstallation of the gfortran package since it's superseded by this
+# package (which includes gfortran implicitly)
+sage-spkg-uninstall gfortran

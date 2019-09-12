@@ -5,7 +5,7 @@ Hyperplane Arrangements
 Before talking about hyperplane arrangements, let us start with
 individual hyperplanes. This package uses certain linear expressions
 to represent hyperplanes, that is, a linear expression `3x + 3y - 5z - 7`
-stands for the hyperplane with the equation `x + 3y - 5z = 7`. To create it
+stands for the hyperplane with the equation `3x + 3y - 5z = 7`. To create it
 in Sage, you first have to create a :class:`HyperplaneArrangements`
 object to define the variables `x`, `y`, `z`::
 
@@ -116,8 +116,8 @@ New arrangements from old::
     sage: b == hyperplane_arrangements.coordinate(3)
     True
 
-A hyperplane arrangement is *essential* is the normals to its
-hyperplane span the ambient space.  Otherwise, it is *inessential*.
+A hyperplane arrangement is *essential* if the normals to its
+hyperplanes span the ambient space.  Otherwise, it is *inessential*.
 The essentialization is formed by intersecting the hyperplanes by this
 normal space (actually, it is a bit more complicated over finite
 fields)::
@@ -334,14 +334,12 @@ from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import QQ, ZZ
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import uniq
 from sage.matrix.constructor import matrix, vector
 from sage.modules.free_module import VectorSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.geometry.hyperplane_arrangement.hyperplane import AmbientVectorSpace, Hyperplane
-
-from copy import copy
+from sage.combinat.posets.posets import Poset
 
 
 class HyperplaneArrangementElement(Element):
@@ -1131,6 +1129,43 @@ class HyperplaneArrangementElement(Element):
             return False
 
     @cached_method
+    def is_simplicial(self):
+        r"""
+        Test whether the arrangement is simplicial.
+        
+        A region is simplicial if the normal vectors of its bounding hyperplanes
+        are linearly independent. A hyperplane arrangement is said to be
+        simplicial if every region is simplicial.
+
+        OUTPUT:
+        
+        A boolean whether the hyperplane arrangement is simplicial.
+
+        EXAMPLES::
+
+            sage: H.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = H([[0,1,1,1],[0,1,2,3]])
+            sage: A.is_simplicial()
+            True
+            sage: A = H([[0,1,1,1],[0,1,2,3],[0,1,3,2]])
+            sage: A.is_simplicial()
+            True
+            sage: A = H([[0,1,1,1],[0,1,2,3],[0,1,3,2],[0,2,1,3]])
+            sage: A.is_simplicial()
+            False
+            sage: hyperplane_arrangements.braid(3).is_simplicial()
+            True
+        """
+        # if the arr is not essential, grab the essential version and check there.
+        if not self.is_essential():
+            return self.essentialization().is_simplicial()
+
+        # Check that the number of facets for each region is equal to rank
+        rank = self.rank()
+        return all(R.n_facets() == rank for R in self.regions())
+
+
+    @cached_method
     def essentialization(self):
         r"""
         Return the essentialization of the hyperplane arrangement.
@@ -1500,6 +1535,92 @@ class HyperplaneArrangementElement(Element):
                         subdivided.append(part)
             regions = subdivided
         return tuple(regions)
+
+    @cached_method
+    def poset_of_regions(self, B=None, numbered_labels=True):
+        r"""
+        Return the poset of regions for a central hyperplane arrangement.
+
+        The poset of regions is a partial order on the set of regions
+        where the regions are ordered by `R\leq R'` if and only if
+        `S(R) \subseteq S(R')` where `S(R)` is the set of hyperplanes which
+        separate the region `R` from the base region `B`.
+
+        INPUT:
+
+        - ``B`` -- a region (optional; default: ``None``); if ``None``, then
+          an arbitrary region is chosen as the base region.
+
+        - ``numbered_labels`` -- bool (optional; default: ``True``); if ``True``,
+          then the elements of the poset are numbered. Else they are labelled
+          with the regions themselves.
+
+        OUTPUT:
+
+        A Poset object containing the poset of regions.
+
+        EXAMPLES::
+
+            sage: H.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = H([[0,1,1,1],[0,1,2,3]])
+            sage: A.poset_of_regions()
+            Finite poset containing 4 elements
+
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: A.poset_of_regions()
+            Finite poset containing 6 elements
+            sage: A.poset_of_regions(numbered_labels=False)
+            Finite poset containing 6 elements
+            sage: A = hyperplane_arrangements.braid(4)
+            sage: A.poset_of_regions()
+            Finite poset containing 24 elements
+
+            sage: H.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = H([[0,1,1,1],[0,1,2,3],[0,1,3,2],[0,2,1,3]])
+            sage: R = A.regions()
+            sage: base_region = R[3]
+            sage: A.poset_of_regions(B=base_region)
+            Finite poset containing 14 elements
+
+        """
+        # We use RX to keep track of indexes and R to keep track of which regions
+        # we've already hit. This poset is graded, so we can go one set at a time
+        RX = self.regions()
+        R = set(RX)
+        if B in R:
+            R.discard(B)
+        else:
+            B = R.pop()
+
+        # Will record the edges in our poset
+        edges = []
+
+        # Start with rank=0 for the poset
+        nextTest = [B]
+
+        # While we have objects in our set R
+        while R:
+            # Transfer the "next step" to the "current step"
+            curTest = list(nextTest)
+            nextTest = set([])
+            # we want to test each region that we haven't hit yet
+            for r in R:
+                # Since it's graded, it suffices to look at the regions of the previous rank
+                for b in curTest:
+                    if self.distance_between_regions(b,r) == 1:
+                        nextTest.add(r)
+                        if numbered_labels:
+                            edges.append([RX.index(b),RX.index(r)])
+                        else:
+                            edges.append([b,r])
+            for x in nextTest:
+                R.discard(x)
+
+        if numbered_labels:
+            return Poset([range(len(RX)),edges])
+        else:
+            return Poset([RX,edges])
+
 
     @cached_method
     def closed_faces(self, labelled=True):
@@ -1896,7 +2017,7 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``field`` -- a field (default: `\mathbb{Q}`), to be used as the
+        - ``field`` -- a field (default: `\QQ`), to be used as the
           base ring for the algebra (can also be a commutative ring, but
           then certain representation-theoretical methods might misbehave)
 
@@ -2422,7 +2543,6 @@ class HyperplaneArrangementElement(Element):
             sage: factor(det(v))
             (h2 - 1) * (h2 + 1) * (h1 - 1) * (h1 + 1)
         """
-        from sage.rings.all import PolynomialRing
         from sage.matrix.constructor import identity_matrix
         from sage.misc.all import prod
         k = len(self)
@@ -2521,11 +2641,26 @@ class HyperplaneArrangementElement(Element):
             3
             sage: B.minimal_generated_number()
             4
+
+        TESTS:
+
+        Check that :trac:`26705` is fixed::
+
+            sage: w = WeylGroup(['A',4]).from_reduced_word([3,4,2,1])
+            sage: I = w.inversion_arrangement()
+            sage: I
+            Arrangement <a4 | a1 | a1 + a2 | a1 + a2 + a3 + a4>
+            sage: I.minimal_generated_number()
+            0
+            sage: I.is_formal()
+            True
         """
         V = VectorSpace(self.base_ring(), self.dimension())
         W = VectorSpace(self.base_ring(), self.n_hyperplanes())
         r = self.rank()
         M = self.matroid()
+        if len(M.groundset()) == r:  # there are no circuits
+            return ZZ.zero()
         norms = M.representation().columns()
         circuits = M.circuits()
         for i in range(2, self.n_hyperplanes()):
@@ -3018,7 +3153,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
                 hyperplanes = [AA(_) for _ in arg]
         hyperplanes = [h.primitive(signed) for h in hyperplanes]
         n = len(hyperplanes)
-        hyperplanes = tuple(uniq(hyperplanes))
+        hyperplanes = set(hyperplanes)
         if warn_duplicates and n != len(hyperplanes):
             from warnings import warn
             warn('Input contained {0} hyperplanes, but only {1} are distinct.'.format(n, len(hyperplanes)))
@@ -3026,13 +3161,12 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         if check:
             if signed and not not_char2:
                 raise ValueError('cannot be signed in characteristic 2')
-            hyperplane_set = set(hyperplanes)
             for h in hyperplanes:
                 if h.A() == 0:
                     raise ValueError('linear expression must be non-constant to define a hyperplane')
-                if not_char2 and -h in hyperplane_set:
+                if not_char2 and -h in hyperplanes:
                     raise ValueError('arrangement cannot simultaneously have h and -h as hyperplane')
-        return self.element_class(self, hyperplanes)
+        return self.element_class(self, tuple(sorted(hyperplanes)))
 
     @cached_method
     def ngens(self):

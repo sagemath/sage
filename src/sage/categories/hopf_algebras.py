@@ -21,7 +21,7 @@ from sage.misc.cachefunc import cached_method
 
 class HopfAlgebras(Category_over_base_ring):
     """
-    The category of Hopf algebras
+    The category of Hopf algebras.
 
     EXAMPLES::
 
@@ -34,7 +34,6 @@ class HopfAlgebras(Category_over_base_ring):
 
         sage: TestSuite(HopfAlgebras(ZZ)).run()
     """
-
     def super_categories(self):
         """
         EXAMPLES::
@@ -102,12 +101,47 @@ class HopfAlgebras(Category_over_base_ring):
 
     class Morphism(Category):
         """
-        The category of Hopf algebra morphisms
+        The category of Hopf algebra morphisms.
         """
         pass
 
     class Super(SuperModulesCategory):
-        pass
+        r"""
+        The category of super Hopf algebras.
+
+        .. NOTE::
+
+            A super Hopf algebra is *not* simply a Hopf
+            algebra with a `\ZZ/2\ZZ` grading due to the
+            signed bialgebra compatibility conditions.
+        """
+        def dual(self):
+            """
+            Return the dual category.
+
+            EXAMPLES:
+
+            The category of super Hopf algebras over any field is self dual::
+
+                sage: C = HopfAlgebras(QQ).Super()
+                sage: C.dual()
+                Category of super hopf algebras over Rational Field
+            """
+            return self
+
+        class ElementMethods:
+            def antipode(self):
+                """
+                Return the antipode of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = SteenrodAlgebra(3)
+                    sage: a = A.an_element()
+                    sage: a, a.antipode()
+                    (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
+                """
+                return self.parent().antipode(self)
 
     class TensorProducts(TensorProductsCategory):
         """

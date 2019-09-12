@@ -7,12 +7,12 @@ AUTHORS:
 
 - Vincent Delecroix (2012 and 2013): improve import_statements
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from __future__ import absolute_import
 
 import os
@@ -177,10 +177,9 @@ def load_submodules(module=None, exclude_pattern=None):
     if module is None:
         import sage
         module = sage
-        exclude_pattern = "^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|sage\.interacts$|^sage\.misc\.benchmark$"
+        exclude_pattern = r"^sage\.libs|^sage\.tests|tests$|^sage\.all_|all$|sage\.interacts$|^sage\.misc\.benchmark$"
 
     if exclude_pattern:
-        import re
         exclude = re.compile(exclude_pattern)
     else:
         exclude = None
@@ -314,7 +313,7 @@ def find_object_modules(obj):
 
     # if the object is an instance, we try to guess where it is defined
     if sageinspect.isclassinstance(obj):
-        dec_pattern = re.compile("^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
+        dec_pattern = re.compile(r"^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
         module_to_obj2 = {}
         for module_name, obj_names in iteritems(module_to_obj):
             module_to_obj2[module_name] = []

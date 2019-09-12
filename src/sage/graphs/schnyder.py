@@ -3,23 +3,17 @@ Schnyder's Algorithm for straight-line planar embeddings
 
 A module for computing the (x,y) coordinates for a straight-line planar
 embedding of any connected planar graph with at least three vertices.  Uses
-Walter Schnyder's Algorithm.
+Walter Schnyder's Algorithm from [Sch1990]_.
 
 AUTHORS:
 
 - Jonathan Bober, Emily Kirkman (2008-02-09) --  initial version
-
-REFERENCE:
-
-.. [1] Schnyder, Walter. Embedding Planar Graphs on the Grid.
-       Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
-       San Francisco (1994), pp. 138-147.
 """
 # ****************************************************************************
 #      Copyright (C) 2008 Jonathan Bober and Emily Kirkman
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
 
@@ -34,7 +28,8 @@ def _triangulate(g, comb_emb):
 
     Given a connected graph g with at least 3 vertices and a planar combinatorial
     embedding comb_emb of g, modify g in place to form a graph whose faces are
-    all triangles, and return the set of newly created edges.
+    all triangles, and return the set of newly created edges. Also ``comb_emb``
+    is updated in place.
 
     The simple way to triangulate a face is to just pick a vertex and draw
     an edge from that vertex to every other vertex in the face. Think that this
@@ -66,8 +61,9 @@ def _triangulate(g, comb_emb):
         sage: g = graphs.PathGraph(3)
         sage: g.is_planar(set_embedding=True)
         True
-        sage: _triangulate(g, g._embedding)
-        [(0, 2)]
+        sage: new_edges = _triangulate(g, g._embedding)
+        sage: [sorted(e) for e in new_edges]
+        [[0, 2]]
     """
     # first make sure that the graph has at least 3 vertices, and that it is connected
     if g.order() < 3:
@@ -75,20 +71,8 @@ def _triangulate(g, comb_emb):
     if not g.is_connected():
         raise NotImplementedError("_triangulate() only knows how to handle connected graphs.")
 
-    if g.order() == 3 and len(g.edges()) == 2:             # if g is o--o--o
-        vertex_list = g.vertices()
-        if len(g.neighbors(vertex_list[0])) == 2:          # figure out which of the vertices already has two neighbors
-            new_edge = (vertex_list[1], vertex_list[2])    # and connect the other two together.
-        elif len(g.neighbors(vertex_list[1])) == 2:
-            new_edge = (vertex_list[0], vertex_list[2])
-        else:
-            new_edge = (vertex_list[0], vertex_list[1])
-
-        g.add_edge(new_edge)
-        return [new_edge]
-
-    # At this point we know that the graph is connected, has at least 3 vertices, and
-    # that it is not the graph o--o--o. This is where the real work starts.
+    # At this point we know that the graph is connected, has at least 3
+    # vertices. This is where the real work starts.
 
     faces = g.faces(comb_emb)
     # We start by finding all of the faces of this embedding.
@@ -103,9 +87,12 @@ def _triangulate(g, comb_emb):
         if len(face) == 3:
             continue  # This face is already triangulated
         elif len(face) == 4:  # In this special case just add diagonal edge to square
-            new_face = (face[1][1], face[0][0])
-            if g.has_edge(new_face):
-                new_face = (face[2][1], face[1][0])
+            u, v, w, x = (e[0] for e in face)
+            if w == u or g.has_edge(w,u):
+                u, v, w, x = v, w, x, u
+            new_face = (w, u)
+            comb_emb[w].insert(comb_emb[w].index(x), u)
+            comb_emb[u].insert(comb_emb[u].index(v), w)
             g.add_edge(new_face)
             edges_added.append(new_face)
         else:
@@ -122,6 +109,8 @@ def _triangulate(g, comb_emb):
 
                 g.add_edge(new_edge)
                 edges_added.append(new_edge)
+                comb_emb[new_edge[0]].insert(comb_emb[new_edge[0]].index((face + new_face)[i + 2][1]), new_edge[1])
+                comb_emb[new_edge[1]].insert(comb_emb[new_edge[1]].index(face[i][1]), new_edge[0])
                 new_face.append((new_edge[1], new_edge[0]))
                 i += 2
             if i != N:
@@ -172,13 +161,15 @@ def _normal_label(g, comb_emb, external_face):
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
         ({0: [<sage.graphs.schnyder.TreeNode object at ...>]},
-         (0, 1, 2))
+         (1, 0, 2))
     """
     contracted = []
     contractible = []
 
     labels = {}
 
+    # For now we will not take the order of the outer face into account.
+    # We will correct this in the end of this function.
     external_vertices = sorted([external_face[0][0],
                                 external_face[1][0],
                                 external_face[2][0]])
@@ -220,7 +211,8 @@ def _normal_label(g, comb_emb, external_face):
         v1_neighbors += v_neighbors - Set([v1])
         contractible = []
         for w in g.neighbors(v1):
-            if(len(v1_neighbors.intersection(Set(g.neighbors(w))))) == 2 and w not in [v1, v2, v3]:
+            if (len(v1_neighbors.intersection(Set(g.neighbors(w)))) == 2
+                    and w not in [v1, v2, v3]):
                 contractible.append(w)
 
     # expansion phase:
@@ -325,6 +317,21 @@ def _normal_label(g, comb_emb, external_face):
         for w in new_neighbors:
             g.add_edge((v, w))
 
+    # Up to this point we did not take the order of the external face into
+    # account. Since the combinatorial embedding of a triangulation is unique up
+    # to the choice of the outer face and reflection, this might lead to a
+    # reflection of the Schnyder drawing resulting from this labeling which is
+    # not conformal with comb_emb any longer. Therefore, we might have to swap
+    # the labels 1 and 2.
+    if (v1, v2) in external_face:
+        for u in labels:
+            for v, w in labels[u]:
+                if labels[u][v, w] == 1:
+                    labels[u][v, w] = 2
+                elif labels[u][v, w] == 2:
+                    labels[u][v, w] = 1
+        v1, v2 = v2, v1
+
     return labels, (v1, v2, v3)
 
 
@@ -378,7 +385,7 @@ def _realizer(g, x, example=False):
         sage: tn = _normal_label(g, g._embedding, faces[0])
         sage: _realizer(g, tn)
         ({0: [<sage.graphs.schnyder.TreeNode object at ...>]},
-         (0, 1, 2))
+         (1, 0, 2))
 
     """
     normal_labeling, (v1, v2, v3) = x
@@ -466,7 +473,7 @@ def _compute_coordinates(g, x):
         sage: r = _realizer(g, tn)
         sage: _compute_coordinates(g,r)
         sage: g.get_pos()
-        {0: [5, 1], 1: [0, 5], 2: [1, 0], 3: [1, 3], 4: [2, 1], 5: [2, 2], 6: [3, 2]}
+        {0: [0, 5], 1: [5, 1], 2: [1, 0], 3: [4, 1], 4: [1, 1], 5: [2, 2], 6: [1, 4]}
     """
 
     tree_nodes, (v1, v2, v3) = x
@@ -690,9 +697,9 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
 
     - graph -- a planar triangulation, given by a graph with an embedding.
 
-    - root_edge -- a pair of vertices (default is from ``'a'`` to ``'b'``)
+    - root_edge -- a pair of vertices (default is from ``-1`` to ``-2``)
       The third boundary vertex is then determined using the orientation and
-      will be labelled ``'c'``.
+      will be labelled ``-3``.
 
     - minimal -- boolean (default ``True``), whether to return a
       minimal or a maximal Schnyder wood.
@@ -702,53 +709,56 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
 
     OUTPUT:
 
-    a planar graph, with edges oriented and colored. The three outer
-    edges of the initial graph are removed.
+    A planar graph, with edges oriented and colored. The three outer
+    edges of the initial graph are removed. For the three outer vertices the
+    list of the neighbors stored in the combinatorial embedding is in the order
+    of the incident edges between the two incident (and removed) outer edges,
+    and not a cyclic shift of it.
 
-    The algorithm is taken from [Brehm2000]_ (section 4.2).
+    The algorithm is taken from [Bre2000]_ (section 4.2).
 
     EXAMPLES::
 
         sage: from sage.graphs.schnyder import minimal_schnyder_wood
-        sage: g = Graph([(0,'a'),(0,'b'),(0,'c'),('a','b'),('b','c'),
-        ....:  ('c','a')], format='list_of_edges')
-        sage: g.set_embedding({'a':['b',0,'c'],'b':['c',0,'a'],
-        ....:  'c':['a',0,'b'],0:['a','b','c']})
+        sage: g = Graph([(0,-1),(0,-2),(0,-3),(-1,-2),(-2,-3),
+        ....:  (-3,-1)], format='list_of_edges')
+        sage: g.set_embedding({-1:[-2,0,-3],-2:[-3,0,-1],
+        ....:  -3:[-1,0,-2],0:[-1,-2,-3]})
         sage: newg = minimal_schnyder_wood(g)
         sage: newg.edges()
-        [(0, 'a', 'green'), (0, 'b', 'blue'), (0, 'c', 'red')]
+        [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
         sage: newg.plot(color_by_label={'red':'red','blue':'blue',
         ....:  'green':'green',None:'black'})
         Graphics object consisting of 8 graphics primitives
 
     A larger example::
 
-        sage: g = Graph([(0,'a'),(0,2),(0,1),(0,'c'),('a','c'),('a',2),
-        ....: ('a','b'),(1,2),(1,'c'),(2,'b'),(1,'b'),('b','c')], format='list_of_edges')
-        sage: g.set_embedding({'a':['b',2,0,'c'],'b':['c',1,2,'a'],
-        ....: 'c':['a',0,1,'b'],0:['a',2,1,'c'],1:['b','c',0,2],2:['a','b',1,0]})
+        sage: g = Graph([(0,-1),(0,2),(0,1),(0,-3),(-1,-3),(-1,2),
+        ....: (-1,-2),(1,2),(1,-3),(2,-2),(1,-2),(-2,-3)], format='list_of_edges')
+        sage: g.set_embedding({-1:[-2,2,0,-3],-2:[-3,1,2,-1],
+        ....: -3:[-1,0,1,-2],0:[-1,2,1,-3],1:[-2,-3,0,2],2:[-1,-2,1,0]})
         sage: newg = minimal_schnyder_wood(g)
         sage: sorted(newg.edges(), key=lambda e:(str(e[0]),str(e[1])))
-        [(0, 2, 'blue'),
-         (0, 'a', 'green'),
-         (0, 'c', 'red'),
+        [(0, -1, 'green'),
+         (0, -3, 'red'),
+         (0, 2, 'blue'),
+         (1, -2, 'blue'),
+         (1, -3, 'red'),
          (1, 0, 'green'),
-         (1, 'b', 'blue'),
-         (1, 'c', 'red'),
-         (2, 1, 'red'),
-         (2, 'a', 'green'),
-         (2, 'b', 'blue')]
+         (2, -1, 'green'),
+         (2, -2, 'blue'),
+         (2, 1, 'red')]
         sage: newg2 = minimal_schnyder_wood(g, minimal=False)
         sage: sorted(newg2.edges(), key=lambda e:(str(e[0]),str(e[1])))
-        [(0, 1, 'blue'),
-         (0, 'a', 'green'),
-         (0, 'c', 'red'),
+        [(0, -1, 'green'),
+         (0, -3, 'red'),
+         (0, 1, 'blue'),
+         (1, -2, 'blue'),
+         (1, -3, 'red'),
          (1, 2, 'green'),
-         (1, 'b', 'blue'),
-         (1, 'c', 'red'),
-         (2, 0, 'red'),
-         (2, 'a', 'green'),
-         (2, 'b', 'blue')]
+         (2, -1, 'green'),
+         (2, -2, 'blue'),
+         (2, 0, 'red')]
 
     TESTS::
 
@@ -766,15 +776,10 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         Traceback (most recent call last):
         ...
         ValueError: not a valid root edge
-
-    REFERENCES:
-
-    .. [Brehm2000] Enno Brehm, *3-Orientations and Schnyder
-       3-Tree-Decompositions*, 2000
     """
     if root_edge is None:
-        a = 'a'
-        b = 'b'
+        a = -1
+        b = -2
     else:
         a, b = root_edge
 
@@ -797,7 +802,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
     # initialisation
     for i in emb[c]:
         if i != a and i != b:
-            new_g.add_edge((i, 'c', 'red'))
+            new_g.add_edge((i, -3, 'red'))
 
     path = list(emb[c])
     idxa = path.index(a)
@@ -836,11 +841,15 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
                            u != a and u != b]
 
     def relabel(w):
-        return 'c' if w == c else w
+        return -3 if w == c else w
 
-    emb = {relabel(v): [relabel(u) for u in emb[v] if not(u in [a, b, c] and
-                                                          v in [a, b, c])]
-           for v in graph}
+    emb = {relabel(v): [relabel(u) for u in emb[v]] for v in graph}
+    for u, v, w in (a, b, -3), (b, -3, a), (-3, a, b):
+        idx = emb[u].index(v)
+        if idx == 0:
+            emb[u] = emb[u][1:-1]
+        else:
+            emb[u] = emb[u][idx+1:] + emb[u][:idx-1]
 
     new_g.set_embedding(emb)
     return new_g

@@ -214,7 +214,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     # Little trick: the same implementation handles both depth and
     # breadth first search. Setting position to -1 makes a depth search
     # (you ask the children for the last node you met). Setting
-    # position on 0 makes a breadth search (enumarate all the
+    # position on 0 makes a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
     if algorithm == 'depth':
         position = -1
@@ -228,7 +228,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     #    of the node at depth ``i-1`` in the current branch (assuming a virtual
     #    father of all roots at depth ``-1``)
     stack = [iter(roots)]
-    while len(stack) > 0:
+    while stack:
         try:
             node = next(stack[position])
         except StopIteration:
@@ -413,8 +413,8 @@ class SearchForest(Parent):
             sage: S = SearchForest( [1], children, category=InfiniteEnumeratedSets())
             sage: dumps(S)
             Traceback (most recent call last):
-            ....:
-            PicklingError: Can't pickle <... 'function'>: attribute lookup __builtin__.function failed
+            ...
+            PicklingError: Can't pickle <...function...>: attribute lookup ... failed
 
         Let us now fake ``children`` being defined in a Python module::
 
@@ -696,7 +696,7 @@ class SearchForest(Parent):
             True
         """
         stack = [iter(self.roots())]
-        while len(stack) > 0:
+        while stack:
             position = randint(0,len(stack)-1)
             try:
                 node = next(stack[position])
@@ -884,10 +884,10 @@ class TransitiveIdeal(RecursivelyEnumeratedSet_generic):
         [0, 2, 1]
         sage: [i for i in TransitiveIdeal(lambda i: [mod(i+2,10)], [0])]
         [0, 2, 4, 6, 8]
-        sage: [i for i in TransitiveIdeal(lambda i: [mod(i+3,10),mod(i+5,10)], [0])]
-        [0, 3, 8, 1, 4, 5, 6, 7, 9, 2]
-        sage: [i for i in TransitiveIdeal(lambda i: [mod(i+4,10),mod(i+6,10)], [0])]
-        [0, 4, 8, 2, 6]
+        sage: sorted(i for i in TransitiveIdeal(lambda i: [mod(i+3,10),mod(i+5,10)], [0]))
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        sage: sorted(i for i in TransitiveIdeal(lambda i: [mod(i+4,10),mod(i+6,10)], [0]))
+        [0, 2, 4, 6, 8]
         sage: [i for i in TransitiveIdeal(lambda i: [mod(i+3,9)], [0,1])]
         [0, 1, 3, 4, 6, 7]
 
@@ -904,17 +904,18 @@ class TransitiveIdeal(RecursivelyEnumeratedSet_generic):
 
     We compute all the permutations of 3::
 
-        sage: [p for p in TransitiveIdeal(attrcall("permutohedron_succ"), [Permutation([1,2,3])])]
-        [[1, 2, 3], [2, 1, 3], [1, 3, 2], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+        sage: sorted(p for p in TransitiveIdeal(attrcall("permutohedron_succ"), [Permutation([1,2,3])]))
+        [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
 
     We compute all the permutations which are larger than [3,1,2,4],
     [2,1,3,4] in the right permutohedron::
 
-        sage: [p for p in TransitiveIdeal(attrcall("permutohedron_succ"), [Permutation([3,1,2,4]), Permutation([2,1,3,4])])]
-        [[2, 1, 3, 4], [3, 1, 2, 4], [2, 1, 4, 3], [3, 1, 4, 2],
-         [2, 3, 1, 4], [3, 4, 1, 2], [3, 4, 2, 1], [2, 3, 4, 1],
-         [2, 4, 1, 3], [3, 2, 1, 4], [4, 3, 1, 2], [4, 3, 2, 1],
-         [3, 2, 4, 1], [4, 2, 1, 3], [2, 4, 3, 1], [4, 2, 3, 1]]
+        sage: sorted(p for p in TransitiveIdeal(attrcall("permutohedron_succ"),
+        ....:     [Permutation([3,1,2,4]), Permutation([2,1,3,4])]))
+        [[2, 1, 3, 4], [2, 1, 4, 3], [2, 3, 1, 4], [2, 3, 4, 1],
+         [2, 4, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4], [3, 1, 4, 2],
+         [3, 2, 1, 4], [3, 2, 4, 1], [3, 4, 1, 2], [3, 4, 2, 1],
+         [4, 2, 1, 3], [4, 2, 3, 1], [4, 3, 1, 2], [4, 3, 2, 1]]
 
     Using TransitiveIdeal people have been using the ``__contains__``
     method provided from the ``__iter__`` method. We need to make sure that
@@ -1023,11 +1024,12 @@ class TransitiveIdealGraded(RecursivelyEnumeratedSet_generic):
     We compute all the permutations which are larger than [3,1,2,4] or
     [2,1,3,4] in the permutohedron::
 
-        sage: [p for p in TransitiveIdealGraded(attrcall("permutohedron_succ"), [Permutation([3,1,2,4]), Permutation([2,1,3,4])])]
-        [[3, 1, 2, 4], [2, 1, 3, 4], [2, 3, 1, 4], [2, 1, 4, 3],
-         [3, 2, 1, 4], [3, 1, 4, 2], [3, 2, 4, 1], [2, 4, 1, 3],
-         [3, 4, 1, 2], [2, 3, 4, 1], [4, 3, 1, 2], [3, 4, 2, 1],
-         [4, 2, 1, 3], [2, 4, 3, 1], [4, 3, 2, 1], [4, 2, 3, 1]]
+        sage: sorted(p for p in TransitiveIdealGraded(attrcall("permutohedron_succ"),
+        ....:     [Permutation([3,1,2,4]), Permutation([2,1,3,4])]))
+        [[2, 1, 3, 4], [2, 1, 4, 3], [2, 3, 1, 4], [2, 3, 4, 1],
+         [2, 4, 1, 3], [2, 4, 3, 1], [3, 1, 2, 4], [3, 1, 4, 2],
+         [3, 2, 1, 4], [3, 2, 4, 1], [3, 4, 1, 2], [3, 4, 2, 1],
+         [4, 2, 1, 3], [4, 2, 3, 1], [4, 3, 1, 2], [4, 3, 2, 1]]
     """
     def __init__(self, succ, generators, max_depth=float("inf")):
         r"""

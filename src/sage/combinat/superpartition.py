@@ -16,7 +16,7 @@ Super partitions are the indexing set for symmetric functions in
 super space.
 
 Super partitions may be input in two different formats: one as a pair
-consisiting of fermionic (strict partition) and a bosonic (partition) part
+consisting of fermionic (strict partition) and a bosonic (partition) part
 and the other as a list of integer values where the negative entries come
 first and are listed in strict order followed by the positive values in
 weak order.
@@ -89,7 +89,7 @@ from sage.rings.integer import Integer
 from sage.structure.global_options import GlobalOptions
 from sage.rings.all import ZZ
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.all import uniq
+
 
 @richcmp_method
 @add_metaclass(InheritComparisonClasscallMetaclass)
@@ -576,7 +576,7 @@ class SuperPartition(ClonableArray):
         The *conjugate* of a super partition is defined by conjugating
         the circled diagram.
 
-        OUPUT:
+        OUTPUT:
 
         - a :class:`SuperPartition`
 
@@ -669,7 +669,7 @@ class SuperPartition(ClonableArray):
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUPUT:
+        OUTPUT:
 
         - a list of super partitions
 
@@ -701,7 +701,7 @@ class SuperPartition(ClonableArray):
                             # TODO: Check that this is not suppose to be
                             #   a tuple of size 1
                            + [(i) for i in circ_list if row_changed[i[0]] == 0]]
-            if len(uniq([k for (j,k) in new_sp[1]])) == len(new_sp[1]):
+            if len(set([k for (j,k) in new_sp[1]])) == len(new_sp[1]):
                 out += [SuperPartition.from_circled_diagram(*new_sp)]
         return out
 
@@ -717,7 +717,7 @@ class SuperPartition(ClonableArray):
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUPUT:
+        OUTPUT:
 
         - a list of super partitions
 

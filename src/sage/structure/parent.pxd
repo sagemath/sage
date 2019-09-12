@@ -23,8 +23,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef inline bint get_flag(self, int flag):
         return self.flags & flag
 
-    cpdef bint _is_coercion_cached(self, domain)
-    cpdef bint _is_conversion_cached(self, domain)
     cpdef register_coercion(self, mor)
     cpdef register_action(self, action)
     cpdef register_conversion(self, mor)
@@ -85,8 +83,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     # do the correct thing.
     # Initialized at ring creation.
     cdef list _action_list
-    # Hashtable of everything we've (possibly recursively) discovered so far.
-    cdef TripleDict _action_hash
 
     # List consisting of Morphisms (from anything to self)
     # and Parents for which the __call__ method of self
@@ -97,6 +93,11 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef MonoDict _convert_from_hash
     # An optional single Morphism that describes a canonical coercion out of self
     cdef _embedding
+
+    # Write-only hashtable of all actions discovered using this parent.
+    # This is only needed to keep a strong reference to actions, to
+    # prevent them being garbage collected prematurely.
+    cdef TripleDict _action_hash
 
 
 cdef class Set_generic(Parent):

@@ -455,7 +455,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: f(z=100)
             a + 2*x + 3*y + 100
         """
-        if any([type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args]): # avoid importing
+        if any(type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args): # avoid importing
             raise NotImplementedError("Numpy arrays are not supported as arguments for symbolic expressions")
 
         d = dict(zip([repr(_) for _ in self.arguments()], args))

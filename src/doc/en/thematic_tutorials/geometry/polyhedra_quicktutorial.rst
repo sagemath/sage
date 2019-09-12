@@ -366,8 +366,8 @@ Here we are told which of the vertices form each 2\-face:
 
 ::
 
-    sage: int34.faces(2)
-    (<1,3,4>, <0,1,3,5>, <0,1,2,4,6>, <2,3,4,5,7>, <2,6,7>, <0,5,6,7>)
+    sage: [f.ambient_V_indices() for f in int34.faces(2)]
+    [(1, 3, 4), (0, 1, 3, 5), (0, 1, 2, 4, 6), (2, 3, 4, 5, 7), (2, 6, 7), (0, 5, 6, 7)]
 
 .. end of output
 

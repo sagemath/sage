@@ -19,9 +19,10 @@ algorithms. We will cover only some of these.
    lie/lie_basics
    lie/weyl_character_ring
    lie/branching_rules
-   lie/weight_ring
    lie/weyl_groups
    lie/crystals
+   lie/affine
+   lie/integrable
    lie/affine_finite_crystals
    lie/affine_hw_crystals
    lie/elementary_crystals
@@ -31,5 +32,5 @@ algorithms. We will cover only some of these.
    lie/bibliography
 
 Preparation of this document was supported in part by NSF grants DMS-0652817,
-DMS-1001079, OCI-1147463, DMS--0652641, DMS--0652652, DMS--1001256 and
-and OCI–1147247.
+DMS-1001079, OCI-1147463, DMS--0652641, DMS--0652652, DMS--1001256, 
+OCI–1147247 and DMS-1601026.

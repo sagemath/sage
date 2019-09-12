@@ -13,7 +13,7 @@ Usage Introduction
 
 Dense graphs are initialized as follows::
 
-    sage: D = DenseGraph(nverts = 10, extra_vertices = 10)
+    sage: D = DenseGraph(nverts=10, extra_vertices=10)
 
 This example initializes a dense graph with room for twenty vertices, the first
 ten of which are in the graph. In general, the first ``nverts`` are "active."
@@ -35,48 +35,48 @@ But 10 is not, until we add it::
 
 You can begin working right away as follows::
 
-    sage: D.add_arc(0,1)
-    sage: D.add_arc(1,2)
-    sage: D.add_arc(1,0)
-    sage: D.has_arc(7,3)
+    sage: D.add_arc(0, 1)
+    sage: D.add_arc(1, 2)
+    sage: D.add_arc(1, 0)
+    sage: D.has_arc(7, 3)
     False
-    sage: D.has_arc(0,1)
+    sage: D.has_arc(0, 1)
     True
     sage: D.in_neighbors(1)
     [0]
     sage: D.out_neighbors(1)
     [0, 2]
-    sage: D.del_all_arcs(0,1)
-    sage: D.has_arc(0,1)
+    sage: D.del_all_arcs(0, 1)
+    sage: D.has_arc(0, 1)
     False
-    sage: D.has_arc(1,2)
+    sage: D.has_arc(1, 2)
     True
     sage: D.del_vertex(7)
-    sage: D.has_arc(7,3)
+    sage: D.has_arc(7, 3)
     False
 
 Dense graphs do not support multiple or labeled edges.
 
 ::
 
-    sage: T = DenseGraph(nverts = 3, extra_vertices = 2)
-    sage: T.add_arc(0,1)
-    sage: T.add_arc(1,2)
-    sage: T.add_arc(2,0)
-    sage: T.has_arc(0,1)
+    sage: T = DenseGraph(nverts=3, extra_vertices=2)
+    sage: T.add_arc(0, 1)
+    sage: T.add_arc(1, 2)
+    sage: T.add_arc(2, 0)
+    sage: T.has_arc(0, 1)
     True
 
 ::
 
-    sage: for _ in range(10): D.add_arc(5,4)
-    sage: D.has_arc(5,4)
+    sage: for _ in range(10): D.add_arc(5, 4)
+    sage: D.has_arc(5,4 )
     True
 
 Dense graphs are by their nature directed. As of this writing, you need to do
 operations in pairs to treat the undirected case (or use a backend or a Sage
 graph)::
 
-    sage: T.has_arc(1,0)
+    sage: T.has_arc(1, 0)
     False
 
 The curious developer is encouraged to check out the ``unsafe`` functions,
@@ -137,15 +137,15 @@ cdef class DenseGraph(CGraph):
 
     Dense graphs are initialized as follows::
 
-        sage: D = DenseGraph(nverts = 10, extra_vertices = 10)
+        sage: D = DenseGraph(nverts=10, extra_vertices=10)
 
     INPUT:
 
-     - ``nverts`` - non-negative integer, the number of vertices.
-     - ``extra_vertices`` - non-negative integer (default: 0), how many extra
-        vertices to allocate.
-     - ``verts`` - optional list of vertices to add
-     - ``arcs`` - optional list of arcs to add
+    - ``nverts`` -- non-negative integer; the number of vertices
+    - ``extra_vertices`` -- non-negative integer (default: 10); how many extra
+      vertices to allocate
+    - ``verts`` -- list (default: ``None``); optional list of vertices to add
+    - ``arcs`` -- list (default: ``None``); optional list of arcs to add
 
     The first ``nverts`` are created as vertices of the graph, and the next
     ``extra_vertices`` can be freely added without reallocation. See top level
@@ -153,21 +153,19 @@ cdef class DenseGraph(CGraph):
     for use in pickling.
 
     """
-    def __cinit__(self, int nverts, int extra_vertices = 10, verts = None, arcs = None):
+    def __cinit__(self, int nverts, int extra_vertices=10, verts=None, arcs=None):
         """
         Allocation and initialization happen in one place.
 
-        Memory usage is
-
-        O(  (nverts + extra_vertices)^2  ).
+        Memory usage is ``O((nverts + extra_vertices)^2)``.
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
-            sage: D = DenseGraph(nverts = 10, extra_vertices = 10)
+            sage: D = DenseGraph(nverts=10, extra_vertices=10)
         """
-        if nverts == 0 and extra_vertices == 0:
-            raise RuntimeError('Dense graphs must allocate space for vertices!')
+        if not nverts and not extra_vertices:
+            raise RuntimeError('dense graphs must allocate space for vertices')
 
         self.num_verts = nverts
         self.num_arcs  = 0
@@ -193,8 +191,8 @@ cdef class DenseGraph(CGraph):
             self.add_vertices(verts)
 
         if arcs is not None:
-            for u,v in arcs:
-                self.add_arc(u,v)
+            for u, v in arcs:
+                self.add_arc(u, v)
 
     def __dealloc__(self):
         """
@@ -211,7 +209,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-         - ``total`` - integer, the total size to make the array
+        - ``total`` -- integer; the total size to make the array
 
         Returns -1 and fails if reallocation would destroy any active vertices.
 
@@ -232,7 +230,7 @@ cdef class DenseGraph(CGraph):
             sage: D.add_vertex(40)
             Traceback (most recent call last):
             ...
-            RuntimeError: Requested vertex is past twice the allocated range: use realloc.
+            RuntimeError: requested vertex is past twice the allocated range: use realloc
             sage: D.realloc(50)
             sage: D.add_vertex(40)
             40
@@ -249,8 +247,8 @@ cdef class DenseGraph(CGraph):
 
         """
         cdef int i, j
-        if total_verts == 0:
-            raise RuntimeError('Dense graphs must allocate space for vertices!')
+        if not total_verts:
+            raise RuntimeError('dense graphs must allocate space for vertices')
 
         cdef bitset_t bits
         cdef int min_verts, min_longs, old_longs = self.num_longs
@@ -275,8 +273,8 @@ cdef class DenseGraph(CGraph):
 
         # Resize of self.edges
         cdef unsigned long *new_edges = <unsigned long *> sig_calloc(total_verts * self.num_longs, sizeof(unsigned long))
-        for i from 0 <= i < min_verts:
-            memcpy(new_edges+i*self.num_longs, self.edges+i*old_longs, min_longs*sizeof(unsigned long))
+        for i in range(min_verts):
+            memcpy(new_edges + i * self.num_longs, self.edges + i * old_longs, min_longs * sizeof(unsigned long))
 
         sig_free(self.edges)
         self.edges = new_edges
@@ -296,10 +294,11 @@ cdef class DenseGraph(CGraph):
 
     cdef int add_arc_unsafe(self, int u, int v) except -1:
         """
-        Adds arc (u, v) to the graph.
+        Add arc ``(u, v)`` to the graph.
 
         INPUT:
-            u, v -- non-negative integers
+
+        - ``u``, ``v`` -- non-negative integers
 
         """
         cdef int place = (u * self.num_longs) + (v / radix)
@@ -312,37 +311,38 @@ cdef class DenseGraph(CGraph):
 
     cpdef add_arc(self, int u, int v):
         """
-        Adds arc ``(u, v)`` to the graph.
+        Add arc ``(u, v)`` to the graph.
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(4,7)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(4, 7)
             Traceback (most recent call last):
             ...
-            LookupError: Vertex (7) is not a vertex of the graph.
-            sage: G.has_arc(1,0)
+            LookupError: vertex (7) is not a vertex of the graph
+            sage: G.has_arc(1, 0)
             False
-            sage: G.has_arc(0,1)
+            sage: G.has_arc(0, 1)
             True
 
         """
         self.check_vertex(u)
         self.check_vertex(v)
-        self.add_arc_unsafe(u,v)
+        self.add_arc_unsafe(u, v)
 
     cdef int has_arc_unsafe(self, int u, int v) except -1:
         """
-        Checks whether arc (u, v) is in the graph.
+        Check whether arc ``(u, v)`` is in the graph.
 
         INPUT:
-            u, v -- non-negative integers, must be in self
+
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         OUTPUT:
             0 -- False
@@ -355,19 +355,20 @@ cdef class DenseGraph(CGraph):
 
     cpdef bint has_arc(self, int u, int v) except -1:
         """
-        Checks whether arc ``(u, v)`` is in the graph.
+        Check whether arc ``(u, v)`` is in the graph.
 
         INPUT:
-            u, v -- integers
+
+        - ``u``, ``v`` -- integers
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.has_arc(1,0)
+            sage: G.add_arc(0, 1)
+            sage: G.has_arc(1, 0)
             False
-            sage: G.has_arc(0,1)
+            sage: G.has_arc(0, 1)
             True
 
         """
@@ -375,14 +376,15 @@ cdef class DenseGraph(CGraph):
             return False
         if v < 0 or v >= self.active_vertices.size or not bitset_in(self.active_vertices, v):
             return False
-        return self.has_arc_unsafe(u,v) == 1
+        return self.has_arc_unsafe(u, v) == 1
 
     cdef int del_arc_unsafe(self, int u, int v) except -1:
         """
-        Deletes the arc from u to v, if it exists.
+        Delete the arc from ``u`` to ``v``, if it exists.
 
         INPUT:
-            u, v -- non-negative integers, must be in self
+
+        - ``u``, ``v`` -- non-negative integers, must be in self
 
         """
         cdef int place = (u * self.num_longs) + (v / radix)
@@ -395,34 +397,37 @@ cdef class DenseGraph(CGraph):
 
     cpdef del_all_arcs(self, int u, int v):
         """
-        Deletes the arc from ``u`` to ``v``.
+        Delete the arc from ``u`` to ``v``.
 
         INPUT:
-         - ``u, v`` - integers
 
-        NOTE:
-        The naming of this function is for consistency with ``SparseGraph``. Of
-        course, there can be at most one arc for a ``DenseGraph``.
+        - ``u, v`` -- integers
+
+        .. NOTE::
+
+            The naming of this function is for consistency with
+            ``SparseGraph``. Of course, there can be at most one arc for a
+            ``DenseGraph``.
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.has_arc(0,1)
+            sage: G.add_arc(0, 1)
+            sage: G.has_arc(0, 1)
             True
-            sage: G.del_all_arcs(0,1)
-            sage: G.has_arc(0,1)
+            sage: G.del_all_arcs(0, 1)
+            sage: G.has_arc(0, 1)
             False
 
         """
         self.check_vertex(u)
         self.check_vertex(v)
-        self.del_arc_unsafe(u,v)
+        self.del_arc_unsafe(u, v)
 
     def complement(self):
         r"""
-        Replaces the graph with its complement
+        Replace the graph with its complement
 
         .. NOTE::
 
@@ -432,11 +437,11 @@ cdef class DenseGraph(CGraph):
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.has_arc(0,1)
+            sage: G.add_arc(0, 1)
+            sage: G.has_arc(0, 1)
             True
             sage: G.complement()
-            sage: G.has_arc(0,1)
+            sage: G.has_arc(0, 1)
             False
         """
         cdef int num_arcs_old = self.num_arcs
@@ -446,16 +451,16 @@ cdef class DenseGraph(CGraph):
         cdef unsigned long * active_vertices_bitset
         active_vertices_bitset = <unsigned long *> self.active_vertices.bits
 
-        cdef int i,j
+        cdef int i, j
         for i in range(self.active_vertices.size):
-            if bitset_in(self.active_vertices,i):
-                self.add_arc_unsafe(i,i)
+            if bitset_in(self.active_vertices, i):
+                self.add_arc_unsafe(i, i)
                 for j in range(self.num_longs): # the actual job
-                    self.edges[i*self.num_longs+j] ^= active_vertices_bitset[j]
+                    self.edges[i * self.num_longs + j] ^= active_vertices_bitset[j]
                 self.in_degrees[i]  = self.num_verts-self.in_degrees[i]
                 self.out_degrees[i] = self.num_verts-self.out_degrees[i]
 
-        self.num_arcs = self.num_verts*(self.num_verts-1) - num_arcs_old
+        self.num_arcs = self.num_verts*(self.num_verts - 1) - num_arcs_old
 
     ###################################
     # Neighbor functions
@@ -463,23 +468,35 @@ cdef class DenseGraph(CGraph):
 
     cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
         """
-        Gives all v such that (u, v) is an arc of the graph.
+        Feed array ``neighbors`` with the out-neighbors of ``u``.
+
+        This function will put at most ``size`` out-neighbors of ``u`` in array
+        ``neighbors``. If ``u`` has more than ``size`` out-neighbors, ``size``
+        of them are put in array ``neighbors`` and the function returns value
+        ``-1``.  Otherwise the function returns the number of out-neighbors that
+        have been put in array ``neighbors``.
 
         INPUT:
-            u -- non-negative integer, must be in self
-            neighbors -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+
+        - ``u`` -- non-negative integer; must be in self
+
+        - ``neighbors`` -- pointer to an (allocated) integer array
+
+        - ``size`` -- the length of the array
 
         OUTPUT:
-            nonnegative integer -- the number of v such that (u, v) is an arc
-            -1 -- indicates that the array has been filled with neighbors, but
-        there were more
+
+        - nonnegative integer -- the out-degree of ``u``
+
+        - ``-1`` -- indicates that the array has been filled with neighbors, but
+          there were more
 
         """
-        cdef int place = (u * self.num_longs), num_nbrs = 0
+        cdef int place = (u * self.num_longs)
+        cdef int num_nbrs = 0
         cdef int i, v = 0
         cdef unsigned long word, data
-        for i from 0 <= i < self.num_longs:
+        for i in range(self.num_longs):
             data = self.edges[place + i]
             word = 1
             while word:
@@ -494,18 +511,19 @@ cdef class DenseGraph(CGraph):
 
     cpdef list out_neighbors(self, int u):
         """
-        Gives all ``v`` such that ``(u, v)`` is an arc of the graph.
+        Return the list of out-neighbors of ``u``.
 
         INPUT:
-         - ``u`` - integer
+
+        - ``u`` -- integer
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
             sage: G.out_neighbors(0)
             [1]
             sage: G.out_neighbors(1)
@@ -514,37 +532,48 @@ cdef class DenseGraph(CGraph):
         """
         cdef int i, num_nbrs
         self.check_vertex(u)
-        if self.out_degrees[u] == 0:
+        if not self.out_degrees[u]:
             return []
         cdef int size = self.out_degrees[u]
         cdef int *neighbors = <int *> sig_malloc(size * sizeof(int))
         if not neighbors:
             raise MemoryError
         num_nbrs = self.out_neighbors_unsafe(u, neighbors, size)
-        output = [neighbors[i] for i from 0 <= i < num_nbrs]
+        output = [neighbors[i] for i in range(num_nbrs)]
         sig_free(neighbors)
         return output
 
     cdef int in_neighbors_unsafe(self, int v, int *neighbors, int size) except -2:
         """
-        Gives all u such that (u, v) is an arc of the graph.
+        Feed array ``neighbors`` with the in-neighbors of ``v``.
+
+        This function will put at most ``size`` in-neighbors of ``v`` in array
+        ``neighbors``. If ``v`` has more than ``size`` in-neighbors, ``size`` of
+        them are put in array ``neighbors`` and the function returns value
+        ``-1``.  Otherwise the function returns the number of in-neighbors that
+        have been put in array ``neighbors``.
 
         INPUT:
-            v -- non-negative integer, must be in self
-            neighbors -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+
+        - ``v`` -- non-negative integer; must be in self
+
+        - ``neighbors`` -- pointer to an (allocated) integer array
+
+        - ``size`` -- the length of the array
 
         OUTPUT:
-            nonnegative integer -- the number of u such that (u, v) is an arc
-            -1 -- indicates that the array has been filled with neighbors, but
-        there were more
+
+        - nonnegative integer -- the in-degree of ``v``
+
+        - ``-1`` -- indicates that the array has been filled with neighbors, but
+          there were more
 
         """
         cdef int place = v / radix
         cdef unsigned long word = (<unsigned long>1) << (v & radix_mod_mask)
         cdef int i, num_nbrs = 0
-        for i from 0 <= i < self.active_vertices.size:
-            if self.edges[place + i*self.num_longs] & word:
+        for i in range(self.active_vertices.size):
+            if self.edges[place + i * self.num_longs] & word:
                 if num_nbrs == size:
                     return -1
                 neighbors[num_nbrs] = i
@@ -553,18 +582,19 @@ cdef class DenseGraph(CGraph):
 
     cpdef list in_neighbors(self, int v):
         """
-        Gives all ``u`` such that ``(u, v)`` is an arc of the graph.
+        Return the list of in-neighbors of ``u``.
 
         INPUT:
-         - ``v`` - integer
+
+        - ``v`` -- integer
 
         EXAMPLES::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(3,1)
-            sage: G.add_arc(1,3)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(3, 1)
+            sage: G.add_arc(1, 3)
             sage: G.in_neighbors(1)
             [0, 3]
             sage: G.in_neighbors(3)
@@ -573,14 +603,14 @@ cdef class DenseGraph(CGraph):
         """
         cdef int i, num_nbrs
         self.check_vertex(v)
-        if self.in_degrees[v] == 0:
+        if not self.in_degrees[v]:
             return []
         cdef int size = self.in_degrees[v]
         cdef int *neighbors = <int *> sig_malloc(size * sizeof(int))
         if not neighbors:
             raise MemoryError
         num_nbrs = self.in_neighbors_unsafe(v, neighbors, size)
-        output = [neighbors[i] for i from 0 <= i < num_nbrs]
+        output = [neighbors[i] for i in range(num_nbrs)]
         sig_free(neighbors)
         return output
 
@@ -606,8 +636,8 @@ def _test_adjacency_sequence_out():
     randg = DiGraph(GraphGenerators().RandomGNP(randint(low, high), random()))
     n = randg.order()
     cdef DenseGraph g = DenseGraph(n,
-                                   verts=randg.vertices(),
-                                   arcs=randg.edges(labels=False))
+                                   verts=randg.vertex_iterator(),
+                                   arcs=randg.edge_iterator(labels=False))
     assert g.num_verts == randg.order(), (
         "Graph order mismatch: %s vs. %s" % (g.num_verts, randg.order()))
     assert g.num_arcs == randg.size(), (
@@ -619,7 +649,7 @@ def _test_adjacency_sequence_out():
         V[i] = v
         i += 1
     cdef int *seq = <int *> sig_malloc(n * sizeof(int))
-    for 0 <= i < randint(50, 101):
+    for i in range(randint(50, 101)):
         u = randint(low, n - 1)
         g.adjacency_sequence_out(n, V, u, seq)
         A = [seq[k] for k in range(n)]
@@ -628,7 +658,7 @@ def _test_adjacency_sequence_out():
         except AssertionError:
             sig_free(V)
             sig_free(seq)
-            raise AssertionError("Graph adjacency mismatch")
+            raise AssertionError("graph adjacency mismatch")
     sig_free(seq)
     sig_free(V)
 
@@ -649,10 +679,10 @@ cdef class DenseGraphBackend(CGraphBackend):
     This class is only intended for use by the Sage Graph and DiGraph class.
     If you are interested in using a DenseGraph, you probably want to do
     something like the following example, which creates a Sage Graph instance
-    which wraps a DenseGraph object::
+    which wraps a ``DenseGraph`` object::
 
-        sage: G = Graph(30, implementation="c_graph", sparse=False)
-        sage: G.add_edges([(0,1), (0,3), (4,5), (9, 23)])
+        sage: G = Graph(30, sparse=False)
+        sage: G.add_edges([(0, 1), (0, 3), (4, 5), (9, 23)])
         sage: G.edges(labels=False)
         [(0, 1), (0, 3), (4, 5), (9, 23)]
 
@@ -660,15 +690,16 @@ cdef class DenseGraphBackend(CGraphBackend):
     themselves. This is because DenseGraphs (by design) do not deal with Python
     objects::
 
-        sage: G.add_vertex((0,1,2))
-        sage: G.vertices()
+        sage: G.add_vertex((0, 1, 2))
+        sage: sorted(list(G),
+        ....:        key=lambda x: (isinstance(x, tuple), x))
         [0,
         ...
          29,
          (0, 1, 2)]
         sage: from sage.graphs.base.dense_graph import DenseGraph
         sage: DG = DenseGraph(30)
-        sage: DG.add_vertex((0,1,2))
+        sage: DG.add_vertex((0, 1, 2))
         Traceback (most recent call last):
         ...
         TypeError: an integer is required
@@ -677,12 +708,12 @@ cdef class DenseGraphBackend(CGraphBackend):
 
     def __init__(self, n, directed=True):
         """
-        Initialize a dense graph with n vertices.
+        Initialize a dense graph with ``n`` vertices.
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edge(0,1,None,False)
+            sage: D.add_edge(0, 1, None, False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None)]
 
@@ -695,21 +726,24 @@ cdef class DenseGraphBackend(CGraphBackend):
 
     def add_edge(self, object u, object v, object l, bint directed):
         """
-        Adds the edge ``(u,v)`` to self.
+        Add edge ``(u, v)`` to self.
 
         INPUT:
 
-         - ``u,v`` - the vertices of the edge
-         - ``l`` - the edge label (ignored)
-         - ``directed`` - if False, also add ``(v,u)``
+        - ``u,v`` -- the vertices of the edge
 
-        NOTE:
-        The input ``l`` is for consistency with other backends.
+        - ``l`` -- the edge label (ignored)
+
+        - ``directed`` -- if ``False``, also add ``(v, u)``
+
+        .. NOTE::
+
+            The input ``l`` is for consistency with other backends.
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edge(0,1,None,False)
+            sage: D.add_edge(0, 1, None, False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None)]
 
@@ -723,7 +757,7 @@ cdef class DenseGraphBackend(CGraphBackend):
             ...
             ValueError: cannot add edge from 0 to 0 in graph without loops
             sage: G = Graph(3, sparse=True, loops=True)
-            sage: G.add_edge(0,0); G.edges()
+            sage: G.add_edge(0, 0); G.edges()
             [(0, 0, None)]
         """
         if u is None: u = self.add_vertex(None)
@@ -748,14 +782,15 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``edges`` - the edges to be added - can either be of the form
-           ``(u,v)`` or ``(u,v,l)``
-         - ``directed`` - if False, add ``(v,u)`` as well as ``(u,v)``
+        - ``edges`` -- an iterable of edges to be added; each edge can either be
+           of the form ``(u, v)`` or ``(u, v, l)``
+
+        - ``directed`` -- if ``False``, adds ``(v, u)`` as well as ``(u, v)``
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
+            sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None),
              (2, 3, None),
@@ -764,32 +799,35 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         """
         for e in edges:
-            u,v = e[:2]
-            self.add_edge(u,v,None,directed)
+            u, v = e[:2]
+            self.add_edge(u, v, None, directed)
 
     def del_edge(self, object u, object v, object l, bint directed):
         """
-        Delete edge ``(u,v)``.
+        Delete edge ``(u, v)``.
 
         INPUT:
 
-         - ``u,v`` - the vertices of the edge
-         - ``l`` - the edge label (ignored)
-         - ``directed`` - if False, also delete ``(v,u,l)``
+        - ``u,v`` -- the vertices of the edge
 
-        NOTE:
-        The input ``l`` is for consistency with other backends.
+        - ``l`` -- the edge label (ignored)
+
+        - ``directed`` -- if ``False``, also delete ``(v, u, l)``
+
+        .. NOTE::
+
+            The input ``l`` is for consistency with other backends.
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
+            sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None),
              (2, 3, None),
              (4, 5, None),
              (5, 6, None)]
-            sage: D.del_edge(0,1,None,True)
+            sage: D.del_edge(0, 1, None, True)
             sage: list(D.iterator_out_edges(range(9), True))
             [(1, 0, None),
              (2, 3, None),
@@ -800,7 +838,7 @@ cdef class DenseGraphBackend(CGraphBackend):
              (6, 5, None)]
 
         """
-        if not ( self.has_vertex(u) and self.has_vertex(v) ):
+        if not (self.has_vertex(u) and self.has_vertex(v)):
             return
         cdef int u_int = self.check_labelled_vertex(u, 0)
         cdef int v_int = self.check_labelled_vertex(v, 0)
@@ -814,23 +852,24 @@ cdef class DenseGraphBackend(CGraphBackend):
 
     def get_edge_label(self, object u, object v):
         """
-        Returns the edge label for ``(u,v)``. Always None, since dense graphs
-        do not support edge labels.
+        Return the edge label for ``(u, v)``.
+
+        Always ``None``, since dense graphs do not support edge labels.
 
         INPUT:
 
-         - ``u,v`` - the vertices of the edge
+        - ``u,v`` -- the vertices of the edge
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edges([(0,1), (2,3,7), (4,5), (5,6)], False)
+            sage: D.add_edges([(0, 1), (2, 3, 7), (4, 5), (5, 6)], False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None),
              (2, 3, None),
              (4, 5, None),
              (5, 6, None)]
-            sage: D.del_edge(0,1,None,True)
+            sage: D.del_edge(0, 1, None, True)
             sage: list(D.iterator_out_edges(range(9), True))
             [(1, 0, None),
              (2, 3, None),
@@ -839,38 +878,40 @@ cdef class DenseGraphBackend(CGraphBackend):
              (5, 4, None),
              (5, 6, None),
              (6, 5, None)]
-            sage: D.get_edge_label(2,3)
-            sage: D.get_edge_label(2,4)
+            sage: D.get_edge_label(2, 3)
+            sage: D.get_edge_label(2, 4)
             Traceback (most recent call last):
             ...
-            LookupError: (2, 4) is not an edge of the graph.
+            LookupError: (2, 4) is not an edge of the graph
 
         """
         if not self.has_edge(u, v, None):
-            raise LookupError("({0}, {1}) is not an edge of the graph.".format(repr(u), repr(v)))
+            raise LookupError("({0}, {1}) is not an edge of the graph".format(repr(u), repr(v)))
         return None
 
     def has_edge(self, object u, object v, object l):
         """
-        Returns whether this graph has edge ``(u,v)``.
+        Check whether this graph has edge ``(u, v)``.
 
-        NOTE:
-        The input ``l`` is for consistency with other backends.
+        .. NOTE::
+
+            The input ``l`` is for consistency with other backends.
 
         INPUT:
 
-         - ``u,v`` - the vertices of the edge
-         - ``l`` - the edge label (ignored)
+        - ``u,v`` -- the vertices of the edge
+
+        - ``l`` -- the edge label (ignored)
 
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
-            sage: D.has_edge(0,1,None)
+            sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
+            sage: D.has_edge(0, 1, None)
             True
 
         """
-        if not ( self.has_vertex(u) and self.has_vertex(v) ):
+        if not (self.has_vertex(u) and self.has_vertex(v)):
             return False
         cdef int u_int = self.get_vertex(u)
         cdef int v_int = self.get_vertex(v)
@@ -878,55 +919,69 @@ cdef class DenseGraphBackend(CGraphBackend):
 
     def iterator_edges(self, object vertices, bint labels):
         """
-        Iterate over the edges incident to a sequence of vertices. Edges are
-        assumed to be undirected.
+        Return an iterator over the edges incident to a sequence of vertices.
+
+        Edges are assumed to be undirected.
 
         INPUT:
-         - ``vertices`` - a list of vertex labels
-         - ``labels`` - boolean, whether to return labels as well
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean; whether to return edge labels as well
 
         EXAMPLES::
 
             sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: G.add_edge(1,2,None,False)
+            sage: G.add_edge(1, 2, None, False)
             sage: list(G.iterator_edges(range(9), False))
             [(1, 2)]
             sage: list(G.iterator_edges(range(9), True))
             [(1, 2, None)]
 
         """
-        cdef object v
+        cdef object v, u
         vertices = [self.get_vertex(v) for v in vertices if self.has_vertex(v)]
         cdef int u_int, v_int
         if labels:
-            return iter([tuple(sorted(
-            (self.vertex_label(v_int),
-             self.vertex_label(u_int)
-            )))+(None,)
-                for v_int in vertices
-                    for u_int in self._cg.out_neighbors(v_int)
-                        if u_int >= v_int or u_int not in vertices])
+            for v_int in vertices:
+                for u_int in self._cg.out_neighbors(v_int):
+                    if u_int >= v_int or u_int not in vertices:
+                        v = self.vertex_label(v_int)
+                        u = self.vertex_label(u_int)
+                        try:
+                            if u < v:
+                                v, u = u, v
+                        except TypeError:
+                            pass
+                        yield (v, u, None)
         else:
-            return iter([tuple(sorted(
-            (self.vertex_label(v_int),
-             self.vertex_label(u_int)
-            )))
-                for v_int in vertices
-                    for u_int in self._cg.out_neighbors(v_int)
-                        if u_int >= v_int or u_int not in vertices])
+            for v_int in vertices:
+                for u_int in self._cg.out_neighbors(v_int):
+                    if u_int >= v_int or u_int not in vertices:
+                        v = self.vertex_label(v_int)
+                        u = self.vertex_label(u_int)
+                        try:
+                            if u < v:
+                                v, u = u, v
+                        except TypeError:
+                            pass
+                        yield (v, u)
 
     def iterator_in_edges(self, object vertices, bint labels):
         """
-        Iterate over the incoming edges incident to a sequence of vertices.
+        Return an iterator over the incoming edges incident to a sequence of
+        vertices.
 
         INPUT:
-         - ``vertices`` - a list of vertex labels
-         - ``labels`` - boolean, whether to return labels as well
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean; whether to return labels as well
 
         EXAMPLES::
 
             sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: G.add_edge(1,2,None,True)
+            sage: G.add_edge(1, 2, None, True)
             sage: list(G.iterator_in_edges([1], False))
             []
             sage: list(G.iterator_in_edges([2], False))
@@ -939,31 +994,31 @@ cdef class DenseGraphBackend(CGraphBackend):
         vertices = [self.get_vertex(v) for v in vertices if self.has_vertex(v)]
         cdef int u_int, v_int
         if labels:
-            return iter([
-            (self.vertex_label(u_int),
-             self.vertex_label(v_int),
-             None)
-                for v_int in vertices
-                    for u_int in self._cg.in_neighbors(v_int)])
+            for v_int in vertices:
+                v = self.vertex_label(v_int)
+                for u_int in self._cg.in_neighbors(v_int):
+                    yield (self.vertex_label(u_int), v, None)
         else:
-            return iter([
-            (self.vertex_label(u_int),
-             self.vertex_label(v_int))
-                for v_int in vertices
-                    for u_int in self._cg.in_neighbors(v_int)])
+            for v_int in vertices:
+                v = self.vertex_label(v_int)
+                for u_int in self._cg.in_neighbors(v_int):
+                    yield (self.vertex_label(u_int), v)
 
     def iterator_out_edges(self, object vertices, bint labels):
         """
-        Iterate over the outbound edges incident to a sequence of vertices.
+        Return an iterator over the outbound edges incident to a sequence of
+        vertices.
 
         INPUT:
-         - ``vertices`` - a list of vertex labels
-         - ``labels`` - boolean, whether to return labels as well
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean; whether to return labels as well
 
         EXAMPLES::
 
             sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: G.add_edge(1,2,None,True)
+            sage: G.add_edge(1, 2, None, True)
             sage: list(G.iterator_out_edges([2], False))
             []
             sage: list(G.iterator_out_edges([1], False))
@@ -972,22 +1027,19 @@ cdef class DenseGraphBackend(CGraphBackend):
             [(1, 2, None)]
 
         """
-        cdef object u, v
+        cdef object v
         vertices = [self.get_vertex(v) for v in vertices if self.has_vertex(v)]
         cdef int u_int, v_int
         if labels:
-            return iter([
-            (self.vertex_label(v_int),
-             self.vertex_label(u_int),
-             None)
-                for v_int in vertices
-                    for u_int in self._cg.out_neighbors(v_int)])
+            for v_int in vertices:
+                v = self.vertex_label(v_int)
+                for u_int in self._cg.out_neighbors(v_int):
+                    yield (v, self.vertex_label(u_int), None)
         else:
-            return iter([
-            (self.vertex_label(v_int),
-             self.vertex_label(u_int))
-                for v_int in vertices
-                    for u_int in self._cg.out_neighbors(v_int)])
+            for v_int in vertices:
+                v = self.vertex_label(v_int)
+                for u_int in self._cg.out_neighbors(v_int):
+                    yield (v, self.vertex_label(u_int))
 
     def multiple_edges(self, new):
         """
@@ -995,7 +1047,7 @@ cdef class DenseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``new`` - boolean (to set) or ``None`` (to get)
+        - ``new`` -- boolean (to set) or ``None`` (to get)
 
         EXAMPLES::
 
@@ -1004,7 +1056,7 @@ cdef class DenseGraphBackend(CGraphBackend):
             sage: G.multiple_edges(True)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Dense graphs do not support multiple edges.
+            NotImplementedError: dense graphs do not support multiple edges
             sage: G.multiple_edges(None)
             False
 
@@ -1012,25 +1064,27 @@ cdef class DenseGraphBackend(CGraphBackend):
         if new is None:
             return False
         if new:
-            raise NotImplementedError("Dense graphs do not support multiple edges.")
+            raise NotImplementedError("dense graphs do not support multiple edges")
 
     def set_edge_label(self, object u, object v, object l, bint directed):
         """
-        Label the edge ``(u,v)`` by ``l``.
+        Label the edge ``(u, v)`` by ``l``.
 
         INPUT:
 
-         - ``u,v`` - the vertices of the edge
-         - ``l`` - the edge label
-         - ``directed`` - if False, also set ``(v,u)`` with label ``l``
+        - ``u,v`` -- the vertices of the edge
+
+        - ``l`` -- the edge label
+
+        - ``directed`` -- if ``False``, also set ``(v, u)`` with label ``l``
 
         EXAMPLES::
 
             sage: import sage.graphs.base.dense_graph
             sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: G.set_edge_label(1,2,'a',True)
+            sage: G.set_edge_label(1, 2, 'a', True)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Dense graphs do not support edge labels.
+            NotImplementedError: dense graphs do not support edge labels
         """
-        raise NotImplementedError("Dense graphs do not support edge labels.")
+        raise NotImplementedError("dense graphs do not support edge labels")

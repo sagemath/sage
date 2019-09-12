@@ -296,7 +296,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     AUTHORS:
 
-    - Frederic Chapoton, David Joyner and William Stein
+    - Frédéric Chapoton, David Joyner and William Stein
     """
     # sanity checks
     n = ZZ(n)

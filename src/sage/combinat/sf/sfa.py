@@ -153,7 +153,7 @@ Here are further examples::
     1
     sage: z.length()
     2
-    sage: z.support()
+    sage: sorted(z.support())
     [[1, 1, 1], [2, 1]]
     sage: z.degree()
     3
@@ -222,7 +222,7 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
-from sage.misc.all import prod, uniq
+from sage.misc.all import prod
 from copy import copy
 from functools import reduce
 
@@ -352,7 +352,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             [Category of realizations of Symmetric Functions over Rational Field,
              Category of commutative hopf algebras with basis over Rational Field,
              Join of Category of realizations of hopf algebras over Rational Field
-                 and Category of graded algebras over Rational Field]
+                 and Category of graded algebras over Rational Field
+                 and Category of graded coalgebras over Rational Field]
         """
         # FIXME: The last one should also be commutative, but this triggers a
         #   KeyError when doing the C3 algorithm!!!
@@ -1566,7 +1567,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
     _print_style = 'lex'
 
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
-    def __getitem__(self, c, *rest):
+    def __getitem__(self, c):
         r"""
         This method implements the abuses of notations ``p[2,1]``,
         ``p[[2,1]]``, ``p[Partition([2,1])]``.
@@ -1589,16 +1590,21 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             s[2, 1]
             sage: s[Partition([2,1])]
             s[2, 1]
+
+        TESTS:
+
+        Check that a single number which is in ``ZZ`` can be used::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s[QQbar(2)]
+            s[2]
         """
         C = self.basis().keys()
-        if isinstance(c, C.element_class):
-            if rest:
-                raise ValueError("invalid number of arguments")
-        else:
-            if rest or isinstance(c, (int, Integer)):
-                c = C([c] + list(rest))
+        if not isinstance(c, C.element_class):
+            if c in ZZ:
+                c = C([c])
             else:
-                c = C(list(c))
+                c = C(c)
         return self.monomial(c)
 
     def _change_by_proportionality(self, x, function):
@@ -2365,7 +2371,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         p = self.realization_of().p()
         res = 0
-        degrees = uniq([ sum(m) for m in g.support() ])
+        degrees = sorted(set(sum(m) for m in g.support()))
         for d in degrees:
             for mu in Partitions_n(d):
                 mu_k = mu.power(k)
@@ -2432,7 +2438,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         if not nu._list:
             s = self.realization_of().s()
             degrees = [ part.size() for part in p_x.support() ]
-            degrees = uniq(degrees)
+            degrees = sorted(set(degrees))
             if 0 in degrees:
                 ext = self([])
             else:
@@ -3414,7 +3420,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
 
         Let us check (on examples) Proposition 5.2 of Gelfand, Krob, Lascoux, Leclerc,
-        Retakh, Thibon, "Noncommutative symmetric functions", :arXiv:`hep-th/9407124`, for
+        Retakh, Thibon, "Noncommutative symmetric functions", :arxiv:`hep-th/9407124`, for
         `r = 2`::
 
             sage: e = SymmetricFunctions(FiniteField(29)).e()
@@ -3435,7 +3441,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
 
         Some examples from Briand, Orellana, Rosas, "The stability of the Kronecker
-        products of Schur functions." :arXiv:`0907.4652`::
+        products of Schur functions." :arxiv:`0907.4652`::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: s[2,2].itensor(s[2,2])
@@ -3497,7 +3503,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(1).itensor(s(1))
             s[]
 
-        Theorem 2.1 in Bessenrodt, van Willigenburg, :arXiv:`1105.3170v2`::
+        Theorem 2.1 in Bessenrodt, van Willigenburg, :arxiv:`1105.3170v2`::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: all( all( max( r[0] for r in s(p).itensor(s(q)).monomial_coefficients().keys() )
@@ -3605,7 +3611,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         partition
         `(n - \left| \lambda \right|, \lambda_1, \lambda_2, \lambda_3, \ldots)`;
         see :meth:`~sage.combinat.partition.Partition.t_completion`).
-        Then, Theorem 1.2 of [BOR09]_ shows that for any partitions
+        Then, Theorem 1.2 of [BOR2009]_ shows that for any partitions
         `\alpha` and `\beta` and every integer
         `n \geq \left|\alpha\right| + \left|\beta\right| + \alpha_1 + \beta_1`,
         we can write the Kronecker product `s_{\alpha[n]} * s_{\beta[n]}`
@@ -3631,7 +3637,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         reduced Kronecker product of any two symmetric functions.
 
         The definition of the reduced Kronecker product goes back to
-        Murnaghan, and has recently been studied in [BOR09]_, [BdVO12]_
+        Murnaghan, and has recently been studied in [BOR2009]_, [BdVO2012]_
         and other places (our notation
         `\overline{g}^{\gamma}_{\alpha, \beta}` appears in these two
         sources).
@@ -3649,15 +3655,15 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         EXAMPLES:
 
-        The example from page 2 of [BOR09]_::
+        The example from page 2 of [BOR2009]_::
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: s = Sym.schur()
             sage: s[2].reduced_kronecker_product(s[2])
             s[] + s[1] + s[1, 1] + s[1, 1, 1] + 2*s[2] + 2*s[2, 1] + s[2, 2] + s[3] + s[3, 1] + s[4]
 
-        Taking the reduced Kronecker product with `1 = s_{\empty}` is the
-        identity map on the ring of symmetric functions::
+        Taking the reduced Kronecker product with `1 = s_{\emptyset}`
+        is the identity map on the ring of symmetric functions::
 
             sage: all( s[Partition([])].reduced_kronecker_product(s[lam])
             ....:      == s[lam] for i in range(4)
@@ -3682,12 +3688,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         - First remove a removable cell from `\lambda`, then add an
           addable cell to the resulting Young diagram.
 
-        This is, in fact, Proposition 5.15 of [CO10]_ in an elementary
+        This is, in fact, Proposition 5.15 of [CO2010]_ in an elementary
         wording. We check this for partitions of size `\leq 4`::
 
             sage: def mults1(lam):
             ....:     # Reduced Kronecker multiplication by s[1], according
-            ....:     # to [CO10]_.
+            ....:     # to [CO2010]_.
             ....:     res = s.zero()
             ....:     for mu in lam.up_list():
             ....:         res += s(mu)
@@ -3870,8 +3876,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: h[2].left_padded_kronecker_product(h[3])
             h[2, 1] + h[2, 1, 1] + h[3, 2]
 
-        Taking the left-padded Kronecker product with `1 = h_{\empty}` is
-        the identity map on the ring of symmetric functions::
+        Taking the left-padded Kronecker product with `1 = h_{\emptyset}`
+        is the identity map on the ring of symmetric functions::
 
             sage: all( h[Partition([])].left_padded_kronecker_product(h[lam])
             ....:      == h[lam] for i in range(4)
@@ -4468,9 +4474,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             [  0   0   0   0 384]
             sage: JQ = SymmetricFunctions(QQ['t'].fraction_field()).jack().Q()
             sage: matrix([[JQ(mu).scalar_jack(JQ(nu)) for nu in Partitions(3)] for mu in Partitions(3)])
-            [(2*t^2 + 3*t + 1)/(6*t^3)                         0                         0]
-            [                        0     (t + 2)/(2*t^3 + t^2)                         0]
-            [                        0                         0     6/(t^3 + 3*t^2 + 2*t)]
+            [(1/3*t^2 + 1/2*t + 1/6)/t^3                           0                           0]
+            [                          0 (1/2*t + 1)/(t^3 + 1/2*t^2)                           0]
+            [                          0                           0       6/(t^3 + 3*t^2 + 2*t)]
         """
         parent = self.parent()
         if t is None:
@@ -4676,10 +4682,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                for (lam, coeff) in m(self)}
         result_in_m_basis = m._from_dict(dct)
         return parent(result_in_m_basis)
-
-    def adams_operation(self, *args, **opts):
-        from sage.misc.superseded import deprecation
-        deprecation(19255, "Do not use this method! Please use `frobenius` or `adams_operator` methods following what you expect.")
 
     def verschiebung(self, n):
         r"""
@@ -5269,9 +5271,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``nu`` -- a partition
+        - ``nu`` -- a partition or a list of integers
 
-        - ``t`` -- (default: ``None``, in which case ``t`` is used) a parameter
+        - ``t`` -- (default: ``None``, in which case ``t`` is used) an element
+          of the base ring
 
         REFERENCES:
 
@@ -5297,11 +5300,26 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(0).hl_creation_operator([2,1,1])
             0
             sage: s([3,2]).hl_creation_operator([2,1,1])
-            (t^2-t)*s[2, 2, 2, 2, 1] + t^3*s[3, 2, 2, 1, 1] + (t^3-t^2)*s[3, 2, 2, 2] + t^3*s[3, 3, 1, 1, 1] + t^4*s[3, 3, 2, 1] + t^3*s[4, 2, 1, 1, 1] + t^4*s[4, 2, 2, 1] + 2*t^4*s[4, 3, 1, 1] + t^5*s[4, 3, 2] + t^5*s[4, 4, 1] + t^4*s[5, 2, 1, 1] + t^5*s[5, 3, 1]
+            (t^2-t)*s[2, 2, 2, 2, 1] + t^3*s[3, 2, 2, 1, 1]
+             + (t^3-t^2)*s[3, 2, 2, 2] + t^3*s[3, 3, 1, 1, 1]
+             + t^4*s[3, 3, 2, 1] + t^3*s[4, 2, 1, 1, 1] + t^4*s[4, 2, 2, 1]
+             + 2*t^4*s[4, 3, 1, 1] + t^5*s[4, 3, 2] + t^5*s[4, 4, 1]
+             + t^4*s[5, 2, 1, 1] + t^5*s[5, 3, 1]
+            sage: s([3,2]).hl_creation_operator([-2])
+            (-t^2+t)*s[1, 1, 1] + (-t^2+1)*s[2, 1]
+            sage: s([3,2]).hl_creation_operator(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: nu must be a list of integers
+            sage: s = SymmetricFunctions(FractionField(ZZ['t'])).schur()
+            sage: s[2].hl_creation_operator([3])
+            s[3, 2] + t*s[4, 1] + t^2*s[5]
 
         TESTS::
 
             sage: s(0).hl_creation_operator([1])
+            0
+            sage: s.one().hl_creation_operator([2,-1])
             0
         """
         s = self.parent().realization_of().schur()
@@ -5309,15 +5327,22 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             if hasattr(self.parent(),"t"):
                 t = self.parent().t
             else:
-                t = QQ['t'].gen()
+                t = self.parent().base_ring()('t')
         P = self.parent()
-        self = s(self)
-        return P(self*s(nu) +
-                 s.sum( s.sum_of_terms( (lam,c) for lam, c in s(mu)*s(nu) if len(lam) <= len(nu) ) *
-                        self.skew_by(s(mu).plethysm((t-1)*s([1])))
-                        for d in range(self.degree())
-                        for mu in Partitions(d+1, max_length=len(nu)) )
-                )
+        if nu in _Partitions:
+            self = s(self)
+            return P(self*s(nu) +
+                     s.sum( s.sum_of_terms( (lam,c) for lam, c in s(mu)*s(nu) if len(lam) <= len(nu) ) *
+                            self.skew_by(s(mu).plethysm((t-1)*s([1])))
+                            for d in range(self.degree())
+                            for mu in Partitions(d+1, max_length=len(nu)) ))
+        elif isinstance(nu, list) and all(isinstance(a, (int,Integer)) for a in nu):
+            return P(s.sum(t**la.size() * c * d * s(la) *
+                     s._repeated_bernstein_creation_operator_on_basis(ga, nu)
+                     for ((la,mu),c) in s(self).coproduct()
+                     for (ga, d) in s(mu).plethysm((1-t)*s[1]) ))
+        else:
+            raise ValueError("nu must be a list of integers")
 
     def eval_at_permutation_roots(self, rho):
         r"""

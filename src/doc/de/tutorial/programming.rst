@@ -455,8 +455,8 @@ beliebigen Objekten.
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
     <... 'dict'>
-    sage: d.keys()
-     [1, 'sage', Integer Ring]
+    sage: list(d.keys())
+    [1, 'sage', Integer Ring]
     sage: d['sage']
     17
     sage: d[ZZ]
@@ -482,7 +482,7 @@ Dictionary zu iterieren:
 
 ::
 
-    sage: d = {2:4, 4:16, 3:9}
+    sage: d = {2:4, 3:9, 4:16}
     sage: [a*b for a, b in d.items()]
     [8, 27, 64]
 
@@ -544,7 +544,8 @@ nichtnegativen ganzen Zahlen bis :math:`10000000`.
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))
+    sage: v = (n^2 for n in xrange(10000000))  # py2
+    sage: v = (n^2 for n in range(10000000))   # py3
     sage: next(v)
     0
     sage: next(v)

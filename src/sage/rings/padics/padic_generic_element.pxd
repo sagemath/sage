@@ -38,4 +38,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
     cdef bint _set_prec_both(self, long absprec, long relprec) except -1
 
     cpdef abs(self, prec=*)
+    cpdef _mod_(self, right)
+    cpdef _floordiv_(self, right)
     cpdef bint _is_base_elt(self, p) except -1

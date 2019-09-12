@@ -2,20 +2,6 @@ cd src
 
 if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
-elif [ "$UNAME" = "CYGWIN" ]; then
-    # TODO: we should install a suitable blas.pc on Cygwin
-    echo "Using system-wide Cygwin LAPACK BLAS."
-    if [ ! -f "/usr/lib/libblas.a" ]; then
-        echo >&2 "*************************************************"
-        echo >&2 "*"
-        echo >&2 "* Error: On Cygwin you must install the standard LAPACK Cygwin package"
-        echo >&2 "* via the Cygwin setup.exe program in the 'Math' category."
-        echo >&2 "*"
-        echo >&2 "*************************************************"
-        exit 1
-    fi
-    LINBOX_BLAS="-lblas"
-    LINBOX_BLAS_CFLAGS=""
 else
     LINBOX_BLAS="$(pkg-config --libs cblas)"
     BLAS_CFLAGS="$(pkg-config --cflags cblas)"
@@ -45,7 +31,7 @@ fi
 # http://trac.sagemath.org/ticket/17635#comment:67
 sdh_configure --with-default="$SAGE_LOCAL" --with-blas-libs="$LINBOX_BLAS" \
               "$LINBOX_BLAS_CFLAGS" --disable-static \
-              --enable-precompilation --disable-openmp $FFLAS_FFPACK_CONFIGURE
+              --enable-precompilation $FFLAS_FFPACK_CONFIGURE
 sdh_make
 
 $MAKE autotune

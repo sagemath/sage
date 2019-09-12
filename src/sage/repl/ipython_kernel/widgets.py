@@ -26,7 +26,7 @@ from __future__ import unicode_literals
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider,
                                 FloatSlider, FloatRangeSlider, Text,
-                                Textarea, ColorPicker, HTML, Label,
+                                Textarea, ColorPicker, HTMLMath, Label,
                                 HBox, VBox, ValueWidget)
 from traitlets import List, Unicode, link
 
@@ -35,9 +35,9 @@ from sage.repl.user_globals import get_globals
 from sage.plot.colors import Color
 
 
-class HTMLText(HTML):
+class HTMLText(HTMLMath):
     """
-    A HTML widget whose ``description`` is always empty.
+    An HTML widget whose ``description`` is always empty.
 
     This is used to display arbitrary HTML text in interacts without
     a label. The :func:`text_control` function from SageNB is an alias

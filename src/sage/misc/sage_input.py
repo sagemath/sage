@@ -184,7 +184,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     INPUT:
 
     - ``x`` - the value we want to find an input form for
-    
+
     - ``preparse`` - (default ``True``) Whether to generate code that requires
       the preparser.  With ``True``, generated code requires the preparser.
       With ``False``, generated code requires that the preparser not be used.
@@ -395,13 +395,13 @@ class SageInputBuilder:
             sage: sage_input(-11r, preparse=None, verify=True)
             # Verified
             -int(11)
-            sage: sage_input(long(-5), verify=True)
+            sage: sage_input(long(-5), verify=True)  # py2
             # Verified
             -long(5)
             sage: sage_input(long(-7), preparse=False, verify=True)
             # Verified
             -7L
-            sage: sage_input(long(11), preparse=None, verify=True)
+            sage: sage_input(long(11), preparse=None, verify=True)  # py2
             # Verified
             long(11)
             sage: sage_input(long(2^70), verify=True)
@@ -410,7 +410,7 @@ class SageInputBuilder:
             sage: sage_input(-long(2^80), preparse=False, verify=True)
             # Verified
             -1208925819614629174706176
-            sage: sage_input(long(2^75), preparse=None, verify=True)
+            sage: sage_input(long(2^75), preparse=None, verify=True)  # py2
             # Verified
             long(37778931862957161709568)
             sage: sage_input(float(-infinity), preparse=True, verify=True)
@@ -589,7 +589,7 @@ class SageInputBuilder:
         INPUT:
 
         - ``n`` - a Sage Integer, a Python int or a Python long
-        
+
         EXAMPLES::
 
             sage: from sage.misc.sage_input import SageInputBuilder
@@ -752,7 +752,7 @@ class SageInputBuilder:
     def import_name(self, module, name, alt_name=None):
         r"""
         INPUT:
-        
+
         - ``module``, ``name``, ``alt_name`` -- strings
 
         Creates an expression that will import a name from a module and
@@ -2280,8 +2280,8 @@ class SIE_dict(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.dict({'us':'good', 'them':'bad'})
-            {dict: {{atomic:'them'}:{atomic:'bad'}, {atomic:'us'}:{atomic:'good'}}}
+            sage: sib.dict({'me':'good', 'you':'bad'})
+            {dict: {{atomic:'me'}:{atomic:'good'}, {atomic:'you'}:{atomic:'bad'}}}
             sage: sib.dict([(10, 'PS2'), (12, 'PS2'), (13, 'PS3')])
             {dict: {{atomic:10}:{atomic:'PS2'}, {atomic:12}:{atomic:'PS2'}, {atomic:13}:{atomic:'PS3'}}}
         """
@@ -3187,7 +3187,7 @@ class SIE_assign(SageInputExpression):
         INPUT:
 
         - ``sib`` - a :class:`SageInputBuilder`
-        
+
         - ``lhs`` - the left-hand side of the assignment
 
         - ``rhs`` - the right-hand side of the assignment
@@ -3299,7 +3299,7 @@ class SageInputFormatter:
         INPUT:
 
         - ``e`` - a :class:`SageInputExpression`
-        
+
         - ``prec`` - an integer representing a precedence level
 
         First, we check to see if ``e`` should be replaced by a variable.
@@ -3508,7 +3508,7 @@ def verify_si_answer(x, answer, preparse):
     - ``x`` - an arbitrary Sage value
 
     - ``answer`` - a string, or a :class:`SageInputAnswer`
-    
+
     - ``preparse`` -- ``True``, ``False``, or ``None``
 
 

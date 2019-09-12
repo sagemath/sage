@@ -1,0 +1,28 @@
+See https://pari.math.u-bordeaux.fr/cgi-bin/bugreport.cgi?bug=2125
+
+commit 943b45c148e06bb0f2f2bd7ff14f3ef99fa6e81a
+Author: Bill Allombert <Bill.Allombert@math.u-bordeaux1.fr>
+Date:   Tue Mar 5 14:59:43 2019 +0100
+
+    factor: fix 'bug in gerepile' (from Jeroen) [#2125]
+    
+    ? p1 = (289*x^4 + 1)^8; p2 = (19*x^2 + 1)^16;
+    ? factor(p1);
+    ? factor(p2);
+      ***   at top-level: factor(p2)
+      ***                 ^----------
+      *** factor: bug in gerepile, significant pointers lost, please report.
+
+diff --git a/src/basemath/QX_factor.c b/src/basemath/QX_factor.c
+index 173b424..ee71ee5 100644
+--- a/src/basemath/QX_factor.c
++++ b/src/basemath/QX_factor.c
+@@ -892,7 +892,7 @@ ZX_squff(GEN f, GEN *ex)
+       GEN U;
+       if (!dW) { set_avma(av); break; }
+       while ( (U = ZX_divides(T, V)) ) { k++; T = U; }
+-      T = gerepileupto(av, T);
++      T = gerepilecopy(av, T);
+     }
+     else
+     {

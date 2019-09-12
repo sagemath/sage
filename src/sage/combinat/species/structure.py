@@ -1,4 +1,4 @@
-"""
+r"""
 Species structures
 
 We will illustrate the use of the structure classes using the

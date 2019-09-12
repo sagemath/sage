@@ -231,7 +231,7 @@ class OrderedSetPartition(ClonableArray):
             sage: s = OS([[1, 3], [2, 4]])
             sage: s.check()
         """
-        assert self in self.parent()
+        assert self in self.parent(), "%s not in %s" % (self, self.parent())
 
     def _hash_(self):
         """
@@ -853,22 +853,25 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
 
     ::
 
-        sage: OS = OrderedSetPartitions("cat"); OS
+        sage: OS = OrderedSetPartitions("cat")
+        sage: OS # py2
         Ordered set partitions of {'a', 'c', 't'}
-        sage: OS.list()
-        [[{'a'}, {'c'}, {'t'}],
-         [{'a'}, {'t'}, {'c'}],
-         [{'c'}, {'a'}, {'t'}],
-         [{'t'}, {'a'}, {'c'}],
-         [{'c'}, {'t'}, {'a'}],
-         [{'t'}, {'c'}, {'a'}],
-         [{'a'}, {'c', 't'}],
-         [{'c'}, {'a', 't'}],
-         [{'t'}, {'a', 'c'}],
+        sage: OS # py3 random
+        Ordered set partitions of {'a', 't', 'c'}
+        sage: sorted(OS.list(), key=str)
+        [[{'a', 'c', 't'}],
          [{'a', 'c'}, {'t'}],
          [{'a', 't'}, {'c'}],
+         [{'a'}, {'c', 't'}],
+         [{'a'}, {'c'}, {'t'}],
+         [{'a'}, {'t'}, {'c'}],
          [{'c', 't'}, {'a'}],
-         [{'a', 'c', 't'}]]
+         [{'c'}, {'a', 't'}],
+         [{'c'}, {'a'}, {'t'}],
+         [{'c'}, {'t'}, {'a'}],
+         [{'t'}, {'a', 'c'}],
+         [{'t'}, {'a'}, {'c'}],
+         [{'t'}, {'c'}, {'a'}]]
     """
     @staticmethod
     def __classcall_private__(cls, s=None, c=None):
@@ -937,6 +940,14 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
             sage: OS = OrderedSetPartitions([1,2,3,4])
             sage: all(sp in OS for sp in OS)
             True
+            sage: [[1,2], [], [3,4]] in OS
+            False
+            sage: [Set([1,2]), Set([3,4])] in OS
+            True
+            sage: [set([1,2]), set([3,4])] in OS
+            Traceback (most recent call last):
+            ...
+            TypeError: X (=...1, 2...) must be a Set
         """
         #x must be a list
         if not isinstance(x, (OrderedSetPartition, list, tuple)):
@@ -948,10 +959,10 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
             return False
 
         #Check to make sure each element of the list
-        #is a set
+        #is a nonempty set
         u = Set([])
         for s in x:
-            if not isinstance(s, (set, frozenset, Set_generic)):
+            if not s or not isinstance(s, (set, frozenset, Set_generic)):
                 return False
             u = u.union(s)
 
@@ -1297,11 +1308,15 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             sage: AOS = OrderedSetPartitions()
             sage: all(sp in AOS for sp in OS)
             True
-            sage: [[1,3],[4],[5,2]] in AOS
+            sage: AOS.__contains__([[1,3], [4], [5,2]])
             True
-            sage: [[1,4],[3]] in AOS
+            sage: AOS.__contains__([Set([1,3]), Set([4]), Set([5,2])])
+            True
+            sage: [Set([1,4]), Set([3])] in AOS
             False
-            sage: [[1,3],[4,2],[2,5]] in AOS
+            sage: [Set([1,3]), Set([4,2]), Set([2,5])] in AOS
+            False
+            sage: [Set([1,2]), Set()] in AOS
             False
         """
         if isinstance(x, OrderedSetPartition):
@@ -1314,10 +1329,10 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
         if not isinstance(x, (list, tuple)):
             return False
 
-        # Check to make sure each element of the list is a set
-        if any(not isinstance(s, (set, frozenset, list, tuple, Set_generic))
-               for s in x):
+        # Check to make sure each element of the list is a nonempty set
+        if not all(s and isinstance(s, (set, frozenset, list, tuple, Set_generic)) for s in x):
             return False
+
         if not all(isinstance(s, (set, frozenset, Set_generic)) or len(s) == len(set(s)) for s in x):
             return False
         X = set(reduce(lambda A,B: A.union(B), x, set()))

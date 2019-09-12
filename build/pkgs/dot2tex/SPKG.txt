@@ -22,6 +22,12 @@ example via the graphviz spkg).
 
 preview, a LaTeX package for extracting parts of a document.
 
+Self-tests dependencies:
+ * graphviz
+ * texlive-latex-base 
+ * texlive-pictures 
+ * texlive-pstricks
+
 == Patches ==
 
  * remove_test_semicolon.patch:

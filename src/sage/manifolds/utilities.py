@@ -60,7 +60,7 @@ class SimplifySqrtReal(ExpressionTreeWalker):
         sage: a.simplify_full()
         sqrt(x^2 - 2*x + 1)
 
-    and the more agressive method :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
+    and the more aggressive method :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
     yields a wrong result, given that `x<1`::
 
         sage: a.canonicalize_radical()  # wrong output!
@@ -776,7 +776,7 @@ def simplify_chain_real_sympy(expr):
 
         sage: s = (sqrt(x^2-2*x+1))._sympy_()
         sage: simplify_chain_real_sympy(s)
-        -x + 1
+        1 - x
 
     Other simplifications::
 
@@ -1205,7 +1205,7 @@ def _list_functions(ex, list_f):
     if op:
         # FIXME: This hack is needed because the NewSymbolicFunction is
         #   a class defined inside of the *function* function_factory().
-        if str(type(op)) == "<class 'sage.symbolic.function_factory.NewSymbolicFunction'>":
+        if "NewSymbolicFunction" in str(type(op)):
             repr_function = repr(op)
             latex_function = latex(op)
 

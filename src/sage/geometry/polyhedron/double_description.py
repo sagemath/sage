@@ -415,8 +415,7 @@ class DoubleDescriptionPair:
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()
             sage: DD.matrix_space(1,2)
-            Full MatrixSpace of 1 by 2 dense matrices over Number Field in sqrt2
-            with defining polynomial x^2 - 2
+            Full MatrixSpace of 1 by 2 dense matrices over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         """
         return MatrixSpace(self.problem.base_ring(), nrows, ncols)
 

@@ -342,7 +342,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     REFERENCES:
 
     - [MR]_
-    - [LodayRonco]_
+    - [LR1998]_
     - [GriRei18]_
     """
 
@@ -1077,7 +1077,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
               the number of blocks in our subdivision.
 
             This formula is equivalent to the formula (1.13) in
-            [AguSot05]_, since Corollary 3.2.8 in [BB05]_ expresses
+            [AguSot05]_, since Corollary 3.2.8 in [BB2005]_ expresses
             the Mobius function of the weak order.
 
             TESTS::
@@ -1270,7 +1270,9 @@ class FQSymBases(Category_realization_of_parent):
             sage: bases = FQSymBases(FQSym)
             sage: bases.super_categories()
             [Category of realizations of Free Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring and Category of graded algebras over Integer Ring,
+             Join of Category of realizations of hopf algebras over Integer Ring
+               and Category of graded algebras over Integer Ring
+               and Category of graded coalgebras over Integer Ring,
              Category of graded connected hopf algebras with basis over Integer Ring]
         """
         R = self.base().base_ring()

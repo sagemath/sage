@@ -11,20 +11,17 @@ AUTHORS:
 
 - David Joyner (2006-03-03): initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #   Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
 #
 #   Distributed under the terms of the GNU General Public License (GPL)
 #
-#                    http://www.gnu.org/licenses/
-#*****************************************************************************
+#                    https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
-from sage.groups.perm_gps.permgroup import *
-from sage.interfaces.gap import *
-from sage.categories.morphism import *
-from sage.categories.homset import *
+from sage.interfaces.gap import gap
+from sage.categories.morphism import Morphism
 
 from sage.misc.all import prod
 
@@ -45,19 +42,6 @@ class AbelianGroupMap(Morphism):
 
     def _repr_type(self):
         return "AbelianGroup"
-
-
-class AbelianGroupMorphism_id(AbelianGroupMap):
-    """
-    Return the identity homomorphism from X to itself.
-
-    EXAMPLES:
-    """
-    def __init__(self, X):
-        AbelianGroupMorphism.__init__(self, X.Hom(X))
-
-    def _repr_defn(self):
-        return "Identity map of " + str(X)
 
 
 class AbelianGroupMorphism(Morphism):
@@ -159,14 +143,16 @@ class AbelianGroupMorphism(Morphism):
         s2 = "gensH := GeneratorsOfGroup(H)"
         gap.eval(s2)
         for i in range(len(gensG)):             # making the Sage group gens
-           cmd = ("%s := gensG["+str(i+1)+"]") % gensG[i]  # correspond to the Sage group gens
+           # correspond to the Sage group gens
+           cmd = "%s := gensG[%d]" % (gensG[i], i + 1)
            gap.eval(cmd)
         for i in range(len(gensH)):
-           cmd = ("%s := gensH[" + str(i + 1) + "]") % gensH[i]
+           cmd = "%s := gensH[%d]" % (gensH[i], i + 1)
            gap.eval(cmd)
         args = str(self.domaingens) + "," + str(self.codomaingens)
-        gap.eval("phi := GroupHomomorphismByImages(G,H," + args + ")")
-        self.gap_hom_string = "phi := GroupHomomorphismByImages(G,H,"+args+")"
+        cmd = "phi := GroupHomomorphismByImages(G,H,%s)" % args
+        gap.eval(cmd)
+        self.gap_hom_string = cmd
         return self.gap_hom_string
 
     def _repr_type(self):

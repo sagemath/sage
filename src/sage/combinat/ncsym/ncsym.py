@@ -122,7 +122,7 @@ def nesting(la, nu):
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-        [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -387,7 +387,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 if s == t:
                     return False
                 for p in s:
-                    if len([ z for z in list(t) if z.intersection(p) != Set([]) ]) != 1:
+                    if len([z for z in t if z.intersection(p)]) != 1:
                         return False
                 return True
 
@@ -1782,7 +1782,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 if s == t:
                     return False
                 for p in s:
-                    if len([ z for z in list(t) if z.intersection(p) != Set([]) ]) != 1:
+                    if len([z for z in t if z.intersection(p)]) != 1:
                         return False
                 return True
 

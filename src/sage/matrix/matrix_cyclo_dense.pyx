@@ -1557,7 +1557,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         A degenerate case with the degree 1 cyclotomic field::
 
-            sage: A = matrix(CyclotomicField(1),2,3,[1,2,3,4,5,6]);
+            sage: A = matrix(CyclotomicField(1),2,3,[1,2,3,4,5,6])
             sage: A.echelon_form()
             [ 1  0 -1]
             [ 0  1  2]
@@ -1602,15 +1602,17 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
     def _echelon_form_multimodular(self, num_primes=10, height_guess=None):
         """
-        Use a multimodular algorithm to find the echelon form of self.
+        Use a multimodular algorithm to find the echelon form of ``self``.
 
         INPUT:
-            num_primes -- number of primes to work modulo
-            height_guess -- guess for the height of the echelon form
-                            of self
+
+        - num_primes -- number of primes to work modulo
+
+        - height_guess -- guess for the height of the echelon form of self
 
         OUTPUT:
-            matrix in reduced row echelon form
+
+        - matrix in reduced row echelon form
 
         EXAMPLES::
 
@@ -1640,8 +1642,10 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         cdef int i
         cdef Matrix_cyclo_dense res
-
-        verbose("entering _echelon_form_multimodular", level=echelon_verbose_level)
+        cdef bint is_square
+        
+        verbose("entering _echelon_form_multimodular",
+                level=echelon_verbose_level)
 
         denom = self._matrix.denominator()
         A = denom * self
@@ -1649,7 +1653,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         # This bound is chosen somewhat arbitrarily. Changing it affects the
         # runtime, not the correctness of the result.
         if height_guess is None:
-            height_guess = (A.coefficient_bound()+100)*1000000
+            height_guess = (A.coefficient_bound() + 100) * 1000000
 
         # This is all setup to keep track of various data
         # in the loop below.
@@ -1659,16 +1663,17 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         n = self._base_ring._n()
         height_bound = self._ncols * height_guess * A.coefficient_bound() + 1
         mod_p_ech_ls = []
-        max_pivots = []
+        max_pivots = tuple()
         is_square = self._nrows == self._ncols
 
-        verbose("using height bound %s"%height_bound, level=echelon_verbose_level)
+        verbose("using height bound %s" % height_bound,
+                level=echelon_verbose_level)
 
         while True:
             # Generate primes to use, and find echelon form
             # modulo those primes.
             while found < num_primes or prod <= height_bound:
-                if (n == 1) or p%n == 1:
+                if (n == 1) or p % n == 1:
                     try:
                         mod_p_ech, piv_ls = A._echelon_form_one_prime(p)
                     except ValueError:
@@ -1705,13 +1710,14 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             if found > num_primes:
                 num_primes = found
 
-            verbose("computed echelon form mod %s primes"%num_primes,
+            verbose("computed echelon form mod %s primes" % num_primes,
                     level=echelon_verbose_level)
-            verbose("current product of primes used: %s"%prod,
+            verbose("current product of primes used: %s" % prod,
                     level=echelon_verbose_level)
 
             # Use CRT to lift back to ZZ
-            mat_over_ZZ = matrix(ZZ, self._base_ring.degree(), self._nrows * self._ncols)
+            mat_over_ZZ = matrix(ZZ, self._base_ring.degree(),
+                                 self._nrows * self._ncols)
             _lift_crt(mat_over_ZZ, mod_p_ech_ls)
             # note: saving the CRT intermediate MultiModularBasis does
             # not seem to affect the runtime at all
@@ -1719,8 +1725,10 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             # Attempt to use rational reconstruction to find
             # our echelon form
             try:
-                verbose("attempting rational reconstruction ...", level=echelon_verbose_level)
-                res = Matrix_cyclo_dense.__new__(Matrix_cyclo_dense, self.parent(),
+                verbose("attempting rational reconstruction ...",
+                        level=echelon_verbose_level)
+                res = Matrix_cyclo_dense.__new__(Matrix_cyclo_dense,
+                                                 self.parent(),
                                                  None, None, None)
                 res._matrix = <Matrix_rational_dense>matrix_integer_dense_rational_reconstruction(mat_over_ZZ, prod)
 
@@ -1742,11 +1750,12 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
                 # prod) to guarantee its correctness, so loop.
 
                 num_primes += echelon_primes_increment
-                verbose("height not sufficient to determine echelon form", level=echelon_verbose_level)
+                verbose("height not sufficient to determine echelon form",
+                        level=echelon_verbose_level)
                 continue
 
             verbose("found echelon form with %s primes, whose product is %s"%(num_primes, prod), level=echelon_verbose_level)
-            self.cache('pivots', tuple(max_pivots))
+            self.cache('pivots', max_pivots)
             return res
 
     def _echelon_form_one_prime(self, p):

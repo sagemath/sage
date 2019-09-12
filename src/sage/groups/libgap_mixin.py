@@ -1,8 +1,8 @@
 """
-Mix-in Class for libGAP-based Groups
+Mix-in Class for GAP-based Groups
 
 This class adds access to GAP functionality to groups such that parent
-and element have a ``gap()`` method that returns a libGAP object for
+and element have a ``gap()`` method that returns a GAP object for
 the parent/element.
 
 If your group implementation uses libgap, then you should add
@@ -14,7 +14,6 @@ just raise ``NotImplementedError``.
 from sage.libs.all import libgap
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
-from sage.misc.superseded import deprecated_function_alias
 
 
 class GroupMixinLibGAP(object):
@@ -140,8 +139,6 @@ class GroupMixinLibGAP(object):
         reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
         return tuple(self(g) for g in reps)
 
-    conjugacy_class_representatives = deprecated_function_alias(22783, conjugacy_classes_representatives)
-
     def conjugacy_classes(self):
         r"""
         Return a list with all the conjugacy classes of ``self``.
@@ -222,36 +219,40 @@ class GroupMixinLibGAP(object):
 
             sage: G = SU(3,GF(2))
             sage: G.center()
-            Matrix group over Finite Field in a of size 2^2 with 1 generators (
+            Subgroup with 1 generators (
             [a 0 0]
             [0 a 0]
             [0 0 a]
-            )
+            ) of Special Unitary Group of degree 3 over Finite Field in a of size 2^2
             sage: GL(2,GF(3)).center()
-            Matrix group over Finite Field of size 3 with 1 generators (
+            Subgroup with 1 generators (
             [2 0]
             [0 2]
-            )
+            ) of General Linear Group of degree 2 over Finite Field of size 3
             sage: GL(3,GF(3)).center()
-            Matrix group over Finite Field of size 3 with 1 generators (
+            Subgroup with 1 generators (
             [2 0 0]
             [0 2 0]
             [0 0 2]
-            )
+            ) of General Linear Group of degree 3 over Finite Field of size 3
             sage: GU(3,GF(2)).center()
-            Matrix group over Finite Field in a of size 2^2 with 1 generators (
+            Subgroup with 1 generators (
             [a + 1     0     0]
             [    0 a + 1     0]
             [    0     0 a + 1]
-            )
+            ) of General Unitary Group of degree 3 over Finite Field in a of size 2^2
 
             sage: A = Matrix(FiniteField(5), [[2,0,0], [0,3,0], [0,0,1]])
             sage: B = Matrix(FiniteField(5), [[1,0,0], [0,1,0], [0,1,1]])
             sage: MatrixGroup([A,B]).center()
-            Matrix group over Finite Field of size 5 with 1 generators (
+            Subgroup with 1 generators (
             [1 0 0]
             [0 1 0]
             [0 0 1]
+            ) of Matrix group over Finite Field of size 5 with 2 generators (
+            [2 0 0]  [1 0 0]
+            [0 3 0]  [0 1 0]
+            [0 0 1], [0 1 1]
             )
         """
         G = self.gap()
@@ -273,19 +274,27 @@ class GroupMixinLibGAP(object):
             sage: len(G)  # isomorphic to S_3
             6
             sage: G.intersection(GL(3,ZZ))
-            Matrix group over Rational Field with 1 generators (
+            Subgroup with 1 generators (
             [ 1  0  0]
             [-2 -1  2]
             [ 0  0  1]
+            ) of Matrix group over Rational Field with 2 generators (
+            [  0 1/2   0]  [  0 1/2   0]
+            [  2   0   0]  [ -2  -1   2]
+            [  0   0   1], [  0   0   1]
             )
             sage: GL(3,ZZ).intersection(G)
-            Matrix group over Integer Ring with 1 generators (
+            Subgroup with 1 generators (
             [ 1  0  0]
             [-2 -1  2]
             [ 0  0  1]
-            )
+            ) of General Linear Group of degree 3 over Integer Ring
             sage: G.intersection(SL(3,ZZ))
-            Matrix group over Rational Field with 0 generators ()
+            Subgroup with 0 generators () of Matrix group over Rational Field with 2 generators (
+            [  0 1/2   0]  [  0 1/2   0]
+            [  2   0   0]  [ -2  -1   2]
+            [  0   0   1], [  0   0   1]
+            )
         """
         G = self.gap()
         H = other.gap()
@@ -398,13 +407,13 @@ class GroupMixinLibGAP(object):
             [ 2 -1  0]
             [ 1  1  1]
             sage: MatrixGroup(SymmetricGroup(5)).character_table()
-            [ 1  1  1  1  1  1  1]
             [ 1 -1 -1  1 -1  1  1]
             [ 4  0  1 -1 -2  1  0]
-            [ 4  0 -1 -1  2  1  0]
-            [ 5 -1  1  0  1 -1  1]
             [ 5  1 -1  0 -1 -1  1]
             [ 6  0  0  1  0  0 -2]
+            [ 5 -1  1  0  1 -1  1]
+            [ 4  0 -1 -1  2  1  0]
+            [ 1  1  1  1  1  1  1]
         """
         #code from function in permgroup.py, but modified for
         #how gap handles these groups.

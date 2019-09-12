@@ -2,9 +2,9 @@ diff --git a/sympy/core/function.py b/sympy/core/function.py
 index cda559716..12a83e7a3 100644
 --- a/sympy/core/function.py
 +++ b/sympy/core/function.py
-@@ -771,6 +771,16 @@ def _sage_(self):
-         func = sage.function(fname)(*args)
-         return func
+@@ -856,6 +856,16 @@ def _sage_(self):
+         return True
+ 
  
 +class UndefSage(object):
 +    def __get__(self, ins, typ):
@@ -19,10 +19,10 @@ index cda559716..12a83e7a3 100644
  class UndefinedFunction(FunctionClass):
      """
      The (meta)class of undefined functions.
-@@ -780,6 +790,7 @@ def __new__(mcl, name, bases=(AppliedUndef,), __dict__=None, **kwargs):
-         __dict__.update(kwargs)
+@@ -873,6 +883,7 @@ def __new__(mcl, name, bases=(AppliedUndef,), __dict__=None, **kwargs):
          __dict__['__module__'] = None # For pickling
          ret = super(UndefinedFunction, mcl).__new__(mcl, name, bases, __dict__)
+         ret.name = name
 +        ret._sage_ = UndefSage()
          return ret
  

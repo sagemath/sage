@@ -335,7 +335,7 @@ def ClassifyingSpace(group):
 
 
 def RealProjectiveSpace(n):
-    """
+    r"""
     Return real `n`-dimensional projective space, as a simplicial set.
 
     This is constructed as the `n`-skeleton of the nerve of the group
@@ -635,7 +635,7 @@ def simplicial_data_from_kenzo_output(filename):
     OUTPUT: data to construct a simplicial set from the Kenzo output
 
     Several files with Kenzo output are in the directory
-    :file:`SAGE_ROOT/src/ext/kenzo/`.
+    :file:`SAGE_EXTCODE/kenzo/`.
 
     EXAMPLES::
 
@@ -704,6 +704,7 @@ def simplicial_data_from_kenzo_output(filename):
         dim_idx = new_dim_idx
     return simplex_data
 
+
 def HopfMap():
     r"""
     Return a simplicial model of the Hopf map `S^3 \to S^2`
@@ -739,9 +740,6 @@ def HopfMap():
     """
     # The 2-sphere and its simplices.
     S2 = Sphere(2)
-    v_0 = S2.n_cells(0)[0]
-    v_1 = v_0.apply_degeneracies(0)
-    v_2 = v_0.apply_degeneracies(0, 0)
     sigma = S2.n_cells(2)[0]
     s0_sigma = sigma.apply_degeneracies(0)
     s1_sigma = sigma.apply_degeneracies(1)

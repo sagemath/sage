@@ -67,7 +67,7 @@ class SequencePrettyPrinter(SageObject):
         Return whether the pretty print items are homogeneous
 
         INPUT:
-        
+
         - ``common_type`` -- a type.
 
         OUTPUT:
@@ -85,7 +85,7 @@ class SequencePrettyPrinter(SageObject):
             False
         """
         return all(isinstance(arg, common_type) for arg in self.args)
-        
+
     def _concatenate_graphs(self):
         """
         Plot multiple graphs into a single plot
@@ -99,9 +99,9 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()
             sage: type(plt)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: plt
-            Graphics Array of size 2 x 4
+            Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
         return graphs_list.to_graphics_array(self.args, **self.kwds)
@@ -119,13 +119,13 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()
             sage: type(ga)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: ga.nrows(), ga.ncols()
             (2, 4)
         """
         from sage.plot.plot import graphics_array
         return graphics_array(self.args, ncols=4, **self.kwds)
-    
+
     def pretty_print(self):
         """
         Actually do the pretty print.
@@ -164,10 +164,10 @@ class SequencePrettyPrinter(SageObject):
 def pretty_print(*args, **kwds):
     r"""
     Pretty print the arguments in an intelligent way.
-    
+
     For a single positional argument, this function chooses the
     highest-quality output supported by the user interface.
-    
+
     For certain homogeneous multiple positional arguments a suitable
     combined graphical output is generated. In particular, graphs and
     plots are treated special.
@@ -214,7 +214,7 @@ def pretty_print(*args, **kwds):
 
         sage: plt = plot(sin)
         sage: pretty_print(plt)             # graphics output
-        sage: pretty_print(ZZ, 123, plt)    # optional - latex 
+        sage: pretty_print(ZZ, 123, plt)    # optional - latex
         <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z} 123 %% Creator: Matplotlib, PGF backend...</script></html>
         sage: pretty_print(plt, plt)        # graphics output
     """
@@ -231,7 +231,7 @@ def pretty_print(*args, **kwds):
             SequencePrettyPrinter(*args, **kwds).pretty_print()
     finally:
         dm.preferences.text = old_preferences_text
-    
+
 
 def show(*args, **kwds):
     r"""

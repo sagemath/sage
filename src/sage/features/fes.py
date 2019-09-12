@@ -6,7 +6,7 @@ Checks for FES
 from . import CythonFeature, PythonModule
 
 TEST_CODE = """
-# disutils: libraries=fes
+# distutils: libraries=fes
 
 from libc.stdint cimport uint64_t
 cdef extern from "<fes_interface.h>":
@@ -66,7 +66,8 @@ class LibFESLibrary(CythonFeature):
             sage: isinstance(LibFESLibrary(), LibFESLibrary)
             True
         """
-        CythonFeature.__init__(self, "LibFES", test_code=TEST_CODE, spkg="fes", url="http://www.lifl.fr/~bouillag/fes/")
+        CythonFeature.__init__(self, "LibFES", test_code=TEST_CODE, spkg="fes",
+                               url="http://www.lifl.fr/~bouillag/fes/")
 
 
 class LibFES(PythonModule):
@@ -87,4 +88,5 @@ class LibFES(PythonModule):
             sage: isinstance(LibFES(), LibFES)
             True
         """
-        PythonModule.__init__(self, "sage.libs.fes", spkg="fes", url="http://www.lifl.fr/~bouillag/fes/")
+        PythonModule.__init__(self, "sage.libs.fes", spkg="fes",
+                              url="http://www.lifl.fr/~bouillag/fes/")

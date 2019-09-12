@@ -4,21 +4,9 @@ cd src
 # be removed in arb >= 2.8 when it is released
 export EXTRA_SHARED_FLAGS=$LDFLAGS
 
-./configure --disable-static --prefix="$SAGE_LOCAL" --with-flint="$SAGE_LOCAL" \
-    --with-gmp="$SAGE_LOCAL" --with-mpfr="$SAGE_LOCAL"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error configuring arb."
-    exit 1
-fi
+./configure --disable-static --prefix="$SAGE_LOCAL" $SAGE_CONFIGURE_GMP \
+            $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_FLINT || \
+    sdh_die "Error configuring arb."
 
-$MAKE verbose
-if [ $? -ne 0 ]; then
-    echo >&2 "Error building arb."
-    exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-    echo >&2 "Error installing arb."
-    exit 1
-fi
+sdh_make verbose
+sdh_make_install

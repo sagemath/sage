@@ -51,6 +51,7 @@ from .sigma0 import Sigma0
 from .fund_domain import t00, t10, t01, t11, M2Z
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import coercion_model
 
 
 def unimod_matrices_to_infty(r, s):
@@ -221,7 +222,7 @@ class ManinMap(object):
         self._codomain = codomain
         self._manin = manin_relations
         if check:
-            if not codomain.get_action(Sigma0(manin_relations._N)):
+            if coercion_model.get_action(codomain, Sigma0(manin_relations._N)) is None:
                 raise ValueError("Codomain must have an action of Sigma0(N)")
             self._dict = {}
             if isinstance(defining_data, (list, tuple)):
@@ -528,7 +529,7 @@ class ManinMap(object):
         SN = Sigma0(self._manin._N)
         A = M2Z(A)
         B = self._manin.equivalent_rep(A)
-        gaminv = SN(B * M2Z(A).adjoint())
+        gaminv = SN(B * M2Z(A).adjugate())
         return (self[B] * gaminv).normalize()
 
     def __call__(self, A):

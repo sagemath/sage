@@ -190,7 +190,7 @@ def _interpolation_matrix_problem(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import _interpolation_matrix_problem
         sage: F = GF(11)
-        sage: points = [ (F(x),F(y)) for (x,y) in (0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]
+        sage: points = [(F(x), F(y)) for (x,y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
         sage: tau = 3
         sage: params = (2, 4)
         sage: wy = 1
@@ -254,7 +254,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
 
         sage: from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg
         sage: F = GF(11)
-        sage: points = [ (F(x),F(y)) for (x,y) in (0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]
+        sage: points = [(F(x),F(y)) for (x,y) in [(0, 5), (1, 1), (2, 4), (3, 6), (4, 3), (5, 3)]]
         sage: tau = 3
         sage: params = (2, 4)
         sage: wy = 1

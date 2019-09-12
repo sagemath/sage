@@ -109,7 +109,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: c.has_rational_point()
             False
             sage: d = c.base_extend(QuadraticField(-1, 'i')); d
-            Projective Conic Curve over Number Field in i with defining polynomial x^2 + 1 defined by x^2 + y^2 + z^2
+            Projective Conic Curve over Number Field in i with defining polynomial x^2 + 1 with i = 1*I defined by x^2 + y^2 + z^2
             sage: d.rational_point(algorithm = 'rnfisnorm')
             (i : 1 : 0)
         """
@@ -411,7 +411,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
            delegates the task to the Magma computer algebra
            system.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Conic(RR, [1, 1, 1]).has_rational_point()
             False
@@ -448,7 +448,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: K.<i> = QuadraticField(-1)
             sage: K.coerce_embedding()
             Generic morphism:
-              From: Number Field in i with defining polynomial x^2 + 1
+              From: Number Field in i with defining polynomial x^2 + 1 with i = 1*I
               To:   Complex Lazy Field
               Defn: i -> 1*I
             sage: Conic(K, [1,1,1]).rational_point(algorithm='magma') # optional - magma
@@ -722,8 +722,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             sage: c.diagonalization()[0].is_diagonal()
             True
         """
-        return all([self.coefficients()[i] == 0 for i in [1,2,4]])
-
+        return all(self.coefficients()[i] == 0 for i in [1, 2, 4])
 
     def is_smooth(self):
         r"""

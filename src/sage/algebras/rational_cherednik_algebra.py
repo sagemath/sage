@@ -1,12 +1,12 @@
 """
 Rational Cherednik Algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -20,6 +20,7 @@ from sage.sets.family import Family
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import QQ
+
 
 class RationalCherednikAlgebra(CombinatorialFreeModule):
     r"""
@@ -394,30 +395,32 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
 
             sage: k = QQ['c,t']
             sage: R = algebras.RationalCherednik(['A',3], k.gen(0), k.gen(1))
-            sage: R._product_coroot_root(1, 1)
-            ((1, 2*t),
-             (s2, 1/2*c),
-             (s3, 0),
+            sage: sorted(R._product_coroot_root(1, 1))
+            [(s1, 2*c),
+             (s1*s2*s1, 1/2*c),
              (s1*s2*s3*s2*s1, 1/2*c),
-             (s2*s3*s2, 1/2*c),
-             (s1, 2*c),
-             (s1*s2*s1, 1/2*c))
-            sage: R._product_coroot_root(1, 2)
-            ((1, -t),
-             (s2, -c),
+             (1, 2*t),
              (s3, 0),
+             (s2, 1/2*c),
+             (s2*s3*s2, 1/2*c)]
+
+            sage: sorted(R._product_coroot_root(1, 2))
+            [(s1, -c),
+             (s1*s2*s1, 1/2*c),
              (s1*s2*s3*s2*s1, 0),
-             (s2*s3*s2, -1/2*c),
-             (s1, -c),
-             (s1*s2*s1, 1/2*c))
-            sage: R._product_coroot_root(1, 3)
-            ((1, 0),
-             (s2, 1/2*c),
+             (1, -t),
              (s3, 0),
+             (s2, -c),
+             (s2*s3*s2, -1/2*c)]
+
+            sage: sorted(R._product_coroot_root(1, 3))
+            [(s1, 0),
+             (s1*s2*s1, -1/2*c),
              (s1*s2*s3*s2*s1, 1/2*c),
-             (s2*s3*s2, -1/2*c),
-             (s1, 0),
-             (s1*s2*s1, -1/2*c))
+             (1, 0),
+             (s3, 0),
+             (s2, 1/2*c),
+             (s2*s3*s2, -1/2*c)]
         """
         Q = RootSystem(self._cartan_type).root_lattice()
         ac = Q.simple_coroot(i)

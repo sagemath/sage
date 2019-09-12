@@ -57,7 +57,7 @@ mpfr_configure()
     ###########################################################################
     echo "Checking what CC and CFLAGS MPFR would use if they were empty..."
     if (unset CC CFLAGS CPPFLAGS CXXFLAGS &&
-        ./configure --with-gmp="$SAGE_LOCAL" $SAGE_CONF_OPTS $MPFR_CONFIGURE) &>/dev/null;
+        ./configure $SAGE_CONFIGURE_GMP $SAGE_CONF_OPTS $MPFR_CONFIGURE) &>/dev/null;
     then
         mpfr_config_file=config.status
         if mpfr_get_upstream_selected_cflags "$mpfr_config_file"; then
@@ -131,7 +131,10 @@ mpfr_configure()
     fi
     echo "  --prefix=\"$SAGE_LOCAL\""
     echo "  --libdir=\"$SAGE_LOCAL/lib\""
-    echo "  --with-gmp=\"$SAGE_LOCAL\""
+    if [ -n "$SAGE_CONFIGURE_GMP" ]; then
+        echo "  --with-gmp=\"$SAGE_LOCAL\""
+    fi
+
     for opt in $SAGE_CONF_OPTS $MPFR_CONFIGURE; do
         echo "  $opt"
     done
@@ -139,8 +142,7 @@ mpfr_configure()
         echo "You can set MPFR_CONFIGURE to pass additional parameters."
     fi
 
-    sdh_configure --with-gmp="$SAGE_LOCAL" \
-                $SAGE_CONF_OPTS $MPFR_CONFIGURE
+    sdh_configure $SAGE_CONFIGURE_GMP $SAGE_CONF_OPTS $MPFR_CONFIGURE
 }
 
 mpfr_build()

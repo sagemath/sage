@@ -658,10 +658,10 @@ class ResidueField_generic(Field):
             Residue field of Fractional ideal (a)
             sage: pi = k.reduction_map(); pi
             Partially defined reduction map:
-              From: Number Field in a with defining polynomial x^3 - 2
+              From: Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
               To:   Residue field of Fractional ideal (a)
             sage: pi.domain()
-            Number Field in a with defining polynomial x^3 - 2
+            Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
             sage: pi.codomain()
             Residue field of Fractional ideal (a)
 
@@ -698,11 +698,11 @@ class ResidueField_generic(Field):
             sage: f = k.lift_map(); f
             Lifting map:
               From: Residue field of Fractional ideal (-a + 2)
-              To:   Maximal Order in Number Field in a with defining polynomial x^3 - 3
+              To:   Maximal Order in Number Field in a with defining polynomial x^3 - 3 with a = 1.442249570307409?
             sage: f.domain()
             Residue field of Fractional ideal (-a + 2)
             sage: f.codomain()
-            Maximal Order in Number Field in a with defining polynomial x^3 - 3
+            Maximal Order in Number Field in a with defining polynomial x^3 - 3 with a = 1.442249570307409?
             sage: f(k.0)
             1
 
@@ -787,7 +787,7 @@ cdef class ReductionMap(Map):
         Residue field in sqrt17bar of Fractional ideal (5)
         sage: R = k.reduction_map(); R
         Partially defined reduction map:
-          From: Number Field in sqrt17 with defining polynomial x^2 - 17
+          From: Number Field in sqrt17 with defining polynomial x^2 - 17 with sqrt17 = 4.123105625617660?
           To:   Residue field in sqrt17bar of Fractional ideal (5)
 
         sage: R.<t> = GF(next_prime(2^20))[]; P = R.ideal(t^2 + t + 1)

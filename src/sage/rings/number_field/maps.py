@@ -358,7 +358,7 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
             g = g(beta).lift()
         # Convert the coefficients to elements of the base field.
         B, from_B, _ = K.absolute_base_field()
-        return self.codomain()([from_B(B(z.lift(), check=False)) for z in g.Vecrev(-K.relative_degree())])
+        return self.codomain()([from_B(B(z.lift(), check=False)) for z in g.Vecrev(K.relative_degree())])
 
 
 class NameChangeMap(NumberFieldIsomorphism):

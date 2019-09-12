@@ -213,10 +213,10 @@ class PanAxiom(ExtraTabCompletion, Expect):
         """
         eval_using_file_cutoff = 200
         self.__eval_using_file_cutoff = eval_using_file_cutoff
-        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj'%(DOT_SAGE, name)
+        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj' % (DOT_SAGE, name)
         Expect.__init__(self,
                         name = name,
-                        prompt = '\([0-9]+\) -> ',
+                        prompt = r'\([0-9]+\) -> ',
                         command = command,
                         script_subdirectory = script_subdirectory,
                         server=server,

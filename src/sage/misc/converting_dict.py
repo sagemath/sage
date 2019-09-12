@@ -27,25 +27,23 @@ result no matter how a generator is identified::
 
     sage: K.<x,y> = QQ[]
     sage: I = ideal([x^2+2*y-5,x+y+3])
-    sage: v = I.variety(AA)[0]; v
-    {x: 4.464101615137755?, y: -7.464101615137755?}
+    sage: V = sorted(I.variety(AA), key=str)
+    sage: v = V[0]
+    sage: v['x'], v['y']
+    (-2.464101615137755?, -0.535898384862246?)
     sage: list(v)[0].parent()
     Multivariate Polynomial Ring in x, y over Algebraic Real Field
-    sage: v[x]
-    4.464101615137755?
-    sage: v["y"]
-    -7.464101615137755?
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Martin von Gagern <Martin.vGagern@gmx.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six import iteritems
 

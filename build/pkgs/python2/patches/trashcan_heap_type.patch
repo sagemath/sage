@@ -1,0 +1,64 @@
+https://github.com/python/cpython/pull/12725
+
+commit 6f8de0b75e0ca987cf5e734cf9c4bb91762efcf3
+Author: Jeroen Demeyer <J.Demeyer@UGent.be>
+Date:   Mon Apr 8 14:08:37 2019 +0200
+
+    bpo-36556: trashcan should not cause duplicated __del__
+
+diff --git a/Lib/test/test_gc.py b/Lib/test/test_gc.py
+index 7e47b2d..3e4d0f9 100644
+--- a/Lib/test/test_gc.py
++++ b/Lib/test/test_gc.py
+@@ -307,6 +307,24 @@ class GCTests(unittest.TestCase):
+                 v = {1: v, 2: Ouch()}
+         gc.disable()
+ 
++    def test_no_double_del(self):
++        # bpo-36556: instances of heap types should be deallocated once,
++        # even if the trashcan and __del__ are involved
++        class ObjectCounter(object):
++            count = 0
++            def __init__(self):
++                type(self).count += 1
++            def __del__(self):
++                # create temporary involving self, whose deallocation
++                # uses the trashcan
++                L = [self]
++                type(self).count -= 1
++        L = None
++        for i in range(10000):
++            L = (L, ObjectCounter())
++        del L
++        self.assertEqual(ObjectCounter.count, 0)
++
+     @unittest.skipUnless(threading, "test meaningless on builds without threads")
+     def test_trashcan_threads(self):
+         # Issue #13992: trashcan mechanism should be thread-safe
+diff --git a/Misc/NEWS.d/next/Core and Builtins/2019-04-08-14-32-28.bpo-36556.lp-8oV.rst b/Misc/NEWS.d/next/Core and Builtins/2019-04-08-14-32-28.bpo-36556.lp-8oV.rst
+new file mode 100644
+index 0000000..496bdc5
+--- /dev/null
++++ b/Misc/NEWS.d/next/Core and Builtins/2019-04-08-14-32-28.bpo-36556.lp-8oV.rst	
+@@ -0,0 +1,2 @@
++When deleting highly nested objects (where the trashcan mechanism is
++involved), it is less likely that ``__del__`` is called multiple times.
+diff --git a/Objects/typeobject.c b/Objects/typeobject.c
+index 844fb00..43b35b1 100644
+--- a/Objects/typeobject.c
++++ b/Objects/typeobject.c
+@@ -917,6 +917,14 @@ subtype_clear(PyObject *self)
+     return 0;
+ }
+ 
++/* bpo-36556: lower the trashcan recursion limit for heap types: this gives
++ * __del__ 10 additional stack frames to work with. This makes it less likely
++ * that the trashcan is used in __del__. Otherwise, an object might seemingly
++ * be resurrected by __del__ when it's still referenced by an object in the
++ * trashcan. */
++#undef PyTrash_UNWIND_LEVEL
++#define PyTrash_UNWIND_LEVEL 40
++
+ static void
+ subtype_dealloc(PyObject *self)
+ {

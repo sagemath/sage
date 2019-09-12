@@ -1397,7 +1397,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         INPUT:
 
         - 'E' - Hyperelliptic Curve of the form `y^2 = f(x)` over a
-          finite field, `\mathbb{F}_q`
+          finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1532,7 +1532,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\mathbb{F}_q`
+        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1628,7 +1628,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         INPUT:
 
         - ``E`` -- hyperelliptic Curve of the form `y^2 = f(x)` over
-          a finite field, `\mathbb{F}_q`
+          a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1730,7 +1730,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\mathbb{F}_q`
+        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1789,7 +1789,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E``: Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\mathbb{F}_q`
+        - ``E``: Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 
@@ -1832,7 +1832,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         r"""
         INPUT:
 
-        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\mathbb{F}_q`
+        - ``E`` : Hyperelliptic Curve of the form `y^2 = f(x)` over a finite field, `\GF{q}`
 
         OUTPUT:
 

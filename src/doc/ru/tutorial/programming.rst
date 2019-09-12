@@ -423,8 +423,8 @@ http://docs.python.org/lib/typesmapping.html) произвольным объе�
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
     <... 'dict'>
-    sage: d.keys()
-     [1, 'sage', Integer Ring]
+    sage: list(d.keys())
+    [1, 'sage', Integer Ring]
     sage: d['sage']
     17
     sage: d[ZZ]
@@ -508,7 +508,8 @@ http://docs.python.org/lib/typesmapping.html) произвольным объе�
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))
+    sage: v = (n^2 for n in xrange(10000000))  # py2
+    sage: v = (n^2 for n in range(10000000))  # py3
     sage: next(v)
     0
     sage: next(v)

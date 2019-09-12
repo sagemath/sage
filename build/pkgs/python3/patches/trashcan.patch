@@ -1,0 +1,633 @@
+See https://github.com/python/cpython/pull/12730
+
+commit 10eff38c7ff67fa1aa89a27880ccb92d2f90878f
+Author: Jeroen Demeyer <J.Demeyer@UGent.be>
+Date:   Wed Feb 13 15:12:48 2019 +0100
+
+    bpo-35983: skip trashcan for subclasses
+
+diff --git a/Include/object.h b/Include/object.h
+index bcf78af..b4b2d5b 100644
+--- a/Include/object.h
++++ b/Include/object.h
+@@ -1026,11 +1026,11 @@ times.
+ 
+ When deallocating a container object, it's possible to trigger an unbounded
+ chain of deallocations, as each Py_DECREF in turn drops the refcount on "the
+-next" object in the chain to 0.  This can easily lead to stack faults, and
++next" object in the chain to 0.  This can easily lead to stack overflows,
+ especially in threads (which typically have less stack space to work with).
+ 
+-A container object that participates in cyclic gc can avoid this by
+-bracketing the body of its tp_dealloc function with a pair of macros:
++A container object can avoid this by bracketing the body of its tp_dealloc
++function with a pair of macros:
+ 
+ static void
+ mytype_dealloc(mytype *p)
+@@ -1038,14 +1038,14 @@ mytype_dealloc(mytype *p)
+     ... declarations go here ...
+ 
+     PyObject_GC_UnTrack(p);        // must untrack first
+-    Py_TRASHCAN_SAFE_BEGIN(p)
++    Py_TRASHCAN_BEGIN(p, mytype_dealloc)
+     ... The body of the deallocator goes here, including all calls ...
+     ... to Py_DECREF on contained objects.                         ...
+-    Py_TRASHCAN_SAFE_END(p)
++    Py_TRASHCAN_END                // there should be no code after this
+ }
+ 
+ CAUTION:  Never return from the middle of the body!  If the body needs to
+-"get out early", put a label immediately before the Py_TRASHCAN_SAFE_END
++"get out early", put a label immediately before the Py_TRASHCAN_END
+ call, and goto it.  Else the call-depth counter (see below) will stay
+ above 0 forever, and the trashcan will never get emptied.
+ 
+@@ -1061,6 +1061,12 @@ notices this, and calls another routine to deallocate all the objects that
+ may have been added to the list of deferred deallocations.  In effect, a
+ chain of N deallocations is broken into (N-1)/(PyTrash_UNWIND_LEVEL-1) pieces,
+ with the call stack never exceeding a depth of PyTrash_UNWIND_LEVEL.
++
++Since the tp_dealloc of a subclass typically calls the tp_dealloc of the base
++class, we need to ensure that the trashcan is only triggered on the tp_dealloc
++of the actual class being deallocated. Otherwise we might end up with a
++partially-deallocated object. To check this, the tp_dealloc function must be
++passed as second argument to Py_TRASHCAN_BEGIN().
+ */
+ 
+ #ifndef Py_LIMITED_API
+@@ -1076,21 +1082,39 @@ PyAPI_FUNC(void) _PyTrash_thread_destroy_chain(void);
+ 
+ #define PyTrash_UNWIND_LEVEL 50
+ 
+-#define Py_TRASHCAN_SAFE_BEGIN(op) \
++#define Py_TRASHCAN_BEGIN_CONDITION(op, cond) \
+     do { \
+-        PyThreadState *_tstate = PyThreadState_GET(); \
+-        if (_tstate->trash_delete_nesting < PyTrash_UNWIND_LEVEL) { \
+-            ++_tstate->trash_delete_nesting;
+-            /* The body of the deallocator is here. */
+-#define Py_TRASHCAN_SAFE_END(op) \
++        PyThreadState *_tstate = NULL; \
++        /* If "cond" is false, then _tstate remains NULL and the deallocator \
++         * is run normally without involving the trashcan */ \
++        if (cond) { \
++            _tstate = PyThreadState_GET(); \
++            if (_tstate->trash_delete_nesting >= PyTrash_UNWIND_LEVEL) { \
++                /* Store the object (to be deallocated later) and jump past \
++                 * Py_TRASHCAN_END, skipping the body of the deallocator */ \
++                _PyTrash_thread_deposit_object((PyObject*)(op)); \
++                break; \
++            } \
++            ++_tstate->trash_delete_nesting; \
++        }
++        /* The body of the deallocator is here. */
++#define Py_TRASHCAN_END \
++        if (_tstate) { \
+             --_tstate->trash_delete_nesting; \
+             if (_tstate->trash_delete_later && _tstate->trash_delete_nesting <= 0) \
+                 _PyTrash_thread_destroy_chain(); \
+         } \
+-        else \
+-            _PyTrash_thread_deposit_object((PyObject*)op); \
+     } while (0);
+ 
++#define Py_TRASHCAN_BEGIN(op, dealloc) Py_TRASHCAN_BEGIN_CONDITION(op, \
++        Py_TYPE(op)->tp_dealloc == (destructor)(dealloc))
++
++/* For backwards compatibility, these macros enable the trashcan
++ * unconditionally */
++#define Py_TRASHCAN_SAFE_BEGIN(op) Py_TRASHCAN_BEGIN_CONDITION(op, 1)
++#define Py_TRASHCAN_SAFE_END(op) Py_TRASHCAN_END
++
++
+ #ifndef Py_LIMITED_API
+ PyAPI_FUNC(void)
+ _PyDebugAllocatorStats(FILE *out, const char *block_name, int num_blocks,
+diff --git a/Lib/test/test_capi.py b/Lib/test/test_capi.py
+index 65e0795..ae0f891 100644
+--- a/Lib/test/test_capi.py
++++ b/Lib/test/test_capi.py
+@@ -315,6 +315,49 @@ class CAPITest(unittest.TestCase):
+         self.assertRaises(TypeError, _testcapi.get_mapping_values, bad_mapping)
+         self.assertRaises(TypeError, _testcapi.get_mapping_items, bad_mapping)
+ 
++    def test_trashcan_subclass(self):
++        # bpo-35983: Check that the trashcan mechanism for "list" is NOT
++        # activated when its tp_dealloc is being called by a subclass
++        from _testcapi import MyList
++        L = None
++        for i in range(1000):
++            L = MyList((L,))
++
++    def test_trashcan_python_class1(self):
++        self.do_test_trashcan_python_class(list)
++
++    def test_trashcan_python_class2(self):
++        from _testcapi import MyList
++        self.do_test_trashcan_python_class(MyList)
++
++    def do_test_trashcan_python_class(self, base):
++        # Check that the trashcan mechanism works properly for a Python
++        # subclass of a class using the trashcan (this specific test assumes
++        # that the base class "base" behaves like list)
++        class PyList(base):
++            # Count the number of PyList instances to verify that there is
++            # no memory leak
++            num = 0
++            def __init__(self, *args):
++                __class__.num += 1
++                super().__init__(*args)
++            def __del__(self):
++                __class__.num -= 1
++
++        for parity in (0, 1):
++            L = None
++            # We need in the order of 2**20 iterations here such that a
++            # typical 8MB stack would overflow without the trashcan.
++            for i in range(2**20):
++                L = PyList((L,))
++                L.attr = i
++            if parity:
++                # Add one additional nesting layer
++                L = (L,)
++            self.assertGreater(PyList.num, 0)
++            del L
++            self.assertEqual(PyList.num, 0)
++
+ 
+ class TestPendingCalls(unittest.TestCase):
+ 
+diff --git a/Lib/test/test_ordered_dict.py b/Lib/test/test_ordered_dict.py
+index b1d7f86..148a9bd 100644
+--- a/Lib/test/test_ordered_dict.py
++++ b/Lib/test/test_ordered_dict.py
+@@ -459,7 +459,9 @@ class OrderedDictTests:
+         self.assertEqual(list(MyOD(items).items()), items)
+ 
+     def test_highly_nested(self):
+-        # Issue 25395: crashes during garbage collection
++        # Issues 25395 and 35983: test that the trashcan mechanism works
++        # correctly for OrderedDict: deleting a highly nested OrderDict
++        # should not crash Python.
+         OrderedDict = self.OrderedDict
+         obj = None
+         for _ in range(1000):
+@@ -468,7 +470,9 @@ class OrderedDictTests:
+         support.gc_collect()
+ 
+     def test_highly_nested_subclass(self):
+-        # Issue 25395: crashes during garbage collection
++        # Issues 25395 and 35983: test that the trashcan mechanism works
++        # correctly for OrderedDict: deleting a highly nested OrderDict
++        # should not crash Python.
+         OrderedDict = self.OrderedDict
+         deleted = []
+         class MyOD(OrderedDict):
+diff --git a/Misc/NEWS.d/next/Core and Builtins/2019-02-13-16-47-19.bpo-35983.bNxsXv.rst b/Misc/NEWS.d/next/Core and Builtins/2019-02-13-16-47-19.bpo-35983.bNxsXv.rst
+new file mode 100644
+index 0000000..1138df6
+--- /dev/null
++++ b/Misc/NEWS.d/next/Core and Builtins/2019-02-13-16-47-19.bpo-35983.bNxsXv.rst	
+@@ -0,0 +1,3 @@
++Added new trashcan macros to deal with a double deallocation that could occur
++when the `tp_dealloc` of a subclass calls the `tp_dealloc` of a base class
++and that base class uses the trashcan mechanism. Patch by Jeroen Demeyer.
+diff --git a/Modules/_elementtree.c b/Modules/_elementtree.c
+index 79f1ccd..d48f2b5 100644
+--- a/Modules/_elementtree.c
++++ b/Modules/_elementtree.c
+@@ -649,7 +649,7 @@ element_dealloc(ElementObject* self)
+ {
+     /* bpo-31095: UnTrack is needed before calling any callbacks */
+     PyObject_GC_UnTrack(self);
+-    Py_TRASHCAN_SAFE_BEGIN(self)
++    Py_TRASHCAN_BEGIN(self, element_dealloc)
+ 
+     if (self->weakreflist != NULL)
+         PyObject_ClearWeakRefs((PyObject *) self);
+@@ -660,7 +660,7 @@ element_dealloc(ElementObject* self)
+ 
+     RELEASE(sizeof(ElementObject), "destroy element");
+     Py_TYPE(self)->tp_free((PyObject *)self);
+-    Py_TRASHCAN_SAFE_END(self)
++    Py_TRASHCAN_END
+ }
+ 
+ /* -------------------------------------------------------------------- */
+diff --git a/Modules/_testcapimodule.c b/Modules/_testcapimodule.c
+index 1e33ca8..af8694e 100644
+--- a/Modules/_testcapimodule.c
++++ b/Modules/_testcapimodule.c
+@@ -5207,6 +5207,76 @@ recurse_infinitely_error_init(PyObject *self, PyObject *args, PyObject *kwds)
+ }
+ 
+ 
++/* Test bpo-35983: create a subclass of "list" which checks that instances
++ * are not deallocated twice */
++
++typedef struct {
++    PyListObject list;
++    int deallocated;
++} MyListObject;
++
++static PyObject *
++MyList_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
++{
++    PyObject* op = PyList_Type.tp_new(type, args, kwds);
++    ((MyListObject*)op)->deallocated = 0;
++    return op;
++}
++
++void
++MyList_dealloc(MyListObject* op)
++{
++    if (op->deallocated) {
++        /* We cannot raise exceptions here but we still want the testsuite
++         * to fail when we hit this */
++        Py_FatalError("MyList instance deallocated twice");
++    }
++    op->deallocated = 1;
++    PyList_Type.tp_dealloc((PyObject *)op);
++}
++
++static PyTypeObject MyList_Type = {
++    PyVarObject_HEAD_INIT(NULL, 0)
++    "MyList",
++    sizeof(MyListObject),
++    0,
++    (destructor)MyList_dealloc,                 /* tp_dealloc */
++    0,                                          /* tp_print */
++    0,                                          /* tp_getattr */
++    0,                                          /* tp_setattr */
++    0,                                          /* tp_reserved */
++    0,                                          /* tp_repr */
++    0,                                          /* tp_as_number */
++    0,                                          /* tp_as_sequence */
++    0,                                          /* tp_as_mapping */
++    0,                                          /* tp_hash */
++    0,                                          /* tp_call */
++    0,                                          /* tp_str */
++    0,                                          /* tp_getattro */
++    0,                                          /* tp_setattro */
++    0,                                          /* tp_as_buffer */
++    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */
++    0,                                          /* tp_doc */
++    0,                                          /* tp_traverse */
++    0,                                          /* tp_clear */
++    0,                                          /* tp_richcompare */
++    0,                                          /* tp_weaklistoffset */
++    0,                                          /* tp_iter */
++    0,                                          /* tp_iternext */
++    0,                                          /* tp_methods */
++    0,                                          /* tp_members */
++    0,                                          /* tp_getset */
++    0,  /* &PyList_Type */                      /* tp_base */
++    0,                                          /* tp_dict */
++    0,                                          /* tp_descr_get */
++    0,                                          /* tp_descr_set */
++    0,                                          /* tp_dictoffset */
++    0,                                          /* tp_init */
++    0,                                          /* tp_alloc */
++    MyList_new,                                 /* tp_new */
++};
++
++
+ /* Test PEP 560 */
+ 
+ typedef struct {
+@@ -5320,6 +5390,12 @@ PyInit__testcapi(void)
+     Py_INCREF(&awaitType);
+     PyModule_AddObject(m, "awaitType", (PyObject *)&awaitType);
+ 
++    MyList_Type.tp_base = &PyList_Type;
++    if (PyType_Ready(&MyList_Type) < 0)
++        return NULL;
++    Py_INCREF(&MyList_Type);
++    PyModule_AddObject(m, "MyList", (PyObject *)&MyList_Type);
++
+     if (PyType_Ready(&GenericAlias_Type) < 0)
+         return NULL;
+     Py_INCREF(&GenericAlias_Type);
+diff --git a/Objects/descrobject.c b/Objects/descrobject.c
+index 370b7a7..7d30032 100644
+--- a/Objects/descrobject.c
++++ b/Objects/descrobject.c
+@@ -1021,11 +1021,11 @@ static void
+ wrapper_dealloc(wrapperobject *wp)
+ {
+     PyObject_GC_UnTrack(wp);
+-    Py_TRASHCAN_SAFE_BEGIN(wp)
++    Py_TRASHCAN_BEGIN(wp, wrapper_dealloc)
+     Py_XDECREF(wp->descr);
+     Py_XDECREF(wp->self);
+     PyObject_GC_Del(wp);
+-    Py_TRASHCAN_SAFE_END(wp)
++    Py_TRASHCAN_END
+ }
+ 
+ static PyObject *
+diff --git a/Objects/dictobject.c b/Objects/dictobject.c
+index eb63526..f602a46 100644
+--- a/Objects/dictobject.c
++++ b/Objects/dictobject.c
+@@ -1898,7 +1898,7 @@ dict_dealloc(PyDictObject *mp)
+ 
+     /* bpo-31095: UnTrack is needed before calling any callbacks */
+     PyObject_GC_UnTrack(mp);
+-    Py_TRASHCAN_SAFE_BEGIN(mp)
++    Py_TRASHCAN_BEGIN(mp, dict_dealloc)
+     if (values != NULL) {
+         if (values != empty_values) {
+             for (i = 0, n = mp->ma_keys->dk_nentries; i < n; i++) {
+@@ -1916,7 +1916,7 @@ dict_dealloc(PyDictObject *mp)
+         free_list[numfree++] = mp;
+     else
+         Py_TYPE(mp)->tp_free((PyObject *)mp);
+-    Py_TRASHCAN_SAFE_END(mp)
++    Py_TRASHCAN_END
+ }
+ 
+ 
+diff --git a/Objects/listobject.c b/Objects/listobject.c
+index d795f66..790f5af 100644
+--- a/Objects/listobject.c
++++ b/Objects/listobject.c
+@@ -313,7 +313,7 @@ list_dealloc(PyListObject *op)
+ {
+     Py_ssize_t i;
+     PyObject_GC_UnTrack(op);
+-    Py_TRASHCAN_SAFE_BEGIN(op)
++    Py_TRASHCAN_BEGIN(op, list_dealloc)
+     if (op->ob_item != NULL) {
+         /* Do it backwards, for Christian Tismer.
+            There's a simple test case where somehow this reduces
+@@ -329,7 +329,7 @@ list_dealloc(PyListObject *op)
+         free_list[numfree++] = op;
+     else
+         Py_TYPE(op)->tp_free((PyObject *)op);
+-    Py_TRASHCAN_SAFE_END(op)
++    Py_TRASHCAN_END
+ }
+ 
+ static PyObject *
+diff --git a/Objects/odictobject.c b/Objects/odictobject.c
+index 88afc61..891fb0e 100644
+--- a/Objects/odictobject.c
++++ b/Objects/odictobject.c
+@@ -1355,28 +1355,17 @@ static PyGetSetDef odict_getset[] = {
+ static void
+ odict_dealloc(PyODictObject *self)
+ {
+-    PyThreadState *tstate = PyThreadState_GET();
+-
+     PyObject_GC_UnTrack(self);
+-    Py_TRASHCAN_SAFE_BEGIN(self)
++    Py_TRASHCAN_BEGIN(self, odict_dealloc)
+ 
+     Py_XDECREF(self->od_inst_dict);
+     if (self->od_weakreflist != NULL)
+         PyObject_ClearWeakRefs((PyObject *)self);
+ 
+     _odict_clear_nodes(self);
+-
+-    /* Call the base tp_dealloc().  Since it too uses the trashcan mechanism,
+-     * temporarily decrement trash_delete_nesting to prevent triggering it
+-     * and putting the partially deallocated object on the trashcan's
+-     * to-be-deleted-later list.
+-     */
+-    --tstate->trash_delete_nesting;
+-    assert(_tstate->trash_delete_nesting < PyTrash_UNWIND_LEVEL);
+     PyDict_Type.tp_dealloc((PyObject *)self);
+-    ++tstate->trash_delete_nesting;
+ 
+-    Py_TRASHCAN_SAFE_END(self)
++    Py_TRASHCAN_END
+ }
+ 
+ /* tp_repr */
+diff --git a/Objects/setobject.c b/Objects/setobject.c
+index 357e48c..75387c2 100644
+--- a/Objects/setobject.c
++++ b/Objects/setobject.c
+@@ -558,7 +558,7 @@ set_dealloc(PySetObject *so)
+ 
+     /* bpo-31095: UnTrack is needed before calling any callbacks */
+     PyObject_GC_UnTrack(so);
+-    Py_TRASHCAN_SAFE_BEGIN(so)
++    Py_TRASHCAN_BEGIN(so, set_dealloc)
+     if (so->weakreflist != NULL)
+         PyObject_ClearWeakRefs((PyObject *) so);
+ 
+@@ -571,7 +571,7 @@ set_dealloc(PySetObject *so)
+     if (so->table != so->smalltable)
+         PyMem_DEL(so->table);
+     Py_TYPE(so)->tp_free(so);
+-    Py_TRASHCAN_SAFE_END(so)
++    Py_TRASHCAN_END
+ }
+ 
+ static PyObject *
+diff --git a/Objects/tupleobject.c b/Objects/tupleobject.c
+index 9bb91a5..b78317a 100644
+--- a/Objects/tupleobject.c
++++ b/Objects/tupleobject.c
+@@ -239,7 +239,7 @@ tupledealloc(PyTupleObject *op)
+     Py_ssize_t i;
+     Py_ssize_t len =  Py_SIZE(op);
+     PyObject_GC_UnTrack(op);
+-    Py_TRASHCAN_SAFE_BEGIN(op)
++    Py_TRASHCAN_BEGIN(op, tupledealloc)
+     if (len > 0) {
+         i = len;
+         while (--i >= 0)
+@@ -258,7 +258,7 @@ tupledealloc(PyTupleObject *op)
+     }
+     Py_TYPE(op)->tp_free((PyObject *)op);
+ done:
+-    Py_TRASHCAN_SAFE_END(op)
++    Py_TRASHCAN_END
+ }
+ 
+ static PyObject *
+diff --git a/Objects/typeobject.c b/Objects/typeobject.c
+index c578d6e..6105529 100644
+--- a/Objects/typeobject.c
++++ b/Objects/typeobject.c
+@@ -1111,7 +1111,6 @@ subtype_dealloc(PyObject *self)
+ {
+     PyTypeObject *type, *base;
+     destructor basedealloc;
+-    PyThreadState *tstate = PyThreadState_GET();
+     int has_finalizer;
+ 
+     /* Extract the type; we expect it to be a heap type */
+@@ -1165,11 +1164,7 @@ subtype_dealloc(PyObject *self)
+     /* UnTrack and re-Track around the trashcan macro, alas */
+     /* See explanation at end of function for full disclosure */
+     PyObject_GC_UnTrack(self);
+-    ++_PyRuntime.gc.trash_delete_nesting;
+-    ++ tstate->trash_delete_nesting;
+-    Py_TRASHCAN_SAFE_BEGIN(self);
+-    --_PyRuntime.gc.trash_delete_nesting;
+-    -- tstate->trash_delete_nesting;
++    Py_TRASHCAN_BEGIN(self, subtype_dealloc);
+ 
+     /* Find the nearest base with a different tp_dealloc */
+     base = type;
+@@ -1262,11 +1257,7 @@ subtype_dealloc(PyObject *self)
+       Py_DECREF(type);
+ 
+   endlabel:
+-    ++_PyRuntime.gc.trash_delete_nesting;
+-    ++ tstate->trash_delete_nesting;
+-    Py_TRASHCAN_SAFE_END(self);
+-    --_PyRuntime.gc.trash_delete_nesting;
+-    -- tstate->trash_delete_nesting;
++    Py_TRASHCAN_END
+ 
+     /* Explanation of the weirdness around the trashcan macros:
+ 
+@@ -1303,67 +1294,6 @@ subtype_dealloc(PyObject *self)
+           looks like trash to gc too, and gc also tries to delete self
+           then.  But we're already deleting self.  Double deallocation is
+           a subtle disaster.
+-
+-       Q. Why the bizarre (net-zero) manipulation of
+-          _PyRuntime.trash_delete_nesting around the trashcan macros?
+-
+-       A. Some base classes (e.g. list) also use the trashcan mechanism.
+-          The following scenario used to be possible:
+-
+-          - suppose the trashcan level is one below the trashcan limit
+-
+-          - subtype_dealloc() is called
+-
+-          - the trashcan limit is not yet reached, so the trashcan level
+-        is incremented and the code between trashcan begin and end is
+-        executed
+-
+-          - this destroys much of the object's contents, including its
+-        slots and __dict__
+-
+-          - basedealloc() is called; this is really list_dealloc(), or
+-        some other type which also uses the trashcan macros
+-
+-          - the trashcan limit is now reached, so the object is put on the
+-        trashcan's to-be-deleted-later list
+-
+-          - basedealloc() returns
+-
+-          - subtype_dealloc() decrefs the object's type
+-
+-          - subtype_dealloc() returns
+-
+-          - later, the trashcan code starts deleting the objects from its
+-        to-be-deleted-later list
+-
+-          - subtype_dealloc() is called *AGAIN* for the same object
+-
+-          - at the very least (if the destroyed slots and __dict__ don't
+-        cause problems) the object's type gets decref'ed a second
+-        time, which is *BAD*!!!
+-
+-          The remedy is to make sure that if the code between trashcan
+-          begin and end in subtype_dealloc() is called, the code between
+-          trashcan begin and end in basedealloc() will also be called.
+-          This is done by decrementing the level after passing into the
+-          trashcan block, and incrementing it just before leaving the
+-          block.
+-
+-          But now it's possible that a chain of objects consisting solely
+-          of objects whose deallocator is subtype_dealloc() will defeat
+-          the trashcan mechanism completely: the decremented level means
+-          that the effective level never reaches the limit.      Therefore, we
+-          *increment* the level *before* entering the trashcan block, and
+-          matchingly decrement it after leaving.  This means the trashcan
+-          code will trigger a little early, but that's no big deal.
+-
+-       Q. Are there any live examples of code in need of all this
+-          complexity?
+-
+-       A. Yes.  See SF bug 668433 for code that crashed (when Python was
+-          compiled in debug mode) before the trashcan level manipulations
+-          were added.  For more discussion, see SF patches 581742, 575073
+-          and bug 574207.
+     */
+ }
+ 
+diff --git a/Python/hamt.c b/Python/hamt.c
+index 71a5ec8..ae776cd 100644
+--- a/Python/hamt.c
++++ b/Python/hamt.c
+@@ -1174,7 +1174,7 @@ hamt_node_bitmap_dealloc(PyHamtNode_Bitmap *self)
+     Py_ssize_t i;
+ 
+     PyObject_GC_UnTrack(self);
+-    Py_TRASHCAN_SAFE_BEGIN(self)
++    Py_TRASHCAN_BEGIN(self, hamt_node_bitmap_dealloc)
+ 
+     if (len > 0) {
+         i = len;
+@@ -1184,7 +1184,7 @@ hamt_node_bitmap_dealloc(PyHamtNode_Bitmap *self)
+     }
+ 
+     Py_TYPE(self)->tp_free((PyObject *)self);
+-    Py_TRASHCAN_SAFE_END(self)
++    Py_TRASHCAN_END
+ }
+ 
+ #ifdef Py_DEBUG
+@@ -1582,7 +1582,7 @@ hamt_node_collision_dealloc(PyHamtNode_Collision *self)
+     Py_ssize_t len = Py_SIZE(self);
+ 
+     PyObject_GC_UnTrack(self);
+-    Py_TRASHCAN_SAFE_BEGIN(self)
++    Py_TRASHCAN_BEGIN(self, hamt_node_collision_dealloc)
+ 
+     if (len > 0) {
+ 
+@@ -1592,7 +1592,7 @@ hamt_node_collision_dealloc(PyHamtNode_Collision *self)
+     }
+ 
+     Py_TYPE(self)->tp_free((PyObject *)self);
+-    Py_TRASHCAN_SAFE_END(self)
++    Py_TRASHCAN_END
+ }
+ 
+ #ifdef Py_DEBUG
+@@ -1967,14 +1967,14 @@ hamt_node_array_dealloc(PyHamtNode_Array *self)
+     Py_ssize_t i;
+ 
+     PyObject_GC_UnTrack(self);
+-    Py_TRASHCAN_SAFE_BEGIN(self)
++    Py_TRASHCAN_BEGIN(self, hamt_node_array_dealloc)
+ 
+     for (i = 0; i < HAMT_ARRAY_NODE_SIZE; i++) {
+         Py_XDECREF(self->a_array[i]);
+     }
+ 
+     Py_TYPE(self)->tp_free((PyObject *)self);
+-    Py_TRASHCAN_SAFE_END(self)
++    Py_TRASHCAN_END
+ }
+ 
+ #ifdef Py_DEBUG
+diff --git a/Python/traceback.c b/Python/traceback.c
+index 8b32864..68fb6d1 100644
+--- a/Python/traceback.c
++++ b/Python/traceback.c
+@@ -163,11 +163,11 @@ static void
+ tb_dealloc(PyTracebackObject *tb)
+ {
+     PyObject_GC_UnTrack(tb);
+-    Py_TRASHCAN_SAFE_BEGIN(tb)
++    Py_TRASHCAN_BEGIN(tb, tb_dealloc)
+     Py_XDECREF(tb->tb_next);
+     Py_XDECREF(tb->tb_frame);
+     PyObject_GC_Del(tb);
+-    Py_TRASHCAN_SAFE_END(tb)
++    Py_TRASHCAN_END
+ }
+ 
+ static int

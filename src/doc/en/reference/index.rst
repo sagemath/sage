@@ -13,7 +13,8 @@ User Interface
 ==============
 
 * :doc:`Command Line Interface (REPL) <repl/index>`
-* :doc:`Web Notebook <notebook/index>`
+* For the Jupyter notebook interface, visit `its documentation <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_.
+* For the legacy notebook interface, which is no longer actively maintained, visit the `source repository <https://github.com/sagemath/sagenb>`_.
 
 Graphics
 ========
@@ -36,9 +37,9 @@ Basic Rings and Fields
 
 * :doc:`Integers and Rational Numbers <rings_standard/index>`
 * :doc:`Real and Complex Numbers <rings_numerical/index>`
-* :doc:`Finite Rings and Fields <finite_rings/index>`
 * :doc:`Polynomials <polynomial_rings/index>`
-* :doc:`Formal Power Series <power_series/index>`
+* :doc:`Power Series and Laurent Series <power_series/index>`
+* :doc:`Finite Rings and Fields <finite_rings/index>`
 * :doc:`p-Adic Numbers <padics/index>`
 * :doc:`Quaternion Algebras <quat_algebras/index>`
 

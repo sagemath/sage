@@ -121,7 +121,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         from sage.misc.latex import latex
-        return "{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
+        return r"{}_{{ n={} }}({},\ {})({})".format(self._analytic_type.latex_space_name(), self._group.n(), self._weight, self._ep, latex(self._base_ring))
 
     def _element_constructor_(self, el):
         r"""
@@ -348,10 +348,9 @@ class FormsSpace_abstract(FormsRing_abstract):
     @cached_method
     def one(self):
         r"""
-        Return the one element from the corresponding space
-        of constant forms.
+        Return the one element from the corresponding space of constant forms.
 
-        Note: The one element does not lie in ``self`` in general.
+        .. NOTE:: The one element does not lie in ``self`` in general.
 
         EXAMPLES::
 
@@ -363,28 +362,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             ModularForms(n=3, k=0, ep=1) over Integer Ring
         """
         return self.extend_type("holo", ring=True)(1).reduce()
-
-    def one_element(self):
-        r"""
-        Return the one element from the corresponding space
-        of constant forms.
-
-        Note: The one element does not lie in ``self`` in general.
-
-        EXAMPLES::
-
-            sage: from sage.modular.modform_hecketriangle.space import CuspForms
-            sage: MF = CuspForms(k=12)
-            sage: (MF.Delta()^(-1)).parent()
-            MeromorphicModularForms(n=3, k=-12, ep=1) over Integer Ring
-            sage: MF.one_element()
-            doctest:...: DeprecationWarning: .one_element() is deprecated. Use .one() instead.
-            See http://trac.sagemath.org/17694 for details.
-            1 + O(q^5)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17694, ".one_element() is deprecated. Use .one() instead.")
-        return self.one()
 
     def is_ambient(self):
         r"""
@@ -399,7 +376,6 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: MF.subspace([MF.gen(0)]).is_ambient()
             False
         """
-
         return self._ambient_space == self
 
     def ambient_space(self):
@@ -2364,7 +2340,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             cor_exp = max(-first_exp, 0)
             m += cor_exp
 
-            if (self.group().is_arithmetic()):
+            if self.group().is_arithmetic():
                 return ZZ(1/dvalue)**m
 
             hecke_n = self.hecke_n()

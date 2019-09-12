@@ -9,16 +9,6 @@ More information can be found in [LLMS2006]_ .
 
 .. SEEALSO:: :meth:`sage.combinat.k_tableau.StrongTableau`, :meth:`sage.combinat.k_tableau.WeakTableau`
 
-REFERENCES:
-
-.. [LLMS2006] \T. Lam, L. Lapointe, J. Morse, M. Shimozono,
-   Affine insertion and Pieri rules for the affine Grassmannian,
-   Memoirs of the AMS, 208 (2010), no. 977, :arxiv:`math.CO/0609110`
-
-.. [LLMSSZ2013] \T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki,
-   `k`-Schur functions and affine Schubert calculus,
-   preprint :arXiv:`1301.3569`
-
 Authors:
 
 - Anne Schilling and Mike Zabrocki (2013): initial version
@@ -52,7 +42,6 @@ from sage.combinat.partition import Partition, Partitions
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.core import Core
 from sage.rings.all import ZZ
-from sage.misc.misc import uniq
 from sage.functions.generalized import sgn
 from sage.misc.flatten import flatten
 from sage.combinat.skew_partition import SkewPartition
@@ -928,7 +917,11 @@ class WeakTableau_core(WeakTableau_abstract):
             sage: t.residues_of_entries(1)
             [2, 3]
         """
-        return uniq([(j - i)%(self.k+1) for i in range(len(self)) for j in range(len(self[i])) if self[i][j] == v])
+        S = set((j - i) % (self.k+1)
+                for i in range(len(self))
+                for j in range(len(self[i]))
+                if self[i][j] == v)
+        return sorted(S)
 
     def dictionary_of_coordinates_at_residues(self, v):
         r"""
@@ -1978,7 +1971,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             sage: t = WeakTableau([[2,0],[3,2]], 3, representation = 'factorized_permutation')
             Traceback (most recent call last):
             ...
-            ValueError: Error! this only works on type 'A' affine Grassmannian elements
+            ValueError: this only works on type 'A' affine Grassmannian elements
 
             sage: T = WeakTableaux(3, [4,1], [2,1], representation = 'factorized_permutation')
             sage: t = T([[2],[1],[0]])
@@ -2527,7 +2520,7 @@ class StrongTableau(ClonableList):
         T = self.to_standard_list()
         size = Core([len(t) for t in T], self.k+1).length()
         inner_size = Core([y for y in (len([x for x in row if x is None]) for row in T) if y > 0], self.k+1).length()
-        if len(uniq([v for v in flatten(list(T)) if v in ZZ and v<0]))!=size-inner_size:
+        if len(set(v for v in flatten(list(T)) if v in ZZ and v < 0)) != size - inner_size:
             return False # TT does not have exactly self.size() marked cells
         for i in range(len(T)):
             for j in range(len(T[i])):
@@ -3184,7 +3177,7 @@ class StrongTableau(ClonableList):
             sage: StrongTableau([],4).height_of_ribbon(1)
             0
         """
-        return len(uniq([c[0] for c in self.cells_of_marked_ribbon(v)]))
+        return len(set(c[0] for c in self.cells_of_marked_ribbon(v)))
 
     def number_of_connected_components(self, v):
         r"""
@@ -4161,7 +4154,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
                         yield TT
 
     @classmethod
-    def marked_given_unmarked_and_weight_iterator( cls, unmarkedT, k, weight ):
+    def marked_given_unmarked_and_weight_iterator(cls, unmarkedT, k, weight):
         r"""
         An iterator generating strong marked tableaux from an unmarked strong tableau.
 
@@ -4207,15 +4200,15 @@ class StrongTableaux(UniqueRepresentation, Parent):
             sage: list(StrongTableaux.marked_given_unmarked_and_weight_iterator([], 4, weight=[]))
             [[]]
         """
-        td = StrongTableaux.cells_head_dictionary( unmarkedT )
-        if td == {}: # the tableau is empty
-            yield StrongTableau( unmarkedT, k, [] )
+        td = StrongTableaux.cells_head_dictionary(unmarkedT)
+        if td == {}:  # the tableau is empty
+            yield StrongTableau(unmarkedT, k, [])
         else:
             import itertools
             dsc = Composition(weight).descents()
-            for m in itertools.product(*td.values()):
+            for m in itertools.product(*[td[key] for key in sorted(td)]):
                 if all(((m[i][1]-m[i][0]<m[i+1][1]-m[i+1][0]) or (i in dsc)) for i in range(len(m)-1)):
-                   yield StrongTableaux.add_marking( unmarkedT, m, k, weight )
+                   yield StrongTableaux.add_marking(unmarkedT, m, k, weight)
 
     @classmethod
     def add_marking( cls, unmarkedT, marking, k, weight ):
@@ -4646,9 +4639,3 @@ def intermediate_shapes(t):
     for i in range(len(t.weight())+1):
         shapes += [ t.restrict(i).outer_shape()]
     return shapes
-
-# Deprecations from trac:18555. July 2016
-from sage.misc.superseded import deprecated_function_alias
-
-
-StrongTableaux.global_options = deprecated_function_alias(18555, StrongTableaux.options)

@@ -70,11 +70,11 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = AlgebrasWithBasis(QQ).Filtered().example()
-            sage: S = A.an_element().support(); S
-            [U['x']^2*U['y']^2*U['z']^3, U['x'], 1, U['y']]
+            sage: S = sorted(A.an_element().support()); S
+            [1, U['x'], U['x']^2*U['y']^2*U['z']^3, U['y']]
             sage: [A._sort_key(m) for m in S]
-            [(-7, ['x', 'x', 'y', 'y', 'z', 'z', 'z']), (-1, ['x']),
-            (0, []), (-1, ['y'])]
+            [(0, []), (-1, ['x']), (-7, ['x', 'x', 'y', 'y', 'z', 'z', 'z']),
+            (-1, ['y'])]
         """
         return (-len(x), x.to_word_list())
 

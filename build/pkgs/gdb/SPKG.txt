@@ -21,8 +21,9 @@ http://www.gnu.org/software/gdb/
 * mpfr
 * ppl
 * gmp/mpir
+* makeinfo (external)
 
 == Special Update/Build Instructions ==
 
-None.
-
+Current version needs makeinfo installed
+to build successfully.

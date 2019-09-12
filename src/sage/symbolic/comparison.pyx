@@ -259,6 +259,8 @@ cpdef int mixed_order(lhs, rhs) except -2:
         sage: mixed_order(SR(oo), sqrt(2))
         1
     """
+    if lhs is rhs:
+        return 0
     if not is_Expression(lhs):
         lhs = SR(lhs)
     if not is_Expression(rhs):

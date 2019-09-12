@@ -86,6 +86,7 @@ Details on Specific Solvers
 
    sage/sat/solvers/satsolver
    sage/sat/solvers/dimacs
+   sage/sat/solvers/picosat
    sage/sat/solvers/sat_lp
    sage/sat/solvers/cryptominisat
 
@@ -105,8 +106,8 @@ Conjunctive Normal Form::
     sage: _ = solver.write()
     sage: print(open(fn).read())
     p cnf 3 2
-    1 0
     -2 0
+    1 0
     <BLANKLINE>
 
 Details on Specific Converterts

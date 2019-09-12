@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
-from sage.misc.search import search
+from sage.misc.search cimport search
 from sage.structure.richcmp cimport rich_to_bool
 
 cimport sage.rings.fast_arith
@@ -773,7 +773,7 @@ cdef class P1List(object):
 
             sage: L = P1List(8)
             sage: L.__reduce__()
-            (<type 'sage.modular.modsym.p1list.P1List'>, (8,))
+            (<... 'sage.modular.modsym.p1list.P1List'>, (8,))
         """
         return type(self), (self.__N, )
 
@@ -801,7 +801,7 @@ cdef class P1List(object):
 
     def __len__(self):
         """
-        Returns the length of this P1List.
+        Return the length of this P1List.
 
         EXAMPLES::
 
@@ -813,7 +813,7 @@ cdef class P1List(object):
 
     def __repr__(self):
         """
-        Returns the string representation of this P1List.
+        Return the string representation of this P1List.
 
         EXAMPLES::
 
@@ -989,7 +989,7 @@ cdef class P1List(object):
             (1, 99)
             sage: L.index(1,99)
             100
-            sage: all([L.index(L[i][0],L[i][1])==i for i in range(len(L))])
+            sage: all(L.index(L[i][0],L[i][1])==i for i in range(len(L)))
             True
         """
         if self.__N == 1:
@@ -1076,23 +1076,23 @@ cdef class P1List(object):
             (1, 99)
             sage: L.index_of_normalized_pair(1,99)
             100
-            sage: all([L.index_of_normalized_pair(L[i][0],L[i][1])==i for i in range(len(L))])
+            sage: all(L.index_of_normalized_pair(L[i][0],L[i][1])==i for i in range(len(L)))
             True
         """
         t, i = search(self.__list, (u,v))
-        if t: return i
+        if t:
+            return i
         return -1
-
 
     def list(self):
         r"""
-        Returns the underlying list of this P1List object.
+        Return the underlying list of this :class:`P1List` object.
 
         EXAMPLES::
 
             sage: L = P1List(8)
             sage: type(L)
-            <type 'sage.modular.modsym.p1list.P1List'>
+            <... 'sage.modular.modsym.p1list.P1List'>
             sage: type(L.list())
             <... 'list'>
         """

@@ -690,7 +690,7 @@ cdef class Parser:
 
 # eqn ::= expr op expr | expr
     cpdef p_eqn(self, Tokenizer tokens):
-        """
+        r"""
         Parse an equation or expression.
 
         This is the top-level node called by the \code{parse} function.

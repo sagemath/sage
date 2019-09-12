@@ -1,10 +1,12 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fmpz.h
 
 from libc.stdio cimport FILE
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/fmpz.h":
+# flint/fmpz.h
+cdef extern from "flint_wrap.h":
     # Memory management
     void fmpz_init(fmpz_t)
     void fmpz_init2(fmpz_t, ulong limbs)

@@ -1,18 +1,7 @@
 cd src
 
-# Use newer version of config.guess and config.sub (see Trac #19714)
-cp "$SAGE_ROOT"/config/config.* config
-
-# The following prevents autotools to regenerate its files.
-touch aclocal.m4 configure Makefile.in config.h.in
-touch src/platform.hpp.in
-
 # Do not treat warnings as errors, see
 # https://github.com/zeromq/libzmq/issues/2818
-# We put this in CPPFLAGS such that it does not override the default
-# CXXFLAGS of zeromq.
-export CPPFLAGS="$CPPFLAGS -Wno-error"
-
-sdh_configure
+sdh_configure --disable-Werror
 sdh_make
 sdh_make_install -j1

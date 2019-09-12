@@ -4,8 +4,8 @@ Manin symbols
 
 This module defines the class ManinSymbol.  A Manin symbol of
 weight `k`, level `N` has the form `[P(X,Y),(u:v)]` where
-`P(X,Y)\in\mathbb{Z}[X,Y]` is homogeneous of weight `k-2` and
-`(u:v)\in\mathbb{P}^1(\mathbb{Z}/N\mathbb{Z}).`  The ManinSymbol class
+`P(X,Y)\in\ZZ[X,Y]` is homogeneous of weight `k-2` and
+`(u:v)\in\mathbb{P}^1(\ZZ/N\ZZ).`  The ManinSymbol class
 holds a "monomial Manin symbol" of the simpler form
 `[X^iY^{k-2-i},(u:v)]`, which is stored as a triple `(i,u,v)`; the
 weight and level are obtained from the parent structure, which is a
@@ -233,6 +233,22 @@ cdef class ManinSymbol(Element):
             return richcmp_not_equal(lx, rx, op)
         return richcmp(self.v, other.v, op)
 
+    def __hash__(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.modular.modsym.manin_symbol import ManinSymbol
+            sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
+            sage: m = ManinSymbolList_gamma0(5,2)
+            sage: s = ManinSymbol(m,(2,2,3))
+            sage: hash(s)  # random
+            7331463901
+        """
+        cdef unsigned long h1 = hash(self.i)
+        cdef unsigned long h2 = hash(self.u)
+        cdef unsigned long h3 = hash(self.v)
+        return <Py_hash_t>(h1 + 1247963869*h2 + 1611845387*h3)
+
     def __mul__(self, matrix):
         """
         Return the result of applying a matrix to this Manin symbol.
@@ -302,7 +318,7 @@ cdef class ManinSymbol(Element):
 
     def lift_to_sl2z(self, N=None):
         r"""
-        Return a lift of this Manin symbol to `SL_2(\mathbb{Z})`.
+        Return a lift of this Manin symbol to `SL_2(\ZZ)`.
 
         If this Manin symbol is `(c,d)` and `N` is its level, this
         function returns a list `[a,b, c',d']` that defines a 2x2

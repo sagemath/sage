@@ -23,7 +23,6 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.categories.sets_cat import Sets
 from sage.matrix.constructor import matrix
-from sage.misc.misc import uniq
 from sage.misc.cachefunc import cached_method
 
 from .functions cimport binomial
@@ -436,22 +435,22 @@ cdef class PointConfiguration_base(Parent):
 
         # We now are sure that projective_points is not empty
         self._ambient_dim = len(projective_points[0])-1
-        assert all([ len(p)==self._ambient_dim+1 for p in projective_points ]), \
+        assert all(len(p) == self._ambient_dim+1 for p in projective_points), \
             'The given point coordinates must all have the same length.'
-        assert len(uniq(projective_points)) == len(projective_points), \
+        assert len(set(projective_points)) == len(projective_points), \
             'Not all points are pairwise distinct.'
 
         proj = matrix(projective_points).transpose()
         self._base_ring = proj.base_ring()
 
-        if all([ x==1 for x in proj.row(self.ambient_dim()) ]):
-            aff = proj.submatrix(0,0,nrows=self.ambient_dim())
+        if all(x == 1 for x in proj.row(self.ambient_dim())):
+            aff = proj.submatrix(0, 0, nrows=self.ambient_dim())
         else:
-            raise NotImplementedError # TODO
+            raise NotImplementedError  # TODO
 
         if n>1:
             # shift first point to origin
-            red = matrix([ aff.column(i)-aff.column(0) for i in range(0,n) ]).transpose()
+            red = matrix([ aff.column(i)-aff.column(0) for i in range(n) ]).transpose()
             # pick linearly independent rows
             red = matrix([ red.row(i) for i in red.pivot_rows()])
         else:
@@ -461,8 +460,9 @@ cdef class PointConfiguration_base(Parent):
         from sage.modules.free_module import VectorSpace
         self._reduced_affine_vector_space = VectorSpace(self._base_ring.fraction_field(), self._dim)
         self._reduced_projective_vector_space = VectorSpace(self._base_ring.fraction_field(), self._dim+1)
-        self._pts = tuple([ Point(self, i, proj.column(i), aff.column(i), red.column(i))
-                           for i in range(0,n) ])
+        self._pts = tuple([Point(self, i, proj.column(i),
+                                aff.column(i), red.column(i))
+                           for i in range(n)])
 
     def __hash__(self):
         r"""
@@ -972,7 +972,7 @@ cdef class ConnectedTriangulationsIterator(SageObject):
         try:
             enumerated_simplices_seed = seed.enumerated_simplices()
         except AttributeError:
-            enumerated_simplices_seed = tuple([ int(t) for t in seed ])
+            enumerated_simplices_seed = tuple([int(t) for t in seed])
         assert self._tp == NULL
         self._tp = init_triangulations(point_configuration.n_points(),
                                        point_configuration.dim()+1,

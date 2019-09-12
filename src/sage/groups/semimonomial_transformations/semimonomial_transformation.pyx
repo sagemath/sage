@@ -329,7 +329,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def invert_v(self):
         """
-        Elementwisely inverts all entries of ``self`` which
+        Elementwisely invert all entries of ``self`` which
         correspond to the component `{R^{\times}}^n`.
 
         The other components of ``self`` keep unchanged.
@@ -338,7 +338,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
             sage: F.<a> = GF(9)
             sage: x = copy(SemimonomialTransformationGroup(F, 4).an_element())
-            sage: x.invert_v();
+            sage: x.invert_v()
             sage: x.get_v() == SemimonomialTransformationGroup(F, 4).an_element().get_v_inverse()
             True
         """

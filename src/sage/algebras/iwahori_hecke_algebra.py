@@ -153,7 +153,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
     Iwahori-Hecke algebras are fundamental in many areas of mathematics,
     ranging from the representation theory of Lie groups and quantum groups,
     to knot theory and statistical mechanics. For more information see,
-    for example, [KL79]_, [HKP2010]_, [Jon1987]_ and
+    for example, [KL1979]_, [HKP2010]_, [Jon1987]_ and
     :wikipedia:`Iwahori-Hecke_algebra`.
 
     .. RUBRIC:: Bases
@@ -193,7 +193,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
     which are uniquely determined by the properties that they are invariant
     under the bar involution on `H` and have triangular transitions matrices
     with polynomial entries of a certain form with the `T`-basis;
-    see [KL79]_ for a precise statement.
+    see [KL1979]_ for a precise statement.
 
     It turns out that the Kazhdan-Lusztig bases can be defined (by
     specialization) in `H` whenever `-q_1 q_2` is a square in the base ring.
@@ -590,7 +590,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: IwahoriHeckeAlgebra("B2", 1).coxeter_group()
-            Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with Coxeter matrix:
+            Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
             [1 4]
             [4 1]
         """
@@ -1034,7 +1034,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 (-q_1 q_2)^{-\ell(w)} T_w`, for `w` an element of the
                 corresponding Coxeter group.
 
-                This map is defined in [KL79]_ and it is used to
+                This map is defined in [KL1979]_ and it is used to
                 change between the `C` and `C^{\prime}` bases because
                 `\alpha(C_w) = (-1)^{\ell(w)} C_w'`.
 
@@ -1599,7 +1599,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             (-q_1 q_2)^{-\ell(w)} T_w`, for `w` an element of the
             corresponding Coxeter group.
 
-            This map is defined in [KL79]_ and it is used to change between
+            This map is defined in [KL1979]_ and it is used to change between
             the `C` and `C^{\prime}` bases because
             `\alpha(C_w) = (-1)^{\ell(w)}C^{\prime}_w`.
 
@@ -1867,7 +1867,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             C^{\prime}_s = (-q_1 q_2)^{-1/2} (T_s + 1).
 
-        See [KL79]_ for more details.
+        See [KL1979]_ for more details.
 
         EXAMPLES::
 
@@ -1975,7 +1975,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             C_s = (-q_1 q_2)^{1/2} (1 - (-q_1 q_2)^{-1/2} T_s).
 
-        See [KL79]_ for more details.
+        See [KL1979]_ for more details.
 
         EXAMPLES::
 

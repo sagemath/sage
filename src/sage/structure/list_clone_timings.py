@@ -81,10 +81,9 @@ Various timings using a Python class::
 #*****************************************************************************
 from __future__ import print_function
 
-
 from sage.structure.list_clone import ClonableArray
 from sage.structure.list_clone_demo import IncreasingArrays
-from sage.structure.list_clone_timings_cy import *
+
 
 class IncreasingArraysPy(IncreasingArrays):
 

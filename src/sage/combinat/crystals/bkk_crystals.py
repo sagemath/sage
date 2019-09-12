@@ -129,8 +129,8 @@ class CrystalOfBKKTableaux(CrystalOfWords):
             sage: B.genuine_highest_weight_vectors()
             ([[-2, -2, -2], [-1, -1], [1]],)
             sage: B.highest_weight_vectors()
-            ([[-2, -2, -2], [-1, 2], [1]],
-             [[-2, -2, -2], [-1, -1], [1]],
+            ([[-2, -2, -2], [-1, -1], [1]],
+             [[-2, -2, -2], [-1, 2], [1]],
              [[-2, -2, 2], [-1, -1], [1]])
         """
         if index_set is None or index_set == self.index_set():

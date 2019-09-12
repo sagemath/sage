@@ -24,7 +24,7 @@ children. Providing such methods is the whole purpose of the
 As a result, the :class:`AbstractTree` class is not meant to be
 instantiated, but extended. It is expected that classes extending this one may
 also inherit from classes representing iterables, for instance
-:class:`ClonableArray` or :class:`~sage.structure.list_clone.ClonableList`
+:class:`~sage.structure.list_clone.ClonableArray` or :class:`~sage.structure.list_clone.ClonableList`
 
 **Constrained Trees**
 
@@ -1016,11 +1016,11 @@ class AbstractTree(object):
             yield ()
             for i, t in enumerate(self):
                 for p in t.paths():
-                    yield (i,)+p
+                    yield (i,) + p
 
     def node_number(self):
         """
-        The number of nodes of ``self``.
+        Return the number of nodes of ``self``.
 
         .. SEEALSO::
 
@@ -1057,7 +1057,7 @@ class AbstractTree(object):
 
     def depth(self):
         """
-        The depth of ``self``.
+        Return the depth of ``self``.
 
         EXAMPLES::
 
@@ -1321,7 +1321,7 @@ class AbstractTree(object):
 
     def canonical_labelling(self, shift=1):
         """
-        Returns a labelled version of ``self``.
+        Return a labelled version of ``self``.
 
         The actual canonical labelling is currently unspecified. However, it
         is guaranteed to have labels in `1...n` where `n` is the number of
@@ -1798,7 +1798,7 @@ class AbstractClonableTree(AbstractTree):
 
     An abstract class for trees with clone protocol (see
     :mod:`~sage.structure.list_clone`). It is expected that classes extending
-    this one may also inherit from classes like :class:`ClonableArray` or
+    this one may also inherit from classes like :class:`~sage.structure.list_clone.ClonableArray` or
     :class:`~sage.structure.list_clone.ClonableList` depending whether one
     wants to build trees where adding a child is allowed.
 
@@ -1847,7 +1847,7 @@ class AbstractClonableTree(AbstractTree):
 
     def __setitem__(self, idx, value):
         """
-        Substitute a subtree
+        Substitute a subtree.
 
         .. NOTE::
 
@@ -2094,7 +2094,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def _repr_(self):
         """
-        Returns the string representation of ``self``
+        Return the string representation of ``self``.
 
         TESTS::
 
@@ -2115,8 +2115,8 @@ class AbstractLabelledTree(AbstractTree):
 
         INPUT:
 
-        - ``path`` -- None (default) or a path (list or tuple of children index
-                     in the tree)
+        - ``path`` -- ``None`` (default) or a path (list or tuple of
+          children index in the tree)
 
         OUTPUT: the label of the subtree indexed by ``path``
 
@@ -2188,7 +2188,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def __eq__(self, other):
         """
-        Tests if ``self`` is equal to ``other``
+        Test if ``self`` is equal to ``other``
 
         TESTS::
 
@@ -2213,7 +2213,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def _hash_(self):
         """
-        Returns the hash value for ``self``
+        Return the hash value for ``self``
 
         TESTS::
 
@@ -2278,7 +2278,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def as_digraph(self):
         """
-        Returns a directed graph version of ``self``.
+        Return a directed graph version of ``self``.
 
         .. WARNING::
 
@@ -2293,7 +2293,7 @@ class AbstractLabelledTree(AbstractTree):
            sage: t1.as_digraph()
            Digraph on 3 vertices
 
-           sage: t = BinaryTree([[None, None],[[],None]]);
+           sage: t = BinaryTree([[None, None],[[],None]])
            sage: lt = t.canonical_labelling()
            sage: lt.as_digraph()
            Digraph on 4 vertices
@@ -2316,12 +2316,12 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
     This class takes care of modification for the label by the clone protocol.
 
     .. NOTE:: Due to the limitation of Cython inheritance, one cannot inherit
-       here from :class:`ClonableArray`, because it would prevent us to
+       here from :class:`~sage.structure.list_clone.ClonableArray`, because it would prevent us to
        inherit later from :class:`~sage.structure.list_clone.ClonableList`.
     """
     def set_root_label(self, label):
         """
-        Sets the label of the root of ``self``
+        Set the label of the root of ``self``.
 
         INPUT: ``label`` -- any Sage object
 
@@ -2377,7 +2377,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
     def set_label(self, path, label):
         """
-        Changes the label of subtree indexed by ``path`` to ``label``
+        Change the label of subtree indexed by ``path`` to ``label``.
 
         INPUT:
 
@@ -2428,7 +2428,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
     def map_labels(self, f):
         """
-        Applies the function `f` to the labels of ``self``
+        Apply the function `f` to the labels of ``self``
 
         This method returns a copy of ``self`` on which the function `f` has
         been applied on all labels (a label `x` is replaced by `f(x)`).
@@ -2476,6 +2476,8 @@ def from_hexacode(ch, parent=None, label='@'):
         sage: from sage.combinat.abstract_tree import from_hexacode
         sage: from_hexacode('12000', LabelledOrderedTrees())
         @[@[@[], @[]]]
+        sage: from_hexacode('12000')
+        @[@[@[], @[]]]
 
         sage: from_hexacode('1200', LabelledOrderedTrees())
         @[@[@[], @[]]]
@@ -2496,7 +2498,7 @@ def from_hexacode(ch, parent=None, label='@'):
         [[[], []]]
     """
     if parent is None:
-        from sage.combinat.rooted_tree import LabelledOrderedTrees
+        from sage.combinat.ordered_tree import LabelledOrderedTrees
         parent = LabelledOrderedTrees()
     return _from_hexacode_aux(ch, parent, label)[0]
 

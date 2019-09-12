@@ -1,7 +1,12 @@
-/************* ComputeL v1.3.4, 2001-2016, (c) Tim Dokchitser ************/
+/************* ComputeL v1.3.8, 2001-2018, (c) Tim Dokchitser ************/
 /**************** computing special values of L-functions ****************/
 /* arXiv.org/abs/math.NT/0207280, Exper. Math. 13 (2004), no. 2, 137-150 */
 /****** Questions/comments welcome! -> tim.dokchitser@bristol.ac.uk ******/
+
+\\ ACKNOWLEDGEMENTS: I'd like to thank Mark Watkins, Steve Donnelly,
+\\ William Stein, Anton Mellit, Almasa Odzak, Karim Belabas, Myoungil Kim,
+\\ Chris King, F. Patrick Rabarison, Neil Dummigan, Maciej Radziejewski,
+\\ François Brunault and Alex Best, for examples, bug fixes and suggestions
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ Distributed under the terms of the GNU General Public License (GPL)
@@ -238,7 +243,7 @@ fullgamma_$i(ss) =
 fullgammaseries_$i(ss,extraterms)=
   local(digts,GSD);
 
-  digts=default(realprecision);
+  digts=lfundigits_$i;
   if (lastFGSs_$i!=ss || lastFGSterms_$i!=extraterms,
     GSD=sum(j=1,numpoles_$i,(abs((ss+poles_$i[j])/2-round(real((ss+poles_$i[j])/2)))<10^(2-digts)) * PoleOrders_$i[j] )+extraterms;
     lastFGSs_$i=ss;
@@ -571,12 +576,12 @@ LogInt_$i(i,j,logt,der)=\
 MakeLogSum_$i(ss,der)=
   local(nn,V,logsum);
 
-  if(length(LogSum)==phiVnn_$i,                      \\ more phiV's necessary
+  if(length(LogSum_$i)==phiVnn_$i,                      \\ more phiV's necessary
     for (j=1,floor(phiVnn_$i/10)+1,RecursephiV_$i()));
-  for (nn=length(LogSum)+1,phiVnn_$i,                \\ generate logsums
+  for (nn=length(LogSum_$i)+1,phiVnn_$i,                \\ generate logsums
     V=phiV_$i[nn];
     logsum=vector(numpoles_$i,j,sum(k=1,PoleOrders_$i[j],V[j,k]*LogInt_$i(poles_$i[j]+2*(nn-1)+ss,k,lt,der)))~;
-    LogSum=concat(LogSum,[logsum]);
+    LogSum_$i=concat(LogSum_$i,[logsum]);
   );
   lastLSs_$i=[ss,der];
 }
@@ -587,7 +592,7 @@ G0_$i(t,ss,der)=                 \\ G(t,s,der) computed using Taylor series at 0
 
   default(realprecision,taylordigits_$i);
   ss     = precision(ss,taylordigits_$i);
-  if ([ss,der]!=lastLSs_$i,LogSum=[]);
+  if ([ss,der]!=lastLSs_$i,LogSum_$i=[]);
   t      = precision(t,taylordigits_$i);
   t2     = t^2;       \\ time
   LT     = log(t);    \\ = money
@@ -597,8 +602,8 @@ G0_$i(t,ss,der)=                 \\ G(t,s,der) computed using Taylor series at 0
   term   = 1;
   until ((nn>3) && abs(term)<10^-(termdigits_$i+1),
     nn++;
-    if(nn>length(LogSum),MakeLogSum_$i(ss,der));
-    term=TPower*subst(LogSum[nn],lt,LT);
+    if(nn>length(LogSum_$i),MakeLogSum_$i(ss,der));
+    term=TPower*subst(LogSum_$i[nn],lt,LT);
     res+=term;
     TPower*=t2;
   );

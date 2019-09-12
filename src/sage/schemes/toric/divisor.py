@@ -1110,7 +1110,7 @@ class ToricDivisor_generic(Divisor_generic):
         The :class:`~sage.schemes.toric.chow_group.ChowCycle`
         represented by the divisor.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: dP6 = toric_varieties.dP6()
             sage: cone = dP6.fan(1)[0]
@@ -1169,7 +1169,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: (-K).is_ample()
             True
 
-        Example 6.1.3, 6.1.11, 6.1.17 of [CLS]_::
+        Example 6.1.3, 6.1.11, 6.1.17 of [CLS2011]_::
 
             sage: from itertools import product
             sage: fan = Fan(cones=[(0,1), (1,2), (2,3), (3,0)],
@@ -1247,7 +1247,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: (-K).is_nef()
             True
 
-        Example 6.1.3, 6.1.11, 6.1.17 of [CLS]_::
+        Example 6.1.3, 6.1.11, 6.1.17 of [CLS2011]_::
 
             sage: from itertools import product
             sage: fan = Fan(cones=[(0,1), (1,2), (2,3), (3,0)],
@@ -1300,7 +1300,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: P_antiK.integral_points()
             ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0))
 
-        Example 6.1.3, 6.1.11, 6.1.17 of [CLS]_::
+        Example 6.1.3, 6.1.11, 6.1.17 of [CLS2011]_::
 
             sage: fan = Fan(cones=[(0,1), (1,2), (2,3), (3,0)],
             ....:           rays=[(-1,2), (0,1), (1,0), (0,-1)])
@@ -1426,7 +1426,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: P2.divisor(2).sections_monomials()
             (z, y, x)
 
-        From [CoxTutorial]_ page 38::
+        From [Cox]_ page 38::
 
             sage: lp = LatticePolytope([(1,0),(1,1),(0,1),(-1,0),(0,-1)])
             sage: lp
@@ -1439,12 +1439,6 @@ class ToricDivisor_generic(Divisor_generic):
             sage: AK.sections_monomials()
             (x3*x4^2*x5, x2*x3^2*x4^2, x1*x4*x5^2, x1*x2*x3*x4*x5,
              x1*x2^2*x3^2*x4, x1^2*x2*x5^2, x1^2*x2^2*x3*x5, x1^2*x2^3*x3^2)
-
-        REFERENCES:
-
-        ..  [CoxTutorial]
-            David Cox, "What is a Toric Variety",
-            http://www.cs.amherst.edu/~dac/lectures/tutorial.ps
         """
         return tuple(self.monomial(m) for m in self.sections())
 
@@ -1724,13 +1718,13 @@ class ToricDivisor_generic(Divisor_generic):
         cohomology. For toric divisors, the local sections can be
         chosen to be monomials (instead of general homogeneous
         polynomials), this is the reason for the extra grading by
-        `m\in M`. General references would be [Fu1993]_, [CLS]_. Here
+        `m\in M`. General references would be [Ful1993]_, [CLS2011]_. Here
         are some salient features of our implementation:
 
         * First, a finite set of `M`-lattice points is identified that
           supports the cohomology. The toric divisor determines a
           (polyhedral) chamber decomposition of `M_\RR`, see Section
-          9.1 and Figure 4 of [CLS]_. The cohomology vanishes on the
+          9.1 and Figure 4 of [CLS2011]_. The cohomology vanishes on the
           non-compact chambers. Hence, the convex hull of the vertices
           of the chamber decomposition contains all non-vanishing
           cohomology groups. This is returned by the private method
@@ -1742,8 +1736,8 @@ class ToricDivisor_generic(Divisor_generic):
 
         * For each point `m\in M`, the weight-`m` part of the
           cohomology can be rewritten as the cohomology of a
-          simplicial complex, see Exercise 9.1.10 of [CLS]_,
-          [Perling]_. This is returned by the private method
+          simplicial complex, see Exercise 9.1.10 of [CLS2011]_,
+          [Per2007]_. This is returned by the private method
           :meth:`_sheaf_complex`.
 
           The simplicial complex is the same for all points in a
@@ -1755,15 +1749,9 @@ class ToricDivisor_generic(Divisor_generic):
           :meth:`_sheaf_cohomology`. Summing over the supporting
           points `m\in M` yields the cohomology of the sheaf`.
 
-        REFERENCES:
-
-        ..  [Perling]
-            Markus Perling: Divisorial Cohomology Vanishing on Toric Varieties,
-            :arxiv:`0711.4836v2`
-
         EXAMPLES:
 
-        Example 9.1.7 of Cox, Little, Schenck: "Toric Varieties" [CLS]_::
+        Example 9.1.7 of Cox, Little, Schenck: "Toric Varieties" [CLS2011]_::
 
             sage: F = Fan(cones=[(0,1), (1,2), (2,3), (3,4), (4,5), (5,0)],
             ....:         rays=[(1,0), (1,1), (0,1), (-1,0), (-1,-1), (0,-1)])

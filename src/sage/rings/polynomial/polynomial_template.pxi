@@ -16,7 +16,7 @@ Polynomial Template for C/C++ Library Interfaces
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport ModuleElement, Element, RingElement
-from sage.structure.element import coerce_binop, bin_op
+from sage.structure.element import coerce_binop
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
@@ -713,7 +713,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return element_shift(self, -n)
 
-    cpdef bint is_zero(self):
+    cpdef bint is_zero(self) except -1:
         """
         EXAMPLES::
 
@@ -723,7 +723,7 @@ cdef class Polynomial_template(Polynomial):
         """
         return celement_is_zero(&self.x, (<Polynomial_template>self)._cparent)
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) except -1:
         """
         EXAMPLES::
 
@@ -804,43 +804,3 @@ cdef class Polynomial_template(Polynomial):
         if not have_ring:
             self.parent()._singular_(singular).set_ring() #this is expensive
         return singular(self._singular_init_())
-
-    def _derivative(self, var=None):
-        r"""
-        Returns the formal derivative of self with respect to var.
-
-        var must be either the generator of the polynomial ring to which
-        this polynomial belongs, or None (either way the behaviour is the
-        same).
-
-        .. SEEALSO:: :meth:`.derivative`
-
-        EXAMPLES::
-
-            sage: R.<x> = Integers(77)[]
-            sage: f = x^4 - x - 1
-            sage: f._derivative()
-            4*x^3 + 76
-            sage: f._derivative(None)
-            4*x^3 + 76
-
-            sage: f._derivative(2*x)
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot differentiate with respect to 2*x
-
-            sage: y = var("y")
-            sage: f._derivative(y)
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot differentiate with respect to y
-        """
-        if var is not None and var is not self._parent.gen():
-            raise ValueError("cannot differentiate with respect to %s" % var)
-
-        P = self.parent()
-        x = P.gen()
-        res = P(0)
-        for i,c in enumerate(self.list()[1:]):
-            res += (i+1)*c*x**i
-        return res

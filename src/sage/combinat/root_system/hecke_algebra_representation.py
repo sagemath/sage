@@ -358,7 +358,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            2*12321 + 3*1231 + 123 + e
+            123 + 3*32 + 2*3 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )

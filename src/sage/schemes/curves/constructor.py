@@ -194,7 +194,7 @@ def Curve(F, A=None):
             return Curve([F], A)
         if not is_AmbientSpace(A):
             raise TypeError("A (=%s) must be either an affine or projective space"%A)
-        if not all([f.parent() == A.coordinate_ring() for f in F]):
+        if not all(f.parent() == A.coordinate_ring() for f in F):
             raise TypeError("F (=%s) must be a list or tuple of polynomials of the coordinate ring of " \
             "A (=%s)"%(F, A))
         n = A.dimension_relative()
@@ -215,7 +215,7 @@ def Curve(F, A=None):
                 return AffinePlaneCurve_finite_field(A, F[0])
             return AffinePlaneCurve(A, F[0])
         elif is_ProjectiveSpace(A):
-            if not all([f.is_homogeneous() for f in F]):
+            if not all(f.is_homogeneous() for f in F):
                 raise TypeError("polynomials defining a curve in a projective space must be homogeneous")
             if n > 2:
                 return ProjectiveCurve(A, F)

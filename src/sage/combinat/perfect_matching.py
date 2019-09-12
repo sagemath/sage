@@ -60,10 +60,12 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.combinat.permutation import Permutation, Permutations
 from sage.sets.set import Set
+from sage.structure.list_clone import ClonableArray
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
 from sage.combinat.set_partition import SetPartition, SetPartitions_set
+from sage.combinat.combinat_cython import perfect_matchings_iterator
 from sage.rings.infinity import infinity
 
 class PerfectMatching(SetPartition):
@@ -176,6 +178,32 @@ class PerfectMatching(SetPartition):
         base_set = frozenset(e for p in parts for e in p)
         P = PerfectMatchings(base_set)
         return P(parts)
+
+    def __init__(self, parent, s, check=True, sort=True):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: PM = PerfectMatchings(6)
+            sage: x = PM.element_class(PM, [[5,6],[3,4],[1,2]])
+
+        Use the ``sort`` argument when you do not care if the result
+        is sorted. Be careful with its use as you can get inconsistent
+        results when then input is not sorted::
+
+            sage: y = PM.element_class(PM, [[5,6],[3,4],[1,2]], sort=False)
+            sage: y
+            [(5, 6), (3, 4), (1, 2)]
+            sage: x == y
+            False
+        """
+        self._latex_options = {}
+        if sort:
+            data = sorted(map(frozenset, s), key=min)
+        else:
+            data = list(map(frozenset, s))
+        ClonableArray.__init__(self, parent, data, check=check)
 
     def _repr_(self):
         r"""
@@ -332,13 +360,29 @@ class PerfectMatching(SetPartition):
 
             sage: m = PerfectMatching([('a','e'),('b','c'),('d','f')])
             sage: n = PerfectMatching([('a','b'),('d','f'),('e','c')])
-            sage: m.loops(n)
+            sage: loops = m.loops(n)
+            sage: loops # random
             [['a', 'e', 'c', 'b'], ['d', 'f']]
 
             sage: o = PerfectMatching([(1, 7), (2, 4), (3, 8), (5, 6)])
             sage: p = PerfectMatching([(1, 6), (2, 7), (3, 4), (5, 8)])
             sage: o.loops(p)
             [[1, 7, 2, 4, 3, 8, 5, 6]]
+
+        TESTS:
+
+        Test whether the shorter element of ``loops`` is ``['d', 'f']``
+        and the longer element is the cycle ``['a', 'e', 'c', 'b']`` or
+        its reverse, or one of their cyclic permutations::
+
+            sage: loops = sorted(loops, key=len)
+            sage: sorted(loops[0])
+            ['d', 'f']
+            sage: G = SymmetricGroup(4)
+            sage: g = G([(1,2,3,4)])
+            sage: ((loops[1] in [permutation_action(g**i, ['a', 'e', 'c', 'b']) for i in range(4)])
+            ....:      or (loops[1] in [permutation_action(g**i, ['a', 'b', 'c', 'e']) for i in range(4)]))
+            True
         """
         return list(self.loops_iterator(other))
 
@@ -476,13 +520,14 @@ class PerfectMatching(SetPartition):
     is_non_nesting = deprecated_function_alias(23982, SetPartition.is_nonnesting)
     conjugate_by_permutation = deprecated_function_alias(23982, SetPartition.apply_permutation)
 
+
 class PerfectMatchings(SetPartitions_set):
     r"""
     Perfect matchings of a ground set.
 
     INPUT:
 
-    - ``s`` -- an itegerable of hashable objects or an integer
+    - ``s`` -- an iterable of hashable objects or an integer
 
     EXAMPLES:
 
@@ -502,13 +547,22 @@ class PerfectMatchings(SetPartitions_set):
         sage: PerfectMatchings(8).cardinality()
         105
         sage: M = PerfectMatchings(('a', 'e', 'b', 'f', 'c', 'd'))
-        sage: M.an_element()
+        sage: x = M.an_element()
+        sage: x # random
         [('a', 'c'), ('b', 'e'), ('d', 'f')]
         sage: all(PerfectMatchings(i).an_element() in PerfectMatchings(i)
         ....:     for i in range(2,11,2))
         True
 
-    TESTS::
+    TESTS:
+
+    Test that ``x = M.an_element()`` is actually a perfect matching::
+
+
+        sage: set([]).union(*x) == M.base_set()
+        True
+        sage: sum([len(a) for a in x]) == M.base_set().cardinality()
+        True
 
         sage: M = PerfectMatchings(6)
         sage: TestSuite(M).run()
@@ -578,21 +632,13 @@ class PerfectMatchings(SetPartitions_set):
             sage: PerfectMatchings(4).list()
             [[(1, 2), (3, 4)], [(1, 3), (2, 4)], [(1, 4), (2, 3)]]
         """
-        def iter_aux(s):
-            n = len(s)
-            if n == 0:
-                yield []
-            elif n == 1:
-                pass
-            else:
-                a = s[0]
-                for i in range(1, n):
-                    b = s[i]
-                    for p in iter_aux(s[1:i] + s[i+1:]):
-                        yield [(a, b)]+p
-
-        for p in iter_aux(list(self._set)):
-            yield self.element_class(self, p)
+        s = list(self._set)
+        if len(s) % 2 != 0:
+            return
+        # The iterator from fixed-point-free involutions has the resulting
+        #   list of pairs sorted by their minimial element.
+        for val in perfect_matchings_iterator(len(s)//2):
+            yield self.element_class(self, ((s[a], s[b]) for a,b in val), check=False, sort=False)
 
     def __contains__(self, x):
         """
@@ -688,11 +734,14 @@ class PerfectMatchings(SetPartitions_set):
         EXAMPLES::
 
             sage: M = PerfectMatchings(('a', 'e', 'b', 'f', 'c', 'd'))
-            sage: M.random_element()
+            sage: x = M.random_element()
+            sage: x # random
             [('a', 'b'), ('c', 'd'), ('e', 'f')]
 
         TESTS::
 
+            sage: x in M
+            True
             sage: p = PerfectMatchings(13).random_element()
             Traceback (most recent call last):
             ...

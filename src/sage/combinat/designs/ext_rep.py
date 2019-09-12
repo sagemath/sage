@@ -40,12 +40,11 @@ import os.path
 import gzip
 import bz2
 from sage.misc.all import tmp_filename
-import sys
 
 # import compatible with py2 and py3
 import six
 from six.moves.urllib.request import urlopen
-from six import string_types
+from six import string_types, PY2
 
 XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
 DTRS_PROTOCOL   = '2.0'
@@ -534,7 +533,7 @@ def open_extrep_file(fname):
         elif ext == '.bz2':
             f = bz2.BZ2File(fname)
         else:
-            f = open(fname)
+            f = open(fname, 'rb')
     return f
 
 def open_extrep_url(url):
@@ -991,9 +990,10 @@ class XTreeProcessor(object):
         p.StartElementHandler = self._start_element
         p.EndElementHandler = self._end_element
         p.CharacterDataHandler = self._char_data
-        p.returns_unicode = 0
+        if PY2:
+            p.returns_unicode = 0
 
-        if isinstance(xml_source, string_types):
+        if isinstance(xml_source, string_types+(bytes,)):
             p.Parse(xml_source)
         else:
             p.ParseFile(xml_source)

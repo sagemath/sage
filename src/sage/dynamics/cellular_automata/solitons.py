@@ -7,15 +7,15 @@ AUTHORS:
 - Travis Scrimshaw (2018-02-03): Periodic version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import TensorProductOfKirillovReshetikhinTableaux
@@ -24,6 +24,7 @@ from sage.combinat.rigged_configurations.rigged_configurations import RiggedConf
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.typeset.ascii_art import ascii_art
 from sage.rings.integer_ring import ZZ
+
 
 class SolitonCellularAutomata(SageObject):
     r"""
@@ -499,7 +500,7 @@ class SolitonCellularAutomata(SageObject):
             if len(carrier_index) != len(carrier_capacity):
                 raise ValueError("carrier_index and carrier_capacity"
                                  " must have the same length")
-            for i,r in zip(carrier_capacity, carrier_index):
+            for i, r in zip(carrier_capacity, carrier_index):
                 self.evolve(i, r)
             return
         if isinstance(carrier_index, (list, tuple)):
@@ -1020,6 +1021,7 @@ class SolitonCellularAutomata(SageObject):
                 self.evolve()
 
         vacuum = self._vacuum_elt
+
         def compact_repr(b):
             if as_array and b == vacuum:
                 return "\\makebox[%s]{.}"%box_width
@@ -1077,13 +1079,15 @@ class SolitonCellularAutomata(SageObject):
                   |         |         |         |         |         |         |
                   3         3         2         1         1         1         1
         """
-        u = self.state_evolution(num) # Also evolves as necessary
+        u = self.state_evolution(num)  # Also evolves as necessary
         final = self._states[num+1]
         vacuum = self._vacuum_elt
         state = [vacuum]*(len(final) - len(self._states[num])) + list(self._states[num])
         carrier = KirillovReshetikhinTableaux(self._cartan_type, *self._evolutions[num])
+
         def simple_repr(x):
             return ''.join(repr(x).strip('[]').split(', '))
+
         def carrier_repr(x):
             if carrier._tableau_height == 1:
                 return sum((ascii_art(repr(b)) if repr(b)[0] != '-'
@@ -1091,6 +1095,7 @@ class SolitonCellularAutomata(SageObject):
                             for b in x),
                            ascii_art(''))
             return ascii_art(''.join(repr(x).strip('[]').split(', ')))
+
         def cross_repr(i):
             ret = ascii_art(
 """
@@ -1125,32 +1130,7 @@ class SolitonCellularAutomata(SageObject):
             \node (i0) at (0.0,0.9) {$1$};
             \node (i1) at (2.48,0.9) {$1$};
             \node (i2) at (4.96,0.9) {$3$};
-            \node (i3) at (7.44,0.9) {$1$};
-            \node (i4) at (9.92,0.9) {$2$};
-            \node (i5) at (12.4,0.9) {$3$};
-            \node (t0) at (0.0,-1) {$1$};
-            \node (t1) at (2.48,-1) {$3$};
-            \node (t2) at (4.96,-1) {$2$};
-            \node (t3) at (7.44,-1) {$3$};
-            \node (t4) at (9.92,-1) {$1$};
-            \node (t5) at (12.4,-1) {$1$};
-            \node (u0) at (-1.24,0) {$111$};
-            \node (u1) at (1.24,0) {$111$};
-            \node (u2) at (3.72,0) {$113$};
-            \node (u3) at (6.2,0) {$112$};
-            \node (u4) at (8.68,0) {$123$};
-            \node (u5) at (11.16,0) {$113$};
-            \node (u6) at (13.64,0) {$111$};
-            \draw[->] (i0) -- (t0);
-            \draw[->] (u1) -- (u0);
-            \draw[->] (i1) -- (t1);
-            \draw[->] (u2) -- (u1);
-            \draw[->] (i2) -- (t2);
-            \draw[->] (u3) -- (u2);
-            \draw[->] (i3) -- (t3);
-            \draw[->] (u4) -- (u3);
-            \draw[->] (i4) -- (t4);
-            \draw[->] (u5) -- (u4);
+            ...
             \draw[->] (i5) -- (t5);
             \draw[->] (u6) -- (u5);
             \end{tikzpicture}
@@ -1167,6 +1147,7 @@ class SolitonCellularAutomata(SageObject):
         vacuum = self._vacuum_elt
         initial = [vacuum]*(len(final) - len(self._states[num])) + list(self._states[num])
         cs = len(u[0]) * 0.08 + 1 # carrier scaling
+
         def simple_repr(x):
             return ''.join(repr(x).strip('[]').split(', '))
         ret = '\\begin{{tikzpicture}}[scale={}]\n'.format(scale)
@@ -1181,6 +1162,7 @@ class SolitonCellularAutomata(SageObject):
             ret += '\\draw[->] (u{}) -- (u{});\n'.format(i+1, i)
         ret += '\\end{tikzpicture}'
         return LatexExpr(ret)
+
 
 class PeriodicSolitonCellularAutomata(SolitonCellularAutomata):
     r"""
@@ -1401,7 +1383,7 @@ class PeriodicSolitonCellularAutomata(SolitonCellularAutomata):
             if len(carrier_index) != len(carrier_capacity):
                 raise ValueError("carrier_index and carrier_capacity"
                                  " must have the same length")
-            for i,r in zip(carrier_capacity, carrier_index):
+            for i, r in zip(carrier_capacity, carrier_index):
                 self.evolve(i, r)
             return
         if isinstance(carrier_index, (list, tuple)):
@@ -1477,4 +1459,3 @@ class PeriodicSolitonCellularAutomata(SolitonCellularAutomata):
         """
         return (isinstance(other, PeriodicSolitonCellularAutomata)
                 and SolitonCellularAutomata.__eq__(self, other))
-

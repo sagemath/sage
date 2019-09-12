@@ -175,6 +175,11 @@ class Jacobi(BuiltinFunction):
             sage: from sage.functions.jacobi import Jacobi
             sage: Jacobi('sn')
             jacobi_sn
+
+        TESTS::
+
+            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
+            -8.59454886300046e-73 + 1.34737147138542*I
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
                         'sc', 'cn', 'cd', 'cs']:

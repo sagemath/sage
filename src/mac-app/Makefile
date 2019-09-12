@@ -99,7 +99,7 @@ $(TARGET)/Applications:
 	ln -s /Applications/ $(TARGET)/Applications
 
 # Add the readme file
-$(TARGET)/README.txt: $(SAGE_ROOT)/src/bin/sage-README-osx.txt
+$(TARGET)/README.txt: sage-README-macOS.txt
 	cp $^ $@
 
 non_app_files: $(TARGET)/README.txt $(TARGET)/Applications

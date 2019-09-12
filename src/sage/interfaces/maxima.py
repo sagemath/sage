@@ -545,7 +545,7 @@ class Maxima(MaximaAbstract, Expect):
         MaximaAbstract.__init__(self,"maxima")
         Expect.__init__(self,
                         name = 'maxima',
-                        prompt = '\(\%i[0-9]+\) ',
+                        prompt = r'\(\%i[0-9]+\) ',
                         command = 'maxima -p "{0}"'.format(STARTUP),
                         env = {'TMPDIR': str(ECL_TMP)},
                         script_subdirectory = script_subdirectory,
@@ -557,7 +557,7 @@ class Maxima(MaximaAbstract, Expect):
         # Must match what is in the file local/bin/sage-maxima.lisp
         self._display_prompt = '<sage-display>'
         # See #15440 for the importance of the trailing space
-        self._output_prompt_re = re.compile('\(\%o[0-9]+\) ')
+        self._output_prompt_re = re.compile(r'\(\%o[0-9]+\) ')
         self._ask = [b'zero or nonzero\\?', b'an integer\\?',
                      b'positive, negative or zero\\?', b'positive or negative\\?',
                      b'positive or zero\\?', b'equal to .*\\?']
@@ -741,7 +741,6 @@ class Maxima(MaximaAbstract, Expect):
                     i += 1
                     if i > 10:
                         break
-                    pass
                 else:
                     break
             raise KeyboardInterrupt(msg)
@@ -803,7 +802,7 @@ class Maxima(MaximaAbstract, Expect):
         m = r.search(out)
         if m is not None:
             out = out[m.end():]
-        return re.sub('\s+', '', out)
+        return re.sub(r'\s+', '', out)
 
     def _synchronize(self):
         """

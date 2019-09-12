@@ -126,6 +126,19 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
     - ``custom_init`` - a function that is called with self as input
       before any computations are done using self; this could be used
       to set a custom modular symbols presentation.
+
+    TESTS::
+
+        sage: ModularSymbols(11,2) == ModularSymbols(11,2)
+        True
+        sage: ModularSymbols(11,2) == ModularSymbols(11,4)
+        False
+        sage: ModularSymbols(11,2) != ModularSymbols(11,2)
+        False
+        sage: ModularSymbols(11,2) != ModularSymbols(11,4)
+        True
+        sage: hash(ModularSymbols(11,2)) != hash(ModularSymbols(11,4))
+        True
     """
     def __init__(self, group, weight, sign, base_ring,
                  character=None, custom_init=None, category=None):
@@ -181,43 +194,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                          group, weight, sign, base_ring, character)
 
         hecke.AmbientHeckeModule.__init__(self, base_ring, rank, group.level(), weight, category=category)
-
-    def __eq__(self, other):
-        """
-        Check that ``self`` is equal to ``other``.
-
-        EXAMPLES::
-
-            sage: ModularSymbols(11,2) == ModularSymbols(11,2)
-            True
-            sage: ModularSymbols(11,2) == ModularSymbols(11,4)
-            False
-        """
-        if not isinstance(other, ModularSymbolsSpace):
-            return False
-
-        if isinstance(other, ModularSymbolsAmbient):
-            return (self.group() == other.group() and
-                    self.weight() == other.weight() and
-                    self.sign() == other.sign() and
-                    self.base_ring() == other.base_ring() and
-                    self.character() == other.character())
-
-        return (self == other.ambient_hecke_module() and
-                self.free_module() == other.free_module())
-
-    def __ne__(self, other):
-        """
-        Check that ``self`` is not equal to ``other``.
-
-        EXAMPLES::
-
-            sage: ModularSymbols(11,2) != ModularSymbols(11,2)
-            False
-            sage: ModularSymbols(11,2) != ModularSymbols(11,4)
-            True
-        """
-        return not (self == other)
 
     def new_submodule(self, p=None):
         r"""
@@ -557,10 +533,10 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
             sage: M = ModularSymbols(11,4,1)
             sage: M._action_on_modular_symbols([1,2,3,7])
-            [   0    0  5/2 -3/2]
-            [   0    0  5/2 -3/2]
-            [   0    1    0    0]
-            [   0    1 -1/2  1/2]
+            [0 0 1 0]
+            [0 0 0 1]
+            [0 1 0 0]
+            [0 1 0 0]
 
         """
         if not isinstance(g, list):
@@ -582,15 +558,15 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
         OUTPUT:
 
-        (ManinSymbol) the monomial Manin Symbol associated to
-        `[i;(u,v)]`, with `i=0` if not supplied, corresponding to the
-        symbol `[X^i*Y^{k-2-i}, (u,v)]`.
+        (ManinSymbol) the Manin Symbol associated to `[i;(u,v)]`, with
+        `i=0` if not supplied, corresponding to the monomial symbol
+        `[X^i*Y^{k-2-i}, (u,v)]`.
 
         EXAMPLES::
 
             sage: M = ModularSymbols(11,4,1)
             sage: M.manin_symbol([2,5,6])
-            [X^2,(1,10)]
+            -2/3*[X^2,(1,6)] + 5/3*[X^2,(1,9)]
         """
         if check:
             if len(x) == 2:
@@ -636,11 +612,11 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
             sage: M = ModularSymbols(11,4,1)
             sage: M._modular_symbol_0_to_alpha(Cusp(3/5))
-            11*[X^2,(1,7)] + 33*[X^2,(1,9)] - 20*[X^2,(1,10)]
+            11*[X^2,(1,4)] + 40/3*[X^2,(1,6)] - 1/3*[X^2,(1,9)]
             sage: M._modular_symbol_0_to_alpha(Cusp(3/5),1)
-            15/2*[X^2,(1,7)] + 35/2*[X^2,(1,9)] - 10*[X^2,(1,10)]
+            15/2*[X^2,(1,4)] + 20/3*[X^2,(1,6)] + 5/6*[X^2,(1,9)]
             sage: M._modular_symbol_0_to_alpha(Cusp(Infinity))
-            -[X^2,(1,10)]
+            2/3*[X^2,(1,6)] - 5/3*[X^2,(1,9)]
             sage: M._modular_symbol_0_to_alpha(Cusp(Infinity),1)
             0
         """
@@ -874,10 +850,10 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
             sage: M = ModularSymbols(11,4,1)
             sage: M._compute_dual_hecke_matrix(5)
-            [126   0   0   0]
-            [  2  63  38  22]
-            [ 11  33  82 121]
-            [-13  30   6 -17]
+            [  126     0     0     0]
+            [    2    63    62    38]
+            [ 26/3   -20   -27    -4]
+            [-32/3    83    91    92]
         """
         return self.hecke_matrix(n).transpose()
 
@@ -1279,14 +1255,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
             sage: M = ModularSymbols(Gamma1(10), 2)
             sage: w = M.atkin_lehner_operator(2).matrix()
-            sage: w^2
-            [ 0  1  0  0  0  0  0]
-            [ 1  0  0  0  0  0  0]
-            [ 0  0  0  0  1  0  0]
-            [ 0  0  0  0  0  1 -1]
-            [ 0  0  1  0  0  0  0]
-            [ 0  0  0  1  0  0 -1]
-            [ 0  0  0  0  0  0 -1]
             sage: w^2 == M.diamond_bracket_matrix(7)
             True
 
@@ -1320,7 +1288,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
         chi = self.character()
         if chi is not None:
             dec = [u for u in chi.decomposition() if chi.modulus().divides(d)]
-            if not all([(u**2).is_trivial() for u in dec]):
+            if not all((u**2).is_trivial() for u in dec):
                 raise ValueError("Atkin-Lehner W_d only defined when d-primary part of character is trivial or quadratic")
 
         if self.sign() != 0:
@@ -1628,9 +1596,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             sage: M.T(3)
             Hecke operator T_3 on Modular Symbols space of dimension 4 for Gamma_0(11) of weight 4 with sign 1 over Rational Field
             sage: M.T(3)(M.0)
-            28*[X^2,(0,1)] + 2*[X^2,(1,7)] - [X^2,(1,9)] - [X^2,(1,10)]
+            28*[X^2,(0,1)] + 2*[X^2,(1,4)] + 2/3*[X^2,(1,6)] - 8/3*[X^2,(1,9)]
             sage: M.T(3)(M.0).element()
-            (28, 2, -1, -1)
+            (28, 2, 2/3, -8/3)
         """
         if isinstance(x, ManinSymbol):
             if not x.parent().weight() == self.weight():
@@ -2119,10 +2087,10 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
             sage: M = Newforms(Gamma1(13),names = 'a')[0].modular_symbols(sign=0)
             sage: M.diamond_bracket_operator(4).matrix()
+            [-1  1  1 -1]
+            [-1  0  1  0]
+            [ 0  0  0 -1]
             [ 0  0  1 -1]
-            [-1 -1  0  1]
-            [-1 -1  0  0]
-            [ 0 -1  1 -1]
 
         We check that the result is correctly normalised for weight > 2::
 
@@ -2288,16 +2256,16 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             sage: M.integral_structure()
             Free module of degree 10 and rank 10 over Integer Ring
             Echelon basis matrix:
-            [     1      0      0      0      0      0      0      0      0      0]
-            [     0      1      0      0      0      0      0      0      0      0]
-            [     0      0  1/102      0  5/204  1/136  23/24   3/17 43/136 69/136]
-            [     0      0      0   1/48      0   1/48  23/24    1/6    1/8  17/24]
-            [     0      0      0      0   1/24      0  23/24    1/3    1/6    1/2]
-            [     0      0      0      0      0   1/24  23/24    1/3  11/24   5/24]
-            [     0      0      0      0      0      0      1      0      0      0]
-            [     0      0      0      0      0      0      0    1/2      0    1/2]
-            [     0      0      0      0      0      0      0      0    1/2    1/2]
-            [     0      0      0      0      0      0      0      0      0      1]
+            [    1     0     0     0     0     0     0     0     0     0]
+            [    0     1     0     0     0     0     0     0     0     0]
+            [    0     0  1/96  1/32 23/24     0  1/96     0  7/24 67/96]
+            [    0     0     0  1/24 23/24     0     0  1/24   1/4 17/24]
+            [    0     0     0     0     1     0     0     0     0     0]
+            [    0     0     0     0     0   1/6     0  1/48 23/48   1/3]
+            [    0     0     0     0     0     0  1/24  1/24 11/24 11/24]
+            [    0     0     0     0     0     0     0  1/16  7/16   1/2]
+            [    0     0     0     0     0     0     0     0   1/2   1/2]
+            [    0     0     0     0     0     0     0     0     0     1]
         """
         if not self.base_ring() == QQ:
             raise NotImplementedError
@@ -2725,40 +2693,31 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
 
         OUTPUT:
 
-
         -  ``matrix`` - whose rows are the Hecke images
-
 
         EXAMPLES::
 
             sage: M = ModularSymbols(11,4,1)
-            sage: M._hecke_images(0,[1,2,3,4])
-            [ 1  0  0  0]
-            [ 9  0  1 -1]
-            [28  2 -1 -1]
-            [73  2  5 -7]
-            sage: M.T(1)(M.0).element()
-            (1, 0, 0, 0)
-            sage: M.T(2)(M.0).element()
-            (9, 0, 1, -1)
-            sage: M.T(3)(M.0).element()
-            (28, 2, -1, -1)
-            sage: M.T(4)(M.0).element()
-            (73, 2, 5, -7)
+            sage: mat = M._hecke_images(0,[1,2,3,4])
+            sage: M.T(1)(M.0).element() == mat[0]
+            True
+            sage: M.T(2)(M.0).element() == mat[1]
+            True
+            sage: M.T(3)(M.0).element() == mat[2]
+            True
+            sage: M.T(4)(M.0).element() == mat[3]
+            True
+
             sage: M = ModularSymbols(12,4)
-            sage: M._hecke_images(0,[1,2,3,4])
-            [  1   0   0   0   0   0   0   0   0   0   0   0]
-            [  8   1  -1  -2   2   2  -3   1  -2   3  -1   0]
-            [ 27   4  -4  -8   8  10 -14   4  -9  14  -5   0]
-            [ 64  10 -10 -20  20  26 -36  10 -24  38 -14   0]
-            sage: M.T(1)(M.0).element()
-            (1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-            sage: M.T(2)(M.0).element()
-            (8, 1, -1, -2, 2, 2, -3, 1, -2, 3, -1, 0)
-            sage: M.T(3)(M.0).element()
-            (27, 4, -4, -8, 8, 10, -14, 4, -9, 14, -5, 0)
-            sage: M.T(4)(M.0).element()
-            (64, 10, -10, -20, 20, 26, -36, 10, -24, 38, -14, 0)
+            sage: mat = M._hecke_images(0,[1,2,3,4])
+            sage: M.T(1)(M.0).element() == mat[0]
+            True
+            sage: M.T(2)(M.0).element() == mat[1]
+            True
+            sage: M.T(3)(M.0).element() == mat[2]
+            True
+            sage: M.T(4)(M.0).element() == mat[3]
+            True
         """
         # Find basis vector for ambient space such that it is not in
         # the kernel of the dual space corresponding to self.
@@ -2983,9 +2942,9 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             sage: M.hecke_operator(2)(M.0)
             3*(1,0) - 2*(1,33)
             sage: M._hecke_image_of_ith_basis_vector(6, 1)
-            -2*(1,33)
+            4*(1,31) - 3*(1,33) + 3*(1,39)
             sage: M.hecke_operator(6)(M.1)
-            -2*(1,33)
+            4*(1,31) - 3*(1,33) + 3*(1,39)
         """
         c = self.manin_generators()[self.manin_basis()[i]]
         N = self.level()
@@ -3014,20 +2973,16 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         EXAMPLES::
 
             sage: M = ModularSymbols(46,2,-1)
-            sage: M._hecke_images(1,[3,4,5,6])
-            [ 0  1 -2  2  0]
-            [ 2 -3  0  0  1]
-            [ 0 -2  2 -2  0]
-            [-5  3 -1  1  0]
+            sage: mat = M._hecke_images(1,[3,4,5,6])
             sage: v = M.basis()[1]
-            sage: M.T(3)(v).element()
-            (0, 1, -2, 2, 0)
-            sage: M.T(4)(v).element()
-            (2, -3, 0, 0, 1)
-            sage: M.T(5)(v).element()
-            (0, -2, 2, -2, 0)
-            sage: M.T(6)(v).element()
-            (-5, 3, -1, 1, 0)
+            sage: M.T(3)(v).element() == mat[0]
+            True
+            sage: M.T(4)(v).element() == mat[1]
+            True
+            sage: M.T(5)(v).element() == mat[2]
+            True
+            sage: M.T(6)(v).element() == mat[3]
+            True
         """
         # Find basis vector for ambient space such that it is not in
         # the kernel of the dual space corresponding to self.
@@ -3368,14 +3323,14 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
 
             sage: M = ModularSymbols(GammaH(15,[4]),2)
             sage: M._compute_hecke_matrix_prime_power(2, 3)
-            [10  0  5  0  1  0  0  4  0]
-            [ 0 10  0  0 -4 -5  0 -1  6]
-            [ 5  0 10  0 -4  0  0 -1  0]
-            [ 0  0  0  5 -7  0 10 -3  4]
-            [ 0  0  0  0 -1  0  0 -4  0]
-            [ 0 -5  0  0 -1 10  0 -4 -6]
-            [ 0  0  0 10 -3  0  5 -7 -4]
-            [ 0  0  0  0 -4  0  0 -1  0]
+            [10  0  5  1  0  0  0  4  0]
+            [ 0 10  0  4 10 -5 -5 -4  5]
+            [ 5  0 10 -4  0  0  0 -1  0]
+            [ 0  0  0 -1  0  0  0 -4  0]
+            [ 0  0  0 -7  5  0 10 -3  6]
+            [ 0 -5  0 -6  0 10  5 -4 -1]
+            [ 0  0  0 -3 10  0  5 -7  6]
+            [ 0  0  0 -4  0  0  0 -1  0]
             [ 0  0  0  0  0  0  0  0  3]
             sage: M.hecke_matrix(7)^2  == M.hecke_matrix(49) + 7 * M.diamond_bracket_operator(7).matrix() # indirect doctest
             True
@@ -3551,7 +3506,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
         return m * self.group().dimension_new_cusp_forms(self.weight(), eps=self.character())
 
     def _matrix_of_operator_on_modular_symbols(self, codomain, R, character_twist=False):
-        """
+        r"""
         INPUT:
 
 
@@ -3582,7 +3537,6 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
             sage: M._matrix_of_operator_on_modular_symbols(M,HeilbronnCremona(3))
             [ 6  6]
             [ 0 10]
-
         """
         eps = self.character()
         rows = []

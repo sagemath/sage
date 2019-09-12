@@ -261,7 +261,8 @@ def WithRealizations(self):
         Category of graded hopf algebras with basis over Rational Field with realizations
         sage: C.super_categories()
         [Join of Category of hopf algebras over Rational Field
-             and Category of graded algebras over Rational Field]
+             and Category of graded algebras over Rational Field
+             and Category of graded coalgebras over Rational Field]
         sage: TestSuite(Semigroups().WithRealizations()).run()
     """
     return WithRealizationsCategory.category_of(self)

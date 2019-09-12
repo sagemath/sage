@@ -39,7 +39,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ######################################################################
 
 from sage.rings.integer_ring import ZZ
@@ -366,18 +366,11 @@ class TateCurve(SageObject):
         One
         instance where this constant appears is in the exceptional
         case of the `p`-adic Birch and Swinnerton-Dyer conjecture as
-        formulated in [MTT]_. See [Col]_ for a detailed discussion.
+        formulated in [MTT1986]_. See [Col2004]_ for a detailed discussion.
 
         INPUT:
 
         - ``prec`` - the `p`-adic precision, default is 20.
-
-        REFERENCES:
-
-        [MTT]_
-
-        .. [Col] Pierre Colmez, Invariant `\mathcal{L}` et derivees de
-           valeurs propres de Frobenius, preprint, 2004.
 
         EXAMPLES::
 
@@ -619,8 +612,8 @@ class TateCurve(SageObject):
 
     def padic_regulator(self, prec=20):
         r"""
-        Compute the canonical `p`-adic regulator on the extended Mordell-Weil group as in [MTT]_
-        (with the correction of [Wer]_ and sign convention in [SW]_.)
+        Compute the canonical `p`-adic regulator on the extended Mordell-Weil group as in [MTT1986]_
+        (with the correction of [Wer1998]_ and sign convention in [SW2013]_.)
 
         The `p`-adic Birch and Swinnerton-Dyer conjecture predicts
         that this value appears in the formula for the leading term of
@@ -629,15 +622,6 @@ class TateCurve(SageObject):
         INPUT:
 
         - ``prec`` -- the `p`-adic precision, default is 20.
-
-        REFERENCES:
-
-        [MTT]_
-
-        .. [Wer] Annette Werner, Local heights on abelian varieties and
-           rigid analytic uniformization, Doc. Math. 3 (1998), 301-319.
-
-        [SW]_
 
         EXAMPLES::
 

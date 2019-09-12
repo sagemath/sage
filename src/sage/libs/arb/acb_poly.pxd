@@ -1,9 +1,11 @@
-# distutils: libraries = gmp flint arb
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = acb_poly.h
 
 from sage.libs.arb.types cimport *
 from sage.libs.flint.types cimport fmpz_poly_t, fmpq_poly_t
 
-cdef extern from "acb_poly.h":
+# acb_poly.h
+cdef extern from "arb_wrap.h":
     void acb_poly_init(acb_poly_t poly)
     void acb_poly_clear(acb_poly_t poly)
     void acb_poly_fit_length(acb_poly_t poly, long len)

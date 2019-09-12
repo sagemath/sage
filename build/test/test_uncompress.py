@@ -3,7 +3,7 @@
 Test sage extraction of tarball / zip files
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@ Test sage extraction of tarball / zip files
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from __future__ import print_function, absolute_import
 
@@ -20,10 +20,6 @@ import unittest
 import shutil
 import tempfile
 import subprocess
-
-from sage_bootstrap.package import Package
-
-from .capture import CapturedLog, CapturedOutput
 
 from sage_bootstrap.uncompress.zip_file import SageZipFile
 from sage_bootstrap.uncompress.tar_file import SageTarFile
@@ -38,10 +34,10 @@ class UncompressTarFileTestCase(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         self.filename = os.path.join(self.tmp, 'test.tar.gz')
         self.make_tarfile()
-        
+
     def tearDown(self):
         shutil.rmtree(self.tmp)
-    
+
     def make_tarfile(self):
         src = os.path.join(self.tmp, 'src')
         os.mkdir(src)
@@ -57,7 +53,7 @@ class UncompressTarFileTestCase(unittest.TestCase):
     def test_can_read(self):
         self.assertTrue(SageTarFile.can_read(self.filename))
         self.assertFalse(SageZipFile.can_read(self.filename))
-        
+
     def test_tarball(self):
         archive = open_archive(self.filename)
         content = archive.extractbytes('content')
@@ -67,7 +63,6 @@ class UncompressTarFileTestCase(unittest.TestCase):
         subprocess.check_call([
             'diff', '-r', 'src', 'dst'
         ], cwd=self.tmp)
-        
 
 
 class UncompressZipFileTestCase(unittest.TestCase):
@@ -76,10 +71,10 @@ class UncompressZipFileTestCase(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         self.filename = os.path.join(self.tmp, 'test.zip')
         self.make_zipfile()
-        
+
     def tearDown(self):
         shutil.rmtree(self.tmp)
-    
+
     def make_zipfile(self):
         src = os.path.join(self.tmp, 'src')
         os.mkdir(src)
@@ -91,11 +86,11 @@ class UncompressZipFileTestCase(unittest.TestCase):
         subprocess.check_call([
             'zip', '-q', '-r', self.filename, 'content', 'foo'
         ], cwd=src)
-    
+
     def test_can_read(self):
         self.assertTrue(SageZipFile.can_read(self.filename))
         self.assertFalse(SageTarFile.can_read(self.filename))
-        
+
     def test_zipfile(self):
         archive = open_archive(self.filename)
         content = archive.extractbytes('content')
@@ -105,4 +100,3 @@ class UncompressZipFileTestCase(unittest.TestCase):
         subprocess.check_call([
             'diff', '-r', 'src', 'dst'
         ], cwd=self.tmp)
-        

@@ -54,8 +54,9 @@ def Mwrank(options="", server=None, server_tmpdir=None):
         sage: M = Mwrank('-v 0 -l')
         sage: print(M('0 0 1 -1 0'))
         Curve [0,0,1,-1,0] :    Rank = 1
-        Generator 1 is [0:-1:1]; height 0.0511114082399688
-        Regulator = 0.0511114082399688
+        Generator 1 is [0:-1:1]; height 0.051...
+        Regulator = 0.051...
+
     """
     global instances
     try:

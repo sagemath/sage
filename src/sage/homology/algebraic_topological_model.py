@@ -6,7 +6,7 @@ This file contains two functions, :func:`algebraic_topological_model`
 and :func:`algebraic_topological_model_delta_complex`. The second
 works more generally: for all simplicial, cubical, and
 `\Delta`-complexes. The first only works for simplicial and cubical
-complexes, but it is faster in those case.
+complexes, but it is faster in those cases.
 
 AUTHORS:
 
@@ -194,7 +194,7 @@ def algebraic_topological_model(K, base_ring=None):
     old_cells = []
 
     for dim in range(K.dimension()+1):
-        n_cells = K.n_cells(dim)
+        n_cells = K._n_cells_sorted(dim)
         diff = C.differential(dim)
         # diff is sparse and low density. Dense matrices are faster
         # over finite fields, but for low density matrices, sparse
@@ -251,7 +251,8 @@ def algebraic_topological_model(K, base_ring=None):
             else:
                 # Take any u in gens so that lambda_i = <u, pi(bdry(c_bar))> != 0.
                 # u_idx will be the index of the corresponding cell.
-                for (u_idx, lambda_i) in iteritems(pi_bdry_c_bar):
+                for u_idx in pi_bdry_c_bar.nonzero_positions():
+                    lambda_i = pi_bdry_c_bar[u_idx]
                     # Now find the actual cell.
                     u = old_cells[u_idx]
                     if u in gens[dim-1]:
@@ -294,7 +295,7 @@ def algebraic_topological_model(K, base_ring=None):
     iota_data = {}
     phi_data = {}
     for n in range(K.dimension()+1):
-        n_cells = K.n_cells(n)
+        n_cells = K._n_cells_sorted(n)
         # Remove zero entries from pi_dict and phi_dict.
         pi_dict[n] = {i: pi_dict[n][i] for i in pi_dict[n] if pi_dict[n][i]}
         phi_dict[n] = {i: phi_dict[n][i] for i in phi_dict[n] if phi_dict[n][i]}

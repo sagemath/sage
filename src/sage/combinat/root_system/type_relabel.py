@@ -222,13 +222,15 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: CoxeterType(['I',5]).relabel({1:0,2:1})
             Coxeter type of ['I', 5] relabelled by {1: 0, 2: 1}
         """
+        from pprint import pformat
         # Special case for type D_4^3
         if (self._type.is_affine() and self._type.dual().type() == 'G'
                 and self.options("notation") == "Kac"):
             if compact:
                 return 'D4^3'
             return "['D', 4, 3]"
-        return self._type._repr_(compact = compact)+" relabelled by {}".format(self._relabelling)
+        relab = pformat(self._relabelling)
+        return self._type._repr_(compact = compact) + " relabelled by {}".format(relab)
 
     def _latex_(self):
         r"""
@@ -403,6 +405,22 @@ class CartanType(cartan_type.CartanType_decorator):
             'G'
         """
         return self._type.type()
+
+    def coxeter_diagram(self):
+        """
+        Return the Coxeter diagram for ``self``.
+
+        EXAMPLES::
+
+            sage: ct = CartanType(['H', 3]).relabel({1:3,2:2,3:1})
+            sage: G = ct.coxeter_diagram(); G
+            Graph on 3 vertices
+            sage: G.edges()
+            [(1, 2, 5), (2, 3, 3)]
+        """
+        result = self._type.coxeter_diagram().copy()
+        result.relabel(self._relabelling)
+        return result
 
 ###########################################################################
 

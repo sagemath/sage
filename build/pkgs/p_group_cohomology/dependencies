@@ -1,1 +1,1 @@
-singular meataxe | matplotlib database_gap xz $(SAGERUNTIME)
+$(PYTHON) cython cysignals singular meataxe $(SAGE_SRC)/sage/matrix/matrix_gfpn_dense.pxd $(SAGE_SRC)/sage/structure/element.pxd $(SAGE_SRC)/sage/matrix/matrix_gfpn_dense.pxd $(SAGE_SRC)/sage/matrix/matrix0.pxd $(SAGE_SRC)/sage/libs/meataxe.pxd $(SAGE_SRC)/sage/rings/morphism.pxd | pip matplotlib gap xz $(SAGERUNTIME)

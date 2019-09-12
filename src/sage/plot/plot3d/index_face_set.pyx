@@ -16,7 +16,7 @@ AUTHORS:
     Smooth triangles using vertex normals
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -28,9 +28,12 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
+
+from textwrap import dedent
+from sage.misc.superseded import deprecation
 
 from libc.math cimport isfinite, INFINITY
 from libc.string cimport memset, memcpy
@@ -64,6 +67,7 @@ from sage.modules.free_module_element import vector
 
 from sage.plot.colors import Color, float_to_integer
 from sage.plot.plot3d.base import Graphics3dGroup
+from sage.plot.plot3d.texture import Texture
 
 from .transform cimport Transformation
 
@@ -200,6 +204,31 @@ cdef inline format_pmesh_face(face_c face, int has_color):
         return bytes_to_str(b"\n".join(all))
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
+
+
+def midpoint(pointa, pointb, w):
+    """
+    Return the weighted mean of two points in 3-space.
+
+    INPUT:
+
+    - ``pointa``, ``pointb`` -- two points in 3-dimensional space
+
+    - ``w`` -- a real weight between 0 and 1.
+
+    If the weight is zero, the result is ``pointb``. If the weight is
+    one, the result is ``pointa``.
+
+    EXAMPLES::
+
+        sage: from sage.plot.plot3d.index_face_set import midpoint
+        sage: midpoint((1,2,3),(4,4,4),0.8)
+        (1.60000000000000, 2.40000000000000, 3.20000000000000)
+    """
+    xa, ya, za = pointa
+    xb, yb, zb = pointb
+    v = 1 - w
+    return ((w * xa + v * xb), (w * ya + v * yb), (w * za + v * zb))
 
 
 cdef class IndexFaceSet(PrimitiveObject):
@@ -380,8 +409,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             for j in range(face.n):
                 v = face.vertices[j]
                 if point_map[v] == -1:
-                    pt = &self.vs[v]
-                    if isfinite(pt.x) and isfinite(pt.y) and isfinite(pt.z):
+                    if point_c_isfinite(self.vs[v]):
                         point_map[v] = nv
                         nv += 1
                     else:
@@ -761,34 +789,35 @@ cdef class IndexFaceSet(PrimitiveObject):
             <BLANKLINE>
             <IndexedFaceSet solid='False' colorPerVertex='False' coordIndex='0,4,5,-1,3,4,5,-1,2,3,4,-1,1,3,5,-1'>
               <Coordinate point='2.0 0.0 0.0,0.0 2.0 0.0,0.0 0.0 2.0,0.0 1.0 1.0,1.0 0.0 1.0,1.0 1.0 0.0'/>
-              <Color color='1.0 0.0 0.0,1.0 0.6 0.0,0.8 1.0 0.0,0.2 1.0 0.0' />
+              <Color color='1.0 0.0 0.0,1.0 0.6000000000000001 0.0,0.7999999999999998 1.0 0.0,0.20000000000000018 1.0 0.0' />
             </IndexedFaceSet>
             <BLANKLINE>
         """
         cdef Py_ssize_t i
-        points = ",".join(["%s %s %s" % (self.vs[i].x,
-                                         self.vs[i].y,
-                                         self.vs[i].z)
+        vs = self.vs
+        fs = self._faces
+        points = ",".join(["%r %r %r" % (vs[i].x, vs[i].y, vs[i].z)
                            for i from 0 <= i < self.vcount])
-        coordIndex = ",-1,".join([",".join([str(self._faces[i].vertices[j])
-                                            for j from 0 <= j < self._faces[i].n])
-                                  for i from 0 <= i < self.fcount])
+        coord_idx = ",-1,".join([",".join([repr(fs[i].vertices[j])
+                                           for j from 0 <= j < fs[i].n])
+                                 for i from 0 <= i < self.fcount])
         if not self.global_texture:
-            colorIndex = ",".join([str(self._faces[i].color.r) + " "
-                                   + str(self._faces[i].color.g) + " "
-                                   + str(self._faces[i].color.b)
-                                   for i from 0 <= i < self.fcount])
-            return """
-<IndexedFaceSet solid='False' colorPerVertex='False' coordIndex='%s,-1'>
-  <Coordinate point='%s'/>
-  <Color color='%s' />
-</IndexedFaceSet>
-""" % (coordIndex, points, colorIndex)
-        return """
-<IndexedFaceSet coordIndex='%s,-1'>
-  <Coordinate point='%s'/>
-</IndexedFaceSet>
-""" % (coordIndex, points)
+            color_idx = ",".join(['%r %r %r' % (fs[i].color.r, fs[i].color.g, fs[i].color.b)
+                                  for i from 0 <= i < self.fcount])
+            # Note: Don't use f-strings, since Sage on Python 2 still expects
+            # this to return a plain str instead of a unicode
+            return dedent("""
+                <IndexedFaceSet solid='False' colorPerVertex='False' coordIndex='{coord_idx},-1'>
+                  <Coordinate point='{points}'/>
+                  <Color color='{color_idx}' />
+                </IndexedFaceSet>
+            """.format(coord_idx=coord_idx, points=points, color_idx=color_idx))
+
+        return dedent("""
+            <IndexedFaceSet coordIndex='{coord_idx},-1'>
+              <Coordinate point='{points}'/>
+            </IndexedFaceSet>
+        """.format(coord_idx=coord_idx, points=points))
 
     def bounding_box(self):
         r"""
@@ -861,7 +890,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             try:
                 count = part_counts[part]
             except KeyError:
-                part_counts[part] = count = [0,0]
+                part_counts[part] = count = [0, 0]
             count[0] += 1
             count[1] += face.n
         all = {}
@@ -885,6 +914,203 @@ cdef class IndexFaceSet(PrimitiveObject):
             all[part] = face_set
         sig_free(partition)
         return all
+
+    def add_condition(self, condition, N=40):
+        """
+        Cut the surface according to the given condition.
+
+        This allows to take the intersection of the surface
+        with a domain in 3-space, in such a way that the result
+        has a smooth boundary.
+
+        INPUT:
+
+        - ``condition`` -- boolean function on ambient space, that
+          defines the domain
+
+        - ``N`` -- number of steps (default: 40) used on the boundary
+          to cut the triangles that are not entirely within the domain
+
+        For higher quality, meaning smoother boundary, use larger ``N``.
+
+        OUTPUT:
+
+        an ``IndexFaceSet``
+
+        This will contain both triangular and quadrilateral faces.
+
+        EXAMPLES::
+
+            sage: var('x,y,z')
+            (x, y, z)
+            sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))
+            sage: def condi(x,y,z):
+            ....:     return bool(x*x+y*y+z*z <= Integer(1))
+            sage: R = P.add_condition(condi,8);R
+            Graphics3d Object
+
+        .. PLOT::
+
+            x,y,z = var('x,y,z')
+            P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))
+            def condi(x,y,z):
+                return bool(x*x+y*y+z*z <= Integer(1))
+            sphinx_plot(P.add_condition(condi,8))
+
+        An example with colors::
+
+            sage: def condi(x,y,z):
+            ....:     return bool(x*x+y*y <= 1.1)
+            sage: cm = colormaps.hsv
+            sage: cf = lambda x,y,z: float(x+y) % 1
+            sage: P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,(-2,2),(-2,2),(-2,2),color=(cm,cf))
+            sage: R = P.add_condition(condi,18); R
+            Graphics3d Object
+
+        .. PLOT::
+
+            x,y,z = var('x,y,z')
+            def condi(x,y,z):
+                return bool(x*x+y*y <= 1.1)
+            cm = colormaps.hsv
+            cf = lambda x,y,z: float(x+y) % 1
+            P = implicit_plot3d(x**2+y**2+z**2-1-x**2*z+y**2*z,(-2,2),(-2,2),(-2,2),color=(cm,cf))
+            sphinx_plot(P.add_condition(condi,18))
+
+        An example with transparency::
+
+            sage: P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
+            sage: def cut(a,b,c):
+            ....:     return a*a+c*c > 2
+            sage: Q = P.add_condition(cut,40); Q
+            Graphics3d Object
+
+        .. PLOT::
+
+            x,y,z = var('x,y,z')
+            P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
+            def cut(a,b,c):
+                return a*a+c*c > 2
+            sphinx_plot(P.add_condition(cut,40))
+
+        A sombrero with quadrilaterals::
+
+            sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),
+            ....:     color='gold')
+            sage: def cut(x,y,z):
+            ....:     return x*x+y*y < 1
+            sage: Q = P.add_condition(cut);Q
+            Graphics3d Object
+
+        .. PLOT::
+
+            x,y,z = var('x,y,z')
+            P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),color='gold')
+            def cut(x,y,z):
+                return x*x+y*y < 1
+            sphinx_plot(P.add_condition(cut))
+
+        .. TODO::
+
+            - Use a dichotomy to search for the place where to cut,
+            - Compute the cut only once for each edge.
+        """
+        index = 0
+        self.triangulate()
+        local_colored = self.has_local_colors()
+        V = self.vertex_list()
+        old_index_to_index = {}
+        point_list = []
+        for old_index, vertex in enumerate(V):
+            if condition(*vertex):
+                old_index_to_index[old_index] = index
+                point_list.append(vertex)
+                index += 1
+
+        face_list = []
+        if local_colored:
+            texture_list = []
+            index_faces = self.index_faces_with_colors()
+        else:
+            texture = self.texture
+            index_faces = self.index_faces()
+
+        if local_colored:
+            def iter_split_faces():
+                for triple in index_faces:
+                    triple, color = triple
+                    if len(triple) == 3:
+                        yield triple, color
+                    else:
+                        v0 = triple[0]
+                        for i in range(1, len(triple) - 1):
+                            yield (v0, triple[i], triple[i + 1]), color
+        else:
+            def iter_split_faces():
+                for triple in index_faces:
+                    if len(triple) == 3:
+                        yield triple
+                    else:
+                        v0 = triple[0]
+                        for i in range(1, len(triple) - 1):
+                            yield (v0, triple[i], triple[i + 1])
+
+        for triple in iter_split_faces():
+            if local_colored:
+                triple, color = triple
+            inside = [x for x in triple if x in old_index_to_index]
+            outside = [x for x in triple if x not in inside]
+            face_degree = len(inside)
+            if face_degree >= 1 and local_colored:
+                texture_list.append(Texture(color=color))
+            if face_degree == 3:
+                face_list.append([old_index_to_index[i] for i in triple])
+            elif face_degree == 2:
+                old_c = outside[0]
+                if old_c == triple[1]:
+                    old_b, old_a = inside
+                else:
+                    old_a, old_b = inside
+                va = V[old_a]
+                vb = V[old_b]
+                vc = V[old_c]
+                for k in range(N + 1):
+                    middle_ac = midpoint(va, vc, k / N)
+                    if condition(*middle_ac):
+                        break
+                for k in range(N + 1):
+                    middle_bc = midpoint(vb, vc, k / N)
+                    if condition(*middle_bc):
+                        break
+                point_list += [middle_ac, middle_bc]
+                face_list.append([index, old_index_to_index[old_a],
+                                  old_index_to_index[old_b], index + 1])
+                index += 2
+            elif face_degree == 1:
+                old_a = inside[0]
+                if old_a == triple[1]:
+                    old_c, old_b = outside
+                else:
+                    old_b, old_c = outside
+                va = V[old_a]
+                vb = V[old_b]
+                vc = V[old_c]
+                for k in range(N + 1):
+                    middle_ab = midpoint(va, vb, k / N)
+                    if condition(*middle_ab):
+                        break
+                for k in range(N + 1):
+                    middle_ac = midpoint(va, vc, k / N)
+                    if condition(*middle_ac):
+                        break
+                point_list += [middle_ac, middle_ab]
+                face_list.append([index, old_index_to_index[old_a], index + 1])
+                index += 2
+
+        if local_colored:
+            return IndexFaceSet(face_list, point_list, texture_list=texture_list)
+        else:
+            return IndexFaceSet(face_list, point_list, texture=texture)
 
     def tachyon_repr(self, render_params):
         """
@@ -970,7 +1196,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: t_list=[Texture(col[i]) for i in range(10)]
             sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
             sage: S.json_repr(S.default_render_params())
-            ['{"vertices":[{"x":2,"y":0,"z":0},..., "face_colors":["#ff0000","#ff9900","#cbff00","#33ff00"], "opacity":1.0}']
+            ['{"vertices":[{"x":2,"y":0,"z":0},..., "faceColors":["#ff0000","#ff9900","#cbff00","#33ff00"], "opacity":1.0}']
         """
         cdef Transformation transform = render_params.transform
         cdef point_c res
@@ -994,7 +1220,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         if self.global_texture:
             color_str = '"#{}"'.format(self.texture.hex_rgb())
-            return ['{{"vertices":{}, "faces":{}, "color":{}, "opacity":{}}}'.format(
+            json = ['{{"vertices":{}, "faces":{}, "color":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
         else:
             color_str = "[{}]".format(",".join(['"{}"'.format(
@@ -1002,8 +1228,16 @@ cdef class IndexFaceSet(PrimitiveObject):
                           self._faces[i].color.g,
                           self._faces[i].color.b).html_color())
                                             for i from 0 <= i < self.fcount]))
-            return ['{{"vertices":{}, "faces":{}, "face_colors":{}, "opacity":{}}}'.format(
+            json = ['{{"vertices":{}, "faces":{}, "faceColors":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
+
+        if self._extra_kwds.get('threejs_flat_shading', False):
+            json[0] = json[0][:-1] + ', "useFlatShading": true}'
+
+        if self._extra_kwds.get('mesh', False):
+            json[0] = json[0][:-1] + ', "showMeshGrid": true}'
+
+        return json
 
     def obj_repr(self, render_params):
         """
@@ -1314,7 +1548,7 @@ cdef class EdgeIter:
                         return ((P.x, P.y, P.z), (Q.x, Q.y, Q.z))
                 else:
                     if point_c_cmp(P, Q) > 0:
-                        P,Q = Q,P
+                        P, Q = Q, P
                     edge = ((P.x, P.y, P.z), (Q.x, Q.y, Q.z))
                     if not edge in self.seen:
                         self.seen[edge] = edge
@@ -1352,12 +1586,18 @@ def len3d(v):
     """
     Return the norm of a vector in three dimensions.
 
+    This is deprecated since :trac:`27450` .
+
     EXAMPLES::
 
         sage: from sage.plot.plot3d.index_face_set import len3d
         sage: len3d((1,2,3))
+        doctest:warning...:
+        DeprecationWarning: len3d is deprecated, use point_c_len instead
+        See https://trac.sagemath.org/27450 for details.
         3.7416573867739413
     """
+    deprecation(27450, "len3d is deprecated, use point_c_len instead")
     return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2])
 
 

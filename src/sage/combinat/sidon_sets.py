@@ -41,8 +41,8 @@ def sidon_sets(N, g = 1):
     EXAMPLES::
 
         sage: S = sidon_sets(3, 2)
-        sage: S
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(S, key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
         sage: S.cardinality()
         8
         sage: S.category()
@@ -117,8 +117,8 @@ def sidon_sets_rec(N, g = 1):
     TESTS::
 
         sage: from sage.combinat.sidon_sets import sidon_sets_rec
-        sage: sidon_sets_rec(3,2)
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(sidon_sets_rec(3,2), key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
     """
     if N == 1 :
         return Set([Set([]), Set([1])])

@@ -1,20 +1,21 @@
 r"""
 Finite Coxeter Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
 #  Copyright (C) 2009    Nicolas Borie <nicolas dot borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.all import AA, UniversalCyclotomicField, QQbar, QQ
+from sage.rings.all import AA, UniversalCyclotomicField, QQbar
 from sage.rings.integer_ring import ZZ
+
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
@@ -219,14 +220,14 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             Return the shard intersection order attached to `W`.
 
-            This is a lattice structure on `W`, introduced in [Reading]_. It
+            This is a lattice structure on `W`, introduced in [Rea2009]_. It
             contains the noncrossing partition lattice, as the induced lattice
             on the subset of `c`-sortable elements.
 
             The partial order is given by simultaneous inclusion of inversion sets
             and subgroups attached to every element.
 
-            The precise description used here can be found in [StThWi]_.
+            The precise description used here can be found in [STW2018]_.
 
             Another implementation for the symmetric groups is
             available as :func:`~sage.combinat.shard_order.shard_poset`.
@@ -246,14 +247,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 q^3 - 11*q^2 + 23*q - 13
                 sage: SH.f_polynomial()
                 34*q^3 + 22*q^2 + q
-
-            REFERENCES:
-
-            .. [Reading] Nathan Reading, *Noncrossing partitions and the shard
-               intersection order*, DMTCS Proceedings of FPSAC 2009, 745--756
-
-            .. [StThWi] Christian Stump, Hugh Thomas and Nathan Williams,
-               *Cataland: why the fuss?*, :arxiv:`1503.00710`
             """
             from sage.combinat.posets.lattices import LatticePoset
             data = {w: (frozenset(u.lift()
@@ -276,7 +269,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             This is a partial order on the elements of a finite
             Coxeter group `W`, which is distinct from the Bruhat
             order, the weak order and the shard intersection order. It
-            was defined in [BHZ05]_.
+            was defined in [BHZ2005]_.
 
             This partial order is not a lattice, as there is no unique
             maximal element. It can be succintly defined as follows.
@@ -302,12 +295,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 34*q^4 + 90*q^3 + 79*q^2 + 24*q + 1
                 sage: len(P.maximal_elements())
                 13
-
-            REFERENCE:
-
-            .. [BHZ05] \N. Bergeron, C. Hohlweg, and M. Zabrocki, *Posets
-               related to the Connectivity Set of Coxeter Groups*.
-               :arxiv:`math/0509271v3`
             """
             from sage.graphs.digraph import DiGraph
             from sage.combinat.posets.posets import Poset
@@ -554,7 +541,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             Return the `m`-Cambrian lattice on `m`-delta sequences.
 
-            See :arxiv:`1503.00710` and :arXiv:`math/0611106`.
+            See :arxiv:`1503.00710` and :arxiv:`math/0611106`.
 
             The `m`-delta sequences are certain `m`-colored minimal
             factorizations of `c` into reflections.
@@ -799,10 +786,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             are those covers of `ws_i` that have a descent at `i`.
             """
 
-            i = self.first_descent(positive=True)
+            i = self.first_descent(positive=True,side='right')
             if i is not None:
-                wsi = self.apply_simple_reflection(i)
-                return [u.apply_simple_reflection(i) for u in wsi.bruhat_upper_covers() if u.has_descent(i)] + [wsi]
+                wsi = self.apply_simple_reflection(i,side='right')
+                return [u.apply_simple_reflection(i,side='right') for u in wsi.bruhat_upper_covers() if u.has_descent(i,side='right')] + [wsi]
             else:
                 return []
 

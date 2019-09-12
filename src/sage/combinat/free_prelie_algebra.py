@@ -37,7 +37,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
 from sage.sets.family import Family
-lazy_import('sage.structure.parent', 'CoercionException')
+from sage.structure.coerce_exceptions import CoercionException
 
 
 class FreePreLieAlgebra(CombinatorialFreeModule):

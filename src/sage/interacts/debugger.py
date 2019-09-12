@@ -11,6 +11,9 @@ AUTHOR:
 from __future__ import print_function
 from six.moves import range
 
+from sage.misc.superseded import deprecation
+deprecation(27531, "sage.interacts.debugger is deprecated because it is meant for the deprecated Sage Notebook")
+
 # Below all tests are done using sage0, which is a pexpect interface
 # to Sage itself.  This allows us to test exploring a stack traceback
 # using the doctest framework.
@@ -21,6 +24,9 @@ def test_function2(a, b):
 
     EXAMPLES::
 
+        >>> import sage.interacts.debugger
+        doctest:...: DeprecationWarning: sage.interacts.debugger is deprecated because it is meant for the deprecated Sage Notebook
+        See https://trac.sagemath.org/27531 for details.
         >>> sage.interacts.debugger.test_function2(2, 3)  # using normal prompt would confuse tests below.
         (5, 6, True, False)
     """
@@ -48,15 +54,16 @@ class Debug(object):
     """
     Create a debugger for the most recent stack trace.
 
-    NOTES:
+    .. NOTE::
 
-    - Input is not preparsed.
-    - You can define and work with many debug interacts at the same time.
+        - Input is not preparsed.
+        - You can define and work with many debug interacts at the same time.
 
-    TESTS::
+    TESTS:
 
     The current position in the stack frame is self._curframe_index::
 
+        sage: a = sage0.eval("import sage.interacts.debugger")
         sage: a = sage0.eval("sage.interacts.debugger.test_function('n', 'm')")
         sage: d = sage0('sage.interacts.debugger.Debug()')
         sage: d._curframe_index
@@ -99,7 +106,7 @@ class Debug(object):
 
             sage: a = sage0.eval("sage.interacts.debugger.test_function('n', 'm')")
             sage: d = sage0('sage.interacts.debugger.Debug()')
-            sage: d.curframe()
+            sage: d.curframe()  # py2
             <frame object at 0x...>
         """
         return self._stack[self._curframe_index][0]
@@ -123,7 +130,7 @@ class Debug(object):
              sage: _ = sage0.eval('d = sage.interacts.debugger.Debug()')
              sage: sage0.eval("d.evaluate('print(a);print(b)')")
              'm\nn'
-       """
+        """
         locals = self.curframe().f_locals
         globals = self.curframe().f_globals
         try:
@@ -157,12 +164,12 @@ class Debug(object):
              sage: _ = sage0.eval("sage.interacts.debugger.test_function('n', 'm')")
              sage: _ = sage0.eval('d = sage.interacts.debugger.Debug()')
              sage: print(sage0("d.listing(1)"))
-                 2...      x = a + b
+                 ...      x = a + b
              --&gt; ...      y = a * b
                  ....:    return x, y, x&lt;y, x&gt;y   # &lt; to ensure HTML is properly escaped
              <hr>> <a href="/src/interacts/debugger.py" target="_new">src/sage/interacts/debugger.py</a>
              sage: print(sage0("d.listing()"))
-                 2...
+                 ...
                  ...
                  ....:    x = a + b
              --&gt; ...      y = a * b
@@ -185,7 +192,7 @@ class Debug(object):
         w = []
         for i in range(lineno-n, lineno+n+1):
             z = linecache.getline(filename, i, curframe.f_globals)
-            if z: w.append(('--> ' if i ==lineno else '    ') + '%-5s'%i + z)
+            if z: w.append(('--> ' if i == lineno else '    ') + '%-5s'%i + z)
         code = ''.join(w)
         if not code.strip():
             code = '(code not available)'
@@ -194,7 +201,7 @@ class Debug(object):
         # If the output of anything contains the string TRACEBACK then
         # it will get mangled.  So we replace TRACEBACK in our code block
         # by the harmless version with the colon missing.  This sucks.
-        from sagenb.notebook.cell import TRACEBACK
+        TRACEBACK = 'Traceback (most recent call last):'
         code = code.replace(TRACEBACK, TRACEBACK[:-1])
 
         # Create a hyperlink to the file, if possible.

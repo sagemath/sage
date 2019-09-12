@@ -171,12 +171,12 @@ class CDFInterpreter(StackInterpreter):
 
             cdef inline double_complex CDE_to_dz(zz):
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>(zz if isinstance(zz, ComplexDoubleElement) else CDF(zz))
-                return z._complex.dat[0] + _Complex_I * z._complex.dat[1]
+                return z._complex.real + _Complex_I * z._complex.imag
 
             cdef inline ComplexDoubleElement dz_to_CDE(double_complex dz):
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-                z._complex.dat[0] = creal(dz)
-                z._complex.dat[1] = cimag(dz)
+                z._complex.real = creal(dz)
+                z._complex.imag = cimag(dz)
                 return z
 
             cdef public bint cdf_py_call_helper(object fn,

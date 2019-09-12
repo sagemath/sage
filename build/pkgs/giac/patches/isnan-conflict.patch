@@ -1,0 +1,30 @@
+Just always use std::isnan and std::isinf so there is no risk of
+conflicting with the libc math.h equivalents thereof.
+
+See https://trac.sagemath.org/ticket/27263
+--- a/src/global.cc	2019-02-12 15:49:03.082594000 +0000
++++ b/src/global.cc	2019-02-12 15:49:43.438594000 +0000
+@@ -4139,11 +4139,7 @@
+     return isnan(d);
+ #endif
+ #else
+-#if defined(FIR_LINUX) || defined(FIR_ANDROID)
+     return std::isnan(d);
+-#else
+-    return isnan(d);
+-#endif
+ #endif
+   }
+ 
+@@ -4152,11 +4148,7 @@
+     double x=0.0;
+     return d==1.0/x || d==-1.0/x;
+ #else
+-#if defined(FIR_LINUX) || defined(FIR_ANDROID)
+     return std::isinf(d);
+-#else
+-    return isinf(d);
+-#endif
+ #endif
+   }
+ 

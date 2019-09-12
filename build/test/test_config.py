@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import unittest
@@ -30,7 +30,7 @@ class ConfigurationTestCase(unittest.TestCase):
         """
         Test all ``SAGE_BOOTSTRAP`` settings
         """
-        SAGE_BOOTSTRAP=' loG:CrItIcAl, interactive:TRUE'
+        SAGE_BOOTSTRAP = ' loG:CrItIcAl, interactive:TRUE'
         result = run_config_with(SAGE_BOOTSTRAP)
         self.assertEqual(len(result), 4)
         self.assertEqual(result['log'], u'critical')
@@ -38,7 +38,6 @@ class ConfigurationTestCase(unittest.TestCase):
         self.assertEqual(result['stdout'], 'default stdout')
         self.assertEqual(result['stderr'], 'default stderr')
 
-        
     def test_logging(self):
         """
         Test that the different log levels are understood
@@ -48,7 +47,7 @@ class ConfigurationTestCase(unittest.TestCase):
                 run_config_with('LOG:{0}'.format(level.upper()))['log'],
                 level)
 
-    def test_logging(self):
+    def test_overriding(self):
         """
         Test that overriding the isatty detection works
         """
@@ -58,7 +57,6 @@ class ConfigurationTestCase(unittest.TestCase):
         self.assertEqual(interactive['stderr'], 'default stderr')
         in_pipe = run_config_with('interactive:false')
         self.assertFalse(in_pipe['interactive'])
-        self.assertEqual(in_pipe['stdout'], u"<class 'sage_bootstrap.stdio.UnbufferedStream'>")
+        self.assertEqual(in_pipe['stdout'],
+                         u"<class 'sage_bootstrap.stdio.UnbufferedStream'>")
         self.assertEqual(in_pipe['stderr'], 'default stderr')
-
-            

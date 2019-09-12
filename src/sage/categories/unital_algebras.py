@@ -11,7 +11,10 @@ Unital algebras
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.categories.magmas import Magmas
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
@@ -83,6 +86,23 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 sage: A(1)          # indirect doctest
                 B[word: ]
 
+            TESTS:
+
+            Ensure that :trac:`28328` is fixed and that non-associative
+            algebras are supported::
+
+                sage: class Foo(CombinatorialFreeModule):
+                ....:     def one(self):
+                ....:         return self.monomial(0)
+                sage: from sage.categories.magmatic_algebras \
+                ....:   import MagmaticAlgebras
+                sage: C = MagmaticAlgebras(QQ).WithBasis().Unital()
+                sage: F = Foo(QQ,(1,),category=C)
+                sage: F(0)
+                0
+                sage: F(3)
+                3*B[0]
+
             """
             # If self has an attribute _no_generic_basering_coercion
             # set to True, then this declaration is skipped.
@@ -103,8 +123,22 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 # has already been registered.
                 return
 
-            # This could be a morphism of Algebras(self.base_ring()); however, e.g., QQ is not in Algebras(QQ)
-            H = Hom(base_ring, self, Rings()) # TODO: non associative ring!
+            # Pick a homset for the morphism to live in...
+            if self in Rings():
+                # The algebra is associative, and thus a ring. The
+                # base ring is also a ring. Everything is OK.
+                H = Hom(base_ring, self, Rings())
+            else:
+                # If the algebra isn't associative, we would like to
+                # use the category of unital magmatic algebras (which
+                # are not necessarily associative) instead. But,
+                # unfortunately, certain important rings like QQ
+                # aren't in that category. As a result, we have to use
+                # something weaker.
+                cat = Magmas().Unital()
+                cat = Category.join([cat, CommutativeAdditiveGroups()])
+                cat = cat.Distributive()
+                H = Hom(base_ring, self, cat)
 
             # We need to register a coercion from the base ring to self.
             #
@@ -177,7 +211,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one()
                     B[word: ]
                     sage: A.from_base_ring(4)
@@ -198,7 +232,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one_from_one_basis()
                     B[word: ]
                     sage: A.one()
@@ -236,7 +270,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
                     sage: A = AlgebrasWithBasis(QQ).example()
                     sage: A.one_basis()
-                    word: 
+                    word:
                     sage: A.one()
                     B[word: ]
                 """

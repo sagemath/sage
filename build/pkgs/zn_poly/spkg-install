@@ -2,12 +2,6 @@
 # Set up environment variables:
 ###############################################################################
 
-zn_poly_version=`cat src/VERSION` # Only used in 'spkg-install'.
-if [ -z "$zn_poly_version" ]; then
-    echo >&2 "Error: Couldn't retrieve zn_poly's version from '`pwd`/src/VERSION'."
-    exit 1
-fi
-
 if [ "$SAGE_DEBUG" = yes ]; then
     echo >&2 "Warning: Setting SAGE_DEBUG to 'yes' completely disables optimization."
     CFLAGS="-O0 -g $CFLAGS -fPIC"
@@ -39,34 +33,20 @@ unset SHARED_FLAG # Currently leave the Makefile default ('-shared'); for safety
 
 cd src/
 
-# use 2to3 if we are running on python3
-if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
-    2to3 -n -w --no-diffs makemakefile.py
-fi
-
 ###############################################################################
 # Configure, tune, build and test zn_poly:
 ###############################################################################
 
-echo "Now configuring zn_poly..."
+echo "Now generating Makefile for zn_poly..."
 # Note: The '--cppflags' and '--cxxflags' options are added by our patch to
 #       'makemakefile.py', and aren't available with vanilla upstream.
 #       Moreover, the generated Makefile now takes CC, CXX and CPP from the
 #       environment, so no need to pass them later explicitly to 'make'.
-./configure --prefix="$SAGE_LOCAL" --cflags="$CFLAGS" --ldflags="$LDFLAGS" \
-              --cppflags="$CPPFLAGS" --cxxflags="$CXXFLAGS" \
-              --gmp-prefix="$SAGE_LOCAL" || sdh_die "Error configuring zn_poly."
+sage-system-python makemakefile.py >Makefile \
+    --prefix="$SAGE_LOCAL" --cflags="$CFLAGS" --ldflags="$LDFLAGS" \
+    --cppflags="$CPPFLAGS" --cxxflags="$CXXFLAGS" \
+    --gmp-prefix="$SAGE_LOCAL" || sdh_die "Error generating Makefile."
 
-# Run the tuning program, only takes 1 minute or so:
-echo
-echo "Now building zn_poly's self-tuning program..."
-sdh_make tune
-
-echo
-echo "Now running zn_poly's self-tuning program..."
-tune/tune > src/tuning.c  || sdh_die "Error running zn_poly's tuning program."
-
-echo
 echo "Now building zn_poly with its tuning parameters..."
 sdh_make
 
@@ -89,7 +69,6 @@ fi
 echo
 echo "Now building and installing zn_poly's shared library..."
 
-soname="libzn_poly-${zn_poly_version}.so"
 case "$UNAME" in
 "Darwin")
     sdh_make libzn_poly.dylib
@@ -98,14 +77,14 @@ case "$UNAME" in
         "$SAGE_DESTDIR_LOCAL/lib/libzn_poly.dylib"
     ;;
 "CYGWIN")
-    sdh_make libzn_poly.so
-    sdh_install -T "$soname" "$SAGE_LOCAL/bin/cygzn_poly.dll"
+    sdh_make libzn_poly.dll.a
+    sdh_install cygzn_poly.dll "$SAGE_LOCAL/bin"
+    sdh_install libzn_poly*.dll.a "$SAGE_LOCAL/lib"
     ;;
 *)
     # Linux, SunOS/Solaris, etc.:
     sdh_make libzn_poly.so
-    sdh_install "$soname" "$SAGE_LOCAL/lib"
-    ln -sf "$soname" "${SAGE_DESTDIR_LOCAL}/lib/libzn_poly.so" || exit $1
+    sdh_install libzn_poly*.so "$SAGE_LOCAL/lib"
     ;;
 esac
 

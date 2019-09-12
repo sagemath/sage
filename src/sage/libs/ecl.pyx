@@ -157,7 +157,7 @@ def test_ecl_options():
         ECL_OPT_SIGALTSTACK_SIZE = 1
         ECL_OPT_HEAP_SIZE = ...
         ECL_OPT_HEAP_SAFETY_AREA = ...
-        ECL_OPT_THREAD_INTERRUPT_SIGNAL = 0
+        ECL_OPT_THREAD_INTERRUPT_SIGNAL = ...
         ECL_OPT_SET_GMP_MEMORY_FUNCTIONS = 0
     """
     print('ECL_OPT_INCREMENTAL_GC = {0}'.format(
@@ -1145,7 +1145,7 @@ cdef class EclObject:
 
         Strings are not characters
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.ecl import *
             sage: EclObject('"a"').characterp()

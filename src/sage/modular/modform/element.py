@@ -15,15 +15,15 @@ Class hierarchy:
     - :class:`EisensteinSeries`
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2008 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import, division
 from six.moves import range
 
@@ -35,7 +35,6 @@ from sage.matrix.constructor import matrix
 from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import verbose
-from sage.misc.superseded import deprecated_function_alias
 from sage.modular.dirichlet import DirichletGroup
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -50,7 +49,7 @@ from sage.structure.element import coercion_model, ModuleElement
 
 def is_ModularFormElement(x):
     """
-    Return True if x is a modular form.
+    Return ``True`` if x is a modular form.
 
     EXAMPLES::
 
@@ -62,22 +61,28 @@ def is_ModularFormElement(x):
     """
     return isinstance(x, ModularFormElement)
 
-def delta_lseries(prec=53,
-                 max_imaginary_part=0,
-                 max_asymp_coeffs=40):
-    r"""
-    Return the L-series of the modular form Delta.
 
-    This actually returns an interface to Tim Dokchitser's program
-    for computing with the L-series of the modular form `\Delta`.
+def delta_lseries(prec=53, max_imaginary_part=0,
+                  max_asymp_coeffs=40, algorithm=None):
+    r"""
+    Return the L-series of the modular form `\Delta`.
+
+    If algorithm is "gp", this returns an interface to Tim
+    Dokchitser's program for computing with the L-series of the
+    modular form `\Delta`.
+
+    If algorithm is "pari", this returns instead an interface to Pari's
+    own general implementation of L-functions.
 
     INPUT:
 
-    - ``prec`` - integer (bits precision)
+    - ``prec`` -- integer (bits precision)
 
-    - ``max_imaginary_part`` - real number
+    - ``max_imaginary_part`` -- real number
 
-    - ``max_asymp_coeffs`` - integer
+    - ``max_asymp_coeffs`` -- integer
+
+    - ``algorithm`` -- optional string: 'gp' (default), 'pari'
 
     OUTPUT:
 
@@ -88,21 +93,32 @@ def delta_lseries(prec=53,
         sage: L = delta_lseries()
         sage: L(1)
         0.0374412812685155
+
+        sage: L = delta_lseries(algorithm='pari')
+        sage: L(1)
+        0.0374412812685155
     """
-    from sage.lfunctions.all import Dokchitser
-    # key = (prec, max_imaginary_part, max_asymp_coeffs)
-    L = Dokchitser(conductor = 1,
-                   gammaV = [0, 1],
-                   weight = 12,
-                   eps = 1,
-                   prec = prec)
-    s = 'tau(n) = (5*sigma(n,3)+7*sigma(n,5))*n/12-35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));'
-    L.init_coeffs('tau(k)',pari_precode = s,
-                  max_imaginary_part=max_imaginary_part,
-                  max_asymp_coeffs=max_asymp_coeffs)
-    L.set_coeff_growth('2*n^(11/2)')
-    L.rename('L-series associated to the modular form Delta')
-    return L
+    if algorithm is None:
+        algorithm = 'pari'
+
+    if algorithm == 'gp':
+        from sage.lfunctions.all import Dokchitser
+        L = Dokchitser(conductor=1, gammaV=[0, 1], weight=12, eps=1,
+                       prec=prec)
+        s = 'tau(n) = (5*sigma(n,3)+7*sigma(n,5))*n/12-35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));'
+        L.init_coeffs('tau(k)', pari_precode=s,
+                      max_imaginary_part=max_imaginary_part,
+                      max_asymp_coeffs=max_asymp_coeffs)
+        L.set_coeff_growth('2*n^(11/2)')
+        L.rename('L-series associated to the modular form Delta')
+        return L
+    elif algorithm == 'pari':
+        from sage.lfunctions.pari import LFunction, lfun_delta
+        return LFunction(lfun_delta(), prec=prec)
+
+    raise ValueError('algorithm must be "gp" or "pari"')
+
+
 
 class ModularForm_abstract(ModuleElement):
     """
@@ -113,7 +129,7 @@ class ModularForm_abstract(ModuleElement):
     """
     def group(self):
         """
-        Return the group for which self is a modular form.
+        Return the group for which ``self`` is a modular form.
 
         EXAMPLES::
 
@@ -124,7 +140,7 @@ class ModularForm_abstract(ModuleElement):
 
     def weight(self):
         """
-        Return the weight of self.
+        Return the weight of ``self``.
 
         EXAMPLES::
 
@@ -269,10 +285,10 @@ class ModularForm_abstract(ModuleElement):
             sage: f._compute([])
             []
         """
-        if not isinstance(X, list) or len(X) == 0:
+        if not isinstance(X, list) or not X:
             return []
         bound = max(X)
-        q_exp = self.q_expansion(bound+1)
+        q_exp = self.q_expansion(bound + 1)
         return [q_exp[i] for i in X]
 
     def coefficients(self, X):
@@ -313,7 +329,7 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients = {}
         if isinstance(X, Integer):
             X = list(range(1, X + 1))
-        Y = [n for n in X   if  not (n in self.__coefficients.keys())]
+        Y = [n for n in X  if n not in self.__coefficients]
         v = self._compute(Y)
         for i in range(len(v)):
             self.__coefficients[Y[i]] = v[i]
@@ -717,8 +733,7 @@ class ModularForm_abstract(ModuleElement):
 
     def lseries(self, embedding=0, prec=53,
                          max_imaginary_part=0,
-                         max_asymp_coeffs=40,
-                         conjugate=None):
+                         max_asymp_coeffs=40):
         r"""
         Return the L-series of the weight k cusp form
         `f` on `\Gamma_0(N)`.
@@ -738,8 +753,6 @@ class ModularForm_abstract(ModuleElement):
         - ``max_imaginary_part`` - real number. Default: 0.
 
         - ``max_asymp_coeffs`` - integer. Default: 40.
-
-        - ``conjugate`` -- deprecated synonym for ``embedding``.
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
@@ -784,13 +797,6 @@ class ModularForm_abstract(ModuleElement):
             sage: L = f.lseries(embedding=1)
             sage: L(1)
             0.921328017272472
-
-        For backward-compatibility, ``conjugate`` is accepted as a synonym for ``embedding``::
-
-            sage: f.lseries(conjugate=1)
-            doctest:...: DeprecationWarning: The argument 'conjugate' for 'lseries' is deprecated -- use the synonym 'embedding'
-            See http://trac.sagemath.org/19668 for details.
-            L-series associated to the cusp form q + a1*q^2 - a1*q^3 + (-a1 + 2)*q^5 + O(q^6), a1=1.41421356237310
 
         An example with a non-real coefficient field (`\QQ(\zeta_3)`
         in this case)::
@@ -864,10 +870,6 @@ class ModularForm_abstract(ModuleElement):
 
         # compute the requested embedding
         C = ComplexField(prec)
-        if conjugate is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(19668, "The argument 'conjugate' for 'lseries' is deprecated -- use the synonym 'embedding'")
-            embedding=conjugate
         K = self.base_ring()
         if isinstance(embedding, RingHomomorphism):
             # Target of embedding might have precision less than desired, so
@@ -918,8 +920,6 @@ class ModularForm_abstract(ModuleElement):
             L.rename('L-series associated to the cusp form %s, %s=%s' \
                 % (self, K.variable_name(), emb(K.gen())))
         return L
-
-    cuspform_lseries = deprecated_function_alias(16917, lseries)
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):
         r"""
@@ -1032,7 +1032,7 @@ class ModularForm_abstract(ModuleElement):
         # If the base ring is QQ we pass the coefficients to GP/PARI as exact
         # rationals. Otherwise, need to use the embedding.
         if self.base_ring() != QQ:
-            dirichlet_series = map(emb, dirichlet_series)
+            dirichlet_series = [emb(cf) for cf in dirichlet_series]
 
         if chi is not None:
             pari_precode_chi = str(chi.values()) + "[n%" + str(chi.conductor()) + "+1]; "
@@ -1257,7 +1257,8 @@ class ModularForm_abstract(ModuleElement):
             ...
             ValueError: Not a CM form
         """
-        if not self.has_cm(): raise ValueError("Not a CM form")
+        if not self.has_cm():
+            raise ValueError("Not a CM form")
         return -self.__cm_char.conductor()
 
 class Newform(ModularForm_abstract):
@@ -1689,9 +1690,9 @@ class Newform(ModularForm_abstract):
             q + a2*q^2 + (-a2 - 2)*q^3 - q^4 - a2*q^5 + O(q^6)
             sage: f._atkin_lehner_eigenvalue_from_qexp(5)
             a2
-
         """
-        if Q == 1: return ZZ(1)
+        if Q == 1:
+            return ZZ(1)
         a_Q = self[Q]
         if not a_Q:
             raise ValueError("a_Q must be nonzero")
@@ -1730,7 +1731,8 @@ class Newform(ModularForm_abstract):
             sage: _ == F._atkin_lehner_eigenvalue_from_qexp(5)
             True
         """
-        if Q == 1: return ZZ(1)
+        if Q == 1:
+            return ZZ(1)
 
         S = self._defining_modular_symbols()
         A = S.ambient()
@@ -1744,7 +1746,8 @@ class Newform(ModularForm_abstract):
         else:
             L = []
             for a in xsrange(Q0):
-                if a.gcd(Q0) > 1: continue
+                if a.gcd(Q0) > 1:
+                    continue
                 aa = crt(a, 1, Q, N.prime_to_m_part(Q))
                 diam = matrix(ZZ, 2, lift_to_sl2z(0,aa,N) )
                 L.append( (W * diam * matrix(QQ, 2, [1,a/Q0,0,1]) ).change_ring(ZZ) )
@@ -1753,12 +1756,13 @@ class Newform(ModularForm_abstract):
         e = S.dual_eigenvector(names=self._name())
         i = e.nonzero_positions()[0]
         w = (W*e)[i]/e[i]
-        if W*e != w*e: raise ArithmeticError("Bug in Atkin--Lehner computation: eigenspace not invariant")
+        if W * e != w * e:
+            raise ArithmeticError("Bug in Atkin--Lehner computation: eigenspace not invariant")
         sign = prod([eps(-1) for eps in self.character().decomposition() if eps.conductor().divides(Q)])
         return w / Q0 / sign * self.character()(crt(1, Q//Q0, Q, N//Q))
 
     def atkin_lehner_action(self, d=None, normalization='analytic', embedding=None):
-        """
+        r"""
         Return the result of the Atkin-Lehner operator `W_d` on this form `f`,
         in the form of a constant `\lambda_d(f)` and a normalized newform `f'`
         such that
@@ -1836,7 +1840,6 @@ class Newform(ModularForm_abstract):
             Traceback (most recent call last):
             ...
             ValueError: d (= 2) does not divide the level (= 11)
-
         """
         # normalise d
         N = self.level()
@@ -2000,14 +2003,18 @@ class Newform(ModularForm_abstract):
         if d is None:
             d = N
         d = ZZ(d)
-        if (N % d): raise ValueError("d should divide N")
+        if N % d:
+            raise ValueError("d should divide N")
         d = N // N.prime_to_m_part(d)
 
         d1 = d2 = d3 = 1
         for (p, e) in d.factor():
-            if self[p] == 0: d1 *= p**e
-            elif self.character().conductor().valuation(p) == e: d2 *= p**e
-            else: d3 *= p**e
+            if self[p] == 0:
+                d1 *= p**e
+            elif self.character().conductor().valuation(p) == e:
+                d2 *= p**e
+            else:
+                d3 *= p**e
 
         verbose("computing W_%s using modsym, W_%s using qexp, W_%s using both" % (d1, d2, d3), level=2)
         w1 = self._atkin_lehner_eigenvalue_from_modsym(d1)
@@ -2023,7 +2030,7 @@ class Newform(ModularForm_abstract):
         else:
             R = embedding.codomain()
 
-        if normalization=='arithmetic':
+        if normalization == 'arithmetic':
             return embedding(w)
         else:
             # get rid of the normalisation factors
@@ -2171,7 +2178,8 @@ class Newform(ModularForm_abstract):
             if p.divides(N) or p.divides(chi.level()):
                 continue
             D = (D.hecke_operator(p) - self[p]*chi(p)).kernel()
-            if D.rank() == 1: break
+            if D.rank() == 1:
+                break
             if D.is_zero():
                 raise ValueError('twist of %s by %s is not a newform of level %s' % (self, chi, level))
         else:
@@ -2320,17 +2328,17 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         from .constructor import ModularForms
         if newchar is not None:
             verbose("creating a parent with char")
-            newparent = ModularForms(newchar, self.weight() + other.weight(), base_ring = newchar.base_ring())
+            newparent = ModularForms(newchar, self.weight() + other.weight(),
+                                     base_ring=newchar.base_ring())
             verbose("parent is %s" % newparent)
         else:
-            newparent = ModularForms(self.group(), self.weight() + other.weight(), base_ring = ZZ)
+            newparent = ModularForms(self.group(),
+                                     self.weight() + other.weight(),
+                                     base_ring=ZZ)
         m = newparent.sturm_bound()
         newqexp = self.qexp(m) * other.qexp(m)
 
         return newparent.base_extend(newqexp.base_ring())(newqexp)
-
-    modform_lseries = deprecated_function_alias(16917,
-            ModularForm_abstract.lseries)
 
     def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """
@@ -2365,7 +2373,8 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             ...
             NotImplementedError: Don't know how to compute Atkin-Lehner matrix acting on this space (try using a newform constructor instead)
         """
-        if d is None: d = self.level()
+        if d is None:
+            d = self.level()
         try:
             f = self.parent().atkin_lehner_operator(d)(self)
         except NotImplementedError:
@@ -2538,7 +2547,7 @@ class ModularFormElement_elliptic_curve(ModularFormElement):
 
     def _compute_element(self):
         """
-        Compute self as a linear combination of the basis elements
+        Compute ``self`` as a linear combination of the basis elements
         of parent.
 
         EXAMPLES::
@@ -2551,12 +2560,13 @@ class ModularFormElement_elliptic_curve(ModularFormElement):
         M = self.parent()
         S = M.cuspidal_subspace()
 ##        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
-        return vector(S.find_in_space( self.__E.q_expansion( S.sturm_bound() ) ) + [0] * ( M.dimension() - S.dimension() ))
+        return vector(S.find_in_space(self.__E.q_expansion(S.sturm_bound())) + [0] * (M.dimension() - S.dimension()))
 
     def _compute_q_expansion(self, prec):
         r"""
         The `q`-expansion of the modular form to precision `O(q^\text{prec})`.
-        This function takes one argument, which is the integer prec.
+
+        This function takes one argument, which is the integer ``prec``.
 
         EXAMPLES::
 
@@ -2734,17 +2744,17 @@ class EisensteinSeries(ModularFormElement):
             if n < 0:
                 pass
             elif n == 0:
-                v.append(F(t-1)/F(24))
+                v.append(F(t - 1) / F(24))
             else:
-                an = sigma(n,1)
+                an = sigma(n, 1)
                 if n % t == 0:
-                    an -= t * sigma(n//t,1)
+                    an -= t * sigma(n // t, 1)
                 v.append(an)
         return v
 
     def __compute_general_case(self, X):
-        """
-        Returns the list coefficients of `q^n` of the power series of self,
+        r"""
+        Return the list coefficients of `q^n` of the power series of self,
         for `n` in the list `X`.  The results are not cached.  (Use
         coefficients for cached results).
 
@@ -2807,9 +2817,9 @@ class EisensteinSeries(ModularFormElement):
         K = chi.base_ring()
         n = K.zeta_order()
         if L == 1:
-            c0 = K(-psi.bernoulli(k))/K(2*k)
+            c0 = K(-psi.bernoulli(k)) / K(2 * k)
         else:
-            c0 = K(0)
+            c0 = K.zero()
         return (c0, chi, psi, K, n, t, L, M)
 
     def chi(self):
@@ -2924,4 +2934,4 @@ class EisensteinSeries(ModularFormElement):
         """
         if self.__chi.is_trivial() and self.__psi.is_trivial() and self.weight() == 2:
             return factor(self.__t)[0][0]
-        return self.L()*self.M()
+        return self.L() * self.M()

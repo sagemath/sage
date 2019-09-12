@@ -410,7 +410,6 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
        Currently, parallel methods do not work with the
        multiprocessing implementation.
     """
-    import types
     if isinstance(p_iter, types.FunctionType):
         return Parallel()(p_iter)
     return Parallel(p_iter, ncpus, **kwds)

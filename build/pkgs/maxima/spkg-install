@@ -23,7 +23,6 @@ cp "$SAGE_ROOT"/config/config.* .
 
 echo
 echo "Now configuring Maxima..."
-./bootstrap
 sdh_configure --enable-ecl git_found=false
 
 # Note the following is regression in maxima build system

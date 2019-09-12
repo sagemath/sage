@@ -76,7 +76,7 @@ Restoring variables after they have been turned into functions::
 
     sage: x = function('x')
     sage: type(x)
-    <class 'sage.symbolic.function_factory.NewSymbolicFunction'>
+    <class 'sage.symbolic.function_factory...NewSymbolicFunction'>
     sage: x(2/3)
     x(2/3)
     sage: restore('x')
@@ -122,7 +122,7 @@ No problems here::
     1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
 
     sage: integrate((1-x^2)^n,x)
-    integrate((-x^2 + 1)^n, x)
+    x*hypergeometric((1/2, -n), (3/2,), x^2*exp_polar(2*I*pi))
     sage: integrate(x^x,x)
     integrate(x^x, x)
     sage: integrate(1/(x^3+1),x)
@@ -139,24 +139,20 @@ No problems here::
     sqrt(pi)/sqrt(c)
     sage: forget()
 
-The following are a bunch of examples of integrals that Mathematica
-can do, but Sage currently can't do::
+Other examples that now (:trac:`27958`) work::
 
-    sage: integrate(log(x)*exp(-x^2), x)        # todo -- Mathematica can do this
-    integrate(e^(-x^2)*log(x), x)
-
-Todo - Mathematica can do this and gets `\pi^2/15`.
-
-::
+    sage: integrate(log(x)*exp(-x^2), x)
+    1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
 
     sage: integrate(log(1+sqrt(1+4*x)/2)/x, x, 0, 1)
     Traceback (most recent call last):
     ...
     ValueError: Integral is divergent.
 
-::
+The following is an example of integral that Mathematica
+can do, but Sage currently cannot do::
 
-    sage: integrate(ceil(x^2 + floor(x)), x, 0, 5)    # todo: Mathematica can do this
+    sage: integrate(ceil(x^2 + floor(x)), x, 0, 5, algorithm='maxima')
     integrate(ceil(x^2) + floor(x), x, 0, 5)
 
 MAPLE: The basic differentiation and integration examples in the
@@ -203,8 +199,8 @@ Maple documentation::
     1/3*sqrt(3)*arctan(1/3*sqrt(3)*(2*x + 1)) - 1/6*log(x^2 + x + 1) + 1/3*log(x - 1)
     sage: integrate(exp(-x^2), x)
     1/2*sqrt(pi)*erf(x)
-    sage: integrate(exp(-x^2)*log(x), x)       # todo: maple can compute this exactly.
-    integrate(e^(-x^2)*log(x), x)
+    sage: integrate(exp(-x^2)*log(x), x)
+    1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
     sage: f = exp(-x^2)*log(x)
     sage: f.nintegral(x, 0, 999)
     (-0.87005772672831..., 7.5584...e-10, 567, 0)

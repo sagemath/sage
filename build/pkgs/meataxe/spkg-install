@@ -11,10 +11,6 @@
 # of MeatAxe (as opposed to SharedMeatAxe).
 rm -f "$SAGE_LOCAL"/lib/libmtx.*
 
-# This is the place where arithmetic tables and some other input files
-# are searched by default.
-export MTXLIB="$DOT_SAGE"/meataxe
-
 # Directory where executables are installed.
 export MTXBIN="$SAGE_LOCAL"/bin
 
@@ -22,8 +18,13 @@ export MTXBIN="$SAGE_LOCAL"/bin
 export ZZZ=0
 
 # We create a directory for the multiplication tables
-mkdir -p $MTXLIB || \
+if [ "x$MTXLIB" = x ] ; then
+    mkdir -p $SAGE_SHARE/meataxe || \
     sdh_die "Error creating directory for multiplication tables"
+else
+    mkdir -p $MTXLIB || \
+    sdh_die "Error creating directory for multiplication tables"
+fi
 
 cd src
 sdh_configure

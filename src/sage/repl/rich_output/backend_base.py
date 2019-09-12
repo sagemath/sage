@@ -7,7 +7,7 @@ IPython notebook, the Emacs sage mode, the Sage doctester, .... All of
 these have different capabilities for what they can display.
 
 To implement a new display backend, you need to subclass
-:class:`BackendBase`. All backend-specific handlig of rich output
+:class:`BackendBase`. All backend-specific handling of rich output
 should be in :meth:`~BackendBase.displayhook` and
 :meth:`~BackendBase.display_immediately`. See :class:`BackendSimple`
 for an absolutely minimal example of a functioning backend.

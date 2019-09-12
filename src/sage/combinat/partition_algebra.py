@@ -82,11 +82,11 @@ class SetPartitionsXkElement(SetPartition):
         EXAMPLES::
 
             sage: A2p5 = SetPartitionsAk(2.5)
-            sage: x = A2p5.first(); x # random
-            {{1, 2, 3, -1, -3, -2}}
+            sage: x = A2p5.first(); x
+            {{-3, -2, -1, 1, 2, 3}}
             sage: x.check()
             sage: y = A2p5.next(x); y
-            {{-3, -2, -1, 2, 3}, {1}}
+            {{-3, 3}, {-2, -1, 1, 2}}
             sage: y.check()
         """
         #Check to make sure each element of x is a set
@@ -222,12 +222,12 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
             sage: all(ak.cardinality() == len(ak.list()) for ak in aks)
             True
         """
-        kp = Set([-self.k-1])
+        kp = frozenset([-self.k-1])
         for sp in SetPartitions_set.__iter__(self):
             res = []
             for part in sp:
                 if self.k+1 in part:
-                    res.append( part + kp )
+                    res.append( part.union(kp) )
                 else:
                     res.append(part)
             yield self.element_class(self, res)

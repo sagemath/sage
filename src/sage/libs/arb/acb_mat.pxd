@@ -1,6 +1,9 @@
+# distutils: depends = acb_mat.h
+
 from sage.libs.arb.types cimport acb_t, acb_mat_t, acb_poly_t
 
-cdef extern from "acb_mat.h":
+# acb_mat.h
+cdef extern from "arb_wrap.h":
     unsigned int acb_mat_nrows(acb_mat_t mat)
     unsigned int acb_mat_ncols(acb_mat_t mat)
     acb_t acb_mat_entry(acb_mat_t mat, unsigned long i, unsigned long j)

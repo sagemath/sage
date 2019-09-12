@@ -12,31 +12,8 @@ positive reals. More specifically, it computes arbitrary terms of the
 asymptotic expansion for `F_{r \alpha}` when the asymptotics are controlled by
 a strictly minimal multiple point of the algebraic variety `H = 0`.
 
-The algorithms and formulas implemented here come from [RaWi2008a]_
-and [RaWi2012]_. For a general reference take a look in the book [PeWi2013].
-
-.. [AiYu1983] \I.A. Aizenberg and A.P. Yuzhakov.
-   *Integral representations and residues in multidimensional complex analysis*.
-   Translations of Mathematical Monographs, **58**. American Mathematical
-   Society, Providence, RI. (1983). x+283 pp. ISBN: 0-8218-4511-X.
-
-.. [Raic2012] Alexander Raichev.
-   *Leinartas's partial fraction decomposition*.
-   :arxiv:`1206.4740`.
-
-.. [RaWi2008a] Alexander Raichev and Mark C. Wilson. *Asymptotics of
-   coefficients of multivariate generating functions: improvements for
-   smooth points*, Electronic Journal of Combinatorics, Vol. 15 (2008).
-   R89 :arxiv:`0803.2914`.
-
-.. [RaWi2012] Alexander Raichev and Mark C. Wilson. *Asymptotics of
-   coefficients of multivariate generating functions: improvements for
-   smooth points*. Online Journal of Analytic Combinatorics.
-   Issue 6, (2011). :arxiv:`1009.5715`.
-
-.. [PeWi2013] Robin Pemantle and Mark C. Wilson.
-   *Analytic Combinatorics in Several Variables*.
-   Cambridge University Press, 2013.
+The algorithms and formulas implemented here come from [RW2008]_
+and [RW2012]_. For a general reference take a look in the book [PW2013]_.
 
 
 Introductory Examples
@@ -82,7 +59,7 @@ A univariate smooth point example::
      ((8,), 105.8425656, [105.8425656], [4.399565380e-11]),
      ((16,), 355.3119534, [355.3119534], [0.0000000000])]
 
-Another smooth point example (Example 5.4 of [RaWi2008a]_)::
+Another smooth point example (Example 5.4 of [RW2008]_)::
 
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: FFPD = FractionWithFactoredDenominatorRing(R)
@@ -125,7 +102,7 @@ Another smooth point example (Example 5.4 of [RaWi2008a]_)::
      ((32, 8), 0.09739671811, [0.09768973377...], [-0.0030084757...]),
      ((64, 16), 0.07744253816, [0.07753639308...], [-0.0012119297...])]
 
-A multiple point example (Example 6.5 of [RaWi2012]_)::
+A multiple point example (Example 6.5 of [RW2012]_)::
 
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: FFPD = FractionWithFactoredDenominatorRing(R, SR)
@@ -756,8 +733,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: FFPD = FractionWithFactoredDenominatorRing(R)
             sage: f = 5*x^3 + 1/x + 1/(x-1) + 1/(3*x^2 + 1)
             sage: f
-            (15*x^7 - 15*x^6 + 5*x^5 - 5*x^4 + 6*x^3 - 2*x^2 + x - 1)/(3*x^4 -
-            3*x^3 + x^2 - x)
+            (5*x^7 - 5*x^6 + 5/3*x^5 - 5/3*x^4 + 2*x^3 - 2/3*x^2 + 1/3*x - 1/3)/(x^4 - x^3 + 1/3*x^2 - 1/3*x)
             sage: decomp = FFPD(f).univariate_decomposition()
             sage: decomp
             (5*x^3, []) +
@@ -803,10 +779,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: FFPD = FractionWithFactoredDenominatorRing(R)
             sage: f = 5*x^3 + 1/x + 1/(x-1) + 1/(3*x^2 + 1)
             sage: f
-            (15.0000000000000*x^7 - 15.0000000000000*x^6 + 5.00000000000000*x^5
-             - 5.00000000000000*x^4 + 6.00000000000000*x^3
-             - 2.00000000000000*x^2 + x - 1.00000000000000)/(3.00000000000000*x^4
-             - 3.00000000000000*x^3 + x^2 - x)
+            (5.00000000000000*x^7 - 5.00000000000000*x^6 + 1.66666666666667*x^5 - 1.66666666666667*x^4 + 2.00000000000000*x^3 - 0.666666666666667*x^2 + 0.333333333333333*x - 0.333333333333333)/(x^4 - x^3 + 0.333333333333333*x^2 - 0.333333333333333*x)
             sage: decomp = FFPD(f).univariate_decomposition()
             sage: decomp
             (5.00000000000000*x^3, []) +
@@ -916,7 +889,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety `\{x \in L^d \mid q_i(x) = 0\}`
         of `q_i` over the algebraic closure `L` of `K`.
-        By [Raic2012]_, `f` can be written as
+        By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -930,7 +903,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` a *Nullstellensatz decomposition* of `f`.
         Nullstellensatz decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         .. NOTE::
 
@@ -1097,7 +1070,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety `\{x \in L^d \mid q_i(x) = 0\}`
         of `q_i` over the algebraic closure `L` of `K`.
-        By [Raic2012]_, `f` can be written as
+        By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -1112,7 +1085,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` an *algebraic dependence decomposition* of `f`.
         Algebraic dependence decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         OUTPUT:
 
@@ -1213,7 +1186,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety
         `\{x\in L^d \mid q_i(x) = 0\}` of `q_i` over the algebraic closure
-        `L` of `K`. By [Raic2012]_, `f` can be written as
+        `L` of `K`. By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -1235,7 +1208,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` a *Leinartas decomposition* of `f`.
         Leinartas decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         OUTPUT:
 
@@ -1341,7 +1314,7 @@ class FractionWithFactoredDenominator(RingElement):
         no repeated irreducible factors.
 
         The algorithm used here comes from the proof of Theorem 17.4 of
-        [AiYu1983]_.
+        [AY1983]_.
 
         OUTPUT:
 
@@ -1384,17 +1357,14 @@ class FractionWithFactoredDenominator(RingElement):
         decomp = FractionWithFactoredDenominatorSum()
         p = self.numerator()
         qs = [q for (q, e) in df]
+        # sort according to the term order of R
         X = sorted(R.gens())
-        var_sets_n = Set(X).subsets(n)
+        var_sets_n = sorted(sorted(s) for s in Set(X).subsets(n))
         Par = self.parent()
 
         # Compute Jacobian determinants for qs.
-        dets = []
-        for v in var_sets_n:
-            # Sort v according to the term order of R.
-            x = sorted(v)
-            jac = jacobian(qs, x)
-            dets.append(R(jac.determinant()))
+        dets = [R(jacobian(qs, x).determinant())
+                for x in var_sets_n]
 
         # Get a Nullstellensatz certificate for qs and dets.
         if self.dimension() == 1:
@@ -1431,11 +1401,9 @@ class FractionWithFactoredDenominator(RingElement):
                 break
         new_df = [list(t) for t in df]
         new_df[J][1] -= 1
-        for k in range(var_sets_n.cardinality()):
+        for k, x in enumerate(var_sets_n):
             if L[n + k] == 0:
                 continue
-            # Sort variables according to the term order of R.
-            x = sorted(var_sets_n[k])
             # Compute Jacobian in the Symbolic Ring.
             jac = jacobian([SR(p * L[n + k])] +
                            [SR(qs[j]) for j in range(n) if j != J],
@@ -1563,7 +1531,7 @@ class FractionWithFactoredDenominator(RingElement):
           with all nonzero coordinates that is critical and nondegenerate
           for ``alpha``.
 
-        The algorithms used here come from [RaWi2008a]_ and [RaWi2012]_.
+        The algorithms used here come from [RW2008]_ and [RW2012]_.
 
         INPUT:
 
@@ -1620,12 +1588,12 @@ class FractionWithFactoredDenominator(RingElement):
              432,
              3/5*sqrt(5)*sqrt(3)*sqrt(2)*sqrt(r)/sqrt(pi)
               + 463/6000*sqrt(5)*sqrt(3)*sqrt(2)/(sqrt(pi)*sqrt(r)))
-            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])
-            [((4, 3), 2.083333333, [2.092576110], [-0.0044365330...]),
-             ((8, 6), 2.787374614, [2.790732875], [-0.0012048112...]),
-             ((16, 12), 3.826259447, [3.827462310], [-0.0003143703...]),
-             ((32, 24), 5.328112821, [5.328540787], [-0.0000803222...]),
-             ((64, 48), 7.475927885, [7.476079664], [-0.0000203023...])]
+            sage: F.relative_error(asy[0], alpha, [1, 2, 4, 8, 16], asy[1])  # abs tol 1e-10
+            [((4, 3), 2.083333333, [2.092576110], [-0.004436533009]),
+             ((8, 6), 2.787374614, [2.790732875], [-0.001204811281]),
+             ((16, 12), 3.826259447, [3.827462310], [-0.0003143703383]),
+             ((32, 24), 5.328112821, [5.328540787], [-0.00008032230388]),
+             ((64, 48), 7.475927885, [7.476079664], [-0.00002030232879])]
 
         A multiple point example::
 
@@ -1698,9 +1666,9 @@ class FractionWithFactoredDenominator(RingElement):
         case of a convenient smooth point.
 
         The formulas used for computing the asymptotic expansions are
-        Theorems 3.2 and 3.3 [RaWi2008a]_ with the exponent of `H`
+        Theorems 3.2 and 3.3 [RW2008]_ with the exponent of `H`
         equal to 1. Theorem 3.2 is a specialization of Theorem 3.4
-        of [RaWi2012]_ with `n = 1`.
+        of [RW2012]_ with `n = 1`.
 
         INPUT:
 
@@ -1904,7 +1872,7 @@ class FractionWithFactoredDenominator(RingElement):
             if any(u for u in Uderivs.values()):
                 all_zero = False
             if all_zero:
-                # Then, using a proposition at the end of [RaWi2012], we can
+                # Then, using a proposition at the end of [RW2012], we can
                 # conclude that all higher derivatives of U are zero.
                 for l in range(k + 1, 2 * N + 1):
                     for s in combinations_with_replacement(X, l):
@@ -2077,7 +2045,7 @@ class FractionWithFactoredDenominator(RingElement):
         ``p.values()`` are not symbolic variables.
 
         The formulas used for computing the asymptotic expansion are
-        Theorem 3.4 and Theorem 3.7 of [RaWi2012]_.
+        Theorem 3.4 and Theorem 3.7 of [RW2012]_.
 
         INPUT:
 
@@ -2610,7 +2578,7 @@ class FractionWithFactoredDenominator(RingElement):
         In case ``p`` is not, ``verdict = False`` and ``comment`` is a string
         explaining why ``p`` fails to be a convenient multiple point.
 
-        See [RaWi2012]_ for more details.
+        See [RW2012]_ for more details.
 
         INPUT:
 
@@ -2731,7 +2699,7 @@ class FractionWithFactoredDenominator(RingElement):
         If the variety `V` of `H` has no smooth points, then return the ideal
         in `R` of `V`.
 
-        See [RaWi2012]_ for more details.
+        See [RW2012]_ for more details.
 
         INPUT:
 
@@ -2763,9 +2731,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: F = FFPD(G, Hfac)
             sage: alpha = [7/3, var('a')]
             sage: F.smooth_critical_ideal(alpha)
-            Ideal (y^2 + 14/(3*a)*y - 1, x + (-3/7*a)*y + 3/7*a - 1) of
-             Multivariate Polynomial Ring in x, y over Fraction Field of
-             Univariate Polynomial Ring in a over Rational Field
+            Ideal (y^2 + 14/3/a*y - 1, x + (-3/7*a)*y + 3/7*a - 1) of Multivariate Polynomial Ring in x, y over Fraction Field of Univariate Polynomial Ring in a over Rational Field
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -3154,8 +3120,6 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
         """
         return self.base().base_ring()
 
-    from sage.misc.decorators import rename_keyword
-    @rename_keyword(deprecation=10519, reduce_='reduce')
     def _element_constructor_(self, *args, **kwargs):
         r"""
         Returns an element of this ring.
@@ -3174,43 +3138,6 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Ring):
         """
         R = self.base()
         Q = R.fraction_field()
-
-        # process deprecated keyword arguments
-        hasn = 'numerator' in kwargs
-        hasdf = 'denominator_factored' in kwargs
-        if hasn:
-            from sage.misc.superseded import deprecation
-            deprecation(10519, "Keyword argument 'numerator' "
-                               "is deprecated. "
-                               "Ignoring non-keyword arguments (if any). "
-                               "Specify numerator and factored denominator "
-                               "as first and second argument, i.e., use "
-                               "something like FFPD(n, df).")
-        if hasdf:
-            from sage.misc.superseded import deprecation
-            deprecation(10519, "Keyword argument 'denominator_factored' "
-                               "is deprecated. "
-                               "Ignoring non-keyword arguments (if any). "
-                               "Specify numerator and factored denominator "
-                               "as first and second argument, i.e., use "
-                               "something like FFPD(n, df).")
-        if hasn or hasdf:
-            args = [kwargs.pop('numerator') if hasn else R(0),
-                    kwargs.pop('denominator_factored') if hasdf else []]
-
-        hasq = 'quotient' in kwargs
-        if hasq:
-            from sage.misc.superseded import deprecation
-            deprecation(10519, "Keyword argument 'quotient' "
-                               "is deprecated. "
-                               "Ignoring non-keyword arguments (if any). "
-                               "Specify numerator and factored denominator "
-                               "as first and second argument, i.e., use "
-                               "something like FFPD(q).")
-            args = [kwargs.pop('quotient')]
-
-        if (hasn or hasdf) and hasq:
-            raise ValueError('parameters ambiguous')
 
         # process keyword arguments
         reduce = kwargs.pop('reduce', None)

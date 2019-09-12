@@ -7,15 +7,15 @@ AUTHORS:
 - Travis Scrimshaw (2013-05-03): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
@@ -1586,7 +1586,7 @@ class FockSpaceBases(Category_realization_of_parent):
                 sage: A[2,2,2,1]
                 Traceback (most recent call last):
                 ...
-                ValueError: (2, 2, 2, 1) is not an element of 3-Regular Partitions
+                ValueError: [2, 2, 2, 1] is not an element of 3-Regular Partitions
 
                 sage: F = FockSpace(3, [0, 0])
                 sage: A = F.A()
@@ -1616,7 +1616,7 @@ class FockSpaceTruncated(FockSpace):
 
     We have three bases:
 
-    - The natural basis indexed by trucated `n`-regular partitions:
+    - The natural basis indexed by truncated `n`-regular partitions:
       :class:`~sage.algebras.quantum_groups.fock_space.FockSpaceTruncated.F`.
     - The approximation basis that comes from LLT(-type) algorithms:
       :class:`~sage.algebras.quantum_groups.fock_space.FockSpaceTruncated.A`.
@@ -1774,7 +1774,7 @@ class FockSpaceTruncated(FockSpace):
 
         class Element(FockSpace.natural.Element):
             r"""
-            An element in the trucated Fock space.
+            An element in the truncated Fock space.
             """
             def _f(self, i):
                 r"""

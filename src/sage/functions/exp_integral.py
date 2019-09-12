@@ -14,7 +14,7 @@ REFERENCES:
 - [AS1964]_ Abramowitz and Stegun: *Handbook of Mathematical Functions*
 - :wikipedia:`Exponential_integral`
 - Online Encyclopedia of Special Function: http://algo.inria.fr/esf/index.html
-- NIST Digital Library of Mathematical Functions: http://dlmf.nist.gov/
+- NIST Digital Library of Mathematical Functions: https://dlmf.nist.gov/
 - Maxima `special functions package`_
 - `mpmath library`_
 
@@ -51,6 +51,7 @@ from __future__ import division, print_function
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.structure.all import parent
+from sage.misc.latex import latex
 from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
@@ -157,7 +158,6 @@ class Function_exp_integral_e(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e", nargs=2,
-                                 latex_name=r'exp_integral_e',
                                  conversions=dict(maxima='expintegral_e',
                                                   sympy='expint'))
 
@@ -222,6 +222,17 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
+
+    def _print_latex_(self, n, z):
+        r"""
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e(1, -x - 1))
+            E_{1}\left(-x - 1\right)
+        """
+        return r"E_{{{}}}\left({}\right)".format(latex(n), latex(z))
 
     def _derivative_(self, n, z, diff_param=None):
         """
@@ -310,7 +321,6 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         """
         BuiltinFunction.__init__(self, "exp_integral_e1", nargs=1,
-                                 latex_name=r'exp_integral_e1',
                                  conversions=dict(maxima='expintegral_e1',
                                                   sympy='E1'))
 
@@ -326,6 +336,18 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         import mpmath
         return mpmath_utils_call(mpmath.e1, z, parent=parent)
+
+
+    def _print_latex_(self, z):
+        r"""
+        Custom ``_print_latex_`` method.
+
+        EXAMPLES::
+
+            sage: latex(exp_integral_e1(2))
+            E_{1}\left(2\right)
+        """
+        return r"E_{{1}}\left({}\right)".format(latex(z))
 
     def _derivative_(self, z, diff_param=None):
         """
@@ -414,7 +436,8 @@ class Function_log_integral(BuiltinFunction):
             log_integral(3)
             sage: log_integral(x)._sympy_()
             li(x)
-
+            sage: log_integral(x)._fricas_init_()
+            'li(x)'
         """
         BuiltinFunction.__init__(self, "log_integral", nargs=1,
                                  latex_name=r'log_integral',
@@ -771,13 +794,16 @@ class Function_sin_integral(BuiltinFunction):
             sin_integral(1)
             sage: sin_integral(x)._sympy_()
             Si(x)
-
+            sage: sin_integral(x)._fricas_init_()
+            'Si(x)'
+            sage: sin_integral(x)._giac_()
+            Si(x)
         """
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
                                  latex_name=r'\operatorname{Si}',
                                  conversions=dict(maxima='expintegral_si',
                                                   sympy='Si',
-                                                  fricas='Si'))
+                                                  fricas='Si', giac='Si'))
 
     def _eval_(self, z):
         """
@@ -887,7 +913,8 @@ class Function_cos_integral(BuiltinFunction):
     Compare ``cos_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: N(euler_gamma + log(3.0) + integrate((cos(x)-1)/x, x, 0, 3.0) - cos_integral(3.0)) < 1e-14
+        sage: a = numerical_integral((cos(x)-1)/x, 0, 3)[0]
+        sage: abs(N(euler_gamma + log(3)) + a - N(cos_integral(3.0))) < 1e-14
         True
 
     Arbitrary precision and complex arguments are handled::
@@ -943,13 +970,16 @@ class Function_cos_integral(BuiltinFunction):
             cos_integral(1)
             sage: cos_integral(x)._sympy_()
             Ci(x)
-
+            sage: cos_integral(x)._fricas_init_()
+            'Ci(x)'
+            sage: cos_integral(x)._giac_()
+            Ci(x)
         """
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,
                                  latex_name=r'\operatorname{Ci}',
                                  conversions=dict(maxima='expintegral_ci',
                                                   sympy='Ci',
-                                                  fricas='Ci'))
+                                                  fricas='Ci', giac='Ci'))
 
     def _evalf_(self, z, parent=None, algorithm=None):
         """
@@ -1016,7 +1046,8 @@ class Function_sinh_integral(BuiltinFunction):
     Compare ``sinh_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: N(integrate((sinh(x))/x, x, 0, 3.0) - sinh_integral(3.0)) < 1e-14
+        sage: a = numerical_integral(sinh(x)/x, 0, 3)[0]
+        sage: abs(a - N(sinh_integral(3))) < 1e-14
         True
 
     Arbitrary precision and complex arguments are handled::
@@ -1175,8 +1206,8 @@ class Function_cosh_integral(BuiltinFunction):
     Compare ``cosh_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: N(euler_gamma + log(3.0) + integrate((cosh(x)-1)/x, x, 0, 3.0) -
-        ....:   cosh_integral(3.0)) < 1e-14
+        sage: a = numerical_integral((cosh(x)-1)/x, 0, 3)[0]
+        sage: abs(N(euler_gamma + log(3)) + a - N(cosh_integral(3.0))) < 1e-14
         True
 
     Arbitrary precision and complex arguments are handled::
@@ -1315,7 +1346,7 @@ class Function_exp_integral(BuiltinFunction):
 
         sage: Ei(RealField(300)(1.1))
         2.16737827956340282358378734233807621497112737591639704719499002090327541763352339357795426
-        
+
     ALGORITHM: Uses mpmath.
 
     TESTS:

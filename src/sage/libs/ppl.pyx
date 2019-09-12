@@ -22,6 +22,11 @@ C++ excerpt:
 translates into::
 
     sage: from sage.libs.ppl import Variable, Constraint_System, C_Polyhedron
+    doctest:warning
+    ...
+    DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+    Please use import 'ppl' instead of 'sage.libs.ppl'.
+    See http://trac.sagemath.org/23024 for details.
     sage: x = Variable(0)
     sage: y = Variable(1)
     sage: cs = Constraint_System()
@@ -104,7 +109,7 @@ basis vectors::
     sage: from sage.libs.ppl import Variable, Generator_System, point, C_Polyhedron
     sage: basis = list(range(5))
     sage: x = [ Variable(i) for i in basis ]
-    sage: gs = Generator_System();
+    sage: gs = Generator_System()
     sage: for coeff in Permutations(basis):
     ....:    gs.insert(point( sum( (coeff[i]+1)*x[i] for i in basis ) ))
     sage: C_Polyhedron(gs)
@@ -135,6 +140,9 @@ AUTHORS:
 
 - Volker Braun (2010-10-08): initial version.
 - Risan (2012-02-19): extension for MIP_Problem class
+- Vincent Klein (2017-12-21) : Deprecate this module. 
+  Future change should be done in the standalone package pplpy 
+  (https://github.com/videlec/pplpy).
 """
 
 #*****************************************************************************
@@ -146,7 +154,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-
+from sage.misc.superseded import deprecation
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.sage_object cimport SageObject
@@ -157,6 +165,10 @@ from sage.rings.rational cimport Rational
 
 from libcpp cimport bool as cppbool
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+
+deprecation(23024, "The Sage wrappers around ppl are now superseded " +
+            "by the standalone pplpy. Please use import 'ppl' instead" +
+            " of 'sage.libs.ppl'.")
 
 ####################################################
 # Potentially expensive operations:
@@ -174,7 +186,6 @@ cdef extern from "ppl.hh" namespace "Parma_Polyhedra_Library":
 
 # but with PPL's rounding the gsl will be very unhappy; must turn off!
 restore_pre_PPL_rounding()
-
 
 ####################################################
 # Cython does not support ctypedef within cppclass; Hack around this restriction:
@@ -890,7 +901,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             sage: m.space_dimension()
             7
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         self.thisptr.add_space_dimensions_and_embed(m)
         sig_off()
@@ -967,7 +978,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::add_constraint(c):
             c.space_dimension() == 3 exceeds this->space_dimension == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_constraint(c.thisptr[0])
@@ -1003,7 +1014,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::add_constraints(cs):
             cs.space_dimension() == 10 exceeds this->space_dimension() == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_constraints(cs.thisptr[0])
@@ -1031,7 +1042,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             sage: m.optimal_value()
             3
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         sig_on()
         try:
             self.thisptr.add_to_integer_space_dimensions(i_vars.thisptr[0])
@@ -1065,7 +1076,7 @@ cdef class MIP_Problem(_mutable_or_immutable):
             ValueError: PPL::MIP_Problem::set_objective_function(obj):
             obj.space_dimension() == 3 exceeds this->space_dimension == 2.
         """
-        self.assert_mutable("The MIP_Problem is not mutable!");
+        self.assert_mutable("The MIP_Problem is not mutable!")
         self.thisptr.set_objective_function(obj.thisptr[0])
 
     def set_optimization_mode(self, mode):
@@ -2987,7 +2998,11 @@ cdef class Polyhedron(_mutable_or_immutable):
             sage: sage_cmd += 'p.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             space_dim 2
             -ZE -EM  +CM +GM  +CS +GS  -CP -GP  -SC +SG
             con_sys (up-to-date)
@@ -3011,6 +3026,34 @@ cdef class Polyhedron(_mutable_or_immutable):
             2 x 2
             0 0
             0 1
+            sage: print(err)  # long time py3
+            space_dim 2
+            -ZE -EM  +CM +GM  +CS +GS  -CP -GP  -SC +SG
+            con_sys (up-to-date)
+            topology NECESSARILY_CLOSED
+            2 x 2 SPARSE (sorted)
+            index_first_pending 2
+            size 3 -1 3 2 = (C)
+            size 3 1 0 0 >= (C)
+            <BLANKLINE>
+            gen_sys (up-to-date)
+            topology NECESSARILY_CLOSED
+            2 x 2 DENSE (not_sorted)
+            index_first_pending 2
+            size 3 0 2 -3 L (C)
+            size 3 2 0 1 P (C)
+            <BLANKLINE>
+            sat_c
+            0 x 0
+            <BLANKLINE>
+            sat_g
+            2 x 2
+            0 0
+            0 1
+            <BLANKLINE>
+            /...: DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy. Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         sig_on()
         self.thisptr.ascii_dump()
@@ -3940,10 +3983,20 @@ cdef class Variables_Set(object):
             sage: sage_cmd += 'S.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             <BLANKLINE>
             variables( 1 )
             123
+            sage: print(err)  # long time py3
+            variables( 1 )
+            123 /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -4224,8 +4277,17 @@ cdef class Linear_Expression(object):
             sage: sage_cmd += 'e.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             size 3 1 3 2
+            sage: print(err)  # long time py3
+            size 3 1 3 2/... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -5118,8 +5180,18 @@ cdef class Generator(object):
             sage: sage_cmd += 'p.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             size 3 1 3 2 P (C)
+            sage: print(err)  # long time py3
+            size 3 1 3 2 P (C)
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -5147,7 +5219,7 @@ cdef class Generator(object):
         TESTS::
 
             sage: from sage.libs.ppl import Generator, Variable, line, ray, point, closure_point
-            sage: x = Variable(0); y = Variable(1);
+            sage: x = Variable(0); y = Variable(1)
             sage: loads(dumps(Generator.point(2*x+7*y, 3)))
             point(2/3, 7/3)
             sage: loads(dumps(Generator.closure_point(2*x+7*y, 3)))
@@ -5419,11 +5491,24 @@ cdef class Generator_System(_mutable_or_immutable):
             sage: sage_cmd += 'gs.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             topology NECESSARILY_CLOSED
             1 x 2 SPARSE (sorted)
             index_first_pending 1
             size 3 1 3 2 P (C)
+            sage: print(err)  # long time py3
+            topology NECESSARILY_CLOSED
+            1 x 2 SPARSE (sorted)
+            index_first_pending 1
+            size 3 1 3 2 P (C)
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -6107,8 +6192,18 @@ cdef class Constraint(object):
             sage: sage_cmd += 'e.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             size 4 1 3 2 -1 > (NNC)
+            sage: print(err)  # long time py3
+            size 4 1 3 2 -1 > (NNC)
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -6453,11 +6548,22 @@ cdef class Constraint_System(object):
             sage: sage_cmd += 'cs.ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            ...
             topology NOT_NECESSARILY_CLOSED
             1 x 2 SPARSE (sorted)
             index_first_pending 1
             size 4 -1 3 -2 -1 > (NNC)
+            sage: print(err)  # long time py3
+            topology NOT_NECESSARILY_CLOSED
+            1 x 2 SPARSE (sorted)
+            index_first_pending 1
+            size 4 -1 3 -2 -1 > (NNC)
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -6804,8 +6910,17 @@ cdef class Poly_Gen_Relation(object):
             sage: sage_cmd += 'Poly_Gen_Relation.nothing().ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             NOTHING
+            sage: print(err)  # long time py3
+            NOTHING/... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 
@@ -7054,8 +7169,17 @@ cdef class Poly_Con_Relation(object):
             sage: sage_cmd += 'Poly_Con_Relation.nothing().ascii_dump()\n'
             sage: from sage.tests.cmdline import test_executable
             sage: (out, err, ret) = test_executable(['sage', '-c', sage_cmd], timeout=100)  # long time, indirect doctest
-            sage: print(err)  # long time
+            sage: print(err)  # long time py2
+            /... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
             NOTHING
+            sage: print(err)  # long time py3
+            NOTHING/... DeprecationWarning: The Sage wrappers around ppl are now superseded by the standalone pplpy.
+            Please use import 'ppl' instead of 'sage.libs.ppl'.
+            See http://trac.sagemath.org/23024 for details.
+            ...
         """
         self.thisptr.ascii_dump()
 

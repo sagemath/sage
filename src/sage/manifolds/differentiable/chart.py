@@ -55,19 +55,23 @@ class DiffChart(Chart):
 
     - ``domain`` -- open subset `U` on which the chart is defined
     - ``coordinates`` -- (default: '' (empty string)) single string defining
-      the coordinate symbols, with ' ' (whitespace) as a separator; each item
-      has at most two fields, separated by ':':
+      the coordinate symbols, with ``' '`` (whitespace) as a separator; each
+      item has at most three fields, separated by a colon (``:``):
 
-        1. The coordinate symbol (a letter or a few letters)
-        2. (optional) The LaTeX spelling of the coordinate; if not provided the
-           coordinate symbol given in the first field will be used.
+      1. the coordinate symbol (a letter or a few letters)
+      2. (optional) the period of the coordinate if the coordinate is
+         periodic; the period field must be written as ``period=T``, where
+         ``T`` is the period (see examples below)
+      3. (optional) the LaTeX spelling of the coordinate; if not provided the
+         coordinate symbol given in the first field will be used
 
-      If it contains any LaTeX expression, the string ``coordinates`` must be
-      declared with the prefix 'r' (for "raw") to allow for a proper treatment
-      of LaTeX's backslash character (see examples below).
-      If no LaTeX spelling is to be set for any coordinate, the argument
-      ``coordinates`` can be omitted when the shortcut operator ``<,>`` is
-      used via Sage preparser (see examples below)
+      The order of fields 2 and 3 does not matter and each of them can be
+      omitted. If it contains any LaTeX expression, the string ``coordinates``
+      must be declared with the prefix 'r' (for "raw") to allow for a proper
+      treatment of LaTeX's backslash character (see examples below).
+      If no period and no LaTeX spelling are to be set for any coordinate, the
+      argument ``coordinates`` can be omitted when the shortcut operator
+      ``<,>`` is used to declare the chart (see examples below).
     - ``names`` -- (default: ``None``) unused argument, except if
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
@@ -164,6 +168,14 @@ class DiffChart(Chart):
     Note the prefix ``r`` in front of the string ``r'z1:\zeta_1 z2:\zeta_2'``;
     it makes sure that the backslash character is treated as an ordinary
     character, to be passed to the LaTeX interpreter.
+
+    Periodic coordinates are declared through the keyword ``period=`` in the
+    coordinate field::
+
+        sage: N = Manifold(2, 'N', field='complex')
+        sage: XN.<Z1,Z2> = N.chart('Z1:period=1+2*I Z2')
+        sage: XN.periods()
+        {0: 2*I + 1}
 
     Coordinates are Sage symbolic variables (see
     :mod:`sage.symbolic.expression`)::
@@ -647,7 +659,7 @@ class DiffChart(Chart):
         # raise an error in case left is not a string
 
         if right is not None:
-            list_strings_velocities = [string_vel + right for string_vel
+            list_strings_velocities = [str_vel + right for str_vel
                                        in list_strings_velocities] # will
             # raise an error in case right is not a string
 
@@ -675,29 +687,32 @@ class RealDiffChart(DiffChart, RealChart):
 
     - ``domain`` -- open subset `U` on which the chart is defined
     - ``coordinates`` -- (default: '' (empty string)) single string defining
-      the coordinate symbols and ranges, with ' ' (whitespace) as a separator;
-      each item has at most three fields, separated by ':':
+      the coordinate symbols, with ``' '`` (whitespace) as a separator; each
+      item has at most four fields, separated by a colon (``:``):
 
-        1. The coordinate symbol (a letter or a few letters)
-        2. (optional) The interval `I` defining the coordinate range: if not
-           provided, the coordinate is assumed to span all `\RR`; otherwise
-           `I` must be provided in the form ``(a,b)`` (or equivalently
-           ``]a,b[``). The bounds ``a`` and ``b`` can be ``+/-Infinity``,
-           ``Inf``, ``infinity``, ``inf`` or ``oo``.
-           For *singular* coordinates, non-open intervals such as ``[a,b]`` and
-           ``(a,b]`` (or equivalently ``]a,b]``) are allowed.
-           Note that the interval declaration must not contain any whitespace.
-        3. (optional) The LaTeX spelling of the coordinate; if not provided the
-           coordinate symbol given in the first field will be used.
+      1. the coordinate symbol (a letter or a few letters)
+      2. (optional) the interval `I` defining the coordinate range: if not
+         provided, the coordinate is assumed to span all `\RR`; otherwise
+         `I` must be provided in the form ``(a,b)`` (or equivalently
+         ``]a,b[``); the bounds ``a`` and ``b`` can be ``+/-Infinity``,
+         ``Inf``, ``infinity``, ``inf`` or ``oo``; for *singular*
+         coordinates, non-open intervals such as ``[a,b]`` and ``(a,b]``
+         (or equivalently ``]a,b]``) are allowed; note that the interval
+         declaration must not contain any whitespace
+      3. (optional) indicator of the periodic character of the coordinate,
+         either as ``period=T``, where ``T`` is the period, or as the keyword
+         ``periodic`` (the value of the period is then deduced from the
+         interval `I` declared in field 2; see examples below)
+      4. (optional) the LaTeX spelling of the coordinate; if not provided the
+         coordinate symbol given in the first field will be used
 
-      The order of the fields 2 and 3 does not matter and each of them can be
-      omitted.
-      If it contains any LaTeX expression, the string ``coordinates`` must be
-      declared with the prefix 'r' (for "raw") to allow for a proper treatment
-      of LaTeX backslash characters (see examples below).
-      If no interval range and no LaTeX spelling is to be set for any
-      coordinate, the argument ``coordinates`` can be omitted when the
-      shortcut operator ``<,>`` is used via Sage preparser (see examples below)
+      The order of fields 2 to 4 does not matter and each of them can be
+      omitted. If it contains any LaTeX expression, the string ``coordinates``
+      must be declared with the prefix 'r' (for "raw") to allow for a proper
+      treatment of LaTeX's backslash character (see examples below).
+      If interval range, no period and no LaTeX spelling are to be set for any
+      coordinate, the argument ``coordinates`` can be omitted when the shortcut
+      operator ``<,>`` is used to declare the chart (see examples below).
     - ``names`` -- (default: ``None``) unused argument, except if
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
@@ -825,16 +840,38 @@ class RealDiffChart(DiffChart, RealChart):
         sage: simplify(abs(x)) # no positive range has been declared for x
         abs(x)
 
-    Each constructed chart is automatically added to the manifold's user atlas::
+    A coordinate can be declared periodic by adding the keyword ``periodic``
+    to its range::
+
+        sage: V = M.open_subset('V')
+        sage: c_spher1.<r,th,ph1> = \
+        ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph1:(0,2*pi):periodic:\phi_1')
+        sage: c_spher1.periods()
+        {3: 2*pi}
+        sage: c_spher1.coord_range()
+        r: (0, +oo); th: (0, pi); ph1: [0, 2*pi] (periodic)
+
+    It is equivalent to give the period as ``period=2*pi``, skipping the
+    coordinate range::
+
+        sage: c_spher2.<r,th,ph2> = \
+        ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph2:period=2*pi:\phi_2')
+        sage: c_spher2.periods()
+        {3: 2*pi}
+        sage: c_spher2.coord_range()
+        r: (0, +oo); th: (0, pi); ph2: [0, 2*pi] (periodic)
+
+    Each constructed chart is automatically added to the manifold's
+    user atlas::
 
         sage: M.atlas()
-        [Chart (R^3, (x, y, z)), Chart (U, (r, th, ph))]
+        [Chart (R^3, (x, y, z)), Chart (U, (r, th, ph)),
+         Chart (V, (r, th, ph1)), Chart (V, (r, th, ph2))]
 
     and to the atlas of its domain::
 
         sage: U.atlas()
         [Chart (U, (r, th, ph))]
-
 
     Manifold subsets have a *default chart*, which, unless changed via the
     method
@@ -881,7 +918,9 @@ class RealDiffChart(DiffChart, RealChart):
         sage: U.atlas()
         [Chart (U, (r, th, ph)), Chart (U, (x, y, z))]
         sage: M.atlas()
-        [Chart (R^3, (x, y, z)), Chart (U, (r, th, ph)), Chart (U, (x, y, z))]
+        [Chart (R^3, (x, y, z)), Chart (U, (r, th, ph)),
+         Chart (V, (r, th, ph1)), Chart (V, (r, th, ph2)),
+         Chart (U, (x, y, z))]
         sage: c_cartU.valid_coordinates(-1,0,2)
         True
         sage: c_cartU.valid_coordinates(1,0,2)

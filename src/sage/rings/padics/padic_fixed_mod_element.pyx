@@ -87,23 +87,23 @@ cdef class pAdicFixedModElement(FMElement):
     Construct from integers::
 
         sage: R(3)
-        3 + O(5^20)
+        3
         sage: R(75)
-        75 + O(5^20)
+        75
         sage: R(0)
-        0 + O(5^20)
+        0
 
         sage: R(-1)
-        95367431640624 + O(5^20)
+        95367431640624
         sage: R(-5)
-        95367431640620 + O(5^20)
+        95367431640620
 
     Construct from rationals::
 
         sage: R(1/2)
-        47683715820313 + O(5^20)
+        47683715820313
         sage: R(-7875/874)
-        9493096742250 + O(5^20)
+        9493096742250
         sage: R(15/425)
         Traceback (most recent call last):
         ...
@@ -112,13 +112,13 @@ cdef class pAdicFixedModElement(FMElement):
     Construct from IntegerMod::
 
         sage: R(Integers(125)(3))
-        3 + O(5^20)
+        3
         sage: R(Integers(5)(3))
-        3 + O(5^20)
+        3
         sage: R(Integers(5^30)(3))
-        3 + O(5^20)
+        3
         sage: R(Integers(5^30)(1+5^23))
-        1 + O(5^20)
+        1
         sage: R(Integers(49)(3))
         Traceback (most recent call last):
         ...
@@ -132,7 +132,7 @@ cdef class pAdicFixedModElement(FMElement):
     Some other conversions::
 
         sage: R(R(5))
-        5 + O(5^20)
+        5
 
     .. TODO:: doctests for converting from other types of `p`-adic rings
     """
@@ -276,7 +276,7 @@ cdef class pAdicFixedModElement(FMElement):
             sage: b.parent()
             Ring of integers modulo 49
             sage: c = a % 7^2; c
-            1 + 7 + O(7^4)
+            1 + 7
             sage: c.parent()
             7-adic Ring of fixed modulus 7^4
 
@@ -338,7 +338,7 @@ cdef class pAdicFixedModElement(FMElement):
 
             sage: R = ZpFM(7, 6)
             sage: R(1/3)
-            5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + 4*7^5 + O(7^6)
+            5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + 4*7^5
             sage: R(1/3).multiplicative_order()
             +Infinity
             sage: R(7).multiplicative_order()
@@ -432,8 +432,7 @@ cdef class pAdicFixedModElement(FMElement):
 
             sage: r = Zp(5,prec=4,type='fixed-mod')(6)
             sage: r._log_binary_splitting(5)
-            5 + 2*5^2 + 4*5^3 + O(5^4)
-
+            5 + 2*5^2 + 4*5^3
         """
         cdef unsigned long p
         cdef unsigned long prec = min(aprec, self.prime_pow.prec_cap)
@@ -578,7 +577,7 @@ def make_pAdicFixedModElement(parent, value):
         sage: from sage.rings.padics.padic_fixed_mod_element import make_pAdicFixedModElement
         sage: R = ZpFM(5)
         sage: a = make_pAdicFixedModElement(R, 17*25); a
-        2*5^2 + 3*5^3 + O(5^20)
+        2*5^2 + 3*5^3
     """
     return unpickle_fme_v2(pAdicFixedModElement, parent, value)
 

@@ -146,7 +146,7 @@ class EllipticCurveLocalData(SageObject):
         Tamagawa Number: 2
 
     """
-    
+
     def __init__(self, E, P, proof=None, algorithm="pari", globally=False):
         r"""
         Initializes the reduction data for the elliptic curve `E` at the prime `P`.
@@ -168,7 +168,7 @@ class EllipticCurveLocalData(SageObject):
           ``ellglobalred`` implementation of Tate's algorithm over
           `\QQ`. If "generic", use the general number field
           implementation.
-          
+
         - ``globally`` (bool, default: False) -- If True, the algorithm
           uses the generators of principal ideals rather than an arbitrary
           uniformizer.
@@ -632,7 +632,7 @@ class EllipticCurveLocalData(SageObject):
             (Fractional ideal (2*a + 1), True)]
         """
         return self._reduction_type == 0
-       
+
     def _tate(self, proof = None, globally = False):
         r"""
         Tate's algorithm for an elliptic curve over a number field.
@@ -648,7 +648,7 @@ class EllipticCurveLocalData(SageObject):
 
         The optional argument globally, when set to True, tells the algorithm to use the generator of the prime ideal if it is principal. Otherwise just any uniformizer will be used.
 
-        .. note:: 
+        .. note::
 
            Called only by ``EllipticCurveLocalData.__init__()``.
 
@@ -696,7 +696,7 @@ class EllipticCurveLocalData(SageObject):
             4
 
         This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
-        
+
             sage: K.<t> = NumberField(x^7-2*x+177)
             sage: E = EllipticCurve([0,1,0,t,t])
             sage: P = K.ideal(2,t^3 + t + 1)
@@ -721,12 +721,12 @@ class EllipticCurveLocalData(SageObject):
         # uniformiser pi which has non-positive valuation at all other
         # primes, so that we can divide by it without losing
         # integrality at other primes.
-           
+
         if globally:
             principal_flag = P.is_principal()
-        else: 
+        else:
             principal_flag = False
-            
+
         if (K is QQ) or principal_flag :
             pi = P.gens_reduced()[0]
             verbose("P is principal, generator pi = %s"%pi, t, 1)
@@ -797,13 +797,13 @@ class EllipticCurveLocalData(SageObject):
             for i in range(7):
                 if A[i] != 0:
                     A[i] *= pie**i
-            verbose("P-integral model is %s, with valuations %s"%([A[i] for i in indices], [pval(A[i]) for i in indices]), t, 1)
+            verbose("P-integral model is %s, with valuations %s" % ([A[i] for i in indices], [pval(A[i]) for i in indices]), t, 1)
 
         split = None # only relevant for multiplicative reduction
 
         (a1, a2, a3, a4, a6) = (A[1], A[2], A[3], A[4], A[6])
         while True:
-            C = EllipticCurve([a1, a2, a3, a4, a6]);
+            C = EllipticCurve([a1, a2, a3, a4, a6])
             (b2, b4, b6, b8) = C.b_invariants()
             (c4, c6) = C.c_invariants()
             delta = C.discriminant()
@@ -1114,7 +1114,7 @@ def check_prime(K,P):
         sage: L.<b> = NumberField(x^2+3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
-        ..
+        ...
         TypeError: The ideal Fractional ideal (5) is not a prime ideal of Number Field in a with defining polynomial x^2 - 5
         sage: check_prime(K, L.ideal(b))
         Traceback (most recent call last):

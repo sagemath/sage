@@ -39,6 +39,7 @@ Orders, Ideals, Ideal Classes
    sage/rings/number_field/number_field_ideal_rel
    sage/rings/number_field/class_group
    sage/rings/number_field/unit_group
+   sage/rings/number_field/S_unit_solver
    sage/rings/number_field/small_primes_of_degree_one
 
 .. SEEALSO::

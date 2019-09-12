@@ -33,7 +33,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     r"""
     Return the Aurifeuillian factors `F_n^\pm(m^2n)`.
 
-    This is based off Theorem 3 of [Brent93]_.
+    This is based off Theorem 3 of [Bre1993]_.
 
     INPUT:
 
@@ -74,13 +74,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
-
-    REFERENCES:
-
-    .. [Brent93] Richard P. Brent.
-       *On computing factors of cyclotomic polynomials*.
-       Mathematics of Computation. **61** (1993). No. 203. pp 131-149.
-       :arXiv:`1004.5466v1`. http://www.jstor.org/stable/2152941
     """
     from sage.arith.all import euler_phi
     from sage.rings.real_mpfi import RealIntervalField
@@ -163,7 +156,7 @@ cpdef factor_aurifeuillian(n, check=True):
     REFERENCES:
 
     - http://mathworld.wolfram.com/AurifeuilleanFactorization.html
-    - [Brent93]_ Theorem 3
+    - [Bre1993]_ Theorem 3
     """
     if n in [-2, -1, 0, 1, 2]:
         return [n]

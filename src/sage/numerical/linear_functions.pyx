@@ -89,7 +89,7 @@ See :trac:`12091`::
     2*x_0 <= x_1 <= x_2
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
@@ -98,8 +98,8 @@ See :trac:`12091`::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from cpython.object cimport Py_EQ, Py_GE, Py_LE, Py_GT, Py_LT
@@ -672,8 +672,7 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF = p.linear_functions_parent()
             sage: LF._element_constructor_(123)
             123
-            sage: p(123)    # indirect doctest
-            doctest:...: DeprecationWarning: ...
+            sage: LF(123)    # indirect doctest
             123
             sage: type(_)
             <type 'sage.numerical.linear_functions.LinearFunction'>
@@ -810,7 +809,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
     cpdef iteritems(self):
         """
-        Iterate over the index, coefficient pairs
+        Iterate over the index, coefficient pairs.
 
         OUTPUT:
 
@@ -823,11 +822,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             sage: p = MixedIntegerLinearProgram(solver = 'ppl')
             sage: x = p.new_variable()
             sage: f = 0.5 + 3/2*x[1] + 0.6*x[3]
-            sage: for id, coeff in f.iteritems():
+            sage: for id, coeff in sorted(f.iteritems()):
             ....:     print('id = {}   coeff = {}'.format(id, coeff))
+            id = -1   coeff = 1/2
             id = 0   coeff = 3/2
             id = 1   coeff = 3/5
-            id = -1   coeff = 1/2
         """
         return self._f.iteritems()
 
@@ -1044,7 +1043,8 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram()
-            sage: f = p(1);  type(f)
+            sage: LF = p.linear_functions_parent()
+            sage: f = LF(1);  type(f)
             <type 'sage.numerical.linear_functions.LinearFunction'>
             sage: f._coeff_formatter(1)
             ''
@@ -1056,21 +1056,24 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             '12.3*'
 
             sage: p = MixedIntegerLinearProgram(solver='ppl')
-            sage: f = p(1)
+            sage: LF = p.linear_functions_parent()
+            sage: f = LF(1)
             sage: f._coeff_formatter(13/45)
             '13/45*'
 
             sage: from sage.rings.number_field.number_field import QuadraticField
             sage: K.<sqrt5> = QuadraticField(5, 'sqrt5')
             sage: p = MixedIntegerLinearProgram(solver='interactivelp', base_ring=K)
-            sage: f = p(1)
+            sage: LF = p.linear_functions_parent()
+            sage: f = LF(1)
             sage: f._coeff_formatter(sqrt5)
             'sqrt5*'
 
             sage: from sage.rings.all import AA
             sage: sqrt5 = AA(5).sqrt()
             sage: p = MixedIntegerLinearProgram(solver='interactivelp', base_ring=AA)
-            sage: f = p(1)
+            sage: LF = p.linear_functions_parent()
+            sage: f = LF(1)
             sage: f._coeff_formatter(sqrt5)
             '2.236067977499790?*'
         """

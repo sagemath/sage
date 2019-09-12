@@ -1,4 +1,4 @@
-"""
+"""nodoctest
 List of assigned names in GAP
 
 EXAMPLES::
@@ -27,7 +27,7 @@ from sage.libs.gap.saved_workspace import workspace
 
 
 NamesGVars = libgap.function_factory('NamesGVars')
-Filtered =libgap.function_factory('Filtered')
+Filtered = libgap.function_factory('Filtered')
 ValueGlobal = libgap.function_factory('ValueGlobal')
 IsBoundGlobal = libgap.function_factory('IsBoundGlobal')
 IsFunction = libgap.function_factory('IsFunction')

@@ -45,18 +45,6 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
     The parent of ``q`` may be a :class:`PolynomialRing` or a
     :class:`LaurentPolynomialRing`.
 
-    REFERENCES:
-
-    .. [KL79] \D. Kazhdan and G. Lusztig. *Representations of Coxeter
-       groups and Hecke algebras*. Invent. Math. **53** (1979).
-       no. 2, 165--184. :doi:`10.1007/BF01390031` :mathscinet:`MR0560412`
-
-    .. [Dy93] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
-       intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
-
-    .. [BB05] \A. Bjorner, F. Brenti. *Combinatorics of Coxeter
-       groups*. New York: Springer, 2005.
-
     EXAMPLES::
 
         sage: W = WeylGroup("B3",prefix="s")
@@ -144,7 +132,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         Return the Kazhdan-Lusztig `\tilde{R}` polynomial.
 
         Information about the `\tilde{R}` polynomials can be found in
-        [Dy93]_ and [BB05]_.
+        [Dy1993]_ and [BB2005]_.
 
         INPUT:
 

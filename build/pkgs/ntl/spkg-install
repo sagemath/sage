@@ -99,6 +99,7 @@ ntl_configure()
         LDFLAGS="$LDFLAGS" LIBTOOL_LINK_FLAGS="$LIBTOOL_LINK_FLAGS" \
         NTL_GMP_LIP=on NTL_GF2X_LIB=on \
         "$DISABLE_NATIVE" \
+        MAKE_PROG="$MAKE" \
         NTL_THREADS=off || sdh_die "Error configuring NTL."
 }
 

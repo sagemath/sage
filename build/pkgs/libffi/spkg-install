@@ -1,0 +1,16 @@
+# Trac #27109: Don't append $(gcc -print-multi-os-directory) to the install
+# path for libraries
+LIBFFI_CONFIGURE="--disable-multi-os-directory $LIBFFI_CONFIGURE"
+
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+    LIBFFI_CONFIGURE="--enable-portable-binary $LIBFFI_CONFIGURE"
+fi
+
+if [ "$SAGE_DEBUG" = "yes" ]; then
+    LIBFFI_CONFIGURE="--enable-debug $LIBFFI_CONFIGURE"
+fi
+
+cd src
+sdh_configure $LIBFFI_CONFIGURE
+sdh_make
+sdh_make_install

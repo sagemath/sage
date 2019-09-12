@@ -17,7 +17,7 @@ Definition
 Three independent vertices of a graph form an *asteroidal triple* if every two
 of them are connected by a path avoiding the neighborhood of the third one. A
 graph is *asteroidal triple-free* (*AT-free*, for short) if it contains no
-asteroidal triple [LB62]_.
+asteroidal triple [LB1962]_.
 
 Use ``graph_classes.AT_free.description()`` to get some known properties of
 AT-free graphs, or visit `this page
@@ -27,8 +27,8 @@ AT-free graphs, or visit `this page
 Algorithm
 ---------
 
-This module implements the  *Straightforward algorithm* recalled in [Koh04]_ and
-due to [LB62]_ for testing if a graph is AT-free or not. This algorithm has time
+This module implements the  *Straightforward algorithm* recalled in [Koh2004]_ and
+due to [LB1962]_ for testing if a graph is AT-free or not. This algorithm has time
 complexity in `O(n^3)` and space complexity in `O(n^2)`.
 
 This algorithm uses the *connected structure* of the graph, stored into a
@@ -44,18 +44,6 @@ these values are positive. Indeed, if `M[u][v]==M[u][w]`, `v` and `w` are in the
 same connected component of `G\setminus(\{u\}\cup N(u))`, and so there is a path
 between `v` and `w` avoiding the neighborhood of `u`. The algorithm iterates
 over all triples.
-
-
-References
-----------
-
-.. [Koh04] \E. Kohler. *Recognizing graphs without asteroidal triples*. Journal of
-      Discrete Algorithms 2(4):439-452, Dec. 2004
-      :doi:`10.1016/j.jda.2004.04.005`
-
-.. [LB62] \C. G. Lekkerkerker, J. Ch. Boland. *Representation of a finite graph
-      by a set of intervals on the real line*. Fundamenta Mathematicae,
-      51:45-64, 1962.
 
 
 Functions
@@ -96,8 +84,8 @@ def is_asteroidal_triple_free(G, certificate=False):
 
     - ``G`` -- a Graph
 
-    - ``certificate`` -- (default: False) By default, this method returns
-      ``True`` if the graph is asteroidal triple-free and ``False``
+    - ``certificate`` -- boolean (default: ``False``); by default, this method
+      returns ``True`` if the graph is asteroidal triple-free and ``False``
       otherwise. When ``certificate==True``, this method returns in addition a
       list of three vertices forming an asteroidal triple if such a triple is
       found, and the empty list otherwise.
@@ -145,20 +133,21 @@ def is_asteroidal_triple_free(G, certificate=False):
     cdef int i
 
     # ==> Trivial cases
-    if n<3:
-        return True if not certificate else (True, [])
+    if n < 3:
+        return (True, []) if certificate else True
 
     # ==> Initialize some data structures for is_asteroidal_triple_free_C
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t * waiting_list         = <uint32_t *>  mem.allocarray(n, sizeof(uint32_t))
-    cdef uint32_t * _connected_structure = <uint32_t *>  mem.calloc(n * n, sizeof(uint32_t))
-    cdef uint32_t ** connected_structure = <uint32_t **> mem.allocarray(n, sizeof(uint32_t *))
+    cdef uint32_t* waiting_list         = <uint32_t*>  mem.allocarray(n, sizeof(uint32_t))
+    cdef uint32_t* _connected_structure = <uint32_t*>  mem.calloc(n * n, sizeof(uint32_t))
+    cdef uint32_t** connected_structure = <uint32_t**> mem.allocarray(n, sizeof(uint32_t*))
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -167,7 +156,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     for i in range(n-1):
         connected_structure[i+1] = connected_structure[i] + n
 
-    cdef list ret = list()
+    cdef list ret = []
 
     # ==> call is_asteroidal_triple_free_C
 
@@ -185,8 +174,7 @@ def is_asteroidal_triple_free(G, certificate=False):
 
     if certificate:
         if ret:
-            V = G.vertices()
-            return False, [V[i] for i in ret]
+            return False, [int_to_vertex[i] for i in ret]
         return True, []
 
     return False if ret else True
@@ -194,25 +182,25 @@ def is_asteroidal_triple_free(G, certificate=False):
 
 cdef list is_asteroidal_triple_free_C(int n,
                                       short_digraph sd,
-                                      uint32_t ** connected_structure,
-                                      uint32_t *  waiting_list,
+                                      uint32_t** connected_structure,
+                                      uint32_t*  waiting_list,
                                       bitset_t seen):
     """
     INPUT:
 
-    - ``n`` (int) -- number of points in the graph
+    - ``n`` -- integer; number of points in the graph
 
-    - ``sd`` (``short_digraph``) -- a graph on ``n`` points. This data
-      structure is well documented in the module
-      sage.graphs.base.static_sparse_graph
+    - ``sd`` -- ``short_digraph``; a graph on ``n`` points. This data structure
+      is well documented in the module
+      :mod:`sage.graphs.base.static_sparse_graph`
 
     - ``connected_structure`` -- bidimensional array of size `n\times n` used to
       store the connected structure of the graph. All its cells must initially
       be set to 0.
 
-    - ``waiting_list`` -- an array of size `n` to be used for BFS.
+    - ``waiting_list`` -- an array of size `n` to be used for BFS
 
-    - ``seen`` -- a bitset of size `n`.
+    - ``seen`` -- a bitset of size `n`
 
     ALGORITHM:
 
@@ -222,8 +210,8 @@ cdef list is_asteroidal_triple_free_C(int n,
     cdef uint32_t waiting_end       = 0
     cdef uint32_t idx_cc            = 0
     cdef uint32_t source, u, v, w
-    cdef uint32_t * p_tmp
-    cdef uint32_t * end
+    cdef uint32_t* p_tmp
+    cdef uint32_t* end
 
     # ==> We build the connected structure
 
@@ -236,7 +224,7 @@ cdef list is_asteroidal_triple_free_C(int n,
 
         # The neighbors of the source are forbidden and seen
         p_tmp = sd.neighbors[source]
-        end = sd.neighbors[source+1]
+        end = sd.neighbors[source + 1]
         # Iterating over all the outneighbors u of v
         while p_tmp < end:
             bitset_add(seen, p_tmp[0])
@@ -262,7 +250,7 @@ cdef list is_asteroidal_triple_free_C(int n,
                 # We pick the first one
                 v = waiting_list[waiting_beginning]
                 p_tmp = sd.neighbors[v]
-                end = sd.neighbors[v+1]
+                end = sd.neighbors[v + 1]
 
                 # Iterating over all the outneighbors u of v
                 while p_tmp < end:
@@ -296,15 +284,15 @@ cdef list is_asteroidal_triple_free_C(int n,
     # The list of connected components of G-N[u] can be built from
     # connected_structure in O(n) time.
 
-    for u in range(n-2):
-        for v in range(u+1,n-1):
-            if connected_structure[u][v]>0:
-                for w in range(v+1,n):
+    for u in range(n - 2):
+        for v in range(u + 1, n - 1):
+            if connected_structure[u][v]:
+                for w in range(v + 1, n):
                     if (connected_structure[u][v] == connected_structure[u][w] and
                         connected_structure[v][u] == connected_structure[v][w] and
                         connected_structure[w][u] == connected_structure[w][v]):
                         # We have found an asteroidal triple
-                        return [u,v,w]
+                        return [u, v, w]
 
     # No asteroidal triple was found
     return []

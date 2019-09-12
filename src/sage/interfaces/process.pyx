@@ -115,7 +115,7 @@ cdef class ContainChildren(object):
             ....:         _ = sys.stdout.write("Y ")
             ....:         sys.stdout.flush()
             ....:         os._exit(0)
-            ....:     sleep(0.5)  # Give the child process time
+            ....:     sleep(float(0.5))  # Give the child process time
             ....:     print("Z")
             ....: finally:
             ....:     pass

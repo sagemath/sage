@@ -73,14 +73,14 @@ the same::
 """
 
 
-#***********************************************************************
+# **********************************************************************
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.symbolic.all import I
@@ -98,7 +98,6 @@ from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh, arcsinh
 from sage.symbolic.ring import SR
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
-from sage.misc.superseded import deprecated_function_alias
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
@@ -1189,8 +1188,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
                 pic = bd_pic + pic
             return pic
 
-    show = deprecated_function_alias(20530, plot)
-
     def ideal_endpoints(self):
         r"""
         Determine the ideal (boundary) endpoints of the complete
@@ -1705,7 +1702,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             True
             sage: bool(moebius_transform(A, p3) == infinity)
             True
-            sage: (x,y,z) = var('x,y,z');
+            sage: (x,y,z) = var('x,y,z')
             sage: HyperbolicGeodesicUHP._crossratio_matrix(x,y,z)
             [     y - z -x*(y - z)]
             [    -x + y  (x - y)*z]
@@ -1838,8 +1835,6 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
             pic += self._model.get_background_graphic()
         return pic
 
-    show = deprecated_function_alias(20530, plot)
-
 
 class HyperbolicGeodesicKM(HyperbolicGeodesic):
     r"""
@@ -1899,8 +1894,6 @@ class HyperbolicGeodesicKM(HyperbolicGeodesic):
         if boundary:
             pic += self._model.get_background_graphic()
         return pic
-
-    show = deprecated_function_alias(20530, plot)
 
 
 class HyperbolicGeodesicHM(HyperbolicGeodesic):
@@ -1978,5 +1971,3 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
         if show_hyperboloid:
             pic += self._model.get_background_graphic()
         return pic
-
-    show = deprecated_function_alias(20530, plot)

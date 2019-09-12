@@ -22,7 +22,7 @@ from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.rational import Rational
+
 
 class Function_exp(GinacFunction):
     r"""
@@ -233,7 +233,7 @@ class Function_log1(GinacFunction):
         """
         GinacFunction.__init__(self, 'log', latex_name=r'\log',
                                conversions=dict(maxima='log', fricas='log',
-                                                mathematica='Log'))
+                                                mathematica='Log', giac='ln'))
 
 ln = function_log = Function_log1()
 
@@ -248,6 +248,13 @@ class Function_log2(GinacFunction):
         sage: from sage.functions.log import logb
         sage: logb(1000,10)
         3
+
+    TESTS::
+
+        sage: logb(7, 2)
+        log(7)/log(2)
+        sage: logb(int(7), 2)
+        log(7)/log(2)
     """
     def __init__(self):
         """
@@ -607,7 +614,7 @@ class Function_dilog(GinacFunction):
             sage: dilog(1)
             1/6*pi^2
             sage: dilog(1.)
-            1.64493406684823 
+            1.64493406684823
             sage: dilog(1).n()
             1.64493406684823
             sage: float(dilog(1))
@@ -748,12 +755,31 @@ class Function_lambert_w(BuiltinFunction):
             0.567143290409784
             sage: lambert_w(x, x)._sympy_()
             LambertW(x, x)
+
+        TESTS:
+
+        Check that :trac:`25987` is fixed::
+
+            sage: lambert_w(x)._fricas_()                                       # optional - fricas
+            lambertW(x)
+
+            sage: fricas(lambert_w(x)).eval(x = -1/e)                           # optional - fricas
+            - 1
+
+        The two-argument form of Lambert's function is not supported
+        by FriCAS, so we return a generic operator::
+
+            sage: var("n")
+            n
+            sage: lambert_w(n, x)._fricas_()                                    # optional - fricas
+            generalizedLambertW(n,x)
         """
         BuiltinFunction.__init__(self, "lambert_w", nargs=2,
                                  conversions={'mathematica': 'ProductLog',
                                               'maple': 'LambertW',
                                               'matlab': 'lambertw',
                                               'maxima': 'generalized_lambert_w',
+                                              'fricas': "((n,z)+->(if n=0 then lambertW(z) else operator('generalizedLambertW)(n,z)))",
                                               'sympy': 'LambertW'})
 
     def __call__(self, *args, **kwds):
@@ -1090,7 +1116,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
     .. MATH::
 
         H_{n}=H_{n,1}=\sum_{k=1}^n\frac{1}{k}
-        
+
         H_{n,m}=\sum_{k=1}^n\frac{1}{k^m}
 
     They are also well-defined for complex argument, through:
@@ -1256,11 +1282,11 @@ class Function_harmonic_number_generalized(BuiltinFunction):
             return harmonic_m1._evalf_(z, parent, algorithm)
 
         from sage.functions.transcendental import zeta, hurwitz_zeta
-        return zeta(m) - hurwitz_zeta(m,z+1)
+        return zeta(m) - hurwitz_zeta(m, z + 1)
 
     def _maxima_init_evaled_(self, n, z):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: maxima_calculus(harmonic_number(x,2))
             gen_harmonic_number(2,_SAGE_VAR_x)
@@ -1430,7 +1456,7 @@ class Function_harmonic_number(BuiltinFunction):
             1/6*pi^2 - harmonic_number(x, 2)
         """
         from sage.functions.transcendental import zeta
-        return zeta(2)-harmonic_number(z,2)
+        return zeta(2) - harmonic_number(z, 2)
 
     def _print_latex_(self, z):
         """

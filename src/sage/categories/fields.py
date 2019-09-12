@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Fields
 """
@@ -303,13 +304,7 @@ class Fields(CategoryWithAxiom):
             ALGORITHM:
 
             This uses the extended Euclidean algorithm; see for example
-            [Cohen1996]_, Algorithm 3.2.2.
-
-            REFERENCES:
-
-            .. [Cohen1996] \H. Cohen, A Course in Computational Algebraic
-               Number Theory.  Graduate Texts in Mathematics 138.
-               Springer-Verlag, 1996.
+            [Coh1993]_, Algorithm 3.2.2.
 
             EXAMPLES::
 
@@ -768,3 +763,35 @@ class Fields(CategoryWithAxiom):
                 raise ArithmeticError("factorization of {!r} is not defined".format(self))
             from sage.structure.factorization import Factorization
             return Factorization([], self)  # No factor; "self" as unit
+
+        def inverse_of_unit(self):
+            r"""
+            Return the inverse of this element.
+
+            EXAMPLES::
+
+                sage: NumberField(x^7+2,'a')(2).inverse_of_unit()
+                1/2
+
+            Trying to invert the zero element typically raises a
+            ``ZeroDivisionError``::
+
+                sage: QQ(0).inverse_of_unit()
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError: rational division by zero
+
+            To catch that exception in a way that also works for non-units
+            in more general rings, use something like::
+
+                sage: try:
+                ....:    QQ(0).inverse_of_unit()
+                ....: except ArithmeticError:
+                ....:    pass
+
+            Also note that some “fields” allow one to invert the zero element::
+
+                sage: RR(0).inverse_of_unit()
+                +infinity
+            """
+            return ~self

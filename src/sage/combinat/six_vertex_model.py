@@ -584,7 +584,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             row = cur[-1]
             l = left[-1]
             i = len(cur) - 1
-            while len(row) > 0:
+            while row:
                 row[-1] += 1
                 # Check to see if we have more vertices
                 if row[-1] > 5:

@@ -61,8 +61,9 @@ from . import eisenstein_submodule
 
 from sage.misc.cachefunc import cached_method
 
+
 class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
-    """
+    r"""
     A space of modular forms for the group `\Gamma_H(N)` over the rational numbers.
     """
     def __init__(self, group, weight, eis_only):
@@ -155,7 +156,7 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
 
 
 class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
-    """
+    r"""
     A space of modular forms for the group `\Gamma_1(N)` over the rational numbers.
     """
     def __init__(self, level, weight, eis_only):

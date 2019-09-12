@@ -66,21 +66,21 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import operator
 
 from sage.categories.all import Hom
 from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan, is_Fan, discard_faces
+from sage.geometry.fan import Fan, is_Fan
 from sage.matrix.all import identity_matrix, matrix
 from sage.structure.element import is_Matrix
 from sage.misc.all import cached_method, latex, prod, walltime
@@ -89,6 +89,7 @@ from sage.modules.free_module_morphism import (FreeModuleMorphism,
 from sage.rings.all import Infinity, ZZ
 from sage.rings.infinity import is_Infinite
 from functools import reduce
+
 
 class FanMorphism(FreeModuleMorphism):
     r"""
@@ -670,7 +671,6 @@ class FanMorphism(FreeModuleMorphism):
             Codomain fan: Rational polyhedral fan in 2-d lattice N
         """
         domain_fan = self._domain_fan
-        codomain_fan = self._codomain_fan
         lattice_dim = self.domain().dimension()
         if verbose:
             start = walltime()
@@ -1580,7 +1580,7 @@ class FanMorphism(FreeModuleMorphism):
             RISGIS = self._RISGIS()
             domain_fan = self._domain_fan
             possible_rays = frozenset(i for i in range(domain_fan.nrays())
-                                        if RISGIS[i].issuperset(CSGI))
+                                      if RISGIS[i].issuperset(CSGI))
             preimage_cones = []
             for dcones in domain_fan.cones():
                 for dcone in dcones:

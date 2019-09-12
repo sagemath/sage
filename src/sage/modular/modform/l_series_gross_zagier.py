@@ -16,7 +16,7 @@ class GrossZagierLseries(SageObject):
         `\QQ` and `A` is an ideal class in an imaginary quadratic number field.
 
         For the exact definition, in the more general setting of modular forms
-        instead of elliptic curves, see section IV of [GrossZagier]_.
+        instead of elliptic curves, see section IV of [GZ1986]_.
 
         INPUT:
 

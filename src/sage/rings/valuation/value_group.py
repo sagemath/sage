@@ -488,7 +488,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         self._generators = generators
 
         category = AdditiveMagmas().AdditiveAssociative().AdditiveUnital()
-        if all([-g in generators for g in generators]):
+        if all(-g in generators for g in generators):
             # check whether this is trivially a group
             # is_group() performs a complete check that is very costly and
             # refines the category

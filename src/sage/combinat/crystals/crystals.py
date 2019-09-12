@@ -63,12 +63,7 @@ for `i \in I` satisfying the following properties for all `i \in I`:
 Some further conditions are required to guarantee that this data
 indeed models a representation of a Lie algebra. For finite simply
 laced types a complete characterization is given by Stembridge's local
-axioms [St2003]_.
-
-REFERENCES:
-
-.. [St2003] \J. Stembridge, *A local characterization of simply-laced crystals*,
-   Trans. Amer. Math. Soc. 355 (2003), no. 12, 4807-4823.
+axioms [Ste2003]_.
 
 EXAMPLES:
 

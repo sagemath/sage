@@ -1,7 +1,12 @@
-/************* ComputeL v1.3.4, 2001-2016, (c) Tim Dokchitser ************/
+/************* ComputeL v1.3.8, 2001-2018, (c) Tim Dokchitser ************/
 /**************** computing special values of L-functions ****************/
 /* arXiv.org/abs/math.NT/0207280, Exper. Math. 13 (2004), no. 2, 137-150 */
 /****** Questions/comments welcome! -> tim.dokchitser@bristol.ac.uk ******/
+
+\\ ACKNOWLEDGEMENTS: I'd like to thank Mark Watkins, Steve Donnelly,
+\\ William Stein, Anton Mellit, Almasa Odzak, Karim Belabas, Myoungil Kim,
+\\ Chris King, F. Patrick Rabarison, Neil Dummigan, Maciej Radziejewski,
+\\ François Brunault and Alex Best, for examples, bug fixes and suggestions
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ Distributed under the terms of the GNU General Public License (GPL)
@@ -238,7 +243,7 @@ fullgamma(ss) =
 fullgammaseries(ss,extraterms)=
   local(digts,GSD);
 
-  digts=default(realprecision);
+  digts=lfundigits;
   if (lastFGSs!=ss || lastFGSterms!=extraterms,
     GSD=sum(j=1,numpoles,(abs((ss+poles[j])/2-round(real((ss+poles[j])/2)))<10^(2-digts)) * PoleOrders[j] )+extraterms;
     lastFGSs=ss;

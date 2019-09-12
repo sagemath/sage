@@ -493,13 +493,16 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
         T = symbs.diamond_bracket_matrix(d)
         return self._convert_matrix_from_modsyms_eis(T)
 
+
 class EisensteinSubmodule_g1_Q(EisensteinSubmodule_gH_Q):
     r"""
     Space of Eisenstein forms for `\Gamma_1(N)`.
     """
     def _parameters_character(self):
-        """
-        Return the character defining self. Since self is a space of Eisenstein
+        r"""
+        Return the character defining self.
+
+        Since self is a space of Eisenstein
         forms on `\Gamma_1(N)`, all characters modulo the level are possible,
         so we return the level.
 
@@ -591,8 +594,9 @@ def cyclotomic_restriction(L,K):
     if not L.has_coerce_map_from(K):
         M = CyclotomicField(lcm(L.zeta_order(), K.zeta_order()))
         f = cyclotomic_restriction_tower(M,K)
+
         def g(x):
-            """
+            r"""
             Function returned by cyclotomic restriction.
 
             INPUT:
@@ -650,8 +654,9 @@ def cyclotomic_restriction_tower(L,K):
     g = R(f)
     h_ls = [ t[0] for t in g.factor() if t[0](L.gen(0)) == 0 ]
     if len(h_ls) == 0:
-        raise ValueError("K (= Q(\zeta_%s)) is not contained in L (= Q(\zeta_%s))"%(K._n(), L._n()))
+        raise ValueError(r"K (= Q(\zeta_%s)) is not contained in L (= Q(\zeta_%s))" % (K._n(), L._n()))
     h = h_ls[0]
+
     def z(a):
         """
         Function returned by cyclotomic_restriction_tower.
@@ -675,4 +680,3 @@ def cyclotomic_restriction_tower(L,K):
         """
         return R(a.polynomial()) % h
     return z
-

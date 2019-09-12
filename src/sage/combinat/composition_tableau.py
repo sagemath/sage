@@ -80,7 +80,7 @@ class CompositionTableau(CombinatorialElement):
 
             sage: t = CompositionTableaux()([[1],[2,2]])
             sage: s = CompositionTableaux(3)([[1],[2,2]])
-            sage: s==t
+            sage: s == t
             True
             sage: t.parent()
             Composition Tableaux
@@ -119,7 +119,7 @@ class CompositionTableau(CombinatorialElement):
         for i in range(l):
             for j in range(i+1,l):
                 for k in range(1,m):
-                    if TT[j][k] != 0 and TT[j][k] >= TT[i][k] and TT[j][k] <= TT[i][k-1]:
+                    if TT[j][k] and TT[i][k] <= TT[j][k] <= TT[i][k-1]:
                         raise ValueError("Triple condition must be satisfied.")
 
         CombinatorialElement.__init__(self, parent, t)
@@ -136,7 +136,8 @@ class CompositionTableau(CombinatorialElement):
               3  2
               4  4
         """
-        return '\n'.join(("".join(("%3s"%str(x) for x in row)) for row in self))
+        return '\n'.join(("".join(("%3s" % str(x) for x in row))
+                          for row in self))
 
     def __call__(self, *cell):
         r"""
@@ -155,9 +156,9 @@ class CompositionTableau(CombinatorialElement):
             IndexError: The cell (2,2) is not contained in [[1], [3, 2], [4, 4]]
         """
         try:
-            i,j = cell
+            i, j = cell
         except ValueError:
-            i,j = cell[0]
+            i, j = cell[0]
 
         try:
             return self[i][j]
@@ -186,7 +187,7 @@ class CompositionTableau(CombinatorialElement):
             sage: CompositionTableau([[1],[3,2],[4,4]]).size()
             5
         """
-        return sum([len(row) for row in self])
+        return sum(len(row) for row in self)
 
     def weight(self):
         r"""
@@ -198,11 +199,11 @@ class CompositionTableau(CombinatorialElement):
             sage: CompositionTableau([[1],[3,2],[4,4]]).weight()
             [1, 1, 1, 2, 0]
         """
-        w = {i:0 for i in range(1,self.size()+1)}
+        w = {i: 0 for i in range(1, self.size() + 1)}
         for row in self:
             for i in row:
                 w[i] += 1
-        return Composition([w[i] for i in range(1,self.size()+1)])
+        return Composition([w[i] for i in range(1, self.size()+1)])
 
     def descent_set(self):
         r"""
@@ -758,6 +759,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         t = [[i]*len for (i,len) in enumerate(self.shape,start=1)]
         return self.element_class(self, t)
 
+
 class CompositionTableauxBacktracker(GenericBacktracker):
     r"""
     A backtracker class for generating sets of composition tableaux.
@@ -806,16 +808,17 @@ class CompositionTableauxBacktracker(GenericBacktracker):
              ([[5], [None, None, None], [None, None]], (1, 0), False),
              ([[6], [None, None, None], [None, None]], (1, 0), False)]
         """
-        #Append zeros to a copy of obj
+        # Append zeros to a copy of obj
         obj_copy = copy.deepcopy(obj)
+        N = max(len(u) for u in obj_copy)
         for a in range(len(obj_copy)):
-            for b in range(len(max(obj_copy))-len(obj_copy[a])):
-                obj_copy[a].append(0)
+            Na = len(obj_copy[a])
+            obj_copy[a] += [0] * (N - Na)
 
-        #We need to set the i,j^th entry.
+        # We need to set the i,j^th entry.
         i, j = state
 
-        #Get the next state
+        # Get the next state
         new_state = self.get_next_pos(i, j)
         yld = True if new_state is None else False
 

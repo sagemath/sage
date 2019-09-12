@@ -77,11 +77,13 @@ There are several ways to create and build Cython code in Sage.
 
    For example, in order to compile
    ``SAGE_ROOT/src/sage/graphs/chrompoly.pyx``, we see the following
-   lines in ``module_list.py``::
+   lines in ``module_list.py``:
 
-    Extension('sage.graphs.chrompoly',
-              sources = ['sage/graphs/chrompoly.pyx'],
-              libraries = ['gmp']),
+   .. CODE-BLOCK:: python
+
+      Extension('sage.graphs.chrompoly',
+                sources = ['sage/graphs/chrompoly.pyx'],
+                libraries = ['gmp']),
 
 
 Attaching or Loading .spyx Files
@@ -93,7 +95,9 @@ about distutils, etc., is to create a file with the extension
 
 #. Create a file ``power2.spyx``.
 
-#. Put the following in it::
+#. Put the following in it:
+
+   .. CODE-BLOCK:: cython
 
        def is2pow(n):
            while n != 0 and n%2 == 0:
@@ -174,7 +178,9 @@ extension classes you need to write a :meth:`__reduce__` method which typically
 returns a tuple ``(f, args, ...)`` such that ``f(*args)`` returns (a copy of) the
 original object. As an example, the following code snippet is the
 :meth:`~sage.rings.integer.Integer.__reduce__` method from
-:class:`sage.rings.integer.Integer`::
+:class:`sage.rings.integer.Integer`:
+
+.. CODE-BLOCK:: cython
 
     def __reduce__(self):
         '''

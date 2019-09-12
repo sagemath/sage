@@ -666,6 +666,11 @@ class VectorFrame(FreeModuleBasis):
 
         """
         from sage.manifolds.differentiable.manifold import DifferentiableManifold
+        # Some sanity check:
+        if not isinstance(vector_field_module, FiniteRankFreeModule):
+            raise ValueError("the {} has already been constructed as a "
+                             "non-free module and therefore cannot have "
+                             "a basis".format(vector_field_module))
         self._domain = vector_field_module._domain
         self._ambient_domain = vector_field_module._ambient_domain
         self._dest_map = vector_field_module._dest_map
@@ -1182,7 +1187,7 @@ class VectorFrame(FreeModuleBasis):
         Structure coefficients of the orthonormal frame associated to
         spherical coordinates in the Euclidean space `\RR^3`::
 
-            sage: M = Manifold(3, 'R^3', '\RR^3', start_index=1)  # Part of R^3 covered by spherical coordinates
+            sage: M = Manifold(3, 'R^3', r'\RR^3', start_index=1)  # Part of R^3 covered by spherical coordinates
             sage: c_spher.<r,th,ph> = M.chart(r'r:(0,+oo) th:(0,pi):\theta ph:(0,2*pi):\phi')
             sage: ch_frame = M.automorphism_field()
             sage: ch_frame[1,1], ch_frame[2,2], ch_frame[3,3] = 1, 1/r, 1/(r*sin(th))
@@ -1717,6 +1722,15 @@ class CoordFrame(VectorFrame):
         from sage.manifolds.differentiable.chart import DiffChart
         if not isinstance(chart, DiffChart):
             raise TypeError("the first argument must be a chart")
+        dom = chart.domain()
+        # Some sanity check:
+        vmodule = dom._vector_field_modules.get(dom.identity_map())
+        if vmodule and not isinstance(vmodule, FiniteRankFreeModule):
+            raise ValueError("the {} has already been constructed as a "
+                             "non-free module, which implies that the {} is "
+                             "not parallelizable and hence cannot be the "
+                             "domain of a coordinate chart".format(vmodule,
+                             dom))
         self._chart = chart
         coords = chart[:] # list of all coordinates
         symbol = tuple("d/d" + str(x) for x in coords)
@@ -1725,13 +1739,13 @@ class CoordFrame(VectorFrame):
         symbol_dual = tuple("d" + str(x) for x in coords)
         latex_symbol_dual = tuple(r"\mathrm{d}" + latex(x) for x in coords)
         VectorFrame.__init__(self,
-                             chart._domain.vector_field_module(force_free=True),
+                             dom.vector_field_module(force_free=True),
                              symbol=symbol, latex_symbol=latex_symbol,
                              symbol_dual=symbol_dual,
                              latex_symbol_dual=latex_symbol_dual)
         # In the above:
         # - force_free=True ensures that a free module is constructed in case
-        #   it is the first call to the vector field module on chart._domain
+        #   it is the first call to the vector field module on chart.domain()
 
 
     ###### Methods that must be redefined by derived classes of ######

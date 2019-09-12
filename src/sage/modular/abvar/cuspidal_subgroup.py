@@ -11,7 +11,7 @@ EXAMPLES: We compute the cuspidal subgroup of `J_1(13)`::
     sage: C = A.cuspidal_subgroup(); C
     Finite subgroup with invariants [19, 19] over QQ of Abelian variety J1(13) of dimension 2
     sage: C.gens()
-    [[(1/19, 0, 0, 9/19)], [(0, 1/19, 1/19, 18/19)]]
+    [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
     sage: C.order()
     361
     sage: C.invariants()
@@ -132,10 +132,10 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
             sage: C._compute_lattice()
             Free module of degree 4 and rank 4 over Integer Ring
             Echelon basis matrix:
-            [ 1/19     0     0  9/19]
-            [    0  1/19  1/19 18/19]
-            [    0     0     1     0]
-            [    0     0     0     1]
+            [1/19    0 9/19 9/19]
+            [   0 1/19    0 9/19]
+            [   0    0    1    0]
+            [   0    0    0    1]
 
         We compute with and without the optional
         ``rational_only`` option.

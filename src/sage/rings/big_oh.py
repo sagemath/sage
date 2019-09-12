@@ -83,7 +83,7 @@ def O(*x, **kwds):
     We can also work with `asymptotic expansions`_::
 
         sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ', coefficient_ring=QQ); A
-        Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ> over Rational Field
+        Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ * Signs^n> over Rational Field
         sage: O(n)
         O(n)
 

@@ -16,6 +16,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+import sys
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
 
@@ -29,7 +31,7 @@ def DegreeSequence(deg_sequence):
     which constructs a simple graph by connecting vertices of highest
     degree to other vertices of highest degree, resorting the remaining
     vertices by degree and repeating the process. See Theorem 1.4 in
-    [CharLes1996]_.
+    [CL1996]_.
 
     INPUT:
 
@@ -58,11 +60,6 @@ def DegreeSequence(deg_sequence):
 
         sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])
         sage: G.show()  # long time
-
-    REFERENCE:
-
-    .. [CharLes1996] Chartrand, G. and Lesniak, L.: Graphs and Digraphs.
-      Chapman and Hall/CRC, 1996.
     """
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
@@ -142,10 +139,11 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     INPUT:
 
-    -  ``deg_sequence`` - a list of integers with each
-       entry corresponding to the expected degree of a different vertex.
+    - ``deg_sequence`` - a list of integers with each entry corresponding to the
+      expected degree of a different vertex.
 
-    -  ``seed`` - for the random number generator.
+    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``).
 
 
     EXAMPLES::
@@ -168,11 +166,10 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     REFERENCE:
 
-    .. [Newman2003] Newman, M.E.J. The Structure and function of complex
-      networks, SIAM Review vol. 45, no. 2 (2003), pp. 167-256.
+    [New2003]_
     """
     if seed is None:
-        seed = current_randstate().long_seed()
+        seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     return Graph(networkx.configuration_model([int(i) for i in deg_sequence], seed=seed), loops=True, multiedges=True, sparse=True)
 
@@ -210,26 +207,26 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
 
     INPUT:
 
-    -  ``deg_sequence`` - a list of integers with each
-       entry corresponding to the expected degree of a different vertex.
+    - ``deg_sequence`` - a list of integers with each entry corresponding to the
+      expected degree of a different vertex.
 
-    -  ``seed`` - for the random number generator.
+    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``).
 
 
     EXAMPLES::
 
         sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3])
         sage: G.edges(labels=False)
-        [(0, 2), (0, 3), (1, 1), (1, 4), (2, 3), (2, 4), (3, 4), (4, 4)]
+        [(0, 3), (1, 3), (1, 4), (4, 4)]                    # 32-bit 
+        [(0, 3), (1, 4), (2, 2), (2, 3), (2, 4), (4, 4)]    # 64-bit
         sage: G.show()  # long time
 
     REFERENCE:
 
-    .. [ChungLu2002] Chung, Fan and Lu, L. Connected components in random
-      graphs with given expected degree sequences.
-      Ann. Combinatorics (6), 2002 pp. 125-145.
+    [CL2002]_
     """
     if seed is None:
-        seed = current_randstate().long_seed()
+        seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     return Graph(networkx.expected_degree_graph([int(i) for i in deg_sequence], seed=seed), loops=True)

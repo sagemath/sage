@@ -80,8 +80,8 @@ A homomorphism may also be created via a method on the domain.  ::
     Vector space morphism represented by the matrix:
     [  sqrt3       1]
     [2*sqrt3       2]
-    Domain: Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3
-    Codomain: Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3
+    Domain: Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
+    Codomain: Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
     sage: psi([1, 4])
     (9*sqrt3, 9)
 

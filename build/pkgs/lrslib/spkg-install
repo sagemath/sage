@@ -1,23 +1,4 @@
 cd src/
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-./configure --prefix=$SAGE_LOCAL
-
-$MAKE
-
-if [ $? -ne 0 ]; then
-   echo "Error building lrslib"
-   exit 1
-fi
-
-$MAKE install
-if [ $? -ne 0 ]; then
-   echo "Error installing lrslib"
-   exit 1
-fi
-
+sdh_configure CPPFLAGS="-DLRS_QUIET $CPPFLAGS"
+sdh_make
+sdh_make_install

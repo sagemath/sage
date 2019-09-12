@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Spaces of Distributions for Pollack-Stevens modular symbols
 
 The Pollack-Stevens version of modular symbols take values on a

@@ -13,7 +13,7 @@ if [ $UNAME = "CYGWIN" ]; then
 fi
 
 # Building
-sdh_configure --with-gmp="$SAGE_LOCAL" --with-mpfr="$SAGE_LOCAL" $EXTRA
+sdh_configure $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR $EXTRA
 sdh_make
 
 # Cleaning

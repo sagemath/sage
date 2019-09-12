@@ -130,10 +130,10 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         be classified by how the special node `0` connects with the
         corresponding classical diagram.
 
-    The classical crystal stucture is given by the usual Kashiwara-Nakashima
+    The classical crystal structure is given by the usual Kashiwara-Nakashima
     tableaux rules. That is to embed this into `B(\Lambda_1)^{\otimes n s}`
     by using the reading word and then applying the classical crystal
-    operator. The affine crystal stucture is given by converting to
+    operator. The affine crystal structure is given by converting to
     the corresponding KR crystal element, performing the affine crystal
     operator, and pulling back to a KR tableau.
 

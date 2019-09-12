@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-walkthrough:
 
 ========================
@@ -275,7 +277,7 @@ and build the documentation (see :ref:`chapter-sage_manuals`).
     additional changes to files. To minimize the impact of switching between branches,
     install ccache using the command ::
 
-        ./sage -i ccache
+        [user@localhost sage]$ ./sage -i ccache
 
     Recythonization will still occur when rebuilding, but the recompilation stage
     first checks whether previously compiled files are cached for reuse before
@@ -324,7 +326,9 @@ snapshot with the ``git commit`` command::
 
 This will open an editor for you to write your commit message. The
 commit message should generally have a one-line description, followed
-by an empty line, followed by further explanatory text::
+by an empty line, followed by further explanatory text:
+
+.. CODE-BLOCK:: text
 
     Added the last twin prime
 

@@ -9,6 +9,7 @@
 
 from sage.groups.perm_gps.partn_ref.data_structures cimport OrbitPartition, PartitionStack
 from sage.libs.gap.element cimport GapElement, GapElement_Permutation
+from sage.structure.parent cimport Parent
 
 cdef extern from "refinement_generic.h":
     cdef long *global_refine_vals_array
@@ -35,6 +36,7 @@ cdef class LabelledBranching:
     cdef int *father
     cdef int *act_perm
     cpdef GapElement group, ClosureGroup
+    cdef Parent sym_gp
     cdef bint has_empty_intersection(self, PartitionStack * part)
     cpdef add_gen(self, GapElement_Permutation gen)
 

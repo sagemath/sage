@@ -1,6 +1,6 @@
 
-Educational Versions of Groebner Basis and Related Algorithms
-=============================================================
+Educational Versions of Groebner Basis Related Algorithms
+=========================================================
 
 .. toctree::
    :maxdepth: 2

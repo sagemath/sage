@@ -244,7 +244,7 @@ AUTHOR:
     ``COND ? T : F`` expression or the Python ``T if COND else F``.
     This lets you define piecewise functions using :func:`fast_callable`. ::
 
-        sage: v4 = etb.choice(v3 >= etb.constant(0), v1, v2)
+        sage: v4 = etb.choice(v3 >= etb.constant(0), v1, v2)  # not tested
 
     The arguments are ``(COND, T, F)`` (the same order as in C), so the
     above means that if ``v3`` evaluates to a nonnegative number,
@@ -374,11 +374,12 @@ def fast_callable(x, domain=None, vars=None,
         sage: fp(3.14159)
         -552.4182988917153
         sage: K.<x,y,z> = QQ[]
-        sage: p = K.random_element(degree=3, terms=5); p
-        x*y^2 + 1/3*y^2 - x*z - y*z
+        sage: p = x*y^2 + 1/3*y^2 - x*z - y*z
         sage: fp = fast_callable(p, domain=RDF)
-        sage: fp.op_list()
+        sage: fp.op_list() # py2
         [('load_const', 0.0), ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
+        sage: fp.op_list() # py3
+        [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
         sage: fp(e, pi, sqrt(2))   # abs tol 3e-14
         21.831120464939584
         sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result
@@ -1125,7 +1126,8 @@ cdef class ExpressionConstant(Expression):
     r"""
     An Expression that represents an arbitrary constant.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb(3))
@@ -1192,7 +1194,8 @@ cdef class ExpressionVariable(Expression):
     r"""
     An Expression that represents a variable.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.var(x))
@@ -1258,7 +1261,8 @@ cdef class ExpressionCall(Expression):
     r"""
     An Expression that represents a function call.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.call(sin, x))
@@ -1346,7 +1350,8 @@ cdef class ExpressionIPow(Expression):
     r"""
     A power Expression with an integer exponent.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: from sage.ext.fast_callable import ExpressionTreeBuilder
         sage: etb = ExpressionTreeBuilder(vars=(x,))
         sage: type(etb.var('x')^17)
@@ -1605,7 +1610,7 @@ class IntegerPowerFunction(object):
         sage: square(I)
         -1
         sage: square(RIF(-1, 1)).str(style='brackets')
-        '[0.00000000000000000 .. 1.0000000000000000]'
+        '[0.0000000000000000 .. 1.0000000000000000]'
         sage: IntegerPowerFunction(-1)
         (^(-1))
         sage: IntegerPowerFunction(-1)(22/7)
@@ -2500,4 +2505,3 @@ cdef class Wrapper:
             if isinstance(op, tuple) and op[0] == 'py_call':
                 py_calls.append(op[1])
         return py_calls
-

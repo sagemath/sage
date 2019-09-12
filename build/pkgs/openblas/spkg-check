@@ -1,8 +1,3 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-    echo >&2 "SAGE_LOCAL undefined ... exiting";
-    exit 1
-fi
-
 cd src
 
 # OpenBlas has no proper configure script
@@ -12,9 +7,6 @@ cd src
 # Therefore the following is copied from spkg-install
 # We could also patch the Makefile to use a generic symlink pointing
 # to the archive with a specific name
-
-# See #22021 for issues with multithreading
-OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_THREAD=0"
 
 if [ `python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
     OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
@@ -27,23 +19,20 @@ fi
 
 echo "Running OpenBLAS testsuite"
 
-$MAKE tests $OPENBLAS_CONFIGURE
+sdh_make tests $OPENBLAS_CONFIGURE
 if [ $? -ne 0 ]; then
     # First make sure we already didn't set a target
     if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then
-        echo >&2 "Error while running the OpenBlas testsuite ... exiting"
-        exit 1
+        sdh_die "Error while running the OpenBlas testsuite ... exiting"
     else
         # The recommended TARGET is ATOM if CPU fails
         # See https://github.com/xianyi/OpenBLAS/issues/1204
         OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE TARGET=ATOM"
         echo "Error while testing the OpenBLAS testsuite"
         echo "Retrying the OpenBAS testsuit with TARGET=ATOM"
-        $MAKE tests $OPENBLAS_CONFIGURE
+        sdh_make tests $OPENBLAS_CONFIGURE
         if [ $? -ne 0 ]; then
-            echo >&2 "Error while running the OpenBLAS testsuite ... exiting"
-            exit 1
+            sdh_die "Error while running the OpenBLAS testsuite ... exiting"
         fi
     fi
 fi
-

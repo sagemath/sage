@@ -1,5 +1,5 @@
 r"""
-Atkin/Hecke series for overconvergent modular forms.
+Atkin/Hecke series for overconvergent modular forms
 
 This file contains a function :func:`~hecke_series` to compute the
 characteristic series `P(t)` modulo `p^m` of the Atkin/Hecke operator `U_p`
@@ -59,15 +59,15 @@ A list containing the characteristic series of the U_23 operator modulo 23^10 on
     + 29197235447073*x + 1, 32737396672905*x^4 + 36141830902187*x^3 + 16514246534976*x^2 + 38886059530878*x + 1]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Alan Lauder <lauder@maths.ox.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six.moves import range
 from sage.functions.all import floor, ceil
 from sage.arith.all import valuation
@@ -112,9 +112,10 @@ def compute_G(p, F):
     Fp = (F.truncate_powerseries(ceil(F.prec() / ZZ(p)))).V(p)
     return F / Fp
 
-def low_weight_bases(N,p,m,NN,weightbound):
+
+def low_weight_bases(N, p, m, NN, weightbound):
     r"""
-    Returns a list of integral bases of modular forms of level N and (even)
+    Return a list of integral bases of modular forms of level N and (even)
     weight at most ``weightbound``, as `q`-expansions modulo `(p^m,q^{NN})`.
 
     These forms are obtained by reduction mod `p^m` from an integral basis in

@@ -16,11 +16,11 @@ out to be the most time-consuming, and for this reason it is also nice to have a
 Cython module, and version of these functions that return C arrays, in order to
 avoid these operations when they are not necessary.
 
-**Memory cost** : The methods implemented in the current module sometimes need large
-amounts of memory to return their result. Storing the distances between all
-pairs of vertices in a graph on `1500` vertices as a dictionary of dictionaries
-takes around 200MB, while storing the same information as a C array requires
-4MB.
+**Memory cost** : The methods implemented in the current module sometimes need
+large amounts of memory to return their result. Storing the distances between
+all pairs of vertices in a graph on `1500` vertices as a dictionary of
+dictionaries takes around 200MB, while storing the same information as a C array
+requires 4MB.
 
 
 The module's main function
@@ -34,107 +34,79 @@ Breadth First Search per vertex of the (di)graph.
 
 **What can this function compute ?**
 
-    - The matrix of predecessors.
+- The matrix of predecessors.
 
-      This matrix `P` has size `n^2`, and is such that vertex `P[u,v]` is a
-      predecessor of `v` on a shortest `uv`-path. Hence, this matrix efficiently
-      encodes the information of a shortest `uv`-path for any `u,v\in G` :
-      indeed, to go from `u` to `v` you should first find a shortest
-      `uP[u,v]`-path, then jump from `P[u,v]` to `v` as it is one of its
-      outneighbors. Apply recursively and find out what the whole path is !.
+  This matrix `P` has size `n^2`, and is such that vertex `P[u,v]` is a
+  predecessor of `v` on a shortest `uv`-path. Hence, this matrix efficiently
+  encodes the information of a shortest `uv`-path for any `u,v\in G` : indeed,
+  to go from `u` to `v` you should first find a shortest `uP[u,v]`-path, then
+  jump from `P[u,v]` to `v` as it is one of its outneighbors. Apply recursively
+  and find out what the whole path is !.
 
-    - The matrix of distances.
+- The matrix of distances.
 
-      This matrix has size `n^2` and associates to any `uv` the distance from
-      `u` to `v`.
+  This matrix has size `n^2` and associates to any `uv` the distance
+  from `u` to `v`.
 
-    - The vector of eccentricities.
+- The vector of eccentricities.
 
-      This vector of size `n` encodes for each vertex `v` the distance to vertex
-      which is furthest from `v` in the graph. In particular, the diameter of
-      the graph is the maximum of these values.
+  This vector of size `n` encodes for each vertex `v` the distance to vertex
+  which is furthest from `v` in the graph. In particular, the diameter of the
+  graph is the maximum of these values.
 
 **What does it take as input ?**
 
-    - ``gg`` a (Di)Graph.
+- ``gg`` a (Di)Graph.
 
-    - ``unsigned short * predecessors`` -- a pointer toward an array of size
-      `n^2\cdot\text{sizeof(unsigned short)}`. Set to ``NULL`` if you do not
-      want to compute the predecessors.
+- ``unsigned short * predecessors`` -- a pointer toward an array of size
+  `n^2\cdot\text{sizeof(unsigned short)}`. Set to ``NULL`` if you do not want to
+  compute the predecessors.
 
-    - ``unsigned short * distances`` -- a pointer toward an array of size
-      `n^2\cdot\text{sizeof(unsigned short)}`. The computation of the distances
-      is necessary for the algorithm, so this value can **not** be set to
-      ``NULL``.
+- ``unsigned short * distances`` -- a pointer toward an array of size
+  `n^2\cdot\text{sizeof(unsigned short)}`. The computation of the distances is
+  necessary for the algorithm, so this value can **not** be set to ``NULL``.
 
-    - ``int * eccentricity`` -- a pointer toward an array of size
-      `n\cdot\text{sizeof(int)}`. Set to ``NULL`` if you do not want to compute
-      the eccentricity.
+- ``int * eccentricity`` -- a pointer toward an array of size
+  `n\cdot\text{sizeof(int)}`. Set to ``NULL`` if you do not want to compute the
+  eccentricity.
 
 **Technical details**
 
-    - The vertices are encoded as `1, ..., n` as they appear in the ordering of
-      ``G.vertices()``.
+- The vertices are encoded as `1, ..., n` as they appear in the ordering of
+  ``G.vertices()``, unless another ordering is specified by the user.
 
-    - Because this function works on matrices whose size is quadratic compared
-      to the number of vertices when computing all distances or predecessors, it
-      uses short variables to store the vertices' names instead of long ones to
-      divide by 2 the size in memory. This means that only the
-      diameter/eccentricities can be computed on a graph of more than 65536
-      nodes. For information, the current version of the algorithm on a graph
-      with `65536=2^{16}` nodes creates in memory `2` tables on `2^{32}` short
-      elements (2bytes each), for a total of `2^{33}` bytes or `8` gigabytes. In
-      order to support larger sizes, we would have to replace shorts by 32-bits
-      int or 64-bits int, which would then require respectively 16GB or 32GB.
+- Because this function works on matrices whose size is quadratic compared to
+  the number of vertices when computing all distances or predecessors, it uses
+  short variables to store the vertices' names instead of long ones to divide by
+  2 the size in memory. This means that only the diameter/eccentricities can be
+  computed on a graph of more than 65536 nodes. For information, the current
+  version of the algorithm on a graph with `65536=2^{16}` nodes creates in
+  memory `2` tables on `2^{32}` short elements (2bytes each), for a total of
+  `2^{33}` bytes or `8` gigabytes. In order to support larger sizes, we would
+  have to replace shorts by 32-bits int or 64-bits int, which would then require
+  respectively 16GB or 32GB.
 
-    - In the C version of these functions, infinite distances are represented
-      with ``<unsigned short> -1 = 65535`` for ``unsigned short`` variables, and
-      by ``INT32_MAX`` otherwise. These case happens when the input is a
-      disconnected graph, or a non-strongly-connected digraph.
+- In the C version of these functions, infinite distances are represented with
+  ``<unsigned short> -1 = 65535`` for ``unsigned short`` variables, and by
+  ``INT32_MAX`` otherwise. These case happens when the input is a disconnected
+  graph, or a non-strongly-connected digraph.
 
-    - A memory error is raised when data structures allocation failed. This
-      could happen with large graphs on computers with low memory space.
+- A memory error is raised when data structures allocation failed. This could
+  happen with large graphs on computers with low memory space.
 
-    .. WARNING::
+.. WARNING::
 
-        The function ``all_pairs_shortest_path_BFS`` has **no reason** to be
-        called by the user, even though he would be writing his code in Cython
-        and look for efficiency. This module contains wrappers for this function
-        that feed it with the good parameters. As the function is inlined, using
-        those wrappers actually saves time as it should avoid testing the
-        parameters again and again in the main function's body.
+    The function ``all_pairs_shortest_path_BFS`` has **no reason** to be called
+    by the user, even though he would be writing his code in Cython and look for
+    efficiency. This module contains wrappers for this function that feed it
+    with the good parameters. As the function is inlined, using those wrappers
+    actually saves time as it should avoid testing the parameters again and
+    again in the main function's body.
 
 AUTHOR:
 
 - Nathann Cohen (2011)
 - David Coudert (2014) -- 2sweep, multi-sweep and iFUB for diameter computation
-
-REFERENCE:
-
-.. [KRG96b] \S. Klavzar, A. Rajapakse, and I. Gutman. The Szeged and the
-  Wiener index of graphs. *Applied Mathematics Letters*, 9(5):45--49, 1996.
-
-.. [GYLL93c] \I. Gutman, Y.-N. Yeh, S.-L. Lee, and Y.-L. Luo. Some recent
-  results in the theory of the Wiener number. *Indian Journal of
-  Chemistry*, 32A:651--661, 1993.
-
-.. [CGH+13] \P. Crescenzi, R. Grossi, M. Habib, L. Lanzi, A. Marino. On computing
-  the diameter of real-world undirected graphs. *Theor. Comput. Sci.* 514: 84-95
-  (2013) :doi:`10.1016/j.tcs.2012.09.018`
-
-.. [CGI+10] \P. Crescenzi, R. Grossi, C. Imbrenda, L. Lanzi, and A. Marino.
-  Finding the Diameter in Real-World Graphs: Experimentally Turning a Lower
-  Bound into an Upper Bound. Proceedings of *18th Annual European Symposium on
-  Algorithms*. Lecture Notes in Computer Science, vol. 6346, 302-313. Springer
-  (2010).
-
-.. [MLH08] \C. Magnien, M. Latapy, and M. Habib. Fast computation of empirically
-  tight bounds for the diameter of massive graphs. *ACM Journal of Experimental
-  Algorithms* 13 (2008) http://dx.doi.org/10.1145/1412228.1455266
-
-.. [TK13] \F. W. Takes and W. A. Kosters. Computing the eccentricity distribution
-  of large graphs. *Algorithms* 6:100-118 (2013)
-  http://dx.doi.org/10.3390/a6010100
 
 Functions
 ---------
@@ -161,29 +133,46 @@ from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
 from sage.ext.memory_allocator cimport MemoryAllocator
 
-from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph, out_degree
-from sage.graphs.base.static_sparse_backend cimport simple_BFS
+from sage.graphs.base.static_sparse_graph cimport (short_digraph,
+                                                   init_short_digraph,
+                                                   free_short_digraph,
+                                                   out_degree,
+                                                   simple_BFS)
 
 cdef inline all_pairs_shortest_path_BFS(gg,
-                                        unsigned short * predecessors,
-                                        unsigned short * distances,
-                                        uint32_t       * eccentricity):
-    """
+                                        unsigned short* predecessors,
+                                        unsigned short* distances,
+                                        uint32_t* eccentricity,
+                                        vertex_list=None):
+    r"""
     See the module's documentation.
+
+    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
+    mapping from `(0, \ldots, n-1)` to vertex labels in ``gg``. When
+    ``vertex_list`` is ``None`` (default), the mapping is given by the ordering
+    of ``gg.vertices()``. When set, ``distances[i * n + j]`` is the shortest BFS
+    distance between vertices ``vertex_list[i]`` and ``vertex_list[j]``.
     """
 
     from sage.rings.infinity import Infinity
 
-    cdef list int_to_vertex = gg.vertices()
+    cdef list int_to_vertex
+    if vertex_list is None:
+        int_to_vertex = gg.vertices()
+    elif set(gg.vertex_iterator()) == set(vertex_list):
+        int_to_vertex = vertex_list
+    else:
+        raise ValueError("parameter vertex_list is incorrect for this graph")
+
     cdef int i
     cdef MemoryAllocator mem = MemoryAllocator()
 
-    cdef int n = len(int_to_vertex)
+    cdef int n = gg.order()
 
     # Computing the predecessors/distances can only be done if we have less than
     # MAX_UNSIGNED_SHORT vertices. No problem with the eccentricities though as
     # we store them on an integer vector.
-    if (predecessors != NULL or distances != NULL) and n > <unsigned short> -1:
+    if (predecessors or distances) and n > <unsigned short> -1:
         raise ValueError("The graph backend contains more than "+
                          str(<unsigned short> -1)+" nodes and we cannot "+
                          "compute the matrix of distances/predecessors on "+
@@ -194,17 +183,17 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     bitset_init(seen, n)
 
     # The list of waiting vertices, the beginning and the end of the list
-    cdef int * waiting_list = <int *> mem.allocarray(n, sizeof(int))
+    cdef int* waiting_list = <int*> mem.allocarray(n, sizeof(int))
     cdef int waiting_beginning = 0
     cdef int waiting_end = 0
 
     cdef int source
     cdef int v, u
-    cdef uint32_t * p_tmp
-    cdef uint32_t * end
+    cdef uint32_t* p_tmp
+    cdef uint32_t* end
 
-    cdef unsigned short * c_predecessors = predecessors
-    cdef int * c_distances = <int *> mem.allocarray(n, sizeof(int))
+    cdef unsigned short *c_predecessors = predecessors
+    cdef int* c_distances = <int*> mem.allocarray(n, sizeof(int))
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors
@@ -222,10 +211,10 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     # sage.graphs.base.static_sparse_graph
 
     cdef short_digraph sd
-    init_short_digraph(sd, gg)
-    cdef uint32_t ** p_vertices = sd.neighbors
-    cdef uint32_t * p_edges = sd.edges
-    cdef uint32_t * p_next = p_edges
+    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex)
+    cdef uint32_t** p_vertices = sd.neighbors
+    cdef uint32_t* p_edges = sd.edges
+    cdef uint32_t* p_next = p_edges
 
     # We run n different BFS taking each vertex as a source
     for source in range(n):
@@ -252,7 +241,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
             v = waiting_list[waiting_beginning]
 
             p_tmp = p_vertices[v]
-            end = p_vertices[v+1]
+            end = p_vertices[v + 1]
 
             # Iterating over all the outneighbors u of v
             while p_tmp < end:
@@ -261,8 +250,8 @@ cdef inline all_pairs_shortest_path_BFS(gg,
                 # If we notice one of these neighbors is not seen yet, we set
                 # its parameters and add it to the queue to be explored later.
                 if not bitset_in(seen, u):
-                    c_distances[u] = c_distances[v]+1
-                    if predecessors != NULL:
+                    c_distances[u] = c_distances[v] + 1
+                    if predecessors:
                         c_predecessors[u] = v
                     bitset_add(seen, u)
                     waiting_end += 1
@@ -278,21 +267,21 @@ cdef inline all_pairs_shortest_path_BFS(gg,
             v = bitset_next(seen, 0)
             while v >= 0:
                 c_distances[v] = INT32_MAX
-                if predecessors != NULL:
+                if predecessors:
                     c_predecessors[v] = -1
-                v = bitset_next(seen, v+1)
+                v = bitset_next(seen, v + 1)
 
-            if eccentricity != NULL:
+            if eccentricity:
                 eccentricity[source] = UINT32_MAX
 
-        elif eccentricity != NULL:
-            eccentricity[source] = c_distances[waiting_list[n-1]]
+        elif eccentricity:
+            eccentricity[source] = c_distances[waiting_list[n - 1]]
 
 
-        if predecessors != NULL:
+        if predecessors:
             c_predecessors += n
 
-        if distances != NULL:
+        if distances:
             for i in range(n):
                 distances[i] = <unsigned short> c_distances[i]
             distances += n
@@ -304,26 +293,33 @@ cdef inline all_pairs_shortest_path_BFS(gg,
 # Predecessors #
 ################
 
-cdef unsigned short * c_shortest_path_all_pairs(G) except NULL:
+cdef unsigned short* c_shortest_path_all_pairs(G, vertex_list=None) except NULL:
     r"""
-    Returns the matrix of predecessors in G.
+    Return the matrix of predecessors in G.
 
     The matrix `P` returned has size `n^2`, and is such that vertex `P[u,v]` is
     a predecessor of `v` on a shortest `uv`-path. Hence, this matrix efficiently
     encodes the information of a shortest `uv`-path for any `u,v\in G` : indeed,
     to go from `u` to `v` you should first find a shortest `uP[u,v]`-path, then
     jump from `P[u,v]` to `v` as it is one of its outneighbors.
+
+    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
+    mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
+    ``vertex_list`` is ``None`` (default), the mapping is given by the ordering
+    of ``G.vertices()``. When set, ``predecessors[i * n + j]`` is the
+    predecessor of ``vertex_list[j]`` on the shortest path from
+    ``vertex_list[i]`` to ``vertex_list[j]``.
     """
 
     cdef unsigned int n = G.order()
-    cdef unsigned short * distances = <unsigned short *> sig_malloc(n*n*sizeof(unsigned short))
-    if distances == NULL:
+    cdef unsigned short* distances = <unsigned short*> sig_malloc(n * n * sizeof(unsigned short))
+    if not distances:
         raise MemoryError()
-    cdef unsigned short * predecessors = <unsigned short *> sig_malloc(n*n*sizeof(unsigned short))
-    if predecessors == NULL:
+    cdef unsigned short* predecessors = <unsigned short*> sig_malloc(n * n * sizeof(unsigned short))
+    if not predecessors:
         sig_free(distances)
         raise MemoryError()
-    all_pairs_shortest_path_BFS(G, predecessors, distances, NULL)
+    all_pairs_shortest_path_BFS(G, predecessors, distances, NULL, vertex_list=vertex_list)
 
     sig_free(distances)
 
@@ -331,16 +327,13 @@ cdef unsigned short * c_shortest_path_all_pairs(G) except NULL:
 
 def shortest_path_all_pairs(G):
     r"""
-    Returns the matrix of predecessors in G.
+    Return the matrix of predecessors in G.
 
     The matrix `P` returned has size `n^2`, and is such that vertex `P[u,v]` is
     a predecessor of `v` on a shortest `uv`-path. Hence, this matrix efficiently
     encodes the information of a shortest `uv`-path for any `u,v\in G` : indeed,
     to go from `u` to `v` you should first find a shortest `uP[u,v]`-path, then
     jump from `P[u,v]` to `v` as it is one of its outneighbors.
-
-    The integer corresponding to a vertex is its index in the list
-    ``G.vertices()``.
 
     EXAMPLES::
 
@@ -361,22 +354,18 @@ def shortest_path_all_pairs(G):
 
     cdef int n = G.order()
 
-    if n == 0:
+    if not n:
         return {}
 
-    cdef unsigned short * predecessors = c_shortest_path_all_pairs(G)
-    cdef unsigned short * c_predecessors = predecessors
+    # The order of vertices must be the same as in init_short_digraph
+    cdef list int_to_vertex = list(G)
+    cdef unsigned short* predecessors = c_shortest_path_all_pairs(G, vertex_list=int_to_vertex)
+    cdef unsigned short* c_predecessors = predecessors
 
     cdef dict d = {}
     cdef dict d_tmp
 
-    cdef CGraphBackend cg = <CGraphBackend> G._backend
-
-    cdef list int_to_vertex = G.vertices()
     cdef int i, j
-
-    for i, l in enumerate(int_to_vertex):
-        int_to_vertex[i] = cg.get_vertex(l)
 
     for j in range(n):
         d_tmp = {}
@@ -398,26 +387,32 @@ def shortest_path_all_pairs(G):
 # Distances #
 #############
 
-cdef unsigned short * c_distances_all_pairs(G):
+cdef unsigned short * c_distances_all_pairs(G, vertex_list=None):
     r"""
     Returns the matrix of distances in G.
 
     The matrix `M` returned is of length `n^2`, and the distance between
     vertices `u` and `v` is `M[u,v]`. The integer corresponding to a vertex is
-    its index in the list ``G.vertices()``.
+    its index in the list ``G.vertices()`` unless parameter ``vertex_list`` is
+    set.
+
+    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
+    mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When set,
+    ``distances[i * n + j]`` is the shortest BFS distance between vertices
+    ``vertex_list[i]`` and ``vertex_list[j]``.
     """
 
     cdef unsigned int n = G.order()
-    cdef unsigned short * distances = <unsigned short *> sig_malloc(n*n*sizeof(unsigned short))
-    if distances == NULL:
+    cdef unsigned short* distances = <unsigned short*> sig_malloc(n * n * sizeof(unsigned short))
+    if not distances:
         raise MemoryError()
-    all_pairs_shortest_path_BFS(G, NULL, distances, NULL)
+    all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=vertex_list)
 
     return distances
 
 def distances_all_pairs(G):
     r"""
-    Returns the matrix of distances in G.
+    Return the matrix of distances in G.
 
     This function returns a double dictionary ``D`` of vertices, in which the
     distance between vertices ``u`` and ``v`` is ``D[u][v]``.
@@ -443,16 +438,18 @@ def distances_all_pairs(G):
 
     cdef int n = G.order()
 
-    if n == 0:
+    if not n:
         return {}
 
-    cdef unsigned short * distances = c_distances_all_pairs(G)
-    cdef unsigned short * c_distances = distances
+    # The order of vertices must be the same as in init_short_digraph
+    cdef list int_to_vertex = list(G)
+
+    cdef unsigned short* distances = c_distances_all_pairs(G, vertex_list=int_to_vertex)
+    cdef unsigned short* c_distances = distances
 
     cdef dict d = {}
     cdef dict d_tmp
 
-    cdef list int_to_vertex = G.vertices()
     cdef int i, j
 
     for j in range(n):
@@ -469,14 +466,15 @@ def distances_all_pairs(G):
     sig_free(distances)
     return d
 
-def is_distance_regular(G, parameters = False):
+def is_distance_regular(G, parameters=False):
     r"""
-    Tests if the graph is distance-regular
+    Test if the graph is distance-regular
 
-    A graph `G` is distance-regular if for any integers `j,k` the value
-    of `|\{x:d_G(x,u)=j,x\in V(G)\} \cap \{y:d_G(y,v)=j,y\in V(G)\}|` is constant
-    for any two vertices `u,v\in V(G)` at distance `i` from each other.
-    In particular `G` is regular, of degree `b_0` (see below), as one can take `u=v`.
+    A graph `G` is distance-regular if for any integers `j,k` the value of
+    `|\{x:d_G(x,u)=j,x\in V(G)\} \cap \{y:d_G(y,v)=j,y\in V(G)\}|` is constant
+    for any two vertices `u,v\in V(G)` at distance `i` from each other. In
+    particular `G` is regular, of degree `b_0` (see below), as one can take
+    `u=v`.
 
     Equivalently a graph is distance-regular if there exist integers `b_i,c_i`
     such that for any two vertices `u,v` at distance `i` we have
@@ -485,14 +483,13 @@ def is_distance_regular(G, parameters = False):
     * `c_i = |\{x:d_G(x,u)=i-1,x\in V(G)\}\cap N_G(v)\}|, \ 1\leq i\leq d,`
 
     where `d` is the diameter of the graph.  For more information on
-    distance-regular graphs, see its associated :wikipedia:`wikipedia
-    page <Distance-regular_graph>`.
+    distance-regular graphs, see the :wikipedia:`Distance-regular_graph`.
 
     INPUT:
 
-    - ``parameters`` (boolean) -- if set to ``True``, the function returns the
-      pair ``(b,c)`` of lists of integers instead of ``True`` (see the definition
-      above). Set to ``False`` by default.
+    - ``parameters`` -- boolean (default: ``False``); if set to ``True``, the
+      function returns the pair ``(b, c)`` of lists of integers instead of
+      a boolean answer (see the definition above)
 
     .. SEEALSO::
 
@@ -521,7 +518,7 @@ def is_distance_regular(G, parameters = False):
 
     TESTS::
 
-        sage: graphs.PathGraph(2).is_distance_regular(parameters = True)
+        sage: graphs.PathGraph(2).is_distance_regular(parameters=True)
         ([1, None], [None, 1])
         sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
@@ -532,18 +529,18 @@ def is_distance_regular(G, parameters = False):
     cdef int infinity = <unsigned short> -1
 
     if n <= 1:
-        return ([],[]) if parameters else True
+        return ([], []) if parameters else True
 
     if not G.is_regular():
         return False
     k = G.degree(next(G.vertex_iterator()))
 
     # Matrix of distances
-    cdef unsigned short * distance_matrix = c_distances_all_pairs(G)
+    cdef unsigned short* distance_matrix = c_distances_all_pairs(G, vertex_list=list(G))
 
     # The diameter, i.e. the longest *finite* distance between two vertices
     cdef int diameter = 0
-    for i in range(n*n):
+    for i in range(n * n):
         if distance_matrix[i] > diameter and distance_matrix[i] != infinity:
             diameter = distance_matrix[i]
 
@@ -553,7 +550,7 @@ def is_distance_regular(G, parameters = False):
     # b_distance_matrix[d*n+v] is the set of vertices at distance d from v.
     cdef binary_matrix_t b_distance_matrix
     try:
-        binary_matrix_init(b_distance_matrix,n*(diameter+2),n)
+        binary_matrix_init(b_distance_matrix, n * (diameter + 2), n)
     except MemoryError:
         sig_free(distance_matrix)
         bitset_free(b_tmp)
@@ -561,14 +558,14 @@ def is_distance_regular(G, parameters = False):
 
     # Fills b_distance_matrix
     for u in range(n):
-        for v in range(u,n):
-            d = distance_matrix[u*n+v]
+        for v in range(u, n):
+            d = distance_matrix[u * n + v]
             if d != infinity:
-                binary_matrix_set1(b_distance_matrix, d*n+u, v)
-                binary_matrix_set1(b_distance_matrix, d*n+v, u)
+                binary_matrix_set1(b_distance_matrix, d * n + u, v)
+                binary_matrix_set1(b_distance_matrix, d * n + v, u)
 
-    cdef list bi = [-1 for i in range(diameter +1)]
-    cdef list ci = [-1 for i in range(diameter +1)]
+    cdef list bi = [-1 for i in range(diameter + 1)]
+    cdef list ci = [-1 for i in range(diameter + 1)]
 
     # Applying the definition with b_i,c_i
     for u in range(n):
@@ -576,15 +573,15 @@ def is_distance_regular(G, parameters = False):
             if u == v:
                continue
 
-            d = distance_matrix[u*n+v]
+            d = distance_matrix[u * n + v]
             if d == infinity:
                 continue
 
             # Computations of b_d and c_d for u,v. We intersect sets stored in
             # b_distance_matrix.
-            bitset_and(b_tmp, b_distance_matrix.rows[(d+1)*n+u], b_distance_matrix.rows[n+v])
+            bitset_and(b_tmp, b_distance_matrix.rows[(d + 1) * n + u], b_distance_matrix.rows[n + v])
             b = bitset_len(b_tmp)
-            bitset_and(b_tmp, b_distance_matrix.rows[(d-1)*n+u], b_distance_matrix.rows[n+v])
+            bitset_and(b_tmp, b_distance_matrix.rows[(d - 1) * n + u], b_distance_matrix.rows[n + v])
             c = bitset_len(b_tmp)
 
             # Consistency of b_d and c_d
@@ -616,7 +613,7 @@ def is_distance_regular(G, parameters = False):
 
 def distances_and_predecessors_all_pairs(G):
     r"""
-    Returns the matrix of distances in G and the matrix of predecessors.
+    Return the matrix of distances in G and the matrix of predecessors.
 
     Distances : the matrix `M` returned is of length `n^2`, and the distance
     between vertices `u` and `v` is `M[u,v]`. The integer corresponding to a
@@ -628,10 +625,6 @@ def distances_and_predecessors_all_pairs(G):
     `u,v\in G` : indeed, to go from `u` to `v` you should first find a shortest
     `uP[u,v]`-path, then jump from `P[u,v]` to `v` as it is one of its
     outneighbors.
-
-    The integer corresponding to a vertex is its index in the list
-    ``G.vertices()``.
-
 
     EXAMPLES::
 
@@ -659,32 +652,26 @@ def distances_and_predecessors_all_pairs(G):
           8: {0: 5, 1: 6, 2: 3, 3: 8, 4: 3, 5: 8, 6: 8, 7: 5, 8: None, 9: 6},
           9: {0: 4, 1: 6, 2: 7, 3: 4, 4: 9, 5: 7, 6: 9, 7: 9, 8: 6, 9: None}})
     """
-
     from sage.rings.infinity import Infinity
     cdef unsigned int n = G.order()
 
-    if n == 0:
+    if not n:
         return {}, {}
 
-    cdef unsigned short * distances = <unsigned short *> sig_malloc(n*n*sizeof(unsigned short))
-    if distances == NULL:
-        raise MemoryError()
-    cdef unsigned short * c_distances = distances
-    cdef unsigned short * predecessor = <unsigned short *> sig_malloc(n*n*sizeof(unsigned short))
-    if predecessor == NULL:
-        sig_free(distances)
-        raise MemoryError()
-    cdef unsigned short * c_predecessor = predecessor
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef unsigned short* c_distances = <unsigned short*> mem.malloc(n * n * sizeof(unsigned short))
+    cdef unsigned short* c_predecessor = <unsigned short*> mem.malloc(n * n * sizeof(unsigned short))
 
-    all_pairs_shortest_path_BFS(G, predecessor, distances, NULL)
+    # The order of vertices must be the same as in init_short_digraph
+    cdef list int_to_vertex = list(G)
 
+    all_pairs_shortest_path_BFS(G, c_predecessor, c_distances, NULL, vertex_list=int_to_vertex)
 
     cdef dict d_distance = {}
     cdef dict d_predecessor = {}
     cdef dict t_distance = {}
     cdef dict t_predecessor = {}
 
-    cdef list int_to_vertex = G.vertices()
     cdef int i, j
 
     for j in range(n):
@@ -705,39 +692,44 @@ def distances_and_predecessors_all_pairs(G):
         c_distances += n
         c_predecessor += n
 
-    sig_free(distances)
-    sig_free(predecessor)
-
     return d_distance, d_predecessor
 
 ################
 # Eccentricity #
 ################
 
-cdef uint32_t * c_eccentricity(G) except NULL:
+cdef uint32_t * c_eccentricity(G, vertex_list=None) except NULL:
     r"""
     Return the vector of eccentricities in G.
 
-    The array returned is of length n, and its ith component is the eccentricity
-    of the ith vertex in ``G.vertices()``.
+    The array returned is of length `n`, and by default its `i`-th component is
+    the eccentricity of the `i`-th vertex in ``G.vertices()``.
+
+    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
+    mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When set,
+    ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``.
     """
     cdef unsigned int n = G.order()
 
     cdef uint32_t * ecc = <uint32_t *> sig_calloc(n, sizeof(uint32_t))
-    if ecc == NULL:
+    if not ecc:
         raise MemoryError()
-    all_pairs_shortest_path_BFS(G, NULL, NULL, ecc)
+    all_pairs_shortest_path_BFS(G, NULL, NULL, ecc, vertex_list=vertex_list)
 
     return ecc
 
-cdef uint32_t * c_eccentricity_bounding(G) except NULL:
+cdef uint32_t * c_eccentricity_bounding(G, vertex_list=None) except NULL:
     r"""
-    Return the vector of eccentricities in G using the algorithm of [TK13]_.
+    Return the vector of eccentricities in G using the algorithm of [TK2013]_.
 
-    The array returned is of length n, and its ith component is the eccentricity
-    of the ith vertex in ``G.vertices()``.
+    The array returned is of length `n`, and by default its `i`-th component is
+    the eccentricity of the `i`-th vertex in ``G.vertices()``.
 
-    The algorithm proposed in [TK13]_ is based on the observation that for all
+    Optional parameter ``vertex_list`` is a list of `n` vertices specifying a
+    mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When set,
+    ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``.
+
+    The algorithm proposed in [TK2013]_ is based on the observation that for all
     nodes `v,w\in V`, we have `\max(ecc[v]-d(v,w), d(v,w))\leq ecc[w] \leq
     ecc[v] + d(v,w)`. Also the algorithms iteratively improves upper and lower
     bounds on the eccentricity of each node until no further improvements can be
@@ -751,7 +743,7 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
     # module sage.graphs.base.static_sparse_graph
     cdef unsigned int n = G.order()
     cdef short_digraph sd
-    init_short_digraph(sd, G)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=vertex_list)
 
     # allocated some data structures
     cdef bitset_t seen
@@ -774,7 +766,7 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
     next_v = max((out_degree(sd, v), v) for v in range(n))[1]
     
     sig_on()
-    while next_v!=UINT32_MAX:
+    while next_v != UINT32_MAX:
 
         v = next_v
         cpt += 1
@@ -782,7 +774,7 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
         # Compute the exact eccentricity of v
         LB[v] = simple_BFS(sd, v, distances, NULL, waiting_list, seen)
 
-        if LB[v]==UINT32_MAX:
+        if LB[v] == UINT32_MAX:
             # The graph is not connected. We set maximum value and exit.
             for w in range(n):
                 LB[w] = UINT32_MAX
@@ -794,9 +786,9 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
         for w in range(n):
             LB[w] = max(LB[w], max(LB[v] - distances[w], distances[w]))
             UB[w] = min(UB[w], LB[v] + distances[w])
-            if LB[w]==UB[w]:
+            if LB[w] == UB[w]:
                 continue
-            elif next_v==UINT32_MAX or (cpt%2==0 and LB[w]<LB[next_v]) or (cpt%2==1 and UB[w]>UB[next_v]):
+            elif next_v == UINT32_MAX or (not cpt % 2 and LB[w] < LB[next_v]) or (cpt % 2 and UB[w] > UB[next_v]):
                 # The next vertex is either the vertex with largest upper bound
                 # or smallest lower bound
                 next_v = w
@@ -809,7 +801,7 @@ cdef uint32_t * c_eccentricity_bounding(G) except NULL:
 
     return LB
 
-def eccentricity(G, algorithm="standard"):
+def eccentricity(G, algorithm="standard", vertex_list=None):
     r"""
     Return the vector of eccentricities in G.
 
@@ -820,10 +812,16 @@ def eccentricity(G, algorithm="standard"):
 
     - ``G`` -- a Graph or a DiGraph.
 
-    - ``algorithm`` -- (default: ``'standard'``) name of the method used to
-      compute the eccentricity of the vertices. Available algorithms are
+    - ``algorithm`` -- string (default: ``'standard'``); name of the method used
+      to compute the eccentricity of the vertices. Available algorithms are
       ``'standard'`` which performs a BFS from each vertex and ``'bounds'``
-      which uses the fast algorithm proposed in [TK13]_ for undirected graphs.
+      which uses the fast algorithm proposed in [TK2013]_ for undirected graphs.
+
+    - ``vertex_list`` -- list (default: ``None``); a list of `n` vertices
+      specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `G`. When
+      set, ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``. When
+      ``vertex_list`` is ``None``, ``ecc[i]`` is the eccentricity of vertex
+      ``G.vertices()[i]``.
 
     EXAMPLES::
 
@@ -831,14 +829,20 @@ def eccentricity(G, algorithm="standard"):
         sage: g = graphs.PetersenGraph()
         sage: eccentricity(g)
         [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        sage: g.add_edge(0, g.add_vertex())
+        sage: V = list(g)
+        sage: eccentricity(g, vertex_list=V)
+        [2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 3]
+        sage: eccentricity(g, vertex_list=V[::-1])
+        [3, 3, 3, 3, 3, 2, 2, 3, 3, 2, 2]
 
     TESTS:
 
     All algorithms are valid::
 
         sage: from sage.graphs.distances_all_pairs import eccentricity
-        sage: g = graphs.RandomGNP(50,.1)
-        sage: eccentricity(g, algorithm='standard')==eccentricity(g, algorithm='bounds')
+        sage: g = graphs.RandomGNP(50, .1)
+        sage: eccentricity(g, algorithm='standard') == eccentricity(g, algorithm='bounds')
         True
 
     Case of not (strongly) connected (directed) graph::
@@ -858,7 +862,7 @@ def eccentricity(G, algorithm="standard"):
         sage: eccentricity(g, algorithm='bounds')
         Traceback (most recent call last):
         ...
-        ValueError: The 'bounds' algorithm only works on undirected graphs.
+        ValueError: the 'bounds' algorithm only works on undirected graphs
 
     Asking for unknown algorithm::
 
@@ -867,29 +871,46 @@ def eccentricity(G, algorithm="standard"):
         sage: eccentricity(g, algorithm='Nice Jazz Festival')
         Traceback (most recent call last):
         ...
-        ValueError: Unknown algorithm 'Nice Jazz Festival'. Please contribute.
+        ValueError: unknown algorithm 'Nice Jazz Festival', please contribute
+
+    Invalid value for parameter vertex_list::
+
+        sage: from sage.graphs.distances_all_pairs import eccentricity
+        sage: g = graphs.PathGraph(2)
+        sage: eccentricity(g, vertex_list=[0, 1, 2])
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter vertex_list is incorrect for this graph
     """
     from sage.rings.infinity import Infinity
     cdef int n = G.order()
 
     # Trivial cases
-    if n == 0:
+    if not n:
         return []
-    elif G.is_directed() and algorithm=='bounds':
-        raise ValueError("The 'bounds' algorithm only works on undirected graphs.")
+    elif G.is_directed() and algorithm == 'bounds':
+        raise ValueError("the 'bounds' algorithm only works on undirected graphs")
     elif not G.is_connected():
-        return [Infinity]*n
+        return [Infinity] * n
 
-    cdef uint32_t * ecc
-    if algorithm=="bounds":
-        ecc = c_eccentricity_bounding(G)
-    elif algorithm=="standard":
-        ecc = c_eccentricity(G)
+    cdef list int_to_vertex
+    if vertex_list is None:
+        int_to_vertex = G.vertices()
+    elif len(vertex_list) == n and set(vertex_list) == set(G):
+        int_to_vertex = vertex_list
     else:
-        raise ValueError("Unknown algorithm '{}'. Please contribute.".format(algorithm))
+        raise ValueError("parameter vertex_list is incorrect for this graph")
+
+    cdef uint32_t* ecc
+    if algorithm == "bounds":
+        ecc = c_eccentricity_bounding(G, vertex_list=int_to_vertex)
+    elif algorithm == "standard":
+        ecc = c_eccentricity(G, vertex_list=int_to_vertex)
+    else:
+        raise ValueError("unknown algorithm '{}', please contribute".format(algorithm))
 
     from sage.rings.integer import Integer
-    cdef list l_ecc = [Integer(ecc[i]) if ecc[i]!=UINT32_MAX else +Infinity for i in range(n)]
+    cdef list l_ecc = [Integer(ecc[i]) if ecc[i] != UINT32_MAX else +Infinity for i in range(n)]
 
     sig_free(ecc)
 
@@ -902,15 +923,15 @@ def eccentricity(G, algorithm="standard"):
 
 cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
                                           uint32_t source,
-                                          uint32_t * distances,
-                                          uint32_t * predecessors,
-                                          uint32_t * waiting_list,
+                                          uint32_t* distances,
+                                          uint32_t* predecessors,
+                                          uint32_t* waiting_list,
                                           bitset_t seen):
     """
     Compute a lower bound on the diameter using the 2-sweep algorithm.
 
     This method computes a lower bound on the diameter of an unweighted
-    undirected graph using 2 BFS, as proposed in [MLH08]_.  It first selects a
+    undirected graph using 2 BFS, as proposed in [MLH2008]_.  It first selects a
     vertex `v` that is at largest distance from an initial vertex `source` using
     BFS. Then it performs a second BFS from `v`. The largest distance from `v`
     is returned as a lower bound on the diameter of `G`.  The time complexity of
@@ -919,9 +940,9 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
     INPUT:
 
-    - ``g`` -- a short_digraph.
+    - ``g`` -- a short_digraph
 
-    - ``source`` -- Starting node of the BFS.
+    - ``source`` -- starting node of the BFS
 
     - ``distances`` -- array of size ``n`` to store BFS distances from `v`, the
       vertex at largest distance from ``source`` from which we start the second
@@ -951,11 +972,11 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
     # If the eccentricity of the source is infinite (very large number), the
     # graph is not connected and so its diameter is infinite.
-    if LB==UINT32_MAX:
+    if LB == UINT32_MAX:
         return UINT32_MAX
 
     # Then we perform a second BFS from the last visited vertex
-    source = waiting_list[g.n-1]
+    source = waiting_list[g.n - 1]
     LB = simple_BFS(g, source, distances, predecessors, waiting_list, seen)
 
     # We return the computed lower bound
@@ -969,8 +990,8 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
 
     This method computes a lower bound on the diameter of an unweighted
     undirected graph using several iterations of the 2-sweep algorithms
-    [CGH+13]_. Roughly, it first uses 2-sweep to identify two vertices `s` and
-    `d` that are far apart. Then it selects a vertex `m` that is at same
+    [CGHLM2013]_. Roughly, it first uses 2-sweep to identify two vertices `s`
+    and `d` that are far apart. Then it selects a vertex `m` that is at same
     distance from `s` and `d`.  This vertex `m` will serve as the new source for
     another iteration of the 2-sweep algorithm that may improve the current
     lower bound on the diameter.  This process is repeated as long as the lower
@@ -982,20 +1003,23 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
 
     INPUT:
 
-    - ``g`` -- a short_digraph.
+    - ``g`` -- a short_digraph
 
-    - ``source`` -- Starting node of the BFS.
+    - ``source`` -- starting node of the BFS
 
     """
     # The while loop below might not be entered so we have to make sure that
     # s and d which are returned are initialized.
-    cdef uint32_t LB, tmp, s = 0, m, d = 0, n = g.n
+    cdef uint32_t LB, tmp, m
+    cdef uint32_t s = 0
+    cdef uint32_t d = 0
+    cdef uint32_t n = g.n
 
     # Allocate some arrays and a bitset
     cdef bitset_t seen
     bitset_init(seen, n)
     cdef uint32_t * distances = <uint32_t *>sig_malloc(3 * n * sizeof(uint32_t))
-    if distances==NULL:
+    if not distances:
         bitset_free(seen)
         raise MemoryError()
     cdef uint32_t * predecessors = distances + n
@@ -1006,7 +1030,7 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
     # very large number, the graph is not connected and so the diameter is
     # infinite.
     tmp = diameter_lower_bound_2sweep(g, source, distances, predecessors, waiting_list, seen)
-    if tmp==UINT32_MAX:
+    if tmp == UINT32_MAX:
         sig_free(distances)
         bitset_free(seen)
         return (UINT32_MAX, 0, 0, 0)
@@ -1015,7 +1039,7 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
     # lower bound.
     LB = 0
     m = source
-    while tmp>LB:
+    while tmp > LB:
 
         LB = tmp
 
@@ -1023,10 +1047,10 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
         # search for a vertex of eccentricity LB/2. This vertex will serve as
         # the source for the next 2sweep call.
         s = waiting_list[0]
-        d = waiting_list[n-1]
-        LB_2 = LB/2
+        d = waiting_list[n - 1]
+        LB_2 = LB / 2
         m = d
-        while distances[m]>LB_2:
+        while distances[m] > LB_2:
             m = predecessors[m]
 
         # We perform a new 2sweep call from m
@@ -1041,30 +1065,31 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
 cdef uint32_t diameter_iFUB(short_digraph g,
                             uint32_t source):
     """
-    Computes the diameter of the input Graph using the iFUB algorithm.
+    Compute the diameter of the input Graph using the ``iFUB`` algorithm.
 
-    The iFUB (iterative Fringe Upper Bound) algorithm calculates the exact value
-    of the diameter of a unweighted undirected graph [CGI+10]_. This algorithms
-    starts with a vertex found through a multi-sweep call (a refinement of the
-    4sweep method). The worst case time complexity of the iFUB algorithm is
-    `O(nm)`, but it can be very fast in practice. See the code's documentation
-    and [CGH+13]_ for more details.
+    The ``iFUB`` (iterative Fringe Upper Bound) algorithm calculates the exact
+    value of the diameter of a unweighted undirected graph [CGILM2010]_. This
+    algorithms starts with a vertex found through a multi-sweep call (a
+    refinement of the 4sweep method). The worst case time complexity of the iFUB
+    algorithm is `O(nm)`, but it can be very fast in practice. See the code's
+    documentation and [CGHLM2013]_ for more details.
 
     INPUT:
 
-    - ``g`` -- a short_digraph.
+    - ``g`` -- a short_digraph
 
-    - ``source`` -- Starting node of the first BFS.
+    - ``source`` -- starting node of the first BFS
 
     """
-    cdef uint32_t i, LB, s, m, d, n = g.n
+    cdef uint32_t i, LB, s, m, d
+    cdef uint32_t n = g.n
 
     # We select a vertex m with low eccentricity using multi-sweep
     LB, s, m, d = diameter_lower_bound_multi_sweep(g, source)
 
     # If the lower bound is a very large number, it means that the graph is not
     # connected and so the diameter is infinite.
-    if LB==UINT32_MAX:
+    if LB == UINT32_MAX:
         return LB
 
 
@@ -1072,20 +1097,20 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     cdef bitset_t seen
     bitset_init(seen, n)    
     cdef uint32_t * distances = <uint32_t *>sig_malloc(4 * n * sizeof(uint32_t))
-    if distances==NULL:
+    if not distances:
         bitset_free(seen)
         raise MemoryError()
-    cdef uint32_t * waiting_list = distances + n
-    cdef uint32_t * layer        = distances + 2 * n
-    cdef uint32_t * order        = distances + 3 * n
+    cdef uint32_t* waiting_list = distances + n
+    cdef uint32_t* layer        = distances + 2 * n
+    cdef uint32_t* order        = distances + 3 * n
 
 
     # We order the vertices by decreasing layers. This is the inverse order of a
     # BFS from m, and so the inverse order of array waiting_list. Distances are
     # stored in array layer.
     LB = simple_BFS(g, m, layer, NULL, waiting_list, seen)
-    for i from 0 <= i < n:
-        order[i] = waiting_list[n-i-1]
+    for i in range(n):
+        order[i] = waiting_list[n - i - 1]
 
     # The algorithm:
     #
@@ -1108,12 +1133,12 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     # the eccentricity of the unexplored vertices is smaller than the max
     # eccentricity already found.
     i = 0
-    while (2*layer[order[i]])>LB and i<n:
+    while 2 * layer[order[i]] > LB and i < n:
         tmp = simple_BFS(g, order[i], distances, NULL, waiting_list, seen)
         i += 1
 
         # We update the lower bound
-        if tmp>LB:
+        if tmp > LB:
             LB = tmp
 
 
@@ -1126,7 +1151,7 @@ cdef uint32_t diameter_iFUB(short_digraph g,
 
 def diameter(G, algorithm='iFUB', source=None):
     r"""
-    Returns the diameter of `G`.
+    Return the diameter of `G`.
 
     This algorithm returns Infinity if the (di)graph is not connected. It can
     also quickly return a lower bound on the diameter using the ``2sweep`` and
@@ -1141,7 +1166,7 @@ def diameter(G, algorithm='iFUB', source=None):
         with time complexity in `O(nm)`.
 
       - ``'2sweep'`` -- Computes a lower bound on the diameter of an
-        unweighted undirected graph using 2 BFS, as proposed in [MLH08]_.  It
+        unweighted undirected graph using 2 BFS, as proposed in [MLH2008]_.  It
         first selects a vertex `v` that is at largest distance from an initial
         vertex source using BFS. Then it performs a second BFS from `v`. The
         largest distance from `v` is returned as a lower bound on the diameter
@@ -1150,7 +1175,7 @@ def diameter(G, algorithm='iFUB', source=None):
 
       - ``'multi-sweep'`` -- Computes a lower bound on the diameter of an
         unweighted undirected graph using several iterations of the ``2sweep``
-        algorithms [CGH+13]_. Roughly, it first uses ``2sweep`` to identify
+        algorithms [CGHLM2013]_. Roughly, it first uses ``2sweep`` to identify
         two vertices `u` and `v` that are far apart. Then it selects a vertex
         `w` that is at same distance from `u` and `v`.  This vertex `w` will
         serve as the new source for another iteration of the ``2sweep``
@@ -1159,7 +1184,7 @@ def diameter(G, algorithm='iFUB', source=None):
         is improved.
 
       - ``'iFUB'`` -- The iFUB (iterative Fringe Upper Bound) algorithm,
-        proposed in [CGI+10]_, computes the exact value of the diameter of an
+        proposed in [CGILM2010]_, computes the exact value of the diameter of an
         unweighted undirected graph. It is based on the following observation:
 
             The diameter of the graph is equal to the maximum eccentricity of
@@ -1168,8 +1193,8 @@ def diameter(G, algorithm='iFUB', source=None):
 
             .. MATH::
 
-                d(v,a)<=i, \forall a \in A\\
-                d(v,b)>=i, \forall b \in B
+                d(v,a) \leq i, \forall a \in A\\
+                d(v,b) \geq i, \forall b \in B
 
             As all vertices from `A` are at distance `\leq 2i` from each
             other, a vertex `a\in A` with eccentricity `ecc(a)>2i` is at
@@ -1180,8 +1205,8 @@ def diameter(G, algorithm='iFUB', source=None):
             compute the eccentricity of the vertices in `A`.
 
         Starting from a vertex `v` obtained through a multi-sweep computation
-        (which refines the 4sweep algorithm used in [CGH+13]_), we compute the
-        diameter by computing the eccentricity of all vertices sorted
+        (which refines the 4sweep algorithm used in [CGHLM2013]_), we compute
+        the diameter by computing the eccentricity of all vertices sorted
         decreasingly according to their distance to `v`, and stop as allowed
         by the remark above. The worst case time complexity of the iFUB
         algorithm is `O(nm)`, but it can be very fast in practice.
@@ -1197,7 +1222,7 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: G = graphs.PetersenGraph()
         sage: diameter(G, algorithm='iFUB')
         2
-        sage: G = Graph( { 0 : [], 1 : [], 2 : [1] } )
+        sage: G = Graph({0: [], 1: [], 2: [1]})
         sage: diameter(G, algorithm='iFUB')
         +Infinity
 
@@ -1215,13 +1240,13 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: d1 = diameter(G, algorithm='standard')
         sage: d2 = diameter(G, algorithm='iFUB')
         sage: d3 = diameter(G, algorithm='iFUB', source=G.random_vertex())
-        sage: if d1!=d2 or d1!=d3: print("Something goes wrong!")
+        sage: if d1 != d2 or d1 != d3: print("Something goes wrong!")
 
     Comparison of lower bound algorithms::
 
         sage: lb2 = diameter(G, algorithm='2sweep')
         sage: lbm = diameter(G, algorithm='multi-sweep')
-        sage: if not (lb2<=lbm and lbm<=d3): print("Something goes wrong!")
+        sage: if not (lb2 <= lbm and lbm <= d3): print("Something goes wrong!")
 
     TESTS:
 
@@ -1232,59 +1257,60 @@ def diameter(G, algorithm='iFUB', source=None):
         0
     """
     cdef int n = G.order()
-    if n==0:
+    if not n:
         return 0
 
-    if algorithm=='standard' or G.is_directed():
+    if algorithm == 'standard' or G.is_directed():
         return max(G.eccentricity())
     elif algorithm is None:
         algorithm = 'iFUB'
     elif not algorithm in ['2sweep', 'multi-sweep', 'iFUB']:
-        raise ValueError("Unknown algorithm for computing the diameter.")
+        raise ValueError("unknown algorithm for computing the diameter")
 
     if source is None:
         source = next(G.vertex_iterator())
     elif not G.has_vertex(source):
-        raise ValueError("The specified source is not a vertex of the input Graph.")
+        raise ValueError("the specified source is not a vertex of the input Graph")
 
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     # and we map the source to an int in [0,n-1] 
-    cdef uint32_t isource = 0 if source is None else G.vertices().index(source)
+    cdef uint32_t isource = 0 if source is None else int_to_vertex.index(source)
 
     cdef bitset_t seen
-    cdef uint32_t * tab
+    cdef uint32_t* tab
     cdef int LB
 
-    if algorithm=='2sweep':
+    if algorithm == '2sweep':
         # We need to allocate arrays and bitset
         bitset_init(seen, n)
-        tab = <uint32_t *> sig_malloc(2* n * sizeof(uint32_t))
-        if tab == NULL:
+        tab = <uint32_t*> sig_malloc(2* n * sizeof(uint32_t))
+        if not tab:
             free_short_digraph(sd)
             bitset_free(seen)
             raise MemoryError()
         
-        LB = diameter_lower_bound_2sweep(sd, isource, tab, NULL, tab+n, seen)
+        LB = diameter_lower_bound_2sweep(sd, isource, tab, NULL, tab + n, seen)
 
         bitset_free(seen)
         sig_free(tab)
 
-    elif algorithm=='multi-sweep':
+    elif algorithm == 'multi-sweep':
         LB = diameter_lower_bound_multi_sweep(sd, isource)[0]
 
-    else: # algorithm=='iFUB'
+    else: # algorithm == 'iFUB'
         LB = diameter_iFUB(sd, isource)
 
 
     free_short_digraph(sd)
 
-    if LB<0 or LB>G.order():
+    if LB < 0 or LB > n:
         from sage.rings.infinity import Infinity
         return +Infinity
     else:
@@ -1298,10 +1324,10 @@ def diameter(G, algorithm='iFUB', source=None):
 
 def wiener_index(G):
     r"""
-    Returns the Wiener index of the graph.
+    Return the Wiener index of the graph.
 
     The Wiener index of a graph `G` can be defined in two equivalent
-    ways [KRG96b]_ :
+    ways [KRG1996]_ :
 
     - `W(G) = \frac 1 2 \sum_{u,v\in G} d(u,v)` where `d(u,v)` denotes the
       distance between vertices `u` and `v`.
@@ -1314,7 +1340,7 @@ def wiener_index(G):
 
     EXAMPLES:
 
-    From [GYLL93c]_, cited in [KRG96b]_::
+    From [GYLL1993]_, cited in [KRG1996]_::
 
         sage: g=graphs.PathGraph(10)
         sage: w=lambda x: (x*(x*x -1)/6)
@@ -1326,14 +1352,14 @@ def wiener_index(G):
         return +Infinity
 
     from sage.rings.integer import Integer
-    cdef unsigned short * distances = c_distances_all_pairs(G)
-    cdef unsigned int NN = G.order()*G.order()
+    cdef unsigned short* distances = c_distances_all_pairs(G, vertex_list=list(G))
+    cdef unsigned int NN = G.order() * G.order()
     cdef unsigned int i
     cdef uint64_t s = 0
-    for 0 <= i < NN:
+    for i in range(NN):
         s += distances[i]
     sig_free(distances)
-    return Integer(s)/2
+    return Integer(s) / 2
 
 ##########################
 # Distances distribution #
@@ -1341,7 +1367,7 @@ def wiener_index(G):
 
 def distances_distribution(G):
     r"""
-    Returns the distances distribution of the (di)graph in a dictionary.
+    Return the distances distribution of the (di)graph in a dictionary.
 
     This method *ignores all edge labels*, so that the distance considered is
     the topological distance.
@@ -1406,25 +1432,26 @@ def distances_distribution(G):
     from sage.rings.infinity import Infinity
     from sage.rings.integer import Integer
 
-    cdef unsigned short * distances = c_distances_all_pairs(G)
-    cdef unsigned int NN = G.order()*G.order()
+    cdef unsigned short* distances = c_distances_all_pairs(G, vertex_list=list(G))
+    cdef unsigned int n = G.order()
+    cdef unsigned int NN = n * n
     cdef dict count = {}
     cdef dict distr = {}
     cdef unsigned int i
-    NNN = Integer(NN-G.order())
+    NNN = Integer(NN - n)
 
     # We count the number of pairs at equal distances
-    for 0 <= i < NN:
-        count[ distances[i] ] = count.get(distances[i],0) + 1
+    for i in range(NN):
+        count[distances[i]] = count.get(distances[i], 0) + 1
 
     sig_free(distances)
 
     # We normalize the distribution
     for j in count:
         if j == <unsigned short> -1:
-            distr[ +Infinity ] = Integer(count[j])/NNN
+            distr[+Infinity] = Integer(count[j]) / NNN
         elif j > 0:
-            distr[j] = Integer(count[j])/NNN
+            distr[j] = Integer(count[j]) / NNN
 
     return distr
 
@@ -1432,30 +1459,30 @@ def distances_distribution(G):
 # Floyd-Warshall #
 ##################
 
-def floyd_warshall(gg, paths = True, distances = False):
+def floyd_warshall(gg, paths=True, distances=False):
     r"""
-    Computes the shortest path/distances between all pairs of vertices.
+    Compute the shortest path/distances between all pairs of vertices.
 
     For more information on the Floyd-Warshall algorithm, see
-    :wikipedia:`Floyd-Warshall_algorithm`
+    the :wikipedia:`Floyd-Warshall_algorithm`.
 
     INPUT:
 
     - ``gg`` -- the graph on which to work.
 
-    - ``paths`` (boolean) -- whether to return the dictionary of shortest
-      paths. Set to ``True`` by default.
+    - ``paths`` -- boolean (default: ``True``); whether to return the dictionary
+      of shortest paths
 
-    - ``distances`` (boolean) -- whether to return the dictionary of
-      distances. Set to ``False`` by default.
+    - ``distances`` -- boolean (default: ``False``); whether to return the
+      dictionary of distances
 
     OUTPUT:
 
-        Depending on the input, this function return the dictionary of paths,
-        the dictionary of distances, or a pair of dictionaries
-        ``(distances, paths)`` where ``distance[u][v]`` denotes the distance of a
-        shortest path from `u` to `v` and ``paths[u][v]`` denotes an inneighbor
-        `w` of `v` such that `dist(u,v)= 1 + dist(u,w)`.
+    Depending on the input, this function return the dictionary of paths, the
+    dictionary of distances, or a pair of dictionaries ``(distances, paths)``
+    where ``distance[u][v]`` denotes the distance of a shortest path from `u` to
+    `v` and ``paths[u][v]`` denotes an inneighbor `w` of `v` such that
+    `dist(u,v) = 1 + dist(u,w)`.
 
     .. WARNING::
 
@@ -1465,7 +1492,7 @@ def floyd_warshall(gg, paths = True, distances = False):
         implementation does not run on a graph of more than 65536 nodes (this
         can be easily changed if necessary, but would require much more
         memory. It may be worth writing two versions). For information, the
-        current version of the algorithm on a graph with `65536=2^{16}` nodes
+        current version of the algorithm on a graph with `65536 = 2^{16}` nodes
         creates in memory `2` tables on `2^{32}` short elements (2bytes each),
         for a total of `2^{34}` bytes or `16` gigabytes. Let us also remember
         that if the memory size is quadratic, the algorithm runs in cubic time.
@@ -1484,17 +1511,22 @@ def floyd_warshall(gg, paths = True, distances = False):
 
         sage: g = graphs.Grid2dGraph(2,2)
         sage: from sage.graphs.distances_all_pairs import floyd_warshall
-        sage: print(floyd_warshall(g))
+        sage: print(floyd_warshall(g))  # py2
         {(0, 1): {(0, 1): None, (1, 0): (0, 0), (0, 0): (0, 1), (1, 1): (0, 1)},
-        (1, 0): {(0, 1): (0, 0), (1, 0): None, (0, 0): (1, 0), (1, 1): (1, 0)},
-        (0, 0): {(0, 1): (0, 0), (1, 0): (0, 0), (0, 0): None, (1, 1): (0, 1)},
-        (1, 1): {(0, 1): (1, 1), (1, 0): (1, 1), (0, 0): (0, 1), (1, 1): None}}
+         (1, 0): {(0, 1): (0, 0), (1, 0): None, (0, 0): (1, 0), (1, 1): (1, 0)},
+         (0, 0): {(0, 1): (0, 0), (1, 0): (0, 0), (0, 0): None, (1, 1): (0, 1)},
+         (1, 1): {(0, 1): (1, 1), (1, 0): (1, 1), (0, 0): (0, 1), (1, 1): None}}
+        sage: print(floyd_warshall(g))  # py3
+        {(0, 0): {(0, 0): None, (0, 1): (0, 0), (1, 0): (0, 0), (1, 1): (0, 1)},
+         (0, 1): {(0, 1): None, (0, 0): (0, 1), (1, 0): (0, 0), (1, 1): (0, 1)},
+         (1, 0): {(1, 0): None, (0, 0): (1, 0), (0, 1): (0, 0), (1, 1): (1, 0)},
+         (1, 1): {(1, 1): None, (0, 0): (0, 1), (0, 1): (1, 1), (1, 0): (1, 1)}}
 
     Checking the distances are correct ::
 
         sage: g = graphs.Grid2dGraph(5,5)
-        sage: dist,path = floyd_warshall(g, distances = True)
-        sage: all( dist[u][v] == g.distance(u,v) for u in g for v in g )
+        sage: dist,path = floyd_warshall(g, distances=True)
+        sage: all(dist[u][v] == g.distance(u, v) for u in g for v in g)
         True
 
     Checking a random path is valid ::
@@ -1509,7 +1541,7 @@ def floyd_warshall(gg, paths = True, distances = False):
     Distances for all pairs of vertices in a diamond::
 
         sage: g = graphs.DiamondGraph()
-        sage: floyd_warshall(g, paths = False, distances = True)
+        sage: floyd_warshall(g, paths=False, distances=True)
         {0: {0: 0, 1: 1, 2: 1, 3: 2},
          1: {0: 1, 1: 0, 2: 1, 3: 1},
          2: {0: 1, 1: 1, 2: 0, 3: 1},
@@ -1523,15 +1555,14 @@ def floyd_warshall(gg, paths = True, distances = False):
         sage: floyd_warshall(Graph(65536))
         Traceback (most recent call last):
         ...
-        ValueError: The graph backend contains more than 65535 nodes
+        ValueError: the graph backend contains more than 65535 nodes
     """
-
     from sage.rings.infinity import Infinity
     cdef CGraph g = <CGraph> gg._backend.c_graph()[0]
 
     cdef list gverts = g.verts()
 
-    if gverts == []:
+    if not gverts:
         if distances and paths:
             return {}, {}
         else:
@@ -1540,27 +1571,25 @@ def floyd_warshall(gg, paths = True, distances = False):
     cdef unsigned int n = max(gverts) + 1
 
     if n >= <unsigned short> -1:
-        raise ValueError("The graph backend contains more than "+str(<unsigned short> -1)+" nodes")
+        raise ValueError("the graph backend contains more than "+str(<unsigned short> -1)+" nodes")
 
     # All this just creates two tables prec[n][n] and dist[n][n]
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef unsigned short * t_prec
-    cdef unsigned short * t_dist
-    cdef unsigned short ** prec
-    cdef unsigned short ** dist
-
+    cdef unsigned short* t_prec = NULL
+    cdef unsigned short**  prec = NULL
+    # init dist
+    cdef unsigned short* t_dist = <unsigned short*>  mem.allocarray(n * n, sizeof(unsigned short))
+    cdef unsigned short**  dist = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
+    dist[0] = t_dist
     cdef int i
+    for i in range(1, n):
+        dist[i] = dist[i - 1] + n
+    memset(t_dist, -1, n * n * sizeof(short))
+
     cdef int v_int
     cdef int u_int
     cdef int w_int
 
-    # init dist
-    t_dist = <unsigned short *>   mem.allocarray(n*n, sizeof(unsigned short))
-    dist   = <unsigned short **>  mem.allocarray(n, sizeof(unsigned short *))
-    dist[0] = t_dist
-    for 1 <= i< n:
-        dist[i] = dist[i-1] + n
-    memset(t_dist, -1, n*n*sizeof(short))
     # Copying the adjacency matrix (vertices at distance 1)
     for v_int in gverts:
         dist[v_int][v_int] =  0
@@ -1569,12 +1598,12 @@ def floyd_warshall(gg, paths = True, distances = False):
 
     if paths:
         # init prec
-        t_prec = <unsigned short *>  mem.allocarray(n*n, sizeof(unsigned short))
-        prec   = <unsigned short **> mem.allocarray(n, sizeof(unsigned short *))
+        t_prec = <unsigned short*>  mem.allocarray(n * n, sizeof(unsigned short))
+        prec   = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
         prec[0] = t_prec
-        for 1 <= i< n:
-            prec[i] = prec[i-1] + n
-        memset(t_prec, 0, n*n*sizeof(short))
+        for i in range(1, n):
+            prec[i] = prec[i - 1] + n
+        memset(t_prec, 0, n * n * sizeof(short))
         # Copying the adjacency matrix (vertices at distance 1)
         for v_int in gverts:
             prec[v_int][v_int] = v_int
@@ -1582,8 +1611,8 @@ def floyd_warshall(gg, paths = True, distances = False):
                 prec[v_int][u_int] = v_int
 
     # The algorithm itself.
-    cdef unsigned short *dv
-    cdef unsigned short *dw
+    cdef unsigned short* dv
+    cdef unsigned short* dw
     cdef int dvw
     cdef int val
 
@@ -1601,19 +1630,17 @@ def floyd_warshall(gg, paths = True, distances = False):
                         prec[v_int][u_int] = prec[w_int][u_int]
 
     # Dictionaries of distance, precedent element, and integers
-    cdef dict d_prec
-    cdef dict d_dist
+    cdef dict d_prec = {}
+    cdef dict d_dist = {}
     cdef dict tmp_prec
     cdef dict tmp_dist
 
     cdef CGraphBackend cgb = <CGraphBackend> gg._backend
 
-    if paths: d_prec = {}
-    if distances: d_dist = {}
     for v_int in gverts:
         v = cgb.vertex_label(v_int)
-        if paths: tmp_prec = {v:None}
-        if distances: tmp_dist = {v:0}
+        if paths: tmp_prec = {v: None}
+        if distances: tmp_dist = {v: 0}
         dv = dist[v_int]
         for u_int in gverts:
             u = cgb.vertex_label(u_int)

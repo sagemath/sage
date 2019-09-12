@@ -63,7 +63,6 @@ from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.rings.all import GF, prime_range
-from sage.misc.decorators import rename_keyword
 from sage.homology.homology_group import HomologyGroup
 from functools import reduce
 
@@ -94,7 +93,6 @@ def _latex_module(R, m):
     return str(latex(FreeModule(R, m)))
 
 
-@rename_keyword(deprecation=15151, check_products='check', check_diffs='check')
 def ChainComplex(data=None, base_ring=None, grading_group=None,
                  degree_of_differential=1, degree=1,
                  check=True):
@@ -203,8 +201,9 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
     differential is zero::
 
         sage: IZ = ChainComplex({0: identity_matrix(ZZ, 1)})
-        sage: IZ.differential()  # the differentials in the chain complex
-        {-1: [], 0: [1], 1: []}
+        sage: diff = IZ.differential()  # the differentials in the chain complex
+        sage: diff[-1], diff[0], diff[1]
+        ([], [1], [])
         sage: IZ.differential(1).parent()
         Full MatrixSpace of 0 by 1 dense matrices over Integer Ring
         sage: mat = ChainComplex({0: matrix(ZZ, 3, 4)}).differential(1)
@@ -938,17 +937,19 @@ class ChainComplex_class(Parent):
         EXAMPLES::
 
             sage: D = ChainComplex({0: matrix(ZZ, 2, 2, [1,0,0,2])})
-            sage: D.differential()
-            {-1: [], 0: [1 0]
-             [0 2], 1: []}
             sage: D.differential(0)
             [1 0]
             [0 2]
+            sage: D.differential(-1)
+            []
             sage: C = ChainComplex({0: identity_matrix(ZZ, 40)})
-            sage: C.differential()
-            {-1: 40 x 0 dense matrix over Integer Ring,
-             0: 40 x 40 dense matrix over Integer Ring,
-             1: []}
+            sage: diff = C.differential()
+            sage: diff[-1]
+            40 x 0 dense matrix over Integer Ring (use the '.str()' method to see the entries)
+            sage: diff[0]
+            40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)
+            sage: diff[1]
+            []
         """
         if dim is None:
             return copy(self._diff)
@@ -1046,6 +1047,25 @@ class ChainComplex_class(Parent):
             rank = self.free_module_rank(degree)
         return FreeModule(self.base_ring(), rank)
 
+    def __hash__(self):
+        """
+        The hash is formed by combining the hashes of
+
+        - the base ring
+        - the differentials -- the matrices and their degrees
+        - the degree of the differential of the chain complex
+
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
+            sage: D = ChainComplex({0: matrix(ZZ, 2, 3, [3, 0, 0, 0, 0, 0])})
+            sage: hash(C) == hash(D)
+            True
+        """
+        return (hash(self.base_ring())
+                ^ hash(tuple(self.differential().items()))
+                ^ hash(self.degree_of_differential()))
+
     def __eq__(self, other):
         """
         Return ``True`` iff this chain complex is the same as other: that
@@ -1137,7 +1157,6 @@ class ChainComplex_class(Parent):
         else:
             return HomologyGroup(0, base_ring)
 
-    @rename_keyword(deprecation=15151, dim='deg')
     def homology(self, deg=None, base_ring=None, generators=False,
                  verbose=False, algorithm='pari'):
         r"""
@@ -1841,7 +1860,7 @@ class ChainComplex_class(Parent):
             sage: m = matrix([0])
             sage: C = ChainComplex(grading_group=G, degree=G(vector([1,2])), data={G.zero(): m})
             sage: C._latex_()
-            '\\dots \\xrightarrow{d_{\\text{\\texttt{(0,{ }0)}}}} \\Bold{Z}^{1} \\xrightarrow{d_{\\text{\\texttt{(1,{ }2)}}}} \\dots'
+            '\\Bold{Z}^{1} \\xrightarrow{d_{\\text{\\texttt{(0,{ }0)}}}} \\Bold{Z}^{1}'
         """
 #         Warning: this is likely to screw up if, for example, the
 #         degree of the differential is 2 and there are nonzero terms
@@ -1857,32 +1876,25 @@ class ChainComplex_class(Parent):
             return "0"
         deg = self.degree_of_differential()
         ring = self.base_ring()
-        if self.grading_group() != ZZ:
-            guess = next(iter(diffs))
-            if guess - deg in diffs:
-                string += "\\dots \\xrightarrow{d_{%s}} " % latex(guess-deg)
-            string += _latex_module(ring, diffs[guess].ncols())
-            string += " \\xrightarrow{d_{%s}} \\dots" % latex(guess)
+        backwards = bool(deg < 0)
+        sorted_list = sorted(diffs.keys(), reverse=backwards)
+        if len(diffs) <= 6:
+            for n in sorted_list[1:-1]:
+                mat = diffs[n]
+                string += _latex_module(ring, mat.ncols())
+                string += " \\xrightarrow{d_{%s}} " % latex(n)
+            mat = diffs[sorted_list[-1]]
+            string += _latex_module(ring, mat.ncols())
         else:
-            backwards = (deg < 0)
-            sorted_list = sorted(diffs.keys(), reverse=backwards)
-            if len(diffs) <= 6:
-                for n in sorted_list[1:-1]:
-                    mat = diffs[n]
-                    string += _latex_module(ring, mat.ncols())
-                    string += " \\xrightarrow{d_{%s}} " % latex(n)
-                mat = diffs[sorted_list[-1]]
+            for n in sorted_list[:2]:
+                mat = diffs[n]
                 string += _latex_module(ring, mat.ncols())
-            else:
-                for n in sorted_list[:2]:
-                    mat = diffs[n]
-                    string += _latex_module(ring, mat.ncols())
-                    string += " \\xrightarrow{d_{%s}} " % latex(n)
-                string += "\\dots "
-                n = sorted_list[-2]
-                string += "\\xrightarrow{d_{%s}} " % latex(n)
-                mat = diffs[sorted_list[-1]]
-                string += _latex_module(ring, mat.ncols())
+                string += " \\xrightarrow{d_{%s}} " % latex(n)
+            string += "\\dots "
+            n = sorted_list[-2]
+            string += "\\xrightarrow{d_{%s}} " % latex(n)
+            mat = diffs[sorted_list[-1]]
+            string += _latex_module(ring, mat.ncols())
         return string
 
     def cartesian_product(self, *factors, **kwds):

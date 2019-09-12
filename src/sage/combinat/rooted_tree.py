@@ -364,7 +364,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList):
 
             sage: x = RootedTree([[[], []], []])
             sage: y = RootedTree([[], []])
-            sage: len(uniq(x.graft_list(y)))
+            sage: len(set(x.graft_list(y)))
             4
         """
         resu = []

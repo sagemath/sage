@@ -21,6 +21,12 @@ from __future__ import print_function
 import sys
 import time
 import gc
+import warnings
+
+# Ignore collections.abc warnings, there are a lot of them but they are
+# harmless. These warnings are also disabled in src/sage/all.py.
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+    message='.*collections[.]abc.*')
 
 cmdline_args = sys.argv[2:]
 have_cmdline_args = (len(cmdline_args) > 0)

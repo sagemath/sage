@@ -351,7 +351,7 @@ class AffineGroup(UniqueRepresentation, Group):
         return MatrixSpace(self.base_ring(), dp, dp)
 
     def linear(self, A):
-        """
+        r"""
         Construct the general linear transformation by ``A``.
 
         INPUT:
@@ -374,7 +374,7 @@ class AffineGroup(UniqueRepresentation, Group):
         return self.element_class(self, A, self.vector_space().zero(), check=True, convert=False)
 
     def translation(self, b):
-        """
+        r"""
         Construct the translation by ``b``.
 
         INPUT:

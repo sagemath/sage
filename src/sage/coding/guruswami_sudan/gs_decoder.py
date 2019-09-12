@@ -24,15 +24,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.coding.grs import GeneralizedReedSolomonCode
-from sage.modules.free_module_element import vector
+from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
 from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg, gs_interpolation_lee_osullivan
 from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
-from sage.functions.other import binomial, floor, sqrt
+from sage.functions.other import floor, sqrt
 
 def n_k_params(C, n_k):
     r"""
@@ -820,8 +819,11 @@ class GRSGuruswamiSudanDecoder(Decoder):
             []
         """
         C = self.code()
-        n, k, d, alphas, colmults, s, l = C.length(), C.dimension(), C.minimum_distance(),\
-                C.evaluation_points(), C.column_multipliers(), self.multiplicity(), self.list_size()
+        k = C.dimension()
+        alphas = C.evaluation_points()
+        colmults = C.column_multipliers()
+        s = self.multiplicity()
+        l = self.list_size()
         tau = self.decoding_radius()
         ## SETUP INTERPOLATION PROBLEM
         wy = k-1

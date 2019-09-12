@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+
 class Parser():
     r"""
     A class for parsing the outputs of different algorithms called in other
@@ -134,6 +135,7 @@ class Parser():
 
         TESTS::
 
+            sage: from sage.cpython.string import bytes_to_str
             sage: from sage.game_theory.parser import Parser
             sage: from subprocess import Popen, PIPE
             sage: A = matrix([[1, 2], [3, 2]])
@@ -148,7 +150,7 @@ class Parser():
             sage: _ = g2_file.write(game2_str)
             sage: g2_file.close()
             sage: process = Popen(['lrsnash', g1_name, g2_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
-            sage: lrs_output = [row for row in process.stdout]  # optional - lrslib
+            sage: lrs_output = [bytes_to_str(row) for row in process.stdout]  # optional - lrslib
 
         The above creates a game, writes the H representation to
         temporary files, calls lrs and stores the output in `lrs_output`
@@ -193,7 +195,7 @@ class Parser():
             sage: _ = g2_file.write(game2_str)
             sage: g2_file.close()
             sage: process = Popen(['lrsnash', g1_name, g2_name], stdout=PIPE, stderr=PIPE)  # optional - lrslib
-            sage: lrs_output = [row for row in process.stdout]  # optional - lrslib
+            sage: lrs_output = [bytes_to_str(row) for row in process.stdout]  # optional - lrslib
             sage: print(lrs_output[5:20])  # optional - lrslib
             ['\n',
              '***** 5 5 rational\n',

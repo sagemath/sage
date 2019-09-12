@@ -499,7 +499,6 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
         translate = {}
         for simplices in itertools.product(*nondegen):
             dims =  [_.dimension() for _ in simplices]
-            dim_min = min(dims)
             dim_max = max(dims)
             sum_dims = sum(dims)
             for d in range(dim_max, sum_dims + 1):
@@ -972,7 +971,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
         return ' x '.join([str(X) for X in self._factors])
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -1107,13 +1106,12 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
             {0: 0, 1: Z x Z x Z, 2: Z x Z x Z}
         """
         basept_factors = [sset.base_point() for sset in self.factors()]
-        to_factors = dict((v,k) for k,v in self._translation)
-        N = len(basept_factors)
+        to_factors = {v: k for k, v in self._translation}
         simps = []
         for x in self.nondegenerate_simplices():
             simplices = to_factors[x]
             combined = zip(simplices, basept_factors)
-            if any(sigma[0] == pt for (sigma,pt) in combined):
+            if any(sigma[0] == pt for (sigma, pt) in combined):
                 simps.append(x)
         return self.subsimplicial_set(simps)
 
@@ -1495,16 +1493,15 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
         # degenerate, we can throw the whole thing away. Otherwise, we
         # can choose a representative to compute the faces.
         simplices = {}
-        for dim in sorted(data.keys()):
+        for dim in sorted(data):
             for s in data[dim]:
                 degenerate = any(sigma[0].is_degenerate() for sigma in s)
                 if degenerate:
                     # Identify the degeneracies involved.
                     degens = []
-                    for (sigma,j) in s:
+                    for (sigma, j) in s:
                         if len(sigma.degeneracies()) > len(degens):
                             degens = sigma.degeneracies()
-                            underlying = sigma
                             space = spaces[j+1]
                             old = _to_P[space][sigma.nondegenerate()]
                     for (sigma,j) in s:
@@ -1805,7 +1802,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         return 'Quotient: ({}/{})'.format(self.ambient(), self.subcomplex())
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -1942,7 +1939,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
         return s
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2405,7 +2402,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         return 'Cone of {}'.format(self._base)
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2538,7 +2535,6 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
             [*, e, (e,*)]
         """
         C = ConeOfSimplicialSet(base)
-        edge_faces = sorted([C.n_skeleton(1).base_point(), base.base_point()])
         for t in C.n_cells(1):
             edge_faces = sorted([C.base_point(), base.base_point()])
             if sorted(C.faces(t)) == edge_faces:
@@ -2783,7 +2779,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: T = simplicial_sets.Torus()
             sage: K = T.suspension(10)
@@ -2824,7 +2820,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: S2 = simplicial_sets.Sphere(2)
             sage: S2.suspension(3)
@@ -2844,7 +2840,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: S2 = simplicial_sets.Sphere(2)
             sage: latex(S2.suspension(3))

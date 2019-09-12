@@ -108,14 +108,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, division, absolute_import
 
 import math
@@ -129,7 +129,6 @@ import sage.rings.all as rings
 from sage.rings.real_mpfr import is_RealField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 import sage.groups.generic as generic
 from sage.libs.pari import pari
 from cypari2.pari_instance import prec_words_to_bits
@@ -142,7 +141,6 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
-from sage.misc.superseded import deprecated_function_alias
 
 oo = rings.infinity       # infinity
 
@@ -409,7 +407,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: pari(E).elladd(O,P)
             [1, 2]
 
-        TESTS::
+        TESTS:
 
         Try the same over a finite field::
 
@@ -603,7 +601,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         if self.is_zero():
             return plot.text("$\\infty$", (-3, 3), **args)
-
         else:
             return plot.point((self[0], self[1]), **args)
 
@@ -822,7 +819,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             8
             sage: [T.order() for T in tor]
             [2, 4, 4, 2, 1, 2, 4, 4]
-            sage: all([T.is_divisible_by(3) for T in tor])
+            sage: all(T.is_divisible_by(3) for T in tor)
             True
             sage: Set([T for T in tor if T.is_divisible_by(2)])
             {(0 : 1 : 0), (1 : 0 : 1)}
@@ -1251,33 +1248,21 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: G.order()
             8
 
-        NOTES:
-
-        The implementation is based of the fact that orders of elliptic curve
-        points are cached in the (pseudo-private) _order slot.
-
         AUTHORS:
 
          - Mariah Lenox (2011-02-16)
         """
+        value = Integer(value)
+
         E = self.curve()
         q = E.base_ring().order()
-        O = E(0)
-        if value == 0:
-            raise ValueError('Value 0 illegal for point order')
-        if value == 1:
-            if self == O:
-                self._order = 1
-                return
-            else:
-                raise ValueError('Value 1 illegal order for non-identity')
+        if value <= 0:
+            raise ValueError('Value %s illegal for point order'%value)
         low, hi = Hasse_bounds(q)
         if value > hi:
             raise ValueError('Value %s illegal: outside max Hasse bound' % value)
-        if value * self != O:
+        if value * self != E(0):
             raise ValueError('Value %s illegal: %s * %s is not the identity' % (value, value, self))
-        if (value - 1) * self == O:
-            raise ValueError('Value %s illegal: %s * %s is the identity' % (value, value-1, self))
         self._order = value
 
     ##############################  end  ################################
@@ -1492,7 +1477,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ALGORITHM:
 
-            Double-and-add. See also [Mil04]_.
+            Double-and-add. See also [Mil2004]_.
 
         AUTHORS:
 
@@ -1512,7 +1497,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         one = self.curve().base_field().one()
         t = one
         V = self
-        S = 2*V
         nbin = n.bits()
         i = n.nbits() - 2
         while i > -1:
@@ -1595,16 +1579,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ALGORITHM:
 
-        Implemented using Proposition 8 in [Mil04]_.  The value 1 is
+        Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
         returned for linearly dependent input points.  This condition
         is caught via a DivisionByZeroError, since the use of a
         discrete logarithm test for linear dependence, is much too slow
         for large `n`.
-
-        REFERENCES:
-
-        .. [Mil04] Victor S. Miller, "The Weil pairing, and its
-           efficient calculation", J. Cryptol., 17(4):235-261, 2004
 
         AUTHOR:
 
@@ -1896,7 +1875,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             True
 
         Using the same data, we show that the ate pairing is a power of the
-        Tate pairing (see [HSV]_ end of section 3.1)::
+        Tate pairing (see [HSV2006]_ end of section 3.1)::
 
             sage: c = (k*p^(k-1)).mod(n); T = t - 1
             sage: N = gcd(T^k - 1, p^k - 1)
@@ -1967,16 +1946,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         NOTES:
 
-        First defined in the paper of [HSV]_, the ate pairing can be
+        First defined in the paper of [HSV2006]_, the ate pairing can be
         computationally effective in those cases when the trace of the curve
         over the base field is significantly smaller than the expected
         value. This implementation is simply Miller's algorithm followed by a
         naive exponentiation, and makes no claims towards efficiency.
-
-        REFERENCES:
-
-        .. [HSV] Hess, Smart, Vercauteren, "The Eta Pairing Revisited",
-           IEEE Trans. Information Theory, 52(10): 4595-4602, 2006.
 
         AUTHORS:
 
@@ -2342,7 +2316,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         E = self.curve()
         if P is None:
-            return all([self.has_good_reduction(Pr) for Pr in E.discriminant().support()])
+            return all(self.has_good_reduction(Pr)
+                       for Pr in E.discriminant().support())
         K = E.base_field()
         from sage.schemes.elliptic_curves.ell_local_data import check_prime
         P = check_prime(K, P)
@@ -2466,22 +2441,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         There are two normalisations used in the literature, one of
         which is double the other. We use the larger of the two, which
         is the one appropriate for the BSD conjecture. This is
-        consistent with [Cre]_ and double that of [SilBook]_.
+        consistent with [Cre1997]_ and double that of [Sil2009]_.
 
         See :wikipedia:`Néron-Tate height`
-
-        REFERENCES:
-
-        .. [Cre] John Cremona, Algorithms for Modular Elliptic Curves.
-           Cambridge University Press, 1997.
-
-        .. [Sil1988] Joseph H. Silverman, Computing heights on
-           elliptic curves. Mathematics of Computation, Vol. 51,
-           No. 183 (Jul., 1988), pp. 339-358.
-
-        .. [SilBook] Joseph H. Silverman, The Arithmetic of Elliptic
-           Curves. Second edition. Graduate Texts in Mathematics, 106.
-           Springer, 2009.
 
         EXAMPLES::
 
@@ -2747,7 +2709,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: K.<a> = QuadraticField(-2)
             sage: E = EllipticCurve(K, [0,-1,1,0,0]); E
-            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2
+            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
             sage: P = E.lift_x(2+a); P
             (a + 2 : 2*a + 1 : 1)
             sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2
@@ -2892,8 +2854,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         if weighted and not v.im_gens()[0] in rings.RR:
             h *= 2
         return h
-
-    archimedian_local_height = deprecated_function_alias(13951, archimedean_local_height)
 
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
@@ -3079,12 +3039,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                     r = r / (v.ramification_index() * v.residue_class_degree())
             return r * log(Nv)
 
-    nonarchimedian_local_height = deprecated_function_alias(13951, non_archimedean_local_height)
-
     def elliptic_logarithm(self, embedding=None, precision=100,
                            algorithm='pari'):
         r"""
-        Returns the elliptic logarithm of this elliptic curve point.
+        Return the elliptic logarithm of this elliptic curve point.
 
         An embedding of the base field into `\RR` or `\CC` (with
         arbitrary precision) may be given; otherwise the first real
@@ -3501,30 +3459,11 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         r"""
         Return the order of this point on the elliptic curve.
 
-        ALGORITHM:
-
-        Use generic functions from :mod:`sage.groups.generic`.  If the
-        group order is known, use ``order_from_multiple()``, otherwise
-        use ``order_from_bounds()`` with the Hasse bounds for the base
-        field.  In the latter case, we might find that we have a
-        generator for the group, in which case it is cached.
-
-        We do not cause the group order to be calculated when not
-        known, since this function is used in determining the group
-        order via computation of several random points and their
-        orders.  The exceptions to this are (1) when the base field is
-        a prime field and efficient SEA-based methods are available
-        for the cardinality, and (2) when finding the group order is
-        possible quickly, currently only implemented for curves with
-        `j=0` or `j=1728` (see :trac:`15567`).
+        ALGORITHM: Use PARI function ``ellorder()``.
 
         .. NOTE::
 
            :meth:`additive_order` is a synonym for :meth:`order`
-
-        AUTHOR:
-
-        - John Cremona, 2008-02-10, adapted 2008-04-05 to use generic functions.
 
         EXAMPLES::
 
@@ -3540,19 +3479,17 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: Q.additive_order()
             7
 
-        In the next example, the cardinality of E will be computed
-        (using SEA) and cached::
+        ::
 
             sage: p=next_prime(2^150)
             sage: E=EllipticCurve(GF(p),[1,1])
             sage: P=E(831623307675610677632782670796608848711856078, 42295786042873366706573292533588638217232964)
             sage: P.order()
             1427247692705959881058262545272474300628281448
-            sage: P.order()==E.cardinality()
+            sage: P.order() == E.cardinality()
             True
 
-        In the next example, the cardinality of E will be computed and
-        cached since `j(E)=0`::
+        The next example has `j(E)=0`::
 
             sage: p = 33554501
             sage: F.<u> = GF(p^2)
@@ -3560,11 +3497,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E.j_invariant()
             0
             sage: P = E.random_point()
-            sage: P = E.random_point()
             sage: P.order() # random
             16777251
-            sage: E._order  # as cached
-            1125904604468004
 
         Similarly when `j(E)=1728`::
 
@@ -3576,46 +3510,14 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: P = E.random_point()
             sage: P.order() # random
             46912611635760
-            sage: E._order  # as cached
-            1125902679258240
         """
         try:
             return self._order
         except AttributeError:
             pass
-        if self.is_zero():
-            return Integer(1)
+
         E = self.curve()
-        K = E.base_ring()
-        from sage.schemes.curves.projective_curve import Hasse_bounds
-        bounds = Hasse_bounds(K.order())
-
-        try:
-            M = E._order
-            try:
-                plist = E._prime_factors_of_order
-            except AttributeError:
-                plist = M.prime_divisors()
-                E._prime_factors_of_order = plist
-            N = generic.order_from_multiple(self, M, plist, operation='+')
-        except AttributeError:
-            j = E.j_invariant()
-            if K.is_prime_field() or j.is_zero() or j==K(1728):
-                M = E.cardinality()  # computed and cached
-                plist = M.prime_divisors()
-                E._prime_factors_of_order = plist
-                N = generic.order_from_multiple(self, M, plist, operation='+')
-            else:
-                N = generic.order_from_bounds(self, bounds, operation='+')
-
-        if 2*N > bounds[1]:  # then we have a generator, so cache this
-            if not hasattr(E, '_order'):
-                E._order = N
-            if not E.abelian_group.is_in_cache():
-                g = AdditiveAbelianGroupWrapper(E.point_homset(), [self], [N])
-                E.abelian_group.set_cache(g)
-
-        self._order = N
-        return self._order
+        ord = getattr(E, "_order", None)  # get cached order of the curve
+        return Integer(E.pari_curve().ellorder(self, ord))
 
     additive_order = order

@@ -1,17 +1,16 @@
 Prevent Sphinx from rebuilding documentation that is already built
 
 diff -ru a/sphinx/environment/__init__.py b/sphinx/environment/__init__.py
---- a/sphinx/environment/__init__.py	2017-05-15 19:15:50.000000000 +0200
-+++ b/sphinx/environment/__init__.py	2017-05-18 13:42:40.871043207 +0200
-@@ -512,8 +512,11 @@
+--- a/sphinx/environment/__init__.py   2017-05-15 19:15:50.000000000 +0200
++++ b/sphinx/environment/__init__.py   2017-05-18 13:42:40.871043207 +0200
+@@ -251,7 +251,10 @@
          else:
              # check if a config value was changed that affects how
              # doctrees are read
 +            import inspect
-             for confval in config.filter('env'):
-                 if self.config[confval.name] != confval.value:
-+                    if inspect.isfunction(confval.value):
-+                        continue
-                     msg = '[config changed] '
-                     config_changed = True
+             for item in config.filter('env'):
++                if inspect.isfunction(item.value):
++                    continue
+                 if self.config[item.name] != item.value:
+                     self.config_status = CONFIG_CHANGED
                      break

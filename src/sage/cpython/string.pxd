@@ -84,7 +84,7 @@ cpdef inline bytes str_to_bytes(s, encoding=None, errors=None):
         sage: str_to_bytes([])
         Traceback (most recent call last):
         ...
-        TypeError: expected str ... list found
+        TypeError: expected str... list found
     """
     # Implemented in C to avoid relying on PY_MAJOR_VERSION
     # compile-time variable. We keep the Cython wrapper to deal with

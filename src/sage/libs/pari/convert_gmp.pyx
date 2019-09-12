@@ -44,10 +44,10 @@ cdef Gen new_gen_from_mpz_t(mpz_t value):
     Check that the hash of an integer does not depend on existing
     garbage on the stack (:trac:`11611`)::
 
-        sage: foo = pari(2^(32*1024));  # Create large integer to put PARI stack in known state
-        sage: a5 = pari(5);
-        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1));  # Dirty PARI stack
-        sage: b5 = pari(5);
+        sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state
+        sage: a5 = pari(5)
+        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1))  # Dirty PARI stack
+        sage: b5 = pari(5)
         sage: a5.__hash__() == b5.__hash__()
         True
     """
@@ -96,10 +96,10 @@ cdef Gen new_gen_from_mpq_t(mpq_t value):
     Check that the hash of a rational does not depend on existing
     garbage on the stack (:trac:`11854`)::
 
-        sage: foo = pari(2^(32*1024));  # Create large integer to put PARI stack in known state
-        sage: a5 = pari(5/7);
-        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1));  # Dirty PARI stack
-        sage: b5 = pari(5/7);
+        sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state
+        sage: a5 = pari(5/7)
+        sage: foo = pari(0xDEADBEEF * (2^(32*1024)-1)//(2^32 - 1))  # Dirty PARI stack
+        sage: b5 = pari(5/7)
         sage: a5.__hash__() == b5.__hash__()
         True
     """

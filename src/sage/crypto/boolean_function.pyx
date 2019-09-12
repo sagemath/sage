@@ -30,6 +30,7 @@ AUTHOR:
 """
 from __future__ import absolute_import
 
+from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
 
 from sage.structure.sage_object cimport SageObject
@@ -41,6 +42,8 @@ from sage.rings.polynomial.pbori import BooleanPolynomial
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.polynomial.polynomial_element import is_Polynomial
+
+from sage.misc.superseded import deprecated_function_alias
 
 include "sage/data_structures/bitset.pxi"
 
@@ -80,6 +83,7 @@ cdef walsh_hadamard(long *f, int ldn):
             t1 = r
             t2 = r+mh
             for 0 <= j < mh:
+                sig_check()
                 u = f[t1]
                 v = f[t2]
                 f[t1] = u + v
@@ -105,6 +109,7 @@ cdef long yellow_code(unsigned long a):
     cdef unsigned long m = (~0UL) >> s
     cdef unsigned long r = a
     while(s):
+        sig_check()
         r ^= ( (r&m) << s )
         s >>= 1
         m ^= (m<<s)
@@ -146,6 +151,7 @@ cdef reed_muller(mp_limb_t* f, int ldn):
             t1 = r
             t2 = r+mh
             for 0 <= j < mh:
+                sig_check()
                 f[t2] ^= f[t1]
                 t1 += 1
                 t2 += 1
@@ -225,7 +231,7 @@ cdef class BooleanFunction(SageObject):
     cdef object _nonlinearity
     cdef object _correlation_immunity
     cdef object _autocorrelation
-    cdef object _absolut_indicator
+    cdef object _absolute_indicator
     cdef object _sum_of_square_indicator
 
     def __cinit__(self, x):
@@ -772,6 +778,7 @@ cdef class BooleanFunction(SageObject):
         """
         cdef list T = [ self(2**i-1) for i in xrange(self._nvariables+1) ]
         for i in xrange(2**self._nvariables):
+            sig_check()
             if T[ hamming_weight_int(i) ] != bitset_in(self._truth_table, i):
                 return False
         return True
@@ -833,6 +840,7 @@ cdef class BooleanFunction(SageObject):
             c = self._nvariables
             W = self.walsh_hadamard_transform()
             for 0 < i < len(W):
+                sig_check()
                 if (W[i] != 0):
                     c = min( c , hamming_weight_int(i) )
             self._correlation_immunity = ZZ(c-1)
@@ -879,7 +887,8 @@ cdef class BooleanFunction(SageObject):
             temp = <long *>sig_malloc(sizeof(long)*n)
             W = self.walsh_hadamard_transform()
 
-            for 0<= i < n:
+            for 0 <= i < n:
+                sig_check()
                 temp[i] = W[i]*W[i]
 
             walsh_hadamard(temp, self._nvariables)
@@ -907,22 +916,35 @@ cdef class BooleanFunction(SageObject):
                 d[abs(i)] = 1
         return d
 
-    def absolut_indicator(self):
+    def absolute_indicator(self):
         """
-        Return the absolut indicator of the function. Ths is the maximal absolut
-        value of the autocorrelation.
+        Return the absolute indicator of the function.
+
+        The absolute indicator is defined as the maximal absolute value of
+        the autocorrelation.
 
         EXAMPLES::
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
+            sage: B.absolute_indicator()
+            32
+
+        The old method's name contained a typo, it is deprecated::
+
             sage: B.absolut_indicator()
+            doctest:warning
+            ...
+            DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
+            See https://trac.sagemath.org/28001 for details.
             32
         """
-        if self._absolut_indicator is None:
+        if self._absolute_indicator is None:
             D = self.autocorrelation()
-            self._absolut_indicator = max([ abs(a) for a in D[1:] ])
-        return self._absolut_indicator
+            self._absolute_indicator = max([ abs(a) for a in D[1:] ])
+        return self._absolute_indicator
+
+    absolut_indicator = deprecated_function_alias(28001, absolute_indicator)
 
     def sum_of_square_indicator(self):
         """
@@ -984,6 +1006,7 @@ cdef class BooleanFunction(SageObject):
         for i in xrange(1, d + 1):
             C = Combinations(self._nvariables,i)
             for c in C:
+                sig_check()
                 r.append(prod([G[i] for i in c]))
 
         cdef BooleanFunction t
@@ -991,6 +1014,7 @@ cdef class BooleanFunction(SageObject):
         for i,m in enumerate(r):
             t = BooleanFunction(m)
             for j,v in enumerate(s):
+                sig_check()
                 M[i,j] = bitset_in(t._truth_table,v)
 
         kg = M.kernel().gens()
@@ -1037,7 +1061,7 @@ cdef class BooleanFunction(SageObject):
                 A = fun.annihilator(i)
                 if A is not None:
                     if annihilator:
-                        return i,A
+                        return i, A
                     else:
                         return i
         raise ValueError("you just found a bug!")
@@ -1214,6 +1238,53 @@ cdef class BooleanFunction(SageObject):
         V = VectorSpace(GF(2), nvars)
         return V.subspace(l)
 
+    def derivative(self, u):
+        """
+        Return the derivative in direction of ``u``
+
+        INPUT:
+
+        - ``u`` -- either an integer or a tuple/list of `\GF{2}` elements
+          of length equal to the number of variables
+
+
+        The derivative of `f` in direction of `u` is defined as
+        `x \mapsto f(x) + f(x + u)`.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = BooleanFunction([0,1,0,1,0,1,0,1])
+            sage: f.derivative(1).algebraic_normal_form()
+            1
+            sage: u = [1,0,0]
+            sage: f.derivative(u).algebraic_normal_form()
+            1
+            sage: v = vector(GF(2), u)
+            sage: f.derivative(u).algebraic_normal_form()
+            1
+            sage: f.derivative(8).algebraic_normal_form()
+            Traceback (most recent call last):
+            ...
+            IndexError: index out of bound
+        """
+        from sage.structure.element import is_Vector
+        nvars = self._nvariables
+
+        if isinstance(u, (tuple, list)):
+            v = ZZ(u, base=2)
+        elif is_Vector(u):
+            if u.base_ring() != GF(2):
+                raise TypeError("base ring of input vector must be GF(2)")
+            elif u.parent().dimension() != nvars:
+                raise TypeError("input vector must be an element of a vector space with dimension %d" % (nvars,))
+            v = ZZ(u.list(), base=2)
+        else:
+            v = u
+
+        return BooleanFunction([self(x) ^ self(x ^ v)
+                                for x in range(1 << nvars)])
+
     def __setitem__(self, i, y):
         """
         Set a value of the function.
@@ -1269,7 +1340,7 @@ cdef class BooleanFunction(SageObject):
         self._nonlinearity = None
         self._correlation_immunity = None
         self._autocorrelation = None
-        self._absolut_indicator = None
+        self._absolute_indicator = None
         self._sum_of_square_indicator = None
 
     def __reduce__(self):
@@ -1370,5 +1441,6 @@ def random_boolean_function(n):
     cdef bitset_t T
     T[0] = B._truth_table[0]
     for 0 <= i < T.limbs:
+        sig_check()
         T.bits[i] = r.randrange(0,Integer(1)<<(sizeof(unsigned long)*8))
     return B

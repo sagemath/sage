@@ -157,7 +157,7 @@ class SpikeFunction:
             sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_abs(8)
-            sage: p = P[0]; p.ydata
+            sage: p = P[0]; p.ydata  # abs tol 1e-8
             [5.0, 5.0, 3.367958691924177, 3.367958691924177, 4.123105625617661, 4.123105625617661, 4.759921664218055, 4.759921664218055]
         """
         w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
@@ -176,8 +176,8 @@ class SpikeFunction:
             sage: S = spike_function([(-3,4),(-1,1),(2,3)]); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_arg(8)
-            sage: p = P[0]; p.ydata
-            [0.0, 0.0, -0.211524990023434..., -0.211524990023434..., 0.244978663126864..., 0.244978663126864..., -0.149106180027477..., -0.149106180027477...]
+            sage: p = P[0]; p.ydata  # abs tol 1e-8
+            [0.0, 0.0, -0.211524990023434, -0.211524990023434, 0.244978663126864, 0.244978663126864, -0.149106180027477, -0.149106180027477]
         """
         w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
         xmin, xmax = self._ranges(xmin, xmax)

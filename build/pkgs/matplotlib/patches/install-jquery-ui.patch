@@ -1,0 +1,22 @@
+See https://github.com/matplotlib/matplotlib/pull/14587
+
+commit 564edad96232e028294d7421b41955029e16816f
+Author: Jeroen Demeyer <J.Demeyer@UGent.be>
+Date:   Thu Jun 20 13:45:09 2019 +0200
+
+    Install verdored copy of jquery-ui
+
+diff --git a/setupext.py b/setupext.py
+index c75725b..3536cf6 100644
+--- a/setupext.py
++++ b/setupext.py
+@@ -871,6 +871,9 @@ class Matplotlib(SetupPackage):
+                 'backends/web_backend/jquery/js/*.min.js',
+                 'backends/web_backend/jquery/css/themes/base/*.min.css',
+                 'backends/web_backend/jquery/css/themes/base/images/*',
++                'backends/web_backend/jquery-ui-*/*',
++                'backends/web_backend/jquery-ui-*/*/*',
++                'backends/web_backend/jquery-ui-*/*/*/*',
+                 'backends/web_backend/css/*.*',
+                 'backends/Matplotlib.nib/*',
+                 'mpl-data/stylelib/*.mplstyle',

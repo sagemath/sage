@@ -69,7 +69,8 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
               non-commuting variables over the Rational Field,
              Category of graded hopf algebras with basis over Rational Field,
              Join of Category of realizations of hopf algebras over Rational Field
-              and Category of graded algebras over Rational Field]
+              and Category of graded algebras over Rational Field
+              and Category of graded coalgebras over Rational Field]
         """
         R = self.base().base_ring()
         from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis

@@ -20,7 +20,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2013 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -33,8 +33,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 import six
 from six import integer_types
@@ -226,7 +226,7 @@ class Set_object(Set_generic):
 
     TESTS:
 
-    See trac ticket :trac:`14486`::
+    See :trac:`14486`::
 
         sage: 0 == Set([1]), Set([1]) == 0
         (False, False)
@@ -365,8 +365,8 @@ class Set_object(Set_generic):
             False
             sage: 5/3 in GF(7)
             False
-            sage: Set(GF(7)).union(Set(GF(5)))
-            {0, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 0}
+            sage: sorted(Set(GF(7)).union(Set(GF(5))), key=int)
+            [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6]
             sage: Set(GF(7)).intersection(Set(GF(5)))
             {}
         """
@@ -399,7 +399,7 @@ class Set_object(Set_generic):
         The following is random, illustrating that comparison of
         sets is not the subset relation, when they are not equal::
 
-            sage: Primes() < Set(QQ)             # random
+            sage: Primes() < Set(QQ)             # random  # py2
             True or False
         """
         if not isinstance(right, Set_object):
@@ -424,8 +424,8 @@ class Set_object(Set_generic):
             True
             sage: GF(5)(2) in X
             False
-            sage: Set(GF(7)) + Set(GF(3))
-            {0, 1, 2, 3, 4, 5, 6, 1, 2, 0}
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
+            [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
         """
         if isinstance(X, Set_generic):
             if self is X:
@@ -445,8 +445,8 @@ class Set_object(Set_generic):
             {0, 1, 2, 0, 1}
             sage: Set(GF(2)) + Set(GF(4,'a'))
             {0, 1, a, a + 1}
-            sage: Set(GF(8,'b')) + Set(GF(4,'a'))
-            {0, 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1, a, a + 1, 1, 0}
+            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)
+            [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
         """
         return self.union(X)
 
@@ -814,12 +814,19 @@ class Set_object_enumerated(Set_object):
             sage: S = Set(GF(2))
             sage: S
             {0, 1}
+
+        TESTS::
+
+            sage: Set()
+            {}
         """
-        s = repr(self.set())
+        py_set = self.set()
         if six.PY3:
-            return s
+            if not py_set:
+                return "{}"
+            return repr(py_set)
         else:
-            return "{" + s[5:-2] + "}"
+            return "{" + repr(py_set)[5:-2] + "}"
 
     def list(self):
         """
@@ -885,9 +892,10 @@ class Set_object_enumerated(Set_object):
             TypeError: unhashable type: 'set'
             sage: s = X.frozenset(); s
             frozenset({0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1})
-            sage: hash(s)
-            -1390224788            # 32-bit
-             561411537695332972    # 64-bit
+
+            sage: hash(s) != hash(tuple(X.set()))
+            True
+
             sage: type(s)
             <... 'frozenset'>
         """
@@ -995,10 +1003,10 @@ class Set_object_enumerated(Set_object):
             sage: Y = Set([GF(8,'c').0, 1, 2, 3])
             sage: X
             {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1}
-            sage: Y
-            {1, c, 3, 2}
-            sage: X.union(Y)
-            {0, 1, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1, 2, 3}
+            sage: sorted(Y)
+            [1, 2, 3, c]
+            sage: sorted(X.union(Y), key=str)
+            [0, 1, 2, 3, c, c + 1, c^2, c^2 + 1, c^2 + c, c^2 + c + 1]
         """
         if not isinstance(other, Set_object_enumerated):
             return Set_object.union(self, other)

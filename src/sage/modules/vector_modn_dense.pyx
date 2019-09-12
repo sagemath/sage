@@ -79,6 +79,24 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
+Test that :trac:`28042` is fixed::
+
+    sage: p = 193379
+    sage: K = GF(p)
+    sage: a = K(1)
+    sage: b = K(191495)
+    sage: c = K(109320)
+    sage: d = K(167667)
+    sage: e = 103937
+    sage: a*c+b*d-e
+    102041
+    sage: vector([a,b]) * vector([c,d]) - e
+    102041
+    sage: type(vector([a,b]) * vector([c,d])) # py3
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    sage: type(vector([a,b]) * vector([c,d])) # py2
+    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+
 AUTHOR:
 
 - William Stein (2007)
@@ -279,21 +297,30 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return z
 
     cpdef _dot_product_(self, Vector right):
-        cdef Py_ssize_t i
+        cdef size_t i
         cdef IntegerMod_int n
+        cdef IntegerMod_int64 m
         cdef Vector_modn_dense r = right
-        n =  IntegerMod_int.__new__(IntegerMod_int)
-        IntegerMod_abstract.__init__(n, self.base_ring())
-        n.ivalue = 0
 
-        for i from 0 <= i < self._degree:
-            n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
-
-        return n
+        if use_32bit_type(self._p):
+            n =  IntegerMod_int.__new__(IntegerMod_int)
+            IntegerMod_abstract.__init__(n, self.base_ring())
+            n.ivalue = 0
+            for i in range(self._degree):
+                n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return n
+        else:
+            m = IntegerMod_int64.__new__(IntegerMod_int64)
+            IntegerMod_abstract.__init__(m, self.base_ring())
+            m.ivalue = 0
+            for i in range(self._degree):
+                m.ivalue = (m.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return m
 
     cpdef _pairwise_product_(self, Vector right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
            sage: v = vector(Integers(8), [2,3]); w = vector(Integers(8), [2,5])
            sage: v * w
            3

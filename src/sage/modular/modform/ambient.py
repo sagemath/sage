@@ -558,9 +558,11 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     ####################################################################
     @cached_method
     def _dim_cuspidal(self):
-        """
+        r"""
         Return the dimension of the cuspidal subspace of this ambient
-        modular forms space. For weights `k \ge 2` this is computed using a
+        modular forms space.
+
+        For weights `k \ge 2` this is computed using a
         dimension formula. For weight 1, it will trigger a computation of a
         basis of `q`-expansions using Schaeffer's algorithm, unless this space
         is a space of Eisenstein forms only, in which case we just return 0.
@@ -583,7 +585,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         if self._eis_only:
             return 0
         if arithgroup.is_Gamma1(self.group()) and self.character() is not None:
-            return self.group().dimension_cusp_forms(self.weight(), self.character())
+            return self.group().dimension_cusp_forms(self.weight(),
+                                                     self.character())
         else:
             return self.group().dimension_cusp_forms(self.weight())
 

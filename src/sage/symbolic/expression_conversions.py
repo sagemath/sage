@@ -12,7 +12,7 @@ overridden by subclasses.
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 from __future__ import print_function
 
@@ -22,6 +22,7 @@ from sage.symbolic.all import I, SR
 from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from functools import reduce
 GaussianField = I.pyobject().parent()
 
@@ -182,7 +183,7 @@ class Converter(object):
             Traceback (most recent call last):
             ...
             NotImplementedError: composition
-            sage: c(function('f', x).diff(x))
+            sage: c(function('f')(x).diff(x))
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative
@@ -346,7 +347,7 @@ class Converter(object):
         TESTS::
 
             sage: from sage.symbolic.expression_conversions import Converter
-            sage: a = function('f', x).diff(x); a
+            sage: a = function('f')(x).diff(x); a
             diff(f(x), x)
             sage: Converter().derivative(a, a.operator())
             Traceback (most recent call last):
@@ -521,7 +522,7 @@ class InterfaceInit(Converter):
 
         ::
 
-            sage: f = function('f', x)
+            sage: f = function('f')(x)
             sage: df = f.diff(x); df
             diff(f(x), x)
             sage: maxima(df)
@@ -794,6 +795,37 @@ class SympyConverter(Converter):
         else:
             return sympy.Function(str(f))(*g, evaluate=False)
 
+    def tuple(self, ex):
+        """
+        Conversion of tuples.
+
+        EXAMPLES::
+
+            sage: t = SR._force_pyobject((3, 4, e^x))
+            sage: t._sympy_()
+            (3, 4, e^x)
+            sage: t = SR._force_pyobject((cos(x),))
+            sage: t._sympy_()
+            (cos(x),)
+
+        TESTS::
+
+            sage: from sage.symbolic.expression_conversions import sympy_converter
+            sage: F = hypergeometric([1/3,2/3],[1,1],x)
+            sage: F._sympy_()
+            hyper((1/3, 2/3), (1, 1), x)
+
+            sage: F = hypergeometric([1/3,2/3],[1],x)
+            sage: F._sympy_()
+            hyper((1/3, 2/3), (1,), x)
+
+            sage: var('a,b,c,d')
+            (a, b, c, d)
+            sage: hypergeometric((a,b,),(c,),d)._sympy_()
+            hyper((a, b), (c,), d)
+        """
+        return tuple(ex.operands())
+
     def derivative(self, ex, operator):
         """
         Convert the derivative of ``self`` in sympy.
@@ -815,7 +847,7 @@ class SympyConverter(Converter):
             sage: df_sage = f_sage.diff(x, 2, y, 1); df_sage
             diff(f_sage(x, y), x, x, y)
             sage: df_sympy = df_sage._sympy_(); df_sympy
-            Derivative(f_sage(x, y), x, x, y)
+            Derivative(f_sage(x, y), (x, 2), y)
             sage: df_sympy == f_sympy.diff(x, 2, y, 1)
             True
         """
@@ -841,6 +873,79 @@ class SympyConverter(Converter):
 
 
 sympy_converter = SympyConverter()
+
+##########
+# FriCAS #
+##########
+class FriCASConverter(InterfaceInit):
+    """
+    Converts any expression to FriCAS.
+
+    EXAMPLES::
+
+        sage: var('x,y')
+        (x, y)
+        sage: f = exp(x^2) - arcsin(pi+x)/y
+        sage: f._fricas_()                                                      # optional - fricas
+             2
+            x
+        y %e   - asin(x + %pi)
+        ----------------------
+                   y
+
+    """
+    def __init__(self):
+        import sage.interfaces.fricas
+        super(FriCASConverter, self).__init__(sage.interfaces.fricas.fricas)
+
+    def derivative(self, ex, operator):
+        """
+        Convert the derivative of ``self`` in FriCAS.
+
+        INPUT:
+
+        - ``ex`` -- a symbolic expression
+
+        - ``operator`` -- operator
+
+        EXAMPLES::
+
+            sage: var('x,y,z')
+            (x, y, z)
+            sage: f = function("F")
+            sage: f(x)._fricas_()                                               # optional - fricas
+            F(x)
+            sage: diff(f(x,y,z), x, z, x)._fricas_()                            # optional - fricas
+            F      (x,y,z)
+             ,1,1,3
+
+        Check that :trac:`25838` is fixed::
+
+            sage: var('x')
+            x
+            sage: F = function('F')
+            sage: integrate(F(x), x, algorithm="fricas")                        # optional - fricas
+            integral(F(x), x)
+
+            sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm="fricas")     # optional - fricas
+            -cos(F(x))
+        """
+        from sage.symbolic.ring import is_SymbolicVariable
+        args = ex.operands()
+        if (not all(is_SymbolicVariable(v) for v in args) or
+            len(args) != len(set(args))):
+            raise NotImplementedError
+        else:
+            f = operator.function()(*args)
+            params = operator.parameter_set()
+            params_set = set(params)
+            vars = "[" + ",".join(args[i]._fricas_init_() for i in params_set) + "]"
+            mult = "[" + ",".join(str(params.count(i)) for i in params_set) + "]"
+            outstr = "D(%s, %s, %s)"%(f._fricas_init_(), vars, mult)
+
+        return outstr
+
+fricas_converter = FriCASConverter()
 
 #############
 # Algebraic #
@@ -981,12 +1086,18 @@ class AlgebraicConverter(Converter):
         func = operator
         operand, = ex.operands()
 
-        QQbar = self.field.algebraic_closure()
+        if isinstance(self.field, UniversalCyclotomicField):
+            QQbar = self.field
+            hold = True
+        else:
+            QQbar = self.field.algebraic_closure()
+            hold = False
+        zeta = QQbar.zeta
         # Note that comparing functions themselves goes via maxima, and is SLOW
         func_name = repr(func)
         if func_name == 'exp':
             if operand.is_trivial_zero():
-                return self.field(1)
+                return self.field.one()
             if not (SR(-1).sqrt()*operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
             # Coerce (not convert, see #22571) arg to a rational
@@ -995,23 +1106,23 @@ class AlgebraicConverter(Converter):
                 rat_arg = QQ.coerce(arg.pyobject())
             except TypeError:
                 raise TypeError("unable to convert %r to %s"%(ex, self.field))
-            res = QQbar.zeta(rat_arg.denom())**rat_arg.numer()
+            res = zeta(rat_arg.denom())**rat_arg.numer()
         elif func_name in ['sin', 'cos', 'tan']:
-            exp_ia = exp(SR(-1).sqrt()*operand)._algebraic_(QQbar)
+            exp_ia = exp(SR(-1).sqrt()*operand, hold=hold)._algebraic_(QQbar)
             if func_name == 'sin':
-                res = (exp_ia - ~exp_ia)/(2*QQbar.zeta(4))
+                res = (exp_ia - ~exp_ia) / (2 * zeta(4))
             elif func_name == 'cos':
-                res = (exp_ia + ~exp_ia)/2
+                res = (exp_ia + ~exp_ia) / 2
             else:
-                res = -QQbar.zeta(4)*(exp_ia - ~exp_ia)/(exp_ia + ~exp_ia)
+                res = -zeta(4) * (exp_ia - ~exp_ia) / (exp_ia + ~exp_ia)
         elif func_name in ['sinh', 'cosh', 'tanh']:
             if not (SR(-1).sqrt()*operand).is_real():
                 raise ValueError("unable to represent as an algebraic number")
-            exp_a = exp(operand)._algebraic_(QQbar)
+            exp_a = exp(operand, hold=hold)._algebraic_(QQbar)
             if func_name == 'sinh':
-                res = (exp_a - ~exp_a)/2
+                res = (exp_a - ~exp_a) / 2
             elif func_name == 'cosh':
-                res = (exp_a + ~exp_a)/2
+                res = (exp_a + ~exp_a) / 2
             else:
                 res = (exp_a - ~exp_a) / (exp_a + ~exp_a)
         elif func_name in self.reciprocal_trig_functions:
@@ -1404,19 +1515,14 @@ class FastFloatConverter(Converter):
             4.1780638977...
 
         Using ``_fast_float_`` without specifying the variable names is
-        deprecated::
+        no longer possible::
 
             sage: f = x._fast_float_()
-            doctest:...: DeprecationWarning: Substitution using
-            function-call syntax and unnamed arguments is deprecated
-            and will be removed from a future release of Sage; you
-            can use named arguments instead, like EXPR(x=..., y=...)
-            See http://trac.sagemath.org/5930 for details.
-            sage: f(1.2)
-            1.2
+            Traceback (most recent call last):
+            ...
+            ValueError: please specify the variable names
 
         Using ``_fast_float_`` on a function which is the identity is
-        Using _fast_float_ on a function which is the identity is
         now supported (see :trac:`10246`)::
 
             sage: f = symbolic_expression(x).function(x)
@@ -1427,16 +1533,14 @@ class FastFloatConverter(Converter):
         """
         self.ex = ex
 
-        if vars == ():
+        if not vars:
             try:
                 vars = ex.arguments()
             except AttributeError:
                 vars = ex.variables()
 
             if vars:
-                from sage.misc.superseded import deprecation
-                deprecation(5930, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
-
+                raise ValueError('please specify the variable names')
 
         self.vars = vars
 

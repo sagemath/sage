@@ -208,8 +208,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: Fd._latex_()
             '$\\mathrm{DualAbelianGroup}( AbelianGroup ( 3, (2, 2, 2) ) )$'
         """
-        s = "$\mathrm{DualAbelianGroup}( AbelianGroup ( %s, %s ) )$"%(self.ngens(), self.gens_orders())
-        return s
+        return r"$\mathrm{DualAbelianGroup}( AbelianGroup ( %s, %s ) )$" % (self.ngens(), self.gens_orders())
 
     def random_element(self):
         """

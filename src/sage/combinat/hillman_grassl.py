@@ -106,7 +106,7 @@ AUTHORS:
 - Darij Grinberg and Tom Roby (2018): Initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Darij Grinberg <darijgrinberg@gmail.com>,
 #                     2018 Tom Roby <tomrobyuconn@gmail.com>
 #
@@ -114,12 +114,13 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.tableau import Tableau, Tableaux
 from sage.categories.sets_cat import Sets
 from sage.combinat.combinatorial_map import combinatorial_map
+
 
 class WeakReversePlanePartition(Tableau):
     r"""
@@ -164,7 +165,7 @@ class WeakReversePlanePartition(Tableau):
             True
         """
         try:
-            r = map(tuple, r)
+            r = list(map(tuple, r))
         except TypeError:
             raise TypeError("r must be a list of positive integers")
         return WeakReversePlanePartitions()(r)
@@ -185,7 +186,7 @@ class WeakReversePlanePartition(Tableau):
 
         Tableau.__init__(self, parent, t)
 
-    @combinatorial_map(order=2,name='conjugate')
+    @combinatorial_map(order=2, name='conjugate')
     def conjugate(self):
         """
         Return the conjugate of ``self``.
@@ -280,8 +281,8 @@ class WeakReversePlanePartition(Tableau):
         result ([Gans1981]_ Corollary 3.4)::
 
             sage: a = WeakReversePlanePartition([[1,3,5],[2,4]])
-            sage: a.hillman_grassl_inverse().conjugate() \
-            ....:     == a.conjugate().hillman_grassl_inverse()
+            sage: a.hillman_grassl_inverse().conjugate() ==\
+            ....:     a.conjugate().hillman_grassl_inverse()
             True
         """
         return Tableau(hillman_grassl_inverse(list(self)))
@@ -400,11 +401,12 @@ class WeakReversePlanePartition(Tableau):
         `M` and then transposing the result::
 
             sage: a = WeakReversePlanePartition([[1,3,5],[2,4]])
-            sage: a.pak_correspondence().conjugate() \
-            ....:     == a.conjugate().pak_correspondence()
+            sage: a.pak_correspondence().conjugate() ==\
+            ....:     a.conjugate().pak_correspondence()
             True
         """
         return Tableau(pak_correspondence(list(self)))
+
 
 class WeakReversePlanePartitions(Tableaux):
     r"""
@@ -432,8 +434,8 @@ class WeakReversePlanePartitions(Tableaux):
         """
         if shape is not None:
             raise NotImplementedError("shape cannot be specified")
-            #from sage.combinat.partition import Partition
-            #return RibbonShapedTableaux_shape(Partition(shape))
+            # from sage.combinat.partition import Partition
+            # return RibbonShapedTableaux_shape(Partition(shape))
 
         return super(WeakReversePlanePartitions, cls).__classcall__(cls, **kwds)
 
@@ -471,10 +473,11 @@ class WeakReversePlanePartitions(Tableaux):
         """
         return self.element_class(self, [[0, 0, 1, 2], [0, 1, 1], [0], [2]])
 
+
 def transpose(M):
     r"""
     Return the transpose of a `\lambda`-array.
-    
+
     The transpose of a `\lambda`-array `(m_{i, j})` is the
     `\lambda^t`-array `(m_{j, i})`
     (where `\lambda^t` is the conjugate of the partition
@@ -499,7 +502,7 @@ def transpose(M):
         sage: transpose(WeakReversePlanePartition([]))
         []
     """
-    if not M: # empty array
+    if not M:  # empty array
         return []
     l = len(M[0])
     res = []
@@ -580,6 +583,7 @@ def hillman_grassl(M):
                 j -= 1
     return res
 
+
 def hillman_grassl_inverse(M):
     r"""
     Return the image of the `\lambda`-rpp ``M`` under the
@@ -639,12 +643,12 @@ def hillman_grassl_inverse(M):
                 continue
             else:
                 break
-        else: # all entries of Mt are 0.
+        else:  # all entries of Mt are 0.
             break
         # Now, j is the index of the leftmost nonzero column of
         # the array.
         s = j
-        i = len(col_j) - 1 # We already have j = s.
+        i = len(col_j) - 1  # We already have j = s.
         while True:
             old = col_j[i]
             col_j[i] -= 1
@@ -657,6 +661,7 @@ def hillman_grassl_inverse(M):
                 col_j = Mt[j]
         res[i][s] += 1
     return res
+
 
 def sulzgruber_correspondence(M):
     r"""
@@ -731,16 +736,16 @@ def sulzgruber_correspondence(M):
         u = i - k
         v = j - k
         if u > 0 and v > 0:
-            lower_bound = max(N[u-1][v], N[u][v-1])
+            lower_bound = max(N[u - 1][v], N[u][v - 1])
         elif u > 0:
-            lower_bound = N[u-1][v]
+            lower_bound = N[u - 1][v]
         elif v > 0:
-            lower_bound = N[u][v-1]
+            lower_bound = N[u][v - 1]
         else:
             lower_bound = 0
         if k > 0:
             val = N[u][v]
-            upper_bound = min(N[u+1][v], N[u][v+1])
+            upper_bound = min(N[u + 1][v], N[u][v + 1])
             N[u][v] = lower_bound + upper_bound - val
         else:
             if len(N) <= u:
@@ -748,6 +753,7 @@ def sulzgruber_correspondence(M):
             N[u].append(lower_bound + x)
 
     return N
+
 
 def pak_correspondence(M, copy=True):
     r"""
@@ -825,7 +831,8 @@ def pak_correspondence(M, copy=True):
     x = M[i][j]
 
     if copy:
-        N = [list(row) for row in M] # make a deep copy of M to avoid vandalizing M
+        N = [list(row) for row in M]
+        # make a deep copy of M to avoid vandalizing M
     else:
         N = M
 
@@ -834,16 +841,16 @@ def pak_correspondence(M, copy=True):
         u = i - k
         v = j - k
         if u > 0 and v > 0:
-            lower_bound = max(N[u-1][v], N[u][v-1])
+            lower_bound = max(N[u - 1][v], N[u][v - 1])
         elif u > 0:
-            lower_bound = N[u-1][v]
+            lower_bound = N[u - 1][v]
         elif v > 0:
-            lower_bound = N[u][v-1]
+            lower_bound = N[u][v - 1]
         else:
             lower_bound = 0
         if k > 0:
             val = N[u][v]
-            upper_bound = min(N[u+1][v], N[u][v+1])
+            upper_bound = min(N[u + 1][v], N[u][v + 1])
             N[u][v] = lower_bound + upper_bound - val
         else:
             x -= lower_bound
@@ -858,4 +865,3 @@ def pak_correspondence(M, copy=True):
         N.append([])
     N[i].append(x)
     return N
-

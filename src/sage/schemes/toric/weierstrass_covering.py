@@ -93,11 +93,7 @@ contains additional variables that you want to treat as coefficients::
 
 REFERENCES:
 
-..  [AnEtAl]
-    An, Sang Yook et al:
-    Jacobians of Genus One Curves,
-    Journal of Number Theory 90 (2002), pp.304--315,
-    http://www.math.arizona.edu/~wmc/Research/JacobianFinal.pdf
+- [AKMMMP2002]_
 """
 
 ########################################################################
@@ -105,7 +101,7 @@ REFERENCES:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from six import iteritems
 
@@ -231,18 +227,18 @@ def WeierstrassMap(polynomial, variables=None):
         variables = polynomial.variables()
     # switch to suitable inhomogeneous coordinates
     from sage.geometry.polyhedron.ppl_lattice_polygon import (
-        polar_P2_polytope, polar_P1xP1_polytope, polar_P2_112_polytope )
+        polar_P2_polytope, polar_P1xP1_polytope, polar_P2_112_polytope)
     from sage.schemes.toric.weierstrass import Newton_polygon_embedded
     newton_polytope, polynomial_aff, variables_aff = \
         Newton_polygon_embedded(polynomial, variables)
     polygon = newton_polytope.embed_in_reflexive_polytope('polytope')
     # Compute the map in inhomogeneous coordinates
     if polygon is polar_P2_polytope():
-        X,Y,Z = WeierstrassMap_P2(polynomial_aff, variables_aff)
+        X, Y, Z = WeierstrassMap_P2(polynomial_aff, variables_aff)
     elif polygon is polar_P1xP1_polytope():
-        X,Y,Z = WeierstrassMap_P1xP1(polynomial_aff, variables_aff)
+        X, Y, Z = WeierstrassMap_P1xP1(polynomial_aff, variables_aff)
     elif polygon is polar_P2_112_polytope():
-        X,Y,Z = WeierstrassMap_P2_112(polynomial_aff, variables_aff)
+        X, Y, Z = WeierstrassMap_P2_112(polynomial_aff, variables_aff)
     else:
         assert False, 'Newton polytope is not contained in a reflexive polygon'
     # homogenize again
@@ -250,29 +246,30 @@ def WeierstrassMap(polynomial, variables=None):
     x = R.gens().index(variables_aff[0])
     y = R.gens().index(variables_aff[1])
     hom = newton_polytope.embed_in_reflexive_polytope('hom')
+
     def homogenize(inhomog, degree):
-        e = tuple(hom._A * vector(ZZ,[inhomog[x], inhomog[y]]) + degree * hom._b)
+        e = tuple(hom._A * vector(ZZ, [inhomog[x], inhomog[y]]) + degree * hom._b)
         result = list(inhomog)
         for i, var in enumerate(variables):
             result[R.gens().index(var)] = e[i]
         result = vector(ZZ, result)
         result.set_immutable()
         return result
-    X_dict = dict((homogenize(e,2), v) for e, v in iteritems(X.dict()))
-    Y_dict = dict((homogenize(e,3), v) for e, v in iteritems(Y.dict()))
-    Z_dict = dict((homogenize(e,1), v) for e, v in iteritems(Z.dict()))
+    X_dict = dict((homogenize(e, 2), v) for e, v in iteritems(X.dict()))
+    Y_dict = dict((homogenize(e, 3), v) for e, v in iteritems(Y.dict()))
+    Z_dict = dict((homogenize(e, 1), v) for e, v in iteritems(Z.dict()))
     # shift to non-negative exponents if necessary
-    min_deg = [0]*R.ngens()
+    min_deg = [0] * R.ngens()
     for var in variables:
         i = R.gens().index(var)
-        min_X = min([ e[i] for e in X_dict ]) if len(X_dict)>0 else 0
-        min_Y = min([ e[i] for e in Y_dict ]) if len(Y_dict)>0 else 0
-        min_Z = min([ e[i] for e in Z_dict ]) if len(Z_dict)>0 else 0
-        min_deg[i] = min( min_X/2, min_Y/3, min_Z )
+        min_X = min([e[i] for e in X_dict]) if X_dict else 0
+        min_Y = min([e[i] for e in Y_dict]) if Y_dict else 0
+        min_Z = min([e[i] for e in Z_dict]) if Z_dict else 0
+        min_deg[i] = min(min_X / 2, min_Y / 3, min_Z)
     min_deg = vector(min_deg)
-    X_dict = dict((tuple(e-2*min_deg), v) for e, v in iteritems(X_dict))
-    Y_dict = dict((tuple(e-3*min_deg), v) for e, v in iteritems(Y_dict))
-    Z_dict = dict((tuple(e-1*min_deg), v) for e, v in iteritems(Z_dict))
+    X_dict = dict((tuple(e - 2 * min_deg), v) for e, v in iteritems(X_dict))
+    Y_dict = dict((tuple(e - 3 * min_deg), v) for e, v in iteritems(Y_dict))
+    Z_dict = dict((tuple(e - 1 * min_deg), v) for e, v in iteritems(Z_dict))
     return (R(X_dict), R(Y_dict), R(Z_dict))
 
 
@@ -320,13 +317,13 @@ def WeierstrassMap_P2(polynomial, variables=None):
         sage: equation.divides(-Y^2 + X^3 + f*X*Z^4 + g*Z^6)
         True
     """
-    x,y,z = _check_polynomial_P2(polynomial, variables)
-    cubic = invariant_theory.ternary_cubic(polynomial, x,y,z)
+    x, y, z = _check_polynomial_P2(polynomial, variables)
+    cubic = invariant_theory.ternary_cubic(polynomial, x, y, z)
     H = cubic.Hessian()
     Theta = cubic.Theta_covariant()
     J = cubic.J_covariant()
     F = polynomial.parent().base_ring()
-    return (Theta, J/F(2), H)
+    return (Theta, J / F(2), H)
 
 
 ######################################################################
@@ -376,16 +373,16 @@ def WeierstrassMap_P1xP1(polynomial, variables=None):
         sage: (-Y^2 + X^3 + f*X*Z^4 + g*Z^6).reduce(R.ideal(equation))
         0
     """
-    x,y,s,t = _check_polynomial_P1xP1(polynomial, variables)
-    a00 = polynomial.coefficient({s:2})
-    V = polynomial.coefficient({s:1})
+    x, y, s, t = _check_polynomial_P1xP1(polynomial, variables)
+    a00 = polynomial.coefficient({s: 2})
+    V = polynomial.coefficient({s: 1})
     U = - _partial_discriminant(polynomial, s, t) / 4
     Q = invariant_theory.binary_quartic(U, x, y)
     g = Q.g_covariant()
     h = Q.h_covariant()
     if t is None:
         t = 1
-    return ( 4*g*t**2, 4*h*t**3, (a00*s+V/2) )
+    return (4 * g * t**2, 4 * h * t**3, (a00 * s + V / 2))
 
 
 ######################################################################
@@ -446,13 +443,13 @@ def WeierstrassMap_P2_112(polynomial, variables=None):
         sage: (-Y^2 + X^3 - 97/48*X*Z^4 + 17/864*Z^6).reduce(C.defining_ideal())
         0
     """
-    x,y,z,t = _check_polynomial_P2_112(polynomial, variables)
-    a00 = polynomial.coefficient({y:2})
-    V = polynomial.coefficient({y:1})
+    x, y, z, t = _check_polynomial_P2_112(polynomial, variables)
+    a00 = polynomial.coefficient({y: 2})
+    V = polynomial.coefficient({y: 1})
     U = - _partial_discriminant(polynomial, y, t) / 4
     Q = invariant_theory.binary_quartic(U, x, z)
     g = Q.g_covariant()
     h = Q.h_covariant()
     if t is None:
         t = 1
-    return ( 4*g*t**2, 4*h*t**3, (a00*y+V/2) )
+    return (4 * g * t**2, 4 * h * t**3, (a00 * y + V / 2))

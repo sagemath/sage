@@ -415,16 +415,16 @@ cdef class FrozenBitset:
 
     def __getstate__(self):
         """
-        Return the current state of the object as a string.
+        Return the current state of the object as a bytes string.
 
         EXAMPLES::
 
-            sage: FrozenBitset('1101').__getstate__()
-            '1101'
-            sage: FrozenBitset('110'*32).__getstate__()
-            '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
+            sage: FrozenBitset('1101').__getstate__() == b'1101'
+            True
+            sage: FrozenBitset('110'*32).__getstate__() == (b'110' * 32)
+            True
         """
-        return str(self)
+        return bytes(self)
 
     def __setstate__(self, state):
         """
@@ -433,15 +433,15 @@ cdef class FrozenBitset:
         EXAMPLES::
 
             sage: a = FrozenBitset()
-            sage: a.__setstate__('1101')
+            sage: a.__setstate__(b'1101')
             sage: a
             1101
-            sage: a.__setstate__('110'*32)
+            sage: a.__setstate__(b'110'*32)
             sage: a
             110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110
         """
         bitset_realloc(self._bitset, len(state))
-        bitset_from_str(self._bitset, state)
+        bitset_from_char(self._bitset, state)
 
     def __iter__(self):
         """
@@ -844,6 +844,21 @@ cdef class FrozenBitset:
             '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
         """
         return bitset_string(self._bitset)
+
+    def __bytes__(self):
+        """
+        Return a bytes object representing the bitset as a binary vector.
+
+        EXAMPLES::
+
+            sage: a = FrozenBitset('10110')
+            sage: bytes(a) == b'10110'
+            True
+            sage: bytes(FrozenBitset('110' * 32)) == b'110' * 32
+            True
+        """
+        return bitset_bytes(self._bitset)
+
 
     def __repr__(self):
         """

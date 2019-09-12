@@ -352,7 +352,7 @@ Two of the most useful of these options help in labeling graphs.
 ::
 
     sage: P1 = plot(f,(x,-1,1),axes_labels=['$x$','$y$'],legend_label='$f(x)$')
-    sage: P2 = plot(sin,(x,-1,1),axes_labels=['$x$','$y$'],legend_label='$\sin(x)$',color='red')
+    sage: P2 = plot(sin,(x,-1,1),axes_labels=['$x$','$y$'],legend_label=r'$\sin(x)$',color='red')
     sage: P1+P2
     Graphics object consisting of 2 graphics primitives
 

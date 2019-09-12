@@ -86,18 +86,18 @@ and two have gone to vertex 3, since the edge from 1 to 3 has weight `2`.
 Vertex 3 in the new configuration is now unstable.  The Sage code for this
 example follows. ::
 
-    sage: g = {'sink':{},
-    ....:      1:{'sink':1, 2:1, 3:2},
+    sage: g = {0:{},
+    ....:      1:{0:1, 2:1, 3:2},
     ....:      2:{1:1, 3:1},
     ....:      3:{1:1, 2:1}}
-    sage: S = Sandpile(g, 'sink')   # create the sandpile
+    sage: S = Sandpile(g, 0)   # create the sandpile
     sage: S.show(edge_labels=true)  # display the graph
 
 Create the configuration::
 
     sage: c = SandpileConfig(S, {1:5, 2:0, 3:1})
     sage: S.out_degree()
-    {1: 4, 2: 2, 3: 2, 'sink': 0}
+    {0: 0, 1: 4, 2: 2, 3: 2}
 
 Fire vertex `1`::
 
@@ -162,12 +162,12 @@ Laplacian.
 **Example.** (Continued.) ::
 
     sage: S.vertices()  # the ordering of the vertices
-    [1, 2, 3, 'sink']
+    [0, 1, 2, 3]
     sage: S.laplacian()
-    [ 4 -1 -2 -1]
-    [-1  2 -1  0]
-    [-1 -1  2  0]
     [ 0  0  0  0]
+    [-1  4 -1 -2]
+    [ 0 -1  2 -1]
+    [ 0 -1 -1  2]
     sage: S.reduced_laplacian()
     [ 4 -1 -2]
     [-1  2 -1]
@@ -798,9 +798,9 @@ Initialization
 
 There are three main classes for sandpile structures in Sage: ``Sandpile``,
 ``SandpileConfig``, and ``SandpileDivisor``.  Initialization for ``Sandpile``
-has the form
+has the form ::
 
-.. code-block:: python
+.. skip
 
     sage: S = Sandpile(graph, sink)
 
@@ -3042,10 +3042,9 @@ fires in the stabilization.::
     sage: m = S.max_stable()
     sage: a = []
     sage: for i in range(1000):
-    ...       m = m.add_random()
-    ...       m, f = m.stabilize(True)
-    ...       a.append(sum(f.values()))
-    ...
+    ....:     m = m.add_random()
+    ....:     m, f = m.stabilize(True)
+    ....:     a.append(sum(f.values()))
     sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
     sage: p.axes_labels(['log(N)','log(D(N))'])
     sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
@@ -3596,14 +3595,14 @@ boolean
 
 EXAMPLES::
 
-    sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
-    sage: c = SandpileConfig(S, {'b':1, 1:2})
+    sage: S = Sandpile({'a':['c','b'], 'b':['c','a'], 'c':['a']},'a')
+    sage: c = SandpileConfig(S, {'b':1, 'c':2})
     sage: c
-    {1: 2, 'b': 1}
+    {'b': 1, 'c': 2}
     sage: c.values()
-    [2, 1]
+    [1, 2]
     sage: S.nonsink_vertices()
-    [1, 'b']
+    ['b', 'c']
 
 ---
 
@@ -4676,14 +4675,14 @@ boolean
 
 EXAMPLES::
 
-    sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
-    sage: D = SandpileDivisor(S, {'a':0, 'b':1, 1:2})
+    sage: S = Sandpile({'a':['c','b'], 'b':['c','a'], 'c':['a']},'a')
+    sage: D = SandpileDivisor(S, {'a':0, 'b':1, 'c':2})
     sage: D
-    {'a': 0, 1: 2, 'b': 1}
+    {'a': 0, 'b': 1, 'c': 2}
     sage: D.values()
-    [2, 0, 1]
+    [0, 1, 2]
     sage: S.vertices()
-    [1, 'a', 'b']
+    ['a', 'b', 'c']
 
 
 ---

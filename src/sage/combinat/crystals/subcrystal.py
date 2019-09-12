@@ -29,6 +29,7 @@ from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
+from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
@@ -99,6 +100,16 @@ class Subcrystal(UniqueRepresentation, Parent):
     .. TODO::
 
         Include support for subcrystals which only contains certain arrows.
+
+    TESTS:
+
+    Check that the subcrystal respects being in the category
+    of supercrystals (:trac:`27368`)::
+
+        sage: T = crystals.Tableaux(['A',[1,1]], [2,1])
+        sage: S = T.subcrystal(max_depth=3)
+        sage: S.category()
+        Category of regular super crystals
     """
     @staticmethod
     def __classcall_private__(cls, ambient, contained=None, generators=None,
@@ -131,6 +142,8 @@ class Subcrystal(UniqueRepresentation, Parent):
         category = Crystals().or_subcategory(category)
         if ambient in FiniteCrystals() or isinstance(contained, frozenset):
             category = category.Finite()
+        if ambient in RegularSuperCrystals():
+            category = category & RegularSuperCrystals()
 
         if virtualization is not None:
             if scaling_factors is None:

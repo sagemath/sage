@@ -7,6 +7,8 @@
 <style>
 
     body { margin: 0px; overflow: hidden; }
+
+    #download { position: absolute; bottom: 30px; right: 40px; }
   
 </style>
 </head>
@@ -17,7 +19,8 @@ SAGE_SCRIPTS
 
     var scene = new THREE.Scene();
 
-    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    var renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor( 0xffffff, 1 );
     document.body.appendChild( renderer.domElement );
@@ -44,7 +47,7 @@ SAGE_SCRIPTS
     }
 
     var rRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
-                            + Math.pow( b[1].x - b[0].x, 2 ) );
+                            + Math.pow( b[1].y - b[0].y, 2 ) );
     var xRange = b[1].x - b[0].x;
     var yRange = b[1].y - b[0].y;
     var zRange = b[1].z - b[0].z;
@@ -54,6 +57,9 @@ SAGE_SCRIPTS
     var autoAspect = 2.5;
     if ( zRange > autoAspect * rRange && a[2] === 1 ) a[2] = autoAspect * rRange / zRange;
 
+    // Distance from (xMid,yMid,zMid) to any corner of the bounding box, after applying aspect_ratio.
+    var midToCorner = Math.sqrt( a[0]*a[0]*xRange*xRange + a[1]*a[1]*yRange*yRange + a[2]*a[2]*zRange*zRange ) / 2;
+
     var xMid = ( b[0].x + b[1].x ) / 2;
     var yMid = ( b[0].y + b[1].y ) / 2;
     var zMid = ( b[0].z + b[1].z ) / 2;
@@ -61,10 +67,11 @@ SAGE_SCRIPTS
     var box = new THREE.Geometry();
     box.vertices.push( new THREE.Vector3( a[0]*b[0].x, a[1]*b[0].y, a[2]*b[0].z ) );
     box.vertices.push( new THREE.Vector3( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) );
-    var boxMesh = new THREE.LineSegments( box );
+    var boxMesh = new THREE.Line( box );
     if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, 'black' ) );
 
     if ( options.axes_labels ) {
+
         var d = options.decimals; // decimals
         var offsetRatio = 0.1;
         var al = options.axes_labels;
@@ -89,36 +96,84 @@ SAGE_SCRIPTS
         addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid );
         addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z );
         addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z );
+
     }
 
     function addLabel( text, x, y, z ) {
+
         var fontsize = 14;
 
         var canvas = document.createElement( 'canvas' );
-        canvas.width = 128;
-        canvas.height = 32; // powers of two
+        var pixelRatio = Math.round( window.devicePixelRatio );
+        canvas.width = 128 * pixelRatio;
+        canvas.height = 32 * pixelRatio; // powers of two
+        canvas.style.width = '128px';
+        canvas.style.height = '32px';
 
         var context = canvas.getContext( '2d' );
+        context.scale( pixelRatio, pixelRatio );
         context.fillStyle = 'black';
         context.font = fontsize + 'px monospace';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText( text, .5*canvas.width, .5*canvas.height );
+        context.fillText( text, canvas.width/2/pixelRatio, canvas.height/2/pixelRatio );
 
         var texture = new THREE.Texture( canvas );
         texture.needsUpdate = true;
 
         var sprite = new THREE.Sprite( new THREE.SpriteMaterial( { map: texture } ) );
         sprite.position.set( x, y, z );
-        sprite.scale.set( 1, .25 ); // ratio of width to height
+
+        // Set the initial scale based on plot size to accomodate orthographic projection.
+        // For other projections, the scale will get reset each frame based on camera distance.
+        var scale = midToCorner/2;
+        sprite.scale.set( scale, scale*.25 ); // ratio of canvas width to height
+
         scene.add( sprite );
+
     }
 
-    if ( options.axes ) scene.add( new THREE.AxisHelper( Math.min( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) ) );
+    if ( options.axes ) scene.add( new THREE.AxesHelper( Math.min( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) ) );
 
-    var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    var camera = createCamera();
     camera.up.set( 0, 0, 1 );
     camera.position.set( a[0]*(xMid+xRange), a[1]*(yMid+yRange), a[2]*(zMid+zRange) );
+
+    function createCamera() {
+
+        var aspect = window.innerWidth / window.innerHeight;
+
+        if ( options.projection === 'orthographic' ) {
+            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -1000, 1000 );
+            updateCameraAspect( camera, aspect );
+            return camera;
+        }
+
+        return new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000 );
+
+    }
+
+    function updateCameraAspect( camera, aspect ) {
+
+        if ( camera.isPerspectiveCamera ) {
+            camera.aspect = aspect;
+        } else if ( camera.isOrthographicCamera ) {
+            // Fit the camera frustum to the bounding box's diagonal so that the entire plot fits
+            // within at the default zoom level and camera position.
+            if ( aspect > 1 ) { // Wide window
+                camera.top = midToCorner;
+                camera.right = midToCorner * aspect;
+            } else { // Tall or square window
+                camera.top = midToCorner / aspect;
+                camera.right = midToCorner;
+            }
+            camera.bottom = -camera.top;
+            camera.left = -camera.right;
+        }
+
+        camera.updateProjectionMatrix();
+
+    }
 
     var lights = SAGE_LIGHTS;
     for ( var i=0 ; i < lights.length ; i++ ) {
@@ -142,11 +197,19 @@ SAGE_SCRIPTS
     window.addEventListener( 'resize', function() {
         
         renderer.setSize( window.innerWidth, window.innerHeight );
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        updateCameraAspect( camera, window.innerWidth / window.innerHeight );
         if ( !animate ) render();
         
     } );
+
+    function saveAsPNG() {
+
+        var a = document.body.appendChild( document.createElement( 'a' ) );
+        a.href = renderer.domElement.toDataURL( 'image/png' );
+        a.download = 'screenshot';
+        a.click();
+
+    }
 
     var texts = SAGE_TEXTS;
     for ( var i=0 ; i < texts.length ; i++ )
@@ -156,6 +219,7 @@ SAGE_SCRIPTS
     for ( var i=0 ; i < points.length ; i++ ) addPoint( points[i] );
 
     function addPoint( json ) {
+
         var geometry = new THREE.Geometry();
         var v = json.point;
         geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
@@ -173,25 +237,30 @@ SAGE_SCRIPTS
         texture.needsUpdate = true;
 
         var transparent = json.opacity < 1 ? true : false;
-        var material = new THREE.PointsMaterial( { size: json.size/100, map: texture,
+        var size = camera.isOrthographicCamera ? json.size : json.size/100;
+        var material = new THREE.PointsMaterial( { size: size, map: texture,
                                                    transparent: transparent, opacity: json.opacity,
                                                    alphaTest: .1 } );
 
-        var c = geometry.center().multiplyScalar( -1 );
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
         var mesh = new THREE.Points( geometry, material );
         mesh.position.set( c.x, c.y, c.z );
         scene.add( mesh );
+
     }
 
     var lines = SAGE_LINES;
     for ( var i=0 ; i < lines.length ; i++ ) addLine( lines[i] );
 
     function addLine( json ) {
+
         var geometry = new THREE.Geometry();
         for ( var i=0 ; i < json.points.length - 1 ; i++ ) {
             var v = json.points[i];
-            geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
-            var v = json.points[i+1];
             geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
         }
 
@@ -199,25 +268,24 @@ SAGE_SCRIPTS
         var material = new THREE.LineBasicMaterial( { color: json.color, linewidth: json.linewidth,
                                                       transparent: transparent, opacity: json.opacity } );
 
-        var c = geometry.center().multiplyScalar( -1 );
-        var mesh = new THREE.LineSegments( geometry, material );
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
+        var mesh = new THREE.Line( geometry, material );
         mesh.position.set( c.x, c.y, c.z );
         scene.add( mesh );
+
     }
 
     var surfaces = SAGE_SURFACES;
-    for ( var i=0 ; i < surfaces.length ; i++ ) {
-        if ( surfaces[i].hasOwnProperty('face_colors') )
-        {
-            addSurfaceWithColors( surfaces[i] )
-        }
-        else
-        {
-            addSurface( surfaces[i] )
-        }
-    }
+    for ( var i=0 ; i < surfaces.length ; i++ ) addSurface( surfaces[i] );
 
     function addSurface( json ) {
+
+        var useFaceColors = 'faceColors' in json ? true : false;
+
         var geometry = new THREE.Geometry();
         for ( var i=0 ; i < json.vertices.length ; i++ ) {
             var v = json.vertices[i];
@@ -226,50 +294,61 @@ SAGE_SCRIPTS
         for ( var i=0 ; i < json.faces.length ; i++ ) {
             var f = json.faces[i];
             for ( var j=0 ; j < f.length - 2 ; j++ ) {
-                geometry.faces.push( new THREE.Face3( f[0], f[j+1], f[j+2] ) );
+                var face = new THREE.Face3( f[0], f[j+1], f[j+2] );
+                if ( useFaceColors ) face.color.set( json.faceColors[i] );
+                geometry.faces.push( face );
             }
         }
         geometry.computeVertexNormals();
 
         var transparent = json.opacity < 1 ? true : false;
-        var material = new THREE.MeshPhongMaterial( {
-                                     color: json.color, side: THREE.DoubleSide,
+        var flatShading = 'useFlatShading' in json ? true : false;
+
+        var material = new THREE.MeshPhongMaterial( { side: THREE.DoubleSide,
+                                     color: useFaceColors ? 'white' : json.color,
+                                     vertexColors: useFaceColors ? THREE.FaceColors : THREE.NoColors,
                                      transparent: transparent, opacity: json.opacity,
-                                     shininess: 20 } );
+                                     shininess: 20, flatShading: flatShading } );
 
-        var c = geometry.center().multiplyScalar( -1 );
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
         var mesh = new THREE.Mesh( geometry, material );
         mesh.position.set( c.x, c.y, c.z );
         scene.add( mesh );
-    }
 
-    function addSurfaceWithColors( json ) {
-        var geometry = new THREE.Geometry();
-        for ( var i=0 ; i < json.vertices.length ; i++ ) {
-            var v = json.vertices[i];
-            geometry.vertices.push( new THREE.Vector3( a[0]*v.x, a[1]*v.y, a[2]*v.z ) );
-        }
-        for ( var i=0 ; i < json.faces.length ; i++ ) {
-            var f = json.faces[i];
-            for ( var j=0 ; j < f.length - 2 ; j++ ) {
-                var tri = new THREE.Face3( f[0], f[j+1], f[j+2] )
-                tri.color.set(json.face_colors[i])
-                geometry.faces.push( tri );
+        if ( 'showMeshGrid' in json ) {
+
+            var geometry = new THREE.Geometry();
+
+            for ( var i=0 ; i < json.faces.length ; i++ ) {
+                var f = json.faces[i];
+                for ( var j=0 ; j < f.length ; j++ ) {
+                    var k = j === f.length-1 ? 0 : j+1;
+                    var v1 = json.vertices[f[j]];
+                    var v2 = json.vertices[f[k]];
+                    // vertices in opposite directions on neighboring faces
+                    var nudge = f[j] < f[k] ? .0005*zRange : -.0005*zRange;
+                    geometry.vertices.push( new THREE.Vector3( a[0]*v1.x, a[1]*v1.y, a[2]*(v1.z+nudge) ) );
+                    geometry.vertices.push( new THREE.Vector3( a[0]*v2.x, a[1]*v2.y, a[2]*(v2.z+nudge) ) );
+                }
             }
+
+            var material = new THREE.LineBasicMaterial( { color: 'black', linewidth: 1 } );
+
+            var c = new THREE.Vector3();
+            geometry.computeBoundingBox();
+            geometry.boundingBox.getCenter( c );
+            geometry.translate( -c.x, -c.y, -c.z );
+
+            var mesh = new THREE.LineSegments( geometry, material );
+            mesh.position.set( c.x, c.y, c.z );
+            scene.add( mesh );
+
         }
-        geometry.computeVertexNormals();
 
-        var transparent = json.opacity < 1 ? true : false;
-        var material = new THREE.MeshPhongMaterial( {
-            vertexColors: THREE.FaceColors,
-            side: THREE.DoubleSide,
-            transparent: transparent, opacity: json.opacity,
-            shininess: 20 } );
-
-        var c = geometry.center().multiplyScalar( -1 );
-        var mesh = new THREE.Mesh( geometry, material );
-        mesh.position.set( c.x, c.y, c.z );
-        scene.add( mesh );
     }
 
     var scratch = new THREE.Vector3();
@@ -279,12 +358,16 @@ SAGE_SCRIPTS
         if ( animate ) requestAnimationFrame( render );
         renderer.render( scene, camera );
 
-        for ( var i=0 ; i < scene.children.length ; i++ ) {
-            if ( scene.children[i].type === 'Sprite' ) {
-                var sprite = scene.children[i];
-                var adjust = scratch.addVectors( sprite.position, scene.position )
-                               .sub( camera.position ).length() / 5;
-                sprite.scale.set( adjust, .25*adjust ); // ratio of canvas width to height
+        // Resize text based on distance from camera.
+        // Not neccessary for orthographic due to the nature of the projection (preserves sizes).
+        if ( !camera.isOrthographicCamera ) {
+            for ( var i=0 ; i < scene.children.length ; i++ ) {
+                if ( scene.children[i].type === 'Sprite' ) {
+                    var sprite = scene.children[i];
+                    var adjust = scratch.addVectors( sprite.position, scene.position )
+                                    .sub( camera.position ).length() / 5;
+                    sprite.scale.set( adjust, .25*adjust ); // ratio of canvas width to height
+                }
             }
         }
     }
@@ -294,6 +377,8 @@ SAGE_SCRIPTS
     if ( !animate ) render();
 
 </script>
+
+<span id="download" onclick="saveAsPNG()">&#x2b07;</span>
 
 </body>
 </html>

@@ -6,21 +6,21 @@ AUTHORS:
 - Travis Scrimshaw (07-15-2017): Initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.kac_moody_algebras import KacMoodyAlgebras
+
 
 class TriangularKacMoodyAlgebras(Category_over_base_ring):
     """
@@ -37,9 +37,9 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             sage: from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
-            [Join of Category of graded modules with basis over Rational Field
-                 and Category of lie algebras with basis over Rational Field
+            [Join of Category of graded lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
+
         """
         # We do not also derive from (Magmatic) algebras since we don't want *
         #   to be our Lie bracket
@@ -170,8 +170,8 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
                 sage: L = lie_algebras.so(QQ, 5)
                 sage: L._negative_half_index_set()
-                [-alpha[2], -alpha[1] - alpha[2],
-                 -alpha[1], -alpha[1] - 2*alpha[2]]
+                [-alpha[2], -alpha[1], -alpha[1] - alpha[2],
+                 -alpha[1] - 2*alpha[2]]
             """
 
         @abstract_method

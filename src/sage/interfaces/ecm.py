@@ -320,15 +320,15 @@ class ECM(SageObject):
         return self._recommended_B1_list[self._B1_table_value(factor_digits)]
 
     _parse_status_re = re.compile(
-        'Using B1=(\d+), B2=(\d+), polynomial ([^,]+), sigma=(\d+)')
+        r'Using B1=(\d+), B2=(\d+), polynomial ([^,]+), sigma=(\d+)')
 
     _found_input_re = re.compile('Found input number N')
 
     _found_factor_re = re.compile(
-        'Found (?P<primality>.*) factor of [\s]*(?P<digits>\d+) digits: (?P<factor>\d+)')
+        r'Found (?P<primality>.*) factor of [\s]*(?P<digits>\d+) digits: (?P<factor>\d+)')
 
     _found_cofactor_re = re.compile(
-        '(?P<primality>.*) cofactor (?P<cofactor>\d+) has [\s]*(?P<digits>\d+) digits')
+        r'(?P<primality>.*) cofactor (?P<cofactor>\d+) has [\s]*(?P<digits>\d+) digits')
 
     def _parse_output(self, n, out):
         """

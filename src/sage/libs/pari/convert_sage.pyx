@@ -21,6 +21,14 @@ from cypari2.types cimport (GEN, typ, t_INT, t_FRAC, t_REAL, t_COMPLEX,
 from cypari2.pari_instance cimport prec_words_to_bits
 from cypari2.paridecl cimport gel, inf_get_sign
 
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.all import RealField, ComplexField, QuadraticField
+from sage.matrix.args cimport MatrixArgs
+from sage.rings.padics.factory import Qp
+from sage.rings.infinity import Infinity
+
+
 cpdef gen_to_sage(Gen z, locals=None):
     """
     Convert a PARI gen to a Sage/Python object.
@@ -120,14 +128,14 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a = gen_to_sage(z); a
         i + 3
         sage: a.parent()
-        Number Field in i with defining polynomial x^2 + 1
+        Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('(3+I)/2'); z
         3/2 + 1/2*I
         sage: a = gen_to_sage(z); a
         1/2*i + 3/2
         sage: a.parent()
-        Number Field in i with defining polynomial x^2 + 1
+        Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('1.0 + 2.0*I'); z
         1.00000000000000 + 2.00000000000000*I
@@ -174,7 +182,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: [parent(b) for b in a1]
         [Integer Ring,
          Real Field with 64 bits of precision,
-         Number Field in i with defining polynomial x^2 + 1]
+         Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         sage: [parent(b) for b in a2]
         [Complex Field with 64 bits of precision, <... 'list'>]
 
@@ -229,13 +237,10 @@ cpdef gen_to_sage(Gen z, locals=None):
     cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
-        from sage.rings.integer import Integer
         return Integer(z)
     elif t == t_FRAC:
-        from sage.rings.rational import Rational
         return Rational(z)
     elif t == t_REAL:
-        from sage.rings.all import RealField
         prec = prec_words_to_bits(z.precision())
         return RealField(prec)(z)
     elif t == t_COMPLEX:
@@ -255,12 +260,10 @@ cpdef gen_to_sage(Gen z, locals=None):
             else:
                 prec = max(prec_words_to_bits(xprec), prec_words_to_bits(yprec))
 
-            from sage.rings.all import RealField, ComplexField
             R = RealField(prec)
             C = ComplexField(prec)
             return C(R(real), R(imag))
         else:
-            from sage.rings.all import QuadraticField
             K = QuadraticField(-1, 'i')
             return K([gen_to_sage(real), gen_to_sage(imag)])
     elif t == t_VEC or t == t_COL:
@@ -268,21 +271,20 @@ cpdef gen_to_sage(Gen z, locals=None):
     elif t == t_VECSMALL:
         return z.python_list_small()
     elif t == t_MAT:
-        nc = lg(g)-1
-        nr = 0 if nc == 0 else lg(gel(g,1))-1
-        L = [gen_to_sage(z[i,j], locals) for i in range(nr) for j in range(nc)]
-        from sage.matrix.constructor import matrix
-        return matrix(nr, nc, L)
+        nc = lg(g) - 1
+        nr = 0 if nc == 0 else lg(gel(g,1)) - 1
+        ma = MatrixArgs.__new__(MatrixArgs)
+        ma.nrows = nr
+        ma.ncols = nc
+        ma.entries = [gen_to_sage(z[i,j], locals) for i in range(nr) for j in range(nc)]
+        return ma.matrix()
     elif t == t_PADIC:
-        from sage.rings.integer import Integer
-        from sage.rings.padics.factory import Qp
         p = z.padicprime()
         K = Qp(Integer(p), precp(g))
         return K(z.lift())
     elif t == t_STR:
         return str(z)
     elif t == t_INFINITY:
-        from sage.rings.infinity import Infinity
         if inf_get_sign(g) >= 0:
             return Infinity
         else:

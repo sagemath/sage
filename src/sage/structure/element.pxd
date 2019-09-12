@@ -1,6 +1,5 @@
 from .sage_object cimport SageObject
 from .parent cimport Parent
-from cpython.number cimport PyNumber_Check
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 
@@ -144,27 +143,6 @@ cpdef inline bint have_same_parent(left, right):
     return HAVE_SAME_PARENT(classify_elements(left, right))
 
 
-cdef inline parent_c(x):
-    """
-    Deprecated alias for :func:`parent`.
-
-    TESTS::
-
-        sage: cython('''
-        ....: from sage.structure.element cimport parent_c
-        ....: from sage.all import ZZ
-        ....: print(parent_c(ZZ.one()))
-        ....: ''')
-        doctest:...:
-        DeprecationWarning: parent_c() is deprecated, use parent() instead
-        See http://trac.sagemath.org/22311 for details.
-        Integer Ring
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(22311, "parent_c() is deprecated, use parent() instead")
-    return parent(x)
-
-
 cdef unary_op_exception(op, x)
 cdef bin_op_exception(op, x, y)
 
@@ -282,11 +260,3 @@ cdef class Matrix(ModuleElement):
 
     cdef bint is_sparse_c(self)
     cdef bint is_dense_c(self)
-
-
-cdef class CoercionModel:
-    cpdef canonical_coercion(self, x, y)
-    cpdef bin_op(self, x, y, op)
-    cpdef richcmp(self, x, y, int op)
-
-cdef CoercionModel coercion_model

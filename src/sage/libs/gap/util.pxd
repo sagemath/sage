@@ -8,32 +8,31 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .types cimport libGAP_Obj
-
+from .gap_includes cimport Obj
 
 ############################################################################
 ### Hooking into the GAP memory management #################################
 ############################################################################
 
 cdef class ObjWrapper(object):
-    cdef libGAP_Obj value
+    cdef Obj value
 
-cdef ObjWrapper wrap_obj(libGAP_Obj obj)
+cdef ObjWrapper wrap_obj(Obj obj)
 
 # returns the refcount dictionary for debugging purposes
 cpdef get_owned_objects()
 
 # Reference count GAP objects that you want to prevent from being
 # garbage collected
-cdef void reference_obj(libGAP_Obj obj)
-cdef void dereference_obj(libGAP_Obj obj)
+cdef void reference_obj(Obj obj)
+cdef void dereference_obj(Obj obj)
 
 # callback from the GAP memory manager so we can mark all_gap_elements.values()
-cdef void gasman_callback()
+cdef void gasman_callback() with gil
 
 
 ############################################################################
-### Initialization of libGAP ###############################################
+### Initialization of GAP ##################################################
 ############################################################################
 
 cdef initialize()
@@ -44,12 +43,4 @@ cdef initialize()
 ############################################################################
 
 # Evaluate a string
-cdef libGAP_Obj gap_eval(str gap_string) except? NULL
-
-
-############################################################################
-### Debug functions ########################################################
-############################################################################
-
-# Return details of the GAP memory pool
-cpdef memory_usage()
+cdef Obj gap_eval(str gap_string) except? NULL

@@ -46,9 +46,8 @@ import sage.rings.infinity as infinity
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
-IF HAVE_GMPY2:
-    cimport gmpy2
-    gmpy2.import_gmpy2()
+cimport gmpy2
+gmpy2.import_gmpy2()
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -166,9 +165,9 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Conversion from gmpy2 numbers::
 
-            sage: from gmpy2 import *           # optional - gmpy2
-            sage: c = mpc('2.0+1.0j')           # optional - gmpy2
-            sage: CC(c)                         # optional - gmpy2
+            sage: from gmpy2 import *
+            sage: c = mpc('2.0+1.0j')
+            sage: CC(c)
             2.00000000000000 + 1.00000000000000*I
         """
         cdef RealNumber rr, ii
@@ -191,7 +190,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real = re
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
-            elif HAVE_GMPY2 and type(real) is gmpy2.mpc:
+            elif type(real) is gmpy2.mpc:
                 real, imag = (<gmpy2.mpc>real).real, (<gmpy2.mpc>real).imag
             else:
                 imag = 0
@@ -433,7 +432,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             return self.imag()
         raise IndexError("i must be between 0 and 1.")
 
-    def __reduce__( self ):
+    def __reduce__(self):
         """
         Pickling support
 
@@ -601,41 +600,31 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: c = ComplexNumber(2,1)
-            sage: c.__mpc__()               # optional - gmpy2
+            sage: c.__mpc__()
             mpc('2.0+1.0j')
-            sage: from gmpy2 import mpc     # optional - gmpy2
-            sage: mpc(c)                    # optional - gmpy2
+            sage: from gmpy2 import mpc
+            sage: mpc(c)
             mpc('2.0+1.0j')
-            sage: CF = ComplexField(134)    
-            sage: mpc(CF.pi()).precision    # optional - gmpy2
+            sage: CF = ComplexField(134)
+            sage: mpc(CF.pi()).precision
             (134, 134)
-            sage: CF = ComplexField(45)     
-            sage: mpc(CF.zeta(5)).precision # optional - gmpy2
+            sage: CF = ComplexField(45)
+            sage: mpc(CF.zeta(5)).precision
             (45, 45)
             sage: CF = ComplexField(255)
             sage: x = CF(5, 8)
-            sage: y = mpc(x)                # optional - gmpy2
-            sage: y.precision               # optional - gmpy2
+            sage: y = mpc(x)
+            sage: y.precision
             (255, 255)
-            sage: CF(y) == x                # optional - gmpy2
+            sage: CF(y) == x
             True
-            sage: x = mpc('1.324+4e50j', precision=(70,70)) # optional - gmpy2
+            sage: x = mpc('1.324+4e50j', precision=(70,70))
             sage: CF = ComplexField(70)
-            sage: y = CF(x)                                 # optional - gmpy2
-            sage: x == mpc(y)                               # optional - gmpy2
+            sage: y = CF(x)
+            sage: x == mpc(y)
             True
-
-        TESTS::
-
-            sage: c.__mpc__(); raise NotImplementedError("gmpy2 is not installed")
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: gmpy2 is not installed
         """
-        IF HAVE_GMPY2:
-            return gmpy2.GMPy_MPC_From_mpfr(self.__re, self.__im)
-        ELSE:
-            raise NotImplementedError("gmpy2 is not installed")
+        return gmpy2.GMPy_MPC_From_mpfr(self.__re, self.__im)
 
 
     def _mpmath_(self, prec=None, rounding=None):
@@ -1128,11 +1117,11 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         EXAMPLES::
 
             sage: a = ComplexNumber(2,1)
-            sage: long(a)
+            sage: long(a)   # py2
             Traceback (most recent call last):
             ...
             TypeError: can't convert complex to long; use long(abs(z))
-            sage: a.__long__()
+            sage: a.__long__()   # py2
             Traceback (most recent call last):
             ...
             TypeError: can't convert complex to long; use long(abs(z))
@@ -2101,7 +2090,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         return self._parent(self.__pari__().incgam(t, precision=self.prec()))
 
-    def log(self,base=None):
+    def log(self, base=None):
         r"""
         Complex logarithm of `z` with branch chosen as follows: Write
         `z = \rho e^{i \theta}` with `-\pi < \theta <= pi`. Then
@@ -2125,7 +2114,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         ::
 
             sage: b = ComplexNumber(float(exp(42)),0)
-            sage: b.log()
+            sage: b.log()  # abs tol 1e-12
             41.99999999999971
 
         ::
@@ -2654,9 +2643,9 @@ cdef class CCtoCDF(Map):
             sage: f(exp(pi*CC.0/4))
             0.7071067811865476 + 0.7071067811865475*I
         """
-        cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-        z._complex.dat[0] = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
-        z._complex.dat[1] = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
+        z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
+        z._complex.real = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
+        z._complex.imag = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
         return z
 
 

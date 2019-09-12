@@ -78,6 +78,36 @@ cdef class qAdicCappedAbsoluteElement(CAElement):
         """
         return self._flint_rep(var), Integer(0)
 
+    def _modp_rep(self, use_smallest_mode=False, return_list=True):
+        r"""
+        Return the element with the same reduction mod p that can be expressed
+        with coefficients between 0 and p-1.  The absolute precision will be maximal.
+
+        This method is used in printing and computing p-adic expansions.
+
+        INPUT:
+
+        - ``use_smallest_mode`` -- if True, use reps between -p/2 and p/2 instead.
+        - ``return_list`` -- if True, return a list of coefficients (as integers).
+            For use in printing.
+
+        EXAMPLES::
+
+            sage: R.<a> = Qq(27,4)
+            sage: b = a^2 + 5*a - 3
+            sage: b._modp_rep()
+            ((a^2 + 2*a) + O(3^4), [0, 2, 1])
+            sage: b._modp_rep(use_smallest_mode=True)[1]
+            [0, -1, 1]
+        """
+        cdef CAElement rep = self._new_c()
+        rep.absprec = self.prime_pow.prec_cap
+        L = cmodp_rep(rep.value, self.value, smallest_mode if use_smallest_mode else simple_mode, return_list, self.prime_pow)
+        if return_list:
+            return rep, L
+        else:
+            return rep
+
     def __hash__(self):
         r"""
         Raise a ``TypeError`` since this element is not hashable

@@ -4,7 +4,7 @@ from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,
                       limit, lim)
 
-from .integration import numerical_integral
+from .integration import numerical_integral, monte_carlo_integral
 integral_numerical = numerical_integral
 
 from .interpolation import spline, Spline

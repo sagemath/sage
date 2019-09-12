@@ -62,8 +62,9 @@ class PieriFactors(UniqueRepresentation, Parent):
         sage: PF = W.pieri_factors()
         sage: PF.generating_series()
         6*z^6 + 14*z^5 + 18*z^4 + 15*z^3 + 9*z^2 + 4*z + 1
-        sage: [w.reduced_word() for w in PF if w.length() == 2]
-        [[2, 3], [1, 0], [2, 0], [0, 1], [2, 1], [3, 1], [3, 0], [3, 2], [1, 2]]
+        sage: sorted(w.reduced_word() for w in PF if w.length() == 2)
+        [[0, 1], [1, 0], [1, 2], [2, 0], [2, 1],
+        [2, 3], [3, 0], [3, 1], [3, 2]]
 
     REFERENCES:
 

@@ -42,7 +42,7 @@ Words
 - :class:`Words`
 - :ref:`sage.combinat.subword`
 - :ref:`sage.combinat.necklace`
-- :ref:`sage.combinat.lyndon_word`
+- :ref:`sage.combinat.words.lyndon_word`
 - :ref:`sage.combinat.dyck_word`
 - :ref:`sage.combinat.debruijn_sequence`
 - :ref:`sage.combinat.shuffle`
@@ -68,6 +68,11 @@ Partitions, tableaux, ...
 -------------------------
 
 See: :ref:`sage.combinat.catalog_partitions`
+
+Polyominoes
+-----------
+
+See: :ref:`sage.combinat.parallelogram_polyomino`
 
 Integer matrices, ...
 ---------------------
@@ -95,6 +100,8 @@ Subsets and set partitions
 - :ref:`sage.combinat.set_partition_ordered`
 - :ref:`sage.combinat.set_partition`
 - :ref:`sage.combinat.diagram_algebras`
+- :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionsIntoSets`,
+  :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionIntoSets`
 
 Trees
 -----
@@ -132,7 +139,6 @@ Backtracking solvers and generic enumerated sets
 Low level enumerated sets
 -------------------------
 
-- :ref:`sage.combinat.multichoose_nk`
 - :ref:`sage.combinat.gray_codes`
 
 Misc enumerated sets

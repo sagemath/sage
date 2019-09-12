@@ -119,8 +119,11 @@ class SageIpythonConfiguration(object):
         EXAMPLES::
 
             sage: from sage.repl.configuration import sage_ipython_config
-            sage: sage_ipython_config.default()
-            {'InteractiveShell': {'colors': ...
+            sage: conf = sage_ipython_config.default()
+            sage: type(conf)
+            <class 'traitlets.config.loader.Config'>
+            sage: 'InteractiveShell' in conf
+            True
         """
         from sage.repl.interpreter import SageTerminalInteractiveShell
         cfg = Config(
@@ -153,8 +156,11 @@ class SageIpythonConfiguration(object):
         EXAMPLES::
 
             sage: from sage.repl.configuration import sage_ipython_config
-            sage: sage_ipython_config.copy()
-            {'InteractiveShell': {'colors': ...
+            sage: conf = sage_ipython_config.copy()
+            sage: type(conf)
+            <class 'traitlets.config.loader.Config'>
+            sage: 'InteractiveShell' in conf
+            True
         """
         try:
             return copy.deepcopy(get_ipython().config)

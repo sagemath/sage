@@ -1,34 +1,31 @@
 r"""
-Hamming Code
+Hamming codes
 
-Given an integer `r` and a field `F`, such that `F=GF(q)`,
-the `[n, k, d]` code with length `n=\frac{q^{r}-1}{q-1}`,
-dimension `k=\frac{q^{r}-1}{q-1} - r` and minimum distance
-`d=3` is called the Hamming Code of order `r`.
+Given an integer `r` and a field `F`, such that `F=GF(q)`, the `[n, k, d]` code
+with length `n=\frac{q^{r}-1}{q-1}`, dimension `k=\frac{q^{r}-1}{q-1} - r` and
+minimum distance `d=3` is called the Hamming Code of order `r`.
 
 REFERENCES:
 
 - [Rot2006]_
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
 
 from .linear_code import AbstractLinearCode
 from sage.matrix.matrix_space import MatrixSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
-from sage.rings.ring import Field
-from copy import copy
+
 
 class HammingCode(AbstractLinearCode):
     r"""
@@ -78,7 +75,7 @@ class HammingCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality of Hamming Code objects.
+        Test equality of Hamming Code objects.
 
         EXAMPLES::
 
@@ -91,9 +88,22 @@ class HammingCode(AbstractLinearCode):
                 and self.length() == other.length()\
                 and self.dimension() == other.dimension()
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: C1 = codes.HammingCode(GF(7), 3)
+            sage: C2 = codes.HammingCode(GF(7), 3)
+            sage: hash(C1) == hash(C2)
+            True
+        """
+        return hash((self.length(), self.dimension()))
+
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -106,7 +116,7 @@ class HammingCode(AbstractLinearCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -117,11 +127,10 @@ class HammingCode(AbstractLinearCode):
         return "[%s, %s] \\textnormal{ Hamming Code over }%s"\
                 % (self.length(), self.dimension(), self.base_field()._latex_())
 
-
     @cached_method
     def parity_check_matrix(self):
         r"""
-        Returns a parity check matrix of ``self``.
+        Return a parity check matrix of ``self``.
 
         The construction of the parity check matrix in case ``self``
         is not a binary code is not really well documented.
@@ -142,8 +151,8 @@ class HammingCode(AbstractLinearCode):
         n = self.length()
         F = self.base_field()
         m = n - self.dimension()
-        MS = MatrixSpace(F,n,m)
-        X = ProjectiveSpace(m-1,F)
+        MS = MatrixSpace(F, n, m)
+        X = ProjectiveSpace(m - 1, F)
         PFn = [list(p) for p in X.point_set(F).points()]
 
         H = MS(PFn).transpose()
@@ -153,7 +162,8 @@ class HammingCode(AbstractLinearCode):
 
     def minimum_distance(self):
         r"""
-        Returns the minimum distance of ``self``.
+        Return the minimum distance of ``self``.
+
         It is always 3 as ``self`` is a Hamming Code.
 
         EXAMPLES::
@@ -163,6 +173,3 @@ class HammingCode(AbstractLinearCode):
             3
         """
         return 3
-
-
-####################### registration ###############################

@@ -1,5 +1,5 @@
 """
-Plotting 3D fields
+Plotting 3D Fields
 """
 #*****************************************************************************
 #       Copyright (C) 2009 Jason Grout <jason-sage@creativetrax.com>
@@ -22,7 +22,7 @@ from sage.modules.free_module_element import vector
 from sage.plot.plot import plot
 
 def plot_vector_field3d(functions, xrange, yrange, zrange,
-                        plot_points=5, colors='jet', center_arrows=False,**kwds):
+                        plot_points=5, colors='jet', center_arrows=False, **kwds):
     r"""
     Plot a 3d vector field
 
@@ -92,7 +92,10 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
     scaled_vectors = [v/max_len for v in vectors]
 
     if center_arrows:
-        return sum([plot(v,color=cm(v.norm()),**kwds).translate(p-v/2) for v,p in zip(scaled_vectors, points)])
+        G = sum([plot(v,color=cm(v.norm()),**kwds).translate(p-v/2) for v,p in zip(scaled_vectors, points)])
+        G._set_extra_kwds(kwds)
+        return G
     else:
-        return sum([plot(v,color=cm(v.norm()),**kwds).translate(p) for v,p in zip(scaled_vectors, points)])
-
+        G = sum([plot(v,color=cm(v.norm()),**kwds).translate(p) for v,p in zip(scaled_vectors, points)])
+        G._set_extra_kwds(kwds)
+        return G

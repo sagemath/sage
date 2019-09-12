@@ -12,20 +12,21 @@ AUTHORS:
 - Julian Rueth (2012-10-15, 2014-06-25, 2017-08-04): added inverse_of_unit(); improved
   add_bigoh(); added _test_expansion()
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2017 David Roe <roed@math.harvard.edu>
 #                     2012-2017 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.infinity import infinity
 from sage.structure.element cimport ModuleElement, RingElement, CommutativeRingElement
 from sage.structure.element import coerce_binop
 from itertools import islice
+
 
 cdef class LocalGenericElement(CommutativeRingElement):
     #cpdef _add_(self, right):
@@ -82,7 +83,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: R(3).inverse_of_unit()
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of 3 + O(3^5) does not exist
 
         Unlike the usual inverse of an element, the result is in the same ring
         as ``self`` and not just in its fraction field::
@@ -118,7 +119,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: ZpCR(3,5)(2).inverse_of_unit()
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
             sage: ZpFM(3,5)(2).inverse_of_unit()
-            2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
+            2 + 3 + 3^2 + 3^3 + 3^4
+            sage: ZpFP(3,5)(2).inverse_of_unit()
+            2 + 3 + 3^2 + 3^3 + 3^4
             sage: QpCR(3,5)(2).inverse_of_unit()
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
 
@@ -134,7 +137,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: R = ZpFM(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
-            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
+            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
+
+            sage: R = ZpFP(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
+            sage: t.inverse_of_unit()
+            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
 
             sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
@@ -152,7 +159,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: R = ZpFM(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
-            2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
+            2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9
 
             sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
@@ -160,11 +167,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         """
         if not self.is_unit():
-            raise ZeroDivisionError("Inverse does not exist.")
+            raise ZeroDivisionError(f"inverse of {self} does not exist")
         return self.parent()(~self)
-
-    #def __getitem__(self, n):
-    #    raise NotImplementedError
 
     def __iter__(self):
         """
@@ -339,13 +343,14 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         # construct the return value
         ans = self.parent().zero()
-        for c in islice(self.expansion(lift_mode=lift_mode), start, stop, k):
+        for c in islice(self.expansion(lift_mode=lift_mode),
+                        int(start), int(stop), int(k)):
             ans += ppow * c
             ppow *= pk
 
         # fix the precision of the return value
         if j < ans.precision_absolute() or self.precision_absolute() < ans.precision_absolute():
-            ans = ans.add_bigoh(min(j,self.precision_absolute()))
+            ans = ans.add_bigoh(min(j, self.precision_absolute()))
 
         return ans
 
@@ -390,7 +395,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def add_bigoh(self, absprec):
         """
-        Return a copy of this element with ablsolute precision decreased to
+        Return a copy of this element with absolute precision decreased to
         ``absprec``.
 
         INPUT:
@@ -424,13 +429,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: R = ZpFM(3,4)
             sage: R(3).add_bigoh(1)
-            O(3^4)
+            0
 
         If ``absprec`` exceeds the precision of the element, then this method
         has no effect::
 
             sage: R(3).add_bigoh(5)
-            3 + O(3^4)
+            3
 
         A negative value for ``absprec`` returns an element in the fraction field::
 
@@ -792,7 +797,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             1/3
         """
         F = self.parent()
-        return self.valuation()/F.ramification_index()
+        return self.valuation()/F.absolute_e()
 
     def _min_valuation(self):
         r"""
@@ -937,7 +942,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         shift = self.parent().one()
         v = 0
         # so that this test doesn't take too long for large precision cap
-        prec_cutoff = min((10000 / (1 + self.precision_relative())).ceil(), 100)
+        prec_cutoff = int(min((10000 / (1 + self.precision_relative())).ceil(), 100))
 
         from sage.categories.all import Fields
         if self.parent() in Fields():
@@ -954,11 +959,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
             expansion = self.expansion(lift_mode=mode)
             expansion_sum = sum(self.parent().maximal_unramified_subextension()(c) *
                                 (self.parent().one()<<i)
-                                for i,c in enumerate(islice(expansion, prec_cutoff))) * shift
+                                for i, c in enumerate(islice(expansion, prec_cutoff))) * shift
 
             tester.assertEqual(self.add_bigoh(prec_cutoff), expansion_sum.add_bigoh(prec_cutoff))
 
-            for i,c in enumerate(islice(expansion, prec_cutoff)):
+            for i, c in enumerate(islice(expansion, prec_cutoff)):
                 tester.assertEqual(c, self.expansion(lift_mode=mode, n=i+v))
 
             if mode == 'teichmuller':

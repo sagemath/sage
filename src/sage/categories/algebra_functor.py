@@ -17,7 +17,7 @@ linear combinations of elements of `group` with coefficients in `R`::
     Algebra of Dihedral group of order 6 as a permutation group
             over Rational Field
     sage: a = A.an_element(); a
-    () + (1,2) + 3*(1,2,3) + 2*(1,3)
+    () + (1,2) + 3*(1,2,3) + 2*(1,3,2)
 
 This space is endowed with an algebra structure, obtained by extending
 by bilinearity the multiplication of `G` to a multiplication on `RG`::
@@ -25,7 +25,7 @@ by bilinearity the multiplication of `G` to a multiplication on `RG`::
     sage: A in Algebras
     True
     sage: a * a
-    6*() + 9*(2,3) + 8*(1,2) + 8*(1,2,3) + 11*(1,3,2) + 7*(1,3)
+    14*() + 5*(2,3) + 2*(1,2) + 10*(1,2,3) + 13*(1,3,2) + 5*(1,3)
 
 In particular, the product of two basis elements is induced by the
 product of the corresponding elements of the group, and the unit of
@@ -230,12 +230,12 @@ is a natural map from `\ZZ[D_2]` to `\QQ[S_4]`::
     sage: a = A.an_element(); a
     () + 2*(3,4) + 3*(1,2) + (1,2)(3,4)
     sage: b = B.an_element(); b
-    () + (2,3,4) + 2*(1,2) + 3*(1,2,3,4)
+    () + (2,3,4) + 2*(1,3)(2,4) + 3*(1,4)(2,3)
     sage: B(a)
     () + 2*(3,4) + 3*(1,2) + (1,2)(3,4)
     sage: a * b  # a is automatically converted to an element of B
-    7*() + 4*(3,4) + 2*(2,3) + (2,3,4) + 5*(1,2) + 5*(1,2)(3,4) + 6*(1,2,3)
-     + 3*(1,2,3,4) + (1,3,2) + 3*(1,3,4,2) + 3*(1,3) + 9*(1,3,4)
+    () + 2*(3,4) + 2*(2,3) + (2,3,4) + 3*(1,2) + (1,2)(3,4) + (1,3,2)
+     + 3*(1,3,4,2) + 5*(1,3)(2,4) + 13*(1,3,2,4) + 12*(1,4,2,3) + 5*(1,4)(2,3)
     sage: parent(a * b)
     Symmetric group algebra of order 4 over Rational Field
 
@@ -244,7 +244,7 @@ There is no obvious map in the other direction, though::
     sage: A(b)
     Traceback (most recent call last):
     ...
-    TypeError: do not know how to make x (= () + (2,3,4) + 2*(1,2) + 3*(1,2,3,4))
+    TypeError: do not know how to make x (= () + (2,3,4) + 2*(1,3)(2,4) + 3*(1,4)(2,3))
      an element of self
      (=Algebra of Dihedral group of order 4 as a permutation group over Integer Ring)
 
@@ -339,11 +339,11 @@ Hopf algebra structure::
     sage: kD4 in HopfAlgebras
     True
     sage: a = kD4.an_element(); a
-    () + 3*(1,2,3,4) + (1,3) + 2*(1,4)(2,3)
+    () + (1,3) + 2*(1,3)(2,4) + 3*(1,4,3,2)
     sage: a.antipode()
-    () + (1,3) + 3*(1,4,3,2) + 2*(1,4)(2,3)
+    () + 3*(1,2,3,4) + (1,3) + 2*(1,3)(2,4)
     sage: a.coproduct()
-    () # () + 3*(1,2,3,4) # (1,2,3,4) + (1,3) # (1,3) + 2*(1,4)(2,3) # (1,4)(2,3)
+    () # () + (1,3) # (1,3) + 2*(1,3)(2,4) # (1,3)(2,4) + 3*(1,4,3,2) # (1,4,3,2)
 
 Coercions from the base ring::
 
@@ -422,10 +422,10 @@ morphism::
       From: Symmetric group algebra of order 3 over Integer Ring
       To: Symmetric group algebra of order 3 over Finite Field of size 5
     sage: a = 2 * A.an_element(); a
-    2*() + 2*(2,3) + 4*(1,2) + 6*(1,2,3)
+    2*() + 2*(2,3) + 6*(1,2,3) + 4*(1,3,2)
 
     sage: hh(a)
-    2*() + 2*(2,3) + 4*(1,2) + (1,2,3)
+    2*() + 2*(2,3) + (1,2,3) + 4*(1,3,2)
 
 Conversion from a formal sum::
 
@@ -626,9 +626,9 @@ class GroupAlgebraFunctor(ConstructionFunctor):
               To:   Symmetric group algebra of order 3 over Finite Field of size 5
 
             sage: a = 2 * A.an_element(); a
-            2*() + 2*(2,3) + 4*(1,2) + 6*(1,2,3)
+            2*() + 2*(2,3) + 6*(1,2,3) + 4*(1,3,2)
             sage: hh(a)
-            2*() + 2*(2,3) + 4*(1,2) + (1,2,3)
+            2*() + 2*(2,3) + (1,2,3) + 4*(1,3,2)
         """
         from sage.categories.rings import Rings
         domain   = self(f.domain())

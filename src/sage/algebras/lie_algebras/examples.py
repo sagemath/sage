@@ -3,8 +3,7 @@ Examples of Lie Algebras
 
 There are the following examples of Lie algebras:
 
-- A rather comprehensive family of 3-dimensional Lie
-  algebras
+- A rather comprehensive family of 3-dimensional Lie algebras
 - The Lie algebra of affine transformations of the line
 - All abelian Lie algebras on free modules
 - The Lie algebra of upper triangular matrices
@@ -31,6 +30,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra
+from sage.algebras.lie_algebras.rank_two_heisenberg_virasoro import RankTwoHeisenbergVirasoro
 from sage.algebras.lie_algebras.onsager import OnsagerAlgebra
 from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra as Affine
 
@@ -444,6 +444,56 @@ def sl(R, n, representation='bracket'):
     if representation == 'matrix':
         from sage.algebras.lie_algebras.classical_lie_algebra import sl as sl_matrix
         return sl_matrix(R, n)
+    raise ValueError("invalid representation")
+
+
+def su(R, n, representation='matrix'):
+    r"""
+    The Lie algebra `\mathfrak{su}_n`.
+
+    The Lie algebra `\mathfrak{su}_n` is the compact real form of the
+    type `A_{n-1}` Lie algebra and is finite-dimensional. As a matrix
+    Lie algebra, it is given by the set of all `n \times n` skew-Hermitian
+    matrices with trace 0.
+
+    INPUT:
+
+    - ``R`` -- the base ring
+    - ``n`` -- the size of the matrix
+    - ``representation`` -- (default: ``'matrix'``) can be one of
+      the following:
+
+      * ``'bracket'`` - use brackets and the Chevalley basis
+      * ``'matrix'`` - use matrices
+
+    EXAMPLES:
+
+    We construct `\mathfrak{su}_2`, where the default is as a
+    matrix Lie algebra::
+
+        sage: su2 = lie_algebras.su(QQ, 2)
+        sage: E,H,F = su2.basis()
+        sage: E.bracket(F) == 2*H
+        True
+        sage: H.bracket(E) == 2*F
+        True
+        sage: H.bracket(F) == -2*E
+        True
+
+    Since `\mathfrak{su}_n` is the same as the type `A_{n-1}` Lie algebra,
+    the bracket is the same as :func:`sl`::
+
+        sage: su2 = lie_algebras.su(QQ, 2, representation='bracket')
+        sage: su2 is lie_algebras.sl(QQ, 2, representation='bracket')
+        True
+    """
+    if representation == 'bracket':
+        from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
+        return LieAlgebraChevalleyBasis(R, ['A', n-1])
+    if representation == 'matrix':
+        from sage.algebras.lie_algebras.classical_lie_algebra import MatrixCompactRealForm
+        from sage.combinat.root_system.cartan_type import CartanType
+        return MatrixCompactRealForm(R, CartanType(['A', n-1]))
     raise ValueError("invalid representation")
 
 def so(R, n, representation='bracket'):

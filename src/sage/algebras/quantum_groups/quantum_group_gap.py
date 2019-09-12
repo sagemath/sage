@@ -10,15 +10,15 @@ Willem Adriaan de Graaf, can be found at
 https://www.gap-system.org/Packages/quagroup.html.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -31,6 +31,7 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.libs.gap.libgap import libgap
+from sage.features.gap import GapPackage
 from sage.graphs.digraph import DiGraph
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
@@ -44,6 +45,7 @@ from sage.categories.rings import Rings
 
 from copy import copy
 import re
+
 
 class QuaGroupModuleElement(Element):
     """
@@ -364,6 +366,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             sage: TestSuite(Q).run()  # long time  # optional - gap_packages
         """
         self._cartan_type = cartan_type
+        GapPackage("QuaGroup", spkg="gap_packages").require()
         libgap.LoadPackage('QuaGroup')
         R = libgap.eval('RootSystem("%s",%s)'%(cartan_type.type(), cartan_type.rank()))
         Q = self._cartan_type.root_system().root_lattice()
@@ -826,7 +829,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         for i in range(len(ext_rep)//2):
             if ext_rep[2*i].Length() == 0:
                 ext_rep.pop(2*i) # Pop the key
-                constant = R(str(ext_rep.pop(2*i))) # Pop the coefficent
+                constant = R(str(ext_rep.pop(2*i))) # Pop the coefficient
                 break
         # To reconstruct, we need the following
         F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
@@ -854,7 +857,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             return self.__class__(self.parent(), self._libgap * other._libgap)
 
         def bar(self):
-            """
+            r"""
             Return the bar involution on ``self``.
 
             The bar involution is defined by
@@ -865,7 +868,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 \overline{F_i} = F_i, \qquad\qquad
                 \overline{K_i} = K_i^{-1}.
 
-            EXMAPLES::
+            EXAMPLES::
 
                 sage: Q = QuantumGroup(['A',2])        # optional - gap_packages
                 sage: [gen.bar() for gen in Q.gens()]  # optional - gap_packages
@@ -893,7 +896,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 \omega(F_i) = E_i, \qquad\qquad
                 \omega(K_i) = K_i^{-1}.
 
-            EXMAPLES::
+            EXAMPLES::
 
                 sage: Q = QuantumGroup(['A',2])          # optional - gap_packages
                 sage: [gen.omega() for gen in Q.gens()]  # optional - gap_packages
@@ -923,7 +926,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 \tau(F_i) = F_i, \qquad\qquad
                 \tau(K_i) = K_i^{-1}.
 
-            EXMAPLES::
+            EXAMPLES::
 
                 sage: Q = QuantumGroup(['A',2])        # optional - gap_packages
                 sage: [gen.tau() for gen in Q.gens()]  # optional - gap_packages
@@ -1547,11 +1550,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
             sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
             sage: T = tensor([V,V])  # optional - gap_packages
             sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: latex(S)  # optional - gap_packages
-            \begin{tikzpicture}...
-            %%
+            sage: latex(S)  # optional - gap_packages  # random (depends on dot2tex)
+            \begin{tikzpicture}
             ...
-            %
             \end{tikzpicture}
         """
         from sage.misc.latex import latex
@@ -1662,9 +1663,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
             True
         """
         G = self._libgap.CrystalGraph()
-        vertices = [CrystalGraphVertex(self, repr(p)) for p in G[bytes('points')]]
+        vertices = [CrystalGraphVertex(self, repr(p)) for p in G['points']]
         edges = [[vertices[e[0][0]-1], vertices[e[0][1]-1], e[1]]
-                 for e in G[bytes('edges')].sage()]
+                 for e in G['edges'].sage()]
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
@@ -2079,11 +2080,11 @@ class HighestWeightSubmodule(QuantumGroupModule):
             sage: T = tensor([V,V])                        # optional - gap_packages
             sage: S = T.highest_weight_decomposition()[1]  # optional - gap_packages
             sage: G = S.crystal_graph()                    # optional - gap_packages
-            sage: sorted(G.vertices(), key=str)            # optional - gap_packages
+            sage: sorted(G.vertices(sort=False), key=str)            # optional - gap_packages
             [<-q^-1*(1*v0<x>F[a1+a2]*v0) + 1*(F[a1+a2]*v0<x>1*v0)>,
              <-q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)>,
              <-q^-1*(F[a1]*v0<x>F[a1+a2]*v0) + 1*(F[a1+a2]*v0<x>F[a1]*v0)>]
-            sage: sorted(S.crystal_graph(False).vertices(), key=str)  # optional - gap_packages
+            sage: sorted(S.crystal_graph(False).vertices(sort=False), key=str)  # optional - gap_packages
             [<(1)*e.1>, <(1)*e.2>, <(1)*e.3>]
         """
         G = self._libgap.CrystalGraph()
@@ -2093,9 +2094,10 @@ class HighestWeightSubmodule(QuantumGroupModule):
         B = self.basis()
         d = {repr(B[k]._libgap): '<{!r}>'.format(self._ambient_basis_map[k])
              for k in self._ambient_basis_map}
-        vertices = [CrystalGraphVertex(self, d[repr(p)[1:-1]]) for p in G[bytes('points')]]
+        vertices = [CrystalGraphVertex(self, d[repr(p)[1:-1]])
+                    for p in G['points']]
         edges = [[vertices[e[0][0]-1], vertices[e[0][1]-1], e[1]]
-                 for e in G[bytes('edges')].sage()]
+                 for e in G['edges'].sage()]
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():

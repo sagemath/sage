@@ -43,7 +43,6 @@ from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.ext.fast_callable import fast_callable
 import sys
-from sage.symbolic.ring import var
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
@@ -129,8 +128,8 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f = H([5*x^3 + 3*x*y^2-y^3, 3*z^3 + y*x^2, x^3-z^3])
             sage: f.dehomogenize(2)
             Scheme endomorphism of Affine Space of dimension 2 over Integer Ring
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    ((5*x0^3 + 3*x0*x1^2 - x1^3)/(x0^3 - 1), (x0^2*x1 + 3)/(x0^3 - 1))
+              Defn: Defined on coordinates by sending (x, y) to
+                    ((5*x^3 + 3*x*y^2 - y^3)/(x^3 - 1), (x^2*y + 3)/(x^3 - 1))
 
             If you pass in quotient ring elements, they are reduced::
 
@@ -233,11 +232,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` - a map on affine space.
+        - ``right`` -- a map on affine space
 
         OUTPUT:
 
-        - Boolean - True if the two affine maps define the same map.
+        ``True`` if the two affine maps define the same map.
 
         EXAMPLES::
 
@@ -250,7 +249,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: f == g
             False
 
-            ::
+        ::
 
             sage: A.<x,y,z> = AffineSpace(CC, 3)
             sage: H = End(A)
@@ -262,7 +261,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return False
         if self.parent() != right.parent():
             return False
-        return all([self[i] == right[i] for i in range(len(self._polys))])
+        return all(val == right._polys[i] for i,val in enumerate(self._polys))
 
     def __ne__(self, right):
         """
@@ -270,11 +269,11 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``right`` -  a map on affine space.
+        - ``right`` -- a map on affine space
 
         OUTPUT:
 
-        - Boolean - True if the two affine maps define the same map.
+        ``True`` if the two affine maps define the same map.
 
         EXAMPLES::
 
@@ -291,9 +290,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return True
         if self.parent() != right.parent():
             return True
-        if all([self[i] == right[i] for i in range(len(self._polys))]):
-            return False
-        return True
+        return any(val != right._polys[i] for i,val in enumerate(self._polys))
 
     @lazy_attribute
     def _fastpolys(self):
@@ -306,12 +303,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             sage: H = Hom(P, P)
             sage: f = H([x^2+y^2, y^2/(1+x)])
             sage: [t.op_list() for g in f._fastpolys for t in g]
-            [[('load_const', 0), ('load_const', 1), ('load_arg', 1), ('ipow', 2),
-            'mul', 'add', ('load_const', 1), ('load_arg', 0), ('ipow', 2), 'mul',
+            [[('load_const', 0), ('load_const', 1), ('load_arg', ...), ('ipow', 2),
+            'mul', 'add', ('load_const', 1), ('load_arg', ...), ('ipow', 2), 'mul',
             'add', 'return'], [('load_const', 0), ('load_const', 1), ('load_arg',
-            1), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0),
+            ...), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0),
             ('load_const', 1), 'add', 'return'], [('load_const', 0), ('load_const',
-            1), ('load_arg', 0), ('ipow', 1), 'mul', 'add', ('load_const', 1),
+            1), ('load_arg', ...), ('ipow', 1), 'mul', 'add', ('load_const', 1),
             'add', 'return']]
         """
         polys = self._polys
@@ -624,81 +621,6 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 return DynamicalSystem_affine_finite_field(list(self), self.domain())
         return DynamicalSystem_affine_field(list(self), self.domain())
 
-    def dynatomic_polynomial(self, period):
-        """
-        Return the dynatomic polynomial.
-
-        EXAMPLES::
-
-            sage: A.<x> = AffineSpace(QQ, 1)
-            sage: H = End(A)
-            sage: f = H([x^2-10/9])
-            sage: f.dynatomic_polynomial([2, 1])
-            doctest:warning
-            ...
-            531441*x^4 - 649539*x^2 - 524880
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.dynatomic_polynomial instead")
-        return self.as_dynamical_system().dynatomic_polynomial(period)
-
-    def nth_iterate_map(self, n):
-        """
-        Return the symbolic nth iterate.
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(ZZ, 2)
-            sage: H = End(A)
-            sage: f = H([(x^2-2)/(2*y), y^2-3*x])
-            sage: f.nth_iterate_map(2)
-            doctest:warning
-            ...
-            Dynamical System of Affine Space of dimension 2 over Integer Ring
-              Defn: Defined on coordinates by sending (x, y) to
-                    ((x^4 - 4*x^2 - 8*y^2 + 4)/(8*y^4 - 24*x*y^2), (2*y^5 - 12*x*y^3
-            + 18*x^2*y - 3*x^2 + 6)/(2*y))
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.nth_iterate_map instead")
-        return self.as_dynamical_system().nth_iterate_map(n)
-
-    def nth_iterate(self, P, n):
-        """
-        Return the nth iterate of the point.
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: H = End(A)
-            sage: f = H([(x-2*y^2)/x, 3*x*y])
-            sage: f.nth_iterate(A(9, 3), 3)
-            doctest:warning
-            ...
-            (-104975/13123, -9566667)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.nth_iterate instead")
-        return self.as_dynamical_system().nth_iterate(P, n)
-
-    def orbit(self, P, n):
-        """
-        Return the orbit of the point.
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: H = End(A)
-            sage: f = H([(x-2*y^2)/x, 3*x*y])
-            sage: f.orbit(A(9, 3), 3)
-            doctest:warning
-            ...
-            [(9, 3), (-1, 81), (13123, -243), (-104975/13123, -9566667)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.orbit instead")
-        return self.as_dynamical_system().orbit(P, n)
-
     def global_height(self, prec=None):
         r"""
         Returns the maximum of the heights of the coefficients in any
@@ -791,24 +713,107 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         self.__jacobian = jacobian(list(self),self.domain().ambient_space().gens())
         return self.__jacobian
 
-    def multiplier(self, P, n, check=True):
+    def _matrix_times_polymap_(self, mat, h):
         """
-        Return the multiplier of the point.
+        Multiplies the morphism on the left by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``self*mat``
 
         EXAMPLES::
 
-            sage: A.<x,y> = AffineSpace(QQ, 2)
-            sage: H = End(A)
-            sage: f = H([x^2, y^2])
-            sage: f.multiplier(A([1, 1]), 1)
-            doctest:warning
-            ...
-            [2 0]
-            [0 2]
+            sage: A.<x> = AffineSpace(ZZ, 1)
+            sage: H = Hom(A, A)
+            sage: f = H([x^2 + 1])
+            sage: matrix([[1,2], [0,1]]) * f
+            Scheme endomorphism of Affine Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 + 3)
+
+        ::
+
+            sage: A1 = AffineSpace(ZZ,1)
+            sage: A2 = AffineSpace(ZZ,2)
+            sage: H = Hom(A1, A2)
+            sage: f = H([x^2+1,x^2-1])
+            sage: matrix([[1,2,3], [0,1,2], [0,0,1]]) * f
+            Scheme morphism:
+              From: Affine Space of dimension 1 over Integer Ring
+              To:   Affine Space of dimension 2 over Integer Ring
+              Defn: Defined on coordinates by sending (x) to
+                    (3*x^2 + 2, x^2 + 1)
         """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.multiplier instead")
-        return self.as_dynamical_system().multiplier(P, n, check)
+        if not mat.is_square():
+            raise TypeError("matrix must be square")
+        if mat.ncols() != self.codomain().ngens() + 1:
+            raise TypeError("the size of the matrix must be n + 1, where n is the dimension of the codomain")
+        if self.is_endomorphism():
+            d = self.domain().ngens()
+        else:
+            d = (self.domain().ngens(),self.codomain().ngens())
+        f = mat*self.homogenize(d)
+        return f.dehomogenize(d)
+
+    def _polymap_times_matrix_(self, mat, h):
+        """
+        Multiplies the morphism on the right by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``mat*self``
+
+        EXAMPLES::
+
+            sage: A.<x> = AffineSpace(ZZ, 1)
+            sage: H = Hom(A, A)
+            sage: f = H([x^2 + 1])
+            sage: f * matrix([[1,2], [0,1]])
+            Scheme endomorphism of Affine Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 + 4*x + 5)
+
+        ::
+
+            sage: A1 = AffineSpace(ZZ,1)
+            sage: A2 = AffineSpace(ZZ,2)
+            sage: H = Hom(A1, A2)
+            sage: f = H([x^2+1,x^2-1])
+            sage: f * matrix([[1,2], [0,1]])
+            Scheme morphism:
+              From: Affine Space of dimension 1 over Integer Ring
+              To:   Affine Space of dimension 2 over Integer Ring
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 + 4*x + 5, x^2 + 4*x + 3)
+
+        ::
+
+            sage: P.<x, y> = AffineSpace(QQ, 2)
+            sage: P2.<u,v,w> = AffineSpace(QQ,3)
+            sage: H = Hom(P2, P)
+            sage: f = H([u^2 + v^2, w^2])
+            sage: m = matrix([[1,1,1], [1,0,1],[0,0,1]])
+            sage: m*f
+            Scheme morphism:
+              From: Affine Space of dimension 3 over Rational Field
+              To:   Affine Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (u, v, w) to
+                    (u^2 + v^2 + w^2 + 1, u^2 + v^2 + 1)
+        """
+        if not mat.is_square():
+            raise TypeError("matrix must be square")
+        if mat.nrows() != self.domain().ngens() + 1:
+            raise TypeError("the size of the matrix must be n + 1, where n is the dimension of the domain")
+        if self.is_endomorphism():
+            d = self.domain().ngens()
+        else:
+            d = (self.domain().ngens(),self.codomain().ngens())
+        f = self.homogenize(d)*mat
+        return f.dehomogenize(d)
 
 class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_affine_space):
 
@@ -857,7 +862,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f(P).weil_restriction() == F(Q)
             True
         """
-        if any([isinstance(f,FractionFieldElement) for f in self]):
+        if any(isinstance(f, FractionFieldElement) for f in self):
             raise TypeError("coordinate functions must be polynomials")
 
         DS = self.domain()
@@ -868,43 +873,139 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
 
         return(H(result))
 
+    def reduce_base_field(self):
+        """
+        Return this map defined over the field of definition of the coefficients.
+
+        The base field of the map could be strictly larger than
+        the field where all of the coefficients are defined. This function
+        reduces the base field to the minimal possible. This can be done when
+        the base ring is a number field, QQbar, a finite field, or algebraic
+        closure of a finite field.
+
+        OUTPUT: A scheme morphism.
+
+        EXAMPLES::
+
+            sage: K.<t> = GF(5^4)
+            sage: A.<x> = AffineSpace(K, 1)
+            sage: A2.<a,b> = AffineSpace(K, 2)
+            sage: H = End(A)
+            sage: H2 = Hom(A,A2)
+            sage: H3 = Hom(A2,A)
+            sage: f = H([x^2 + 2*(t^3 + t^2 + t + 3)])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Affine Space of dimension 1 over Finite Field in t2 of size 5^2
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 + (2*t2))
+            sage: f2 = H2([x^2 + 4, 2*x])
+            sage: f2.reduce_base_field()
+            Scheme morphism:
+              From: Affine Space of dimension 1 over Finite Field of size 5
+              To:   Affine Space of dimension 2 over Finite Field of size 5
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 - 1, 2*x)
+            sage: f3 = H3([a^2 + t*b])
+            sage: f3.reduce_base_field()
+            Scheme morphism:
+              From: Affine Space of dimension 2 over Finite Field in t of size 5^4
+              To:   Affine Space of dimension 1 over Finite Field in t of size 5^4
+              Defn: Defined on coordinates by sending (a, b) to
+                    (a^2 + (t)*b)
+
+        ::
+
+            sage: K.<v> = CyclotomicField(4)
+            sage: A.<x> = AffineSpace(K, 1)
+            sage: H = End(A)
+            sage: f = H([x^2 + v])
+            sage: g = f.reduce_base_field();g
+            Scheme endomorphism of Affine Space of dimension 1 over Cyclotomic Field of order 4 and degree 2
+              Defn: Defined on coordinates by sending (x) to
+                (x^2 + (v))
+            sage: g.base_ring() is K
+            True
+
+        ::
+
+            sage: A.<x> = AffineSpace(QQbar, 1)
+            sage: H = End(A)
+            sage: f = H([(QQbar(sqrt(2))*x^2 + 1/QQbar(sqrt(3))) / (5*x)])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Affine Space of dimension 1 over Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a = 1.931851652578137?
+              Defn: Defined on coordinates by sending (x) to
+                    (((a^3 - 3*a)*x^2 + (1/3*a^2 - 2/3))/(5*x))
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: A.<x> =AffineSpace(QQbar,1)
+            sage: H = End(A)
+            sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Affine Space of dimension 1 over Number
+            Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
+            with a = 1.442249570307409? + 1.414213562373095?*I
+              Defn: Defined on coordinates by sending (x) to
+                    ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a
+                    - 1092/269)*x^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2
+                    + 1041/269*a + 1092/269))
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(x^3-x+1, embedding=(x^3+x+1).roots(ring=CC)[0][0])
+            sage: A.<x> = AffineSpace(K,1)
+            sage: A2.<u,v> = AffineSpace(K,2)
+            sage: H = Hom(A, A2)
+            sage: f = H([x^2 + a*x + 3, 5*x])
+            sage: f.reduce_base_field()
+            Scheme morphism:
+                  From: Affine Space of dimension 1 over Number Field in a with
+                  defining polynomial x^3 - x + 1 with a = -1.324717957244746?
+                  To:   Affine Space of dimension 2 over Number Field in a with
+                  defining polynomial x^3 - x + 1 with a = -1.324717957244746?
+                  Defn: Defined on coordinates by sending (x) to
+                        (x^2 + (a)*x + 3, 5*x)
+
+        ::
+
+            sage: K.<v> = QuadraticField(2)
+            sage: A.<x> =AffineSpace(K,1)
+            sage: H = End(A)
+            sage: f = H([3*x^2 + x + 1])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x) to
+                    (3*x^2 + x + 1)
+
+        ::
+
+            sage: K.<t> = GF(5^6)
+            sage: A.<x> = AffineSpace(K, 1)
+            sage: H = End(A)
+            sage: f = H([x^2 + x*(t^3 + 2*t^2 + 4*t) + (t^5 + 3*t^4 + t^2 + 4*t)])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Affine Space of dimension 1 over Finite Field in t of size 5^6
+              Defn: Defined on coordinates by sending (x) to
+                    (x^2 + (t^3 + 2*t^2 - t)*x + (t^5 - 2*t^4 + t^2 - t))
+        """
+        g = self.homogenize(0).reduce_base_field().dehomogenize(0)
+        from sage.schemes.affine.affine_space import AffineSpace
+        new_domain = AffineSpace(g.domain().base_ring(),
+                                 self.domain().dimension_relative(),
+                                 self.domain().variable_names())
+        new_codomain = AffineSpace(g.codomain().base_ring(),
+                                   self.codomain().dimension_relative(),
+                                   self.codomain().variable_names())
+        R = new_domain.coordinate_ring()
+        H = Hom(new_domain, new_codomain)
+        if isinstance(g[0], FractionFieldElement):
+            return H([R(G.numerator())/R(G.denominator()) for G in g])
+        return H([R(G) for G in g])
+
+
 class SchemeMorphism_polynomial_affine_space_finite_field(SchemeMorphism_polynomial_affine_space_field):
-
-    def orbit_structure(self, P):
-        """
-        Return the tail and period of the point.
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(GF(13), 2)
-            sage: H = End(A)
-            sage: f = H([x^2 - 1, y^2])
-            sage: f.orbit_structure(A(2, 3))
-            doctest:warning
-            ...
-            [1, 6]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.orbit_structures instead")
-        return self.as_dynamical_system().orbit_structure(P)
-
-    def cyclegraph(self):
-        """
-        Return the directed graph of the map.
-
-        EXAMPLES::
-
-            sage: A.<x,y> = AffineSpace(GF(5), 2)
-            sage: H = End(A)
-            sage: f = H([x^2-y, x*y+1])
-            sage: f.cyclegraph()
-            doctest:warning
-            ...
-            Looped digraph on 25 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.affine_ds.cyclegraph instead")
-        return self.as_dynamical_system().cyclegraph()
 
     def _fast_eval(self, x):
         """

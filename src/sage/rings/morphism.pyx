@@ -502,7 +502,7 @@ cdef class RingMap_lift(RingMap):
             sage: RingMap_lift(GF9, ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Number Field in I with defining polynomial x^2 + 1 to Integer Ring
+            TypeError: no canonical coercion from Number Field in I with defining polynomial x^2 + 1 with I = 1*I to Integer Ring
         """
         self.S = <Parent?>S
         x = <Element?>R(0).lift()
@@ -812,7 +812,10 @@ cdef class RingHomomorphism(RingMap):
         - Simon King (2010-05)
         - Francis Clarke (2011-02)
         """
+        from sage.categories.morphism import IdentityMorphism
         from sage.categories.rings import Rings
+        if isinstance(right, IdentityMorphism):
+            return self
         if homset.homset_category().is_subcategory(Rings()):
             if isinstance(right, RingHomomorphism_im_gens):
                 try:
@@ -919,7 +922,12 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
 
             sage: from sage.rings.morphism import RingHomomorphism_coercion
             sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py2
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py3
+            doctest:warning
+            ...
+            DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
+            See http://trac.sagemath.org/23204 for details.
             sage: isinstance(f, RingHomomorphism_coercion)
             True
 
@@ -1591,7 +1599,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             sage: f._call_(1/2)
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse does not exist.
+            ZeroDivisionError: inverse of Mod(2, 6) does not exist
             sage: f(1/2)
             Traceback (most recent call last):
             ...
@@ -1987,7 +1995,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         EXAMPLES::
 
             sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(2);
+            sage: Frob = K.frobenius_endomorphism(2)
             sage: Frob._latex_()
             '\\verb"Frob"^{2}'
         """

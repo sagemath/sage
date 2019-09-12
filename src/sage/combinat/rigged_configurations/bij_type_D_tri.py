@@ -345,7 +345,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             row0.append( self.cur_partitions[0].remove_cell(ell[3], 2) )
         else:
             if case_Q:
-                if ell[0] < ell[2]:
+                if ell[0] is None or ell[0] < ell[2]:
                     row0 = [self.cur_partitions[0].remove_cell(ell[2]),
                             self.cur_partitions[0].remove_cell(ell[0])]
                 else:

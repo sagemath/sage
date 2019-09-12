@@ -1,0 +1,36 @@
+From 82a681e0e876a7e45357c5cf3b041ae9113e55f8 Mon Sep 17 00:00:00 2001
+From: "Erik M. Bray" <erik.bray@lri.fr>
+Date: Tue, 23 Apr 2019 14:34:05 +0200
+Subject: [PATCH] Workaround for wrong errno on socket bind permission errors
+ on Cygwin.
+
+---
+ notebook/notebookapp.py | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/notebook/notebookapp.py b/notebook/notebookapp.py
+index 6b680ed9a..f332aeb6a 100755
+--- a/notebook/notebookapp.py
++++ b/notebook/notebookapp.py
+@@ -1406,10 +1406,17 @@ class NotebookApp(JupyterApp):
+             try:
+                 self.http_server.listen(port, self.ip)
+             except socket.error as e:
++                eacces = (errno.EACCES, getattr(errno, 'WSAEACCES', errno.EACCES))
++                if sys.platform == 'cygwin':
++                    # Cygwin has a bug that causes EPERM to be returned in this
++                    # case instead of EACCES:
++                    # https://cygwin.com/ml/cygwin/2019-04/msg00160.html
++                    eacces += (errno.EPERM,)
++
+                 if e.errno == errno.EADDRINUSE:
+                     self.log.info(_('The port %i is already in use, trying another port.') % port)
+                     continue
+-                elif e.errno in (errno.EACCES, getattr(errno, 'WSAEACCES', errno.EACCES)):
++                elif e.errno in eacces:
+                     self.log.warning(_("Permission to listen on port %i denied") % port)
+                     continue
+                 else:
+-- 
+2.15.1
+

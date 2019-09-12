@@ -16,24 +16,25 @@ You can create random elements::
 There is an iterator over the (infinitely many) elements::
 
     sage: import itertools
-    sage: list(itertools.islice(G, 10))
+    sage: list(itertools.islice(G, 10r))
     [0, 1/2, 1/3, 2/3, 1/4, 3/4, 1/5, 2/5, 3/5, 4/5]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ, QQ
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from .qmodnz_element import QmodnZ_Element
+
 
 class QmodnZ(Parent, UniqueRepresentation):
     r"""
@@ -68,8 +69,8 @@ class QmodnZ(Parent, UniqueRepresentation):
         sage: QmodnZ(2/3)
         Q/(2/3)Z
     """
-
     Element = QmodnZ_Element
+
     def __init__(self, n=1):
         r"""
         Initialization.
@@ -110,9 +111,9 @@ class QmodnZ(Parent, UniqueRepresentation):
         if self.n == 1:
             return "Q/Z"
         elif self.n in ZZ:
-            return "Q/%sZ"%(self.n)
+            return "Q/%sZ" % self.n
         else:
-            return "Q/(%s)Z"%(self.n)
+            return "Q/(%s)Z" % self.n
 
     def _coerce_map_from_(self, S):
         r"""
@@ -143,10 +144,6 @@ class QmodnZ(Parent, UniqueRepresentation):
             return True
         if isinstance(S, QmodnZ) and (S.n / self.n in ZZ):
             return True
-
-    #TODO: Disallow order comparisons between different Q/nZ's
-    # e.g., sage: QmodnZ(10/3) > QmodnZ(5/3)
-    # returns False.
 
     def _element_constructor_(self, x):
         r"""
@@ -182,11 +179,13 @@ class QmodnZ(Parent, UniqueRepresentation):
             sage: len(L)
             92
         """
-        return sorted(list(set([self(x) for x in QQ.some_elements()])))
+        return list(set(self(x) for x in QQ.some_elements()))
 
     def random_element(self):
         r"""
-        Return a random element of `\Q/n\Z`.  The denominator is selected
+        Return a random element of `\Q/n\Z`.
+
+        The denominator is selected
         using the ``1/n`` distribution on integers, modified to return
         a positive value.  The numerator is then selected uniformly.
 
@@ -204,25 +203,27 @@ class QmodnZ(Parent, UniqueRepresentation):
             return self(QQ.random_element())
         d = ZZ.random_element()
         if d >= 0:
-            d = 2*d + 1
+            d = 2 * d + 1
         else:
-            d = -2*d
+            d = -2 * d
         n = ZZ.random_element((self.n * d).ceil())
-        return self(n/d)
+        return self(n / d)
 
     def __iter__(self):
         r"""
-        Creates an iterator that generates the elements of `\Q/n\Z` without
-        repetition, organized by increasing denominator; for a fixed denominator
-        elements are listed by increasing numerator.
+        Create an iterator that generates the elements of `\Q/n\Z` without
+        repetition, organized by increasing denominator.
+
+        For a fixed denominator, elements are listed by increasing numerator.
 
         EXAMPLES:
 
-            The first 19 elements of `\Q/5\Z`::
+        The first 19 elements of `\Q/5\Z`::
 
             sage: import itertools
-            sage: list(itertools.islice(QQ/(5*ZZ),19))
-            [0, 1, 2, 3, 4, 1/2, 3/2, 5/2, 7/2, 9/2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3, 10/3, 11/3, 13/3]
+            sage: list(itertools.islice(QQ/(5*ZZ), 19r))
+            [0, 1, 2, 3, 4, 1/2, 3/2, 5/2, 7/2, 9/2, 1/3, 2/3, 4/3, 5/3,
+             7/3, 8/3, 10/3, 11/3, 13/3]
         """
         if self.n == 0:
             for x in QQ:
@@ -230,6 +231,6 @@ class QmodnZ(Parent, UniqueRepresentation):
         else:
             d = ZZ(0)
             while True:
-                for a in d.coprime_integers((d*self.n).floor()):
-                    yield self(a/d)
+                for a in d.coprime_integers((d * self.n).floor()):
+                    yield self(a / d)
                 d += 1

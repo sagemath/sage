@@ -19,7 +19,7 @@ from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_AS_LONG
 from cpython.long cimport PyLong_AsLong
 from cpython.number cimport PyNumber_Index, PyIndex_Check
-from cpython.longintrepr cimport PyLongObject, PyLong_SHIFT, digit
+from cpython.longintrepr cimport py_long, PyLong_SHIFT, digit
 
 from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_get_si
 from sage.rings.integer_fake cimport is_Integer, Integer_AS_MPZ
@@ -208,7 +208,7 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         return 0
 
     # x is a Python "long" (called "int" on Python 3)
-    cdef const digit* D = (<PyLongObject*>x).ob_digit
+    cdef const digit* D = (<py_long>x).ob_digit
     cdef Py_ssize_t size = Py_SIZE(x)
 
     # We assume that PyLong_SHIFT is 15 on a 32-bit system and 30 on a

@@ -1,3 +1,5 @@
+.. highlight:: ipython
+
 .. _chapter-code-basics:
 
 ===================
@@ -94,7 +96,9 @@ Files and Directory Structure
 
 Roughly, the Sage directory tree is layout like this. Note that we use
 ``SAGE_ROOT`` in the following as a shortcut for the (arbitrary) name
-of the directory containing the Sage sources::
+of the directory containing the Sage sources:
+
+.. CODE-BLOCK:: text
 
     SAGE_ROOT/
         sage          # the Sage launcher
@@ -332,7 +336,9 @@ information. You can use the existing functions of Sage as templates.
 
 -  A **SEEALSO** block (highly recommended) with links to related parts of
    Sage. This helps users find the features that interest them and discover
-   the new ones. ::
+   the new ones.
+
+   .. CODE-BLOCK:: rest
 
        .. SEEALSO::
 
@@ -347,7 +353,9 @@ information. You can use the existing functions of Sage as templates.
 
    It indicates what algorithm and/or what software is used, e.g.
    ``ALGORITHM: Uses Pari``. Here's a longer example with a
-   bibliographical reference::
+   bibliographical reference:
+
+   .. CODE-BLOCK:: rest
 
        ALGORITHM:
 
@@ -367,12 +375,16 @@ information. You can use the existing functions of Sage as templates.
 
    The bibliographical reference should go in Sage's master
    bibliography file,
-   :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`::
+   :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`:
+
+   .. CODE-BLOCK:: rest
 
        .. [Nat2000] \M. B. Nathanson. Elementary Methods in Number Theory.
           Springer, 2000.
 
--  A **NOTE** block for tips/tricks (optional). ::
+-  A **NOTE** block for tips/tricks (optional).
+
+   .. CODE-BLOCK:: rest
 
        .. NOTE::
 
@@ -382,7 +394,9 @@ information. You can use the existing functions of Sage as templates.
 - A **WARNING** block for critical information about your code (optional).
 
   For example known situations for which the code breaks, or anything
-  that the user should be aware of. ::
+  that the user should be aware of.
+
+  .. CODE-BLOCK:: rest
 
       .. WARNING::
 
@@ -396,7 +410,9 @@ information. You can use the existing functions of Sage as templates.
 - A **TODO** block for future improvements (optional).
 
   It can contain disabled doctests to demonstrate the desired
-  feature. Here's an example of a TODO block::
+  feature. Here's an example of a TODO block:
+
+  .. CODE-BLOCK:: rest
 
       .. TODO::
 
@@ -409,7 +425,9 @@ information. You can use the existing functions of Sage as templates.
 - A **PLOT** block to illustrate with pictures the output of a function.
 
   Generate with Sage code an object ``g`` with a ``.plot`` method, then call
-  ``sphinx_plot(g)``::
+  ``sphinx_plot(g)``:
+
+  .. CODE-BLOCK:: rest
 
       .. PLOT::
 
@@ -428,7 +446,9 @@ information. You can use the existing functions of Sage as templates.
   which are not explicitly mentioned in the docstring or if the docstring is
   particularly long. In that case, add the bibliographic information to the
   master bibliography file, if not already present, and add a reference block
-  to your docstring as follows::
+  to your docstring as follows:
+
+  .. CODE-BLOCK:: rest
 
       REFERENCES:
 
@@ -474,6 +494,8 @@ information. You can use the existing functions of Sage as templates.
     followed by a string of hyphens, equal signs, or other
     characters which are valid markers for reST
     headers: ``- = ` : ' " ~ _ ^ * + # < >``.
+    However, lines only containing double colons `::` do not
+    end "TESTS" blocks.
 
 Note about Sphinx directives vs. other blocks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -521,7 +543,9 @@ Sage's master **BIBLIOGRAPHY** file
 All bibliographical references should be stored in the master
 bibliography file,
 :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`, in the
-format ::
+format
+
+.. CODE-BLOCK:: rest
 
   .. [Gau1801] \C. F. Gauss, *Disquisitiones Arithmeticae*, 1801.
 
@@ -558,7 +582,7 @@ indentation:
 
 .. skip    # do not doctest
 
-::
+.. CODE-BLOCK:: python
 
     def point(self, x=1, y=2):
         r"""
@@ -614,7 +638,9 @@ indentation:
         """
         <body of the function>
 
-The master bibliography file would contain ::
+The master bibliography file would contain
+
+.. CODE-BLOCK:: rest
 
         .. [BCDT2001] Breuil, Conrad, Diamond, Taylor,
                       "Modularity ...."
@@ -668,7 +694,9 @@ Private functions should contain an EXAMPLES (or TESTS) block.
 
 A special case is the constructor ``__init__``: due to its special
 status the ``__init__`` docstring is used as the class docstring if
-there is not one already. That is, you can do the following::
+there is not one already. That is, you can do the following:
+
+.. CODE-BLOCK:: ipycon
 
     sage: class Foo(SageObject):
     ....:     # no class docstring
@@ -706,7 +734,9 @@ the following are valid::
         """
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
-(or ``$$<math expression>$$``). For instance::
+(or ``$$<math expression>$$``). For instance:
+
+.. CODE-BLOCK:: rest
 
     .. MATH::
 
@@ -720,7 +750,9 @@ the following are valid::
     \leq
     e \sum_{i=1}^{\infty} a_i
 
-The **aligned** environment works as it does in LaTeX::
+The **aligned** environment works as it does in LaTeX:
+
+.. CODE-BLOCK:: rest
 
     .. MATH::
 
@@ -743,7 +775,9 @@ in particular, it is turned into ``\begin{gather} block
 ``align``) which in ordinary LaTeX would not be wrapped like this, you
 must add a **:nowrap:** flag to the MATH mode. See also `Sphinx's
 documentation for math blocks
-<http://sphinx-doc.org/latest/ext/math.html?highlight=nowrap#directive-math>`_. ::
+<http://sphinx-doc.org/latest/ext/math.html?highlight=nowrap#directive-math>`_. :
+
+.. CODE-BLOCK:: rest
 
     .. MATH::
        :nowrap:
@@ -751,7 +785,7 @@ documentation for math blocks
        \begin{align}
           1+...+n &= n(n+1)/2\\
           &= O(n^2)\\
-       \end{tabular}
+       \end{align}
 
 .. MATH::
    :nowrap:
@@ -796,6 +830,8 @@ All new doctests added to Sage should **pass all tests** (see
 :ref:`chapter-doctesting`), i.e. running ``sage -t your_file.py`` should not
 give any error messages. Below are instructions about how doctests should be
 written.
+
+.. highlight:: ipycon
 
 **What doctests should test:**
 
@@ -870,7 +906,7 @@ written.
       sage: print "not like that"
       Traceback (most recent call last):
       ...
-      SyntaxError: invalid syntax
+      SyntaxError: ...
       sage: print("but like this")
       but like this
 
@@ -1039,7 +1075,9 @@ framework. Here is a comprehensive list:
        eventually halting.
 
   - **bug:** For lines that describe bugs. Alternatively, use ``# known bug``
-    instead: it is an alias for ``optional bug``. ::
+    instead: it is an alias for ``optional bug``.
+
+    .. CODE-BLOCK:: rest
 
         The following should yield 4.  See :trac:`2`. ::
 
@@ -1069,7 +1107,9 @@ framework. Here is a comprehensive list:
 
   Use it when testing special functions like ``__repr__``, ``__add__``,
   etc. Use it also when you test the function by calling ``B`` which
-  internally calls ``A``::
+  internally calls ``A``:
+
+  .. CODE-BLOCK:: rest
 
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
@@ -1081,9 +1121,9 @@ framework. Here is a comprehensive list:
   64-bit machines. Note that this particular flag is to be applied on the
   **output** lines, not the input lines::
 
-      sage: hash(-920390823904823094890238490238484)
-      -873977844            # 32-bit
-      6874330978542788722   # 64-bit
+      sage: hash(2^31 + 2^13)
+      -2147475456               # 32-bit
+      2147491840                # 64-bit
 
 Using ``search_src`` from the Sage prompt (or ``grep``), one can
 easily find the aforementioned keywords. In the case of ``todo: not
@@ -1112,9 +1152,11 @@ Testing .py, .pyx and .sage Files
 
 Run ``sage -t <filename.py>`` to test all code examples in
 ``filename.py``. Similar remarks apply to ``.sage`` and ``.pyx``
-files::
+files:
 
-      sage -t [--verbose] [--optional]  [files and directories ... ]
+.. CODE-BLOCK:: shell-session
+
+      $ sage -t [--verbose] [--optional]  [files and directories ... ]
 
 The Sage doctesting framework is based on the standard Python doctest
 module, but with many additional features (such as parallel testing,
@@ -1138,7 +1180,9 @@ environments in reST documentation.
 
 Of course in reST files, one often inserts explanatory texts between
 different verbatim environments. To link together verbatim
-environments, use the ``.. link`` comment. For example::
+environments, use the ``.. link`` comment. For example:
+
+.. CODE-BLOCK:: rest
 
     EXAMPLES::
 

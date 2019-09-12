@@ -42,7 +42,7 @@ r"""
 
     sage: F = QuadraticField(7)
     sage: F
-    Number Field in a with defining polynomial x^2 - 7
+    Number Field in a with defining polynomial x^2 - 7 with a = 2.645751311064591?
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -64,7 +64,7 @@ r"""
 
     sage: F.<b> = QuadraticField(7)
     sage: F
-    Number Field in b with defining polynomial x^2 - 7
+    Number Field in b with defining polynomial x^2 - 7 with b = 2.645751311064591?
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -195,7 +195,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: c.parent()
-    Number Field in a with defining polynomial x^2 + 11
+    Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -220,7 +220,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: e.parent()
-    Number Field in a with defining polynomial x^2 + 11
+    Number Field in a with defining polynomial x^2 + 11 with a = 3.316624790355400?*I
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

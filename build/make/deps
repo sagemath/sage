@@ -1,4 +1,5 @@
-## -*- Makefile -*- ###########################################################
+# -*- Makefile -*- ###########################################################
+# vim: noexpandtab filetype=make
 # This file ($SAGE_ROOT/build/make/deps) will be copied into
 # $SAGE_ROOT/build/make/Makefile by config.status
 ###############################################################################
@@ -28,7 +29,7 @@ STARTED = $(SAGE_LOCAL)/etc/sage-started.txt
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
 	doc-clean doc-src-clean doc-output-clean \
-	clean sagelib-clean build-clean
+	clean sagelib-clean build-clean _clean-broken-gcc
 
 # Build everything and start Sage.
 # Note that we put the "doc" target first in the rule below because
@@ -44,11 +45,8 @@ all-build: toolchain-deps
 
 
 # The 2 preliminary build phases: base and toolchain.
-# During the toolchain build, we export SAGE_BUILD_TOOLCHAIN=yes
-# such that packages can do different things when they are built
-# as prerequisite of GCC.
-base-toolchain: base
-	env SAGE_BUILD_TOOLCHAIN=yes $(MAKE) toolchain
+base-toolchain: _clean-broken-gcc base
+	$(MAKE) toolchain
 
 # All targets except for the base packages
 all-sage: \
@@ -74,11 +72,16 @@ toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname)))
 # unconditionally. We still use the dependency checking from $(MAKE),
 # so this will not trigger useless rebuilds.
 # See #14168 and #14232.
+#
+# Note: This list consists of only the *runtime* dependencies of the toolchain.
+TOOLCHAIN_DEPS = zlib $(MP_LIBRARY) mpfr mpc
+TOOLCHAIN_DEP_INSTS = \
+	$(foreach pkgname,$(TOOLCHAIN_DEPS),$(inst_$(pkgname)))
+
 toolchain-deps:
-	$(MAKE) $(inst_zlib)
-	$(MAKE) $(MP_LIBRARY)
-	$(MAKE) $(inst_mpfr)
-	$(MAKE) $(inst_mpc)
+	for target in $(TOOLCHAIN_DEP_INSTS); do \
+	    $(MAKE) $$target; \
+	done
 
 all-toolchain: base-toolchain
 	$(MAKE) toolchain-deps
@@ -121,9 +124,9 @@ base: $(inst_patch) $(inst_pkgconf)
 # dependencies for Cython files (e.g. PARI, NTL, MP_LIBRARY).
 sagelib: \
 		$(inst_arb) \
-		$(BLAS) \
+		$(inst_boost_cropped) \
+		$(inst_$(BLAS)) \
 		$(inst_brial) \
-		$(inst_cephes) \
 		$(inst_cliquer) \
 		$(inst_cypari) \
 		$(inst_cysignals) \
@@ -133,15 +136,18 @@ sagelib: \
 		$(inst_ecm) \
 		$(inst_flint) \
 		$(inst_libgd) \
+		$(inst_gap) \
 		$(inst_givaro) \
 		$(inst_glpk) \
+		$(inst_gmpy2) \
 		$(inst_gsl) \
 		$(inst_iml) \
 		$(inst_jinja2) \
 		$(inst_jupyter_core) \
 		$(inst_lcalc) \
 		$(inst_lrcalc) \
-		$(inst_libgap) \
+		$(inst_libbraiding) \
+		$(inst_libhomfly) \
 		$(inst_libpng) \
 		$(inst_linbox) \
 		$(inst_m4ri) \
@@ -149,7 +155,7 @@ sagelib: \
 		$(inst_mpc) \
 		$(inst_mpfi) \
 		$(inst_mpfr) \
-		$(MP_LIBRARY) \
+		$(inst_$(MP_LIBRARY)) \
 		$(inst_ntl) \
 		$(inst_numpy) \
 		$(inst_pari) \
@@ -157,10 +163,10 @@ sagelib: \
 		$(inst_pkgconfig) \
 		$(inst_planarity) \
 		$(inst_ppl) \
+		$(inst_pplpy) \
 		$(inst_pycygwin) \
 		$(inst_pynac) \
-		$(inst_python2) \
-		$(inst_python3) \
+		$(inst_$(PYTHON)) \
 		$(inst_ratpoints) \
 		$(inst_readline) \
 		$(inst_rw) \
@@ -258,3 +264,17 @@ sagelib-clean:
 	cd "$(SAGE_SRC)" && $(MAKE) clean
 
 build-clean: clean doc-clean sagelib-clean
+
+# Special target for cleaning up a broken GCC install detected by configure
+# This should check for the .clean-broken-gcc stamp, and if found clean
+# everything up along with the stamp file itself.  This target is then run
+# as a prerequisite to installing any other packages.
+_clean-broken-gcc:
+	@if [ -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc" ]; then \
+	   rm -f "$(SAGE_LOCAL)/bin/gcc"; \
+	   rm -f "$(SAGE_LOCAL)/gcc-"*; \
+	   rm -f "$(SAGE_LOCAL)/bin/g++"; \
+	   rm -f "$(SAGE_SPKG_INST)/gcc-"*; \
+	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
+	   echo "Cleaned up old broken GCC install"; \
+	fi

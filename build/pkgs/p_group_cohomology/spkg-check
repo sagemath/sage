@@ -1,9 +1,8 @@
 cd src
 
-# testing modular_resolution-1.0
+# testing modular_resolution-1.1
 cd csources
-export MTXLIB="$DOT_SAGE/meataxe/"
-$MAKE check || sdh_die "Error testing modular_resolution-1.0"
+$MAKE check || sdh_die "Error testing modular_resolution-1.1"
 cd ..
 
 # testing pGroupCohomology

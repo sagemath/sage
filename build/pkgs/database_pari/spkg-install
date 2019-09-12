@@ -1,1 +1,0 @@
-sdh_install src/* "$GP_DATA_DIR"

@@ -7,14 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.misc.latex import latex
@@ -31,6 +31,7 @@ from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 def coerce_AA(p):
     r"""
     Return the argument first coerced into ``AA`` and then simplified.
+
     This leads to a major performance gain with some operations.
 
     EXAMPLES::
@@ -75,12 +76,11 @@ def cyclic_representative(L):
         sage: cyclic_representative((1,2,3,2,3,1))
         (3, 2, 3, 1, 1, 2)
     """
-    if not isinstance(L,list):
-        L = list(L)
+    L = list(L)
     n = len(L)
     Lmax = L[:]
-    for _ in range(n-1):
-        L.insert(n-1,L.pop(0))
+    for _ in range(n - 1):
+        L.append(L.pop(0))
         if L > Lmax:
             Lmax = L[:]
 
@@ -135,7 +135,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             [ -1   0]
             [lam  -1]
             sage: el.matrix().parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5
+            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5 with lam = 1.902113032590308?
 
             sage: M = matrix([[-1, lam], [0, 1]])
             sage: G(M)
@@ -428,7 +428,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: print(el.string_repr(method="basic"))
             S*T^3*S*T^(-2)
         """
-        if   method == "default":
+        if method == "default":
             return MatrixGroupElement_generic._repr_(self)
         elif method == "basic":
             (L, sgn) = self._word_S_T_data()
@@ -486,7 +486,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             repr_str = ""
             begin = True
             for v in L:
-                if   self.is_identity():
+                if self.is_identity():
                     pass
                 elif self.is_elliptic():
                     if v[0] == 0:
@@ -527,7 +527,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             raise NotImplementedError
 
     # We cache this method since the calculation is rather long and the
-    # result is beeing reused:
+    # result is being reused:
     # - For block decompositions
     # - For calculating reduced (and simple) elements (and all dependent methods)
     @cached_method
@@ -636,7 +636,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
     # TODO: allow output as word?
     # We cache this method since the calculation is rather long and the
-    # data is beeing reused when working with primitive representatives
+    # data is being reused when working with primitive representatives
     # and conjugacy classes.
     @cached_method
     def _primitive_block_decomposition_data(self):
@@ -2032,17 +2032,16 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if self.is_identity() or self.is_elliptic():
             raise NotImplementedError
 
-
         from sage.sets.set import Set
 
         R = self.simple_elements()
-        FPS = Set([v.fixed_points()[0] for v in R])
+        FPS = Set(v.fixed_points()[0] for v in R)
 
         if not extended:
             return FPS
 
         S = self.parent().S()
-        FPS2 = Set([S.acton(v) for v in FPS])
+        FPS2 = Set(S.acton(v) for v in FPS)
 
         return FPS.union(FPS2)
 
@@ -2057,7 +2056,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: latex(V)
             \begin{pmatrix} \mathit{\lambda}^{3} - 2 \mathit{\lambda} & \mathit{\lambda}^{2} - 1 \\ \mathit{\lambda}^{4} - 3 \mathit{\lambda}^{2} + 1 & \mathit{\lambda}^{3} - 2 \mathit{\lambda} \end{pmatrix}
         """
-        latex_out = r"\begin{pmatrix} %s & %s \\ %s & %s \end{pmatrix}"%(latex(self.a()), latex(self.b()), latex(self.c()), latex(self.d()))
+        latex_out = r"\begin{pmatrix} %s & %s \\ %s & %s \end{pmatrix}" % (latex(self.a()), latex(self.b()), latex(self.c()), latex(self.d()))
         return latex_out.replace("lam", r"\lambda")
 
     def __neg__(self):
@@ -2085,11 +2084,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U[0]
             (lam, -1)
             sage: U[0].parent()
-            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
             sage: U[1][0]
             1
             sage: U[1][0].parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[key]
 
@@ -2104,7 +2103,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.a()
             lam
             sage: U.a().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][0]
 
@@ -2119,7 +2118,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.b()
             -1
             sage: U.b().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][1]
 
@@ -2487,7 +2486,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         ``self``, denoted by ``[gamma]`` is `Hecke-symmetric`:
         I.e. if ``[gamma] == [gamma^(-1)]``.
 
-        This is equivalent to ``self.simple_fixed_point_set()`` beeing
+        This is equivalent to ``self.simple_fixed_point_set()`` being
         equal with it's `Hecke-conjugated` set (where each fixed point
         is replaced by the other (`Hecke-conjugated`) fixed point.
 
@@ -2496,8 +2495,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         The method assumes that ``self`` is hyperbolic.
 
-        Warning: The case ``n=infinity`` is not verified at all
-        and probably wrong!
+        .. WARNING::
+
+            The case ``n=infinity`` is not verified at all and probably wrong!
 
         EXAMPLES::
 
@@ -2519,8 +2519,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el = G.V(2)*G.V(3)
             sage: el.is_hecke_symmetric()
             True
-            sage: el.simple_fixed_point_set()
-            {(lam - 3/2)*e + 1/2*lam - 1, (-lam + 3/2)*e - 1/2*lam + 1, (lam - 3/2)*e - 1/2*lam + 1, (-lam + 3/2)*e + 1/2*lam - 1}
+            sage: sorted(el.simple_fixed_point_set(), key=str)
+            [(-lam + 3/2)*e + 1/2*lam - 1,
+             (-lam + 3/2)*e - 1/2*lam + 1,
+             (lam - 3/2)*e + 1/2*lam - 1,
+             (lam - 3/2)*e - 1/2*lam + 1]
             sage: el.simple_fixed_point_set() == el.inverse().simple_fixed_point_set()
             True
         """
@@ -2574,8 +2577,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     return True
 
             sage: z = PolynomialRing(G.base_ring(), 'z').gen()
-            sage: uniq([ is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)])    # long time
-            [True]
+            sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time
+            [True, True, True, True, True, True]
             sage: [is_rpf(1/z, k=k) for k in range(-6, 6, 2)]
             [False, False, False, False, True, False]
 
@@ -2658,7 +2661,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         try:
             k = ZZ(k)
-            if k%2 != 0:
+            if k % 2:
                 raise TypeError
         except TypeError:
             raise ValueError("k={} must be an even integer!".format(k))
@@ -2867,7 +2870,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``K`` -- A field to which we want the (correct) embeddding.
+        - ``K`` -- A field to which we want the (correct) embedding.
                    If ``K=None`` (default) then ``AlgebraicField()`` is
                    used for elliptic elements and ``AlgebraicRealField()``
                    otherwise.
@@ -3280,7 +3283,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         try:
             k = ZZ(k)
-            if k%2 != 0:
+            if k % 2:
                 raise TypeError
         except TypeError:
             raise ValueError("k={} must be an even integer!".format(k))

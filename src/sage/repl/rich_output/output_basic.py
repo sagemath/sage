@@ -24,7 +24,7 @@ To create new types of output, you must create your own subclass of
 
 .. warning::
 
-    All rich output data in sublasses of :class:`OutputBase` must be
+    All rich output data in subclasses of :class:`OutputBase` must be
     contained in :class:`~sage.repl.rich_output.buffer.OutputBuffer`
     instances. You must never reference any files on the local file
     system, as there is no guarantee that the notebook server and the

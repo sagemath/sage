@@ -47,7 +47,7 @@ class StarCrystal(UniqueRepresentation, Parent):
 
     The induced operation on the crystal `B(\infty)` is called the
     *Kashiwara involution*.  Its implementation here is based on the
-    recursive algorithm from Theorem 2.2.1 of [Kash95]_, which states
+    recursive algorithm from Theorem 2.2.1 of [Ka1993]_, which states
     that for any `i \in I` there is a unique strict crystal embedding
 
     .. MATH::
@@ -84,12 +84,6 @@ class StarCrystal(UniqueRepresentation, Parent):
         [[1, 1], [2]]
         sage: mg.f_string([1,2,1,2,2])
         [[1, 1, 1, 1, 1, 2, 2], [2, 3, 3, 3]]
-
-    REFERENCES:
-
-    .. [Kash95] \M. Kashiwara.
-       The crystal base and Littelmann's refined Demazure character formula.
-       Duke Math. J. **71** (1993), no. 3, 839-858.
     """
     def __init__(self, Binf):
         r"""

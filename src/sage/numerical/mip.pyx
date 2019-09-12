@@ -23,7 +23,7 @@ in the following form
 with given `A \in \mathbb{R}^{m,n}`, `b \in \mathbb{R}^m`,
 `c \in \mathbb{R}^n` and unknown `x \in \mathbb{R}^{n}`.
 If some or all variables in the vector `x` are restricted over
-the integers `\mathbb{Z}`, the problem is called mixed integer
+the integers `\ZZ`, the problem is called mixed integer
 linear program (:wikipedia:`MILP <Mixed_integer_linear_programming>`).
 A wide variety of problems in optimization
 can be formulated in this standard form. Then, solvers are
@@ -42,7 +42,7 @@ and this additional inequality:
 
  - `w_0 - w_1 - w_2 \geq 0`
 
-where all `w_i \in \mathbb{Z}^+`. You know that the trivial solution is `w_i=0`,
+where all `w_i \in \ZZ^+`. You know that the trivial solution is `w_i=0`,
 but what is the first non-trivial one with `w_3 \geq 1`?
 
 A mixed integer linear program can give you an answer:
@@ -88,7 +88,7 @@ The following example shows all these steps::
       x_3 is an integer variable (min=0.0, max=+oo)
     sage: print('Objective Value: {}'.format(p.solve()))
     Objective Value: 2.0
-    sage: for i, v in p.get_values(w).iteritems():
+    sage: for i, v in sorted(p.get_values(w).items()):
     ....:     print('w_%s = %s' % (i, int(round(v))))
     w_0 = 15
     w_1 = 10
@@ -198,7 +198,6 @@ also implements the :class:`MIPSolverException` exception, as well as the
     :meth:`~MixedIntegerLinearProgram.is_integer`                | Tests whether the variable is an integer
     :meth:`~MixedIntegerLinearProgram.is_real`                   | Tests whether the variable is real
     :meth:`~MixedIntegerLinearProgram.linear_constraints_parent` | Return the parent for all linear constraints
-    :meth:`~MixedIntegerLinearProgram.linear_function`           | Construct a new linear function (deprecated)
     :meth:`~MixedIntegerLinearProgram.linear_functions_parent`   | Return the parent for all linear functions
     :meth:`~MixedIntegerLinearProgram.new_variable`              | Returns an instance of ``MIPVariable`` associated
     :meth:`~MixedIntegerLinearProgram.number_of_constraints`     | Returns the number of constraints assigned so far
@@ -225,14 +224,14 @@ AUTHORS:
 - Risan (2012/02): added extension for exact computation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from copy import copy
@@ -241,6 +240,7 @@ from sage.structure.element cimport Element
 from sage.structure.element import is_Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
+
 
 cdef class MixedIntegerLinearProgram(SageObject):
     r"""
@@ -497,37 +497,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
             self._linear_constraints_parent = LinearConstraintsParent(LF)
         return self._linear_constraints_parent
 
-    def __call__(self, x):
-        """
-        Construct a new linear function
-
-        .. warning::
-
-            This method is deprecated.  The variables appearing in
-            the linear function are not created in the backend.
-            Build linear functions from the components of
-            :class:`MIPVariable` objects instead; see
-            :meth:`new_variable`.
-
-        EXAMPLES::
-
-             sage: p = MixedIntegerLinearProgram(solver='GLPK')
-             sage: p.linear_function({1:3, 4:5})
-             doctest:...: DeprecationWarning:...linear_function...deprecated...
-             3*x_1 + 5*x_4
-
-        This is equivalent to::
-
-            sage: p({1:3, 4:5})
-            3*x_1 + 5*x_4
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(20602, 'MixedIntegerLinearProgram.linear_function, __call__, and gen are deprecated. If p is a MixedIntegerLinearProgram instance, please use p[i] to get component i of the default MIP variable; use p.sum to build linear functions.')
-        parent = self.linear_functions_parent()
-        return parent(x)
-
-    linear_function = __call__
-
     def _repr_(self):
         r"""
         Return a short description of the ``MixedIntegerLinearProgram``.
@@ -710,7 +679,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: d = polytopes.dodecahedron()
             sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())
             sage: p.base_ring()
-            Number Field in sqrt5 with defining polynomial x^2 - 5
+            Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()
 
@@ -732,7 +701,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         self._backend.problem_name(name)
 
-    def new_variable(self, real=False, binary=False, integer=False, nonnegative=False, name=""):
+    def new_variable(self, real=False, binary=False, integer=False, nonnegative=False, name="",
+                     indices=None):
         r"""
         Return a new :class:`MIPVariable` instance.
 
@@ -768,6 +738,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
           using ``write_mps`` or ``write_lp``, and has no other
           effect.
 
+        - ``indices`` -- (optional) an iterable of keys; components
+           corresponding to these keys are created in order,
+           and access to components with other keys will raise an
+           error; otherwise components of this variable can be
+           indexed by arbitrary keys and are created dynamically
+           on access
+
         OUTPUT:
 
         A new instance of :class:`MIPVariable` associated to the
@@ -801,7 +778,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         An exception is raised when two types are supplied ::
 
-            sage: z = p.new_variable(real = True, integer = True)
+            sage: z = p.new_variable(real=True, integer=True)
             Traceback (most recent call last):
             ...
             ValueError: Exactly one of the available types has to be True
@@ -857,7 +834,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
                       vtype,
                       name=name,
                       lower_bound=0 if (nonnegative or binary) else None,
-                      upper_bound=1 if binary else None)
+                      upper_bound=1 if binary else None,
+                           indices=indices)
 
     def default_variable(self):
         """
@@ -903,28 +881,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
               b[2] = x_1 is a continuous variable (min=-oo, max=+oo)
         """
         return tuple(self.new_variable() for i in range(n))
-
-    def gen(self, i):
-        """
-        Return the linear variable `x_i`.
-        
-        .. warning::
-
-            This method is deprecated.  The variable is not created
-            in the backend if it does not exist, and most methods
-            do not accept this variable as valid input.
-
-        EXAMPLES::
-
-            sage: mip = MixedIntegerLinearProgram(solver='GLPK')
-            sage: mip.gen(0)
-            x_0
-            sage: [mip.gen(i) for i in range(10)]
-            [x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7, x_8, x_9]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(20602, 'MixedIntegerLinearProgram.linear_function, __call__, and gen are deprecated. If p is a MixedIntegerLinearProgram instance, please use p[i] to get component i of the default MIP variable; use p.sum to build linear functions.')
-        return self.linear_functions_parent().gen(i)
 
     cpdef int number_of_constraints(self):
       r"""
@@ -1465,7 +1421,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         values for the corresponding variables ::
 
             sage: x_sol = p.get_values(x)
-            sage: x_sol.keys()
+            sage: sorted(x_sol)
             [3, 5]
 
         Obviously, it also works with variables of higher dimension::
@@ -2827,6 +2783,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             raise ValueError('Form of interactive_lp_problem must be either None or \'standard\'')
 
+
 class MIPSolverException(RuntimeError):
     r"""
     Exception raised when the solver fails.
@@ -2836,7 +2793,7 @@ class MIPSolverException(RuntimeError):
         sage: from sage.numerical.mip import MIPSolverException
         sage: e = MIPSolverException("Error")
         sage: e
-        MIPSolverException('Error',)
+        MIPSolverException('Error'...)
         sage: print(e)
         Error
 
@@ -2886,7 +2843,8 @@ cdef class MIPVariable(SageObject):
         You should not instantiate this class directly. Instead, use
         :meth:`MixedIntegerLinearProgram.new_variable`.
     """
-    def __init__(self, mip, vtype, name="", lower_bound=0, upper_bound=None):
+    def __init__(self, mip, vtype, name="", lower_bound=0, upper_bound=None,
+                 indices=None):
         r"""
         Constructor for ``MIPVariable``.
 
@@ -2907,6 +2865,13 @@ cdef class MIPVariable(SageObject):
           bound on the variable. Set to ``None`` to indicate that the
           variable is unbounded.
 
+        - ``indices`` -- (optional) an iterable of keys; components
+           corresponding to these keys are created in order,
+           and access to components with other keys will raise an
+           error; otherwise components of this variable can be
+           indexed by arbitrary keys and are created dynamically
+           on access
+
         For more informations, see the method
         ``MixedIntegerLinearProgram.new_variable``.
 
@@ -2922,6 +2887,11 @@ cdef class MIPVariable(SageObject):
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
         self._name = name
+        self._dynamic_indices = True
+        if indices is not None:
+            for i in indices:
+                self[i]                   # creates component
+            self._dynamic_indices = False
 
     def __copy__(self):
         r"""
@@ -2969,21 +2939,64 @@ cdef class MIPVariable(SageObject):
 
     def __getitem__(self, i):
         r"""
-        Returns the symbolic variable corresponding to the key.
+        Returns the variable component corresponding to the key.
 
-        Returns the element asked, otherwise creates it.
+        Returns the component asked.
 
-        EXAMPLES::
+        Otherwise, if ``self`` was created with indices=None,
+        creates the component.
+
+        EXAMPLES:
+
+        Dynamic indices::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
             sage: v[0]
             x_0
+
+        Static indices::
+
+            sage: p = MixedIntegerLinearProgram()
+            sage: x = p.new_variable(indices=range(7))
+            sage: p.number_of_variables()
+            7
+            sage: x[3]
+            x_3
+            sage: x[11]
+            Traceback (most recent call last):
+            ...
+            IndexError: 11 does not index a component of MIPVariable of dimension 1
+
+        Indices can be more than just integers::
+
+            sage: p = MixedIntegerLinearProgram()
+            sage: indices = ( (i,j) for i in range(6) for j in range(4) )
+            sage: x = p.new_variable(indices=indices)
+            sage: p.number_of_variables()
+            24
+            sage: x[(2, 3)]
+            x_11
+
+        TESTS:
+
+        An empty list of static indices gives an error on every component access;
+        it is different from passing ``indices=None`` (the default) on init. ::
+
+            sage: p = MixedIntegerLinearProgram()
+            sage: x = p.new_variable(indices=[])
+            sage: x[0]
+            Traceback (most recent call last):
+            ...
+            IndexError: 0 does not index a component of MIPVariable of dimension 1
+
         """
         cdef int j
         if i in self._dict:
             return self._dict[i]
+        if not self._dynamic_indices:
+            raise IndexError("{} does not index a component of {}".format(i, self))
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
         j = self._p._backend.add_variable(
@@ -3028,10 +3041,23 @@ cdef class MIPVariable(SageObject):
             2
             sage: q.number_of_variables()
             2
+
+            sage: p = MixedIntegerLinearProgram(solver='GLPK')
+            sage: pv = p.new_variable(indices=[3, 7])
+            sage: q = copy(p)
+            sage: qv = pv.copy_for_mip(q)
+            sage: qv[3]
+            x_0
+            sage: qv[5]
+            Traceback (most recent call last):
+            ...
+            IndexError: 5 does not index a component of MIPVariable of dimension 1
+
         """
         cdef MIPVariable cp = type(self)(mip, self._vtype, self._name,
                                          self._lower_bound, self._upper_bound)
         cp._dict = copy(self._dict)
+        cp._dynamic_indices = self._dynamic_indices
         return cp
 
     def set_min(self, min):
@@ -3131,7 +3157,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.keys())
+            sage: sorted(v.keys())
             [0, 1]
         """
         return self._dict.keys()
@@ -3145,7 +3171,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.items())
+            sage: sorted(v.items())
             [(0, x_0), (1, x_1)]
         """
         return self._dict.items()
@@ -3159,7 +3185,7 @@ cdef class MIPVariable(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: v = p.new_variable(nonnegative=True)
             sage: p.set_objective(v[0] + v[1])
-            sage: list(v.values())
+            sage: sorted(v.values(), key=str)
             [x_0, x_1]
         """
         return self._dict.values()

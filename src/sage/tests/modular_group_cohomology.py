@@ -3,7 +3,7 @@ Tests for the optional ``p_group_cohomology`` package.
 
 AUTHOR:
 
-- Simon King (July 2018, see :trac:`18514`)
+- Simon King
 
 TESTS::
 
@@ -61,12 +61,11 @@ ring::
 Computation of a modular cohomology ring of a non prime power group in
 characteristic 2::
 
-    sage: H = CohomologyRing(gap(AlternatingGroup(6)),  # optional - p_group_cohomology
+    sage: H = CohomologyRing(libgap.AlternatingGroup(6),  # optional - p_group_cohomology
     ....:                    GroupName="A(6)", prime=2,
     ....:                    from_scratch=True)
     sage: H.make()                                      # optional - p_group_cohomology
     sage: print(H)                                      # optional - p_group_cohomology
-    <BLANKLINE>
     Cohomology ring of A(6) with coefficients in GF(2)
     <BLANKLINE>
     Computation complete

@@ -128,7 +128,7 @@ r"""
 
     sage: G = DihedralGroup(8)
     sage: N = G.normal_subgroups()
-    sage: [H.order() for H in N]
+    sage: l=[H.order() for H in N]; l.sort(); l
     [1, 2, 4, 8, 8, 8, 16]
 
 """

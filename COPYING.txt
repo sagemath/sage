@@ -38,7 +38,6 @@ backports_ssl_match_hostname  Python License
 boost_cropped               Boost Software License (see below)
 bzip2                       BSD-ish (see below)
 cddlib                      GPLv2+
-cephes                      "may be used freely" (see below)
 certifi                     ISC
 cliquer                     GPLv2+
 conway_polynomials          None (database)
@@ -873,16 +872,6 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-================================================================================
-
-cephes:
-
-   Some software in this archive may be from the book _Methods and
-   Programs for Mathematical Functions_ (Prentice-Hall, 1989) or
-   from the Cephes Mathematical Library, a commercial product. In
-   either event, it is copyrighted by the author.  What you see here
-   may be used freely but it comes with no support or guarantee.
 
 ================================================================================
 

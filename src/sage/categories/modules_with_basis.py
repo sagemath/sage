@@ -215,7 +215,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
                 sage: F.basis()
-                Finite family {'a': B['a'], 'c': B['c'], 'b': B['b']}
+                Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
 
             ::
 
@@ -771,7 +771,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S3A = S3.algebra(QQ)
                 sage: basis = S3A.annihilator_basis(S3A.algebra_generators(), S3A.bracket)
                 sage: basis
-                ((), (2,3) + (1,2) + (1,3), (1,2,3) + (1,3,2))
+                ((), (1,2,3) + (1,3,2), (2,3) + (1,2) + (1,3))
                 sage: center = S3A.submodule(basis,
                 ....:                        category=AlgebrasWithBasis(QQ).Subobjects(),
                 ....:                        already_echelonized=True)
@@ -782,7 +782,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: center.print_options(prefix='c')
                 sage: c = center.basis()
                 sage: c[1].lift()
-                (2,3) + (1,2) + (1,3)
+                (1,2,3) + (1,3,2)
                 sage: c[0]^2
                 c[0]
                 sage: e = 1/6*(c[0]+c[1]+c[2])
@@ -818,7 +818,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                                       unitriangular=unitriangular,
                                       category=category)
 
-        def tensor(*parents):
+        def tensor(*parents, **kwargs):
             """
             Return the tensor product of the parents.
 
@@ -830,7 +830,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 A # A # A
                 sage: A.rename(None)
             """
-            return parents[0].__class__.Tensor(parents, category = tensor.category_from_parents(parents))
+            constructor = kwargs.pop('constructor', tensor)
+            cat = constructor.category_from_parents(parents)
+            return parents[0].__class__.Tensor(parents, category=cat)
 
         def cardinality(self):
             """
@@ -1200,17 +1202,47 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: DihedralGroup(6).algebra(QQ).random_element()
                 -1/95*() - 1/2*(1,4)(2,5)(3,6)
+
+            Note, this result can depend on the PRNG state in libgap in a way
+            that depends on which packages are loaded, so we must re-seed GAP
+            to ensure a consistent result for this example::
+
+                sage: libgap.set_seed(0)
+                0
                 sage: SU(2, 13).algebra(QQ).random_element(1)
-                1/2*[       3        0]
-                [11*a + 1        9]
+                1/2*[       1  9*a + 2]
+                [2*a + 12        2]
                 sage: CombinatorialFreeModule(ZZ, Partitions(4)).random_element() # random
                 2*B[[2, 1, 1]] + B[[2, 2]]
+
+            TESTS:
+
+            Ensure that the two issues reported in :trac:`28327` are
+            fixed; that we don't rely unnecessarily on being able to
+            coerce the base ring's zero into the algebra, and that
+            we can find a random element in a trivial module::
+
+                sage: class Foo(CombinatorialFreeModule):
+                ....:     _no_generic_basering_coercion = True
+                ....:     def _element_constructor_(self,x):
+                ....:         if x in self:
+                ....:             return x
+                ....:         else:
+                ....:             raise ValueError
+                sage: from sage.categories.magmatic_algebras \
+                ....:   import MagmaticAlgebras
+                sage: C = MagmaticAlgebras(QQ).WithBasis().Unital()
+                sage: F = Foo(QQ, tuple(), category=C)
+                sage: F.random_element() == F.zero()
+                True
+
             """
             indices = self.basis().keys()
-            a = self(0)
-            for i in range(n):
-                a += self.term(indices.random_element(),
-                               self.base_ring().random_element())
+            a = self.zero()
+            if not indices.is_empty():
+                for i in range(n):
+                    a += self.term(indices.random_element(),
+                                   self.base_ring().random_element())
             return a
 
     class ElementMethods:
@@ -1269,27 +1301,17 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: p = Partition([2,1])
-                sage: q = Partition([1,1,1])
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: a = s(p)
-                sage: a._coefficient_fast([2,1])
-                Traceback (most recent call last):
-                ...
-                TypeError: unhashable type: 'list'
-
-            ::
-
-                sage: a._coefficient_fast(p)
-                1
-                sage: a._coefficient_fast(q)
+                sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
+                sage: x[((0,0,0),(0,0,0))]
                 0
-                sage: a[p]
+                sage: x[((1,0,0),(0,0,0))]
                 1
-                sage: a[q]
-                0
             """
-            return self.monomial_coefficients(copy=False).get(m, self.base_ring().zero())
+            res = self.monomial_coefficients(copy=False).get(m)
+            if res is None:
+                return self.base_ring().zero()
+            else:
+                return res
 
         def coefficient(self, m):
             """
@@ -2155,7 +2177,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: A.an_element()
                     B[word: ] + 2*B[word: a] + 3*B[word: b] + B[word: bab]
                     sage: B.an_element()
-                    B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3)]
+                    B[()] + B[(1,2)] + 3*B[(1,2,3)] + 2*B[(1,3,2)]
                     sage: cartesian_product((A, B, A)).an_element()           # indirect doctest
                     2*B[(0, word: )] + 2*B[(0, word: a)] + 3*B[(0, word: b)]
                 """

@@ -2,7 +2,7 @@ r"""
 Tutte polynomial
 
 This module implements a deletion-contraction algorithm for computing
-the Tutte polynomial as described in the paper [Gordon10]_.
+the Tutte polynomial as described in the paper [HPR2010]_.
 
 .. csv-table::
     :class: contentstable
@@ -27,13 +27,6 @@ connected components we define the Tutte polynomial of `G` as
     \sum_H (x-1) ^{k(H) - c} (y-1)^{k(H) - |E(H)|-n}
 
 where the sum ranges over all induced subgraphs `H` of `G`.
-
-REFERENCES:
-
-.. [Gordon10] Computing Tutte Polynomials. Gary Haggard, David
-   J. Pearce and Gordon Royle. In ACM Transactions on Mathematical
-   Software, Volume 37(3), article 24, 2010. Preprint:
-   http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf
 
 Functions
 ---------
@@ -208,7 +201,7 @@ def underlying_graph(G):
 
 def edge_multiplicities(G):
     r"""
-    Return the a dictionary of multiplicities of the edges in the
+    Return the dictionary of multiplicities of the edges in the
     graph `G`.
 
     EXAMPLES::
@@ -232,7 +225,7 @@ class Ear(object):
     r"""
     An ear is a sequence of vertices
 
-    Here is the definition from [Gordon10]_:
+    Here is the definition from [HPR2010]_:
 
     An ear in a graph is a path `v_1 - v_2 - \dots - v_n - v_{n+1}`
     where `d(v_1) > 2`, `d(v_{n+1}) > 2` and
@@ -578,7 +571,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
     Verify that :trac:`18366` is fixed::
 
         sage: g = Graph(multiedges=True)
-        sage: g.add_edges([(0,1,1),(1,5,2),(5,3,3),(5,2,4),(2,4,5),(0,2,6),(0,3,7),(0,4,8),(0,5,9)]);
+        sage: g.add_edges([(0,1,1),(1,5,2),(5,3,3),(5,2,4),(2,4,5),(0,2,6),(0,3,7),(0,4,8),(0,5,9)])
         sage: g.tutte_polynomial()(1,1)
         52
         sage: g.spanning_trees_count()

@@ -26,13 +26,13 @@ AUTHORS:
 - Volker Braun (2014-03-31): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 import ctypes
@@ -40,6 +40,7 @@ import time
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.compat import find_library
+from sage.cpython.string import bytes_to_str
 
 
 libc = None
@@ -144,7 +145,7 @@ class Profiler(SageObject):
         global libprofiler
         if libprofiler is not None:
             return libprofiler
-        import ctypes, ctypes.util
+        import ctypes.util
         name = ctypes.util.find_library('profiler')
         if name:
             libprofiler = ctypes.CDLL(name)
@@ -222,6 +223,7 @@ class Profiler(SageObject):
                 version = check_output([name, '--version'], stderr=STDOUT)
             except (CalledProcessError, OSError):
                 continue
+            version = bytes_to_str(version)
             if 'gperftools' not in version:
                 from warnings import warn
                 warn('the "{0}" utility does not appear to be the gperftools profiler'

@@ -961,7 +961,7 @@ class NumberFieldIdeal(Ideal_generic):
             return self.__is_integral
         except AttributeError:
             one = self.number_field().ideal(1)
-            self.__is_integral = all([a in one for a in self.integral_basis()])
+            self.__is_integral = all(a in one for a in self.integral_basis())
             return self.__is_integral
 
     def is_maximal(self):
@@ -1099,7 +1099,7 @@ class NumberFieldIdeal(Ideal_generic):
         ``proof=True`` (this is the default setting) to prove the correctness
         of the output.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: K = QuadraticField(-119,'a')
             sage: P = K.factor(2)[1][0]
@@ -1326,7 +1326,7 @@ class NumberFieldIdeal(Ideal_generic):
 
             sage: K.<i> = QuadraticField(-1)
             sage: P1, P2 = [P for P,e in K.factor(13)]
-            sage: all([(P1^i*P2^j).smallest_integer() == 13^max(i,j,0) for i in range(-3,3) for j in range(-3,3)])
+            sage: all((P1^i*P2^j).smallest_integer() == 13^max(i,j,0) for i in range(-3,3) for j in range(-3,3))
             True
             sage: I = K.ideal(0)
             sage: I.smallest_integer()
@@ -1420,7 +1420,7 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(7)[0].decomposition_group()
-            Galois group of Number Field in w with defining polynomial x^2 + 23
+            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
         return self.number_field().galois_group().decomposition_group(self)
 
@@ -1436,9 +1436,9 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(23)[0].ramification_group(0)
-            Galois group of Number Field in w with defining polynomial x^2 + 23
+            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
             sage: QuadraticField(-23, 'w').primes_above(23)[0].ramification_group(1)
-            Subgroup [()] of Galois group of Number Field in w with defining polynomial x^2 + 23
+            Subgroup [()] of Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
 
         return self.number_field().galois_group().ramification_group(self, v)
@@ -1454,7 +1454,7 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(23)[0].inertia_group()
-            Galois group of Number Field in w with defining polynomial x^2 + 23
+            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
         return self.ramification_group(0)
 
@@ -1656,8 +1656,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         REFERENCES:
 
-        .. [Cohen] Henri Cohen, A Course in Computational Algebraic
-           Number Theory. Section 5.2.
+        - [Coh1993]_
         """
         K = self.number_field()
         if K.degree() == 2:
@@ -2087,7 +2086,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
 
             sage: K.<i>=NumberField(x^2+1)
             sage: res =  K.ideal(2).residues(); res
-            xmrange_iter([[0, 1], [0, 1]], <function <lambda> at 0x...>)
+            xmrange_iter([[0, 1], [0, 1]], <function ...<lambda> at 0x...>)
             sage: list(res)
             [0, i, 1, i + 1]
             sage: list(K.ideal(2+i).residues())
@@ -2098,7 +2097,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
             sage: reps=I.residues()
             sage: len(list(reps)) == I.norm()
             True
-            sage: all([r==s or not (r-s) in I for r in reps for s in reps])  # long time (6s on sage.math, 2011)
+            sage: all(r == s or not (r-s) in I for r in reps for s in reps)  # long time (6s on sage.math, 2011)
             True
 
             sage: K.<a> = NumberField(x^3-10)
@@ -2150,7 +2149,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
 
             sage: K.<i>=NumberField(x^2+1)
             sage: ires =  K.ideal(2).invertible_residues(); ires
-            xmrange_iter([[0, 1]], <function <lambda> at 0x...>)
+            xmrange_iter([[0, 1]], <function ...<lambda> at 0x...>)
             sage: list(ires)
             [1, -i]
             sage: list(K.ideal(2+i).invertible_residues())
@@ -2548,7 +2547,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
             (f0, f1)
             sage: G.gens_values()   # random output
             (2*a^2 - 1, 2*a^2 + 2*a - 2)
-            sage: all([G.gen(i).value() in k for i in range(G.ngens())])
+            sage: all(G.gen(i).value() in k for i in range(G.ngens()))
             True
 
         TESTS::
@@ -2648,7 +2647,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
         # sanitise input
 
         k = self.number_field()
-        if not all([k(x).valuation(p)==0 for p, e in self.factor()]):
+        if not all(k(x).valuation(p) == 0 for p, e in self.factor()):
             raise TypeError("the element must be invertible mod the ideal")
 
         # calculate ideal log w.r.t. standard gens

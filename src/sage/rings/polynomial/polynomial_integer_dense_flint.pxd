@@ -8,7 +8,5 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
     cdef fmpz_poly_t __poly
 
     cdef Polynomial_integer_dense_flint _new(self)
-    cpdef bint is_zero(self)
-    cpdef bint is_one(self)
     cpdef _unsafe_mutate(self, long n, value)
     cpdef Integer content(self)

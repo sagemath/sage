@@ -248,6 +248,7 @@ class Crystals(Category_singleton):
             """
             return self.first()
 
+        @cached_method
         def weight_lattice_realization(self):
             """
             Return the weight lattice realization used to express weights
@@ -368,7 +369,13 @@ class Crystals(Category_singleton):
                 sage: C.__iter__.__module__
                 'sage.categories.crystals'
                 sage: g = C.__iter__()
-                sage: for _ in range(5): next(g)
+                sage: for _ in range(5): next(g) # py2
+                (-Lambda[0] + Lambda[2],)
+                (Lambda[0] - Lambda[1] + delta,)
+                (Lambda[1] - Lambda[2],)
+                (Lambda[0] - Lambda[1],)
+                (Lambda[1] - Lambda[2] + delta,)
+                sage: for _ in range(5): next(g) # py3 random
                 (-Lambda[0] + Lambda[2],)
                 (Lambda[0] - Lambda[1] + delta,)
                 (Lambda[1] - Lambda[2],)
@@ -2096,8 +2103,8 @@ class CrystalMorphismByGenerators(CrystalMorphism):
             [[[1]], [[2]], [[1]]] |--> [[1, 1], [2]]
             [[[3]], [[2]], [[1]]] |--> None
         """
-        return '\n'.join(['{} |--> {}'.format(mg, im)
-                          for mg, im in zip(self._gens, self.im_gens())])
+        return '\n'.join('{} |--> {}'.format(mg, im)
+                         for mg, im in zip(self._gens, self.im_gens()))
 
     def _check(self):
         """
@@ -2232,7 +2239,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
         ef = [[]]
         indices = [[]]
 
-        while len(todo) > 0:
+        while todo:
             cur = todo.pop(0)
             cur_ef = ef.pop(0)
             cur_indices = indices.pop(0)

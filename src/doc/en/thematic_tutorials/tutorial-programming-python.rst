@@ -60,7 +60,9 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 
 * A *list* is a data structure which groups values. It is constructed using
   brackets as in ``[1, 3, 4]``. The :func:`range` function creates integer
-  lists. One can also create lists using *list comprehension*::
+  lists. One can also create lists using *list comprehension*:
+
+  .. CODE-BLOCK:: python
 
       [ <expr> for <name> in <iterable> (if <condition>) ]
 
@@ -95,7 +97,9 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
-  constructor :class:`dict`, or using the syntax::
+  constructor :class:`dict`, or using the syntax:
+
+  .. CODE-BLOCK:: python
 
       {key1 : value1, key2 : value2 ...}
 
@@ -127,7 +131,9 @@ instructions block. Blocks are delimited solely by means of
 indentation. Most of the time a new block is introduced by
 ``:``. Python has the following control structures:
 
-* Conditional instruction::
+* Conditional instruction:
+
+  .. CODE-BLOCK:: python
 
      if <condition>:
          <instruction sequence>
@@ -136,18 +142,22 @@ indentation. Most of the time a new block is introduced by
      [else:
          <instruction sequence>]
 
-* Inside expression exclusively, one can write::
+* Inside expression exclusively, one can write:
+
+  .. CODE-BLOCK:: python
 
    <value> if <condition> else <value>
 
-* Iterative instructions::
+* Iterative instructions:
+
+  .. CODE-BLOCK:: python
 
      for <name> in <iterable>:
          <instruction sequence>
      [else:
          <instruction sequence>]
 
-  ::
+  .. CODE-BLOCK:: python
 
      while <condition>:
          <instruction sequence>
@@ -162,7 +172,9 @@ indentation. Most of the time a new block is introduced by
 * An iterable is an object which can be iterated through. Iterable
   types include lists, tuples, dictionaries, and strings.
 
-* An error (also called exception) is raised by::
+* An error (also called exception) is raised by:
+
+  .. CODE-BLOCK:: python
 
      raise <ErrorType> [, error message]
 
@@ -179,14 +191,18 @@ Functions
     doesn't make sense to do mathematical manipulation such as
     additions or derivations on Python functions.
 
-One defines a function using the keyword ``def`` as::
+One defines a function using the keyword ``def`` as:
+
+.. CODE-BLOCK:: python
 
     def <name>(<argument list>):
          <instruction sequence>
 
 The result of the function is given by the instruction
 ``return``. Very short functions can be created anonymously using
-``lambda`` (remark that there is no instruction ``return`` here)::
+``lambda`` (remark that there is no instruction ``return`` here):
+
+.. CODE-BLOCK:: python
 
     lambda <arguments>: <expression>
 
@@ -213,7 +229,7 @@ Creating Lists I: [Square brackets]
     sage: L
     [3, [5, 1, 4, 2, 3], 17, 17, 3, 51]
 
-**Exercise:** Create the list :math:`[63, 12, -10, \text{``a''}, 12]`,
+**Exercise:** Create the list ``[63, 12, -10, "a", 12]``,
 assign it to the variable ``L``, and print the list.
 
 ::
@@ -230,7 +246,9 @@ Creating Lists II: range
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :func:`range` function provides an easy way to construct a list of
-integers. Here is the documentation of the :func:`range` function::
+integers. Here is the documentation of the :func:`range` function:
+
+.. CODE-BLOCK:: text
 
     range([start,] stop[, step]) -> list of integers
 
@@ -262,7 +280,8 @@ be negative. Use range to construct the list `[10, 7, 4, 1, -2]`.
 
 .. SEEALSO::
 
-    - :func:`xrange`: returns an iterator rather than building a list.
+    - :func:`xrange`: returns an iterator rather than building a list,
+      (only for Python2, replaced by range in Python 3).
     - :func:`srange`: like range but with Sage integers; see below.
     - :func:`xsrange`: like xrange but with Sage integers.
 
@@ -670,7 +689,7 @@ to use each item once.
     sage: g[0]
     Traceback (most recent call last):
     ...
-    TypeError: 'generator' object has no attribute '__getitem__'
+    TypeError: 'generator' object ...
 
 ::
 
@@ -710,7 +729,7 @@ braces, ``{}``, with comma-separated entries given in the form
 A second method is to use the constructor :class:`dict` which admits a
 list (or actually any iterable) of 2-tuples *(key, value)*::
 
-    sage: dd = dict((i,i^2) for i in xrange(10))
+    sage: dd = dict((i,i^2) for i in range(10))
     sage: dd
     {0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
 
@@ -814,7 +833,9 @@ below::
 Create a dictionary whose keys are the vertices of the above directed graph,
 and whose values are the lists of the vertices that it points to. For
 instance, the vertex 1 points to the vertices 2 and 3, so the dictionary will
-look like::
+look like:
+
+.. CODE-BLOCK:: python
 
     d = { ..., 1:[2,3], ... }
 
@@ -1111,7 +1132,7 @@ How does this work?
 ::
 
     sage: it = iter(GF(5)); it
-    <generator object __iter__ at 0x...>
+    <generator object ...__iter__ at 0x...>
 
     sage: next(it)
     0

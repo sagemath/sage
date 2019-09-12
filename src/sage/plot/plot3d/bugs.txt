@@ -51,7 +51,7 @@ checklist -- each option is documented
 General TODO:
   * implement frame_thickness and frame_color for everything in platonic.py, not just for cube.
 
-  * Make it so all extra parameters to any ploting commands (in 2d or 3d)
+  * Make it so all extra parameters to any plotting commands (in 2d or 3d)
     are saved and passed through to show -- or at least those that
     are relevant, e.g., xmin, xmax, etc.
   * Fix all doctests now that show is not needed by default.
@@ -85,6 +85,3 @@ Jmol todo:
 
 Tachyon bugs:
  * Text3D doesn't work
-
-
-

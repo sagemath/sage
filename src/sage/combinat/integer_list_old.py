@@ -15,7 +15,7 @@ AUTHORS:
 - Travis Scrimshaw (2012-10-29): Made ``IntegerListsLex`` into a parent with
   the element class ``IntegerListsLexElement``.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
@@ -28,8 +28,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six.moves import builtins
 
@@ -43,7 +43,7 @@ from sage.misc.stopgap import stopgap
 
 def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
-    Returns the lexicographically smallest valid composition of `n`
+    Return the lexicographically smallest valid composition of ``n``
     satisfying the conditions.
 
     .. warning::
@@ -99,11 +99,11 @@ def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
             return []
         min_length = 1
 
-    #Increase min_length until n <= sum([ceiling(i) for i in range(min_length)])
-    #This may run forever!
+    # Increase min_length until n <= sum([ceiling(i) for i in range(min_length)])
+    # This may run forever!
     # Find the actual length the list needs to be
     N = 0
-    for i in range(1,min_length+1):
+    for i in range(1, min_length + 1):
         ceil = ceiling(i)
         if ceil < floor(i):
             return None
@@ -138,12 +138,12 @@ def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
         if n < 0:
             return None
 
-    if n == 0: # There is nothing more to do
+    if n == 0:  # There is nothing more to do
         return result
 
     if min_slope == float('-inf'):
         for i in range(1, min_length+1):
-            if n <= ceiling(i) - result[i-1]: #-1 for indexing
+            if n <= ceiling(i) - result[i-1]:  # -1 for indexing
                 result[i-1] += n
                 break
             else:
@@ -156,9 +156,9 @@ def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
         high_y = result[0]
 
         while n > 0:
-            #invariant after each iteration of the loop:
-            #[low_x, low_y] is the coordinate of the rightmost point of the
-            #current diagonal s.t. result[low_x] < low_y
+            # invariant after each iteration of the loop:
+            # [low_x, low_y] is the coordinate of the rightmost point of the
+            # current diagonal s.t. result[low_x] < low_y
             low_y += 1
             while low_x < min_length and low_y + min_slope > result[low_x]:
                 low_x += 1
@@ -179,15 +179,16 @@ def first(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
             result[high_x+i-1] = high_y + min_slope * i
 
     # Special check for equal slopes
-    if min_slope == max_slope and any(val + min_slope != result[i+1]
-                                      for i,val in enumerate(result[:-1])):
+    if min_slope == max_slope and any(val + min_slope != result[i + 1]
+                                      for i, val in enumerate(result[:-1])):
             return None
 
     return result
 
+
 def lower_regular(comp, min_slope, max_slope):
     """
-    Returns the uppest regular composition below ``comp``
+    Return the uppest regular composition below ``comp``
 
     TESTS::
 
@@ -207,15 +208,15 @@ def lower_regular(comp, min_slope, max_slope):
         sage: integer_list.lower_regular([infinity, 4, 2], -1, 1)
         [4, 3, 2]
     """
-
     new_comp = comp[:]
     for i in range(1, len(new_comp)):
         new_comp[i] = min(new_comp[i], new_comp[i-1] + max_slope)
 
     for i in reversed(range(len(new_comp)-1)):
-        new_comp[i] = min( new_comp[i], new_comp[i+1] - min_slope)
+        new_comp[i] = min(new_comp[i], new_comp[i+1] - min_slope)
 
     return new_comp
+
 
 def rightmost_pivot(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
@@ -279,58 +280,57 @@ def rightmost_pivot(comp, min_length, max_length, floor, ceiling, min_slope, max
             break
         y += 1
 
-    ceilingx_x = comp[x-1]-1
+    ceilingx_x = comp[x - 1]-1
     floorx_x = floor(x)
     if x > 1:
-        floorx_x = max(floorx_x, comp[x-2]+min_slope)
+        floorx_x = max(floorx_x, comp[x - 2] + min_slope)
 
-    F = comp[x-1] - floorx_x
-    G = ceilingx_x - comp[x-1] #this is -1
+    F = comp[x - 1] - floorx_x
+    G = ceilingx_x - comp[x - 1]  # this is -1
 
     highX = x
-    lowX  = x
+    lowX = x
 
     while not (ceilingx_x >= floorx_x and
                (G >= 0 or
-               ( y < max_length +1 and
-                 F - max(floor(y), floorx_x + (y-x)*min_slope) >= 0 and
-                 G + min(ceiling(y), ceilingx_x + (y-x)*max_slope) >= 0 ))):
+               (y < max_length + 1 and
+                F - max(floor(y), floorx_x + (y - x) * min_slope) >= 0 and
+                G + min(ceiling(y), ceilingx_x + (y - x) * max_slope) >= 0))):
 
         if x == 1:
             return None
 
         x -= 1
 
-        oldfloorx_x    = floorx_x
+        oldfloorx_x = floorx_x
         ceilingx_x = comp[x-1] - 1
-        floorx_x   = floor(x)
+        floorx_x = floor(x)
         if x > 1:
-            floorx_x = max(floorx_x, comp[x-2]+min_slope)
+            floorx_x = max(floorx_x, comp[x-2] + min_slope)
 
-        min_slope_lowX  = min_slope*(lowX - x)
-        max_slope_highX = max_slope*(highX - x)
+        min_slope_lowX = min_slope * (lowX - x)
+        max_slope_highX = max_slope * (highX - x)
 
-
-        #Update G
+        # Update G
         if max_slope == float('+inf'):
-            #In this case, we have
+            # In this case, we have
             #  -- ceiling_x(i) = ceiling(i) for i > x
             #  --G >= 0 or G = -1
-            G += ceiling(x+1)-comp[x]
+            G += ceiling(x + 1) - comp[x]
         else:
-            G += (highX - x)*( (comp[x-1]+max_slope) - comp[x]) - 1
+            G += (highX - x) * ((comp[x-1] + max_slope) - comp[x]) - 1
             temp = (ceilingx_x + max_slope_highX) - ceiling(highX)
-            while highX > x and ( temp >= 0 ):
-                G  -= temp
+            while highX > x and temp >= 0:
+                G -= temp
                 highX -= 1
-                max_slope_highX = max_slope*(highX-x)
+                max_slope_highX = max_slope * (highX-x)
                 temp = (ceilingx_x + max_slope_highX) - ceiling(highX)
 
         if G >= 0 and comp[x-1] > floorx_x:
-            #By case 1, x is at the rightmost pivot position
+            # By case 1, x is at the rightmost pivot position
             break
 
-        #Update F
+        # Update F
         if y < max_length+1:
             F += comp[x-1] - floorx_x
             if min_slope != float('-inf'):
@@ -339,7 +339,7 @@ def rightmost_pivot(comp, min_length, max_length, floor, ceiling, min_slope, max
                 while lowX > x and temp >= 0:
                     F -= temp
                     lowX -= 1
-                    min_slope_lowX = min_slope*(lowX-x)
+                    min_slope_lowX = min_slope * (lowX-x)
                     temp = floor(lowX) - (floorx_x + min_slope_lowX)
 
     return [x, floorx_x]
@@ -347,7 +347,7 @@ def rightmost_pivot(comp, min_length, max_length, floor, ceiling, min_slope, max
 
 def next(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
-    Returns the next integer list after ``comp`` that satisfies the
+    Return the next integer list after ``comp`` that satisfies the
     constraints.
 
     .. WARNING::
@@ -365,17 +365,17 @@ def next(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
             " non-allowed input can return wrong results,"
             " please see the documentation for IntegerListsLex for details.",
             17548)
-    x = rightmost_pivot( comp, min_length, max_length, floor, ceiling, min_slope, max_slope)
+    x = rightmost_pivot(comp, min_length, max_length, floor, ceiling, min_slope, max_slope)
     if x is None:
         return None
     [x, low] = x
-    high = comp[x-1]-1
+    high = comp[x-1] - 1
 
-##     // Build wrappers around floor and ceiling to take into
-##     // account the new constraints on the value of compo[x].
-##     //
-##     // Efficiency note: they are not wrapped more than once, since
-##     // the method Next calls first, but not the converse.
+#     // Build wrappers around floor and ceiling to take into
+#     // account the new constraints on the value of compo[x].
+#     //
+#     // Efficiency note: they are not wrapped more than once, since
+#     // the method Next calls first, but not the converse.
 
     if min_slope == float('-inf'):
         new_floor = lambda i: floor(x+(i-1))
@@ -391,7 +391,7 @@ def next(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
     res += comp[:x-1]
     f = first(sum(comp[x-1:]), max(min_length-x+1, 0), max_length-x+1,
                  new_floor, new_ceiling, min_slope, max_slope)
-    if f is None: # Check to make sure it is valid
+    if f is None:  # Check to make sure it is valid
         return None
     res += f
     return res
@@ -416,16 +416,17 @@ def iterator(n, min_length, max_length, floor, ceiling, min_slope, max_slope):
             17548)
     succ = lambda x: next(x, min_length, max_length, floor, ceiling, min_slope, max_slope)
 
-    #Handle the case where n is a list of integers
+    # Handle the case where n is a list of integers
     if isinstance(n, builtins.list):
-        for i in range(n[0], min(n[1]+1,upper_bound(min_length, max_length, floor, ceiling, min_slope, max_slope))):
+        for i in range(n[0], min(n[1]+1, upper_bound(min_length, max_length, floor, ceiling, min_slope, max_slope))):
             for el in iterator(i, min_length, max_length, floor, ceiling, min_slope, max_slope):
                 yield el
     else:
         f = first(n, min_length, max_length, floor, ceiling, min_slope, max_slope)
-        while not f is None:
+        while f is not None:
             yield f
             f = succ(f)
+
 
 def upper_regular(comp, min_slope, max_slope):
     """
@@ -449,9 +450,10 @@ def upper_regular(comp, min_slope, max_slope):
         new_comp[i] = max(new_comp[i], new_comp[i-1] + min_slope)
 
     for i in reversed(range(len(new_comp)-1)):
-        new_comp[i] = max( new_comp[i], new_comp[i+1] - max_slope)
+        new_comp[i] = max(new_comp[i], new_comp[i+1] - max_slope)
 
     return new_comp
+
 
 def comp2floor(f, min_slope, max_slope):
     """
@@ -465,15 +467,15 @@ def comp2floor(f, min_slope, max_slope):
         sage: [f(i) for i in range(10)]
         [2, 1, 1, 1, 2, 3, 4, 5, 6, 7]
     """
-    if len(f) == 0: return lambda i: 0
+    if not f:
+        return lambda i: 0
     floor = upper_regular(f, min_slope, max_slope)
     return lambda i: floor[i] if i < len(floor) else max(0, floor[-1]-(i-len(floor))*min_slope)
 
 
 def comp2ceil(c, min_slope, max_slope):
     """
-    Given a composition, returns the lowest regular function N->N below
-    it.
+    Given a composition, return the lowest regular function N->N below it.
 
     EXAMPLES::
 
@@ -482,7 +484,8 @@ def comp2ceil(c, min_slope, max_slope):
         sage: [f(i) for i in range(10)]
         [2, 1, 1, 1, 2, 3, 4, 5, 6, 7]
     """
-    if len(c) == 0: return lambda i: 0
+    if not c:
+        return lambda i: 0
     ceil = lower_regular(c, min_slope, max_slope)
     return lambda i: ceil[i] if i < len(ceil) else max(0, ceil[-1]-(i-len(ceil))*min_slope)
 
@@ -509,22 +512,21 @@ def upper_bound(min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
     from sage.functions.all import floor as flr
     if max_length < float('inf'):
-        return sum( [ ceiling(j) for j in range(max_length)] )
+        return sum([ceiling(j) for j in range(max_length)])
     elif max_slope < 0 and ceiling(1) < float('inf'):
-        maxl = flr(-ceiling(1)/max_slope)
-        return ceiling(1)*(maxl+1) + binomial(maxl+1,2)*max_slope
-    #FIXME: only checking the first 10000 values, but that should generally
-    #be enough
-    elif [ceiling(j) for j in range(10000)] == [0]*10000:
+        maxl = flr(-ceiling(1) / max_slope)
+        return ceiling(1) * (maxl + 1) + binomial(maxl + 1, 2) * max_slope
+    # FIXME: only checking the first 10000 values, but that should generally
+    # be enough
+    elif [ceiling(j) for j in range(10000)] == [0] * 10000:
         return 0
     else:
         return float('inf')
 
 
-
 def is_a(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
     """
-    Returns ``True`` if ``comp`` meets the constraints imposed by the
+    Return ``True`` if ``comp`` meets the constraints imposed by the
     arguments.
 
     .. WARNING::
@@ -538,18 +540,17 @@ def is_a(comp, min_length, max_length, floor, ceiling, min_slope, max_slope):
         sage: all(is_a(iv, 3, 3, lambda i: 0, lambda i: 5, 0, 10) for iv in IV)
         True
     """
-    if len(comp) < min_length or len(comp) > max_length:
+    if not(min_length <= len(comp) <= max_length):
         return False
     for i in range(len(comp)):
-        if comp[i] < floor(i+1):
+        if not(floor(i + 1) <= comp[i] <= ceiling(i + 1)):
             return False
-        if comp[i] > ceiling(i+1):
-            return False
-    for i in range(len(comp)-1):
-        slope = comp[i+1] - comp[i]
-        if slope < min_slope or slope > max_slope:
+    for i in range(len(comp) - 1):
+        slope = comp[i + 1] - comp[i]
+        if not(min_slope <= slope <= max_slope):
             return False
     return True
+
 
 class IntegerListsLexElement(ClonableArray):
     """
@@ -569,6 +570,7 @@ class IntegerListsLexElement(ClonableArray):
             True
         """
         return True
+
 
 class IntegerListsLex(Parent):
     r"""
@@ -987,7 +989,7 @@ class IntegerListsLex(Parent):
 
     def __eq__(self, x):
         """
-        Compares two different :class:`IntegerListsLex`.
+        Compare two different :class:`IntegerListsLex`.
 
         For now, the comparison is done just on their repr's which is
         not robust!
@@ -1006,7 +1008,7 @@ class IntegerListsLex(Parent):
 
     def __ne__(self, other):
         """
-        Compares two different :class:`IntegerListsLex`.
+        Compare two different :class:`IntegerListsLex`.
 
         For now, the comparison is done just on their repr's which is
         not robust!
@@ -1035,7 +1037,7 @@ class IntegerListsLex(Parent):
 
     def _repr_(self):
         """
-        Returns the name of this combinatorial class.
+        Return the name of this combinatorial class.
 
         EXAMPLES::
 
@@ -1053,13 +1055,13 @@ class IntegerListsLex(Parent):
             A given name
         """
         if hasattr(self, "n"):
-            return "Integer lists of sum %s satisfying certain constraints"%self.n
+            return "Integer lists of sum %s satisfying certain constraints" % self.n
 
-        return "Integer lists of sum in %s satisfying certain constraints"%self.n_range
+        return "Integer lists of sum in %s satisfying certain constraints" % self.n_range
 
     def floor(self, i):
         """
-        Returns the minimum part that can appear at the `i^{th}` position of
+        Return the minimum part that can appear at the `i^{th}` position of
         any list produced.
 
         EXAMPLES::
@@ -1082,7 +1084,7 @@ class IntegerListsLex(Parent):
 
     def ceiling(self, i):
         """
-        Returns the maximum part that can appear in the `i^{th}`
+        Return the maximum part that can appear in the `i^{th}`
         position in any list produced.
 
         EXAMPLES::
@@ -1108,7 +1110,7 @@ class IntegerListsLex(Parent):
     # FIXME: integrate them as methods of this class
     def build_args(self):
         """
-        Returns a list of arguments that can be passed into the pre-existing
+        Return a list of arguments that can be passed into the pre-existing
         ``first``, ``next``, ``is_a``, ... functions in this module.
 
         ``n`` is currently not included in this list.
@@ -1120,19 +1122,18 @@ class IntegerListsLex(Parent):
             sage: C.build_args()
             [3,
              3,
-             <function <lambda> at 0x...>,
-             <function <lambda> at 0x...>,
+             <function ...<lambda> at 0x...>,
+             <function ...<lambda> at 0x...>,
              -inf,
              inf]
-
         """
         return [self.min_length, self.max_length,
-                lambda i: self.floor(i-1), lambda i: self.ceiling(i-1),
+                lambda i: self.floor(i - 1), lambda i: self.ceiling(i - 1),
                 self.min_slope, self.max_slope]
 
     def first(self):
         """
-        Returns the lexicographically maximal element in ``self``.
+        Return the lexicographically maximal element in ``self``.
 
         EXAMPLES::
 
@@ -1149,7 +1150,7 @@ class IntegerListsLex(Parent):
 
     def __iter__(self):
         """
-        Returns an iterator for the elements of ``self``.
+        Return an iterator for the elements of ``self``.
 
         EXAMPLES::
 
@@ -1195,7 +1196,7 @@ class IntegerListsLex(Parent):
 
     def __contains__(self, v):
         """
-        Returns ``True`` if and only if ``v`` is in ``self``.
+        Return ``True`` if and only if ``v`` is in ``self``.
 
         EXAMPLES::
 

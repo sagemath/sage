@@ -71,7 +71,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    - [HK02]_ Chapter 10
+    - [HK2002]_ Chapter 10
     """
     def __init__(self, B):
         """

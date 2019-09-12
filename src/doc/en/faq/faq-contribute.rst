@@ -262,7 +262,9 @@ necessity to import what you need.
   import everything what you need. More precisely, each time you use
   some Sage function, you need to import it at the beginning of the
   file. For example, if you want ``PolynomialRing``, you need to
-  write::
+  write:
+
+  .. CODE-BLOCK:: python
 
       from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -273,7 +275,9 @@ necessity to import what you need.
 
   This also corresponds to the path starting after ``site-packages``
   given when you ask Sage for ``PolynomialRing`` help. For example,
-  if you call ``PolynomialRing?``, you get::
+  if you call ``PolynomialRing?``, you get:
+
+  .. CODE-BLOCK:: text
 
       Type:    function
       [...]

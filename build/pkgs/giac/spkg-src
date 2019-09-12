@@ -13,8 +13,8 @@ fi
 # Exit on failure
 set -e
 
-VERSION="1.4.9"
-VERSIONREV="45"
+VERSION="1.5.0"
+VERSIONREV="63"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"

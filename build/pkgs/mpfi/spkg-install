@@ -5,7 +5,7 @@ cd src
 # Use newer version of config.guess and config.sub (see Trac #19716)
 cp "$SAGE_ROOT"/config/config.* .
 
-sdh_configure --with-mpfr="$SAGE_LOCAL" --with-gmp="$SAGE_LOCAL"
+sdh_configure $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_GMP
 sdh_make
 sdh_make_install
 

@@ -30,7 +30,7 @@ class HeckeOperator(sage.modular.hecke.hecke_operator.HeckeOperator):
             sage: M = ModularSymbols(17,4,-1)
             sage: T = M.hecke_operator(4)
             sage: T.apply_sparse(M.0)
-            64*[X^2,(1,8)] + 24*[X^2,(1,10)] - 9*[X^2,(1,13)] + 37*[X^2,(1,16)]
+            -27*[X^2,(1,7)] - 167/2*[X^2,(1,9)] - 21/2*[X^2,(1,13)] + 53/2*[X^2,(1,15)]
             sage: [T.apply_sparse(x) == T.hecke_module_morphism()(x) for x in M.basis()]
             [True, True, True, True]
             sage: N = ModularSymbols(17,4,1)

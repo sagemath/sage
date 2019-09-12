@@ -42,8 +42,11 @@ from sage.structure.element cimport parent
 
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
-# The following Integer is used so that the functions here don't need to initialize an mpz_t.
+cdef long minusmaxordp = -maxordp
+# The following Integer (resp. Rational) is used so that 
+# the functions here don't need to initialize an mpz_t (resp. mpq_t)
 cdef Integer temp = PY_NEW(Integer)
+cdef Rational rat_temp = PY_NEW(Rational)
 
 cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
     """
@@ -75,7 +78,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
     - a long, giving the valuation of the resulting `p`-adic element.
       If the input is zero, returns ``maxordp``
     """
-    cdef long k, n, p, curterm, shift, f, e = prime_pow.e
+    cdef long k, n, p, curterm, shift, f, ratio, e = prime_pow.e
     cdef Integer value
     cdef GEN pari_tmp
     if isinstance(x, int):
@@ -119,17 +122,25 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
                     if isinstance(b, (list,tuple)):
                         raise ValueError("list nesting too deep")
                     curterm = get_ordp(b, prime_pow)
-                    k = min(k, curterm + shift)
+                    k = min(k, curterm + shift, maxordp)
             else:
                 curterm = get_ordp(a, prime_pow)
-                k = min(k, curterm + shift)
+                k = min(k, curterm + shift, maxordp)
             if e != 1: shift += 1
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
         k = (<pAdicGenericElement>x).valuation_c()
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
-            k //= x.parent().ramification_index()
+            # We have to be careful with overflow
+            ratio = e // x.parent().absolute_e()
+            if k >= maxordp // ratio:
+                return maxordp
+            elif k <= minusmaxordp // ratio:
+                return minusmaxordp
+            else:
+                return (k*e) // x.parent().absolute_e()
+        return k
     elif isinstance(x, pari_gen):
         pari_tmp = (<pari_gen>x).g
         if typ(pari_tmp) == t_PADIC:
@@ -202,7 +213,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         k = mpz_get_si(prec.value)
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
             # since x lives in a subfield, the ramification index of x's parent will divide e.
-            return k * (e // x.parent().ramification_index())
+            return (k * e) // x.parent().absolute_e()
     elif isinstance(x, pari_gen):
         pari_tmp = (<pari_gen>x).g
         # since get_ordp has been called typ(x.g) == t_PADIC
@@ -294,10 +305,10 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
     else:
         absprec = kwds.get("absprec",infinity)
     if absolute:
-        aprec[0] = comb_prec(absprec, prime_pow.prec_cap)
+        aprec[0] = comb_prec(absprec, prime_pow.ram_prec_cap)
         rprec[0] = comb_prec(relprec, maxordp)
     else:
-        rprec[0] = comb_prec(relprec, prime_pow.prec_cap)
+        rprec[0] = comb_prec(relprec, prime_pow.ram_prec_cap)
         aprec[0] = comb_prec(absprec, maxordp)
 
 cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute, PowComputer_class prime_pow) except? -10000:
@@ -401,7 +412,8 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
             mpz_divexact(out, (<Integer>x).value, prime_pow.pow_mpz_t_tmp(valshift))
             mpz_mod(out, out, prime_pow.pow_mpz_t_tmp(prec))
         elif valshift < 0:
-            raise RuntimeError("Integer should not have negative valuation")
+            mpz_mul(out, (<Integer>x).value, prime_pow.pow_mpz_t_tmp(-valshift))
+            mpz_mod(out, out, prime_pow.pow_mpz_t_tmp(prec))
         else:
             mpz_mod(out, (<Integer>x).value, prime_pow.pow_mpz_t_tmp(prec))
     elif isinstance(x, Rational):
@@ -409,9 +421,10 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
             mpz_invert(out, mpq_denref((<Rational>x).value), prime_pow.pow_mpz_t_tmp(prec))
             mpz_mul(out, out, mpq_numref((<Rational>x).value))
         elif valshift < 0:
-            mpz_divexact(out, mpq_denref((<Rational>x).value), prime_pow.pow_mpz_t_tmp(-valshift))
-            mpz_invert(out, out, prime_pow.pow_mpz_t_tmp(prec))
-            mpz_mul(out, out, mpq_numref((<Rational>x).value))
+            mpq_set_z(rat_temp.value, prime_pow.pow_mpz_t_tmp(-valshift))
+            mpq_mul(rat_temp.value, rat_temp.value, (<Rational>x).value)
+            mpz_invert(out, mpq_denref(rat_temp.value), prime_pow.pow_mpz_t_tmp(prec))
+            mpz_mul(out, out, mpq_numref(rat_temp.value))
         else:
             mpz_invert(out, mpq_denref((<Rational>x).value), prime_pow.pow_mpz_t_tmp(prec))
             mpz_divexact(temp.value, mpq_numref((<Rational>x).value), prime_pow.pow_mpz_t_tmp(valshift))

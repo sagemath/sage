@@ -17,7 +17,7 @@ EXAMPLES::
 
     * :func:`sage.misc.defaults.set_series_precision`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2007 Robert Bradshaw <robertwb@math.washington.edu>
 #                     2012 David Roe <roed.math@gmail.com>
@@ -28,8 +28,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function, absolute_import
 
@@ -424,10 +424,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         Various conversions from PARI (see also :trac:`2508`)::
 
-            sage: L.<q> = LaurentSeriesRing(QQ)
-            sage: L.set_default_prec(10)
-            doctest:...: DeprecationWarning: This method is deprecated.
-            See http://trac.sagemath.org/16201 for details.
+            sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
             sage: L(pari('1/x'))
             q^-1
             sage: L(pari('polchebyshev(5)'))
@@ -647,25 +644,6 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             raise TypeError("the base ring is not a field")
         return self.base_ring()
 
-    def set_default_prec(self, n):
-        """
-        Set the default precision.
-
-        This method is deprecated.
-
-        TESTS::
-
-            sage: R.<x> = LaurentSeriesRing(QQ)
-            sage: R.set_default_prec(3)
-            doctest:...: DeprecationWarning: This method is deprecated.
-            See http://trac.sagemath.org/16201 for details.
-            sage: 1/(x^5-x^7)
-            x^-5 + x^-3 + O(x^-2)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(16201, "This method is deprecated.")
-        self._power_series_ring.set_default_prec(n)
-
     def default_prec(self):
         """
         Get the precision to which exact elements are truncated when
@@ -780,4 +758,3 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             Power Series Ring in x over Rational Field
         """
         return self._power_series_ring
-

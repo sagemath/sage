@@ -10,8 +10,7 @@ A parity-check code of dimension `k` over `F_q` is the set:
 
 REFERENCE:
 
-    .. [W88] Codes and Cryptography, Dominic Welsh, Oxford Sciences
-             Publications, 1988
+- [Wel1988]_
 """
 
 # *****************************************************************************

@@ -1,1 +1,1 @@
-../database_pari/spkg-install
+sdh_install src/* "$SAGE_LOCAL/share/pari"

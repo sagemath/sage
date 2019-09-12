@@ -200,5 +200,3 @@ class WeierstrassTransformationWithInverse_class(WeierstrassTransformation):
               (1/3*y : -1/3*y + 3*z : -x)
         """
         return self._inverse
-
-

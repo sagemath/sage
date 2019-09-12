@@ -78,16 +78,15 @@ REFERENCES:
 
 - Stein, "Modular Forms, a computational approach." AMS (2007).
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import absolute_import
 from six.moves import range
@@ -165,7 +164,7 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -174,7 +173,8 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
             sage: (-6*ModularSymbols(Gamma0(11), 2).boundary_space()(Cusp(0)))._repr_()
             '-6*[0]'
         """
-        return repr_lincomb([ ('[' + repr(self.parent()._known_gens[i]) + ']', c) for i,c in self.__x.items() ])
+        return repr_lincomb([('[' + repr(self.parent()._known_gens[i]) + ']', c)
+                             for i, c in sorted(self.__x.items())])
 
     # can't inherit arithmetic operations from HeckeModule, because basis
     # dimension might change!
@@ -222,8 +222,10 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
         return BoundarySpaceElement(self.parent(), z)
 
     def _rmul_(self, other):
-        """
-        Return self \* other. Assumes that other can be coerced into
+        r"""
+        Return self \* other.
+
+        Assumes that other can be coerced into
         self.parent().base_ring().
 
         EXAMPLES::
@@ -241,8 +243,10 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
         return BoundarySpaceElement(self.parent(), x)
 
     def _lmul_(self, other):
-        """
-        Return other \* self. Assumes that other can be coerced into
+        r"""
+        Return other \* self.
+
+        Assumes that other can be coerced into
         self.parent().base_ring().
 
         EXAMPLES::
@@ -363,8 +367,8 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
     def is_ambient(self):
         """
-        Return True if self is a space of boundary symbols associated to an
-        ambient space of modular symbols.
+        Return ``True`` if ``self`` is a space of boundary symbols
+        associated to an ambient space of modular symbols.
 
         EXAMPLES::
 
@@ -440,12 +444,12 @@ class BoundarySpace(hecke.HeckeModule_generic):
             [1/3]
         """
         if i >= len(self._known_gens) or i < 0:
-            raise ValueError("only %s generators known for %s"%(len(self._known_gens), self))
+            raise ValueError("only %s generators known for %s" % (len(self._known_gens), self))
         return BoundarySpaceElement(self, {i:1})
 
     def free_module(self):
         """
-        Return the underlying free module for self.
+        Return the underlying free module for ``self``.
 
         EXAMPLES::
 
@@ -494,19 +498,19 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
     def _coerce_in_manin_symbol(self, x):
         """
-        Coerce the Manin symbol x into self. (That is, return the image of
+        Coerce the Manin symbol x into ``self``. (That is, return the image of
         x under the boundary map.)
 
         Assumes that x is associated to the same space of modular symbols
-        as self.
+        as ``self``.
 
         EXAMPLES::
 
             sage: M = ModularSymbols(Gamma1(5), 4) ; B = M.boundary_space()
             sage: [ B(x) for x in M.basis() ]
-            [-[2/5], -[-1/5], -[1/2], -[1/2], -[1/4], -[1/4]]
+            [-[2/5], -[-1/5], -[1/3], -[-1/4], -[-1/4], -[-1/4]]
             sage: [ B._coerce_in_manin_symbol(x) for x in M.manin_symbols_basis() ]
-            [-[2/5], -[-1/5], -[1/2], -[1/2], -[1/4], -[1/4]]
+            [-[2/5], -[-1/5], -[1/3], -[-1/4], -[-1/4], -[-1/4]]
         """
         i = x.i
         alpha, beta = x.endpoints(self.level())
@@ -554,24 +558,24 @@ class BoundarySpace(hecke.HeckeModule_generic):
         elif element.is_ModularSymbolsElement(x):
             M = x.parent()
             if not isinstance(M, ModularSymbolsAmbient):
-                raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient"%x)
+                raise TypeError("x (=%s) must be an element of a space of modular symbols of type ModularSymbolsAmbient" % x)
             if M.level() != self.level():
                 raise TypeError("x (=%s) must have level %s but has level %s"%(
                     x, self.level(), M.level()))
             S = x.manin_symbol_rep()
             if len(S) == 0:
                 return self(0)
-            return sum([c*self._coerce_in_manin_symbol(v) for c, v in S])
+            return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
         elif is_FreeModuleElement(x):
-            y = dict([(i,x[i]) for i in range(len(x))])
+            y = {i: xi for i, xi in enumerate(x)}
             return BoundarySpaceElement(self, y)
 
         raise TypeError("Coercion of %s (of type %s) into %s not (yet) defined."%(x, type(x), self))
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -579,7 +583,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             'Space of Boundary Modular Symbols of weight 2 for Congruence Subgroup Gamma0(3) with sign 0 and character [1] over Rational Field'
         """
         return ("Space of Boundary Modular Symbols of weight %s for" + \
-                " %s with sign %s and character %s over %s")%(
+                " %s with sign %s and character %s over %s") % (
                  self.weight(), self.group(), self.sign(),
                  self.character()._repr_short_(), self.base_ring())
 
@@ -612,6 +616,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             return -2
         return -1
 
+
 class BoundarySpace_wtk_g0(BoundarySpace):
     def __init__(self, level, weight, sign, F):
         """
@@ -641,7 +646,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
         level = int(level)
         sign = int(sign)
         weight = int(weight)
-        if not sign in [-1,0,1]:
+        if not sign in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
         if level <= 0:
             raise ArithmeticError("level must be positive")
@@ -653,7 +658,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -662,7 +667,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
             'Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(97) of weight 3 and over Rational Field'
         """
         return ("Space of Boundary Modular Symbols for %s of weight %s " + \
-                "and over %s")%(self.group(), self.weight(), self.base_ring())
+                "and over %s") % (self.group(), self.weight(), self.base_ring())
 
     def _coerce_cusp(self, c):
         """
@@ -686,7 +691,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
             sage: [ B(Cusp(i,4)) for i in range(4) ]
             [0, [1/4], 0, -[1/4]]
         """
-        if self.weight()%2 != 0:
+        if self.weight() % 2:
             return self(0)
 
         # see if we've already found this cusp
@@ -744,7 +749,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
     def _is_equiv(self, c1, c2):
         """
-        Determine whether or not c1 and c2 are equivalent for self.
+        Determine whether or not c1 and c2 are equivalent for ``self``.
 
         EXAMPLES::
 
@@ -797,7 +802,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -805,13 +810,11 @@ class BoundarySpace_wtk_g1(BoundarySpace):
             'Boundary Modular Symbols space for Gamma_1(5) of weight 3 over Rational Field'
         """
         return ("Boundary Modular Symbols space for Gamma_1(%s) of weight %s " + \
-                "over %s")%(self.level(),self.weight(), self.base_ring())
-
+                "over %s") % (self.level(),self.weight(), self.base_ring())
 
     def _is_equiv(self, c1, c2):
         """
-        Return True if c1 and c2 are equivalent cusps for self, and False
-        otherwise.
+        Return whether c1 and c2 are equivalent cusps for ``self``.
 
         EXAMPLES::
 
@@ -921,7 +924,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         # Does cusp class vanish because of irregularity? For Gamma1 groups
         # this occurs if and only if N = 4 and c is equivalent to 1/2.
 
-        if N == 4 and k % 2 != 0:
+        if N == 4 and k % 2:
             if self._is_equiv(c, (1,2))[0]:
                 self._zero_cusps.append(c)
                 del self._known_gens[-1]
@@ -960,6 +963,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
         return BoundarySpaceElement(self, {(len(g)-1):1})
 
+
 class BoundarySpace_wtk_gamma_h(BoundarySpace):
     def __init__(self, group, weight, sign, F):
         """
@@ -997,7 +1001,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             Codomain: Boundary Modular Symbols space for Congruence Subgroup Gamma_H(8) ...
         """
         sign = int(sign)
-        if not sign in [-1,0,1]:
+        if not sign in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
 
         BoundarySpace.__init__(self,
@@ -1008,7 +1012,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -1016,8 +1020,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             'Boundary Modular Symbols space for Congruence Subgroup Gamma_H(7) with H generated by [2] of weight 4 over Rational Field'
         """
         return ("Boundary Modular Symbols space for %s of weight %s " + \
-                "over %s")%(self.group(),self.weight(), self.base_ring())
-
+                "over %s") % (self.group(),self.weight(), self.base_ring())
 
     def _is_equiv(self, c1, c2):
         """
@@ -1039,7 +1042,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
     def _cusp_index(self, cusp):
         """
-        Returns a pair (i, t), where i is the index of the first cusp in
+        Return a pair (i, t), where i is the index of the first cusp in
         self._known_cusps() which is equivalent to cusp, and t is 1 or -1 as
         cusp is GammaH-equivalent to plus or minus self._known_cusps()[i]. If
         cusp is not equivalent to any known cusp, return (-1, 0); if cusp is
@@ -1068,7 +1071,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
     def _coerce_cusp(self, c):
         """
-        Coerce the cusp c into self.
+        Coerce the cusp c into ``self``.
 
         EXAMPLES::
 
@@ -1165,7 +1168,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
         # Does the cusp class vanish because the cusp is irregular?
 
-        if k % 2 != 0:
+        if k % 2:
             if self.group().is_even() or not self.group().is_regular_cusp(c):
                 self._zero_cusps.append(c)
                 del self._known_gens[-1]
@@ -1252,7 +1255,7 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -1260,9 +1263,8 @@ class BoundarySpace_wtk_eps(BoundarySpace):
             'Boundary Modular Symbols space of level 6, weight 4, character [-1] and dimension 0 over Rational Field'
         """
         return ("Boundary Modular Symbols space of level %s, weight %s, character %s " + \
-                "and dimension %s over %s")%(self.level(), self.weight(),
+                "and dimension %s over %s") % (self.level(), self.weight(),
                     self.character()._repr_short_(), self.rank(), self.base_ring())
-
 
     def _is_equiv(self, c1, c2):
         """
@@ -1284,7 +1286,7 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
     def _cusp_index(self, cusp):
         """
-        Returns a pair (i, s), where i is the index of the first cusp in
+        Return a pair (i, s), where i is the index of the first cusp in
         self._known_cusps() which is equivalent to cusp, and such that cusp is
         Gamma0-equivalent to self.character()(s) times self._known_cusps()[i].
         If cusp is not equivalent to any known cusp, return (-1, 0); if cusp is
@@ -1315,7 +1317,7 @@ class BoundarySpace_wtk_eps(BoundarySpace):
 
     def _coerce_cusp(self, c):
         """
-        Coerce the cusp c into self.
+        Coerce the cusp c into ``self``.
 
         EXAMPLES::
 
@@ -1424,5 +1426,3 @@ class BoundarySpace_wtk_eps(BoundarySpace):
                         return self(0)
 
         return BoundarySpaceElement(self, {(len(g)-1):1})
-
-

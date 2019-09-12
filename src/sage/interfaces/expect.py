@@ -29,15 +29,15 @@ AUTHORS:
   pexpect 4.0.1 + patches, see :trac:`10295`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
 from six import string_types
 from six import reraise as raise_
@@ -58,7 +58,7 @@ import pexpect
 from pexpect import ExceptionPexpect
 from sage.interfaces.sagespawn import SageSpawn
 from sage.interfaces.interface import (Interface, InterfaceElement,
-            InterfaceFunction, InterfaceFunctionElement, AsciiArtString)
+            InterfaceFunction, InterfaceFunctionElement)
 
 from sage.structure.element import RingElement
 
@@ -138,8 +138,7 @@ class Expect(Interface):
         Interface.__init__(self, name)
 
         # Read environment variables
-        env_name = 'SAGE_%s_{}'%self.name().upper()
-        import os
+        env_name = 'SAGE_%s_{}' % self.name().upper()
         if server is None:
             server = os.getenv(env_name.format('SERVER'))
         if server_tmpdir is None:
@@ -472,7 +471,7 @@ If this all works, you can then make calls like:
             print("Starting %s" % cmd.split()[0])
 
         if self.__remote_cleaner and self._server:
-            c = 'sage-native-execute  ssh %s "nohup sage -cleaner"  &'%self._server
+            c = 'sage-native-execute  ssh %s "nohup sage -cleaner"  &' % self._server
             os.system(c)
 
         # Unset some environment variables for the children to
@@ -532,6 +531,39 @@ If this all works, you can then make calls like:
                 for X in self.__init_code:
                     self._send(X)
 
+    def _isalive(self):
+        """
+        Wrapper for pexpect's ``spawn.isalive()``.
+
+        Handles an issue where if the underlying process disappear (died / was
+        killed and wait()-ed by another process) before pexpect itself could
+        wait() on it, then pexpect (really ptyprocess) raises an exception but
+        does *not* mark the process as terminated.  The same exception results,
+        then, from any attempt to close the pexpect process.
+
+        See https://trac.sagemath.org/ticket/28354
+        """
+        try:
+            return self._expect is not None and self._expect.isalive()
+        except ExceptionPexpect:
+            self._expect.ptyproc.terminated = True
+            return False
+
+    def _close(self, force=True):
+        """
+        Wrapper for pexpect's ``spawn.close()``.
+
+        Since the underlying method calls ``isalive()`` it is affected by the
+        same issue described in ``_isalive()`` above.
+        """
+        try:
+            if self._expect is not None:
+                self._expect.close(force=force)
+        except ExceptionPexpect:
+            self._expect.ptyproc.fd = -1
+            self._expect.ptyproc.closed = True
+            self._expect.child_fd = -1
+            self._expect.closed = True
 
     def clear_prompts(self):
         while True:
@@ -594,7 +626,7 @@ If this all works, you can then make calls like:
                     print("Exiting %r (running on %s)" % (self._expect, self._server))
                 else:
                     print("Exiting %r" % (self._expect,))
-            self._expect.close()
+            self._close()
         self._reset_expect()
 
     def detach(self):
@@ -790,7 +822,7 @@ If this all works, you can then make calls like:
             tmp_to_use = self._remote_tmpfile()
         try:
             s = self._eval_line(self._read_in_file_command(tmp_to_use), allow_use_file=False, restart_if_needed=False)
-        except pexpect.EOF as msg:
+        except pexpect.EOF:
             if self._quit_string() in line:
                 # we expect to get an EOF if we're quitting.
                 return ''
@@ -799,26 +831,27 @@ If this all works, you can then make calls like:
                     self._synchronize()
                     return self._post_process_from_file(self._eval_line_using_file(line, restart_if_needed=False))
                 except RuntimeError as msg:
-                    raise RuntimeError('%s terminated unexpectedly while reading in a large line:\n%s'%(self,msg[0]))
+                    raise RuntimeError('%s terminated unexpectedly while reading in a large line:\n%s' % (self, msg.args[0]))
                 except TypeError:
                     pass
-            raise RuntimeError('%s terminated unexpectedly while reading in a large line'%self)
+            raise RuntimeError('%s terminated unexpectedly while reading in a large line' % self)
         except RuntimeError as msg:
             if self._quit_string() in line:
-                if self._expect is None or not self._expect.isalive():
+                if not self._isalive():
                     return ''
                 raise
-            if restart_if_needed and (self._expect is None or not self._expect.isalive()):
+            if restart_if_needed and not self._isalive():
                 try:
                     self._synchronize()
                     return self._post_process_from_file(self._eval_line_using_file(line, restart_if_needed=False))
                 except TypeError:
                     pass
-                except RuntimeError as msg:
-                    raise RuntimeError('%s terminated unexpectedly while reading in a large line'%self)
-            if "Input/output error" in msg[0]: # This occurs on non-linux machines
-                raise RuntimeError('%s terminated unexpectedly while reading in a large line'%self)
-            raise RuntimeError('%s terminated unexpectedly while reading in a large line:\n%s'%(self,msg[0]))
+                except RuntimeError:
+                    raise RuntimeError('%s terminated unexpectedly while reading in a large line' % self)
+            if "Input/output error" in msg.args[0]:
+                # This occurs on non-linux machines
+                raise RuntimeError('%s terminated unexpectedly while reading in a large line' % self)
+            raise RuntimeError('%s terminated unexpectedly while reading in a large line:\n%s' % (self, msg.args[0]))
         return self._post_process_from_file(s)
 
     def _post_process_from_file(self, s):
@@ -918,7 +951,7 @@ If this all works, you can then make calls like:
             E = self._expect
             try:
                 if len(line) >= 4096:
-                    raise RuntimeError("Sending more than 4096 characters with %s on a line may cause a hang and you're sending %s characters"%(self, len(line)))
+                    raise RuntimeError("Sending more than 4096 characters with %s on a line may cause a hang and you're sending %s characters" % (self, len(line)))
                 E.sendline(line)
                 if not wait_for_prompt:
                     return ''
@@ -933,19 +966,19 @@ If this all works, you can then make calls like:
                         # while because the process might not die
                         # immediately. See Trac #14371.
                         for t in [0.5, 1.0, 2.0]:
-                            if E.isalive():
+                            if self._isalive():
                                 time.sleep(t)
                             else:
                                 break
-                    if not E.isalive():
+                    if not self._isalive():
                         try:
                             self._synchronize()
                         except (TypeError, RuntimeError):
                             pass
                         return self._eval_line(line,allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False)
-                raise_(RuntimeError, "%s\nError evaluating %s in %s"%(msg, line, self), sys.exc_info()[2])
+                raise_(RuntimeError, RuntimeError("%s\nError evaluating %s in %s" % (msg, line, self)), sys.exc_info()[2])
 
-            if len(line)>0:
+            if line:
                 try:
                     if isinstance(wait_for_prompt, string_types):
                         E.expect(str_to_bytes(wait_for_prompt))
@@ -982,7 +1015,7 @@ If this all works, you can then make calls like:
                     out = ''
         except KeyboardInterrupt:
             self._keyboard_interrupt()
-            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
         if self._terminal_echo:
             i = out.find("\n")
             j = out.rfind("\r")
@@ -994,16 +1027,16 @@ If this all works, you can then make calls like:
         print("Interrupting %s..." % self)
         if self._restart_on_ctrlc:
             try:
-                self._expect.close(force=1)
+                self._close()
             except pexpect.ExceptionPexpect as msg:
                 raise pexpect.ExceptionPexpect( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
-            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)"%self)
+            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
             self._expect.sendline(chr(3))  # send ctrl-c
             self._expect.expect(self._prompt)
             self._expect.expect(self._prompt)
-            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
     def interrupt(self, tries=5, timeout=2.0, quit_on_fail=True):
         E = self._expect
@@ -1122,10 +1155,15 @@ If this all works, you can then make calls like:
 
         EXAMPLES:
 
-        We test all of this using the R interface. First we put
+        We test all of this using the Singular interface. First we put
         10 + 15 in the input stream::
 
-            sage: r._sendstr('abc <- 10 +15;\n')
+            sage: singular._sendstr('def abc = 10 + 15;\n')
+
+        Then we tell singular to print 10, which is an arbitrary number
+        different from the expected result 35.
+
+            sage: singular._sendstr('10;\n')
 
         Here an exception is raised because 25 hasn't appeared yet in the
         output stream. The key thing is that this doesn't lock, but instead
@@ -1135,34 +1173,34 @@ If this all works, you can then make calls like:
 
             sage: t = walltime()
             sage: try:
-            ....:    r._expect_expr('25', timeout=0.5)
+            ....:    singular._expect_expr('25', timeout=float(0.4))
             ....: except Exception:
             ....:    print('Did not get expression')
             Did not get expression
 
         A quick consistency check on the time that the above took::
 
-            sage: w = walltime(t); w > 0.4 and w < 10
+            sage: w = walltime(t); 0.3 < w < 10
             True
 
-        We tell R to print abc, which equals 25.
+        We tell Singular to print abc, which equals 25.
 
         ::
 
-            sage: r._sendstr('abc;\n')
+            sage: singular._sendstr('abc;\n')
 
         Now 25 is in the output stream, so we can wait for it.
 
         ::
 
-            sage: r._expect_expr('25')
+            sage: singular._expect_expr('25')
 
-        This gives us everything before the 25.
+        This gives us everything before the 25, including the 10 we printed earlier.
 
         ::
 
-            sage: r._expect.before
-            '...abc;\r\n[1] '
+            sage: singular._expect.before.decode('ascii')
+            u'...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
         see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
@@ -1171,7 +1209,7 @@ If this all works, you can then make calls like:
         running, so a timeout of 1 second should be sufficient. ::
 
             sage: print(sage0.eval("dummy=gp.eval('0'); alarm(1); gp._expect_expr('1')"))  # long time
-            Control-C pressed.  Interrupting PARI/GP interpreter. Please wait a few seconds...
+            ...Interrupting PARI/GP interpreter. Please wait a few seconds...
             ...
             AlarmInterrupt:
         """
@@ -1188,9 +1226,9 @@ If this all works, you can then make calls like:
             if i > 0:
                 v = self._before()
                 self.quit()
-                raise ValueError("%s\nComputation failed due to a bug in %s -- NOTE: Had to restart."%(v, self))
+                raise ValueError("%s\nComputation failed due to a bug in %s -- NOTE: Had to restart." % (v, self))
         except KeyboardInterrupt:
-            print("Control-C pressed. Interrupting %s. Please wait a few seconds..."%self)
+            print("Control-C pressed. Interrupting %s. Please wait a few seconds..." % self)
             self.interrupt()
             raise
 
@@ -1203,14 +1241,7 @@ If this all works, you can then make calls like:
 
         -  ``string`` -- a string
 
-        EXAMPLES: We illustrate this function using the R interface::
-
-            sage: r._synchronize()
-            sage: r._sendstr('a <- 10;\n')
-            sage: r.eval('a')
-            '[1] 10'
-
-        We illustrate using the singular interface::
+        EXAMPLES: We illustrate this function using the Singular interface::
 
             sage: singular._synchronize()
             sage: singular._sendstr('int i = 5;')
@@ -1260,7 +1291,7 @@ If this all works, you can then make calls like:
 
         EXAMPLES: We observe nothing, just as it should be::
 
-            sage: r._synchronize()
+            sage: singular._synchronize()
 
         TESTS:
 
@@ -1535,10 +1566,10 @@ class StdOutContext:
             self.interface._start()
         self._logfile_backup = self.interface._expect.logfile
 
-        if isinstance(sys.stdout, io.TextIOWrapper):
-            stdout = sys.stdout.buffer
+        if isinstance(self.stdout, io.TextIOWrapper):
+            stdout = self.stdout.buffer
         else:
-            stdout = sys.stdout
+            stdout = self.stdout
 
         if self.interface._expect.logfile:
             self.interface._expect.logfile = Multiplex(self.interface._expect.logfile, stdout)

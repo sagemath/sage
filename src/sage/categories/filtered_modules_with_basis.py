@@ -789,7 +789,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             .. SEEALSO:: :meth:`homogeneous_degree`
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: A = ModulesWithBasis(ZZ).Filtered().example()
                 sage: x = A(Partition((3,2,1)))

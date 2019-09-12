@@ -15,7 +15,7 @@ REFERENCES:
    :arxiv:`math/9809122v3` [math.q-alg]
 """
 from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #
@@ -28,8 +28,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.unique_representation import UniqueRepresentation
 from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
@@ -250,7 +250,8 @@ class LLT_class(UniqueRepresentation):
         if skp in _Partitions:
             m = (sum(skp) / self.level()).floor()
             if m == 0:
-                raise ValueError("level (%=) must divide %s "%(sum(skp), self.level()))
+                raise ValueError("level (%s=) must divide %s " % (sum(skp),
+                                                                  self.level()))
             mu = Partitions( ZZ(sum(skp) / self.level()) )
 
         elif isinstance(skp, list) and skp[0] in sage.combinat.skew_partition.SkewPartitions():

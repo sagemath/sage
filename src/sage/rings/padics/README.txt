@@ -84,7 +84,7 @@ LocalGenericElement (local_generic_element.pyx)                                 
       pAdicCappedRelativeElement (padic_capped_relative_element.pyx)              :
       pAdicCappedAbsoluteElement (padic_capped_absolute_element.pyx)              :
       pAdicFixedModElement (padic_fixed_mod_element.pyx)                          :
-      pAdicLazyElement (padic_lazy_element.py, currently not suppored)            :
+      pAdicLazyElement (padic_lazy_element.py, currently not supported)            :
     pAdicExtElement (padic_ext_element.pyx)                                       :
       pAdicZZpXElement (padic_ZZ_pX_element.pyx)                                  : unramified and eisenstein extensions of Qp and Zp, using ntl ZZ_pX
         pAdicZZpXCRElement (padic_ZZ_pX_CR_element.pyx)                           :

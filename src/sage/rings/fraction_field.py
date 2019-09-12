@@ -576,24 +576,37 @@ class FractionField_generic(ring.Field):
         Check that :trac:`24539` is fixed::
 
             sage: tau = polygen(QQ, 'tau')
-            sage: R = PolynomialRing(CyclotomicField(2), 'z').fraction_field()(
-            ....:     tau/(1+tau))
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot convert tau/(tau + 1)/1 to an element of Fraction
-            Field of Univariate Polynomial Ring in z over Cyclotomic Field of
-            order 2 and degree 1
+            sage: PolynomialRing(CyclotomicField(2), 'z').fraction_field()(tau/(1+tau))
+            z/(z + 1)
+
+        Check that :trac:`26150` is fixed::
+
+            sage: z = SR.var('z')
+            sage: CyclotomicField(2)['z'].fraction_field()(2*(4*z + 5)/((z + 1)*(z - 1)^4))
+            (8*z + 10)/(z^5 - 3*z^4 + 2*z^3 + 2*z^2 - 3*z + 1)
+
+        ::
+
+            sage: T.<t> = ZZ[]
+            sage: S.<s> = ZZ[]
+            sage: S.fraction_field()(s/(s+1), (t-1)/(t+2))
+            (s^2 + 2*s)/(s^2 - 1)
         """
         if y is None:
             if isinstance(x, Element) and x.parent() is self:
                 return x
-            else:
-                y = self.base_ring().one()
-
-        try:
-            return self._element_class(self, x, y, coerce=coerce)
-        except (TypeError, ValueError):
-            pass
+            ring_one = self.ring().one()
+            try:
+                return self._element_class(self, x, ring_one, coerce=coerce)
+            except (TypeError, ValueError):
+                pass
+            y = self._element_class(self, ring_one, ring_one,
+                                    coerce=False, reduce=False)
+        else:
+            try:
+                return self._element_class(self, x, y, coerce=coerce)
+            except (TypeError, ValueError):
+                pass
 
         if isinstance(x, six.string_types):
             from sage.misc.sage_eval import sage_eval
@@ -622,12 +635,32 @@ class FractionField_generic(ring.Field):
             v = self._element_class(self, x.variable(), 1)
             x = sum(self(x[i]) * v**i for i in range(x.poldegree() + 1))
 
+        def resolve_fractions(x, y):
+            xn = x.numerator()
+            xd = x.denominator()
+            yn = y.numerator()
+            yd = y.denominator()
+            try:
+                return (xn * yd, yn * xd)
+            except (AttributeError, TypeError, ValueError):
+                pass
+            try:
+                P = yd.parent()
+                return (P(xn) * yd, yn * P(xd))
+            except (AttributeError, TypeError, ValueError):
+                pass
+            try:
+                P = xd.parent()
+                return (xn * P(yd), P(yn) * xd)
+            except (AttributeError, TypeError, ValueError):
+                pass
+            raise TypeError
+
         while True:
             x0, y0 = x, y
             try:
-                x = x0.numerator()*y0.denominator()
-                y = y0.numerator()*x0.denominator()
-            except AttributeError:
+                x, y = resolve_fractions(x0, y0)
+            except (AttributeError, TypeError):
                 raise TypeError("cannot convert {!r}/{!r} to an element of {}".format(
                                 x0, y0, self))
             try:
@@ -879,7 +912,7 @@ class FractionField_1poly_field(FractionField_generic):
 
             sage: R.<t> = QQ[]; K = R.fraction_field()
             sage: K._element_class
-            <class 'sage.rings.fraction_field_element.FractionFieldElement_1poly_field'>
+            <type 'sage.rings.fraction_field_element.FractionFieldElement_1poly_field'>
         """
         FractionField_generic.__init__(self, R, element_class)
 
@@ -984,6 +1017,7 @@ class FractionField_1poly_field(FractionField_generic):
         return super(FractionField_1poly_field, self)._coerce_map_from_(R)
 
 
+
 class FractionFieldEmbedding(DefaultConvertMap_unique):
     r"""
     The embedding of an integral domain into its field of fractions.
@@ -1033,7 +1067,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         EXAMPLES:
 
         The map from an integral domain to its fraction field is always
-        injective:
+        injective::
 
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_injective()

@@ -1,5 +1,6 @@
-.. _chapter-git_trac:
+.. highlight:: shell-session
 
+.. _chapter-git_trac:
 
 =======================================
 Collaborative Development with Git-Trac
@@ -99,6 +100,23 @@ password. The password is stored in plain-text in ``.git/config``, so
 make sure that it is not readable by other users on your system. For
 example, by running ``chmod 0600 .git/config`` if your home directory
 is not already private.
+
+Instead of a username and password you may also configure authentication via
+a generated token by passing ``--token=<token>`` instead of ``--pass``::
+
+    [user@localhost sage]$ git trac config --user=<username> --token=<token>
+
+This is required if you authenticate to Trac with your GitHub account, as
+you do not have a Trac password.  Logged in users can find their token
+under `the token tab in preferences on the trac site <https://trac.sagemath.org/prefs/token>`_ .
+
+If both a token and a username/password are configured, the token-based
+authentication takes precedence.
+
+If you do not want to store your trac username/password/token on disk you
+can temporarily override it with the environment variables
+``TRAC_USERNAME``,  ``TRAC_PASSWORD``, and ``TRAC_TOKEN`` respectively.
+These take precedence over any other configuration.
 
 If there is no SSH key listed then you haven't uploaded your SSH
 public key to the trac server. You should do that now following the
@@ -294,7 +312,9 @@ reviewed by somebody else before they can be included in the next
 version of Sage. To mark your ticket as ready for review, you should
 set it to ``needs_review`` on the trac server. Also, add yourself as
 the (or one of the) author(s) for that ticket by inserting the
-following as the first line::
+following as the first line:
+
+.. CODE-BLOCK:: text
 
     Authors: Your Real Name
 
@@ -423,7 +443,9 @@ Conflict Resolution
 Merge conflicts happen if there are overlapping edits, and they are an
 unavoidable consequence of distributed development. Fortunately,
 resolving them is common and easy with git. As a hypothetical example,
-consider the following code snippet::
+consider the following code snippet:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -433,7 +455,9 @@ consider the following code snippet::
 
 This is clearly wrong; Two developers, namely Alice and Bob, decide to
 fix it. First, in a cabin in the woods far away from any internet
-connection, Alice corrects the seed values::
+connection, Alice corrects the seed values:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
        """
@@ -451,7 +475,9 @@ and turns those changes into a new commit::
 However, not having an internet connection, she cannot immediately
 send her changes to the trac server. Meanwhile, Bob changes the
 multiplication to an addition since that is the correct recursion
-formula::
+formula:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -475,9 +501,11 @@ own local branch::
     CONFLICT (content): Merge conflict in fibonacci.py
     Automatic merge failed; fix conflicts and then commit the result.
 
+The file now looks like this:
+
 .. skip    # doctester confuses >>> with input marker
 
-The file now looks like this::
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -498,7 +526,9 @@ number after the second conflict marker is the SHA1 hash of the most
 recent common parent of both.
 
 It is now Alice's job to resolve the conflict by reconciling their
-changes, for example by editing the file. Her result is::
+changes, for example by editing the file. Her result is:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """

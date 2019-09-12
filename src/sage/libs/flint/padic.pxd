@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/qadic.h
 
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/qadic.h":
+# flint/qadic.h
+cdef extern from "flint_wrap.h":
     # macros
     long padic_val(padic_t x)
     long padic_prec(padic_t x)
@@ -12,12 +14,12 @@ cdef extern from "flint/qadic.h":
     slong padic_get_prec(const padic_t x)
 
     #* Context *******************************************************************/
-    void padic_ctx_init(padic_ctx_t ctx, const fmpz_t p, slong min, slong max, 
+    void padic_ctx_init(padic_ctx_t ctx, const fmpz_t p, slong min, slong max,
                     padic_print_mode mode);
     void padic_ctx_clear(padic_ctx_t ctx);
- 
+
     int _padic_ctx_pow_ui(fmpz_t rop, ulong e, const padic_ctx_t ctx)
- 
+
     void padic_ctx_pow_ui(fmpz_t rop, ulong e, const padic_ctx_t ctx)
 
     #* Memory management *********************************************************/
@@ -30,9 +32,9 @@ cdef extern from "flint/qadic.h":
 
     #* Randomisation *************************************************************/
     void padic_randtest(padic_t rop, flint_rand_t state, const padic_ctx_t ctx);
-    void padic_randtest_not_zero(padic_t rop, flint_rand_t state, 
+    void padic_randtest_not_zero(padic_t rop, flint_rand_t state,
                              const padic_ctx_t ctx);
-    void padic_randtest_int(padic_t rop, flint_rand_t state, 
+    void padic_randtest_int(padic_t rop, flint_rand_t state,
                         const padic_ctx_t ctx);
 
     #* Assignments and conversions ***********************************************/
@@ -59,15 +61,15 @@ cdef extern from "flint/qadic.h":
     #* Arithmetic operations *****************************************************/
     slong * _padic_lifts_exps(slong *n, slong N);
     void _padic_lifts_pows(fmpz *pow, const slong *a, slong n, const fmpz_t p);
-    void padic_add(padic_t rop, const padic_t op1, const padic_t op2, 
+    void padic_add(padic_t rop, const padic_t op1, const padic_t op2,
                const padic_ctx_t ctx);
-    void padic_sub(padic_t rop, const padic_t op1, const padic_t op2, 
+    void padic_sub(padic_t rop, const padic_t op1, const padic_t op2,
                const padic_ctx_t ctx);
     void padic_neg(padic_t rop, const padic_t op, const padic_ctx_t ctx);
-    void padic_mul(padic_t rop, const padic_t op1, const padic_t op2, 
+    void padic_mul(padic_t rop, const padic_t op1, const padic_t op2,
                const padic_ctx_t ctx);
     void padic_shift(padic_t rop, const padic_t op, slong v, const padic_ctx_t ctx);
-    void padic_div(padic_t rop, const padic_t op1, const padic_t op2, 
+    void padic_div(padic_t rop, const padic_t op1, const padic_t op2,
                const padic_ctx_t ctx);
     void _padic_inv_precompute(padic_inv_t S, const fmpz_t p, slong N);
     void _padic_inv_clear(padic_inv_t S);
@@ -75,7 +77,7 @@ cdef extern from "flint/qadic.h":
     void _padic_inv(fmpz_t rop, const fmpz_t op, const fmpz_t p, slong N);
     void padic_inv(padic_t rop, const padic_t op, const padic_ctx_t ctx);
     int padic_sqrt(padic_t rop, const padic_t op, const padic_ctx_t ctx);
-    void padic_pow_si(padic_t rop, const padic_t op, slong e, 
+    void padic_pow_si(padic_t rop, const padic_t op, slong e,
                   const padic_ctx_t ctx);
 
     #* Exponential ***************************************************************/
@@ -109,7 +111,7 @@ cdef extern from "flint/qadic.h":
     char * padic_get_str(char * str, const padic_t op, const padic_ctx_t ctx);
     int _padic_fprint(FILE * file, const fmpz_t u, slong v, const padic_ctx_t ctx);
     int padic_fprint(FILE * file, const padic_t op, const padic_ctx_t ctx);
- 
+
     int _padic_print(const fmpz_t u, slong v, const padic_ctx_t ctx)
     int padic_print(const padic_t op, const padic_ctx_t ctx)
     void padic_debug(const padic_t op)

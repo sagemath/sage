@@ -39,6 +39,11 @@ BLAS = @SAGE_BLAS@
 BUILT_PACKAGES = @SAGE_BUILT_PACKAGES@
 DUMMY_PACKAGES = @SAGE_DUMMY_PACKAGES@
 
+# Set to the path to Sage's GCC (if GCC is installed) to force rebuilds
+# of packages if GCC changed.
+# See m4/sage_spkg_collect.m4 and https://trac.sagemath.org/ticket/24703
+GCC_DEP = @SAGE_GCC_DEP@
+
 # Versions of all the packages, in the format
 #
 # vers_<pkgname> = <pkgvers>
@@ -128,9 +133,13 @@ $(INST)/.dummy:
 # the name of some arbitrary file, or it is the '|' symbol) then it is just
 # used verbatim.
 #
+# As a special case, also adds a special variable GCC_DEP for all packages
+# except for gcc itself.  See the definition of GCC_DEP above
+#
 # Positional arguments:
 #     $(1): package name
 pkg_deps = \
+	$(if $(filter gcc,$(1)),,$$(GCC_DEP))\
 	$(foreach dep,$(deps_$(1)),\
         $(if $(value inst_$(dep)),$$(inst_$(dep)),$(dep)))
 
@@ -161,6 +170,11 @@ pkg_deps = \
 # it may expand to $(INST)/.dummy for packages that were not configured
 # for installation by default.  However, we wish to be able to manually
 # install those packages later.
+#
+# For packages listed in $(TOOLCHAIN_DEPS) we also pass --keep-existing to
+# sage-spkg, and --keep-files to sage-spkg-uninstall since those packages can
+# have a recursive self-dependency, and should not be deleted while upgrading.
+# See Trac #25857
 
 # Positional arguments:
 #     $(1): package name
@@ -168,13 +182,15 @@ pkg_deps = \
 #     $(3): package dependencies
 define NORMAL_PACKAGE_templ
 $$(INST)/$(1)-$(2): $(3)
-	+$(AM_V_at)sage-logger -p '$$(SAGE_SPKG) $(1)-$(2)' '$$(SAGE_LOGS)/$(1)-$(2).log'
+	+$(AM_V_at)sage-logger -p '$$(SAGE_SPKG) \
+		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
+		$(1)-$(2)' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
 $(1): $$(INST)/$(1)-$(2)
 
 $(1)-clean:
-	sage-spkg-uninstall $(1) '$$(SAGE_LOCAL)'
-	rm -rf $$(INST)/$(1)-$(2)
+	sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
+		$(1) '$(SAGE_LOCAL)'
 
 endef
 
@@ -208,6 +224,7 @@ $(1): $(2)
 
 $(1)-clean:
 	-sage --pip uninstall -y $(1)
+
 endef
 
 $(foreach pkgname,$(PIP_PACKAGES),\
@@ -246,6 +263,7 @@ $(1)-clean:
 	-$(AM_V_at)cd '$$(SAGE_ROOT)' && \
 		source '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-uninstall'
+
 endef
 
 $(foreach pkgname,$(SCRIPT_PACKAGES),\

@@ -31,7 +31,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.structure.parent', 'CoercionException')
+from sage.structure.coerce_exceptions import CoercionException
 
 
 class FreeDendriformAlgebra(CombinatorialFreeModule):
@@ -119,7 +119,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     REFERENCES:
 
-    - [LodayRonco]_
+    - [LR1998]_
     """
     @staticmethod
     def __classcall_private__(cls, R, names=None):

@@ -14,7 +14,6 @@
 # subprocess32 will eventually be installed.
 
 
-import os
 from sysconfig import get_path
 from subprocess import check_output
 

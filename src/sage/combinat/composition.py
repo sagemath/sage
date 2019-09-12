@@ -1084,10 +1084,10 @@ class Composition(CombinatorialElement):
         size `n = 8`::
 
             sage: n = 8
-            sage: all(Composition(from_subset=(S, n)).to_subset() == S \
+            sage: all(Composition(from_subset=(S, n)).to_subset() == S
             ....:     for S in Subsets(n-1))
             True
-            sage: all(Composition(from_subset=(I.to_subset(), n)) == I \
+            sage: all(Composition(from_subset=(I.to_subset(), n)) == I
             ....:     for I in Compositions(n))
             True
         """

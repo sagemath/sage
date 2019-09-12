@@ -9,7 +9,9 @@ give the matrix representation given in [HRT2000]_.
 AUTHORS:
 
 - Travis Scrimshaw (2013-05-03): Initial version
-- Sebastian Oehms  (2018-03-18): matrix method of the element class of ClassicalMatrixLieAlgebra added
+- Sebastian Oehms  (2018-03-18): matrix method of the element class
+  of ClassicalMatrixLieAlgebra added
+- Travis Scrimshaw (2019-07-09): Implemented compact real form
 """
 
 #*****************************************************************************
@@ -21,20 +23,24 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from collections import OrderedDict
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.indexed_generators import IndexedGenerators
+from sage.structure.element import Element
+from sage.structure.richcmp import richcmp
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
 
-from sage.algebras.lie_algebras.lie_algebra import LieAlgebraFromAssociative
+from sage.algebras.lie_algebras.lie_algebra import LieAlgebraFromAssociative, FinitelyGeneratedLieAlgebra
 from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
 from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.family import Family
+from sage.modules.free_module import FreeModule
 
 
 class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
@@ -918,6 +924,434 @@ class g2(ExceptionalMatrixLieAlgebra):
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['G', 2]), e, f, h)
 
 #######################################
+## Compact real form
+
+class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
+    r"""
+    The compact real form of a matrix Lie algebra.
+
+    Let `L` be a classical (i.e., type `ABCD`) Lie algebra over `\RR`
+    given as matrices that is invariant under matrix transpose (i.e.,
+    `X^T \in L` for all `X \in L`). Then we can perform the
+    *Cartan decomposition* of `L` by `L = K \oplus S`, where `K`
+    (resp. `S`) is the set of skew-symmetric (resp. symmetric) matrices
+    in `L`. Then the Lie algebra `U = K \oplus i S` is an `\RR`-subspace
+    of the complexification of `L` that is closed under commutators and
+    has skew-hermitian matrices. Hence, the Killing form is negative
+    definitive (i.e., `U` is a compact Lie algebra), and thus `U` is
+    the complex real form of the complexification of `L`.
+
+    EXAMPLES::
+
+        sage: U = LieAlgebra(QQ, cartan_type=['A',1], representation="compact real")
+        sage: list(U.basis())
+        [
+        [ 0  1]  [ i  0]  [0 i]
+        [-1  0], [ 0 -i], [i 0]
+        ]
+        sage: U.killing_form_matrix()
+        [-8  0  0]
+        [ 0 -8  0]
+        [ 0  0 -8]
+
+    Computations are only (currently) possible if this is defined
+    over a field::
+
+        sage: U = LieAlgebra(ZZ, cartan_type=['A',1], representation="compact real")
+        sage: list(U.basis())
+        Traceback (most recent call last):
+        ...
+        TypeError: no conversion of this rational to integer
+    """
+    def __init__(self, R, cartan_type):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+            sage: TestSuite(L).run()
+        """
+        if not cartan_type.is_finite():
+            raise ValueError("the Cartan type must be finite type")
+
+        self._classical = ClassicalMatrixLieAlgebra(R, cartan_type)
+        self._MS = self._classical._assoc
+        dim = self._classical.dimension()
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        index_set = FiniteEnumeratedSet(range(dim))
+        names = tuple(['CR%s'%s for s in range(dim)])
+        category = LieAlgebras(R).FiniteDimensional().WithBasis()
+        FinitelyGeneratedLieAlgebra.__init__(self, R, names=names,
+                                             index_set=index_set,
+                                             category=category)
+
+    @cached_method
+    def basis(self):
+        """
+        Compute a basis of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['B',2], representation="compact real")
+            sage: list(L.basis())
+            [
+            [ 0  1  0  0  0]  [ 0  0  0  1  0]  [ 0  0  0  0  1]  [ 0  0  0  0  0]
+            [-1  0  0  0  0]  [ 0  0 -1  0  0]  [ 0  0  0  0  0]  [ 0  0  0  0  1]
+            [ 0  0  0  1  0]  [ 0  1  0  0  0]  [ 0  0  0  0  1]  [ 0  0  0  0  0]
+            [ 0  0 -1  0  0]  [-1  0  0  0  0]  [ 0  0  0  0  0]  [ 0  0  0  0  1]
+            [ 0  0  0  0  0], [ 0  0  0  0  0], [-1  0 -1  0  0], [ 0 -1  0 -1  0],
+            <BLANKLINE>
+            [ i  0  0  0  0]  [ 0  i  0  0  0]  [ 0  0  0  i  0]  [ 0  0  0  0  i]
+            [ 0  0  0  0  0]  [ i  0  0  0  0]  [ 0  0 -i  0  0]  [ 0  0  0  0  0]
+            [ 0  0 -i  0  0]  [ 0  0  0 -i  0]  [ 0 -i  0  0  0]  [ 0  0  0  0 -i]
+            [ 0  0  0  0  0]  [ 0  0 -i  0  0]  [ i  0  0  0  0]  [ 0  0  0  0  0]
+            [ 0  0  0  0  0], [ 0  0  0  0  0], [ 0  0  0  0  0], [ i  0 -i  0  0],
+            <BLANKLINE>
+            [ 0  0  0  0  0]  [ 0  0  0  0  0]
+            [ 0  i  0  0  0]  [ 0  0  0  0  i]
+            [ 0  0  0  0  0]  [ 0  0  0  0  0]
+            [ 0  0  0 -i  0]  [ 0  0  0  0 -i]
+            [ 0  0  0  0  0], [ 0  i  0 -i  0]
+            ]
+        """
+        from sage.matrix.constructor import matrix
+        zero = self._MS.zero()
+        basis = self._classical.basis()
+        R = self.base_ring()
+        mat = matrix(R, [((b.value - b.value.transpose()) / 2).list() for b in basis])
+        mat.echelonize()
+        ret = [self.element_class(self, self._MS(mat[i].list()), zero)
+               for i in range(mat.rank())]
+        mat = matrix(R, [((b.value + b.value.transpose()) / 2).list() for b in basis])
+        mat.echelonize()
+        ret += [self.element_class(self, zero, self._MS(mat[i].list()))
+                for i in range(mat.rank())]
+        return Family(ret)
+
+    @cached_method
+    def zero(self):
+        """
+        Return the element `0`.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['D',4], representation="compact real")
+            sage: L.zero()
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+        """
+        return self.element_class(self, self._MS.zero(), self._MS.zero())
+
+    def monomial(self, i):
+        """
+        Return the monomial indexed by ``i``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',3], representation="compact real")
+            sage: L.monomial(0)
+            [ 0  1  0  0]
+            [-1  0  0  0]
+            [ 0  0  0  0]
+            [ 0  0  0  0]
+        """
+        return self.basis()[i]
+
+    def term(self, i, c=None):
+        """
+        Return the term indexed by ``i`` with coefficient ``c``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['C',3], representation="compact real")
+            sage: L.term(4, 7/2)
+            [   0    0    0    0    0  7/2]
+            [   0    0    0    0    0    0]
+            [   0    0    0  7/2    0    0]
+            [   0    0 -7/2    0    0    0]
+            [   0    0    0    0    0    0]
+            [-7/2    0    0    0    0    0]
+        """
+        if c is None:
+            c = self.base_ring().one()
+        else:
+            c = self.base_ring()(c)
+        return c * self.basis()[i]
+
+    def _repr_option(self, key):
+        """
+        Metadata about the :meth:`_repr_` output.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['A',1], representation="compact real")
+            sage: L._repr_option("element_ascii_art")
+            True
+        """
+        if key == "element_ascii_art":
+            return True
+        return FinitelyGeneratedLieAlgebra._repr_option(self, key)
+
+    class Element(Element):
+        """
+        An element of a matrix Lie algebra in its compact real form.
+        """
+        def __init__(self, parent, real, imag):
+            """
+            Initialize ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['D',4], representation="compact real")
+                sage: TestSuite(L.an_element()).run()
+            """
+            Element.__init__(self, parent)
+            self._real = real
+            self._imag = imag
+            self._real.set_immutable()
+            self._imag.set_immutable()
+            self._mc = None
+
+        def _repr_(self):
+            """
+            Return a string representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['B',2], representation="compact real")
+                sage: L.sum((i+1)/7*b for i,b in enumerate(L.basis()))
+                [        5/7*i   6/7*i + 1/7             0       i + 2/7   8/7*i + 3/7]
+                [  6/7*i - 1/7         9/7*i      -i - 2/7             0  10/7*i + 4/7]
+                [            0      -i + 2/7        -5/7*i  -6/7*i + 1/7  -8/7*i + 3/7]
+                [      i - 2/7             0  -6/7*i - 1/7        -9/7*i -10/7*i + 4/7]
+                [  8/7*i - 3/7  10/7*i - 4/7  -8/7*i - 3/7 -10/7*i - 4/7             0]
+            """
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            MS = self.parent()._MS
+            R = PolynomialRing(MS.base_ring(), 'i')
+            return repr(self._real + R.gen()*self._imag)
+
+        def _latex_(self):
+            r"""
+            Return a latex representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['B',2], representation="compact real")
+                sage: x = L.sum((i+1)/7*b for i,b in enumerate(L.basis()))
+                sage: latex(x)
+                \left(\begin{array}{rrrrr}
+                \frac{5}{7} i & \frac{6}{7} i + \frac{1}{7} & 0 & i + \frac{2}{7} & \frac{8}{7} i + \frac{3}{7} \\
+                \frac{6}{7} i - \frac{1}{7} & \frac{9}{7} i & -i - \frac{2}{7} & 0 & \frac{10}{7} i + \frac{4}{7} \\
+                0 & -i + \frac{2}{7} & -\frac{5}{7} i & -\frac{6}{7} i + \frac{1}{7} & -\frac{8}{7} i + \frac{3}{7} \\
+                i - \frac{2}{7} & 0 & -\frac{6}{7} i - \frac{1}{7} & -\frac{9}{7} i & -\frac{10}{7} i + \frac{4}{7} \\
+                \frac{8}{7} i - \frac{3}{7} & \frac{10}{7} i - \frac{4}{7} & -\frac{8}{7} i - \frac{3}{7} & -\frac{10}{7} i - \frac{4}{7} & 0
+                \end{array}\right)
+            """
+            from sage.misc.latex import latex
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            MS = self.parent()._MS
+            R = PolynomialRing(MS.base_ring(), 'i')
+            return latex(self._real + R.gen()*self._imag)
+
+        def __bool__(self):
+            r"""
+            Return if ``self`` is nonzero.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C',3], representation="compact real")
+                sage: all(b for b in L.basis() if b != 0)
+                True
+                sage: bool(L.zero())
+                False
+            """
+            return bool(self._real) or bool(self._imag)
+
+        __nonzero__ = __bool__
+
+        def __hash__(self):
+            r"""
+            Return the hash of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+                sage: x = L.an_element()
+                sage: hash(x) == hash((x._real, x._imag))
+                True
+            """
+            return hash((self._real, self._imag))
+
+        def _richcmp_(self, other, op):
+            r"""
+            Return the richcmp of ``self`` and ``other`` by ``op``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',1], representation="compact real")
+                sage: sorted(L.basis())
+                [
+                [0 i]  [ i  0]  [ 0  1]
+                [i 0], [ 0 -i], [-1  0]
+                ]
+            """
+            return richcmp((self._real, self._imag), (other._real, other._imag), op)
+
+        def _add_(self, other):
+            r"""
+            Add ``self`` and ``other``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C',2], representation="compact real")
+                sage: B = L.basis()
+                sage: B[0] + B[6]
+                [ 0  1  i  0]
+                [-1  0  0  0]
+                [ i  0  0  1]
+                [ 0  0 -1  0]
+                sage: L.sum(B)
+                [     i  i + 1  i + 1  i + 1]
+                [ i - 1      i  i + 1  i + 1]
+                [ i - 1  i - 1     -i -i + 1]
+                [ i - 1  i - 1 -i - 1     -i]
+            """
+            P = self.parent()
+            return P.element_class(P, self._real + other._real,
+                                   self._imag + other._imag)
+
+        def _sub_(self, other):
+            r"""
+            Subtract ``self`` and ``other``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C',2], representation="compact real")
+                sage: B = L.basis()
+                sage: B[0] - B[6]
+                [ 0  1 -i  0]
+                [-1  0  0  0]
+                [-i  0  0  1]
+                [ 0  0 -1  0]
+                sage: all(b - b == L.zero() for b in B)
+                True
+            """
+            P = self.parent()
+            return P.element_class(P, self._real - other._real,
+                                   self._imag - other._imag)
+
+        def _neg_(self):
+            r"""
+            Negate ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C',2], representation="compact real")
+                sage: B = L.basis()
+                sage: -(B[0] + B[6])
+                [ 0 -1 -i  0]
+                [ 1  0  0  0]
+                [-i  0  0 -1]
+                [ 0  0  1  0]
+                sage: all(-(-b) == b for b in B)
+                True
+            """
+            P = self.parent()
+            return P.element_class(P, -self._real, -self._imag)
+
+        def _bracket_(self, other):
+            r"""
+            Return the Lie bracket of ``self`` and ``other``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['A',1], representation="compact real")
+                sage: B = L.basis()
+                sage: list(B)
+                [
+                [ 0  1]  [ i  0]  [0 i]
+                [-1  0], [ 0 -i], [i 0]
+                ]
+                sage: [b._bracket_(bp) for b in B for bp in B]
+                [
+                [0 0]  [   0 -2*i]  [ 2*i    0]  [  0 2*i]  [0 0]  [ 0 -2]
+                [0 0], [-2*i    0], [   0 -2*i], [2*i   0], [0 0], [ 2  0],
+                <BLANKLINE>
+                [-2*i    0]  [ 0  2]  [0 0]
+                [   0  2*i], [-2  0], [0 0]
+                ]
+            """
+            A, B = self._real, self._imag
+            X, Y = other._real, other._imag
+            P = self.parent()
+            return P.element_class(P, A*X - X*A - B*Y + Y*B,
+                                   A*Y - Y*A + B*X - X*B)
+
+        def _acted_upon_(self, x, self_on_left):
+            r"""
+            Return the action of ``x`` on ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['D',4], representation="compact real")
+                sage: B = L.basis()
+                sage: (3/5) * B[21]
+                [     0      0      0      0      0      0      0      0]
+                [     0      0      0  3/5*i      0      0      0      0]
+                [     0      0      0      0      0      0      0      0]
+                [     0  3/5*i      0      0      0      0      0      0]
+                [     0      0      0      0      0      0      0      0]
+                [     0      0      0      0      0      0      0 -3/5*i]
+                [     0      0      0      0      0      0      0      0]
+                [     0      0      0      0      0 -3/5*i      0      0]
+                sage: B[7] * 7
+                [ 0  0  0  0  0  0  0  0]
+                [ 0  0  0  7  0  0  0  0]
+                [ 0  0  0  0  0  0  0  0]
+                [ 0 -7  0  0  0  0  0  0]
+                [ 0  0  0  0  0  0  0  0]
+                [ 0  0  0  0  0  0  0  7]
+                [ 0  0  0  0  0  0  0  0]
+                [ 0  0  0  0  0 -7  0  0]
+            """
+            P = self.parent()
+            return P.element_class(P, x*self._real, x*self._imag)
+
+        def monomial_coefficients(self, copy=False):
+            """
+            Return the monomial coefficients of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, cartan_type=['C',3], representation="compact real")
+                sage: B = L.basis()
+                sage: x = L.sum(i*B[i] for i in range(len(B)))
+                sage: x.monomial_coefficients() == {i: i for i in range(1,len(B))}
+                True
+            """
+            if self._mc is None:
+                P = self.parent()
+                B = [b._real.list() + b._imag.list() for b in P.basis()]
+                B.append(self._real.list() + self._imag.list())
+                R = self.base_ring()
+                F = FreeModule(R, len(B[0]))
+                dep = list(F.linear_dependence([F(b) for b in B])[0])
+                last = dep.pop()
+                self._mc = {i: R(-val / last) for i,val in enumerate(dep) if val != 0}
+            if copy:
+                return dict(self._mc)
+            return self._mc
+
+
+#######################################
 ## Chevalley Basis
 
 class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
@@ -980,7 +1414,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         alpha = self._Q.simple_roots()
         p_roots = list(self._Q.positive_roots_by_height())
         n_roots = [-x for x in p_roots]
-        self._p_roots_index = {al: i for i,al in enumerate(p_roots)}
+        self._p_roots_index = OrderedDict((al, i)
+                                          for i, al in enumerate(p_roots))
         alphacheck = self._Q.simple_coroots()
         roots = frozenset(self._Q.roots())
         num_sroots = len(alpha)
@@ -1072,10 +1507,10 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     s_coeffs[(-r, -s)] = {-a: -c}
 
         # Lastly, make sure a < b for all (a, b) in the coefficients and flip if necessary
-        for k in s_coeffs.keys():
-            a,b = k[0], k[1]
+        for k in list(s_coeffs):
+            a, b = k[0], k[1]
             if self._basis_key(a) > self._basis_key(b):
-                s_coeffs[(b,a)] = [(index, -v) for index,v in s_coeffs[k].items()]
+                s_coeffs[(b, a)] = [(index, -v) for index, v in s_coeffs[k].items()]
                 del s_coeffs[k]
             else:
                 s_coeffs[k] = s_coeffs[k].items()
@@ -1255,8 +1690,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: L = lie_algebras.sp(QQ, 4)
             sage: L._negative_half_index_set()
-            [-alpha[2], -alpha[1] - alpha[2],
-             -2*alpha[1] - alpha[2], -alpha[1]]
+            [-alpha[2], -alpha[1], -alpha[1] - alpha[2],
+             -2*alpha[1] - alpha[2]]
         """
         return [-x for x in self._p_roots_index]
 
@@ -1321,7 +1756,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             sage: L.indices_to_positive_roots_map()
             {1: alpha[1], 2: alpha[2], 3: alpha[1] + alpha[2]}
         """
-        return {i+1: r for i,r in enumerate(self._Q.positive_roots())}
+        return {i+1: r for i, r in enumerate(self._Q.positive_roots())}
 
     @cached_method
     def lie_algebra_generators(self, str_keys=False):
@@ -1337,9 +1772,9 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: L = LieAlgebra(QQ, cartan_type=['A', 1])
             sage: L.lie_algebra_generators()
-            Finite family {-alpha[1]: E[-alpha[1]], alpha[1]: E[alpha[1]], alphacheck[1]: h1}
+            Finite family {alpha[1]: E[alpha[1]], -alpha[1]: E[-alpha[1]], alphacheck[1]: h1}
             sage: L.lie_algebra_generators(True)
-            Finite family {'f1': E[-alpha[1]], 'h1': h1, 'e1': E[alpha[1]]}
+            Finite family {'e1': E[alpha[1]], 'f1': E[-alpha[1]], 'h1': h1}
         """
         index_set = self._cartan_type.index_set()
         alpha = self._Q.simple_roots()
@@ -1353,14 +1788,20 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                 ret['e{}'.format(i)] = B[al]
                 ret['f{}'.format(i)] = B[-al]
                 ret['h{}'.format(i)] = B[alphacheck[i]]
+            keys = (['e{}'.format(i) for i in index_set]
+                    + ['f{}'.format(i) for i in index_set]
+                    + ['h{}'.format(i) for i in index_set])
         else:
             for i in index_set:
                 al = alpha[i]
                 ret[al] = B[al]
                 ret[-al] = B[-al]
                 ret[alphacheck[i]] = B[alphacheck[i]]
+            keys = ([alpha[i] for i in index_set]
+                    + [-alpha[i] for i in index_set]
+                    + [alphacheck[i] for i in index_set])
 
-        return Family(ret)
+        return Family(keys, ret.__getitem__)
 
     @cached_method
     def _part_generators(self, positive=False):

@@ -210,7 +210,10 @@ else
 fi
 echo "  --prefix=\"$SAGE_LOCAL\""
 echo "  --libdir=\"$SAGE_LOCAL/lib\""
-echo "  --with-gmp=\"$SAGE_LOCAL\""
+if [ -n "$SAGE_CONFIGURE_GMP" ]; then
+    echo "  --with-gmp=\"$SAGE_LOCAL\""
+fi
+
 for opt in $ECM_CONFIGURE; do
     echo "  $opt"
 done
@@ -221,7 +224,7 @@ if [ -z "$ECM_CONFIGURE" ]; then
 fi
 echo
 
-sdh_configure --with-gmp="$SAGE_LOCAL" $ECM_CONFIGURE
+sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 
 ###############################################################################
 # Now build ECM:

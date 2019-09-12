@@ -50,7 +50,7 @@ class BackendIPython(BackendBase):
             sage: from sage.repl.interpreter import get_test_shell
             sage: from sage.repl.rich_output.backend_ipython import BackendIPython
             sage: backend = BackendIPython()
-            sage: shell = get_test_shell();
+            sage: shell = get_test_shell()
             sage: backend.install(shell=shell)
             sage: shell.run_cell('1+1')
             2
@@ -411,10 +411,15 @@ class BackendIPythonCommandline(BackendIPython):
             sage: backend.threejs_offline_scripts()
             '...<script ...</script>...'
         """
-        from sage.env import SAGE_SHARE
+        from sage.env import THREEJS_DIR
 
-        scripts = [os.path.join(SAGE_SHARE, 'threejs', script)
-                   for script in ['three.min.js', 'OrbitControls.js']]
+        scripts = [
+            os.path.join(THREEJS_DIR, script)
+            for script in [
+                'build/three.min.js',
+                'examples/js/controls/OrbitControls.js',
+            ]
+        ]
 
         if sys.platform == 'cygwin':
             import cygwin
@@ -539,8 +544,8 @@ class BackendIPythonNotebook(BackendIPython):
                      u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputHtml):
-            return ({u'text/html':  rich_output.html.get(),
-                     u'text/plain': plain_text.text.get(),
+            return ({u'text/html':  rich_output.html.get_unicode(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputImagePng):
             return ({u'image/png':  rich_output.png.get(),
@@ -548,7 +553,7 @@ class BackendIPythonNotebook(BackendIPython):
             }, {})
         elif isinstance(rich_output, OutputImageGif):
             return ({u'text/html':  rich_output.html_fragment(),
-                     u'text/plain': plain_text.text.get(),
+                     u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
             return ({u'image/jpeg':  rich_output.jpg.get(),
@@ -569,7 +574,7 @@ class BackendIPythonNotebook(BackendIPython):
                      u'text/plain': plain_text.text.get_unicode(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get().replace('"', '&quot;')
+            escaped_html = rich_output.html.get_unicode().replace('"', '&quot;')
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',
@@ -594,14 +599,14 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.threejs_offline_scripts()
-            '...<script src="/nbextensions/threejs/three.min...<\\/script>...'
+            '...<script src="/nbextensions/threejs/build/three.min...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
         CDN_scripts = get_display_manager().threejs_scripts(online=True)
         return """
-<script src="/nbextensions/threejs/three.min.js"></script>
-<script src="/nbextensions/threejs/OrbitControls.js"></script>
+<script src="/nbextensions/threejs/build/three.min.js"></script>
+<script src="/nbextensions/threejs/examples/js/controls/OrbitControls.js"></script>
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(CDN_scripts.replace('</script>', r'<\/script>'))
+        """.format(CDN_scripts.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))

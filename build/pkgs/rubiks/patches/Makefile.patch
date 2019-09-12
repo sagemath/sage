@@ -1,0 +1,18 @@
+diff -ruN rubiks-20070912/Makefile rubiks-20070912.new/Makefile
+--- rubiks-20070912/Makefile	2018-09-10 18:20:18.923991000 +0100
++++ rubiks-20070912.new/Makefile	2018-09-10 18:20:33.203529000 +0100
+@@ -5,12 +5,12 @@
+ 
+ all clean:
+ 	for dir in $(DIRS); do \
+-		(cd $${dir} && make $@)\
++		(cd $${dir} && $(MAKE) $@)\
+ 	done
+ 
+ distclean: clean
+ 	for dir in $(DIRS); do \
+-		(cd $${dir} && make distclean)\
++		(cd $${dir} && $(MAKE) distclean)\
+ 	done
+ 
+ install: all

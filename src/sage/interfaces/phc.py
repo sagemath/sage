@@ -548,8 +548,8 @@ class PHC:
         # regular expressions for matching certain output types
         var_cnt_regex = re.compile('^ +([0-9]+)')
         output_regex  = re.compile('^OUTPUT INFORMATION DURING')
-        t_regex       = re.compile('(^t +: +(-{0,1}[0-9]+\.[0-9]+E[-+][0-9]+) +(-{0,1}[0-9]+\.[0-9]+E[-+][0-9]+)$)', re.IGNORECASE)
-        sols_regex    = re.compile('(^ *(([a-z]|[0-9])+) +: +(-?[0-9]+\.[0-9]+E[-+][0-9]+) +(-?[0-9]+\.[0-9]+E[-+][0-9]+)$)', re.IGNORECASE)
+        t_regex       = re.compile(r'(^t +: +(-{0,1}[0-9]+\.[0-9]+E[-+][0-9]+) +(-{0,1}[0-9]+\.[0-9]+E[-+][0-9]+)$)', re.IGNORECASE)
+        sols_regex    = re.compile(r'(^ *(([a-z]|[0-9])+) +: +(-?[0-9]+\.[0-9]+E[-+][0-9]+) +(-?[0-9]+\.[0-9]+E[-+][0-9]+)$)', re.IGNORECASE)
         complete_regex= re.compile('^TIMING INFORMATION')
 
         breakfast = False

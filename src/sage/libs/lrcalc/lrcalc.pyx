@@ -10,7 +10,7 @@ fusion products. All of the above are achieved by counting LR
 appropriate shape and content by iterating through them.
 Additionally, ``lrcalc`` handles products of Schubert polynomials.
 
-The web page of ``lrcalc`` is `<http://math.rutgers.edu/~asbuch/lrcalc/>`_.
+The web page of ``lrcalc`` is `<http://sites.math.rutgers.edu/~asbuch/lrcalc/>`_.
 
 The following describes the Sage interface to this library.
 
@@ -93,21 +93,23 @@ this example `\mu=[3,2,1]` and `\nu=[2,1]`. Specifying a third entry
     sage: list(lrcalc.lrskew([3,2,1],[2,1],maxrows=2))
     [[[None, None, 1], [None, 1], [1]], [[None, None, 1], [None, 1], [2]], [[None, None, 1], [None, 2], [1]]]
 
-.. todo:: use this library in the :class:`SymmetricFunctions` code, to
+.. TODO::
+
+    use this library in the :class:`SymmetricFunctions` code, to
     make it easy to apply it to linear combinations of Schur functions.
 
 .. SEEALSO::
 
     - :func:`lrcoef`
-    
+
     - :func:`mult`
-    
+
     - :func:`coprod`
-    
+
     - :func:`skew`
-    
+
     - :func:`lrskew`
-    
+
     - :func:`mult_schubert`
 
 .. rubric:: Underlying algorithmic in lrcalc
@@ -178,18 +180,19 @@ AUTHORS:
   product, iterating through LR tableaux, finalization, documentation
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Mike Hansen <mhansen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer cimport Integer
 from sage.structure.parent cimport Parent
 from sage.combinat.partition import _Partitions
 from sage.combinat.permutation import Permutation
 from sage.combinat.skew_tableau import SkewTableau
+
 
 cdef vector* iterable_to_vector(it):
     """
@@ -206,9 +209,10 @@ cdef vector* iterable_to_vector(it):
     cdef int n = len(itr)
     cdef int i
     v = v_new(n)
-    for i from 0 <= i < n:
+    for i in range(n):
         v.array[i] = int(itr[i])
     return v
+
 
 cdef list vector_to_list(vector *v):
     """
@@ -223,9 +227,10 @@ cdef list vector_to_list(vector *v):
     cdef int i, n
     n = v_length(v)
     cdef list result = [None]*n
-    for i from 0 <= i < n:
+    for i in range(n):
         result[i] = Integer(v_elem(v, i))
     return result
+
 
 def test_iterable_to_vector(it):
     """
@@ -242,6 +247,7 @@ def test_iterable_to_vector(it):
     result = vector_to_list(v)
     v_free(v)
     return result
+
 
 cdef skewtab_to_SkewTableau(skewtab *st):
     """
@@ -260,6 +266,7 @@ cdef skewtab_to_SkewTableau(skewtab *st):
                              [[st.matrix[x + y * st.cols] + 1
                                 for x in range(inner[y], outer[y])]
                               for y in range(len(outer) - 1, -1, -1)]])
+
 
 def test_skewtab_to_SkewTableau(outer, inner):
     """
@@ -286,6 +293,7 @@ def test_skewtab_to_SkewTableau(outer, inner):
     cdef skewtab* st = st_new(o, i, NULL, 0)
     return skewtab_to_SkewTableau(st)
 
+
 cdef dict sf_hashtab_to_dict(hashtab *ht):
     """
     Return a dictionary representing a Schur function. The keys are
@@ -307,6 +315,7 @@ cdef dict sf_hashtab_to_dict(hashtab *ht):
         result[_Partitions(p)] = Integer(hash_intvalue(itr))
         hash_next(itr)
     return result
+
 
 cdef dict schubert_hashtab_to_dict(hashtab *ht):
     """
@@ -352,6 +361,7 @@ cdef dict vp_hashtab_to_dict(hashtab *ht):
         hash_next(itr)
     return result
 
+
 def lrcoef_unsafe(outer, inner1, inner2):
     r"""
     Compute a single Littlewood-Richardson coefficient.
@@ -390,8 +400,11 @@ def lrcoef_unsafe(outer, inner1, inner2):
     i1 = iterable_to_vector(inner1)
     i2 = iterable_to_vector(inner2)
     result = lrcoef_c(o, i1, i2)
-    v_free(o); v_free(i1); v_free(i2)
+    v_free(o)
+    v_free(i1)
+    v_free(i2)
     return Integer(result)
+
 
 def lrcoef(outer, inner1, inner2):
     """
@@ -426,6 +439,7 @@ def lrcoef(outer, inner1, inner2):
 
     """
     return lrcoef_unsafe(_Partitions(outer), _Partitions(inner1), _Partitions(inner2))
+
 
 def mult(part1, part2, maxrows=None, level=None, quantum=None):
     r"""
@@ -532,6 +546,7 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None):
     l_free(qlist)
     return result
 
+
 def skew(outer, inner, maxrows=0):
     """
     Compute the Schur expansion of a skew Schur function.
@@ -561,8 +576,11 @@ def skew(outer, inner, maxrows=0):
     cdef vector* v2 = iterable_to_vector(inner)
     cdef hashtab* ht = skew_c(v1, v2, int(maxrows))
     result = sf_hashtab_to_dict(ht)
-    v_free(v1); v_free(v2); hash_free(ht)
+    v_free(v1)
+    v_free(v2)
+    hash_free(ht)
     return result
+
 
 def coprod(part, all=0):
     """
@@ -594,7 +612,8 @@ def coprod(part, all=0):
     cdef vector* v1 = iterable_to_vector(part)
     cdef hashtab* ht = coprod_c(v1, int(all))
     result = vp_hashtab_to_dict(ht)
-    v_free(v1); hash_free(ht)
+    v_free(v1)
+    hash_free(ht)
     return result
 
 
@@ -631,28 +650,31 @@ def mult_schubert(w1, w2, rank=0):
     cdef vector* v2 = iterable_to_vector(w2)
     cdef hashtab* ht = mult_schubert_c(v1, v2, int(rank))
     result = schubert_hashtab_to_dict(ht)
-    v_free(v1); v_free(v2); hash_free(ht)
+    v_free(v1)
+    v_free(v2)
+    hash_free(ht)
     return result
 
+
 def lrskew(outer, inner, weight=None, maxrows=0):
-    """
-    Return the skew LR tableaux of shape ``outer / inner``.
+    r"""
+    Iterate over the skew LR tableaux of shape ``outer / inner``.
 
     INPUT:
 
-    - ``outer`` -- a partition.
+    - ``outer`` -- a partition
 
-    - ``inner`` -- a partition.
+    - ``inner`` -- a partition
 
-    - ``weight`` -- a partition (optional).
+    - ``weight`` -- a partition (optional)
 
-    - ``maxrows`` -- an integer (optional).
+    - ``maxrows`` -- an integer (optional)
 
-    OUTPUT: a list of :class:`SkewTableau`x. This will change to an
-    iterator over such skew tableaux once Cython will support the
-    ``yield`` statement. Specifying a third entry `maxrows` restricts
-    the alphabet to `\{1,2,\ldots,maxrows\}`. Specifying `weight`
-    returns only those tableaux of given content/weight.
+    OUTPUT: an iterator of :class:`SkewTableau`
+
+    Specifying ``maxrows`` restricts the alphabet to `\{1,2,\ldots,maxrows\}`.
+
+    Specifying ``weight`` returns only those tableaux of given content/weight.
 
     EXAMPLES::
 
@@ -678,19 +700,24 @@ def lrskew(outer, inner, weight=None, maxrows=0):
         1  2
         2
 
-        sage: lrskew([3,2,1],[2], weight=[3,1])
+        sage: list(lrskew([3,2,1],[2], weight=[3,1]))
         [[[None, None, 1], [1, 1], [2]]]
     """
     cdef vector* o = iterable_to_vector(outer)
-    cdef vector* i = iterable_to_vector(inner+[0]*(len(outer)-len(inner)))
+    cdef vector* i = iterable_to_vector(inner + [0]*(len(outer) - len(inner)))
     cdef skewtab* st = st_new(o, i, NULL, int(maxrows))
-    result = [skewtab_to_SkewTableau(st)] # todo: replace by the following line
-    #yield skewtab_to_SkewTableau(st)
-    while st_next(st):
-        result.append(skewtab_to_SkewTableau(st)) # todo: replace by the following line
-        #yield skewtab_to_SkewTableau(st)
-    st_free(st)
-    if weight is not None:
-        result = [r for r in result if r.weight() == _Partitions(weight) ]
-    return result # todo: remove
 
+    if weight is None:
+        yield skewtab_to_SkewTableau(st)
+        while st_next(st):
+            yield skewtab_to_SkewTableau(st)
+    else:
+        wt = _Partitions(weight)
+        r = skewtab_to_SkewTableau(st)
+        if r.weight() == wt:
+            yield r
+        while st_next(st):
+            r = skewtab_to_SkewTableau(st)
+            if r.weight() == wt:
+                yield r
+    st_free(st)

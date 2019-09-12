@@ -1,3 +1,4 @@
 /Makefile
 /Makefile-auto
 /Makefile-auto.in
+/.clean-broken-gcc

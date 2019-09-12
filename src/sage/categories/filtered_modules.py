@@ -21,18 +21,18 @@ of the given module `M`.
 
     Implement `\operatorname{gr}` as a functor.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_over_base_ring):
     def __init__(self, base_category):
@@ -46,7 +46,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
             Category of algebras over Rational Field
             sage: sorted(C.super_categories(), key=str)
             [Category of algebras over Rational Field,
-             Category of filtered modules over Rational Field]
+             Category of filtered vector spaces over Rational Field]
 
             sage: AlgebrasWithBasis(QQ).Filtered().base_ring()
             Rational Field
@@ -99,8 +99,8 @@ class FilteredModules(FilteredModulesCategory):
 
         EXAMPLES::
 
-            sage: Modules(QQ).Filtered().extra_super_categories()
-            [Category of vector spaces over Rational Field]
+            sage: Modules(QQ).Filtered().is_subcategory(VectorSpaces(QQ))
+            True
             sage: Modules(ZZ).Filtered().extra_super_categories()
             []
 
@@ -109,7 +109,7 @@ class FilteredModules(FilteredModulesCategory):
         an instance of this class and of ``VectorSpaces(QQ)``::
 
             sage: type(Modules(QQ).Filtered())
-            <class 'sage.categories.filtered_modules.FilteredModules_with_category'>
+            <class 'sage.categories.vector_spaces.VectorSpaces.Filtered_with_category'>
 
         .. TODO::
 
@@ -143,8 +143,7 @@ class FilteredModules(FilteredModulesCategory):
                 sage: Modules(ZZ).Filtered().Connected()
                 Category of filtered connected modules over Integer Ring
                 sage: Coalgebras(QQ).Filtered().Connected()
-                Join of Category of filtered connected modules over Rational Field
-                    and Category of coalgebras over Rational Field
+                Category of filtered connected coalgebras over Rational Field
                 sage: AlgebrasWithBasis(QQ).Filtered().Connected()
                 Category of filtered connected algebras with basis over Rational Field
 

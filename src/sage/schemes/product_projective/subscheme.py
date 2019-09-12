@@ -254,7 +254,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                 PP = X.ambient_space()
                 I = X.defining_ideal().radical()
                 #check if the irrelevant ideal of any component is in the radical
-                if any([all([t in I for t in PS.gens()]) for PS in PP.components()]):
+                if any(all(t in I for t in PS.gens())
+                       for PS in PP.components()):
                     self.__dimension = -1
                 else:
                     self.__dimension = I.dimension() - PP.num_components()

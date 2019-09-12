@@ -2,7 +2,7 @@
 r"""
 Möbius Algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Möbius Algebras
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
@@ -361,6 +361,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
 
     idempotent = I
 
+
 class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
     r"""
     The quantum Möbius algebra of a lattice.
@@ -388,6 +389,13 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             sage: L = posets.BooleanLattice(4)
             sage: M = L.quantum_moebius_algebra()
             sage: TestSuite(M).run() # long time
+
+            sage: from sage.combinat.posets.moebius_algebra import QuantumMoebiusAlgebra
+            sage: L = posets.Crown(2)
+            sage: QuantumMoebiusAlgebra(L)
+            Traceback (most recent call last):
+            ...
+            ValueError: L must be a lattice
         """
         if not L.is_lattice():
             raise ValueError("L must be a lattice")
@@ -768,4 +776,3 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
 
     class ElementMethods:
         pass
-

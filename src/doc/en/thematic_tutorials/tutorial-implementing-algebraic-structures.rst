@@ -100,9 +100,12 @@ methods ``product_on_basis``, ``one_basis``, ``_repr_`` and
 ask the category (TODO: find a slicker idiom for this)::
 
     sage: from sage.misc.abstract_method import abstract_methods_of_class
-    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class)
+    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class) # py2
     {'optional': ['_add_', '_mul_'],
      'required': ['__nonzero__', 'monomial_coefficients']}
+    sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).element_class) # py3
+    {'optional': ['_add_', '_mul_'],
+     'required': ['__bool__', 'monomial_coefficients']}
     sage: abstract_methods_of_class(AlgebrasWithBasis(QQ).parent_class)
     {'optional': ['one_basis', 'product_on_basis'], 'required': ['__contains__']}
 
@@ -606,7 +609,9 @@ will be a *parent with realizations*. See :func:`Sets().WithRealizations
 <sage.categories.with_realizations.WithRealizations>` for more information
 about the expected user interface and the rationale.
 
-Here is a brief template highlighting the overall structure::
+Here is a brief template highlighting the overall structure:
+
+.. CODE-BLOCK:: python
 
     class MyAlgebra(Parent, UniqueRepresentation):
         def __init__(self, R, ...):
@@ -685,7 +690,9 @@ particular, this construction says that they are:
     reason.
 
     The current recommended solution is to have an additional class ``Basis``
-    that factors out the common concrete features of the different bases::
+    that factors out the common concrete features of the different bases:
+
+    .. CODE-BLOCK:: python
 
         ...
 

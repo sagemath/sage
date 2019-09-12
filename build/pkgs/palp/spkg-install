@@ -11,37 +11,25 @@ if [ "$UNAME" = "CYGWIN" ] ; then
   CFLAGS="$CFLAGS -Wl,--stack,8000000"
 fi
 
+BIN="$SAGE_LOCAL/bin"
+
 for dim in 4 5 6 11; do
     echo Building PALP optimized for $dim dimensions
 
     sed "s/^#define[^a-zA-Z]*POLY_Dmax.*/#define POLY_Dmax $dim/" Global.h-template > Global.h
 
-    $MAKE CC="$CC" CFLAGS="$CFLAGS"
-    if [ $? -ne 0 ]; then
-        echo "Error building PALP."
-        exit 1
-    fi
-
+    sdh_make CC="$CC" CFLAGS="$CFLAGS"
     for file in poly class cws nef mori; do
-        cp -p ${file}.x "$SAGE_LOCAL"/bin/${file}-${dim}d.x
-        if [ $? -ne 0 ]; then
-            echo "Error installing PALP."
-            exit 1
-        fi
+        sdh_install -T "${file}.x" "${BIN}/${file}-${dim}d.x"
     done
 
     # the next step is important to avert races on older file systems
     # for example, ext3 has 1-second timestamp granularity!
-    $MAKE cleanall
-    if [ $? -ne 0 ]; then
-        echo "Error building PALP."
-        exit 1
-    fi
+    sdh_make cleanall
 done
 
 # symlinks for the default dimension
-cd "$SAGE_LOCAL"/bin
+cd "${SAGE_DESTDIR}${BIN}"
 for file in poly class cws nef mori; do
     ln -sf ${file}-6d.x ${file}.x
 done
-

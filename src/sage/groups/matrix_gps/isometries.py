@@ -30,16 +30,15 @@ AUTHORS:
 - Simon Brandhorst (2018-02): First created
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Simon Brandhorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from sage.misc.cachefunc import cached_method
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
 from sage.categories.action import Action
 
@@ -237,7 +236,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
             if is_FGP_Module(S):
                 if S.is_submodule(T):
                     V = S.V()
-                    if all([V==V*f.matrix() for f in self.gens()]):
+                    if all(V == V * f.matrix() for f in self.gens()):
                         return GroupActionOnQuotientModule(self, S)
         return None
 
@@ -264,6 +263,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         if x * F * x.transpose() != F:
             raise TypeError('matrix must be orthogonal '
                 'with respect to the invariant form')
+
 
 class GroupActionOnSubmodule(Action):
     r"""
@@ -312,18 +312,17 @@ class GroupActionOnSubmodule(Action):
         import operator
         Action.__init__(self, MatrixGroup, submodule, is_left, operator.mul)
 
-    def _call_(self, a, g):
+    def _act_(self, g, a):
         r"""
         This defines the group action.
 
         INPUT:
 
-        - ``a`` -- an element of the invariant submodule
         - ``g`` -- an element of the acting group
 
-        OUTPUT:
+        - ``a`` -- an element of the invariant submodule
 
-        - an element of the invariant submodule
+        OUTPUT: an element of the invariant submodule
 
         EXAMPLES::
 
@@ -347,9 +346,11 @@ class GroupActionOnSubmodule(Action):
             [0 1]
         """
         if self.is_left():
-            return a.parent()(g.matrix()*a)
+            b = g.matrix() * a
         else:
-            return a.parent()(a*g.matrix())
+            b = a * g.matrix()
+        return a.parent()(b)
+
 
 class GroupActionOnQuotientModule(Action):
     r"""
@@ -395,14 +396,15 @@ class GroupActionOnQuotientModule(Action):
         import operator
         Action.__init__(self, MatrixGroup, quotient_module, is_left, operator.mul)
 
-    def _call_(self, a, g):
+    def _act_(self, g, a):
         r"""
         This defines the group action.
 
         INPUT:
 
-        - ``a`` -- an element of the invariant submodule
         - ``g`` -- an element of the acting group
+
+        - ``a`` -- an element of the invariant submodule
 
         OUTPUT:
 
@@ -427,6 +429,7 @@ class GroupActionOnQuotientModule(Action):
             Finitely generated module V/W over Integer Ring with invariants (6)
         """
         if self.is_left():
-            return a.parent()(g.matrix()*a.lift())
+            b = g.matrix() * a.lift()
         else:
-            return a.parent()(a.lift()*g.matrix())
+            b = a.lift() * g.matrix()
+        return a.parent()(b)

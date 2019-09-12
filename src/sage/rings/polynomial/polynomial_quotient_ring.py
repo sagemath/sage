@@ -298,7 +298,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
     TESTS:
 
-    By trac ticket :trac:`11900`, polynomial quotient rings use Sage's
+    By :trac:`11900`, polynomial quotient rings use Sage's
     category framework. They do so in an unusual way: During their
     initialisation, they are declared to be objects in the category of
     quotients of commutative algebras over a base ring. However, if it
@@ -666,6 +666,28 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         """
         return  not (self == other)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: Rx.<x> = PolynomialRing(QQ)
+            sage: Ry.<y> = PolynomialRing(QQ)
+            sage: hash(Rx) == hash(Ry)
+            False
+            sage: Qx = Rx.quotient(x^2+1)
+            sage: Qy = Ry.quotient(y^2+1)
+            sage: hash(Qx) == hash(Qy)
+            False
+            sage: hash(Qx) == hash(Qx)
+            True
+            sage: Qz = Rx.quotient(x^2+1)
+            sage: hash(Qz) == hash(Qx)
+            True
+        """
+        return hash((self.polynomial_ring(), self.modulus()))
+
     def _singular_init_(self, S=None):
         """
         Represent ``self`` in the Singular interface.
@@ -980,7 +1002,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: F2.is_field()
             Traceback (most recent call last):
             ...
-            NotImplementedError: can not rewrite Univariate Quotient Polynomial Ring in xbar over 2-adic Field with capped relative precision 20 with modulus (1 + O(2^20))*x^2 + (1 + O(2^20))*x + (1 + O(2^20)) as an isomorphic ring
+            NotImplementedError: can not rewrite Univariate Quotient Polynomial Ring in xbar over 2-adic Field with capped relative precision 20 with modulus (1 + O(2^20))*x^2 + (1 + O(2^20))*x + 1 + O(2^20) as an isomorphic ring
             sage: F2.is_field(proof = False)
             False
 
@@ -1226,7 +1248,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             sage: K.<a> = QuadraticField(-5)
             sage: K.class_group()
-            Class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 5
+            Class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
             sage: R.<x> = K[]
             sage: S.<xbar> = R.quotient(x^2 + 23)
             sage: S.S_class_group([])
@@ -1287,7 +1309,6 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             component_S_class_groups.append(clgp_gens)
 
         clgp_gens = []
-        clgp_gens_orders = []
         moduli = [D.relative_polynomial() for D in fields]
         for i in range(n):
             phi = isos[i][0]
@@ -1332,7 +1353,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             sage: K.<a> = QuadraticField(-3)
             sage: K.class_group()
-            Class group of order 1 of Number Field in a with defining polynomial x^2 + 3
+            Class group of order 1 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: K.class_group()
             []
@@ -1357,7 +1378,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             sage: K.<a> = QuadraticField(-5)
             sage: K.class_group()
-            Class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 5
+            Class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
             sage: R.<x> = K[]
             sage: S.<xbar> = R.quotient(x^2 + 23)
             sage: S.class_group()
@@ -1427,7 +1448,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             sage: K.<a> = QuadraticField(-3)
             sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3
+            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u,o = K.S_units([])[0]; o
             6
@@ -1445,7 +1466,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: K.<a> = QuadraticField(-3)
             sage: y = polygen(K)
             sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with modulus y^3 + 5
+            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
             sage: [u for u, o in L.S_units([]) if o is Infinity]
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]
@@ -1513,7 +1534,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             sage: K.<a> = QuadraticField(-3)
             sage: K.unit_group()
-            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3
+            Unit group with structure C6 of Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
             sage: K.<a> = QQ['x'].quotient(x^2 + 3)
             sage: u = K.units()[0][0]
             sage: 2*u - 1 in {a, -a}
@@ -1533,7 +1554,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: K.<a> = QuadraticField(-3)
             sage: y = polygen(K)
             sage: L.<b> = K['y'].quotient(y^3 + 5); L
-            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with modulus y^3 + 5
+            Univariate Quotient Polynomial Ring in b over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I with modulus y^3 + 5
             sage: [u for u, o in L.units() if o is Infinity]
             [(-1/3*a - 1)*b^2 - 4/3*a*b - 5/6*a + 7/2,
              2/3*a*b^2 + (2/3*a - 2)*b - 5/6*a - 7/2]

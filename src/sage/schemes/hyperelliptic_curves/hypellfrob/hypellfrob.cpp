@@ -181,6 +181,24 @@ void interval_products_wrapper(vector<mat_ZZ_p>& output,
    }
 }
 
+void hypellfrob_interval_products_wrapper(mat_ZZ_p& output,
+                               const mat_ZZ_p& M0, const mat_ZZ_p& M1,
+                               const vector<ZZ>& target,
+                               int force_ntl = 0)
+{
+   vector<mat_ZZ_p> mat_vector;
+   interval_products_wrapper(mat_vector, M0, M1, target, force_ntl);
+   int r = M0.NumRows();
+   output.SetDims(r, r * mat_vector.size());
+
+   for (int i = 0; i < mat_vector.size(); i++)
+      for (int x = 0; x < r; x++)
+         for (int y = 0; y < r; y++)
+         {
+            output[y][x + i*r] = mat_vector[i][y][x];
+         }
+}
+
 
 
 /* ============================================================================

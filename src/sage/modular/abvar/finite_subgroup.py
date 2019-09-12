@@ -577,7 +577,7 @@ class FiniteSubgroup(Module):
             sage: J0(43).cuspidal_subgroup().gens()
             [[(0, 1/7, 0, 6/7, 0, 5/7)]]
             sage: J1(13).cuspidal_subgroup().gens()
-            [[(1/19, 0, 0, 9/19)], [(0, 1/19, 1/19, 18/19)]]
+            [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
             sage: J0(22).torsion_subgroup(6).gens()
             [[(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)], [(0, 0, 0, 1/6)]]
         """

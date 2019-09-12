@@ -110,7 +110,7 @@ cdef class ArgumentFixer:
         sage: class one:
         ....:    def __init__(self, x = 1):
         ....:       self.x = x
-        sage: af = ArgumentFixer(one.__init__.__func__, classmethod=True)
+        sage: af = ArgumentFixer(one.__init__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
 

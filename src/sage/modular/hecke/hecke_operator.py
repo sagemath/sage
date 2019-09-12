@@ -118,21 +118,21 @@ class HeckeAlgebraElement(AlgebraElement):
             Hecke operator T_2 on Modular Symbols space of dimension 15 for Gamma_1(13) of weight 2 with sign 0 and over Rational Field
             sage: t.hecke_module_morphism()
             Hecke module morphism T_2 defined by the matrix
-            [ 2  1  0  0  0  0  0  0  0  0  0  0  0  0 -1]
-            [ 0  2  0  1  0  0  0 -1  0  0  0  0  0  0  0]
-            [ 0  0  2  0  0  1 -1  1  0 -1  0  1 -1  0  0]
-            [ 0  0  0  2  1  0  1  0  0  0  1 -1  0  0  0]
-            [ 0  0  1  0  2  0  0  0  0  1 -1  0  0  0  1]
-            [ 1  0  0  0  0  2  0  0  0  0  0  0  1  0  0]
-            [ 0  0  0  0  0  0  0  1 -1  1 -1  0 -1  1  1]
-            [ 0  0  0  0  0  0  0 -1  1  1  0  0 -1  1  0]
-            [ 0  0  0  0  0  0 -1 -1  0  1 -1 -1  1  0 -1]
-            [ 0  0  0  0  0  0 -2  0  2 -2  0  2 -2  1 -1]
-            [ 0  0  0  0  0  0  0  0  2 -1  1  0  0  1 -1]
-            [ 0  0  0  0  0  0 -1  1  2 -1  1  0 -2  2  0]
-            [ 0  0  0  0  0  0  0  0  1  1  0 -1  0  0  0]
-            [ 0  0  0  0  0  0 -1  1  1  0  1  1 -1  0  0]
-            [ 0  0  0  0  0  0  2  0  0  0  2 -1  0  1 -1]
+            [ 2  0  0  0  0  0  0  1  0  0  1  0  0  0  0]
+            [ 0  2  0  1  0  1  0  0 -1  0  0  0  0  0  1]
+            [ 0  1  2  0  0  0  0  0  0  0  0 -1  1  0  0]
+            [ 1  0  0  2  0 -1  1  0  1  0 -1  1 -1  0  0]
+            [ 0  0  1  0  2  0 -1  0  0  0  0  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  0  0  0  1 -2  2 -1]
+            [ 0  0  0  0  0  2 -1  0 -1  0  0  0  0  1  0]
+            [ 0  0  0  0  1  0  0  2  0  0  0  0  0  0 -1]
+            [ 0  0  0  0  0  1  0  0 -1  0  2 -1  0  2 -1]
+            [ 0  0  0  0  0  1  1  0  0 -1  0  1 -1  2  0]
+            [ 0  0  0  0  0  2  0  0 -1 -1  1 -1  0  1  0]
+            [ 0  0  0  0  0  1  1  0  1  0  0  0 -1  1  0]
+            [ 0  0  0  0  0  1  1  0  0  1  0  0  0  0  0]
+            [ 0  0  0  0  0  1  0  0  1 -1  2  0  0  0 -1]
+            [ 0  0  0  0  0  0  0  0  0  1  0 -1  2  0 -1]
             Domain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
             Codomain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
             """
@@ -171,12 +171,12 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: t2 = M.hecke_operator(2); t3 = M.hecke_operator(3)
             sage: t2 + t3
             Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 and over Rational Field defined by:
-            [   35     0     0  -8/7  24/7 -16/7]
-            [    4    28     0  19/7 -57/7  38/7]
-            [   18     0     9 -40/7  22/7  18/7]
-            [    0    18     4 -22/7 -18/7  54/7]
-            [    0    18     4  13/7 -53/7  54/7]
-            [    0    18     4  13/7 -18/7  19/7]
+            [   35     0     0   8/5   8/5 -16/5]
+            [    4    28     0 -19/5 -19/5  38/5]
+            [   18     0     9    -6     8    -2]
+            [    0    18     4 -23/5 -13/5  46/5]
+            [    0    18     4   2/5 -38/5  46/5]
+            [    0    18     4   2/5 -13/5  21/5]
             sage: (t2 - t3).charpoly('x')
             x^6 + 36*x^5 + 104*x^4 - 3778*x^3 + 7095*x^2 - 3458*x
         """
@@ -227,12 +227,12 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: t2 = M.hecke_operator(2); t3 = M.hecke_operator(3)
             sage: t2 - t3 # indirect doctest
             Hecke operator on Modular Symbols space of dimension 6 for Gamma_1(6) of weight 4 with sign 0 and over Rational Field defined by:
-            [  -19     0     0   4/7 -12/7   8/7]
-            [    4   -26     0 -17/7  51/7 -34/7]
-            [  -18     0     7 -12/7  -6/7  18/7]
-            [    0   -18     4 -16/7  34/7 -18/7]
-            [    0   -18     4 -23/7  41/7 -18/7]
-            [    0   -18     4 -23/7  34/7 -11/7]
+            [  -19     0     0  -4/5  -4/5   8/5]
+            [    4   -26     0  17/5  17/5 -34/5]
+            [  -18     0     7 -18/5  12/5   6/5]
+            [    0   -18     4   3/5  23/5 -26/5]
+            [    0   -18     4  -2/5  28/5 -26/5]
+            [    0   -18     4  -2/5  23/5 -21/5]
         """
         return self.parent()(self.matrix() - other.matrix(), check=False)
 
@@ -549,16 +549,16 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
             sage: type(d)
             <class 'sage.modular.hecke.hecke_operator.DiamondBracketOperator'>
             sage: d.matrix()
-            [     0      1      0      0      0      0      0      0      0      0]
-            [     1      0      0      0      0      0      0      0      0      0]
-            [     0      0      0      0      0      0      0      1      0      0]
-            [     0      0  -8/17     -1  14/17  11/17      0  -8/17  14/17  11/17]
-            [     0      0      0      0      0      0      0      0      1      0]
-            [     0      0      0      0      0      0      0      0      0      1]
-            [     0      0  16/17      0 -11/17  12/17     -1  16/17 -11/17  12/17]
-            [     0      0      1      0      0      0      0      0      0      0]
-            [     0      0      0      0      1      0      0      0      0      0]
-            [     0      0      0      0      0      1      0      0      0      0]
+            [    0     1     0     0     0     0     0     0     0     0]
+            [    1     0     0     0     0     0     0     0     0     0]
+            [    0     0     0     0     0     0     1     0     0     0]
+            [    0     0     0     0     0     0     0     0     0     1]
+            [    0     0     0     0     0     0     0     1     0     0]
+            [    0     0 17/16 11/16  -3/4    -1 17/16  -3/4     0 11/16]
+            [    0     0     1     0     0     0     0     0     0     0]
+            [    0     0     0     0     1     0     0     0     0     0]
+            [    0     0  -1/2   1/2     1     0  -1/2     1    -1   1/2]
+            [    0     0     0     1     0     0     0     0     0     0]
             sage: d**4 == 1
             True
         """

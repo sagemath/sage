@@ -373,7 +373,7 @@ def test_relation_maxima(relation):
 
         sage: from sage.symbolic.relation import test_relation_maxima
         sage: k = var('k')
-        sage: pol = 1/(k-1) - 1/k -1/k/(k-1);
+        sage: pol = 1/(k-1) - 1/k -1/k/(k-1)
         sage: test_relation_maxima(pol == 0)
         True
         sage: f = sin(x)^2 + cos(x)^2 - 1
@@ -479,17 +479,15 @@ def test_relation_maxima(relation):
         True
         sage: forget()
         
-    In case one of the solutions while solving an equation is a real number::
-        
-        sage: var('K, d, R')
-        (K, d, R)
-        sage: assume(K>0)
-        sage: assume(K, 'noninteger')
-        sage: assume(R>0)
-        sage: assume(R<1)
-        sage: assume(d<R)
+    In case an equation is to be solved for non-integers, ''assume()''
+    is used::
+    
+        sage: k = var('k')
+        sage: assume(k,'noninteger')
+        sage: solve([k^3==1],k)
+        [k == 1/2*I*sqrt(3) - 1/2, k == -1/2*I*sqrt(3) - 1/2]
         sage: assumptions()
-        [K > 0, K is noninteger, R > 0, R < 1, d < R]
+        [k is noninteger]
     """
     m = relation._maxima_()
 
@@ -624,12 +622,12 @@ def solve(f, *args, **kwds):
        some solutions of trigonometric equations are lost).
 
     - ``algorithm`` - string (default: 'maxima'); to use SymPy's
-       solvers set this to 'sympy'. Note that SymPy is always used
-       for diophantine equations.
+      solvers set this to 'sympy'. Note that SymPy is always used
+      for diophantine equations.
 
     - ``domain`` - string (default: 'complex'); setting this to 'real'
-       changes the way SymPy solves single equations; inequalities
-       are always solvedin the real domain.
+      changes the way SymPy solves single equations; inequalities
+      are always solved in the real domain.
 
     EXAMPLES::
 
@@ -714,8 +712,8 @@ def solve(f, *args, **kwds):
         x: -2, y: 4
 
     If there is a parameter in the answer, that will show up as
-    a new variable.  In the following example, ``r1`` is a real free
-    variable (because of the ``r``)::
+    a new variable.  In the following example, ``r1`` is an arbitrary
+    constant (because of the ``r``)::
 
         sage: forget()
         sage: x, y = var('x,y')
@@ -764,7 +762,7 @@ def solve(f, *args, **kwds):
 
         sage: var('s,j,b,m,g')
         (s, j, b, m, g)
-        sage: sys = [ m*(1-s) - b*s*j, b*s*j-g*j ];
+        sage: sys = [ m*(1-s) - b*s*j, b*s*j-g*j ]
         sage: solve(sys,s,j)
         [[s == 1, j == 0], [s == g/b, j == (b - g)*m/(b*g)]]
         sage: solve(sys,(s,j))
@@ -827,7 +825,7 @@ def solve(f, *args, **kwds):
     https://sourceforge.net/p/maxima/bugs/3276/::
 
         sage: solve(Q*sqrt(Q^2 + 2) - 1, Q, to_poly_solve=True)
-        [Q == -sqrt(-sqrt(2) - 1)]
+        [Q == -sqrt(-sqrt(2) - 1), Q == sqrt(sqrt(2) + 1)*(sqrt(2) - 1)]
 
     An effort is made to only return solutions that satisfy
     the current assumptions::
@@ -916,13 +914,12 @@ def solve(f, *args, **kwds):
     print them::
 
         sage: solve(sinh(x) - 2*cosh(x),x,algorithm='sympy')
-        ConditionSet(x, Eq((-exp(2*x) - 3)*exp(-x)/2, 0), S.Reals)
+        ConditionSet(x, Eq((-exp(2*x) - 3)*exp(-x)/2, 0), Reals)
         sage: solve(2*sin(x) - 2*sin(2*x), x,algorithm='sympy')
-        ...
-        [ImageSet(Lambda(_n, 2*_n*pi), S.Integers),
-         ImageSet(Lambda(_n, 2*_n*pi + pi), S.Integers),
-         ImageSet(Lambda(_n, 2*_n*pi + 5*pi/3), S.Integers),
-         ImageSet(Lambda(_n, 2*_n*pi + pi/3), S.Integers)]
+        [ImageSet(Lambda(_n, 2*_n*pi), Integers),
+         ImageSet(Lambda(_n, 2*_n*pi + pi), Integers),
+         ImageSet(Lambda(_n, 2*_n*pi + 5*pi/3), Integers),
+         ImageSet(Lambda(_n, 2*_n*pi + pi/3), Integers)]
 
         sage: solve(x^5 + 3*x^3 + 7, x, algorithm='sympy')[0] # known bug
         complex_root_of(x^5 + 3*x^3 + 7, 0)
@@ -1088,7 +1085,7 @@ def solve(f, *args, **kwds):
                     l = []
                     for d in ret:
                         r = {}
-                        for (v,ex) in d.iteritems():
+                        for (v, ex) in d.items():
                             r[v._sage_()] = ex._sage_()
                         l.append(r)
                     return l
@@ -1099,7 +1096,7 @@ def solve(f, *args, **kwds):
                 l = []
                 for sol in ret:
                     r = {}
-                    for (v,ex) in sol.iteritems():
+                    for (v, ex) in sol.items():
                         r[v._sage_()] = ex._sage_()
                     l.append(r)
                 return l
@@ -1116,7 +1113,7 @@ def solve(f, *args, **kwds):
             s = m.to_poly_solve(variables)
         except TypeError as mess: # if that gives an error, raise an error.
             if "Error executing code in Maxima" in str(mess):
-                raise ValueError("Sage is unable to determine whether the system %s can be solved for %s"%(f,args))
+                raise ValueError("Sage is unable to determine whether the system %s can be solved for %s" % (f, args))
             else:
                 raise
 
@@ -1148,6 +1145,7 @@ def solve(f, *args, **kwds):
     else:
         return sol_list
 
+
 def _solve_expression(f, x, explicit_solutions, multiplicities,
                      to_poly_solve, solution_dict, algorithm, domain):
     """
@@ -1155,7 +1153,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     .. NOTE::
 
-        This is an auxillery function only meant to be called
+        This is an auxiliary function only meant to be called
         from :func:`solve`.
 
     TESTS:
@@ -1360,7 +1358,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     if to_check:
         for ix, soln in reversed(list(enumerate(X))):
             if soln.lhs().is_symbol():
-                if any([a.contradicts(soln) for a in to_check]):
+                if any(a.contradicts(soln) for a in to_check):
                     del X[ix]
                     if multiplicities:
                         del ret_multiplicities[ix]
@@ -1750,7 +1748,7 @@ def solve_ineq(ineq, vars=None):
     - ``ineq`` - one inequality or a list of inequalities
 
       Case1: If ``ineq`` is one equality, then it should be rational
-      expression in one varible. This input is passed to
+      expression in one variable. This input is passed to
       sage.symbolic.relation.solve_ineq_univar function.
 
       Case2: If ``ineq`` is a list involving one or more

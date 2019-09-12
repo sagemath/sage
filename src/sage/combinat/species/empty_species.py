@@ -129,7 +129,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _structures(self, structure_class, labels):
         """
-        Thanks to the couting optimisation, this is never called... Otherwise
+        Thanks to the counting optimisation, this is never called... Otherwise
         this should return an empty iterator.
 
         EXAMPLES::

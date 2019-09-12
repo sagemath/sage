@@ -3,7 +3,7 @@ sage -c "import sage.libs.meataxe" || sdh_die "sage.libs.meataxe cannot be impor
 
 cd src
 
-# building modular_resolution-1.0
+# building modular_resolution-1.1
 cd csources
 sdh_configure
 sdh_make

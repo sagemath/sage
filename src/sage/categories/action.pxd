@@ -9,7 +9,9 @@ cdef class Action(Functor):
     cdef readonly bint _is_left
     cdef US
     cdef underlying_set(self)
-    cpdef _call_(self, a, b)
+
+    cdef _act_convert(self, g, x)
+    cpdef _act_(self, g, x)
 
 
 cdef class InverseAction(Action):
@@ -18,8 +20,8 @@ cdef class InverseAction(Action):
 
 cdef class PrecomposedAction(Action):
     cdef Action _action
-    cdef Map left_precomposition
-    cdef Map right_precomposition
+    cdef Map G_precomposition
+    cdef Map S_precomposition
 
 cdef class ActionEndomorphism(Morphism):
     cdef Action _action

@@ -1,7 +1,7 @@
 r"""
-Educational Versions of Groebner Basis Algorithms: Triangular Factorization.
+Educational versions of Groebner basis algorithms: triangular factorization
 
-In this file is the implementation of two algorithms in [Laz92]_.
+In this file is the implementation of two algorithms in [Laz1992]_.
 
 The main algorithm is ``Triangular``; a secondary algorithm, necessary for the
 first, is ``ElimPolMin``. As per Lazard's formulation, the implementation works
@@ -27,12 +27,6 @@ AUTHORS:
 - John Perry (2009-02-24): initial version, but some words of
   documentation were stolen shamelessly from Martin Albrecht's
   ``toy_buchberger.py``.
-
-REFERENCES:
-
-.. [Laz92] Daniel Lazard, *Solving Zero-dimensional Algebraic Systems*,
-  in Journal of Symbolic Computation (1992) vol\. 13, pp\. 117-131
-
 """
 from six.moves import range
 
@@ -43,7 +37,7 @@ def is_triangular(B):
   ordering of the base ring ``R`` is ``R.gens()[i]``.
 
   The algorithm is based on the definition of a triangular basis,
-  given by Lazard in 1992 in [Laz92]_.
+  given by Lazard in 1992 in [Laz1992]_.
 
   INPUT:
 
@@ -173,7 +167,6 @@ def is_linearly_dependent(polys):
   """
   if len(polys) == 0:
     return False
-  R = polys[0].base_ring()
   M = coefficient_matrix(polys).echelon_form()
   return any(M.row(each).is_zero() for each in range(M.nrows()))
 
@@ -229,7 +222,7 @@ def triangular_factorization(B, n=-1):
 
   This will not work properly if ``B`` is not a Groebner basis!
 
-  The algorithm used is that described in a 1992 paper by Daniel Lazard [Laz92]_.
+  The algorithm used is that described in a 1992 paper by Daniel Lazard [Laz1992]_.
   It is not necessary for the term ordering to be lexicographic.
 
   INPUT:
@@ -256,8 +249,6 @@ def triangular_factorization(B, n=-1):
        [x^2 - 4*x + 4, y, z - 1],
        [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z - 1]]
   """
-  import sage.rings.polynomial.polynomial_ring_constructor as prc
-  import copy
   # type checking in a probably vain attempt to avoid stupid errors
   if isinstance(B, (tuple,list)):
     G = B
@@ -308,7 +299,7 @@ def elim_pol(B, n=-1):
   ``B`` should describe the Groebner basis of a zero-dimensional ideal.
   However, it is not necessary for the Groebner basis to be lexicographic.
 
-  The algorithm is taken from a 1993 paper by Lazard [Laz92]_.
+  The algorithm is taken from a 1993 paper by Lazard [Laz1992]_.
 
   INPUT:
 

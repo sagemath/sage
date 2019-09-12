@@ -464,10 +464,10 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         """
         from sage.misc.latex import latex
-        from sage.tensor.modules.format_utilities import is_atomic, \
-                                                         FormattedExpansion
-        if basis is None:
-            basis = self._fmodule._def_basis
+        from sage.tensor.modules.format_utilities import (is_atomic,
+                                                          FormattedExpansion)
+        basis, format_spec = self._preparse_display(basis=basis,
+                                                    format_spec=format_spec)
         cobasis = basis.dual_basis()
         comp = self.comp(basis)
         terms_txt = []

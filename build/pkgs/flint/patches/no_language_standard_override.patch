@@ -1,0 +1,13 @@
+diff --git a/configure b/configure
+index 424ab0a..64d39ba 100755
+--- a/configure
++++ b/configure
+@@ -552,7 +552,7 @@ if [ -z "$CFLAGS" ]; then
+    elif [ "$MACHINE" = "mips64" ]; then
+       CFLAGS="-O2 -funroll-loops -g $POPCNT_FLAG $ABI_FLAG"
+    else
+-      CFLAGS="-ansi -pedantic -Wall -O2 -funroll-loops -g $POPCNT_FLAG $ABI_FLAG"
++      CFLAGS="-pedantic -Wall -O2 -funroll-loops -g $POPCNT_FLAG $ABI_FLAG"
+    fi
+ fi
+ 

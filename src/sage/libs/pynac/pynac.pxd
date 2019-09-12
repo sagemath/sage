@@ -28,7 +28,7 @@ Check that we can externally cimport this (:trac:`18825`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython cimport PyObject
+from cpython.object cimport PyObject
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 from libcpp.string cimport string as stdstring

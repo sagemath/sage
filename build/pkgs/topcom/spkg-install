@@ -8,7 +8,7 @@ cd src
 ./configure \
     --prefix="$SAGE_LOCAL" \
     --libdir="$SAGE_LOCAL/lib" \
-    --with-gmp="$SAGE_LOCAL" \
+    $SAGE_CONFIGURE_GMP \
     --with-cdd="$SAGE_LOCAL"
 if [ $? -ne 0 ]; then
    echo "Error configuring TOPCOM."

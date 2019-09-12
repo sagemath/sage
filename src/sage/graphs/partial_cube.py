@@ -4,17 +4,9 @@ Partial cubes
 The code in this module that recognizes partial cubes is originally
 from the PADS library by David Eppstein, which is available at
 http://www.ics.uci.edu/~eppstein/PADS/ under the MIT license. It has a
-quadratic runtime and has been described in [Eppstein2008]_.
+quadratic runtime and has been described in [Epp2008]_.
 
-For more information on partial cubes, see the
-:wikipedia:`Partial cube`.
-
-REFERENCE:
-
-.. [Eppstein2008] David Eppstein,
-  "Recognizing partial cubes in quadratic time",
-  J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
-  :arxiv:`0705.1025`
+For more information on partial cubes, see the :wikipedia:`Partial cube`.
 
 Recognition algorithm
 ---------------------
@@ -29,7 +21,7 @@ labelled with binary sequences in such a way that the distance between
 two vertices `u,v\in G` is the Hamming distance between their labels.
 
 **Tokens** and their **action**: in the terminology of
-[Eppstein2008]_, a token represents a transition of the form:
+[Epp2008]_, a token represents a transition of the form:
 
     *switch the k-th bit of the binary string from 0 to 1*
 
@@ -174,8 +166,8 @@ def depth_first_traversal(G, start):
         16
 
     """
-    neighbors=G.neighbor_out_iterator
-    seen=set([])
+    neighbors = G.neighbor_out_iterator
+    seen = set()
     if not isinstance(start, list):
         start = [start]
 
@@ -208,19 +200,19 @@ def is_partial_cube(G, certificate=False):
 
     Originally written by D. Eppstein for the PADS library
     (http://www.ics.uci.edu/~eppstein/PADS/), see also
-    [Eppstein2008]_.  The algorithm runs in `O(n^2)` time, where `n`
+    [Epp2008]_.  The algorithm runs in `O(n^2)` time, where `n`
     is the number of vertices. See the documentation of
     :mod:`~sage.graphs.partial_cube` for an overview of the algorithm.
 
     INPUT:
 
-    - ``certificate`` (boolean; ``False``) -- The function returns ``True``
-      or ``False`` according to the graph, when ``certificate = False``. When
-      ``certificate = True`` and the graph is a partial cube, the function
-      returns ``(True, mapping)``, where ``mapping`` is an isometric mapping of
-      the vertices of the graph to the vertices of a hypercube ((0, 1)-strings
-      of a fixed length). When ``certificate = True`` and the graph is not a
-      partial cube, ``(False, None)`` is returned.
+    - ``certificate`` -- boolean (default: ``False``); this function returns
+      ``True`` or ``False`` according to the graph, when ``certificate =
+      False``. When ``certificate = True`` and the graph is a partial cube, the
+      function returns ``(True, mapping)``, where ``mapping`` is an isometric
+      mapping of the vertices of the graph to the vertices of a hypercube
+      ((0, 1)-strings of a fixed length). When ``certificate = True`` and the
+      graph is not a partial cube, ``(False, None)`` is returned.
 
     EXAMPLES:
 
@@ -241,7 +233,7 @@ def is_partial_cube(G, certificate=False):
     The returned mapping is an isometric embedding into a hypercube::
 
         sage: g = graphs.DesarguesGraph()
-        sage: _, m = g.is_partial_cube(certificate = True)
+        sage: _, m = g.is_partial_cube(certificate=True)
         sage: m # random
         {0: '00000',
          1: '00001',
@@ -268,13 +260,13 @@ def is_partial_cube(G, certificate=False):
 
     A graph without vertices is trivially a partial cube::
 
-        sage: Graph().is_partial_cube(certificate = True)
+        sage: Graph().is_partial_cube(certificate=True)
         (True, {})
 
     """
     G._scream_if_not_simple()
 
-    if G.order() == 0:
+    if not G.order():
         if certificate:
             return (True, {})
         else:
@@ -308,19 +300,19 @@ def is_partial_cube(G, certificate=False):
     from sage.graphs.graph import Graph
     from sage.sets.disjoint_set import DisjointSet
     contracted = DiGraph({v: {w: (v, w) for w in G[v]} for v in G})
-    unionfind = DisjointSet(contracted.edges(labels = False))
-    available = n-1
+    unionfind = DisjointSet(contracted.edges(labels=False))
+    available = n - 1
 
     # Main contraction loop in place of the original algorithm's recursion
     while contracted.order() > 1:
         # Find max degree vertex in contracted, and update label limit
-        deg, root = max((contracted.out_degree(v), v) for v in contracted)
+        deg, root = max([(contracted.out_degree(v), v) for v in contracted], key=lambda x: x[0])
         if deg > available:
             return fail
         available -= deg
 
         # Set up bitvectors on vertices
-        bitvec = {v:0 for v in contracted}
+        bitvec = {v: 0 for v in contracted}
         neighbors = {}
         for i, neighbor in enumerate(contracted[root]):
             bitvec[neighbor] = 1 << i
@@ -334,9 +326,9 @@ def is_partial_cube(G, certificate=False):
 
         # Make graph of labeled edges and union them together
         labeled = Graph([contracted.vertices(), []])
-        for v, w in contracted.edge_iterator(labels = False):
+        for v, w in contracted.edge_iterator(labels=False):
             diff = bitvec[v]^bitvec[w]
-            if not diff or bitvec[w] &~ bitvec[v] == 0:
+            if not diff or not bitvec[w] &~ bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail

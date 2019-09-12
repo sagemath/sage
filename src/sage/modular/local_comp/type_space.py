@@ -412,19 +412,23 @@ class TypeSpace(SageObject):
 
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: T = example_type_space(2)
-            sage: T._rho_s([1,1,0,1])
-            [ 0  0  0 -1]
-            [ 0  0 -1  0]
-            [ 0  1 -2  1]
+            sage: TT = T._rho_s([1,1,0,1]); TT
+            [ 0  0  1  0]
             [ 1  0 -1  1]
-            sage: T._rho_s([0,-1,1,0])
-            [ 0  1 -2  1]
-            [ 0  0 -1  0]
-            [ 0 -1  0  0]
-            [ 1 -2  1  0]
+            [ 0  0 -2  1]
+            [ 0 -1 -2  1]
+            sage: TT**5 == 1
+            True
+            sage: TS = T._rho_s([0,-1,1,0]); TS
+            [ 0  0  1  0]
+            [ 0  0  1 -1]
+            [ 1  0  0  0]
+            [ 1 -1  0  0]
+            sage: TS**2 == 1
+            True
             sage: example_type_space(3)._rho_s([1,1,0,1])
-            [ 0  1]
             [-1 -1]
+            [ 1  0]
         """
         if self.conductor() % 2 == 1:
             return self._rho_ramified(g)
@@ -442,12 +446,12 @@ class TypeSpace(SageObject):
 
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: T = example_type_space(2)
-            sage: T._second_gen_unramified()
-            [ 0  1 -2  1]
-            [ 0  0 -1  0]
-            [ 0 -1  0  0]
-            [ 1 -2  1  0]
-            sage: T._second_gen_unramified()**4 == 1
+            sage: TS = T._second_gen_unramified(); TS
+            [ 0  0  1  0]
+            [ 0  0  1 -1]
+            [ 1  0  0  0]
+            [ 1 -1  0  0]
+            sage: TS**2 == 1
             True
         """
         f = self.prime() ** self.u()
@@ -476,10 +480,10 @@ class TypeSpace(SageObject):
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: T = example_type_space(2)
             sage: T._rho_unramified([2,1,1,1])
-            [-1  1 -1  1]
-            [ 0  0  0  1]
+            [-1  0  0 -1]
+            [ 0 -1  1  0]
             [ 1 -1  0  1]
-            [ 1 -2  1  0]
+            [ 2 -1  1  1]
             sage: T._rho_unramified([1,-2,1,-1]) == T._rho_unramified([2,1,1,1]) * T._rho_unramified([0,-1,1,0])
             True
         """
@@ -513,8 +517,8 @@ class TypeSpace(SageObject):
              sage: from sage.modular.local_comp.type_space import example_type_space
              sage: T = example_type_space(3)
              sage: T._rho_ramified([1,0,3,1])
+             [ 0  1]
              [-1 -1]
-             [ 1  0]
              sage: T._rho_ramified([1,3,0,1]) == 1
              True
          """
@@ -565,10 +569,10 @@ class TypeSpace(SageObject):
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: example_type_space(2)._intertwining_basis(2)
             [
-            [ 1 -2  1  0]
             [ 1 -1  0  1]
-            [ 1  0 -1  1]
-            [ 0  1 -2  1]
+            [ 0  0  1 -1]
+            [ 0  1  1 -1]
+            [-1  1  2 -2]
             ]
             sage: example_type_space(3)._intertwining_basis(2)
             [
@@ -607,10 +611,10 @@ class TypeSpace(SageObject):
 
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: example_type_space(2).rho([2,0,0,1]) # indirect doctest
-            [ 1 -2  1  0]
-            [ 1 -1  0  1]
-            [ 1  0 -1  1]
-            [ 0  1 -2  1]
+            [-1  1  0 -1]
+            [ 0  0 -1  1]
+            [ 0 -1 -1  1]
+            [ 1 -1 -2  2]
         """
         f = self.prime() ** self.u()
         if len(Zmod(f).unit_gens()) != 1:
@@ -633,10 +637,10 @@ class TypeSpace(SageObject):
             sage: from sage.modular.local_comp.type_space import example_type_space
             sage: T = example_type_space(2)
             sage: m = T.rho([2,0,0,1]); m
-            [ 1 -2  1  0]
-            [ 1 -1  0  1]
-            [ 1  0 -1  1]
-            [ 0  1 -2  1]
+            [-1  1  0 -1]
+            [ 0  0 -1  1]
+            [ 0 -1 -1  1]
+            [ 1 -1 -2  2]
             sage: v = T.eigensymbol_subspace().basis()[0]
             sage: m * v == v
             True
@@ -690,7 +694,7 @@ class TypeSpace(SageObject):
         # funny business
 
         if (self.conductor() % 2 == 0):
-            if all([x.valuation(p) > 0 for x in g]):
+            if all(x.valuation(p) > 0 for x in g):
                 eps = self.form().character()(crt(1, p, f, self.tame_level()))
                 return ~eps * self.rho([x // p for x in g])
             else:

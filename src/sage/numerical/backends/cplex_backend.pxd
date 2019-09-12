@@ -141,10 +141,10 @@ cdef extern from "cplex.h":
      # get the value of some variables in the solution of a LP
      int CPXgetx(c_cpxlp * env, c_cpxlp * lp, double * x, int begin, int end)
 
-     # Create a CPLEX enviromnment
+     # Create a CPLEX environment
      c_cpxlp * CPXopenCPLEX (int *status_p)
 
-     # Close a CPLEX enviromnment
+     # Close a CPLEX environment
      int CPXcloseCPLEX (c_cpxlp ** env)
 
      # Free the problem's ressources

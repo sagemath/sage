@@ -346,7 +346,7 @@ def modular_decomposition(graph):
         sage: test_modular_decomposition(modular_decomposition(g), g)
         True
 
-    Graph from wikipedia link :wikipedia:`Modular_decomposition`::
+    Graph from the :wikipedia:`Modular_decomposition`::
 
         sage: d2 = {1:[2,3,4], 2:[1,4,5,6,7], 3:[1,4,5,6,7], 4:[1,2,3,5,6,7], \
                     5:[2,3,4,6,7], 6:[2,3,4,5,8,9,10,11], \

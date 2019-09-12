@@ -6,15 +6,9 @@ SRC=`pwd`/src
 cd "$SRC"
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
+    # This used to disable omalloc but that is not really supported
+    # by upstream
     SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --enable-debug --disable-optimizationflags"
-
-    # --disable-omalloc is broken: linking fails because of missing flags
-    #SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --disable-omalloc"
-
-    # Replace omalloc by xalloc in places unaffected by --disable-omalloc
-    # See xalloc/README, altough here we just replace the folder for simplicity
-    rm -rf "$SRC/omalloc"
-    mv "$SRC/xalloc" "$SRC/omalloc"
 
     CFLAGS="$CFLAGS -O0 -g"
     CXXFLAGS="$CXXFLAGS -O0 -g"
@@ -83,9 +77,9 @@ config()
     #    may be ignored.
     sdh_configure --exec-prefix="$SAGE_LOCAL" \
                   --bindir="$SAGE_LOCAL/bin" \
-                  --with-gmp="$SAGE_LOCAL" \
-                  --with-ntl="$SAGE_LOCAL" \
-                  --with-flint="$SAGE_LOCAL" \
+                  $SAGE_CONFIGURE_GMP \
+                  $SAGE_CONFIGURE_NTL \
+                  $SAGE_CONFIGURE_FLINT \
                   --enable-gfanlib \
                   --enable-Singular \
                   --enable-factory \

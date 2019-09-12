@@ -50,7 +50,7 @@ TESTS::
      ((2, 0, 1, 1, 0, 0, 0), (0, 1, 1, 0, 0, 0, 0))]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011, 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -62,8 +62,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from six.moves import range
 import itertools
@@ -73,15 +73,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.arith.all import binomial
+from sage.features import FeatureNotPresentError
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp_not_equal, richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.modules.free_module import FreeModule
 
 from sage.combinat.root_system.cartan_type import CartanType
 
@@ -329,8 +328,7 @@ class KleberTreeNode(Element):
             return Integer(1)
 
         mult = Integer(1)
-        I = self.parent()._classical_ct.index_set()
-        for a,m in self.up_root:
+        for a, m in self.up_root:
             p = self.weight[a]
             for r,s in self.parent().B:
                 if r == a and s > self.depth:
@@ -343,7 +341,7 @@ class KleberTreeNode(Element):
             root_diff = cur.up_root - prev_up_root
             for a,m in root_diff:
                 p = cur.weight[a]
-                for r,s in self.parent().B:
+                for r, s in self.parent().B:
                     if r == a and s > cur.depth:
                         p -= s - cur.depth
                 mult *= binomial(m + p, m)
@@ -362,9 +360,11 @@ class KleberTreeNode(Element):
             sage: R = RS.root_lattice()
             sage: KT = KleberTree(['A', 2, 1], [[1,1]])
             sage: n = KT(WS.sum_of_terms([(1,5), (2,2)]), R.zero())
-            sage: hash(n)
-            -603608031356818252 # 64-bit
-            -1956156236         # 32-bit
+            sage: n2 = KT(WS.sum_of_terms([(2,2), (1,5)]), R.zero())
+            sage: hash(n) == hash(n2)
+            True
+            sage: hash(n) == hash(R.zero())
+            False
         """
         return hash(self.depth) ^ hash(self.weight)
 
@@ -462,9 +462,9 @@ class KleberTreeNode(Element):
             ret_str = repr(self.multiplicity()) + ret_str
         for pair in self.weight:
             if pair[1] > 1:
-                ret_str += repr(pair[1]) + "\omega_{" + repr(pair[0]) + "}+"
+                ret_str += repr(pair[1]) + r"\omega_{" + repr(pair[0]) + "}+"
             elif pair[1] == 1:
-                ret_str += "\omega_{" + repr(pair[0]) + "}+"
+                ret_str += r"\omega_{" + repr(pair[0]) + "}+"
 
         if ret_str[-1] == '{':
             ret_str += "0}"
@@ -835,7 +835,7 @@ class KleberTree(UniqueRepresentation, Parent):
         try:
             poly = Polyhedron(ieqs=ieqs, backend='normaliz')
             self._has_normaliz = True
-        except ImportError:
+        except FeatureNotPresentError:
             poly = Polyhedron(ieqs=ieqs)
             self._has_normaliz = False
 
@@ -878,7 +878,6 @@ class KleberTree(UniqueRepresentation, Parent):
         I = self._classical_ct.index_set()
         wt = node.weight.to_vector()
         cols = self._CM.columns()
-        F = FreeModule(ZZ, self._classical_ct.rank())
 
         L = [range(val + 1) for val in node.up_root.to_vector()]
 
@@ -886,7 +885,8 @@ class KleberTree(UniqueRepresentation, Parent):
         next(it)  # First element is the zero element
         for root in it:
             # Convert the list to the weight lattice
-            converted_root = sum(cols[i] * c for i,c in enumerate(root) if c != 0)
+            converted_root = sum(cols[i] * c for i, c in enumerate(root)
+                                 if c != 0)
 
             if all(wt[i] >= val for i,val in enumerate(converted_root)):
                 wd = {I[i]: wt[i] - val for i,val in enumerate(converted_root)}
@@ -929,7 +929,7 @@ class KleberTree(UniqueRepresentation, Parent):
         """
         cur = []
         next = [self.root]
-        while len(next) > 0:
+        while next:
             cur = next
             next = []
             for node in cur:
@@ -1065,8 +1065,9 @@ class KleberTree(UniqueRepresentation, Parent):
 
     Element = KleberTreeNode
 
+
 class VirtualKleberTree(KleberTree):
-    """
+    r"""
     A virtual Kleber tree.
 
     We can use a modified version of the Kleber algorithm called the virtual

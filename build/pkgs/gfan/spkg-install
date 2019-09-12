@@ -1,11 +1,4 @@
-if [[ -z "$SAGE_LOCAL" ]]; then
-    echo >&2 "Error: SAGE_LOCAL undefined - exiting..."
-    echo >&2 "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
-# C++11 workaround https://trac.sagemath.org/ticket/20926
-CXXFLAGS="$CXXFLAGS -std=c++11 -DNOCDDPREFIX"
+CXXFLAGS="$CXXFLAGS -DNOCDDPREFIX"
 
 export CC CXX CFLAGS CXXFLAGS LDFLAGS
 
@@ -13,32 +6,13 @@ cd src
 
 echo "Now building gfan..."
 # We don't use the makefile to install gfan so we don't need to set PREFIX
-$MAKE CPPFLAGS="-I$SAGE_LOCAL/include"
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error building gfan."
-    exit 1
-fi
+sdh_make CPPFLAGS="-I$SAGE_LOCAL/include"
 
-if [[ ! -f gfan ]]; then
-    echo >&2 "Error: Build completed normally but gfan executable not found."
-    exit 1
-fi
+[ -f gfan ] || \
+    sdh_die "Error: Build completed normally but gfan executable not found."
 
-echo "Removing old version of gfan (if any)..."
-rm -f "$SAGE_LOCAL"/bin/gfan*
+sdh_install gfan "$SAGE_LOCAL/bin"
 
-
-cp -pf gfan "$SAGE_LOCAL/bin/"
-if [[ $? -ne 0 ]]; then
-    echo >&2 "Error copying gfan executable."
-    exit 1
-fi
-
-cd "$SAGE_LOCAL/bin/"
+cd "${SAGE_DESTDIR_LOCAL}/bin"
 echo "Now running gfan to install links in '$SAGE_LOCAL/bin/'..."
-./gfan installlinks
-# XXX How about [just] checking $? here?
-if [[ ! -f "$SAGE_LOCAL/bin/gfan_buchberger" ]]; then
-    echo >&2 "Error: gfan links not created correctly."
-    exit 1
-fi
+./gfan installlinks || sdh_die "gfan links not created correctly"

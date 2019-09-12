@@ -9,6 +9,9 @@ Bibliography
    Iwahori vectors and the Bruhat order*. :arxiv:`1002.2996`,
    :arxiv:`1002.2996`.
 
+.. [BumpSchilling2017] \D. Bump and A. Schilling, *Crystal bases:
+   representations and combinatorics*, World Scientific, 2017.
+
 .. [Carrell1994] \J. B. Carrell. The Bruhat graph of a Coxeter group, a
    conjecture of Deodhar, and rational smoothness of Schubert varieties. In
    *Algebraic Groups and Their Generalizations: Classical Methods*,
@@ -64,6 +67,11 @@ Bibliography
    Chevalley group over a finite field. *J. Fac. Sci. Univ. Tokyo
    Sect. I*, 10:215--236, 1964.
 
+.. [JayneMisra2014] \R. Jayne and K. Misra,
+   On multiplicities of maximal weights of
+   `\widehat{sl}(n)`-modules. Algebr. Represent. Theory 17 (2014), no. 4,
+   1303–1321. :arxiv:`1309.4969`.
+
 .. [Jimbo1986] \M. A. Jimbo. `q`-analogue of `U(\mathfrak{gl}(N+1))`,
    Hecke algebra, and the Yang-Baxter equation.
    *Lett. Math. Phys*, 11(3):247--252, 1986.
@@ -75,8 +83,12 @@ Bibliography
 .. [Joseph1995] \A. Joseph. *Quantum Groups and Their Primitive Ideals*.
    Springer-Verlag, 1995.
 
-.. [Kac] Victor G. Kac. *Infinite Dimensional Lie algebras*
+.. [Kac] Victor G. Kac. *Infinite Dimensional Lie algebras*,
    Cambridge University Press, third edition, 1994.
+
+.. [KacPeterson] Kac and Peterson. *Infinite-dimensional Lie algebras,
+   theta functions and modular forms*. Adv. in Math. 53 (1984),
+   no. 2, 125-264.
 
 .. [KKMMNN1992] S-J. Kang, M. Kashiwara, K. C. Misra, T. Miwa,
    T. Nakashima, A. Nakayashiki.
@@ -98,9 +110,17 @@ Bibliography
    graphs for representations of the `q`-analogue of classical Lie
    algebras. *Journal Algebra*, 165(2):295--345, 1994.
 
+.. [KMPS] Kass, Moody, Patera and Slansky, *Affine Lie algebras,
+   weight multiplicities, and branching rules*. Vols. 1, 2. University
+   of California Press, Berkeley, CA, 1990.
+
 .. [KimShin2010] \J.-A. Kim and D.-U. Shin. Generalized Young walls and
    crystal bases for quantum affine algebra of type `A`. *Proc. Amer.
    Math. Soc.*, 138(11):3877--3889, 2010.
+
+.. [KimLeeOh2017] Jang Soo Kim, Kyu-Hwan Lee and Se-Jin Oh,
+   Weight multiplicities and Young tableaux through affine crystals.
+   :arxiv:`1703.10321` (2017).
 
 .. [King1975] \R. C. King. Branching rules for classical Lie groups
    using tensor and spinor methods. *Journal of Physics A*,
@@ -123,6 +143,9 @@ Bibliography
 
 .. [L1995] \P. Littelmann. *Paths and root operators in representation theory*.
    Ann. of Math. (2) 142 (1995), no. 3, 499-525.
+
+.. [Macdonald2003] \I. Macdonald.
+   *Affine Hecke algebras and orthogonal polynomials*, Cambridge, 2003.
 
 .. [McKayPatera1981] \W. G. McKay and J. Patera. *Tables of Dimensions,
    Indices and Branching Rules for Representations of Simple Lie
@@ -149,7 +172,7 @@ Bibliography
 
 .. [SchillingTingley2011] \A. Schilling, P. Tingley.
    *Demazure crystals, Kirillov-Reshetikhin crystals, and the energy function*.
-   preprint :arXiv:`1104.2359`
+   preprint :arxiv:`1104.2359`
 
 .. [Stanley1999] \R. P. Stanley. *Enumerative Combinatorics, Volume
    2*. Cambridge University Press, 1999.

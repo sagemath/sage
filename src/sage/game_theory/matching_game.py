@@ -97,9 +97,9 @@ class MatchingGame(SageObject):
         sage: m
         A matching game with 4 suitors and 4 reviewers
         sage: m.suitors()
-        ('K', 'J', 'M', 'L')
+        ('J', 'K', 'L', 'M')
         sage: m.reviewers()
-        ('A', 'C', 'B', 'D')
+        ('A', 'B', 'C', 'D')
 
     A matching `M` is any bijection between `S` and `R`. If `s \in S` and
     `r \in R` are matched by `M` we denote:
@@ -180,9 +180,9 @@ class MatchingGame(SageObject):
         sage: g.add_reviewer()
         sage: g.add_suitor()
         sage: g.reviewers()
-        ('Rosaline', 'Juliet', -3)
+        (-3, 'Juliet', 'Rosaline')
         sage: g.suitors()
-        ('Mercutio', 'Romeo', 3)
+        (3, 'Mercutio', 'Romeo')
 
     Note that when adding a reviewer or a suitor all preferences are wiped::
 
@@ -200,15 +200,15 @@ class MatchingGame(SageObject):
         ValueError: suitor preferences are not complete
 
     Here we update the preferences so that the new reviewers and suitors
-    don't affect things too much (they prefer each other and are the least
+    do not affect things too much (they prefer each other and are the least
     preferred of the others)::
 
-        sage: g.suitors()[0].pref = suitrs['Mercutio'] + (-3,)
-        sage: g.suitors()[1].pref = suitrs['Romeo'] + (-3,)
-        sage: g.suitors()[2].pref = (-3, 'Juliet', 'Rosaline')
-        sage: g.reviewers()[0].pref = revwrs['Rosaline'] + (3,)
+        sage: g.suitors()[1].pref = suitrs['Mercutio'] + (-3,)
+        sage: g.suitors()[2].pref = suitrs['Romeo'] + (-3,)
+        sage: g.suitors()[0].pref = (-3, 'Juliet', 'Rosaline')
+        sage: g.reviewers()[2].pref = revwrs['Rosaline'] + (3,)
         sage: g.reviewers()[1].pref = revwrs['Juliet'] + (3,)
-        sage: g.reviewers()[2].pref = (3, 'Romeo', 'Mercutio')
+        sage: g.reviewers()[0].pref = (3, 'Romeo', 'Mercutio')
 
     Now the game can be solved::
 
@@ -269,10 +269,10 @@ class MatchingGame(SageObject):
         ....:                 'C': ('K', 'M', 'L', 'J'),
         ....:                 'D': ('M', 'K', 'J', 'L')}
         sage: m = MatchingGame([suitr_pref, reviewr_pref])
-        sage: m._suitors
-        ['K', 'J', 'M', 'L']
-        sage: m._reviewers
-        ['A', 'C', 'B', 'D']
+        sage: m.suitors()
+        ('J', 'K', 'L', 'M')
+        sage: m.reviewers()
+        ('A', 'B', 'C', 'D')
 
     Also works for numbers::
 
@@ -468,7 +468,7 @@ class MatchingGame(SageObject):
             sage: g1.reviewers()
             (-1, -2, -3)
             sage: g1.suitors()
-            (1, 3, 2)
+            (1, 2, 3)
 
             sage: g2 = MatchingGame(1)
             sage: g2.add_reviewer(-2)
@@ -491,18 +491,8 @@ class MatchingGame(SageObject):
                 and all(s1.pref == s2.pref for s1, s2 in
                         zip(set(self._suitors), set(other._suitors))))
 
-    def __hash__(self):
-        """
-        Raise an error because this is mutable.
-
-        EXAMPLES::
-
-            sage: hash(MatchingGame(3))
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable because matching games are mutable
-        """
-        raise TypeError("unhashable because matching games are mutable")
+    __hash__ = None
+   # not hashable because this is mutable.
 
     def plot(self):
         r"""
@@ -803,11 +793,11 @@ class MatchingGame(SageObject):
             ....:         -3: (1, 0)}
             sage: g = MatchingGame([suit, revr])
             sage: g.reviewers()
-            (-3, -1)
+            (-1, -3)
 
             sage: g.add_reviewer()
             sage: g.reviewers()
-            (-3, -1, -4)
+            (-1, -3, -4)
         """
         if name is None:
             name = -len(self._reviewers) - 1
@@ -831,7 +821,7 @@ class MatchingGame(SageObject):
             sage: g.suitors()
             (1, 2)
         """
-        return tuple(self._suitors)
+        return tuple(sorted(self._suitors, key=lambda s:str(s._name)))
 
     def reviewers(self):
         """
@@ -843,7 +833,7 @@ class MatchingGame(SageObject):
             sage: g.reviewers()
             (-1, -2)
         """
-        return tuple(self._reviewers)
+        return tuple(sorted(self._reviewers, key=lambda r:str(r._name)))
 
     def solve(self, invert=False):
         r"""

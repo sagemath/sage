@@ -943,9 +943,7 @@ variável ``b`` não foi redefinida.
 A Interface do Notebook
 =======================
 
-Esta seção refere-se ao notebook Sage legado, ou "sagenb". Consulte a
-`documentação da sagenb <https://doc.sagemath.org/html/en/reference/notebook/index.html>`_
-para obter maiores detalhes.
+Esta seção refere-se ao notebook Sage legado, ou "sagenb".
 
 SageMath está em transição para uso do
 `Jupyter <http://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_

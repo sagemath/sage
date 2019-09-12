@@ -202,8 +202,8 @@ def setp_to_edges(p):
     The main example from the paper::
 
         sage: from sage.tests.arxiv_0812_2725 import *
-        sage: setp_to_edges(Set(map(Set, [[1,5],[2,4,9],[3],[6,12],[7,10,11],[8]])))
-        [[7, 10], [10, 11], [2, 4], [4, 9], [1, 5], [6, 12]]
+        sage: sorted(setp_to_edges(Set(map(Set, [[1,5],[2,4,9],[3],[6,12],[7,10,11],[8]]))))
+        [[1, 5], [2, 4], [4, 9], [6, 12], [7, 10], [10, 11]]
     """
     q = [sorted(list(b)) for b in p]
     ans = []

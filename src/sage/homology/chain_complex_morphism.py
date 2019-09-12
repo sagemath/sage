@@ -139,8 +139,8 @@ class ChainComplexMorphism(Morphism):
         if d != D.degree_of_differential():
             raise ValueError('degree of differential does not match')
             
-        from sage.misc.misc import uniq
-        degrees = uniq(list(C.differential()) + list(D.differential()))
+        degrees = list(C.differential()) + list(D.differential())
+        degrees = sorted(set(degrees))
         initial_matrices = dict(matrices)
         matrices = dict()
         for i in degrees:
@@ -248,10 +248,8 @@ class ChainComplexMorphism(Morphism):
         """
         if deg is not None:
             return self.in_degree(deg)
-        row = 0
-        col = 0
         blocks = [self._matrix_dictionary[n]
-                  for n in sorted(self._matrix_dictionary.keys())]
+                  for n in sorted(self._matrix_dictionary)]
         return block_diagonal_matrix(blocks)
 
     def dual(self):

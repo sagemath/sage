@@ -4,10 +4,10 @@
 
 Modular Cohomology Rings of Finite Groups
 
-The package is located at http://users.minet.uni-jena.de/cohomology/,
-that's to say the tarball p_group_cohomology-x.y.tar.gz can be found
+The package is located at http://users.fmi.uni-jena.de/cohomology/,
+that's to say the tarball p_group_cohomology-x.y.tar.xz can be found
 there and the documentation of the package is provided at
-http://users.minet.uni-jena.de/cohomology/documentation/
+http://users.fmi.uni-jena.de/cohomology/documentation/
 
 == License ==
 
@@ -70,8 +70,6 @@ rather efficient completeness criterion.
 
 == Dependencies ==
 
-- The SmallGroups library needs to be installed in GAP, as a runtime dependency
-  This can be met by installing the database_gap spkg
 - The SharedMeatAxe needs to be installed, as a build time dependency.
   This can be met by installing the meataxe spkg
 
@@ -97,13 +95,28 @@ SAGE_ROOT/local/share/doc/p_group_cohomology/.
 
 == Changelog ==
 
+  * v3.2 (Simon King, July 2019):
+    - Detection of graded non-induced isomorphisms of cohomology rings.
+    - Easier creation of a cohomology ring from a tower of subgroups.
+    - Kernels and preimage representatives of induced maps.
+    - Stop hard-coding the MTXLIB environment variable.
+  * 3.1 (Simon King, December 2018):
+    - Hilbert series computation by using a new implementation in SageMath.
+    - Vastly improved computation of filter degree type (now relying on
+      Hilbert series).
+    - Use libgap instead of the GAP pexpect interface.
+    - Sub-package upgrade: modres-1.1
+  * 3.0.1 (Simon King, August 2018):
+    - Add a routine to compute filter regular parameters in small degrees
+      by enumeration.
+    - Cope with some changes in Singular.
   * 3.0 (Simon King, January/February 2018):
     - The MeatAxe has been removed from this package and has been replaced
       by "SharedMeatAxe", as an external package.
     - David Green's C code for the computation of minimal projective resolutions
       is now using autotools and is now providing a library.
     - The Python/Cython part of this package is now pip installable.
-    - Remove some experimental options
+    - Remove some experimental options.
     - Drop support for Singular versions < 3-1-0
     - Drop the old test script, as `sage -t` now works for this package.
     - Drop the old doc builder, as building the docs is now closer to
@@ -111,8 +124,8 @@ SAGE_ROOT/local/share/doc/p_group_cohomology/.
     - Cope with an API change in SageMath.
   * 2.1.5 (Simon King, Mai 2015):
     - Cope with removal of the ._domain attribute of maps and with changed import locations.
-    - Improved computation of the nil-radical, including degree-wise computation
-    - Methods is_nilpotent and nilpotency_degree for cohomology ring elements
+    - Improved computation of the nil-radical, including degree-wise computation.
+    - Methods is_nilpotent and nilpotency_degree for cohomology ring elements.
     - Improved computation of Poincaré series.
     - Hilbert-driven computations for depth and filter degree type.
     - For computing depth, only use filter degree type if it has been previously computed.
@@ -204,11 +217,11 @@ SAGE_ROOT/local/share/doc/p_group_cohomology/.
       p-groups). This is implemented in a new module
       pGroupCohomology.modular_cohomology, that builds on top of the
       old pGroupCohomology.cohomology module.
-    - The build process now uses environment
-    variables such as $MAKE or $MKDIR, in order to increase portability.
+    - The build process now uses environment variables such as $MAKE
+      or $MKDIR, in order to increase portability.
   * 1.2.p0 (Dima Pasechnik and Simon King, March 2010):
-    Adding .hgignore (ignoring src/db and mtxoriginal).
-    Adding a robuster test for the existence of the SmallGroups library.
+    - Adding .hgignore (ignoring src/db and mtxoriginal).
+    - Adding a robuster test for the existence of the SmallGroups library.
   * 1.2 (Simon King, October 2009):
     - Modified printing for cocycles
     - Minor bug fixes and code improvements.

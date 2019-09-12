@@ -7,6 +7,8 @@
 #
 #  Options can be:
 #   -s: do not delete temporary build directory
+#   -k: do not uninstall existing installation of this package before
+#       installing; instead simply overwrite existing files.
 #   -c: after installing, run the test suite for the spkg. This should
 #       override the settings of SAGE_CHECK and SAGE_CHECK_PACKAGES.
 #   -d: only download the package
@@ -168,8 +170,8 @@ if [ -z "$SAGE_BUILD_DIR" ]; then
 fi
 
 
-# Remove '.' from PYTHONPATH, which may also come from SAGE_PATH, to avoid
-# trouble with setuptools / easy_install (cf. #10192, #10176):
+# Remove '.' from PYTHONPATH, to avoid trouble with setuptools / easy_install
+# (cf. #10192, #10176):
 if [ -n "$PYTHONPATH" ]; then
     # We also collapse multiple slashs into a single one (first substitution),
     # remove leading './'s and trailing '/.'s (second and third), and
@@ -202,6 +204,7 @@ fi
 # Parse options
 INFO=0
 YES=0
+KEEP_EXISTING=0
 while true; do
     case "$1" in
         --info)
@@ -217,6 +220,8 @@ while true; do
         -c|--check)
             SAGE_CHECK_PACKAGES=x  # nonempty, so not set to default later
             export SAGE_CHECK=yes;;
+        -k|--keep-existing)
+            KEEP_EXISTING=yes;;
         -*)
             echo >&2 "Error: unknown option '$1'"
             exit 2;;
@@ -673,14 +678,14 @@ write_script_wrapper() {
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_SRC="$SAGE_SRC"
 export SAGE_PKG_DIR="$script_dir"
+export SAGE_SPKG_SCRIPTS="$SAGE_SPKG_SCRIPTS"
 
 export PKG_NAME="$PKG_NAME"
 export PKG_BASE="$PKG_BASE"
 export PKG_VER="$PKG_VER"
 
-for lib in env dist-helpers; do
-    lib="sage-\$lib"
-    source "\$SAGE_SRC/bin/\$lib"
+for lib in "\$SAGE_ROOT/build/bin/sage-dist-helpers" "\$SAGE_SRC/bin/sage-env" ; do
+    source "\$lib"
     if [ \$? -ne 0 ]; then
         echo >&2 "Error: failed to source \$lib"
         echo >&2 "Is \$SAGE_ROOT the correct SAGE_ROOT?"
@@ -710,7 +715,7 @@ __EOF__
 }
 
 
-WRAPPED_SCRIPTS="build install check postinst legacy-uninstall prerm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst legacy-uninstall prerm postrm"
 INSTALLED_SCRIPTS="prerm postrm"
 
 
@@ -841,8 +846,19 @@ export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
 export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_LOCAL}"
 
 # First uninstall the previous version of this package, if any
-sage-spkg-uninstall "$PKG_BASE"
+if [ "$KEEP_EXISTING" != "yes" ]; then
+    sage-spkg-uninstall "$PKG_BASE"
+fi
 
+# Run the pre-install script, if any
+if [ -f spkg-preinst ]; then
+    echo "Running pre-install script for $PKG_NAME."
+    time $SAGE_SUDO ./spkg-preinst
+    if [ $? -ne 0 ]; then
+        error_msg "Error running the preinst script for $PKG_NAME."
+        exit 1
+    fi
+fi
 
 if [ -f spkg-build ]; then
     # Package has both spkg-build and spkg-install; execute the latter with SAGE_SUDO
@@ -869,37 +885,26 @@ fi
 # case DESTDIR=$SAGE_DESTDIR installation was not used
 echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_LOCAL"
 if [ -d "$SAGE_DESTDIR" ]; then
-    PREFIX="${SAGE_DESTDIR_LOCAL%/}/"
+    # Some `find` implementations will put superfluous slashes in the
+    # output if we give them a directory name with a slash; so make sure
+    # any trailing slash is removed; https://trac.sagemath.org/ticket/26013
+    PREFIX="${SAGE_DESTDIR_LOCAL%/}"
 
-    rm -f "$PREFIX"lib/*.la
+    rm -f "$PREFIX"/lib/*.la
     if [ $? -ne 0 ]; then
         error_msg "Error deleting unnecessary libtool archive files"
         exit 1
     fi
 
     # Generate installed file manifest
-    FILE_LIST=""
-    FIRST=1
-    old_IFS="$IFS"; IFS=$'\n'
-    for filename in $(find "$PREFIX" -type f -o -type l | sort); do
-        filename="${filename#$PREFIX}"
-        if [ $FIRST -eq 1 ]; then
-            FILE_LIST="\"$filename\""
-            FIRST=0
-        else
-            FILE_LIST="${FILE_LIST},"$'\n        '"\"${filename}\""
-        fi
-        # Copy file from the temp install path into $SAGE_LOCAL
-        if [ ! -d "$SAGE_LOCAL/$(dirname "$filename")" ]; then
-            $SAGE_SUDO mkdir -p "$SAGE_LOCAL/$(dirname "$filename")"
-        fi
-        $SAGE_SUDO mv "$PREFIX$filename" "${SAGE_LOCAL%/}/$filename"
-        if [ $? -ne 0 ]; then
-            error_msg "Error moving files for $PKG_NAME."
-            exit 1
-        fi
-    done
-    IFS="$old_IFS"
+    FILE_LIST="$(cd "$PREFIX" && find . -type f -o -type l | sed 's|^\./||' | sort)"
+
+    # Copy files into $SAGE_LOCAL
+    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_LOCAL"
+    if [ $? -ne 0 ]; then
+        error_msg "Error copying files for $PKG_NAME."
+        exit 1
+    fi
 
     # Remove the $SAGE_DESTDIR entirely once all files have been moved to their
     # final location.
@@ -980,6 +985,15 @@ if [ "$SAGE_CHECK" = "yes" ]; then
     fi
 fi
 
+# For each line in $FILE_LIST, enclose in double quotes:
+NEW_LIST=""
+for f in $FILE_LIST; do
+         NEW_LIST+="\"$f\"
+"
+done
+# Now remove the last line (it's blank), indent each line (skipping
+# the first) and append a comma (skipping the last).
+FILE_LIST="$(echo "$NEW_LIST" | sed '$d' | sed '2,$s/^/        /; $!s/$/,/')"
 
 # Mark that the new package has been installed (and tested, if
 # applicable).

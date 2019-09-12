@@ -1,8 +1,5 @@
 cd src
 
-# See #22021 for issues with multithreading
-OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_THREAD=0"
-
 # OpenBLAS does not build on 32bit Haswell. Upstream suggests to pass BINARY=32 to default to NEHALEM kernels
 # See https://github.com/xianyi/OpenBLAS/issues/657
 # Right now this affect all 32bit CPUs.
@@ -21,6 +18,12 @@ if [ "x$SAGE_FAT_BINARY" = "xyes" ]; then
 fi
 
 echo "Building OpenBLAS: $MAKE $OPENBLAS_CONFIGURE"
+
+# Ensure USE_TLS=1 ; see https://trac.sagemath.org/ticket/27256
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE USE_TLS=1"
+
+# Disable AVX512 for now, see https://trac.sagemath.org/ticket/27961
+OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE NO_AVX512=1"
 
 if ! (sdh_make libs netlib shared $OPENBLAS_CONFIGURE); then
     if [[ $OPENBLAS_CONFIGURE == *"TARGET"* ]]; then

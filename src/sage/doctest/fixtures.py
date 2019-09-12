@@ -57,7 +57,7 @@ def reproducible_repr(val):
     All types for which special handling had been implemented are
     covered by the examples below. If a doctest requires special
     handling for additional types, this function may be extended
-    apropriately. It is an error if an argument to this function has
+    appropriately. It is an error if an argument to this function has
     a non-reproducible ``repr`` implementation and is not explicitely
     mentioned in an example case below.
 

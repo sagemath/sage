@@ -133,11 +133,11 @@ from https://wiki.sagemath.org/days4schedule .
 from __future__ import print_function, absolute_import
 
 from copy import copy
-from random import Random
 import time
 
 from sage.rings.all import ZZ, QQ, RR, AA, RealField, RealIntervalField, RIF, RDF, infinity
 from sage.arith.all import binomial, factorial
+from sage.misc.randstate import randstate
 from sage.modules.all import vector, FreeModule
 from sage.matrix.all import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -349,9 +349,9 @@ cdef class interval_bernstein_polynomial:
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, _ = bp.try_split(mk_context(), None)
             sage: bp1
-            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.1 .. 0.01] over [0 .. 1/2]>
+            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.10000000000000023 .. 0.010000000000000226] over [0 .. 1/2]>
             sage: bp2
-            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.1 .. 0.01] over [1/2 .. 1]>
+            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.10000000000000023 .. 0.010000000000000226] over [1/2 .. 1]>
         """
         (p1, p2, ok) = self.de_casteljau(ctx, QQ_1_2)
         ctx.dc_log_append(("half" + self._type_code(), self.scale_log2, self.bitsize, ok, logging_note))
@@ -387,9 +387,9 @@ cdef class interval_bernstein_polynomial:
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, _ = bp.try_rand_split(mk_context(), None)
             sage: bp1  # rel tol
-            <IBP: (0.5, 0.2984375, -0.2642578125, -0.5511661529541015, -0.3145806974172592) + [-0.1 .. 0.01] over [0 .. 43/64]>
+            <IBP: (0.5, 0.2984375, -0.2642578125, -0.5511661529541015, -0.3145806974172592) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 43/64]>
             sage: bp2  # rel tol
-            <IBP: (-0.3145806974172592, -0.19903896331787108, 0.04135986328125002, 0.43546875, 0.99) + [-0.1 .. 0.01] over [43/64 .. 1]>
+            <IBP: (-0.3145806974172592, -0.19903896331787108, 0.04135986328125002, 0.43546875, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [43/64 .. 1]>
         """
 
         # We want a split point which is a dyadic rational (denominator
@@ -758,7 +758,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
             sage: print(bp.as_float())
             degree 4 IBP with floating-point coefficients
             sage: bp.as_float()
-            <IBP: ((0.1953125, 0.078125, -0.3515625, -0.2734375, 0.78125) + [-1.12757025938e-16 .. 0.01953125]) * 2^8>
+            <IBP: ((0.1953125, 0.078125, -0.3515625, -0.2734375, 0.78125) + [-1.1275702593849246e-16 .. 0.01953125000000017]) * 2^8>
         """
         (fcoeffs, neg_err, pos_err, scale_log2_delta) = intvec_to_doublevec(self.coeffs, self.error)
         cdef interval_bernstein_polynomial_float fbp = interval_bernstein_polynomial_float(fcoeffs, self.lower, self.upper, self.lsign, self.usign, neg_err, pos_err, self.scale_log2 + scale_log2_delta, self.level, self.slope_err)
@@ -1429,7 +1429,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
             sage: repr(bp)
             '<IBP: (-0.11, 0.22, -0.33) + [-0.3 .. 0.1] over [0 .. 1/9]>'
         """
-        base = "%s + [%s .. %s]" % (self.coeffs, self.neg_err, self.pos_err)
+        base = "%s + [%r .. %r]" % (self.coeffs, self.neg_err, self.pos_err)
         if self.scale_log2 != 0:
             base = "(%s) * 2^%d" % (base, self.scale_log2)
         s = "<IBP: %s" % base
@@ -1568,19 +1568,19 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 1/2)
             sage: bp1
-            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.1 .. 0.01] over [0 .. 1/2]>
+            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.10000000000000023 .. 0.010000000000000226] over [0 .. 1/2]>
             sage: bp2
-            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.1 .. 0.01] over [1/2 .. 1]>
+            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.10000000000000023 .. 0.010000000000000226] over [1/2 .. 1]>
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 2/3)
             sage: bp1 # rel tol 2e-16
-            <IBP: (0.5, 0.30000000000000004, -0.2555555555555555, -0.5444444444444444, -0.32172839506172846) + [-0.1 .. 0.01] over [0 .. 2/3]>
+            <IBP: (0.5, 0.30000000000000004, -0.2555555555555555, -0.5444444444444444, -0.32172839506172846) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 2/3]>
             sage: bp2  # rel tol 3e-15
-            <IBP: (-0.32172839506172846, -0.21037037037037046, 0.028888888888888797, 0.4266666666666666, 0.99) + [-0.1 .. 0.01] over [2/3 .. 1]>
+            <IBP: (-0.32172839506172846, -0.21037037037037046, 0.028888888888888797, 0.4266666666666666, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [2/3 .. 1]>
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 7/39)
             sage: bp1  # rel tol
-            <IBP: (0.5, 0.4461538461538461, 0.36653517422748183, 0.27328680523946786, 0.1765692706232836) + [-0.1 .. 0.01] over [0 .. 7/39]>
+            <IBP: (0.5, 0.4461538461538461, 0.36653517422748183, 0.27328680523946786, 0.1765692706232836) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 7/39]>
             sage: bp2  # rel tol
-            <IBP: (0.1765692706232836, -0.26556803047927313, -0.7802038132807364, -0.3966666666666666, 0.99) + [-0.1 .. 0.01] over [7/39 .. 1]>
+            <IBP: (0.1765692706232836, -0.26556803047927313, -0.7802038132807364, -0.3966666666666666, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [7/39 .. 1]>
         """
         (c1_, c2_, err_inc) = de_casteljau_doublevec(self.coeffs, mid)
         cdef Vector_real_double_dense c1 = c1_
@@ -4273,8 +4273,7 @@ cdef class context:
         Initialize a context class.
         """
         self.seed = seed # saved to make context printable
-        self.random = Random()
-        self.random.seed(seed)
+        self.random = randstate().python_random(seed=seed)
         self.do_logging = do_logging
         self.wordsize = wordsize
         self.dc_log = []

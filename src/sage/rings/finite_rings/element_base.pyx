@@ -807,7 +807,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         OUTPUT:
 
         Instance of this class representing the image under
-        the Frobenius morhisms.
+        the Frobenius morphisms.
 
         EXAMPLES::
 

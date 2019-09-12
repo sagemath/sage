@@ -50,19 +50,19 @@ cdef class Polynomial_complex_arb(Polynomial):
         (0,
          1.000000000000000,
          2.000000000000000*x^2 + x,
-         I*x^3 + ([3.141592653589793 +/- 5.61e-16])*x)
+         I*x^3 + ([3.141592653589793 +/- ...e-16])*x)
 
         sage: Pol("x - 2/3")
-        x + [-0.666666666666667 +/- 4.82e-16]
+        x + [-0.666666666666667 +/- ...e-16]
         sage: Pol(polygen(QQ))
         x
 
-        sage: [Pol.has_coerce_map_from(P) for P in
-        ....: QQ['x'], QuadraticField(-1), RealBallField(100)]
-        [True, True, True]
-        sage: [Pol.has_coerce_map_from(P) for P in
-        ....: QQ['y'], RR, CC, RDF, CDF, RIF, CIF, RealBallField(20)]
-        [False, False, False, False, False, False, False, False]
+        sage: all(Pol.has_coerce_map_from(P) for P in
+        ....:     (QQ['x'], QuadraticField(-1), RealBallField(100)))
+        True
+        sage: any(Pol.has_coerce_map_from(P) for P in
+        ....:     (QQ['y'], RR, CC, RDF, CDF, RIF, CIF, RealBallField(20)))
+        False
     """
 
     # Memory management and initialization
@@ -125,9 +125,9 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Polynomial_complex_arb(Pol, QQ['x'](0))
             0
             sage: Polynomial_complex_arb(Pol, {10: pi})
-            ([3.141592653589793 +/- 5.61e-16])*x^10
+            ([3.141592653589793 +/- ...e-16])*x^10
             sage: Polynomial_complex_arb(Pol, pi)
-            [3.141592653589793 +/- 5.61e-16]
+            [3.141592653589793 +/- ...e-16]
         """
         cdef ComplexBall ball
         cdef Polynomial pol
@@ -195,7 +195,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: (x^2 + 1).degree()
             2
             sage: pol = (x/3 + 1) - x/3; pol
-            ([+/- 1.12e-16])*x + 1.000000000000000
+            ([+/- ...e-16])*x + 1.000000000000000
             sage: pol.degree()
             1
             sage: Pol([1, 0, 0, 0]).degree()
@@ -217,7 +217,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (x^2/3).list()
-            [0, 0, [0.3333333333333333 +/- 7.04e-17]]
+            [0, 0, [0.3333333333333333 +/- ...e-17]]
             sage: Pol(0).list()
             []
             sage: Pol([0, 1, RBF(0, rad=.1), 0]).list()
@@ -251,7 +251,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (x + 1) + (x/3 - 2)
-            ([1.333333333333333 +/- 5.37e-16])*x - 1.000000000000000
+            ([1.333333333333333 +/- ...e-16])*x - 1.000000000000000
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
@@ -271,7 +271,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: -(x/3 - 2)
-            ([-0.3333333333333333 +/- 7.04e-17])*x + 2.000000000000000
+            ([-0.3333333333333333 +/- ...e-17])*x + 2.000000000000000
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
@@ -287,7 +287,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (x + 1) - (x/3 - 2)
-            ([0.666666666666667 +/- 5.37e-16])*x + 3.000000000000000
+            ([0.666666666666667 +/- ...e-16])*x + 3.000000000000000
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
@@ -307,8 +307,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (x + 1)*(x/3 - 2)
-            ([0.3333333333333333 +/- 7.04e-17])*x^2
-            + ([-1.666666666666667 +/- 7.59e-16])*x - 2.000000000000000
+            ([0.3333333333333333 +/- ...e-17])*x^2
+            + ([-1.666666666666667 +/- ...e-16])*x - 2.000000000000000
         """
         cdef Polynomial_complex_arb res = self._new()
         sig_on()
@@ -328,7 +328,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: (x + 1)._lmul_(CBF(3))
             3.000000000000000*x + 3.000000000000000
             sage: (1 + x)*(1/3)
-            ([0.3333333333333333 +/- 7.04e-17])*x + [0.3333333333333333 +/- 7.04e-17]
+            ([0.3333333333333333 +/- ...e-17])*x + [0.3333333333333333 +/- ...e-17]
             sage: (1 + x)*GF(2)(1)
             Traceback (most recent call last):
             ...
@@ -348,7 +348,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: (x + 1)._rmul_(CBF(3))
             3.000000000000000*x + 3.000000000000000
             sage: (1/3)*(1 + x)
-            ([0.3333333333333333 +/- 7.04e-17])*x + [0.3333333333333333 +/- 7.04e-17]
+            ([0.3333333333333333 +/- ...e-17])*x + [0.3333333333333333 +/- ...e-17]
         """
         return self._lmul_(a)
 
@@ -366,7 +366,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Pol.<x> = CBF[]
 
             sage: (x^3/7 - CBF(i)).quo_rem(x + CBF(pi))
-            (([0.1428571428571428 +/- 7.70e-17])*x^2 + ([-0.448798950512828 +/- 6.74e-16])*x + [1.40994348586991 +/- 3.04e-15], [-4.42946809718569 +/- 7.86e-15] - I)
+            (([0.1428571428571428 +/- ...e-17])*x^2 + ([-0.448798950512828 +/- ...e-16])*x + [1.409943485869908 +/- ...e-16], [-4.42946809718569 +/- ...e-15] - I)
 
             sage: Pol(0).quo_rem(x + 1)
             (0, 0)
@@ -377,12 +377,12 @@ cdef class Polynomial_complex_arb(Polynomial):
             ZeroDivisionError: ('cannot divide by this polynomial', 0)
 
             sage: div = (x^2/3 + x + 1) - x^2/3; div
-            ([+/- 1.12e-16])*x^2 + x + 1.000000000000000
+            ([+/- ...e-16])*x^2 + x + 1.000000000000000
             sage: (x + 1).quo_rem(div)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ('cannot divide by this polynomial',
-            ([+/- 1.12e-16])*x^2 + x + 1.000000000000000)
+            ([+/- ...e-16])*x^2 + x + 1.000000000000000)
         """
         cdef Polynomial_complex_arb div = <Polynomial_complex_arb> divisor
         cdef Polynomial_complex_arb quo = self._new()
@@ -540,7 +540,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (1 - x/3).inverse_series_trunc(3)
-            ([0.1111111111111111 +/- 5.99e-17])*x^2 + ([0.3333333333333333 +/- 7.04e-17])*x + 1.000000000000000
+            ([0.1111111111111111 +/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x + 1.000000000000000
             sage: x.inverse_series_trunc(1)
             nan
             sage: Pol(0).inverse_series_trunc(2)
@@ -604,9 +604,9 @@ cdef class Polynomial_complex_arb(Polynomial):
 
             sage: Pol.<x> = CBF[]
             sage: (1 + x/3)._log_series(3)
-            ([-0.0555555555555555 +/- 7.10e-17])*x^2 + ([0.3333333333333333 +/- 7.04e-17])*x
+            ([-0.0555555555555555 +/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x
             sage: (-1 + x)._log_series(3)
-            -0.5000000000000000*x^2 - x + [3.141592653589793 +/- 5.61e-16]*I
+            -0.5000000000000000*x^2 - x + [3.141592653589793 +/- ...e-16]*I
 
         An example where the constant term crosses the branch cut of the
         logarithm::
@@ -614,7 +614,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: pol = CBF(-1, RBF(0, rad=.01)) + x; pol
             x - 1.000000000000000 + [+/- 0.0101]*I
             sage: pol._log_series(2)
-            ([-1.000 +/- 1.01e-4] + [+/- 0.0101]*I)*x + [+/- 5.01e-5] + [+/- 3.15]*I
+            ([-1.000 +/- ...e-4] + [+/- 0.0101]*I)*x + [+/- ...e-5] + [+/- 3.15]*I
 
         Some cases where the result is not defined::
 
@@ -642,7 +642,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: x._exp_series(3)
             0.5000000000000000*x^2 + x + 1.000000000000000
             sage: (1 + x/3)._log_series(3)._exp_series(3)
-            ([+/- 5.09e-17])*x^2 + ([0.3333333333333333 +/- 7.04e-17])*x + 1.000000000000000
+            ([+/- ...e-17])*x^2 + ([0.3333333333333333 +/- ...e-17])*x + 1.000000000000000
             sage: (CBF(0, pi) + x)._exp_series(4)
             ([-0.166...] + [+/- ...]*I)*x^3 + ([-0.500...] + [+/- ...]*I)*x^2
             + ([-1.000...] + [+/- ...]*I)*x + [-1.000...] + [+/- ...]*I
@@ -668,7 +668,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: pol = CBF(-1, RBF(0, rad=.01)) + x; pol
             x - 1.000000000000000 + [+/- 0.0101]*I
             sage: pol._sqrt_series(2)
-            ([+/- 7.51e-3] + [+/- 0.501]*I)*x + [+/- 5.01e-3] + [+/- 1.01]*I
+            ([+/- ...e-3] + [+/- 0.501]*I)*x + [+/- ...e-3] + [+/- 1.01]*I
             sage: x._sqrt_series(2)
             (nan + nan*I)*x
         """
@@ -694,7 +694,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: pol.compose_trunc(1 + x, 4)
             x^3 + x^2
             sage: pol.compose_trunc(2 + x/3, 2)
-            ([1.666666666666667 +/- 9.81e-16])*x + 2.000000000000000
+            ([1.666666666666667 +/- ...e-16])*x + 2.000000000000000
             sage: pol.compose_trunc(2 + x/3, 0)
             0
             sage: pol.compose_trunc(2 + x/3, -1)
@@ -742,7 +742,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             0.5000000000000000*x
 
             sage: (x + x^3/6 + x^5/120).revert_series(6)
-            ([0.075000000000000 +/- 9.75e-17])*x^5 + ([-0.166666666666667 +/- 4.45e-16])*x^3 + x
+            ([0.075000000000000 +/- ...e-17])*x^5 + ([-0.166666666666667 +/- ...e-16])*x^3 + x
 
             sage: (1 + x).revert_series(6)
             Traceback (most recent call last):
@@ -777,7 +777,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: Pol.<x> = CBF[]
             sage: pol = x^2 - 1
             sage: pol(CBF(pi))
-            [8.86960440108936 +/- 8.36e-15]
+            [8.86960440108936 +/- ...e-15]
             sage: pol(x^3 + 1)
             x^6 + 2.000000000000000*x^3
             sage: pol(matrix([[1,2],[3,4]]))

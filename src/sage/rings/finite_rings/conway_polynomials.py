@@ -195,17 +195,10 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         ALGORITHM:
 
-        Uses an algorithm described in [HL99]_, modified to find
+        Uses an algorithm described in [HL1999]_, modified to find
         pseudo-Conway polynomials rather than Conway polynomials.  The
         major difference is that we stop as soon as we find a
         primitive polynomial.
-
-        REFERENCE:
-
-        .. [HL99] \L. Heath and N. Loehr (1999).  New algorithms for
-           generating Conway polynomials over finite fields.
-           Proceedings of the tenth annual ACM-SIAM symposium on
-           discrete algorithms, pp. 429-437.
 
         EXAMPLES::
 

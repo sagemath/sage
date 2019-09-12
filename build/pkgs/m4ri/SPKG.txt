@@ -13,7 +13,7 @@ GF(2).  (See also m4ri/README for a brief overview.)
 
  * Authors: Martin Albrecht et al.
  * Email:   <m4ri-devel@googlegroups.com>
- * Website: http://m4ri.sagemath.org
+ * Website: https://bitbucket.org/malb/m4ri
 
 == Dependencies ==
 

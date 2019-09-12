@@ -166,4 +166,4 @@ Metas a largo plazo de Sage
 
 .. [PyT] El Tutorial De Python, http://www.python.org/
 
-.. [Sage] Sage, http://www.sagemath.org
+.. [Sage] Sage, https://www.sagemath.org

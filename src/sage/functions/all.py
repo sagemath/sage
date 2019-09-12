@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import
 
-lazy_import('sage.functions.piecewise_old', 'Piecewise')   # deprecated
 lazy_import('sage.functions.piecewise', 'piecewise')
 lazy_import('sage.functions.error', ['erf', 'erfc', 'erfi', 'erfinv',
     'fresnel_sin', 'fresnel_cos'])
@@ -19,7 +18,6 @@ from .hyperbolic import ( tanh, sinh, cosh, coth, sech, csch,
                          arcsinh, arccosh, arctanh, arccoth, arcsech, arccsch )
 
 reciprocal_trig_functions = {'sec': cos, 'csc': sin, 'cot': tan, 'sech': cosh, 'csch': sinh, 'coth': tanh}
-
 
 
 from .other import ( ceil, floor, abs_symbolic, sqrt,
@@ -40,7 +38,7 @@ from .bessel import (bessel_I, bessel_J, bessel_K, bessel_Y,
 
 from .special import (spherical_harmonic, elliptic_e,
                      elliptic_f, elliptic_ec, elliptic_eu,
-                     elliptic_kc, elliptic_pi, elliptic_j, error_fcn)
+                     elliptic_kc, elliptic_pi, elliptic_j)
 
 from .jacobi import (jacobi, inverse_jacobi, jacobi_nd, jacobi_ns, jacobi_nc,
                     jacobi_dn, jacobi_ds, jacobi_dc, jacobi_sn, jacobi_sd,
@@ -86,4 +84,4 @@ from .exp_integral import (exp_integral_e, exp_integral_e1, log_integral, li, Li
 from .hypergeometric import hypergeometric, hypergeometric_M, hypergeometric_U
 
 from .gamma import (gamma, psi, beta, log_gamma,
-                    gamma_inc, incomplete_gamma, gamma_inc_lower)
+                    gamma_inc, gamma_inc_lower)

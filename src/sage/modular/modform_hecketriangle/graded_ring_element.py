@@ -250,7 +250,7 @@ class FormsRingElement(six.with_metaclass(
             f_{\rho}^{3} -  f_{i}^{2}
 
             sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))
-            - E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
+            -E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
         """
 
         from sage.misc.latex import latex
@@ -980,7 +980,8 @@ class FormsRingElement(six.with_metaclass(
 
     def sqrt(self):
         r"""
-        Try to return the square root of ``self``.
+        Return the square root of ``self`` if it exists.
+
         I.e. the element corresponding to ``sqrt(self.rat())``.
 
         Whether this works or not depends on whether
@@ -996,24 +997,21 @@ class FormsRingElement(six.with_metaclass(
         In particular this is the case if ``self``
         is a (homogeneous) element of a forms space.
 
-        .. TODO::
-
-            Make square root in the underlying rational field work.
-
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.space import QuasiModularForms
-            sage: E2=QuasiModularForms(k=2, ep=-1).E2()
-            sage: sqrt(E2^2)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: is_square() not implemented for elements of Multivariate Polynomial Ring in x, y, z, d over Integer Ring
+            sage: E2 = QuasiModularForms(k=2, ep=-1).E2()
+            sage: (E2^2).sqrt()
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 + O(q^5)
+            sage: (E2^2).sqrt() == E2
+            True
         """
-
-        res = self.parent().rat_field()(self._rat.sqrt())
+        res = self._rat.sqrt()
+        assert res.parent() is self.parent().rat_field()
         #new_parent = self.parent().extend_type(ring=True)
         # The sqrt of a homogeneous element is homogeneous if it exists
-        return self.parent()(res).reduce()
+        new_parent = self.parent().extend_type(ring=True)
+        return new_parent(res).reduce()
 
     def diff_op(self, op, new_parent=None):
         r"""
@@ -1530,7 +1528,7 @@ class FormsRingElement(six.with_metaclass(
 
         return self.reduced_parent()(self._rat)
 
-    #precision is actually acuracy, maybe add "real precision" meaning number of rel. coef
+    #precision is actually accuracy, maybe add "real precision" meaning number of rel. coef
     @cached_method
     def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec = False):
         """
@@ -1922,7 +1920,7 @@ class FormsRingElement(six.with_metaclass(
            #. Substitute ``x=f_rho(tau), y=f_i(tau), z=E2(tau)``
               and the numerical value of ``d`` for ``d``
               in ``self.rat()``. If ``n=infinity`` then
-              subsitute ``x=E4(tau)`` instead.
+              substitute ``x=E4(tau)`` instead.
 
         EXAMPLES::
 

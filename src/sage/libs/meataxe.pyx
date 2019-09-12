@@ -66,21 +66,27 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
 ## this module. Hence, `import sage.libs.meataxe` is enough
 ## to make sure that MeatAxe is initialised.
 
-from cpython.bytes cimport PyBytes_AsString
+from sage.cpython.string cimport str_to_bytes, char_to_str
+import os
 
 cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err):
     sig_block()
-    cdef bytes ErrText = err.Text
-    PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), "{} in file {} (line {})".format(ErrText, err.FileInfo.BaseName, err.LineNo))
+    ErrText  = char_to_str(err.Text)
+    BaseName = char_to_str(err.FileInfo.BaseName)
+    LineNo   = err.LineNo
+    PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), f"{ErrText} in file {BaseName} (line {LineNo})")
     sig_unblock()
 
 cdef inline meataxe_init():
     ## Assign to a variable that enables MeatAxe to find
     ## its multiplication tables.
-    import os
-    from sage.env import DOT_SAGE
     global MtxLibDir
-    MtxLibDir = PyBytes_AsString(os.path.join(DOT_SAGE,'meataxe'))
+    from sage import env
+    mtxdir = str_to_bytes(env.MTXLIB)
+    if len(mtxdir) >= 1024:
+        raise RuntimeError(f"the path for the meataxe library {mtxdir!r} is too long, it needs to be of length < 1024")
+    MtxLibDir[:len(mtxdir)] = mtxdir
+    MtxLibDir[len(mtxdir)] = c'\0'
     ## Error handling for MeatAxe, to prevent immediate exit of the program
     MtxSetErrorHandler(sage_meataxe_error_handler)
 

@@ -110,8 +110,8 @@ class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense)
     pass
 
 # Add elementwise methods.
-for method in ['simplify', 'simplify_exp', 'simplify_factorial',
-        'simplify_log', 'simplify_radical', 'simplify_rational',
-        'simplify_trig', 'simplify_full', 'trig_expand',
-        'canonicalize_radical', 'trig_reduce']:
+for method in ['simplify', 'simplify_factorial',
+               'simplify_log', 'simplify_rational',
+               'simplify_trig', 'simplify_full', 'trig_expand',
+               'canonicalize_radical', 'trig_reduce']:
     setattr(Vector_symbolic_dense, method, apply_map(getattr(Expression, method)))

@@ -165,7 +165,7 @@ def q_binomial(n, k, q=None):
         division is not implemented in the ring containing `q`,
         then it will not work.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.algebras.quantum_groups.q_numbers import q_binomial
         sage: q_binomial(2, 1)

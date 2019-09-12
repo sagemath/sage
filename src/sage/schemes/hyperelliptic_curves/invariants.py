@@ -46,7 +46,7 @@ def differential_operator(f, g, k):
     r"""
     Return the differential operator `(f g)_k` symbolically in the polynomial ring in ``dfdx, dfdy, dgdx, dgdy``.
 
-    This is defined by Mestre on p 315 [MJ1991]_:
+    This is defined by Mestre on p 315 [Mes1991]_:
 
     .. MATH::
 
@@ -114,7 +114,7 @@ def Ueberschiebung(f, g, k):
     r"""
     Return the differential operator `(f g)_k`.
 
-    This is defined by Mestre on page 315 [MJ1991]_:
+    This is defined by Mestre on page 315 [Mes1991]_:
 
     .. MATH::
 
@@ -140,7 +140,7 @@ def Ueberschiebung(f, g, k):
 
 def ubs(f):
     r"""
-    Given a sextic form `f`, return a dictionary of the invariants of Mestre, p 317 [MJ1991]_.
+    Given a sextic form `f`, return a dictionary of the invariants of Mestre, p 317 [Mes1991]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
@@ -260,12 +260,13 @@ def igusa_to_clebsch(I2, I4, I6, I10):
 def clebsch_invariants(f):
     r"""
     Given a sextic form `f`, return the Clebsch invariants `(A, B, C, D)` of
-    Mestre, p 317, [MJ1991]_.
+    Mestre, p 317, [Mes1991]_.
 
     `f` may be homogeneous in two variables or inhomogeneous in one.
 
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import clebsch_invariants
         sage: R.<x, y> = QQ[]
         sage: clebsch_invariants(x^6 + y^6)
         (2, 2/3, -2/9, 0)
@@ -298,6 +299,7 @@ def igusa_clebsch_invariants(f):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import igusa_clebsch_invariants
         sage: R.<x, y> = QQ[]
         sage: igusa_clebsch_invariants(x^6 + y^6)
         (-240, 1620, -119880, -46656)
@@ -339,6 +341,7 @@ def absolute_igusa_invariants_wamelen(f):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_wamelen
         sage: R.<x> = QQ[]
         sage: absolute_igusa_invariants_wamelen(x^5 - 1)
         (0, 0, 0)
@@ -371,6 +374,7 @@ def absolute_igusa_invariants_kohel(f):
 
     EXAMPLES::
 
+        sage: from sage.schemes.hyperelliptic_curves.invariants import absolute_igusa_invariants_kohel
         sage: R.<x> = QQ[]
         sage: absolute_igusa_invariants_kohel(x^5 - 1)
         (0, 0, 0)

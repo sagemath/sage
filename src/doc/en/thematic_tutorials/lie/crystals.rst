@@ -332,9 +332,11 @@ Before giving examples of crystals, we digress to help you install
 crystals.
 
 ``dot2tex`` is an optional package of sage and the latest version
-can be installed via::
+can be installed via:
 
-    sage -i dot2tex
+.. CODE-BLOCK:: shell-session
+
+    $ sage -i dot2tex
 
 This also requires various LaTeX packages. The following command
 checks whether those are available::

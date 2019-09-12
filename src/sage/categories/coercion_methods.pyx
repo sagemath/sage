@@ -45,7 +45,9 @@ def _mul_parent(self, other):
     This is :meth:`Magmas.ElementMethods._mul_parent`, implemented as
     a Cython method in :mod:`sage.categories.coercion_methods`::
 
-        sage: x._mul_parent.__func__ is Magmas.ElementMethods._mul_parent.__func__
+        sage: from sage.cpython.getattr import raw_getattr
+        sage: x._mul_parent.__func__ is raw_getattr(Magmas.ElementMethods,
+        ....:                                       '_mul_parent')
         True
         sage: x._mul_parent.__func__ is sage.categories.coercion_methods._mul_parent
         True

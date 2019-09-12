@@ -20,8 +20,8 @@ To list the packages available, either use in a terminal one of ``sage
 command inside Sage::
 
     sage: from sage.misc.package import list_packages
-    sage: pkgs = list_packages(local=True)
-    sage: sorted(pkgs.keys())  # random
+    sage: pkgs = list_packages(local=True)  # optional - build
+    sage: sorted(pkgs.keys())  # optional - build, random
     ['4ti2',
      'alabaster',
      'arb',
@@ -34,20 +34,21 @@ Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
-from sage.env import SAGE_ROOT, SAGE_PKGS
+import sage.env
 
 import json
 import os
 import subprocess
+import sys
 try:
     # Python 3.3+
     from urllib.request import urlopen
@@ -134,17 +135,23 @@ def pip_installed_packages():
     EXAMPLES::
 
         sage: from sage.misc.package import pip_installed_packages
-        sage: d = pip_installed_packages()
-        sage: 'scipy' in d
+        sage: d = pip_installed_packages()  # optional - build
+        sage: 'scipy' in d  # optional - build
         True
-        sage: d['scipy']
+        sage: d['scipy']  # optional - build
         u'...'
-        sage: d['beautifulsoup']   # optional - beautifulsoup
+        sage: d['beautifulsoup']   # optional - build beautifulsoup
         u'...'
     """
-    proc = subprocess.Popen(["pip", "list", "--no-index", "--format", "json"], stdout=subprocess.PIPE)
-    stdout = proc.communicate()[0].decode()
-    return {package['name'].lower():package['version'] for package in json.loads(stdout)}
+    with open(os.devnull, 'w')  as devnull:
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "pip", "list", "--no-index", "--format", "json"],
+            stdout=subprocess.PIPE,
+            stderr=devnull,
+        )
+        stdout = proc.communicate()[0].decode()
+        return {package['name'].lower():package['version']
+                for package in json.loads(stdout)}
 
 def list_packages(*pkg_types, **opts):
     r"""
@@ -177,29 +184,29 @@ def list_packages(*pkg_types, **opts):
     EXAMPLES::
 
         sage: from sage.misc.package import list_packages
-        sage: L = list_packages('standard')
-        sage: sorted(L.keys())  # random
+        sage: L = list_packages('standard')  # optional - build
+        sage: sorted(L.keys())  # optional - build, random
         ['alabaster',
          'arb',
          'babel',
          ...
          'zn_poly',
          'zope_interface']
-        sage: L['ppl']
+        sage: L['ppl']  # optional - build
         {'installed': True,
          'installed_version': '...',
          'remote_version': '...',
          'type': 'standard'}
 
-        sage: L = list_packages('pip', local=True)
-        sage: L['beautifulsoup']
+        sage: L = list_packages('pip', local=True)  # optional - build
+        sage: L['beautifulsoup']                    # optional - build
         {'installed': ...,
          'installed_version': ...,
          'remote_version': None,
          'type': 'pip'}
 
-        sage: L = list_packages('pip')   # optional - internet
-        sage: L['beautifulsoup']         # optional - internet
+        sage: L = list_packages('pip')   # optional - build internet
+        sage: L['beautifulsoup']         # optional - build internet
         {'installed': ...,
          'installed_version': ...,
          'remote_version': u'...',
@@ -207,7 +214,7 @@ def list_packages(*pkg_types, **opts):
 
     Check the option ``exclude_pip``::
 
-        sage: list_packages('pip', exclude_pip=True)
+        sage: list_packages('pip', exclude_pip=True)  # optional - build
         {}
     """
     if not pkg_types:
@@ -225,6 +232,7 @@ def list_packages(*pkg_types, **opts):
     installed = installed_packages(exclude_pip)
 
     pkgs = {}
+    SAGE_PKGS = sage.env.SAGE_PKGS
     for p in os.listdir(SAGE_PKGS):
         try:
             f = open(os.path.join(SAGE_PKGS, p, "type"))
@@ -272,19 +280,19 @@ def installed_packages(exclude_pip=True):
 
     EXAMPLES::
 
-        sage: installed_packages()
-        {...'arb': ...'pynac': ...}
+        sage: installed_packages()  # optional - build
+        {...'brial': ...'pynac': ...}
 
     .. SEEALSO::
 
         :func:`sage.misc.package.list_packages`
     """
-    from sage.env import SAGE_SPKG_INST
     installed = {}
     if not exclude_pip:
         installed.update(pip_installed_packages())
     # Sage packages should override pip packages (Trac #23997)
-    installed.update(pkgname_split(pkgname) for pkgname in os.listdir(SAGE_SPKG_INST))
+    installed.update(pkgname_split(pkgname)
+                     for pkgname in os.listdir(sage.env.SAGE_SPKG_INST))
     return installed
 
 
@@ -302,12 +310,12 @@ def is_package_installed(package, exclude_pip=True):
 
     EXAMPLES::
 
-        sage: is_package_installed('pari')
+        sage: is_package_installed('gap')  # optional - build
         True
 
     Giving just the beginning of the package name is not good enough::
 
-        sage: is_package_installed('matplotli')
+        sage: is_package_installed('matplotli')  # optional - build
         False
 
     Otherwise, installing "pillow" would cause this function to think
@@ -316,7 +324,7 @@ def is_package_installed(package, exclude_pip=True):
     Check that the option ``exclude_pip`` is turned on by default::
 
         sage: from sage.misc.package import list_packages
-        sage: for pkg in list_packages('pip', local=True):
+        sage: for pkg in list_packages('pip', local=True):  # optional - build
         ....:     assert not is_package_installed(pkg)
 
     .. NOTE::
@@ -329,6 +337,7 @@ def is_package_installed(package, exclude_pip=True):
         whether a library is installed and functional.
     """
     return any(p.split('-')[0] == package for p in installed_packages(exclude_pip))
+
 
 def package_versions(package_type, local=False):
     r"""
@@ -354,13 +363,14 @@ def package_versions(package_type, local=False):
 
     EXAMPLES::
 
-        sage: std = package_versions('standard', local=True)
-        sage: 'gap' in std
+        sage: std = package_versions('standard', local=True)  # optional - build
+        sage: 'gap' in std  # optional - build
         True
-        sage: std['zn_poly']  # random
+        sage: std['zn_poly']  # optional - build, random
         ('0.9.p12', '0.9.p12')
     """
     return {pkg['name']: (pkg['installed_version'], pkg['remote_version']) for pkg in list_packages(package_type, local=local).values()}
+
 
 def standard_packages():
     """
@@ -382,13 +392,14 @@ def standard_packages():
     EXAMPLES::
 
         sage: from sage.misc.package import standard_packages
-        sage: installed, not_installed = standard_packages()
-        sage: installed[0], installed[-1]
+        sage: installed, not_installed = standard_packages()  # optional - build
+        sage: installed[0], installed[-1]  # optional - build
         ('alabaster', 'zope_interface')
     """
     pkgs = list_packages('standard', local=True).values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+
 
 def optional_packages():
     """
@@ -410,15 +421,15 @@ def optional_packages():
     EXAMPLES::
 
         sage: from sage.misc.package import optional_packages
-        sage: installed, not_installed = optional_packages()
-        sage: 'ore_algebra' in installed+not_installed
+        sage: installed, not_installed = optional_packages()  # optional - build
+        sage: 'ore_algebra' in installed+not_installed  # optional - build
         True
-        sage: 'beautifulsoup' in installed+not_installed
+        sage: 'beautifulsoup' in installed+not_installed  # optional - build
         True
 
-        sage: 'beautifulsoup' in installed   # optional - beautifulsoup
+        sage: 'beautifulsoup' in installed   # optional - build beautifulsoup
         True
-        sage: 'ore_algebra' in installed     # optional - ore_algebra
+        sage: 'ore_algebra' in installed     # optional - build ore_algebra
         True
     """
     pkgs = list_packages('optional', local=True)
@@ -426,6 +437,7 @@ def optional_packages():
     pkgs = pkgs.values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+
 
 def experimental_packages():
     """
@@ -447,11 +459,47 @@ def experimental_packages():
     EXAMPLES::
 
         sage: from sage.misc.package import experimental_packages
-        sage: installed, not_installed = experimental_packages()
+        sage: installed, not_installed = experimental_packages()  # optional - build
     """
     pkgs = list_packages('experimental', local=True).values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+
+def package_manifest(package):
+    """
+    Return the manifest for ``package``.
+
+    INPUT:
+
+    - ``package`` -- package name
+
+    The manifest is written in the file
+    ``SAGE_SPKG_INST/package-VERSION``. It is a JSON file containing a
+    dictionary with the package name, version, installation date, list
+    of installed files, etc.
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import package_manifest
+        sage: sagetex_manifest = package_manifest('sagetex')  # optional - build
+        sage: sagetex_manifest['package_name'] == 'sagetex'  # optional - build
+        True
+        sage: 'files' in sagetex_manifest  # optional - build
+        True
+
+    Test a nonexistent package::
+
+        sage: package_manifest('dummy-package')  # optional - build
+        Traceback (most recent call last):
+        ...
+        KeyError: 'dummy-package'
+    """
+    version = installed_packages()[package]
+    stamp_file = os.path.join(sage.env.SAGE_SPKG_INST,
+                              '{}-{}'.format(package, version))
+    with open(stamp_file) as f:
+        spkg_meta = json.load(f)
+    return spkg_meta
 
 
 class PackageNotFoundError(RuntimeError):

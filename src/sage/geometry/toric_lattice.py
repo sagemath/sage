@@ -136,14 +136,14 @@ Or you can create a homomorphism from one lattice to any other::
 # Parts of the "tutorial" above are also in toric_lattice_element.pyx.
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.geometry.toric_lattice_element import (ToricLatticeElement,
@@ -800,9 +800,8 @@ class ToricLattice_generic(FreeModule_generic_pid):
             if is_ToricLatticeElement(g) and g not in A:
                 raise ValueError("%s can not generate a sublattice of %s"
                                  % (g, A))
-        else:
-            return super(ToricLattice_generic, self).span(gens, base_ring,
-                                                          *args, **kwds)
+        return super(ToricLattice_generic, self).span(gens, base_ring,
+                                                      *args, **kwds)
 
     def span_of_basis(self, basis, base_ring=ZZ, *args, **kwds):
         r"""
@@ -856,9 +855,8 @@ class ToricLattice_generic(FreeModule_generic_pid):
             if is_ToricLatticeElement(g) and g not in A:
                 raise ValueError("%s can not generate a sublattice of %s"
                                  % (g, A))
-        else:
-            return super(ToricLattice_generic, self).span_of_basis(
-                                            basis, base_ring, *args, **kwds)
+        return super(ToricLattice_generic, self).span_of_basis(
+            basis, base_ring, *args, **kwds)
 
 
 @richcmp_method
@@ -1774,7 +1772,7 @@ class ToricLattice_quotient(FGP_Module_class):
         """
         coordinates = super(ToricLattice_quotient, self).coordinate_vector(x,reduce)
         if self._flip_sign_of_generator:
-            assert len(coordinates)==1, "Sign flipped for a multi-dimensional quotient!"
+            assert len(coordinates) == 1, "Sign flipped for a multi-dimensional quotient!"
             return -coordinates
         else:
             return coordinates

@@ -228,6 +228,70 @@ class MappedValuation_base(DiscretePseudoValuation):
         f = self._base_valuation.lift(F)
         return self._from_base_domain(f)
 
+    def simplify(self, x, error=None, force=False):
+        r"""
+        Return a simplified version of ``x``.
+
+        Produce an element which differs from ``x`` by an element of
+        valuation strictly greater than the valuation of ``x`` (or strictly
+        greater than ``error`` if set.)
+        
+        If ``force`` is not set, then expensive simplifications may be avoided.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+
+            sage: v = K.valuation(0)
+            sage: w = v.extensions(L)[0]
+
+        As :meth:`_relative_size` misses the bloated term ``x^32``, the
+        following term does not get simplified::
+
+            sage: w.simplify(y + x^32)
+            y + x^32
+
+        In this case the simplification can be forced but this should not
+        happen as a default as the recersive simplification can be quite
+        costly::
+
+            sage: w.simplify(y + x^32, force=True)
+            y
+
+        """
+        return self._from_base_domain(self._base_valuation.simplify(self._to_base_domain(x), error=error, force=force))
+
+    def _relative_size(self, x):
+        r"""
+        Return an estimate on the coefficient size of ``x``.
+
+        The number returned is an estimate on the factor between the number of
+        bits used by ``x`` and the minimal number of bits used by an element
+        congruent to ``x``.
+
+        This can be used by :meth:`simplify` to decide whether simplification
+        of coefficients is going to lead to a significant shrinking of the
+        coefficients of ``x``.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: v = K.valuation(0)
+            sage: w = v.extensions(L)[0]
+
+        In this example, the method misses the size of the bloated term
+        ``x^32``::
+
+            sage: w._relative_size(y + x^32)
+            1
+
+        """
+        return self._base_valuation._relative_size(self._to_base_domain(x))
+
     def _to_base_residue_ring(self, F):
         r"""
         Return ``F``, an element of :meth:`~sage.rings.valuation.valuation_space.DiscretePseudoValuationSpace.ElementMethods.residue_ring`,

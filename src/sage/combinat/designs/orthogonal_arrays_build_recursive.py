@@ -383,11 +383,11 @@ def OA_and_oval(q):
     # We build the TD by relabelling the point set, and removing those which
     # contain x.
     r = {}
-    B = list(B)
-    # (this is to make sure that the first set containing x in B is the one
-    # which contains no other oval point)
 
-    B.sort(key=lambda b:int(any([xx in oval for xx in b])))
+    # Make sure that the first set containing x in B is the one
+    # which contains no other oval point
+    B = sorted(B, key=lambda b: any(xx in oval for xx in b))
+
     BB = []
     for b in B:
         if x in b:
@@ -540,7 +540,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     PBD = [[relabel[xx] for xx in B if not xx in points_to_delete] for B in TD]
 
     # Taking the unique block of size x+2
-    assert map(len,PBD).count(x+2)==1
+    assert list(map(len,PBD)).count(x+2)==1
     for B in PBD:
         if len(B) == x+2:
             break
@@ -803,13 +803,14 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     q = n
     K = FiniteField(q, 'x')
-    relabel = {x:i for i,x in enumerate(K)}
-    PG = DesarguesianProjectivePlaneDesign(q,check=False,point_coordinates=False).blocks(copy=False)
+    relabel = {x: i for i, x in enumerate(K)}
+    PG = DesarguesianProjectivePlaneDesign(q, check=False,
+                                           point_coordinates=False).blocks()
 
     if q % 3 == 0:
         t = K.one()
-    elif q%3 == 1:
-        t = K.multiplicative_generator()**((q-1)//3)
+    elif q % 3 == 1:
+        t = K.multiplicative_generator()**((q - 1)//3)
     else:
         raise ValueError("q(={}) must be congruent to 0 or 1 mod 3".format(q))
 
@@ -902,7 +903,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         - The product of the blocks of a `n_1`-parallel class of `OA(k,n_2)`
           with an `OA(k,n_1)` can be done in such a way that it yields `n_1n_2`
           parallel classes of `OA(k,n_1n_2)`. Those classes cover exactly the
-          pairs that woud have been covered with the usual product.
+          pairs that would have been covered with the usual product.
 
           This can be achieved by simple cyclic permutations. Let us build the
           product of the `n_1`-parallel class `\mathcal P\subseteq OA(k,n_2)`

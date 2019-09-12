@@ -166,7 +166,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: c = []
             sage: c = [Conic(a) for a in m if a != [0,0,0]]
             sage: d = [C.has_rational_point(algorithm = 'rnfisnorm', point = True) for C in c] # long time: 3.3 seconds
-            sage: all([c[k].defining_polynomial()(Sequence(d[k][1])) == 0 for k in range(len(d)) if d[k][0]])
+            sage: all(c[k].defining_polynomial()(Sequence(d[k][1])) == 0 for k in range(len(d)) if d[k][0])
             True
             sage: [C.has_rational_point(algorithm='local', read_cache=False) for C in c] == [o[0] for o in d] # long time: 5 seconds
             True
@@ -183,9 +183,9 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: M.<c> = NumberField(x^5+3*x+1)
             sage: m = [[F(b) for b in a] for a in l for F in [K, L, M]]
             sage: c = [Conic(a) for a in m if a != [0,0,0] and a != [1,1,1] and a != [-1,-1,-1]]
-            sage: assert all([C.has_rational_point(algorithm = 'rnfisnorm') for C in c])
-            sage: assert all([C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c])
-            sage: assert all([C.has_rational_point(algorithm='local', read_cache=False) for C in c]) # long time: 1 second
+            sage: assert all(C.has_rational_point(algorithm = 'rnfisnorm') for C in c)
+            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c)
+            sage: assert all(C.has_rational_point(algorithm='local', read_cache=False) for C in c) # long time: 1 second
         """
         if read_cache:
             if self._rational_point is not None:
@@ -377,12 +377,12 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: L.<a> = QuadraticField(5)
             sage: Conic(L, [1, 2, 3]).local_obstructions()
             [Ring morphism:
-              From: Number Field in a with defining polynomial x^2 - 5
-              To:   Algebraic Real Field
-              Defn: a |--> -2.236067977499790?, Ring morphism:
-              From: Number Field in a with defining polynomial x^2 - 5
-              To:   Algebraic Real Field
-              Defn: a |--> 2.236067977499790?]
+               From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
+               To:   Algebraic Real Field
+               Defn: a |--> -2.236067977499790?, Ring morphism:
+               From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
+               To:   Algebraic Real Field
+               Defn: a |--> 2.236067977499790?]
         """
         obs0 = []
         obs1 = []

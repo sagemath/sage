@@ -140,14 +140,14 @@ ACKNOWLEDGEMENT:
 Classes and their Methods
 =========================
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                http://www.gnu.org/licenses/
-#*****************************************************************************
+#                https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from six import itervalues
@@ -1062,7 +1062,7 @@ class MutablePosetShell(SageObject):
             sage: P.add(42)
             sage: P.add(5)
             sage: marked = set()
-            sage: list(P.null._iter_topological_visit_(marked, reverse=True))
+            sage: list(P.null._iter_topological_visit_(marked, reverse=True, key=repr))
             [oo, 42, 5, null]
         """
         if (condition is not None and
@@ -1129,7 +1129,7 @@ class MutablePosetShell(SageObject):
         ::
 
             sage: for e in P.shells_topological(include_special=True,
-            ....:                               reverse=True):
+            ....:                               reverse=True, key=repr):
             ....:     print(e)
             ....:     print(list(e.iter_topological(reverse=True, key=repr)))
             oo
@@ -1152,7 +1152,7 @@ class MutablePosetShell(SageObject):
         ::
 
             sage: for e in P.shells_topological(include_special=True,
-            ....:                               reverse=True):
+            ....:                               reverse=True, key=repr):
             ....:     print(e)
             ....:     print(list(e.iter_topological(reverse=False, key=repr)))
             oo
@@ -1175,7 +1175,8 @@ class MutablePosetShell(SageObject):
         ::
 
             sage: list(P.null.iter_topological(
-            ....:     reverse=True, condition=lambda s: s.element[0] == 1))
+            ....:     reverse=True, condition=lambda s: s.element[0] == 1,
+            ....:     key=repr))
             [(1, 3), (1, 2), (1, 1), null]
 
         .. SEEALSO::
@@ -1791,9 +1792,8 @@ class MutablePoset(SageObject):
           ``True`` gives largest first.
 
         - ``key`` -- (default: ``None``) a function used for sorting
-          the direct successors of a shell (used in case of a tie). If
-          this is ``None``, then the successors are sorted according
-          to their representation strings.
+          the direct successors of a shell (used in case of a tie).
+          If this is ``None``, no sorting occurs.
 
         OUTPUT:
 
@@ -1812,14 +1812,14 @@ class MutablePoset(SageObject):
             ....:         return all(l <= r for l, r in zip(left, right))
             sage: P = MP([T((1, 1)), T((1, 3)), T((2, 1)),
             ....:         T((4, 4)), T((1, 2)), T((2, 2))])
-            sage: list(P.shells_topological())
+            sage: list(P.shells_topological(key=repr))
             [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (4, 4)]
-            sage: list(P.shells_topological(reverse=True))
+            sage: list(P.shells_topological(reverse=True, key=repr))
             [(4, 4), (1, 3), (2, 2), (1, 2), (2, 1), (1, 1)]
-            sage: list(P.shells_topological(include_special=True))
+            sage: list(P.shells_topological(include_special=True, key=repr))
             [null, (1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (4, 4), oo]
             sage: list(P.shells_topological(
-            ....:     include_special=True, reverse=True))
+            ....:     include_special=True, reverse=True, key=repr))
             [oo, (4, 4), (1, 3), (2, 2), (1, 2), (2, 1), (1, 1), null]
 
         .. SEEALSO::
@@ -1832,8 +1832,6 @@ class MutablePoset(SageObject):
             :meth:`MutablePosetShell.iter_depth_first`,
             :meth:`MutablePosetShell.iter_topological`.
         """
-        if key is None:
-            key = repr
         shell = self.oo if not reverse else self.null
         return iter(e for e in shell.iter_topological(reverse, key)
                     if include_special or not e.is_special())
@@ -1904,7 +1902,7 @@ class MutablePoset(SageObject):
             ....:         return all(l <= r for l, r in zip(left, right))
             sage: P = MP([T((1, 1)), T((1, 3)), T((2, 1)),
             ....:         T((4, 4)), T((1, 2)), T((2, 2))])
-            sage: [(v, type(v)) for v in P.elements_topological()]
+            sage: [(v, type(v)) for v in P.elements_topological(key=repr)]
             [((1, 1), <class '__main__.T'>),
              ((1, 2), <class '__main__.T'>),
              ((1, 3), <class '__main__.T'>),
@@ -1988,15 +1986,15 @@ class MutablePoset(SageObject):
             sage: from sage.data_structures.mutable_poset import MutablePoset as MP
             sage: P = MP([(1, 1), (2, 1), (4, 4)],
             ....:        key=lambda c: c[0])
-            sage: [(v, type(v)) for v in P.keys_topological()]
+            sage: [(v, type(v)) for v in P.keys_topological(key=repr)]
             [(1, <type 'sage.rings.integer.Integer'>),
              (2, <type 'sage.rings.integer.Integer'>),
              (4, <type 'sage.rings.integer.Integer'>)]
-            sage: [(v, type(v)) for v in P.elements_topological()]
+            sage: [(v, type(v)) for v in P.elements_topological(key=repr)]
             [((1, 1), <... 'tuple'>),
              ((2, 1), <... 'tuple'>),
              ((4, 4), <... 'tuple'>)]
-            sage: [(v, type(v)) for v in P.shells_topological()]
+            sage: [(v, type(v)) for v in P.shells_topological(key=repr)]
             [((1, 1), <class 'sage.data_structures.mutable_poset.MutablePosetShell'>),
              ((2, 1), <class 'sage.data_structures.mutable_poset.MutablePosetShell'>),
              ((4, 4), <class 'sage.data_structures.mutable_poset.MutablePosetShell'>)]
@@ -2043,7 +2041,8 @@ class MutablePoset(SageObject):
         """
         s = 'poset('
         s += ', '.join(repr(shell) for shell in
-                       self.shells_topological(include_special, reverse))
+                       self.shells_topological(include_special, reverse,
+                                               key=repr))
         s += ')'
         return s
 
@@ -2077,7 +2076,9 @@ class MutablePoset(SageObject):
             |   +-- no predecessors
         """
         sortedshells = tuple(
-            self.shells_topological(include_special=True, reverse=reverse))
+            self.shells_topological(include_special=True,
+                                    reverse=reverse,
+                                    key=repr))
         strings = [self.repr(include_special=False, reverse=reverse)]
         for shell in sortedshells:
             strings.append('+-- ' + repr(shell))
@@ -3223,20 +3224,21 @@ class MutablePoset(SageObject):
             +-- null
             |   +-- successors:   (1, 3, 'abe'), (2, 1, 'c')
             |   +-- no predecessors
-            sage: for k in P.keys():
+            sage: for k in sorted(P.keys()):
             ....:     Q = copy(P)
             ....:     Q.merge(k)
             ....:     print('merging %s: %s' % (k, Q))
-            merging (1, 2): poset((1, 2, 'ae'), (1, 3, 'b'),
-                                  (2, 1, 'c'), (2, 2, 'f'), (4, 4, 'd'))
-            merging (1, 3): poset((1, 3, 'abe'), (2, 1, 'c'),
-                                  (2, 2, 'f'), (4, 4, 'd'))
-            merging (4, 4): poset((4, 4, 'abcdef'))
-            merging (2, 1): poset((1, 2, 'e'), (1, 3, 'b'),
-                                  (2, 1, 'ac'), (2, 2, 'f'), (4, 4, 'd'))
-            merging (2, 2): poset((1, 3, 'b'), (2, 2, 'acef'), (4, 4, 'd'))
             merging (1, 1): poset((1, 1, 'a'), (1, 2, 'e'), (1, 3, 'b'),
                                   (2, 1, 'c'), (2, 2, 'f'), (4, 4, 'd'))
+            merging (1, 2): poset((1, 2, 'ae'), (1, 3, 'b'), (2, 1, 'c'),
+                                  (2, 2, 'f'), (4, 4, 'd'))
+            merging (1, 3): poset((1, 3, 'abe'), (2, 1, 'c'), (2, 2, 'f'),
+                                  (4, 4, 'd'))
+            merging (2, 1): poset((1, 2, 'e'), (1, 3, 'b'), (2, 1, 'ac'),
+                                  (2, 2, 'f'), (4, 4, 'd'))
+            merging (2, 2): poset((1, 3, 'b'), (2, 2, 'acef'), (4, 4, 'd'))
+            merging (4, 4): poset((4, 4, 'abcdef'))
+
             sage: Q = copy(P)
             sage: Q.merge(); Q
             poset((4, 4, 'abcdef'))

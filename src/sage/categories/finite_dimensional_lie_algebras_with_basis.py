@@ -21,6 +21,7 @@ from __future__ import print_function
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.subobjects import SubobjectsCategory
@@ -37,7 +38,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         Many of these tests should use non-abelian Lie algebras and need to
         be added after :trac:`16820`.
     """
-    _base_category_class_and_axiom = [LieAlgebras.FiniteDimensional, "WithBasis"]
+    _base_category_class_and_axiom = (LieAlgebras.FiniteDimensional, "WithBasis")
 
     def example(self, n=3):
         """
@@ -60,10 +61,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         from sage.categories.examples.finite_dimensional_lie_algebras_with_basis import Example
         return Example(self.base_ring(), n)
 
+    Nilpotent = LazyImport('sage.categories.finite_dimensional_nilpotent_lie_algebras_with_basis',
+                           'FiniteDimensionalNilpotentLieAlgebrasWithBasis')
+
     class ParentMethods:
         @cached_method
         def _construct_UEA(self):
-            """
+            r"""
             Construct the universal enveloping algebra of ``self``.
 
             EXAMPLES::
@@ -83,6 +87,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  nc-relations: {...}
                 sage: sorted(UEA.relations().items(), key=str)
                 [(y*x, x*y - z), (z*x, x*z + y), (z*y, y*z - x)]
+
+            Singular's ``nc_algebra`` does not work over `\ZZ/6\ZZ`,
+            so we fallback to the PBW basis in this case::
+
+                sage: L = lie_algebras.pwitt(Zmod(6), 6)
+                sage: L._construct_UEA()
+                Universal enveloping algebra of
+                 The 6-Witt Lie algebra over Ring of integers modulo 6
+                 in the Poincare-Birkhoff-Witt basis
             """
             # Create the UEA relations
             # We need to get names for the basis elements, not just the generators
@@ -113,7 +126,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     rels[g1*g0] = g0*g1 - F.sum(val*get_var(g) for g, val in S[k])
                 else:
                     rels[g0*g1] = g1*g0 + F.sum(val*get_var(g) for g, val in S[k])
-            return F.g_algebra(rels)
+            try:
+                return F.g_algebra(rels)
+            except RuntimeError:
+                # Something went wrong with the computation, so fallback to
+                #   the generic PBW basis implementation
+                return self.pbw_basis()
 
         @lazy_attribute
         def _basis_ordering(self):
@@ -306,7 +324,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         @cached_method
         def structure_coefficients(self, include_zeros=False):
-            """
+            r"""
             Return the structure coefficients of ``self``.
 
             INPUT:
@@ -326,7 +344,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.structure_coefficients()
                 Finite family {}
                 sage: L.structure_coefficients(True)
-                Finite family {(0, 1): (0, 0, 0), (1, 2): (0, 0, 0), (0, 2): (0, 0, 0)}
+                Finite family {(0, 1): (0, 0, 0), (0, 2): (0, 0, 0), (1, 2): (0, 0, 0)}
 
             ::
 
@@ -334,15 +352,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S = GroupAlgebra(G, QQ)
                 sage: L = LieAlgebra(associative=S)
                 sage: L.structure_coefficients()
-                Finite family {((1,2), (1,3,2)): (2,3) - (1,3),
-                               ((1,3,2), (1,3)): (2,3) - (1,2),
-                               ((1,2), (1,2,3)): -(2,3) + (1,3),
-                               ((1,2,3), (1,3)): -(2,3) + (1,2),
+                Finite family {((2,3), (1,2)): (1,2,3) - (1,3,2),
                                ((2,3), (1,3)): -(1,2,3) + (1,3,2),
-                               ((1,2), (2,3)): -(1,2,3) + (1,3,2),
+                               ((1,2,3), (2,3)): -(1,2) + (1,3),
+                               ((1,2,3), (1,2)): (2,3) - (1,3),
+                               ((1,2,3), (1,3)): -(2,3) + (1,2),
                                ((1,3,2), (2,3)): (1,2) - (1,3),
-                               ((1,2), (1,3)): (1,2,3) - (1,3,2),
-                               ((1,2,3), (2,3)): -(1,2) + (1,3)}
+                               ((1,3,2), (1,2)): -(2,3) + (1,3),
+                               ((1,3,2), (1,3)): (2,3) - (1,2),
+                               ((1,3), (1,2)): -(1,2,3) + (1,3,2)}
             """
             d = {}
             B = self.basis()
@@ -564,6 +582,81 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return tuple([matrix(R, N, N, list(b))
                           for b in IDer.row_module().basis()])
 
+        def subalgebra(self, *gens, **kwds):
+            r"""
+            Return the subalgebra of ``self`` generated by ``gens``.
+
+            INPUT:
+
+            - ``gens`` -- a list of generators of the subalgebra
+            - ``category`` -- (optional) a subcategory of subobjects of finite
+              dimensional Lie algebras with basis
+
+            EXAMPLES::
+
+                sage: H = lie_algebras.Heisenberg(QQ, 2)
+                sage: p1,p2,q1,q2,z = H.basis()
+                sage: S = H.subalgebra([p1, q1])
+                sage: S.basis().list()
+                [p1, q1, z]
+                sage: S.basis_matrix()
+                [1 0 0 0 0]
+                [0 0 1 0 0]
+                [0 0 0 0 1]
+
+            Passing an extra category to a subalgebra::
+
+                sage: L = LieAlgebra(QQ, 3, step=2)
+                sage: x,y,z = L.homogeneous_component_basis(1)
+                sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
+                sage: C = C.Subobjects().Graded().Stratified()
+                sage: S = L.subalgebra([x, y], category=C)
+                sage: S.homogeneous_component_basis(2).list()
+                [X_12]
+            """
+            from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimensional_with_basis
+            if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+                gens = gens[0]
+            category = kwds.pop('category', None)
+            return LieSubalgebra_finite_dimensional_with_basis(
+                self, gens, category=category, **kwds)
+
+        def ideal(self, *gens, **kwds):
+            r"""
+            Return the ideal of ``self`` generated by ``gens``.
+
+            INPUT:
+
+            - ``gens`` -- a list of generators of the ideal
+            - ``category`` -- (optional) a subcategory of subobjects of finite
+              dimensional Lie algebras with basis
+
+            EXAMPLES::
+
+                sage: H = lie_algebras.Heisenberg(QQ, 2)
+                sage: p1,p2,q1,q2,z = H.basis()
+                sage: I = H.ideal([p1-p2, q1-q2])
+                sage: I.basis().list()
+                [-p1 + p2, -q1 + q2, z]
+                sage: I.reduce(p1 + p2 + q1 + q2 + z)
+                2*p1 + 2*q1
+
+            Passing an extra category to an ideal::
+
+                sage: L.<x,y,z> = LieAlgebra(QQ, abelian=True)
+                sage: C = LieAlgebras(QQ).FiniteDimensional().WithBasis()
+                sage: C = C.Subobjects().Graded().Stratified()
+                sage: I = L.ideal(x, y, category=C)
+                sage: I.homogeneous_component_basis(1).list()
+                [x, y]
+            """
+            from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimensional_with_basis
+            if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+                gens = gens[0]
+            category = kwds.pop('category', None)
+            return LieSubalgebra_finite_dimensional_with_basis(
+                self, gens, ideal=True, category=category, **kwds)
+
         @cached_method
         def is_ideal(self, A):
             """
@@ -601,6 +694,53 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             except (ValueError, TypeError):
                 return False
             return b_mat.row_space().is_submodule(self.module())
+
+        def quotient(self, I, names=None, category=None):
+            r"""
+            Return the quotient of ``self`` by the ideal ``I``.
+
+            A quotient Lie algebra.
+
+            INPUT:
+
+            - ``I`` -- an ideal or a list of generators of the ideal
+            - ``names`` -- (optional) a string or a list of strings;
+              names for the basis elements of the quotient. If ``names`` is a
+              string, the basis will be named ``names_1``,...,``names_n``.
+
+            EXAMPLES:
+
+            The Engel Lie algebra as a quotient of the free nilpotent Lie algebra
+            of step 3 with 2 generators::
+
+                    sage: L.<X,Y,Z,W,U> = LieAlgebra(QQ, 2, step=3)
+                    sage: E = L.quotient(U); E
+                    Lie algebra quotient L/I of dimension 4 over Rational Field where
+                    L: Free Nilpotent Lie algebra on 5 generators (X, Y, Z, W, U) over Rational Field
+                    I: Ideal (U)
+                    sage: E.basis().list()
+                    [X, Y, Z, W]
+                    sage: E(X).bracket(E(Y))
+                    Z
+                    sage: Y.bracket(Z)
+                    -U
+                    sage: E(Y).bracket(E(Z))
+                    0
+                    sage: E(U)
+                    0
+
+            Quotients when the base ring is not a field are not implemented::
+
+                sage: L = lie_algebras.Heisenberg(ZZ, 1)
+                sage: L.quotient(L.an_element())
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: quotients over non-fields not implemented
+            """
+            from sage.algebras.lie_algebras.quotient import LieQuotient_finite_dimensional_with_basis
+            return LieQuotient_finite_dimensional_with_basis(I, ambient=self,
+                                                             names=names,
+                                                             category=category)
 
         def product_space(self, L, submodule=False):
             r"""
@@ -654,16 +794,20 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ()
             """
             # Make sure we lift everything to the ambient space
-            try:
-                A = self._ambient
-            except AttributeError:
-                try:
-                    A = L._ambient
-                except AttributeError:
-                    A = self
+            if self in LieAlgebras(self.base_ring()).Subobjects():
+                A = self.ambient()
+            elif L in LieAlgebras(L.base_ring()).Subobjects():
+                A = L.ambient()
+            else:
+                A = self
+
+            if L not in self.category():
+                # L might be a submodule of A.module()
+                LB = [self.from_vector(b) for b in L.basis()]
+            else:
+                LB = L.basis()
 
             B = self.basis()
-            LB = L.basis()
             b_mat = matrix(A.base_ring(), [A.bracket(b, lb).to_vector()
                                            for b in B for lb in LB])
             if submodule is True or not (self.is_ideal(A) and L.is_ideal(A)):
@@ -749,11 +893,16 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return tuple(L)
 
         @cached_method
-        def lower_central_series(self):
+        def lower_central_series(self, submodule=False):
             r"""
             Return the lower central series `(\mathfrak{g}_{i})_i`
             of ``self`` where the rightmost
             `\mathfrak{g}_k = \mathfrak{g}_{k+1} = \cdots`.
+
+            INPUT:
+
+            - ``submodule`` -- (default: ``False``) if ``True``, then the
+              result is given as submodules of ``self``
 
             We define the lower central series of a Lie algebra `\mathfrak{g}`
             recursively by `\mathfrak{g}_0 := \mathfrak{g}` and
@@ -783,6 +932,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     with basis matrix:
                     [])
 
+            The lower central series as submodules::
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
+                sage: L.lower_central_series(submodule=True)
+                (Sparse vector space of dimension 2 over Rational Field,
+                Vector space of degree 2 and dimension 1 over Rational Field
+                Basis matrix:
+                [1 0])
+
             ::
 
                 sage: L.<x,y> = LieAlgebra(QQ, {('x','y'):{'x':1}})
@@ -791,9 +949,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  Subalgebra generated of Lie algebra on 2 generators (x, y) over Rational Field with basis:
                 (x,))
             """
-            L = [self]
+            if submodule:
+                L = [self.module()]
+            else:
+                L = [self]
             while L[-1].dimension() > 0:
-                s = self.product_space(L[-1])
+                s = self.product_space(L[-1], submodule = submodule)
                 if L[-1].dimension() == s.dimension():
                     break
                 L.append(s)
@@ -1196,6 +1357,58 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 mats.append(matrix(R, M))
             from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
             return FiniteDimensionalAlgebra(R, mats, names=self._names)
+
+        def morphism(self, on_generators, codomain=None, check=True):
+            r"""
+            Return a Lie algebra morphism defined by images of a Lie
+            generating subset of ``self``.
+
+            INPUT:
+
+            - ``on_generators`` -- dictionary ``{X: Y}`` of the images `Y`
+              in ``codomain`` of elements `X` of ``domain``
+            - ``codomain`` -- a Lie algebra (optional); this is inferred
+              from the values of ``on_generators`` if not given
+            - ``check`` -- (default: ``True``) boolean; if ``False`` the
+              values  on the Lie brackets implied by ``on_generators`` will
+              not be checked for contradictory values
+
+            .. NOTE::
+
+                The keys of ``on_generators`` need to generate ``domain``
+                as a Lie algebra.
+
+            .. SEEALSO::
+
+                :class:`sage.algebras.lie_algebras.morphism.LieAlgebraMorphism_from_generators`
+
+            EXAMPLES:
+
+            A quotient type Lie algebra morphism ::
+
+                sage: L.<X,Y,Z,W> = LieAlgebra(QQ, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+                sage: K.<A,B> = LieAlgebra(QQ, abelian=True)
+                sage: L.morphism({X: A, Y: B})
+                Lie algebra morphism:
+                  From: Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
+                  To:   Abelian Lie algebra on 2 generators (A, B) over Rational Field
+                  Defn: X |--> A
+                        Y |--> B
+                        Z |--> 0
+                        W |--> 0
+
+            The reverse map `A \mapsto X`, `B \mapsto Y` does not define a Lie
+            algebra morphism, since `[A,B] = 0`, but `[X,Y] \neq 0`::
+
+                sage: K.morphism({A:X, B: Y})
+                Traceback (most recent call last):
+                ...
+                ValueError: this does not define a Lie algebra morphism;
+                 contradictory values for brackets of length 2
+            """
+            from sage.algebras.lie_algebras.morphism import LieAlgebraMorphism_from_generators
+            return LieAlgebraMorphism_from_generators(on_generators, domain=self,
+                                                      codomain=codomain, check=check)
 
     class ElementMethods:
         def adjoint_matrix(self): # In #11111 (more or less) by using matrix of a morphism

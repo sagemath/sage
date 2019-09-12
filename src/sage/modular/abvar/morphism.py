@@ -50,7 +50,9 @@ from .finite_subgroup import TorsionPoint
 
 class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
     """
-    A morphism between modular abelian varieties. EXAMPLES::
+    A morphism between modular abelian varieties.
+
+    EXAMPLES::
 
         sage: t = J0(11).hecke_operator(2)
         sage: from sage.modular.abvar.morphism import Morphism
@@ -898,7 +900,7 @@ class HeckeOperator(Morphism):
         return self.__abvar.homology(R).hecke_operator(self.index())
 
     def matrix(self):
-        """
+        r"""
         Return the matrix of self acting on the homology
         `H_1(A, ZZ)` of this abelian variety with coefficients in
         `\ZZ`.

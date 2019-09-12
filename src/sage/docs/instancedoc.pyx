@@ -114,7 +114,7 @@ Check that inheritance works (after passing the subclass to
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cpython.object cimport PyObject, PyTypeObject
@@ -311,11 +311,16 @@ def instancedoc(cls):
         Traceback (most recent call last):
         ...
         TypeError: expected type, got 7
+
         sage: class OldStyle: pass
-        sage: instancedoc(OldStyle)
+        sage: instancedoc(OldStyle)  # py2
         Traceback (most recent call last):
         ...
         TypeError: expected type, got <class __main__.OldStyle at ...>
+        sage: instancedoc(OldStyle)  # py3
+        Traceback (most recent call last):
+        ...
+        TypeError: instancedoc requires <class '__main__.OldStyle'> to have an '_instancedoc_' attribute
     """
     cdef PyTypeObject* tp = TypeObject(cls)
     try:

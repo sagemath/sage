@@ -233,7 +233,7 @@ class JonesDatabase:
             S = list(S)
         except TypeError:
             S = [S]
-        if not all([p.is_prime() for p in S]):
+        if not all(p.is_prime() for p in S):
             raise ValueError("S must be a list of primes")
         S.sort()
         s = tuple(S)

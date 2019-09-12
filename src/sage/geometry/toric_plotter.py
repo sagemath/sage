@@ -35,7 +35,7 @@ You may change default plotting options as follows::
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
@@ -43,8 +43,8 @@ You may change default plotting options as follows::
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 from six import iteritems
 
@@ -217,7 +217,7 @@ class ToricPlotter(SageObject):
         self.dimension = dimension
         self.origin = vector(RDF, max(dimension, 2)) # 1-d is plotted in 2-d
         if self.mode not in ["box", "generators", "round"]:
-            raise ValueError("unrecognized plotting mode: %s!" % mode)
+            raise ValueError("unrecognized plotting mode: %s!" % self.mode)
         # If radius was explicitly set by the user, it sets other bounds too.
         # If we don't take it into account here, they will be replaced by
         # automatically computed values.

@@ -8,7 +8,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2016 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
@@ -16,14 +16,15 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.numerical.mip import MIPSolverException
 from sage.numerical.interactive_simplex_method import InteractiveLPProblem, default_variable_name
 from sage.modules.all import vector
 from copy import copy
+
 
 cdef class InteractiveLPBackend:
     """
@@ -563,7 +564,7 @@ cdef class InteractiveLPBackend:
                                        problem_type, ring, objective_constant_term=d)
 
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -593,11 +594,11 @@ cdef class InteractiveLPBackend:
             sage: p.nrows()
             0
             sage: p.add_linear_constraints(5, 0, None)
-            sage: p.add_col(range(5), range(5))
+            sage: p.add_col(list(range(5)), list(range(5)))
             sage: p.nrows()
             5
         """
-        self.add_variable(coefficients = zip(indices, coeffs))
+        self.add_variable(coefficients=zip(indices, coeffs))
 
     cpdef int solve(self) except -1:
         """
@@ -614,7 +615,7 @@ cdef class InteractiveLPBackend:
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "InteractiveLP")
             sage: p.add_linear_constraints(5, 0, None)
-            sage: p.add_col(range(5), range(5))
+            sage: p.add_col(list(range(5)), list(range(5)))
             sage: p.solve()
             0
             sage: p.objective_coefficient(0,1)
@@ -746,14 +747,14 @@ cdef class InteractiveLPBackend:
         """
         return self.lp.problem_type() == "max"
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -763,7 +764,7 @@ cdef class InteractiveLPBackend:
             sage: print(p.problem_name())
             There_once_was_a_french_fry
         """
-        if name == NULL:
+        if name is None:
             if self.prob_name is not None:
                 return self.prob_name
             else:

@@ -54,7 +54,9 @@ cdef class restore_atexit:
         sage: import atexit
         sage: from sage.cpython.atexit import restore_atexit
         sage: def handler(*args, **kwargs):
-        ....:     print((args, kwargs))
+        ....:     import sys # see https://trac.sagemath.org/ticket/25270#comment:56
+        ....:     sys.stdout.write(str((args, kwargs)))
+        ....:     sys.stdout.write('\n')
         sage: atexit.register(handler, 1, 2, c=3)
         <function handler at 0x...>
         sage: atexit.register(handler, 4, 5, d=6)

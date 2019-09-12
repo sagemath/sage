@@ -317,13 +317,13 @@ def fan_2d_echelon_forms(fan):
                    [ 0  1 -1]})
 
         sage: fan = toric_varieties.dP7().fan()
-        sage: list(fan_2d_echelon_forms(fan))
+        sage: sorted(fan_2d_echelon_forms(fan))
         [
-        [ 1  0 -1 -1  1]  [ 1  0 -1 -1  0]  [ 1  0 -1  0  1]  [ 1  0 -1 -1  0]
-        [ 0  1  1  0 -1], [ 0  1  1  0 -1], [ 0  1  1 -1 -1], [ 0  1  0 -1 -1],
+        [ 1  0 -1 -1  0]  [ 1  0 -1 -1  0]  [ 1  0 -1 -1  1]  [ 1  0 -1  0  1]
+        [ 0  1  0 -1 -1], [ 0  1  1  0 -1], [ 0  1  1  0 -1], [ 0  1  0 -1 -1],
         <BLANKLINE>
         [ 1  0 -1  0  1]
-        [ 0  1  0 -1 -1]
+        [ 0  1  1 -1 -1]
         ]
 
     TESTS::

@@ -18,6 +18,8 @@ cdef class PowComputer_flint(PowComputer_class):
 cdef class PowComputer_flint_1step(PowComputer_flint):
     cdef fmpz_t q
     cdef fmpz_poly_t modulus
+    cdef fmpz_poly_t powhelper_oneunit
+    cdef fmpz_poly_t powhelper_teichdiff
     cdef fmpz_poly_t* _moduli
     cdef fmpz_poly_t* get_modulus(self, unsigned long n)
     cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long n)

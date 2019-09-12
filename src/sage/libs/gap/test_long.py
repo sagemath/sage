@@ -1,5 +1,5 @@
 """
-Long tests for libGAP
+Long tests for GAP
 
 These stress test the garbage collection inside GAP
 """

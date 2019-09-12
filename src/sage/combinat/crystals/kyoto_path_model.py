@@ -64,7 +64,7 @@ class KyotoPathModel(TensorProductOfCrystals):
         \Phi_n : B(\lambda) \to B^{(0)} \otimes B^{(1)} \otimes \cdots
         \otimes B^{(N)} \otimes B(\lambda_{N+1}).
 
-    We note by Lemma 10.6.2 in [HK02]_ that for any `b \in B(\lambda)` there
+    We note by Lemma 10.6.2 in [HK2002]_ that for any `b \in B(\lambda)` there
     exists a finite `N` such that
 
     .. MATH::
@@ -121,12 +121,6 @@ class KyotoPathModel(TensorProductOfCrystals):
     the :class:`affinization
     <sage.combinat.crystals.affinization.AffinizationOfCrystal>` of the
     of crystals `B^{(i)}` for all `i`.
-
-    REFERENCES:
-
-    .. [HK02] *Introduction to Quantum Groups and Crystal Bases.*
-       Jin Hong and Seok-Jin Kang. 2002. Volume 42.
-       Graduate Studies in Mathematics. American Mathematical Society.
 
     INPUT:
 

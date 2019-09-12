@@ -3,18 +3,19 @@ r"""
 SageMath version and banner info
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
+import sys
 
-from sage.env import (SAGE_VERSION, SAGE_DATE, SAGE_VERSION_BANNER,
-                      SAGE_SRC, SAGE_BANNER)
+from sage.env import (SAGE_VERSION, SAGE_VERSION_BANNER, SAGE_BANNER)
+
 
 def version():
     """
@@ -38,14 +39,14 @@ def banner_text(full=True):
 
     INPUT:
 
-    - ``full`` -- boolean (optional, default=True)
+    - ``full`` -- boolean (optional, default=``True``)
 
     OUTPUT:
 
     A string containing the banner message.
 
-    If option full is False, a simplified plain ASCII banner is displayed; if
-    True the full banner with box art is displayed.
+    If option full is ``False``, a simplified plain ASCII banner is
+    displayed; if ``True`` the full banner with box art is displayed.
 
     EXAMPLES::
 
@@ -58,14 +59,13 @@ def banner_text(full=True):
     if not full:
         return version()
 
-    bars = u"─"*68
+    bars = u"─" * 68
     s = []
     a = s.append
     a(u'┌' + bars + u'┐')
     a(u"\n│ %-66s │\n" % version())
-    a(u"│ %-66s │\n" % 'Type "notebook()" for the browser-based notebook interface.')
-    a(u"│ %-66s │\n" % 'Type "help()" for help.')
-    #s += u"│ %-66s │\n" % 'Distributed under the GNU General Public License V2.'
+    python_version = sys.version_info[:3]
+    a(u"│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
     a(u'└' + bars + u'┘')
     pre = version_dict()['prerelease']
     if pre:
@@ -96,8 +96,7 @@ def banner():
         sage: banner()
         ┌────────────────────────────────────────────────────────────────────┐
         │ SageMath version ..., Release Date: ...                            │
-        │ Type "notebook()" for the browser-based notebook interface.        │
-        │ Type "help()" for help.                                            │
+        │ Using Python .... Type "help()" for help.                          │
         ...
     """
     typ = SAGE_BANNER.lower()

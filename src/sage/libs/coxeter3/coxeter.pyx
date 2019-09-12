@@ -7,15 +7,16 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
     - Write a more efficient method for converting polynomials in
       Coxeter to Sage polynomials.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009-2013 Mike Hansen <mhansen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .decl cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 initConstants()
 
@@ -36,7 +37,7 @@ cdef class String:
             hello
             sage: del s                                               # optional - coxeter3
         """
-        self.x = c_String(s)
+        self.x = c_String(str_to_bytes(s))
 
     def __repr__(self):
         """
@@ -47,7 +48,7 @@ cdef class String:
             sage: s                                                   # optional - coxeter3
             Hi
         """
-        return self.x.ptr()
+        return bytes_to_str(self.x.ptr())
 
     def __hash__(self):
         """
@@ -137,7 +138,7 @@ cdef class Type:
             A
             sage: del t                                               # optional - coxeter3
         """
-        self.x = c_Type(s)
+        self.x = c_Type(str_to_bytes(s))
 
     def __repr__(self):
         """
@@ -147,7 +148,7 @@ cdef class Type:
             sage: t = Type('A'); t                                    # optional - coxeter3
             A
         """
-        return self.x.name().ptr()
+        return bytes_to_str(self.x.name().ptr())
 
     def name(self):
         """
@@ -158,7 +159,7 @@ cdef class Type:
             sage: t.name()                                            # optional - coxeter3
             A
         """
-        return String(self.x.name().ptr())
+        return String(bytes_to_str(self.x.name().ptr()))
 
     def __hash__(self):
         """
@@ -462,7 +463,7 @@ cdef class CoxGroup(SageObject):
             sage: W.type()                                                              # optional - coxeter3
             A
         """
-        return Type(self.x.type().name().ptr())
+        return Type(bytes_to_str(self.x.type().name().ptr()))
 
     def rank(self):
         """
@@ -797,7 +798,7 @@ cdef class CoxGroupElement:
 
     def __richcmp__(CoxGroupElement self, other, int op):
         """
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.coxeter3.coxeter import *        # optional - coxeter3
             sage: W = CoxGroup(['A', 5])                          # optional - coxeter3

@@ -204,7 +204,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         sage: len(M.idempotents())
         16
-        sage: all([len(j) == 1 for j in M.j_classes()])
+        sage: all(len(j) == 1 for j in M.j_classes())
         True
 
     TESTS::

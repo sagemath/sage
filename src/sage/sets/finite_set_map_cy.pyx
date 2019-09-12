@@ -45,15 +45,14 @@ AUTHORS:
 
 - Florent Hivert
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
-import sage
 from sage.structure.list_clone cimport ClonableIntArray
 from sage.structure.parent cimport Parent
 from sage.arith.power cimport generic_power
@@ -315,8 +314,8 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
             sage: FiniteSetMaps(4, 3)([1, 0, 2, 1]).fibers()
             {0: {1}, 1: {0, 3}, 2: {2}}
             sage: F = FiniteSetMaps(["a", "b", "c"])
-            sage: F.from_dict({"a": "b", "b": "a", "c": "b"}).fibers()
-            {'a': {'b'}, 'b': {'a', 'c'}}
+            sage: F.from_dict({"a": "b", "b": "a", "c": "b"}).fibers() == {'a': {'b'}, 'b': {'a', 'c'}}
+            True
         """
         return fibers(self, self.domain())
 
@@ -499,8 +498,8 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         EXAMPLES::
 
             sage: F = FiniteSetMaps(["a", "b", "c"])
-            sage: F.from_dict({"a": "b", "b": "a", "c": "b"}).image_set()
-            {'a', 'b'}
+            sage: sorted(F.from_dict({"a": "b", "b": "a", "c": "b"}).image_set())
+            ['a', 'b']
             sage: F = FiniteSetMaps(["a", "b", "c"])
             sage: F(lambda x: "c").image_set()
             {'c'}

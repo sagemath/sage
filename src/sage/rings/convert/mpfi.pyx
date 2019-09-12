@@ -18,6 +18,7 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
 
 from sage.arith.long cimport integer_check_long
+from sage.cpython.string cimport bytes_to_str
 from sage.structure.element cimport Element, parent
 from ..integer cimport Integer
 from ..rational cimport Rational
@@ -134,11 +135,11 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         if isinstance(x, ComplexDoubleElement):
             zd = <ComplexDoubleElement>x
             if im is NULL:
-                if zd._complex.dat[1] != 0:
+                if zd._complex.imag:
                     raise TypeError(f"unable to convert complex number {x!r} to real interval")
             else:
-                mpfi_set_d(im, zd._complex.dat[1])
-            mpfi_set_d(re, zd._complex.dat[0])
+                mpfi_set_d(im, zd._complex.imag)
+            mpfi_set_d(re, zd._complex.real)
             return 0
     else:  # not a Sage Element
         # Real
@@ -156,6 +157,7 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         if isinstance(x, bytes):
             s = (<bytes>x).replace(b'..', b',').replace(b' ', b'').replace(b'+infinity', b'@inf@').replace(b'-infinity', b'-@inf@')
             if mpfi_set_str(re, s, base):
+                x = bytes_to_str(x)
                 raise TypeError(f"unable to convert {x!r} to real interval")
             return return_real(im)
 

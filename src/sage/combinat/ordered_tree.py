@@ -5,17 +5,20 @@ Ordered Rooted Trees
 AUTHORS:
 
 - Florent Hivert (2010-2011): initial revision
-- Frederic Chapoton (2010): contributed some methods
+- Frédéric Chapoton (2010): contributed some methods
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+#python 3 support
+from __future__ import division, absolute_import, print_function, unicode_literals
+
 from six import add_metaclass
 
 import itertools
@@ -345,6 +348,117 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             True
         """
         return self._to_binary_tree_rec()
+
+    @combinatorial_map(name="To parallelogram polyomino")
+    def to_parallelogram_polyomino(self, bijection=None):
+        r"""
+        Return a polyomino parallelogram.
+
+        INPUT:
+
+        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the 
+          bijection to use. Possible values are ``'Boussicault-Socci'``,
+          ``'via dyck and Delest-Viennot'``.
+
+        EXAMPLES::
+
+            sage: T = OrderedTree([[[], [[], [[]]]], [], [[[],[]]], [], []])
+            sage: T.to_parallelogram_polyomino( bijection='Boussicault-Socci' )
+            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+            sage: T = OrderedTree( [] )
+            sage: T.to_parallelogram_polyomino()
+            [[1], [1]]
+            sage: T = OrderedTree( [[]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 1], [1, 0]]
+            sage: T = OrderedTree( [[],[]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 1, 1], [1, 1, 0]]
+            sage: T = OrderedTree( [[[]]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 0, 1], [1, 0, 0]]
+        """
+        if (bijection is None) or (bijection == 'Boussicault-Socci'):
+            return self._to_parallelogram_polyomino_Boussicault_Socci()
+        if bijection == 'via dyck and Delest-Viennot':
+            raise NotImplementedError
+        raise ValueError('unknown bijection')
+
+    def _to_parallelogram_polyomino_Boussicault_Socci(self):
+        r"""
+        Return the polyomino parallelogram using the Boussicault-Socci 
+        bijection.
+
+        EXAMPLES::
+
+            sage: T = OrderedTree(
+            ....:     [[[], [[], [[]]]], [], [[[],[]]], [], []]
+            ....: )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+            sage: T = OrderedTree( [] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[1], [1]]
+            sage: T = OrderedTree( [[]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 1], [1, 0]]
+            sage: T = OrderedTree( [[],[]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 1, 1], [1, 1, 0]]
+            sage: T = OrderedTree( [[[]]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 0, 1], [1, 0, 0]]
+        """
+        from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino
+        if self.node_number() == 1:
+            return ParallelogramPolyomino([[1], [1]])
+        upper_nodes = []
+        lower_nodes = []
+        w_coordinate = {}
+        w_coordinate[()] = 0
+        h_coordinate = {}
+
+        cpt = 0
+        for h in range(0, self.depth(), 2):
+            for node in self.paths_at_depth(h):
+                h_coordinate[node] = cpt
+                lower_nodes.append( node )
+                cpt += 1
+
+        cpt = 0
+        for h in range(1, self.depth(), 2):
+            for node in self.paths_at_depth(h):
+                w_coordinate[node] = cpt
+                upper_nodes.append(node)
+                cpt += 1
+
+        def W(path):
+            if path in w_coordinate:
+                return w_coordinate[path]
+            else:
+                return w_coordinate[path[:-1]]
+
+        def H(path):
+            if path in h_coordinate:
+                return h_coordinate[path]
+            else:
+                return h_coordinate[path[:-1]]
+
+        lower_path = []
+        for i in range(1, len(lower_nodes)):
+            lower_path.append(0)
+            lower_path += [1] * (W(lower_nodes[i]) - W(lower_nodes[i - 1]))
+        lower_path.append(0)
+        lower_path += [1] * (self.node_number() - len(lower_path))
+
+        upper_path =[]
+        for i in range(1, len(upper_nodes)):
+            upper_path.append(1)
+            upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))
+        upper_path.append(1)
+        upper_path += [0] * (self.node_number() - len(upper_path))
+
+        return ParallelogramPolyomino([lower_path, upper_path])
 
     @combinatorial_map(name="To binary tree, right brother = right child")
     def to_binary_tree_right_branch(self):
@@ -1127,6 +1241,8 @@ class LabelledOrderedTree(AbstractLabelledClonableTree, OrderedTree):
         return LabelledOrderedTrees()
 
     _UnLabelled = OrderedTree
+
+    __hash__ = ClonableArray.__hash__
 
     @combinatorial_map(order=2, name="Left-right symmetry")
     def left_right_symmetry(self):

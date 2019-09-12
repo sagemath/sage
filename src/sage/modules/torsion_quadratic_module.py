@@ -6,7 +6,7 @@ AUTHORS:
 - Simon Brandhorst (2017-09): First created
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Simon Brandhorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,10 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# ****************************************************************************
 
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
-from sage.modules.fg_pid.fgp_element import DEBUG, FGP_Element
+from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_quadratic_module import FreeQuadraticModule
 from sage.arith.misc import gcd
 from sage.rings.all import ZZ, Zp, QQ, IntegerModRing
@@ -28,6 +27,7 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.integer_mod import mod
 from sage.arith.misc import legendre_symbol
+
 
 def TorsionQuadraticForm(q):
     r"""
@@ -59,6 +59,15 @@ def TorsionQuadraticForm(q):
         Finite quadratic module over Integer Ring with invariants (12,)
         Gram matrix of the quadratic form with values in Q/Z:
         [7/12]
+
+    TESTS::
+
+        sage: TorsionQuadraticForm(matrix.diagonal([3/8,3/8,3/4]))
+        Finite quadratic module over Integer Ring with invariants (4, 8, 8)
+        Gram matrix of the quadratic form with values in Q/2Z:
+        [3/4   0   0]
+        [  0 3/8   0]
+        [  0   0 3/8]
     """
     q = matrix(QQ, q)
     if q.nrows() != q.ncols():
@@ -70,9 +79,10 @@ def TorsionQuadraticForm(q):
     S, U, V = Q.smith_form()
     D = U * q * V
     Q = FreeQuadraticModule(ZZ, q.ncols(), inner_product_matrix=d**2 * q)
-    denoms = [D[i,i].denominator() for i in range(D.ncols())]
+    denoms = [D[i, i].denominator() for i in range(D.ncols())]
     rels = Q.span(diagonal_matrix(ZZ, denoms) * U)
-    return TorsionQuadraticModule((1/d)*Q, (1/d)*rels)
+    return TorsionQuadraticModule((1/d)*Q, (1/d)*rels, modulus=1)
+
 
 class TorsionQuadraticModuleElement(FGP_Element):
     r"""
@@ -154,7 +164,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             sage: W = FreeQuadraticModule(ZZ, 2, 2*matrix.identity(2))
             sage: V = (1/2) * W
             sage: T = TorsionQuadraticModule(V,W)
-            sage: x = T.gen(0);
+            sage: x = T.gen(0)
             sage: x
             (1, 0)
             sage: x.quadratic_product()
@@ -171,6 +181,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
         return value_module_qf(lift.inner_product(lift))
 
     q = quadratic_product
+
 
 class TorsionQuadraticModule(FGP_Module_class):
     r"""
@@ -283,9 +294,9 @@ class TorsionQuadraticModule(FGP_Module_class):
             [0 0 0]
         """
         return ( "Finite quadratic module over %s with invariants %s\n"
-                 % (self.base_ring(),self.invariants()) +
+                 % (self.base_ring(), self.invariants()) +
                  "Gram matrix of the quadratic form with values in %r:\n%r"
-                 % (self.value_module_qf(),self.gram_matrix_quadratic()) )
+                 % (self.value_module_qf(), self.gram_matrix_quadratic()))
 
     def _module_constructor(self, V, W, check=False):
         r"""
@@ -423,13 +434,13 @@ class TorsionQuadraticModule(FGP_Module_class):
             q = q.gram_matrix_quadratic()
             L = collect_small_blocks(q)
             for qi in L:
-                brown += _brown_indecomposable(qi,p)
+                brown += _brown_indecomposable(qi, p)
         return brown
 
     @cached_method
     def gram_matrix_bilinear(self):
         r"""
-        Return the gram matrix with respect to the generators.
+        Return the Gram matrix with respect to the generators.
 
         OUTPUT:
 
@@ -452,14 +463,14 @@ class TorsionQuadraticModule(FGP_Module_class):
         Q = self.base_ring().fraction_field()
         G = matrix.zero(Q, n)
         for i in range(n):
-            for j in range(i+1):
-                G[i,j] = G[j,i] = (gens[i] * gens[j]).lift()
+            for j in range(i + 1):
+                G[i, j] = G[j, i] = (gens[i] * gens[j]).lift()
         return G
 
     @cached_method
     def gram_matrix_quadratic(self):
         r"""
-        The gram matrix of the quadratic form with respect to the generators.
+        The Gram matrix of the quadratic form with respect to the generators.
 
         OUTPUT:
 
@@ -486,8 +497,8 @@ class TorsionQuadraticModule(FGP_Module_class):
         G = matrix.zero(Q, n)
         for i in range(n):
             for j in range(i):
-                G[i,j] = G[j,i] = (gens[i] * gens[j]).lift()
-            G[i,i] = gens[i].q().lift()
+                G[i, j] = G[j, i] = (gens[i] * gens[j]).lift()
+            G[i, i] = gens[i].q().lift()
         return G
 
     def gens(self):
@@ -509,13 +520,213 @@ class TorsionQuadraticModule(FGP_Module_class):
             return self.smith_form_gens()
         return self._gens_user
 
+    def genus(self, signature_pair):
+        r"""
+        Return the genus defined by ``self`` and the ``signature_pair``.
+
+        If no such genus exists, raise a ``ValueError``.
+
+        REFERENCES:
+
+        [Nik1977]_ Corollary 1.9.4 and 1.16.3.
+
+        EXAMPLES::
+
+            sage: L = IntegralLattice("D4").direct_sum(IntegralLattice("A2"))
+            sage: D = L.discriminant_group()
+            sage: genus = D.genus(L.signature_pair())
+            sage: genus
+            Genus of
+            None
+            Signature:  (6, 0)
+            Genus symbol at 2:    1^4:2^-2
+            Genus symbol at 3:     1^-5 3^-1
+            sage: genus == L.genus()
+            True
+
+        Let `H` be an even unimodular lattice of signature `(9, 1)`.
+        Then `L = D_4 + A_2` is primitively embedded in `H`. We compute the discriminant
+        form of the orthogonal complement of `L` in `H`::
+
+            sage: DK = D.twist(-1)
+            sage: DK
+            Finite quadratic module over Integer Ring with invariants (2, 6)
+            Gram matrix of the quadratic form with values in Q/2Z:
+            [  1 1/2]
+            [1/2 1/3]
+
+        We know that  `K` has signature `(5, 1)` and thus we can compute
+        the genus of `K` as::
+
+            sage: DK.genus((3,1))
+            Genus of
+            None
+            Signature:  (3, 1)
+            Genus symbol at 2:    1^2:2^-2
+            Genus symbol at 3:     1^-3 3^1
+
+        We can also compute the genus of an odd lattice
+        from its discriminant form::
+
+            sage: L = IntegralLattice(matrix.diagonal(range(1,5)))
+            sage: D = L.discriminant_group()
+            sage: D.genus((4,0))
+            Genus of
+            None
+            Signature:  (4, 0)
+            Genus symbol at 2:    [1^-2 2^1 4^1]_6
+            Genus symbol at 3:     1^-3 3^1
+
+        TESTS::
+
+            sage: L.genus() == D.genus((4,0))
+            True
+            sage: D.genus((1,0))
+            Traceback (most recent call last):
+            ...
+            ValueError: this discriminant form and signature do not define a genus
+
+        A systematic test of lattices of small ranks and determinants::
+
+            sage: from sage.quadratic_forms.genera.genus import genera
+            sage: signatures = [(1,0),(1,1),(1,2),(3,0),(0,4)]
+            sage: dets = range(1,33)
+            sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])    # long time
+            sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)  # long time
+            True
+            """
+        from sage.quadratic_forms.genera.genus import (Genus_Symbol_p_adic_ring,
+                                                       GenusSymbol_global_ring,
+                                                       p_adic_symbol,
+                                                       is_GlobalGenus,
+                                                       _blocks)
+        from sage.misc.misc_c import prod
+        s_plus = signature_pair[0]
+        s_minus = signature_pair[1]
+        rank = s_plus + s_minus
+        if len(self.invariants()) > rank:
+            raise ValueError("this discriminant form and " +
+                             "signature do not define a genus")
+        disc = self.cardinality()
+        determinant = (-1)**s_minus * disc
+        local_symbols = []
+        for p in (2 * disc).prime_divisors():
+            D = self.primary_part(p)
+            if len(D.invariants()) != 0:
+                G_p = D.gram_matrix_quadratic().inverse()
+                # get rid of denominators without changing the local equivalence class
+                G_p *= G_p.denominator()**2
+                G_p = G_p.change_ring(ZZ)
+                local_symbol = p_adic_symbol(G_p, p, D.invariants()[-1].valuation(p))
+            else:
+                local_symbol = []
+
+            rk = rank - len(D.invariants())
+            if rk > 0:
+                if p == 2:
+                    det = determinant.prime_to_m_part(2)
+                    det *= prod([di[2] for di in local_symbol])
+                    det = det % 8
+                    local_symbol.append([ZZ(0), rk, det, ZZ(0), ZZ(0)])
+                else:
+                    det = legendre_symbol(determinant.prime_to_m_part(p), p)
+                    det = (det * prod([di[2] for di in local_symbol]))
+                    local_symbol.append([ZZ(0), rk, det])
+            local_symbol.sort()
+            local_symbol = Genus_Symbol_p_adic_ring(p, local_symbol)
+            local_symbols.append(local_symbol)
+
+        # This genus has the right discriminant group
+        # but it may be empty
+        genus = GenusSymbol_global_ring(signature_pair, local_symbols)
+        sym2 = local_symbols[0].symbol_tuple_list()
+
+        if sym2[0][0] != 0:
+            sym2 = [[ZZ(0), ZZ(0), ZZ(1), ZZ(0), ZZ(0)]] + sym2
+        if len(sym2) <= 1 or sym2[1][0] != 1:
+            sym2 = sym2[:1] + [[ZZ(1), ZZ(0), ZZ(1), ZZ(0), ZZ(0)]] + sym2[1:]
+        if len(sym2) <= 2 or sym2[2][0] != 2:
+            sym2 = sym2[:2] + [[ZZ(2), ZZ(0), ZZ(1), ZZ(0), ZZ(0)]] + sym2[2:]
+
+        if self.value_module_qf().n == 1:
+            # in this case the blocks of scales 1, 2, 4 are under determined
+            # make sure the first 3 symbols are of scales 1, 2, 4
+            # i.e. their valuations are 0, 1, 2
+
+            # the form is odd
+            block0 = [b for b in _blocks(sym2[0]) if b[3] == 1]
+
+            o = sym2[1][3]
+            # no restrictions on determinant and
+            # oddity beyond existence
+            # but we know if even or odd
+            block1 = [b for b in _blocks(sym2[1]) if b[3] == o]
+
+            d = sym2[2][2]
+            o = sym2[2][3]
+            t = sym2[2][4]
+            # if the jordan block of scale 2 is even we know it
+            if o == 0:
+                block2 = [sym2[2]]
+            # if it is odd we know det and oddity mod 4 at least
+            else:
+                block2 = [b for b in _blocks(sym2[2]) if b[3] == o
+                          and (b[2] - d) % 4 == 0
+                          and (b[4] - t) % 4 == 0
+                          and (b[2] - d) % 8 == (b[4] - t) % 8  # if the oddity is altered by 4 then so is the determinant
+                         ]
+        elif self.value_module_qf().n == 2:
+            # the form is even
+            block0 = [b for b in _blocks(sym2[0]) if b[3] == 0]
+
+            # if the jordan block of scale 2 is even we know it
+            d = sym2[1][2]
+            o = sym2[1][3]
+            t = sym2[1][4]
+            if o == 0:
+                block1 = [sym2[1]]
+            else:
+                # the block is odd and we know det and oddity mod 4
+                block1 = [b for b in _blocks(sym2[1])
+                          if b[3] == o
+                          and (b[2] - d) % 4 == 0
+                          and (b[4] - t) % 4 == 0
+                          and (b[2] - d) % 8 == (b[4] - t) % 8 # if the oddity is altered by 4 then so is the determinant
+                         ]
+            # this is completely determined
+            block2 = [sym2[2]]
+        else:
+            raise ValueError("this is not a discriminant form")
+
+        # figure out which symbol defines a genus and return that
+        for b0 in block0:
+            for b1 in block1:
+                for b2 in block2:
+                    sym2[:3] = [b0, b1, b2]
+                    local_symbols[0] = Genus_Symbol_p_adic_ring(2, sym2)
+                    genus = GenusSymbol_global_ring(signature_pair, local_symbols)
+                    if is_GlobalGenus(genus):
+                        # make the symbol sparse again.
+                        i = 0
+                        k = 0
+                        while i < 3:
+                            if sym2[k][1] == 0:
+                                sym2.pop(k)
+                            else:
+                                k = k + 1
+                            i = i + 1
+                        local_symbols[0] = Genus_Symbol_p_adic_ring(2, sym2)
+                        genus = GenusSymbol_global_ring(signature_pair, local_symbols)
+                        return genus
+        raise ValueError("this discriminant form and signature do not define a genus")
+
     def is_genus(self, signature_pair, even=True):
         r"""
         Return ``True`` if there is a lattice with this signature and discriminant form.
 
-        TODO:
+        .. TODO::
 
-        - implement the same for odd lattices
+            implement the same for odd lattices
 
         INPUT:
 
@@ -539,7 +750,7 @@ class TorsionQuadraticModule(FGP_Module_class):
         """
         s_plus = ZZ(signature_pair[0])
         s_minus = ZZ(signature_pair[1])
-        if s_plus<0 or s_minus<0:
+        if s_plus < 0 or s_minus < 0:
             raise ValueError("signature invariants must be non negative")
         rank = s_plus + s_minus
         signature = s_plus - s_minus
@@ -549,7 +760,7 @@ class TorsionQuadraticModule(FGP_Module_class):
             return False
         if even and self._modulus_qf != 2:
             raise ValueError("the discriminant form of an even lattice has"
-                                 "values modulo 2.")
+                             "values modulo 2.")
         if (not even) and not (self._modulus == self._modulus_qf == 1):
             raise ValueError("the discriminant form of an odd lattice has"
                              "values modulo 1.")
@@ -557,13 +768,13 @@ class TorsionQuadraticModule(FGP_Module_class):
             raise NotImplementedError("at the moment sage knows how to do this only for even genera. " +
                                       " Help us to implement this for odd genera.")
         for p in D.prime_divisors():
-            # check the determinat conditions
+            # check the determinant conditions
             Q_p = self.primary_part(p)
             gram_p = Q_p.gram_matrix_quadratic()
             length_p = len(Q_p.invariants())
             u = det.prime_to_m_part(p)
             up = gram_p.det().numerator().prime_to_m_part(p)
-            if p!=2 and length_p==rank:
+            if p != 2 and length_p == rank:
                 if legendre_symbol(u, p) != legendre_symbol(up, p):
                     return False
             if p == 2:
@@ -577,7 +788,7 @@ class TorsionQuadraticModule(FGP_Module_class):
                     b = QQ(3) / QQ(2)
                     diag = gram_p.diagonal()
                     if not (a in diag or b in diag):
-                        if u % 8 !=  up % 8:
+                        if u % 8 != up % 8:
                             return False
         if self.brown_invariant() != signature:
             return False
@@ -609,7 +820,7 @@ class TorsionQuadraticModule(FGP_Module_class):
             sage: O.V() + S.V() == T.V()
             True
         """
-        if not isinstance(S,TorsionQuadraticModule):
+        if not isinstance(S, TorsionQuadraticModule):
             S = self.submodule(S)
         else:
             if not S.is_submodule(self):
@@ -772,8 +983,8 @@ class TorsionQuadraticModule(FGP_Module_class):
                 U = q_p._clear_denom()[0].hermite_form(transformation=True)[1]
             else:
                 U = q_p.parent().identity_matrix()
-            kernel = U[r:,:]
-            nondeg = U[:r,:]
+            kernel = U[r:, :]
+            nondeg = U[:r, :]
             q_p = nondeg * q_p * nondeg.T
 
             # the normal form is implemented for p-adic lattices
@@ -796,13 +1007,13 @@ class TorsionQuadraticModule(FGP_Module_class):
             nondeg = U * nondeg
             U = nondeg.stack(kernel)
 
-            #apply U to the generators
+            # apply U to the generators
             n = U.ncols()
             gens_p = []
             for i in range(n):
                 g = self.V().zero()
                 for j in range(n):
-                    g += D_p.gens()[j].lift() * U[i,j]
+                    g += D_p.gens()[j].lift() * U[i, j]
                 gens_p.append(g)
             gens += gens_p
         return self.submodule_with_gens(gens)
@@ -844,7 +1055,7 @@ class TorsionQuadraticModule(FGP_Module_class):
         """
         annihilator = self.annihilator().gen()
         a = annihilator.prime_to_m_part(m)
-        return self.submodule( (a*self.V()).gens() )
+        return self.submodule((a * self.V()).gens())
 
     def submodule_with_gens(self, gens):
         r"""
@@ -993,6 +1204,7 @@ class TorsionQuadraticModule(FGP_Module_class):
         """
         return QmodnZ(self._modulus_qf)
 
+
 def _brown_indecomposable(q, p):
     r"""
     Return the Brown invariant of the indecomposable form ``q``.
@@ -1031,21 +1243,21 @@ def _brown_indecomposable(q, p):
     if p == 2:
         # brown(U) = 0
         if q.ncols() == 2:
-            if q[0,0].valuation(2)>v+1 and q[1,1].valuation(2)>v+1:
+            if q[0, 0].valuation(2) > v + 1 and q[1, 1].valuation(2) > v + 1:
                 # type U
                 return mod(0, 8)
             else:
                 # type V
-                return mod(4*v, 8)
-        u = q[0,0].numerator()
-        return mod(u + v*(u**2 - 1)/2, 8)
+                return mod(4 * v, 8)
+        u = q[0, 0].numerator()
+        return mod(u + v * (u**2 - 1) / 2, 8)
     if p % 4 == 1:
         e = -1
     if p % 4 == 3:
         e = 1
     if v % 2 == 1:
-        u = q[0,0].numerator()//2
-        if legendre_symbol(u,p) == 1:
+        u = q[0, 0].numerator() // 2
+        if legendre_symbol(u, p) == 1:
             return mod(1 + e, 8)
         else:
             return mod(-3 + e, 8)

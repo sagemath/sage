@@ -6,14 +6,7 @@ AUTHORS:
 - William Stein (input from David Joyner, David Kohel, and Joe Wetherell)
 
 - Sebastian Pancratz (2010-01-06): Rewrite of addition, multiplication and
-  derivative to use Henrici's algorithms [Ho72]
-
-REFERENCES:
-
-.. [Ho72] \E. Horowitz, "Algorithms for Rational Function Arithmetic
-   Operations", Annual ACM Symposium on Theory of Computing, Proceedings of
-   the Fourth Annual ACM Symposium on Theory of Computing, pp. 108--118, 1972
-
+  derivative to use Henrici's algorithms [Hor1972]_
 """
 
 #*****************************************************************************
@@ -30,6 +23,7 @@ from __future__ import absolute_import
 
 from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
+# from sage.rings.polynomial.flatten import SpecializationMorphism
 
 from . import integer_ring
 from .integer_ring import ZZ
@@ -67,7 +61,7 @@ cdef class FractionFieldElement(FieldElement):
         True
         sage: x = K.gen()
         sage: f = (x^3 + x)/(17 - x^19); f
-        (x^3 + x)/(-x^19 + 17)
+        (-x^3 - x)/(x^19 - 17)
         sage: loads(f.dumps()) == f
         True
 
@@ -91,6 +85,7 @@ cdef class FractionFieldElement(FieldElement):
     """
     cdef object __numerator
     cdef object __denominator
+    cdef bint _is_reduced
 
     def __init__(self, parent, numerator, denominator=1,
                  coerce=True, reduce=True):
@@ -157,9 +152,14 @@ cdef class FractionFieldElement(FieldElement):
         nden = codomain.coerce(self.__denominator._im_gens_(codomain, im_gens))
         return codomain.coerce(nnum/nden)
 
-    def reduce(self):
+    cpdef reduce(self):
         """
-        Divides out the gcd of the numerator and denominator.
+        Reduce this fraction.
+
+        Divides out the gcd of the numerator and denominator. If the
+        denominator becomes a unit, it becomes 1. Additionally, depending on
+        the base ring, the leading coefficients of the numerator and the
+        denominator may be normalized to 1.
 
         Automatically called for exact rings, but because it may be
         numerically unstable for inexact rings it must be called manually
@@ -173,28 +173,28 @@ cdef class FractionFieldElement(FieldElement):
             sage: f.reduce(); f
             x + 1.0
         """
+        if self._is_reduced:
+            return
         try:
             g = self.__numerator.gcd(self.__denominator)
             if not g.is_unit():
-                num, _ = self.__numerator.quo_rem(g)
-                den, _ = self.__denominator.quo_rem(g)
-            else:
-                num = self.__numerator
-                den = self.__denominator
-            if not den.is_one() and den.is_unit():
-                try:
-                    num *= den.inverse_of_unit()
-                    den  = den.parent().one()
-                except Exception:
-                    pass
-            self.__numerator   = num
-            self.__denominator = den
+                self.__numerator //= g
+                self.__denominator //= g
+            self._is_reduced = True
         except AttributeError:
             raise ArithmeticError("unable to reduce because lack of gcd or quo_rem algorithm")
         except TypeError:
             raise ArithmeticError("unable to reduce because gcd algorithm doesn't work on input")
         except NotImplementedError:
             raise ArithmeticError("unable to reduce because gcd algorithm not implemented on input")
+        if not self.__denominator.is_one() and self.__denominator.is_unit():
+            try:
+                inv = self.__denominator.inverse_of_unit()
+            except Exception:
+                pass
+            else:
+                self.__numerator *= inv
+                self.__denominator = self.__denominator.parent().one()
 
     def __copy__(self):
         """
@@ -283,9 +283,7 @@ cdef class FractionFieldElement(FieldElement):
 
             sage: R.<x> = QQ[]
             sage: a = 2*(x+1)^2 / (2*(x-1)^2); a
-            (2*x^2 + 4*x + 2)/(2*x^2 - 4*x + 2)
-            sage: a.numerator().is_square()
-            False
+            (x^2 + 2*x + 1)/(x^2 - 2*x + 1)
             sage: a.is_square()
             True
             sage: (0/x).is_square()
@@ -299,6 +297,28 @@ cdef class FractionFieldElement(FieldElement):
         if is_sqr:
             return True, self._parent( sq_rt/b )
         return False, None
+
+    def nth_root(self, n):
+        r"""
+        Return a ``n``-th root of this element.
+
+        EXAMPLES::
+
+            sage: R = QQ['t'].fraction_field()
+            sage: t = R.gen()
+            sage: p = (t+1)^3 / (t^2+t-1)^3
+            sage: p.nth_root(3)
+            (t + 1)/(t^2 + t - 1)
+
+            sage: p = (t+1) / (t-1)
+            sage: p.nth_root(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a 2nd power
+        """
+        a = self.numerator()
+        b = self.denominator()
+        return a.nth_root(n) / b.nth_root(n)
 
     def __hash__(self):
         """
@@ -341,17 +361,49 @@ cdef class FractionFieldElement(FieldElement):
             1
             sage: hash(R(1)/R(2))==hash(1/2)
             True
+
+        Check that :trac:`16268` is fixed::
+
+            sage: ku.<u> = FractionField(PolynomialRing(QQ,'u'))
+            sage: a = 27*u^2+81*u+243
+            sage: b = 27*u-81
+            sage: c = u^2 + 3*u + 9
+            sage: d = u-3
+            sage: s = a/b
+            sage: t = c/d
+            sage: s == t
+            True
+            sage: len(set([s,t]))
+            1
+
+        Check that :trac:`25199` is fixed::
+
+            sage: R.<x,y,z>=QQbar[]
+            sage: hash(R.0)==hash(FractionField(R).0)
+            True
+            sage: ((x+1)/(x^2+1)).subs({x:1})
+            1
         """
-        # This is same algorithm as used for members of QQ
-        #cdef long n, d
+        if self.__denominator.is_one():
+            # Handle this case even over rings that don't support reduction, to
+            # avoid breaking existing code that carelessly mixes p and p/1
+            return hash(self.__numerator)
+        if self._parent.is_exact():
+            # May fail; let the exception propagate then.
+            # (In contrast, over inexact rings, we hash unreduced fractions
+            # without complaining. This is not ideal, but there is code in Sage
+            # that uses dictionaries indexed by rational functions with
+            # floating-point coefficients, and since the equality test involves
+            # potentially inexact operations, there would be compatibility
+            # issues even if we didn't...)
+            self.reduce()
+        # Same algorithm as for elements of QQ
         n = hash(self.__numerator)
         d = hash(self.__denominator)
         if d == 1:
             return n
-        n = n ^ d
-        if n == -1:
-            return -2
-        return n
+        else:
+            return n ^ d
 
     def __call__(self, *x, **kwds):
         """
@@ -858,7 +910,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: x = PolynomialRing(RationalField(),'x').gen()
             sage: f = (x^3 + x)/(x^2 - 2*x^3)
             sage: f
-            (x^2 + 1)/(-2*x^2 + x)
+            (-1/2*x^2 - 1/2)/(x^2 - 1/2*x)
             sage: f.valuation()
             -1
             sage: f.valuation(x^2+1)
@@ -1002,8 +1054,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: L = R.fraction_field()
             sage: S.<y> = L[]
             sage: y(K(1,1)/x)
-            ((1 + O(2)))/((1 + O(2^5))*x)
-
+            (1 + O(2))/((1 + O(2))*x)
         """
         if self.numerator().is_one():
             denominator = self.denominator()
@@ -1026,14 +1077,47 @@ cdef class FractionFieldElement(FieldElement):
 
         raise NotImplementedError
 
+    def specialization(self, D=None, phi=None):
+        """
+        Returns the specialization of a fraction element of a polynomial ring
+        """
+        numerator = self.numerator().specialization(D, phi)
+        denominator = self.denominator().specialization(D, phi)
+        return numerator / denominator
 
-class FractionFieldElement_1poly_field(FractionFieldElement):
+cdef class FractionFieldElement_1poly_field(FractionFieldElement):
     """
     A fraction field element where the parent is the fraction field of a
-    univariate polynomial ring.
+    univariate polynomial ring over a field.
 
     Many of the functions here are included for coherence with number fields.
     """
+
+    def __init__(self, parent, numerator, denominator=1,
+                 coerce=True, reduce=True):
+        """
+        TESTS:
+
+            sage: P.<x> = QQ[]
+            sage: a = (2*x^2)/x
+            sage: ~a
+            1/2/x
+            sage: 1/a
+            1/2/x
+        """
+        FractionFieldElement.__init__(self, parent, numerator, denominator,
+                coerce, reduce)
+        if not reduce:
+            self.normalize_leading_coefficients()
+
+    cdef normalize_leading_coefficients(self):
+        """
+        See :meth:`reduce`.
+        """
+        invlc = ~self.__denominator.leading_coefficient()
+        self.__denominator = self.__denominator.monic()
+        self.__numerator *= invlc
+
     def is_integral(self):
         """
         Returns whether this element is actually a polynomial.
@@ -1070,6 +1154,31 @@ class FractionFieldElement_1poly_field(FractionFieldElement):
         L.sort()
         return L
 
+    cpdef reduce(self):
+        """
+        Pick a normalized representation of self.
+
+        In particular, for any a == b, after normalization they will have the
+        same numerator and denominator.
+
+        EXAMPLES:
+
+        For univariate rational functions over a field, we have::
+
+            sage: R.<x> = QQ[]
+            sage: (2 + 2*x) / (4*x) # indirect doctest
+            (1/2*x + 1/2)/x
+
+        Compare with::
+
+            sage: R.<x> = ZZ[]
+            sage: (2 + 2*x) / (4*x)
+            (x + 1)/(2*x)
+        """
+        if self._is_reduced:
+            return
+        super(self.__class__, self).reduce()
+        self.normalize_leading_coefficients()
 
 def make_element(parent, numerator, denominator):
     """

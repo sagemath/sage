@@ -124,7 +124,6 @@ class HighestWeightTensorKRT(UniqueRepresentation):
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['D',4,1], [[2,1]])
             sage: from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import HighestWeightTensorKRT
             sage: for x in HighestWeightTensorKRT(KRT): x
-            ...
             [[1], [2]]
             [[1], [-1]]
         """

@@ -15,12 +15,12 @@ Sage Packages
 
 import re
 import os
-
 import logging
-log = logging.getLogger()
 
 from sage_bootstrap.env import SAGE_ROOT, SAGE_DISTFILES
 
+
+log = logging.getLogger()
 
 
 class Package(object):

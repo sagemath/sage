@@ -967,7 +967,7 @@ class BooleanFormula(object):
                 s += '0 '
             else:
                 varname = ''
-                while i < self.__expression[i] not in '|) ':
+                if self.__expression[i] not in '|) ':
                     varname += self.__expression[i]
                     i += 1
                 s += vars_num[varname] + ' '
@@ -1030,16 +1030,16 @@ class BooleanFormula(object):
 #        wtd = boolopt.WFFtoDNF()
 #        dnf = wtd(wff)
 #        dnf = wtd.clean(dnf)
-#        if(dnf == [] or dnf == [[]]):
+#        if dnf == [] or dnf == [[]]:
 #            exp = self.__vars_order[0] + '&~' + self.__vars_order[0] + ' '
 #        opt = boolopt.optimize(dnf)
-#        if(exp == '' and (opt == [] or opt == [[]])):
+#        if exp == '' and (opt == [] or opt == [[]]):
 #            exp = self.__vars_order[0] + '|~' + self.__vars_order[0] + ' '
-#        if(exp == ''):
+#        if exp == '':
 #            for con in opt:
 #                s = '('
 #                for prop in con:
-#                    if(prop[0] == 'notprop'):
+#                    if prop[0] == 'notprop':
 #                       s += '~'
 #                    s += prop[1] + '&'
 #                exp += s[:-1] + ')|'

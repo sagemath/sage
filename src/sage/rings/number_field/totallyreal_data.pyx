@@ -86,16 +86,7 @@ def hermite_constant(n):
 
     .. NOTE::
 
-        The upper bounds used can be found in [CS]_ and [CE]_.
-
-    REFERENCES:
-
-    .. [CE] Henry Cohn and Noam Elkies, New upper bounds on sphere
-       packings I, Ann. Math. 157 (2003), 689--714.
-
-    .. [CS] \J.H. Conway and N.J.A. Sloane, Sphere packings, lattices
-       and groups, 3rd. ed., Grundlehren der Mathematischen
-       Wissenschaften, vol. 290, Springer-Verlag, New York, 1999.
+        The upper bounds used can be found in [CS1999]_ and [CE2003]_.
 
     AUTHORS:
 

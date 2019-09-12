@@ -19,7 +19,6 @@ from __future__ import print_function
 from six.moves import range
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
-import sage.libs.linbox.linbox as linbox
 
 def avg(X):
     """
@@ -1743,73 +1742,6 @@ class FiniteExtFieldMult(Benchmark):
         v = [e*f for _ in range(self.__times)]
         return cputime(t)
 
-    def givaro(self):
-        """
-        Time the computation in Givaro.
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
-            sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
-            sage: isinstance(B.givaro(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e)
-        f = k(self.f)
-        t = cputime()
-        v = [e*f for _ in range(self.__times)]
-        return cputime(t)
-
-    def givaro_nck(self):
-        """
-        Time the computation in Givaro.
-
-        TODO: nck?
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
-            sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
-            sage: isinstance(B.givaro_nck(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e)
-        f = k(self.f)
-        t = cputime()
-        v = [e.mul(f) for _ in range(self.__times)]
-        return cputime(t)
-
-    def givaro_raw(self):
-        """
-        Time the computation in Givaro.
-
-        TODO: raw?
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldMult
-            sage: B = FiniteExtFieldMult(GF(9, 'x'), 2)
-            sage: isinstance(B.givaro_raw(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e).logint()
-        f = k(self.f).logint()
-        t = cputime()
-        v = [k._mul(e,f) for _ in range(self.__times)]
-        return cputime(t)
-
     def magma(self):
         """
         Time the computation in Magma.
@@ -1829,8 +1761,9 @@ class FiniteExtFieldMult(Benchmark):
         v = magma('[e*f : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
+
 class FiniteExtFieldAdd(Benchmark):
-    def __init__(self,field,times):
+    def __init__(self, field, times):
         self.__times = times
         self.field = field
         self.e = field.gen()**(field.cardinality()/3)
@@ -1873,73 +1806,6 @@ class FiniteExtFieldAdd(Benchmark):
         v = [e+f for _ in range(self.__times)]
         return cputime(t)
 
-    def givaro(self):
-        """
-        Time the computation in Givaro.
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
-            sage: B = FiniteExtFieldAdd(GF(9,'x'), 2)
-            sage: isinstance(B.givaro(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e)
-        f = k(self.f)
-        t = cputime()
-        v = [e+f for _ in range(self.__times)]
-        return cputime(t)
-
-    def givaro_nck(self):
-        """
-        Time the computation in Givaro.
-
-        TODO: nck?
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
-            sage: B = FiniteExtFieldAdd(GF(9,'x'), 2)
-            sage: isinstance(B.givaro_nck(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e)
-        f = k(self.f)
-        t = cputime()
-        v = [e.add(f) for _ in range(self.__times)]
-        return cputime(t)
-
-    def givaro_raw(self):
-        """
-        Time the computation in Givaro.
-
-        TODO: raw?
-
-        EXAMPLES::
-
-            sage: from sage.tests.benchmark import FiniteExtFieldAdd
-            sage: B = FiniteExtFieldAdd(GF(9, 'x'), 2)
-            sage: isinstance(B.givaro_raw(), float)
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'module' object has no attribute 'GFq'
-
-        """
-        k = linbox.GFq(self.field.cardinality())
-        e = k(self.e).logint()
-        f = k(self.f).logint()
-        t = cputime()
-        v = [k._add(e,f) for _ in range(self.__times)]
-        return cputime(t)
-
     def magma(self):
         """
         Time the computation in Magma.
@@ -1961,7 +1827,8 @@ class FiniteExtFieldAdd(Benchmark):
 
 
 """
-TODO:
+.. TODO::
+
    * multiply reals
    * modular degree
    * anlist

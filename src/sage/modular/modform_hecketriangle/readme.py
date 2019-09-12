@@ -61,7 +61,7 @@ Hecke triangle groups and elements:
       sage: G.U().parent()
       Hecke triangle group for n = 6
       sage: G.U().matrix().parent()
-      Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^2 - 3
+      Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^2 - 3 with lam = 1.732050807568878?
 
 
 - **Decomposition into product of generators:**
@@ -410,8 +410,8 @@ Hecke triangle groups and elements:
       ....:     return True
 
       sage: z = PolynomialRing(G.base_ring(), 'z').gen()
-      sage: uniq([ is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)])    # long time
-      [True]
+      sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time
+      [True, True, True, True, True, True]
       sage: [is_rpf(1/z, k=k) for k in range(-6, 6, 2)]
       [False, False, False, False, True, False]
 
@@ -531,11 +531,11 @@ Hecke triangle groups and elements:
       sage: G.class_representatives(68)
       [S*T^(-2)*S*T^(-1)*S*T, -S*T^(-1)*S*T^2*S*T, S*T^(-5)*S*T^(-1)*S, T*S*T^5]
       sage: R = G.reduced_elements(68)
-      sage: uniq([v.is_reduced() for v in R])    # long time
-      [True]
+      sage: all(v.is_reduced() for v in R)  # long time
+      True
       sage: R = G.simple_elements(68)
-      sage: uniq([v.is_simple() for v in R])    # long time
-      [True]
+      sage: all(v.is_simple() for v in R)  # long time
+      True
       sage: G.element_repr_method("default")
 
       sage: G = HeckeTriangleGroup(n=5)
@@ -549,8 +549,8 @@ Hecke triangle groups and elements:
       sage: G.class_representatives(9*G.lam() + 5)
       [S*T^(-2)*S*T^(-1)*S, T*S*T^2]
       sage: R = G.reduced_elements(9*G.lam() + 5)
-      sage: uniq([v.is_reduced() for v in R])    # long time
-      [True]
+      sage: all(v.is_reduced() for v in R)  # long time
+      True
       sage: R = G.simple_elements(7*G.lam() + 6)
       sage: for v in R: print(v.string_repr("default"))
       [lam + 2     lam]

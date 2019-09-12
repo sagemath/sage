@@ -10,6 +10,8 @@ Graded algebras with basis
 #******************************************************************************
 
 from sage.categories.graded_modules import GradedModulesCategory
+from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
+from sage.misc.cachefunc import cached_method
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
@@ -84,4 +86,85 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
     class ElementMethods:
         pass
+
+    class SignedTensorProducts(SignedTensorProductsCategory):
+        """
+        The category of algebras with basis constructed by signed tensor
+        product of algebras with basis.
+        """
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Cat = AlgebrasWithBasis(QQ).Graded()
+                sage: Cat.SignedTensorProducts().extra_super_categories()
+                [Category of graded algebras with basis over Rational Field]
+                sage: Cat.SignedTensorProducts().super_categories()
+                [Category of graded algebras with basis over Rational Field,
+                 Category of signed tensor products of graded algebras over Rational Field]
+            """
+            return [self.base_category()]
+
+        class ParentMethods:
+            """
+            Implements operations on tensor products of super algebras
+            with basis.
+            """
+            @cached_method
+            def one_basis(self):
+                """
+                Return the index of the one of this signed tensor product of
+                algebras, as per ``AlgebrasWithBasis.ParentMethods.one_basis``.
+
+                It is the tuple whose operands are the indices of the
+                ones of the operands, as returned by their
+                :meth:`.one_basis` methods.
+
+                EXAMPLES::
+
+                    sage: A.<x,y> = ExteriorAlgebra(QQ)
+                    sage: A.one_basis()
+                    ()
+                    sage: B = tensor((A, A, A))
+                    sage: B.one_basis()
+                    ((), (), ())
+                    sage: B.one()
+                    1 # 1 # 1
+                """
+                # FIXME: this method should be conditionally defined,
+                # so that B.one_basis returns NotImplemented if not
+                # all modules provide one_basis
+                if all(hasattr(module, "one_basis") for module in self._sets):
+                    return tuple(module.one_basis() for module in self._sets)
+                else:
+                    raise NotImplementedError
+
+            def product_on_basis(self, t0, t1):
+                """
+                The product of the algebra on the basis, as per
+                ``AlgebrasWithBasis.ParentMethods.product_on_basis``.
+
+                EXAMPLES:
+
+                Test the sign in the super tensor product::
+
+                    sage: A = SteenrodAlgebra(3)
+                    sage: x = A.Q(0)
+                    sage: y = x.coproduct()
+                    sage: y^2
+                    0
+
+                TODO: optimize this implementation!
+                """
+                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                n = len(self._sets)
+                parity0 = [self._sets[idx].degree_on_basis(x0)
+                           for (idx, x0) in enumerate(t0)]
+                parity1 = [self._sets[idx].degree_on_basis(x1)
+                           for (idx, x1) in enumerate(t1)]
+                parity = sum(parity0[i] * parity1[j]
+                             for j in range(n) for i in range(j+1,n))
+                return (-1)**parity * basic
 

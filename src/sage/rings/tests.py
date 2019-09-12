@@ -7,12 +7,6 @@ TESTS::
     sage: V.<z> = K[]
     sage: x+z
     z + x
-
-    sage: (1/2)^(2^100)
-    Traceback (most recent call last):
-    ...
-    RuntimeError: exponent must be at most 9223372036854775807     # 64-bit
-    RuntimeError: exponent must be at most 2147483647              # 32-bit
 """
 from __future__ import print_function
 
@@ -93,7 +87,7 @@ def quadratic_number_field():
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.quadratic_number_field()
-        Number Field in a with defining polynomial x^2 - 61099
+        Number Field in a with defining polynomial x^2 - 61099 with a = 247.1821190944038?
     """
     from sage.all import ZZ, QuadraticField
     while True:

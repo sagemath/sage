@@ -48,7 +48,7 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015, 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015 Marco Mancini <marco.mancini@obspm.fr>
@@ -57,13 +57,14 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.manifolds.differentiable.multivectorfield import (
                                        MultivectorField, MultivectorFieldParal)
 from sage.misc.decorators import options
+
 
 class VectorField(MultivectorField):
     r"""
@@ -123,7 +124,7 @@ class VectorField(MultivectorField):
         sage: W = U.intersection(V)
         sage: eU = c_xy.frame() ; eV = c_tu.frame()
         sage: c_tuW = c_tu.restrict(W) ; eVW = c_tuW.frame()
-        sage: v = M.vector_field('v') ; v
+        sage: v = M.vector_field(name='v') ; v
         Vector field v on the 2-dimensional differentiable manifold M
         sage: v.parent()
         Module X(M) of vector fields on the 2-dimensional differentiable
@@ -238,7 +239,7 @@ class VectorField(MultivectorField):
         # Initialization of list of quantities depending on self:
         self._init_dependencies()
 
-    def _repr_(self) :
+    def _repr_(self):
         r"""
         Return a string representation of ``self``.
 
@@ -325,11 +326,10 @@ class VectorField(MultivectorField):
             sage: V = M.open_subset('V') # complement of the South pole
             sage: c_uv.<u,v> = V.chart() # stereographic coordinates from the South pole
             sage: M.declare_union(U,V)   # S^2 is the union of U and V
-            sage: a = M.vector_field(name='a')
-            sage: a[c_xy.frame(),:] = [x, y]
-            sage: a[c_uv.frame(),:] = [-u, -v]
-            sage: f = M.scalar_field({c_xy: atan(x^2+y^2), c_uv: pi/2-atan(u^2+v^2)},
-            ....:                    name='f')
+            sage: a = M.vector_field({c_xy.frame(): [x, y],
+            ....:                     c_uv.frame(): [-u, -v]}, name='a')
+            sage: f = M.scalar_field({c_xy: atan(x^2+y^2),
+            ....:                     c_uv: pi/2-atan(u^2+v^2)}, name='f')
             sage: s = a.__call__(f); s
             Scalar field a(f) on the 2-dimensional differentiable manifold M
             sage: s.display()
@@ -476,8 +476,8 @@ class VectorField(MultivectorField):
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart()
-            sage: v = M.vector_field(name='v')
-            sage: v[:] = -y, x ; v.display()
+            sage: v = M.vector_field(-y, x, name='v')
+            sage: v.display()
             v = -y d/dx + x d/dy
             sage: v.plot()
             Graphics object consisting of 80 graphics primitives
@@ -486,7 +486,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot()
             sphinx_plot(g)
 
@@ -500,7 +500,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot(scale=0.5, color='green', linestyle='--', width=1, arrowsize=6)
             sphinx_plot(g)
 
@@ -513,7 +513,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot(max_range=4, number_values=5, scale=0.5)
             sphinx_plot(g)
 
@@ -528,7 +528,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot(scale=0.5,  number_values=10, linestyle='--', width=1, arrowsize=6)
             sphinx_plot(g)
 
@@ -545,7 +545,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot(fixed_coords={x: -2})
             sphinx_plot(g)
 
@@ -558,7 +558,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(2, 'M')
             X = M.chart('x y'); x, y = X[:]
-            v = M.vector_field(name='v'); v[:] = -y, x
+            v = M.vector_field(-y, x, name='v')
             g = v.plot(fixed_coords={y: 1})
             sphinx_plot(g)
 
@@ -566,8 +566,8 @@ class VectorField(MultivectorField):
 
             sage: M = Manifold(4, 'M')
             sage: X.<t,x,y,z> = M.chart()
-            sage: v = M.vector_field(name='v')
-            sage: v[:] = (t/8)^2, -t*y/4, t*x/4, t*z/4 ; v.display()
+            sage: v = M.vector_field((t/8)^2, -t*y/4, t*x/4, t*z/4, name='v')
+            sage: v.display()
             v = 1/64*t^2 d/dt - 1/4*t*y d/dx + 1/4*t*x d/dy + 1/4*t*z d/dz
 
         We cannot make a 4D plot directly::
@@ -588,8 +588,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(4, 'M')
             X = M.chart('t x y z') ; t,x,y,z = X[:]
-            v = M.vector_field(name='v')
-            v[:] = (t/8)**2, -t*y/4, t*x/4, t*z/4
+            v = M.vector_field((t/8)**2, -t*y/4, t*x/4, t*z/4, name='v')
             sphinx_plot(v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},
                                number_values=4))
 
@@ -604,8 +603,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(4, 'M')
             X = M.chart('t x y z'); t,x,y,z = X[:]
-            v = M.vector_field(name='v')
-            v[:] = (t/8)**2, -t*y/4, t*x/4, t*z/4
+            v = M.vector_field((t/8)**2, -t*y/4, t*x/4, t*z/4, name='v')
             sphinx_plot(v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},
                                ranges={x: (-2,2), y: (-2,2), t: (-1, 4)},
                                number_values=4))
@@ -619,8 +617,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(4, 'M')
             X = M.chart('t x y z'); t,x,y,z = X[:]
-            v = M.vector_field(name='v')
-            v[:] = (t/8)**2, -t*y/4, t*x/4, t*z/4
+            v = M.vector_field((t/8)**2, -t*y/4, t*x/4, t*z/4, name='v')
             g = v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})
             sphinx_plot(g)
 
@@ -633,8 +630,7 @@ class VectorField(MultivectorField):
 
             M = Manifold(4, 'M')
             X = M.chart('t x y z'); t,x,y,z = X[:]
-            v = M.vector_field(name='v')
-            v[:] = v[:] = (t/8)**2, -t*y/4, t*x/4, t*z/4
+            v = M.vector_field((t/8)**2, -t*y/4, t*x/4, t*z/4, name='v')
             g = v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})
             sphinx_plot(g)
 
@@ -1379,7 +1375,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
 
         sage: M = Manifold(3, 'M')
         sage: c_xyz.<x,y,z> = M.chart()
-        sage: v = M.vector_field('V') ; v
+        sage: v = M.vector_field(name='V') ; v
         Vector field V on the 3-dimensional differentiable manifold M
         sage: latex(v)
         V
@@ -1406,63 +1402,92 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
     Components of a vector field with respect to a given frame::
 
         sage: e = M.vector_frame('e') ; M.set_default_frame(e)
-        sage: v[0], v[1], v[2] = (1, 4, 9)  # components on M's default frame (e)
+        sage: v[0], v[1], v[2] = (1+y, 4*x*z, 9)  # components on M's default frame (e)
         sage: v.comp()
         1-index components w.r.t. Vector frame (M, (e_0,e_1,e_2))
 
     The totality of the components are accessed via the operator ``[:]``::
 
-        sage: v[:] = (1, 4, 9)  # equivalent to v[0], v[1], v[2] = (1, 4, 9)
+        sage: v[:] = (1+y, 4*x*z, 9)
         sage: v[:]
-        [1, 4, 9]
+        [y + 1, 4*x*z, 9]
 
     The components are also read on the expansion on the frame ``e``,
     as provided by the method
     :meth:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor.display`::
 
-        sage: v.display()  # displays the expansion in the default frame
-        V = e_0 + 4 e_1 + 9 e_2
+        sage: v.display()  # expansion in the default frame
+        V = (y + 1) e_0 + 4*x*z e_1 + 9 e_2
 
     A subset of the components can be accessed by using slice notation::
 
-        sage: v[1:] = (-2, -3)
+        sage: v[1:] = (-2, -x*y)
         sage: v[:]
-        [1, -2, -3]
+        [y + 1, -2, -x*y]
         sage: v[:2]
-        [1, -2]
+        [y + 1, -2]
 
     Components in another frame::
 
         sage: f = M.vector_frame('f')
         sage: for i in range(3):
-        ....:     v.set_comp(f)[i] = (i+1)**3
+        ....:     v.set_comp(f)[i] = (i+1)**3 * c_xyz[i]
         ....:
         sage: v.comp(f)[2]
-        27
+        27*z
         sage: v[f, 2]  # equivalent to above
-        27
+        27*z
         sage: v.display(f)
-        V = f_0 + 8 f_1 + 27 f_2
+        V = x f_0 + 8*y f_1 + 27*z f_2
+
+    One can set the components at the vector definition::
+
+        sage: v = M.vector_field(1+y, 4*x*z, 9, name='V')
+        sage: v.display()
+        V = (y + 1) e_0 + 4*x*z e_1 + 9 e_2
+
+    If the components regard a vector frame different from the default one,
+    the vector frame has to be specified via the argument ``frame``::
+
+        sage: v = M.vector_field(x, 8*y, 27*z, frame=f, name='V')
+        sage: v.display(f)
+        V = x f_0 + 8*y f_1 + 27*z f_2
+
+    For providing the components in various frames, one may use a dictionary::
+
+        sage: v = M.vector_field({e: [1+y, -2, -x*y], f: [x, 8*y, 27*z]},
+        ....:                    name='V')
+        sage: v.display(e)
+        V = (y + 1) e_0 - 2 e_1 - x*y e_2
+        sage: v.display(f)
+        V = x f_0 + 8*y f_1 + 27*z f_2
+
+    It is also possible to construct a vector field from a vector of symbolic
+    expressions (or any other iterable)::
+
+        sage: v = M.vector_field(vector([1+y, 4*x*z, 9]), name='V')
+        sage: v.display()
+        V = (y + 1) e_0 + 4*x*z e_1 + 9 e_2
 
     The range of the indices depends on the convention set for the manifold::
 
         sage: M = Manifold(3, 'M', start_index=1)
         sage: c_xyz.<x,y,z> = M.chart()
         sage: e = M.vector_frame('e') ; M.set_default_frame(e)
-        sage: v = M.vector_field('V')
-        sage: (v[1], v[2], v[3]) = (1, 4, 9)
+        sage: v = M.vector_field(1+y, 4*x*z, 9, name='V')
         sage: v[0]
         Traceback (most recent call last):
         ...
         IndexError: index out of range: 0 not in [1, 3]
+        sage: v[1]  # OK
+        y + 1
 
     A vector field acts on scalar fields (derivation along the vector field)::
 
         sage: M = Manifold(2, 'M')
         sage: c_cart.<x,y> = M.chart()
         sage: f = M.scalar_field(x*y^2, name='f')
-        sage: v = M.vector_field('v')
-        sage: v[:] = (-y, x)
+        sage: v = M.vector_field(-y, x, name='v')
         sage: v.display()
         v = -y d/dx + x d/dy
         sage: v(f)
@@ -1483,14 +1508,13 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         sage: Phi.display()
         Phi: R --> M
            t |--> (x, y) = (cos(t), sin(t))
-        sage: w = R.vector_field('w', dest_map=Phi) ; w
+        sage: w = R.vector_field(-sin(t), cos(t), dest_map=Phi, name='w') ; w
         Vector field w along the 1-dimensional differentiable manifold R with
          values on the 2-dimensional differentiable manifold M
         sage: w.parent()
         Free module X(R,Phi) of vector fields along the 1-dimensional
          differentiable manifold R mapped into the 2-dimensional differentiable
          manifold M
-        sage: w[:] = (-sin(t), cos(t))
         sage: w.display()
         w = -sin(t) d/dx + cos(t) d/dy
 
@@ -1528,13 +1552,12 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
 
         Construction via ``DifferentiableManifold.vector_field``::
 
-            sage: u = M.vector_field(name='u'); u
+            sage: u = M.vector_field(1+x, 1-y, name='u'); u
             Vector field u on the 2-dimensional differentiable manifold M
             sage: type(u) == type(v)
             True
             sage: u.parent() is v.parent()
             True
-            sage: u[:] = (1+x, 1-y)
             sage: TestSuite(u).run()
 
         """
@@ -1543,8 +1566,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         # MultivectorFieldParal attributes:
         self._domain = vector_field_module._domain
         self._ambient_domain = vector_field_module._ambient_domain
-        self._extensions_graph = {self._domain: self}
-        self._restrictions_graph = {self._domain: self}
         # VectorField attributes:
         self._vmodule = vector_field_module
         # Initialization of derived quantities:
@@ -1632,8 +1653,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             sage: M = Manifold(2, 'M')
             sage: c_cart.<x,y> = M.chart()
             sage: f = M.scalar_field(x*y^2)
-            sage: v = M.vector_field()
-            sage: v[:] = (-y, x)
+            sage: v = M.vector_field(-y, x)
             sage: v(f)
             Scalar field on the 2-dimensional differentiable manifold M
             sage: v(f).display()

@@ -677,7 +677,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(2^64+1, L)
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
 
         We are testing the corner case of the maximal possible bound::
 
@@ -690,7 +690,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(100, [2^256])
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
             sage: BoundedIntegerSequence(100, [100])
             Traceback (most recent call last):
             ...
@@ -701,7 +701,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(2^256, [200])
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
 
         """
         if bound <= 0:
@@ -886,7 +886,7 @@ cdef class BoundedIntegerSequence:
             sage: S[2^63]
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert to int
+            OverflowError: ... int too large to convert to ...
 
         ::
 

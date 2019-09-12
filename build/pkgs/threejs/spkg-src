@@ -2,7 +2,8 @@
 
 set -e
 
-GIT_VERSION=r80
+# https://github.com/mrdoob/three.js/releases
+GIT_VERSION=r105
 
 [ -n "${SAGE_ROOT}" ] || SAGE_ROOT="$(pwd)/../../../"
 
@@ -20,9 +21,17 @@ URL3="https://raw.githubusercontent.com/mrdoob/three.js/${GIT_VERSION}/LICENSE"
 echo "Downloading $URL3"
 curl -OL "$URL3"
 
+# Set up directory structure
+
+mkdir build
+mv three.min.js build
+
+mkdir -p examples/js/controls
+mv OrbitControls.js examples/js/controls
+
 # Package
-tar czf "$SAGE_ROOT/upstream/threejs-${GIT_VERSION}.tar.gz" 'three.min.js' 'OrbitControls.js' 'LICENSE'
-rm -rf 'three.min.js' 'OrbitControls.js' 'LICENSE'
+tar czf "$SAGE_ROOT/upstream/threejs-${GIT_VERSION}.tar.gz" build examples 'LICENSE'
+rm -rf 'build' 'examples' 'LICENSE'
 
 # Update package info
 echo "${GIT_VERSION}" > 'package-version.txt'

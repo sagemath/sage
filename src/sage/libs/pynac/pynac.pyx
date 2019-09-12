@@ -30,7 +30,8 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 
 from sage.arith.all import gcd, lcm, is_prime, factorial, bernoulli
 
-from sage.structure.element cimport Element, parent, coercion_model
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport Element, parent
 from sage.misc.persist import loads, dumps
 
 from sage.rings.integer_ring import ZZ
@@ -617,7 +618,7 @@ cdef stdstring* py_print_fderivative(unsigned id, params,
       derivative.
     - args -- arguments of the function.
     """
-    if all([tolerant_is_symbol(a) for a in args]) and len(set(args))==len(args):
+    if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
         diffvarstr = ', '.join([repr(args[i]) for i in params])
         py_res = ''.join(['diff(',py_print_function_pystring(id,args,False),', ',diffvarstr,')'])
     else:
@@ -625,6 +626,7 @@ cdef stdstring* py_print_fderivative(unsigned id, params,
         fstr = py_print_function_pystring(id, args, True)
         py_res = ostr + fstr
     return string_from_pystr(py_res)
+
 
 def py_print_fderivative_for_doctests(id, params, args):
     """
@@ -662,6 +664,7 @@ def py_print_fderivative_for_doctests(id, params, args):
     print(char_to_str(ostr.c_str()))
     del ostr
 
+
 cdef stdstring* py_latex_fderivative(unsigned id, params,
         args):
     """
@@ -671,14 +674,14 @@ cdef stdstring* py_latex_fderivative(unsigned id, params,
     See documentation of py_print_fderivative for more information.
 
     """
-    if all([tolerant_is_symbol(a) for a in args]) and len(set(args))==len(args):
-        param_iter=iter(params)
-        v=next(param_iter)
-        nv=1
-        diff_args=[]
+    if all(tolerant_is_symbol(a) for a in args) and len(set(args)) == len(args):
+        param_iter = iter(params)
+        v = next(param_iter)
+        nv = 1
+        diff_args = []
         for next_v in param_iter:
             if next_v == v:
-                nv+=1
+                nv += 1
             else:
                 if nv == 1:
                     diff_args.append(r"\partial %s"%(args[v]._latex_(),))
@@ -1724,7 +1727,7 @@ cdef py_log(x):
             return math.log(real)
         elif real < 0:
             res = gsl_complex_log(gsl_complex_rect(real, 0))
-            return PyComplex_FromDoubles(res.dat[0], res.dat[1])
+            return PyComplex_FromDoubles(res.real, res.imag)
         else:
             return float('-inf')
     elif type(x) is complex:
@@ -1733,7 +1736,7 @@ cdef py_log(x):
         if real == 0 and imag == 0:
             return float('-inf')
         res = gsl_complex_log(gsl_complex_rect(real, imag))
-        return PyComplex_FromDoubles(res.dat[0], res.dat[1])
+        return PyComplex_FromDoubles(res.real, res.imag)
     elif isinstance(x, Integer):
         return x.log().n()
     elif hasattr(x, 'log'):
@@ -2193,7 +2196,7 @@ cdef GConstant py_get_constant(const char* name):
     """
     from sage.symbolic.constants import constants_name_table
     cdef PynacConstant pc
-    c = constants_name_table.get(name, None)
+    c = constants_name_table.get(char_to_str(name), None)
     if c is None:
         raise RuntimeError
     else:

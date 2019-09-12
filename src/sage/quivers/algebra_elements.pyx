@@ -7,14 +7,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #     Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import division, print_function
 
 include "algebra_elements.pxi"
@@ -27,11 +27,12 @@ cdef class PathAlgebraElement(RingElement):
     """
     Elements of a :class:`~sage.quivers.algebra.PathAlgebra`.
 
-    NOTE:
+    .. NOTE::
 
-    Upon creation of a path algebra, one can choose among several monomial
-    orders, which are all positive or negative degree orders. Monomial orders
-    that are not degree orders are not supported.
+        Upon creation of a path algebra, one can choose among several
+        monomial orders, which are all positive or negative degree
+        orders. Monomial orders that are not degree orders are not
+        supported.
 
     EXAMPLES:
 
@@ -148,9 +149,9 @@ cdef class PathAlgebraElement(RingElement):
           :class:`~sage.quivers.paths.QuiverPath`, the value giving its
           coefficient.
 
-        NOTE:
+        .. NOTE::
 
-        Monomial orders that are not degree orders are not supported.
+            Monomial orders that are not degree orders are not supported.
 
         EXAMPLES::
 
@@ -261,10 +262,10 @@ cdef class PathAlgebraElement(RingElement):
         """
         String representation.
 
-        NOTE:
+        .. NOTE::
 
-        The terms are first sorted by initial and terminal vertices, and only
-        then by the given monomial order.
+            The terms are first sorted by initial and terminal
+            vertices, and only then by the given monomial order.
 
         EXAMPLES::
 
@@ -463,7 +464,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list coefficients(self):
         """
-        Returns the list of coefficients.
+        Return the list of coefficients.
 
         .. NOTE::
 
@@ -498,7 +499,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list monomials(self):
         """
-        Returns the list of monomials appearing in this element.
+        Return the list of monomials appearing in this element.
 
         .. NOTE::
 
@@ -561,7 +562,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list terms(self):
         """
-        Returns the list of terms.
+        Return the list of terms.
 
         .. NOTE::
 
@@ -616,7 +617,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list support(self):
         """
-        Returns the list of monomials, as elements of the underlying partial semigroup.
+        Return the list of monomials, as elements of the underlying partial semigroup.
 
         .. NOTE::
 
@@ -966,12 +967,12 @@ cdef class PathAlgebraElement(RingElement):
         """
         Helper for comparison of path algebra elements.
 
-        NOTE:
+        .. NOTE::
 
-        First, the comparison is by initial vertices of monomials. Then, the
-        terminal vertices are compared. Last, the given monomial order is
-        applied for monomials that have the same initial and terminal
-        vertices.
+            First, the comparison is by initial vertices of
+            monomials. Then, the terminal vertices are compared. Last,
+            the given monomial order is applied for monomials that
+            have the same initial and terminal vertices.
 
         EXAMPLES::
 

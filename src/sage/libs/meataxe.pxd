@@ -93,11 +93,11 @@ cdef extern from "meataxe.h":
     ## Matrices
     ############
     ctypedef struct Matrix_t:
-        unsigned long Magic         #/* Used internally */
-        int Field, Nor, Noc     #/* Field, #rows, #columns */
-        PTR Data            #/* Pointer to data area */
-        int RowSize                     # Size (in bytes) of one row
-        int *PivotTable                 # Pivot table (if matrix is in echelon form
+        int Field, Nor, Noc        # Field, #rows, #columns
+        PTR Data                   # Pointer to data area
+        int RowSize                # Size (in bytes) of one row
+        int *PivotTable            # Pivot table (if matrix is in echelon form)
+
     ## Basic memory operations
     Matrix_t *MatAlloc(int field, int nor, int noc) except NULL
     int MatFree(Matrix_t *mat)

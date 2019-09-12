@@ -6,11 +6,13 @@ AUTHORS:
 - Travis Scrimshaw (2012-04-22): Nicolas M. Thiery moved matrix creation to
   :class:`CartanType` to prepare :func:`cartan_matrix()` for deprecation.
 - Christian Stump, Travis Scrimshaw (2013-04-13): Created :class:`CartanMatrix`.
+- Ben Salisbury (2018-08-07): Added Borcherds-Cartan matrices.
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012,2013 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #       Copyright (C) 2013 Christian Stump,
+#       Copyright (C) 2018 Ben Salisbury <salis1bt at cmich.edu>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -57,6 +59,14 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     *symmetrizable* (see :meth:`is_symmetrizable`). However following Kac, we
     do not make that assumption here.
 
+    An even, integral Borcherds--Cartan matrix is an integral matrix
+    `A = (a_{ij})_{i,j \in I}` for some countable index set `I` which satisfies
+    the following properties:
+
+    - `a_{ii} \in \{2\} \cup 2\ZZ_{<0}` for all `i`,
+    - `a_{ij} \leq 0` for all `i \neq j`,
+    - `a_{ij} = 0` if and only if `a_{ji} = 0` for all `i \neq j`.
+
     INPUT:
 
     Can be anything which is accepted by ``CartanType`` or a matrix.
@@ -65,6 +75,11 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     a matrix to explicitly state the type. Otherwise this will try to check the
     input matrix against possible standard types of Cartan matrices. To disable
     this check, use the keyword ``cartan_type_check = False``.
+
+    If one wants to initialize a Borcherds-Cartan matrix using matrix data,
+    use the keyword ``borcherds=True``. To specify the diagonal entries of
+    corresponding to a Cartan type (a Cartan matrix is treated as matrix data),
+    use ``borcherds`` with a list of the diagonal entries.
 
     EXAMPLES::
 
@@ -192,6 +207,16 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         [ 0  2 -3]
         [-1 -1  2]
 
+    Examples of Borcherds-Cartan matrices::
+
+        sage: CartanMatrix([[2,-1],[-1,-2]], borcherds=True)
+        [ 2 -1]
+        [-1 -2]
+        sage: CartanMatrix('B3', borcherds=[-4,-6,2])
+        [-4 -1  0]
+        [-1 -6 -1]
+        [ 0 -2  2]
+
     .. NOTE::
 
         Since this is a matrix, :meth:`row()` and :meth:`column()` will return
@@ -202,7 +227,8 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     """
     @staticmethod
     def __classcall_private__(cls, data=None, index_set=None,
-                              cartan_type=None, cartan_type_check=True):
+                              cartan_type=None, cartan_type_check=True,
+                              borcherds=None):
         """
         Normalize input so we can inherit from sparse integer matrix.
 
@@ -266,14 +292,27 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
                 index_set = dynkin_diagram.index_set()
                 oir = dynkin_diagram.odd_isotropic_roots()
                 reverse = {a: i for i,a in enumerate(index_set)}
-                data = {(i, i): 2 if index_set[i] not in oir else 0
-                        for i in range(n)}
+                if isinstance(borcherds, (list, tuple)):
+                    if (len(borcherds) != len(index_set)
+                        and not all(val in ZZ
+                                    and (val == 2 or (val % 2 == 0 and val < 0))
+                                    for val in borcherds)):
+                        raise ValueError("the input data is not a Borcherds-Cartan matrix")
+                    data = {(i, i): val if index_set[i] not in oir else 0
+                            for i,val in enumerate(borcherds)}
+                else:
+                    data = {(i, i): 2 if index_set[i] not in oir else 0
+                            for i in range(n)}
                 for (i,j,l) in dynkin_diagram.edge_iterator():
                     data[(reverse[j], reverse[i])] = -l
             else:
                 M = matrix(data)
-                if not is_generalized_cartan_matrix(M):
-                    raise ValueError("the input matrix is not a generalized Cartan matrix")
+                if borcherds:
+                    if not is_borcherds_cartan_matrix(M):
+                        raise ValueError("the input matrix is not a Borcherds-Cartan matrix")
+                else:
+                    if not is_generalized_cartan_matrix(M):
+                        raise ValueError("the input matrix is not a generalized Cartan matrix")
                 n = M.ncols()
                 data = M.dict()
                 subdivisions = M._subdivisions
@@ -513,6 +552,8 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             [-2 -1  2]
         """
         if self._cartan_type is None:
+            return self
+        if is_borcherds_cartan_matrix(self) and not is_generalized_cartan_matrix(self):
             return self
         return self._cartan_type
 
@@ -916,6 +957,46 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         subgraphs = self.dynkin_diagram().connected_components_subgraphs()
         return tuple(CartanMatrix(subg._matrix_().rows()) for subg in subgraphs)
 
+def is_borcherds_cartan_matrix(M):
+    """
+    Return ``True`` if ``M`` is an even, integral Borcherds-Cartan matrix.
+    For a definition of such a matrix, see :class:`CartanMatrix`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.root_system.cartan_matrix import is_borcherds_cartan_matrix
+        sage: M = Matrix([[2,-1],[-1,2]])
+        sage: is_borcherds_cartan_matrix(M)
+        True
+        sage: N = Matrix([[2,-1],[-1,0]])
+        sage: is_borcherds_cartan_matrix(N)
+        False
+        sage: O = Matrix([[2,-1],[-1,-2]])
+        sage: is_borcherds_cartan_matrix(O)
+        True
+        sage: O = Matrix([[2,-1],[-1,-3]])
+        sage: is_borcherds_cartan_matrix(O)
+        False
+    """
+    if not is_Matrix(M):
+        return False
+    if not M.is_square():
+        return False
+    n = M.ncols()
+    for i in range(n):
+        if M[i,i] == 0:
+            return False
+        if M[i,i] % 2 == 1:
+            return False
+        for j in range(i+1, n):
+            if M[i,j] > 0 or M[j,i] > 0:
+                return False
+            elif M[i,j] == 0 and M[j,i] != 0:
+                return False
+            elif M[j,i] == 0 and M[i,j] != 0:
+                return False
+    return True
+
 def is_generalized_cartan_matrix(M):
     """
     Return ``True`` if ``M`` is a generalized Cartan matrix. For a definition
@@ -940,22 +1021,10 @@ def is_generalized_cartan_matrix(M):
         sage: is_generalized_cartan_matrix(M)
         True
     """
-    if not is_Matrix(M):
-        return False
-    if not M.is_square():
+    if not is_borcherds_cartan_matrix(M):
         return False
     n = M.ncols()
-    for i in range(n):
-        if M[i,i] != 2:
-            return False
-        for j in range(i+1, n):
-            if M[i,j] > 0 or M[j,i] > 0:
-                return False
-            elif M[i,j] == 0 and M[j,i] != 0:
-                return False
-            elif M[j,i] == 0 and M[i,j] != 0:
-                return False
-    return True
+    return all(M[i,i] == 2 for i in range(n))
 
 def find_cartan_type_from_matrix(CM):
     r"""

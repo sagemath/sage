@@ -47,8 +47,8 @@ Test all interacts from the Sage interact library::
       dpi: IntSlider(value=100, description=u'dpi', max=300, min=10, step=10)
     <h2>Polar Prime Spiral</h2>           <div style="white-space: normal;">          For more information about the factors in the spiral, visit           <a href="http://www.dcs.gla.ac.uk/~jhw/spirals/index.html" target="_blank">          Number Spirals by John Williamson</a>.</div>
     <script type="math/tex">n = 89</script>
-    Pink Curve:  <script type="math/tex">n^2 + 8.0</script>
-    Green Curve: <script type="math/tex">n^2 + n + -1.0</script>
+    Pink Curve:  <script type="math/tex">n^2 + 8</script>
+    Green Curve: <script type="math/tex">n^2 + n + -1</script>
 
     sage: test(interacts.calculus.taylor_polynomial)
     Interactive function <function taylor_polynomial at ...> with 3 widgets
@@ -102,16 +102,6 @@ Test all interacts from the Sage interact library::
     <script type="math/tex">x^2 + x - 2 = 0</script>
     <script type="math/tex">Ax^2 + Bx + C = 0</script>
     <script type="math/tex">x = \frac{-B\pm\sqrt{B^2-4AC}}{2A} = \frac{-1\pm\sqrt{1^2-4*1*-2}}{2*1} = \frac{-1\pm\sqrt{\color{Green}{9}}}{2} = \begin{cases}1\\-2\end{cases}</script>
-
-    sage: test(interacts.calculus.trigonometric_properties_triangle)
-    Interactive function <function trigonometric_properties_triangle at ...> with 3 widgets
-      a0: IntSlider(value=30, description=u'A', max=360)
-      a1: IntSlider(value=180, description=u'B', max=360)
-      a2: IntSlider(value=300, description=u'C', max=360)
-    <h2>Trigonometric Properties of a Triangle</h2>
-    <script type="math/tex">\angle A = {60.0}^{\circ},</script> <script type="math/tex">\angle B = {45.0}^{\circ},</script> <script type="math/tex">\angle C = {75.0}^{\circ}</script>
-    <script type="math/tex">AB = 1.93185165258,</script>  <script type="math/tex">BC = 1.73205080757,</script>  <script type="math/tex">CA = 1.41421356237</script>
-    Area of triangle <script type="math/tex">ABC = 1.18301270189</script>
 
     sage: test(interacts.calculus.secant_method)
     Interactive function <function secant_method at ...> with 5 widgets
@@ -270,9 +260,9 @@ Test all interacts from the Sage interact library::
       a1: IntSlider(value=180, description=u'B', max=360)
       a2: IntSlider(value=300, description=u'C', max=360)
     <h2>Trigonometric Properties of a Triangle</h2>
-    <script type="math/tex">\angle A = {60.0}^{\circ},</script> <script type="math/tex">\angle B = {45.0}^{\circ},</script> <script type="math/tex">\angle C = {75.0}^{\circ}</script>
-    <script type="math/tex">AB = 1.93185165258,</script>  <script type="math/tex">BC = 1.73205080757,</script>  <script type="math/tex">CA = 1.41421356237</script>
-    Area of triangle <script type="math/tex">ABC = 1.18301270189</script>
+    <script type="math/tex">\angle A = {60.000}^{\circ},</script> <script type="math/tex">\angle B = {45.000}^{\circ},</script> <script type="math/tex">\angle C = {75.000}^{\circ}</script>
+    <script type="math/tex">AB = 1.931852</script>, <script type="math/tex">BC = 1.732051</script>, <script type="math/tex">CA = 1.414214</script>
+    Area of triangle <script type="math/tex">ABC = 1.183013</script>
 
     sage: test(interacts.geometry.special_points)
     Interactive function <function special_points at ...> with 10 widgets
@@ -294,3 +284,16 @@ Test all interacts from the Sage interact library::
     doctest:...: UserWarning: Attempting to set identical bottom==top results
     in singular transformations; automatically expanding.
     bottom=0.0, top=0.0
+
+Test matrix control (see :trac:`27735`)::
+
+    sage: @library_interact
+    ....: def matrix_test(A=matrix(QQ, 2, 2, range(4))):
+    ....:     print(A)
+    ....:     print(parent(A))
+    sage: test(matrix_test)
+    Interactive function <function matrix_test at ...> with 1 widget
+      A: Grid(value=[[0, 1], [2, 3]], children=(Label(value=u'A'), VBox(children=(EvalText(value=u'0', layout=Layout(max_width=u'5em')), EvalText(value=u'2', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'1', layout=Layout(max_width=u'5em')), EvalText(value=u'3', layout=Layout(max_width=u'5em'))))))
+    [0 1]
+    [2 3]
+    Full MatrixSpace of 2 by 2 dense matrices over Rational Field

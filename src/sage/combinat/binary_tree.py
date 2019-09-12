@@ -14,31 +14,15 @@ AUTHORS:
 
 - Florent Hivert (2010-2011): initial implementation.
 - Adrien Boussicault (2015): Hook statistics.
-
-REFERENCES:
-
-.. [LodayRonco] Jean-Louis Loday and Maria O. Ronco.
-   *Hopf algebra of the planar binary trees*,
-   Advances in Mathematics, volume 139, issue 2,
-   10 November 1998, pp. 293-309.
-   http://www.sciencedirect.com/science/article/pii/S0001870898917595
-
-.. [HNT05] Florent Hivert, Jean-Christophe Novelli, and Jean-Yves Thibon.
-   *The algebra of binary search trees*,
-   :arxiv:`math/0401089v2`.
-
-.. [CP12] Grégory Châtel, Viviane Pons.
-   *Counting smaller trees in the Tamari order*,
-   :arxiv:`1212.0751v1`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 # python3
 from __future__ import division, absolute_import
 from six import add_metaclass
@@ -239,6 +223,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         """
         if not (not self or len(self) == 2):
             raise ValueError("this is not a binary tree")
+
+    __hash__ = ClonableArray.__hash__
 
     def _repr_(self):
         """
@@ -1051,7 +1037,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             sage: bt.tamari_interval(BinaryTree([[None,[]],[]]))
             Traceback (most recent call last):
             ...
-            ValueError: The two binary trees are not comparable on the Tamari lattice.
+            ValueError: the two binary trees are not comparable on the Tamari lattice
 
         TESTS:
 
@@ -1088,7 +1074,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         by sending every permutation `p \in S_n` to the binary
         search tree of `p` (more precisely, to
         ``p.binary_search_tree_shape()``) is a lattice
-        homomorphism. (See Theorem 6.2 in [Read04]_.)
+        homomorphism. (See Theorem 6.2 in [Rea2004]_.)
 
         .. SEEALSO::
 
@@ -1157,12 +1143,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             sage: b = BinaryTree([])
             sage: b.tamari_join(b)
             [., .]
-
-        REFERENCES:
-
-        .. [Read04] Nathan Reading.
-           *Cambrian Lattices*.
-           :arxiv:`math/0402086v2`.
         """
         # We use Reading's result that the projection from the symmetric
         # group is a lattice homomorphism.
@@ -1182,7 +1162,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         by sending every permutation `p \in S_n` to the binary
         search tree of `p` (more precisely, to
         ``p.binary_search_tree_shape()``) is a lattice
-        homomorphism. (See Theorem 6.2 in [Read04]_.)
+        homomorphism. (See Theorem 6.2 in [Rea2004]_.)
 
         .. SEEALSO::
 
@@ -1334,11 +1314,11 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             [[[[]], [[]]], [[]], []]
         """
         close_root = False
-        if(root is None):
+        if root is None:
             from sage.combinat.ordered_tree import OrderedTree
             root = OrderedTree().clone()
             close_root = True
-        if(self):
+        if self:
             left, right = self[0], self[1]
             if bijection == "left":
                 root = left._to_ordered_tree(bijection=bijection, root=root)
@@ -1429,7 +1409,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             right.append(label)
             return right
 
-    def tamari_sorting_tuple(self):
+    def tamari_sorting_tuple(self, reverse=False):
         r"""
         Return the Tamari sorting tuple of ``self`` and the
         size of ``self``.
@@ -1441,6 +1421,12 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         of ``self``. Here, the nodes of ``self`` are numbered
         from left to right.
 
+        INPUT:
+
+        - ``reverse`` -- boolean (default ``False``) if ``True``,
+          return instead the result for the left-right symmetric of the
+          binary tree
+
         OUTPUT:
 
         a pair `(w, n)`, where `w` is a tuple of integers,
@@ -1449,7 +1435,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         Two binary trees of the same size are comparable in
         the Tamari order if and only if the associated tuples
         `w` are componentwise comparable.
-        (This is essentially the Theorem in [HuangTamari1972]_.)
+        (This is essentially the Theorem in [HT1972]_.)
         This is used in :meth:`tamari_lequal`.
 
         EXAMPLES::
@@ -1461,15 +1447,23 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
              ((1, 0, 0), 3),
              ((0, 0, 0), 3)]
 
+            sage: t = BinaryTrees(10).random_element()
+            sage: u = t.left_right_symmetry()
+            sage: t.tamari_sorting_tuple(True) == u.tamari_sorting_tuple()
+            True
+
         REFERENCES:
 
-        - [HuangTamari1972]_
+        - [HT1972]_
         """
         if not self:
             return tuple(), 0
-        t1, t2 = self
-        u1, n1 = t1.tamari_sorting_tuple()
-        u2, n2 = t2.tamari_sorting_tuple()
+        if not reverse:
+            t1, t2 = self
+        else:
+            t2, t1 = self
+        u1, n1 = t1.tamari_sorting_tuple(reverse=reverse)
+        u2, n2 = t2.tamari_sorting_tuple(reverse=reverse)
         return (u1 + (n2,) + u2, n1 + 1 + n2)
 
     @combinatorial_map(name="To 312 avoiding permutation")
@@ -1842,9 +1836,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         """
         if not self:
             return BinaryTree()
-        tree = [self[1].left_right_symmetry(), self[0].left_right_symmetry()]
         if self not in LabelledBinaryTrees():
-            return BinaryTree(tree)
+            a = self.tamari_sorting_tuple(reverse=True)[0]
+            return from_tamari_sorting_tuple(a)
+        tree = [self[1].left_right_symmetry(), self[0].left_right_symmetry()]
         return LabelledBinaryTree(tree, label=self.label())
 
     @combinatorial_map(order=2, name="Left border symmetry")
@@ -1914,7 +1909,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
 
         The number of pairs `(t_1, t_2)` of binary trees of size `n` such that
         the canopee of `t_1` is the complementary of the canopee of `t_2` is
-        also the number of Baxter permutations (see [DG94]_, see
+        also the number of Baxter permutations (see [DG1994]_, see
         also :oeis:`A001181`). We check this in small cases::
 
             sage: [len([(u,v) for u in BinaryTrees(n) for v in BinaryTrees(n)
@@ -1940,12 +1935,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             Traceback (most recent call last):
             ...
             ValueError: canopee is only defined for non empty binary trees
-
-        REFERENCES:
-
-        .. [DG94] \S. Dulucq and O. Guibert. Mots de piles, tableaux
-           standards et permutations de Baxter, proceedings of
-           Formal Power Series and Algebraic Combinatorics, 1994.
         """
         if not self:
             raise ValueError("canopee is only defined for non empty binary trees")
@@ -2124,8 +2113,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             ....:    l.append(leaf)
             ....:    leaf = chr( ord(leaf)+1 )
             sage: n_action = lambda node: l.append( node.label() )
-            sage: b = BinaryTree([[None,[]],[[[],[]],[]]]).\
-            ....:     canonical_labelling()
+            sage: b = BinaryTree([[None,[]],[[[],[]],[]]])
+            sage: b = b.canonical_labelling()
             sage: b.in_order_traversal(n_action, l_action)
             sage: l
             ['a', 1, 'b', 2, 'c', 3, 'd', 4, 'e', 5, 'f', 6, 'g', 7, 'h', 8,
@@ -2161,7 +2150,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         is a quotient of the weak order on the `n`-th symmetric group
         (also known as the right permutohedron order, see
         :meth:`~sage.combinat.permutation.Permutation.permutohedron_lequal`).
-        See [CP12]_. The set of binary trees of size `n` equipped with
+        See [CP2012]_. The set of binary trees of size `n` equipped with
         the Tamari order is called the `n`-th Tamari poset.
 
         The Tamari order can equivalently be defined as follows:
@@ -2806,7 +2795,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         multiplicative factor, which is a power of `q`.
 
         When `q = 1`, both `f_{q} (T)` and `h_{q} (T)` equal the number
-        of permutations whose binary search tree (see [HNT05]_ for the
+        of permutations whose binary search tree (see [HNT2005]_ for the
         definition) is `T` (after dropping the labels). For example,
         there are `20` permutations which give a binary tree of the
         following shape::
@@ -2828,7 +2817,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
 
         Objects similar to `h_{q} (T)` also make sense for general
         ordered forests (rather than just binary trees), see e. g.
-        [BW88]_, Theorem 9.1.
+        [BW1988]_, Theorem 9.1.
 
         INPUT:
 
@@ -2842,14 +2831,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
           compute `f_{q} (T)` (namely, `h_{q} (T)` is obtained when
           ``q_factor == False``, and `f_{q} (T)` is obtained when
           ``q_factor == True``)
-
-        REFERENCES:
-
-        .. [BW88] Anders Bjoerner, Michelle L. Wachs,
-           *Generalized quotients in Coxeter groups*.
-           Transactions of the American Mathematical Society,
-           vol. 308, no. 1, July 1988.
-           http://www.ams.org/journals/tran/1988-308-01/S0002-9947-1988-0946427-X/S0002-9947-1988-0946427-X.pdf
 
         EXAMPLES:
 
@@ -2986,7 +2967,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         (:meth:`left_rotate`).
 
         The right rotation operation introduced here is the one defined
-        in Definition 2.1 of [CP12]_.
+        in Definition 2.1 of [CP2012]_.
 
         .. SEEALSO::
 
@@ -3108,18 +3089,18 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         (written `T / T'`) is defined as the tree obtained by grafting
         `T'` on the rightmost leaf of `T`. More precisely, `T / T'` is
         defined by identifying the root of the `T'` with the rightmost
-        leaf of `T`. See section 4.5 of [HNT05]_.
+        leaf of `T`. See section 4.5 of [HNT2005]_.
 
         If `T` is empty, then `T / T' = T'`.
 
         The definition of this "over" operation goes back to
-        Loday-Ronco [LodRon0102066]_ (Definition 2.2), but it is
+        Loday-Ronco [LR0102066]_ (Definition 2.2), but it is
         denoted by `\backslash` and called the "under" operation there.
         In fact, trees in sage have their root at the top, contrary to
-        the trees in [LodRon0102066]_ which are growing upwards. For
+        the trees in [LR0102066]_ which are growing upwards. For
         this reason, the names of the over and under operations are
         swapped, in order to keep a graphical meaning.
-        (Our notation follows that of section 4.5 of [HNT05]_.)
+        (Our notation follows that of section 4.5 of [HNT2005]_.)
 
         .. SEEALSO::
 
@@ -3222,13 +3203,13 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         If `T'` is empty, then `T \backslash T' = T`.
 
         The definition of this "under" operation goes back to
-        Loday-Ronco [LodRon0102066]_ (Definition 2.2), but it is
+        Loday-Ronco [LR0102066]_ (Definition 2.2), but it is
         denoted by `/` and called the "over" operation there. In fact,
         trees in sage have their root at the top, contrary to the trees
-        in [LodRon0102066]_ which are growing upwards. For this reason,
+        in [LR0102066]_ which are growing upwards. For this reason,
         the names of the over and under operations are swapped, in
         order to keep a graphical meaning.
-        (Our notation follows that of section 4.5 of [HNT05]_.)
+        (Our notation follows that of section 4.5 of [HNT2005]_.)
 
         .. SEEALSO::
 
@@ -3483,7 +3464,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
 
         The sylvester class of a tree `T` is the set of permutations
         `\sigma` whose right-to-left binary search tree (a notion defined
-        in [HNT05]_, Definition 7) is `T` after forgetting the labels.
+        in [HNT2005]_, Definition 7) is `T` after forgetting the labels.
         This is an equivalence class of the sylvester congruence (the
         congruence on words which holds two words `uacvbw` and `ucavbw`
         congruent whenever `a`, `b`, `c` are letters satisfying
@@ -4074,7 +4055,7 @@ def from_tamari_sorting_tuple(key):
 
     - ``key`` -- a tuple of integers
 
-    EXEMPLES::
+    EXAMPLES::
 
         sage: from sage.combinat.binary_tree import from_tamari_sorting_tuple
         sage: t = BinaryTrees(60).random_element()
@@ -4294,7 +4275,8 @@ class BinaryTrees_size(BinaryTrees):
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size
-        return CompleteDyckWords_size(self._size).random_element().to_binary_tree()
+        dw = CompleteDyckWords_size(self._size).random_element()
+        return dw.to_binary_tree_tamari()
 
     def __iter__(self):
         """
@@ -4314,7 +4296,7 @@ class BinaryTrees_size(BinaryTrees):
         if self._size == 0:
             yield self._element_constructor_()
         else:
-            for i in range(0, self._size):
+            for i in range(self._size):
                 for lft in self.__class__(i):
                     for rgt in self.__class__(self._size - 1 - i):
                         yield self._element_constructor_([lft, rgt])
@@ -4420,6 +4402,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
 # Enumerated set of full binary trees of a given size
 #################################################################
 
+
 def _full_construction(n):
     """
     Helper function for the disjoint union construction.
@@ -4438,7 +4421,8 @@ def _full_construction(n):
     """
     if n == 0:
         return FullBinaryTrees_size(0)
-    return FullBinaryTrees_size(2*n-1)
+    return FullBinaryTrees_size(2 * n - 1)
+
 
 class FullBinaryTrees_size(BinaryTrees):
     """
@@ -4517,7 +4501,7 @@ class FullBinaryTrees_size(BinaryTrees):
         if self._size == 0:
             return Integer(1)
         from sage.combinat.combinat import catalan_number
-        return catalan_number((self._size-1) // 2)
+        return catalan_number((self._size - 1) // 2)
 
     def random_element(self):
         r"""
@@ -4540,13 +4524,14 @@ class FullBinaryTrees_size(BinaryTrees):
         TESTS::
 
             sage: B = BinaryTrees(19, full=True)
-            sage: all([B.random_element() in B for i in range(20)])
+            sage: all(B.random_element() in B for i in range(20))
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size
         if self._size == 0:
             return BinaryTree(None)
-        return CompleteDyckWords_size((self._size-1) // 2).random_element().to_binary_tree().to_full()
+        dw = CompleteDyckWords_size((self._size - 1) // 2).random_element()
+        return dw.to_binary_tree_tamari().to_full()
 
     def __iter__(self):
         """
@@ -4572,10 +4557,10 @@ class FullBinaryTrees_size(BinaryTrees):
         if self._size == 1:
             yield self._element_constructor_("[.,.]")
         else:
-            k = (self._size - 1) // 2 # number of internal nodes
+            k = (self._size - 1) // 2  # number of internal nodes
             for i in range(k):
-                for lft in FullBinaryTrees_size(2*i+1):
-                    for rgt in FullBinaryTrees_size(2*(k-1-i)+1):
+                for lft in FullBinaryTrees_size(2 * i + 1):
+                    for rgt in FullBinaryTrees_size(2 * (k - 1 - i) + 1):
                         yield self._element_constructor_([lft, rgt])
 
     def _element_constructor_(self, *args, **keywords):
@@ -4808,6 +4793,8 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         resu = [(l, self.label())] + [u for t in self for u in t._sort_key()]
         return tuple(resu)
 
+    __hash__ = ClonableArray.__hash__
+
     def binary_search_insert(self, letter):
         r"""
         Return the result of inserting a letter ``letter`` into the
@@ -4848,7 +4835,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
           obtained by replacing the left child of `t` by `Ins(i, l)`
           in `t`, where `l` denotes the left child of `t`.
 
-        See, for example, [HNT05]_ for properties of this algorithm.
+        See, for example, [HNT2005]_ for properties of this algorithm.
 
         .. WARNING::
 
@@ -4859,7 +4846,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
 
         EXAMPLES:
 
-        The example from Fig. 2 of [HNT05]_::
+        The example from Fig. 2 of [HNT2005]_::
 
             sage: LBT = LabelledBinaryTree
             sage: x = LBT(None)

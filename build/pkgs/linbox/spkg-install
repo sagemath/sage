@@ -32,7 +32,7 @@ fi
 # We disable openmp because of build failures, see
 # http://trac.sagemath.org/ticket/17635#comment:67
 sdh_configure --with-default="$SAGE_LOCAL" \
-              --enable-sage --disable-static --disable-openmp \
+              --disable-static --disable-openmp \
               $LINBOX_CONFIGURE
 sdh_make
 sdh_make_install

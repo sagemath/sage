@@ -65,7 +65,11 @@ class MinMax_base(BuiltinFunction):
                 symb_args.append(x)
             else:
                 num_non_symbolic_args += 1
-                res = builtin_f(res, x)
+                if res is None:
+                    # Any argument is greater or less than None
+                    res = x
+                else:
+                    res = builtin_f(res, x)
 
         # if no symbolic arguments, return the result
         if len(symb_args) == 0:
@@ -118,13 +122,13 @@ class MinMax_base(BuiltinFunction):
 
         Check if we return None, when the builtin function would::
 
-            sage: max_symbolic([None]) is None
+            sage: max_symbolic([None]) is None  # py2 on Python 3 None is not ordered
             True
-            sage: max_symbolic([None, None]) is None
+            sage: max_symbolic([None, None]) is None  # py2
             True
-            sage: min_symbolic([None]) is None
+            sage: min_symbolic([None]) is None  # py2
             True
-            sage: min_symbolic([None, None]) is None
+            sage: min_symbolic([None, None]) is None  # py2
             True
 
         Check if a single argument which is not iterable works::
@@ -154,7 +158,7 @@ class MinMax_base(BuiltinFunction):
             raise ValueError("number of arguments must be > 0")
         if len(args) == 1:
             try:
-                args=(SR._force_pyobject(iter(args[0])),)
+                args = (SR._force_pyobject(iter(args[0])),)
             except TypeError as e:
                 raise e
 
@@ -163,6 +167,7 @@ class MinMax_base(BuiltinFunction):
         except ValueError as e:
             if e.args[0] == "return None":
                 return None
+
 
 class MaxSymbolic(MinMax_base):
     def __init__(self):
@@ -244,11 +249,13 @@ class MaxSymbolic(MinMax_base):
         ::
 
             sage: f = max_symbolic(sin(x), cos(x))
-            sage: r = integral(f, x, 0, 1)
+            sage: r = integral(f, x, 0, 1); r
+            sqrt(2) - cos(1)
             sage: r.n()
-            0.8739124411567263
+            0.873911256504955
         """
         return max_symbolic(args)
+
 
 max_symbolic = MaxSymbolic()
 

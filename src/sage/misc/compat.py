@@ -92,4 +92,16 @@ def find_library(name):
 
     """
 
-    return _find_library(name)
+    result = _find_library(name)
+    if result:
+        return result
+
+    # if no result found, check DYLD_LIBRARY_PATH
+    LDPATH_STR = os.environ.get('DYLD_LIBRARY_PATH')
+    lib_dirs = (LDPATH_STR.split(':') if LDPATH_STR else []) + [os.path.join(SAGE_LOCAL, 'lib')]
+    for libdir in lib_dirs:
+        for libext in ['so', 'a']:
+            implib = os.path.join(libdir,
+                                  'lib{0}.{1}'.format(name, libext))
+            if os.path.exists(implib):
+                return implib

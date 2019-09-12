@@ -10,9 +10,7 @@ ready to use from the command prompt. Further customization is
 possible by editing the ``$SAGE_ROOT/ipythonrc`` file. Upon starting
 Sage, you get output similar to the following:
 
-.. skip
-
-::
+.. CODE-BLOCK:: text
 
     ----------------------------------------------------------------------
     | SAGE Version 3.1.1, Release Date: 2008-05-24                       |
@@ -55,7 +53,7 @@ caching. All input is saved and can be retrieved as variables (besides
 the usual arrow key recall). The following GLOBAL variables always
 exist (so don't overwrite them!)":
 
-::
+.. CODE-BLOCK:: text
 
       _:  previous input (interactive shell and notebook)
       __: next previous input (interactive shell only)
@@ -171,7 +169,7 @@ file).
 
 .. skip
 
-::
+.. CODE-BLOCK:: shell-session
 
     was@form:~$ sage
     ----------------------------------------------------------------------
@@ -419,7 +417,9 @@ commands" in IPython:
   ``export EDITOR=/usr/bin/vim`` or something similar in the
   appropriate place, like a ``.profile`` file).  From the Sage prompt,
   executing ``%edit`` will open up the named editor.  Then within the
-  editor you can define a function::
+  editor you can define a function:
+
+  .. CODE-BLOCK:: python
 
     def some_function(n):
         return n**2 + 3*n + 2
@@ -496,7 +496,7 @@ execution stack. For example,
 For a list of commands in the debugger, type ``?`` at the ``ipdb>``
 prompt:
 
-::
+.. CODE-BLOCK:: text
 
     ipdb> ?
 
@@ -949,13 +949,10 @@ Each saved variable is again available. Moreover, the variable
 
 .. _section-notebook:
 
-The Notebook Interface
-======================
+The legacy Notebook Interface
+=============================
 
 This section refers to the legacy Sage notebook, or "sagenb".
-See the `sagenb documentation
-<https://doc.sagemath.org/html/en/reference/notebook/index.html>`_
-for full details.
 
 SageMath is transitioning to using the
 `Jupyter notebook
@@ -999,7 +996,7 @@ or run several separate notebook servers at the same time.
 When you start the notebook, it first creates the following files
 in ``$HOME/.sage/sage_notebook.sagenb``:
 
-::
+.. CODE-BLOCK:: text
 
     conf.pickle
     openid.pickle
@@ -1021,7 +1018,7 @@ or whatever, that human-readable file contains everything needed to
 reconstruct your worksheet.  Each worksheet also has, at a minimum,
 the files/folders:
 
-::
+.. CODE-BLOCK:: text
 
     cells/
     worksheet.html
@@ -1035,7 +1032,7 @@ notebook server.
 The following diagram illustrates the architecture of the Sage
 Notebook:
 
-::
+.. CODE-BLOCK:: text
 
     ----------------------
     |                    |

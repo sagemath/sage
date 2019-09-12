@@ -13,17 +13,18 @@ Base class for sparse matrices
 from __future__ import absolute_import, print_function
 
 cimport cython
-from cysignals.memory cimport sig_malloc, sig_free
-from cysignals.signals cimport sig_on, sig_off, sig_check
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
 from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
-from sage.structure.richcmp cimport richcmp
+from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 from sage.rings.ring import is_Ring
 from sage.misc.misc import verbose
 
 from cpython cimport *
+from cpython.object cimport Py_EQ, Py_NE
 
 import sage.matrix.matrix_space
 
@@ -190,17 +191,18 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         e = {}
         k1 = 0
-        sig_on()
         while k1 < len_left:
             row_start = k1
             row = get_ij(left_nonzero, row_start, 0)
             k2 = 0
             while k2 < len_right:
+                sig_check()
                 col = get_ij(right_nonzero, k2, 1)
                 sum = None
                 k1 = row_start
                 while k1 < len_left and get_ij(left_nonzero,k1,0) == row and \
                           k2 < len_right and get_ij(right_nonzero,k2,1) == col:
+                    sig_check()
                     a = get_ij(left_nonzero, k1,1)
                     b = get_ij(right_nonzero,k2,0)
                     if a == b:
@@ -214,13 +216,12 @@ cdef class Matrix_sparse(matrix.Matrix):
                         k1 = k1 + 1
                     else:
                         k2 = k2 + 1
-                if not sum is None:
+                if sum is not None:
                     e[row, col] = sum
                 while k2 < len_right and get_ij(right_nonzero,k2,1) == col:
                     k2 = k2 + 1
             while k1 < len_left and get_ij(left_nonzero,k1,0) == row:
                 k1 = k1 + 1
-        sig_off()
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
@@ -249,14 +250,9 @@ cdef class Matrix_sparse(matrix.Matrix):
         right_nonzero = right.nonzero_positions(copy=False, column_order=True)
         len_left = len(left_nonzero)
         len_right = len(right_nonzero)
-        next_row = <Py_ssize_t *> sig_malloc(sizeof(Py_ssize_t) * left._nrows)
-        next_col = <Py_ssize_t *> sig_malloc(sizeof(Py_ssize_t) * right._ncols)
-        if next_row == NULL or next_col == NULL:
-            if next_row != NULL: sig_free(next_row)
-            sig_off()
-            raise MemoryError("out of memory multiplying a matrix")
+        next_row = <Py_ssize_t *>check_allocarray(left._nrows, sizeof(Py_ssize_t))
+        next_col = <Py_ssize_t *>check_allocarray(right._ncols, sizeof(Py_ssize_t))
 
-        sig_on()
         i = len_left - 1
         for row from left._nrows > row >= 0:
             next_row[row] = i + 1
@@ -275,10 +271,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             row = get_ij(left_nonzero, row_start, 0)
             k2 = 0
             while k2 < len_right:
+                sig_check()
                 col = get_ij(right_nonzero, k2, 1)
                 sum = None
                 k1 = row_start
                 while k1 < next_row[row] and k2 < next_col[col]:
+                    sig_check()
                     a = get_ij(left_nonzero, k1,1)
                     b = get_ij(right_nonzero,k2,0)
                     if a == b:
@@ -292,14 +290,13 @@ cdef class Matrix_sparse(matrix.Matrix):
                         k1 = k1 + 1
                     else:
                         k2 = k2 + 1
-                if not sum is None:
+                if sum is not None:
                     e[row, col] = sum
                 k2 = next_col[col]
             k1 = next_row[row]
 
         sig_free(next_row)
         sig_free(next_col)
-        sig_off()
 
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
@@ -374,7 +371,36 @@ cdef class Matrix_sparse(matrix.Matrix):
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
     cpdef _richcmp_(self, right, int op):
-        return richcmp(self._dict(), right._dict(), op)
+        """
+        Rich comparison.
+
+        EXAMPLES::
+
+            sage: M = matrix({(5,5): 2})
+            sage: Mp = matrix({(5,5): 7, (3,1):-2})
+            sage: M > Mp
+            True
+            sage: M == M.transpose()
+            True
+            sage: M != Mp
+            True
+        """
+        other = <Matrix_sparse>right
+        if op == Py_EQ:
+            return self._dict() == other._dict()
+        if op == Py_NE:
+            return self._dict() != other._dict()
+        cdef Py_ssize_t i, j
+        # Parents are equal, so dimensions of self and other are equal
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                lij = self.get_unsafe(i, j)
+                rij = other.get_unsafe(i, j)
+                r = richcmp_item(lij, rij, op)
+                if r is not NotImplemented:
+                    return bool(r)
+        # Matrices are equal
+        return rich_to_bool(op, 0)
 
     def transpose(self):
         """

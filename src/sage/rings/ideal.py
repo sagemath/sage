@@ -318,6 +318,21 @@ class Ideal_generic(MonoidElement):
         """
         return "Ideal %s of %s"%(self._repr_short(), self.ring())
 
+    def random_element(self, *args, **kwds):
+        """
+        Return a random element in this ideal.
+
+        EXAMPLES::
+
+            sage: P.<a,b,c> = GF(5)[[]]
+            sage: I = P.ideal([a^2, a*b + c, c^3])
+            sage: I.random_element()  # random
+            2*a^5*c + a^2*b*c^4 + ... + O(a, b, c)^13
+
+        """
+        return sum(self.__ring.random_element(*args, **kwds) * g for g in self.__gens)
+
+
     def _richcmp_(self, other, op):
         """
         Compares the generators of two ideals.
@@ -701,7 +716,7 @@ class Ideal_generic(MonoidElement):
         a prime ideal `P` is specified).
 
         Recall that an ideal `I` is primary if and only if `I` has a
-        unique associated prime (see page 52 in [AtiMac]_).  If this
+        unique associated prime (see page 52 in [AM1969]_).  If this
         prime is `P`, then `I` is said to be `P`-primary.
 
         INPUT:
@@ -739,12 +754,6 @@ class Ideal_generic(MonoidElement):
         .. NOTE::
 
             This uses the list of associated primes.
-
-        REFERENCES:
-
-        .. [AtiMac] Atiyah and Macdonald, "Introduction to commutative
-           algebra", Addison-Wesley, 1969.
-
         """
         try:
             ass = self.associated_primes()

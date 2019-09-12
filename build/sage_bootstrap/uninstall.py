@@ -56,7 +56,7 @@ PKGS = pth.join(SAGE_ROOT, 'build', 'pkgs')
 """Directory where all spkg sources are found."""
 
 
-def uninstall(spkg_name, sage_local, verbose=False):
+def uninstall(spkg_name, sage_local, keep_files=False, verbose=False):
     """
     Given a package name and path to SAGE_LOCAL, uninstall that package from
     SAGE_LOCAL if it is currently installed.
@@ -70,27 +70,37 @@ def uninstall(spkg_name, sage_local, verbose=False):
     # Find all stamp files for the package; there should be only one, but if
     # there is somehow more than one we'll work with the most recent and delete
     # the rest
-    stamp_files = glob.glob(pth.join(spkg_inst, '{0}-*'.format(spkg_name)))
+    pattern = pth.join(spkg_inst, '{0}-*'.format(spkg_name))
+    stamp_files = sorted(glob.glob(pattern), key=pth.getmtime)
 
-    if len(stamp_files) > 1:
-        stamp_files.sort(key=pth.getmtime)
-    elif not stamp_files:
-        print("No record that '{0}' was ever installed; skipping "
-              "uninstall".format(spkg_name), file=sys.stderr)
+    if keep_files:
+        print("Removing stamp file but keeping package files")
+        remove_stamp_files(stamp_files)
         return
 
-    stamp_file = stamp_files[-1]
+    if stamp_files:
+        stamp_file = stamp_files[-1]
+    else:
+        stamp_file = None
 
-    try:
-        with open(stamp_file) as f:
-            spkg_meta = json.load(f)
-    except (OSError, ValueError):
-        spkg_meta = {}
+    spkg_meta = {}
+    if stamp_file:
+        try:
+            with open(stamp_file) as f:
+                spkg_meta = json.load(f)
+        except (OSError, ValueError):
+            pass
 
     if 'files' not in spkg_meta:
-        print("Old-style or corrupt stamp file '{0}'".format(stamp_file),
-              file=sys.stderr)
+        if stamp_file:
+            print("Old-style or corrupt stamp file '{0}'"
+                  .format(stamp_file), file=sys.stderr)
+        else:
+            print("Package '{0}' is currently not installed"
+                  .format(spkg_name), file=sys.stderr)
 
+        # Run legacy uninstaller even if there is no stamp file: the
+        # package may be partially installed without a stamp file
         legacy_uninstall(spkg_name, verbose=verbose)
     else:
         files = spkg_meta['files']
@@ -100,11 +110,7 @@ def uninstall(spkg_name, sage_local, verbose=False):
 
         modern_uninstall(spkg_name, sage_local, files, verbose=verbose)
 
-    # Finally, if all went well, delete all the stamp files.
-    for stamp_file in stamp_files:
-        if verbose:
-            print('rm "{}"'.format(stamp_file))
-        os.remove(stamp_file)
+    remove_stamp_files(stamp_files, verbose=verbose)
 
 
 def legacy_uninstall(spkg_name, verbose=False):
@@ -116,8 +122,7 @@ def legacy_uninstall(spkg_name, verbose=False):
     spkg_dir = pth.join(PKGS, spkg_name)
     legacy_uninstall = pth.join(spkg_dir, 'spkg-legacy-uninstall')
 
-    if not (pth.isfile(legacy_uninstall) and
-            os.access(legacy_uninstall, os.X_OK)):
+    if not pth.isfile(legacy_uninstall):
         print("No legacy uninstaller found for '{0}'; nothing to "
               "do".format(spkg_name), file=sys.stderr)
         return
@@ -129,7 +134,7 @@ def legacy_uninstall(spkg_name, verbose=False):
 
     # Any errors from this, including a non-zero return code will
     # bubble up and exit the uninstaller
-    subprocess.check_call([legacy_uninstall])
+    subprocess.check_call(['bash', legacy_uninstall])
 
 
 def modern_uninstall(spkg_name, sage_local, files, verbose=False):
@@ -187,9 +192,11 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
     # Remove the files; if a directory is empty after removing a file
     # from it, remove the directory too.
     for filename in files:
-        filename = pth.join(sage_local, filename)
+        # Just in case: use lstrip to remove leading "/" from
+        # filename. See https://trac.sagemath.org/ticket/26013.
+        filename = pth.join(sage_local, filename.lstrip(os.sep))
         dirname = pth.dirname(filename)
-        if os.path.exists(filename):
+        if os.path.lexists(filename):
             if verbose:
                 print('rm "{}"'.format(filename))
             os.remove(filename)
@@ -220,6 +227,13 @@ def modern_uninstall(spkg_name, sage_local, files, verbose=False):
         pass
 
 
+def remove_stamp_files(stamp_files, verbose=False):
+    # Finally, if all went well, delete all the stamp files.
+    for stamp_file in stamp_files:
+        print("Removing stamp file '{0}'".format(stamp_file))
+        os.remove(stamp_file)
+
+
 def run_spkg_script(spkg_name, path, script_name, script_descr):
     """
     Runs the specified ``spkg-<foo>`` script under the given ``path``,
@@ -238,7 +252,7 @@ def dir_type(path):
     """
 
     if path and not pth.isdir(path):
-        raise argparse.ArgumentError(
+        raise argparse.ArgumentTypeError(
             "'{0}' is not a directory".format(path))
 
     return path
@@ -253,7 +267,7 @@ def spkg_type(pkg):
     pkgbase = pth.join(PKGS, pkg)
 
     if not pth.isdir(pkgbase):
-        raise argparse.ArgumentError(
+        raise argparse.ArgumentTypeError(
                 "'{0}' is not a known spkg".format(pkg))
 
     return pkg
@@ -276,6 +290,10 @@ def make_parser():
                              'environment variable if set)')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='verbose output showing all files removed')
+    parser.add_argument('-k', '--keep-files', action='store_true',
+                        help="only delete the package's installation record, "
+                             "but do not remove files installed by the "
+                             "package")
     parser.add_argument('--debug', action='store_true', help=argparse.SUPPRESS)
 
     return parser
@@ -293,7 +311,8 @@ def run(argv=None):
         sys.exit(1)
 
     try:
-        uninstall(args.spkg, args.sage_local, verbose=args.verbose)
+        uninstall(args.spkg, args.sage_local, keep_files=args.keep_files,
+                  verbose=args.verbose)
     except Exception as exc:
         print("Error during uninstallation of '{0}': {1}".format(
             args.spkg, exc), file=sys.stderr)

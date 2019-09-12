@@ -42,15 +42,15 @@ AUTHORS:
   - Add support for indefinite forms.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006-2009 William Stein and Jon Hanke
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from functools import total_ordering
 
 from sage.libs.pari.all import pari_gen
@@ -197,12 +197,12 @@ class BinaryQF(SageObject):
             sage: (R[1] * R[1] * R[1]).reduced_form()
             x^2 + x*y + 6*y^2
             sage: q1 = BinaryQF(1, 1, 4)
-            sage: M = Matrix(ZZ, [[1,3], [0,1]]);
+            sage: M = Matrix(ZZ, [[1,3], [0,1]])
             sage: q1*M
             x^2 + 7*x*y + 16*y^2
             sage: q1.matrix_action_right(M)
             x^2 + 7*x*y + 16*y^2
-            sage: N = Matrix(ZZ, [[1,0], [1,0]]);
+            sage: N = Matrix(ZZ, [[1,0], [1,0]])
             sage: q1*(M*N) == q1.matrix_action_right(M).matrix_action_right(N)
             True
         """
@@ -483,7 +483,7 @@ class BinaryQF(SageObject):
         # Note: Cacheing in _poly seems to give a very slight
         # improvement (~0.2 usec) in 'timeit()' runs.  Not sure it
         # is worth the instance variable.
-        if self._poly == None:
+        if self._poly is None:
             self._poly = self(ZZ['x, y'].gens())
         return self._poly
 
@@ -641,6 +641,23 @@ class BinaryQF(SageObject):
             raise ValueError("only defined for negative discriminant")
         return (abs(self._b) <= self._a) and (self._a <= self._c)
 
+    @cached_method
+    def is_reducible(self):
+        r"""
+        Return if this form is reducible and cache the result.
+
+        A binary form `q` is called reducible if it is the product of
+        two linear forms `q = (a x + b y) (c x + d y)`, or
+        equivalently if its discriminant is a square.
+
+        EXAMPLES::
+
+            sage: q = BinaryQF([1, 0, -1])
+            sage: q.is_reducible()
+            True
+        """
+        return self.discriminant().is_square()
+
     def _reduce_indef(self, transformation=False):
         """
         Reduce an indefinite, non-reduced form.
@@ -664,6 +681,11 @@ class BinaryQF(SageObject):
             [ 0 -1]
             sage: red == f*trans
             True
+
+            sage: f = BinaryQF(0, 5, 24)
+            sage: red, trans = f._reduce_indef(transformation=True)
+            sage: red == f*trans
+            True
         """
         if transformation:
             U = Matrix(ZZ, 2, 2, [1,0,0,1])
@@ -675,14 +697,30 @@ class BinaryQF(SageObject):
             c = Q._c
             cabs = c.abs()
             # rho(f) as defined in [BUVO2007]_ p. 112 equation (6.12)
-            if cabs >= d:
-                s = c.sign() * ((cabs + b) / (2 * cabs)).floor()
+            if cabs != 0:
+                if cabs >= d:
+                    s = c.sign() * ((cabs + b) / (2 * cabs)).floor()
+                else:
+                    s = c.sign() * ((d + b) / (2 * cabs)).floor()
+                if transformation:
+                    T = Matrix(ZZ, 2, 2, [0, -1, 1, s])
+                    U = U * T
+                Q = BinaryQF(c, -b + 2*s*c, c*s*s - b*s + a)
             else:
-                s = c.sign() * ((d + b) / (2 * cabs)).floor()
-            if transformation:
-                T = Matrix(ZZ, 2, 2, [0, -1, 1, s])
-                U = U * T
-            Q = BinaryQF(c, -b + 2*s*c, c*s*s - b*s + a)
+                if b < 0:
+                    Q = BinaryQF(a, -b, c)
+                    if transformation:
+                        T = Matrix(ZZ, 2, 2, [1, 0, 0, -1])
+                        U = U * T
+                else:
+                    q, r = a.quo_rem(b)
+                    if 2*r > b:
+                        q, r = a.quo_rem(-b)
+                        q = -q
+                    if transformation:
+                        T = Matrix(ZZ, 2, 2, [1, 0, -q, 1])
+                        U = U * T
+                    Q = BinaryQF(r, b, c)
         if transformation:
             return Q, U
         return Q
@@ -728,7 +766,7 @@ class BinaryQF(SageObject):
             sage: b.is_reduced()
             True
 
-        An example of reducing an indefinite form::
+        Examples of reducing indefinite forms::
 
             sage: f = BinaryQF(1, 0, -3)
             sage: f.is_reduced()
@@ -738,6 +776,25 @@ class BinaryQF(SageObject):
             sage: g.is_reduced()
             True
 
+            sage: q = BinaryQF(1, 0, -1)
+            sage: q.reduced_form()
+            x^2 + 2*x*y
+
+            sage: BinaryQF(1, 9, 4).reduced_form(transformation=True)
+            (
+                                 [ 0 -1]
+            4*x^2 + 7*x*y - y^2, [ 1  2]
+            )
+            sage: BinaryQF(3, 7, -2).reduced_form(transformation=True)
+            (
+                                   [1 0]
+            3*x^2 + 7*x*y - 2*y^2, [0 1]
+            )
+            sage: BinaryQF(-6, 6, -1).reduced_form(transformation=True)
+            (
+                                  [ 0 -1]
+            -x^2 + 2*x*y + 2*y^2, [ 1 -4]
+            )
         """
         if self.is_reduced():
             if transformation:
@@ -745,8 +802,8 @@ class BinaryQF(SageObject):
             else:
                 return self
 
-        if algorithm is "default":
-            if self.discriminant() > 0 and transformation:
+        if algorithm == "default":
+            if self.is_reducible() or (self.discriminant() > 0 and transformation):
                 algorithm = 'sage'
             elif not transformation:
                 algorithm = 'pari'
@@ -763,6 +820,9 @@ class BinaryQF(SageObject):
             if transformation:
                 raise NotImplementedError('transformation=True is not '
                                         'supported using PARI')
+            elif self.is_reducible():
+                raise NotImplementedError('reducible forms are not '
+                                          'supported using PARI')
             return BinaryQF(self.__pari__().qfbred())
         else:
             raise ValueError('unknown implementation for binary quadratic form '
@@ -792,21 +852,60 @@ class BinaryQF(SageObject):
         Q = BinaryQF(-c, -b + 2*s*c, -(a - b*s + c*s*s))
         return Q
 
+    def _Rho(self):
+        """
+        Apply the Rho operator to this form, returning a new form `Q`.
+
+        EXAMPLES::
+
+            sage: f = BinaryQF(1, 8, -3)
+            sage: f._Rho()
+            -3*x^2 + 4*x*y + 5*y^2
+        """
+        d = self.discriminant().sqrt(prec=53)
+        a = self._a
+        b = self._b
+        c = self._c
+        cabs = c.abs()
+        sign = c.sign()
+        if cabs >= d:
+            s = sign * ((cabs+b) / (2*cabs)).floor()
+        else:
+            s = sign * ((d+b) / (2*cabs)).floor()
+        Q = BinaryQF(c, -b + 2*s*c, a - b*s + c*s*s)
+        return Q
+
+    def _Tau(self):
+        """
+        Apply the Tau operator to this form, returning a new form `Q`.
+
+        EXAMPLES::
+
+            sage: f = BinaryQF(1, 8, -3)
+            sage: f._Tau()
+            -x^2 + 8*x*y + 3*y^2
+        """
+        a = self._a
+        b = self._b
+        c = self._c
+        Q = BinaryQF(-a, b, -c)
+        return Q
+
     def cycle(self, proper=False):
         """
         Return the cycle of reduced forms to which ``self`` belongs.
 
-        This is Algorithm 6.1 of [BUVO2007]]_.
+        This is Algorithm 6.1 of [BUVO2007]_.
 
         INPUT:
 
-        - ``self`` -- reduced, indefinite form of squarefree discriminant
+        - ``self`` -- reduced, indefinite form of non-square discriminant
 
         - ``proper`` -- boolean (default: ``False``); if ``True``, return the
           proper cycle (not implemented)
 
         This is used to test for equivalence between indefinite forms.
-        The cycle of a form `f` consists of all equivalent forms `g`
+        The cycle of a form `f` consists of all reduced, equivalent forms `g`
         such that the `a`-coefficients of `f` and `g` have the same
         sign.  The proper cycle consists of all equivalent forms, and
         is either the same as, or twice the size of, the cycle.  In
@@ -843,20 +942,25 @@ class BinaryQF(SageObject):
         """
         if not (self.is_indef() and self.is_reduced()):
             raise ValueError("%s must be indefinite and reduced" % self)
-        if proper:
-            raise NotImplementedError('computation of the proper cycle '
-                                      ' is not implemented')
         if self.discriminant().is_square():
-            # Buchmann/Vollmer assume the discriminant to be squarefree
+            # Buchmann/Vollmer assume the discriminant to be non-square
             raise NotImplementedError('computation of cycles is only '
-                    'implemented for squarefree discrimiants')
-        C = [self]
-        Q1 = self._RhoTau()
-        while not self == Q1:
-            C.append(Q1)
-            Q1 = Q1._RhoTau()
-        self._cycle_list = C
-        return C
+                    'implemented for non-square discriminants')
+        if proper:
+            # Prop 6.10.5 in Buchmann Vollmer
+            C = self.cycle(proper=False)
+            if len(C) % 2:
+                return C
+            else:
+                return C[:1] + [q._Tau() for q in C[1:]]
+        if not hasattr(self, '_cycle_list'):
+            C = [self]
+            Q1 = self._RhoTau()
+            while not self == Q1:
+                C.append(Q1)
+                Q1 = Q1._RhoTau()
+            self._cycle_list = C
+        return self._cycle_list
 
     def is_positive_definite(self):
         """
@@ -960,39 +1064,95 @@ class BinaryQF(SageObject):
             True
             sage: a.is_equivalent(BinaryQF((3,4,5)))
             False
+
+        Some indefinite examples::
+
+            sage: Q1 = BinaryQF(3,  4, -2)
+            sage: Q2 = BinaryQF(-2, 4, 3)
+            sage: Q1.is_equivalent(Q2)
+            False
+            sage: Q1.is_equivalent(Q2,proper=False)
+            True
+
+        TESTS:
+
+        We check that :trac:`25888` is fixed::
+
+            sage: Q1 = BinaryQF(3,  4, -2)
+            sage: Q2 = BinaryQF(-2, 4, 3)
+            sage: Q1.is_equivalent(Q2, proper=False)
+            True
+            sage: Q2.is_equivalent(Q1, proper=True)
+            False
+
+        A test for rational forms::
+
+            sage: Q1 = BinaryQF(0, 4, 2)
+            sage: Q2 = BinaryQF(2, 4, 0)
+            sage: Q1.is_equivalent(Q2, proper=False)
+            True
         """
         if type(other) != type(self):
             raise TypeError("%s is not a BinaryQF" % other)
         if self.discriminant() != other.discriminant():
             return False
         if self.is_indef():
-            if proper:
-                raise NotImplementedError("proper equivalence of "
-                    "definite forms is not supported")
-            # First, reduce self and get a positive lead coefficient
-            RedSelf = self.reduced_form()
-            if RedSelf._a < 0:
-                RedSelf = BinaryQF(-RedSelf._a, RedSelf._b, -RedSelf._c)
-            _ = other.cycle()                 # This caches the list
-            return RedSelf in other._cycle_list
+            # First, reduce self and other
+            selfred = self.reduced_form()
+            otherred = other.reduced_form()
+            if self.discriminant().is_square():
+                # make sure we terminate in a form
+                # with c = 0
+                while selfred[2] != 0:
+                    selfred = selfred._Rho()
+                while otherred[2] != 0:
+                    otherred = otherred._Rho()
+                b = selfred._b
+                a = selfred._a
+                ao = otherred._a
+                # Conway Sloane p. 359
+                if proper:
+                    return (a-ao) % (2*b) == 0
+                else:
+                    g = gcd(a,b)
+                    return (a*ao - g**2) % (2*b*g) == 0
+
+            proper_cycle = otherred.cycle(proper=True)
+
+            is_prop = selfred in proper_cycle
+            if proper or is_prop:
+                return is_prop
+            # note that our definition of improper equivalence
+            # differs from that of Buchmann and Vollmer
+            # their action is det f * q(f(x,y))
+            # ours is q(f(x,y))
+
+            # an improper equivalence in our convention
+            selfred = BinaryQF(self._c, self._b, self._a)
+
+            return selfred in proper_cycle
+
         # Else we're dealing with definite forms.
-        if not proper:
-            raise NotImplementedError("improper equivalence of "
-                "definite forms is not supported")
         if self.is_posdef() and not other.is_posdef():
             return False
         if self.is_negdef() and not other.is_negdef():
             return False
         Q1 = self.reduced_form()
         Q2 = other.reduced_form()
-        return Q1 == Q2
+        if Q1 == Q2:
+            return True
+        if not proper:
+            Q1e = BinaryQF(self._c, self._b, self._a).reduced_form()
+            return Q1e == Q2
+        return False
 
     @cached_method
     def is_reduced(self):
         r"""
         Return if ``self`` is reduced.
 
-        Let `f = a x^2 + b xy + c y^2` be a binary quadratic form.
+        Let `f = a x^2 + b xy + c y^2` be a binary quadratic form of
+        discriminant `D`.
 
         - If `f` is positive definite (`D < 0` and `a > 0`), then `f`
           is reduced if and only if `|b|\leq a \leq c`, and `b\geq 0`
@@ -1025,10 +1185,14 @@ class BinaryQF(SageObject):
             sage: Q.is_reduced()
             True
 
-        An example using an indefinite form::
+        Examples using indefinite forms::
 
             sage: f = BinaryQF(-1, 2, 2)
             sage: f.is_reduced()
+            True
+            sage: BinaryQF(1, 9, 4).is_reduced()
+            False
+            sage: BinaryQF(1, 5, -1).is_reduced()
             True
 
         """
@@ -1336,7 +1500,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False):
     if D > 0:           # Indefinite
         # We follow the description of Buchmann/Vollmer 6.7.1
         if D.is_square():
-            # Buchmann/Vollmer 6.7.1. require D squarefree.
+            # Buchmann/Vollmer 6.7.1. require D a non-square.
             raise ValueError("%s is a square" % D)
         sqrt_d = D.sqrt(prec=53)
         for b in xsrange(1, sqrt_d.floor()+1):

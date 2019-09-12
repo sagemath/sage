@@ -77,7 +77,7 @@ accessed via the standard tableaux classes::
     [([[5]], [[1, 2], [3, 4]]), ([[4]], [[1, 2], [3, 5]])]
 
 These residue sequences are particularly useful in the graded representation
-theory of the cyclotomic KLR algebrasand the cyclotomic Hecke algebras of type~A;
+theory of the cyclotomic KLR algebras and the cyclotomic Hecke algebras of type~A;
 see [DJM1998]_ and [BK2009]_.
 
 This module implements the following classes:
@@ -109,15 +109,15 @@ AUTHORS:
 - Andrew Mathas (2016-07-01): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012,2016 Andrew Mathas <andrew dot mathas at sydney dot edu dot au>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import, print_function
 from six import add_metaclass
 
@@ -452,14 +452,20 @@ class ResidueSequence(ClonableArray):
             sage: res == ser
             False
 
+        TESTS::
+
+            sage: res.swap_residues(22,26)
+            Traceback (most recent call last):
+            ...
+            IndexError: 22 and 26 must be between 1 and 8
         """
         with self.clone() as swap:
             try:
                 # we have overridden __getitem__ so that indices are 1-based but
                 # __setitem__ is still 0-based so we need to renormalise the LHS
-                swap[i-1],swap[j-1] = self[j], self[i]
+                swap[i-1], swap[j-1] = self[j], self[i]
             except IndexError:
-                raise IndexError('%s and %s must be between 1 and %s' % (i,j,self.size))
+                raise IndexError('%s and %s must be between 1 and %s' % (i, j, self.size()))
         return swap
 
     def standard_tableaux(self, shape=None):
@@ -846,4 +852,3 @@ class ResidueSequences(UniqueRepresentation, Parent):
         """
         if any(r not in self._base_ring for r in element):
             raise ValueError('not a {}-residue sequence {}'.format(self._quantum_characteristic))
-

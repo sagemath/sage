@@ -1,11 +1,13 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fmpq.h
 
 from libc.stdio cimport FILE
 from sage.libs.gmp.types cimport mpq_t
 from sage.libs.flint.types cimport fmpz_t, fmpq_t, flint_rand_t, mp_bitcnt_t, fmpz
 from sage.libs.mpfr.types cimport mpfr_t, mpfr_rnd_t
 
-cdef extern from "flint/fmpq.h":
+# flint/fmpq.h
+cdef extern from "flint_wrap.h":
     fmpz * fmpq_numref(fmpq_t)
     fmpz * fmpq_denref(fmpq_t)
     void fmpq_init(fmpq_t)

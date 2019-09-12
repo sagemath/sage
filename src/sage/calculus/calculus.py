@@ -394,6 +394,7 @@ see :trac:`9538`::
     sage: sage.calculus.calculus.maxima('f1')
     f1
 """
+from six import iteritems
 
 import re
 from sage.arith.all import algdep
@@ -799,7 +800,9 @@ def nintegral(ex, x, a, b,
 
     return float(v[0]), float(v[1]), Integer(v[2]), Integer(v[3])
 
+
 nintegrate = nintegral
+
 
 def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     r"""
@@ -1003,7 +1006,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         sage: eqn =  x^3 + sqrt(2)*x + 5 == 0
         sage: a = solve(eqn, x)[0].rhs()
         sage: QQ[a]
-        Number Field in a with defining polynomial x^6 + 10*x^3 - 2*x^2 + 25
+        Number Field in a with defining polynomial x^6 + 10*x^3 - 2*x^2 + 25 with a = 0.7185272465828846? - 1.721353471724806?*I
 
     Here we solve a cubic and then recover it from its complicated
     radical expansion.
@@ -1246,6 +1249,15 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: lim(sin(1/x), x = 0)
         ind
 
+    We can use other packages than maxima::
+
+        sage: (x / (x+2^x+cos(x))).limit(x=-infinity, algorithm='fricas')       # optional - fricas
+        1
+        sage: limit(e^(-1/x), x=0, dir='right', algorithm='fricas')             # optional - fricas
+        0
+        sage: limit(e^(-1/x), x=0, dir='left', algorithm='fricas')              # optional - fricas
+        +Infinity
+
     TESTS::
 
         sage: lim(x^2, x=2, dir='nugget')
@@ -1253,6 +1265,11 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         ...
         ValueError: dir must be one of None, 'plus', '+', 'above', 'right',
         'minus', '-', 'below', 'left'
+
+        sage: x.limit(x=3, algorithm='nugget')
+        Traceback (most recent call last):
+        ...
+        ValueError: Unknown algorithm: nugget
 
     We check that :trac:`3718` is fixed, so that
     Maxima gives correct limits for the floor function::
@@ -1309,6 +1326,23 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: (1/(x-3)).limit(x=3, dir='below')
         -Infinity
+
+    From :trac:`14677`::
+
+        sage: f = (x^x-sin(x)^sin(x))/(x^3*log(x))
+        sage: limit(f, x=0, algorithm='fricas')                                 # optional - fricas
+        und
+
+        sage: limit(f, x=0, dir='right', algorithm='fricas')                    # optional - fricas
+        1/6
+
+    From :trac:`26497`::
+
+        sage: mu, y, sigma = var("mu, y, sigma")
+        sage: f = 1/2*sqrt(2)*e^(-1/2*(mu - log(y))^2/sigma^2)/(sqrt(pi)*sigma*y)
+        sage: limit(f, y=0, algorithm='fricas')                                 # optional - fricas
+        0
+
     """
     if not isinstance(ex, Expression):
         ex = SR(ex)
@@ -1323,23 +1357,25 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     if taylor and algorithm == 'maxima':
         algorithm = 'maxima_taylor'
 
-    if dir not in [None, 'plus', '+', 'right', 'minus', '-', 'left',
-            'above', 'below']:
-        raise ValueError("dir must be one of None, 'plus', '+', 'above', 'right', 'minus', '-', 'below', 'left'")
+    dir_plus = ['plus', '+', 'above', 'right']
+    dir_minus = ['minus', '-', 'below', 'left']
+    dir_both = [None] + dir_plus + dir_minus
+    if dir not in dir_both:
+        raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
 
     if algorithm == 'maxima':
         if dir is None:
             l = maxima.sr_limit(ex, v, a)
-        elif dir in ['plus', '+', 'right', 'above']:
+        elif dir in dir_plus:
             l = maxima.sr_limit(ex, v, a, 'plus')
-        elif dir in ['minus', '-', 'left', 'below']:
+        elif dir in dir_minus:
             l = maxima.sr_limit(ex, v, a, 'minus')
     elif algorithm == 'maxima_taylor':
         if dir is None:
             l = maxima.sr_tlimit(ex, v, a)
-        elif dir in ['plus', '+', 'right', 'above']:
+        elif dir in dir_plus:
             l = maxima.sr_tlimit(ex, v, a, 'plus')
-        elif dir in ['minus', '-', 'left', 'below']:
+        elif dir in dir_minus:
             l = maxima.sr_tlimit(ex, v, a, 'minus')
     elif algorithm == 'sympy':
         if dir is None:
@@ -1347,6 +1383,20 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
             l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_())
         else:
             raise NotImplementedError("sympy does not support one-sided limits")
+    elif algorithm == 'fricas':
+        from sage.interfaces.fricas import fricas
+        eq = fricas.equation(v._fricas_(), a._fricas_())
+        f = ex._fricas_()
+        if dir is None:
+            l = fricas.limit(f, eq).sage()
+            if isinstance(l, dict):
+                l = maxima("und")
+        elif dir in dir_plus:
+            l = fricas.limit(f, eq, '"right"').sage()
+        elif dir in dir_minus:
+            l = fricas.limit(f, eq, '"left"').sage()
+    else:
+        raise ValueError("Unknown algorithm: %s" % algorithm)
 
     #return l.sage()
     return ex.parent()(l)
@@ -1390,11 +1440,12 @@ def laplace(ex, t, s, algorithm='maxima'):
 
       - ``'giac'`` - use Giac
     
-    NOTES:
+    .. NOTE::
     
-    - The ``'sympy'`` algorithm returns the tuple (`F`, `a`, ``cond``) where `F` is the Laplace 
-      transform of `f(t)`, `Re(s)>a` is the half-plane of convergence, and cond 
-      are auxiliary convergence conditions.
+        The ``'sympy'`` algorithm returns the tuple (`F`, `a`, ``cond``)
+        where `F` is the Laplace transform of `f(t)`,
+        `Re(s)>a` is the half-plane of convergence, and ``cond`` are
+        auxiliary convergence conditions.
 
     .. SEEALSO::
 
@@ -1509,7 +1560,7 @@ def laplace(ex, t, s, algorithm='maxima'):
     Testing SymPy::
 
         sage: laplace(t^n, t, s, algorithm='sympy')
-        (gamma(n + 1)/(s*s^n), 0, -re(n) < 1)
+        (gamma(n + 1)/(s*s^n), 0, re(n) > -1)
 
     Testing Maxima::
 
@@ -1559,7 +1610,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         try:
             result = giac.laplace(ex, t, s)
         except TypeError:
-            raise ValueError("Giac cannot make sense of: %s" % ex_gi)
+            raise ValueError("Giac cannot make sense of: %s" % ex)
         if 'integrate' in format(result) or 'integration' in format(result):
             return dummy_laplace(ex, t, s)
         else:
@@ -1567,6 +1618,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     else:
         raise ValueError("Unknown algorithm: %s" % algorithm)
+
 
 def inverse_laplace(ex, s, t, algorithm='maxima'):
     r"""
@@ -1803,15 +1855,17 @@ def at(ex, *args, **kwds):
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
-    kwds={ (k[10:] if k[:10] == "_SAGE_VAR_" else k):v for k,v in six.iteritems(kwds)}
-    if len(args) == 1 and isinstance(args[0],list):
+    kwds = {(k[10:] if k[:10] == "_SAGE_VAR_" else k): v
+            for k, v in iteritems(kwds)}
+    if len(args) == 1 and isinstance(args[0], list):
         for c in args[0]:
-            kwds[str(c.lhs())]=c.rhs()
+            kwds[str(c.lhs())] = c.rhs()
     else:
-        if len(args) !=0:
+        if len(args):
             raise TypeError("at can take at most one argument, which must be a list")
 
     return ex.subs(**kwds)
+
 
 def dummy_diff(*args):
     """
@@ -1947,9 +2001,6 @@ symtable = {'%pi':'pi', '%e': 'e', '%i':'I', '%gamma':'euler_gamma',\
             '%c' : '_C', '%k1' : '_K1', '%k2' : '_K2',
             'e':'_e', 'i':'_i', 'I':'_I'}
 
-import re
-
-import six
 
 
 maxima_tick = re.compile("'[a-z|A-Z|0-9|_]*")
@@ -2188,6 +2239,7 @@ def mapped_opts(v):
         return str(v).lower()
     return str(v)
 
+
 def maxima_options(**kwds):
     """
     Used internally to create a string of options to pass to Maxima.
@@ -2195,9 +2247,10 @@ def maxima_options(**kwds):
     EXAMPLES::
 
         sage: sage.calculus.calculus.maxima_options(an_option=True, another=False, foo='bar')
-        'an_option=true,foo=bar,another=false'
+        'an_option=true,another=false,foo=bar'
     """
-    return ','.join(['%s=%s'%(key,mapped_opts(val)) for key, val in six.iteritems(kwds)])
+    return ','.join('%s=%s' % (key, mapped_opts(val))
+                    for key, val in sorted(iteritems(kwds)))
 
 
 # Parser for symbolic ring elements

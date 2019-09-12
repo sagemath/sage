@@ -44,6 +44,7 @@ from random import randint
 from six.moves import cStringIO as StringIO
 
 from sage.misc.misc import sage_makedirs
+from sage.misc.temporary_file import tmp_filename
 from sage.env import SAGE_LOCAL
 from sage.doctest import DOCTEST_MODE
 
@@ -300,9 +301,9 @@ cdef class Graphics3d(SageObject):
             sage: out = line._rich_repr_wavefront()
             sage: out
             OutputSceneWavefront container
-            sage: out.obj.get()
+            sage: out.obj.get_str()
             'mtllib ... 6 3 8 11\nf 8 7 12\nf 7 9 12\nf 9 10 12\nf 10 11 12\nf 11 8 12\n'
-            sage: out.mtl.get()
+            sage: out.mtl.get_str()
             'newmtl texture...\nKd 0.4 0.4 1.0\nKs 0.0 0.0 0.0\nillum 1\nNs 1.0\nd 1.0\n'
         """
         from sage.repl.rich_output.output_graphics3d import OutputSceneWavefront
@@ -328,7 +329,7 @@ cdef class Graphics3d(SageObject):
             sage: out = sphere()._rich_repr_canvas3d()
             sage: out
             OutputSceneCanvas3d container
-            sage: out.canvas3d.get()
+            sage: out.canvas3d.get_str()
             '[{"vertices":[{"x":0,"y":0,"z":-1},..., "color":"#6666ff", "opacity":1.0}]'
         """
         opts = self._process_viewing_options(kwds)
@@ -366,6 +367,11 @@ cdef class Graphics3d(SageObject):
         options.setdefault('axes_labels', ['x','y','z'])
         options.setdefault('decimals', 2)
         options.setdefault('online', False)
+        options.setdefault('projection', 'perspective')
+        if options['projection'] not in ['perspective', 'orthographic']:
+            import warnings
+            warnings.warn('projection={} is not supported; using perspective'.format(options['projection']))
+            options['projection'] = 'perspective'
         # Normalization of options values for proper JSONing
         options['aspect_ratio'] = [float(i) for i in options['aspect_ratio']]
         options['decimals'] = int(options['decimals'])
@@ -386,7 +392,9 @@ cdef class Graphics3d(SageObject):
         ambient = '{{"color":"{}"}}'.format(Color(.5,.5,.5).html_color())
 
         import json
+        from sage.plot.plot3d.shapes import arrow3d
         points, lines, texts = [], [], []
+
         if not hasattr(self, 'all'):
             self += Graphics3d()
         for p in self.flatten().all:
@@ -402,10 +410,17 @@ cdef class Graphics3d(SageObject):
                 lines.append('{{"points":{}, "color":"{}", "opacity":{}, "linewidth":{}}}'.format(
                              json.dumps(p.points), color, opacity, thickness))
             if hasattr(p, '_trans'):
+                m = p.get_transformation().get_matrix()
+                t = (m[0,3], m[1,3], m[2,3])
+                if hasattr(p.all[0], 'points'):
+                    translated = [[sum(x) for x in zip(t,u)] for u in p.all[0].points]
+                    width = .5 * p.all[0].thickness
+                    color = p.all[0].texture.color
+                    opacity = p.all[0].texture.opacity
+                    self += arrow3d(translated[0], translated[1], width=width, color=color, opacity=opacity)
                 if hasattr(p.all[0], 'string'):
-                    m = p.get_transformation().get_matrix()
                     texts.append('{{"text":"{}", "x":{}, "y":{}, "z":{}}}'.format(
-                                 p.all[0].string, m[0,3], m[1,3], m[2,3]))
+                                 p.all[0].string, t[0], t[1], t[2]))
 
         points = '[' + ','.join(points) + ']'
         lines = '[' + ','.join(lines) + ']'
@@ -422,7 +437,7 @@ cdef class Graphics3d(SageObject):
 
         html = html.replace('SAGE_SCRIPTS', scripts)
         js_options = dict((key, options[key]) for key in
-            ['aspect_ratio', 'axes', 'axes_labels', 'decimals', 'frame'])
+            ['aspect_ratio', 'axes', 'axes_labels', 'decimals', 'frame', 'projection'])
         html = html.replace('SAGE_OPTIONS', json.dumps(js_options))
         html = html.replace('SAGE_BOUNDS', bounds)
         html = html.replace('SAGE_LIGHTS', lights)
@@ -766,7 +781,7 @@ cdef class Graphics3d(SageObject):
         """
         Return an instance of RenderParams suitable for testing this object.
 
-        In particular, it opens up '/dev/null' as an auxiliary zip
+        In particular, it opens up a temporary file as an auxiliary zip
         file for jmol.
 
         EXAMPLES::
@@ -775,7 +790,8 @@ cdef class Graphics3d(SageObject):
             <class 'sage.plot.plot3d.base.RenderParams'>
         """
         params = RenderParams(ds=.075)
-        params.output_archive = zipfile.ZipFile('/dev/null', 'w', zipfile.ZIP_STORED, True)
+        fn = tmp_filename(ext=".zip")
+        params.output_archive = zipfile.ZipFile(fn, 'w', zipfile.ZIP_STORED, True)
         return params
 
     def x3d(self):
@@ -848,7 +864,7 @@ cdef class Graphics3d(SageObject):
                         COLOR 1.0 1.0 1.0
                         TEXFUNC 0
                 Texdef texture...
-              Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 1.0
+              Ambient 0.3333333333333333 Diffuse 0.6666666666666666 Specular 0.0 Opacity 1.0
                Color 1.0 1.0 0.0
                TexFunc 0
                 Sphere center 1.0 -2.0 3.0 Rad 5.0 texture...
@@ -860,7 +876,7 @@ cdef class Graphics3d(SageObject):
             begin_scene
             ...
             Texdef texture...
-              Ambient 0.333333333333 Diffuse 0.666666666667 Specular 0.0 Opacity 1.0
+              Ambient 0.3333333333333333 Diffuse 0.6666666666666666 Specular 0.0 Opacity 1.0
                Color 1.0 1.0 0.0
                TexFunc 0
             TRI V0 ...
@@ -955,7 +971,7 @@ end_scene""" % (render_params.antialiasing,
             sage: z.namelist()
             ['obj_...pmesh', 'SCRIPT']
 
-            sage: print(z.read('SCRIPT'))
+            sage: print(z.read('SCRIPT').decode('ascii'))
             data "model list"
             2
             empty
@@ -981,7 +997,7 @@ end_scene""" % (render_params.antialiasing,
             label "hi"
             isosurface fullylit; pmesh o* fullylit; set antialiasdisplay on;
 
-            sage: print(z.read(z.namelist()[0]))
+            sage: print(z.read(z.namelist()[0]).decode('ascii'))
             24
             0.5 0.5 0.5
             -0.5 0.5 0.5
@@ -1488,9 +1504,10 @@ end_scene""" % (render_params.antialiasing,
         EXAMPLES::
 
             sage: s = sphere()
-            sage: filename = tmp_filename(ext='.png')
-            sage: s._save_image_png(filename)
-            sage: open(filename).read().startswith('\x89PNG')
+            sage: png = tmp_filename(ext='.png')
+            sage: s._save_image_png(png)
+            sage: with open(png, 'rb') as fobj:
+            ....:     fobj.read().startswith(b'\x89PNG')
             True
 
             sage: s._save_image_png('/path/to/foo.bar')
@@ -1531,11 +1548,13 @@ end_scene""" % (render_params.antialiasing,
             sage: G = sphere()
             sage: png = tmp_filename(ext='.png')
             sage: G.save_image(png)
-            sage: assert open(png).read().startswith('\x89PNG')
+            sage: with open(png, 'rb') as fobj:
+            ....:     assert fobj.read().startswith(b'\x89PNG')
 
             sage: gif = tmp_filename(ext='.gif')
             sage: G.save_image(gif)
-            sage: assert open(gif).read().startswith('GIF')
+            sage: with open(gif, 'rb') as fobj:
+            ....:     assert fobj.read().startswith(b'GIF')
         """
         ext = os.path.splitext(filename)[1].lower()
         if ext not in ['.bmp', '.png', '.gif', '.ppm', '.tiff', '.tif',
@@ -1652,19 +1671,19 @@ end_scene""" % (render_params.antialiasing,
             sage: x,y,z = var('x,y,z')
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: astl = a.stl_binary()
-            sage: astl[:40]
-            'STL binary file / made by SageMath / ###'
+            sage: print(astl[:40].decode('ascii'))
+            STL binary file / made by SageMath / ###
 
             sage: p = polygon3d([[0,0,0], [1,2,3], [3,0,0]])
-            sage: p.stl_binary()[:40]
-            'STL binary file / made by SageMath / ###'
+            sage: print(p.stl_binary()[:40].decode('ascii'))
+            STL binary file / made by SageMath / ###
 
         This works when faces have more then 3 sides::
 
             sage: P = polytopes.dodecahedron()
             sage: Q = P.plot().all[-1]
-            sage: Q.stl_binary()[:40]
-            'STL binary file / made by SageMath / ###'
+            sage: print(Q.stl_binary()[:40].decode('ascii'))
+            STL binary file / made by SageMath / ###
         """
         import struct
         from sage.modules.free_module import FreeModule
@@ -1764,11 +1783,11 @@ end_scene""" % (render_params.antialiasing,
             sage: Q = P.plot().all[-1]
             sage: Q.stl_ascii_string().splitlines()[:6]
             ['solid surface',
-            'facet normal 0.8506508083520398 -0.0 0.5257311121191338',
-            '    outer loop',
-            '        vertex 1.2360679775 -0.472135955 0.0',
-            '        vertex 1.2360679775 0.472135955 0.0',
-            '        vertex 0.7639320225 0.7639320225 0.7639320225']
+             'facet normal 0.5257311121191338 0.8506508083520398 -0.0',
+             '    outer loop',
+             '        vertex 0.0 1.2360679774997898 -0.4721359549995796',
+             '        vertex 0.0 1.2360679774997898 0.4721359549995796',
+             '        vertex 0.7639320225002102 0.7639320225002102 0.7639320225002102']
         """
         from sage.modules.free_module import FreeModule
         RR3 = FreeModule(RDF, 3)
@@ -1778,11 +1797,11 @@ end_scene""" % (render_params.antialiasing,
             self.triangulate()
             faces = self.face_list()
 
-        code = ("facet normal {} {} {}\n"
+        code = ("facet normal {!r} {!r} {!r}\n"
                 "    outer loop\n"
-                "        vertex {} {} {}\n"
-                "        vertex {} {} {}\n"
-                "        vertex {} {} {}\n"
+                "        vertex {!r} {!r} {!r}\n"
+                "        vertex {!r} {!r} {!r}\n"
+                "        vertex {!r} {!r} {!r}\n"
                 "    endloop\n"
                 "endfacet\n")
 
@@ -1906,7 +1925,7 @@ end_scene""" % (render_params.antialiasing,
             sage: a = implicit_plot3d(x^2+y^2+z^2-9,[x,-5,5],[y,-5,5],[z,-5,5])
             sage: a_amf = a.amf_ascii_string()
             sage: a_amf[:160]
-            '<?xml version="1.0" encoding="utf-8"?><amf><object id="surface"><mesh><vertices><vertex><coordinates><x>2.94871794872</x><y>-0.384615384615</y><z>-0.39358974359'
+            '<?xml version="1.0" encoding="utf-8"?><amf><object id="surface"><mesh><vertices><vertex><coordinates><x>2.948717948717948</x><y>-0.384615384615385</y><z>-0.3935'
 
             sage: p = polygon3d([[0,0,0], [1,2,3], [3,0,0]])
             sage: print(p.amf_ascii_string(name='triangle'))
@@ -1923,7 +1942,7 @@ end_scene""" % (render_params.antialiasing,
         string_list = ['<?xml version="1.0" encoding="utf-8"?><amf><object id="{}"><mesh>'.format(name)]
 
         string_list += ['<vertices>']
-        vertex_template = '<vertex><coordinates><x>{}</x><y>{}</y><z>{}</z></coordinates></vertex>'
+        vertex_template = '<vertex><coordinates><x>{!r}</x><y>{!r}</y><z>{!r}</z></coordinates></vertex>'
         for v in self.vertices():
             string_list += [vertex_template.format(*v)]
         string_list += ['</vertices><volume>']

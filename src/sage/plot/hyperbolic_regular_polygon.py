@@ -13,7 +13,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, division
 
@@ -31,7 +31,7 @@ from sage.matrix.constructor import matrix
 
 class HyperbolicRegularPolygon(HyperbolicPolygon):
     r"""
-    Primitive class for regular hyberbolic polygon type.
+    Primitive class for regular hyperbolic polygon type.
 
     See ``hyperbolic_regular_polygon?`` for information about plotting
     a hyperbolic regular polygon in the upper complex halfplane.

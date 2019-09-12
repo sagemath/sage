@@ -10,27 +10,27 @@ EXAMPLES::
     1/3
     sage: x.additive_order()
     9
-    sage: x / 3
-    2/9
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import AdditiveGroupElement
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
+
 class QmodnZ_Element(AdditiveGroupElement):
     r"""
-    The ``QmodnZ_Element`` class represents an element of the abelian group `\Q/n\Z`.
+    The ``QmodnZ_Element`` class represents an element of the abelian
+    group `\Q/n\Z`.
 
     INPUT:
 
@@ -73,12 +73,13 @@ class QmodnZ_Element(AdditiveGroupElement):
             m = parent.n.denominator()
             a = x.numerator()
             b = x.denominator()
-            q, r = (a*m).quo_rem(n*b)
-            self._x = r/(m*b)
+            q, r = (a * m).quo_rem(n * b)
+            self._x = r / (m * b)
 
     def lift(self):
         r"""
-        Return the smallest non-negative rational number reducing to this element.
+        Return the smallest non-negative rational number reducing to
+        this element.
 
         EXAMPLES::
 
@@ -196,7 +197,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     def _sub_(self, other):
         r"""
-        Returns the difference of two elements in `\Q/n\Z`.
+        Return the difference of two elements in `\Q/n\Z`.
 
         EXAMPLES::
 
@@ -221,7 +222,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     def _rmul_(self, c):
         r"""
-        Returns the (right) scalar product of this element by ``c`` in `\Q/n\Z`.
+        Return the (right) scalar product of this element by ``c`` in `\Q/n\Z`.
 
         EXAMPLES::
 
@@ -236,7 +237,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     def _lmul_(self, c):
         r"""
-        Returns the (left) scalar product of this element by ``c`` in `\Q/n\Z`.
+        Return the (left) scalar product of this element by ``c`` in `\Q/n\Z`.
 
         EXAMPLES::
 
@@ -255,9 +256,9 @@ class QmodnZ_Element(AdditiveGroupElement):
         """
         return self._rmul_(c)
 
-    def __div__(self, other):
+    def division_by(self, other):
         r"""
-        Division.
+        Division by an integer.
 
         .. WARNING::
 
@@ -270,7 +271,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
             sage: G = QQ/(4*ZZ)
             sage: x = G(3/8)
-            sage: x / 4
+            sage: x.division_by(4)
             3/32
         """
         QZ = self.parent()
@@ -344,6 +345,6 @@ class QmodnZ_Element(AdditiveGroupElement):
         QZ = self.parent()
         if QZ.n == 0:
             if self._x == 0:
-                return ZZ(1)
+                return ZZ.one()
             return infinity
         return (self._x / QZ.n).denominator()

@@ -92,7 +92,7 @@ class ParametrizedSurface3D(SageObject):
     specified explicitly. This is mainly useful for plotting. Here we
     construct half of an ellipsoid::
 
-        sage: u1, u2 = var ('u1, u2', domain='real');
+        sage: u1, u2 = var ('u1, u2', domain='real')
         sage: coords = ((u1, -pi/2, pi/2), (u2, 0, pi))
         sage: ellipsoid_eq = (cos(u1)*cos(u2), 2*sin(u1)*cos(u2), 3*sin(u2))
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
@@ -185,8 +185,8 @@ class ParametrizedSurface3D(SageObject):
 
     We find the area of the sphere of radius $R$::
 
-        sage: R = var('R', domain='real');
-        sage: u, v = var('u,v', domain='real');
+        sage: R = var('R', domain='real')
+        sage: u, v = var('u,v', domain='real')
         sage: assume(R>0)
         sage: assume(cos(v)>0)
         sage: sphere = ParametrizedSurface3D([R*cos(u)*cos(v),R*sin(u)*cos(v),R*sin(v)],[u,v],'sphere')
@@ -235,7 +235,7 @@ class ParametrizedSurface3D(SageObject):
     We can easily generate a color plot of the Gaussian curvature of a surface.
     Here we deal with the ellipsoid::
 
-        sage: u1, u2 = var('u1,u2', domain='real');
+        sage: u1, u2 = var('u1,u2', domain='real')
         sage: u = [u1,u2]
         sage: ellipsoid_equation(u1,u2) = [2*cos(u1)*cos(u2),1.5*cos(u1)*sin(u2),sin(u1)]
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_equation(u1,u2), [u1, u2],'ellipsoid')
@@ -341,20 +341,19 @@ class ParametrizedSurface3D(SageObject):
         """
         self.equation = tuple(equation)
 
-        if len(variables[0]) > 0:
+        if len(variables[0]):
             self.variables_range = (variables[0][1:3], variables[1][1:3])
-            self.variables_list  = (variables[0][0], variables[1][0])
+            self.variables_list = (variables[0][0], variables[1][0])
         else:
             self.variables_range = None
             self.variables_list = variables
 
-        self.variables = {1:self.variables_list[0],2:self.variables_list[1]}
+        self.variables = {1:self.variables_list[0], 2:self.variables_list[1]}
         self.name = name
-
 
     def _latex_(self):
         r"""
-        Returns the LaTeX representation of this parametrized surface.
+        Return the LaTeX representation of this parametrized surface.
 
         EXAMPLES::
 

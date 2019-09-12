@@ -16,6 +16,8 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2013-2015): initial version
 - Travis Scrimshaw (2016): review tweaks
 - Marco Mancini (2017): SymPy as an optional symbolic engine, alternative to SR
+- Florentin Jaffredo (2018) : series expansion with respect to a given
+  parameter
 
 REFERENCES:
 
@@ -24,7 +26,7 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -33,14 +35,15 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from six import itervalues
 
 from sage.structure.element import CommutativeAlgebraElement
 from sage.symbolic.expression import Expression
 from sage.manifolds.chart_func import ChartFunction
+
 
 class ScalarField(CommutativeAlgebraElement):
     r"""
@@ -636,7 +639,7 @@ class ScalarField(CommutativeAlgebraElement):
         on U: (x, y) |--> 1/(x**2 + y**2 + 1)
         on V: (u, v) |--> (u**2 + v**2)/(u**2 + v**2 + 1)
 
-    Defintion without any coordinate expression and subsequent completion::
+    Definition without any coordinate expression and subsequent completion::
 
         sage: f = M.scalar_field(name='f')
         sage: f.add_expr(1/(1+x^2+y^2), chart=c_xy)
@@ -1575,28 +1578,6 @@ class ScalarField(CommutativeAlgebraElement):
             self._del_derived()
         return self._express[chart]
 
-    def function_chart(self, chart=None, from_chart=None):
-        r"""
-        Deprecated.
-
-        Use :meth:`coord_function` instead.
-
-        EXAMPLES::
-
-            sage: M = Manifold(2, 'M', structure='topological')
-            sage: c_xy.<x,y> = M.chart()
-            sage: f = M.scalar_field(x*y^2)
-            sage: fc = f.function_chart()
-            doctest:...: DeprecationWarning: Use coord_function() instead.
-            See http://trac.sagemath.org/18640 for details.
-            sage: fc
-            x*y^2
-
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(18640, 'Use coord_function() instead.')
-        return self.coord_function(chart=chart, from_chart=from_chart)
-
     def expr(self, chart=None, from_chart=None):
         r"""
         Return the coordinate expression of the scalar field in a given
@@ -1613,8 +1594,9 @@ class ScalarField(CommutativeAlgebraElement):
 
         OUTPUT:
 
-        - symbolic expression representing the coordinate
-          expression of the scalar field in the given chart.
+        - the coordinate expression of the scalar field in the given chart,
+          either as a Sage's symbolic expression or as a SymPy object,
+          depending on the symbolic calculus method used on the chart
 
         EXAMPLES:
 
@@ -1627,8 +1609,6 @@ class ScalarField(CommutativeAlgebraElement):
             x*y^2
             sage: f.expr(c_xy)  # equivalent form (since c_xy is the default chart)
             x*y^2
-            sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
 
         Expression via a change of coordinates::
 
@@ -1643,6 +1623,17 @@ class ScalarField(CommutativeAlgebraElement):
             True
             sage: f._express  # random (dict. output); f has now 2 coordinate expressions:
             {Chart (M, (x, y)): x*y^2, Chart (M, (u, v)): u^3 - u^2*v - u*v^2 + v^3}
+
+        Note that the object returned by ``expr()`` depends on the symbolic
+        backend used for coordinate computations::
+
+            sage: type(f.expr())
+            <type 'sage.symbolic.expression.Expression'>
+            sage: M.set_calculus_method('sympy')
+            sage: type(f.expr())
+            <class 'sympy.core.mul.Mul'>
+            sage: f.expr()  # note the SymPy exponent notation
+            x*y**2
 
         """
         return self.coord_function(chart, from_chart).expr()
@@ -2066,12 +2057,24 @@ class ScalarField(CommutativeAlgebraElement):
             sage: g._express
             {Chart (W, (u, v)): u + 1}
             sage: f.common_charts(g)
-            [Chart (W, (u, v)), Chart (W, (x, y))]
+            [Chart (W, (x, y)), Chart (W, (u, v))]
             sage: f._express # random (dictionary output)
             {Chart (W, (u, v)): 1/4*u^2 + 1/2*u*v + 1/4*v^2,
              Chart (W, (x, y)): x^2}
             sage: g._express # random (dictionary output)
             {Chart (W, (u, v)): u + 1, Chart (W, (x, y)): x + y + 1}
+
+        TESTS:
+
+        Check that :trac:`28072` has been fixed::
+
+            sage: c_ab.<a,b> = W.chart()
+            sage: xy_to_ab = c_xy_W.transition_map(c_ab, (3*y, x-y))
+            sage: h = W.scalar_field(a+b, chart=c_ab)
+            sage: f.common_charts(h)
+            [Chart (W, (x, y))]
+            sage: h.expr(c_xy_W)
+            x + 2*y
 
         """
         if not isinstance(other, ScalarField):
@@ -2106,11 +2109,11 @@ class ScalarField(CommutativeAlgebraElement):
                 for chart2 in known_expr2:
                     if chart2 not in resu:
                         if (chart1, chart2) in coord_changes:
-                            self.coord_function(chart2, from_chart=chart1)
-                            resu.append(chart2)
-                        if (chart2, chart1) in coord_changes:
                             other.coord_function(chart1, from_chart=chart2)
                             resu.append(chart1)
+                        if (chart2, chart1) in coord_changes:
+                            self.coord_function(chart2, from_chart=chart1)
+                            resu.append(chart2)
         if resu == []:
             return None
         else:
@@ -3236,3 +3239,61 @@ class ScalarField(CommutativeAlgebraElement):
         for chart, func in self._express.items():
             resu._express[chart] = func.arctanh()
         return resu
+
+    def set_calc_order(self, symbol, order, truncate=False):
+        r"""
+        Trigger a power series expansion with respect to a small parameter in
+        computations involving the scalar field.
+
+        This property is propagated by usual operations. The internal
+        representation must be ``SR`` for this to take effect.
+
+        If the small parameter is `\epsilon` and `f` is ``self``, the
+        power series expansion to order `n` is
+
+        .. MATH::
+
+            f = f_0 + \epsilon f_1 + \epsilon^2 f_2 + \cdots + \epsilon^n f_n
+                + O(\epsilon^{n+1}),
+
+        where `f_0, f_1, \ldots, f_n` are `n+1` scalar fields that do not
+        depend upon `\epsilon`.
+
+        INPUT:
+
+        - ``symbol`` -- symbolic variable (the "small parameter" `\epsilon`)
+          with respect to which the coordinate expressions of ``self`` in
+          various charts are expanded in power series (around the zero value of
+          this variable)
+        - ``order`` -- integer; the order `n` of the expansion, defined as the
+          degree of the polynomial representing the truncated power series in
+          ``symbol``
+
+          .. WARNING::
+
+             The order of the big `O` in the power series expansion is `n+1`,
+             where `n` is ``order``.
+
+        - ``truncate`` -- (default: ``False``) determines whether the
+          coordinate expressions of ``self`` are replaced by their expansions
+          to the given order
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: t = var('t')  # the small parameter
+            sage: f = M.scalar_field(exp(-t*x))
+            sage: f.expr()
+            e^(-t*x)
+            sage: f.set_calc_order(t, 2, truncate=True)
+            sage: f.expr()
+            1/2*t^2*x^2 - t*x + 1
+
+        """
+        for expr in self._express.values():
+            expr._expansion_symbol = symbol
+            expr._order = order
+            if truncate:
+                expr.simplify()
+        self._del_derived()

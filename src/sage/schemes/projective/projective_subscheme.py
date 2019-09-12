@@ -10,16 +10,16 @@ AUTHORS:
 - Ben Hutz (2013) refactoring
 """
 
-#*****************************************************************************
-# Copyright (C) 2005 William Stein <wstein@gmail.com>
-# Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
-
+# ****************************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#       Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
-# Distributed under the terms of the GNU General Public License (GPL)
-# as published by the Free Software Foundation; either version 2 of
-# the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import binomial
 from sage.categories.fields import Fields
@@ -224,15 +224,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: U = C.affine_patch(0)
             sage: U
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0^3*x1 + x1^3 + x0
+              Y^3*Z + Z^3 + Y
             sage: U.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0^3*x1 + x1^3 + x0
+              Y^3*Z + Z^3 + Y
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               X^3*Y + Y^3*Z + X*Z^3
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (1 : x0 : x1)
+              Defn: Defined on coordinates by sending (Y, Z) to
+                    (1 : Y : Z)
             sage: U.projective_embedding() is U.embedding_morphism()
             True
 
@@ -276,11 +276,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         phi = AA.projective_embedding(i, PP)
         polys = self.defining_polynomials()
         xi = phi.defining_polynomials()
-        U = AA.subscheme([ f(xi) for f in polys ])
-        U._default_embedding_index = i
+        U = AA.subscheme([f(xi) for f in polys])
         phi = U.projective_embedding(i, PP)
-        self.__affine_patches[i] = U
         U._embedding_morphism = phi
+        self.__affine_patches[i] = U
         return U
 
     def _best_affine_patch(self, point):
@@ -288,7 +287,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Return the best affine patch of the ambient projective space.
 
         The "best" affine patch is where you end up dividing by the
-        homogeneous coordinate with the largest absolutue
+        homogeneous coordinate with the largest absolute
         value. Division by small numbers is numerically unstable.
 
         INPUT:
@@ -359,15 +358,15 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             (0 : -3/2 : 1)
             sage: patch = S.neighborhood(s); patch
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0 + 3*x1
+              x + 3*z
             sage: patch.embedding_morphism()
             Scheme morphism:
               From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-              x0 + 3*x1
+              x + 3*z
               To:   Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x + 2*y + 3*z
-              Defn: Defined on coordinates by sending (x0, x1) to
-                    (x0 : -3/2 : x1 + 1)
+              Defn: Defined on coordinates by sending (x, z) to
+                    (x : -3/2 : z + 1)
             sage: patch.embedding_center()
             (0, 0)
             sage: patch.embedding_morphism()([0,0])
@@ -391,11 +390,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             phi[j+1] = phi[j+1] + R.gen(j)
 
         pullback_polys = [f(phi) for f in self.defining_polynomials()]
-        patch = patch_cover.subscheme(pullback_polys)
-        patch_hom = patch.hom(phi,self)
-        patch._embedding_center = patch.point([0]*n)
-        patch._embedding_morphism = patch_hom
-        return patch
+        return patch_cover.subscheme(pullback_polys, embedding_center=[0]*n,
+                                     embedding_codomain=self, embedding_images=phi)
 
     def is_smooth(self, point=None):
         r"""
@@ -781,9 +777,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         G = L.groebner_basis() #eliminate
         newL = []
         #get only the elimination ideal portion
-        for i in range (len(G)-1,0,-1):
+        for i in range (len(G) - 1, 0, -1):
             v = G[i].variables()
-            if all([Rvars[j] not in v for j in range(n)]):
+            if all(Rvars[j] not in v for j in range(n)):
                 newL.append(psi(G[i]))
         return(codom.subscheme(newL))
 
@@ -804,9 +800,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         OUTPUT:
 
-        - a subscheme in the domain of ``f``.
+        a subscheme in the domain of ``f``
 
-        Examples::
+        EXAMPLES::
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(PS)
@@ -898,7 +894,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise TypeError("subscheme must be in ambient space of codomain")
             k = ZZ(k)
             if k <= 0:
-                raise ValueError("k (=%s) must be a positive integer"%(k))
+                raise ValueError("k (=%s) must be a positive integer" % (k))
             if k > 1 and not f.is_endomorphism():
                 raise TypeError("map must be an endomorphism")
         R = codom.coordinate_ring()
@@ -1040,14 +1036,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         the ambient projective space of `X`. The elimination ideal `I = J' \cap K[u_{ij}]`
         is a principal ideal, let `R` be its generator. The Chow form is obtained by
         writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
-        [DalbecSturmfels]_.
+        [DS1994]_.
 
         OUTPUT: a homogeneous polynomial.
-
-        REFERENCES:
-
-        .. [DalbecSturmfels] J. Dalbec and B. Sturmfels. Invariant methods in discrete and computational geometry,
-           chapter Introduction to Chow forms, pages 37-58. Springer Netherlands, 1994.
 
         EXAMPLES::
 
@@ -1160,14 +1151,14 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         mind = max(degs)
         # need the smallest degree form that did not reduce to 0
         for d in degs:
-            if d < mind and d >0:
+            if d < mind and d > 0:
                 mind = d
         ind = degs.index(mind)
         CF = reduced[ind] #this should be the Chow form of X
         # check that it is correct (i.e., it is a principal generator for CH + the relations)
         rel2 = rel + [CF]
-        assert all([f in rel2 for f in CH.gens()]), "did not find a principal generator"
-        return(alp(CF))
+        assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
+        return alp(CF)
 
     def degree(self):
         r"""
@@ -1250,8 +1241,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 3
             over Rational Field defined by:
-              x1^2 + x2^2 - 2*x0,
-              x0^2 - x2^2) must be proper and finite
+              z^2 + w^2 - 2*y,
+              y^2 - w^2) must be proper and finite
         """
         try:
             self.ambient_space()(P)

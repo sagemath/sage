@@ -13,15 +13,15 @@ AUTHORS:
 - Stefan van Zwam (2013-06-06): Added bitset tests, some docstring cleanup
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 import sys
@@ -77,7 +77,7 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
     element of the list, otherwise use z.  The empty product is the int 1 if z
     is not specified, and is z if given.
 
-    This assumes that your multiplication is associative; we don't promise
+    This assumes that your multiplication is associative; we do not promise
     which end of the list we start at.
 
     .. SEEALSO::
@@ -318,7 +318,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
     recursively, where the sum is split up if the list is greater than
     recursion_cutoff.  recursion_cutoff must be at least 3.
 
-    This assumes that your addition is associative; we don't promise
+    This assumes that your addition is associative; we do not promise
     which end of the list we start at.
 
     EXAMPLES::
@@ -335,11 +335,12 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
         sage: balanced_sum([[i] for i in range(10)], [], recursion_cutoff=3)
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    We make copies when appropriate so that we don't accidentally modify the arguments::
+    We make copies when appropriate so that we do not accidentally
+    modify the arguments::
 
-        sage: list(range(10e4))==balanced_sum([[i] for i in range(10e4)], [])
+        sage: list(range(10^5))==balanced_sum([[i] for i in range(10^5)], [])
         True
-        sage: list(range(10e4))==balanced_sum([[i] for i in range(10e4)], [])
+        sage: list(range(10^5))==balanced_sum([[i] for i in range(10^5)], [])
         True
 
     TESTS::
@@ -591,10 +592,12 @@ cpdef list normalize_index(object key, int size):
         index_tuple = key
     elif type(key) is list:
         index_tuple = PyList_AsTuple(key)
+    elif type(key) is range:
+        index_tuple = tuple(key)
     else:
         raise TypeError("index must be an integer or slice or a tuple/list of integers and slices")
 
-    # Cython doesn't automatically use PyTuple_GET_SIZE, even though
+    # Cython does not automatically use PyTuple_GET_SIZE, even though
     # it knows that index_tuple is tuple
     for i in range(PyTuple_GET_SIZE(index_tuple)):
         index_obj = index_tuple[i]

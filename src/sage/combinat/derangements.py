@@ -82,7 +82,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     For an integer, or a list or string with all elements
     distinct, the derangements are obtained by a standard result described
-    in [DerUB]_. For a list or string with repeated elements, the derangements
+    in [BV2004]_. For a list or string with repeated elements, the derangements
     are formed by computing all permutations of the input and discarding all
     non-derangements.
 
@@ -93,11 +93,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [DerUB] Jean-Luc Baril, Vincent Vajnovszki. *Gray code for derangements*.
-       Discrete Applied Math. 140 (2004)
-       :doi:`10.1016/j.dam.2003.06.002`
-       http://jl.baril.u-bourgogne.fr/derange.pdf
-
+    - [BV2004]_
     - :wikipedia:`Derangement`
 
     EXAMPLES::
@@ -296,7 +292,7 @@ class Derangements(UniqueRepresentation, Parent):
     def _iter_der(self, n):
         r"""
         Iterate through all derangements of the list `[1, 2, 3, \ldots, n]`
-        using the method given in [DerUB]_.
+        using the method given in [BV2004]_.
 
         EXAMPLES::
 
@@ -434,7 +430,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         This is an
         implementation of the algorithm described by Martinez et. al. in
-        [Martinez08]_.
+        [MPP2008]_.
 
         EXAMPLES::
 
@@ -470,7 +466,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         For an integer, or a list or string with all elements
         distinct, the value is obtained by an algorithm described in
-        [Martinez08]_. For a list or string with repeated elements the
+        [MPP2008]_. For a list or string with repeated elements the
         derangement is formed by choosing an element at random from the list of
         all possible derangements.
 
@@ -478,13 +474,6 @@ class Derangements(UniqueRepresentation, Parent):
 
         A single list or string containing a derangement, or an
         empty list if there are no derangements.
-
-        REFERENCES:
-
-        .. [Martinez08] Conrado Martinez, Alois Panholzer and Helmut Prodinger,
-           *Generating random derangements*
-           :doi:`10.1137/1.9781611972986.7`
-           http://www.siam.org/proceedings/analco/2008/anl08_022martinezc.pdf
 
         EXAMPLES::
 

@@ -160,7 +160,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert cos(x) to an integer
+        TypeError: self must be a numeric expression
         sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)
         Traceback (most recent call last):
         ...

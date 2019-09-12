@@ -1,7 +1,3 @@
-# Make sure we do not include conflicting complex.h from cephes Sage package
-CFLAGS="$CFLAGS -D__CEPHES_COMPLEX_H"
-export CFLAGS
-
 cd src
 
 set -e
@@ -24,8 +20,6 @@ export FCFLAGS="$FCFLAGS -fPIC"
 export NUMPY_FCONFIG="config_fc --noopt --noarch"
 
 ################################################
-
-rm -rf "$SAGE_LOCAL/lib/python*/site-packages/numpy"
 
 sage-python23 setup.py \
         --no-user-cfg \

@@ -1,6 +1,7 @@
 Save the current PID to the file given by :envvar:DOCTEST_TEST_PID_FILE::
 
-    sage: open(os.environ['DOCTEST_TEST_PID_FILE'], "w").write(str(os.getpid()))
+    sage: with open(os.environ['DOCTEST_TEST_PID_FILE'], "w") as file:
+    ....:     file.write(str(os.getpid()))
 
 Interrupt the doctester (the parent process) while blocking the quit
 signal (used to kill this process)::

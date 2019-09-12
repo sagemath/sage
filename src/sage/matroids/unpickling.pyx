@@ -34,7 +34,7 @@ from .dual_matroid import DualMatroid
 from .circuit_closures_matroid cimport CircuitClosuresMatroid
 from .basis_matroid cimport BasisMatroid
 from .linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from .lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, IntegerMatrix
+from .lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix
 from .graphic_matroid import GraphicMatroid
 
 
@@ -288,9 +288,9 @@ def unpickle_quaternary_matrix(version, data):
     return A
 
 
-def unpickle_integer_matrix(version, data):
-    """
-    Reconstruct an ``IntegerMatrix`` object (internal Sage data structure).
+def unpickle_plus_minus_one_matrix(version, data):
+    r"""
+    Reconstruct an ``PlusMinusOneMatrix`` object (internal Sage data structure).
 
     .. WARNING::
 
@@ -299,18 +299,36 @@ def unpickle_integer_matrix(version, data):
     EXAMPLES::
 
         sage: from sage.matroids.lean_matrix import *
-        sage: A = IntegerMatrix(2, 5)
+        sage: A = PlusMinusOneMatrix(2, 5)
         sage: A == loads(dumps(A))  # indirect doctest
         True
+
+    TESTS:
+
+    Check that we can unpickle old ``IntegerMatrix`` pickles::
+
+        sage: p = (b"x\x9ck`J.NLO\xd5\xcbM,)\xca\xcfL)\xd6+\xcd+\xc8L\xce\xce"
+        ....:      b"\xc9\xccK\xe7\x822S\xe33\xf3JR\xd3S\x8b\xe2A\x8a2+\xb8\n"
+        ....:      b"\x19\xbd\x19\xbc\x99\xbc\x99b\x0b\x994\xbc\x81l\xaf\xff@"
+        ....:      b"\xe0\xcd\x98\xda\xde\x16T\xc8\xac\x07\x00\xf0\xe6\x1e\x07")
+        sage: M = loads(p)
+        sage: M
+        PlusMinusOneMatrix instance with 2 rows and 2 columns
+        sage: type(M)
+        <type 'sage.matroids.lean_matrix.PlusMinusOneMatrix'>
+        sage: M.__reduce__()[1][1]
+        (2, 2, [1, 0, -1, 1])
     """
     if version != 0:
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
-    cdef IntegerMatrix A = IntegerMatrix(data[0], data[1])
+    cdef PlusMinusOneMatrix A = PlusMinusOneMatrix(data[0], data[1])
     cdef long i
     for i from 0 <= i < A._nrows * A._ncols:
         A._entries[i] = data[2][i]
     return A
 
+from sage.misc.persist import register_unpickle_override
+register_unpickle_override("sage.matroids.unpickling", "unpickle_integer_matrix", unpickle_plus_minus_one_matrix)
 
 #############################################################################
 # LinearMatroid and subclasses

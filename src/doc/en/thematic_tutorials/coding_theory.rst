@@ -132,7 +132,7 @@ Sage can build.
 
 For the rest of this section, we will illustrate specific functionalities
 of these code families by manipulating
-:class:`sage.coding.grs.GeneralizedReedSolomonCode`.
+:class:`sage.coding.grs_code.GeneralizedReedSolomonCode`.
 
 So, for starters, we want to create a Generalized Reed-Solomon (GRS) code.
 
@@ -170,8 +170,8 @@ previous section::
 
 It is also possible to ask for the evaluation points and
 the column multipliers by calling
-:meth:`sage.coding.grs.GeneralizedReedSolomonCode.evaluation_points` and
-:meth:`sage.coding.grs.GeneralizedReedSolomonCode.column_multipliers`.
+:meth:`sage.coding.grs_code.GeneralizedReedSolomonCode.evaluation_points` and
+:meth:`sage.coding.grs_code.GeneralizedReedSolomonCode.column_multipliers`.
 
 Now, if you know some theory for GRS codes, you know that it's especially easy
 to compute their minimum distance, which is:
@@ -230,7 +230,7 @@ So, we might want to put some errors in it, and try to correct these
 errors afterwards. We can obviously do it by changing the values at
 some random positions of our codeword, but we propose here something
 more general: communication channels.
-:class:`sage.coding.channel_constructions.Channel` objects are meant
+:class:`sage.coding.channel.Channel` objects are meant
 as abstractions for communication channels and for manipulation of
 data representation. In this case, we want to emulate a communication channel
 which adds some, but not too many, errors to a transmitted word::
@@ -316,7 +316,7 @@ we can now ask for specific encoder and decoder::
     sage: Evect
     Evaluation vector-style encoder for [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
     sage: type(Evect)
-    <class 'sage.coding.grs.GRSEvaluationVectorEncoder'>
+    <class 'sage.coding.grs_code.GRSEvaluationVectorEncoder'>
     sage: msg = random_vector(GF(59), C.dimension()) #random
     sage: c = Evect.encode(msg)
     sage: NN = C.decoder("NearestNeighbor")
@@ -329,7 +329,7 @@ Calling::
 
 is actually a short-hand for constructing the encoder manually,
 by calling the constructor for
-:class:`sage.coding.grs.EncoderGRSEvaluationVector` yourself.
+:class:`sage.coding.grs_code.EncoderGRSEvaluationVector` yourself.
 If you don't supply ``encoder_name`` to
 :meth:`sage.coding.linear_code.AbstractLinearCode.encoder`
 you get the default encoder for the code.
@@ -468,7 +468,7 @@ introduce a second Channel.
         in Sage.
 
 Consider again the
-:meth:`sage.coding.channel_constructions.ChannelStaticErrorRate` from before.
+:meth:`sage.coding.channel.ChannelStaticErrorRate` from before.
 This is a channel that places errors in the transmitted vector
 but within controlled boundaries.
 We can describe these boundaries in two ways:
@@ -492,7 +492,7 @@ We can describe these boundaries in two ways:
     Static error rate channel creating between 1 and 14 errors, of input and output space Vector space of dimension 40 over Finite Field of size 59
 
 We already know that a channel has a
-:meth:`sage.coding.channel_constructions.Channel.transmit` method which will
+:meth:`sage.coding.channel.Channel.transmit` method which will
 perform transmission over the channel; in this case it will return
 the transmitted word with some errors in it.
 This method will always check if the provided word belongs to
@@ -501,9 +501,9 @@ In a case one is absolutely certain that one's word is in the input space,
 one might want to avoid this check, which is time consuming - especially
 if one is simulating millions of transmissions.
 For this usage there is
-:meth:`sage.coding.channel_constructions.Channel.transmit_unsafe` which does
+:meth:`sage.coding.channel.Channel.transmit_unsafe` which does
 the same as
-:meth:`sage.coding.channel_constructions.Channel.transmit`
+:meth:`sage.coding.channel.Channel.transmit`
 but without checking the input, as illustrated thereafter::
 
     sage: c = C.random_element()
@@ -514,7 +514,7 @@ but without checking the input, as illustrated thereafter::
     False
 
 Note there exists a useful shortcut for
-:meth:`sage.coding.channel_constructions.Channel.transmit` ::
+:meth:`sage.coding.channel.Channel.transmit` ::
 
     sage: r = Chan(c)
     sage: r in C
@@ -536,14 +536,14 @@ The first parameter is the input space of the channel.
 The next two are (respectively) the number of errors
 and the number or erasures.
 Each of these can be tuples too, just as it was with
-:class:`sage.coding.channel_constructions.StaticErrorRateChannel`.
+:class:`sage.coding.channel.StaticErrorRateChannel`.
 As opposed to this channel though, the output of
-:class:`sage.coding.channel_constructions.ErrorErasureChannel`
+:class:`sage.coding.channel.ErrorErasureChannel`
 is not the same as its input space, i.e. the ambient space of C.
 Rather, it will return two vectors: the first is the transmitted word
 with the errors added and erased positions set to 0.
 The second one is the erasure vector whose erased positions contain ones.
-This is reflected in :meth:`sage.coding.channel_constructions.output_space`::
+This is reflected in :meth:`sage.coding.channel.output_space`::
 
     sage: C = codes.random_linear_code(GF(7), 10, 5)
     sage: Chan.output_space()

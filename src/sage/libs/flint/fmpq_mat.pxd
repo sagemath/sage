@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fmpq_mat.h
 
 from sage.libs.flint.types cimport fmpz_t, fmpz, fmpq_t, fmpq, fmpz_mat_t, fmpq_mat_t, flint_rand_t, mp_bitcnt_t
 
-cdef extern from "flint/fmpq_mat.h":
+# flint/fmpq_mat.h
+cdef extern from "flint_wrap.h":
     fmpq * fmpq_mat_entry(const fmpq_mat_t mat, long i, long j)
     fmpz * fmpq_mat_entry_num(const fmpq_mat_t mat, long i, long j)
     fmpz * fmpq_mat_entry_den(const fmpq_mat_t mat, long i, long j)

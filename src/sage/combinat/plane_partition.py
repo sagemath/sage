@@ -567,11 +567,32 @@ class PlanePartition(ClonableArray):
             sage: PP = PlanePartition([[3,3,2],[3,3,2],[2,2,2]])
             sage: PP.is_SPP()
             True
+            sage: PP = PlanePartition([[3,2,1],[2,0,0]])
+            sage: PP.is_SPP()
+            False
+            sage: PP = PlanePartition([[3,2,0],[2,0,0]])
+            sage: PP.is_SPP()
+            True
+            sage: PP = PlanePartition([[3,2],[2,0],[1,0]])
+            sage: PP.is_SPP()
+            False
+            sage: PP = PlanePartition([[3,2],[2,0],[0,0]])
+            sage: PP.is_SPP()
+            True
+
+
         """
-        z_tab = self.z_tableau()
-        return all(z_tab[r][c] == z_tab[c][r]
-                   for r in range(len(z_tab))
-                   for c in range(r, len(z_tab[r])))
+        Z = self.z_tableau()
+        c1 = len(Z)
+        c2 = len(Z[0])
+        size = max(c1, c2)
+        T = [[0 for i in range(0,size)] for j in range(0,size)]
+        for i in range(0,c1):
+            for j in range(0,c2):
+                T[i][j]=Z[i][j]
+        return all(T[r][c] == T[c][r]
+            for r in range(0,size)
+            for c in range(r, size))
 
     def is_CSPP(self):
         r"""
@@ -652,6 +673,15 @@ class PlanePartition(ClonableArray):
             sage: PP.is_SSCPP()
             False
             sage: PP = PlanePartition([[4,3,3,2],[3,2,2,1],[3,2,2,1],[2,1,1,0]])
+            sage: PP.is_SSCPP()
+            True
+            sage: PP = PlanePartition([[2,1],[1,0]])
+            sage: PP.is_SSCPP()
+            True
+            sage: PP = PlanePartition([[4,3,2],[3,2,1],[2,1,0]])
+            sage: PP.is_SSCPP()
+            True
+            sage: PP = PlanePartition([[4,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,0]])
             sage: PP.is_SSCPP()
             True
         """

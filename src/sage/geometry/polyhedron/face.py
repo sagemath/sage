@@ -8,11 +8,29 @@ the faces in a particular dimension, use the
 
     sage: P = polytopes.cross_polytope(3)
     sage: P.faces(3)
-    (<0,1,2,3,4,5>,)
-    sage: P.faces(2)
-    (<0,1,2>, <0,1,3>, <0,2,4>, <0,3,4>, <3,4,5>, <2,4,5>, <1,3,5>, <1,2,5>)
-    sage: P.faces(1)
-    (<0,1>, <0,2>, <1,2>, <0,3>, <1,3>, <0,4>, <2,4>, <3,4>, <2,5>, <3,5>, <4,5>, <1,5>)
+    (A 3-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 6 vertices,)
+    sage: [f.ambient_V_indices() for f in P.facets()]
+    [(0, 1, 2),
+     (0, 1, 3),
+     (0, 2, 4),
+     (0, 3, 4),
+     (3, 4, 5),
+     (2, 4, 5),
+     (1, 3, 5),
+     (1, 2, 5)]
+    sage: [f.ambient_V_indices() for f in P.faces(1)]
+    [(0, 1),
+     (0, 2),
+     (1, 2),
+     (0, 3),
+     (1, 3),
+     (0, 4),
+     (2, 4),
+     (3, 4),
+     (2, 5),
+     (3, 5),
+     (4, 5),
+     (1, 5)]
 
 or :meth:`~sage.geometry.polyhedron.base.face_lattice` to get the
 whole face lattice as a poset::
@@ -25,7 +43,9 @@ index of a vertex/ray/line in the same order as the containing
 Polyhedron's :meth:`~sage.geometry.polyhedron.base.Vrepresentation` ::
 
     sage: face = P.faces(1)[3];  face
-    <0,3>
+    A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices
+    sage: face.ambient_V_indices()
+    (0, 3)
     sage: P.Vrepresentation(0)
     A vertex at (-1, 0, 0)
     sage: P.Vrepresentation(3)
@@ -93,9 +113,11 @@ class PolyhedronFace(SageObject):
         sage: from sage.geometry.polyhedron.face import PolyhedronFace
         sage: face = PolyhedronFace(octahedron, face_v_indices, face_h_indices)
         sage: face
-        <0,1,2>
+        A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
         sage: face.dim()
         2
+        sage: face.ambient_V_indices()
+        (0, 1, 2)
         sage: face.ambient_Hrepresentation()
         (An inequality (1, 1, 1) x + 1 >= 0,)
         sage: face.ambient_Vrepresentation()
@@ -125,7 +147,7 @@ class PolyhedronFace(SageObject):
 
             sage: from sage.geometry.polyhedron.face import PolyhedronFace
             sage: PolyhedronFace(Polyhedron(), [], [])   # indirect doctest
-            <>
+            A -1-dimensional face of a Polyhedron in ZZ^0
         """
         self._polyhedron = polyhedron
         self._ambient_Vrepresentation_indices = tuple(V_indices)
@@ -153,7 +175,7 @@ class PolyhedronFace(SageObject):
         EXAMPLES::
 
             sage: triangle = Polyhedron(vertices=[[1,0],[0,1],[1,1]])
-            sage: face = triangle.faces(1)[0]
+            sage: face = triangle.facets()[0]
             sage: for v in face.vertex_generator(): print(v)
             A vertex at (0, 1)
             A vertex at (1, 0)
@@ -181,6 +203,24 @@ class PolyhedronFace(SageObject):
             (A vertex at (0, 1), A vertex at (1, 0))
         """
         return tuple(self.vertex_generator())
+
+    @cached_method
+    def n_vertices(self):
+        """
+        Return the number of vertices of the face.
+
+        OUTPUT:
+
+        Integer.
+
+        EXAMPLES::
+
+            sage: Q = polytopes.cross_polytope(3)
+            sage: face = Q.faces(2)[0]
+            sage: face.n_vertices()
+            3
+        """
+        return len(self.vertices())
 
     def ray_generator(self):
         """
@@ -215,6 +255,24 @@ class PolyhedronFace(SageObject):
         """
         return tuple(self.ray_generator())
 
+    @cached_method
+    def n_rays(self):
+        """
+        Return the number of rays of the face.
+
+        OUTPUT:
+
+        Integer.
+
+        EXAMPLES::
+
+            sage: p = Polyhedron(ieqs = [[0,0,0,1],[0,0,1,0],[1,1,0,0]])
+            sage: face = p.faces(2)[0]
+            sage: face.n_rays()
+            2
+        """
+        return len(self.rays())
+
     def line_generator(self):
         """
         Return a generator for the lines of the face.
@@ -246,6 +304,23 @@ class PolyhedronFace(SageObject):
             (A line in the direction (1, 0),)
         """
         return tuple(self.line_generator())
+
+    @cached_method
+    def n_lines(self):
+        """
+        Return the number of lines of the face.
+
+        OUTPUT:
+
+        Integer.
+
+        EXAMPLES::
+
+            sage: p = Polyhedron(rays = [[1,0],[-1,0],[0,1],[1,1]], vertices = [[-2,-2],[2,3]])
+            sage: p.n_lines()
+            1
+        """
+        return len(self.lines())
 
     def __richcmp__(self, other, op):
         """
@@ -378,7 +453,7 @@ class PolyhedronFace(SageObject):
             sage: p = polytopes.cross_polytope(4)
             sage: face = p.face_lattice()[10]
             sage: face
-            <0,2>
+            A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
             sage: face.ambient_Hrepresentation()
             (An inequality (1, -1, 1, -1) x + 1 >= 0,
              An inequality (1, 1, 1, 1) x + 1 >= 0,
@@ -405,13 +480,69 @@ class PolyhedronFace(SageObject):
             sage: p = polytopes.cross_polytope(4)
             sage: face = p.face_lattice()[10]
             sage: face
-            <0,2>
+            A 1-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 2 vertices
             sage: face.ambient_Vrepresentation()
             (A vertex at (-1, 0, 0, 0), A vertex at (0, 0, -1, 0))
             sage: face.n_ambient_Vrepresentation()
             2
         """
         return len(self.ambient_Vrepresentation())
+
+    def ambient_H_indices(self):
+        """
+        Return the indices of the H-representation objects of the
+        ambient polyhedron that make up the H-representation of ``self``.
+
+        See also :meth:`ambient_Hrepresentation`.
+
+        OUTPUT:
+
+        Tuple of indices
+
+        EXAMPLES::
+
+            sage: Q = polytopes.cross_polytope(3)
+            sage: F = Q.faces(1)
+            sage: [f.ambient_H_indices() for f in F]
+            [(1, 2),
+             (2, 3),
+             (2, 7),
+             (0, 1),
+             (1, 6),
+             (0, 3),
+             (3, 4),
+             (0, 5),
+             (4, 7),
+             (5, 6),
+             (4, 5),
+             (6, 7)]
+        """
+        return self._ambient_Hrepresentation_indices
+
+    def ambient_V_indices(self):
+        """
+        Return the indices of the V-representation objects of the
+        ambient polyhedron that make up the V-representation of ``self``.
+
+        See also :meth:`ambient_Vrepresentation`.
+
+        OUTPUT:
+
+        Tuple of indices
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: F = P.faces(2)
+            sage: [f.ambient_V_indices() for f in F]
+            [(0, 1, 2, 3),
+             (0, 1, 4, 5),
+             (0, 2, 4, 6),
+             (1, 3, 5, 7),
+             (2, 3, 6, 7),
+             (4, 5, 6, 7)]
+        """
+        return self._ambient_Vrepresentation_indices
 
     def ambient_dim(self):
         r"""
@@ -443,7 +574,7 @@ class PolyhedronFace(SageObject):
               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
               1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3]
         """
-        if self.n_ambient_Vrepresentation()==0:
+        if self.n_ambient_Vrepresentation() == 0:
             return -1
         else:
             origin = vector(self.ambient_Vrepresentation(0))
@@ -463,12 +594,34 @@ class PolyhedronFace(SageObject):
             sage: square = polytopes.hypercube(2)
             sage: a_face = list( square.face_lattice() )[8]
             sage: a_face.__repr__()
-            '<1,3>'
+            'A 1-dimensional face of a Polyhedron in ZZ^2 defined as the convex hull of 2 vertices'
         """
-        s = '<'
-        s += ','.join([ str(v.index()) for v in self.ambient_Vrepresentation() ])
-        s += '>'
-        return s
+        desc = ''
+        desc += 'A ' + repr(self.dim()) + '-dimensional face'
+        desc += ' of a Polyhedron in '
+        desc += self.polyhedron().parent()._repr_ambient_module()
+
+        if self.n_vertices() > 0:
+            desc += ' defined as the convex hull of '
+            desc += repr(self.n_vertices())
+            if self.n_vertices() == 1: desc += ' vertex'
+            else:                      desc += ' vertices'
+
+            if self.n_rays() > 0:
+                if self.n_lines() > 0: desc += ", "
+                else:                  desc += " and "
+                desc += repr(self.n_rays())
+                if self.n_rays() == 1: desc += ' ray'
+                else:                  desc += ' rays'
+
+            if self.n_lines() > 0:
+                if self.n_rays() > 0: desc += ", "
+                else:                 desc += " and "
+                desc += repr(self.n_lines())
+                if self.n_lines() == 1: desc += ' line'
+                else:                   desc += ' lines'
+
+        return desc
 
     def polyhedron(self):
         """
@@ -478,9 +631,9 @@ class PolyhedronFace(SageObject):
 
             sage: P = polytopes.cross_polytope(3); P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-           sage: face = P.faces(2)[3]
+            sage: face = P.facets()[3]
             sage: face
-            <0,3,4>
+            A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: face.polyhedron()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
         """
@@ -501,7 +654,7 @@ class PolyhedronFace(SageObject):
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
             sage: face = P.faces(2)[3]
             sage: face
-            <0,3,4>
+            A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices
             sage: face.as_polyhedron()
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 3 vertices
 

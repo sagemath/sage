@@ -1,9 +1,9 @@
-## -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
 #                2013 Simon King <simon.king@uni-jena.de>
 #
@@ -16,8 +16,8 @@ Path Semigroups
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
 from six import integer_types, string_types
 
@@ -36,6 +36,7 @@ from .representation import QuiverRep
 
 #########################
 # Some auxiliary function to create generating functions to count paths.
+
 
 class PathSemigroup(UniqueRepresentation, Parent):
     r"""
@@ -155,7 +156,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             semigroup!
         """
         #########
-        ## Verify that the graph labels are acceptable for this implementation ##
+        # Verify that the graph labels are acceptable for this implementation
         # Check that edges are labelled with nonempty strings and don't begin
         # with 'e_' or contain '*'
         labels = Q.edge_labels()
@@ -175,7 +176,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             if not isinstance(v, integer_types + (Integer,)):
                 raise ValueError("vertices of the digraph must be labelled by integers")
 
-        ## Determine the category which this (partial) semigroup belongs to
+        # Determine the category which this (partial) semigroup belongs to
         if Q.is_directed_acyclic():
             cat = FiniteEnumeratedSets()
         else:
@@ -332,15 +333,15 @@ class PathSemigroup(UniqueRepresentation, Parent):
             if data.parent() is self:
                 return data
             start = data.initial_vertex()
-            end   = data.terminal_vertex()
-            edge_index = {e:i for i,e in enumerate(E)}
+            end = data.terminal_vertex()
+            edge_index = {e: i for i, e in enumerate(E)}
             path = [edge_index.get(e) for e in data]
         elif not data:
             raise ValueError("No data given to define this path")
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
-        elif isinstance(data, string_types): # one edge
+        elif isinstance(data, string_types):  # one edge
             i = L.get(data, None)
             if i is None:
                 raise ValueError("data={!r} is not the label of an edge".format(data))
@@ -741,7 +742,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self._quiver.reverse().path_semigroup()
 
-    def algebra(self, k, order = "negdegrevlex"):
+    def algebra(self, k, order="negdegrevlex"):
         """
         Return the path algebra of the underlying quiver.
 
@@ -753,9 +754,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
           "degrevlex", "negdeglex" or "deglex", defining the monomial order to
           be used.
 
-        NOTE:
+        .. NOTE::
 
-        Monomial orders that are not degree orders are not supported.
+            Monomial orders that are not degree orders are not supported.
 
         EXAMPLES::
 
@@ -1159,4 +1160,3 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         # The result is all paths from start to end
         return result
-

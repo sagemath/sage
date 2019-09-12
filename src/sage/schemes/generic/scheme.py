@@ -7,9 +7,7 @@ AUTHORS:
 
 - Volker Braun (2011-08-11): documenting, improving, refactoring.
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2008 Kiran Kedlaya <kedlaya@mit.edu>
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
@@ -18,14 +16,12 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.all import cached_method
-from sage.rings.all import (IntegerRing,
-                            ZZ, GF, PowerSeriesRing,
-                            Rationals, CommutativeRing)
+from sage.rings.all import (ZZ, CommutativeRing)
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -1142,13 +1138,16 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Spectrum of Integer Ring
             sage: Spec_ZZ.base_extend(QQ)
             Spectrum of Rational Field
+
+            sage: Spec(ZZ['x']).base_extend(Spec(QQ))
+            Spectrum of Univariate Polynomial Ring in x over Rational Field
         """
         from sage.categories.commutative_rings import CommutativeRings
         if R in CommutativeRings():
             return AffineScheme(self.coordinate_ring().base_extend(R), self.base_ring())
         if not self.base_scheme() == R.base_scheme():
             raise ValueError('the new base scheme must be a scheme over the old base scheme')
-        return AffineScheme(self.coordinate_ring().base_extend(new_base.coordinate_ring()),
+        return AffineScheme(self.coordinate_ring().base_extend(R.coordinate_ring()),
                             self.base_ring())
 
     def _point_homset(self, *args, **kwds):

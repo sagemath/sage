@@ -4,7 +4,7 @@ from .types cimport (ZZ_c, ZZX_c, ZZ_p_c, vec_ZZ_p_c, ZZ_pContext_c,
         ZZ_pX_c, ZZ_pX_Modulus_c, ZZ_pX_Multiplier_c)
 
 
-cdef extern from "ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     long ZZ_pX_IsZero "IsZero"(ZZ_pX_c a)
     long ZZ_pX_IsOne "IsOne"(ZZ_pX_c a)
 
@@ -105,13 +105,13 @@ cdef extern from "ntlwrap.cpp":
     void ZZ_pX_to_ZZX "conv"(ZZX_c x, ZZ_pX_c a)
     void ZZX_to_ZZ_pX "conv"(ZZ_pX_c x, ZZX_c a)
 
-    char* ZZ_pX_trace_list(ZZ_pX_c* x)
 
+cdef extern from "ntlwrap_impl.h":
+    char* ZZ_pX_trace_list(ZZ_pX_c* x)
     void ZZ_pX_factor(ZZ_pX_c*** v, long** e, long* n, ZZ_pX_c* x, long verbose)
     void ZZ_pX_linear_roots(ZZ_p_c*** v, long* n, ZZ_pX_c* x)
 
-    # The following are ZZ_pX functions written in ntlwrap, used for padics.
-
+    # The following are all used for padics.
     void ZZ_pX_conv_modulus(ZZ_pX_c fout, ZZ_pX_c fin, ZZ_pContext_c c)
     void ZZ_pX_min_val_coeff(long valuation, long index, ZZ_pX_c f, ZZ_c p)
     long ZZ_pX_get_val_coeff(ZZ_pX_c f, ZZ_c p, long i)

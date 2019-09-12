@@ -33,14 +33,14 @@ UHP for convenience::
     [1 0]
 """
 
-#***********************************************************************
+# **********************************************************************
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 
 from copy import copy
 from sage.categories.homset import Hom
@@ -56,6 +56,7 @@ from sage.functions.all import arccosh, sign
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 from sage.geometry.hyperbolic_space.hyperbolic_geodesic import HyperbolicGeodesic
+
 
 class HyperbolicIsometry(Morphism):
     r"""
@@ -444,7 +445,7 @@ class HyperbolicIsometry(Morphism):
 
     def preserves_orientation(self):
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -537,12 +538,12 @@ class HyperbolicIsometry(Morphism):
 
     def fixed_point_set(self):
         r"""
-        Return the a list containing the fixed point set of orientation-
-        preserving isometries.
+        Return a list containing the fixed point set of
+        orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -659,7 +660,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
 
     def preserves_orientation(self): #UHP
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -751,14 +752,14 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return 2 * arccosh(tau / 2)
         raise TypeError("translation length is only defined for hyperbolic transformations")
 
-    def fixed_point_set(self): #UHP
+    def fixed_point_set(self):  # UHP
         r"""
-        Return the a list or geodesic containing the fixed point set of
+        Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -1020,7 +1021,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
 #####################################################################
 ## Helper functions
 
-from sage.misc.superseded import deprecated_function_alias
+
 def moebius_transform(A, z):
     r"""
     Given a matrix ``A`` in `GL(2, \CC)` and a point ``z`` in the complex
@@ -1059,7 +1060,7 @@ def moebius_transform(A, z):
     The matrix can be symbolic or can be a matrix over the real
     or complex numbers, but must be provably invertible::
 
-        sage: a,b,c,d = var('a,b,c,d');
+        sage: a,b,c,d = var('a,b,c,d')
         sage: moebius_transform(matrix(2,[a,b,c,d]),I)
         (I*a + b)/(I*c + d)
         sage: moebius_transform(matrix(2,[1,b,c,b*c+1]),I)
@@ -1069,19 +1070,18 @@ def moebius_transform(A, z):
         ...
         TypeError: A must be an invertible 2x2 matrix over the complex numbers or a symbolic ring
     """
-    if A.ncols() == 2 and A.nrows() == 2 and A.det() != 0:
-        (a, b, c, d) = A.list()
+    if A.ncols() == 2 == A.nrows() and A.det() != 0:
+        a, b, c, d = A.list()
         if z == infinity:
             if c == 0:
                 return infinity
-            return a/c
-        if a*d - b*c < 0:
-            w = z.conjugate() # Reverses orientation
+            return a / c
+        if a * d - b * c < 0:
+            w = z.conjugate()  # Reverses orientation
         else:
             w = z
-        if c*z + d == 0:
+        if c * z + d == 0:
             return infinity
-        return (a*w + b) / (c*w + d)
+        return (a * w + b) / (c * w + d)
     raise TypeError("A must be an invertible 2x2 matrix over the"
                     " complex numbers or a symbolic ring")
-mobius_transform = deprecated_function_alias(19855, moebius_transform)

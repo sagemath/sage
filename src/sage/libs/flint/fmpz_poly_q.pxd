@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/qadic.h
 
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/qadic.h":
+# flint/qadic.h
+cdef extern from "flint_wrap.h":
     #* Accessing numerator and denominator ***************************************/
     # macros
     fmpz_poly_struct* fmpz_poly_q_numref(fmpz_poly_q_t op)

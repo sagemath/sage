@@ -77,17 +77,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __hash__(self):
         """
-        Return a hash of self.
+        Return a hash of ``self``.
 
         EXAMPLES::
 
             sage: R.<t> = ZZ[[]]
-            sage: t.__hash__()
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
-            sage: hash(t)
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
+            sage: hash(t) == hash(R.gen())
+            True
+            sage: hash(t) != hash(R.one())
+            True
         """
         return hash(self.__f)
 

@@ -40,7 +40,7 @@ from sage.combinat.words.word_options import word_options
 from itertools import islice, groupby
 from sage.rings.all import Integers, ZZ, Infinity
 from sage.structure.richcmp import (richcmp_method, rich_to_bool,
-                                    richcmp, op_LT, op_GT)
+                                    richcmp_item)
 
 
 @richcmp_method
@@ -75,7 +75,6 @@ class Word_class(SageObject):
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'
         """
-        global word_options
         if word_options['old_repr']:
             return "Word over %s" % (str(self.parent().alphabet())[17:])
         return word_options['identifier'] + self.string_rep()
@@ -122,10 +121,9 @@ class Word_class(SageObject):
             sage: print(w)
             0123401234012340123401234012340123401234...
         """
-        global word_options
         l = word_options['truncate_length']
-        letters = list(islice(self, l+1))
-        if len(letters) == l+1:
+        letters = list(islice(self, int(l + 1)))
+        if len(letters) == l + 1:
             letters.pop()
             suffix = "..."
         else:
@@ -310,8 +308,6 @@ class Word_class(SageObject):
 
             sage: Words([0,1,2])([0,1,0,1]) ==  Words([0,1])([0,1,0,1])
             True
-            sage: Words('abc')('abab') == Words([0,9])([0,0,9])
-            False
             sage: Word('ababa') == Words('abcd')('ababa')
             True
 
@@ -376,10 +372,9 @@ class Word_class(SageObject):
                 else:
                     key_cs = cmp_key(cs)
                     key_co = cmp_key(co)
-                    if key_cs < key_co:
-                        return rich_to_bool(op, -1)
-                    elif key_cs > key_co:
-                        return rich_to_bool(op, 1)
+                    res = richcmp_item(key_cs, key_co, op)
+                    if res is not NotImplemented:
+                        return res
 
     def _longest_common_prefix_iterator(self, other):
         r"""
@@ -707,7 +702,7 @@ class Word_class(SageObject):
             sage: t[:10].lex_less(t)
             True
         """
-        return richcmp(self, other, op_LT)
+        return self < other
 
     def lex_greater(self, other):
         r"""
@@ -737,7 +732,7 @@ class Word_class(SageObject):
             sage: t.lex_greater(t[:10])
             True
         """
-        return richcmp(self, other, op_GT)
+        return self > other
 
     def apply_morphism(self, morphism):
         r"""
@@ -1323,7 +1318,7 @@ class Word_class(SageObject):
 
     def _finite_differences_iterator(self, mod=None):
         r"""
-        Iterator over the diffences of consecutive letters of self.
+        Iterator over the differences of consecutive letters of ``self``.
 
         INPUT:
 
@@ -1373,25 +1368,33 @@ class Word_class(SageObject):
         if mod in (None, 0):
             i = iter(self)
             j = iter(self)
-            next(j)
-            while True:
-                yield next(j) - next(i)
+
+            try:
+                next(j)
+                while True:
+                    yield next(j) - next(i)
+            except StopIteration:
+                return
 
         elif mod in ZZ:
             Zn = Integers(mod)
             i = iter(self)
             j = iter(self)
-            next(j)
-            while True:
-                yield Zn(next(j) - next(i))
+
+            try:
+                next(j)
+                while True:
+                    yield Zn(next(j) - next(i))
+            except StopIteration:
+                return
 
         else:
             raise TypeError('mod(=%s) must be None or an integer'%mod)
 
     def finite_differences(self, mod=None):
         r"""
-        Returns the word obtained by the diffences of consecutive letters
-        of self.
+        Return the word obtained by the differences of consecutive letters
+        of ``self``.
 
         INPUT:
 
@@ -1620,11 +1623,14 @@ class Word_class(SageObject):
             word: 011010010110
         """
         it = self.factor_occurrences_iterator(fact)
-        i = next(it)
-        while True:
-            j = next(it)
-            yield self[i:j]
-            i = j
+        try:
+            i = next(it)
+            while True:
+                j = next(it)
+                yield self[i:j]
+                i = j
+        except StopIteration:
+            return
 
     def complete_return_words_iterator(self, fact):
         r"""
@@ -1668,9 +1674,12 @@ class Word_class(SageObject):
         """
         it = self.factor_occurrences_iterator(fact)
         L = fact.length()
-        i = next(it)
-        while True:
-            j = next(it)
-            yield self[i:j+L]
-            i = j
+        try:
+            i = next(it)
+            while True:
+                j = next(it)
+                yield self[i:j+L]
+                i = j
+        except StopIteration:
+            return
 

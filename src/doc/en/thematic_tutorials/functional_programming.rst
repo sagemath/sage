@@ -82,7 +82,12 @@ Functional programming using map
 Functional programming is yet another style of programming in which a
 program is decomposed into various functions. The Python built-in
 functions ``map``, ``reduce`` and ``filter`` allow you to program in
-the functional style. The function ::
+the functional style. Note that in Python 3 (as compared to Python 2),
+these functions have different behaviors, and ``reduce`` has been
+removed: if you want to use ``reduce`` in Python 3, you must import it
+from ``functools``.
+
+The function ::
 
     map(func, seq1, seq2, ...)
 
@@ -109,7 +114,7 @@ Alternatively, you could use the Python built-in addition function
     sage: from operator import add
     sage: A = [1, 2, 3, 4]
     sage: B = [2, 3, 5, 7]
-    sage: map(add, A, B)
+    sage: list(map(add, A, B))
     [3, 5, 8, 11]
 
 An advantage of ``map`` is that you do not need to explicitly define
@@ -146,8 +151,8 @@ integers and ``M`` is a list of moduli. ::
 
     sage: def crt(A, M):
     ....:     Mprod = prod(M)
-    ....:     Mdiv = map(lambda x: Integer(Mprod / x), M)
-    ....:     X = map(inverse_mod, Mdiv, M)
+    ....:     Mdiv = list(map(lambda x: Integer(Mprod / x), M))
+    ....:     X = list(map(inverse_mod, Mdiv, M))
     ....:     x = sum([A[i]*X[i]*Mdiv[i] for i in range(len(A))])
     ....:     return mod(x, Mprod).lift()
     ...
@@ -240,6 +245,7 @@ uses ``reduce`` and the built-in function ``operator.add`` to add
 together all integers in a given list. This is followed by using
 ``sum`` to accomplish the same task::
 
+    sage: from functools import reduce # py3
     sage: from operator import add
     sage: L = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     sage: reduce(add, L)
@@ -255,6 +261,7 @@ is then implemented using the functions ``operator.add`` and
 ``reduce`` and ``map``. We then show how ``sum`` and ``map`` could be
 combined to produce the same result. ::
 
+    sage: from functools import reduce # py3
     sage: from operator import add
     sage: from operator import mul
     sage: U = [1, 2, 3]
@@ -276,10 +283,11 @@ using ``sum`` as was done previously. The version below uses
 ``operator.add`` and defines ``mul3`` to multiply three numbers
 instead of two. ::
 
+    sage: from functools import reduce # py3
     sage: def crt(A, M):
     ....:     from operator import add
     ....:     Mprod = prod(M)
-    ....:     Mdiv = map(lambda x: Integer(Mprod / x), M)
+    ....:     Mdiv = list(map(lambda x: Integer(Mprod / x), M))
     ....:     X = map(inverse_mod, Mdiv, M)
     ....:     mul3 = lambda a, b, c: a * b * c
     ....:     x = reduce(add, map(mul3, A, X, Mdiv))

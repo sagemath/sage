@@ -246,7 +246,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: F.<b> = QuadraticField(-7)
             sage: b._number_field() # indirect doctest
-            Number Field in b with defining polynomial x^2 + 7
+            Number Field in b with defining polynomial x^2 + 7 with b = 2.645751311064591?*I
         """
         return self._parent
 
@@ -288,14 +288,39 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.<sqrt5> = QuadraticField(5)
             sage: polymake(3+2*sqrt5)                 # optional - polymake
             3+2r5
+            sage: polymake(2**100/7 - 2*sqrt5/3**50)  # optional - polymake
+            1267650600228229401496703205376/7-2/717897987691852588770249r5
             sage: K.<i> = QuadraticField(-1)
             sage: polymake(i)                         # optional - polymake
             Traceback (most recent call last):
             ...
             TypeError: Negative values for the root of the extension ... Bad Thing...
+
+        TESTS:
+
+        Test that :trac:`28377` is fixed::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K = NumberField(x^2 - x -1, 'a', embedding=(1-AA(5).sqrt())/2)
+            sage: L = NumberField(x^2 - x -1, 'a', embedding=(1+AA(5).sqrt())/2)
+            sage: polymake(K.gen())  # optional - polymake
+            1/2-1/2r5
+            sage: polymake(L.gen())  # optional - polymake
+            1/2+1/2r5
         """
-        x0, x1 = self
-        return "new QuadraticExtension({}, {}, {})".format(x0, x1, self.D)
+        cdef Integer a = Integer.__new__(Integer)
+        cdef Integer b = Integer.__new__(Integer)
+        cdef Integer denom
+        mpz_set(a.value, self.a)
+        mpz_set(b.value, self.b)
+        if not self.standard_embedding:
+            mpz_neg(b.value, b.value)
+        if mpz_cmp_ui(self.denom, 1) == 0:
+            return "new QuadraticExtension({}, {}, {})".format(a, b, self.D)
+        else:
+            denom = Integer.__new__(Integer)
+            mpz_set(denom.value, self.denom)
+            return "new QuadraticExtension({}, {}, {})".format(a/denom, b/denom, self.D)
 
     def __copy__(self):
         r"""
@@ -588,7 +613,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: RIF.convert_map_from(QuadraticField(5))
             Conversion via _real_mpfi_ method map:
-              From: Number Field in a with defining polynomial x^2 - 5
+              From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
               To:   Real Interval Field with 53 bits of precision
         """
         ans = (<RealIntervalField_class?>R)._new()
@@ -638,7 +663,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: CIF.convert_map_from(QuadraticField(-5))
             Conversion via _complex_mpfi_ method map:
-              From: Number Field in a with defining polynomial x^2 + 5
+              From: Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
               To:   Complex Interval Field with 53 bits of precision
         """
         ans = <ComplexIntervalFieldElement>ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement, R)
@@ -767,11 +792,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: RBF.convert_map_from(QuadraticField(5))
             Conversion via _arb_ method map:
-              From: Number Field in a with defining polynomial x^2 - 5
+              From: Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
               To:   Real ball field with 53 bits of precision
             sage: RBF.coerce_map_from(QuadraticField(5, embedding=-AA(5).sqrt()))
             Conversion via _arb_ method map:
-              From: Number Field in a with defining polynomial x^2 - 5
+              From: Number Field in a with defining polynomial x^2 - 5 with a = -2.236067977499790?
               To:   Real ball field with 53 bits of precision
         """
         cdef RealBall res = RealBall.__new__(RealBall)
@@ -802,12 +827,12 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
             sage: CBF.convert_map_from(QuadraticField(-3))
             Conversion via _acb_ method map:
-              From: Number Field in a with defining polynomial x^2 + 3
+              From: Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
               To:   Complex ball field with 53 bits of precision
 
             sage: CBF.coerce_map_from(QuadraticField(-3, embedding=-QQbar(-3).sqrt()))
             Conversion via _acb_ method map:
-              From: Number Field in a with defining polynomial x^2 + 3
+              From: Number Field in a with defining polynomial x^2 + 3 with a = -1.732050807568878?*I
               To:   Complex ball field with 53 bits of precision
         """
         cdef ComplexBall res = ComplexBall.__new__(ComplexBall)
@@ -2464,7 +2489,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
     def __invert__(self):
         r"""
         Implement inversion, checking that the return value has the right parent.
-        See trac \#4190.
+        See :trac:`4190`.
 
         EXAMPLES::
 
@@ -2522,7 +2547,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
         sage: phi = K.coerce_map_from(ZZ); phi
         Natural morphism:
           From: Integer Ring
-          To:   Number Field in a with defining polynomial x^2 - 3
+          To:   Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
         sage: phi(4)
         4
         sage: phi(5).parent() is K
@@ -2601,7 +2626,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
             sage: phi # indirect doctest
             Natural morphism:
               From: Integer Ring
-              To:   Number Field in a with defining polynomial x^2 - 3
+              To:   Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(ZZ)
@@ -2624,7 +2649,7 @@ cdef class Q_to_quadratic_field_element(Morphism):
         sage: f = K.coerce_map_from(QQ); f
         Natural morphism:
           From: Rational Field
-          To:   Number Field in a with defining polynomial x^2 + 3
+          To:   Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
         sage: f(3/1)
         3
         sage: f(1/2).parent() is K
@@ -2696,7 +2721,7 @@ cdef class Q_to_quadratic_field_element(Morphism):
             sage: phi # indirect doctest
             Natural morphism:
               From: Rational Field
-              To:   Number Field in a with defining polynomial x^2 - 3
+              To:   Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(QQ)

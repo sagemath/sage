@@ -1,4 +1,4 @@
-$(MP_LIBRARY) singular boost_cropped flint
+$(MP_LIBRARY) singular boost_cropped flint e_antic
 
 ----------
 All lines of this file are ignored except the first.

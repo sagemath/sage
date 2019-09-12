@@ -3,7 +3,7 @@ r"""
 Set of words
 
 To define a new class of words, please refer to the documentation file:
-sage/combinat/words/notes/word_inheritance_howto.txt
+sage/combinat/words/notes/word_inheritance_howto.rst
 
 AUTHORS:
 
@@ -56,8 +56,6 @@ from sage.combinat.words.alphabet import build_alphabet
 from sage.rings.all import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-
-from sage.misc.decorators import rename_keyword
 
 
 def Words(alphabet=None, length=None, finite=True, infinite=True):
@@ -152,14 +150,20 @@ class AbstractLanguage(Parent):
 
         self._alphabet = alphabet
 
-        if (alphabet.cardinality() == Infinity or
-            (alphabet.cardinality() < 36 and
-             all(alphabet.unrank(i) > alphabet.unrank(j)
-                 for i in range(min(36, alphabet.cardinality()))
-                 for j in range(i)))):
+        # Default sorting key: use rank()
+        self.sortkey_letters = self._sortkey_letters
+
+        # Check if we should use the trivial sorting key
+        N = alphabet.cardinality()
+        if N == Infinity:
             self.sortkey_letters = self._sortkey_trivial
-        else:
-            self.sortkey_letters = self._sortkey_letters
+        elif N < 36:
+            try:
+                if all(alphabet.unrank(i) > alphabet.unrank(j)
+                       for i in range(N) for j in range(i)):
+                    self.sortkey_letters = self._sortkey_trivial
+            except TypeError:
+                pass
 
         if category is None:
             category = Sets()
@@ -242,7 +246,8 @@ class AbstractLanguage(Parent):
             ...
             ValueError: z not in alphabet!
         """
-        for a in itertools.islice(w, length):
+        stop = None if length is None else int(length)
+        for a in itertools.islice(w, stop):
             if a not in self.alphabet():
                 raise ValueError("%s not in alphabet!" % a)
 
@@ -588,7 +593,7 @@ class FiniteWords(AbstractLanguage):
            when reloading. Also, most iterators do not support copying and
            should not support pickling by extension.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: W = FiniteWords()
 
@@ -1020,7 +1025,6 @@ class FiniteWords(AbstractLanguage):
         return self([self.alphabet().random_element(*args, **kwds)
                      for x in range(length)])
 
-    @rename_keyword(deprecation=10134, l='arg')
     def iter_morphisms(self, arg=None, codomain=None, min_length=1):
         r"""
         Iterate over all morphisms with domain ``self`` and the given

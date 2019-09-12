@@ -208,7 +208,7 @@ class CommutativeRings(CategoryWithAxiom):
                     sage: R = cartesian_product([GF(7), Zmod(14)])
                     sage: a = R((3,5))
                     sage: R.cyclotomic_cosets((3,5), [(1,1)])
-                    [[(1, 1), (3, 5), (2, 11), (6, 13), (4, 9), (5, 3)]]
+                    [[(1, 1), (2, 11), (3, 5), (4, 9), (5, 3), (6, 13)]]
                 """
                 q = self(q)
 

@@ -2,13 +2,13 @@ r"""
 Elements of Laurent polynomial rings
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.rings.integer cimport Integer
@@ -560,9 +560,6 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: hash(R.zero()) == hash(t - t)
             True
         """
-        if self.__n == 0:
-            return hash(self.__u)
-
         # we reimplement below the hash of polynomials to handle negative
         # degrees
         cdef long result = 0
@@ -573,10 +570,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             result_mon = hash(self.__u[i])
             if result_mon:
                 j = i + self.__n
-                result_mon = (1000003 * result_mon) ^ var_hash_name
                 if j > 0:
+                    result_mon = (1000003 * result_mon) ^ var_hash_name
                     result_mon = (1000003 * result_mon) ^ j
                 elif j < 0:
+                    result_mon = (1000003 * result_mon) ^ var_hash_name
                     result_mon = (700005 * result_mon) ^ j
                 result += result_mon
         return result
@@ -992,7 +990,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             x^-40 - 4*x^-29 + 6*x^-18 - 4*x^-7 + x^4
         """
         cdef LaurentPolynomial_univariate self = _self
-        cdef long right = long(r)
+        cdef long right = r
         if right != r:
             raise ValueError("exponent must be an integer")
         return self._parent.element_class(self._parent, self.__u**right, self.__n*right)
@@ -1095,7 +1093,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f / x
             1 + x + 3*x^3
             sage: f / g
-            (3*x^11 + x^9 + x^8)/(-x^11 + x^9 - x^8 + 1)
+            (-3*x^11 - x^9 - x^8)/(x^11 - x^9 + x^8 - 1)
             sage: (x^-2 + x)*(x^-2 + 1) / ((x^5 + x^8)*(x + 2))
             (x^2 + 1)/(x^10 + 2*x^9)
             sage: (x^-2 + x)*(x^-2 + 1) / ((x^-5 + x^-8)*(x + 2))
@@ -1422,6 +1420,71 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             False
         """
         return self.__n == 0 and self.__u.is_constant()
+
+
+    def is_square(self, root=False):
+        r"""
+        Return whether this Laurent polynomial is a square.
+
+        If ``root`` is set to ``True`` then return a pair made of the
+        boolean answer together with ``None`` or a square root.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentPolynomialRing(QQ)
+
+            sage: R.one().is_square()
+            True
+            sage: R(2).is_square()
+            False
+
+            sage: t.is_square()
+            False
+            sage: (t**-2).is_square()
+            True
+
+        Usage of the ``root`` option::
+
+            sage: p = (1 + t^-1 - 2*t^3)
+            sage: p.is_square(root=True)
+            (False, None)
+            sage: (p**2).is_square(root=True)
+            (True, -t^-1 - 1 + 2*t^3)
+
+        The answer is dependent of the base ring::
+
+            sage: S.<u> = LaurentPolynomialRing(QQbar)
+            sage: (2 + 4*t + 2*t^2).is_square()
+            False
+            sage: (2 + 4*u + 2*u^2).is_square()
+            True
+
+        TESTS::
+
+            sage: R.<t> = LaurentPolynomialRing(QQ)
+            sage: (t - t).is_square(True)
+            (True, 0)
+
+            sage: for _ in range(10):
+            ....:     p = t ** randint(-15,15) * sum(QQ.random_element() * t**n for n in range(randint(5,10)))
+            ....:     ans, r = (p**2).is_square(root=True)
+            ....:     assert ans
+            ....:     assert r*r == p*p
+        """
+        cdef LaurentPolynomial_univariate sqrt
+        if self.__n % 2:
+            return (False, None) if root else False
+        elif root:
+            ans, r = self.__u.is_square(True)
+            if ans:
+                sqrt = self._new_c()
+                sqrt.__u = r
+                sqrt.__n = self.__n // 2
+                return (True, sqrt)
+            else:
+                return (False, None)
+        else:
+            return self.__u.is_square(False)
 
     def __copy__(self):
         """
@@ -1840,7 +1903,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         r"""
         TESTS:
 
-        Test that the hash is non-constant::
+        Test that the hash is non-constant (see also :trac:`27914`)::
 
             sage: L.<w,z> = LaurentPolynomialRing(QQ)
             sage: len({hash(w^i*z^j) for i in [-2..2] for j in [-2..2]})
@@ -1876,6 +1939,18 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             True
             sage: hash(1 - 7*x0 + x1*x2) == hash(L(1 - 7*x0 + x1*x2))
             True
+
+        Check that :trac:`27914` is fixed::
+
+            sage: L.<w,z> = LaurentPolynomialRing(QQ)
+            sage: Lw = LaurentPolynomialRing(QQ, 'w')
+            sage: Lz = LaurentPolynomialRing(QQ, 'z')
+            sage: all(hash(w^k) == hash(Lw(w^k))
+            ....:     and hash(z^k) == hash(Lz(z^k)) for k in (-5..5))
+            True
+            sage: p = w^-1 + 2 + w
+            sage: hash(p) == hash(Lw(p))
+            True
         """
         # we reimplement the hash from multipolynomial to handle negative exponents
         # (see multi_polynomial.pyx)
@@ -1890,10 +1965,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             if c_hash != 0:
                 for p in range(n):
                     exponent = m[p] + self._mon[p]
-                    if not exponent:
-                        continue
-                    c_hash = (1000003 * c_hash) ^ var_name_hash[p]
-                    c_hash = (1000003 * c_hash) ^ exponent
+                    if exponent > 0:
+                        c_hash = (1000003 * c_hash) ^ var_name_hash[p]
+                        c_hash = (1000003 * c_hash) ^ exponent
+                    elif exponent < 0:
+                        c_hash = (1000003 * c_hash) ^ var_name_hash[p]
+                        c_hash = (700005 * c_hash) ^ exponent
                 result += c_hash
 
         return result
@@ -2188,8 +2265,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: P.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = (y^2 - x^9 - 7*x*y^3 + 5*x*y)*x^-3
-            sage: list(f) # indirect doctest
-            [(-1, x^6), (1, x^-3*y^2), (5, x^-2*y), (-7, x^-2*y^3)]
+            sage: sorted(f) # indirect doctest
+            [(-7, x^-2*y^3), (-1, x^6), (1, x^-3*y^2), (5, x^-2*y)]
         """
         if self._prod is None:
             self._compute_polydict()
@@ -2211,8 +2288,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: P.<x,y> = LaurentPolynomialRing(QQ)
             sage: f = (y^2 - x^9 - 7*x*y^3 + 5*x*y)*x^-3
-            sage: f.monomials()
-            [x^6, x^-3*y^2, x^-2*y, x^-2*y^3]
+            sage: sorted(f.monomials())
+            [x^-3*y^2, x^-2*y, x^-2*y^3, x^6]
         """
         cdef list L = []
         if self._prod is None:
@@ -2689,6 +2766,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     cpdef _richcmp_(self, right, int op):
         """
+        Compare two polynomials in a `LaurentPolynomialRing` based on the term
+        order from the parent ring.  If the parent ring does not specify a term
+        order then only comparison by equality is supported.
+
         EXAMPLES::
 
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
@@ -2705,7 +2786,14 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._compute_polydict()
         if (<LaurentPolynomial_mpair> right)._prod is None:
             (<LaurentPolynomial_mpair> right)._compute_polydict()
-        return richcmp(self._prod, (<LaurentPolynomial_mpair>right)._prod, op)
+
+        try:
+            sortkey = self.parent().term_order().sortkey
+        except AttributeError:
+            sortkey = None
+
+        return self._prod.rich_compare((<LaurentPolynomial_mpair>right)._prod,
+                                       op, sortkey)
 
     def exponents(self):
         """
@@ -3147,3 +3235,51 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         return Factorization(f, unit=u)
 
+    def is_square(self, root=False):
+        r"""
+        Test whether this Laurent polynomial is a square root.
+
+        INPUT:
+
+        - ``root`` - boolean (default ``False``) - if set to ``True``
+          then return a pair ``(True, sqrt)`` with ``sqrt`` a square
+          root of this Laurent polynomial when it exists or
+          ``(False, None)``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
+            sage: p = (1 + x*y + z^-3)
+            sage: (p**2).is_square()
+            True
+            sage: (p**2).is_square(root=True)
+            (True, x*y + 1 + z^-3)
+
+            sage: x.is_square()
+            False
+            sage: x.is_square(root=True)
+            (False, None)
+
+            sage: (x**-4 * (1 + z)).is_square(root=False)
+            False
+            sage: (x**-4 * (1 + z)).is_square(root=True)
+            (False, None)
+        """
+        self._normalize()
+        if not self._mon.is_multiple_of(2):
+            return (False, None) if root else False
+
+        cdef LaurentPolynomial_mpair ans
+
+        if not root:
+            return self._poly.is_square(root=False)
+        else:
+            (pans, root) = self._poly.is_square(root=True)
+            if not pans:
+                return (False, None)
+
+            mon = self._mon.escalar_div(2)
+            ans = self._new_c()
+            ans._mon = mon
+            ans._poly = root
+            return (True, ans)

@@ -7,22 +7,23 @@ AUTHORS:
 - Travis Scrimshaw (2013-05-04): Initial implementation
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 from sage.misc.misc import repr_lincomb
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.structure.element cimport have_same_parent, coercion_model, parent
+from sage.structure.element cimport have_same_parent, parent
+from sage.structure.coerce cimport coercion_model
 from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 from sage.structure.element_wrapper cimport ElementWrapper
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
@@ -355,8 +356,8 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
             sage: L = LieAlgebra(associative=S)
             sage: x = L.gen(2); x
             (1,2,3)
-            sage: y = L.gen(1); y
-            (1,2)
+            sage: y = L.gen(3); y
+            (2,3)
             sage: u = x*3; u
             3*(1,2,3)
             sage: parent(u) == L
@@ -369,10 +370,10 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
             b4 - b5
             sage: xp, yp = x.lift_associative(), y.lift_associative()
             sage: eltp = xp*yp - yp*xp; eltp
-            (2,3) - (1,3)
+            -(1,2) + (1,3)
             sage: G = list(S.basis())
             sage: G[4] - G[5]
-            (2,3) - (1,3)
+            -(1,2) + (1,3)
 
         TESTS::
 
@@ -493,9 +494,9 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
             sage: x = L.an_element() + L.basis()[G.one()]
             sage: x
             2*() + (2,3) + (1,2) + (1,2,3) + (1,3,2) + (1,3)
-            sage: list(x)
-            [((2,3), 1), ((1,2), 1), ((1,3), 1),
-             ((1,2,3), 1), ((1,3,2), 1), ((), 2)]
+            sage: sorted(x)
+            [((), 2), ((2,3), 1), ((1,2), 1), ((1,2,3), 1),
+             ((1,3,2), 1), ((1,3), 1)]
         """
         cdef dict d = self.value.monomial_coefficients(copy=False)
         yield from d.iteritems()
@@ -519,6 +520,217 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
         """
         value.set_immutable() # Make the matrix immutable for hashing
         LieAlgebraElementWrapper.__init__(self, parent, value)
+
+
+cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
+    r"""
+    Wrap an element of the ambient Lie algebra as an element.
+    """
+    def __init__(self, parent, value):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}})
+            sage: S = L.subalgebra([X, Y])
+            sage: TestSuite(S(X)).run()
+        """
+        LieAlgebraElementWrapper.__init__(self, parent, value)
+        self._monomial_coefficients = None
+
+    def __getitem__(self, i):
+        r"""
+        Return the coefficient of ``self`` indexed by ``i``.
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}})
+            sage: S = L.subalgebra([X, Y])
+            sage: el = S(2*Y + 9*Z)
+            sage: el[1]
+            2
+            sage: el[2]
+            9
+        """
+        if self._monomial_coefficients is None:
+            # This sets _monomial_coefficients
+            self.monomial_coefficients(copy=False)
+        try:
+            return self._monomial_coefficients[i]
+        except KeyError:
+            return self.parent().base_ring().zero()
+
+    def _bracket_(self, x):
+        """
+        Return the Lie bracket ``[self, x]``.
+
+        Assumes ``x`` and ``self`` have the same parent.
+
+        INPUT:
+
+        - ``x`` -- an element of the same Lie subalgebra as ``self``
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}})
+            sage: S = L.subalgebra([X, Y])
+            sage: S(X)._bracket_(S(Y))
+            Z
+        """
+        x_lift = (<LieSubalgebraElementWrapper> x).value
+        return type(self)(self._parent, self.value._bracket_(x_lift))
+
+    def to_vector(self):
+        r"""
+        Return the vector in ``g.module()`` corresponding to the
+        element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+            sage: S = L.subalgebra([X, Y])
+            sage: S.basis()
+            Family (X, Y, 3*Z)
+            sage: S(2*Y + 9*Z).to_vector()
+            (0, 2, 9)
+            sage: S2 = L.subalgebra([Y, Z])
+            sage: S2.basis()
+            Family (Y, Z)
+            sage: S2(2*Y + 9*Z).to_vector()
+            (0, 2, 9)
+
+        TESTS::
+
+            sage: L.<X,Y> = LieAlgebra(ZZ, abelian=True)
+            sage: S = L.subalgebra(X)
+            sage: S(X).to_vector() in S.module()
+            True
+            sage: S(X).to_vector().parent() is S.module()
+            True
+        """
+        return self._parent.module()(self.value.to_vector())
+
+    cpdef dict monomial_coefficients(self, bint copy=True):
+        r"""
+        Return a dictionary whose keys are indices of basis elements
+        in the support of ``self`` and whose values are the
+        corresponding coefficients.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``;
+          if ``False``, then this can cause undesired behavior by
+          mutating ``d``
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+            sage: S = L.subalgebra([X, Y])
+            sage: S(2*Y + 9*Z).monomial_coefficients()
+            {1: 2, 2: 3}
+            sage: S2 = L.subalgebra([Y, Z])
+            sage: S2(2*Y + 9*Z).monomial_coefficients()
+            {0: 2, 1: 9}
+        """
+        cdef Py_ssize_t k
+        if self._monomial_coefficients is None:
+            sm = self.parent().module()
+            v = sm.coordinate_vector(self.to_vector())
+            self._monomial_coefficients = {k: v[k] for k in range(len(v)) if v[k]}
+        if copy:
+            return dict(self._monomial_coefficients)
+        return self._monomial_coefficients
+
+    cpdef _add_(self, right):
+        """
+        Add ``self`` and ``rhs``.
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+            sage: S = L.subalgebra([X, Y])
+            sage: a = S(2*Y + 12*Z)
+            sage: b = S(X + 2*Y)
+            sage: (a + b).monomial_coefficients()
+            {0: 1, 1: 4, 2: 4}
+            sage: a.monomial_coefficients()        # We set a._monomial_coefficients
+            {1: 2, 2: 4}
+            sage: b.monomial_coefficients()        # We set b._monomial_coefficients
+            {0: 1, 1: 2}
+            sage: (a + b).monomial_coefficients()  # This is now computed from a and b
+            {0: 1, 1: 4, 2: 4}
+        """
+        cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
+        ret = type(self)(self._parent, self.value + other.value)
+        if self._monomial_coefficients is not None and other._monomial_coefficients is not None:
+            mc = add(self._monomial_coefficients, other._monomial_coefficients)
+            ret._monomial_coefficients = mc
+        return ret
+
+    cpdef _sub_(self, right):
+        """
+        Subtract ``self`` and ``rhs``.
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+            sage: S = L.subalgebra([X, Y])
+            sage: a = S(2*Y + 12*Z)
+            sage: b = S(X + 2*Y)
+            sage: (a - b).monomial_coefficients()
+            {0: -1, 2: 4}
+            sage: a.monomial_coefficients()        # We set a._monomial_coefficients
+            {1: 2, 2: 4}
+            sage: b.monomial_coefficients()        # We set b._monomial_coefficients
+            {0: 1, 1: 2}
+            sage: (a - b).monomial_coefficients()  # This is now computed from a and b
+            {0: -1, 2: 4}
+        """
+        cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
+        ret = type(self)(self._parent, self.value - other.value)
+        if self._monomial_coefficients is not None and other._monomial_coefficients is not None:
+            mc = axpy(-1, other._monomial_coefficients, self._monomial_coefficients)
+            ret._monomial_coefficients = mc
+        return ret
+
+    cpdef _acted_upon_(self, scalar, bint self_on_left):
+        """
+        Return the action of a scalar on ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
+            sage: S = L.subalgebra([X, Y])
+            sage: a = S(2*Y + 12*Z)
+            sage: (2*a).monomial_coefficients()
+            {1: 4, 2: 8}
+            sage: a.monomial_coefficients()      # We set a._monomial_coefficients
+            {1: 2, 2: 4}
+            sage: (2*a).monomial_coefficients()  # This is now computed from a
+            {1: 4, 2: 8}
+        """
+        # This was copied and IDK if it still applies (TCS):
+        # With the current design, the coercion model does not have
+        # enough information to detect apriori that this method only
+        # accepts scalars; so it tries on some elements(), and we need
+        # to make sure to report an error.
+        scalar_parent = parent(scalar)
+        if scalar_parent != self._parent.base_ring():
+            # Temporary needed by coercion (see Polynomial/FractionField tests).
+            if self._parent.base_ring().has_coerce_map_from(scalar_parent):
+                scalar = self._parent.base_ring()( scalar )
+            else:
+                return None
+        cdef LieSubalgebraElementWrapper ret
+        if self_on_left:
+            ret = type(self)(self._parent, self.value * scalar)
+        else:
+            ret = type(self)(self._parent, scalar * self.value)
+        if self._monomial_coefficients is not None:
+            ret._monomial_coefficients = scal(scalar, self._monomial_coefficients, self_on_left)
+        return ret
 
 cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
     """
@@ -935,8 +1147,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
-            sage: e0.bracket(e1) + d + e1 + c + 3*d
-            (E[alpha[1]])#t^0 + (-h1)#t^1 + c + 4*d
+            sage: e0.bracket(e1) + d + c + 3*d
+            (-h1)#t^1 + c + 4*d
         """
         cdef UntwistedAffineLieAlgebraElement rt = <UntwistedAffineLieAlgebraElement> other
         return type(self)(self._parent, add(self._t_dict, rt._t_dict),
@@ -951,8 +1163,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
 
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
-            sage: e0.bracket(e1) + d - e1 + c - 3*d
-            (-E[alpha[1]])#t^0 + (-h1)#t^1 + c + -2*d
+            sage: d - e1 + c - 3*d
+            (-E[alpha[1]])#t^0 + c + -2*d
             sage: 4*c - e0.bracket(f0)
             (h1)#t^0
             sage: 4*c - e0.bracket(f0) - h1
@@ -976,8 +1188,8 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: L = lie_algebras.Affine(QQ, ['A',1,1])
             sage: e1,f1,h1,e0,f0,c,d = list(L.lie_algebra_generators())
             sage: x = e0.bracket(e1) + d + e1 + c + 3*d
-            sage: -x
-            (-E[alpha[1]])#t^0 + (h1)#t^1 + -1*c + -4*d
+            sage: -x + e1
+            (h1)#t^1 + -1*c + -4*d
         """
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
@@ -1208,7 +1420,7 @@ class FreeLieAlgebraElement(LieAlgebraElement):
             [([x, y], -1), (x, 1)]
         """
         k = lambda x: (-x[0]._grade, x[0]) if isinstance(x[0], GradedLieBracket) else (-1, x[0])
-        return sorted(self._monomial_coefficients.iteritems(), key=k)
+        return sorted((<dict>self._monomial_coefficients).iteritems(), key=k)
 
     def _bracket_(self, y):
         """
@@ -1274,34 +1486,36 @@ cdef class LieObject(SageObject):
         """
         raise NotImplementedError
 
+
 cdef class LieGenerator(LieObject):
     """
     A wrapper around an object so it can ducktype with and do
     comparison operations with :class:`LieBracket`.
     """
-    def __init__(self, name):
+    def __init__(self, name, index):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: TestSuite(x).run()
         """
         self._word = (name,)
         self._name = name
+        self._index_word = (index,)
 
     def __reduce__(self):
         """
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: loads(dumps(x)) == x
             True
         """
-        return (LieGenerator, (self._name,))
+        return (LieGenerator, (self._name, self._index_word[0]))
 
     def _repr_(self):
         """
@@ -1310,7 +1524,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: LieGenerator('x')
+            sage: LieGenerator('x', 0)
             x
         """
         return self._name
@@ -1324,7 +1538,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: hash(x) == hash('x')
             True
         """
@@ -1337,15 +1551,15 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: x == y
             False
             sage: x < y
             True
             sage: y < x
             False
-            sage: z = LieGenerator('x')
+            sage: z = LieGenerator('x', 0)
             sage: x == z
             True
             sage: z = LieBracket(x, y)
@@ -1365,7 +1579,7 @@ cdef class LieGenerator(LieObject):
             # when the comparison ``self < rhs`` returns a
             # NotImplemented error.)
         if isinstance(rhs, LieGenerator):
-            return richcmp(self._name, <LieGenerator>(rhs)._name, op)
+            return richcmp(self._index_word[0], <LieGenerator>(rhs)._index_word[0], op)
         return op == Py_NE
 
     def _im_gens_(self, codomain, im_gens, names):
@@ -1398,7 +1612,7 @@ cdef class LieGenerator(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator
-            sage: x = LieGenerator('x')
+            sage: x = LieGenerator('x', 0)
             sage: x.to_word()
             ('x',)
         """
@@ -1415,14 +1629,15 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: TestSuite(z).run()
         """
         self._left = l
         self._right = r
         self._word = ()
+        self._index_word = self._left._index_word + self._right._index_word
         self._hash = -1
 
     def __reduce__(self):
@@ -1430,8 +1645,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: loads(dumps(z)) == z
             True
@@ -1445,8 +1660,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: LieBracket(x, y)
             [x, y]
         """
@@ -1459,8 +1674,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: latex(z)
             \left[ x , y \right]
@@ -1475,8 +1690,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: z = LieBracket(x, y)
             sage: z[0]
             x
@@ -1500,9 +1715,9 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = LieBracket(x, y)
             sage: c = LieBracket(y, x)
             sage: b == c
@@ -1540,9 +1755,9 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = LieBracket(x, y)
             sage: hash(b) == hash(b)
             True
@@ -1612,8 +1827,8 @@ cdef class LieBracket(LieObject):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = LieBracket(x, y)
             sage: c = LieBracket(b, x)
             sage: c.to_word()
@@ -1640,8 +1855,8 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = GradedLieBracket(x, y, 2)
             sage: TestSuite(b).run()
         """
@@ -1653,8 +1868,8 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = GradedLieBracket(x, y, 2)
             sage: loads(dumps(b)) == b
             True
@@ -1668,9 +1883,9 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = GradedLieBracket(x, y, 2)
             sage: b < x
             False
@@ -1700,9 +1915,9 @@ cdef class GradedLieBracket(LieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, GradedLieBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
-            sage: z = LieGenerator('z')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
+            sage: z = LieGenerator('z', 2)
             sage: b = GradedLieBracket(x, y, 2)
             sage: hash(b) == hash(b)
             True
@@ -1729,13 +1944,13 @@ cdef class LyndonBracket(GradedLieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LyndonBracket
-            sage: x,y,z = [LieGenerator(letter) for letter in ['x', 'y', 'z']]
+            sage: x,y,z = [LieGenerator(letter, ind) for letter,ind in zip(['x', 'y', 'z'],range(3))]
             sage: LyndonBracket(x, LyndonBracket(y, z, 2), 3) < LyndonBracket(LyndonBracket(y, z, 2), x, 3)
             True
         """
         if not isinstance(rhs, LieObject):
             return op == Py_NE
-        return richcmp(self.to_word(), <LieObject>(rhs).to_word(), op)
+        return richcmp(self._index_word, <LieObject>(rhs)._index_word, op)
 
     def __hash__(self):
         """
@@ -1744,14 +1959,13 @@ cdef class LyndonBracket(GradedLieBracket):
         EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.lie_algebra_element import LieGenerator, LyndonBracket
-            sage: x = LieGenerator('x')
-            sage: y = LieGenerator('y')
+            sage: x = LieGenerator('x', 0)
+            sage: y = LieGenerator('y', 1)
             sage: b = LyndonBracket(x, y, 2)
-            sage: hash(b) == hash((x, y))
+            sage: hash(b) == hash((0, 1))
             True
         """
         if self._hash == -1:
-            self._hash = hash(self.to_word())
+            self._hash = hash(self._index_word)
         return self._hash
-
 

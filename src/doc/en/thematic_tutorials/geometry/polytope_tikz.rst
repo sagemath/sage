@@ -37,7 +37,7 @@ To put an image of a 3d-polytope in LaTeX using TikZ and Sage, simply follow the
 
 Then, you can either copy-paste it to your article by typing ``Img`` in Sage or save it to a file, by doing
 
-::
+.. CODE-BLOCK:: python
 
   f = open('Img_poly.tex','w')
   f.write(Img)
@@ -96,7 +96,7 @@ Or you may want to customize using the command
 
 Further, you may want to edit deeper the style of the polytope, directly inside the tikzpicture. For example, line 6-9 in the tikzpicture reads:
 
-::
+.. CODE-BLOCK:: latex
 
   back/.style={loosely dotted, thin},
   edge/.style={color=orange, thick},
@@ -108,7 +108,7 @@ Further, you may want to edit deeper the style of the polytope, directly inside 
 
 It is also possible to replace it by the following 4 lines (and adding ``\usetikzlibrary{shapes}`` in the preamble)
 
-::
+.. CODE-BLOCK:: latex
 
   back/.style={loosely dashed,line width=2pt},
   edge/.style={color=yellow, line width=2pt},
@@ -134,7 +134,7 @@ some possibilities.
 
 1) You can directly type in a sagestr in the article:
 
-::
+.. CODE-BLOCK:: latex
 
   \sagestr{(polytopes.permutahedron(4)).projection().tikz([4,5,6],45,scale=0.75, facet_color='red',vertex_color='yellow',opacity=0.3)}
 
@@ -142,7 +142,7 @@ some possibilities.
 
 2) You may create the following tex commands
 
-::
+.. CODE-BLOCK:: latex
 
   \newcommand{\polytopeimg}[4]{\sagestr{(#1).projection().tikz(#2,#3,#4)}}
   \newcommand{\polytopeimgopt}[9]{\sagestr{(#1).projection().tikz(#2,#3,#4,#5,#6,#7,#8,#9)}}
@@ -151,7 +151,7 @@ some possibilities.
 
 in your preamble and use them with a sagesilent in your article:
 
-::
+.. CODE-BLOCK:: latex
 
   \begin{sagesilent}
   Polytope = polytopes.great_rhombicuboctahedron()
@@ -159,7 +159,7 @@ in your preamble and use them with a sagesilent in your article:
 
 .. end of output
 
-::
+.. CODE-BLOCK:: latex
 
   \polytopeimg{Polytope}{[276,-607,-746]}{102}{1}
   \polytopeimgopt{Polytope}{view=[-907,379,183]}{angle=129}{scale=2}{edge_color='red'}{facet_color='yellow'}{vertex_color='blue'}{opacity=0.6}{axis=False}

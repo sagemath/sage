@@ -42,10 +42,9 @@ AUTHORS:
 # python3
 from __future__ import division, print_function, absolute_import
 from six.moves import range
-from six import iteritems
 
 from sage.all import ZZ, Integer, vector, SageObject, binomial
-from .decoder import Decoder, DecodingError
+from .decoder import Decoder
 
 
 def _format_decoding_interval(decoding_interval):
@@ -137,7 +136,7 @@ class InformationSetAlgorithm(SageObject):
         Return the name of this ISD algorithm.
 
         EXAMPLES::
-        
+
             sage: C = codes.GolayCode(GF(2))
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (0,2))
@@ -315,7 +314,7 @@ class InformationSetAlgorithm(SageObject):
             True
         """
         return hash(str(self))
-        
+
     def _repr_(self):
         r"""
         Returns a string representation of this ISD algorithm.
@@ -548,7 +547,10 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
             0.0008162108571427874
         """
         from sage.all import sample, mean, random_vector, random_matrix, randint
-        import time
+        try:
+            from time import process_time
+        except ImportError:
+            from time import clock as process_time
         C = self.code()
         G = C.generator_matrix()
         n, k = C.length(), C.dimension()
@@ -557,7 +559,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         q = F.cardinality()
         Fstar = F.list()[1:]
         def time_information_set_steps():
-            before = time.clock()
+            before = process_time()
             while True:
                 I = sample(range(n), k)
                 Gi = G.matrix_from_columns(I)
@@ -565,17 +567,16 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
                     Gi_inv = Gi.inverse()
                 except ZeroDivisionError:
                     continue
-                return time.clock() - before
+                return process_time() - before
         def time_search_loop(p):
             y = random_vector(F, n)
             g = random_matrix(F, p, n).rows()
             scalars = [  [ Fstar[randint(0,q-2)] for i in range(p) ]
                              for s in range(100) ]
-            before = time.clock()
+            before = process_time()
             for m in scalars:
                 e = y - sum(m[i]*g[i] for i in range(p))
-                errs = e.hamming_weight()
-            return (time.clock() - before)/100.
+            return (process_time() - before)/100.
         T = mean([ time_information_set_steps() for s in range(5) ])
         P = [ time_search_loop(p) for p in range(tau+1) ]
 

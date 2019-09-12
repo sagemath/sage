@@ -121,6 +121,7 @@ __append_to_doc(
      "FranklinGraph",
      "FruchtGraph",
      "GoldnerHararyGraph",
+     "GolombGraph",
      "GossetGraph",
      "GrayGraph",
      "GrotzschGraph",
@@ -204,19 +205,23 @@ __append_to_doc(
     ["BalancedTree",
      "BarbellGraph",
      "BubbleSortGraph",
+     "CaiFurerImmermanGraph",
      "chang_graphs",
      "CirculantGraph",
      "cospectral_graphs",
      "CubeGraph",
      "DorogovtsevGoltsevMendesGraph",
+     "EgawaGraph",
      "FibonacciTree",
      "FoldedCubeGraph",
      "FriendshipGraph",
      "fullerenes",
+     "FurerGadget",
      "fusenes",
      "FuzzyBallGraph",
      "GeneralizedPetersenGraph",
      "GoethalsSeidelGraph",
+     "HammingGraph",
      "HanoiTowerGraph",
      "HararyGraph",
      "HyperStarGraph",
@@ -313,6 +318,7 @@ __append_to_doc(
      "RandomGNM",
      "RandomGNP",
      "RandomHolmeKim",
+     "RandomChordalGraph",
      "RandomIntervalGraph",
      "RandomLobster",
      "RandomNewmanWattsStrogatz",
@@ -504,11 +510,8 @@ class GraphGenerators():
     - ``loops`` -- (default: ``False``) whether to allow loops in the graph
       or not.
 
-    - ``implementation`` -- (default: ``'c_graph'``) which underlying
-      implementation to use (see ``Graph?``).
-
-    - ``sparse`` -- (default: ``True``) ignored if implementation is not
-      ``'c_graph'``.
+    - ``sparse`` -- (default: ``True``); whether to use a sparse or dense data
+      structure. See the documentation of :class:`~sage.graphs.graph.Graph`.
 
     - ``copy`` (boolean) -- If set to ``True`` (default)
       this method makes copies of the graphs before returning
@@ -524,19 +527,6 @@ class GraphGenerators():
     Print graphs on 3 or less vertices::
 
         sage: for G in graphs(3, augment='vertices'):
-        ....:     print(G)
-        Graph on 0 vertices
-        Graph on 1 vertex
-        Graph on 2 vertices
-        Graph on 3 vertices
-        Graph on 3 vertices
-        Graph on 3 vertices
-        Graph on 2 vertices
-        Graph on 3 vertices
-
-    Note that we can also get graphs with underlying Cython implementation::
-
-        sage: for G in graphs(3, augment='vertices', implementation='c_graph'):
         ....:     print(G)
         Graph on 0 vertices
         Graph on 1 vertex
@@ -697,8 +687,7 @@ class GraphGenerators():
 ###########################################################################
 
     def __call__(self, vertices=None, property=None, augment='edges',
-        size=None, degree_sequence=None, loops=False, implementation='c_graph',
-        sparse=True, copy = True):
+        size=None, degree_sequence=None, loops=False, sparse=True, copy = True):
         """
         Accesses the generator of isomorphism class representatives.
         Iterates over distinct, exhaustive representatives. See the docstring
@@ -746,13 +735,14 @@ class GraphGenerators():
         # Use nauty for the basic case, as it is much faster.
         if (vertices and property is None and size is None and
             degree_sequence is None and not loops and augment == 'edges' and
-            implementation == 'c_graph' and sparse and copy):
+            sparse and copy):
             for g in graphs.nauty_geng(vertices):
                 yield g
             return
 
         if property is None:
-            property = lambda x: True
+            def property(x):
+                return True
 
         from sage.graphs.all import Graph
         from copy import copy as copyfun
@@ -764,21 +754,31 @@ class GraphGenerators():
                 raise ValueError("Invalid degree sequence.")
             degree_sequence = sorted(degree_sequence)
             if augment == 'edges':
-                property = lambda x: all([degree_sequence[i] >= d for i,d in enumerate(sorted(x.degree()))])
-                extra_property = lambda x: degree_sequence == sorted(x.degree())
+                def property(x):
+                    D = sorted(x.degree())
+                    return all(degree_sequence[i] >= d for i, d in enumerate(D))
+                def extra_property(x):
+                    return degree_sequence == sorted(x.degree())
             else:
-                property = lambda x: all([degree_sequence[i] >= d for i,d in enumerate(sorted(x.degree() + [0]*(vertices-x.num_verts()) ))])
-                extra_property = lambda x: x.num_verts() == vertices and degree_sequence == sorted(x.degree())
+                def property(x):
+                    D = sorted(x.degree() + [0] * (vertices - x.num_verts()))
+                    return all(degree_sequence[i] >= d for i, d in enumerate(D))
+                def extra_property(x):
+                    if x.num_verts() != vertices:
+                        return False
+                    return degree_sequence == sorted(x.degree())
         elif size is not None:
-            extra_property = lambda x: x.size() == size
+            def extra_property(x):
+                return x.size() == size
         else:
-            extra_property = lambda x: True
+            def extra_property(x):
+                return True
 
         if augment == 'vertices':
             if vertices is None:
                 raise NotImplementedError
-            g = Graph(loops=loops, implementation=implementation, sparse=sparse)
-            for gg in canaug_traverse_vert(g, [], vertices, property, loops=loops, implementation=implementation, sparse=sparse):
+            g = Graph(loops=loops, sparse=sparse)
+            for gg in canaug_traverse_vert(g, [], vertices, property, loops=loops, sparse=sparse):
                 if extra_property(gg):
                     yield copyfun(gg) if copy else gg
         elif augment == 'edges':
@@ -786,17 +786,17 @@ class GraphGenerators():
                 from sage.rings.all import Integer
                 vertices = Integer(0)
                 while True:
-                    for g in self(vertices, loops=loops, implementation=implementation, sparse=sparse):
+                    for g in self(vertices, loops=loops, sparse=sparse):
                         yield copyfun(g) if copy else g
                     vertices += 1
-            g = Graph(vertices, loops=loops, implementation=implementation, sparse=sparse)
+            g = Graph(vertices, loops=loops, sparse=sparse)
             gens = []
             for i in range(vertices-1):
                 gen = list(range(i))
                 gen.append(i+1); gen.append(i)
                 gen += list(range(i + 2, vertices))
                 gens.append(gen)
-            for gg in canaug_traverse_edge(g, gens, property, loops=loops, implementation=implementation, sparse=sparse):
+            for gg in canaug_traverse_edge(g, gens, property, loops=loops, sparse=sparse):
                 if extra_property(gg):
                     yield copyfun(gg) if copy else gg
         else:
@@ -1080,7 +1080,7 @@ class GraphGenerators():
             sage: _ = code_input.write('>>planar_code<<')
             sage: for c in [4,2,3,4,0,1,4,3,0,1,2,4,0,1,3,2,0]:
             ....:     _ = code_input.write('{:c}'.format(c))
-            sage: code_input.seek(0)
+            sage: _ = code_input.seek(0)
             sage: gen = graphs._read_planar_code(code_input)
             sage: l = list(gen)
             sage: l
@@ -1260,6 +1260,9 @@ class GraphGenerators():
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)
 
+        if not PY2:
+            sp.stdout.reconfigure(newline='')
+
         for G in graphs._read_planar_code(sp.stdout):
             yield(G)
 
@@ -1354,6 +1357,9 @@ class GraphGenerators():
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)
+
+        if not PY2:
+            sp.stdout.reconfigure(newline='')
 
         for G in graphs._read_planar_code(sp.stdout):
             yield(G)
@@ -1555,6 +1561,9 @@ class GraphGenerators():
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)
 
+        if not PY2:
+            sp.stdout.reconfigure(newline='')
+
         for G in graphs._read_planar_code(sp.stdout):
             yield(G)
 
@@ -1743,6 +1752,9 @@ class GraphGenerators():
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)
 
+        if not PY2:
+            sp.stdout.reconfigure(newline='')
+
         for G in graphs._read_planar_code(sp.stdout):
             yield(G)
 
@@ -1890,6 +1902,9 @@ class GraphGenerators():
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)
 
+        if not PY2:
+            sp.stdout.reconfigure(newline='')
+
         for G in graphs._read_planar_code(sp.stdout):
             yield(G)
 
@@ -1951,6 +1966,7 @@ class GraphGenerators():
     FranklinGraph            = staticmethod(sage.graphs.generators.smallgraphs.FranklinGraph)
     FruchtGraph              = staticmethod(sage.graphs.generators.smallgraphs.FruchtGraph)
     GoldnerHararyGraph       = staticmethod(sage.graphs.generators.smallgraphs.GoldnerHararyGraph)
+    GolombGraph              = staticmethod(sage.graphs.generators.smallgraphs.GolombGraph)
     GossetGraph              = staticmethod(sage.graphs.generators.smallgraphs.GossetGraph)
     GrayGraph                = staticmethod(sage.graphs.generators.smallgraphs.GrayGraph)
     GrotzschGraph            = staticmethod(sage.graphs.generators.smallgraphs.GrotzschGraph)
@@ -2028,17 +2044,21 @@ class GraphGenerators():
     BalancedTree           = staticmethod(sage.graphs.generators.families.BalancedTree)
     BarbellGraph           = staticmethod(sage.graphs.generators.families.BarbellGraph)
     BubbleSortGraph        = staticmethod(sage.graphs.generators.families.BubbleSortGraph)
+    CaiFurerImmermanGraph  = staticmethod(sage.graphs.generators.families.CaiFurerImmermanGraph)
     chang_graphs           = staticmethod(sage.graphs.generators.families.chang_graphs)
     CirculantGraph         = staticmethod(sage.graphs.generators.families.CirculantGraph)
     CubeGraph              = staticmethod(sage.graphs.generators.families.CubeGraph)
     DipoleGraph            = staticmethod(sage.graphs.generators.families.DipoleGraph)
     DorogovtsevGoltsevMendesGraph = staticmethod(sage.graphs.generators.families.DorogovtsevGoltsevMendesGraph)
+    EgawaGraph             = staticmethod(sage.graphs.generators.families.EgawaGraph)
     FibonacciTree          = staticmethod(sage.graphs.generators.families.FibonacciTree)
     FoldedCubeGraph        = staticmethod(sage.graphs.generators.families.FoldedCubeGraph)
     FriendshipGraph        = staticmethod(sage.graphs.generators.families.FriendshipGraph)
+    FurerGadget            = staticmethod(sage.graphs.generators.families.FurerGadget)
     FuzzyBallGraph         = staticmethod(sage.graphs.generators.families.FuzzyBallGraph)
     GeneralizedPetersenGraph = staticmethod(sage.graphs.generators.families.GeneralizedPetersenGraph)
     GoethalsSeidelGraph    = staticmethod(sage.graphs.generators.families.GoethalsSeidelGraph)
+    HammingGraph           = staticmethod(sage.graphs.generators.families.HammingGraph)
     HanoiTowerGraph        = staticmethod(sage.graphs.generators.families.HanoiTowerGraph)
     HararyGraph            = staticmethod(sage.graphs.generators.families.HararyGraph)
     HyperStarGraph         = staticmethod(sage.graphs.generators.families.HyperStarGraph)
@@ -2121,6 +2141,7 @@ class GraphGenerators():
     RandomBicubicPlanar      = staticmethod(sage.graphs.generators.random.RandomBicubicPlanar)
     RandomBlockGraph         = staticmethod(sage.graphs.generators.random.RandomBlockGraph)
     RandomBoundedToleranceGraph = staticmethod(sage.graphs.generators.random.RandomBoundedToleranceGraph)
+    RandomChordalGraph       = staticmethod(sage.graphs.generators.random.RandomChordalGraph)
     RandomGNM                = staticmethod(sage.graphs.generators.random.RandomGNM)
     RandomGNP                = staticmethod(sage.graphs.generators.random.RandomGNP)
     RandomHolmeKim           = staticmethod(sage.graphs.generators.random.RandomHolmeKim)
@@ -2153,7 +2174,7 @@ class GraphGenerators():
     DegreeSequenceTree       = staticmethod(sage.graphs.generators.degree_sequence.DegreeSequenceTree)
     DegreeSequenceExpected   = staticmethod(sage.graphs.generators.degree_sequence.DegreeSequenceExpected)
 
-def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=False, implementation='c_graph', sparse=True):
+def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=False, sparse=True):
     """
     Main function for exhaustive generation. Recursive traversal of a
     canonically generated tree of isomorph free (di)graphs satisfying a
@@ -2212,7 +2233,6 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
         Digraph on 2 vertices
     """
     from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
-
     if not property(g):
         return
     yield g
@@ -2262,7 +2282,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
             i += 1
         for i in roots:
             # construct a z for each number in roots...
-            z = g.copy(implementation=implementation, sparse=sparse)
+            z = g.copy(sparse=sparse)
             z.add_vertex(n)
             edges = []
             if dig:
@@ -2286,7 +2306,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
             if property(z):
                 z_s.append(z)
             if loops:
-                z = z.copy(implementation=implementation, sparse=sparse)
+                z = z.copy(sparse=sparse)
                 z.add_edge((n,n))
                 if property(z):
                     z_s.append(z)
@@ -2299,12 +2319,12 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
                 m_z = z.subgraph(sub_verts)
 
                 if m_z == g:
-                    for a in canaug_traverse_vert(z, z_aut_gens, max_verts, property, dig=dig, loops=loops, implementation=implementation, sparse=sparse):
+                    for a in canaug_traverse_vert(z, z_aut_gens, max_verts, property, dig=dig, loops=loops, sparse=sparse):
                         yield a
                 else:
                     for possibility in check_aut(z_aut_gens, cut_vert, n):
                         if m_z.relabel(dict(enumerate(possibility)), check_input=False, inplace=False) == g:
-                            for a in canaug_traverse_vert(z, z_aut_gens, max_verts, property, dig=dig, loops=loops, implementation=implementation, sparse=sparse):
+                            for a in canaug_traverse_vert(z, z_aut_gens, max_verts, property, dig=dig, loops=loops, sparse=sparse):
                                 yield a
                             break
 
@@ -2344,7 +2364,7 @@ def check_aut(aut_gens, cut_vert, n):
                 if new_perm[cut_vert] == n:
                     yield new_perm
 
-def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implementation='c_graph', sparse=True):
+def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=True):
     """
     Main function for exhaustive generation. Recursive traversal of a
     canonically generated tree of isomorph free graphs satisfying a
@@ -2482,7 +2502,7 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implemen
             if g.has_edge(i, j):
                 continue
             # construct a z for each edge in roots...
-            z = g.copy(implementation=implementation, sparse=sparse)
+            z = g.copy(sparse=sparse)
             z.add_edge(i, j)
             if not property(z):
                 continue
@@ -2502,12 +2522,12 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, implemen
             m_z = copy(z)
             m_z.delete_edge(cut_edge)
             if m_z == g:
-                for a in canaug_traverse_edge(z, z_aut_gens, property, dig=dig, loops=loops, implementation=implementation, sparse=sparse):
+                for a in canaug_traverse_edge(z, z_aut_gens, property, dig=dig, loops=loops, sparse=sparse):
                     yield a
             else:
                 for possibility in check_aut_edge(z_aut_gens, cut_edge, i, j, n, dig=dig):
                     if m_z.relabel(possibility, inplace=False) == g:
-                        for a in canaug_traverse_edge(z, z_aut_gens, property, dig=dig, loops=loops, implementation=implementation, sparse=sparse):
+                        for a in canaug_traverse_edge(z, z_aut_gens, property, dig=dig, loops=loops, sparse=sparse):
                             yield a
                         break
 

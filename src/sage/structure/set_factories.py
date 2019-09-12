@@ -183,7 +183,7 @@ Here is an example::
 
     sage: selfpolicy = SelfParentPolicy(XYPairs, NewXYPair)
     sage: SelfS = XYPairs(policy=selfpolicy)
-    sage: el = SelfS.an_element();
+    sage: el = SelfS.an_element()
     sage: el.parent() is SelfS
     True
 

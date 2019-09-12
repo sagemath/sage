@@ -470,7 +470,7 @@ class QuotientRingElement(RingElement):
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError
+            TypeError: unable to convert non-constant polynomial x to an integer
         """
         return int(self.lift())
 
@@ -587,7 +587,7 @@ class QuotientRingElement(RingElement):
             sage: float(a)
             Traceback (most recent call last):
             ...
-            TypeError
+            TypeError: unable to convert non-constant polynomial x to a float
         """
         return float(self.lift())
 
@@ -597,9 +597,9 @@ class QuotientRingElement(RingElement):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = R.quo(x^2 + y^2)
-            sage: hash(a)
-            15360174650385711  # 64-bit
-            1505322287         # 32-bit
+            sage: c = a*a + b
+            sage: hash(a) != hash(b)
+            True
         """
         return hash(self.__rep)
 

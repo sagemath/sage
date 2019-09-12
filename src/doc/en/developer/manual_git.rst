@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-manual-git:
 
 ================
@@ -243,7 +245,9 @@ Sometimes, a new version of Sage is released while you work on a git branch.
 Let us assume you started ``my_branch`` at commit ``B``. After a while, your
 branch has advanced to commit ``Z``, but you updated ``master`` (see
 :ref:`section-git-pull-master`) and now your git history looks like this (see
-:ref:`section_walkthrough_logs`)::
+:ref:`section_walkthrough_logs`):
+
+.. CODE-BLOCK:: text
 
                      X---Y---Z my_branch
                     /
@@ -254,12 +258,16 @@ How should you deal with such changes? In principle, there are two ways:
 
 * **Rebase:** The first solution is to **replay** commits ``X,Y,Z`` atop of the
   new ``master``. This is called **rebase**, and it rewrites your current
-  branch::
+  branch:
+
+  .. CODE-BLOCK:: text
 
       git checkout my_branch
       git rebase -i master
 
-  In terms of the commit graph, this results in::
+  In terms of the commit graph, this results in:
+
+  .. CODE-BLOCK:: text
 
                              X'--Y'--Z' my_branch
                             /
@@ -270,18 +278,24 @@ How should you deal with such changes? In principle, there are two ways:
   began to write code atop of your commits ``X,Y,Z``. It is safe otherwise.
 
   **Alternatively**, you can rebase ``my_branch`` while updating master at the
-  same time (see :ref:`section-git-pull`)::
+  same time (see :ref:`section-git-pull`):
+
+  .. CODE-BLOCK:: text
 
     git checkout my_branch
     git pull -r master
 
 * **Merging** your branch with ``master`` will create a new commit above the two
-  of them::
+  of them:
+
+  .. CODE-BLOCK:: text
 
       git checkout my_branch
       git merge master
 
-  The result is the following commit graph::
+  The result is the following commit graph:
+
+  .. CODE-BLOCK:: text
 
                      X---Y---Z---W my_branch
                     /           /
@@ -295,7 +309,9 @@ How should you deal with such changes? In principle, there are two ways:
     not be there had you used rebase.
 
   **Alternatively**, you can merge ``my_branch`` while updating master at the
-  same time (see :ref:`section-git-pull`)::
+  same time (see :ref:`section-git-pull`):
+
+  .. CODE-BLOCK:: text
 
     git checkout my_branch
     git pull master

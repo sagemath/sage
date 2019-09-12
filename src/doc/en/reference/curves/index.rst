@@ -97,7 +97,6 @@ The following relate to elliptic curves over local nonarchimedean fields.
    sage/schemes/elliptic_curves/ell_local_data
    sage/schemes/elliptic_curves/kodaira_symbol
    sage/schemes/elliptic_curves/ell_tate_curve
-   sage/schemes/elliptic_curves/padics
 
 Analytic properties over `\CC`.
 
@@ -157,10 +156,7 @@ Hyperelliptic curves
    sage/schemes/hyperelliptic_curves/jacobian_homset
    sage/schemes/hyperelliptic_curves/jacobian_morphism
 
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_generic
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_finite_field
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_padic_field
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2_rational_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2
    sage/schemes/hyperelliptic_curves/invariants
    sage/schemes/hyperelliptic_curves/kummer_surface
 

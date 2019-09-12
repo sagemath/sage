@@ -36,7 +36,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
         Category of filtered hopf algebras with basis over Integer Ring
         sage: C.super_categories()
         [Category of hopf algebras with basis over Integer Ring,
-         Category of filtered algebras with basis over Integer Ring]
+         Category of filtered algebras with basis over Integer Ring,
+         Category of filtered coalgebras with basis over Integer Ring]
 
         sage: C is HopfAlgebras(ZZ).WithBasis().Filtered()
         True
@@ -55,7 +56,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 sage: HopfAlgebrasWithBasis(QQ).Filtered().WithRealizations().super_categories()
                 [Join of Category of hopf algebras over Rational Field
-                     and Category of filtered algebras over Rational Field]
+                     and Category of filtered algebras over Rational Field
+                     and Category of filtered coalgebras over Rational Field]
 
             TESTS::
 
@@ -118,8 +120,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
                 TESTS::
 
                     sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
-                    sage: H.antipode(H.monomial(140))
-                    P140
+                    sage: H.antipode(H.monomial(14))
+                    P14
 
                     sage: H.monomial(0).antipode()
                     P0

@@ -300,8 +300,8 @@ MOLS_constructions = {
 }
 
 # Add this data to the module's doc
-LIST_OF_MOLS_CONSTRUCTIONS = ", ".join([":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
-                                        for n,(k,_) in MOLS_constructions.items()])
+LIST_OF_MOLS_CONSTRUCTIONS = ", ".join(":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
+                                       for n,(k,_) in MOLS_constructions.items())
 
 def OA_7_18():
     r"""
@@ -703,7 +703,7 @@ def OA_15_112():
     r"""
     Returns an OA(15,112)
 
-    Published by Julian R. Abel in [AbelThesis]_. Uses the fact that 112 = `2^4
+    Published by Julian R. Abel in [Ab1995]_. Uses the fact that 112 = `2^4
     \times 7` and that `7` is prime.
 
     .. SEEALSO::
@@ -882,7 +882,7 @@ def OA_11_160():
     r"""
     Returns an OA(11,160)
 
-    Published by Julian R. Abel in [AbelThesis]_. Uses the fact that `160 = 2^5
+    Published by Julian R. Abel in [Ab1995]_. Uses the fact that `160 = 2^5
     \times 5` is a product of a power of `2` and a prime number.
 
     .. SEEALSO::
@@ -925,7 +925,7 @@ def OA_16_176():
     r"""
     Returns an OA(16,176)
 
-    Published by Julian R. Abel in [AbelThesis]_. Uses the fact that `176 = 2^4
+    Published by Julian R. Abel in [Ab1995]_. Uses the fact that `176 = 2^4
     \times 11` is a product of a power of `2` and a prime number.
 
     .. SEEALSO::
@@ -1124,7 +1124,7 @@ def OA_16_208():
     r"""
     Returns an OA(16,208)
 
-    Published by Julian R. Abel in [AbelThesis]_. Uses the fact that `208 = 2^4
+    Published by Julian R. Abel in [Ab1995]_. Uses the fact that `208 = 2^4
     \times 13` is a product of `2` and a prime number.
 
     .. SEEALSO::
@@ -1183,7 +1183,7 @@ def OA_15_224():
     r"""
     Returns an OA(15,224)
 
-    Published by Julian R. Abel in [AbelThesis]_ (uses the fact that `224=2^5
+    Published by Julian R. Abel in [Ab1995]_ (uses the fact that `224=2^5
     \times 7` is a product of a power of `2` and a prime number).
 
     .. SEEALSO::
@@ -1269,7 +1269,7 @@ def OA_20_352():
     r"""
     Returns an OA(20,352)
 
-    Published by Julian R. Abel in [AbelThesis]_ (uses the fact that `352=2^5
+    Published by Julian R. Abel in [Ab1995]_ (uses the fact that `352=2^5
     \times 11` is the product of a power of `2` and a prime number).
 
     .. SEEALSO::
@@ -1328,7 +1328,7 @@ def OA_20_416():
     r"""
     Returns an OA(20,416)
 
-    Published by Julian R. Abel in [AbelThesis]_ (uses the fact that `416=2^5
+    Published by Julian R. Abel in [Ab1995]_ (uses the fact that `416=2^5
     \times 13` is the product of a power of `2` and a prime number).
 
     .. SEEALSO::
@@ -1388,7 +1388,7 @@ def OA_20_544():
     r"""
     Returns an OA(20,544)
 
-    Published by Julian R. Abel in [AbelThesis]_ (uses the fact that
+    Published by Julian R. Abel in [Ab1995]_ (uses the fact that
     `544=2^5 \times 17` is the product of a power of `2` and a prime number).
 
     .. SEEALSO::
@@ -1516,7 +1516,7 @@ def OA_11_640():
     r"""
     Returns an OA(11,640)
 
-    Published by Julian R. Abel in [AbelThesis]_ (uses the fact that `640=2^7
+    Published by Julian R. Abel in [Ab1995]_ (uses the fact that `640=2^7
     \times 5` is the product of a power of `2` and a prime number).
 
     .. SEEALSO::
@@ -2707,7 +2707,7 @@ LIST_OF_VMT_VECTORS = "\n".join("    - `m={}` and `t=` ".format(m) +
                                 ", ".join("`{}`".format(t) for _,t in sorted(Vmt_vectors.keys()) if _ == m)
                                 for m in _all_m)
 
-r""""
+r"""
 Tests for the Vmt vectors
 
 EXAMPLES::
@@ -3091,14 +3091,14 @@ DF = {
            [0,4,21,26,29,33,35,36,47,55,56,60]]},
 
 # a 133-cyclic set from Ken Smith database
-# see http://www.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
+# see https://math.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
 (133,33, 8):
   {(133,): [[0,4,7,8,15,17,19,22,24,25,29,30,38,
              47,49,50,55,58,61,62,71,73,76,77,78,
              82,95,111,113,114,121,123,127]]},
 
 # a 901-cyclic
-# see http://www.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
+# see https://math.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
 (901,225,56):
   {(901,): [[  0,  1,  5,  9, 12, 13, 14, 16, 22, 25, 41, 43,
               45, 47, 53, 59, 60, 65, 69, 70, 71, 79, 80, 81,
@@ -4214,7 +4214,7 @@ def BIBD_66_6_1():
     Return a (66,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4238,7 +4238,7 @@ def BIBD_76_6_1():
     Return a (76,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4262,7 +4262,7 @@ def BIBD_96_6_1():
     Return a (96,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://www.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4327,7 +4327,7 @@ def BIBD_111_6_1():
             ((26,0), (34,0), ( 1,1), ( 7,1), (10,2), (33,2))]
     gens = lambda B: [frozenset(((x*10)%37,(y+1)%3) for x,y in B),
                       frozenset(((x+1) %37,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 def BIBD_126_6_1():
@@ -4381,7 +4381,7 @@ def BIBD_136_6_1():
             ( inf ,( 0,0), ( 9,0), (18,0), (27,0), (36,0))]
     gens = lambda B: [frozenset(((x*16)%45,(y+1)%3) if (x,y)!=inf else inf for x,y in B),
                       frozenset(((x+1) %45,y)       if (x,y)!=inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 
@@ -4413,7 +4413,7 @@ def BIBD_141_6_1():
 
     gens = lambda B: [frozenset(((x*16)%35,(y+1)%3 if y!=a else a) if (x,y)!=inf else inf for x,y in B),
                       frozenset(((x+1) %35, y )                    if (x,y)!=inf else inf for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 def BIBD_171_6_1():
@@ -4441,7 +4441,7 @@ def BIBD_171_6_1():
 
     gens = lambda B: [frozenset(((x*7) %57,(y+1)%3) for x,y in B),
                       frozenset(((x+1) %57,      y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 def HigmanSimsDesign():
@@ -4534,7 +4534,7 @@ def BIBD_196_6_1():
 
     gens = lambda B: [frozenset(((x*30)%49,(y+1)%3 if y!=a else a) for x,y in B),
                       frozenset(((x+1) %49,   y)                   for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 def BIBD_201_6_1():
@@ -4563,7 +4563,7 @@ def BIBD_201_6_1():
 
     gens = lambda B: [frozenset(((x*29)%67,y) for x,y in B),
                       frozenset(((x+1) %67,y) for x,y in B)]
-    bibd = RecursivelyEnumeratedSet(map(frozenset,bibd), successors=gens)
+    bibd = RecursivelyEnumeratedSet([frozenset(e) for e in bibd], successors=gens)
     return IncidenceStructure(bibd)._blocks
 
 # Index of the BIBD constructions

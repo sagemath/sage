@@ -224,7 +224,6 @@ from sage.combinat.tableau import (Tableau, Tableaux, Tableaux_size, Tableaux_al
                                    RowStandardTableaux, RowStandardTableaux_size,
                                    RowStandardTableaux_all, RowStandardTableaux_shape)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.misc.classcall_metaclass import ClasscallMetaclass
@@ -238,7 +237,6 @@ from sage.rings.integer import Integer
 from sage.rings.all import NN
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1300,7 +1298,7 @@ class TableauTuple(CombinatorialElement):
             \Lambda = \sum_{i=1}^l \Lambda_{a_i}
 
         of the affine special linear group. In the combinatorics, the
-        muticharge simply offsets the contents in each component so that
+        multicharge simply offsets the contents in each component so that
         the cell `(k, r, c)` has content `a_k + c - r`.
 
         INPUT:
@@ -2719,16 +2717,16 @@ class RowStandardTableauTuples(TableauTuples):
         sage: tabs[:]
         [([[3, 4]], [[2], [1]]),
          ([[2, 4]], [[3], [1]]),
-         ([[2, 3]], [[4], [1]]),
-         ([[3, 4]], [[1], [2]]),
-         ([[2, 4]], [[1], [3]]),
-         ([[2, 3]], [[1], [4]]),
          ([[1, 4]], [[3], [2]]),
+         ([[1, 2]], [[4], [3]]),
          ([[1, 3]], [[4], [2]]),
+         ([[2, 3]], [[4], [1]]),
          ([[1, 4]], [[2], [3]]),
          ([[1, 3]], [[2], [4]]),
-         ([[1, 2]], [[4], [3]]),
-         ([[1, 2]], [[3], [4]])]
+         ([[1, 2]], [[3], [4]]),
+         ([[2, 3]], [[1], [4]]),
+         ([[2, 4]], [[1], [3]]),
+         ([[3, 4]], [[1], [2]])]
 
         sage: tabs = RowStandardTableauTuples(level=3); tabs
         Row standard tableau tuples of level 3
@@ -2880,14 +2878,14 @@ class RowStandardTableauTuples(TableauTuples):
 
             sage: RowStandardTableauTuples()[10:20]
             [([[2, 3], [1]]),
-             ([[1, 3], [2]]),
              ([[1, 2], [3]]),
+             ([[1, 3], [2]]),
              ([[3], [2], [1]]),
              ([[2], [3], [1]]),
-             ([[3], [1], [2]]),
-             ([[2], [1], [3]]),
              ([[1], [3], [2]]),
              ([[1], [2], [3]]),
+             ([[2], [1], [3]]),
+             ([[3], [1], [2]]),
              ([[1, 2]], [])]
 
         .. TODO::
@@ -3418,41 +3416,41 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             sage: RowStandardTableauTuples([[1],[1],[1]]).list()
             [([[3]], [[2]], [[1]]),
              ([[2]], [[3]], [[1]]),
-             ([[3]], [[1]], [[2]]),
-             ([[2]], [[1]], [[3]]),
              ([[1]], [[3]], [[2]]),
-             ([[1]], [[2]], [[3]])]
+             ([[1]], [[2]], [[3]]),
+             ([[2]], [[1]], [[3]]),
+             ([[3]], [[1]], [[2]])]
             sage: RowStandardTableauTuples([[2,1],[2]]).list()
-            [([[4, 5], [3]], [[1, 2]]),
+            [([[4, 5], [2]], [[1, 3]]),
+             ([[4, 5], [3]], [[1, 2]]),
              ([[3, 5], [4]], [[1, 2]]),
              ([[3, 4], [5]], [[1, 2]]),
-             ([[4, 5], [2]], [[1, 3]]),
-             ([[3, 5], [2]], [[1, 4]]),
-             ([[3, 4], [2]], [[1, 5]]),
-             ([[2, 5], [4]], [[1, 3]]),
-             ([[2, 4], [5]], [[1, 3]]),
-             ([[2, 5], [3]], [[1, 4]]),
-             ([[2, 4], [3]], [[1, 5]]),
-             ([[2, 3], [5]], [[1, 4]]),
-             ([[2, 3], [4]], [[1, 5]]),
              ([[4, 5], [1]], [[2, 3]]),
              ([[3, 5], [1]], [[2, 4]]),
-             ([[3, 4], [1]], [[2, 5]]),
              ([[2, 5], [1]], [[3, 4]]),
-             ([[2, 4], [1]], [[3, 5]]),
-             ([[2, 3], [1]], [[4, 5]]),
-             ([[1, 5], [4]], [[2, 3]]),
-             ([[1, 4], [5]], [[2, 3]]),
-             ([[1, 5], [3]], [[2, 4]]),
-             ([[1, 4], [3]], [[2, 5]]),
-             ([[1, 3], [5]], [[2, 4]]),
-             ([[1, 3], [4]], [[2, 5]]),
              ([[1, 5], [2]], [[3, 4]]),
              ([[1, 4], [2]], [[3, 5]]),
              ([[1, 3], [2]], [[4, 5]]),
-             ([[1, 2], [5]], [[3, 4]]),
+             ([[1, 2], [3]], [[4, 5]]),
+             ([[2, 3], [1]], [[4, 5]]),
+             ([[2, 4], [1]], [[3, 5]]),
+             ([[3, 4], [1]], [[2, 5]]),
+             ([[3, 4], [2]], [[1, 5]]),
+             ([[2, 4], [3]], [[1, 5]]),
+             ([[1, 4], [3]], [[2, 5]]),
              ([[1, 2], [4]], [[3, 5]]),
-             ([[1, 2], [3]], [[4, 5]])]
+             ([[1, 3], [4]], [[2, 5]]),
+             ([[2, 3], [4]], [[1, 5]]),
+             ([[2, 3], [5]], [[1, 4]]),
+             ([[1, 3], [5]], [[2, 4]]),
+             ([[1, 2], [5]], [[3, 4]]),
+             ([[1, 5], [3]], [[2, 4]]),
+             ([[1, 5], [4]], [[2, 3]]),
+             ([[1, 4], [5]], [[2, 3]]),
+             ([[2, 4], [5]], [[1, 3]]),
+             ([[2, 5], [4]], [[1, 3]]),
+             ([[2, 5], [3]], [[1, 4]]),
+             ([[3, 5], [2]], [[1, 4]])]
 
         TESTS::
 
@@ -3463,7 +3461,6 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             True
         """
         mu = self.shape()
-        n = mu.size()
 
         # Set up two lists clen and cclen which give the "end points" of
         # the components of mu and the rows of each component, respectively, so
@@ -3530,7 +3527,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
         EXAMPLES::
 
             sage: RowStandardTableauTuples([[2],[2,1]]).an_element()
-            ([[2, 4]], [[3, 5], [1]])
+            ([[4, 5]], [[1, 3], [2]])
             sage: RowStandardTableauTuples([[10],[],[]]).an_element()
             ([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], [], [])
         """

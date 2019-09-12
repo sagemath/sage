@@ -26,6 +26,7 @@ cdef class ntl_ZZ_pEContext_class(object):
     def __init__(self, ntl_ZZ_pX f):
         """
         EXAMPLES:
+
             # You can construct contexts manually.
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([4,1,6],25))
             sage: n1=c.ZZ_pE([10,17,12])
@@ -64,9 +65,10 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         Returns a string representation of self.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
-        NTL modulus [1 1 1] (mod 7)
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
+            NTL modulus [1 1 1] (mod 7)
         """
         return "NTL modulus %s (mod %s)"%(self.f, self.pc.p)
 
@@ -74,11 +76,12 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         Returns the ZZ_pContext contained within self.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
-        NTL modulus [1 1 1] (mod 7)
-        sage: c.get_pc()
-        NTL modulus 7
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
+            NTL modulus [1 1 1] (mod 7)
+            sage: c.get_pc()
+            NTL modulus 7
         """
         return self.pc
 
@@ -86,10 +89,11 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         Returns the ZZ_pX polynomial defining self.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
-        sage: c.polynomial()
-        [1 1 1]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
+            sage: c.polynomial()
+            [1 1 1]
         """
         return self.f
 
@@ -126,10 +130,11 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         Returns a ZZ_pE object with modulus self out of the data v.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
-        sage: c.ZZ_pE([4,3])
-        [4 3]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
+            sage: c.ZZ_pE([4,3])
+            [4 3]
         """
         from .ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
@@ -138,10 +143,11 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         Returns a ZZ_pE object with modulus self out of the data v.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
-        sage: c.ZZ_pEX([4,3])
-        [[4] [3]]
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7))
+            sage: c.ZZ_pEX([4,3])
+            [[4] [3]]
         """
         from .ntl_ZZ_pEX import ntl_ZZ_pEX
         return ntl_ZZ_pEX(v, modulus=self)
@@ -153,9 +159,11 @@ def ntl_ZZ_pEContext( ntl_ZZ_pX f):
     Such an object must be created before any ZZ_pE or ZZ_pEX objects can be used.
 
     The context handling should be taken care of by the wrapper classes.
-    EXAMPLES:
-    sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
-    NTL modulus [1 1 1] (mod 7)
+
+    EXAMPLES::
+
+        sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
+        NTL modulus [1 1 1] (mod 7)
     """
     try:
         return ZZ_pEContextDict[repr(f), repr(f.c.p)]

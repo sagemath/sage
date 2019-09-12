@@ -630,7 +630,7 @@ class WordDatatype_iter(WordDatatype):
             self._data = iter
         else:
             self._len = length
-            self._data = itertools.islice(iter, length)
+            self._data = itertools.islice(iter, int(length))
 
         self._parent = parent
         self._hash = None
@@ -832,20 +832,22 @@ class WordDatatype_iter(WordDatatype):
                 if not(key.start is None) and key.start < 0 or \
                         not(key.stop is None) and key.stop < 0:
                     raise ValueError("for infinite words, start and stop values cannot be negative")
-                step = 1 if key.step is None else key.step
+                step = 1 if key.step is None else int(key.step)
                 if step >= 0:
-                    start = 0 if key.start is None else key.start
+                    start = 0 if key.start is None else int(key.start)
                     if key.stop is None:
                         length = Infinity
+                        stop = None
                     else: # key.stop > 0
                         length = int(max(0,ceil((key.stop-start)/float(step))))
-                    data = itertools.islice(self, start, key.stop, step)
+                        stop = int(key.stop)
+                    data = itertools.islice(self, start, stop, step)
                 else:
                     if key.start is None or key.start < 0:
                         raise ValueError("start value must be nonnegative for negative step values")
-                    start = key.start
-                    stop = 0 if key.stop is None else key.stop
-                    length = int(max(0,ceil((key.stop-start)/float(step))))
+                    start = int(key.start)
+                    stop = 0 if key.stop is None else int(key.stop)
+                    length = int(max(0,ceil((stop-start)/float(step))))
                     data = list(itertools.islice(self, start+1))[key]
 
                 if length is None or length is Infinity:
@@ -853,9 +855,9 @@ class WordDatatype_iter(WordDatatype):
                 else:
                     return self._parent.factors()(data, length=length)
             else:
-                start = 0 if key.start is None else key.start
-                stop = self._len if key.stop is None else key.stop
-                step = 1 if key.step is None else key.step
+                start = 0 if key.start is None else int(key.start)
+                stop = int(self._len) if key.stop is None else int(key.stop)
+                step = 1 if key.step is None else int(key.step)
                 # If either key.start or key.stop is negative,
                 # then we need to expand the word.
                 if start < 0 or (not(stop is None) and stop < 0):
@@ -866,10 +868,10 @@ class WordDatatype_iter(WordDatatype):
                     if key.start is None:
                         data = list(self)[key]
                     else:
-                        data = list(itertools.islice(self, start+1))[start:stop:step]
+                        data = list(itertools.islice(self, int(start+1)))[start:stop:step]
                     length = None
                 else: # start >= 0, step >= 1, stop >= 0 or None
-                    data = itertools.islice(self, key.start, key.stop, key.step)
+                    data = itertools.islice(self, start, stop, step)
                     length = "unknown" if stop is None else int(max(0,((stop-start)/float(step))))
 
                 return self._parent.factors()(data, length=length)

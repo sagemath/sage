@@ -358,7 +358,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         try:
             return f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
         except Exception:
-            if check and not all([v>=0 for v in self.valuations(f)]):
+            if check and not all(v >= 0 for v in self.valuations(f)):
                 raise ValueError("reduction not defined for non-integral elements and %r is not integral over %r"%(f, self))
             raise
 
@@ -383,7 +383,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: F = v.reduce(f); F
             x^2 + 2*x + 1
             sage: g = v.lift(F); g
-            (1 + O(3^5))*x^2 + (2 + O(3^5))*x + (1 + O(3^5))
+            (1 + O(3^5))*x^2 + (2 + O(3^5))*x + 1 + O(3^5)
             sage: v.is_equivalent(f,g)
             True
             sage: g.parent() is v.domain()
@@ -412,7 +412,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         A polynomial `f` in the domain of this valuation which is a key
         polynomial for this valuation and which, for a suitable equivalence
-        unit `R`, satifies that the reduction of `Rf` is ``F``
+        unit `R`, satisfies that the reduction of `Rf` is ``F``
 
         EXAMPLES::
 
@@ -453,9 +453,9 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: v.equivalence_unit(2)
-            (3^2 + O(3^7))
+            3^2 + O(3^7)
             sage: v.equivalence_unit(-2)
-            (3^-2 + O(3^3))
+            3^-2 + O(3^3)
 
         """
         if reciprocal:
@@ -632,7 +632,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
                Defn: (1 + O(2^5))*x |--> (2^-1 + O(2^4))*x,
              Ring endomorphism of Univariate Polynomial Ring in x over 2-adic Field with capped relative precision 5
                Defn: (1 + O(2^5))*x |--> (2 + O(2^6))*x,
-            (1 + O(2^5))*x^2 + (1 + 2^2 + 2^3 + O(2^5))*x + (1 + 2^2 + 2^3 + O(2^5)))
+             (1 + O(2^5))*x^2 + (1 + 2^2 + 2^3 + O(2^5))*x + 1 + 2^2 + 2^3 + O(2^5))
 
         """
         if not G.is_monic():

@@ -251,7 +251,7 @@ subgroup::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
@@ -268,14 +268,12 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.interfaces.all import gp
 from sage.misc.cachefunc import cached_method
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.all import NN, ZZ, IntegerModRing
 from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
+
 
 #--------------------------------------------------
 # Partition tuple - element class
@@ -517,7 +515,7 @@ class PartitionTuple(CombinatorialElement):
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
 
-            sage: Partitions.options(convention="French");
+            sage: Partitions.options(convention="French")
             sage: PartitionTuples.options(display="diagram"); mu
             *
             *    **    *
@@ -749,7 +747,6 @@ class PartitionTuple(CombinatorialElement):
 
             sage: for t in PartitionTuple([[2,1],[3,2],[3]]).components():
             ....:     print('%s\n' % t.ferrers_diagram())
-            ...
             **
             *
             <BLANKLINE>
@@ -760,7 +757,6 @@ class PartitionTuple(CombinatorialElement):
             <BLANKLINE>
             sage: for t in PartitionTuple([3,2]).components():
             ....:     print('%s\n' % t.ferrers_diagram())
-            ...
             ***
             **
         """
@@ -1202,7 +1198,7 @@ class PartitionTuple(CombinatorialElement):
         "straightening" rules for the Specht modules over an arbitrary ring.
         The *top Garnir tableaux* arise in the graded representation theory of
         the symmetric groups and higher level Hecke algebras. They were
-        introduced in [KMR]_.
+        introduced in [KMR2012]_.
 
         If the Garnir node is ``cell=(k,r,c)`` and `m` and `M` are the entries
         in the cells ``(k,r,c)`` and ``(k,r+1,c)``, respectively, in the
@@ -1244,14 +1240,6 @@ class PartitionTuple(CombinatorialElement):
         .. SEEALSO::
 
             - :meth:`~sage.combinat.partition.Partition_tuple.garnir_tableau`
-
-        REFERENCE:
-
-        .. [KMR] \A. Kleshchev, A. Mathas, and A. Ram, *Universal Specht
-           modules for cyclotomic Hecke algebras*,
-           Proc. London Math. Soc. (2012) 105 (6): 1245-1289.
-           :arxiv:`1102.3519v1`
-
         """
         (comp,row,col)=cell
         if comp>=len(self) or row+1>=len(self[comp]) or col>=self[comp][row+1]:
@@ -1628,7 +1616,7 @@ class PartitionTuple(CombinatorialElement):
         INPUT:
 
         - ``e`` -- an  integer `e > 1`
-        - ``muticharge`` -- an `l`-tuple of integers, where `l` is
+        - ``multicharge`` -- an `l`-tuple of integers, where `l` is
           the :meth:`level` of ``self``
 
         OUTPUT:
@@ -1665,7 +1653,7 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- the quantum characteritic
+        - ``e`` -- the quantum characteristic
 
         - ``multicharge`` -- the multicharge (default `(0,)`)
 
@@ -1737,7 +1725,7 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- the quantum characteritic
+        - ``e`` -- the quantum characteristic
 
         - ``multicharge`` -- the multicharge (default `(0,)`)
 

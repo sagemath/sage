@@ -99,13 +99,13 @@ class SetShuffleProduct(SageObject):
     def __init__(self, l1, l2, element_constructor=None):
         """
         Construct the set of all possible shuffle products of two sets of iterables.
-        
+
         INPUT:
-        
+
         - ``l1``, ``l2`` -- iterable: the sets to shuffle
 
         - ``element_constructor`` --  constructor for the returned elements
-        
+
 
         TESTS::
 
@@ -241,9 +241,9 @@ class ShuffleProduct(SageObject):
     def __init__(self, l1, l2, element_constructor=None):
         """
         Construct the shuffle product of two iterable.
-        
+
         INPUT:
-        
+
         - ``l1``, ``l2`` -- iterable: iterables to shuffle
 
         - ``element_constructor``:  constructor for the returned elements
@@ -324,11 +324,11 @@ class ShuffleProduct(SageObject):
             sage: B = BinaryTree
             sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],
             ....:   [B([[[],[]],[[],None]])])))
-            [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]  [ o,     __o__  , 
-            [ [     / \      /     \  ]  [    /     \       / \  ]  [       /     \   
-            [ [    o   o    o       o ]  [   o       o     o   o ]  [      o       o 
+            [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]  [ o,     __o__  ,
+            [ [     / \      /     \  ]  [    /     \       / \  ]  [       /     \
+            [ [    o   o    o       o ]  [   o       o     o   o ]  [      o       o
             [ [            / \     /  ]  [  / \     /            ]  [     / \     /
-            [ [           o   o   o   ], [ o   o   o             ], [    o   o   o   
+            [ [           o   o   o   ], [ o   o   o             ], [    o   o   o
             <BLANKLINE>
                o   ] ]
               / \  ] ]
@@ -714,4 +714,3 @@ class ShuffleProduct_overlapping(CombinatorialClass):
                                                   self._element_constructor_,
                                                   add=self._add):
                 yield w
-

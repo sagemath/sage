@@ -44,7 +44,7 @@ if [ "$UNAME" = "Darwin" ]; then
     DISABLENLS="--disable-nls"
 fi
 
-sdh_configure --disable-gui --disable-ao --disable-lapack "$DISABLENLS"
+sdh_configure --disable-gui --disable-ao --disable-lapack "$DISABLENLS" --enable-png=no --disable-samplerate
 
 #############################################################
 #   Build

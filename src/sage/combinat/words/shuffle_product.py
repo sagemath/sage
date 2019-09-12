@@ -6,7 +6,7 @@ Shuffle product of words
     The module :mod:`sage.combinat.shuffle` contains a more general
     implementation of shuffle product.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
@@ -19,14 +19,15 @@ Shuffle product of words
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.combinat.words.word import Word_class, Word
 from sage.combinat.combinat import CombinatorialClass
 from sage.arith.all import binomial
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.composition import Compositions_n, Compositions, Composition
+from sage.combinat.composition import Composition
 from sage.misc.lazy_import import lazy_import
+
 
 class ShuffleProduct_w1w2(CombinatorialClass):
     def __init__(self, w1, w2):
@@ -82,7 +83,7 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: repr(ShuffleProduct_w1w2(W("ab"),W("cd")))
             'Shuffle product of word: ab and word: cd'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
 
     def __contains__(self, x):
         """
@@ -236,6 +237,7 @@ class ShuffleProduct_w1w2(CombinatorialClass):
         for iv in IntegerVectors(n1, n1+n2, max_part=1):
             yield self._proc(iv)
 
+
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):
     def __init__(self, w1, w2):
         """
@@ -269,8 +271,7 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             sage: ShuffleProduct_shifted(w,u).__repr__()
             'Shuffle product of word: 01 and word: 45'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
 
 lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping_r', deprecation=15597)
 lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping', deprecation=15597)
-

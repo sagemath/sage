@@ -211,13 +211,14 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: FooBar.mro()  # py3
         [<class '__main__.FooBar'>, <class '__main__.Bar'>, <class 'object'>]
 
-    If all the base classes are extension types, the dynamic class is
-    also considered to be an extension type (see :trac:`23435`)::
+    If all the base classes have a zero ``__dictoffset__``, the dynamic
+    class also has a zero ``__dictoffset__``. This means that the
+    instances of the class don't have a ``__dict__``
+    (see :trac:`23435`)::
 
         sage: dyn = dynamic_class("dyn", (Integer,))
-        sage: from sage.structure.misc import is_extension_type
-        sage: is_extension_type(dyn)
-        True
+        sage: dyn.__dictoffset__
+        0
 
     .. RUBRIC:: Pickling
 
@@ -431,7 +432,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     # NOTE: we need the isinstance(b, type) check to exclude old-style
     # classes.
     if all(isinstance(b, type) and not b.__dictoffset__ for b in bases):
-        methods['__slots__'] = []
+        methods['__slots__'] = ()
 
     metaclass = DynamicMetaclass
     # The metaclass of a class must derive from the metaclasses of its

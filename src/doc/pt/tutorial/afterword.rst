@@ -161,10 +161,10 @@ aos cálculos feitos com o Sage incluindo
 
 ::
 
-    [Sage] William A. Stein et al., Sage Mathematics Software (Version 4.3).
-           The Sage Development Team, 2009, http://www.sagemath.org.
+    [Sage] SageMath, the Sage Mathematics Software System (Version 8.7),
+           The Sage Developers, 2019, https://www.sagemath.org.
 
-na sua bibliografia (substituindo 4.3 pela versão do Sage que você
+na sua bibliografia (substituindo 8.7 pela versão do Sage que você
 está usando). Além disso, procure observar quais componentes do Sage
 você está usando em seus cálculos, por exemplo, PARI, Singular, GAP,
 Maxima, e também site esses sistemas. Se você está em dúvida sobre

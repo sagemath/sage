@@ -21,8 +21,6 @@ from __future__ import absolute_import
 
 from .linear_code import AbstractLinearCode
 from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.categories.homset import Hom
 from .relative_finite_field_extension import RelativeFiniteFieldExtension
 from sage.matrix.constructor import matrix
@@ -82,7 +80,6 @@ class SubfieldSubcode(AbstractLinearCode):
             raise ValueError("original_code must be a linear code")
         if not subfield.is_finite():
             raise ValueError("subfield has to be a finite field")
-        p = subfield.characteristic()
         F = original_code.base_field()
         s = subfield.degree()
         sm = F.degree()
@@ -146,6 +143,12 @@ class SubfieldSubcode(AbstractLinearCode):
         r"""
         Returns the dimension of ``self``.
 
+        EXAMPLES::
+
+            sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'aa').list()[:13], 5)
+            sage: Cs = codes.SubfieldSubcode(C, GF(4, 'a'))
+            sage: Cs.dimension()
+            3
         """
         return self.generator_matrix().nrows()
 
@@ -228,7 +231,6 @@ class SubfieldSubcode(AbstractLinearCode):
             [    0     0     0     0     0     0     0     0     0     1     a     0 a + 1]
         """
         C = self.original_code()
-        Fqm = C.base_field()
         Fq = self.base_field()
         H_original = C.parity_check_matrix()
         n = self.length()

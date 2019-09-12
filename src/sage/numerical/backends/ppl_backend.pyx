@@ -21,7 +21,7 @@ AUTHORS:
 from __future__ import print_function
 
 from sage.numerical.mip import MIPSolverException
-from sage.libs.ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression, Constraint, Generator
+from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression, Constraint, Generator
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from .generic_backend cimport GenericBackend
@@ -179,7 +179,7 @@ cdef class PPLBackend(GenericBackend):
             mip_obj = mip_obj + Linear_Expression(coeff * Variable(i))
         self.mip.set_objective_function(mip_obj)
         self.obj_denominator = denom
-        
+
         # Constraints
         for i in range(len(self.Matrix)):
             l = Linear_Expression(0)
@@ -193,16 +193,59 @@ cdef class PPLBackend(GenericBackend):
                     l *= newdenom
                     coeff *= newdenom
                 l = l + Linear_Expression(coeff * Variable(j))
-            self.mip._add_rational_constraint(l, denom, self.row_lower_bound[i], self.row_upper_bound[i])
+            self._add_rational_constraint(l, denom, self.row_lower_bound[i], self.row_upper_bound[i])
 
         assert len(self.col_lower_bound) == len(self.col_upper_bound)
         for i in range(len(self.col_lower_bound)):
-            self.mip._add_rational_constraint(Variable(i), 1, self.col_lower_bound[i], self.col_upper_bound[i])
+            self._add_rational_constraint(Variable(i), 1, self.col_lower_bound[i], self.col_upper_bound[i])
 
         if self.is_maximize == 1:
             self.mip.set_optimization_mode('maximization')
         else:
             self.mip.set_optimization_mode('minimization')
+
+    def _add_rational_constraint(self, e, denom, lower, upper):
+        """
+        Helper function for adding constraints: add the constraint
+        ``lower <= e/denom <= upper``.
+
+        INPUT:
+
+        - ``e`` -- a linear expression (type ``Linear_Expression``)
+
+        - ``denom`` -- a positive integer
+
+        - ``lower``, ``upper`` -- a rational number or ``None``, where
+          ``None`` means that there is no constraint
+
+        TESTS:
+
+        Create a linear system with only equalities as constraints::
+
+            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: x = p.new_variable(nonnegative=False)
+            sage: n = 40
+            sage: v = random_vector(QQ, n)
+            sage: M = random_matrix(QQ, 2*n, n)
+            sage: for j in range(2*n):  # indirect doctest
+            ....:     lhs = p.sum(M[j,i]*x[i] for i in range(n))
+            ....:     rhs = M.row(j).inner_product(v)
+            ....:     p.add_constraint(lhs == rhs)
+            sage: p.solve()  # long time
+            0
+
+        """
+        if lower == upper:
+            if lower is not None:
+                rhs = Rational(lower * denom)
+                self.mip.add_constraint(e * rhs.denominator() == rhs.numerator())
+        else:
+            if lower is not None:
+                rhs = Rational(lower * denom)
+                self.mip.add_constraint(e * rhs.denominator() >= rhs.numerator())
+            if upper is not None:
+                rhs = Rational(upper * denom)
+                self.mip.add_constraint(e * rhs.denominator() <= rhs.numerator())
 
     cpdef int add_variable(self, lower_bound=0, upper_bound=None, binary=False, continuous=False, integer=False, obj=0, name=None) except -1:
         """
@@ -556,7 +599,7 @@ cdef class PPLBackend(GenericBackend):
         self.row_upper_bound.append(upper_bound)
         self.row_name_var.append(name)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -722,7 +765,7 @@ cdef class PPLBackend(GenericBackend):
             sage: p.get_variable_value(1)
             3/2
         """
-        ans = self.mip.optimal_value()
+        ans = Rational(self.mip.optimal_value())
         return ans / self.obj_denominator + self.obj_constant_term
 
     cpdef get_variable_value(self, int variable):
@@ -751,7 +794,7 @@ cdef class PPLBackend(GenericBackend):
             3/2
         """
         g = self.mip.optimizing_point()
-        return g.coefficient(Variable(variable)) / g.divisor()
+        return Integer(g.coefficient(Variable(variable))) / Integer(g.divisor())
 
     cpdef int ncols(self):
         """
@@ -805,14 +848,14 @@ cdef class PPLBackend(GenericBackend):
         else:
             return 0
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -822,9 +865,9 @@ cdef class PPLBackend(GenericBackend):
             sage: print(p.problem_name())
             There once was a french fry
         """
-        if name == NULL:
+        if name is None:
             return self.name
-        self.name = str(<bytes>name)
+        self.name = name
 
     cpdef row(self, int i):
         """

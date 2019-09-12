@@ -6,20 +6,13 @@ of the period lattice of an elliptic curve, used in computing minimum height
 bounds.
 
 In particular, these are the approximating sets ``S^{(v)}`` in section 3.2 of
-Thotsaphon Thongjunthug's Ph.D. Thesis and paper [TT]_.
+Thotsaphon Thongjunthug's Ph.D. Thesis and paper [Tho2010]_.
 
 AUTHORS:
 
 - Robert Bradshaw (2010): initial version
 
 - John Cremona (2014): added some docstrings and doctests
-
-REFERENCES:
-
-.. [T] \T. Thongjunthug, Computing a lower bound for the canonical
-   height on elliptic curves over number fields, Math. Comp. 79
-   (2010), pages 2431-2449.
-
 """
 
 #*****************************************************************************

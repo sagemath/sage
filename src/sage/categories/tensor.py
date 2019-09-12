@@ -74,7 +74,6 @@ class TensorProductsCategory(CovariantConstructionCategory):
         \mathbf{TensorProducts}(\mathbf{WithBasis}_{\Bold{Q}})
         sage: TestSuite(C).run()
     """
-
     _functor_category = "TensorProducts"
 
     def TensorProducts(self):
@@ -101,3 +100,4 @@ class TensorProductsCategory(CovariantConstructionCategory):
             Integer Ring
         """
         return self.base_category().base()
+

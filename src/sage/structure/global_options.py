@@ -231,7 +231,9 @@ Documentation for options
 
 The documentation for a :class:`GlobalOptions` is automatically generated from
 the supplied options. For example, the generated documentation for the options
-``menu`` defined in :ref:`construction_section` is the following::
+``menu`` defined in :ref:`construction_section` is the following:
+
+.. CODE-BLOCK:: text
 
     Fancy documentation
     -------------------
@@ -297,7 +299,9 @@ If the value of a dispatchable option is set equal to a (user defined) function
 then this function is called instead of a class method.
 
 For example, the options ``MyOptions`` can be used to dispatch the ``_repr_``
-method of the associated class ``MyClass`` as follows::
+method of the associated class ``MyClass`` as follows:
+
+.. CODE-BLOCK:: python
 
     class MyClass(...):
         def _repr_(self):
@@ -317,7 +321,9 @@ and not a method of ``MyClass``. Apart from ``MyOptions``, as it is a method of
 this class, the arguments are the attached class (here ``MyClass``), the prefix
 of the method of ``MyClass`` being dispatched, the option of ``MyOptions``
 which controls the dispatching. All other arguments are passed through to the
-corresponding methods of ``MyClass``. In general, a dispatcher is invoked as::
+corresponding methods of ``MyClass``. In general, a dispatcher is invoked as:
+
+.. CODE-BLOCK:: python
 
     self.options._dispatch(self, dispatch_to, option, *args, **kargs)
 
@@ -334,7 +340,9 @@ customise the default behaviour of this method. See
 The dispatching capabilities of :class:`GlobalOptions` allows options to be
 applied automatically without needing to parse different values of the option
 (the cost is that there must be a method for each value). The dispatching
-capabilities can also be used to make one option control several methods::
+capabilities can also be used to make one option control several methods:
+
+.. CODE-BLOCK:: python
 
     def __le__(self, other):
         return self.options._dispatch(self, '_le_','cmp', other)
@@ -366,7 +374,9 @@ Pickling
 Options classes can only be pickled if they are the options for some standard
 sage class. In this case the class is specified using the arguments to
 :class:`GlobalOptions`. For example
-:meth:`~sage.combinat.partition.Partitions.options` is defined as::
+:meth:`~sage.combinat.partition.Partitions.options` is defined as:
+
+.. CODE-BLOCK:: python
 
      class Partitions(UniqueRepresentation, Parent):
          ...
@@ -887,7 +897,9 @@ class GlobalOptions(object):
         ValueError: p is not a valid value for main in the options for menu
 
     The documentation for the options class is automatically generated from the
-    information which specifies the options::
+    information which specifies the options:
+
+    .. CODE-BLOCK:: text
 
         Fancy documentation
         -------------------
@@ -1680,10 +1692,3 @@ class GlobalOptions(object):
             elif option in self._linked_value:
                 link, linked_opt=self._linked_value[option]
                 link._reset(linked_opt)
-
-
-# Deprecations from trac:18555. July 2016
-from sage.misc.superseded import deprecated_function_alias
-GlobalOptions.default_value=deprecated_function_alias(18555, GlobalOptions._default_value)
-GlobalOptions.dispatch=deprecated_function_alias(18555, GlobalOptions._dispatch)
-GlobalOptions.reset=deprecated_function_alias(18555, GlobalOptions._reset)

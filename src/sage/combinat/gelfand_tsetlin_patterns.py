@@ -34,7 +34,7 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
 from six.moves import range
@@ -138,7 +138,7 @@ class GelfandTsetlinPattern(ClonableArray):
           3  3  3  4
     """
     # Note that the width == height, so len(gt) == len(gt[0]) except
-    #   we don't have to check if it is the emtry GT pattern
+    #   we don't have to check if it is the entry GT pattern
     @staticmethod
     def __classcall_private__(self, gt):
         """
@@ -707,6 +707,37 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         return self.element_class(self, list(gt))
 
     Element = GelfandTsetlinPattern
+
+    def _coerce_map_from_(self, S):
+        """
+        TESTS::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: t == 0
+            False
+            sage: t == GelfandTsetlinPattern([[1]])
+            True
+
+        Check that :trac:`25919` is fixed::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: u = GelfandTsetlinPatterns()[1]
+            sage: v = GelfandTsetlinPatterns(top_row=(1,))[0]
+            sage: t == u
+            True
+            sage: u == t
+            True
+            sage: t == v
+            True
+            sage: v == t
+            True
+            sage: u == v
+            True
+            sage: v == u
+            True
+        """
+        if isinstance(S, GelfandTsetlinPatternsTopRow):
+            return True
 
     def __iter__(self):
         """

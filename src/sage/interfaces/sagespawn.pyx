@@ -145,8 +145,8 @@ class SageSpawn(spawn):
             sage: from sage.interfaces.sagespawn import SageSpawn
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_peek("w")
-            sage: E.read()
-            'hello world\r\n'
+            sage: E.read().decode('ascii')
+            u'hello world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self.buffer = self.before + self.after + self.buffer
@@ -163,8 +163,8 @@ class SageSpawn(spawn):
             sage: from sage.interfaces.sagespawn import SageSpawn
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_upto("w")
-            sage: E.read()
-            'world\r\n'
+            sage: E.read().decode('ascii')
+            u'world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self.buffer = self.after + self.buffer

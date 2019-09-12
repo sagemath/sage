@@ -1015,8 +1015,8 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: cubic = 2*x^3+3*y^3+5*z^3
         sage: EllipticCurve_from_cubic(cubic,[1,1,-1])
         Scheme morphism:
-          From: Projective Plane Curve over Number Field in a with defining polynomial x^2 + 3 defined by 2*x^3 + 3*y^3 + 5*z^3
-          To:   Elliptic Curve defined by y^2 + 1754460/2053*x*y + 5226454388736000/8653002877*y = x^3 + (-652253285700/4214809)*x^2 over Number Field in a with defining polynomial x^2 + 3
+          From: Projective Plane Curve over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I defined by 2*x^3 + 3*y^3 + 5*z^3
+          To:   Elliptic Curve defined by y^2 + 1754460/2053*x*y + 5226454388736000/8653002877*y = x^3 + (-652253285700/4214809)*x^2 over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
           Defn: Defined on coordinates by sending (x : y : z) to
                 (-16424/127575*x^2 - 231989/680400*x*y - 14371/64800*y^2 - 26689/81648*x*z - 10265/27216*y*z - 2053/163296*z^2 : 24496/315*x^2 + 119243/840*x*y + 4837/80*y^2 + 67259/504*x*z + 25507/168*y*z + 5135/1008*z^2 : 8653002877/2099914709760000*x^2 + 8653002877/699971569920000*x*y + 8653002877/933295426560000*y^2 + 8653002877/419982941952000*x*z + 8653002877/279988627968000*y*z + 8653002877/335986353561600*z^2)
 
@@ -1026,7 +1026,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: R.<x,y,z> = K[]
         sage: cubic = x^3+t*y^3+(1+t)*z^3
         sage: EllipticCurve_from_cubic(cubic,[1,1,-1], morphism=False)
-        Elliptic Curve defined by y^2 + ((-236196*t^6-708588*t^5-1180980*t^4-1180980*t^3-708588*t^2-236196*t)/(-1458*t^6-17496*t^5+4374*t^4+29160*t^3+4374*t^2-17496*t-1458))*x*y + ((-459165024*t^14-5969145312*t^13-34207794288*t^12-113872925952*t^11-244304490582*t^10-354331909458*t^9-354331909458*t^8-244304490582*t^7-113872925952*t^6-34207794288*t^5-5969145312*t^4-459165024*t^3)/(-1458*t^14-58320*t^13-841266*t^12-5137992*t^11-11773350*t^10-7709904*t^9+12627738*t^8+25789104*t^7+12627738*t^6-7709904*t^5-11773350*t^4-5137992*t^3-841266*t^2-58320*t-1458))*y = x^3 + ((-118098*t^12-708588*t^11+944784*t^10+11219310*t^9+27871128*t^8+36374184*t^7+27871128*t^6+11219310*t^5+944784*t^4-708588*t^3-118098*t^2)/(-54*t^12-1296*t^11-7452*t^10+6048*t^9+25758*t^8-3888*t^7-38232*t^6-3888*t^5+25758*t^4+6048*t^3-7452*t^2-1296*t-54))*x^2 over Rational function field in t over Rational Field
+        Elliptic Curve defined by y^2 + ((162*t^6+486*t^5+810*t^4+810*t^3+486*t^2+162*t)/(t^6+12*t^5-3*t^4-20*t^3-3*t^2+12*t+1))*x*y + ((314928*t^14+4094064*t^13+23462136*t^12+78102144*t^11+167561379*t^10+243026001*t^9+243026001*t^8+167561379*t^7+78102144*t^6+23462136*t^5+4094064*t^4+314928*t^3)/(t^14+40*t^13+577*t^12+3524*t^11+8075*t^10+5288*t^9-8661*t^8-17688*t^7-8661*t^6+5288*t^5+8075*t^4+3524*t^3+577*t^2+40*t+1))*y = x^3 + ((2187*t^12+13122*t^11-17496*t^10-207765*t^9-516132*t^8-673596*t^7-516132*t^6-207765*t^5-17496*t^4+13122*t^3+2187*t^2)/(t^12+24*t^11+138*t^10-112*t^9-477*t^8+72*t^7+708*t^6+72*t^5-477*t^4-112*t^3+138*t^2+24*t+1))*x^2 over Rational function field in t over Rational Field
 
 
     TESTS:
@@ -1367,43 +1367,20 @@ def are_projectively_equivalent(P, Q, base_ring):
     return matrix(base_ring, [P, Q]).rank() < 2
 
 
-def EllipticCurve_from_plane_curve(C, P):
-    """
-    Deprecated way to construct an elliptic curve.
-
-    Use :meth:`~sage.schemes.elliptic_curves.jacobian.Jacobian` instead.
-
-    EXAMPLES::
-
-        sage: R.<x,y,z> = QQ[]
-        sage: C = Curve(x^3+y^3+z^3)
-        sage: P = C(1,-1,0)
-        sage: E = EllipticCurve_from_plane_curve(C,P); E  # long time (3s on sage.math, 2013)
-        doctest:...: DeprecationWarning: use Jacobian(C) instead
-        See http://trac.sagemath.org/3416 for details.
-        Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(3416, 'use Jacobian(C) instead')
-    # Note: this function never used the rational point
-    from sage.schemes.elliptic_curves.jacobian import Jacobian
-    return Jacobian(C)
-
-
 def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False):
     r"""
-    Returns a sorted list of all elliptic curves defined over `Q`
+    Return a sorted list of all elliptic curves defined over `Q`
     with good reduction outside the set `S` of primes.
 
     INPUT:
 
-    -  ``S`` - list of primes (default: empty list).
+    -  ``S`` -- list of primes (default: empty list)
 
-    - ``proof`` - True/False (default True): the MW basis for
-      auxiliary curves will be computed with this proof flag.
+    - ``proof`` -- boolean (default ``True``): the MW basis for
+      auxiliary curves will be computed with this proof flag
 
-    - ``verbose`` - True/False (default False): if True, some details
-      of the computation will be output.
+    - ``verbose`` -- boolean (default ``False``): if ``True``, some details
+      of the computation will be output
 
     .. NOTE::
 
@@ -1414,8 +1391,8 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
         The value of this flag is passed to the function which
         computes generators of various auxiliary elliptic curves, in
-        order to find their S-integral points.  Set to False if the
-        default (True) causes warning messages, but note that you can
+        order to find their S-integral points.  Set to ``False`` if the
+        default (``True``) causes warning messages, but note that you can
         then not rely on the set of curves returned being
         complete.
 
@@ -1431,7 +1408,7 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
         Elliptic Curve defined by y^2 = x^3 - x^2 - 13*x + 21 over Rational Field]
         sage: len(elist)
         24
-        sage: ', '.join([e.label() for e in elist])
+        sage: ', '.join(e.label() for e in elist)
         '32a1, 32a2, 32a3, 32a4, 64a1, 64a2, 64a3, 64a4, 128a1, 128a2, 128b1, 128b2, 128c1, 128c2, 128d1, 128d2, 256a1, 256a2, 256b1, 256b2, 256c1, 256c2, 256d1, 256d2'
 
     Without ``Proof=False``, this example gives two warnings::
@@ -1439,58 +1416,59 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
         sage: elist = EllipticCurves_with_good_reduction_outside_S([11],proof=False)  # long time (14s on sage.math, 2011)
         sage: len(elist)  # long time
         12
-        sage: ', '.join([e.label() for e in elist])  # long time
+        sage: ', '.join(e.label() for e in elist)  # long time
         '11a1, 11a2, 11a3, 121a1, 121a2, 121b1, 121b2, 121c1, 121c2, 121d1, 121d2, 121d3'
 
         sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3]) # long time (26s on sage.math, 2011)
         sage: len(elist) # long time
         752
-        sage: max([e.conductor() for e in elist]) # long time
+        sage: conds = sorted(set([e.conductor() for e in elist]))  # long time
+        sage: max(conds) # long time
         62208
-        sage: [N.factor() for N in Set([e.conductor() for e in elist])] # long time
-        [2^7,
-        2^8,
-        2^3 * 3^4,
-        2^2 * 3^3,
-        2^8 * 3^4,
-        2^4 * 3^4,
-        2^3 * 3,
-        2^7 * 3,
-        2^3 * 3^5,
-        3^3,
-        2^8 * 3,
-        2^5 * 3^4,
-        2^4 * 3,
-        2 * 3^4,
-        2^2 * 3^2,
-        2^6 * 3^4,
-        2^6,
-        2^7 * 3^2,
-        2^4 * 3^5,
-        2^4 * 3^3,
-        2 * 3^3,
-        2^6 * 3^3,
-        2^6 * 3,
-        2^5,
-        2^2 * 3^4,
-        2^3 * 3^2,
-        2^5 * 3,
-        2^7 * 3^4,
-        2^2 * 3^5,
-        2^8 * 3^2,
-        2^5 * 3^2,
-        2^7 * 3^5,
-        2^8 * 3^5,
-        2^3 * 3^3,
-        2^8 * 3^3,
-        2^5 * 3^5,
-        2^4 * 3^2,
-        2 * 3^5,
-        2^5 * 3^3,
-        2^6 * 3^5,
-        2^7 * 3^3,
-        3^5,
-        2^6 * 3^2]
+        sage: [N.factor() for N in conds] # long time
+        [2^3 * 3,
+         3^3,
+         2^5,
+         2^2 * 3^2,
+         2^4 * 3,
+         2 * 3^3,
+         2^6,
+         2^3 * 3^2,
+         2^5 * 3,
+         2^2 * 3^3,
+         2^7,
+         2^4 * 3^2,
+         2 * 3^4,
+         2^6 * 3,
+         2^3 * 3^3,
+         3^5,
+         2^8,
+         2^5 * 3^2,
+         2^2 * 3^4,
+         2^7 * 3,
+         2^4 * 3^3,
+         2 * 3^5,
+         2^6 * 3^2,
+         2^3 * 3^4,
+         2^8 * 3,
+         2^5 * 3^3,
+         2^2 * 3^5,
+         2^7 * 3^2,
+         2^4 * 3^4,
+         2^6 * 3^3,
+         2^3 * 3^5,
+         2^8 * 3^2,
+         2^5 * 3^4,
+         2^7 * 3^3,
+         2^4 * 3^5,
+         2^6 * 3^4,
+         2^8 * 3^3,
+         2^5 * 3^5,
+         2^7 * 3^4,
+         2^6 * 3^5,
+         2^8 * 3^4,
+         2^7 * 3^5,
+         2^8 * 3^5]
     """
-    from .ell_egros import (egros_from_jlist, egros_get_j)
+    from .ell_egros import egros_from_jlist, egros_get_j
     return egros_from_jlist(egros_get_j(S, proof=proof, verbose=verbose), S)

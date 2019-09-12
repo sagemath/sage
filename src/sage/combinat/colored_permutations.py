@@ -626,6 +626,19 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         from sage.groups.matrix_gps.finitely_generated import MatrixGroup
         return MatrixGroup([g.to_matrix() for g in self.gens()])
 
+    def as_permutation_group(self):
+        r"""
+        Return the permutation group corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: C = ColoredPermutations(4, 3)
+            sage: C.as_permutation_group()
+            Complex reflection group G(4, 1, 3) as a permutation group
+        """
+        from sage.groups.perm_gps.permgroup_named import ComplexReflectionGroup
+        return ComplexReflectionGroup(self._m, 1, self._n)
+
     def _element_constructor_(self, x):
         """
         Construct an element of ``self`` from ``x``.
@@ -1069,8 +1082,7 @@ class SignedPermutations(ColoredPermutations):
     This is a finite Coxeter group of type `B_n`::
 
         sage: S.canonical_representation()
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 2 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
         [1 3 2 2]
         [3 1 3 2]
         [2 3 1 4]

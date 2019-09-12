@@ -114,7 +114,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         sage: A = Modules(QQ).WithBasis().Filtered().example()
         sage: grA = A.graded_algebra()
         sage: grA.category()
-        Category of graded modules with basis over Rational Field
+        Category of graded vector spaces with basis over Rational Field
         sage: x = A.basis()[Partition([3,2,1])]
         sage: grA(x)
         Bbar[[3, 2, 1]]
@@ -281,7 +281,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             sage: A = Algebras(QQ).WithBasis().Filtered().example()
             sage: grA = A.graded_algebra()
             sage: grA.algebra_generators()
-            Finite family {'y': bar(U['y']), 'x': bar(U['x']), 'z': bar(U['z'])}
+            Finite family {'x': bar(U['x']), 'y': bar(U['y']), 'z': bar(U['z'])}
         """
         G = self._A.algebra_generators()
         return Family(G.keys(), lambda x: self(G[x]), name="generator")

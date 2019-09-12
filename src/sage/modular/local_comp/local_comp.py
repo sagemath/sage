@@ -623,7 +623,7 @@ class PrimitiveSupercuspidal(LocalComponentBase):
             sage: chars[0].base_ring()
             Number Field in d with defining polynomial x^2 + x + 1
 
-        These characters are interchanged by the Frobenius automorphism of `\mathbb{F}_{25}`::
+        These characters are interchanged by the Frobenius automorphism of `\GF{25}`::
 
             sage: chars[0] == chars[1]**5
             True

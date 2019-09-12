@@ -26,10 +26,10 @@ def var(*args, **kwds):
 
     .. NOTE::
 
-       The new variable is both returned and automatically injected
-       into the global namespace. If you need a symbolic variable in
-       library code, you must use either ``SR.var()``
-       or ``SR.symbol()``.
+        The new variable is both returned and automatically injected
+        into the global namespace. If you need a symbolic variable in
+        library code, you must use either ``SR.var()``
+        or ``SR.symbol()``.
 
     OUTPUT:
 
@@ -115,34 +115,12 @@ def var(*args, **kwds):
         <type 'sage.symbolic.expression.Expression'>
         sage: parent(theta)
         Symbolic Ring
-
-    TESTS::
-
-        sage: var('q',ns=False)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: The new (Pynac) symbolics are now the only symbolics; please do not use keyword `ns` any longer.
-        sage: q
-        Traceback (most recent call last):
-        ...
-        NameError: name 'q' is not defined
-        sage: var('q',ns=1)
-        doctest:...: DeprecationWarning: The new (Pynac) symbolics are now the only symbolics; please do not use keyword 'ns' any longer.
-        See http://trac.sagemath.org/6559 for details.
-        q
     """
-    if len(args)==1:
+    if len(args) == 1:
         name = args[0]
     else:
         name = args
     G = globals()  # this is the reason the code must be in Cython.
-    if 'ns' in kwds:
-        if kwds['ns']:
-            from sage.misc.superseded import deprecation
-            deprecation(6559, "The new (Pynac) symbolics are now the only symbolics; please do not use keyword 'ns' any longer.")
-        else:
-            raise NotImplementedError("The new (Pynac) symbolics are now the only symbolics; please do not use keyword `ns` any longer.")
-        kwds.pop('ns')
     v = SR.var(name, **kwds)
     if isinstance(v, tuple):
         for x in v:
@@ -151,14 +129,13 @@ def var(*args, **kwds):
         G[repr(v)] = v
     return v
 
-def function(s, *args, **kwds):
+
+def function(s, **kwds):
     r"""
     Create a formal symbolic function with the name *s*.
 
     INPUT:
 
-    - ``args`` - arguments to the function, if specified returns the new
-      function evaluated at the given arguments (deprecated as of :trac:`17447`)
     - ``nargs=0`` - number of arguments the function accepts, defaults to
       variable number of arguments, or 0
     - ``latex_name`` - name used when printing in latex mode
@@ -191,10 +168,10 @@ def function(s, *args, **kwds):
 
     .. NOTE::
 
-       The new function is both returned and automatically injected
-       into the global namespace.  If you use this function in library
-       code, it is better to use sage.symbolic.function_factory.function,
-       since it won't touch the global namespace.
+        The new function is both returned and automatically injected
+        into the global namespace.  If you use this function in library
+        code, it is better to use sage.symbolic.function_factory.function,
+        since it will not touch the global namespace.
 
     EXAMPLES:
 
@@ -290,13 +267,17 @@ def function(s, *args, **kwds):
         y x + y
         (x + y)*y
 
-        sage: def expand(self, *args, **kwds): print("{} {}".format(args, kwds)); return sum(args[0]^i for i in range(kwds['order']))
+        sage: from pprint import pformat
+        sage: def expand(self, *args, **kwds):
+        ....:     print("{} {}".format(args, pformat(kwds)))
+        ....:     return sum(args[0]^i for i in range(kwds['order']))
         sage: foo = function("foo", nargs=1, series_func=expand)
         sage: foo(y).series(y, 5)
-        (y,) {'var': y, 'options': 0, 'at': 0, 'order': 5}
+        (y,) {'at': 0, 'options': 0, 'order': 5, 'var': y}
         y^4 + y^3 + y^2 + y + 1
 
-        sage: def my_print(self, *args): return "my args are: " + ', '.join(map(repr, args))
+        sage: def my_print(self, *args):
+        ....:     return "my args are: " + ', '.join(map(repr, args))
         sage: foo = function('t', nargs=2, print_func=my_print)
         sage: foo(x,y^z)
         my args are: x, y^z
@@ -336,7 +317,7 @@ def function(s, *args, **kwds):
         sage: 2*f
         Traceback (most recent call last):
         ...
-        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.symbolic.function_factory.NewSymbolicFunction'>'
+        TypeError: unsupported operand parent(s) for *: 'Integer Ring' and '<class 'sage.symbolic.function_factory...NewSymbolicFunction'>'
 
     You now need to evaluate the function in order to do the arithmetic::
 
@@ -368,11 +349,6 @@ def function(s, *args, **kwds):
         sage: B
         B   
     """
-    if args:
-        from sage.misc.superseded import deprecation
-        deprecation(17447, "Calling function('f',x) is deprecated. Use function('f')(x) instead.")
-        return function(s, **kwds)(*args)
-
     G = globals()  # this is the reason the code must be in Cython.
     v = new_function(s, **kwds)
     if isinstance(v, tuple):
@@ -386,8 +362,10 @@ def function(s, *args, **kwds):
 def clear_vars():
     """
     Delete all 1-letter symbolic variables that are predefined at
-    startup of Sage.  Any one-letter global variables that are not
-    symbolic variables are not cleared.
+    startup of Sage.
+
+    Any one-letter global variables that are not symbolic variables
+    are not cleared.
 
     EXAMPLES::
 

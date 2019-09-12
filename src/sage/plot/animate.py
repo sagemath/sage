@@ -44,10 +44,8 @@ Animate using FFmpeg_ instead of ImageMagick::
 Animate as an APNG_::
 
     sage: a.apng()  # long time
-    doctest:...: DeprecationWarning: use tmp_filename instead
-    See http://trac.sagemath.org/17234 for details.
 
-An animated :class:`sage.plot.graphics.GraphicsArray` of rotating ellipses::
+An animated :class:`sage.plot.multigraphics.GraphicsArray` of rotating ellipses::
 
     sage: E = animate((graphics_array([[ellipse((0,0),a,b,angle=t,xmin=-3,xmax=3)+circle((0,0),3,color='blue') for a in range(1,3)] for b in range(2,4)]) for t in sxrange(0,pi/4,.15)))
     sage: str(E)    # animations produced from a generator do not have a known length
@@ -123,7 +121,7 @@ import six
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
-from sage.misc.temporary_file import tmp_dir, tmp_filename, graphics_filename
+from sage.misc.temporary_file import tmp_dir, tmp_filename
 from . import plot
 import sage.misc.misc
 import sage.misc.viewer
@@ -477,10 +475,10 @@ class Animation(WithEqualityById, SageObject):
 
     def graphics_array(self, ncols=3):
         r"""
-        Return a :class:`sage.plot.graphics.GraphicsArray` with plots of the
+        Return a :class:`sage.plot.multigraphics.GraphicsArray` with plots of the
         frames of this animation, using the given number of columns.
         The frames must be acceptable inputs for
-        :class:`sage.plot.graphics.GraphicsArray`.
+        :class:`sage.plot.multigraphics.GraphicsArray`.
 
 
         EXAMPLES::
@@ -608,7 +606,7 @@ www.ffmpeg.org, or use 'convert' to produce gifs instead."""
                 raise OSError(msg)
         else:
             if not savefile:
-                savefile = graphics_filename(ext='.gif')
+                savefile = tmp_filename(ext='.gif')
             if not savefile.endswith('.gif'):
                 savefile += '.gif'
             savefile = os.path.abspath(savefile)
@@ -879,8 +877,6 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
         TESTS::
 
             sage: a.ffmpeg(output_format='gif',delay=30,iterations=5)     # optional -- ffmpeg
-            doctest:...: DeprecationWarning: use tmp_filename instead
-            See http://trac.sagemath.org/17234 for details.
         """
         if not self._have_ffmpeg():
             msg = """Error: ffmpeg does not appear to be installed. Saving an animation to
@@ -894,7 +890,7 @@ please install it and try again."""
                 else:
                     if output_format[0] != '.':
                         output_format = '.'+output_format
-                savefile = graphics_filename(ext=output_format)
+                savefile = tmp_filename(ext=output_format)
             else:
                 if output_format is None:
                     suffix = os.path.splitext(savefile)[1]
@@ -999,7 +995,7 @@ please install it and try again."""
         """
         pngdir = self.png()
         if savefile is None:
-            savefile = graphics_filename('.png')
+            savefile = tmp_filename('.png')
         with open(savefile, "wb") as out:
             apng = APngAssembler(
                 out, len(self),

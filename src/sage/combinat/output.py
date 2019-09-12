@@ -253,7 +253,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     This function creates latex code for a "skew composition" ``array``.
     That is, for a two dimensional array in which each row can begin with
     an arbitrary number ``None``'s and the remaining entries could, in
-    principe, be anything but probably should be strings or integers of similar
+    principle, be anything but probably should be strings or integers of similar
     width. A row consisting completely of ``None``'s is allowed.
 
     INPUT:
@@ -275,6 +275,13 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
         &\\
         \lr{5}&\lr{6}&\lr{7}&\lr{8}\\
         \end{array}$}
+
+    TESTS::
+
+        sage: sage.combinat.output.tex_from_skew_array([(1,2,3), (2,3,4)])
+        '\\raisebox{-.6ex}{$\\begin{array}[b]{*{3}c}\\\\\n\\lr{1}&\\lr{2}&\\lr{3}\\\\\n\\lr{2}&\\lr{3}&\\lr{4}\\\\\n\\end{array}$}'
+        sage: sage.combinat.output.tex_from_skew_array([((1,2,),)])
+        '\\raisebox{-.6ex}{$\\begin{array}[b]{*{1}c}\\\\\n\\lr{(1, 2)}\\\\\n\\end{array}$}'
     """
     # first identify where the None's appear in ``array`` and define a
     # function end_line which puts in the required \cline's.
@@ -299,7 +306,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     tex=r'\raisebox{-.6ex}{$\begin{array}[%s]{*{%s}c}'%(align,max(map(len,array)))
     tex+=end_line(0)+'\n'
     for r in range(len(array)):
-        tex+='&'.join('' if c is None else r'\lr{%s}'%c for c in array[r])
+        tex+='&'.join('' if c is None else r'\lr{%s}'%(c,) for c in array[r])
         tex+=end_line(r+1)+'\n'
     return tex+r'\end{array}$}'
 

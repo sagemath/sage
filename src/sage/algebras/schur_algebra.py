@@ -626,7 +626,7 @@ def GL_irreducible_character(n, mu, KK):
     # recording the list
     # of semistandard tableaux words with that content
 
-    # graded_basis will consist of the a corresponding basis element
+    # graded_basis will consist of the corresponding basis element
     graded_basis = []
     JJ = []
     for i in range(len(contents)):

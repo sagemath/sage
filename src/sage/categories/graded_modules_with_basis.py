@@ -50,7 +50,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
                 sage: E.<a,b> = ExteriorAlgebra(QQ)
                 sage: E.degree_negation((1 + a) * (1 + b))
-                a^b - a - b + 1
+                a*b - a - b + 1
                 sage: E.degree_negation(E.zero())
                 0
 
@@ -84,7 +84,7 @@ class GradedModulesWithBasis(GradedModulesCategory):
 
                 sage: E.<a,b> = ExteriorAlgebra(QQ)
                 sage: ((1 + a) * (1 + b)).degree_negation()
-                a^b - a - b + 1
+                a*b - a - b + 1
                 sage: E.zero().degree_negation()
                 0
 

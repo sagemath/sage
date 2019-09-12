@@ -1,4 +1,4 @@
-$(PYTHON) cython pari | pip cysignals
+$(PYTHON) cython pari cysignals | pip
 
 ----------
 All lines of this file are ignored except the first.

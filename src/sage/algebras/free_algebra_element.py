@@ -177,7 +177,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
                 result += c*m(x)
 
         if result is None:
-            return self.parent()(0)
+            return self.parent().zero()
         return result
 
     def _mul_(self, y):

@@ -22,7 +22,7 @@ cannot.
 
 The toric morphisms are perhaps the most mysterious at the
 beginning. Let us quickly review their definition (See Definition
-3.3.3 of [CLS]_). Let `\Sigma_1` be a fan in `N_{1,\RR}` and `\Sigma_2` be a
+3.3.3 of [CLS2011]_). Let `\Sigma_1` be a fan in `N_{1,\RR}` and `\Sigma_2` be a
 fan in `N_{2,\RR}`. A morphism `\phi: X_{\Sigma_1} \to X_{\Sigma_2}`
 of the associated toric varieties is toric if `\phi` maps the maximal
 torus `T_{N_1} \subseteq X_{\Sigma_1}` into `T_{N_2} \subseteq
@@ -135,7 +135,7 @@ using homogeneous polynomials. Consider the blowup `O_{\mathbb{P}^1}(2)
 
 If we denote the homogeneous coordinates of `O_{\mathbb{P}^1}(2)` by
 `x`, `t`, `y` corresponding to the rays `(1,2)`, `(1,1)`, and `(1,0)`
-then the blow-up map is [BB]_:
+then the blow-up map is [BB2013]_:
 
 .. MATH::
 
@@ -346,13 +346,6 @@ fan::
     None connected components over (1, 2), each with 0 irreducible components.
     None connected components over (0, 2), each with 0 irreducible components.
     1 connected components over (0, 1), each with 2 irreducible components.
-
-REFERENCES:
-
-.. [BB]
-    Gavin Brown, Jaroslaw Buczynski:
-    *Maps of toric varieties in Cox coordinates*,
-    :arxiv:`1004.4924`
 """
 
 #*****************************************************************************

@@ -47,10 +47,14 @@ from sage.rings.integer cimport Integer
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
 
-
 cdef class FiniteField(Field):
     """
     Abstract base class for finite fields.
+
+    TESTS::
+
+        sage: GF(997).is_finite()
+        True
     """
     def __init__(self, base, names, normalize, category=None):
         """
@@ -763,17 +767,6 @@ cdef class FiniteField(Field):
         """
         return True
 
-    def is_finite(self):
-        """
-        Return ``True`` since a finite field is finite.
-
-        EXAMPLES::
-
-            sage: GF(997).is_finite()
-            True
-        """
-        return True
-
     def order(self):
         """
         Return the order of this finite field.
@@ -1284,7 +1277,7 @@ cdef class FiniteField(Field):
             sage: K.<a> = Qq(49); k = K.residue_field()
             sage: k.convert_map_from(K)
             Reduction morphism:
-              From: Unramified Extension in a defined by x^2 + 6*x + 3 with capped relative precision 20 over 7-adic Field
+              From: 7-adic Unramified Extension Field in a defined by x^2 + 6*x + 3
               To:   Finite Field in a0 of size 7^2
 
         Check that :trac:`8240 is resolved::
@@ -1292,7 +1285,7 @@ cdef class FiniteField(Field):
             sage: R.<a> = Zq(81); k = R.residue_field()
             sage: k.convert_map_from(R)
             Reduction morphism:
-              From: Unramified Extension in a defined by x^4 + 2*x^3 + 2 with capped relative precision 20 over 3-adic Ring
+              From: 3-adic Unramified Extension Ring in a defined by x^4 + 2*x^3 + 2
               To:   Finite Field in a0 of size 3^4
         """
         from sage.rings.padics.padic_generic import pAdicGeneric, ResidueReductionMap
@@ -1413,7 +1406,7 @@ cdef class FiniteField(Field):
                 if modulus.change_ring(self).is_irreducible():
                     E = GF(self.characteristic()**(modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:
-                    E = Field.extension(self, modulus, name=name, embedding=embedding)
+                    E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
         elif isinstance(modulus, (int, Integer)):
             E = GF(self.order()**modulus, name=name, **kwds)
             if E is self:
@@ -1430,7 +1423,7 @@ cdef class FiniteField(Field):
                 except AssertionError: # coercion already exists
                     pass
         else:
-            E = Field.extension(self, modulus, name=name, embedding=embedding)
+            E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
         if map:
             return (E, E.coerce_map_from(self))
         else:
@@ -1545,7 +1538,8 @@ cdef class FiniteField(Field):
         any two algebraic closures constructed using the algorithm.
 
         This non-uniqueness problem can in principle be solved by
-        using *Conway polynomials*; see for example [CP]_.  These have
+        using *Conway polynomials*; see for example
+        :wikipedia:`Conway_polynomial_(finite_fields)`. These have
         the drawback that computing them takes a long time.  Therefore
         Sage implements a variant called *pseudo-Conway polynomials*,
         which are easier to compute but do not determine an algebraic
@@ -1587,16 +1581,10 @@ cdef class FiniteField(Field):
 
             This is currently only implemented for prime fields.
 
-        REFERENCE:
-
-        .. [CP] Wikipedia entry on Conway polynomials,
-           :wikipedia:`Conway_polynomial_(finite_fields)`
-
         TESTS::
 
             sage: GF(5).algebraic_closure() is GF(5).algebraic_closure()
             True
-
         """
         from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
         return AlgebraicClosureFiniteField(self, name, **kwds)
@@ -1606,7 +1594,7 @@ cdef class FiniteField(Field):
         """
         Return ``True`` if self is defined by a Conway polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: GF(5^3, 'a').is_conway()
             True
@@ -1694,7 +1682,7 @@ cdef class FiniteField(Field):
         ALGORITHM:
 
         The algorithm used to calculate the dual basis comes from pages
-        110--111 of [FFCSE1987]_.
+        110--111 of [McE1987]_.
 
         Let `e = \{e_0, e_1, ..., e_{n-1}\}` be a basis of `\GF{p^n}` as a
         vector space over `\GF{p}` and `d = \{d_0, d_1, ..., d_{n-1}\}` be the
@@ -1761,11 +1749,6 @@ cdef class FiniteField(Field):
             Traceback (most recent call last):
             ...
             ValueError: value of 'basis' keyword is not a basis
-
-        REFERENCES:
-
-        .. [FFCSE1987] Robert J. McEliece. Finite Fields for Computer
-           Scientists and Engineers. Kluwer Academic Publishers, 1987.
 
         AUTHOR:
 

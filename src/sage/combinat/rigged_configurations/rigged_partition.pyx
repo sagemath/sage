@@ -143,7 +143,7 @@ cdef class RiggedPartition(SageObject):
         ret_str = ""
         vac_num_width = max(len(str(vac_num)) for vac_num in self.vacancy_numbers)
         for i, val in itr:
-            ret_str += ("{:>" + str(vac_num_width) + "}").format(self.vacancy_numbers[i])
+            ret_str += ("{:>" + str(vac_num_width) + "}").format(str(self.vacancy_numbers[i]))
             ret_str += "[ ]"*val
             ret_str += str(self.rigging[i])
             ret_str += "\n"

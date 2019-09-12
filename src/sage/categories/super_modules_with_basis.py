@@ -20,12 +20,13 @@ class SuperModulesWithBasis(SuperModulesCategory):
 
     EXAMPLES::
 
-        sage: C = GradedModulesWithBasis(ZZ); C
-        Category of graded modules with basis over Integer Ring
+        sage: C = GradedModulesWithBasis(QQ); C
+        Category of graded vector spaces with basis over Rational Field
         sage: sorted(C.super_categories(), key=str)
-        [Category of filtered modules with basis over Integer Ring,
-         Category of graded modules over Integer Ring]
-        sage: C is ModulesWithBasis(ZZ).Graded()
+        [Category of filtered vector spaces with basis over Rational Field,
+         Category of graded modules with basis over Rational Field,
+         Category of graded vector spaces over Rational Field]
+        sage: C is ModulesWithBasis(QQ).Graded()
         True
 
     TESTS::

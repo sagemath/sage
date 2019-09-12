@@ -64,8 +64,6 @@ EXAMPLES::
 """
 from six import iteritems
 
-from functools import reduce
-
 from sage.homology.simplicial_complex import SimplicialComplex
 from sage.structure.unique_representation import UniqueRepresentation
 # Below we define a function Simplex to construct a simplex as a
@@ -74,7 +72,6 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.homology.simplicial_complex import Simplex as TrueSimplex
 from sage.sets.set import Set
 from sage.misc.functional import is_even
-from sage.misc.misc import union
 from sage.combinat.subset import Subsets
 import sage.misc.prandom as random
 
@@ -174,10 +171,11 @@ def matching(A, B):
     for v in A:
         for w in B:
             for M in matching(set(A).difference([v]), set(B).difference([w])):
-                new = M.union([(v,w)])
+                new = M.union([(v, w)])
                 if new not in answer:
                     answer.append(new)
     return answer
+
 
 class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
     """
@@ -239,12 +237,10 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
                     if not isinstance(maximal_faces, (list, tuple, Simplex)):
                         # Convert it into a list (in case it is an iterable)
                         maximal_faces = list(maximal_faces)
-                    if len(maximal_faces) != 0:
-                        vertex_set = reduce(union, maximal_faces)
             if C is not None:
                 maximal_faces = C.facets()
             # Now convert maximal_faces to a tuple of tuples, so that it is hashable.
-            maximal_faces = tuple([tuple(_) for _ in maximal_faces])
+            maximal_faces = tuple(tuple(mf) for mf in maximal_faces)
         return super(UniqueSimplicialComplex, self).__classcall__(self, maximal_faces,
                                                                   name=name,
                                                                   **kwds)
@@ -1393,8 +1389,7 @@ def RandomTwoSphere(n):
     EXAMPLES::
 
         sage: G = simplicial_complexes.RandomTwoSphere(6); G
-        Simplicial complex with vertex set (0, 1, 2, 3, 'a', 'b')
-        and 8 facets
+        Simplicial complex with vertex set (0, 1, 2, 3, 4, 5) and 8 facets
         sage: G.homology()
         {0: 0, 1: 0, 2: Z}
         sage: G.is_pure()
@@ -1441,14 +1436,14 @@ def ShiftedComplex(generators):
     EXAMPLES::
 
         sage: X = simplicial_complexes.ShiftedComplex([ Simplex([1,6]), (2,4), [8] ])
-        sage: X.facets()
-        {(2, 4), (7,), (1, 2), (1, 5), (1, 4), (8,), (2, 3), (1, 6), (1, 3)}
+        sage: sorted(X.facets())
+        [(1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 3), (2, 4), (7,), (8,)]
         sage: X = simplicial_complexes.ShiftedComplex([ [2,3,5] ])
-        sage: X.facets()
-        {(1, 3, 4), (1, 3, 5), (2, 3, 5), (1, 2, 3), (2, 3, 4), (1, 2, 5), (1, 2, 4)}
+        sage: sorted(X.facets())
+        [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (2, 3, 4), (2, 3, 5)]
         sage: X = simplicial_complexes.ShiftedComplex([ [1,3,5], [2,6] ])
-        sage: X.facets()
-        {(1, 3, 4), (1, 3, 5), (1, 6), (2, 6), (1, 2, 3), (1, 2, 5), (1, 2, 4)}
+        sage: sorted(X.facets())
+        [(1, 2, 3), (1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5), (1, 6), (2, 6)]
     """
     from sage.combinat.partition import Partitions
     Facets = []

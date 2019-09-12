@@ -667,7 +667,7 @@ def SL2R_to_SO21(A):
                 Integer(1)/Integer(2)*b**2 + Integer(1)/Integer(2)*c**2 +
         Integer(1)/Integer(2)*d**2
     ]
-    B = matrix(3, [real(c) for c in components])
+    B = matrix(3, [real(comp) for comp in components])
 
     #B = B.apply_map(attrcall('real'))
     if A.det() > 0:
@@ -676,6 +676,7 @@ def SL2R_to_SO21(A):
         # Orientation-reversing isometries swap the nappes of
         #  the lightcone.  This fixes that issue.
         return -B
+
 
 def SO21_to_SL2R(M):
     r"""

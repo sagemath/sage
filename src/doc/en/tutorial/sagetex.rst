@@ -61,7 +61,9 @@ To see how SageTeX works, follow the directions for installing SageTeX (in
     \end{document}
 
 Run LaTeX on ``st_example.tex`` as usual. Note that LaTeX will have some
-complaints, which will include::
+complaints, which will include:
+
+.. CODE-BLOCK:: text
 
     Package sagetex Warning: Graphics file
     sage-plots-for-st_example.tex/plot-0.eps on page 1 does not exist. Plot
@@ -138,9 +140,9 @@ ways to accomplish this.
 - The second way is to use the ``TEXINPUTS`` environment variable. If
   you are using the bash shell, you can do
 
-  ::
+  .. CODE-BLOCK:: shell-session
 
-      export TEXINPUTS="SAGE_ROOT/local/share/texmf//:"
+      $ export TEXINPUTS="SAGE_ROOT/local/share/texmf//:"
 
   where ``SAGE_ROOT`` is the location of your Sage installation. Note
   that the double slash and colon at the end of that line are important.
@@ -163,18 +165,20 @@ ways to accomplish this.
   copy that file into a convenient place in your home directory. In most
   TeX distributions, the ``texmf`` directory in your home directory is
   automatically searched for packages. To find out exactly what this
-  directory is, do the following on the command line::
+  directory is, do the following on the command line:
 
-      kpsewhich -var-value=TEXMFHOME
+  .. CODE-BLOCK:: shell-session
+
+      $ kpsewhich -var-value=TEXMFHOME
 
   which will print out a directory, such as ``/home/drake/texmf`` or
   ``/Users/drake/Library/texmf``. Copy the ``tex/`` directory from
   ``SAGE_ROOT/local/share/texmf/`` into your home ``texmf`` directory
   with a command like
 
-  ::
+  .. CODE-BLOCK:: shell-session
 
-      cp -R SAGE_ROOT/local/share/texmf/tex TEXMFHOME
+      $ cp -R SAGE_ROOT/local/share/texmf/tex TEXMFHOME
 
   where ``SAGE_ROOT`` is, as usual, replaced with the location of your
   Sage installation and ``TEXMFHOME`` is the result of the
@@ -191,18 +195,18 @@ ways to accomplish this.
   TeX directory. Instead of the directory ``TEXMFHOME``, probably the
   best choice is to use the result of
 
-  ::
+  .. CODE-BLOCK:: shell-session
 
-      kpsewhich -var-value=TEXMFLOCAL
+      $ kpsewhich -var-value=TEXMFLOCAL
 
   which will likely produce something like ``/usr/local/share/texmf``.
   Copy the ``tex`` directory as above into the ``TEXMFLOCAL``
   directory. Now you need to update TeX's database of packages, which
   you can do simply by running
 
-  ::
+  .. CODE-BLOCK:: shell-session
 
-      texhash TEXMFLOCAL
+      $ texhash TEXMFLOCAL
 
   as root, replacing ``TEXMFLOCAL`` appropriately. Now all users of your
   system will have access to the LaTeX package, and if they can also run

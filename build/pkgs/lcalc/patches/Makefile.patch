@@ -1,5 +1,15 @@
+Notes on changes:
+Default to using pari
+Sanitize compiler settings and don't set CC as a c++ compiler for everything
+Sanitize compiler flags and use standard one
+Sanitize default compile rules
+Ad hock support for proper extension on windows and OS X
+Sanitize calls to make
+Remove the use of "PARI_LOCATION*" variables. Everything is in standard location and 
+patched to be found iin standard location.
+
 diff --git a/src/Makefile b/src/Makefile
-index 84e4e88..e807574 100644
+index 84e4e88..5d263a6 100644
 --- a/src/Makefile
 +++ b/src/Makefile
 @@ -13,7 +13,7 @@
@@ -34,7 +44,7 @@ index 84e4e88..e807574 100644
  #CC = /Users/michaelrubinstein/math/L/packages/gcc4.3/usr/local/bin/g++
  #EXTRA= -pg
  #EXTRA = -ftree-vectorize -ftree-vectorizer-verbose=5 -funroll-loops
-@@ -58,9 +68,7 @@ ifeq ($(G5),TRUE)
+@@ -58,29 +68,12 @@ ifeq ($(G5),TRUE)
     #MACHINE_SPECIFIC_FLAGS = -mpowerpc -mpowerpc64 -m64
  endif
  
@@ -45,21 +55,27 @@ index 84e4e88..e807574 100644
  
  #warning- O2 doesn't help with -DUSE_LONG_DOUBLE on mac, and actually seems to hurt, making runtime longer
  #by a factor of 1.5
-@@ -68,12 +76,8 @@ CCFLAGS =  -Wa,-W -O3 $(OPENMP_FLAG) -Wno-deprecated $(PREPROCESSOR_DEFINE) $(MA
  
- ifeq ($(PARI_DEFINE),-DINCLUDE_PARI)
-     #location of pari.h.
+ 
+-ifeq ($(PARI_DEFINE),-DINCLUDE_PARI)
+-    #location of pari.h.
 -    LOCATION_PARI_H = /usr/local/include/pari #usual location
-+    LOCATION_PARI_H = $(SAGE_LOCAL)/include/pari
- 
+-
 -    #location of libpari.a or of libpari.so
 -    #depending on whether static or dynamic libraries are being used.
 -    #On mac os x it's the former, on linux I think usually the latter.
 -    LOCATION_PARI_LIBRARY = /usr/local/lib #usual location
- else
-     #supplied as a dummy so as to avoid more ifeq's below
-     LOCATION_PARI_H = .
-@@ -88,27 +92,12 @@ INCLUDEFILES= -I../include
+-else
+-    #supplied as a dummy so as to avoid more ifeq's below
+-    LOCATION_PARI_H = .
+-    LOCATION_PARI_LIBRARY = .
+-endif
+-
+-
+ 
+ #INCLUDEFILES= -I../include -I../../packages/gcc4.3/usr/local/include
+ INCLUDEFILES= -I../include
+@@ -88,27 +81,12 @@ INCLUDEFILES= -I../include
  #For Mac os x we omit shared library options
  
  ifeq ($(OS_NAME),Darwin)
@@ -89,7 +105,7 @@ index 84e4e88..e807574 100644
  
  
  #NOTES:
-@@ -129,47 +118,63 @@ endif
+@@ -129,47 +107,63 @@ endif
  #become clear which libraries the computer can find.
  
  
@@ -170,38 +186,34 @@ index 84e4e88..e807574 100644
 +# Warning: We (Sage) add $CXXFLAGS to CXXFLAGS above.
  .c.o:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -c $<
-+	$(CC) $(CXXFLAGS) $(INCLUDEFILES) -c $<
++	$(CC) $(CFLAGS) $(INCLUDEFILES) -c $<
  
  
  Lglobals.o: ../include/Lglobals.h ../include/Lcommon.h ../include/Lcomplex.h ../include/Lnumeric.h ../include/Lint_complex.h
-@@ -227,7 +232,7 @@ Lcommandline_elliptic.o: ../include/Lnumberzeros.h ../include/Lgram.h
+@@ -227,7 +221,7 @@ Lcommandline_elliptic.o: ../include/Lnumberzeros.h ../include/Lgram.h
  Lcommandline_elliptic.o: ../include/Lvalue.h ../include/Lfind_zeros.h
  Lcommandline_elliptic.o: ../include/Lcommandline_numbertheory.h
  Lcommandline_elliptic.o: ../include/Lcommandline_globals.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
  
  Lcommandline_twist.o: ../include/Lcommandline_twist.h ../include/L.h
  Lcommandline_twist.o: ../include/Lglobals.h ../include/Lcommon.h ../include/Lcomplex.h ../include/Lnumeric.h ../include/Lint_complex.h
-@@ -239,10 +244,10 @@ Lcommandline_twist.o: ../include/Lvalue.h ../include/Lfind_zeros.h
+@@ -239,7 +233,7 @@ Lcommandline_twist.o: ../include/Lvalue.h ../include/Lfind_zeros.h
  Lcommandline_twist.o: ../include/Lcommandline_numbertheory.h
  Lcommandline_twist.o: ../include/Lcommandline_globals.h
  Lcommandline_twist.o: ../include/Lcommandline_elliptic.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_twist.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_twist.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline_twist.cc
  
  cmdline.o: ../include/cmdline.h ../include/getopt.h
--#$(CC) $(CCFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
-+#$(CC) $(CXXFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
- 
- 
- Lcommandline.o: ../include/Lcommandline.h ../include/L.h
-@@ -258,21 +263,21 @@ Lcommandline.o: ../include/Lcommandline_misc.h
+ #$(CC) $(CCFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
+@@ -258,21 +252,21 @@ Lcommandline.o: ../include/Lcommandline_misc.h
  Lcommandline.o: ../include/Lcommandline_elliptic.h
  Lcommandline.o: ../include/Lcommandline_twist.h
  Lcommandline.o: ../include/Lcommandline_values_zeros.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline.cc
  
  
 -libLfunction.so: $(OBJ_L)
@@ -219,7 +231,7 @@ index 84e4e88..e807574 100644
 -	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
 +	cp -f lcalc$(EXEEXT) $(INSTALL_DIR)/bin/.
 +	cp -f libLfunction$(LIBEXT) $(INSTALL_DIR)/lib/.
-+	cp -rf ../include $(INSTALL_DIR)/include/libLfunction
++	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
  
  
  SRCS = Lcommandline.cc Lcommandline_elliptic.cc Lcommandline_globals.cc Lcommandline_misc.cc Lcommandline_numbertheory.cc Lcommandline_twist.cc Lcommandline_values_zeros.cc Lgamma.cc Lglobals.cc Lmisc.cc Lriemannsiegel.cc Lriemannsiegel_blfi.cc cmdline.c

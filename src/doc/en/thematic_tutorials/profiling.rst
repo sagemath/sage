@@ -140,7 +140,9 @@ are the most costly using `perf
 package ``linux-tools``).
 
 The easiest way to use it is to run some (very long) computation in Sage, and to
-type in a console::
+type in a console
+
+.. CODE-BLOCK:: shell-session
 
   [user@localhost ~] sudo perf top
 
@@ -151,7 +153,7 @@ command will show you:
 * the source code
 * the associated time
 
-::
+.. CODE-BLOCK:: text
 
         │     *         cdef unsigned long word = (<unsigned long>1) << (v & self.radix_mod_mask)
         │     *         return (self.edges[place] & word) >> (v & self.radix_mod_mask)             # <<<<<<<<<<<<<<
@@ -172,7 +174,9 @@ command will show you:
 
 Alternatively, or if you have no ``sudo`` privileges, you can record the statistics
 of a specific process into a file ``perf.data`` from its PID. Then, visualize
-the result using ``perf report``::
+the result using ``perf report``:
+
+.. CODE-BLOCK:: shell-session
 
   [user@localhost ~] perf record -p PID
   [user@localhost ~] perf report --vmlinux vmlinux

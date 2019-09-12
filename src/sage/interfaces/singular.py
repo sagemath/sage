@@ -308,19 +308,19 @@ see :trac:`11645`::
     ''
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Joyner and William Stein
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 from six.moves import range
 from six import integer_types, string_types
+from six import reraise as raise_
 
 import io
 import os
@@ -337,11 +337,10 @@ from sage.structure.element import RingElement
 
 import sage.rings.integer
 
+from sage.env import SINGULARPATH
 from sage.misc.misc import get_verbose
-from sage.misc.superseded import deprecation
 from sage.docs.instancedoc import instancedoc
 
-from six import reraise as raise_
 
 class SingularError(RuntimeError):
     """
@@ -654,7 +653,9 @@ class Singular(ExtraTabCompletion, Expect):
 
         s = Expect.eval(self, x, **kwds)
 
-        if s.find("error") != -1 or s.find("Segment fault") != -1:
+        # "Segment fault" is not a typo:
+        # Singular actually does use that string
+        if s.find("error occurred") != -1 or s.find("Segment fault") != -1:
             raise SingularError('Singular error:\n%s'%s)
 
         if get_verbose() > 0:
@@ -1079,7 +1080,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: S = singular.ring('real', '(a,b)', 'lp')
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
-            //   coefficients: float
+            //   coefficients: Float()
             //   number of vars : 2
             //        block   1 : ordering lp
             //                  : names    a b
@@ -1113,7 +1114,7 @@ class Singular(ExtraTabCompletion, Expect):
             True
         """
         ringlist = self.eval("listvar(ring)").splitlines()
-        p = re.compile("// ([a-zA-Z0-9_]*).*\[.*\].*\*.*") #do this in constructor?
+        p = re.compile(r"// ([a-zA-Z0-9_]*).*\[.*\].*\*.*") #do this in constructor?
         for line in ringlist:
             m = p.match(line)
             if m:
@@ -1157,14 +1158,14 @@ class Singular(ExtraTabCompletion, Expect):
              sage: singular._tab_completion()
              ['exteriorPower',
               ...
-              'flintZ']
+              'crossprod']
          """
         p = re.compile("// *([a-z0-9A-Z_]*).*") #compiles regular expression
         proclist = self.eval("listvar(proc)").splitlines()
         return [p.match(line).group(int(1)) for line in proclist]
 
     def console(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: singular_console() #not tested
@@ -1183,7 +1184,7 @@ class Singular(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: singular.version()
-            "Singular ... version 4.1.0 ...
+            "Singular ... version 4...
         """
         return singular_version()
 
@@ -1562,7 +1563,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         elif charstr[0] in ['0', 'QQ']:
             from sage.all import QQ
             br = QQ
-        elif charstr[0]=='real':
+        elif charstr[0].startswith('Float'):
             from sage.all import RealField, ceil, log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = RealField(ceil((ZZ(prec)+1)/log(2,10)))
@@ -1750,7 +1751,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
 
         # Singular 4 puts parentheses around floats and sign outside them
         charstr = self.parent().eval('charstr(basering)').split(',',1)
-        if charstr[0] in ['real', 'complex']:
+        if charstr[0].startswith('Float') or charstr[0] == 'complex':
               for i in range(coeff_start, 2 * coeff_start):
                   singular_poly_list[i] = singular_poly_list[i].replace('(','').replace(')','')
 
@@ -1992,7 +1993,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: S = singular.ring('real', '(a,b)', 'lp')
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
-            //   coefficients: float
+            //   coefficients: Float()
             //   number of vars : 2
             //        block   1 : ordering lp
             //                  : names    a b
@@ -2019,7 +2020,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             ['0', 'x', 'y', 'dp', '1,1', 'C', '0', '_[1]=0']
         """
         s = str(self)
-        c = '\[[0-9]*\]:'
+        c = r'\[[0-9]*\]:'
         r = re.compile(c)
         s = r.sub('',s).strip()
         return s.split()
@@ -2072,7 +2073,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: R._tab_completion()
             ['exteriorPower',
              ...
-             'flintZ']
+             'crossprod']
         """
         return self.parent()._tab_completion()
 
@@ -2090,7 +2091,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             'poly'
         """
         # singular reports // $varname $type $stuff
-        p = re.compile("// [\w]+ (\w+) [\w]*")
+        p = re.compile(r"// [\w]+ (\w+) [\w]*")
         m = p.match(self.parent().eval("type(%s)"%self.name()))
         return m.group(1)
 
@@ -2261,11 +2262,10 @@ def generate_docstring_dictionary():
     nodes.clear()
     node_names.clear()
 
-    import os
-    singular_docdir = os.environ['SINGULARPATH']+"/../info/"
+    singular_docdir = SINGULARPATH + "/../info/"
 
-    new_node = re.compile("File: singular\.hlp,  Node: ([^,]*),.*")
-    new_lookup = re.compile("\* ([^:]*):*([^.]*)\..*")
+    new_node = re.compile(r"File: singular\.hlp,  Node: ([^,]*),.*")
+    new_lookup = re.compile(r"\* ([^:]*):*([^.]*)\..*")
 
     L, in_node, curr_node = [], False, None
 
@@ -2333,7 +2333,7 @@ def reduce_load_Singular():
 
 
 def singular_console():
-    """
+    r"""
     Spawn a new Singular command-line session.
 
     EXAMPLES::
@@ -2358,10 +2358,9 @@ def singular_version():
     EXAMPLES::
 
         sage: singular.version()
-        "Singular ... version 4.1.0 ...
+        "Singular ... version 4...
     """
     return singular.eval('system("--version");')
-
 
 
 class SingularGBLogPrettyPrinter:
@@ -2369,30 +2368,30 @@ class SingularGBLogPrettyPrinter:
     A device which prints Singular Groebner basis computation logs
     more verbatim.
     """
-    rng_chng = re.compile("\[\d+:\d+\]")# [m:n] internal ring change to
+    rng_chng = re.compile(r"\[\d+:\d+\]")# [m:n] internal ring change to
                                         # poly representation with
                                         # exponent bound m and n words in
                                         # exponent vector
     new_elem = re.compile("s")          # found a new element of the standard basis
     red_zero = re.compile("-")          # reduced a pair/S-polynomial to 0
-    red_post = re.compile("\.")         # postponed a reduction of a pair/S-polynomial
+    red_post = re.compile(r"\.")         # postponed a reduction of a pair/S-polynomial
     cri_hilb = re.compile("h")          # used Hilbert series criterion
-    hig_corn = re.compile("H\(\d+\)")   # found a 'highest corner' of degree d, no need to consider higher degrees
-    num_crit = re.compile("\(\d+\)")    # n critical pairs are still to be reduced
-    red_num =  re.compile("\(S:\d+\)")  # doing complete reduction of n elements
-    deg_lead = re.compile("\d+")        # the degree of the leading terms is currently d
+    hig_corn = re.compile(r"H\(\d+\)")   # found a 'highest corner' of degree d, no need to consider higher degrees
+    num_crit = re.compile(r"\(\d+\)")    # n critical pairs are still to be reduced
+    red_num =  re.compile(r"\(S:\d+\)")  # doing complete reduction of n elements
+    deg_lead = re.compile(r"\d+")        # the degree of the leading terms is currently d
 
     # SlimGB
-    red_para = re.compile("M\[(\d+),(\d+)\]") # parallel reduction of n elements with m non-zero output elements
+    red_para = re.compile(r"M\[(\d+),(\d+)\]") # parallel reduction of n elements with m non-zero output elements
     red_betr = re.compile("b")                # exchange of a reductor by a 'better' one
     non_mini = re.compile("e")                # a new reductor with non-minimal leading term
 
-    crt_lne1 = re.compile("product criterion:(\d+) chain criterion:(\d+)")
-    crt_lne2 = re.compile("NF:(\d+) product criterion:(\d+), ext_product criterion:(\d+)")
+    crt_lne1 = re.compile(r"product criterion:(\d+) chain criterion:(\d+)")
+    crt_lne2 = re.compile(r"NF:(\d+) product criterion:(\d+), ext_product criterion:(\d+)")
 
-    pat_sync = re.compile("1\+(\d+);")
+    pat_sync = re.compile(r"1\+(\d+);")
 
-    global_pattern = re.compile("(\[\d+:\d+\]|s|-|\.|h|H\(\d+\)|\(\d+\)|\(S:\d+\)|\d+|M\[\d+,[b,e]*\d+\]|b|e).*")
+    global_pattern = re.compile(r"(\[\d+:\d+\]|s|-|\.|h|H\(\d+\)|\(\d+\)|\(S:\d+\)|\d+|M\[\d+,[b,e]*\d+\]|b|e).*")
 
     def __init__(self, verbosity=1):
         """
@@ -2611,7 +2610,6 @@ class SingularGBDefaultContext:
             7*b+210*c^3-79*c^2+3*c,
             7*a-420*c^3+158*c^2+8*c-7
         """
-        from sage.interfaces.singular import SingularError
         try:
             self.bck_degBound = int(self.singular.eval('degBound'))
         except SingularError:
@@ -2649,16 +2647,16 @@ class SingularGBDefaultContext:
             7*b+210*c^3-79*c^2+3*c,
             7*a-420*c^3+158*c^2+8*c-7
         """
-        from sage.interfaces.singular import SingularError
-        self.singular.option("set",self.o)
+        self.singular.option("set", self.o)
         try:
-            self.singular.eval('degBound=%d'%self.bck_degBound)
+            self.singular.eval('degBound=%d' % self.bck_degBound)
         except SingularError:
             pass
         try:
-            self.singular.eval('multBound=%d'%self.bck_multBound)
+            self.singular.eval('multBound=%d' % self.bck_multBound)
         except SingularError:
             pass
+
 
 def singular_gb_standard_options(func):
     r"""
@@ -2680,7 +2678,8 @@ def singular_gb_standard_options(func):
         sage: sage_getargspec(I.interreduced_basis)
         ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
         sage: sage_getsourcelines(I.interreduced_basis)
-        (['    @singular_gb_standard_options\n',
+        (['    @handle_AA_and_QQbar\n',
+          '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
           '    def interreduced_basis(self):\n', '
           ...

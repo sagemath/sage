@@ -29,9 +29,8 @@ from __future__ import print_function
 
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
+from six import iteritems
 from copy import copy
-
-import six
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
                                    sage_getargspec)
@@ -103,10 +102,11 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
-        sage: sage_getfile(I.interreduced_basis)
-        '.../sage/interfaces/singular.py'
+        sage: sage_getfile(I.interreduced_basis)       # known bug
+        '.../sage/rings/polynomial/multi_polynomial_ideal.py'
         sage: sage_getsourcelines(I.interreduced_basis)
-        (['    @singular_gb_standard_options\n',
+        (['    @handle_AA_and_QQbar\n',
+          '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
           '    def interreduced_basis(self):\n',
           ...
@@ -160,9 +160,12 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     assigned = set(assigned).intersection(set(dir(wrapped)))
     #end workaround
 
-    def f(wrapper):
+    def f(wrapper, assigned=assigned, updated=updated):
         update_wrapper(wrapper, wrapped, assigned=assigned, updated=updated)
+        # For backwards-compatibility with old versions of sage_wraps
         wrapper.f = wrapped
+        # For forwards-compatibility with functools.wraps on Python 3
+        wrapper.__wrapped__ = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
         #Getting the signature right in documentation by Sphinx (Trac 9976)
@@ -185,20 +188,22 @@ class infix_operator(object):
 
     An infix dot product operator::
 
-        sage: def dot(a,b): return a.dot_product(b)
-        sage: dot=infix_operator('multiply')(dot)
-        sage: u=vector([1,2,3])
-        sage: v=vector([5,4,3])
+        sage: @infix_operator('multiply')
+        ....: def dot(a, b):
+        ....:     '''Dot product.'''
+        ....:     return a.dot_product(b)
+        sage: u = vector([1, 2, 3])
+        sage: v = vector([5, 4, 3])
         sage: u *dot* v
         22
 
     An infix element-wise addition operator::
 
-        sage: def eadd(a,b):
-        ....:   return a.parent([i+j for i,j in zip(a,b)])
-        sage: eadd=infix_operator('add')(eadd)
-        sage: u=vector([1,2,3])
-        sage: v=vector([5,4,3])
+        sage: @infix_operator('add')
+        ....: def eadd(a, b):
+        ....:   return a.parent([i + j for i, j in zip(a, b)])
+        sage: u = vector([1, 2, 3])
+        sage: v = vector([5, 4, 3])
         sage: u +eadd+ v
         (6, 6, 6)
         sage: 2*u +eadd+ v
@@ -206,172 +211,93 @@ class infix_operator(object):
 
     A hack to simulate a postfix operator::
 
-        sage: def thendo(a,b): return b(a)
-        sage: thendo=infix_operator('or')(thendo)
+        sage: @infix_operator('or')
+        ....: def thendo(a, b):
+        ....:     return b(a)
         sage: x |thendo| cos |thendo| (lambda x: x^2)
         cos(x)^2
     """
 
+    operators = {
+        'add': {'left': '__add__', 'right': '__radd__'},
+        'multiply': {'left': '__mul__', 'right': '__rmul__'},
+        'or': {'left': '__or__', 'right': '__ror__'},
+    }
+
     def __init__(self, precedence):
         """
-        A decorator for functions which allows for a hack that makes
-        the function behave like an infix operator.
+        INPUT:
 
-        This decorator exists as a convenience for interactive use.
-
-        EXAMPLES::
-
-            sage: def dot(a,b): return a.dot_product(b)
-            sage: dot=infix_operator('multiply')(dot)
-            sage: u=vector([1,2,3])
-            sage: v=vector([5,4,3])
-            sage: u *dot* v
-            22
-
-            sage: from sage.misc.decorators import infix_operator
-            sage: def eadd(a,b):
-            ....:   return a.parent([i+j for i,j in zip(a,b)])
-            sage: eadd=infix_operator('add')(eadd)
-            sage: u=vector([1,2,3])
-            sage: v=vector([5,4,3])
-            sage: u +eadd+ v
-            (6, 6, 6)
-            sage: 2*u +eadd+ v
-            (7, 8, 9)
-
-            sage: from sage.misc.decorators import infix_operator
-            sage: def thendo(a,b): return b(a)
-            sage: thendo=infix_operator('or')(thendo)
-            sage: x |thendo| cos |thendo| (lambda x: x^2)
-            cos(x)^2
+        - ``precedence`` -- one of ``'add'``, ``'multiply'``, or ``'or'``
+          indicating the new operator's precedence in the order of operations.
         """
         self.precedence = precedence
 
-    operators = {'add': {'left': '__add__', 'right': '__radd__'},
-                 'multiply': {'left': '__mul__', 'right': '__rmul__'},
-                 'or': {'left': '__or__', 'right': '__ror__'},
-                 }
-
     def __call__(self, func):
+        """Returns a function which acts as an inline operator."""
+
+        left_meth = self.operators[self.precedence]['left']
+        right_meth = self.operators[self.precedence]['right']
+        wrapper_name = func.__name__
+        wrapper_members = {
+            'function': staticmethod(func),
+            left_meth: _infix_wrapper._left,
+            right_meth: _infix_wrapper._right,
+            '_sage_src_': lambda: sage_getsource(func)
+        }
+        for attr in WRAPPER_ASSIGNMENTS:
+            try:
+                wrapper_members[attr] = getattr(func, attr)
+            except AttributeError:
+                pass
+
+        wrapper = type(wrapper_name, (_infix_wrapper,), wrapper_members)
+
+        wrapper_inst = wrapper()
+        wrapper_inst.__dict__.update(getattr(func, '__dict__', {}))
+        return wrapper_inst
+
+
+class _infix_wrapper(object):
+    function = None
+
+    def __init__(self, left=None, right=None):
         """
-        Returns a function which acts as an inline operator.
-
-        EXAMPLES::
-
-            sage: from sage.misc.decorators import infix_operator
-            sage: def dot(a,b): return a.dot_product(b)
-            sage: dot=infix_operator('multiply')(dot)
-            sage: u=vector([1,2,3])
-            sage: v=vector([5,4,3])
-            sage: u *dot* v
-            22
-
-            sage: def eadd(a,b):
-            ....:   return a.parent([i+j for i,j in zip(a,b)])
-            sage: eadd=infix_operator('add')(eadd)
-            sage: u=vector([1,2,3])
-            sage: v=vector([5,4,3])
-            sage: u +eadd+ v
-            (6, 6, 6)
-            sage: 2*u +eadd+ v
-            (7, 8, 9)
-
-            sage: def thendo(a,b): return b(a)
-            sage: thendo=infix_operator('or')(thendo)
-            sage: x |thendo| cos |thendo| (lambda x: x^2)
-            cos(x)^2
+        Initialize the actual infix object, with possibly a specified left
+        and/or right operand.
         """
-        def left_func(self, right):
-            """
-            The function for the operation on the left (e.g., __add__).
+        self.left = left
+        self.right = right
 
-            EXAMPLES::
+    def __call__(self, *args, **kwds):
+        """Call the passed function."""
+        return self.function(*args, **kwds)
 
-                sage: def dot(a,b): return a.dot_product(b)
-                sage: dot=infix_operator('multiply')(dot)
-                sage: u=vector([1,2,3])
-                sage: v=vector([5,4,3])
-                sage: u *dot* v
-                22
-            """
-
-            if self.left is None:
-                if self.right is None:
-                    new = copy(self)
-                    new.right = right
-                    return new
-                else:
-                    raise SyntaxError("Infix operator already has its "
-                                      "right argument")
-            else:
-                return self.function(self.left, right)
-
-        def right_func(self, left):
-            """
-            The function for the operation on the right (e.g., __radd__).
-
-            EXAMPLES::
-
-                sage: def dot(a,b): return a.dot_product(b)
-                sage: dot=infix_operator('multiply')(dot)
-                sage: u=vector([1,2,3])
-                sage: v=vector([5,4,3])
-                sage: u *dot* v
-                22
-            """
+    def _left(self, right):
+        """The function for the operation on the left (e.g., __add__)."""
+        if self.left is None:
             if self.right is None:
-                if self.left is None:
-                    new = copy(self)
-                    new.left = left
-                    return new
-                else:
-                    raise SyntaxError("Infix operator already has its "
-                                      "left argument")
+                new = copy(self)
+                new.right = right
+                return new
             else:
-                return self.function(left, self.right)
+                raise SyntaxError("Infix operator already has its "
+                                  "right argument")
+        else:
+            return self.function(self.left, right)
 
-        @sage_wraps(func)
-        class wrapper:
-            def __init__(self, left=None, right=None):
-                """
-                Initialize the actual infix object, with possibly a
-                specified left and/or right operand.
-
-                EXAMPLES::
-
-                    sage: def dot(a,b): return a.dot_product(b)
-                    sage: dot=infix_operator('multiply')(dot)
-                    sage: u=vector([1,2,3])
-                    sage: v=vector([5,4,3])
-                    sage: u *dot* v
-                    22
-                """
-
-                self.function = func
-                self.left = left
-                self.right = right
-
-            def __call__(self, *args, **kwds):
-                """
-                Call the passed function.
-
-                EXAMPLES::
-
-                    sage: def dot(a,b): return a.dot_product(b)
-                    sage: dot=infix_operator('multiply')(dot)
-                    sage: u=vector([1,2,3])
-                    sage: v=vector([5,4,3])
-                    sage: dot(u,v)
-                    22
-                """
-                return self.function(*args, **kwds)
-
-        setattr(wrapper, self.operators[self.precedence]['left'], left_func)
-        setattr(wrapper, self.operators[self.precedence]['right'], right_func)
-
-        wrapper._sage_src_ = lambda: sage_getsource(func)
-
-        return wrapper()
+    def _right(self, left):
+        """The function for the operation on the right (e.g., __radd__)."""
+        if self.right is None:
+            if self.left is None:
+                new = copy(self)
+                new.left = left
+                return new
+            else:
+                raise SyntaxError("Infix operator already has its "
+                                  "left argument")
+        else:
+            return self.function(left, self.right)
 
 
 def decorator_defaults(func):
@@ -474,9 +400,9 @@ class suboptions(object):
             suboptions = copy(self.options)
             suboptions.update(kwds.pop(self.name+"options", {}))
 
-            #Collect all the relevant keywords in kwds
-            #and put them in suboptions
-            for key, value in list(six.iteritems(kwds)):
+            # Collect all the relevant keywords in kwds
+            # and put them in suboptions
+            for key, value in list(iteritems(kwds)):
                 if key.startswith(self.name):
                     suboptions[key[len(self.name):]] = value
                     del kwds[key]
@@ -485,9 +411,9 @@ class suboptions(object):
 
             return func(*args, **kwds)
 
-        #Add the options specified by @options to the signature of the wrapped
-        #function in the Sphinx-generated documentation (Trac 9976), using the
-        #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
+        # Add the options specified by @options to the signature of the wrapped
+        # function in the Sphinx-generated documentation (Trac 9976), using the
+        # special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
 
@@ -497,7 +423,7 @@ class suboptions(object):
             args = (argspec.args if not argspec.args is None else []) + newArgs
             defaults = (argspec.defaults if not argspec.defaults is None else ()) \
                         + tuple(self.options.values())
-            #Note: argspec.defaults is not always a tuple for some reason
+            # Note: argspec.defaults is not always a tuple for some reason
             return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
         wrapper._sage_argspec_ = argspec
 
@@ -571,10 +497,12 @@ class options(object):
         #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
-            args = (argspec.args if not argspec.args is None else []) + list(self.options.keys())
-            defaults = tuple(argspec.defaults if not argspec.defaults is None else ()) + tuple(self.options.values())
-            #Note: argspec.defaults is not always a tuple for some reason
+            args = ((argspec.args if not argspec.args is None else []) +
+                    list(self.options))
+            defaults = (argspec.defaults or ()) + tuple(self.options.values())
+            # Note: argspec.defaults is not always a tuple for some reason
             return ArgSpec(args, argspec.varargs, argspec.keywords, defaults)
+
         wrapper._sage_argspec_ = argspec
 
         def defaults():

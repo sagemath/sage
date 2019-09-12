@@ -16,6 +16,3 @@ cd src
 sdh_configure --enable-shared=yes
 sdh_make
 sdh_make_install
-
-# Delete libpng.* symlinks, see SPKG.txt for details
-rm -f "$SAGE_DESTDIR_LOCAL"/lib/libpng.*

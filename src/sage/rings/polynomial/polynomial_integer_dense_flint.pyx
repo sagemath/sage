@@ -42,7 +42,6 @@ from cpython.int cimport PyInt_AS_LONG
 from sage.libs.gmp.mpz cimport *
 from sage.arith.long cimport pyobject_to_long
 
-from sage.libs.flint.fmpz_poly cimport *
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport ModuleElement, Element
 from sage.structure.element import coerce_binop
@@ -59,7 +58,8 @@ from sage.rings.fraction_field_element import FractionFieldElement
 from sage.arith.all import lcm
 
 from sage.libs.flint.fmpz cimport *
-from sage.libs.flint.fmpz_poly cimport fmpz_poly_reverse, fmpz_poly_revert_series
+from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.types cimport ulong, fmpz_poly_t
 from sage.libs.flint.ntl_interface cimport fmpz_set_ZZ, fmpz_poly_set_ZZX, fmpz_poly_get_ZZX
 from sage.libs.ntl.ZZX cimport *
 from sage.rings.integer cimport Integer, smallInteger
@@ -379,7 +379,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         TESTS:
 
-            sage: t(-sys.maxint-1r) == t(-sys.maxint-1)
+            sage: t(-sys.maxsize-1r) == t(-sys.maxsize-1)
             True
         """
         cdef Polynomial_integer_dense_flint f
@@ -730,7 +730,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return qq, rr
 
-    cpdef bint is_zero(self):
+    cpdef bint is_zero(self) except -1:
         """
         Returns True if self is equal to zero.
 
@@ -746,7 +746,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         """
         return (fmpz_poly_degree(self.__poly) == -1)
 
-    cpdef bint is_one(self):
+    cpdef bint is_one(self) except -1:
         """
         Returns True if self is equal to one.
 
@@ -1639,14 +1639,13 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         p = Integer(p)
         if not p.is_prime():
             raise ValueError("p must be prime")
-        if all([c%p==0 for c in self.coefficients()]):
+        if not any(c % p for c in self.coefficients()):
             raise ArithmeticError("factorization of 0 is not defined")
         f = self.__pari__()
         G = f.factormod(p)
         k = FiniteField(p)
         R = k[self.parent().variable_name()]
         return R(1)._factor_pari_helper(G, unit=R(self).leading_coefficient())
-
 
     def factor_padic(self, p, prec=10):
         """
@@ -1667,13 +1666,13 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: R.<x> = PolynomialRing(ZZ)
             sage: f = x^2 + 1
             sage: f.factor_padic(5, 4)
-            ((1 + O(5^4))*x + (2 + 5 + 2*5^2 + 5^3 + O(5^4))) * ((1 + O(5^4))*x + (3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)))
+            ((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4)) * ((1 + O(5^4))*x + 3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4))
 
         A more difficult example::
 
             sage: f = 100 * (5*x + 1)^2 * (x + 5)^2
             sage: f.factor_padic(5, 10)
-            (4 + O(5^10)) * ((5 + O(5^11)))^2 * ((1 + O(5^10))*x + (5 + O(5^10)))^2 * ((5 + O(5^10))*x + (1 + O(5^10)))^2
+            (4 + O(5^10)) * (5 + O(5^11))^2 * ((1 + O(5^10))*x + 5 + O(5^10))^2 * ((5 + O(5^10))*x + 1 + O(5^10))^2
 
         """
         from sage.rings.padics.factory import Zp

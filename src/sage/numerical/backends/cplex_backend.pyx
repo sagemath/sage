@@ -7,7 +7,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string import FS_ENCODING
 from sage.numerical.mip import MIPSolverException
 
 cdef class CPLEXBackend(GenericBackend):
@@ -138,6 +140,7 @@ cdef class CPLEXBackend(GenericBackend):
             self.set_variable_type(n,1)
 
         if name is not None:
+            name = str_to_bytes(name)
             c_name = name
             status = CPXchgcolname(self.env, self.lp, 1, &n, &c_name)
             check(status)
@@ -235,7 +238,8 @@ cdef class CPLEXBackend(GenericBackend):
                 self.set_variable_type(j, 1)
 
             if names:
-                c_name = names[i]
+                name = str_to_bytes(names[i])
+                c_name = name
                 status = CPXchgcolname(self.env, self.lp, 1, &j, &c_name)
                 check(status)
 
@@ -346,14 +350,14 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgobj(self.env, self.lp, 1, &variable, &value)
             check(status)
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         r"""
         Returns or defines the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
-          ``NULL`` (default), the method returns the problem's name.
+        - ``name`` (``str``) -- the problem's name. When set to
+          ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
@@ -367,18 +371,18 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int status
         cdef int zero
         cdef char * n
-        if name == NULL:
+        if name is None:
 
             n = <char*> sig_malloc(500*sizeof(char))
             status = CPXgetprobname(self.env, self.lp, n, 500, &zero)
             check(status)
-            s = str(n)
+            s = char_to_str(n)
             sig_free(n)
             return s
 
 
         else:
-            status = CPXchgprobname(self.env, self.lp, name)
+            status = CPXchgprobname(self.env, self.lp, str_to_bytes(name))
             check(status)
 
 
@@ -481,7 +485,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.solve()                                    # optional - CPLEX
             10.0
             sage: p.get_values([x,y])                          # optional - CPLEX
-            [0.0, 3.0]
+            [0, 3]
         """
         cdef int status
         status = CPXdelrows(self.env, self.lp, i, i)
@@ -547,7 +551,8 @@ cdef class CPLEXBackend(GenericBackend):
             bound[0] = lower_bound
 
         if names:
-            c_names[0] = names[0]
+            name = str_to_bytes(names[0])
+            c_names[0] = name
 
         for 1<= i <number:
             sense[i] = sense[0]
@@ -555,7 +560,8 @@ cdef class CPLEXBackend(GenericBackend):
             if rng != NULL:
                 rng[i] = rng[0]
             if names:
-                c_names[i] = names[i]
+                name = str_to_bytes(names[i])
+                c_names[i] = name
 
         status = CPXnewrows(self.env, self.lp, number, bound, sense, rng, c_names if names else NULL)
 
@@ -586,12 +592,12 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p = get_solver(solver = "CPLEX")                             # optional - CPLEX
             sage: p.add_variables(5)                                           # optional - CPLEX
             4
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 2.0, 2.0)  # optional - CPLEX
+            sage: p.add_linear_constraint(zip(range(5), range(5), 2.0, 2.0)  # optional - CPLEX
             sage: p.row(0)                                                     # optional - CPLEX
             ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
             sage: p.row_bounds(0)                                              # optional - CPLEX
             (2.0, 2.0)
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo') # optional - CPLEX
+            sage: p.add_linear_constraint(zip(range(5), range(5), 1.0, 1.0, name='foo') # optional - CPLEX
             sage: p.row_name(1)                                                           # optional - CPLEX
             'foo'
 
@@ -599,6 +605,7 @@ cdef class CPLEXBackend(GenericBackend):
         if lower_bound is None and upper_bound is None:
             raise ValueError("At least one of 'upper_bound' or 'lower_bound' must be set.")
 
+        coefficients = list(coefficients)
         cdef int status
         cdef int i, j
         cdef int n = len(coefficients)
@@ -647,6 +654,7 @@ cdef class CPLEXBackend(GenericBackend):
             bound = lower_bound
 
         if name:
+            name = str_to_bytes(name)
             c_name = name
 
         status = CPXnewrows(self.env, self.lp, 1, &bound, &sense, &rng, NULL if (name is None) else &c_name)
@@ -681,7 +689,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p = get_solver(solver = "CPLEX")  # optional - CPLEX
             sage: p.add_variables(5)                               # optional - CPLEX
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)       # optional - CPLEX
+            sage: p.add_linear_constraint([(i, i) for i in range(5)], 2, 2)  # optional - CPLEX
             sage: p.row(0)                                     # optional - CPLEX
             ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
             sage: p.row_bounds(0)                              # optional - CPLEX
@@ -730,7 +738,7 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p = get_solver(solver = "CPLEX")  # optional - CPLEX
             sage: p.add_variables(5)                               # optional - CPLEX
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)       # optional - CPLEX
+            sage: p.add_linear_constraint([(i, i) for i in range(5)], 2, 2)  # optional - CPLEX
             sage: p.row(0)                                     # optional - CPLEX
             ([1, 2, 3, 4], [1.0, 2.0, 3.0, 4.0])
             sage: p.row_bounds(0)                              # optional - CPLEX
@@ -795,10 +803,10 @@ cdef class CPLEXBackend(GenericBackend):
         status = CPXgetlb(self.env, self.lp, &lb, index, index)
         check(status)
 
-        return (None if lb <= -int(CPX_INFBOUND) else lb,
-                None if ub >= +int(CPX_INFBOUND) else ub)
+        return (None if lb <= -CPX_INFBOUND else lb,
+                None if ub >= +CPX_INFBOUND else ub)
 
-    cpdef add_col(self, list indices, list coeffs):
+    cpdef add_col(self, indices, coeffs):
         r"""
         Adds a column.
 
@@ -833,9 +841,22 @@ cdef class CPLEXBackend(GenericBackend):
             5
         """
 
+        cdef list list_indices
+        cdef list list_coeffs
+
+        if type(indices) is not list:
+            list_indices = list(indices)
+        else:
+            list_indices = <list>indices
+
+        if type(coeffs) is not list:
+            list_coeffs = list(coeffs)
+        else:
+            list_coeffs = <list>coeffs
+
         cdef int status
         cdef int i
-        cdef int n = len(indices)
+        cdef int n = len(list_indices)
         cdef int ncols = self.ncols()
 
         status = CPXnewcols(self.env, self.lp, 1, NULL, NULL, NULL, NULL, NULL)
@@ -848,8 +869,8 @@ cdef class CPLEXBackend(GenericBackend):
         cdef int * c_col = <int *> sig_malloc(n * sizeof(int))
 
         for 0<= i < n:
-            c_coeff[i] = coeffs[i]
-            c_indices[i] = indices[i]
+            c_coeff[i] = list_coeffs[i]
+            c_indices[i] = list_indices[i]
             c_col[i] = ncols
 
 
@@ -957,14 +978,21 @@ cdef class CPLEXBackend(GenericBackend):
             0.0
             sage: p.get_variable_value(1)                          # optional - CPLEX
             1.5
-        """
 
+        TESTS:
+
+        :trac:`27773` is fixed::
+
+            sage: g = graphs.PetersenGraph()             # optional - CPLEX
+            sage: g.vertex_connectivity(solver='cplex')  # optional - CPLEX
+            3
+        """
         cdef int status
         cdef double value
-        status = CPXgetobjval (self.env, self.lp, &value)
+        status = CPXgetobjval(self.env, self.lp, &value)
         check(status)
 
-        return value + self.obj_constant_term
+        return value + <double>self.obj_constant_term
 
 
     cpdef best_known_objective_bound(self):
@@ -1004,10 +1032,10 @@ cdef class CPLEXBackend(GenericBackend):
         """
         cdef int status
         cdef double value
-        status = CPXgetbestobjval (self.env, self.lp, &value)
+        status = CPXgetbestobjval(self.env, self.lp, &value)
         check(status)
 
-        return value + self.obj_constant_term
+        return value + <double>self.obj_constant_term
 
     cpdef get_relative_objective_gap(self):
         r"""
@@ -1083,7 +1111,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         status = CPXgetctype(self.env, self.lp, &ctype, variable, variable)
 
-        return value if (status == 3003 or ctype=='C') else round(value)
+        return value if (status == 3003 or ctype == 'C') else int(round(value))
 
     cpdef int ncols(self):
         r"""
@@ -1148,7 +1176,7 @@ cdef class CPLEXBackend(GenericBackend):
             return ""
         check(status)
 
-        s = str(n)
+        s = char_to_str(n)
         sig_free(n)
 
         return s
@@ -1182,7 +1210,7 @@ cdef class CPLEXBackend(GenericBackend):
             return ""
         check(status)
 
-        s = str(n)
+        s = char_to_str(n)
         sig_free(n)
         return s
 
@@ -1356,7 +1384,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXgetub(self.env, self.lp, &ub, index, index)
             check(status)
 
-            return ub if ub < int(CPX_INFBOUND) else None
+            return ub if ub < CPX_INFBOUND else None
 
         else:
             x = 'U'
@@ -1408,7 +1436,7 @@ cdef class CPLEXBackend(GenericBackend):
         if value is False:
             status = CPXgetlb(self.env, self.lp, &lb, index, index)
             check(status)
-            return None if lb <= int(-CPX_INFBOUND) else lb
+            return None if lb <= -CPX_INFBOUND else lb
 
         else:
             x = 'L'
@@ -1416,7 +1444,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgbds(self.env, self.lp, 1, &index, &x, &c_value)
             check(status)
 
-    cpdef write_lp(self, char * filename):
+    cpdef write_lp(self, filename):
         r"""
         Writes the problem to a .lp file
 
@@ -1437,10 +1465,11 @@ cdef class CPLEXBackend(GenericBackend):
 
         cdef int status
         cdef char * ext = "LP"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 
-    cpdef write_mps(self, char * filename, int modern):
+    cpdef write_mps(self, filename, int modern):
         r"""
         Writes the problem to a .mps file
 
@@ -1461,6 +1490,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         cdef int status
         cdef char * ext = "MPS"
+        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 
@@ -1575,7 +1605,7 @@ cdef class CPLEXBackend(GenericBackend):
                 check( CPXsetlogfile(self.env, NULL) )
                 self._logfilename = ''
             else:             # Set log file to logfilename
-                ff = fopen(value, "a")
+                ff = fopen(str_to_bytes(value), "a")
                 if not ff:
                     raise ValueError("Unable to append file {}.".format(value))
                 check( CPXsetlogfile(self.env, ff) )

@@ -50,7 +50,7 @@ class DivisionRings(CategoryWithAxiom):
             The :ref:`axioms-deduction-rules` section in the
             documentation of axioms
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: DivisionRings().extra_super_categories()
             (Category of domains,)

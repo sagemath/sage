@@ -22,13 +22,13 @@ EXAMPLES::
     sage: S = CoordinatePatch((u, v)); S
     Open subset of R^2 with coordinates u, v
 
-TODO:
+.. TODO::
 
-- Add functionality for metric tensors
+    Add functionality for metric tensors
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #    Copyright (C) 2010 Joris Vankerschaver <joris.vankerschaver@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -40,11 +40,10 @@ TODO:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.parent import Parent
+
 
 class CoordinatePatch(Parent):
     """

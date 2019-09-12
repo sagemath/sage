@@ -257,7 +257,6 @@ class SimplicialSets(Category_singleton):
                 else:
                     if len(domain._simplices) > 1:
                         raise ValueError('domain has more than one nondegenerate simplex')
-                src = domain.base_point()
                 target = self.base_point()
                 return domain.Hom(self).constant_map(point=target)
 

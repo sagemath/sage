@@ -4,9 +4,8 @@
 
 Includes two databases:
 
- * A small subset of the data in John Cremona's database of elliptic curves up
-   to conductor 10000. See http://www.warwick.ac.uk/~masgaj/ftp/data/ or
-   http://sage.math.washington.edu/cremona/INDEX.html
+ * A small subset of John Cremona's database of elliptic curves up
+   to conductor 10000.
  * William Stein's database of interesting curves
 
 == Upstream Contact ==
@@ -15,7 +14,7 @@ Includes two databases:
 
  * Author: John Cremona
  * Email: john.cremona@gmail.com
- * Website: http://www.warwick.ac.uk/~masgaj/ftp/data/
+ * Website: http://johncremona.github.io/ecdata/
 
 === ellcurves ===
 
@@ -28,6 +27,9 @@ Includes two databases:
  * python
 
 == Changelog ==
+
+=== elliptic_curves-0.8.1 (Frédéric Chapoton, 2019-03-01) ===
+ * #20717: remove macOS hidden files
 
 === elliptic_curves-0.8 (Simon Spicer, 2014-10-24) ===
  * #16773: add more examples of high rank curves

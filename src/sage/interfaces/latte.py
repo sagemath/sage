@@ -11,12 +11,15 @@ Interface to LattE integrale programs
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from __future__ import print_function, absolute_import
 import six
+from sage.cpython.string import str_to_bytes, bytes_to_str
 
 from subprocess import Popen, PIPE
 from sage.misc.misc import SAGE_TMP
-
+from sage.rings.integer import Integer
 from sage.features.latte import Latte
+
 
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
     r"""
@@ -112,6 +115,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
     # Check that LattE is present
     Latte().require()
 
+    arg = str_to_bytes(arg)
+
     args = ['count']
     if ehrhart_polynomial and multivariate_generating_function:
         raise ValueError
@@ -137,7 +142,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         from sage.misc.temporary_file import tmp_filename
         filename = tmp_filename()
         with open(filename, 'w') as f:
-            f.write(arg)
+            f.write(bytes_to_str(arg))
         args += [filename]
     else:
         args += ['/dev/stdin']
@@ -150,6 +155,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
                        cwd=str(SAGE_TMP))
 
     ans, err = latte_proc.communicate(arg)
+    if err:
+        err = bytes_to_str(err)
     ret_code = latte_proc.poll()
     if ret_code:
         if err is None:
@@ -158,6 +165,7 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
             err = ":\n" + err
         raise RuntimeError("LattE integrale program failed (exit code {})".format(ret_code) + err.strip())
 
+    ans = bytes_to_str(ans)
 
     if ehrhart_polynomial:
         ans = ans.splitlines()[-2]
@@ -187,8 +195,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             return ans
         else:
-            from sage.rings.integer import Integer
             return Integer(ans)
+
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
     r"""
@@ -304,6 +312,10 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     # Check that LattE is present
     Latte().require()
 
+    arg = str_to_bytes(arg)
+
+    from sage.rings.rational import Rational
+
     args = ['integrate']
 
     got_polynomial = True if polynomial is not None else False
@@ -363,6 +375,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
             err = ":\n" + err
         raise RuntimeError("LattE integrale program failed (exit code {})".format(ret_code) + err.strip())
 
+    ans = bytes_to_str(ans)
     ans = ans.splitlines()
     ans = ans[-5].split()
     assert(ans[0]=='Answer:')
@@ -371,8 +384,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     if raw_output:
         return ans
     else:
-        from sage.rings.rational import Rational
         return Rational(ans)
+
 
 def to_latte_polynomial(polynomial):
     r"""

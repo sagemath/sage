@@ -5,8 +5,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-11-10): Initial version
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -18,14 +17,15 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
+
 from . import sfa
 import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.combinat.partition import Partitions
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import ZZ, QQ, Integer
-from sage.matrix.all import matrix
+
 
 class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
     r"""
@@ -58,7 +58,7 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
 
     .. [ChariKleber2000] Vyjayanthi Chari and Michael Kleber.
        *Symmetric functions and representations of quantum affine algebras*.
-       :arXiv:`math/0011161v1`
+       :arxiv:`math/0011161v1`
 
     .. [KoikeTerada1987] \K. Koike, I. Terada, *Young-diagrammatic methods for
        the representation theory of the classical groups of type Bn, Cn, Dn*.

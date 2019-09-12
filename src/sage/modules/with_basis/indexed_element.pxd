@@ -10,4 +10,3 @@ cdef class IndexedFreeModuleElement(ModuleElement):
     cpdef _neg_(self)
 
     cpdef dict monomial_coefficients(self, bint copy=*)
-    cpdef _coefficient_fast(self, m)

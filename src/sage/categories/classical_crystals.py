@@ -1,12 +1,12 @@
 r"""
 Classical Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010    Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -15,6 +15,7 @@ from sage.categories.finite_crystals import FiniteCrystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.categories.tensor import TensorProductsCategory
+
 
 class ClassicalCrystals(Category_singleton):
     """
@@ -76,7 +77,7 @@ class ClassicalCrystals(Category_singleton):
         """
         return [RegularCrystals(), FiniteCrystals(), HighestWeightCrystals()]
 
-    def example(self, n = 3):
+    def example(self, n=3):
         """
         Returns an example of highest weight crystals, as per
         :meth:`Category.example`.
@@ -108,28 +109,9 @@ class ClassicalCrystals(Category_singleton):
 
     class ParentMethods:
 
-        def opposition_automorphism(self):
-            r"""
-            Deprecated in :trac:`15560`. Use the corresponding method in
-            Cartan type.
-
-            EXAMPLES::
-
-                sage: T = crystals.Tableaux(['A',5],shape=[1])
-                sage: T.opposition_automorphism()
-                doctest:...: DeprecationWarning: opposition_automorphism is deprecated.
-                Use opposition_automorphism from the Cartan type instead.
-                See http://trac.sagemath.org/15560 for details.
-                Finite family {1: 5, 2: 4, 3: 3, 4: 2, 5: 1}
-            """
-            from sage.misc.superseded import deprecation
-            deprecation(15560, 'opposition_automorphism is deprecated. Use'
-                               ' opposition_automorphism from the Cartan type instead.')
-            return self.cartan_type().opposition_automorphism()
-
         def demazure_character(self, w, f = None):
             r"""
-            Returns the Demazure character associated to ``w``.
+            Return the Demazure character associated to ``w``.
 
             INPUT:
 
@@ -190,7 +172,6 @@ class ClassicalCrystals(Category_singleton):
             """
             from sage.misc.misc_c import prod
             from sage.rings.integer_ring import ZZ
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             if hasattr(w, 'reduced_word'):
                 word = w.reduced_word()
             else:
@@ -199,12 +180,12 @@ class ClassicalCrystals(Category_singleton):
             u = self.algebra(ZZ).sum_of_monomials(self.module_generators)
             u = self.demazure_operator(u, word)
             if f is None:
-                x = ['x%s'%i for i in range(1,n+1)]
-                P = PolynomialRing(ZZ, x)
+                from sage.symbolic.all import SR as P
+                x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
             else:
-                return sum((coeff*f(c)) for c, coeff in u)
+                return sum(coeff * f(c) for c, coeff in u)
 
         def character(self, R=None):
             """

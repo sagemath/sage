@@ -3,9 +3,9 @@ Matrix/Vector-Valued Linear Functions: Parents
 
 In Sage, matrices assume that the base is a ring. Hence, we cannot
 construct matrices whose entries are linear functions in Sage. Really,
-they should be thought of as the tensor product of the R-module of
-linear functions and the R-module of vector/matrix spaces (`R` is
-``QQ`` or ``RDF`` for our purposes).
+they should be thought of as the tensor product of the `R`-module of
+linear functions and the `R`-vector/matrix space, with the latter viewed
+as an `R`-module (`R` is usually ``QQ`` or ``RDF`` for our purposes).
 
 You should not construct any tensor products by calling the parent
 directly. This is also why none of the classes are imported in the

@@ -445,7 +445,6 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         n = self._cartan_type.rank()
         partitions = [None] * n
         riggings = [None] * n
-        vac_nums = [None] * n
         vindex = self._folded_ct._folding.index_set()
         for a in range(n):
             index = vindex.index(sigma[a][0])
@@ -454,8 +453,3 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         return self.element_class(self, partition_list=partitions, rigging_list=riggings)
 
     Element = RCHWNonSimplyLacedElement
-
-# deprecations from trac:18555
-from sage.misc.superseded import deprecated_function_alias
-CrystalOfRiggedConfigurations.global_options = deprecated_function_alias(18555, CrystalOfRiggedConfigurations.options)
-

@@ -1804,7 +1804,10 @@ class Components(SageObject):
 
                     @parallel(p_iter='multiprocessing',ncpus=nproc)
                     def paral_mul(a, local_list_ind):
-                        return [[ind, a[[ind[0]]]*a[[ind[1]]]] for ind in local_list_ind]
+                        partial = []
+                        for ind in local_list_ind:
+                            partial.append([ind, a[[ind[0]]]*a[[ind[1]]]])
+                        return partial
 
                     for ii,val in paral_mul(listParalInput):
                         for jj in val:

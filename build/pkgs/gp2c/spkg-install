@@ -1,13 +1,4 @@
-if [ -z "$SAGE_LOCAL" ]; then
-    echo "SAGE_LOCAL undefined ... exiting"
-    echo "Maybe run 'sage -sh'?"
-    exit 1
-fi
-
 cd src
-
-set -e
-
-./configure --prefix="$SAGE_LOCAL" --with-paricfg="$SAGE_LOCAL/lib/pari/pari.cfg"
-
-$MAKE install
+sdh_configure --with-paricfg=$SAGE_PARI_CFG
+sdh_make
+sdh_make_install

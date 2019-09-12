@@ -1,5 +1,11 @@
 """
 Monoid of ideals in a commutative ring
+
+WARNING: This is used by some rings that are not commutative! ::
+
+    sage: MS = MatrixSpace(QQ,3,3)
+    sage: type(MS.ideal(MS.one()).parent())
+    <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """
 from __future__ import absolute_import
 
@@ -48,11 +54,22 @@ class IdealMonoid_c(Parent):
 
             sage: R = QuadraticField(-23, 'a')
             sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M # indirect doctest
-            Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
+            Monoid of ideals of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I
+
+            sage: id = QQ.ideal(6)
+            sage: id.parent().category()
+            Category of commutative monoids
+
+            sage: MS = MatrixSpace(QQ,3,3)
+            sage: MS.ideal(MS.one()).parent().category()
+            Category of monoids
         """
         self.__R = R
+        cat = Monoids()
+        if R.is_commutative():
+            cat = cat.Commutative()
         Parent.__init__(self, base=sage.rings.integer_ring.ZZ,
-                        category=Monoids())
+                        category=cat)
         self._populate_coercion_lists_()
 
     def _repr_(self):
@@ -63,7 +80,7 @@ class IdealMonoid_c(Parent):
 
             sage: R = QuadraticField(-23, 'a')
             sage: M = sage.rings.ideal_monoid.IdealMonoid(R); M._repr_()
-            'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23'
+            'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I'
         """
         return "Monoid of ideals of %s" % self.__R
 
@@ -165,3 +182,21 @@ class IdealMonoid_c(Parent):
             False
         """
         return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: hash(M) == hash(QQ)
+            False
+            sage: hash(M) == 17
+            False
+            sage: hash(M) == hash(R.ideal_monoid())
+            True
+        """
+        # uses a random number, to have a distinct hash
+        return hash((1580963238588124931699, self.ring()))

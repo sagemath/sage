@@ -20,13 +20,17 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_QQ_ppl
-from sage.geometry.polyhedron.parent import Polyhedra_QQ_ppl
+from sage.geometry.polyhedron.backend_normaliz import Polyhedron_QQ_normaliz
+from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
+from sage.geometry.polyhedron.backend_field import Polyhedron_field
+from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
+from sage.geometry.polyhedron.parent import Polyhedra_QQ_ppl, Polyhedra_QQ_normaliz, Polyhedra_QQ_cdd, Polyhedra_polymake, Polyhedra_field
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
 from sage.rings.all import QQ
 
 
-def Associahedron(cartan_type):
+def Associahedron(cartan_type, backend='ppl'):
     r"""
     Construct an associahedron.
 
@@ -38,9 +42,17 @@ def Associahedron(cartan_type):
     The associahedron of type `A_n` is one way to realize the classical
     associahedron as defined in the :wikipedia:`Associahedron`.
 
-    A polytopal realization of the associahedron can be found in [CFZ]_. The
-    implementation is based on [CFZ]_, Theorem 1.5, Remark 1.6, and Corollary
+    A polytopal realization of the associahedron can be found in [CFZ2002]_. The
+    implementation is based on [CFZ2002]_, Theorem 1.5, Remark 1.6, and Corollary
     1.9.
+
+    INPUT:
+
+    - ``cartan_type`` -- a cartan type according to
+      :class:`sage.combinat.root_system.cartan_type.CartanTypeFactory`
+
+    - ``backend`` -- string (``'ppl'``); the backend to use;
+      see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
 
     EXAMPLES::
 
@@ -61,16 +73,16 @@ def Associahedron(cartan_type):
         sage: polytopes.associahedron(['B',2])
         Generalized associahedron of type ['B', 2] with 6 vertices
 
-    The two pictures of [CFZ]_ can be recovered with::
+    The two pictures of [CFZ2002]_ can be recovered with::
 
         sage: Asso = polytopes.associahedron(['A',3]); Asso
         Generalized associahedron of type ['A', 3] with 14 vertices
-        sage: Asso.plot()
+        sage: Asso.plot()  # long time
         Graphics3d Object
 
         sage: Asso = polytopes.associahedron(['B',3]); Asso
         Generalized associahedron of type ['B', 3] with 20 vertices
-        sage: Asso.plot()
+        sage: Asso.plot()  # long time
         Graphics3d Object
 
     TESTS::
@@ -100,15 +112,22 @@ def Associahedron(cartan_type):
         (1, 42, 84, 56, 14, 1)
         sage: polytopes.associahedron(['B',4]).f_vector()
         (1, 70, 140, 90, 20, 1)
+
+        sage: p1 = polytopes.associahedron(['A',4], backend='normaliz')   # optional - pynormaliz
+        sage: TestSuite(p1).run(skip='_test_pickling')                    # optional - pynormaliz
+        sage: p2 = polytopes.associahedron(['A',4], backend='cdd')
+        sage: TestSuite(p2).run()
+        sage: p3 = polytopes.associahedron(['A',4], backend='field')
+        sage: TestSuite(p3).run()
     """
     cartan_type = CartanType(cartan_type)
-    parent = Associahedra(QQ, cartan_type.rank(), 'ppl')
+    parent = Associahedra(QQ, cartan_type.rank(), backend)
     return parent(cartan_type)
 
 
-class Associahedron_class(Polyhedron_QQ_ppl):
+class Associahedron_class_base(object):
     r"""
-    The Python class of an associahedron
+    The base class of the Python class of an associahedron
 
     You should use the :func:`Associahedron` convenience function to
     construct associahedra from the Cartan type.
@@ -163,10 +182,62 @@ class Associahedron_class(Polyhedron_QQ_ppl):
         return tuple(root_space.from_vector(vector(V))
                      for V in self.vertex_generator())
 
+class Associahedron_class_ppl(Associahedron_class_base, Polyhedron_QQ_ppl):
+    pass
 
-class Associahedra(Polyhedra_QQ_ppl):
+class Associahedron_class_normaliz(Associahedron_class_base, Polyhedron_QQ_normaliz):
+    pass
+
+class Associahedron_class_cdd(Associahedron_class_base, Polyhedron_QQ_cdd):
+    pass
+
+class Associahedron_class_polymake(Associahedron_class_base, Polyhedron_polymake):
+    pass
+
+class Associahedron_class_field(Associahedron_class_base, Polyhedron_field):
+    pass
+
+
+def Associahedra(base_ring, ambient_dim, backend='ppl'):
+    r"""
+    Construct a parent class of Associahedra according to ``backend``.
+
+    TESTS::
+
+        sage: from sage.combinat.root_system.associahedron import Associahedra
+        sage: Associahedra(QQ, 4, 'ppl').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
+        sage: Associahedra(QQ, 4, 'normaliz').parent() # optional - pynormaliz
+        <class 'sage.combinat.root_system.associahedron.Associahedra_normaliz_with_category'>
+        sage: Associahedra(QQ, 4, 'polymake').parent() # optional - polymake
+        <class 'sage.combinat.root_system.associahedron.Associahedra_polymake_with_category'>
+        sage: Associahedra(QQ, 4, 'field').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_field_with_category'>
+        sage: Associahedra(QQ, 4, 'cdd').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_cdd_with_category'>
+
+    .. SEEALSO::
+
+        :class:`Associahedra_base`.
     """
-    Parent of Associahedra of specified dimension
+    if not base_ring is QQ:
+        raise NotImplementedError("base ring must be QQ")
+    if backend == 'ppl':
+        return Associahedra_ppl(base_ring, ambient_dim, backend)
+    elif backend == 'normaliz':
+        return Associahedra_normaliz(base_ring, ambient_dim, backend)
+    elif backend == 'cdd':
+        return Associahedra_cdd(QQ, ambient_dim, backend)
+    elif backend == 'polymake':
+        return Associahedra_polymake(base_ring.fraction_field(), ambient_dim, backend)
+    elif backend == 'field':
+        return Associahedra_field(base_ring, ambient_dim, backend)
+    else:
+        raise ValueError("unknown backend")
+
+class Associahedra_base(object):
+    """
+    Base class of parent of Associahedra of specified dimension
 
     EXAMPLES::
 
@@ -174,7 +245,7 @@ class Associahedra(Polyhedra_QQ_ppl):
         sage: parent = Associahedra(QQ,2,'ppl');  parent
         Polyhedra in QQ^2
         sage: type(parent)
-        <class 'sage.combinat.root_system.associahedron.Associahedra_with_category'>
+        <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
         sage: parent(['A',2])
         Generalized associahedron of type ['A', 2] with 5 vertices
 
@@ -187,7 +258,6 @@ class Associahedra(Polyhedra_QQ_ppl):
         ...
         ValueError: V-representation data requires a list of length ambient_dim
     """
-    Element = Associahedron_class
 
     def _element_constructor_(self, cartan_type, **kwds):
         """
@@ -205,6 +275,13 @@ class Associahedra(Polyhedra_QQ_ppl):
             Generalized associahedron of type ['A', 2] with 5 vertices
             sage: parent._element_constructor_(['A',2])
             Generalized associahedron of type ['A', 2] with 5 vertices
+
+        TESTS::
+
+            sage: parent(['A', 2, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the Cartan type must be finite
         """
         cartan_type = CartanType(cartan_type)
         if not cartan_type.is_finite():
@@ -219,6 +296,21 @@ class Associahedra(Polyhedra_QQ_ppl):
             c = rhocheck.coefficient(orbit[0].leading_support())
             for beta in orbit:
                 inequalities.append([c] + [beta.coefficient(i) for i in I])
-        associahedron = super(Associahedra, self)._element_constructor_(None, [inequalities, []])
+        associahedron = super(Associahedra_base, self)._element_constructor_(None, [inequalities, []])
         associahedron._cartan_type = cartan_type
         return associahedron
+
+class Associahedra_ppl(Associahedra_base, Polyhedra_QQ_ppl):
+    Element = Associahedron_class_ppl
+
+class Associahedra_normaliz(Associahedra_base, Polyhedra_QQ_normaliz):
+    Element = Associahedron_class_normaliz
+
+class Associahedra_cdd(Associahedra_base, Polyhedra_QQ_cdd):
+    Element = Associahedron_class_cdd
+
+class Associahedra_polymake(Associahedra_base, Polyhedra_polymake):
+    Element = Associahedron_class_polymake
+
+class Associahedra_field(Associahedra_base, Polyhedra_field):
+    Element = Associahedron_class_field

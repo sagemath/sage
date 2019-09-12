@@ -6,12 +6,12 @@ AUTHORS:
 - Travis Scrimshaw (2013-10-15)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six import integer_types, iteritems
 
 from copy import copy
@@ -509,12 +509,10 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
         TESTS::
 
             sage: F = FreeAbelianMonoid(index_set=ZZ)
-            sage: hash( F([(0,1), (2,2)]) )
-            8087055352805725849 # 64-bit
-            250091161           # 32-bit
-            sage: hash( F([(2,1)]) )
-            5118585357534560720 # 64-bit
-            1683816912          # 32-bit
+            sage: H1 = hash( F([(0,1), (2,2)]) )
+            sage: H2 = hash( F([(2,1)]) )
+            sage: H1 == H2
+            False
         """
         return hash(frozenset(self._monomial.items()))
 

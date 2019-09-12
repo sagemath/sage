@@ -329,9 +329,6 @@ class A000001(SloaneSequence):
         r"""
         Number of groups of order `n`.
 
-        Note: The package database_gap must be installed for
-        `n > 50`: run ``sage -i database_gap`` first.
-
         INPUT:
 
         -  ``n`` -- positive integer
@@ -354,7 +351,7 @@ class A000001(SloaneSequence):
             2
             sage: a.list(16)
             [1, 1, 1, 2, 1, 2, 1, 5, 2, 2, 1, 5, 1, 2, 1, 14]
-            sage: a(60)  # optional - database_gap
+            sage: a(60)
             13
 
         AUTHORS:
@@ -379,16 +376,17 @@ class A000001(SloaneSequence):
 
             sage: sloane.A000001._eval(4)
             2
-            sage: sloane.A000001._eval(51) # optional - database_gap
+            sage: sloane.A000001._eval(51)
             1
+            sage: sloane.A000001._eval(5000)
+            Traceback (most recent call last):
+            ...
+            GAPError: Error, the library of groups of size 5000 is not available
         """
         if n <= 50:
             return self._small[n-1]
-        try:
-            return Integer(gap.gap.eval('NumberSmallGroups(%s)' % n))
-        except Exception:  # help, don't know what to do here? Jaap
-            print("Install database_gap first. See optional packages.")
-
+        from sage.libs.gap.libgap import libgap
+        return Integer(libgap.NumberSmallGroups(n))
 
 class A000027(SloaneSequence):
     def __init__(self):
@@ -5612,15 +5610,11 @@ class A001909(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-
-        -  ``n`` - positive integer = 2
-
+        -  ``n`` - positive integer >= 2
 
         OUTPUT:
 
-
         -  ``integer`` - function value
-
 
         EXAMPLES::
 
@@ -5676,15 +5670,11 @@ class A001910(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-
-        -  ``n`` - positive integer = 3
-
+        -  ``n`` - positive integer >= 3
 
         OUTPUT:
 
-
         -  ``integer`` - function value
-
 
         EXAMPLES::
 
@@ -9488,18 +9478,13 @@ class A000110(ExponentialNumbers):
             B_n = \sum{k=0}^{n} S(n, k) .
 
 
-
         INPUT:
 
-
-        -  ``n`` - integer = 0
-
+        -  ``n`` - integer >= 0
 
         OUTPUT:
 
-
         -  ``integer`` - `B_n`
-
 
         EXAMPLES::
 
@@ -9548,18 +9533,13 @@ class A000587(ExponentialNumbers):
             C_n = \sum{k=0}^{n} (-1)^k S(n, k) .
 
 
-
         INPUT:
 
-
-        -  ``n`` - integer = 0
-
+        - ``n`` -- integer >= 0
 
         OUTPUT:
 
-
-        -  ``integer`` - `C_n`
-
+        - ``integer`` -- `C_n`
 
         EXAMPLES::
 

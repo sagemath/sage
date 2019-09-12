@@ -7,6 +7,9 @@ AUTHORS:
 
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
   a list of Map instead of only two Map. See :trac:`16291`.
+
+- Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
+  See :trac:`27081`.
 """
 
 #*****************************************************************************
@@ -27,7 +30,6 @@ from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.arith.power cimport generic_power
 from sage.sets.pythonclass cimport Set_PythonType
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.superseded import deprecated_function_alias
 from sage.structure.element cimport parent
 from cpython.object cimport PyObject_RichCompare
 
@@ -198,7 +200,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)
             sage: phi = CDF._internal_convert_map_from(Q)
             sage: print(phi.parent())
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
 
         We now demonstrate that the reference to the coercion map `\phi` does
         not prevent `Q` from being garbage collected::
@@ -217,12 +219,12 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)
             sage: phi = CDF.convert_map_from(Q)
             sage: print(phi.parent())
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
             sage: import gc
             sage: del Q
             sage: _ = gc.collect()
             sage: phi.parent()
-            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 to Complex Double Field
+            Set of field embeddings from Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I to Complex Double Field
         """
         if self._parent is None:
             D = self.domain()
@@ -260,7 +262,7 @@ cdef class Map(Element):
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()
             sage: print(phi.domain)
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5
+            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
@@ -279,7 +281,7 @@ cdef class Map(Element):
         if one really knows what one is doing::
 
             sage: phi._make_weak_references()
-            sage: del x
+            sage: del x # py2
             sage: _ = gc.collect()
             sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
             True
@@ -322,7 +324,7 @@ cdef class Map(Element):
             <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()
             sage: print(phi.domain)
-            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5
+            The constant function (...) -> Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Now, as there is a strong reference, `Q` cannot be garbage collected::
 
@@ -341,7 +343,7 @@ cdef class Map(Element):
         if one really knows what one is doing::
 
             sage: phi._make_weak_references()
-            sage: del x
+            sage: del x # py2
             sage: _ = gc.collect()
             sage: numberQuadFields == len([x for x in gc.get_objects() if isinstance(x, C)]) + 1
             True
@@ -549,7 +551,7 @@ cdef class Map(Element):
             sage: phi = CDF._internal_coerce_map_from(Q); phi
             (map internal to coercion system -- copy before use)
             Composite map:
-              From: Number Field in a with defining polynomial x^2 + 5
+              From: Number Field in a with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
               To:   Complex Double Field
             sage: del Q
             sage: import gc
@@ -1825,10 +1827,9 @@ cdef class FormalCompositeMap(Map):
             sage: (f*g).then() == f
             True
         """
-        if len(self.__list) == 2: return self.__list[1]
+        if len(self.__list) == 2:
+            return self.__list[1]
         return FormalCompositeMap(self.__list[1:])
-
-    second = deprecated_function_alias(16291, then)
 
     def is_injective(self):
         """
@@ -1896,7 +1897,7 @@ cdef class FormalCompositeMap(Map):
         else:
             return True
 
-        if all([f.is_surjective() for f in injectives]):
+        if all(f.is_surjective() for f in injectives):
             return False
 
         raise NotImplementedError("Not enough information to deduce injectivity.")
@@ -1962,7 +1963,7 @@ cdef class FormalCompositeMap(Map):
         else:
             return True
 
-        if all([f.is_injective() for f in surjectives]):
+        if all(f.is_injective() for f in surjectives):
             return False
 
         raise NotImplementedError("Not enough information to deduce surjectivity.")
@@ -1984,3 +1985,66 @@ cdef class FormalCompositeMap(Map):
         """
         for f in self.__list:
             yield f.domain()
+
+    def section(self):
+        """
+        Compute a section map from sections of the factors of
+        ``self`` if they have been implemented.
+
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: incl = P.coerce_map_from(ZZ)
+            sage: sect = incl.section(); sect
+            Composite map:
+              From: Univariate Polynomial Ring in x over Rational Field
+              To:   Integer Ring
+              Defn:   Generic map:
+                      From: Univariate Polynomial Ring in x over Rational Field
+                      To:   Rational Field
+                    then
+                      Generic map:
+                      From: Rational Field
+                      To:   Integer Ring
+            sage: p = x + 5; q = x + 2
+            sage: sect(p-q)
+            3
+
+        the following example has been attached to :meth:`_integer_`
+        of :class:`sage.rings.polynomial.polynomial_element.Polynomial`
+        before (see comment there)::
+
+            sage: k = GF(47)
+            sage: R.<x> = PolynomialRing(k)
+            sage: R.coerce_map_from(ZZ).section()
+            Composite map:
+              From: Univariate Polynomial Ring in x over Finite Field of size 47
+              To:   Integer Ring
+              Defn:   Generic map:
+                      From: Univariate Polynomial Ring in x over Finite Field of size 47
+                      To:   Finite Field of size 47
+                    then
+                      Lifting map:
+                      From: Finite Field of size 47
+                      To:   Integer Ring
+            sage: ZZ(R(45))                 # indirect doctest
+            45
+            sage: ZZ(3*x + 45)              # indirect doctest
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        sections = []
+        for m in reversed(list(self)):
+            try:
+                sec = m.section()
+            except TypeError:
+                return None
+            if sec is None:
+                return None
+            sections.append(sec)
+
+        from sage.categories.homset import Hom
+        from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+        H = Hom(self.codomain(), self.domain(), category=SetsWithPartialMaps())
+        return FormalCompositeMap(H, sections)

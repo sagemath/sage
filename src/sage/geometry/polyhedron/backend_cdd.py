@@ -14,18 +14,17 @@ The cdd backend for polyhedral computations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 from six import PY2
 
 from subprocess import Popen, PIPE
-from sage.rings.all import ZZ, QQ, RDF
-from sage.misc.all import SAGE_TMP, tmp_filename, union, cached_method, prod
+from sage.rings.all import ZZ
 from sage.matrix.constructor import matrix
 
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 from .base_RDF import Polyhedron_RDF
+
 
 class Polyhedron_cdd(Polyhedron_base):
     r"""
@@ -218,14 +217,14 @@ class Polyhedron_cdd(Polyhedron_base):
         cddout = cddout.splitlines()
 
         def parse_indices(count, cdd_indices, cdd_indices_to_sage_indices=None):
-            cdd_indices = map(int, cdd_indices)
+            cdd_indices = [int(x) for x in cdd_indices]
             if cdd_indices_to_sage_indices is None:
-                cdd_indices_to_sage_indices = {i:i-1 for i in cdd_indices}
+                cdd_indices_to_sage_indices = {i: i-1 for i in cdd_indices}
             if count < 0:
                 assert cdd_indices_to_sage_indices is not None, "Did not expect negative counts here"
                 count = -count
                 cdd_indices = list(set(cdd_indices_to_sage_indices.keys()) - set(cdd_indices))
-                assert count in [len(cdd_indices), len(cdd_indices) -1]
+                assert count in [len(cdd_indices), len(cdd_indices) - 1]
             assert count == len(cdd_indices)
             return [cdd_indices_to_sage_indices[i] for i in cdd_indices if cdd_indices_to_sage_indices[i] is not None]
 
@@ -242,13 +241,14 @@ class Polyhedron_cdd(Polyhedron_base):
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_H_to_sage_H = {}
             equations = parse_linearities(intro)
-            data[0].pop(2) # ignore data type, we know the base ring already
+            data[0].pop(2)  # ignore data type, we know the base ring already
             count, dimension = map(int, data.pop(0))
             assert self.ambient_dim() == dimension - 1, "Unexpected ambient dimension"
             assert len(data) == count, "Unexpected number of lines"
+            R = self.base_ring()
             for i, line in enumerate(data):
-                coefficients = map(self.base_ring(), line)
-                if coefficients[0] != 0 and all([e == 0 for e in coefficients[1:]]):
+                coefficients = [R(x) for x in line]
+                if coefficients[0] != 0 and all(e == 0 for e in coefficients[1:]):
                     # cddlib sometimes includes an implicit plane at infinity: 1 0 0 ... 0
                     # We do not care about this entry.
                     self._cdd_H_to_sage_H[i+1] = None
@@ -269,7 +269,7 @@ class Polyhedron_cdd(Polyhedron_base):
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_V_to_sage_V = {}
             lines = parse_linearities(intro)
-            data[0].pop(2) # ignore data type, we know the base ring already
+            data[0].pop(2)  # ignore data type, we know the base ring already
             count, dimension = map(int, data.pop(0))
             assert self.ambient_dim() == dimension - 1, "Unexpected ambient dimension"
             assert len(data) == count, "Unexpected number of lines"
@@ -279,9 +279,9 @@ class Polyhedron_cdd(Polyhedron_base):
                 coefficients = map(self.base_ring(), line)
                 self._cdd_V_to_sage_V[i+1] = len(self._Vrepresentation)
                 if i in lines:
-                    self.parent()._make_Line(self, coefficients);
+                    self.parent()._make_Line(self, coefficients)
                 elif kind == '0':
-                    self.parent()._make_Ray(self, coefficients);
+                    self.parent()._make_Ray(self, coefficients)
                 else:
                     self.parent()._make_Vertex(self, coefficients)
                     has_vertex = True
@@ -295,7 +295,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_adjacency(intro, data, N, cdd_indices_to_sage_indices):
             ret = matrix(ZZ, N, N, 0)
-            cdd_vertex_count = int(data.pop(0)[0])
+            data.pop(0)
             data.reverse()
             for adjacencies in data:
                 assert adjacencies[2] == ':', "Not a line of adjacency data"
@@ -327,8 +327,8 @@ class Polyhedron_cdd(Polyhedron_base):
                 # we disagree, they are adjacent to everything.
                 if v.is_line():
                     for j in range(len(self._Vrepresentation)):
-                        self._V_adjacency_matrix[i,j] = 1
-                        self._V_adjacency_matrix[j,i] = 1
+                        self._V_adjacency_matrix[i ,j] = 1
+                        self._V_adjacency_matrix[j, i] = 1
                 self._V_adjacency_matrix[i,i] = 0
             self._V_adjacency_matrix.set_immutable()
             self.vertex_adjacency_matrix.set_cache(self._V_adjacency_matrix)
@@ -409,6 +409,36 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_RDF_cdd
         sage: Polyhedron_RDF_cdd(parent, [ [(1,0),(0,1),(0,0)], [], []], None, verbose=False)
         A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 3 vertices
+
+    TESTS:
+
+    Checks that :ticket:`24877` is fixed::
+
+        sage: n1 = 1045602428815736513789288687833080060779
+        sage: n2 = 76591188009721216624438400001815308369088648782156930777145
+        sage: n3 = 141046287872967162025203834781636948939209065735662536571684677443277621519222367249160281646288602157866548267640061850035
+        sage: n4 = 169296796161110084211548448622149955145002732358082778064645608216077666698460018565094060494217
+        sage: verts = [[159852/261157, 227425/261157],
+        ....:  [9/10, 7/10],
+        ....:  [132/179, 143/179],
+        ....:  [8/11, -59/33],
+        ....:  [174/167, 95/167],
+        ....:  [3/2, -1/2],
+        ....:  [-1162016360399650274197433414376009691155/n1,
+        ....:    1626522696050475596930360993440360903664/n1],
+        ....:  [-112565666321600055047037445519656973805313121630809713051718/n2,
+        ....:    -15318574020578896781701071673537253327221557273483622682053/n2],
+        ....:  [-222823992658914823798345935660863293259608796350232624336738123149601409997996952470726909468671437285720616325991022633438/n3,
+        ....:   (-20857694835570598502487921801401627779907095024585170129381924208334510445828894861553290291713792691651471189597832832973*5)/n3],
+        ....:  [-100432602675156818915933977983765863676402454634873648118147187022041830166292457614016362515164/n4,
+        ....:   -429364759737031049317769174492863890735634068814210512342503744054527903830844433491149538512537/n4]]
+        sage: P = Polyhedron(verts, base_ring=RDF)
+        sage: len(P.faces(1))
+        10
+        sage: P.n_vertices()
+        10
+        sage: P.n_facets()
+        10
     """
     _cdd_type = 'real'
 
@@ -429,4 +459,3 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
-

@@ -7,16 +7,15 @@ TESTS::
     sage: loads(dumps(A)) == A
     True
 """
-from __future__ import absolute_import
-
-
 ###########################################################################
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>               #
 #  Distributed under the terms of the GNU General Public License (GPL)    #
-#                  http://www.gnu.org/licenses/                           #
+#                  https://www.gnu.org/licenses/                           #
 ###########################################################################
+from __future__ import absolute_import
+from sage.misc.lazy_import import lazy_import
 
-from sage.databases.cremona import cremona_letter_code
+lazy_import('sage.databases.cremona', 'cremona_letter_code')
 
 from sage.rings.all  import QQ, ZZ
 
@@ -26,6 +25,7 @@ from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1, is_GammaH
 
 from .abvar import ModularAbelianVariety_modsym_abstract
 from . import homspace
+
 
 class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
     """
@@ -125,7 +125,8 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         abelian variety.
 
         OUTPUT:
-            string
+
+        string
 
         EXAMPLES::
 
@@ -139,15 +140,16 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         elif is_Gamma1(G):
             group = 'G1'
         elif is_GammaH(G):
-            group = 'GH[' + ','.join([str(z) for z in G._generators_for_H()]) + ']'
-        return '%s%s%s'%(self.level(), cremona_letter_code(self.factor_number()), group)
+            group = 'GH[' + ','.join(str(z) for z in G._generators_for_H()) + ']'
+        return '%s%s%s' % (self.level(), cremona_letter_code(self.factor_number()), group)
 
     def factor_number(self):
         """
         Return factor number.
 
         OUTPUT:
-            int
+
+        int
 
         EXAMPLES::
 

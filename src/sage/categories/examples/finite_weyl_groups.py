@@ -31,7 +31,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         sage: S
         The symmetric group on {0, ..., 3}
         sage: S.category()
-        Category of finite weyl groups
+        Category of finite irreducible weyl groups
 
     The elements of this group are permutations of the set `\{0,\ldots,3\}`::
 
@@ -81,7 +81,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             sage: S == FiniteWeylGroups().example(4)
             True
         """
-        Parent.__init__(self, category = FiniteWeylGroups())
+        Parent.__init__(self, category=FiniteWeylGroups().Irreducible())
         self.n = n
 
     def _repr_(self):

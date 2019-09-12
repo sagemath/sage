@@ -120,9 +120,9 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
             sage: m = [[F(b) for b in a] for a in l for F in [GF(2), GF(4, 'a'), GF(5), GF(9, 'a'), bigF, bigF2]]
             sage: m += [[F.random_element() for i in range(6)] for j in range(20) for F in [GF(5), bigF]]
             sage: c = [Conic(a) for a in m if a != [0,0,0,0,0,0]]
-            sage: assert all([C.has_rational_point() for C in c])
+            sage: assert all(C.has_rational_point() for C in c)
             sage: r = randrange(0, 5)
-            sage: assert all([C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c[r::5]])  # long time (1.4s on sage.math, 2013)
+            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c[r::5])  # long time (1.4s on sage.math, 2013)
         """
         if not point:
             return True

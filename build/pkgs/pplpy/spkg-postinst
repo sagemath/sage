@@ -1,0 +1,11 @@
+if [[ "$SAGE_SPKG_INSTALL_DOCS" != no ]] ; then
+    # Compile pplpy's documentation
+    cd src
+    cd docs
+    $MAKE html
+
+    # install pplpy's documentation
+    PPLPY_DOCS=$SAGE_SHARE/doc/pplpy
+    mkdir -p $PPLPY_DOCS
+    cp -r build/html/*  $PPLPY_DOCS
+fi

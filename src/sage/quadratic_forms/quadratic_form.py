@@ -34,7 +34,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.modules.free_module_element import vector
-
+from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 
 
@@ -373,7 +373,7 @@ class QuadraticForm(SageObject):
 
     ## Routines for solving equations of the form Q(x) = c.
     from sage.quadratic_forms.qfsolve import solve
-        
+
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -891,7 +891,7 @@ class QuadraticForm(SageObject):
         if is_Matrix(v):
             ## Check that v has the correct number of rows
             if v.nrows() != n:
-                raise TypeError("Oops!  The matrix must have " + str(n) + " rows. =(")
+                raise TypeError("the matrix must have {} rows".format(n))
 
             ## Create the new quadratic form
             m = v.ncols()
@@ -901,14 +901,14 @@ class QuadraticForm(SageObject):
         elif (is_Vector(v) or isinstance(v, (list, tuple))):
             ## Check the vector/tuple/list has the correct length
             if not (len(v) == n):
-                raise TypeError("Oops!  Your vector needs to have length " + str(n) + " .")
+                raise TypeError("your vector needs to have length {}".format(n))
 
             ## TO DO:  Check that the elements can be coerced into the base ring of Q -- on first elt.
             if len(v) > 0:
                 try:
-                    x = self.base_ring()(v[0])
+                    self.base_ring()(v[0])
                 except Exception:
-                    raise TypeError("Oops!  Your vector is not coercible to the base ring of the quadratic form... =(")
+                    raise TypeError("your vector is not coercible to the base ring of the quadratic form")
 
             ## Attempt to evaluate Q[v]
             return QFEvaluateVector(self, v)
@@ -970,7 +970,7 @@ class QuadraticForm(SageObject):
             try:
                 for i in range(n):
                     for j in range(i, n):
-                        x = R(A[i,j])
+                        R(A[i,j])
             except Exception:
                 return False
 
@@ -1267,7 +1267,7 @@ class QuadraticForm(SageObject):
             [ *  1 ]
 
         """
-        return QuadraticForm(self.Hessian_matrix().adjoint()).primitive()
+        return QuadraticForm(self.Hessian_matrix().adjoint_classical()).primitive()
 
     def dim(self):
         """
@@ -1582,6 +1582,7 @@ class QuadraticForm(SageObject):
             raise TypeError("not defined for rings of characteristic 2")
         return (self(v+w) - self(v) - self(w))/2
 
+    genera = staticmethod(genera)
 
 ## =====================================================================================================
 

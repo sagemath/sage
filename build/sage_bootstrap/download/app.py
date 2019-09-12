@@ -36,7 +36,7 @@ class Application(object):
         print(MirrorList().fastest)
 
     def download_url(self, url, destination):
-        Download(url, destination, progress=not self.quiet, ignore_errors=True).run()
+        Download(url, destination, progress=not self.quiet, ignore_errors=False).run()
 
     def download_tarball(self, tarball_filename, destination=None):
         tarball = Tarball(tarball_filename)

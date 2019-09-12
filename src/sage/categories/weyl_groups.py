@@ -118,27 +118,27 @@ class WeylGroups(Category_singleton):
 
                 sage: W = WeylGroup(['B',3])
                 sage: PF = W.pieri_factors()
-                sage: [w.reduced_word() for w in PF]
-                [[1, 2, 3, 2, 1],
-                 [1, 2, 3, 2],
-                 [2, 3, 2],
-                 [3, 1, 2],
-                 [1, 2, 3, 1],
-                 [1, 2, 1],
-                 [3, 1],
-                 [2, 1],
-                 [2, 3, 2, 1],
-                 [1, 2, 3],
-                 [3, 1, 2, 1],
-                 [2, 3],
-                 [3, 2],
+                sage: sorted([w.reduced_word() for w in PF])
+                [[],
+                 [1],
                  [1, 2],
-                 [3],
-                 [],
+                 [1, 2, 1],
+                 [1, 2, 3],
+                 [1, 2, 3, 1],
+                 [1, 2, 3, 2],
+                 [1, 2, 3, 2, 1],
                  [2],
-                 [3, 2, 1],
+                 [2, 1],
+                 [2, 3],
                  [2, 3, 1],
-                 [1]]
+                 [2, 3, 2],
+                 [2, 3, 2, 1],
+                 [3],
+                 [3, 1],
+                 [3, 1, 2],
+                 [3, 1, 2, 1],
+                 [3, 2],
+                 [3, 2, 1]]
                 sage: W = WeylGroup(['C',4,1])
                 sage: PF = W.pieri_factors()
                 sage: W.from_reduced_word([3,2,0]) in PF

@@ -137,28 +137,16 @@ export ABI CFLAGS CXXFLAGS LDFLAGS # Partially redundant, but safe(r).
 
 GMP_CONFIGURE="--enable-shared $GMP_CONFIGURE"
 
-# If we're bootstrapping GCC from the GCC spkg, don't build the C++
-# interface (cf. #12782), static libraries and disable fat binary.
-# After GCC is built, we will build GMP again.
-if [ "$SAGE_BUILD_TOOLCHAIN" = yes ]; then
-    echo "Building a reduced version of GMP to bootstrap GCC."
-    echo "GMP will later get rebuilt (with the C++ interface and static libraries"
-    echo "enabled) using the new compiler."
-    GMP_CONFIGURE="$GMP_CONFIGURE --disable-cxx --disable-static"
-    SAGE_FAT_BINARY=no
+# Also build the static library to be used by e.g. ECM
+# unless we are on Cygwin where we can only build a shared
+# or a static library but not both:
+if [ "$UNAME" = "CYGWIN" ]; then
+    echo "Building GMP with the C++ interface and (only) shared libraries."
+    GMP_CONFIGURE="--enable-cxx $GMP_CONFIGURE --disable-static"
 else
-    # Also build the static library to be used by e.g. ECM
-    # unless we are on Cygwin where we can only build a shared
-    # or a static library but not both:
-    if [ "$UNAME" = "CYGWIN" ]; then
-        echo "Building GMP with the C++ interface and (only) shared libraries."
-        GMP_CONFIGURE="--enable-cxx $GMP_CONFIGURE --disable-static"
-    else
-        echo "Building GMP with the C++ interface and (also) static libraries."
-        GMP_CONFIGURE="--enable-cxx --enable-static $GMP_CONFIGURE"
-    fi
+    echo "Building GMP with the C++ interface and (also) static libraries."
+    GMP_CONFIGURE="--enable-cxx --enable-static $GMP_CONFIGURE"
 fi
-# (Further options to 'configure' are added below.)
 
 # If SAGE_FAT_BINARY is enabled, then add --enable-fat to configure
 # options on Linux x86 systems.  On other systems, fat binaries are not

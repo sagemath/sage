@@ -292,7 +292,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         return self.__group
 
     def character(self):
-        """
+        r"""
         Return the Dirichlet character corresponding to this space of
         modular forms. Returns None if there is no specific character
         corresponding to this space, e.g., if this is a space of modular
@@ -333,7 +333,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         return self.__character
 
     def has_character(self):
-        """
+        r"""
         Return True if this space of modular forms has a specific
         character.
 

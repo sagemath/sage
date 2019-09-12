@@ -1,0 +1,30 @@
+Notes:
+Use a standard include path for pari. It means there is no need
+to specify an include path when pari headers are in a standard location.
+
+diff --git a/include/Lcommandline.h b/include/Lcommandline.h
+index 6537e98..5e63e4e 100644
+--- a/include/Lcommandline.h
++++ b/include/Lcommandline.h
+@@ -39,7 +39,7 @@
+ 
+ #include "Lcommandline_globals.h"      //command line global variables
+ #ifdef INCLUDE_PARI
+-#include "pari.h"          //for pari's elliptic curve functions
++#include "pari/pari.h"          //for pari's elliptic curve functions
+ #undef init                //pari has a '#define init pari_init' which
+                            //causes trouble with the stream.h init.
+                            //pari also causes trouble with things like abs.
+diff --git a/include/Lcommandline_elliptic.h b/include/Lcommandline_elliptic.h
+index 17fa42c..7d80208 100644
+--- a/include/Lcommandline_elliptic.h
++++ b/include/Lcommandline_elliptic.h
+@@ -32,7 +32,7 @@
+ 
+ 
+ #ifdef INCLUDE_PARI
+-#include "pari.h"          //for pari's elliptic curve functions 
++#include "pari/pari.h"          //for pari's elliptic curve functions
+ #undef init                //pari has a '#define init pari_init' which
+                            //causes trouble with the stream.h init.
+                            //pari also causes trouble with things like abs.

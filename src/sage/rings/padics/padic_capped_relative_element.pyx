@@ -415,8 +415,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
             sage: r = Zp(5,prec=4,type='fixed-mod')(6)
             sage: r._log_binary_splitting(5)
-            5 + 2*5^2 + 4*5^3 + O(5^4)
-
+            5 + 2*5^2 + 4*5^3
         """
         cdef unsigned long p
         cdef unsigned long prec = min(aprec, self.relprec)
@@ -559,6 +558,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         sig_off()
 
         return ans
+
 
 def unpickle_pcre_v1(R, unit, ordp, relprec):
     """

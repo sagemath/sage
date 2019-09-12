@@ -94,8 +94,10 @@ from cysignals.memory cimport check_malloc, check_allocarray, sig_malloc, sig_fr
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
-from sage.libs.linbox.fflas cimport fflas_trans_enum, fflas_no_trans, fflas_trans, \
-    fflas_right, vector, list as std_list
+from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
+    FflasRight, vector, list as std_list
+from libcpp cimport bool
+from sage.parallel.parallelism import Parallelism
 
 cimport sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int ArithIntObj
@@ -148,7 +150,7 @@ cdef inline celement_invert(celement a, celement n):
         y_int = x_int - q * y_int
         x_int = temp
         temp = ty
-        ty = tx - q * ty;
+        ty = tx - q * ty
         tx = temp
 
     if tx < 0:
@@ -172,6 +174,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     """
     Return the reduced row echelon form of this matrix.
     """
+
     if linbox_is_zero(modulus, entries, nrows, ncols):
         return 0,[]
 
@@ -180,8 +183,15 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     cdef size_t* P = <size_t*>check_allocarray(nrows, sizeof(size_t))
     cdef size_t* Q = <size_t*>check_allocarray(ncols, sizeof(size_t))
 
+    cdef Py_ssize_t r
+    cpdef size_t nbthreads
+    nbthreads = Parallelism().get('linbox')
+    cdef bool transform = False
     if nrows*ncols > 1000: sig_on()
-    cdef Py_ssize_t r = Mod_echelon(F[0], nrows, ncols, <ModFieldElement*>entries, ncols, P, Q)
+    if nbthreads > 1 :
+        r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
+    else : 
+        r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
     if nrows*ncols > 1000: sig_off()
 
     for i in range(nrows):
@@ -190,7 +200,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
         if i<r:
             (entries + i*(ncols+1))[0] = 1
 
-    Mod_applyp(F[0], fflas_right, fflas_no_trans, nrows, 0, r, <ModFieldElement*>entries, ncols, Q)
+    applyP(F[0], FflasRight, FflasNoTrans, nrows, 0, r, <ModField.Element*>entries, ncols, Q)
 
     cdef list pivots = [int(Q[i]) for i in range(r)]
 
@@ -207,21 +217,12 @@ cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_
         return 0,[]
 
     cdef ModField *F = new ModField(<long>modulus)
-    cdef EchelonFormDomain *EF = new EchelonFormDomain(F[0])
-    cdef BlasMatrix *A = new BlasMatrix(F[0], <uint64_t>nrows, <uint64_t>ncols)
-    cdef BlasMatrix *E = new BlasMatrix(F[0], <uint64_t>nrows, <uint64_t>ncols)
-
+    cdef DenseMatrix *A = new DenseMatrix(F[0], <ModField.Element*>entries,<Py_ssize_t>nrows, <Py_ssize_t>ncols)
+    cdef Py_ssize_t r = reducedRowEchelonize(A[0])
     cdef Py_ssize_t i,j
-
-    # TODO: can we avoid this copy?
     for i in range(nrows):
         for j in range(ncols):
-            A.setEntry(i, j, <ModFieldElement>entries[i*ncols+j])
-
-    cdef int r = EF.rowReducedEchelon(E[0], A[0])
-    for i in range(nrows):
-        for j in range(ncols):
-            entries[i*ncols+j] = <celement>E.getEntry(i,j)
+            entries[i*ncols+j] = <celement>A.getEntry(i,j)
 
     cdef Py_ssize_t ii = 0
     cdef list pivots = []
@@ -232,7 +233,7 @@ cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_
                 ii = j+1
                 break
 
-    del F, A, E, EF
+    del F
     return r, pivots
 
 cdef inline celement *linbox_copy(celement modulus, celement *entries,  Py_ssize_t nrows, Py_ssize_t ncols) except? NULL:
@@ -251,54 +252,82 @@ cdef inline int linbox_rank(celement modulus, celement* entries, Py_ssize_t nrow
 
     cdef celement *cpy = linbox_copy(modulus, entries, nrows, ncols)
 
+    cpdef Py_ssize_t r
+    cpdef size_t nbthreads
+    nbthreads = Parallelism().get('linbox')
     if nrows*ncols > 1000: sig_on()
-    r = ModRank(F[0], nrows, ncols, <ModFieldElement*>cpy, ncols)
+    if nbthreads > 1:
+        r = pRank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols, nbthreads)
+    else:
+        r = Rank(F[0], nrows, ncols, <ModField.Element*>cpy, ncols)
     if nrows*ncols > 1000: sig_off()
     sig_free(cpy)
     del F
     return r
 
-cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
+cdef inline celement linbox_det(celement modulus, celement* entries, Py_ssize_t n):
     """
     Return the determinant of this matrix.
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef celement *cpy = linbox_copy(modulus, entries, nrows, ncols)
-    if nrows*ncols > 1000: sig_on()
-    d =  <celement>ModDet(F[0], nrows, ncols, <ModFieldElement*>cpy, ncols)
-    if nrows*ncols > 1000: sig_off()
+    cdef celement *cpy = linbox_copy(modulus, entries, n, n)
+
+    cdef celement d
+    cpdef size_t nbthreads
+    nbthreads = Parallelism().get('linbox')
+
+    if n*n > 1000: sig_on()
+    if nbthreads > 1 :
+        pDet(F[0], d, n, <ModField.Element*>cpy, n, nbthreads)
+    else :
+        Det(F[0], d, n, <ModField.Element*>cpy, n)
+    if n*n > 1000: sig_off()
     sig_free(cpy)
     del F
     return d
 
-cdef inline int linbox_matrix_matrix_multiply(celement modulus, celement* ans, celement* A, celement* B, Py_ssize_t m, Py_ssize_t n, Py_ssize_t k):
+cdef inline celement linbox_matrix_matrix_multiply(celement modulus, celement* ans, celement* A, celement* B, Py_ssize_t m, Py_ssize_t n, Py_ssize_t k) :
     """
     C = A*B
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModFieldElement one, mone, zero
+    cdef ModField.Element one, zero
     F[0].init(one, <int>1)
     F[0].init(zero, <int>0)
+
+    cpdef size_t nbthreads
+    nbthreads = Parallelism().get('linbox')
+
     if m*n*k > 100000: sig_on()
-    Mod_fgemm(F[0], fflas_no_trans, fflas_no_trans, m, n, k,
-              one, <ModFieldElement*>A, k, <ModFieldElement*>B, n, zero,
-              <ModFieldElement*>ans, n)
+    if nbthreads > 1 :
+        pfgemm(F[0], FflasNoTrans, FflasNoTrans, m, n, k, one,
+               <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
+               <ModField.Element*>ans, n, nbthreads)
+    else :
+        fgemm(F[0], FflasNoTrans, FflasNoTrans, m, n, k, one,
+               <ModField.Element*>A, k, <ModField.Element*>B, n, zero,
+               <ModField.Element*>ans, n)
+
     if m*n*k > 100000: sig_off()
+
     del F
 
-cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, celement* A, celement* b, Py_ssize_t m, Py_ssize_t n, fflas_trans_enum trans):
+cdef inline int linbox_matrix_vector_multiply(celement modulus, celement* C, celement* A, celement* b, Py_ssize_t m, Py_ssize_t n, FFLAS_TRANSPOSE trans):
     """
     C = A*v
     """
     cdef ModField *F = new ModField(<long>modulus)
-    cdef ModFieldElement one, mone, zero
+    cdef ModField.Element one, zero
     F.init(one, <int>1)
     F.init(zero, <int>0)
 
-    Mod_fgemv(F[0], trans,  m, n,
-              one, <ModFieldElement*>A, n,
-              <ModFieldElement*>b, 1,
-              zero, <ModFieldElement*>C, 1)
+    if m*n > 100000: sig_on()
+
+    fgemv(F[0], trans,  m, n, one, <ModField.Element*>A, n, <ModField.Element*>b, 1,
+               zero, <ModField.Element*>C, 1)
+
+    if m*n > 100000: sig_off()
+
     del F
 
 cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries):
@@ -307,10 +336,10 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     """
     cdef Py_ssize_t i
     cdef ModField *F = new ModField(<long>modulus)
-    cdef vector[ModFieldElement] *minP = new vector[ModFieldElement]()
+    cdef vector[ModField.Element] *minP = new vector[ModField.Element]()
 
     if nrows*nrows > 1000: sig_on()
-    Mod_MinPoly(F[0], minP[0], nrows, <ModFieldElement*>entries, nrows)
+    MinPoly(F[0], minP[0], nrows, <ModField.Element*>entries, nrows)
     if nrows*nrows > 1000: sig_off()
 
     l = []
@@ -332,7 +361,7 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
     cdef celement *cpy = linbox_copy(modulus, entries, nrows, nrows)
 
     if nrows*nrows > 1000: sig_on()
-    Mod_CharPoly(R[0], P, nrows, <ModFieldElement*>cpy, nrows)
+    CharPoly(R[0], P, nrows, <ModField.Element*>cpy, nrows)
     if nrows*nrows > 1000: sig_off()
 
     sig_free(cpy)
@@ -1214,7 +1243,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i in range(self._nrows):
             _b[i] = <celement>b._entries[i]
 
-        linbox_matrix_vector_multiply(self.p, _c, self._entries, _b, self._nrows, self._ncols, fflas_trans)
+        linbox_matrix_vector_multiply(self.p, _c, self._entries, _b, self._nrows, self._ncols, FflasTrans)
 
         for i in range(self._ncols):
             c._entries[i] = <mod_int>_c[i]
@@ -1268,7 +1297,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         for i in range(self._ncols):
             _b[i] = <celement>b._entries[i]
 
-        linbox_matrix_vector_multiply(self.p, _c, self._entries, _b, self._nrows, self._ncols, fflas_no_trans)
+        linbox_matrix_vector_multiply(self.p, _c, self._entries, _b, self._nrows, self._ncols, FflasNoTrans)
 
         for i in range(self._nrows):
             c._entries[i] = <mod_int>_c[i]
@@ -1328,24 +1357,24 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         ::
 
             sage: A = random_matrix(GF(2916337), 7, 7); A
-            [ 446196 2267054   36722 2092388 1694559  514193 1196222]
-            [1242955 1040744   99523 2447069   40527  930282 2685786]
-            [2892660 1347146 1126775 2131459  869381 1853546 2266414]
-            [2897342 1342067 1054026  373002   84731 1270068 2421818]
-            [ 569466  537440  572533  297105 1415002 2079710  355705]
-            [2546914 2299052 2883413 1558788 1494309 1027319 1572148]
-            [ 250822  522367 2516720  585897 2296292 1797050 2128203]
+            [ 514193 1196222 1242955 1040744   99523 2447069   40527]
+            [ 930282 2685786 2892660 1347146 1126775 2131459  869381]
+            [1853546 2266414 2897342 1342067 1054026  373002   84731]
+            [1270068 2421818  569466  537440  572533  297105 1415002]
+            [2079710  355705 2546914 2299052 2883413 1558788 1494309]
+            [1027319 1572148  250822  522367 2516720  585897 2296292]
+            [1797050 2128203 1161160  562535 2875615 1165768  286972]
 
             sage: B = copy(A)
             sage: char_p = A.characteristic_polynomial(); char_p
-            x^7 + 1191770*x^6 + 547840*x^5 + 215639*x^4 + 2434512*x^3 + 1039968*x^2 + 483592*x + 733817
+            x^7 + 1274305*x^6 + 1497602*x^5 + 12362*x^4 + 875330*x^3 + 31311*x^2 + 1858466*x + 700510
             sage: char_p(A) == 0
             True
             sage: B == A               # A is not modified
             True
 
             sage: min_p = A.minimal_polynomial(proof=True); min_p
-            x^7 + 1191770*x^6 + 547840*x^5 + 215639*x^4 + 2434512*x^3 + 1039968*x^2 + 483592*x + 733817
+            x^7 + 1274305*x^6 + 1497602*x^5 + 12362*x^4 + 875330*x^3 + 31311*x^2 + 1858466*x + 700510
             sage: min_p.divides(char_p)
             True
 
@@ -1505,20 +1534,20 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         ::
 
             sage: A = random_matrix(GF(1214471), 10, 10); A
-            [ 266673  745841  418200  521668  905837  160562  831940   65852  173001  515930]
-            [ 714380  778254  844537  584888  392730  502193  959391  614352  775603  240043]
-            [1156372  104118 1175992  612032 1049083  660489 1066446  809624   15010 1002045]
-            [ 470722  314480 1155149 1173111   14213 1190467 1079166  786442  429883  563611]
-            [ 625490 1015074  888047 1090092  892387    4724  244901  696350  384684  254561]
-            [ 898612   44844   83752 1091581  349242  130212  580087  253296  472569  913613]
-            [ 919150   38603  710029  438461  736442  943501  792110  110470  850040  713428]
-            [ 668799 1122064  325250 1084368  520553 1179743  791517   34060 1183757 1118938]
-            [ 642169   47513   73428 1076788  216479  626571  105273  400489 1041378 1186801]
-            [ 158611  888598 1138220 1089631   56266 1092400  890773 1060810  211135  719636]
+            [ 160562  831940   65852  173001  515930  714380  778254  844537  584888  392730]
+            [ 502193  959391  614352  775603  240043 1156372  104118 1175992  612032 1049083]
+            [ 660489 1066446  809624   15010 1002045  470722  314480 1155149 1173111   14213]
+            [1190467 1079166  786442  429883  563611  625490 1015074  888047 1090092  892387]
+            [   4724  244901  696350  384684  254561  898612   44844   83752 1091581  349242]
+            [ 130212  580087  253296  472569  913613  919150   38603  710029  438461  736442]
+            [ 943501  792110  110470  850040  713428  668799 1122064  325250 1084368  520553]
+            [1179743  791517   34060 1183757 1118938  642169   47513   73428 1076788  216479]
+            [ 626571  105273  400489 1041378 1186801  158611  888598 1138220 1089631   56266]
+            [1092400  890773 1060810  211135  719636 1011640  631366  427711  547497 1084281]
 
             sage: B = copy(A)
             sage: min_p = A.minimal_polynomial(proof=True); min_p
-            x^10 + 283013*x^9 + 252503*x^8 + 512435*x^7 + 742964*x^6 + 130817*x^5 + 581471*x^4 + 899760*x^3 + 207023*x^2 + 470831*x + 381978
+            x^10 + 384251*x^9 + 702437*x^8 + 960299*x^7 + 202699*x^6 + 409368*x^5 + 1109249*x^4 + 1163061*x^3 + 333802*x^2 + 273775*x + 55190
 
             sage: min_p(A) == 0
             True
@@ -1526,7 +1555,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             True
 
             sage: char_p = A.characteristic_polynomial(); char_p
-            x^10 + 283013*x^9 + 252503*x^8 + 512435*x^7 + 742964*x^6 + 130817*x^5 + 581471*x^4 + 899760*x^3 + 207023*x^2 + 470831*x + 381978
+            x^10 + 384251*x^9 + 702437*x^8 + 960299*x^7 + 202699*x^6 + 409368*x^5 + 1109249*x^4 + 1163061*x^3 + 333802*x^2 + 273775*x + 55190
 
             sage: min_p.divides(char_p)
             True
@@ -1662,7 +1691,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         r = R(v)
         return r
 
-    def echelonize(self, algorithm="linbox", **kwds):
+    def echelonize(self, algorithm="linbox_noefd", **kwds):
         """
         Put ``self`` in reduced row echelon form.
 
@@ -1672,9 +1701,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         - ``algorithm``
 
-          - ``linbox`` - uses the LinBox library (``EchelonFormDomain`` implementation, default)
+          - ``linbox`` - uses the LinBox library (wrapping fflas-ffpack)
 
-          - ``linbox_noefd`` - uses the LinBox library (FFPACK directly, less memory but slower)
+          - ``linbox_noefd`` - uses the FFPACK directly, less memory and faster (default)
 
           - ``gauss`` - uses a custom slower `O(n^3)` Gauss
             elimination implemented in Sage.
@@ -1764,6 +1793,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 10'.
 
         ::
+
             sage: A = random_matrix(GF(16007), 10, 20); A
             [15455  1177 10072  4693  3887  4102 10746 15265  6684 14559  4535 13921  9757  9525  9301  8566  2460  9609  3887  6205]
             [ 8602 10035  1242  9776   162  7893 12619  6660 13250  1988 14263 11377  2216  1247  7261  8446 15081 14412  7371  7948]
@@ -1794,6 +1824,16 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             Traceback (most recent call last):
             ...
             NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 10000'.
+
+        Parallel computation::
+
+            sage: A = random_matrix(GF(65521),100,200)
+            sage: Parallelism().set('linbox', nproc=2)
+            sage: E = A.echelon_form()
+            sage: Parallelism().set('linbox', nproc=1) # switch off parallelization
+            sage: F = A.echelon_form()
+            sage: E==F
+            True
 
         TESTS::
 
@@ -1929,7 +1969,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         else:
             r, pivots = linbox_echelonize(self.p, self._entries, self._nrows, self._ncols)
         verbose('done with echelonize',t)
-
         self.cache('in_echelon_form',True)
         self.cache('rank', r)
         self.cache('pivots', tuple(pivots))
@@ -2375,7 +2414,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A.determinant()
             6
 
-       ::
+        ::
 
             sage: A = random_matrix(GF(7), 100, 100)
             sage: A.determinant()
@@ -2425,6 +2464,17 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: (A*B).determinant() == A.determinant() * B.determinant()
             True
 
+        Parallel computation::
+
+            sage: A = random_matrix(GF(65521),200)
+            sage: B = copy(A)
+            sage: Parallelism().set('linbox', nproc=2)
+            sage: d = A.determinant()
+            sage: Parallelism().set('linbox', nproc=1) # switch off parallelization
+            sage: e = B.determinant()
+            sage: d==e
+            True
+
         TESTS::
 
             sage: A = random_matrix(GF(7), 0, 0); A.det()
@@ -2468,7 +2518,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             x = self.fetch('det')
             if not x is None:
                 return x
-            d = linbox_det(self.p, self._entries, self._nrows, self._ncols)
+            d = linbox_det(self.p, self._entries, self._nrows)
             d2 = self._coerce_element(d)
             self.cache('det', d2)
             return d2

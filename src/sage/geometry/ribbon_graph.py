@@ -12,15 +12,15 @@ AUTHORS:
 - Pablo Portilla (2016)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Pablo Portilla  <p.portilla89@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
@@ -62,10 +62,11 @@ def _find(l, k):
         ...
         ValueError: element -1 not found
     """
-    for i,lst in enumerate(l):
+    for i, lst in enumerate(l):
         if k in lst:
             return [i, lst.index(k)]
     raise ValueError("element {} not found".format(k))
+
 
 def _clean(l):
     r"""
@@ -394,7 +395,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         """
         # It might seem a bit overkill to call boundary() here but it is
         #   necessary to either call it or do similar computations here.
-        #   The function boundary() avoids some patologies with boundaries
+        #   The function boundary() avoids some pathologies with boundaries
         #   formed by just one loop.
         return len(self.boundary())
 
@@ -596,9 +597,8 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         del repr_sigma[vertex][dart1+1:dart2+1]
 
         #We update rho
-        repr_rho.append([k+1,k+2])
+        repr_rho.append([k+1, k+2])
 
-        perm_group = self._sigma.parent()
         return RibbonGraph(PermutationGroupElement([tuple(x) for x in repr_sigma]), 
                            PermutationGroupElement([tuple(x) for x in repr_rho]))
 

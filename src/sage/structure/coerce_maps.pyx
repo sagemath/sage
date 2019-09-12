@@ -48,7 +48,25 @@ cdef class DefaultConvertMap(Map):
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
+
+        This class is deprecated when used directly::
+
+            sage: from sage.structure.coerce_maps import DefaultConvertMap
+            sage: DefaultConvertMap(ZZ, ZZ)
+            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable
+            See https://trac.sagemath.org/26879 for details.
+            Conversion map:
+              From: Integer Ring
+              To:   Integer Ring
         """
+        # The base class DefaultConvertMap is deprecated, only the
+        # derived class DefaultConvertMap_unique should be used.
+        # When removing this deprecation, this class should be merged
+        # into DefaultConvertMap_unique.
+        if not isinstance(self, DefaultConvertMap_unique):
+            from sage.misc.superseded import deprecation
+            deprecation(26879, "DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable")
+
         if not isinstance(domain, Parent):
             domain = Set_PythonType(domain)
         if category is None:
@@ -67,9 +85,8 @@ cdef class DefaultConvertMap(Map):
         EXAMPLES::
 
             sage: f = GF(11).convert_map_from(GF(7))
-            sage: f._repr_type() 
+            sage: f._repr_type()
             'Conversion'
-
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
 

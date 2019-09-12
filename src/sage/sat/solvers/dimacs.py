@@ -462,10 +462,23 @@ class Glucose(DIMACS):
     """
     An instance of the Glucose solver.
 
-    For information on Glucose see: http://www.lri.fr/~simon/?page=glucose
+    For information on Glucose see: http://www.labri.fr/perso/lsimon/glucose/
+
+    EXAMPLES::
+
+        sage: from sage.sat.solvers import Glucose
+        sage: solver = Glucose()
+        sage: solver
+        DIMACS Solver: 'glucose -verb=2 {input} {output}'
+        sage: solver.add_clause( (1, 2, 3) )
+        sage: solver.add_clause( (-1,) )
+        sage: solver.add_clause( (-2,) )
+        sage: solver()                            # optional - glucose
+        (None, False, False, True)
+
     """
 
-    command = "glucose_static -verb=2 {input} {output}"
+    command = "glucose -verb=2 {input} {output}"
 
     def __call__(self, **kwds):
         """
@@ -486,9 +499,42 @@ class Glucose(DIMACS):
 
         EXAMPLES::
 
-           sage: from sage.sat.boolean_polynomials import solve as solve_sat
-           sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
-           sage: solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - Glucose
+            sage: from sage.sat.boolean_polynomials import solve as solve_sat
+            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
+            sage: solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
+            [{k003: 1,
+              k002: 1,
+              k001: 0,
+              k000: 1,
+              s003: 1,
+              s002: 0,
+              s001: 1,
+              s000: 0,
+              w103: 1,
+              w102: 1,
+              w101: 1,
+              w100: 1,
+              x103: 0,
+              x102: 0,
+              x101: 0,
+              x100: 1,
+              k103: 1,
+              k102: 0,
+              k101: 1,
+              k100: 1}]
+
+        ::
+
+            sage: from sage.sat.solvers.dimacs import Glucose
+            sage: solver = Glucose()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((1,-2))
+            sage: solver()                           # optional - glucose
+            (None, True, True)
+            sage: solver.add_clause((-1,-2))
+            sage: solver()                           # optional - glucose
+            False
         """
         DIMACS.__call__(self)
 
@@ -505,3 +551,83 @@ class Glucose(DIMACS):
             except ValueError:
                 pass
         return False
+
+class GlucoseSyrup(DIMACS):
+    """
+    An instance of the Glucose-syrup parallel solver.
+
+    For information on Glucose see: http://www.labri.fr/perso/lsimon/glucose/
+    """
+
+    command = "glucose-syrup -model -verb=2 {input}"
+
+    def __call__(self, **kwds):
+        """
+        Solve this instance.
+
+        INPUT:
+
+        - ``assumptions`` - ignored, accepted for compatibility with
+          other solvers (default: ``None``)
+
+        OUTPUT:
+
+        - If this instance is SAT: A tuple of length ``nvars()+1``
+          where the ``i``-th entry holds an assignment for the
+          ``i``-th variables (the ``0``-th entry is always ``None``).
+
+        - If this instance is UNSAT: ``False``
+
+        EXAMPLES::
+
+            sage: from sage.sat.boolean_polynomials import solve as solve_sat
+            sage: F,s = mq.SR(1,1,1,4,gf2=True,polybori=True).polynomial_system()
+            sage: solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
+            [{k003: 1,
+            k002: 1,
+            k001: 0,
+            k000: 1,
+            s003: 1,
+            s002: 0,
+            s001: 1,
+            s000: 0,
+            w103: 1,
+            w102: 1,
+            w101: 1,
+            w100: 1,
+            x103: 0,
+            x102: 0,
+            x101: 0,
+            x100: 1,
+            k103: 1,
+            k102: 0,
+            k101: 1,
+            k100: 1}]
+
+            sage: from sage.sat.solvers.dimacs import GlucoseSyrup
+            sage: solver = GlucoseSyrup()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((1,-2))
+            sage: solver()                          # optional - glucose
+            (None, True, True)
+            sage: solver.add_clause((-1,-2))
+            sage: solver()                          # optional - glucose
+            False
+        """
+        DIMACS.__call__(self)
+
+        full_line = ''
+
+        for line in self._output:
+            if line.startswith("c"):
+                continue
+            if line.startswith("s"):
+                if "UNSAT" in line:
+                    return False
+            if line.startswith("v"):
+                full_line += line[2:] + ' '
+        s = map(int, full_line[:-3].strip().split(" "))
+        s = (None,) + tuple(e>0 for e in s)
+        return s
+

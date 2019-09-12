@@ -19,6 +19,7 @@ from sage.structure.element import is_Vector
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import ZZ
 from sage.modules.free_module_element import vector
+from copy import copy
 
 
 
@@ -172,9 +173,18 @@ class PolyhedronRepresentation(SageObject):
             (-1.0, -1.0, 0.0)
             sage: vector(RDF, v)
             (-1.0, -1.0, 0.0)
+
+        TESTS:
+
+        Checks that :trac:`27709` is fixed::
+
+            sage: C = polytopes.cube()
+            sage: C.vertices()[0].vector()[0] = 3
+            sage: C.vertices()[0]
+            A vertex at (-1, -1, -1)
         """
         if (base_ring is None) or (base_ring is self._base_ring):
-            return self._vector
+            return copy(self._vector)
         else:
             return vector(base_ring, self._vector)
 
@@ -205,18 +215,18 @@ class PolyhedronRepresentation(SageObject):
             sage: v.__call__()
             (1, 2, 3)
         """
-        return self._vector
+        return copy(self._vector)
 
     def index(self):
         """
-        Returns an arbitrary but fixed number according to the internal
+        Return an arbitrary but fixed number according to the internal
         storage order.
 
         NOTES:
 
         H-representation and V-representation objects are enumerated
         independently. That is, amongst all vertices/rays/lines there
-        will be one with ``index()==0``, and amongs all
+        will be one with ``index()==0``, and amongst all
         inequalities/equations there will be one with ``index()==0``,
         unless the polyhedron is empty or spans the whole space.
 
@@ -299,7 +309,7 @@ class PolyhedronRepresentation(SageObject):
             sage: v.count(1)
             3
         """
-        return sum([1 for j in self if i==j])
+        return sum([1 for j in self if i == j])
 
 
 class Hrepresentation(PolyhedronRepresentation):
@@ -410,8 +420,17 @@ class Hrepresentation(PolyhedronRepresentation):
             sage: pH = p.Hrepresentation(2)
             sage: pH.A()
             (1, 0)
+
+        TESTS:
+
+        Checks that :trac:`27709` is fixed::
+
+            sage: C = polytopes.cube()
+            sage: C.inequalities()[0].A()[2] = 5
+            sage: C.inequalities()[0]
+            An inequality (0, 0, -1) x + 1 >= 0
         """
-        return self._A
+        return copy(self._A)
 
     def b(self):
         r"""
@@ -574,9 +593,9 @@ class Hrepresentation(PolyhedronRepresentation):
             ....:                eqns=[(1, -1, -1, 1)])
             sage: for h in P.Hrepresentation():
             ....:     print(h.repr_pretty())
-            x0 + x1 == x2 + 1
+            x0 + x1 - x2 == 1
             x0 >= 0
-            2*x0 + x1 + 1 >= 0
+            2*x0 + x1 >= -1
         """
         return repr_pretty(self.vector(), self.type(), **kwds)
 
@@ -594,9 +613,9 @@ class Hrepresentation(PolyhedronRepresentation):
             ....:                eqns=[(1, -1, -1, 1)])
             sage: for h in P.Hrepresentation():
             ....:     print(latex(h))
-            x_{0} + x_{1} = x_{2} + 1
+            x_{0} + x_{1} - x_{2} = 1
             x_{0} \geq 0
-            2 \, x_{0} + x_{1} + 1 \geq 0
+            2 \, x_{0} + x_{1} \geq -1
         """
         return self.repr_pretty(latex=True)
 
@@ -681,7 +700,7 @@ class Inequality(Hrepresentation):
         have_A = not self.A().is_zero()
         if have_A:
             s += repr(self.A()) + ' x '
-        if self.b()>=0:
+        if self.b() >= 0:
             if have_A:
                 s += '+'
         else:
@@ -752,6 +771,23 @@ class Inequality(Hrepresentation):
             return self.polyhedron()._is_positive( self.eval(Vobj) )
         else: # Vobj.is_ray()
             return self.polyhedron()._is_nonneg( self.eval(Vobj) )
+
+    def outer_normal(self):
+        r"""
+        Return the outer normal vector of ``self``.
+
+        OUTPUT:
+        
+        The normal vector directed away from the interior of the polyhedron.
+        
+        EXAMPLES::
+
+            sage: p = Polyhedron(vertices = [[0,0,0],[1,1,0],[1,2,0]])
+            sage: a = next(p.inequality_generator())
+            sage: a.outer_normal()
+            (1, -1, 0)
+        """
+        return -self.A()
 
 
 class Equation(Hrepresentation):
@@ -920,6 +956,7 @@ class Vrepresentation(PolyhedronRepresentation):
             sage: TestSuite(pV).run(skip='_test_pickling')
         """
         assert polyhedron.parent() is self._polyhedron_parent
+        data = list(data)
         if len(data) != self._vector.degree():
             raise ValueError('V-representation data requires a list of length ambient_dim')
 
@@ -1407,7 +1444,8 @@ class Line(Vrepresentation):
         return Hobj.A() * self.vector()
 
 
-def repr_pretty(coefficients, type, prefix='x', indices=None, latex=False, style='positive',split=False):
+def repr_pretty(coefficients, type, prefix='x', indices=None,
+                latex=False, style='>=', split=False):
     r"""
     Return a pretty representation of equation/inequality represented
     by the coefficients.
@@ -1425,14 +1463,16 @@ def repr_pretty(coefficients, type, prefix='x', indices=None, latex=False, style
 
     - ``latex`` -- a boolean
 
-    - ``split`` -- a boolean
+    - ``split`` -- a boolean; (Default: ``False``). If set to ``True``,
+                   the output is split into a 3-tuple containing the left-hand side,
+                   the relation, and the right-hand side of the object.
 
     - ``style`` -- either ``"positive"`` (making all coefficients positive), or
-      ``"<="``, or ``">="``.
+                   ``"<="`` or ``">="``.
 
     OUTPUT:
 
-    A string.
+    A string or 3-tuple of strings (depending on ``split``).
 
     EXAMPLES::
 
@@ -1441,9 +1481,9 @@ def repr_pretty(coefficients, type, prefix='x', indices=None, latex=False, style
         sage: print(repr_pretty((0, 1, 0, 0), PolyhedronRepresentation.INEQUALITY))
         x0 >= 0
         sage: print(repr_pretty((1, 2, 1, 0), PolyhedronRepresentation.INEQUALITY))
-        2*x0 + x1 + 1 >= 0
+        2*x0 + x1 >= -1
         sage: print(repr_pretty((1, -1, -1, 1), PolyhedronRepresentation.EQUATION))
-        x2 + 1 == x0 + x1
+        -x0 - x1 + x2 == -1
     """
     from sage.misc.latex import latex as latex_function
     from sage.modules.free_module_element import vector
@@ -1465,31 +1505,22 @@ def repr_pretty(coefficients, type, prefix='x', indices=None, latex=False, style
         raise NotImplementedError(
             'no pretty printing available: wrong type {}'.format(type))
 
-    if not split:
-        if style == 'positive':
-            positive_part = vector([max(c, 0) for c in coeffs])
-            negative_part = - (coeffs - positive_part)
-            assert coeffs == positive_part - negative_part
-            return '{} {} {}'.format(f(positive_part*vars), rel, f(negative_part*vars))
-        elif style == '>=':
-            product = coeffs[1:]*vars[1:]
-            return '{} {} {}'.format(f(product), rel, f(-coeffs[0]))
-        elif style == '<=':
-            product = -1*(coeffs[1:]*vars[1:])
-            return '{} {} {}'.format(f(product), rel, f(coeffs[0]))
-        else:
-            raise NotImplementedError('no pretty printing available: wrong style {}'.format(style))
+    if style == 'positive':
+        pos_part = vector([max(c, 0) for c in coeffs])
+        neg_part = pos_part - coeffs
+        assert coeffs == pos_part - neg_part
+        left_part = f(pos_part*vars)
+        right_part = f(neg_part*vars)
+    elif style == '>=':
+        left_part = f(coeffs[1:]*vars[1:])
+        right_part = f(-coeffs[0])
+    elif style == '<=':
+        left_part = f(-coeffs[1:]*vars[1:])
+        right_part = f(coeffs[0])
     else:
-        if style == 'positive':
-            positive_part = vector([max(c, 0) for c in coeffs])
-            negative_part = - (coeffs - positive_part)
-            assert coeffs == positive_part - negative_part
-            return (str(f(positive_part*vars)), rel, str(f(negative_part*vars)))
-        elif style == '>=':
-            product = coeffs[1:]*vars[1:]
-            return (str(f(product)), rel, str(f(-coeffs[0])))
-        elif style == '<=':
-            product = -1*(coeffs[1:]*vars[1:])
-            return (str(f(product)), rel, str(f(coeffs[0])))
-        else:
-            raise NotImplementedError('no pretty printing available: wrong style {}'.format(style))
+        raise NotImplementedError('no pretty printing available: wrong style {}'.format(style))
+
+    if not split:
+        return '{} {} {}'.format(left_part, rel, right_part)
+    else:
+        return (str(left_part), rel, str(right_part))

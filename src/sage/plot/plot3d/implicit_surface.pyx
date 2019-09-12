@@ -87,6 +87,7 @@ from sage.plot.plot3d.base import RenderParams, default_texture
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet
 from sage.rings.all import RDF
 from sage.plot.misc import setup_for_eval_on_grid
+from sage.plot.colors import check_color_data
 
 from sage.libs.gsl.math cimport gsl_isnan
 
@@ -973,8 +974,9 @@ cdef class ImplicitSurface(IndexFaceSet):
             IndexFaceSet.__init__(self, [], [], **kwds)
         else:
             # case of a color depending on parameters
-            self.color_function = color_data[0]
-            self.colormap = color_data[1]
+            cf, cm = check_color_data(color_data)
+            self.color_function = cf
+            self.colormap = cm
             IndexFaceSet.__init__(self, [], [], texture_list=[], **kwds)
         from sage.ext.fast_eval import fast_float
 

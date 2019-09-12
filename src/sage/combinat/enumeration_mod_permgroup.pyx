@@ -9,9 +9,8 @@ Tools for enumeration modulo the action of a permutation group
 #              The full text of the GPL is available at:
 #                    http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.structure.list_clone cimport ClonableIntArray
+
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
-from cpython cimport bool
 
 cpdef list all_children(ClonableIntArray v, int max_part):
     r"""
@@ -136,7 +135,8 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
         return -1
     return 1
 
-cpdef bool is_canonical(list sgs, ClonableIntArray v):
+
+cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     r"""
     Returns ``True`` if the integer vector `v` is maximal with respect to
     the lexicographic order in its orbit under the action of the
@@ -181,6 +181,7 @@ cpdef bool is_canonical(list sgs, ClonableIntArray v):
                     new_to_analyse.add(child)
         to_analyse = new_to_analyse
     return True
+
 
 cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIntArray v):
     r"""

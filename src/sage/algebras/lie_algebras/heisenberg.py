@@ -139,6 +139,22 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
             return m
         return "%s_{%s}"%(m[0], m[1:]) # else it is of length at least 2
 
+    def step(self):
+        r"""
+        Return the nilpotency step of ``self``.
+
+        EXAMPLES::
+
+            sage: h = lie_algebras.Heisenberg(ZZ, 10)
+            sage: h.step()
+            2
+
+            sage: h = lie_algebras.Heisenberg(ZZ, oo)
+            sage: h.step()
+            2
+        """
+        return Integer(2)
+
     class Element(LieAlgebraElement):
         pass
 
@@ -218,7 +234,7 @@ class HeisenbergAlgebra_fd(object):
 
             sage: H = lie_algebras.Heisenberg(QQ, 1)
             sage: H.lie_algebra_generators()
-            Finite family {'q1': q1, 'p1': p1}
+            Finite family {'p1': p1, 'q1': q1}
             sage: H = lie_algebras.Heisenberg(QQ, 0)
             sage: H.lie_algebra_generators()
             Finite family {'z': z}
@@ -242,7 +258,7 @@ class HeisenbergAlgebra_fd(object):
 
             sage: H = lie_algebras.Heisenberg(QQ, 1)
             sage: H.basis()
-            Finite family {'q1': q1, 'p1': p1, 'z': z}
+            Finite family {'p1': p1, 'q1': q1, 'z': z}
         """
         d = {}
         for i in range(1, self._n+1):
@@ -353,7 +369,7 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
                       + ['q%s'%i for i in range(1,n+1)]
                       + ['z'])
         LieAlgebraWithGenerators.__init__(self, R, names=names, index_set=names,
-            category=LieAlgebras(R).FiniteDimensional().WithBasis())
+            category=LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis())
         HeisenbergAlgebra_abstract.__init__(self, names)
 
     def _repr_(self):
@@ -389,7 +405,7 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             True
         """
         S = cartesian_product([PositiveIntegers(), ['p','q']])
-        cat = LieAlgebras(R).WithBasis()
+        cat = LieAlgebras(R).Nilpotent().WithBasis()
         LieAlgebraWithGenerators.__init__(self, R, index_set=S, category=cat)
         HeisenbergAlgebra_abstract.__init__(self, S)
 
@@ -427,7 +443,6 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
             sage: L.lie_algebra_generators()
             Lazy family (generator map(i))_{i in The Cartesian product of
                                             (Positive integers, {'p', 'q'})}
-
         """
         return Family(self._indices, lambda x: self.monomial(x[1] + str(x[0])),
                       name='generator map')
@@ -652,7 +667,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         z = (MS({(0,n+1): one}),)
         names = tuple('p%s'%i for i in range(1,n+1))
         names = names + tuple('q%s'%i for i in range(1,n+1)) + ('z',)
-        cat = LieAlgebras(R).FiniteDimensional().WithBasis()
+        cat = LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis()
         LieAlgebraFromAssociative.__init__(self, MS, p + q + z, names=names,
                                            index_set=names, category=cat)
 
@@ -710,6 +725,18 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
             [0 0 0]
         """
         return self._gens['z']
+
+    def step(self):
+        r"""
+        Return the nilpotency step of ``self``.
+
+        EXAMPLES::
+
+            sage: h = lie_algebras.Heisenberg(ZZ, 2, representation="matrix")
+            sage: h.step()
+            2
+        """
+        return Integer(2)
 
     class Element(LieAlgebraMatrixWrapper, LieAlgebraFromAssociative.Element):
         def monomial_coefficients(self, copy=True):

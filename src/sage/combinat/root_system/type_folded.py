@@ -61,7 +61,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
     and were chosen based on virtual crystals. In particular, the diagram
     foldings extend to crystal morphisms and gives a realization of
     Kirillov-Reshetikhin crystals for non-simply-laced types as simply-laced
-    types. See [OSShimo03]_ and [FOS09]_ for more details. Here we can compute
+    types. See [OSShimo03]_ and [FOS2009]_ for more details. Here we can compute
     `\gamma_i = \max(c) / c_i` where `(c_i)_i` are the translation factors
     of the root system. In a more type-dependent way, we can define `\gamma_i`
     as follows:

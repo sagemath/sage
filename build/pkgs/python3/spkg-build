@@ -31,7 +31,7 @@ if [ "$UNAME" = Darwin ]; then
     PYTHON_CONFIGURE="--disable-toolbox-glue $PYTHON_CONFIGURE"
 
     mkdir "../include"
-    if ![ -z "$OPENSSL_INCLUDE" ];  then
+    if [ -n "$OPENSSL_INCLUDE" ];  then
         # If the user explicitely states where to get the openssl
         # includes, use that.
         cp -rp "$OPENSSL_INCLUDE" "../include"

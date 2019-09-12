@@ -9,7 +9,7 @@ restrictive class of (weak) Fano toric varieties.
 
 An **excellent reference on toric varieties** is the book "Toric
 Varieties" by David A. Cox, John B. Little, and Hal Schenck
-[CLS]_.
+[CLS2011]_.
 
 The interface to this module is provided through functions
 :func:`AffineToricVariety` and :func:`ToricVariety`, although you may
@@ -22,13 +22,6 @@ also be interested in :func:`normalize_names`.
     the homogeneous coordinate ring (a.k.a. Cox's ring or the total coordinate
     ring). This description works best for simplicial fans of the full
     dimension.
-
-REFERENCES:
-
-..  [CLS]
-    David A. Cox, John B. Little,  Hal Schenck,
-    "Toric Varieties", Graduate Studies in Mathematics,
-    Amer. Math. Soc., Providence, RI, 2011
 
 AUTHORS:
 
@@ -2095,7 +2088,7 @@ class ToricVariety_field(AmbientSpace):
         means that the cohomology class `[t] \cap [y]` should be
         `\frac{1}{2}` times the volume class. Note that this is
         different from the volume normalization chosen in
-        [Schubert]_::
+        [KS]_::
 
             sage: P1xP1_Z2 = toric_varieties.P1xP1_Z2()
             sage: Dt = P1xP1_Z2.divisor(1);  Dt
@@ -2116,12 +2109,6 @@ class ToricVariety_field(AmbientSpace):
             sage: A = P1xP1_Z2.Chow_group(QQ)
             sage: A(Dt).intersection_with_divisor(Dy).count_points()
             1/2
-
-        REFERENCES:
-
-        ..  [Schubert]
-            Sheldon Katz and Stein Arild Stromme,
-            A Maple package for intersection theory and enumerative geometry.
         """
         if not self.is_orbifold():
             raise NotImplementedError('Cohomology computations are only '
@@ -2751,7 +2738,7 @@ class ToricVariety_field(AmbientSpace):
         `V(\sigma)` of the torus orbit `O(\sigma)` in the ambient toric
         variety `X_\Sigma`, which is again a toric variety.
 
-        See Proposition 3.2.7 of [CLS]_ for more details.
+        See Proposition 3.2.7 of [CLS2011]_ for more details.
 
         INPUT:
 
@@ -2837,16 +2824,8 @@ class ToricVariety_field(AmbientSpace):
 
         REFERENCES:
 
-        ..  [Demazure]
-            \M. Demazure
-            Sous-groupes algébriques de rang maximum du groupe de Cremona.
-            Ann. Sci. Ecole Norm. Sup. 1970, 3, 507--588.
-
-        ..  [Bazhov]
-            Ivan Bazhov:
-            On orbits of the automorphism group on a complete toric variety.
-            :arxiv:`1110.4275`,
-            :doi:`10.1007/s13366-011-0084-0`.
+        - [De1970]_
+        - [Baz2011]_
 
         EXAMPLES::
 
@@ -2854,7 +2833,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P2.Demazure_roots()
             (M(-1, 0), M(-1, 1), M(0, -1), M(0, 1), M(1, -1), M(1, 0))
 
-        Here are the remaining three examples listed in [Bazhov]_, Example 2.1 and 2.3::
+        Here are the remaining three examples listed in [Baz2011]_, Example 2.1 and 2.3::
 
             sage: s = 3
             sage: cones = [(0,1),(1,2),(2,3),(3,0)]
@@ -3246,7 +3225,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         intersection of the divisors corresponding to the rays is
         still proportional to the product of the variables, but the
         coefficient is a multiple depending on the orbifold
-        singularity. See also [CLS]_, Lemma 12.5.2::
+        singularity. See also [CLS2011]_, Lemma 12.5.2::
 
             sage: P2_123 = toric_varieties.P2_123()
             sage: HH = P2_123.cohomology_ring()

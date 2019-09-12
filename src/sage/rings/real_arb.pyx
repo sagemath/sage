@@ -29,16 +29,16 @@ ball represents a ball over the real numbers, that is, an interval `[m-r,m+r]`
 where the midpoint `m` and the radius `r` are (extended) real numbers::
 
     sage: RBF(pi)
-    [3.141592653589793 +/- 5.61e-16]
+    [3.141592653589793 +/- ...e-16]
     sage: RBF(pi).mid(), RBF(pi).rad()
-    (3.14159265358979, 4.4408921e-16)
+    (3.14159265358979, ...e-16)
 
 The midpoint is represented as an arbitrary-precision floating-point number
 with arbitrary-precision exponent. The radius is a floating-point number with
 fixed-precision mantissa and arbitrary-precision exponent. ::
 
     sage: RBF(2)^(2^100)
-    [2.285367694229514e+381600854690147056244358827360 +/- 2.98e+381600854690147056244358827344]
+    [2.285367694229514e+381600854690147056244358827360 +/- ...e+381600854690147056244358827344]
 
 :class:`RealBallField` objects (the parents of real balls) model the field of
 real numbers represented by balls on which computations are carried out with a
@@ -176,9 +176,9 @@ TESTS::
 ::
 
     sage: SR.coerce(RBF(0.42))
-    [0.4200000000000000 +/- 1.56e-17]
+    [0.4200000000000000 +/- ...e-17]
     sage: RBF(0.42) + SR(1)
-    [1.420000000000000 +/- 2.94e-16]
+    [1.420000000000000 +/- ...e-16]
     sage: _.parent()
     Symbolic Ring
 
@@ -232,7 +232,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.cpython.string cimport char_to_str
+from sage.cpython.string cimport char_to_str, str_to_bytes
 
 cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision):
     """
@@ -332,16 +332,16 @@ class RealBallField(UniqueRepresentation, Field):
     ::
 
         sage: (1/2*RBF(1)) + AA(sqrt(2)) - 1 + polygen(QQ, 'x')
-        x + [0.914213562373095 +/- 4.10e-16]
+        x + [0.914213562373095 +/- ...e-16]
 
     TESTS::
 
         sage: RBF.bracket(RBF(1/2), RBF(1/3))
-        [+/- 5.56e-17]
+        [+/- ...e-17]
         sage: RBF.cardinality()
         +Infinity
         sage: RBF.cartesian_product(QQ).an_element()**2
-        ([1.440000000000000 +/- 4.98e-16], 1/4)
+        ([1.440000000000000 +/- ...e-16], 1/4)
         sage: RBF.coerce_embedding() is None
         True
         sage: RBF['x'].gens_dict_recursive()
@@ -358,7 +358,10 @@ class RealBallField(UniqueRepresentation, Field):
         sage: NF.<sqrt2> = QuadraticField(2, embedding=AA(2).sqrt())
         sage: a = (sqrt2 - 1)^1000
         sage: RBF(a)
-        [1.676156872756536e-383 +/- 4.39e-399]
+        [1.676156872756536e-383 +/- ...e-399]
+
+        sage: RealBallField().is_finite()
+        False
     """
     Element = RealBall
 
@@ -499,14 +502,14 @@ class RealBallField(UniqueRepresentation, Field):
         intervals. (This is faster and yields tighter error bounds.) ::
 
             sage: RBF(e)
-            [2.718281828459045 +/- 5.35e-16]
+            [2.718281828459045 +/- ...e-16]
             sage: RBF(pi)
-            [3.141592653589793 +/- 5.61e-16]
+            [3.141592653589793 +/- ...e-16]
 
         Symbolic expressions are parsed ::
 
             sage: RBF(4*zeta(3))
-            [4.808227612638377 +/- 9.42e-16]
+            [4.808227612638377 +/- ...e-16]
         """
         try:
             return self.element_class(self, mid, rad)
@@ -536,7 +539,7 @@ class RealBallField(UniqueRepresentation, Field):
             sage: RBF._repr_option('element_is_atomic')
             True
             sage: RBF['x']([-2,-2,-2/3])
-            [-0.666666666666667 +/- 4.82e-16]*x^2 - 2.000000000000000*x
+            [-0.666666666666667 +/- ...e-16]*x^2 - 2.000000000000000*x
             - 2.000000000000000
             sage: RBF._repr_option('element_is_atomic_typo')
             Traceback (most recent call last):
@@ -618,21 +621,6 @@ class RealBallField(UniqueRepresentation, Field):
         """
         return False
 
-    def is_finite(self):
-        """
-        Real ball fields are infinite.
-
-        They already specify it via their category, but we currently need to
-        re-implement this method due to the legacy implementation in
-        :class:`sage.rings.ring.Ring`.
-
-        EXAMPLES::
-
-            sage: RealBallField().is_finite()
-            False
-        """
-        return False
-
     def characteristic(self):
         """
         Real ball fields have characteristic zero.
@@ -652,8 +640,8 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RBF.some_elements()
-            [0, 1.000000000000000, [0.3333333333333333 +/- 7.04e-17],
-            [-4.733045976388941e+363922934236666733021124 +/- 3.46e+363922934236666733021108],
+            [0, 1.000000000000000, [0.3333333333333333 +/- ...e-17],
+            [-4.733045976388941e+363922934236666733021124 +/- ...e+363922934236666733021108],
             [+/- inf], [+/- inf], [+/- inf], nan]
         """
         import sage.symbolic.constants
@@ -676,7 +664,7 @@ class RealBallField(UniqueRepresentation, Field):
             sage: Pol.<x> = RealBallField(1000)[]
             sage: pol = (x + 1/3)^100
             sage: RBF._sum_of_products((c, c) for c in pol)
-            [6.3308767660842e+23 +/- 4.59e+9]
+            [6.3308767660842e+23 +/- ...e+9]
 
         TESTS::
 
@@ -713,9 +701,9 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RBF.pi()
-            [3.141592653589793 +/- 5.61e-16]
+            [3.141592653589793 +/- ...e-16]
             sage: RealBallField(128).pi()
-            [3.1415926535897932384626433832795028842 +/- 1.65e-38]
+            [3.1415926535897932384626433832795028842 +/- ...e-38]
         """
         cdef RealBall res = RealBall.__new__(RealBall)
         res._parent = self
@@ -731,9 +719,9 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RBF.log2()
-            [0.693147180559945 +/- 3.98e-16]
+            [0.6931471805599453 +/- ...e-17]
             sage: RealBallField(128).log2()
-            [0.69314718055994530941723212145817656807 +/- 7.70e-39]
+            [0.69314718055994530941723212145817656807 +/- ...e-39]
         """
         cdef RealBall res = RealBall.__new__(RealBall)
         res._parent = self
@@ -749,9 +737,9 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RBF.euler_constant()
-            [0.577215664901533 +/- 3.57e-16]
+            [0.577215664901533 +/- ...e-16]
             sage: RealBallField(128).euler_constant()
-            [0.57721566490153286060651209008240243104 +/- 3.25e-39]
+            [0.57721566490153286060651209008240243104 +/- ...e-39]
         """
         cdef RealBall res = RealBall.__new__(RealBall)
         res._parent = self
@@ -767,9 +755,9 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: RBF.catalan_constant()
-            [0.915965594177219 +/- 1.23e-16]
+            [0.915965594177219 +/- ...e-16]
             sage: RealBallField(128).catalan_constant()
-            [0.91596559417721901505460351493238411077 +/- 6.37e-39]
+            [0.91596559417721901505460351493238411077 +/- ...e-39]
         """
         cdef RealBall res = RealBall.__new__(RealBall)
         res._parent = self
@@ -792,16 +780,16 @@ class RealBallField(UniqueRepresentation, Field):
             sage: RBF.sinpi(1)
             0
             sage: RBF.sinpi(1/3)
-            [0.866025403784439 +/- 5.15e-16]
+            [0.866025403784439 +/- ...e-16]
             sage: RBF.sinpi(1 + 2^(-100))
-            [-2.478279624546525e-30 +/- 5.90e-46]
+            [-2.478279624546525e-30 +/- ...e-46]
 
         .. SEEALSO:: :meth:`~sage.rings.real_arb.RealBall.sin`
 
         TESTS::
 
             sage: RBF.sinpi(RLF(sqrt(2)))
-            [-0.96390253284988 +/- 4.11e-15]
+            [-0.963902532849877 +/- ...e-16]
         """
         cdef RealBall res, x_as_ball
         cdef Rational x_as_Rational
@@ -845,7 +833,7 @@ class RealBallField(UniqueRepresentation, Field):
         TESTS::
 
             sage: RBF.cospi(RLF(sqrt(2)))
-            [-0.26625534204142 +/- 5.38e-15]
+            [-0.26625534204142 +/- ...e-15]
         """
         cdef RealBall res, x_as_ball
         cdef Rational x_as_Rational
@@ -882,9 +870,9 @@ class RealBallField(UniqueRepresentation, Field):
             sage: RBF.gamma(5)
             24.00000000000000
             sage: RBF.gamma(10**20)
-            [+/- 5.50e+1956570552410610660600]
+            [+/- ...e+1956570552410610660600]
             sage: RBF.gamma(1/3)
-            [2.678938534707747 +/- 8.99e-16]
+            [2.678938534707747 +/- ...e-16]
             sage: RBF.gamma(-5)
             nan
 
@@ -893,7 +881,7 @@ class RealBallField(UniqueRepresentation, Field):
         TESTS::
 
             sage: RBF.gamma(RLF(pi))
-            [2.2880377953400 +/- 4.29e-14]
+            [2.2880377953400 +/- ...e-14]
         """
         cdef RealBall res
         cdef Integer x_as_Integer
@@ -938,12 +926,12 @@ class RealBallField(UniqueRepresentation, Field):
 
         EXAMPLES::
 
-            sage: RBF.zeta(3) # abs tol 5e-16
-            [1.202056903159594 +/- 2.87e-16]
+            sage: RBF.zeta(3)
+            [1.202056903159594 +/- ...e-16]
             sage: RBF.zeta(1)
             nan
             sage: RBF.zeta(1/2)
-            [-1.460354508809587 +/- 1.94e-16]
+            [-1.460354508809587 +/- ...e-16]
 
         .. SEEALSO:: :meth:`~sage.rings.real_arb.RealBall.zeta`
         """
@@ -968,9 +956,9 @@ class RealBallField(UniqueRepresentation, Field):
         EXAMPLES::
 
             sage: [RBF.bernoulli(n) for n in range(4)]
-            [1.000000000000000, -0.5000000000000000, [0.1666666666666667 +/- 7.04e-17], 0]
+            [1.000000000000000, -0.5000000000000000, [0.1666666666666667 +/- ...e-17], 0]
             sage: RBF.bernoulli(2**20)
-            [-1.823002872104961e+5020717 +/- 7.16e+5020701]
+            [-1.823002872104961e+5020717 +/- ...e+5020701]
             sage: RBF.bernoulli(2**1000)
             Traceback (most recent call last):
             ...
@@ -979,7 +967,7 @@ class RealBallField(UniqueRepresentation, Field):
         TESTS::
 
             sage: RBF.bernoulli(2r)
-            [0.1666666666666667 +/- 7.04e-17]
+            [0.1666666666666667 +/- ...e-17]
             sage: RBF.bernoulli(2/3)
             Traceback (most recent call last):
             ...
@@ -1020,7 +1008,7 @@ class RealBallField(UniqueRepresentation, Field):
             sage: RBF.fibonacci(-2)
             -1.000000000000000
             sage: RBF.fibonacci(10**20)
-            [3.78202087472056e+20898764024997873376 +/- 4.01e+20898764024997873361]
+            [3.78202087472056e+20898764024997873376 +/- ...e+20898764024997873361]
         """
         cdef fmpz_t tmpz
         cdef RealBall res = self.element_class(self)
@@ -1054,7 +1042,7 @@ class RealBallField(UniqueRepresentation, Field):
             ...
             ValueError: expected a nonnegative index
             sage: RBF.bell_number(10**20)
-            [5.38270113176282e+1794956117137290721328 +/- 5.44e+1794956117137290721313]
+            [5.38270113176282e+1794956117137290721328 +/- ...e+1794956117137290721313]
         """
         cdef fmpz_t tmpz
         cdef RealBall res = self.element_class(self)
@@ -1086,7 +1074,7 @@ class RealBallField(UniqueRepresentation, Field):
              15.00000000000000,
              48.00000000000000]
             sage: RBF.double_factorial(2**20)
-            [1.4483729903e+2928836 +/- 8.96e+2928825]
+            [1.4483729903e+2928836 +/- ...e+2928825]
             sage: RBF.double_factorial(2**1000)
             Traceback (most recent call last):
             ...
@@ -1153,7 +1141,7 @@ cdef class RealBall(RingElement):
         sage: a = RealBallField()(RIF(1))                     # indirect doctest
         sage: b = a.psi()
         sage: b
-        [-0.577215664901533 +/- 3.85e-16]
+        [-0.577215664901533 +/- ...e-16]
         sage: RIF(b)
         -0.577215664901533?
     """
@@ -1210,9 +1198,9 @@ cdef class RealBall(RingElement):
             sage: RBF(3r)
             3.000000000000000
             sage: RBF(1/3)
-            [0.3333333333333333 +/- 7.04e-17]
+            [0.3333333333333333 +/- ...e-17]
             sage: RBF(3.14)
-            [3.140000000000000 +/- 1.25e-16]
+            [3.140000000000000 +/- ...e-16]
 
         ::
 
@@ -1220,18 +1208,22 @@ cdef class RealBall(RingElement):
             [3e+0 +/- 0.126]
             sage: RBF(pi, 0.125r)
             [3e+0 +/- 0.267]
+            sage: RBF(3, 1/8)
+            [3e+0 +/- 0.126]
+            sage: RBF(13, 1)
+            [1e+1 +/- 4.01]
 
         ::
 
             sage: NF.<sqrt2> = QuadraticField(2)
             sage: RBF(1/5 + sqrt2/2)
-            [0.907106781186547 +/- 7.06e-16]
+            [0.907106781186547 +/- ...e-16]
 
         Note that integers and floating-point numbers are ''not'' rounded to
         the parent's precision::
 
             sage: b = RBF(11111111111111111111111111111111111111111111111); b
-            [1.111111111111111e+46 +/- 1.12e+30]
+            [1.111111111111111e+46 +/- ...e+30]
             sage: b.mid().exact_rational()
             11111111111111111111111111111111111111111111111
 
@@ -1242,11 +1234,11 @@ cdef class RealBall(RingElement):
 
             sage: RBF100 = RealBallField(100)
             sage: b100 = RBF100(1/3); b100
-            [0.333333333333333333333333333333 +/- 4.65e-31]
+            [0.333333333333333333333333333333 +/- ...e-31]
             sage: b53 = RBF(b100); b53
-            [0.3333333333333333 +/- 3.34e-17]
+            [0.3333333333333333 +/- ...e-17]
             sage: RBF100(b53)
-            [0.333333333333333333333333333333 +/- 4.65e-31]
+            [0.333333333333333333333333333333 +/- ...e-31]
 
         Special values are supported::
 
@@ -1265,13 +1257,13 @@ cdef class RealBall(RingElement):
         A few examples::
 
             sage: RBF("1.1")
-            [1.100000000000000 +/- 3.56e-16]
+            [1.100000000000000 +/- ...e-16]
             sage: RBF(str(RBF("1.1")))
-            [1.100000000000000 +/- 7.12e-16]
+            [1.100000000000000 +/- ...e-16]
             sage: RBF("3.25")
             3.250000000000000
             sage: RBF("-3.1 +/- 1e-10")
-            [-3.100000000 +/- 1.01e-10]
+            [-3.100000000 +/- ...e-10]
             sage: RBF("[+/-1]")
             [+/- 1.01]
             sage: RBF("inf +/- inf")
@@ -1282,24 +1274,24 @@ cdef class RealBall(RingElement):
         TESTS::
 
             sage: from sage.rings.real_arb import RealBall
-            sage: RealBall(RBF, sage.symbolic.constants.Pi()) # abs tol 1e-16
-            [3.141592653589793 +/- 5.62e-16]
-            sage: RealBall(RBF, sage.symbolic.constants.Log2()) # abs tol 1e-16
-            [0.693147180559945 +/- 4.06e-16]
+            sage: RealBall(RBF, sage.symbolic.constants.Pi())
+            [3.141592653589793 +/- ...e-16]
+            sage: RealBall(RBF, sage.symbolic.constants.Log2())
+            [0.6931471805599453 +/- ...e-17]
             sage: RealBall(RBF, sage.symbolic.constants.Catalan())
-            [0.915965594177219 +/- 1.23e-16]
+            [0.915965594177219 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.Khinchin())
-            [2.685452001065306 +/- 6.82e-16]
+            [2.685452001065306 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.Glaisher())
-            [1.282427129100623 +/- 6.02e-16]
+            [1.282427129100623 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.e)
-            [2.718281828459045 +/- 5.35e-16]
+            [2.718281828459045 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.EulerGamma())
-            [0.577215664901533 +/- 3.57e-16]
+            [0.577215664901533 +/- ...e-16]
             sage: RBF("1 +/- 0.001")
-            [1.00 +/- 1.01e-3]
+            [1.00 +/- ...e-3]
             sage: RBF("2.3e10000000000000000000000 +/- 0.00005e10000000000000000000000")
-            [2.3000e+10000000000000000000000 +/- 5.01e+9999999999999999999995]
+            [2.3000e+10000000000000000000000 +/- ...e+9999999999999999999995]
             sage: RBF("0.3 +/- 0.2 +/- 0.1")
             Traceback (most recent call last):
             ...
@@ -1307,10 +1299,10 @@ cdef class RealBall(RingElement):
 
             sage: NF.<a> = QuadraticField(2, embedding=AA(2).sqrt())
             sage: RBF.coerce(a)
-            [1.414213562373095 +/- 2.99e-16]
+            [1.414213562373095 +/- ...e-16]
             sage: NF.<a> = QuadraticField(2, embedding=-AA(2).sqrt())
             sage: RBF.coerce(a)
-            [-1.414213562373095 +/- 2.99e-16]
+            [-1.414213562373095 +/- ...e-16]
             sage: NF.<a> = QuadraticField(2, embedding=None)
             sage: RBF.coerce(a)
             Traceback (most recent call last):
@@ -1368,7 +1360,7 @@ cdef class RealBall(RingElement):
                 (<RealIntervalFieldElement> mid).value,
                 prec(self))
         elif isinstance(mid, str):
-            if arb_set_str(self.value, mid, prec(self)) != 0:
+            if arb_set_str(self.value, str_to_bytes(mid), prec(self)) != 0:
                 raise ValueError("unsupported string format")
         else:
             # the initializers that trigger imports
@@ -1413,6 +1405,19 @@ cdef class RealBall(RingElement):
             if isinstance(rad, RealNumber):
                 arf_init(tmpr)
                 arf_set_mpfr(tmpr, (<RealNumber> rad).value)
+                arf_get_mag(tmpm, tmpr)
+                arf_clear(tmpr)
+            elif isinstance(rad, Integer):
+                arf_init(tmpr)
+                arf_set_mpz(tmpr, (<Integer> rad).value)
+                arf_get_mag(tmpm, tmpr)
+                arf_clear(tmpr)
+            elif isinstance(rad, Rational):
+                arf_init(tmpr)
+                arf_set_mpz(tmpr, (<Integer> rad.numerator()).value)
+                fmpz_init(tmpz)
+                fmpz_set_mpz(tmpz, (<Integer> rad.denominator()).value)
+                arf_div_fmpz(tmpr, tmpr, tmpz, prec(self), ARF_RND_UP)
                 arf_get_mag(tmpm, tmpr)
                 arf_clear(tmpr)
             elif isinstance(rad, float):
@@ -1507,7 +1512,7 @@ cdef class RealBall(RingElement):
             sage: ZZ(RBF(pi))
             Traceback (most recent call last):
             ...
-            ValueError: [3.141592653589793 +/- 5.61e-16] does not contain a unique integer
+            ValueError: [3.141592653589793 +/- ...e-16] does not contain a unique integer
 
         """
         cdef Integer res
@@ -1535,7 +1540,7 @@ cdef class RealBall(RingElement):
             sage: QQ(RBF(1/3))
             Traceback (most recent call last):
             ...
-            ValueError: [0.3333333333333333 +/- 7.04e-17] does not contain a unique rational number
+            ValueError: [0.3333333333333333 +/- ...e-17] does not contain a unique rational number
         """
         if arb_is_exact(self.value):
             return self.mid().exact_rational()
@@ -1723,7 +1728,7 @@ cdef class RealBall(RingElement):
 
             sage: mid = RealBallField(16)(1/3).squash()
             sage: mid
-            [0.3333 +/- 2.83e-5]
+            [0.3333 +/- ...e-5]
             sage: mid.is_exact()
             True
             sage: mid.parent()
@@ -1744,7 +1749,7 @@ cdef class RealBall(RingElement):
 
             sage: rad = RBF(1/3).rad_as_ball()
             sage: rad
-            [5.55111512e-17 +/- 3.13e-26]
+            [5.55111512e-17 +/- ...e-26]
             sage: rad.is_exact()
             True
             sage: rad.parent()
@@ -1764,7 +1769,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(-1/3).abs() # indirect doctest
-            [0.3333333333333333 +/- 7.04e-17]
+            [0.3333333333333333 +/- ...e-17]
             sage: abs(RBF(-1))
             1.000000000000000
         """
@@ -1789,10 +1794,10 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RealBallField(8)(1/3).below_abs()
-            [0.33 +/- 7.82e-5]
+            [0.33 +/- ...e-5]
             sage: b = RealBallField(8)(1/3).below_abs()
             sage: b
-            [0.33 +/- 7.82e-5]
+            [0.33 +/- ...e-5]
             sage: b.is_exact()
             True
             sage: QQ(b)
@@ -1826,7 +1831,7 @@ cdef class RealBall(RingElement):
 
             sage: b = RealBallField(8)(1/3).above_abs()
             sage: b
-            [0.33 +/- 3.99e-3]
+            [0.33 +/- ...e-3]
             sage: b.is_exact()
             True
             sage: QQ(b)
@@ -1934,6 +1939,29 @@ cdef class RealBall(RingElement):
 
     # Precision and accuracy
 
+    def nbits(self):
+        r"""
+        Return the minimum precision sufficient to represent this ball exactly.
+
+        In other words, return the number of bits needed to represent the
+        absolute value of the mantissa of the midpoint of this ball. The result
+        is 0 if the midpoint is a special value.
+
+        EXAMPLES::
+
+            sage: RBF(1/3).nbits()
+            53
+            sage: RBF(1023, .1).nbits()
+            10
+            sage: RBF(1024, .1).nbits()
+            1
+            sage: RBF(0).nbits()
+            0
+            sage: RBF(infinity).nbits()
+            0
+        """
+        return arb_bits(self.value)
+
     def round(self):
         """
         Return a copy of this ball with center rounded to the precision of the
@@ -1974,7 +2002,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(pi).accuracy()
-            51
+            52
             sage: RBF(1).accuracy() == RBF.maximal_accuracy()
             True
             sage: RBF(NaN).accuracy() == -RBF.maximal_accuracy()
@@ -2028,7 +2056,7 @@ cdef class RealBall(RingElement):
 
             sage: err = RBF(10^-16)
             sage: RBF(1).add_error(err)
-            [1.000000000000000 +/- 1.01e-16]
+            [1.000000000000000 +/- ...e-16]
 
         TESTS::
 
@@ -2335,7 +2363,7 @@ cdef class RealBall(RingElement):
             (-2.00000000651926, 1.00000000465662)
 
             sage: RBF(infinity).min(3, 1/3)
-            [0.3333333333333333 +/- 7.04e-17]
+            [0.3333333333333333 +/- ...e-17]
 
         Note that calls involving NaNs try to return a number when possible.
         This is consistent with IEEE-754-2008 but may be surprising. ::
@@ -2372,7 +2400,7 @@ cdef class RealBall(RingElement):
             (-1.00000000465662, 2.00000000651926)
 
             sage: RBF(-infinity).max(-3, 1/3)
-            [0.3333333333333333 +/- 7.04e-17]
+            [0.3333333333333333 +/- ...e-17]
 
         Note that calls involving NaNs try to return a number when possible.
         This is consistent with IEEE-754-2008 but may be surprising. ::
@@ -2642,7 +2670,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: -RBF(1/3)
-            [-0.3333333333333333 +/- 7.04e-17]
+            [-0.3333333333333333 +/- ...e-17]
         """
         cdef RealBall res = self._new()
         arb_neg(res.value, self.value)
@@ -2658,7 +2686,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: ~RBF(5)
-            [0.2000000000000000 +/- 4.45e-17]
+            [0.2000000000000000 +/- ...e-17]
             sage: ~RBF(0)
             nan
             sage: RBF(RIF(-0.1,0.1))
@@ -2681,7 +2709,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1) + RBF(1/3)
-            [1.333333333333333 +/- 5.37e-16]
+            [1.333333333333333 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -2700,7 +2728,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1) - RBF(1/3)
-            [0.666666666666667 +/- 5.37e-16]
+            [0.666666666666667 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -2719,7 +2747,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(-2) * RBF(1/3)
-            [-0.666666666666667 +/- 4.82e-16]
+            [-0.666666666666667 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -2738,7 +2766,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(pi)/RBF(e)
-            [1.155727349790922 +/- 8.43e-16]
+            [1.155727349790922 +/- ...e-16]
             sage: RBF(2)/RBF(0)
             nan
         """
@@ -2753,13 +2781,13 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(e)^17
-            [24154952.7535753 +/- 9.30e-8]
+            [24154952.7535753 +/- ...e-8]
             sage: RBF(e)^(-1)
-            [0.367879441171442 +/- 4.50e-16]
+            [0.367879441171442 +/- ...e-16]
             sage: RBF(e)^(1/2)
-            [1.648721270700128 +/- 4.96e-16]
+            [1.648721270700128 +/- ...e-16]
             sage: RBF(e)^RBF(pi)
-            [23.1406926327793 +/- 9.16e-14]
+            [23.1406926327793 +/- ...e-14]
 
         ::
 
@@ -2773,9 +2801,9 @@ cdef class RealBall(RingElement):
         TESTS::
 
             sage: RBF(e)**(2r)
-            [7.38905609893065 +/- 4.68e-15]
+            [7.38905609893065 +/- ...e-15]
             sage: RBF(e)**(-1r)
-            [0.367879441171442 +/- 4.50e-16]
+            [0.367879441171442 +/- ...e-16]
         """
         cdef fmpz_t tmpz
         if not isinstance(base, RealBall):
@@ -2808,7 +2836,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(2).sqrt()
-            [1.414213562373095 +/- 2.99e-16]
+            [1.414213562373095 +/- ...e-16]
             sage: RBF(-1/3).sqrt()
             nan
         """
@@ -2828,7 +2856,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(2).sqrtpos()
-            [1.414213562373095 +/- 2.99e-16]
+            [1.414213562373095 +/- ...e-16]
             sage: RBF(-1/3).sqrtpos()
             0
             sage: RBF(0, rad=2.r).sqrtpos()
@@ -2849,7 +2877,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(2).rsqrt()
-            [0.707106781186547 +/- 5.73e-16]
+            [0.707106781186547 +/- ...e-16]
             sage: RBF(0).rsqrt()
             nan
         """
@@ -2868,9 +2896,9 @@ cdef class RealBall(RingElement):
 
             sage: eps = RBF(10^(-20))
             sage: (1 + eps).sqrt() - 1
-            [+/- 1.12e-16]
+            [+/- ...e-16]
             sage: eps.sqrt1pm1()
-            [5.00000000000000e-21 +/- 2.54e-36]
+            [5.00000000000000e-21 +/- ...e-36]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -2923,16 +2951,16 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1/3) << 2 # indirect doctest
-            [1.333333333333333 +/- 4.82e-16]
+            [1.333333333333333 +/- ...e-16]
             sage: RBF(1) << -1
             0.5000000000000000
 
         TESTS::
 
             sage: RBF(1) << (2^100)
-            [2.285367694229514e+381600854690147056244358827360 +/- 2.98e+381600854690147056244358827344]
+            [2.285367694229514e+381600854690147056244358827360 +/- ...e+381600854690147056244358827344]
             sage: RBF(1) << (-2^100)
-            [4.375663498372584e-381600854690147056244358827361 +/- 9.57e-381600854690147056244358827378]
+            [4.375663498372584e-381600854690147056244358827361 +/- ...e-381600854690147056244358827378]
 
             sage: "a" << RBF(1/3)
             Traceback (most recent call last):
@@ -2978,7 +3006,7 @@ cdef class RealBall(RingElement):
             sage: RBF(4) >> 2
             1.000000000000000
             sage: RBF(1/3) >> -2
-            [1.333333333333333 +/- 4.82e-16]
+            [1.333333333333333 +/- ...e-16]
 
         TESTS::
 
@@ -3009,11 +3037,11 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(3).log()
-            [1.098612288668110 +/- 6.63e-16]
+            [1.098612288668110 +/- ...e-16]
             sage: RBF(3).log(2)
-            [1.584962500721156 +/- 7.53e-16]
+            [1.58496250072116 +/- ...e-15]
             sage: log(RBF(5), 2)
-            [2.32192809488736 +/- 3.04e-15]
+            [2.32192809488736 +/- ...e-15]
 
             sage: RBF(-1/3).log()
             nan
@@ -3043,9 +3071,9 @@ cdef class RealBall(RingElement):
 
             sage: eps = RBF(1e-30)
             sage: (1 + eps).log()
-            [+/- 2.23e-16]
+            [+/- ...e-16]
             sage: eps.log1p()
-            [1.00000000000000e-30 +/- 2.68e-46]
+            [1.00000000000000e-30 +/- ...e-46]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3060,7 +3088,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).exp()
-            [2.718281828459045 +/- 5.41e-16]
+            [2.718281828459045 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3077,9 +3105,9 @@ cdef class RealBall(RingElement):
 
             sage: eps = RBF(1e-30)
             sage: exp(eps) - 1
-            [+/- 3.16e-30]
+            [+/- ...e-30]
             sage: eps.expm1()
-            [1.000000000000000e-30 +/- 8.34e-47]
+            [1.000000000000000e-30 +/- ...e-47]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3093,8 +3121,8 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(pi).sin() # abs tol 1e-16
-            [+/- 5.69e-16]
+            sage: RBF(pi).sin()
+            [+/- ...e-16]
 
         .. SEEALSO:: :meth:`~sage.rings.real_arb.RealBallField.sinpi`
         """
@@ -3110,8 +3138,8 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(pi).cos() # abs tol 1e-16
-            [-1.00000000000000 +/- 6.69e-16]
+            sage: RBF(pi).cos()
+            [-1.00000000000000 +/- ...e-16]
 
         .. SEEALSO:: :meth:`~sage.rings.real_arb.RealBallField.cospi`
         """
@@ -3128,7 +3156,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).tan()
-            [1.557407724654902 +/- 3.26e-16]
+            [1.557407724654902 +/- ...e-16]
             sage: RBF(pi/2).tan()
             nan
         """
@@ -3145,13 +3173,43 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).cot()
-            [0.642092615934331 +/- 4.79e-16]
+            [0.642092615934331 +/- ...e-16]
             sage: RBF(pi).cot()
             nan
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
         arb_cot(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def sec(self):
+        """
+        Return the secant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).sec()
+            [1.850815717680925 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_sec(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def csc(self):
+        """
+        Return the cosecant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).csc()
+            [1.188395105778121 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_csc(res.value, self.value, prec(self))
         if _do_sig(prec(self)): sig_off()
         return res
 
@@ -3162,7 +3220,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).arcsin()
-            [1.570796326794897 +/- 6.65e-16]
+            [1.570796326794897 +/- ...e-16]
             sage: RBF(1, rad=.125r).arcsin()
             nan
         """
@@ -3196,7 +3254,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).arctan()
-            [0.785398163397448 +/- 3.91e-16]
+            [0.7853981633974483 +/- ...e-17]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3211,7 +3269,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).sinh()
-            [1.175201193643801 +/- 6.18e-16]
+            [1.175201193643801 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3226,7 +3284,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).cosh()
-            [1.543080634815244 +/- 5.28e-16]
+            [1.543080634815244 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3241,7 +3299,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).tanh()
-            [0.761594155955765 +/- 2.81e-16]
+            [0.761594155955765 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3256,13 +3314,43 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).coth()
-            [1.313035285499331 +/- 4.97e-16]
+            [1.313035285499331 +/- ...e-16]
             sage: RBF(0).coth()
             nan
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
         arb_coth(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def sech(self):
+        """
+        Return the hyperbolic secant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).sech()
+            [0.648054273663885 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_sech(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def csch(self):
+        """
+        Return the hyperbolic cosecant of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).csch()
+            [0.850918128239321 +/- ...e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_csch(res.value, self.value, prec(self))
         if _do_sig(prec(self)): sig_off()
         return res
 
@@ -3273,7 +3361,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).arcsinh()
-            [0.881373587019543 +/- 1.87e-16]
+            [0.881373587019543 +/- ...e-16]
             sage: RBF(0).arcsinh()
             0
         """
@@ -3290,7 +3378,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(2).arccosh()
-            [1.316957896924817 +/- 6.61e-16]
+            [1.316957896924817 +/- ...e-16]
             sage: RBF(1).arccosh()
             0
             sage: RBF(0).arccosh()
@@ -3311,7 +3399,7 @@ cdef class RealBall(RingElement):
             sage: RBF(0).arctanh()
             0
             sage: RBF(1/2).arctanh()
-            [0.549306144334055 +/- 3.32e-16]
+            [0.549306144334055 +/- ...e-16]
             sage: RBF(1).arctanh()
             nan
         """
@@ -3333,7 +3421,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1/2).gamma()
-            [1.772453850905516 +/- 3.41e-16]
+            [1.772453850905516 +/- ...e-16]
 
         .. SEEALSO::
             :meth:`~sage.rings.real_arb.RealBallField.gamma`
@@ -3354,7 +3442,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1/2).log_gamma()
-            [0.572364942924700 +/- 2.67e-16]
+            [0.572364942924700 +/- ...e-16]
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3393,7 +3481,7 @@ cdef class RealBall(RingElement):
             sage: RBF(1).rising_factorial(5)
             120.0000000000000
             sage: RBF(1/2).rising_factorial(1/3)
-            [0.63684988431797 +/- 5.71e-15]
+            [0.63684988431797 +/- ...e-15]
         """
         cdef RealBall result = self._new()
         cdef RealBall my_n = self._parent.coerce(n)
@@ -3409,7 +3497,7 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(1).psi()
-            [-0.577215664901533 +/- 3.85e-16]
+            [-0.577215664901533 +/- ...e-16]
         """
 
         cdef RealBall result = self._new()
@@ -3430,11 +3518,11 @@ cdef class RealBall(RingElement):
         EXAMPLES::
 
             sage: RBF(-1).zeta()
-            [-0.0833333333333333 +/- 4.26e-17]
+            [-0.0833333333333333 +/- ...e-17]
             sage: RBF(-1).zeta(1)
-            [-0.0833333333333333 +/- 4.26e-17]
+            [-0.0833333333333333 +/- ...e-17]
             sage: RBF(-1).zeta(2)
-            [-1.083333333333333 +/- 4.96e-16]
+            [-1.083333333333333 +/- ...e-16]
         """
         cdef RealBall a_ball
         cdef RealBall res = self._new()
@@ -3458,20 +3546,20 @@ cdef class RealBall(RingElement):
             sage: polylog(0, -1)
             -1/2
             sage: RBF(-1).polylog(0)
-            [-0.50000000000000 +/- 1.29e-15]
+            [-0.50000000000000 +/- ...e-16]
             sage: polylog(1, 1/2)
             -log(1/2)
             sage: RBF(1/2).polylog(1)
-            [0.6931471805599 +/- 5.02e-14]
+            [0.69314718055995 +/- ...e-15]
             sage: RBF(1/3).polylog(1/2)
             [0.44210883528067 +/- 6.7...e-15]
             sage: RBF(1/3).polylog(RLF(pi))
-            [0.34728895057225 +/- 5.51e-15]
+            [0.34728895057225 +/- ...e-15]
 
         TESTS::
 
             sage: RBF(1/3).polylog(2r)
-            [0.366213229977063 +/- 5.85e-16]
+            [0.366213229977063 +/- ...e-16]
         """
         cdef RealBall s_as_ball
         cdef Integer s_as_Integer
@@ -3500,8 +3588,8 @@ cdef class RealBall(RingElement):
 
             sage: RBF(pi).chebyshev_T(0)
             1.000000000000000
-            sage: RBF(pi).chebyshev_T(1) # abs tol 1e-16
-            [3.141592653589793 +/- 5.62e-16]
+            sage: RBF(pi).chebyshev_T(1)
+            [3.141592653589793 +/- ...e-16]
             sage: RBF(pi).chebyshev_T(10**20)
             Traceback (most recent call last):
             ...
@@ -3533,7 +3621,7 @@ cdef class RealBall(RingElement):
             sage: RBF(pi).chebyshev_U(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_U(1)
-            [6.28318530717959 +/- 4.66e-15]
+            [6.283185307179586 +/- ...e-16]
             sage: RBF(pi).chebyshev_U(10**20)
             Traceback (most recent call last):
             ...

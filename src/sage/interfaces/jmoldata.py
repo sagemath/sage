@@ -67,7 +67,7 @@ class JmolData(SageObject):
         except (subprocess.CalledProcessError, OSError):
             return False
 
-        java_version = re.search('version.*([1][.][789]|"\d+")', version)
+        java_version = re.search(r'version.*([1][.][789]|"[\d.]+")', version)
         return java_version is not None
 
     def export_image(self,

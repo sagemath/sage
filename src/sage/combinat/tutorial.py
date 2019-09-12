@@ -223,7 +223,7 @@ author, which contains more than 190000 sequences of integers::
 
     sage: oeis([1,1,2,5,14])                            # optional -- internet
     0: A000108: Catalan numbers: C(n) = binomial(2n,n)/(n+1) = (2n)!/(n!(n+1)!). Also called Segner numbers.
-    1: A120588: G.f. satisfies: 3*A(x) = 2 + x + A(x)^2, with a(0) = 1.
+    1: ...
     2: ...
 
 The result suggests that the trees are counted by one of the most famous
@@ -275,7 +275,7 @@ Now we can solve this equation with ``Sage``. In order to do so, we
 introduce two variables, `C` and `z`, and we define the
 equation::
 
-    sage: C, z = var('C,z');
+    sage: C, z = var('C,z')
     sage: sys = [ C == z + C*C ]
 
 There are two solutions, which happen to have closed forms::
@@ -322,7 +322,7 @@ define by a recursive equation::
 
     sage: C = L()
     sage: C._name = 'C'
-    sage: C.define( z + C * C );
+    sage: C.define( z + C * C )
 
 ::
 
@@ -339,7 +339,7 @@ At any point, one can ask for any coefficient without having to redefine
 
 We now return to the closed form of `C(z)`::
 
-    sage: z = var('z');
+    sage: z = var('z')
     sage: C = s0; C
     -1/2*sqrt(-4*z + 1) + 1/2
 
@@ -374,7 +374,7 @@ satisfies the recurrence relation
 
 We check this::
 
-    sage: n = var('n');
+    sage: n = var('n')
     sage: c = 1/n*binomial(2*(n-1),n-1)
     sage: [c.subs(n=k) for k in range(1, 11)]
     [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
@@ -659,7 +659,7 @@ which is roughly `2\cdot 10^{19728}`::
 
 or ask for its `237102124`-th element::
 
-    sage: S.unrank(237102123)
+    sage: S.unrank(237102123) # random print output
     {{{2, 4}, {1, 4}, {}, {1, 3, 4}, {1, 2, 4}, {4}, {2, 3}, {1, 3}, {2}},
       {{1, 3}, {2, 4}, {1, 2, 4}, {}, {3, 4}}}
 
@@ -673,10 +673,15 @@ result of ``len`` be an integer of type ``int``; this could cause
 overflows, and would not permit the return of {Infinity} for infinite
 sets::
 
-    sage: len(S)
+    sage: len(S)  #py2
     Traceback (most recent call last):
     ...
     OverflowError: Python int too large to convert to C long
+
+    sage: len(S)  #py3
+    Traceback (most recent call last):
+    ...
+    OverflowError: cannot fit 'int' into an index-sized integer
 
 Partitions of integers
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -831,14 +836,17 @@ Permutations::
 
 Set partitions::
 
-    sage: C = SetPartitions([1,2,3])
-    sage: C
-    Set partitions of {1, 2, 3}
+    sage: C = SetPartitions(["a", "b", "c"])
+    sage: C # random print output
+    Set partitions of {'a', 'c', 'b'}
     sage: C.cardinality()
     5
     sage: C.list()
-    [{{1, 2, 3}}, {{1}, {2, 3}}, {{1, 3}, {2}}, {{1, 2}, {3}},
-     {{1}, {2}, {3}}]
+    [{{'a', 'b', 'c'}},
+     {{'a', 'b'}, {'c'}},
+     {{'a', 'c'}, {'b'}},
+     {{'a'}, {'b', 'c'}},
+     {{'a'}, {'b'}, {'c'}}]
 
 Partial orders on a set of `8` elements, up to isomorphism::
 
@@ -887,7 +895,7 @@ structures like the dihedral groups::
     sage: G.cardinality()
     8
     sage: G.list()
-    [(), (1,4)(2,3), (1,2,3,4), (1,3)(2,4), (1,3), (2,4), (1,4,3,2), (1,2)(3,4)]
+    [(), (1,3)(2,4), (1,4,3,2), (1,2,3,4), (2,4), (1,3), (1,4)(2,3), (1,2)(3,4)]
 
 or the algebra of `2\times 2` matrices over the finite field
 `\ZZ/2\ZZ`::
@@ -1109,8 +1117,7 @@ use the ``Sage`` function ``exists``::
 
 Alternatively, we could construct an iterator on the counter-examples::
 
-    sage: counter_examples = \
-    ....:   (p for p in range(1000)
+    sage: counter_examples = (p for p in range(1000)
     ....:      if is_prime(p) and not is_prime(mersenne(p)))
     sage: next(counter_examples)
     11
@@ -1262,7 +1269,7 @@ or select only the elements in positions 2, 3, and 4 (analogue of
 ``l[1:4]``)::
 
     sage: import itertools
-    sage: list(itertools.islice(Permutations(3), 1, 4))
+    sage: list(itertools.islice(Permutations(3), int(1), int(4)))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
 The itertools methods ``imap`` and ``ifilter`` have been renamed to

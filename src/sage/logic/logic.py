@@ -852,13 +852,13 @@ def tokenize(s, toks):
             tok = tok_list[6]
             skip = 3
 
-        if len(tok) > 0:
+        if tok:
             toks.append(tok)
             i += skip
             continue
         else:
             # token is a variable name
-            if(s[i] == ' '):
+            if s[i] == ' ':
                  i += 1
                  continue
 
@@ -866,11 +866,11 @@ def tokenize(s, toks):
                 tok += s[i]
                 i += 1
 
-            if len(tok) > 0:
-                if tok[0] not in string.letters:
+            if tok:
+                if tok[0] not in string.ascii_letters:
                     valid = 0
                 for c in tok:
-                    if c not in string.letters and c not in string.digits and c != '_':
+                    if c not in string.ascii_letters and c not in string.digits and c != '_':
                         valid = 0
 
             if valid == 1:

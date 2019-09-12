@@ -229,7 +229,7 @@ class FGP_Morphism(Morphism):
 
             sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
             sage: Q = V/W
-            sage: phi = Q.hom([Q.0+3*Q.1, -Q.1]);
+            sage: phi = Q.hom([Q.0+3*Q.1, -Q.1])
             sage: phi(Q.0) == Q.0 + 3*Q.1
             True
 

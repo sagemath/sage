@@ -11,7 +11,7 @@ from sage.libs.gmp.mpz cimport *
 from sage.rings.all import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
-from sage.structure.element cimport Element, ModuleElement, RingElement
+from sage.structure.element cimport Element, ModuleElement, FieldElement
 from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField_generic, FractionField_1poly_field
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int
@@ -83,9 +83,17 @@ class FpT(FractionField_1poly_field):
         """
         return FpT_iter(self, bound, start)
 
-cdef class FpTElement(RingElement):
+cdef class FpTElement(FieldElement):
     """
     An element of an FpT fraction field.
+
+    TESTS::
+
+        sage: R.<t> = GF(5)[]
+        sage: K = R.fraction_field()
+        sage: A.<x> = K[]
+        sage: x.divides(x)  # Testing ticket #27064
+        True
     """
 
     def __init__(self, parent, numer, denom=1, coerce=True, reduce=True):
@@ -103,7 +111,7 @@ cdef class FpTElement(RingElement):
             sage: R(7)
             2
         """
-        RingElement.__init__(self, parent)
+        super().__init__(parent)
         if coerce:
             numer = parent.poly_ring(numer)
             denom = parent.poly_ring(denom)

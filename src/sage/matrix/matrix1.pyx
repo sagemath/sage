@@ -18,12 +18,13 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from __future__ import absolute_import
 
-from cpython cimport *
+from cpython.sequence cimport PySequence_Fast
 
 import sage.modules.free_module
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 
 
 cdef class Matrix(Matrix0):
@@ -163,6 +164,45 @@ cdef class Matrix(Matrix0):
         from sage.libs.gap.libgap import libgap
         return libgap._construct_matrix(self)
 
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this matrix.
+
+        EXAMPLES::
+
+            sage: M = matrix(ZZ,2,range(4))
+            sage: fricas(M)                                                     # optional - fricas
+            +0  1+
+            |    |
+            +2  3+
+
+        ::
+
+            sage: M = matrix(QQ,3,[1,2,3,4/3,5/3,6/4,7,8,9])
+            sage: fricas(M).sage().parent()                                     # optional - fricas
+            Full MatrixSpace of 3 by 3 dense matrices over Rational Field
+
+        ::
+
+            sage: P.<x> = ZZ[]
+            sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
+            sage: fricas(M)                                                     # optional - fricas
+            +     2                      +
+            |- 9 x  - 2 x + 2    x - 1   |
+            |                            |
+            |     2                 2    |
+            +    x  + 8 x      - 3 x  + 5+
+
+        """
+        s = str(self.rows()).replace('(','[').replace(')',']')
+        R = self.base_ring()
+        try:
+            R._fricas_()
+        except TypeError:
+            return "matrix(%s)"%(s)
+
+        return "matrix(%s)$Matrix(%s)"%(s, R._fricas_init_())
+
     def _giac_init_(self):
         """
         Return a Giac string representation of this matrix.
@@ -252,9 +292,7 @@ cdef class Matrix(Matrix0):
 
         EXAMPLES:
 
-        We first coerce a square matrix.
-
-        ::
+        We first coerce a square matrix. ::
 
             sage: A = MatrixSpace(QQ,3)([1,2,3,4/3,5/3,6/4,7,8,9])
             sage: B = magma(A); B                       # (indirect doctest) optional - magma
@@ -267,9 +305,7 @@ cdef class Matrix(Matrix0):
             Full Matrix Algebra of degree 3 over Rational Field
 
         We coerce a non-square matrix over
-        `\ZZ/8\ZZ`.
-
-        ::
+        `\ZZ/8\ZZ`. ::
 
             sage: A = MatrixSpace(Integers(8),2,3)([-1,2,3,4,4,-2])
             sage: B = magma(A); B                       # optional - magma
@@ -280,15 +316,11 @@ cdef class Matrix(Matrix0):
             sage: B.Parent()                            # optional - magma
             Full RMatrixSpace of 2 by 3 matrices over IntegerRing(8)
 
-        ::
-
             sage: R.<x,y> = QQ[]
             sage: A = MatrixSpace(R,2,2)([x+y,x-1,y+5,x*y])
             sage: B = magma(A); B                       # optional - magma
             [x + y x - 1]
             [y + 5   x*y]
-
-        ::
 
             sage: R.<x,y> = ZZ[]
             sage: A = MatrixSpace(R,2,2)([x+y,x-1,y+5,x*y])
@@ -297,9 +329,7 @@ cdef class Matrix(Matrix0):
             [y + 5   x*y]
 
         We coerce a matrix over a cyclotomic field, where the generator
-        must be named during the coercion.
-
-        ::
+        must be named during the coercion. ::
 
             sage: K = CyclotomicField(9) ; z = K.0
             sage: M = matrix(K,3,3,[0,1,3,z,z**4,z-1,z**17,1,0])
@@ -313,10 +343,27 @@ cdef class Matrix(Matrix0):
             [-zeta9^5 - zeta9^2                  1                  0]
             sage: magma(M**2) == magma(M)**2           # optional - magma
             True
+
+        One sparse matrix::
+
+            sage: M = matrix(QQ,2,2,[4,6,55,0],sparse=True)
+            sage: T = magma(M); T    # optional - magma
+            Sparse matrix with 2 rows and 2 columns over Rational Field
+            sage: T.Determinant()    # optional - magma
+            -330
         """
-        P = magma(self.parent())
-        v = [x._magma_init_(magma) for x in self.list()]
-        return '%s![%s]'%(P.name(), ','.join(v))
+        if self.is_sparse():
+            R = magma(self.base_ring())
+            s = "SparseMatrix({}, {}, {}, ["
+            s = s.format(R.name(), self.nrows(), self.ncols())
+            entries = ("<{}, {}, {}>".format(ij[0] + 1, ij[1] + 1,
+                                             mij._magma_init_(magma))
+                       for ij, mij in self.dict().items())
+            return s + ', '.join(entries) + "])"
+        else:
+            P = magma(self.parent())
+            v = [x._magma_init_(magma) for x in self.list()]
+            return '%s![%s]' % (P.name(), ','.join(v))
 
     def _maple_init_(self):
         """
@@ -395,7 +442,7 @@ cdef class Matrix(Matrix0):
             | x+1 y+1 |
         """
         base_ring = macaulay2(self.base_ring())
-        entries = map(list, self)
+        entries = list(map(list, self))
         return macaulay2(entries).matrix()
 
 
@@ -403,7 +450,7 @@ cdef class Matrix(Matrix0):
         """
         Returns a string defining a Scilab representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: a = matrix([[1,2,3],[4,5,6],[7,8,9]]); a
             [1 2 3]
@@ -432,7 +479,7 @@ cdef class Matrix(Matrix0):
         """
         Creates a ScilabElement object based on self and returns it.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: a = matrix([[1,2,3],[4,5,6],[7,8,9]]); a
             [1 2 3]
@@ -1695,21 +1742,17 @@ cdef class Matrix(Matrix0):
             [5 4]
             [0 7]
         """
-        if not isinstance(columns, (list, tuple)):
-            columns = list(columns)
+        columns = PySequence_Fast(columns, "columns is not iterable")
+        cdef Py_ssize_t ncols = len(columns)
 
-        cdef Matrix A
-        cdef Py_ssize_t ncols,k,r
-
-        ncols = PyList_GET_SIZE(columns)
-        A = self.new_matrix(ncols = ncols)
-        k = 0
-        for i from 0 <= i < ncols:
-            if columns[i] < 0 or columns[i] >= self._ncols:
-                raise IndexError("column %s out of range" % columns[i])
-            for r from 0 <= r < self._nrows:
-                A.set_unsafe(r, k, self.get_unsafe(r,columns[i]))
-            k = k + 1
+        # Construct new matrix
+        cdef Matrix A = self.new_matrix(ncols=ncols)
+        cdef Py_ssize_t i, j, col
+        for j, col in enumerate(columns):
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
+            for i in range(self._nrows):
+                A.set_unsafe(i, j, self.get_unsafe(i, col))
         return A
 
     def delete_columns(self, dcols, check=True):
@@ -1796,21 +1839,17 @@ cdef class Matrix(Matrix0):
             [6 7 0]
             [3 4 5]
         """
-        if not isinstance(rows, (list, tuple)):
-            rows = list(rows)
+        rows = PySequence_Fast(rows, "rows is not iterable")
+        cdef Py_ssize_t nrows = len(rows)
 
-        cdef Matrix A
-        cdef Py_ssize_t nrows,k,c
-
-        nrows = PyList_GET_SIZE(rows)
-        A = self.new_matrix(nrows = nrows)
-        k = 0
-        for i from 0 <= i < nrows:
-            if rows[i] < 0 or rows[i] >= self._nrows:
-                raise IndexError("row %s out of range" % rows[i])
-            for c from 0 <= c < self._ncols:
-                A.set_unsafe(k,c, self.get_unsafe(rows[i],c))
-            k += 1
+        # Construct new matrix
+        cdef Matrix A = self.new_matrix(nrows=nrows)
+        cdef Py_ssize_t i, j, row
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            for j in range(self._ncols):
+                A.set_unsafe(i, j, self.get_unsafe(row, j))
         return A
 
     def delete_rows(self, drows, check=True):
@@ -1920,34 +1959,25 @@ cdef class Matrix(Matrix0):
 
         - Didier Deshommes: some Pyrex speedups implemented
         """
+        rows = PySequence_Fast(rows, "rows is not iterable")
+        columns = PySequence_Fast(columns, "columns is not iterable")
 
-        if not isinstance(rows, (list, tuple)):
-            rows = list(rows)
+        cdef Py_ssize_t ncols = len(columns)
+        cdef Py_ssize_t nrows = len(rows)
 
-        if not isinstance(columns, (list, tuple)):
-            columns = list(columns)
+        # Check whether column indices are valid
+        cdef Py_ssize_t i, j, row, col
+        for col in columns:
+            if col < 0 or col >= self._ncols:
+                raise IndexError("column index out of range")
 
-        cdef Matrix A
-        cdef Py_ssize_t nrows, ncols,k,r,i,j
-
-        r = 0
-        ncols = PyList_GET_SIZE(columns)
-        nrows = PyList_GET_SIZE(rows)
-        A = self.new_matrix(nrows = nrows, ncols = ncols)
-
-        tmp = [el for el in columns if el >= 0 and el < self._ncols]
-        columns = tmp
-        if ncols != PyList_GET_SIZE(columns):
-            raise IndexError("column index out of range")
-
-        for i from 0 <= i < nrows:
-            if rows[i] < 0 or rows[i] >= self._nrows:
-                raise IndexError("row %s out of range" % i)
-            k = 0
-            for j from 0 <= j < ncols:
-                A.set_unsafe(r,k, self.get_unsafe(rows[i],columns[j]))
-                k += 1
-            r += 1
+        # Construct new matrix
+        cdef Matrix A = self.new_matrix(nrows=nrows, ncols=ncols)
+        for i, row in enumerate(rows):
+            if row < 0 or row >= self._nrows:
+                raise IndexError("row index out of range")
+            for j, col in enumerate(columns):
+                A.set_unsafe(i, j, self.get_unsafe(row, col))
         return A
 
     def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,

@@ -87,9 +87,9 @@ Raw and hex work correctly::
     sage: type(0xa1)
     <type 'sage.rings.integer.Integer'>
     sage: type(0xa1r)
-    <... 'int'>
+    <type 'int'>
     sage: type(0Xa1R)
-    <... 'int'>
+    <type 'int'>
 
 In Sage, methods can also be called on integer and real literals (note
 that in pure Python this would be a syntax error)::
@@ -159,7 +159,7 @@ We create a raw integer::
     sage: a
     393939
     sage: type(a)
-    <... 'int'>
+    <type 'int'>
 
 We create a raw float::
 
@@ -167,7 +167,7 @@ We create a raw float::
     sage: z
     1.5949
     sage: type(z)
-    <... 'float'>
+    <type 'float'>
 
 You can also use an upper case letter::
 
@@ -175,7 +175,7 @@ You can also use an upper case letter::
     sage: z
     3.1415
     sage: type(z)
-    <... 'float'>
+    <type 'float'>
 
 This next example illustrates how raw literals can be very useful in
 certain cases.  We make a list of even integers up to 10000::
@@ -1149,7 +1149,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         sage: preparse("ZZ.<x> = QQ[2^(1/3)]")
         'ZZ = QQ[Integer(2)**(Integer(1)/Integer(3))]; (x,) = ZZ._first_ngens(1)'
         sage: QQ[2^(1/3)]
-        Number Field in a with defining polynomial x^3 - 2
+        Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
 
         sage: preparse("a^b")
         'a**b'
@@ -1345,9 +1345,10 @@ def preparse_file(contents, globals=None, numeric_literals=True):
 
     return '\n'.join(F)
 
+
 def implicit_mul(code, level=5):
     r"""
-    Inserts \*'s to make implicit multiplication explicit.
+    Insert \*'s to make implicit multiplication explicit.
 
     INPUT:
 
@@ -1560,7 +1561,8 @@ def preparse_file_named_to_stream(name, out):
     stream \code{out}.
     """
     name = os.path.abspath(name)
-    contents = open(name).read()
+    with open(name) as f:
+        contents = f.read()
     contents = handle_encoding_declaration(contents, out)
     parsed = preparse_file(contents)
     out.write('#'*70+'\n')
@@ -1575,7 +1577,6 @@ def preparse_file_named(name):
     """
     from sage.misc.temporary_file import tmp_filename
     tmpfilename = tmp_filename(os.path.basename(name)) + '.py'
-    out = open(tmpfilename, 'w')
-    preparse_file_named_to_stream(name, out)
-    out.close()
+    with open(tmpfilename, 'w') as out:
+        preparse_file_named_to_stream(name, out)
     return tmpfilename

@@ -108,7 +108,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
             sage: F.summation(a,b)
             a + b
             sage: (a+b) + (a+c)
-            2*a + c + b
+            2*a + b + c
         """
         assert x in self
         assert y in self
@@ -138,7 +138,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
             sage: F = CommutativeAdditiveSemigroups().example()
             sage: F.an_element()
-            a + 3*c + 2*b + 4*d
+            a + 2*b + 3*c + 4*d
         """
         return self((a, (ord(a)-96)) for a in self.alphabet)
 
@@ -175,13 +175,13 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
                 sage: F = CommutativeAdditiveSemigroups().example()
                 sage: F.an_element() # indirect doctest
-                a + 3*c + 2*b + 4*d
+                a + 2*b + 3*c + 4*d
 
                 sage: F(())
                 0
             """
             d = self.value
-            result = ' + '.join( ("%s*%s"%(d[a],a) if d[a] != 1 else a) for a in d.keys() if d[a] != 0)
+            result = ' + '.join( ("%s*%s"%(d[a],a) if d[a] != 1 else a) for a in sorted(d.keys()) if d[a] != 0)
             return '0' if result == '' else result
 
         def __hash__(self):

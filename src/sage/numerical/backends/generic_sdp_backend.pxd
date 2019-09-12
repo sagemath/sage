@@ -24,7 +24,7 @@ cdef class GenericSDPBackend:
     cpdef row(self, int i)
     cpdef int ncols(self)
     cpdef int nrows(self)
-    cpdef problem_name(self, char * name = *)
+    cpdef problem_name(self, name=*)
     cpdef row_name(self, int index)
     cpdef col_name(self, int index)
     cpdef solver_parameter(self, name, value=*)

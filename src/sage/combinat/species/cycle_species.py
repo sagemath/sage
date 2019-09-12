@@ -56,7 +56,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
             sage: a.permutation_group_element()
             (1,2,3)
         """
-        from sage.groups.all import PermutationGroupElement, SymmetricGroup
+        from sage.groups.all import PermutationGroupElement
         return PermutationGroupElement(tuple(self._list))
 
     def transport(self, perm):

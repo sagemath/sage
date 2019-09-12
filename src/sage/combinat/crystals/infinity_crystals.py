@@ -47,10 +47,10 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
     `\mathcal{B}(\infty)` crystal of tableaux.
 
     A tableaux model `\mathcal{T}(\infty)` for the crystal
-    `\mathcal{B}(\infty)` is introduced by Hong and Lee in [HL08]_. This model
+    `\mathcal{B}(\infty)` is introduced by Hong and Lee in [HL2008]_. This model
     is currently valid for types `A_n`, `B_n`, `C_n`, `D_n`, and `G_2`, and
-    builds on the tableaux model given by Kashiwara and Nakashima [KN94]_ in
-    types `A_n`, `B_n`, `C_n`, and `D_n`, and by Kang and Misra [KM94]_ in
+    builds on the tableaux model given by Kashiwara and Nakashima [KN1994]_ in
+    types `A_n`, `B_n`, `C_n`, and `D_n`, and by Kang and Misra [KM1994]_ in
     type `G_2`.
 
     .. NOTE::
@@ -123,24 +123,6 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
     In particular, the shape of the tableaux is not fixed in any instance of
     `\mathcal{T}(\infty)`; the row lengths of a tableau can be arbitrarily long.
-
-    REFERENCES:
-
-    .. [BN10] \D. Bump and M. Nakasuji.
-       Integration on `p`-adic groups and crystal bases.
-       Proc. Amer. Math. Soc. 138(5), pp. 1595--1605.
-
-    .. [LS12] \K.-H. Lee and B. Salisbury.
-       Young tableaux, canonical bases, and the Gindikin-Karpelevich formula.
-       :arXiv:`1205.6006`.
-
-    .. [HL08] \J. Hong and H. Lee.
-       Young tableaux and crystal `B(\infty)` for finite simple Lie algebras.
-       J. Algebra 320, pp. 3680--3693, 2008.
-
-    .. [KM94] \S.-J. Kang and K. C. Misra.
-       Crystal bases and tensor product decompositions of `U_q(G_2)`-modules.
-       J. Algebra 163, pp. 675--691, 1994.
 
     INPUT:
 
@@ -427,7 +409,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             (not necessarily semistandard) tableaux obtained from `T` by
             removing all `i`-boxes in the `i`-th row, subject to the condition
             that if the row is empty, a `\ast` is put as a placeholder.
-            This is described in [BN10]_ and [LS12]_.
+            This is described in [BN2010]_ and [LS2012]_.
 
             EXAMPLES::
 
@@ -461,7 +443,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             r"""
             Returns the statistic `\mathrm{seg}` of ``self.``
 
-            More precisely, following [LS12]_, define a `k`-segment of a
+            More precisely, following [LS2012]_, define a `k`-segment of a
             tableau `T` in `\mathcal{B}(\infty)` to be a maximal string
             of `k`-boxes in a single row of `T`.  Set `\mathrm{seg}^{\prime}(T)`
             to be the number of `k`-segments in `T`, as `k` varies over

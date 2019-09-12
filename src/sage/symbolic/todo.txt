@@ -13,7 +13,7 @@ done * use gmp to implement binomial on ui's
 done * fix the binomial expand memory leak
 done  * Need to print with parenthesis, e.g.:
 sage: K.<alpha> = NumberField(x^5 + x^2 + x -1)
-sage: var('x,y,z,w',ns=1); P=x.parent();
+sage: var('x,y,z,w',ns=1); P=x.parent()
 sage: x^(alpha+1)
 x^alpha + 1
 done * fix symbol order (done by changing hashing and compare_same_type in symbol.cpp)
@@ -111,7 +111,7 @@ done * wrap taylor series
 done    * power series print wrong -- no spaces around operators
 
 done * figure out how to check for true or false-ness of inequalities in ginac manual.
-   sage: var('x,y,z,w',ns=1); P=x.parent();
+   sage: var('x,y,z,w',ns=1); P=x.parent()
    sage: bool(P(2)== P(2))
 
 done-ish * implement conversion to RealField, and more general coercions...
@@ -166,6 +166,7 @@ be implemented via Singular, probably...
 done * Make it so these work the same way, i.e., in second case below the Mod(1,7)
 should also reduce.  Probably in some cases ginac just doesn't bother to do
 the multiply because Mod(1,7) == 1 is true.
+
 sage: a.expand()*Mod(2,7)
 5 + (5)*x + (2)*x^3 + (4)*x^2
 sage: a.expand()*Mod(1,7)

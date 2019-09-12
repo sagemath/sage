@@ -183,7 +183,7 @@ window.onload = function(){
       }
       // Curved edges
       else {
-        p = third_point_of_curved_edge(d.source,d.target,d.curve)
+        var p = third_point_of_curved_edge(d.source,d.target,d.curve)
         return line([{'x':d.source.x,'y':d.source.y},
         {'x':p[0],'y':p[1]},
         {'x':d.target.x,'y':d.target.y}])
@@ -217,8 +217,6 @@ window.onload = function(){
     // Returns the coordinates of a point located at distance d from the
     // barycenter of two points pa, pb.
     function third_point_of_curved_edge(pa,pb,d){
-	var dx = pb.x - pa.x,
-	dy = pb.y - pa.y;
 	var ox=pa.x,oy=pa.y,dx=pb.x,dy=pb.y;
 	var cx=(dx+ox)/2,cy=(dy+oy)/2;
 	var ny=-(dx-ox),nx=dy-oy;

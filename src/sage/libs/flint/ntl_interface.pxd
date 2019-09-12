@@ -1,12 +1,14 @@
 # distutils: language = c++
 # distutils: libraries = flint
+# distutils: depends = flint/NTL-interface.h
 
 from .types cimport fmpz_t, fmpz_poly_t
 
 from sage.libs.ntl.ZZ cimport ZZ_c
 from sage.libs.ntl.ZZX cimport ZZX_c
 
-cdef extern from "flint/NTL-interface.h":
+# flint/NTL-interface.h
+cdef extern from "flint_ntl_wrap.h":
     void fmpz_poly_get_ZZX(ZZX_c output, fmpz_poly_t poly)
     void fmpz_poly_set_ZZX(fmpz_poly_t output, ZZX_c poly)
 

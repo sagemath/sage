@@ -30,17 +30,17 @@ REFERENCES:
 - [WP-Error]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Ralf Stephan <gtrwst9 at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
+from sage.structure.all import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
@@ -49,6 +49,8 @@ from sage.symbolic.constants import pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
 from sage.libs.pynac.pynac import I
+
+from sage.rings.real_arb import RealBallField
 
 class Function_erf(BuiltinFunction):
     r"""
@@ -252,7 +254,7 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200));
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 
@@ -263,10 +265,21 @@ class Function_erf(BuiltinFunction):
             1629.99462260157*I
             sage: erf(33.0*I)
             1.51286977510409e471*I
+
+        Check that real ball evaluation is fixed :trac:`28061`::
+
+            sage: RealBallField(128)(erf(5))
+            [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)
-        import mpmath
-        return mpmath_utils.call(mpmath.erf, x, parent=R)
+        if isinstance(R, RealBallField):
+            # NOTE: erf exists on complex balls but not on real ones
+            C = R.complex_field()
+            return C(x).erf().real()
+        else:
+            import mpmath
+            y = mpmath_utils.call(mpmath.erf, x, parent=R)
+            return y
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -379,7 +392,7 @@ class Function_erfc(BuiltinFunction):
     .. MATH::
 
         \frac{2}{\sqrt{\pi}} \int_t^\infty e^{-x^2} dx.
-    
+
     EXAMPLES::
 
         sage: erfc(6)
@@ -393,6 +406,14 @@ class Function_erfc(BuiltinFunction):
         0.520499877813047
         sage: erf(0.5)
         0.520499877813047
+
+    TESTS:
+
+    Check that :trac:`25991` is fixed::
+
+            sage: erfc(x)._fricas_()                                            # optional - fricas
+            - erf(x) + 1
+
     """
     def __init__(self):
         r"""
@@ -407,7 +428,7 @@ class Function_erfc(BuiltinFunction):
                                  latex_name=r"\operatorname{erfc}",
                                  conversions=dict(maxima='erfc',
                                                   sympy='erfc',
-                                                  fricas='erfc',
+                                                  fricas='(x+->1-erf(x))',
                                                   giac='erfc'))
 
     def _eval_(self, x):
@@ -493,7 +514,7 @@ class Function_erfinv(BuiltinFunction):
             sage: _ = var('z,t')
             sage: PDF = exp(-x^2 /2)/sqrt(2*pi)
             sage: integralExpr = integrate(PDF,x,z,oo).subs(z==log(t))
-            sage: y = solve(integralExpr==z,t)[0].rhs().subs(z==1/4)    
+            sage: y = solve(integralExpr==z,t)[0].rhs().subs(z==1/4)
             sage: y
             e^(sqrt(2)*erfinv(1/2))
             sage: y.n()
@@ -592,7 +613,8 @@ class Function_Fresnel_sin(BuiltinFunction):
                                  conversions=dict(maxima='fresnel_s',
                                                   sympy='fresnels',
                                                   mathematica='FresnelS',
-                                                  maple='FresnelS'))
+                                                  maple='FresnelS',
+                                                  fricas='fresnelS'))
 
     def _eval_(self, x):
         r"""
@@ -689,7 +711,8 @@ class Function_Fresnel_cos(BuiltinFunction):
                                  conversions=dict(maxima='fresnel_c',
                                                   sympy='fresnelc',
                                                   mathematica='FresnelC',
-                                                  maple='FresnelC'))
+                                                  maple='FresnelC',
+                                                  fricas='fresnelC'))
 
     def _eval_(self, x):
         r"""
@@ -750,4 +773,3 @@ class Function_Fresnel_cos(BuiltinFunction):
         return cos(pi*x**2/2)
 
 fresnel_cos = Function_Fresnel_cos()
-

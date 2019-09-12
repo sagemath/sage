@@ -497,45 +497,61 @@ change !) filename is joined.
 The environment variable defining the licence's path must also be set when
 running Sage. You can append to your ``.bashrc`` file one of the following :
 
-    * For CPLEX ::
+* For CPLEX
 
-        export ILOG_LICENSE_FILE=/path/to/the/license/ilog/ilm/access_1.ilm
+  .. CODE-BLOCK:: bash
 
-    * For GUROBI ::
+    export ILOG_LICENSE_FILE=/path/to/the/license/ilog/ilm/access_1.ilm
 
-        export GRB_LICENSE_FILE=/path/to/the/license/gurobi.lic
+* For GUROBI
+
+  .. CODE-BLOCK:: bash
+
+    export GRB_LICENSE_FILE=/path/to/the/license/gurobi.lic
 
 
 As Sage also needs the files library and header files the easiest way is to
 create symbolic links to these files in the appropriate directories:
 
 * For CPLEX:
-    * ``libcplex.a`` -- in ``SAGE_ROOT/local/lib/``, type::
+    * ``libcplex.a`` -- in ``SAGE_ROOT/local/lib/``, type:
 
-        ln -s /path/to/lib/libcplex.a .
+      .. CODE-BLOCK:: shell-session
 
-    * ``cplex.h`` -- in ``SAGE_ROOT/local/include/``, type::
+        $ ln -s /path/to/lib/libcplex.a .
 
-        ln -s /path/to/include/cplex.h .
+    * ``cplex.h`` -- in ``SAGE_ROOT/local/include/``, type:
 
-    *  ``cpxconst.h`` (if it exists) -- in ``SAGE_ROOT/local/include/``, type::
+      .. CODE-BLOCK:: shell-session
 
-        ln -s /path/to/include/cpxconst.h .
+        $ ln -s /path/to/include/cplex.h .
+
+    *  ``cpxconst.h`` (if it exists) -- in ``SAGE_ROOT/local/include/``, type:
+
+      .. CODE-BLOCK:: shell-session
+
+        $ ln -s /path/to/include/cpxconst.h .
 
 * For GUROBI
 
-    * ``libgurobi56.so`` -- in ``SAGE_ROOT/local/lib/``, type::
+    * ``libgurobi56.so`` -- in ``SAGE_ROOT/local/lib/``, type:
 
-        ln -s /path/to/lib/libgurobi56.so libgurobi.so
+      .. CODE-BLOCK:: shell-session
 
-    * ``gurobi_c.h`` -- in ``SAGE_ROOT/local/include/``, type::
+        $ ln -s /path/to/lib/libgurobi56.so libgurobi.so
 
-        ln -s /path/to/include/gurobi_c.h .
+    * ``gurobi_c.h`` -- in ``SAGE_ROOT/local/include/``, type:
 
-**It is very important that the names of the symbolic links in Sage's folders**
-** be precisely as indicated. If the names differ, Sage will not notice that**
-**the files are present**
+      .. CODE-BLOCK:: shell-session
 
-Once this is done, Sage is to be asked to notice the changes by running::
+        $ ln -s /path/to/include/gurobi_c.h .
 
-    make
+**It is very important that the names of the symbolic links in Sage's folders
+be precisely as indicated. If the names differ, Sage will not notice that
+the files are present**
+
+Once this is done, Sage is to be asked to notice the changes by running:
+
+.. CODE-BLOCK:: shell-session
+
+    $ make

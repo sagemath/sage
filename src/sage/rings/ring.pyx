@@ -69,9 +69,10 @@ from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object import check_default_category
+from sage.structure.sequence import Sequence
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
@@ -135,19 +136,21 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run()
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test agaings another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :trac:`9944`::
 
         sage: QQ['x'].category()
         Join of Category of euclidean domains and Category of commutative algebras over
-        (number fields and quotient fields and metric spaces) and Category of infinite sets
+         (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: QQ['x','y'].category()
         Join of Category of unique factorization domains and Category of commutative algebras over
-        (number fields and quotient fields and metric spaces) and Category of infinite sets
+         (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: PolynomialRing(MatrixSpace(QQ,2),'x').category()
         Category of infinite algebras over (finite dimensional algebras with basis over
-        (number fields and quotient fields and metric spaces) and infinite sets)
+         (number fields and quotient fields and metric spaces) and infinite sets)
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()
-        Category of infinite algebras over graded hopf algebras with basis over Finite Field of size 2
+        Category of infinite algebras over (super hopf algebras with basis
+         over Finite Field of size 2 and supercocommutative super coalgebras
+         over Finite Field of size 2)
 
     TESTS::
 
@@ -157,7 +160,25 @@ cdef class Ring(ParentWithGens):
         True
         sage: CDF._repr_option('element_is_atomic')
         False
-    """
+
+    Check that categories correctly implement `is_finite` and `cardinality`::
+
+        sage: QQ.is_finite()
+        False
+        sage: GF(2^10,'a').is_finite()
+        True
+        sage: R.<x> = GF(7)[]
+        sage: R.is_finite()
+        False
+        sage: S.<y> = R.quo(x^2+1)
+        sage: S.is_finite()
+        True
+
+        sage: Integers(7).cardinality()
+        7
+        sage: QQ.cardinality()
+        +Infinity
+     """
     def __init__(self, base, names=None, normalize=True, category = None):
         """
         Initialize ``self``.
@@ -579,7 +600,7 @@ cdef class Ring(ParentWithGens):
             sage: R.<a> = K[]
             sage: L.<a> = K.extension(a^2-3)
             sage: L.ideal(a)
-            Principal ideal (1 + O(a^40)) of Eisenstein Extension in a defined by a^2 - 3 with capped relative precision 40 over 3-adic Field
+            Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
 
         """
         if self._zero_ideal is None:
@@ -893,47 +914,6 @@ cdef class Ring(ParentWithGens):
             False
         """
         return False
-
-    def is_finite(self):
-        """
-        Return ``True`` if this ring is finite.
-
-        EXAMPLES::
-
-            sage: QQ.is_finite()
-            False
-            sage: GF(2^10,'a').is_finite()
-            True
-            sage: R.<x> = GF(7)[]
-            sage: R.is_finite()
-            False
-            sage: S.<y> = R.quo(x^2+1)
-            sage: S.is_finite()
-            True
-        """
-        if self.is_zero():
-            return True
-        return super(Ring, self).is_finite()
-
-    def cardinality(self):
-        """
-        Return the cardinality of the underlying set.
-
-        OUTPUT:
-
-        Either an integer or ``+Infinity``.
-
-        EXAMPLES::
-
-            sage: Integers(7).cardinality()
-            7
-            sage: QQ.cardinality()
-            +Infinity
-        """
-        if not self.is_finite():
-            from .infinity import Infinity
-            return Infinity
-        raise NotImplementedError
 
     def is_integral_domain(self, proof = True):
         """
@@ -1446,11 +1426,11 @@ cdef class CommutativeRing(Ring):
 
             sage: K.<i> = QuadraticField(-1)
             sage: R = K.maximal_order(); R
-            Gaussian Integers in Number Field in i with defining polynomial x^2 + 1
+            Gaussian Integers in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: R.krull_dimension()
             1
             sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1
+            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: R.is_maximal()
             False
             sage: R.krull_dimension()
@@ -1477,7 +1457,7 @@ cdef class CommutativeRing(Ring):
             self.__ideal_monoid = M
             return M
 
-    def extension(self, poly, name=None, names=None, embedding=None, structure=None):
+    def extension(self, poly, name=None, names=None, **kwds):
         """
         Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
 
@@ -1521,10 +1501,11 @@ cdef class CommutativeRing(Ring):
             name = name[0]
         if name is None:
             name = str(poly.parent().gen(0))
-        if embedding is not None:
-            raise NotImplementedError("ring extension with prescripted embedding is not implemented")
-        if structure is not None:
-            raise NotImplementedError("ring extension with additional structure is not implemented")
+        for key, val in kwds.items():
+            if key not in ['structure', 'implementation', 'prec', 'embedding']:
+                raise TypeError("extension() got an unexpected keyword argument '%s'"%key)
+            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
+                raise NotImplementedError("ring extension with prescripted %s is not implemented"%key)
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
@@ -1533,7 +1514,7 @@ cdef class CommutativeRing(Ring):
         """
         INPUT:
 
-        -  ``n`` -- a nonnegative integer (default: 1)
+        - ``n`` -- a nonnegative integer (default: 1)
 
         OUTPUT:
 
@@ -1557,6 +1538,167 @@ cdef class CommutativeRing(Ring):
         """
         from .morphism import FrobeniusEndomorphism_generic
         return FrobeniusEndomorphism_generic(self, n)
+
+    def derivation_module(self, codomain=None, twist=None):
+        r"""
+        Returns the module of derivations over this ring.
+
+        INPUT:
+
+        - ``codomain`` -- an algebra over this ring or a ring homomorphism
+          whose domain is this ring or ``None`` (default: ``None``); if it
+          is a morphism, the codomain of derivations will be the codomain
+          of the morphism viewed as an algebra over ``self`` through the
+          given morphism; if ``None``, the codomain will be this ring
+
+        - ``twist`` -- a morphism from this ring to ``codomain``
+          or ``None`` (default: ``None``); if ``None``, the coercion
+          map from this ring to ``codomain`` will be used
+
+        .. NOTE::
+
+            A twisted derivation with respect to `\theta` (or a
+            `\theta`-derivation for short) is an additive map `d`
+            satisfying the following axiom for all `x, y` in the domain:
+
+            .. MATH::
+
+                d(xy) = \theta(x) d(y) + d(x) y.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: M = R.derivation_module(); M
+            Module of derivations over Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gens()
+            (d/dx, d/dy, d/dz)
+
+        We can specify a different codomain::
+
+            sage: K = R.fraction_field()
+            sage: M = R.derivation_module(K); M
+            Module of derivations from Multivariate Polynomial Ring in x, y, z over
+             Rational Field to Fraction Field of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: M.gen() / x
+            1/x*d/dx
+
+        Here is an example with a non-canonical defining morphism::
+
+            sage: ev = R.hom([QQ(0), QQ(1), QQ(2)])
+            sage: ev
+            Ring morphism:
+              From: Multivariate Polynomial Ring in x, y, z over Rational Field
+              To:   Rational Field
+              Defn: x |--> 0
+                    y |--> 1
+                    z |--> 2
+            sage: M = R.derivation_module(ev)
+            sage: M
+            Module of derivations from Multivariate Polynomial Ring in x, y, z over Rational Field to Rational Field
+
+        Elements in `M` acts as derivations at `(0,1,2)`::
+
+            sage: Dx = M.gen(0); Dx
+            d/dx
+            sage: Dy = M.gen(1); Dy
+            d/dy
+            sage: Dz = M.gen(2); Dz
+            d/dz
+            sage: f = x^2 + y^2 + z^2
+            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
+            0
+            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
+            2
+            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
+            4
+
+        An example with a twisting homomorphism::
+
+            sage: theta = R.hom([x^2, y^2, z^2])
+            sage: M = R.derivation_module(twist=theta); M
+            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+        .. SEEALSO::
+
+            :meth:`derivation`
+
+        """
+        from sage.rings.derivation import RingDerivationModule
+        if codomain is None:
+            codomain = self
+        return RingDerivationModule(self, codomain, twist)
+
+    def derivation(self, arg=None, twist=None):
+        r"""
+        Return the twisted or untwisted derivation over this ring
+        specified by ``arg``.
+
+        .. NOTE::
+
+            A twisted derivation with respect to `\theta` (or a
+            `\theta`-derivation for short) is an additive map `d`
+            satisfying the following axiom for all `x, y` in the domain:
+
+            .. MATH::
+
+                d(xy) = \theta(x) d(y) + d(x) y.
+
+        INPUT:
+
+        - ``arg`` -- (optional) a generator or a list of coefficients
+          that defines the derivation
+
+        - ``twist`` -- (optional) the twisting homomorphism
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: R.derivation()
+            d/dx
+
+        In that case, ``arg`` could be a generator::
+
+            sage: R.derivation(y)
+            d/dy
+
+        or a list of coefficients::
+
+            sage: R.derivation([1,2,3])
+            d/dx + 2*d/dy + 3*d/dz
+
+        It is not possible to define derivations with respect to a
+        polynomial which is not a variable::
+
+            sage: R.derivation(x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to create the derivation
+
+        Here is an example with twisted derivations::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: theta = R.hom([x^2, y^2, z^2])
+            sage: f = R.derivation(twist=theta); f
+            0
+            sage: f.parent()
+            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
+             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
+
+        Specifying a scalar, the returned twisted derivation is the
+        corresponding multiple of `\theta - id`::
+
+            sage: R.derivation(1, twist=theta)
+            [x |--> x^2, y |--> y^2, z |--> z^2] - id
+            sage: R.derivation(x, twist=theta)
+            x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
+
+        """
+        if isinstance(arg, (list, tuple)):
+            codomain = Sequence([self(0)] + list(arg)).universe()
+        else:
+            codomain = self
+        return self.derivation_module(codomain, twist=twist)(arg)
 
 
 cdef class IntegralDomain(CommutativeRing):
@@ -1695,14 +1837,6 @@ cdef class IntegralDomain(CommutativeRing):
             True
             sage: R.<x> = PolynomialRing(QQ); R.is_field()
             False
-
-        An example where we raise a ``NotImplementedError``::
-
-            sage: R = IntegralDomain(ZZ)
-            sage: R.is_field()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cannot construct elements of <sage.rings.ring.IntegralDomain object at ...>
         """
         if self.is_finite():
             return True
@@ -1784,7 +1918,7 @@ cdef class DedekindDomain(IntegralDomain):
 
             sage: K.<i> = QuadraticField(-1)
             sage: R = K.order(2*i); R
-            Order in Number Field in i with defining polynomial x^2 + 1
+            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: R.is_maximal()
             False
             sage: R.krull_dimension()

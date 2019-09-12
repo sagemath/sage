@@ -19,7 +19,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
 
@@ -30,7 +30,7 @@ from sage.rings.all import CC
 
 class HyperbolicArc(BezierPath):
     """
-    Primitive class for hyberbolic arc type. See ``hyperbolic_arc?`` for
+    Primitive class for hyperbolic arc type. See ``hyperbolic_arc?`` for
     information about plotting a hyperbolic arc in the complex plane.
 
     INPUT:

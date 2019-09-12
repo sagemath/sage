@@ -58,7 +58,7 @@ import sys
 import subprocess
 
 from sage.env import DOT_SAGE
-COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
 
@@ -68,7 +68,7 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 import sage.server.support
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-  InterfaceFunction, AsciiArtString)
+                        InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 
@@ -168,7 +168,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             -- Function: gcd (<p_1>, <p_2>, <x_1>, ...)
             ...
         """
-        cmd = 'maxima --very-quiet -r "%s(%s);" '%(command, s)
+        cmd = 'maxima --very-quiet --batch-string="%s(%s);" '%(command, s)
         if sage.server.support.EMBEDDED_MODE:
             cmd += '< /dev/null'
 
@@ -178,9 +178,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if redirect:
             res = bytes_to_str(subprocess.check_output(cmd, shell=True,
                                                        env=env))
-            # We get 4 lines of commented verbosity
-            # every time Maxima starts, so we need to get rid of them
-            for _ in range(4):
+            # We get 4 lines of commented verbosity every time Maxima starts
+            # and the input is echoed, so we need to get rid of them
+            for _ in range(5):
                 res = res[res.find('\n')+1:]
 
             return AsciiArtString(res)
@@ -969,12 +969,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: u = maxima.unit_quadratic_integer(101); u
             a + 10
             sage: u.parent()
-            Number Field in a with defining polynomial x^2 - 101
+            Number Field in a with defining polynomial x^2 - 101 with a = 10.04987562112089?
             sage: u = maxima.unit_quadratic_integer(13)
             sage: u
             5*a + 18
             sage: u.parent()
-            Number Field in a with defining polynomial x^2 - 13
+            Number Field in a with defining polynomial x^2 - 13 with a = 3.605551275463990?
         """
         from sage.rings.all import Integer
         from sage.rings.number_field.number_field import QuadraticField
@@ -986,7 +986,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if n < 1:
             raise ValueError("n (=%s) must be >= 1" % n)
         s = repr(self('qunit(%s)' % n)).lower()
-        r = re.compile('sqrt\(.*\)')
+        r = re.compile(r'sqrt\(.*\)')
         a = QuadraticField(n, 'a').gen()
         s = r.sub('a', s)
         return eval(s)
@@ -2028,10 +2028,8 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         return self.definition()
 
     def _latex_(self):
-        """
+        r"""
         Return latex representation of this Maxima function.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -2042,7 +2040,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
             \mathrm{sin(x+y)}
         """
         if self.__latex is None:
-            return r'\mathrm{%s}'%self.__defn
+            return r'\mathrm{%s}' % self.__defn
         else:
             return self.__latex
 

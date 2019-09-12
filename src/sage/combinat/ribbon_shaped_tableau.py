@@ -286,11 +286,11 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
              [[1, 2]],
              [[1], [2]],
              [[1, 2, 3]],
-             [[None, 2], [1, 3]],
              [[None, 1], [2, 3]],
+             [[None, 2], [1, 3]],
              [[1], [2], [3]],
              [[1, 2, 3, 4]],
-             [[None, None, 3], [1, 2, 4]]]
+             [[None, None, 1], [2, 3, 4]]]
         """
         from sage.combinat.partition import _Partitions
         for p in _Partitions:
@@ -364,11 +364,11 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         sage: StandardRibbonShapedTableaux([2,2]).cardinality()
         5
         sage: StandardRibbonShapedTableaux([2,2]).list()
-        [[[None, 2, 4], [1, 3]],
+        [[[None, 1, 3], [2, 4]],
+         [[None, 1, 2], [3, 4]],
          [[None, 2, 3], [1, 4]],
-         [[None, 1, 4], [2, 3]],
-         [[None, 1, 3], [2, 4]],
-         [[None, 1, 2], [3, 4]]]
+         [[None, 2, 4], [1, 3]],
+         [[None, 1, 4], [2, 3]]]
         sage: StandardRibbonShapedTableaux([3,2,2]).cardinality()
         155
     """
@@ -434,11 +434,12 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         EXAMPLES::
 
             sage: [t for t in StandardRibbonShapedTableaux([2,2])]
-            [[[None, 2, 4], [1, 3]],
+            [[[None, 1, 3], [2, 4]],
+             [[None, 1, 2], [3, 4]],
              [[None, 2, 3], [1, 4]],
-             [[None, 1, 4], [2, 3]],
-             [[None, 1, 3], [2, 4]],
-             [[None, 1, 2], [3, 4]]]
+             [[None, 2, 4], [1, 3]],
+             [[None, 1, 4], [2, 3]]]
+
         """
         for p in descents_composition_list(self.shape):
             yield self.from_permutation(p)
@@ -464,8 +465,3 @@ class Ribbon_class(RibbonShapedTableau):
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.ribbon', 'Ribbon_class', Ribbon_class)
 register_unpickle_override('sage.combinat.ribbon', 'StandardRibbons_shape', StandardRibbonShapedTableaux)
-
-# Deprecations from trac:18555. July 2016
-from sage.misc.superseded import deprecated_function_alias
-RibbonShapedTableaux.global_options = deprecated_function_alias(18555, RibbonShapedTableaux.options)
-StandardRibbonShapedTableaux.global_options = deprecated_function_alias(18555, StandardRibbonShapedTableaux.options)

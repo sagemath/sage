@@ -12,7 +12,7 @@ AUTHORS:
 * Federico Poloni (2013) - specialized ``rank()``
 * Travis Scrimshaw (2013-02-04) - Refactored to use ``ClonableIntArray``
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
@@ -25,8 +25,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import, division
 from six.moves import range
 from six import add_metaclass
@@ -427,25 +427,6 @@ def list2func(l, default=None):
     else:
         from functools import partial
         return partial(_default_function, l, default)
-
-
-def constant_func(i):
-    """
-    Return the constant function ``i``.
-
-    EXAMPLES::
-
-        sage: f = sage.combinat.integer_vector.constant_func(3)
-        doctest:...: DeprecationWarning: constant_func is deprecated. Use lambda x: i instead
-        See http://trac.sagemath.org/12453 for details.
-        sage: f(-1)
-        3
-        sage: f('asf')
-        3
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(12453, 'constant_func is deprecated. Use lambda x: i instead')
-    return lambda x: i
 
 
 class IntegerVector(ClonableArray):
@@ -1271,6 +1252,23 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         return not self.__eq__(rhs)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: hash(IntegerVectors(min_slope=0)) == hash(IntegerVectors(min_slope=0))
+            True
+            sage: hash(IntegerVectors(2, min_slope=0)) == hash(IntegerVectors(2, min_slope=0))
+            True
+            sage: hash(IntegerVectors(2, 3, min_slope=0)) == hash(IntegerVectors(2, 3, min_slope=0))
+            True
+            sage: hash(IntegerVectors(min_slope=0)) != hash(IntegerVectors(min_slope=3))
+            True
+        """
+        return hash((self.n, self.k, tuple(self.constraints.items())))
+
     def __contains__(self, x):
         """
         TESTS::
@@ -1477,52 +1475,6 @@ def integer_vectors_nk_fast_iter(n, k):
             rem = zero
             yield list(cur)
 
-
-def IntegerVectors_nconstraints(n, **constraints):
-    """
-    EXAMPLES::
-
-        sage: sage.combinat.integer_vector.IntegerVectors_nconstraints(2)
-        doctest:...: DeprecationWarning: this class is deprecated. Use sage.combinat.integer_vector.IntegerVectors_n instead
-        See http://trac.sagemath.org/12453 for details.
-        Integer vectors that sum to 2
-        sage: sage.combinat.integer_vector.IntegerVectors_nconstraints(2, min_slope=0)
-        doctest:...: DeprecationWarning: this class is deprecated. Use sage.combinat.integer_vector.IntegerVectorsConstraints instead
-        See http://trac.sagemath.org/12453 for details.
-        Integer vectors that sum to 2 with constraints: min_slope=0
-    """
-    from sage.misc.superseded import deprecation
-    if len(constraints) == 0:
-        deprecation(12453, 'this class is deprecated. Use sage.combinat.integer_vector.IntegerVectors_n instead')
-        return IntegerVectors_n(n)
-    deprecation(12453, 'this class is deprecated. Use sage.combinat.integer_vector.IntegerVectorsConstraints instead')
-    return IntegerVectorsConstraints(n, **constraints)
-
-
-def IntegerVectors_nkconstraints(n=None, k=None, **constraints):
-    """
-    EXAMPLES::
-
-        sage: sage.combinat.integer_vector.IntegerVectors_nkconstraints(3, 2)
-        doctest:...: DeprecationWarning: this class is deprecated.
-         Use sage.combinat.integer_vector.IntegerVectors_nk instead
-        See http://trac.sagemath.org/12453 for details.
-        Integer vectors of length 2 that sum to 3
-        sage: sage.combinat.integer_vector.IntegerVectors_nkconstraints(3, 2, min_slope=0)
-        doctest:...: DeprecationWarning: this class is deprecated.
-         Use sage.combinat.integer_vector.IntegerVectorsConstraints instead
-        See http://trac.sagemath.org/12453 for details.
-        Integer vectors that sum to 3 with constraints: length=2, min_slope=0
-    """
-    from sage.misc.superseded import deprecation
-    if len(constraints) == 0:
-        if n is None:
-            deprecation(12453, 'this class is deprecated. Use sage.combinat.integer_vector.IntegerVectors_k instead')
-            return IntegerVectors_k(k)
-        deprecation(12453, 'this class is deprecated. Use sage.combinat.integer_vector.IntegerVectors_nk instead')
-        return IntegerVectors_nk(n, k)
-    deprecation(12453, 'this class is deprecated. Use sage.combinat.integer_vector.IntegerVectorsConstraints instead')
-    return IntegerVectorsConstraints(n, k, **constraints)
 
 # October 2012: fixing outdated pickles which use classes being deprecated
 from sage.misc.persist import register_unpickle_override

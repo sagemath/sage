@@ -1647,12 +1647,12 @@ TESTS:
     sage: FiniteGroups().Algebras(QQ)
     Category of finite group algebras over Rational Field
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import importlib
@@ -1665,7 +1665,7 @@ from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_types import Category_over_base_ring
 from sage.structure.dynamic_class import DynamicMetaclass
-from sage.categories.category_cy_helper import AxiomContainer, canonicalize_axioms, _sort_uniq
+from sage.categories.category_cy_helper import AxiomContainer, canonicalize_axioms
 
 # The order of the axioms in this lists implies that
 # Magmas().Commutative().Unital() is printed as
@@ -1679,13 +1679,16 @@ all_axioms += ("Flying", "Blue",
                "WellGenerated",
                "Facade", "Finite", "Infinite","Enumerated",
                "Complete",
+               "Nilpotent",
                "FiniteDimensional", "Connected", "WithBasis",
                "Irreducible",
-               "Commutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
+               "Supercommutative", "Supercocommutative",
+               "Commutative", "Cocommutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
                "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
                "Distributive",
                "Endset",
-               "Pointed"
+               "Pointed",
+               "Stratified",
               )
 
 def uncamelcase(s,separator=" "):
@@ -1855,13 +1858,13 @@ class CategoryWithAxiom(Category):
     how to implement axioms and the documentation of the axiom
     infrastructure.
 
-    .. automethod:: __classcall__
-    .. automethod:: __classget__
-    .. automethod:: __init__
-    .. automethod:: _repr_object_names
-    .. automethod:: _repr_object_names_static
-    .. automethod:: _test_category_with_axiom
-    .. automethod:: _without_axioms
+    .. automethod:: CategoryWithAxiom.__classcall__
+    .. automethod:: CategoryWithAxiom.__classget__
+    .. automethod:: CategoryWithAxiom.__init__
+    .. automethod:: CategoryWithAxiom._repr_object_names
+    .. automethod:: CategoryWithAxiom._repr_object_names_static
+    .. automethod:: CategoryWithAxiom._test_category_with_axiom
+    .. automethod:: CategoryWithAxiom._without_axioms
     """
 
     @lazy_class_attribute
@@ -2018,7 +2021,7 @@ class CategoryWithAxiom(Category):
             sage: Sets().Infinite()
             Category of infinite sets
             sage: Sets().Infinite
-            Cached version of <function Infinite at ...>
+            Cached version of <function ...Infinite at ...>
             sage: Sets().Infinite.f == Sets.SubcategoryMethods.Infinite.f
             True
 
@@ -2026,7 +2029,7 @@ class CategoryWithAxiom(Category):
         a separate file, and lazy imported::
 
             sage: Sets().Finite
-            Cached version of <function Finite at ...>
+            Cached version of <function ...Finite at ...>
 
         There is no binding behavior when accessing ``Finite`` or
         ``Infinite`` from the class of the category instead of the
@@ -2187,7 +2190,7 @@ class CategoryWithAxiom(Category):
 
         .. SEEALSO:: :meth:`Category.additional_structure`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: Sets().Finite().additional_structure()
             sage: Monoids().additional_structure()
@@ -2267,6 +2270,14 @@ class CategoryWithAxiom(Category):
                 result = result.replace("graded ", "graded connected ", 1)
             elif axiom == "Connected" and "filtered " in result:
                 result = result.replace("filtered ", "filtered connected ", 1)
+            elif axiom == "Stratified" and "graded " in result:
+                result = result.replace("graded ", "stratified ", 1)
+            elif axiom == "Nilpotent" and "finite dimensional " in result:
+                # We need to put nilpotent before finite dimensional in the
+                #   axioms ordering so we do not (unnecessarily) display
+                #   'nilpotent' in 'finite dimensional nilpotent stratified'.
+                # So we need to swap the order here.
+                result = result.replace("finite dimensional ", "finite dimensional nilpotent ", 1)
             elif axiom == "Endset" and "homsets" in result:
                 # Without the space at the end to handle Homsets().Endset()
                 result = result.replace("homsets", "endsets", 1)
@@ -2476,6 +2487,7 @@ class CategoryWithAxiom(Category):
                          for category in self._super_categories
                          for axiom in category.axioms()) | {self._axiom}
 
+
 class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_ring):
 
     def __init__(self, base_category):
@@ -2498,6 +2510,7 @@ class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_rin
         # but then one has to take into account Python's name mangling.
         self._base_category = base_category
         Category_over_base_ring.__init__(self, base_category.base_ring())
+
 
 class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):#, Category_singleton, FastHashable_class):
     pass
@@ -2535,6 +2548,7 @@ The following workaround is needed until any :class:`CategoryWithAxiom` of a
 ##############################################################################
 # Utilities and tests tools
 
+
 def axiom(axiom):
     """
     Return a function/method ``self -> self._with_axiom(axiom)``.
@@ -2558,12 +2572,13 @@ def axiom(axiom):
         ....:     def _with_axiom(self, axiom): return self, axiom
         ....:     Finite = axiom("Finite")
         sage: As().Finite()
-        (<__main__.As instance at ...>, 'Finite')
+        (<__main__.As ... at ...>, 'Finite')
     """
     def with_axiom(self):
         return self._with_axiom(axiom)
     with_axiom.__name__ = axiom
     return with_axiom
+
 
 class Blahs(Category_singleton):
     r"""
@@ -2599,13 +2614,17 @@ class Blahs(Category_singleton):
 
     class FiniteDimensional(CategoryWithAxiom):
         pass
+
     class Commutative(CategoryWithAxiom):
         pass
+
     class Connected(CategoryWithAxiom):
         pass
+
     class Unital(CategoryWithAxiom):
         class Blue(CategoryWithAxiom):
             pass
+
     class Flying(CategoryWithAxiom):
         def extra_super_categories(self):
             """
@@ -2667,6 +2686,7 @@ class Blahs(Category_singleton):
         """
         return [Blahs().Unital()]
 
+
 class Bars(Category_singleton):
     r"""
     A toy singleton category, for testing purposes.
@@ -2712,6 +2732,7 @@ class Bars(Category_singleton):
         """
         return [TestObjects()]
 
+
 class TestObjects(Category_singleton):
     r"""
     A toy singleton category, for testing purposes.
@@ -2731,19 +2752,19 @@ class TestObjects(Category_singleton):
         return [Bars()]
 
     class FiniteDimensional(CategoryWithAxiom):
-         class Finite(CategoryWithAxiom):
-              pass
-         class Unital(CategoryWithAxiom):
-              class Commutative(CategoryWithAxiom):
-                   pass
+        class Finite(CategoryWithAxiom):
+            pass
+        class Unital(CategoryWithAxiom):
+            class Commutative(CategoryWithAxiom):
+                pass
 
     class Commutative(CategoryWithAxiom):
-         class Facade(CategoryWithAxiom):
-             pass
-         class FiniteDimensional(CategoryWithAxiom):
-             pass
-         class Finite(CategoryWithAxiom):
-             pass
+        class Facade(CategoryWithAxiom):
+            pass
+        class FiniteDimensional(CategoryWithAxiom):
+            pass
+        class Finite(CategoryWithAxiom):
+            pass
 
     class Unital(CategoryWithAxiom):
         pass
@@ -2771,20 +2792,19 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
         return [TestObjects()]
 
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
-         class Finite(CategoryWithAxiom_over_base_ring):
-              pass
-         class Unital(CategoryWithAxiom_over_base_ring):
-              class Commutative(CategoryWithAxiom_over_base_ring):
-                   pass
+        class Finite(CategoryWithAxiom_over_base_ring):
+            pass
+        class Unital(CategoryWithAxiom_over_base_ring):
+            class Commutative(CategoryWithAxiom_over_base_ring):
+                pass
 
     class Commutative(CategoryWithAxiom_over_base_ring):
-         class Facade(CategoryWithAxiom_over_base_ring):
-             pass
-         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
-             pass
-         class Finite(CategoryWithAxiom_over_base_ring):
-             pass
+        class Facade(CategoryWithAxiom_over_base_ring):
+            pass
+        class FiniteDimensional(CategoryWithAxiom_over_base_ring):
+            pass
+        class Finite(CategoryWithAxiom_over_base_ring):
+            pass
 
     class Unital(CategoryWithAxiom_over_base_ring):
         pass
-

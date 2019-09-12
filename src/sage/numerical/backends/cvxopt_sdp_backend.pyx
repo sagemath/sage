@@ -283,6 +283,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: p.row_name(-1)
             'fun'
         """
+        coefficients = list(coefficients)
         from sage.structure.element import is_Matrix
         for t in coefficients:
             m = t[1]
@@ -347,7 +348,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
             sage: p.add_constraint(a1*x[0] + a3*x[2] <= a4)
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
-            sage: round(p.solve(), 3)
+            sage: N(p.solve(), digits=4)
             -3.225
             sage: p = SemidefiniteProgram(solver = "cvxopt", maximization=False)
             sage: x = p.new_variable()
@@ -362,7 +363,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
             sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
-            sage: round(p.solve(), 3)
+            sage: N(p.solve(), digits=4)
             -3.154
 
         """
@@ -450,9 +451,9 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
             sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
-            sage: round(p.solve(),3)
+            sage: N(p.solve(), digits=4)
             -3.154
-            sage: round(p.get_backend().get_objective_value(),3)
+            sage: N(p.get_backend().get_objective_value(), digits=4)
             -3.154
         """
         sum = self.obj_constant_term
@@ -513,18 +514,16 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: b4 = matrix([[14., 9., 40.], [9., 91., 10.], [40., 10., 15.]])
             sage: p.add_constraint(a1*x[0] + a2*x[1] + a3*x[2] <= a4)
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
-            sage: round(p.solve(),3)
+            sage: N(p.solve(), digits=4)
             -3.154
-            sage: round(p.get_backend().get_variable_value(0),3)
+            sage: N(p.get_backend().get_variable_value(0), digits=3)
             -0.368
-            sage: round(p.get_backend().get_variable_value(1),3)
+            sage: N(p.get_backend().get_variable_value(1), digits=4)
             1.898
-            sage: round(p.get_backend().get_variable_value(2),3)
+            sage: N(p.get_backend().get_variable_value(2), digits=3)
             -0.888
-
         """
         return self.answer['x'][variable]
-
 
     cpdef int ncols(self):
         """
@@ -582,13 +581,13 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         else:
             return 0
 
-    cpdef problem_name(self, char * name = NULL):
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
         INPUT:
 
-        - ``name`` (``char *``) -- the problem's name. When set to
+        - ``name`` (``str``) -- the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -599,9 +598,10 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             sage: print(p.problem_name())
             There once was a french fry
         """
-        if name == NULL:
+        if name is None:
             return self.name
-        self.name = str(<bytes>name)
+
+        self.name = name
 
 
     cpdef row(self, int i):
@@ -682,7 +682,6 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         TESTS::
 
             sage: B.dual_variable(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
@@ -728,7 +727,7 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
             [0.0 0.0]
             sage: B1.is_positive_definite()
             True
-            sage: x = p.get_values(x).values()
+            sage: x = sorted(p.get_values(x).values())
             sage: x[0]*b1 + x[1]*b2 - b3 + B1       # tol 1e-09
             [0.0 0.0]
             [0.0 0.0]
@@ -736,7 +735,6 @@ cdef class CVXOPTSDPBackend(GenericSDPBackend):
         TESTS::
 
             sage: B.slack(7)
-            ...
             Traceback (most recent call last):
             ...
             IndexError: list index out of range

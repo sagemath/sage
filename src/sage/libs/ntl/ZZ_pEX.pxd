@@ -4,7 +4,7 @@ from .types cimport (ZZ_c, ZZ_p_c, ZZ_pContext_c, ZZ_pE_c, vec_ZZ_p_c,
         vec_ZZ_pE_c, ZZ_pEX_c, ZZ_pEX_Modulus_c)
 
 
-cdef extern from "ntlwrap.cpp":
+cdef extern from "ntlwrap.h":
     long ZZ_pEX_IsZero "IsZero"(ZZ_pEX_c a)
     long ZZ_pEX_IsOne "IsOne"(ZZ_pEX_c a)
 
@@ -94,8 +94,10 @@ cdef extern from "ntlwrap.cpp":
     void ZZ_pEX_clear "clear"(ZZ_pEX_c x)
     void ZZ_pEX_set "set"(ZZ_pEX_c x)
 
-    void ZZ_pEX_conv_modulus(ZZ_pEX_c fout, ZZ_pEX_c fin, ZZ_pContext_c c)
-
     long ZZ_pEX_IterIrredTest "IterIrredTest"(ZZ_pEX_c x)
     long ZZ_pEX_DetIrredTest "DetIrredTest"(ZZ_pEX_c x)
     long ZZ_pEX_ProbIrredTest "ProbIrredTest"(ZZ_pEX_c x, long iter)
+
+
+cdef extern from "ntlwrap_impl.h":
+    void ZZ_pEX_conv_modulus(ZZ_pEX_c fout, ZZ_pEX_c fin, ZZ_pContext_c c)

@@ -8,6 +8,8 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013-2015) : initial version
 - Marco Mancini (2015) : parallelization of some computations
+- Florentin Jaffredo (2018) : series expansion with respect to a given
+  parameter
 
 REFERENCES:
 
@@ -24,7 +26,7 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #******************************************************************************
 
 from sage.rings.integer import Integer
@@ -212,8 +214,7 @@ class AffineConnection(SageObject):
 
     The connection acting on a vector field::
 
-        sage: v = M.vector_field('v')
-        sage: v[:] = (y*z, x*z, x*y)
+        sage: v = M.vector_field(y*z, x*z, x*y, name='v')
         sage: Dv = nab(v) ; Dv
         Tensor field nabla(v) of type (1,1) on the 3-dimensional differentiable
          manifold M
@@ -263,10 +264,8 @@ class AffineConnection(SageObject):
 
     We may let it act on a vector field defined globally on `M`::
 
-        sage: a = M.vector_field('a')
-        sage: a[eU,:] = [-y,x]
-        sage: a[eV,0] = a[eVW,0,c_uvW].expr()
-        sage: a[eV,1] = a[eVW,1,c_uvW].expr()
+        sage: a = M.vector_field({eU: [-y,x]}, name='a')
+        sage: a.add_comp_by_continuation(eV, W, c_uv)
         sage: a.display(eU)
         a = -y d/dx + x d/dy
         sage: a.display(eV)
@@ -316,10 +315,8 @@ class AffineConnection(SageObject):
 
     We may let it act on a vector field defined globally on `M`::
 
-        sage: a = M.vector_field('a')
-        sage: a[eU,:] = [-y,x]
-        sage: a[eV,0] = a[eVW,0,c_uvW].expr()
-        sage: a[eV,1] = a[eVW,1,c_uvW].expr()
+        sage: a = M.vector_field({eU: [-y,x]}, name='a')
+        sage: a.add_comp_by_continuation(eV, W, c_uv)
         sage: a.display(eU)
         a = -y d/dx + x d/dy
         sage: a.display(eV)
@@ -1869,7 +1866,6 @@ class AffineConnection(SageObject):
                                                        gam_gam[[i,l,j,k]] -  \
                                                        gam_sc[[i,j,k,l]]
             self._riemann = resu
-
         return self._riemann
 
     def ricci(self):
@@ -2271,3 +2267,54 @@ class AffineConnection(SageObject):
                     forms[(i1,j1)] = omega
             self._curvature_forms[frame] = forms
         return  self._curvature_forms[frame][(i,j)]
+
+    def set_calc_order(self, symbol, order, truncate=False):
+        r"""
+        Trigger a series expansion with respect to a small parameter in
+        computations involving ``self``.
+
+        This property is propagated by usual operations. The internal
+        representation must be ``SR`` for this to take effect.
+
+        INPUT:
+
+        - ``symbol`` -- symbolic variable (the "small parameter" `\epsilon`)
+          with respect to which the connection coefficients are expanded in
+          power series
+        - ``order`` -- integer; the order `n` of the expansion, defined as the
+          degree of the polynomial representing the truncated power series in
+          ``symbol``
+        - ``truncate`` -- (default: ``False``) determines whether the
+          connection coefficients are replaced by their expansions to the
+          given order
+
+        EXAMPLES::
+
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
+            sage: C.<t,x,y,z> = M.chart()
+            sage: e = var('e')
+            sage: g = M.metric()
+            sage: h = M.tensor_field(0, 2, sym=(0,1))
+            sage: g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -1, 1, 1, 1
+            sage: h[0, 1] = x
+            sage: g.set(g + e*h)
+            sage: g[:]
+            [ -1 e*x   0   0]
+            [e*x   1   0   0]
+            [  0   0   1   0]
+            [  0   0   0   1]
+            sage: nab = g.connection()
+            sage: nab[0, 1, 1]
+            -e/(e^2*x^2 + 1)
+            sage: nab.set_calc_order(e, 1, truncate=True)
+            sage: nab[0, 1, 1]
+            -e
+
+        """
+        for coef in self._coefficients.values():
+            for ind in coef.non_redundant_index_generator():
+                coef[ind]._expansion_symbol = symbol
+                coef[ind]._order = order
+                if truncate:
+                    coef[ind].simplify()
+        self._del_derived()

@@ -393,10 +393,10 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
         sage: K.<sqrt3> = QuadraticField(3)
         sage: u = vector(K, (1/2, sqrt3/2) )
         sage: vector(u).base_ring()
-        Number Field in sqrt3 with defining polynomial x^2 - 3
+        Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
         sage: v = vector(K, (0, 1) )
         sage: vector(v).base_ring()
-        Number Field in sqrt3 with defining polynomial x^2 - 3
+        Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
 
     Constructing a vector from a numpy array behaves as expected::
 
@@ -690,6 +690,7 @@ def zero_vector(arg0, arg1=None):
         return (arg0**arg1).zero_vector()
     raise TypeError("first argument must be a ring")
 
+
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
     Returns a vector (or module element) with random entries.
@@ -820,6 +821,7 @@ def random_vector(ring, degree=None, *args, **kwds):
     sparse = kwds.pop('sparse', False)
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
+
 
 cdef class FreeModuleElement(Vector):   # abstract base class
     """
@@ -987,7 +989,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.numpy()
             array([1, 2, 5/6], dtype=object)
             sage: v.numpy(dtype=float)
-            array([ 1.        ,  2.        ,  0.83333333])
+            array([1.        , 2.        , 0.83333333])
             sage: v.numpy(dtype=int)
             array([1, 2, 0])
             sage: import numpy
@@ -998,7 +1000,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         be more efficient but may have unintended consequences::
 
             sage: v.numpy(dtype=None)
-            array([ 1.        ,  2.        ,  0.83333333])
+            array([1.        , 2.        , 0.83333333])
 
             sage: w = vector(ZZ, [0, 1, 2^63 -1]); w
             (0, 1, 9223372036854775807)
@@ -2561,8 +2563,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: u.dot_product(w)
             0
 
-        The cross product is defined for degree seven vectors as well.
-        [Crossproduct]_
+        The cross product is defined for degree seven vectors as well: 
+        see :wikipedia:`Cross_product`.
         The 3-D cross product is achieved using the quaternions,
         whereas the 7-D cross product is achieved using the octonions. ::
 
@@ -2637,7 +2639,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                            l[0]*r[2] - l[2]*r[0] + l[1]*r[5] - l[5]*r[1] + l[3]*r[4] - l[4]*r[3]])
 
         else:
-            raise TypeError("Cross product only defined for vectors of length three or seven, not (%s and %s)"%(len(l),len(r)))
+            raise TypeError("Cross product only defined for vectors of length three or seven, not (%s and %s)" % (len(l), len(r)))
 
     def cross_product_matrix(self):
         r"""
@@ -3271,7 +3273,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             Full MatrixSpace of 3 by 4 dense matrices over Rational Field
 
         The more general :meth:`sage.matrix.matrix2.tensor_product` is an
-        operation on a pair of matrices.  If we construe a pair of vectors
+        operation on a pair of matrices.  If we construct a pair of vectors
         as a column vector and a row vector, then an outer product and a
         tensor product are identical.  Thus `tensor_product` is a synonym
         for this method.  ::
@@ -4116,7 +4118,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
                 try:
                     entries = [coefficient_ring(x) for x in entries]
                 except TypeError:
-                    raise TypeError("Unable to coerce entries (=%s) to coefficients in %s"%(entries, coefficient_ring))
+                    raise TypeError("Unable to coerce entries (=%s) to coefficients in %s" % (entries, coefficient_ring))
             elif copy:
                 entries = list(entries)  # make a copy/convert to list
         self._entries = entries
@@ -4459,10 +4461,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         return self._new_c(dict(self._entries))
 
-    def __init__(self, parent,
-                 entries=0,
-                 coerce=True,
-                 copy=True):
+    def __init__(self, parent, entries=0, coerce=True, copy=True):
         """
         EXAMPLES::
 
@@ -4537,39 +4536,42 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         FreeModuleElement.__init__(self, parent)
         R = self.base_ring()
         cdef Py_ssize_t i
+        cdef dict entries_dict, e
         if not entries:
-            entries = {}
+            entries_dict = {}
         else:
             if type(entries) is not dict:
                 if isinstance(entries, dict):
                     # Convert derived type to dict
                     copy = True
+                    entries_dict = <dict> entries
                 elif isinstance(entries, (list, tuple)):
                     if len(entries) != self._degree:
                         raise TypeError("entries has the wrong length")
-                    e = entries
-                    entries = {}
+                    entries_dict = {}
                     for i in range(self._degree):
-                        x = e[i]
+                        x = entries[i]
                         if x:
-                            entries[i] = x
+                            entries_dict[i] = x
                     copy = False
                 else:
-                    raise TypeError("entries must be a dict, list or tuple, not %s", type(entries))
+                    raise TypeError("entries must be a dict, list or tuple, not %s" % type(entries))
+            else:
+                entries_dict = <dict> entries
             if coerce:
                 coefficient_ring = parent.coordinate_ring()
-                e = entries
-                entries = {}
+                e = entries_dict
+                entries_dict = {}
                 try:
-                    for k, x in e.iteritems():
+                    for k, x in (<dict> e).iteritems():
                         x = coefficient_ring(x)
                         if x:
-                            entries[k] = x
+                            entries_dict[k] = x
                 except TypeError:
-                    raise TypeError("Unable to coerce value (=%s) of entries dict (=%s) to %s"%(x, entries, coefficient_ring))
+                    raise TypeError("unable to coerce value (=%s) of entries dict (=%s) to %s" % (x, entries, coefficient_ring))
             elif copy:
-                entries = dict(entries)  # make a copy/convert to dict
-        self._entries = entries
+                entries_dict = dict(entries_dict)  # make a copy/convert to dict
+        self._entries = entries_dict
 
     cpdef _add_(left, right):
         """
@@ -4751,8 +4753,8 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         EXAMPLES::
 
             sage: v = vector([1,2/3,pi], sparse=True)
-            sage: v.items()
-            <dictionary-itemiterator object at ...>
+            sage: next(v.items())
+            (0, 1)
             sage: list(v.items())
             [(0, 1), (1, 2/3), (2, pi)]
 
@@ -4763,7 +4765,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: list(v.iteritems())
             [(0, 1), (1, 2/3), (2, pi)]
         """
-        return self._entries.iteritems()
+        return iter(self._entries.iteritems())
 
     iteritems = items
 
@@ -4880,7 +4882,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: w[39893] = sqrt(2)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert sqrt(2) to an integer
+            TypeError: self must be a numeric expression
 
         ::
 

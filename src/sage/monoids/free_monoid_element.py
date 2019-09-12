@@ -49,7 +49,7 @@ class FreeMonoidElement(MonoidElement):
         sage: x**(-1)
         Traceback (most recent call last):
         ...
-        TypeError: bad operand type for unary ~: 'FreeMonoid_class_with_category.element_class'
+        TypeError: bad operand type for unary ~: 'FreeMonoid_with_category.element_class'
     """
     def __init__(self, F, x, check=True):
         """

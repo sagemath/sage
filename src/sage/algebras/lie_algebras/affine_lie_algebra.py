@@ -124,8 +124,8 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
         0
         sage: f0.bracket(f2)
         (E[3*alpha[1] + alpha[2]])#t^-1
-        sage: A[h1+3*h2, A[[[f0, f2], f1], [f1,f2]] + f1]
-        (E[-alpha[1]])#t^0 + (2*E[alpha[1]])#t^-1
+        sage: A[h1+3*h2, A[[[f0, f2], f1], [f1,f2]] + f1] - f1
+        (2*E[alpha[1]])#t^-1
 
     We can construct its derived subalgebra, the affine Lie algebra
     of type `G_2^{(1)}`. In this case, there is no canonical derivation,

@@ -194,9 +194,7 @@ There are two main scenarios when starting with Sage.
    In either scenario, the Sage notebook will be saving your files
    in a "hidden" location not meant for ordinary users and you will
    ordinarily interact with your Sage worksheets only through the
-   notebook server.  Please see the
-   `reference manual <https://doc.sagemath.org/html/en/reference/notebook/index.html>`_
-   for SageNB for more information on how to access all this.
+   notebook server.
 
 .. _FromScratch:
 

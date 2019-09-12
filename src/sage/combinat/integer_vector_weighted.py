@@ -6,14 +6,14 @@ AUTHORS:
 - Mike Hansen (2007): initial version, ported from MuPAD-Combinat
 - Nicolas M. Thiery (2010-10-30): WeightedIntegerVectors(weights) + cleanup
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -387,21 +387,6 @@ def iterator_fast(n, l):
             cur.append(rem // l[k] + one)
             rem -= cur[-1] * l[k]
 
-
-def WeightedIntegerVectors_nweight(n, weight):
-    """
-    Deprecated in :trac:`12453`. Use :class:`WeightedIntegerVectors` instead.
-
-    EXAMPLES::
-
-        sage: sage.combinat.integer_vector_weighted.WeightedIntegerVectors_nweight(7, [2,2])
-        doctest:...: DeprecationWarning: this class is deprecated. Use WeightedIntegerVectors instead
-        See http://trac.sagemath.org/12453 for details.
-        Integer vectors of 7 weighted by [2, 2]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(12453, 'this class is deprecated. Use WeightedIntegerVectors instead')
-    return WeightedIntegerVectors(n, weight)
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors_nweight', WeightedIntegerVectors)

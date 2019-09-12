@@ -10,7 +10,6 @@ echo "library_dirs = $SAGE_LOCAL/lib/" >> src/setup.cfg
 echo "include_dirs = $SAGE_LOCAL/include/" >> src/setup.cfg
 
 echo "[configure]" >> src/setup.cfg
-echo "zmq = $SAGE_LOCAL" >> src/setup.cfg
 
 cd src
 

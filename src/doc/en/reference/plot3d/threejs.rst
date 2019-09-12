@@ -44,6 +44,9 @@ Options currently supported by the viewer:
 
 - ``opacity`` -- (default: 1) numeric value for transparency of lines and surfaces
 
+- ``projection`` -- (default: 'perspective') the type of camera projection to use;
+  'perspective' or 'orthographic'
+
 - ``radius`` -- (default: None) numeric value for radius of lines; use to render
   lines thicker than available using ``thickness`` or on Windows platforms where
   ``thickness`` is ignored

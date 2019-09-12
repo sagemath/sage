@@ -469,8 +469,8 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
             sage: mat = matrix(CBF, [[1/2, 1/3], [1, 1]])
             sage: mat**2
-            [[0.5833333333333...] [0.500000000000000 +/- 1.95e-16]]
-            [               1.500000000000000 [1.333333333333333 +/- 5.37e-16]]
+            [[0.5833333333333...] [0.500000000000000 +/- ...e-16]]
+            [               1.500000000000000 [1.333333333333333 +/- ...e-16]]
             sage: mat**(-2)
             [ [48.00000000000...] [-18.00000000000...]]
             [[-54.0000000000...]  [21.000000000000...]]
@@ -487,9 +487,9 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             NotImplementedError: non-integral exponents not supported
 
             sage: (-(matrix(CBF, [2])**(-2**100))[0,0].log(2)).log(2)
-            [100.000000000000 +/- 7.13e-14]
+            [100.000000000000 +/- ...e-14]
             sage: (-(matrix(CBF, [2])**(-2**64+1))[0,0].log(2)).log(2)
-            [64.0000000000000 +/- 1.34e-14]
+            [64.0000000000000 +/- ...e-14]
         """
         cdef Matrix_complex_ball_dense res = self._new(self._nrows, self._ncols)
         cdef Matrix_complex_ball_dense tmp
@@ -521,20 +521,28 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         TESTS::
 
             sage: ~matrix(CBF, [[1/2, 1/3], [1, 1]])
-            [ [6.00000000000000 +/- 3.78e-15] [-2.00000000000000 +/- 1.89e-15]]
-            [[-6.00000000000000 +/- 3.78e-15]  [3.00000000000000 +/- 1.89e-15]]
+            [ [6.00000000000000 +/- ...e-15] [-2.00000000000000 +/- ...e-15]]
+            [[-6.00000000000000 +/- ...e-15]  [3.00000000000000 +/- ...e-15]]
             sage: ~matrix(CBF, [[1/2, 1/3]])
             Traceback (most recent call last):
             ...
             ArithmeticError: self must be a square matrix
+            sage: mat = matrix(CBF, [[1/3, 1/2], [0, 1]]) - 1/3
+            sage: ~mat
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: unable to compute the inverse, is the matrix singular?
         """
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         cdef Matrix_complex_ball_dense res = self._new(self._nrows, self._ncols)
         sig_on()
-        acb_mat_inv(res.value, self.value, prec(self))
+        cdef bint success = acb_mat_inv(res.value, self.value, prec(self))
         sig_off()
-        return res
+        if success:
+            return res
+        else:
+            raise ZeroDivisionError("unable to compute the inverse, is the matrix singular?")
 
     def _solve_right_nonsingular_square(self, Matrix_complex_ball_dense rhs, check_rank=None):
         r"""
@@ -568,9 +576,9 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: matrix(CBF, [[1/2, 1/3], [1, 1]]).determinant()
-            [0.1666666666666667 +/- 7.04e-17]
+            [0.1666666666666667 +/- ...e-17]
             sage: matrix(CBF, [[1/2, 1/3], [1, 1]]).det()
-            [0.1666666666666667 +/- 7.04e-17]
+            [0.1666666666666667 +/- ...e-17]
             sage: matrix(CBF, [[1/2, 1/3]]).determinant()
             Traceback (most recent call last):
             ...
@@ -592,7 +600,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: matrix(CBF, [[1/3, 1/3], [1, 1]]).trace()
-            [1.333333333333333 +/- 5.37e-16]
+            [1.333333333333333 +/- ...e-16]
             sage: matrix(CBF, [[1/2, 1/3]]).trace()
             Traceback (most recent call last):
             ...
@@ -616,17 +624,17 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             sage: from sage.matrix.benchmark import hilbert_matrix
             sage: mat = hilbert_matrix(5).change_ring(ComplexBallField(10))
             sage: mat.charpoly()
-            x^5 + ([-1.8 +/- 0.0258])*x^4 + ([0.3 +/- 0.0567])*x^3 +
-            ([+/- 0.0212])*x^2 + ([+/- 0.0266])*x + [+/- 0.0285]
+            x^5 + ([-1.8 +/- 0.0258])*x^4 + ([0.3 +/- 0.05...)*x^3 +
+            ([+/- 0.0...])*x^2 + ([+/- 0.0...])*x + [+/- 0.0...]
 
         TESTS::
 
             sage: mat.charpoly(algorithm="hessenberg")
-            x^5 + ([-1.8 +/- 0.0445])*x^4 + ([0.3 +/- 0.0828])*x^3
-            + ([+/- 0.0163])*x^2 + ([+/- 5.95e-4])*x + [+/- 6.83e-6]
+            x^5 + ([-1.8 +/- 0.04...])*x^4 + ([0.3 +/- 0.08...])*x^3
+            + ([+/- 0.0...])*x^2 + ([+/- ...e-4])*x + [+/- ...e-6]
             sage: mat.charpoly('y')
-            y^5 + ([-1.8 +/- 0.0258])*y^4 + ([0.3 +/- 0.0567])*y^3 +
-            ([+/- 0.0212])*y^2 + ([+/- 0.0266])*y + [+/- 0.0285]
+            y^5 + ([-1.8 +/- 0.02...])*y^4 + ([0.3 +/- 0.05...])*y^3 +
+            ([+/- 0.0...])*y^2 + ([+/- 0.0...])*y + [+/- 0.0...]
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
@@ -646,8 +654,8 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         EXAMPLES::
 
             sage: matrix(CBF, [[i*pi, 1], [0, i*pi]]).exp()
-            [[-1.00000000000000 +/- 8.04e-16] + [+/- 7.05e-16]*I [-1.00000000000000 +/- 8.04e-16] + [+/- 7.05e-16]*I]
-            [                                                  0 [-1.00000000000000 +/- 8.04e-16] + [+/- 7.05e-16]*I]
+            [[-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
+            [                                                0 [-1.00000000000000 +/- ...e-16] + [+/- ...e-16]*I]
             sage: matrix(CBF, [[1/2, 1/3]]).exp()
             Traceback (most recent call last):
             ...

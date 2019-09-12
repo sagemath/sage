@@ -91,7 +91,7 @@ def _make_wrapper(backend, attr):
     update_wrapper(m, getattr(backend, attr))
     return m
 
-class LoggingBackend (GenericBackend):
+class LoggingBackend(GenericBackend):
 
     """
     See :class:`LoggingBackendFactory` for documentation.
@@ -194,22 +194,18 @@ class LoggingBackend (GenericBackend):
         else:
             return self._backend.base_ring()
 
+
 # Override all methods that we inherited from GenericBackend
 # by delegating methods
 def _override_attr(attr):
     """
     Override a method by a delegating method.
-
-    TESTS::
-
-        sage: from sage.numerical.backends.logging_backend import _override_attr
     """
     a = getattr(LoggingBackend, attr)
     if callable(a):
-        # make an unbound method
-        import types
-        _mm = types.MethodType(_make_wrapper(GenericBackend(), attr), None, LoggingBackend)
-        setattr(LoggingBackend, attr, _mm)
+        m = _make_wrapper(GenericBackend(), attr)
+        setattr(LoggingBackend, attr, m)
+
 
 for attr in dir(LoggingBackend):
     if not attr.startswith("_") and attr not in ("zero", "base_ring"):

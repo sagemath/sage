@@ -1,15 +1,4 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
-
-cd "src"
-
-./configure --prefix="$SAGE_LOCAL" --disable-gmp && $MAKE && $MAKE install
-
-if [ $? -ne 0 ]; then
-    echo "An error occurred whilst building bliss"
-    exit 1
-fi
+cd src
+sdh_configure --disable-gmp
+sdh_make
+sdh_make_install

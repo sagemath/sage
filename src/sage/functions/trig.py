@@ -1,8 +1,7 @@
 r"""
 Trigonometric Functions
 """
-from sage.symbolic.function import BuiltinFunction, GinacFunction
-from sage.symbolic.expression import is_Expression
+from sage.symbolic.function import GinacFunction
 import math
 
 
@@ -724,7 +723,7 @@ class Function_arccot(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: arccot(a)
-            array([ 0.46364761,  0.32175055,  0.24497866])
+            array([0.46364761, 0.32175055, 0.24497866])
         """
         return math.pi/2 - arctan(x)
 
@@ -780,7 +779,7 @@ class Function_arccsc(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: arccsc(a)
-            array([ 0.52359878,  0.33983691,  0.25268026])
+            array([0.52359878, 0.33983691, 0.25268026])
         """
         return arcsin(1.0/x)
 
@@ -838,7 +837,7 @@ class Function_arcsec(GinacFunction):
             sage: import numpy
             sage: a = numpy.arange(2, 5)
             sage: arcsec(a)
-            array([ 1.04719755,  1.23095942,  1.31811607])
+            array([1.04719755, 1.23095942, 1.31811607])
         """
         return arccos(1.0/x)
 
@@ -913,13 +912,13 @@ class Function_arctan2(GinacFunction):
             sage: a = numpy.linspace(1, 3, 3)
             sage: b = numpy.linspace(3, 6, 3)
             sage: atan2(a, b)
-            array([ 0.32175055,  0.41822433,  0.46364761])
+            array([0.32175055, 0.41822433, 0.46364761])
 
             sage: atan2(1,a)
-            array([ 0.78539816,  0.46364761,  0.32175055])
+            array([0.78539816, 0.46364761, 0.32175055])
 
             sage: atan2(a, 1)
-            array([ 0.78539816,  1.10714872,  1.24904577])
+            array([0.78539816, 1.10714872, 1.24904577])
 
         TESTS::
 

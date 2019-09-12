@@ -1,20 +1,7 @@
 cd src/
-
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 CFLAGS="-I $SAGE_LOCAL/include -L$SAGE_LOCAL/lib $CFLAGS"
 export CFLAGS
-./configure --prefix=$SAGE_LOCAL --with-gmp=$SAGE_LOCAL --with-glpk=$SAGE_LOCAL --enable-shared=yes --enable-static=no
-
-$MAKE
-$SAGE_SUDO $MAKE install
-
-if [ $? -ne 0 ]; then
-   echo "Error building 4ti2"
-   exit 1
-fi
-
+sdh_configure $SAGE_CONFIGURE_GMP --with-glpk=$SAGE_LOCAL \
+    --enable-shared=yes --enable-static=no
+sdh_make
+sdh_make_install

@@ -12,7 +12,7 @@ REFERENCES:
    Preprint. :arxiv:`1505.07040`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -24,8 +24,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
 
@@ -39,10 +39,10 @@ from sage.combinat.rigged_configurations.bij_type_C import (KRTToRCBijectionType
                                                             RCToKRTBijectionTypeC)
 from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import TensorProductOfKirillovReshetikhinTableaux
 from sage.combinat.crystals.letters import CrystalOfLetters
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.misc.flatten import flatten
+
 
 class FromTableauIsomorphism(Morphism):
     r"""

@@ -540,7 +540,7 @@ categories and parallel to that we had seen for the elements. This is
 best viewed graphically::
 
     sage: g = class_graph(m.__class__)
-    sage: g.relabel(lambda x: x.replace("_","\_"))
+    sage: g.relabel(lambda x: x.replace("_",r"\_"))
     sage: g.set_latex_options(format="dot2tex")
     sage: view(g)                 # not tested
 
@@ -949,7 +949,9 @@ what to do, ask your parent); it's also a speed critical method::
     sage: x._mul_.__module__
     'sage.categories.coercion_methods'
     sage: from six import get_method_function as gmf
-    sage: gmf(x._mul_) is gmf(Magmas.ElementMethods._mul_parent)
+    sage: gmf(x._mul_) is gmf(Magmas.ElementMethods._mul_parent)  # py2
+    True
+    sage: gmf(x._mul_) is Magmas.ElementMethods._mul_parent  # py3
     True
 
 ``product`` is a mathematical method implemented by the parent::
@@ -1436,7 +1438,8 @@ necessarily a graded algebra! Indeed, the grading on `O` may not be
 compatible with the product on `O`::
 
     sage: Modules(QQ).Graded() & Algebras(QQ)
-    Join of Category of algebras over Rational Field and Category of graded modules over Rational Field
+    Join of Category of algebras over Rational Field
+     and Category of graded vector spaces over Rational Field
 
 The relevant difference between ``FiniteDimensional`` and ``Graded``
 is that ``FiniteDimensional`` is a statement about the properties of
@@ -1630,7 +1633,7 @@ methods ``foo`` in `C_1` and `C_2` must have the same semantic. Code
 should not rely on any specific order, as it is subject to later
 change. Whenever one of the implementations is preferred in some common
 subcategory of `C_1` and `C_2`, for example for efficiency reasons,
-the ambiguity should be resolved explicitly by definining a
+the ambiguity should be resolved explicitly by defining a
 method ``foo`` in this category. See the method ``some_elements`` in
 the code of the category :class:`FiniteCoxeterGroups` for an example.
 

@@ -62,7 +62,7 @@ def SimpleGraphSpecies():
 
         sage: seq = S.generating_series().counts(10)[1:]
         sage: oeis(seq)[0]                              # optional -- internet
-        A006125: a(n) = 2^(n(n-1)/2).
+        A006125: a(n) = 2^(n*(n-1)/2).
     """
     E = SetSpecies()
     E2 = SetSpecies(size=2)
@@ -73,8 +73,10 @@ def SimpleGraphSpecies():
 
 @cached_function
 def BinaryTreeSpecies():
-    """
-    Returns the species of binary trees on n leaves. The species of
+    r"""
+    Return the species of binary trees on n leaves.
+
+    The species of
     binary trees B is defined by B = X + B\*B where X is the singleton
     species.
 

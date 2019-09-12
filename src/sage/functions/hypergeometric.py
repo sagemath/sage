@@ -169,7 +169,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 from sage.arith.all import binomial, rising_factorial, factorial
 from sage.symbolic.constants import pi
-from sage.symbolic.all import I
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.ring import SR
 from sage.structure.element import get_coercion_model
@@ -183,9 +182,9 @@ from functools import reduce
 from .gamma import gamma
 from .other import sqrt, real_part
 from .log import exp, log
-from .trig import sin
 from .hyperbolic import cosh, sinh
 from .error import erf
+
 
 def rational_param_as_tuple(x):
     r"""
@@ -232,7 +231,7 @@ class Hypergeometric(BuiltinFunction):
     def __init__(self):
         """
         Initialize class.
-        
+
         EXAMPLES::
 
             sage: maxima(hypergeometric)
@@ -248,13 +247,13 @@ class Hypergeometric(BuiltinFunction):
     def __call__(self, a, b, z, **kwargs):
         """
         Return symbolic hypergeometric function expression.
-         
+
         INPUT:
-    
+
         - ``a`` -- a list or tuple of parameters
         - ``b`` -- a list or tuple of parameters
         - ``z`` -- a number or symbolic expression
-    
+
         EXAMPLES::
 
             sage: hypergeometric([], [], 1)
@@ -267,7 +266,7 @@ class Hypergeometric(BuiltinFunction):
             hypergeometric((), (), x)
             sage: hypergeometric([x], [], x^2)
             hypergeometric((x,), (), x^2)
-    
+
         The only simplification that is done automatically is returning 1
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
@@ -298,8 +297,9 @@ class Hypergeometric(BuiltinFunction):
             sage: hypergeometric([], [], 0)
             1
         """
-        if not isinstance(a,tuple) or not isinstance(b,tuple):
+        if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
+
         if not isinstance(z, Expression) and z == 0:  # Expression is excluded
             return Integer(1)                         # to avoid call to Maxima
 
@@ -328,8 +328,9 @@ class Hypergeometric(BuiltinFunction):
         # We need to override this for hypergeometric functions since
         # the first 2 arguments are tuples and the generic _evalf_try_
         # cannot handle that.
-        if not isinstance(a,tuple) or not isinstance(b,tuple):
+        if not isinstance(a, tuple) or not isinstance(b, tuple):
             return None
+
         args = list(a) + list(b) + [z]
         if any(self._is_numerical(x) for x in args):
             if not any(isinstance(x, Expression) for x in args):
@@ -692,7 +693,7 @@ class Hypergeometric(BuiltinFunction):
         def _deflated(self, a, b, z):
             """
             Private helper to return list of deflated terms.
-            
+
             EXAMPLES::
 
                 sage: x = hypergeometric([5], [4], 3)
@@ -958,7 +959,7 @@ class Hypergeometric_M(BuiltinFunction):
     def __init__(self):
         r"""
         TESTS::
-        
+
             sage: maxima(hypergeometric_M(1,1,x))
             kummer_m(1,1,_SAGE_VAR_x)
             sage: latex(hypergeometric_M(1,1,x))
@@ -974,7 +975,7 @@ class Hypergeometric_M(BuiltinFunction):
     def _eval_(self, a, b, z, **kwargs):
         """
         TESTS::
-        
+
             sage: (a,b)=var('a,b')
             sage: hypergeometric_M(a,b,0)
             1
@@ -986,7 +987,7 @@ class Hypergeometric_M(BuiltinFunction):
     def _evalf_(self, a, b, z, parent, algorithm=None):
         """
         TESTS::
-        
+
             sage: hypergeometric_M(1,1,1).n()
             2.71828182845905
         """
@@ -996,7 +997,7 @@ class Hypergeometric_M(BuiltinFunction):
     def _derivative_(self, a, b, z, diff_param):
         """
         TESTS::
-        
+
             sage: diff(hypergeometric_M(1,1,x),x,3)
             hypergeometric_M(4, 4, x)
             sage: diff(hypergeometric_M(x,1,1),x,3)
@@ -1069,7 +1070,7 @@ class Hypergeometric_U(BuiltinFunction):
     def __init__(self):
         r"""
         TESTS::
-        
+
             sage: maxima(hypergeometric_U(1,1,x))
             kummer_u(1,1,_SAGE_VAR_x)
             sage: latex(hypergeometric_U(1,1,x))
@@ -1088,7 +1089,7 @@ class Hypergeometric_U(BuiltinFunction):
     def _evalf_(self, a, b, z, parent, algorithm=None):
         """
         TESTS::
-        
+
             sage: hypergeometric_U(1,1,1).n()
             0.596347362323194
         """
@@ -1098,7 +1099,7 @@ class Hypergeometric_U(BuiltinFunction):
     def _derivative_(self, a, b, z, diff_param):
         """
         TESTS::
-        
+
             sage: diff(hypergeometric_U(1,1,x),x,3)
             -6*hypergeometric_U(4, 4, x)
             sage: diff(hypergeometric_U(x,1,1),x,3)

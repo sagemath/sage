@@ -1,7 +1,3 @@
-# Lcalc requires GNU extensions, it does not strictly conform to any
-# C++ standard: https://trac.sagemath.org/ticket/23341
-# distutils: extra_compile_args = -std=gnu++98
-
 cdef extern from "lcalc_sage.h":
     ctypedef struct doublevec "std::vector<double>":
         int (*size)()

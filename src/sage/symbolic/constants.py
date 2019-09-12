@@ -214,13 +214,13 @@ Check that :trac:`8237` is fixed::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 import math
 from functools import partial
 from sage.rings.infinity import (infinity, minus_infinity,
                                  unsigned_infinity)
+from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
 
 constants_table = {}
 constants_name_table = {}
@@ -263,6 +263,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         cls = globals()[class_name]
         return cls(name=name)
 
+@richcmp_method
 class Constant(object):
     def __init__(self, name, conversions=None, latex=None, mathml="",
                  domain='complex'):
@@ -292,7 +293,7 @@ class Constant(object):
 
         register_symbol(self.expression(), self._conversions)
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -306,8 +307,10 @@ class Constant(object):
             sage: p != s
             True
         """
-        return (self.__class__ == other.__class__ and
-                self._name == other._name)
+        if self.__class__ == other.__class__ and self._name == other._name:
+            return op in [op_EQ, op_GE, op_LE]
+        else:
+            return NotImplemented
 
     def __reduce__(self):
         """
@@ -947,7 +950,7 @@ class EulerGamma(Constant):
         """
         conversions = dict(kash='EulerGamma(R)', maple='gamma',
                            mathematica='EulerGamma', pari='Euler',
-                           maxima='%gamma', pynac='Euler')
+                           maxima='%gamma', pynac='Euler', giac='euler_gamma')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 

@@ -30,6 +30,5 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     cdef Matrix_integer_dense _new(self, Py_ssize_t nrows, Py_ssize_t ncols)
 
-    cdef extract_hnf_from_pari_matrix(self, GEN H, int flag, bint include_zero_rows)
 
 cpdef _lift_crt(Matrix_integer_dense M, residues, moduli=*)

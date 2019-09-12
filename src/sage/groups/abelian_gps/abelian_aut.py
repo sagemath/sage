@@ -263,7 +263,7 @@ class AbelianGroupAutomorphismGroup_gap(UniqueRepresentation,
 
           * a libgap element
           * an integer matrix in the covering matrix ring
-          * a class:`sage.modules.fg_pid.fgp_morphism.FGP_Morphism`
+          * a :class:`sage.modules.fg_pid.fgp_morphism.FGP_Morphism`
             defining an automorphism -- the domain of ``x`` must have
             invariants equal to ``self.domain().gens_orders()``
 

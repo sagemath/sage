@@ -69,32 +69,10 @@ cdef class Parent(parent.Parent):
     def __cinit__(self):
         self._has_coerce_map_from = MonoDict()
 
-    def __init__(self, coerce_from=None, actions=None, embeddings=None, *, category=None):
+    def __init__(self, *, category=None):
         self.init_coerce(False)
-        if coerce_from is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'coerce_from' keyword is deprecated")
-            self._coerce_from_list = list(coerce_from)
         self._coerce_from_hash = MonoDict()
-        if actions is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'actions' keyword is deprecated")
-            self._action_list = list(actions)
-        self._action_hash = TripleDict()
-
-        cdef parent.Parent other
-        if embeddings is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'embeddings' keyword is deprecated")
-            for mor in embeddings:
-                other = mor.domain()
-                print("embedding", self, " --> ", other)
-                print(mor)
-                other.init_coerce() # TODO remove when we can
-                other._coerce_from_list.append(mor)
-
         self._set_element_constructor()
-
         if category is not None:
             self._init_category_(category)
 
@@ -106,12 +84,10 @@ cdef class Parent(parent.Parent):
         """
         TESTS::
 
-            sage: Cusps.coerce_map_from_c(QQ)
+            sage: A = J0(33)
+            sage: A.coerce_map_from_c(QuadraticField(3))
             doctest:...: DeprecationWarning: coerce_map_from_c is deprecated
             See https://trac.sagemath.org/25236 for details.
-            Call morphism:
-              From: Rational Field
-              To:   Set P^1(QQ) of all cusps
 
         Check to make sure that we handle coerce maps from Python
         native types correctly::
@@ -307,15 +283,17 @@ cdef class Parent(parent.Parent):
 
     def has_coerce_map_from_c(self, S):
         """
-        Return True if there is a natural map from S to self.
-        Otherwise, return False.
+        Return ``True`` if there is a natural map from ``S`` to ``self``.
+
+        Otherwise, return ``False``.
 
         TESTS::
 
-            sage: Cusps.has_coerce_map_from_c(QQ)
+            sage: A = J0(33)
+            sage: A.has_coerce_map_from_c(QuadraticField(3))
             doctest:...: DeprecationWarning: has_coerce_map_from_c is deprecated
             See https://trac.sagemath.org/25236 for details.
-            True
+            False
         """
         from sage.misc.superseded import deprecation
         deprecation(25236, "has_coerce_map_from_c is deprecated")

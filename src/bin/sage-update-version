@@ -58,7 +58,7 @@ EOF
 echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
 
 # Regenerate auto-generated files tarball
-"$SAGE_ROOT/bootstrap" -i -s
+"$SAGE_ROOT/bootstrap" -s
 
 # Commit auto-generated changes
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \

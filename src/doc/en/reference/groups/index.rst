@@ -44,6 +44,8 @@ Abelian Groups
    sage/groups/abelian_gps/abelian_group_morphism
    sage/groups/additive_abelian/additive_abelian_group
    sage/groups/additive_abelian/additive_abelian_wrapper
+   sage/groups/misc_gps/argument_groups
+   sage/groups/misc_gps/imaginary_groups
 
 Permutation Groups
 ------------------
@@ -82,6 +84,14 @@ Matrix and Affine Groups
    sage/groups/affine_gps/affine_group
    sage/groups/affine_gps/euclidean_group
    sage/groups/affine_gps/group_element
+
+Lie Groups
+------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/groups/lie_gps/nilpotent_lie_group
 
 Partition Refinement
 --------------------

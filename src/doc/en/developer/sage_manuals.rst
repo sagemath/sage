@@ -1,3 +1,5 @@
+.. highlight:: bash
+
 .. _chapter-sage_manuals:
 
 ================
@@ -96,7 +98,9 @@ absolute. If you are documenting ``method_one``, you can write
 ``:meth:`method_two```.
 
 **Global namespace:** if an object (e.g. ``integral``) is automatically imported
-by Sage, you can link toward it without specifying its full path::
+by Sage, you can link toward it without specifying its full path:
+
+.. CODE-BLOCK:: rest
 
     :func:`A link toward the integral function <integral>`
 
@@ -114,7 +118,7 @@ by Sage, you can link toward it without specifying its full path::
      - ``:wikipedia:`Sage_(mathematics_software)```
      - :wikipedia:`Sage_(mathematics_software)`
 
-   * - Arxiv
+   * - arXiv
      - ``:arxiv:`1202.1506```
      - :arxiv:`1202.1506`
 
@@ -198,7 +202,9 @@ links::
 Document Names
 --------------
 
-The ``<document-name>`` has the form::
+The ``<document-name>`` has the form:
+
+.. CODE-BLOCK:: text
 
     lang/name
 

@@ -7,38 +7,32 @@ AUTHORS:
 
 - William Stein: initial version
 
+- Sebastian Pancratz (2009-06-12): implemented ``adjoint`` and ``charpoly`` methods
+
+- Sebastian Pancratz (2009-06-25): fixed ``adjoint`` reflecting the change that
+  ``_adjoint`` is now implemented in :class:`Matrix`
+
+- Sebastian Pancratz (2009-06-25): use the division-free algorithm for ``charpoly``
+
 - Miguel Marco (2010-06-19): modified eigenvalues and eigenvectors functions to
-  allow the option extend=False
+  allow the option ``extend=False``
+
+- Thierry Monteil (2010-10-05): Bugfix for :trac:`10063`, so that the
+  determinant is computed even for rings for which the ``is_field`` method is not
+  implemented.
 
 - Rob Beezer (2011-02-05): refactored all of the matrix kernel routines
 
-TESTS::
-
-    sage: m = matrix(ZZ['x'], 2, 3, [1..6])
-    sage: TestSuite(m).run()
-
-Check that a pair consisting of a matrix and its echelon form is
-pickled correctly (this used to give a wrong answer due to a Python
-bug, see :trac:`17527`)::
-
-    sage: K.<x> = FractionField(QQ['x'])
-    sage: m = Matrix([[1], [x]])
-    sage: t = (m, m.echelon_form())
-    sage: loads(dumps(t))
-    (
-    [1]  [1]
-    [x], [0]
-    )
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import, division
 
 from cpython cimport *
@@ -47,8 +41,9 @@ from cysignals.signals cimport sig_check
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
+from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
-from sage.structure.element cimport have_same_parent, coercion_model
+from sage.structure.element cimport have_same_parent
 from sage.misc.misc import verbose, get_verbose
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import is_NumberField
@@ -69,8 +64,32 @@ from . import berlekamp_massey
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
 
+# used to deprecate only adjoint method
+from sage.misc.superseded import deprecated_function_alias
+
 
 cdef class Matrix(Matrix1):
+    """
+    Base class for matrices, part 2
+
+    TESTS::
+
+        sage: m = matrix(ZZ['x'], 2, 3, [1..6])
+        sage: TestSuite(m).run()
+
+    Check that a pair consisting of a matrix and its echelon form is
+    pickled correctly (this used to give a wrong answer due to a Python
+    bug, see :trac:`17527`)::
+
+        sage: K.<x> = FractionField(QQ['x'])
+        sage: m = Matrix([[1], [x]])
+        sage: t = (m, m.echelon_form())
+        sage: loads(dumps(t))
+        (
+        [1]  [1]
+        [x], [0]
+        )
+    """
     def _backslash_(self, B):
         r"""
         Used to compute `A \backslash B`, i.e., the backslash solver
@@ -331,7 +350,7 @@ cdef class Matrix(Matrix1):
             sage: v = vector([3,4*x - 2])
             sage: X = A \ v
             sage: X
-            ((-8*x^2 + 4*x + 9)/(10*x^3 + x), (19*x^2 - 2*x - 3)/(10*x^3 + x))
+            ((-4/5*x^2 + 2/5*x + 9/10)/(x^3 + 1/10*x), (19/10*x^2 - 1/5*x - 3/10)/(x^3 + 1/10*x))
             sage: A * X == v
             True
 
@@ -349,12 +368,12 @@ cdef class Matrix(Matrix1):
             sage: A = Matrix(Zmod(128), 2, 3, [23,11,22,4,1,0])
             sage: B = Matrix(Zmod(128), 2, 1, [1,0])
             sage: A.solve_right(B)
-            [  1]
-            [124]
-            [  1]
+            [  5]
+            [108]
+            [127]
             sage: B = B.column(0)
             sage: A.solve_right(B)
-            (1, 124, 1)
+            (5, 108, 127)
             sage: A = Matrix(Zmod(15), 3,4, range(12))
             sage: B = Matrix(Zmod(15), 3,3, range(3,12))
             sage: X = A.solve_right(B)
@@ -717,13 +736,12 @@ cdef class Matrix(Matrix1):
             TypeError: no common canonical parent for objects with parents: 'Full MatrixSpace of 3 by 2 dense matrices over Rational Field' and 'Full MatrixSpace of 3 by 2 dense matrices over Finite Field of size 3'
 
         We illustrate various combinations of sparse and dense matrices.
-        Notice how if base rings are unequal, both operands must be sparse
-        to get a sparse result. ::
+        The usual coercion rules apply::
 
             sage: A = matrix(ZZ, 5, 6, range(30), sparse=False)
             sage: B = matrix(ZZ, 5, 6, range(30), sparse=True)
             sage: C = matrix(QQ, 5, 6, range(30), sparse=True)
-            sage: A.elementwise_product(C).is_dense()
+            sage: A.elementwise_product(C).is_sparse()
             True
             sage: B.elementwise_product(C).is_sparse()
             True
@@ -1487,7 +1505,7 @@ cdef class Matrix(Matrix1):
 
         If the base ring has a method :meth:`_matrix_determinant`, we call it.
 
-        Otherwise, for small matrices (n less than 4), this is computed using the 
+        Otherwise, for small matrices (n less than 4), this is computed using the
         naive formula. In the specific case of matrices over the integers modulo a
         non-prime, the determinant of a lift is computed over the integers.
         In general, the characteristic polynomial is computed either using
@@ -1585,14 +1603,6 @@ cdef class Matrix(Matrix1):
             sage: A.determinant() == B.determinant()
             True
 
-        AUTHORS:
-
-          - Unknown: No author specified in the file from 2009-06-25
-          - Sebastian Pancratz (2009-06-25): Use the division-free
-            algorithm for charpoly
-          - Thierry Monteil (2010-10-05): Bugfix for :trac:`10063`,
-            so that the determinant is computed even for rings for which
-            the is_field method is not implemented.
         """
 
         from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
@@ -2328,10 +2338,6 @@ cdef class Matrix(Matrix1):
             sage: A._cache['charpoly']
             x^2 - 3.00000000000000*x - 2.00000000000000
 
-        AUTHORS:
-
-        - Unknown: No author specified in the file from 2009-06-25
-        - Sebastian Pancratz (2009-06-25): Include the division-free algorithm
         """
 
         f = self.fetch('charpoly')
@@ -2387,10 +2393,9 @@ cdef class Matrix(Matrix1):
         rationals::
 
             sage: R.<t> = QQ[]
-            sage: A = matrix(R, [[7*t^2 - t - 9, -1/4*t - 1, -17*t^2 - t + 1], \
-                                 [-t^2 + 1/4*t, t^2 + 5/7*t + 3, 1/5*t^2 +     \
-                                  1662],                                       \
-                                 [-2*t - 3, 2*t^2 + 6*t - 1/2, -1/6*t^2]])
+            sage: A = matrix(R,[[7*t^2 - t - 9, -1/4*t - 1, -17*t^2 - t + 1],
+            ....:               [-t^2 + 1/4*t, t^2 + 5/7*t + 3, 1/5*t^2 + 1662],
+            ....:               [-2*t - 3, 2*t^2 + 6*t - 1/2, -1/6*t^2]])
             sage: A
             [    7*t^2 - t - 9        -1/4*t - 1   -17*t^2 - t + 1]
             [     -t^2 + 1/4*t   t^2 + 5/7*t + 3    1/5*t^2 + 1662]
@@ -2422,24 +2427,22 @@ cdef class Matrix(Matrix1):
             sage: A._charpoly_df()
             x - 23
 
-        NOTES:
+        Test that :trac:`27937` is fixed::
 
-        The key feature of this implementation is that it is division-free.
-        This means that it can be used as a generic implementation for any
-        ring (commutative and with multiplicative identity).  The algorithm
-        is described in full detail as Algorithm 3.1 in [Se02].
+            sage: R = FreeAbelianMonoid('u,v').algebra(QQ)
+            sage: matrix(4, 4, lambda i, j: R.an_element())._charpoly_df()
+            B[1]*x^4 - 4*B[u]*x^3
 
-        Note that there is a missing minus sign in front of the last term in
-        the penultimate line of Algorithm 3.1.
+        .. NOTE::
 
-        REFERENCES:
+            The key feature of this implementation is that it is division-free.
+            This means that it can be used as a generic implementation for any
+            ring (commutative and with multiplicative identity).  The algorithm
+            is described in full detail as Algorithm 3.1 in [Sei2002]_.
 
-        - [Se02] T. R. Seifullin, "Computation of determinants, adjoint
-          matrices, and characteristic polynomials without division"
+            Note that there is a missing minus sign in front of the last term in
+            the penultimate line of Algorithm 3.1.
 
-        AUTHORS:
-
-        - Sebastian Pancratz (2009-06-12)
         """
 
         # Validate assertions
@@ -2461,7 +2464,7 @@ cdef class Matrix(Matrix1):
         # test for 0 x n or m x 0 matrices.
         #
         if n == 0:
-            return S(1)
+            return S.one()
 
         # In the notation of Algorithm 3.1,
         #
@@ -2478,9 +2481,9 @@ cdef class Matrix(Matrix1):
         #
         from sage.matrix.constructor import matrix
 
-        F = [R(0) for i in xrange(n)]
+        F = [R.zero()] * n
         cdef Matrix a = <Matrix> matrix(R, n-1, n)
-        A = [R(0) for i in xrange(n)]
+        A = [R.zero()] * n
 
         F[0] = - M.get_unsafe(0, 0)
         for t in xrange(1,n):
@@ -2499,7 +2502,7 @@ cdef class Matrix(Matrix1):
                 # Set a(p, t) to the product of M[<=t, <=t] * a(p-1, t)
                 #
                 for i in xrange(t+1):
-                    s = R(0)
+                    s = R.zero()
                     for j in xrange(t+1):
                         s = s + M.get_unsafe(i, j) * a.get_unsafe(p-1, j)
                     a.set_unsafe(p, i, s)
@@ -2510,7 +2513,7 @@ cdef class Matrix(Matrix1):
 
             # Set A[t, t] to be M[t, <=t] * a(p-1, t)
             #
-            s = R(0)
+            s = R.zero()
             for j in xrange(t+1):
                 s = s + M.get_unsafe(t, j) * a.get_unsafe(t-1, j)
             A[t] = s
@@ -2522,9 +2525,7 @@ cdef class Matrix(Matrix1):
                 F[p] = s - A[p]
 
         X = S.gen(0)
-        f = X ** n
-        for p in xrange(n):
-            f = f + F[p] * X ** (n-1-p)
+        f = X ** n + S(list(reversed(F)))
 
         return f
 
@@ -3073,7 +3074,7 @@ cdef class Matrix(Matrix1):
             [0 1]
             sage: A = matrix(Q, 2, 0)
             sage: A._right_kernel_matrix_over_number_field()[1].parent()
-            Full MatrixSpace of 0 by 0 dense matrices over Number Field in a with defining polynomial x^2 + 7
+            Full MatrixSpace of 0 by 0 dense matrices over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             sage: A = zero_matrix(Q, 4, 3)
             sage: A._right_kernel_matrix_over_number_field()[1]
             [1 0 0]
@@ -3141,23 +3142,37 @@ cdef class Matrix(Matrix1):
         E = self.echelon_form(*args, **kwds)
         pivots = E.pivots()
         pivots_set = set(pivots)
-        R = self.base_ring()
-        zero = R(0)
-        one = R(1)
-        basis = []
-        for i in xrange(self._ncols):
-            if not (i in pivots_set):
-                v = [zero]*self._ncols
-                v[i] = one
-                for r in range(len(pivots)):
-                    v[pivots[r]] = -E[r,i]
-                basis.append(v)
-        tm = verbose("done computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()),level=1,t=tm)
-        return 'pivot-generic', MatrixSpace(R, len(basis), self._ncols)(basis)
+        zero = self._base_ring.zero()
+        one = self._base_ring.one()
+        MS = self.matrix_space(self._ncols-len(pivots), self._ncols)
+        cdef Py_ssize_t i, r, cur_row
+        if self.is_sparse():
+            entries = {}
+            cur_row = 0
+            for i in range(self._ncols):
+                if i not in pivots_set:
+                    entries[cur_row, i] = one
+                    for r, p in enumerate(pivots):
+                        entries[cur_row, p] = -E[r, i]
+                    cur_row += 1
+            M = MS(entries, copy=False, coerce=False)
+        else:
+            basis = []
+            for i in range(self._ncols):
+                if i not in pivots_set:
+                    v = [zero] * self._ncols
+                    v[i] = one
+                    for r, p in enumerate(pivots):
+                        v[p] = -E[r, i]
+                    basis.append(v)
+            M = MS(basis, coerce=False)
+        tm = verbose("done computing right kernel matrix over an arbitrary field for %sx%s matrix"
+                     % (self.nrows(), self.ncols()),level=1,t=tm)
+        return 'pivot-generic', M
 
     def _right_kernel_matrix_over_domain(self):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         OUTPUT:
@@ -3168,7 +3183,7 @@ cdef class Matrix(Matrix1):
         Second item is a matrix whose rows are a basis for the right kernel,
         over the field, as computed by general Python code.
 
-        .. warning::
+        .. WARNING::
 
             This routine uses Smith normal form, which can fail
             if the domain is not a principal ideal domain.  Since we do
@@ -3178,7 +3193,7 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES:
 
-        Univariate polynomials over a field form a PID.  ::
+        Univariate polynomials over a field form a PID::
 
             sage: R.<y> = QQ[]
             sage: A = matrix(R, [[  1,   y, 1+y^2],
@@ -3193,7 +3208,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        We test some trivial cases. ::
+        We test some trivial cases::
 
             sage: R.<y> = QQ[]
             sage: A = matrix(R, 0, 2)
@@ -3209,13 +3224,16 @@ cdef class Matrix(Matrix1):
             [0 1 0]
             [0 0 1]
         """
-        tm = verbose("computing right kernel matrix over a domain for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
+        tm = verbose("computing right kernel matrix over a domain for %sx%s matrix"
+                     % (self.nrows(), self.ncols()), level=1)
         d, u, v = self.smith_form()
         basis = []
-        for i in xrange(self.ncols()):
-            if (i >= self.nrows()) or d[i][i] == 0:
-                basis.append( v.column(i).list() )
-        verbose("done computing right kernel matrix over a domain for %sx%s matrix" % (self.nrows(), self.ncols()),level=1,t=tm)
+        cdef Py_ssize_t i, nrows = self._nrows
+        for i in range(self._ncols):
+            if i >= nrows or d[i, i] == 0:
+                basis.append( v.column(i) )
+        verbose("done computing right kernel matrix over a domain for %sx%s matrix"
+                % (self.nrows(), self.ncols()), level=1, t=tm)
         return 'computed-smith-form', self.new_matrix(nrows=len(basis), ncols=self._ncols, entries=basis)
 
     def right_kernel_matrix(self, *args, **kwds):
@@ -3405,7 +3423,7 @@ cdef class Matrix(Matrix1):
             verbose 1 (<module>) computing right kernel matrix over a number field for 2x4 matrix
             verbose 1 (<module>) done computing right kernel matrix over a number field for 2x4 matrix
             ...
-            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7
+            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             Basis matrix:
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
@@ -3567,9 +3585,9 @@ cdef class Matrix(Matrix1):
             True
 
             sage: X = A.right_kernel_matrix(algorithm='pari', basis='computed'); X
-            [ -3  -1   5   7   2  -3  -2]
-            [  3   1   2   5  -5   2  -6]
-            [ -4 -13   2  -7   5   7  -3]
+            [ 3  1 -5 -7 -2  3  2]
+            [ 3  1  2  5 -5  2 -6]
+            [ 4 13 -2  7 -5 -7  3]
             sage: A*X.transpose() == zero_matrix(ZZ, 4, 3)
             True
 
@@ -4007,7 +4025,7 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(Q, [[  2, 5-a,     15-a, 16+4*a],
             ....:                [2+a,   a, -7 + 5*a, -3+3*a]])
             sage: K = A.right_kernel(algorithm='default'); K
-            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7
+            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             Basis matrix:
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
@@ -4015,7 +4033,7 @@ cdef class Matrix(Matrix1):
             True
             sage: B = copy(A)
             sage: G = A.right_kernel(algorithm='generic'); G
-            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7
+            Vector space of degree 4 and dimension 2 over Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
             Basis matrix:
             [                1                 0     7/88*a + 3/88 -3/176*a - 39/176]
             [                0                 1   -1/88*a - 13/88  13/176*a - 7/176]
@@ -4595,7 +4613,7 @@ cdef class Matrix(Matrix1):
 
         ::
 
-            sage: m = Matrix(Integers(5),2,2,[2,2,2,2]);
+            sage: m = Matrix(Integers(5),2,2,[2,2,2,2])
             sage: m.row_space()
             Vector space of degree 2 and dimension 1 over Ring of integers modulo 5
             Basis matrix:
@@ -4961,7 +4979,7 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
-            sage: t = matrix(QQ, 3, [3, 0, -2, 0, -2, 0, 0, 0, 0]);
+            sage: t = matrix(QQ, 3, [3, 0, -2, 0, -2, 0, 0, 0, 0])
             sage: t.decomposition_of_subspace(v, check_restrict = False) == t.decomposition_of_subspace(v)
             True
         """
@@ -5500,10 +5518,10 @@ cdef class Matrix(Matrix1):
         Next we compute the left eigenspaces over the finite field of order 11. ::
 
             sage: A = ModularSymbols(43, base_ring=GF(11), sign=1).T(2).matrix(); A
-            [ 3  9  0  0]
-            [ 0  9  0  1]
-            [ 0 10  9  2]
-            [ 0  9  0  2]
+            [ 3  0  9  0]
+            [ 0  9  0 10]
+            [ 0  0 10  1]
+            [ 0  0  1  1]
             sage: A.base_ring()
             Finite Field of size 11
             sage: A.charpoly()
@@ -5512,13 +5530,13 @@ cdef class Matrix(Matrix1):
             [
             (9, Vector space of degree 4 and dimension 1 over Finite Field of size 11
             User basis matrix:
-            [0 0 1 5]),
+            [0 1 5 6]),
             (3, Vector space of degree 4 and dimension 1 over Finite Field of size 11
             User basis matrix:
-            [1 6 0 6]),
+            [1 0 1 6]),
             (beta2, Vector space of degree 4 and dimension 1 over Univariate Quotient Polynomial Ring in beta2 over Finite Field of size 11 with modulus x^2 + 9
             User basis matrix:
-            [           0            1            0 5*beta2 + 10])
+            [        0         0         1 beta2 + 1])
             ]
 
         This method is only applicable to exact matrices.
@@ -6199,7 +6217,7 @@ cdef class Matrix(Matrix1):
             [13.348469228349522                0.0                 0.0]
             [               0.0 -1.348469228349534                 0.0]
             [               0.0                0.0                 0.0]
-            sage: evectors = em[1];
+            sage: evectors = em[1]
             sage: for i in range(3):
             ....:     scale = evectors[i,0].sign()
             ....:     evectors.rescale_row(i, scale)
@@ -6307,7 +6325,7 @@ cdef class Matrix(Matrix1):
             [13.348469228349522                0.0                0.0]
             [               0.0 -1.348469228349534                0.0]
             [               0.0                0.0                0.0]
-            sage: evectors = em[1];
+            sage: evectors = em[1]
             sage: for i in range(3):
             ....:     scale = evectors[0,i].sign()
             ....:     evectors.rescale_col(i, scale)
@@ -6524,7 +6542,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that http://trac.sagemath.org/sage_trac/ticket/11558 is fixed::
+        Check that :trac:`11558` is fixed::
 
             sage: matrix(ZZ, [[1,2],[4,6]], sparse=False).echelon_form(transformation=True)
             (
@@ -6598,6 +6616,9 @@ cdef class Matrix(Matrix1):
 
           - ``'scaled_partial_pivoting'``: Gauss elimination, using scaled
             partial pivoting (if base ring has absolute value)
+
+          - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
+            scaled partial pivoting (if base ring has valuation)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -6722,12 +6743,16 @@ cdef class Matrix(Matrix1):
             # but this should be done by introducing a category of general valuation rings and fields,
             # which we don't have at the moment
             elif self.base_ring() in DiscreteValuationFields():
-                algorithm = 'scaled_partial_pivoting'
+                try:
+                    self.base_ring().one().abs()
+                    algorithm = 'scaled_partial_pivoting'
+                except (AttributeError, TypeError):
+                    algorithm = 'scaled_partial_pivoting_valuation'
             else:
                 algorithm = 'classical'
         try:
             if self.base_ring().is_field():
-                if algorithm in ['classical', 'partial_pivoting', 'scaled_partial_pivoting']:
+                if algorithm in ['classical', 'partial_pivoting', 'scaled_partial_pivoting', 'scaled_partial_pivoting_valuation']:
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
                     self._echelon_strassen(cutoff)
@@ -6766,6 +6791,9 @@ cdef class Matrix(Matrix1):
 
           - ``'scaled_partial_pivoting'``: Gauss elimination, using scaled
             partial pivoting (if base ring has absolute value)
+
+          - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
+            scaled partial pivoting (if base ring has valuation)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -7011,10 +7039,21 @@ cdef class Matrix(Matrix1):
                         if abs_val > scale_factor:
                             scale_factor = abs_val
                     scale_factors.append(scale_factor)
+            elif algorithm == 'scaled_partial_pivoting_valuation':
+                for r in range(nr):
+                    scale_factor = None
+                    for c in range(nc):
+                        valuation = A.get_unsafe(r, c).valuation()
+                        if scale_factor is None or valuation < scale_factor:
+                            scale_factor = valuation
+                    scale_factors.append(scale_factor)
 
             for c in range(nc):
                 sig_check()
-                max_abs_val = 0
+                if algorithm == 'scaled_partial_pivoting_valuation':
+                    max_abs_val = None
+                else:
+                    max_abs_val = 0
                 best_r = start_row - 1
 
                 if algorithm == 'partial_pivoting':
@@ -7023,21 +7062,28 @@ cdef class Matrix(Matrix1):
                         if abs_val > max_abs_val:
                             max_abs_val = abs_val
                             best_r = r
-                else: # algorithm == 'scaled_partial_pivoting':
+                elif algorithm == 'scaled_partial_pivoting':
                     for r in range(start_row, nr):
                         if scale_factors[r]:
                             abs_val = A.get_unsafe(r,c).abs() / scale_factors[r]
                             if abs_val > max_abs_val:
                                 max_abs_val = abs_val
                                 best_r = r
+                else: # algorithm == 'scaled_partial_pivoting_valuation':
+                    for r in range(start_row, nr):
+                        if scale_factors[r] is not None:
+                            abs_val = scale_factors[r] - A.get_unsafe(r,c).valuation()
+                            if max_abs_val is None or abs_val > max_abs_val:
+                                max_abs_val = abs_val
+                                best_r = r
 
-                if max_abs_val:
+                if max_abs_val or (algorithm == 'scaled_partial_pivoting_valuation' and max_abs_val is not None):
                     pivots.append(c)
                     a_inverse = ~A.get_unsafe(best_r, c)
                     A.rescale_row(best_r, a_inverse, c)
                     A.swap_rows(best_r, start_row)
 
-                    if algorithm == 'scaled_partial_pivoting':
+                    if algorithm == 'scaled_partial_pivoting' or algorithm == 'scaled_partial_pivoting_valuation':
                         scale_factors[best_r], scale_factors[start_row] = scale_factors[start_row], scale_factors[best_r]
 
                     for i in range(nr):
@@ -7349,20 +7395,31 @@ cdef class Matrix(Matrix1):
 
             sage: all(M.with_permuted_rows_and_columns(*i) == M for i in A)
             True
+
+        Check that :trac:`25426` is fixed::
+
+            sage: j = matrix([(3, 2, 1, 0, 0),
+            ....:             (2, 2, 0, 1, 0),
+            ....:             (1, 0, 3, 0, 2),
+            ....:             (0, 1, 0, 2, 1),
+            ....:             (0, 0, 2, 1, 2)])
+            sage: j.automorphisms_of_rows_and_columns()
+            [((), ()), ((1,3)(2,5), (1,3)(2,5))]
         """
         from sage.groups.perm_gps.permgroup_element import \
             PermutationGroupElement
         B = self.as_bipartite_graph()
         nrows = self.nrows()
-        A = B.automorphism_group(edge_labels = True)
+        ncols = self.ncols()
+        A = B.automorphism_group(edge_labels=True)
+
+        # Convert to elements of Sym(self) from S_n
         permutations = []
         for p in A:
-            p = p.domain()
-            # Convert to elements of Sym(self) from S_n
-            if p[0] <= nrows:
+            if p(1) <= nrows:  # Check that rows are mapped to rows
                 permutations.append(
-                    (PermutationGroupElement(p[:nrows]),
-                     PermutationGroupElement([elt - nrows for elt in p[nrows:]])
+                    (PermutationGroupElement([p(1 + i) for i in range(nrows)]),
+                     PermutationGroupElement([p(1 + nrows + i) - nrows for i in range(ncols)])
                     ))
         return permutations
 
@@ -8515,7 +8572,7 @@ cdef class Matrix(Matrix1):
                 row_sums == col_sums and\
                 row_sums == len(row_sums) * [col_sums[0]] and\
                 ((not normalized) or col_sums[0] == self.base_ring()(1)) and\
-                all(entry>=0 for row in self for entry in row)
+                all(entry >= 0 for row in self for entry in row)
 
     def is_normal(self):
         r"""
@@ -8857,33 +8914,34 @@ cdef class Matrix(Matrix1):
 
             sage: matrix().inverse()
             []
+
+        Test :trac:`27473`::
+
+            sage: F.<t> = LaurentSeriesRing(GF(2))
+            sage: M = Matrix([[t,1],[0,t]])
+            sage: ~M
+            [t^-1 t^-2]
+            [   0 t^-1]
+
         """
         return ~self
 
-    def adjoint(self):
-        """
-        Returns the adjoint matrix of self (matrix of cofactors).
+    def adjugate(self):
+        r"""
+        Return the adjugate matrix of ``self`` (that is, the transpose of the
+        matrix of cofactors).
 
-        OUTPUT:
-
-        - ``N`` - the adjoint matrix, such that
-          N \* M = M \* N = M.parent(M.det())
-
-        ALGORITHM:
-
-        Use PARI whenever the method ``self._adjoint`` is included to do so
-        in an inheriting class.  Otherwise, use a generic division-free
-        algorithm to compute the characteristic polynomial and hence the
-        adjoint.
-
-        The result is cached.
+        Let `M` be an `n \times n`-matrix. The adjugate matrix of `M` is the `n
+        \times n`-matrix `N` whose `(i, j)`-th entry is `(-1)^{i + j}
+        \det(M_{j, i})`, where `M_{j,i}` is the matrix `M` with its `j`-th row
+        and `i`-th column removed. It is known to satisfy `NM = MN = \det(M)I`.
 
         EXAMPLES::
 
             sage: M = Matrix(ZZ,2,2,[5,2,3,4]) ; M
             [5 2]
             [3 4]
-            sage: N = M.adjoint() ; N
+            sage: N = M.adjugate() ; N
             [ 4 -2]
             [-3  5]
             sage: M * N
@@ -8895,38 +8953,56 @@ cdef class Matrix(Matrix1):
             sage: M = Matrix(QQ,2,2,[5/3,2/56,33/13,41/10]) ; M
             [  5/3  1/28]
             [33/13 41/10]
-            sage: N = M.adjoint() ; N
+            sage: N = M.adjugate() ; N
             [ 41/10  -1/28]
             [-33/13    5/3]
             sage: M * N
             [7363/1092         0]
             [        0 7363/1092]
 
-        AUTHORS:
+        An alias is :meth:`adjoint_classical`, which replaces the deprecated
+        :meth:`adjoint` method::
 
-        - Unknown: No author specified in the file from 2009-06-25
-        - Sebastian Pancratz (2009-06-25): Reflecting the change that
-          ``_adjoint`` is now implemented in this class
+            sage: M.adjoint()
+            ...: DeprecationWarning: adjoint is deprecated. Please use adjugate instead.
+            See http://trac.sagemath.org/10501 for details.
+            [ 41/10  -1/28]
+            [-33/13    5/3]
+            sage: M.adjoint_classical()
+            [ 41/10  -1/28]
+            [-33/13    5/3]
+
+        ALGORITHM:
+
+        Use PARI whenever the method ``self._adjugate`` is included to do so in
+        an inheriting class. Otherwise, use a generic division-free algorithm
+        that computes the adjugate matrix from the characteristic polynomial.
+
+        The result is cached.
         """
 
         if self._nrows != self._ncols:
-            raise ValueError("self must be a square matrix")
+            raise ValueError("must be a square matrix")
 
-        X = self.fetch('adjoint')
+        X = self.fetch('adjugate')
         if not X is None:
             return X
 
-        X = self._adjoint()
-        self.cache('adjoint', X)
+        X = self._adjugate()
+        self.cache('adjugate', X)
         return X
 
-    def _adjoint(self):
+    adjoint = deprecated_function_alias(10501, adjugate)
+
+    adjoint_classical = adjugate
+
+    def _adjugate(self):
         r"""
-        Returns the adjoint of self.
+        Return the adjugate of this matrix.
 
         OUTPUT:
 
-        - matrix -- the adjoint of self
+        - matrix -- the adjugate of the matrix
 
         EXAMPLES:
 
@@ -8936,31 +9012,30 @@ cdef class Matrix(Matrix1):
             sage: A
             [ 1 24]
             [ 3  5]
-            sage: A._adjoint()
+            sage: A._adjugate()
             [  5 -24]
             [ -3   1]
 
         Secondly, here is an example over a polynomial ring::
 
             sage: R.<t> = QQ[]
-            sage: A = matrix(R, [[-2*t^2 + t + 3/2, 7*t^2 + 1/2*t - 1,      \
-                                  -6*t^2 + t - 2/11],                       \
-                                 [-7/3*t^2 - 1/2*t - 1/15, -2*t^2 + 19/8*t, \
-                                  -10*t^2 + 2*t + 1/2],                     \
-                                 [6*t^2 - 1/2, -1/7*t^2 + 9/4*t, -t^2 - 4*t \
-                                  - 1/10]])
+            sage: A = matrix(R, [[-2*t^2 + t + 3/2, 7*t^2 + 1/2*t - 1,
+            ....:                 -6*t^2 + t - 2/11],
+            ....:                [-7/3*t^2 - 1/2*t - 1/15, -2*t^2 + 19/8*t,
+            ....:                 -10*t^2 + 2*t + 1/2],
+            ....:                [6*t^2 - 1/2, -1/7*t^2 + 9/4*t, -t^2 - 4*t
+            ....:                 - 1/10]])
             sage: A
             [       -2*t^2 + t + 3/2       7*t^2 + 1/2*t - 1       -6*t^2 + t - 2/11]
             [-7/3*t^2 - 1/2*t - 1/15         -2*t^2 + 19/8*t     -10*t^2 + 2*t + 1/2]
             [            6*t^2 - 1/2        -1/7*t^2 + 9/4*t       -t^2 - 4*t - 1/10]
-            sage: A._adjoint()
+            sage: A._adjugate()
             [          4/7*t^4 + 1591/56*t^3 - 961/70*t^2 - 109/80*t 55/7*t^4 + 104/7*t^3 + 6123/1540*t^2 - 959/220*t - 1/10       -82*t^4 + 101/4*t^3 + 1035/88*t^2 - 29/22*t - 1/2]
             [   -187/3*t^4 + 13/6*t^3 + 57/10*t^2 - 79/60*t - 77/300            38*t^4 + t^3 - 793/110*t^2 - 28/5*t - 53/220 -6*t^4 + 44/3*t^3 + 4727/330*t^2 - 1147/330*t - 487/660]
             [          37/3*t^4 - 136/7*t^3 - 1777/840*t^2 + 83/80*t      292/7*t^4 + 107/14*t^3 - 323/28*t^2 - 29/8*t + 1/2   61/3*t^4 - 25/12*t^3 - 269/120*t^2 + 743/240*t - 1/15]
 
-        Finally, an example over a general ring, that is to say, as of
-        version 4.0.2, SAGE does not even determine that ``S`` in the following
-        example is an integral domain::
+        Finally, an example over a general ring ``S`` that is
+        not an integral domain::
 
             sage: R.<a,b> = QQ[]
             sage: S.<x,y> = R.quo((b^3))
@@ -8972,10 +9047,10 @@ cdef class Matrix(Matrix1):
             -4*x
             sage: A.charpoly('T')
             T^2 + (-x^10*y - x*y^2)*T - 4*x
-            sage: A.adjoint()
+            sage: A.adjugate()
             [x^10*y   -2*x]
             [    -2  x*y^2]
-            sage: A.adjoint() * A
+            sage: A.adjugate() * A
             [-4*x    0]
             [   0 -4*x]
 
@@ -8986,72 +9061,56 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(ZZ, 0, 0)
             sage: A
             []
-            sage: A._adjoint()
+            sage: A._adjugate()
             []
             sage: A = matrix(ZZ, [[2]])
             sage: A
             [2]
-            sage: A._adjoint()
+            sage: A._adjugate()
             [1]
 
-        Ensure proper computation of the adjoint matrix even in the
+        Ensure proper computation of the adjugate matrix even in the
         presence of non-integral powers of the variable `x`
         (:trac:`14403`)::
 
             sage: x = var('x')
-            sage: Matrix([[sqrt(x),x],[1,0]]).adjoint()
+            sage: Matrix([[sqrt(x),x],[1,0]]).adjugate()
             [      0      -x]
             [     -1 sqrt(x)]
 
-        NOTES:
+        .. NOTE::
 
-        The key feature of this implementation is that it is division-free.
-        This means that it can be used as a generic implementation for any
-        ring (commutative and with multiplicative identity).  The algorithm
-        is described in full detail as Algorithm 3.1 in [Se02].
+            The key feature of this implementation is that it is division-free.
+            This means that it can be used as a generic implementation for any
+            ring (commutative and with multiplicative identity).  The algorithm
+            is described in full detail as Algorithm 3.1 in [Sei2002]_.
 
-        Note that this method does not utilise a lookup if the adjoint has
-        already been computed previously, and it does not cache the result.
-        This is all left to the method `adjoint`.
+            Note that this method does not utilise a lookup if the adjugate has
+            already been computed previously, and it does not cache the result.
+            This is all left to the method `adjugate`.
 
-        REFERENCES:
-
-        - [Se02] T. R. Seifullin, "Computation of determinants, adjoint
-          matrices, and characteristic polynomials without division"
-
-        AUTHORS:
-
-        - Sebastian Pancratz (2009-06-12): Initial version
         """
-
-        # Validate assertions
-        #
+        # self must be square
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
 
-        # Corner cases
-        # N.B.  We already tested for the matrix  to be square, hence we do not
-        # need to test for 0 x n or m x 0 matrices.
-        #
+        # as self is square, we do not need to test for 0 x n or m x 0
+        # matrices
         if self._ncols == 0:
             return self.copy()
 
-        # Extract parameters
-        #
+        # extract parameters
         n  = self._ncols
         R  = self._base_ring
         MS = self._parent
 
         f = self.charpoly()
 
-        # Let A denote the adjoint of M, which we want to compute, and
-        # N denote a copy of M used to store powers of M.
-        #
+        # A will be the adjugate of M and N is used to store powers of M
         A = f[1] * MS.identity_matrix()
         N = R(1) * MS.identity_matrix()
         for i in range(1, n):
-            # Set N to be M^i
-            #
+            # set N to M^i
             N = N * self
             A = A + f[i+1] * N
         if not (n % 2):
@@ -9894,8 +9953,8 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: a = matrix(ZZ,4,[1, 0, 0, 0, 0, 1, 0, 0, 1, \
-            -1, 1, 0, 1, -1, 1, 2]); a
+            sage: a = matrix(ZZ,4,[1, 0, 0, 0, 0, 1, 0, 0,
+            ....:                  1, -1, 1, 0, 1, -1, 1, 2]); a
             [ 1  0  0  0]
             [ 0  1  0  0]
             [ 1 -1  1  0]
@@ -9928,7 +9987,7 @@ cdef class Matrix(Matrix1):
         Here we need to specify a field, since the eigenvalues are not defined
         in the smallest ring containing the matrix entries (:trac:`14508`)::
 
-            sage: c = matrix([[0,1,0],[0,0,1],[1,0,0]]);
+            sage: c = matrix([[0,1,0],[0,0,1],[1,0,0]])
             sage: c.jordan_form(CyclotomicField(3))
             [         1|         0|         0]
             [----------+----------+----------]
@@ -10235,8 +10294,8 @@ cdef class Matrix(Matrix1):
             evals = eigenvalues
         else:
             evals = A.charpoly().roots()
-        if sum([mult for (_,mult) in evals]) < n:
-            raise RuntimeError("Some eigenvalue does not exist in %s."  %(A.base_ring()))
+        if sum(mult for (_, mult) in evals) < n:
+            raise RuntimeError("Some eigenvalue does not exist in %s." % (A.base_ring()))
 
         # Compute the block information.  Here, ``blocks`` is a list of pairs,
         # each first entry a root and each second entry the size of a block.
@@ -10313,7 +10372,7 @@ cdef class Matrix(Matrix1):
             for eval,size in blocks:
                 # Find a block with the right size
                 for index,chain in enumerate(jordan_chains[eval]):
-                    if len(chain)==size:
+                    if len(chain) == size:
                         jordan_basis += jordan_chains[eval].pop(index)
                         break
 
@@ -10490,7 +10549,7 @@ cdef class Matrix(Matrix1):
             raise ValueError('matrix entries must be from a field, not {0}'.format(self.base_ring()))
 
         evals = self.charpoly().roots()
-        if sum([mult for (_,mult) in evals]) < self._nrows:
+        if sum(mult for (_, mult) in evals) < self._nrows:
             raise RuntimeError('an eigenvalue of the matrix is not contained in {0}'.format(self.base_ring()))
 
         # Obtaining a generic minimal polynomial requires much more
@@ -11975,13 +12034,13 @@ cdef class Matrix(Matrix1):
             sage: M.is_immutable()
             True
             sage: P, L, U = A.LU(format='plu')
-            sage: all([A.is_mutable() for A in [P, L, U]])
+            sage: all(A.is_mutable() for A in [P, L, U])
             True
 
         Partial pivoting is based on the absolute values of entries
         of a column. :trac:`12208` shows that the return value of the
         absolute value must be handled carefully.  This tests that
-        situation in the case of cylotomic fields.  ::
+        situation in the case of cyclotomic fields.  ::
 
             sage: C = SymmetricGroup(5).character_table()
             sage: C.base_ring()
@@ -12734,7 +12793,7 @@ cdef class Matrix(Matrix1):
 
     def principal_square_root(self, check_positivity=True):
         r"""
-        Return the principal square root of a positive definte matrix.
+        Return the principal square root of a positive definite matrix.
 
         A positive definite matrix `A` has a unique positive definite
         matrix `M` such that `M^2 = A`.
@@ -13019,7 +13078,7 @@ cdef class Matrix(Matrix1):
             [2*a + 1       1]
 
         Conjugation does not make sense over rings not containing complex
-        numbers or finite fields which are not a qadratic extension::
+        numbers or finite fields which are not a quadratic extension::
 
             sage: N = matrix(GF(5), 2, [0,1,2,3])
             sage: N.conjugate_transpose()
@@ -13029,7 +13088,7 @@ cdef class Matrix(Matrix1):
 
         AUTHOR:
 
-            Rob Beezer (2010-12-13)
+        Rob Beezer (2010-12-13)
         """
         # limited testing on a 1000 x 1000 matrix over CC:
         #   transpose is fast, conjugate is slow
@@ -13147,7 +13206,7 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
-            sage: d = matrix([[3, 0],[0,sqrt(2)]]) ;
+            sage: d = matrix([[3, 0],[0,sqrt(2)]])
             sage: b = matrix([[1, -1], [2, 2]]) ; e = b * d * b.inverse();e
             [ 1/2*sqrt(2) + 3/2 -1/4*sqrt(2) + 3/4]
             [      -sqrt(2) + 3  1/2*sqrt(2) + 3/2]
@@ -13523,7 +13582,7 @@ cdef class Matrix(Matrix1):
             [           0   1 + O(2^5)            0], [42 + O(2^6)  1 + O(2^5)],
             <BLANKLINE>
             [ 1 + O(2^5) 26 + O(2^5)  6 + O(2^5)]
-            [ 0 + O(2^4)  3 + O(2^4) 11 + O(2^4)]
+            [     O(2^4)  3 + O(2^4) 11 + O(2^4)]
             [          0           0  1 + O(2^5)]
             )
 
@@ -13795,17 +13854,17 @@ cdef class Matrix(Matrix1):
 
         We check some degenerate cases::
 
-            sage: m = matrix(OL, 0, 0, []); r,s,p = m._echelon_form_PID();
+            sage: m = matrix(OL, 0, 0, []); r,s,p = m._echelon_form_PID()
             sage: (r,s,p)
             ([], [], [])
             sage: r * m == s and r.det() == 1
             True
-            sage: m = matrix(OL, 0, 1, []); r,s,p = m._echelon_form_PID();
+            sage: m = matrix(OL, 0, 1, []); r,s,p = m._echelon_form_PID()
             sage: (r,s,p)
             ([], [], [])
             sage: r * m == s and r.det() == 1
             True
-            sage: m = matrix(OL, 1, 0, []); r,s,p = m._echelon_form_PID();
+            sage: m = matrix(OL, 1, 0, []); r,s,p = m._echelon_form_PID()
             sage: (r,s,p)
             ([1], [], [])
             sage: r * m == s and r.det() == 1
@@ -13813,7 +13872,7 @@ cdef class Matrix(Matrix1):
 
         A 2x2 matrix::
 
-            sage: m = matrix(OL, 2, 2, [1,0, a, 2]);
+            sage: m = matrix(OL, 2, 2, [1,0, a, 2])
             sage: r,s,p = m._echelon_form_PID(); (r,s,p)
             (
             [ 1  0]  [1 0]
@@ -13950,7 +14009,7 @@ cdef class Matrix(Matrix1):
         [Sto1998]_, where the former is more
         representative of the code here.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A = matrix(QQ, [[-68,   69, -27, -11, -65,   9, -181, -32],
             ....:                 [-52,   52, -27,  -8, -52, -16, -133, -14],
@@ -14853,6 +14912,571 @@ cdef class Matrix(Matrix1):
                 companions.append(companion_matrix(poly, format=format))
             return block_diagonal_matrix(companions, subdivide=subdivide)
 
+    def is_positive_operator_on(self,K1,K2=None):
+        r"""
+        Determine if this matrix is a positive operator on a cone.
+
+        A matrix is a positive operator on a cone if the image of the
+        cone under the matrix is itself a subset of the cone. That
+        concept can be extended to two cones: a matrix is a positive
+        operator on a pair of cones if the image of the first cone is
+        contained in the second cone.
+
+        To reliably check whether or not this matrix is a positive
+        operator, its base ring must be either exact (for example, the
+        rationals) or the symbolic ring. An exact ring is more reliable,
+        but in some cases a matrix whose entries contain symbolic
+        constants like `e` and `\pi` will work. Performance is best
+        for integer or rational matrices, for which we can check the
+        "is a subset of the other cone" condition quickly.
+
+        INPUT:
+
+        - ``K1`` -- a polyhedral closed convex cone.
+
+        - ``K2`` -- (default: ``K1``) the codomain cone; this matrix is
+          a positive operator if the image of ``K1`` is a subset of ``K2``.
+
+        OUTPUT:
+
+        If the base ring of this matrix is exact, then ``True`` will be
+        returned if and only if this matrix is a positive operator.
+
+        If the base ring of this matrix is symbolic, then the situation is
+        more complicated:
+
+        - ``True`` will be returned if it can be proven that this matrix
+          is a positive operator.
+        - ``False`` will be returned if it can be proven that this matrix
+          is not a positive operator.
+        - ``False`` will also be returned if we can't decide; specifically
+          if we arrive at a symbolic inequality that cannot be resolved.
+
+        .. SEEALSO::
+
+              :meth:`is_cross_positive_on`,
+              :meth:`is_Z_operator_on`,
+              :meth:`is_lyapunov_like_on`
+
+        REFERENCES:
+
+        A. Berman and P. Gaiha. A generalization of irreducible
+        monotonicity. Linear Algebra and its Applications, 5:29-38,
+        1972.
+
+        A. Berman and R. J. Plemmons. Nonnegative Matrices in the
+        Mathematical Sciences. SIAM, Philadelphia, 1994.
+
+        EXAMPLES:
+
+        Nonnegative matrices are positive operators on the nonnegative
+        orthant::
+
+            sage: set_random_seed()
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = random_matrix(QQ,3).apply_map(abs)
+            sage: L.is_positive_operator_on(K)
+            True
+
+        Symbolic entries also work in some easy cases::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [0,       e, 0 ],
+            ....:                  [0,       2, pi],
+            ....:                  [sqrt(2), 0, 0 ] ])
+            sage: L.is_positive_operator_on(K)
+            True
+
+        Your matrix can be over any exact ring, for example the ring of
+        univariate polynomials with rational coefficients::
+
+            sage: K = Cone([(1,0),(-1,0),(0,1),(0,-1)])
+            sage: K.is_full_space()
+            True
+            sage: L = matrix(QQ[x], [[x,0],[0,1]])
+            sage: L.is_positive_operator_on(K)
+            True
+
+        TESTS:
+
+        The identity matrix is always a positive operator::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = identity_matrix(R, K.lattice_dim())
+            sage: L.is_positive_operator_on(K)
+            True
+
+        The zero matrix is always a positive operator::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = zero_matrix(R, K.lattice_dim())
+            sage: L.is_positive_operator_on(K)
+            True
+
+        Everything in ``K1.positive_operators_gens(K2)`` should be
+        positive on ``K1`` with respect to ``K2``, even if we make
+        the underlying ring symbolic (the usual case is tested by
+        the ``positive_operators_gens`` method)::
+
+            sage: set_random_seed()
+            sage: K1 = random_cone(max_ambient_dim=5)
+            sage: K2 = random_cone(max_ambient_dim=5)
+            sage: all(L.change_ring(SR).is_positive_operator_on(K1, K2)
+            ....:     for L in K1.positive_operators_gens(K2))  # long time
+            True
+
+        Technically we could test this, but for now only closed convex cones
+        are supported as our ``K1`` and ``K2`` arguments::
+
+            sage: K = [ vector([1,2,3]), vector([5,-1,7]) ]
+            sage: L = identity_matrix(3)
+            sage: L.is_positive_operator_on(K)
+            Traceback (most recent call last):
+            ...
+            TypeError: K1 and K2 must be cones.
+
+        We can't give reliable answers over inexact rings::
+
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(RR,3)
+            sage: L.is_positive_operator_on(K)
+            Traceback (most recent call last):
+            ...
+            ValueError: The base ring of the matrix is neither symbolic nor
+            exact.
+
+        """
+        from sage.symbolic.ring import SR
+        from sage.geometry.cone import is_Cone
+
+        if K2 is None:
+            K2 = K1
+        if not ( is_Cone(K1) and is_Cone(K2) ):
+            raise TypeError('K1 and K2 must be cones.')
+        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+            msg = 'The base ring of the matrix is neither symbolic nor exact.'
+            raise ValueError(msg)
+
+        if self.base_ring() is ZZ or self.base_ring() is QQ:
+            # This should be way faster than computing the dual and
+            # checking a bunch of inequalities, but it doesn't work if
+            # ``self*x`` is symbolic, polynomial, or otherwise
+            # contains something unexpected. For example, ``e in
+            # Cone([(1,)])`` is true, but returns ``False``.
+            return all(self * x in K2 for x in K1)
+        else:
+            # Fall back to inequality-checking when the entries of
+            # this matrix might be symbolic, polynomial, or something
+            # else weird.
+            return all(s * (self * x) >= 0 for x in K1 for s in K2.dual())
+
+    def is_cross_positive_on(self, K):
+        r"""
+        Determine if this matrix is cross-positive on a cone.
+
+        We say that a matrix `L` is cross-positive on a closed convex
+        cone `K` if the inner product of `Lx` and `s` is nonnegative for
+        all pairs of orthogonal vectors `x` in `K` and `s` in the dual
+        of `K`. This property need only be checked for generators of `K`
+        and its dual.
+
+        To reliably check whether or not this matrix is cross-positive,
+        its base ring must be either exact (for example, the rationals)
+        or the symbolic ring. An exact ring is more reliable, but in
+        some cases a matrix whose entries contain symbolic constants
+        like `e` and `\pi` will work.
+
+        INPUT:
+
+        - ``K`` -- a polyhedral closed convex cone.
+
+        OUTPUT:
+
+        If the base ring of this matrix is exact, then ``True`` will be
+        returned if and only if this matrix is cross-positive on ``K``.
+
+        If the base ring of this matrix is symbolic, then the situation
+        is more complicated:
+
+        - ``True`` will be returned if it can be proven that this matrix
+          is cross-positive on ``K``.
+        - ``False`` will be returned if it can be proven that this matrix
+          is not cross-positive on ``K``.
+        - ``False`` will also be returned if we can't decide; specifically
+          if we arrive at a symbolic inequality that cannot be resolved.
+
+        .. SEEALSO::
+
+              :meth:`is_positive_operator_on`,
+              :meth:`is_Z_operator_on`,
+              :meth:`is_lyapunov_like_on`
+
+        REFERENCES:
+
+        H. Schneider and M. Vidyasagar. Cross-positive matrices. SIAM
+        Journal on Numerical Analysis, 7:508-519, 1970.
+
+        EXAMPLES:
+
+        Negative Z-matrices are cross-positive operators on the
+        nonnegative orthant::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [-1, 2, 0],
+            ....:                  [ 0, 2, 7],
+            ....:                  [ 3, 0, 3] ])
+            sage: L.is_cross_positive_on(K)
+            True
+
+        Symbolic entries also work in some easy cases::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [-1,       e, 0 ],
+            ....:                  [ 0,       2, pi],
+            ....:                  [ sqrt(2), 0, 3 ] ])
+            sage: L.is_cross_positive_on(K)
+            True
+
+        TESTS:
+
+        The identity matrix is always cross-positive::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = identity_matrix(R, K.lattice_dim())
+            sage: L.is_cross_positive_on(K)
+            True
+
+        The zero matrix is always cross-positive::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = zero_matrix(R, K.lattice_dim())
+            sage: L.is_cross_positive_on(K)
+            True
+
+        Everything in ``K.cross_positive_operators_gens()`` should be
+        cross-positive on ``K``, even if we make the underlying ring
+        symbolic (the usual case is tested by the
+        ``cross_positive_operators_gens`` method)::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: all(L.change_ring(SR).is_cross_positive_on(K)
+            ....:     for L in K.cross_positive_operators_gens())  # long time
+            True
+
+        Technically we could test this, but for now only closed convex cones
+        are supported as our ``K`` argument::
+
+            sage: L = identity_matrix(3)
+            sage: K = [ vector([8,2,-8]), vector([5,-5,7]) ]
+            sage: L.is_cross_positive_on(K)
+            Traceback (most recent call last):
+            ...
+            TypeError: K must be a cone.
+
+        We can't give reliable answers over inexact rings::
+
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(RR,3)
+            sage: L.is_cross_positive_on(K)
+            Traceback (most recent call last):
+            ...
+            ValueError: The base ring of the matrix is neither symbolic nor
+            exact.
+
+        """
+        from sage.symbolic.ring import SR
+        from sage.geometry.cone import is_Cone
+
+        if not is_Cone(K):
+            raise TypeError('K must be a cone.')
+        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+            msg = 'The base ring of the matrix is neither symbolic nor exact.'
+            raise ValueError(msg)
+
+        return all(s * (self * x) >= 0
+                   for (x, s) in K.discrete_complementarity_set())
+
+    def is_Z_operator_on(self, K):
+        r"""
+        Determine if this matrix is a Z-operator on a cone.
+
+        We say that a matrix `L` is a Z-operator on a closed convex cone
+        `K` if the inner product of `Lx` and `s` is nonpositive for all
+        pairs of orthogonal vectors `x` in `K` and `s` in the dual of
+        `K`. This property need only be checked for generators of `K`
+        and its dual.
+
+        A matrix is a Z-operator on `K` if and only if its negation is a
+        cross-positive operator on `K`.
+
+        To reliably check whether or not this matrix is a Z operator,
+        its base ring must be either exact (for example, the rationals)
+        or the symbolic ring. An exact ring is more reliable, but in
+        some cases a matrix whose entries contain symbolic constants
+        like `e` and `\pi` will work.
+
+        INPUT:
+
+        - ``K`` -- a polyhedral closed convex cone.
+
+        OUTPUT:
+
+        If the base ring of this matrix is exact, then ``True`` will be
+        returned if and only if this matrix is a Z-operator on ``K``.
+
+        If the base ring of this matrix is symbolic, then the situation
+        is more complicated:
+
+        - ``True`` will be returned if it can be proven that this matrix
+          is a Z-operator on ``K``.
+        - ``False`` will be returned if it can be proven that this matrix
+          is not a Z-operator on ``K``.
+        - ``False`` will also be returned if we can't decide; specifically
+          if we arrive at a symbolic inequality that cannot be resolved.
+
+        .. SEEALSO::
+
+              :meth:`is_positive_operator_on`,
+              :meth:`is_cross_positive_on`,
+              :meth:`is_lyapunov_like_on`
+
+        REFERENCES:
+
+        A. Berman and R. J. Plemmons. Nonnegative Matrices in the
+        Mathematical Sciences. SIAM, Philadelphia, 1994.
+
+        EXAMPLES:
+
+        Z-matrices are Z-operators on the nonnegative orthant::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [-1, -2,  0],
+            ....:                  [ 0,  2, -7],
+            ....:                  [-3,  0,  3] ])
+            sage: L.is_Z_operator_on(K)
+            True
+
+        Symbolic entries also work in some easy cases::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [-1,      -e,  0 ],
+            ....:                  [ 0,       2, -pi],
+            ....:                  [-sqrt(2), 0,  3 ] ])
+            sage: L.is_Z_operator_on(K)
+            True
+
+        TESTS:
+
+        The identity matrix is always a Z-operator::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = identity_matrix(R, K.lattice_dim())
+            sage: L.is_Z_operator_on(K)
+            True
+
+        The zero matrix is always a Z-operator::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = zero_matrix(R, K.lattice_dim())
+            sage: L.is_Z_operator_on(K)
+            True
+
+        Everything in ``K.Z_operators_gens()`` should be a Z-operator on
+        ``K``, , even if we make the underlying ring symbolic (the usual
+        case is tested by the ``Z_operators_gens`` method)::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: all(L.change_ring(SR).is_Z_operator_on(K)
+            ....:     for L in K.Z_operators_gens())  # long time
+            True
+
+        Technically we could test this, but for now only closed convex cones
+        are supported as our ``K`` argument::
+
+            sage: L = identity_matrix(3)
+            sage: K = [ vector([-4,20,3]), vector([1,-5,2]) ]
+            sage: L.is_Z_operator_on(K)
+            Traceback (most recent call last):
+            ...
+            TypeError: K must be a cone.
+
+        We can't give reliable answers over inexact rings::
+
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(RR,3)
+            sage: L.is_Z_operator_on(K)
+            Traceback (most recent call last):
+            ...
+            ValueError: The base ring of the matrix is neither symbolic nor
+            exact.
+
+        """
+        return (-self).is_cross_positive_on(K)
+
+    def is_lyapunov_like_on(self,K):
+        r"""
+        Determine if this matrix is Lyapunov-like on a cone.
+
+        We say that a matrix `L` is Lyapunov-like on a closed convex
+        cone `K` if the inner product of `Lx` and `s` is zero for all
+        pairs of orthogonal vectors `x` in `K` and `s` in the dual of
+        `K`. This property need only be checked for generators of `K`
+        and its dual.
+
+        An operator is Lyapunov-like on `K` if and only if both the
+        operator itself and its negation are cross-positive on `K`.
+
+        To reliably check whether or not this matrix is Lyapunov-like,
+        its base ring must be either exact (for example, the rationals)
+        or the symbolic ring. An exact ring is more reliable, but in
+        some cases a matrix whose entries contain symbolic constants
+        like `e` and `\pi` will work.
+
+        INPUT:
+
+        - ``K`` -- a polyhedral closed convex cone.
+
+        OUTPUT:
+
+        If the base ring of this matrix is exact, then ``True`` will be
+        returned if and only if this matrix is Lyapunov-like on ``K``.
+
+        If the base ring of this matrix is symbolic, then the situation
+        is more complicated:
+
+        - ``True`` will be returned if it can be proven that this matrix
+          is Lyapunov-like on ``K``.
+        - ``False`` will be returned if it can be proven that this matrix
+          is not Lyapunov-like on ``K``.
+        - ``False`` will also be returned if we can't decide; specifically
+          if we arrive at a symbolic inequality that cannot be resolved.
+
+        .. SEEALSO::
+
+              :meth:`is_positive_operator_on`,
+              :meth:`is_cross_positive_on`,
+              :meth:`is_Z_operator_on`
+
+        REFERENCES:
+
+        - [Or2017]_
+
+        EXAMPLES:
+
+        Diagonal matrices are Lyapunov-like operators on the nonnegative
+        orthant::
+
+            sage: set_random_seed()
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = diagonal_matrix(random_vector(QQ,3))
+            sage: L.is_lyapunov_like_on(K)
+            True
+
+        Symbolic entries also work in some easy cases::
+
+            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: L = matrix(SR, [ [e, 0,  0      ],
+            ....:                  [0, pi, 0      ],
+            ....:                  [0, 0,  sqrt(2)] ])
+            sage: L.is_lyapunov_like_on(K)
+            True
+
+        TESTS:
+
+        The identity matrix is always Lyapunov-like::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = identity_matrix(R, K.lattice_dim())
+            sage: L.is_lyapunov_like_on(K)
+            True
+
+        The zero matrix is always Lyapunov-like::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=8)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = zero_matrix(R, K.lattice_dim())
+            sage: L.is_lyapunov_like_on(K)
+            True
+
+        Everything in ``K.lyapunov_like_basis()`` should be
+        Lyapunov-like on ``K``, even if we make the underlying ring
+        symbolic (the usual case is tested by the
+        ``lyapunov_like_basis`` method)::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: all(L.change_ring(SR).is_lyapunov_like_on(K)
+            ....:     for L in K.lyapunov_like_basis())  # long time
+            True
+
+        Technically we could test this, but for now only closed convex cones
+        are supported as our ``K`` argument::
+
+            sage: L = identity_matrix(3)
+            sage: K = [ vector([2,2,-1]), vector([5,4,-3]) ]
+            sage: L.is_lyapunov_like_on(K)
+            Traceback (most recent call last):
+            ...
+            TypeError: K must be a cone.
+
+        We can't give reliable answers over inexact rings::
+
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(RR,3)
+            sage: L.is_lyapunov_like_on(K)
+            Traceback (most recent call last):
+            ...
+            ValueError: The base ring of the matrix is neither symbolic nor
+            exact.
+
+        A matrix is Lyapunov-like on a cone if and only if both the
+        matrix and its negation are cross-positive on the cone::
+
+            sage: set_random_seed()
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: R = K.lattice().vector_space().base_ring()
+            sage: L = random_matrix(R, K.lattice_dim())
+            sage: actual = L.is_lyapunov_like_on(K)          # long time
+            sage: expected = (L.is_cross_positive_on(K) and
+            ....:             (-L).is_cross_positive_on(K))  # long time
+            sage: actual == expected                         # long time
+            True
+
+        """
+        from sage.symbolic.ring import SR
+        from sage.geometry.cone import is_Cone
+
+        if not is_Cone(K):
+            raise TypeError('K must be a cone.')
+        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+            msg = 'The base ring of the matrix is neither symbolic nor exact.'
+            raise ValueError(msg)
+
+        # Even though ``discrete_complementarity_set`` is a cached
+        # method of cones, this is faster than calling
+        # :meth:`is_cross_positive_on` twice: doing so checks twice as
+        # many inequalities as the number of equalities that we're
+        # about to check.
+        return all(s * (self * x) == 0
+                   for (x, s) in K.discrete_complementarity_set())
+
     # A limited number of access-only properties are provided for matrices
     @property
     def T(self):
@@ -14906,37 +15530,6 @@ cdef class Matrix(Matrix1):
         """
         return self.conjugate().transpose()
 
-    @property
-    def I(self):
-        r"""
-        Returns the inverse of the matrix, if it exists.
-
-        EXAMPLES::
-
-            sage: A = matrix(QQ, [[-5, -3, -1, -7],
-            ....:                 [ 1,  1,  1,  0],
-            ....:                 [-1, -2, -2,  0],
-            ....:                 [-2, -1,  0, -4]])
-            sage: A.I
-            doctest:...: DeprecationWarning: The I property on matrices has been deprecated. Please use the inverse() method instead.
-            See http://trac.sagemath.org/20904 for details.
-            [ 0  2  1  0]
-            [-4 -8 -2  7]
-            [ 4  7  1 -7]
-            [ 1  1  0 -2]
-
-            sage: B = matrix(QQ, [[-11, -5, 18,  -6],
-            ....:                 [  1,  2, -6,   8],
-            ....:                 [ -4, -2,  7,  -3],
-            ....:                 [  1, -2,  5, -11]])
-            sage: B.I
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: input matrix must be nonsingular
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(20904, "The I property on matrices has been deprecated. Please use the inverse() method instead.")
-        return ~self
 
 def _smith_diag(d, transformation=True):
     r"""
@@ -14987,7 +15580,8 @@ def _smith_diag(d, transformation=True):
         for j in xrange(i+1,n):
             if dp[j,j] not in I:
                 t = R.ideal([dp[i,i], dp[j,j]]).gens_reduced()
-                if len(t) > 1: raise ArithmeticError
+                if len(t) > 1:
+                    raise ArithmeticError
                 t = t[0]
                 # find lambda, mu such that lambda*d[i,i] + mu*d[j,j] = t
                 lamb = R(dp[i,i]/t).inverse_mod( R.ideal(dp[j,j]/t))
@@ -15125,6 +15719,7 @@ def _generic_clear_column(m):
 
     return left_mat, a
 
+
 def _smith_onestep(m):
     r"""
     Carry out one step of Smith normal form for matrix m. Returns three matrices a,b,c over
@@ -15180,6 +15775,7 @@ def _smith_onestep(m):
         right_mat = right_mat* s.transpose()
 
     return left_mat, a, right_mat
+
 
 def decomp_seq(v):
     """
@@ -15264,6 +15860,7 @@ def _choose(Py_ssize_t n, Py_ssize_t t):
 
     return x
 
+
 def _binomial(Py_ssize_t n, Py_ssize_t k):
     """
     Fast and unchecked implementation of binomial(n,k) This is only for
@@ -15296,6 +15893,7 @@ def _binomial(Py_ssize_t n, Py_ssize_t k):
         i, n, k = i + 1, n - 1, k - 1
     return result
 
+
 def _jordan_form_vector_in_difference(V, W):
     r"""
     Given two lists of vectors ``V`` and ``W`` over the same base field,
@@ -15315,15 +15913,16 @@ def _jordan_form_vector_in_difference(V, W):
         sage: sage.matrix.matrix2._jordan_form_vector_in_difference([v,w], [u])
         (1, 0, 0, 0)
     """
-    if len(V) == 0:
+    if not V:
         return None
-    if len(W) == 0:
+    if not W:
         return V[0]
     W_space = sage.all.span(W)
     for v in V:
         if v not in W_space:
             return v
     return None
+
 
 def _matrix_power_symbolic(A, n):
     r"""

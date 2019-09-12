@@ -2,15 +2,15 @@ r"""
 Super algebras with basis
 """
 #*****************************************************************************
-#  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
+#  Copyright (C) 2015,2019 Travis Scrimshaw <tcscrims at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
 from sage.categories.super_modules import SuperModulesCategory
-from sage.categories.algebras import Algebras
-from sage.categories.modules import Modules
+from sage.categories.signed_tensor import SignedTensorProductsCategory
+from sage.misc.cachefunc import cached_method
 
 class SuperAlgebrasWithBasis(SuperModulesCategory):
     """
@@ -58,4 +58,24 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
             """
             from sage.algebras.associated_graded import AssociatedGradedAlgebra
             return AssociatedGradedAlgebra(self)
+
+    class SignedTensorProducts(SignedTensorProductsCategory):
+        """
+        The category of super algebras with basis constructed by tensor
+        product of super algebras with basis.
+        """
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Algebras(QQ).Super().SignedTensorProducts().extra_super_categories()
+                [Category of super algebras over Rational Field]
+                sage: Algebras(QQ).Super().SignedTensorProducts().super_categories()
+                [Category of signed tensor products of graded algebras over Rational Field,
+                 Category of super algebras over Rational Field]
+
+            Meaning: a signed tensor product of super algebras is a super algebra
+            """
+            return [self.base_category()]
 

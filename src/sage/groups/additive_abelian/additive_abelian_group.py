@@ -108,13 +108,15 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         True
     """
     invs = [ZZ(x) for x in invs]
-    if not all( [x >= 0 for x in invs] ): raise ValueError("Invariants must be nonnegative")
+    if not all(x >= 0 for x in invs):
+        raise ValueError("Invariants must be nonnegative")
     A, B = cover_and_relations_from_invariants(invs)
     if remember_generators:
         G = AdditiveAbelianGroup_fixed_gens(A, B, A.gens())
     else:
         G = AdditiveAbelianGroup_class(A, B)
     return G
+
 
 def cover_and_relations_from_invariants(invs):
     r"""
@@ -452,7 +454,20 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
             sage: G = AdditiveAbelianGroup([2, 3])
             sage: G.permutation_group()
             Permutation Group with generators [(3,4,5), (1,2)]
+
+        TESTS:
+
+        Check that :trac:`25692` is fixed::
+
+            sage: G = AdditiveAbelianGroup([0])
+            sage: G.permutation_group()
+            Traceback (most recent call last):
+            ...
+            TypeError: Additive Abelian group must be finite
         """
+        # GAP does not support infinite permutation groups
+        if not self.is_finite(): 
+            raise TypeError('Additive Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)
         return PermutationGroup(gap_group=s)

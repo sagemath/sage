@@ -610,7 +610,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             return self._upper_closed
         return False
 
-    def __mul__(left, right):
+    def __mul__(self, right):
         r"""
         Scale an interval by a scalar on the left or right.
 
@@ -642,22 +642,22 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         if not isinstance(right, InternalRealInterval):
             right = RLF(right)
-            if left.is_empty():
-                return left
-            lower = left._lower * right
-            lower_closed = left._lower_closed
-            upper = left._upper * right
-            upper_closed = left._upper_closed
+            if self.is_empty():
+                return self
+            lower = self._lower * right
+            lower_closed = self._lower_closed
+            upper = self._upper * right
+            upper_closed = self._upper_closed
             scalar = right
-        elif not isinstance(left, InternalRealInterval):
-            left = RLF(left)
+        elif not isinstance(self, InternalRealInterval):
+            self = RLF(self)
             if right.is_empty():
                 return right
-            lower = left * right._lower
+            lower = self * right._lower
             lower_closed = right._lower_closed
-            upper = left * right._upper
+            upper = self * right._upper
             upper_closed = right._upper_closed
-            scalar = left
+            scalar = self
         else:
             return NotImplemented
         if scalar == RLF(0):
@@ -1704,7 +1704,7 @@ class RealSet(UniqueRepresentation, Parent):
         else:
             return sib.sum(interval_input(i) for i in self)
 
-    def __mul__(left, right):
+    def __mul__(self, right):
         r"""
         Scale a real set by a scalar on the left or right.
 
@@ -1722,9 +1722,9 @@ class RealSet(UniqueRepresentation, Parent):
             (-oo, -4) + [-1, 0]
         """
         if not isinstance(right, RealSet):
-            return RealSet(*[e*right for e in left])
-        elif not isinstance(left, RealSet):
-            return RealSet(*[left*e for e in right])
+            return RealSet(*[e * right for e in self])
+        elif not isinstance(self, RealSet):
+            return RealSet(*[self * e for e in right])
         else:
             return NotImplemented
 

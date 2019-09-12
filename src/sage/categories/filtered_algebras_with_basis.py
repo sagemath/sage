@@ -488,13 +488,13 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                 sage: A.to_graded_conversion()(y)
                 y
                 sage: A.to_graded_conversion()(x*y)
-                x^y
+                x*y
                 sage: u = A.to_graded_conversion()(x*y+1); u
-                x^y + 1
+                x*y + 1
                 sage: A.from_graded_conversion()(u)
                 x*y + 1
                 sage: A.projection(2)(x*y+1)
-                x^y
+                x*y
                 sage: A.projection(1)(x+2*y-2)
                 x + 2*y
                 sage: grf = A.induced_graded_map(B, f); grf
@@ -508,7 +508,7 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
                 sage: grf(A.to_graded_conversion()(x**2))
                 6
                 sage: grf(A.to_graded_conversion()(x*y))
-                -3*u^v
+                -3*u*v
                 sage: grf(grA.one())
                 1
             """

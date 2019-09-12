@@ -50,15 +50,16 @@ We verify Lagrange's four squares identity::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
 from six.moves import range
 from six import iteritems, integer_types
 
-from sage.structure.element import CommutativeRingElement, canonical_coercion, coerce_binop
+from sage.structure.element import CommutativeRingElement, coerce_binop
 from sage.misc.all import prod
 import sage.rings.integer
+from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from . import polydict
 from sage.structure.factorization import Factorization
 from sage.rings.polynomial.polynomial_singular_interface import Polynomial_singular_repr
@@ -126,6 +127,15 @@ class MPolynomial_element(MPolynomial):
             sage: f(1,2,5)
             -17.0000000000000
 
+        TESTS:
+
+        Check :trac:`27446`::
+
+            sage: P = PolynomialRing(QQ, 't', 0)
+            sage: a = P(1)
+            sage: a(()).parent()
+            Rational Field
+
         AUTHORS:
 
         - David Kohel (2005-09-27)
@@ -142,7 +152,7 @@ class MPolynomial_element(MPolynomial):
         if len(x) != n:
             raise TypeError("x must be of correct length")
         if n == 0:
-            return self
+            return self.constant_coefficient()
         try:
             K = x[0].parent()
         except AttributeError:
@@ -912,12 +922,22 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return [tuple(e) for e in self.__exponents]
 
     def inverse_of_unit(self):
+        """
+        Return the inverse of a unit in a ring.
+
+        TESTS::
+
+            sage: R.<c> = QQ[]
+            sage: l = R(2)
+            sage: l.inverse_of_unit().parent()
+            Univariate Polynomial Ring in c over Rational Field
+        """
         d = self.element().dict()
         k = list(d)
         if self.is_unit():
             if len(k) != 1:
                 raise NotImplementedError
-            return ~d[k[0]]
+            return d[k[0]].inverse_of_unit()
         raise ArithmeticError("is not a unit")
 
     def is_homogeneous(self):
@@ -1243,11 +1263,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         monomial_coefficients = self._MPolynomial_element__element.dict()
 
-        if( not self.is_constant() ):
+        if not self.is_constant():
             var_idx = self.degrees().nonzero_positions()[0] #variable
         else:
-            var_idx = 0; #constant
-            if( len(monomial_coefficients.keys())==0 ):
+            var_idx = 0 #constant
+            if len(monomial_coefficients) == 0:
                 return R(0)
 
         #construct list
@@ -1463,9 +1483,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             return CommutativeRingElement.__ne__(self, right)
         return self._MPolynomial_element__element != right._MPolynomial_element__element
 
+    # required by Python 3
+    __hash__ = MPolynomial_element.__hash__
+
     def __bool__(self):
         """
-        Returns True if self != 0
+        Return True if self != 0
 
         .. note::
 
@@ -1641,13 +1664,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         d = polydict.PolyDict(d, self.parent().base_ring()(0), remove_zero=True)
         return MPolynomial_polydict(self.parent(), d)
 
-    def factor(self, proof=True):
+    def factor(self, proof=None):
         r"""
         Compute the irreducible factorization of this polynomial.
 
         INPUT:
 
-        - ``proof'' - insist on provably correct results (default: ``True``)
+        - ``proof'' - insist on provably correct results (default: ``True``
+          unless explicitly disabled for the ``"polynomial"`` subsystem with
+          :class:`sage.structure.proof.proof.WithProof`.)
 
         TESTS:
 
@@ -1677,10 +1702,25 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         Check that we prohibit too large moduli, :trac:`11829`::
 
             sage: R.<x,y> = GF(previous_prime(2^31))[]
-            sage: factor(x+y+1,proof=False)
+            sage: factor(x+y+1)
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+
+        Check that the global proof flag for polynomials is honored::
+
+            sage: R.<x,y> = QQbar[]
+            sage: f = x^2 + y^2
+            sage: with proof.WithProof('polynomial', True):
+            ....:     f.factor()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Provably correct factorization not implemented. Disable this error by wrapping your code in a `with proof.WithProof('polynomial', False):` block.
+            sage: with proof.WithProof('polynomial', False):
+            ....:     f.factor()
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this ring to a Singular ring defined
 
         We check that the original issue in :trac:`7554` is fixed::
 
@@ -1711,6 +1751,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = z^4 - 6*z + 3
             sage: f.factor()
             (z - 1.60443920904349) * (z - 0.511399619393097) * (z + 1.05791941421830 - 1.59281852704435*I) * (z + 1.05791941421830 + 1.59281852704435*I)
+
+        We check a case that failed with an exception at some point::
+
+            sage: k.<u> = GF(4)
+            sage: R.<v> = k[]
+            sage: l.<v> = R.quo(v^3 + v + 1)
+            sage: R.<x,y> = l[]
+            sage: f = y^3 + x^3 + (u + 1)*x
+            sage: f.factor()
+            x^3 + y^3 + (u + 1)*x
 
         """
         R = self.parent()
@@ -1743,8 +1793,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if base_ring.is_finite():
             if base_ring.characteristic() > 1<<29:
                 raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
+
+        if proof is None:
+            from sage.structure.proof.proof import get_flag
+            proof = get_flag(subsystem="polynomial")
         if proof:
-            raise NotImplementedError("proof = True factorization not implemented.  Call factor with proof=False.")
+            raise NotImplementedError("Provably correct factorization not implemented. Disable this error by wrapping your code in a `with proof.WithProof('polynomial', False):` block.")
 
         R._singular_().set_ring()
         S = self._singular_().factorize()
@@ -1761,6 +1815,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         F = sorted(Factorization(v, unit=unit))
         return F
 
+    @handle_AA_and_QQbar
     def lift(self,I):
         """
         given an ideal I = (f_1,...,f_r) and some g (== self) in I, find
@@ -1778,6 +1833,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
             sage: sum( map( mul , zip( M, I.gens() ) ) ) == f
             True
+
+        TESTS:
+
+        Check that this method works over QQbar (:trac:`25351`)::
+
+            sage: A.<x,y> = QQbar[]
+            sage: I = A.ideal([x^2 + y^2 - 1, x^2 - y^2])
+            sage: f = 2*x^2 - 1
+            sage: M = f.lift(I)
+            sage: sum( map( mul , zip( M, I.gens() ) ) ) == f
+            True
         """
         fs = self._singular_()
         Is = I._singular_()
@@ -1789,6 +1855,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         return Sequence(M.list(), P, check=False, immutable=True)
 
     @coerce_binop
+    @handle_AA_and_QQbar
     def quo_rem(self, right):
         """
         Returns quotient and remainder of self and right.
@@ -1813,6 +1880,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             TypeError: no conversion of this ring to a Singular ring defined
 
         ALGORITHM: Use Singular.
+
+        TESTS:
+
+        Check that this method works over QQbar (:trac:`25351`)::
+
+            sage: R.<x,y> = QQbar[]
+            sage: f = y*x^2 + x + 1
+            sage: f.quo_rem(x)
+            (x*y + 1, 1)
         """
         R = self.parent()
         try:
@@ -1829,6 +1905,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             X = self._singular_().division(right._singular_())
             return R(X[1][1,1]), R(X[2][1])
 
+    @handle_AA_and_QQbar
     def resultant(self, other, variable=None):
         """
         Compute the resultant of ``self`` and ``other`` with respect
@@ -1836,6 +1913,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         If a second argument is not provided, the first variable of
         ``self.parent()`` is chosen.
+
+        For inexact rings or rings not available in Singular,
+        this computes the determinant of the Sylvester matrix.
 
         INPUT:
 
@@ -1871,11 +1951,28 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: (x^2 + 1).resultant(x^2 - y)
             y^2 + 2*y + 1
 
+        Test for :trac:`2693`::
+
+            sage: R.<x,y> = RR[]
+            sage: p = x + y
+            sage: q = x*y
+            sage: p.resultant(q)
+            -y^2
+
+        Check that this method works over QQbar (:trac:`25351`)::
+
+            sage: P.<x,y> = QQbar[]
+            sage: a = x + y
+            sage: b = x^3 - y^3
+            sage: a.resultant(b)
+            (-2)*y^3
+            sage: a.resultant(b, y)
+            2*x^3
         """
         R = self.parent()
         if variable is None:
             variable = R.gen(0)
-        if R._has_singular:
+        if R._has_singular and R.is_exact():
             rt = self._singular_().resultant(other._singular_(), variable._singular_())
             r = rt.sage_poly(R)
         else:
@@ -1973,29 +2070,24 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 # Useful for some geometry code.
 ###############################################################
 
-def degree_lowest_rational_function(r,x):
+def degree_lowest_rational_function(r, x):
     r"""
+    Return the difference of valuations of r with respect to variable x.
+
     INPUT:
 
+    - ``r`` -- a multivariate rational function
 
-    -  ``r`` - a multivariate rational function
-
-    -  ``x`` - a multivariate polynomial ring generator x
-
+    - ``x`` -- a multivariate polynomial ring generator x
 
     OUTPUT:
 
+    - ``integer`` -- the difference val_x(p) - val_x(q) where r = p/q
 
-    -  ``integer`` - the degree of r in x and its "leading"
-       (in the x-adic sense) coefficient.
+    .. NOTE::
 
-
-    .. note::
-
-       This function is dependent on the ordering of a python dict.
-       Thus, it isn't really mathematically well-defined. I think that
-       it should made a method of the FractionFieldElement class and
-       rewritten.
+        This function should be made a method of the
+        FractionFieldElement class.
 
     EXAMPLES::
 
@@ -2014,35 +2106,15 @@ def degree_lowest_rational_function(r,x):
         sage: r = f/g; r
         (-b*c^2 + 2)/(a*b^3*c^6 - 2*a*c)
         sage: degree_lowest_rational_function(r,a)
-        (-1, 3)
+        -1
         sage: degree_lowest_rational_function(r,b)
-        (0, 4)
+        0
         sage: degree_lowest_rational_function(r,c)
-        (-1, 4)
+        -1
     """
     from sage.rings.fraction_field import FractionField
-    R = r.parent()
-    F = FractionField(R)
+    F = FractionField(r.parent())
     r = F(r)
-    if r == 0:
-        return (0, F(0))
-    L = next(iter(x.dict()))
-    for ix in range(len(L)):
-        if L[ix] != 0:
-            break
-    f = r.numerator()
-    g = r.denominator()
-    M = f.dict()
-    keys = list(M)
-    numtermsf = len(M)
-    degreesf = [keys[j][ix] for j in range(numtermsf)]
-    lowdegf = min(degreesf)
-    cf = M[keys[degreesf.index(lowdegf)]] ## constant coeff of lowest degree term
-    M = g.dict()
-    keys = list(M)
-    numtermsg = len(M)
-    degreesg = [keys[j][ix] for j in range(numtermsg)]
-    lowdegg = min(degreesg)
-    cg = M[keys[degreesg.index(lowdegg)]] ## constant coeff of lowest degree term
-    return (lowdegf-lowdegg,cf/cg)
-
+    f = r.numerator().polynomial(x)
+    g = r.denominator().polynomial(x)
+    return f.valuation() - g.valuation()

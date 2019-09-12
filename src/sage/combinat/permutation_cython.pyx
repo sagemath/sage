@@ -11,7 +11,7 @@ in a permutation than construct the next object directly
 from the next permutation in a list. The backtracking
 algorithm in sage/graphs/genus.pyx is an example of this.
 
-The lowest level is implemented as a struct with auxilliary
+The lowest level is implemented as a struct with auxiliary
 methods.  This is because Cython does not allow pointers to
 class instances, so a list of these objects is inherently
 slower than a list of structs.  The author prefers ugly code
@@ -39,14 +39,8 @@ cimport cython
 
 from cpython.object cimport PyObject
 
-from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.memory cimport check_allocarray, sig_free
 
-cdef extern from "Python.h":
-    void Py_INCREF(PyObject *)
-    PyObject * PyInt_FromLong(long ival)
-    list PyList_New(Py_ssize_t size)
-    void PyList_SET_ITEM(list l, Py_ssize_t, PyObject *)
-    PyObject * PyTuple_GET_ITEM(PyObject *op, Py_ssize_t i)
 
 #########################################################
 #
@@ -125,9 +119,9 @@ cdef int next_swap(int n, int *c, int *o):
     c[j] = q
     return j - offset + s
 
+
 def permutation_iterator_transposition_list(int n):
     """
-
     Returns a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
@@ -157,45 +151,26 @@ def permutation_iterator_transposition_list(int n):
         ....:     L.append(copy(Q))
         sage: print(L)
         [[1, 2, 3, 4], [1, 3, 2, 4], [3, 1, 2, 4], [3, 2, 1, 4], [2, 3, 1, 4], [2, 1, 3, 4]]
-
     """
-
-    cdef int *c
-    cdef int *o
-    cdef int N, m
-    cdef list T
-
     if n <= 1:
         return []
     if n > 12:
         raise ValueError("Cowardly refusing to enumerate the permutations "
                          "on more than 12 letters.")
+    # Compute N = n! - 1
+    cdef Py_ssize_t N = n
+    cdef Py_ssize_t i
+    for i in range(2, n):
+        N *= i
+    N -= 1
 
-    m = n-1
-    N = n
-    while m > 1:
-        N *= m
-        m -= 1
-
-    c = <int *>sig_malloc(2*n*sizeof(int))
-    if c is NULL:
-        raise MemoryError("Failed to allocate memory in "
-                          "permutation_iterator_transposition_list")
-    o = c + n
-
+    cdef int* c = <int *>check_allocarray(n, 2 * sizeof(int))
+    cdef int* o = c + n
     try:
-        T = PyList_New(N-1)
-    except Exception:
+        reset_swap(n, c, o)
+        return [next_swap(n, c, o) for i in range(N)]
+    finally:
         sig_free(c)
-        raise MemoryError("Failed to allocate memory in "
-                          "permutation_iterator_transposition_list")
-
-    reset_swap(n,c,o)
-    for m in range(N-1):
-        PyList_SET_ITEM(T, m, PyInt_FromLong(next_swap(n,c,o)))
-    sig_free(c)
-
-    return T
 
 
 #####################################################################
@@ -203,7 +178,7 @@ def permutation_iterator_transposition_list(int n):
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cpdef bint next_perm(array.array l):
+cpdef bint next_perm(array l):
     """
     Obtain the next permutation under lex order of ``l``
     by mutating ``l``.
@@ -282,7 +257,9 @@ cpdef bint next_perm(array.array l):
 
     return True
 
-cpdef list map_to_list(array.array l, values, int n):
+
+@cython.boundscheck(False)
+cpdef map_to_list(array l, tuple values, int n):
     """
     Build a list by mapping the array ``l`` using ``values``.
 
@@ -311,13 +288,9 @@ cpdef list map_to_list(array.array l, values, int n):
         ['a', 'b', 'a', 'd', 'd', 'a', 'b']
     """
     cdef int i
-    cdef list ret = PyList_New(n)
-    cdef PyObject * t
-    for i in range(n):
-        t = PyTuple_GET_ITEM(<PyObject *> values, l.data.as_uints[i])
-        Py_INCREF(t)
-        PyList_SET_ITEM(ret, i, t)
-    return ret
+    cdef unsigned int* ind = l.data.as_uints
+    return [values[ind[i]] for i in range(n)]
+
 
 #####################################################################
 ## Multiplication functions for permutations

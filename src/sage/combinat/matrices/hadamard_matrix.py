@@ -67,6 +67,7 @@ from sage.matrix.constructor import identity_matrix as I
 from sage.matrix.constructor import ones_matrix     as J
 from sage.misc.unknown import Unknown
 
+
 def normalise_hadamard(H):
     """
     Return the normalised Hadamard matrix corresponding to ``H``.
@@ -76,21 +77,23 @@ def normalise_hadamard(H):
 
     EXAMPLES::
 
-        sage: H = sage.combinat.matrices.hadamard_matrix.normalise_hadamard(hadamard_matrix(4))
+        sage: from sage.combinat.matrices.hadamard_matrix import normalise_hadamard
+        sage: H = normalise_hadamard(hadamard_matrix(4))
         sage: H == hadamard_matrix(4)
         True
     """
     for i in range(H.ncols()):
-        if H[0,i] < 0:
+        if H[0, i] < 0:
             H.rescale_col(i, -1)
     for i in range(H.nrows()):
-        if H[i,0] < 0:
+        if H[i, 0] < 0:
             H.rescale_row(i, -1)
     return H
 
+
 def hadamard_matrix_paleyI(n, normalize=True):
-    """
-    Implements the Paley type I construction.
+    r"""
+    Implement the Paley type I construction.
 
     The Paley type I case corresponds to the case `p \cong 3 \mod{4}` for a
     prime `p` (see [Hora]_).
@@ -154,9 +157,10 @@ def hadamard_matrix_paleyI(n, normalize=True):
         H = normalise_hadamard(H)
     return H
 
+
 def hadamard_matrix_paleyII(n):
-    """
-    Implements the Paley type II construction.
+    r"""
+    Implement the Paley type II construction.
 
     The Paley type II case corresponds to the case `p \cong 1 \mod{4}` for a
     prime `p` (see [Hora]_).
@@ -716,21 +720,20 @@ def RSHCD_324(e):
         sage: from sage.combinat.matrices.hadamard_matrix import RSHCD_324, is_hadamard_matrix
         sage: for e in [1,-1]:  # long time
         ....:     M = RSHCD_324(e)
-        ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all([M[i,i]==1 for i in range(324)])))
-        ....:     print(set(map(sum,M)))
+        ....:     print("{} {} {}".format(M==M.T,is_hadamard_matrix(M),all(M[i,i]==1 for i in range(324))))
+        ....:     print(list(set(sum(x) for x in M)))
         True True True
-        set([18])
+        [18]
         True True True
-        set([-18])
+        [-18]
 
     REFERENCE:
 
     .. [CP16] \N. Cohen, D. Pasechnik,
-       Implementing Brouwer's database of strongly regular graphs,
+       *Implementing Brouwer's database of strongly regular graphs*,
        Designs, Codes, and Cryptography, 2016
        :doi:`10.1007/s10623-016-0264-x`
     """
-
     from sage.graphs.generators.smallgraphs import JankoKharaghaniTonchevGraph as JKTG
     M = JKTG().adjacency_matrix()
     M = J(324) - 2*M
@@ -771,64 +774,59 @@ def _helper_payley_matrix(n, zero_position=True):
 
         sage: from sage.combinat.matrices.hadamard_matrix import _helper_payley_matrix
         sage: _helper_payley_matrix(5)
-        [ 0  1 -1 -1  1]
-        [ 1  0  1 -1 -1]
-        [-1  1  0  1 -1]
-        [-1 -1  1  0  1]
-        [ 1 -1 -1  1  0]
+        [ 0  1  1 -1 -1]
+        [ 1  0 -1  1 -1]
+        [ 1 -1  0 -1  1]
+        [-1  1 -1  0  1]
+        [-1 -1  1  1  0]
 
     TESTS::
 
         sage: _helper_payley_matrix(11,zero_position=True)
-        [ 0 -1  1 -1 -1 -1  1  1  1 -1  1]
-        [ 1  0 -1 -1  1 -1  1 -1  1  1 -1]
-        [-1  1  0  1 -1 -1 -1 -1  1  1  1]
-        [ 1  1 -1  0  1 -1 -1  1 -1 -1  1]
-        [ 1 -1  1 -1  0  1 -1 -1 -1  1  1]
-        [ 1  1  1  1 -1  0  1 -1 -1 -1 -1]
-        [-1 -1  1  1  1 -1  0  1 -1  1 -1]
-        [-1  1  1 -1  1  1 -1  0  1 -1 -1]
-        [-1 -1 -1  1  1  1  1 -1  0 -1  1]
-        [ 1 -1 -1  1 -1  1 -1  1  1  0 -1]
-        [-1  1 -1 -1 -1  1  1  1 -1  1  0]
+        [ 0 -1  1 -1 -1  1 -1  1  1  1 -1]
+        [ 1  0 -1  1 -1 -1 -1 -1  1  1  1]
+        [-1  1  0 -1  1  1 -1 -1 -1  1  1]
+        [ 1 -1  1  0 -1  1  1 -1 -1 -1  1]
+        [ 1  1 -1  1  0  1 -1  1 -1 -1 -1]
+        [-1  1 -1 -1 -1  0  1  1  1 -1  1]
+        [ 1  1  1 -1  1 -1  0 -1  1 -1 -1]
+        [-1  1  1  1 -1 -1  1  0 -1  1 -1]
+        [-1 -1  1  1  1 -1 -1  1  0 -1  1]
+        [-1 -1 -1  1  1  1  1 -1  1  0 -1]
+        [ 1 -1 -1 -1  1 -1  1  1 -1  1  0]
         sage: _helper_payley_matrix(11,zero_position=False)
-        [ 0  1  1  1  1 -1  1 -1 -1 -1 -1]
-        [-1  0 -1  1 -1 -1  1  1  1 -1  1]
-        [-1  1  0 -1 -1  1  1 -1  1  1 -1]
-        [-1 -1  1  0  1 -1 -1 -1  1  1  1]
-        [-1  1  1 -1  0  1 -1  1 -1 -1  1]
-        [ 1  1 -1  1 -1  0 -1 -1 -1  1  1]
-        [-1 -1 -1  1  1  1  0  1 -1  1 -1]
-        [ 1 -1  1  1 -1  1 -1  0  1 -1 -1]
-        [ 1 -1 -1 -1  1  1  1 -1  0 -1  1]
-        [ 1  1 -1 -1  1 -1 -1  1  1  0 -1]
-        [ 1 -1  1 -1 -1 -1  1  1 -1  1  0]
+        [ 0 -1  1 -1 -1 -1  1  1  1 -1  1]
+        [ 1  0 -1  1 -1 -1 -1  1  1  1 -1]
+        [-1  1  0 -1  1 -1 -1 -1  1  1  1]
+        [ 1 -1  1  0 -1  1 -1 -1 -1  1  1]
+        [ 1  1 -1  1  0 -1  1 -1 -1 -1  1]
+        [ 1  1  1 -1  1  0 -1  1 -1 -1 -1]
+        [-1  1  1  1 -1  1  0 -1  1 -1 -1]
+        [-1 -1  1  1  1 -1  1  0 -1  1 -1]
+        [-1 -1 -1  1  1  1 -1  1  0 -1  1]
+        [ 1 -1 -1 -1  1  1  1 -1  1  0 -1]
+        [-1  1 -1 -1 -1  1  1  1 -1  1  0]
     """
-    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-    K = GF(n,prefix='x')
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    K = FiniteField(n, prefix='x')
 
     # Order the elements of K in K_list
-    # so that K_list[i] = -K_list[n-i-1]
-    K_pairs = set(frozenset([x,-x]) for x in K)
-    K_pairs.discard(frozenset([0]))
-    K_list = [None]*n
-    if zero_position:
-        zero_position=n//2
-        shift=0
-    else:
-        shift=1
+    # so that K_list[i] = -K_list[n - i - 1]
+    K_pairs = set(tuple(sorted([x, -x])) for x in K if x)
+    K_list = [K.zero()] * n
+    shift = 0 if zero_position else 1
 
-    for i,(x,y) in enumerate(K_pairs):
-        K_list[i+shift]   = x
-        K_list[-i-1] = y
-    K_list[zero_position] = K(0)
-    M = matrix(n,[[2*((x-y).is_square())-1
-                   for x in K_list]
-                  for y in K_list])
-    M = M-I(n)
-    assert (M*J(n)).is_zero()
-    assert (M*M.transpose()) == n*I(n)-J(n)
+    for i, (x, y) in enumerate(sorted(K_pairs)):
+        K_list[i + shift] = x
+        K_list[-i - 1] = y
+
+    M = matrix(ZZ, n, n, [(1 if (x - y).is_square() else -1)
+                          for x in K_list for y in K_list])
+    M -= I(n)
+    assert (M * J(n)).is_zero()
+    assert M * M.transpose() == n * I(n) - J(n)
     return M
+
 
 def rshcd_from_close_prime_powers(n):
     r"""
@@ -854,25 +852,25 @@ def rshcd_from_close_prime_powers(n):
         sage: from sage.combinat.matrices.hadamard_matrix import rshcd_from_close_prime_powers
         sage: rshcd_from_close_prime_powers(4)
         [-1 -1  1 -1  1 -1 -1  1 -1  1 -1 -1  1 -1  1 -1]
-        [-1 -1  1  1 -1 -1 -1 -1 -1  1  1 -1 -1  1 -1  1]
-        [ 1  1 -1  1  1 -1 -1 -1 -1 -1  1 -1 -1 -1  1 -1]
+        [-1 -1 -1  1  1 -1 -1  1 -1 -1  1 -1 -1  1 -1  1]
+        [ 1 -1 -1  1  1  1  1 -1 -1 -1 -1 -1 -1 -1  1 -1]
         [-1  1  1 -1  1  1 -1 -1 -1 -1 -1  1 -1 -1 -1  1]
-        [ 1 -1  1  1 -1  1  1 -1 -1 -1 -1 -1  1 -1 -1 -1]
-        [-1 -1 -1  1  1 -1  1  1 -1 -1 -1  1 -1  1 -1 -1]
-        [-1 -1 -1 -1  1  1 -1 -1  1 -1  1 -1  1  1 -1 -1]
-        [ 1 -1 -1 -1 -1  1 -1 -1 -1  1 -1  1 -1  1  1 -1]
+        [ 1  1  1  1 -1 -1 -1 -1 -1 -1  1 -1  1 -1 -1 -1]
+        [-1 -1  1  1 -1 -1  1 -1 -1  1 -1  1 -1  1 -1 -1]
+        [-1 -1  1 -1 -1  1 -1 -1  1 -1  1 -1 -1  1  1 -1]
+        [ 1  1 -1 -1 -1 -1 -1 -1 -1  1 -1 -1 -1  1  1  1]
         [-1 -1 -1 -1 -1 -1  1 -1 -1 -1  1  1  1 -1  1  1]
-        [ 1  1 -1 -1 -1 -1 -1  1 -1 -1 -1 -1  1  1 -1  1]
-        [-1  1  1 -1 -1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1]
-        [-1 -1 -1  1 -1  1 -1  1  1 -1 -1 -1 -1 -1  1  1]
-        [ 1 -1 -1 -1  1 -1  1 -1  1  1 -1 -1 -1 -1 -1  1]
+        [ 1 -1 -1 -1 -1  1 -1  1 -1 -1 -1  1  1  1 -1 -1]
+        [-1  1 -1 -1  1 -1  1 -1  1 -1 -1 -1  1  1 -1 -1]
+        [-1 -1 -1  1 -1  1 -1 -1  1  1 -1 -1  1 -1 -1  1]
+        [ 1 -1 -1 -1  1 -1 -1 -1  1  1  1  1 -1 -1 -1 -1]
         [-1  1 -1 -1 -1  1  1  1 -1  1  1 -1 -1 -1 -1 -1]
-        [ 1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1 -1 -1]
-        [-1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1 -1]
+        [ 1 -1  1 -1 -1 -1  1  1  1 -1 -1 -1 -1 -1 -1  1]
+        [-1  1 -1  1 -1 -1 -1  1  1 -1 -1  1 -1 -1  1 -1]
 
     REFERENCE:
 
-    .. [SWW72] A Street, W. Wallis, J. Wallis,
+    .. [SWW72] \A. Street, W. Wallis, J. Wallis,
       Combinatorics: Room squares, sum-free sets, Hadamard matrices.
       Lecture notes in Mathematics 292 (1972).
     """
@@ -895,6 +893,7 @@ def rshcd_from_close_prime_powers(n):
     assert len(set(map(sum,HH))) == 1
     assert HH**2 == n**2*I(n**2)
     return HH
+
 
 def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     r"""
@@ -981,11 +980,10 @@ def GS_skew_hadamard_smallcases(n, existence=False, check=True):
         92 x 92 dense matrix over Integer Ring...
         sage: GS_skew_hadamard_smallcases(100)
     """
-    from sage.combinat.matrices.hadamard_matrix import\
-         williamson_goethals_seidel_skew_hadamard_matrix as WGS
+    WGS = williamson_goethals_seidel_skew_hadamard_matrix
 
     def pmtoZ(s):
-       return [1 if x == '+' else -1 for x in s]
+        return [1 if x == '+' else -1 for x in s]
 
     if existence:
         return n in [36, 52, 92]
@@ -1207,6 +1205,7 @@ def symmetric_conference_matrix(n, check=True):
         assert (C==C.T and C**2==(n-1)*I(n))
     return C
 
+
 def szekeres_difference_set_pair(m, check=True):
     r"""
     Construct Szekeres `(2m+1,m,1)`-cyclic difference family
@@ -1246,16 +1245,18 @@ def szekeres_difference_set_pair(m, check=True):
     t = F.multiplicative_generator()**2
     G = F.cyclotomic_cosets(t, cosets=[F.one()])[0]
     sG = set(G)
-    A = filter(lambda a: a-F.one() in sG, G)
-    B = filter(lambda b: b+F.one() in sG, G)
+    A = [a for a in G if a - F.one() in sG]
+    B = [b for b in G if b + F.one() in sG]
     if check:
         from itertools import product, chain
-        assert(len(list(A)) == len(list(B)) == m)
-        if m>1:
-            assert(sG==set([xy[0]/xy[1] for xy in chain(product(A,A), product(B,B))]))
-        assert(all(F.one()/b+F.one() in sG for b in B))
-        assert(not any(F.one()/a-F.one() in sG for a in A))
-    return G,A,B
+        assert(len(A) == len(B) == m)
+        if m > 1:
+            assert(sG == set([xy[0] / xy[1]
+                              for xy in chain(product(A, A), product(B, B))]))
+        assert(all(F.one() / b + F.one() in sG for b in B))
+        assert(not any(F.one() / a - F.one() in sG for a in A))
+    return G, A, B
+
 
 def typeI_matrix_difference_set(G,A):
     r"""

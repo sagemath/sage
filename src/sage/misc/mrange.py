@@ -639,9 +639,9 @@ def cantor_product(*args, **kwds):
         [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3)]
 
     Infinite iterators are valid input as well::
-    
+
        sage: from itertools import islice
-       sage: list(islice(cantor_product(ZZ, QQ), 14))
+       sage: list(islice(cantor_product(ZZ, QQ), 14r))
         [(0, 0),
          (1, 0),
          (0, 1),

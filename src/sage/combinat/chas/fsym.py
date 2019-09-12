@@ -14,7 +14,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.bindable_class import BindableClass
@@ -28,6 +28,7 @@ from sage.categories.hopf_algebras import HopfAlgebras
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.tableau import Tableau, StandardTableaux
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.combinat.composition import Composition
 
 
 class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
@@ -148,7 +149,9 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                 return False
             if not self.base_ring().has_coerce_map_from(R.base_ring()):
                 return False
-            if self._realization_name() == R._realization_name(): # The same basis
+            if self._realization_name() == R._realization_name():
+                # The same basis
+
                 def coerce_base_ring(self, x):
                     return self._from_dict(x.monomial_coefficients())
                 return coerce_base_ring
@@ -170,7 +173,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         u = self.one()
         o = self([[1]])
         s = self.base_ring().an_element()
-        return [u, o, self([[1,2]]), o + self([[1],[2]]), u + s*o]
+        return [u, o, self([[1, 2]]), o + self([[1], [2]]), u + s * o]
 
     def _repr_term(self, phi):
         r"""
@@ -190,8 +193,9 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             G[135|24]
         """
         return "{}[{}]".format(self._prefix,
-                               "|".join("".join(map(str,block))
-                                                for block in phi))
+                               "|".join("".join(map(str, block))
+                                        for block in phi))
+
 
 class FSymBases(Category_realization_of_parent):
     r"""
@@ -210,7 +214,8 @@ class FSymBases(Category_realization_of_parent):
             sage: bases.super_categories()
             [Category of realizations of Hopf algebra of standard tableaux over the Integer Ring,
              Join of Category of realizations of hopf algebras over Integer Ring
-                 and Category of graded algebras over Integer Ring,
+                 and Category of graded algebras over Integer Ring
+                 and Category of graded coalgebras over Integer Ring,
              Category of graded connected hopf algebras with basis over Integer Ring]
         """
         R = self.base().base_ring()
@@ -408,6 +413,7 @@ class FSymBases(Category_realization_of_parent):
                 0
             """
             return self.parent().duality_pairing(self, other)
+
 
 class FreeSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -622,6 +628,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
                     ribbon = A.ribbon()
                     if R is ribbon:
                         ST = self._indices
+
                         def R_to_G_on_basis(alpha):
                             return self.sum_of_monomials(ST(t) for t in StandardTableaux(alpha.size())
                                                          if descent_composition(t) == alpha)
@@ -745,6 +752,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
                 return s.sum_of_terms((t.shape(), coeff) for t, coeff in self)
 
     G = Fundamental
+
 
 class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
     r"""
@@ -993,8 +1001,8 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
             from itertools import combinations
             for I in combinations(range(1, npmp1), n):
                 J = [j for j in range(1, npmp1) if (j not in I)]
-                tt1 = [[I[x-1] for x in row] for row in t1]
-                tt2 = [tuple([J[x-1] for x in row]) for row in t2]
+                tt1 = [[I[x - 1] for x in row] for row in t1]
+                tt2 = [tuple([J[x - 1] for x in row]) for row in t2]
                 z.append(ST(Tableau(tt1).slide_multiply(tt2)))
             return self.sum_of_monomials(z)
 
@@ -1011,7 +1019,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
                  + F[12|3] # F[12] + F[12|34] # F[1] + F[125|34] # F[]
             """
             terms = [(t.restrict(i), standardize(t.anti_restrict(i).rectify()))
-                        for i in range(t.size()+1)]
+                     for i in range(t.size() + 1)]
             return self.tensor_square().sum_of_monomials(terms)
 
         class Element(FSymBasis_abstract.Element):
@@ -1040,8 +1048,8 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
 
     F = FundamentalDual
 
-##### utility functions for tableaux
-from sage.combinat.composition import Composition
+
+# some utility functions for tableaux
 
 def standardize(t):
     r"""
@@ -1077,6 +1085,7 @@ def standardize(t):
     ST = StandardTableaux()
     return ST([[std[i] for i in row] for row in t])
 
+
 def ascent_set(t):
     """
     Return the ascent set of a standard tableau ``t``
@@ -1107,16 +1116,17 @@ def ascent_set(t):
         for entry in row:
             row_locations[entry] = i
     n = len(row_locations)
-    if n == 0:
+    if not n:
         return []
     ascents = [n]
     for i in range(1, n):
         # ascent means i+1 appears to the right or above
         x = row_locations[i]
-        u = row_locations[i+1]
+        u = row_locations[i + 1]
         if u <= x:
             ascents.append(i)
     return sorted(ascents)
+
 
 def descent_set(t):
     """
@@ -1146,6 +1156,7 @@ def descent_set(t):
     n = sum(len(row) for row in t)
     return [i for i in range(1, n) if i not in ascents]
 
+
 def descent_composition(t):
     """
     Return the descent composition of a standard tableau ``t``.
@@ -1165,4 +1176,3 @@ def descent_composition(t):
     """
     n = sum(len(row) for row in t)
     return Composition(from_subset=(descent_set(t), n))
-

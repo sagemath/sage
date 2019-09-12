@@ -30,8 +30,8 @@ Any graph backend must redefine the following methods (for which
     :meth:`~GenericGraphBackend.iterator_in_edges` | Iterate over the incoming edges incident to a sequence of vertices.
     :meth:`~GenericGraphBackend.iterator_out_edges` | Iterate over the outbound edges incident to a sequence of vertices.
     :meth:`~GenericGraphBackend.iterator_nbrs` | Iterate over the vertices adjacent to `v`.
-    :meth:`~GenericGraphBackend.iterator_in_nbrs` | Iterate over the vertices u such that the edge `(u,v)` is in ``self`` (that is, predecessors of `v`).
-    :meth:`~GenericGraphBackend.iterator_out_nbrs` | Iterate over the vertices u such that the edge `(v,u)` is in ``self`` (that is, successors of `v`).
+    :meth:`~GenericGraphBackend.iterator_in_nbrs` | Iterate over the in-neighbors of vertex `v`.
+    :meth:`~GenericGraphBackend.iterator_out_nbrs` | Iterate over the out-neighbors of vertex `v`.
     :meth:`~GenericGraphBackend.iterator_verts` | Iterate over the vertices `v` with labels in verts.
     :meth:`~GenericGraphBackend.loops` | Get/set whether or not ``self`` allows loops.
     :meth:`~GenericGraphBackend.multiple_edges` | Get/set whether or not ``self`` allows multiple edges.
@@ -65,9 +65,10 @@ from .c_graph cimport CGraphBackend, CGraph
 
 cdef class GenericGraphBackend(SageObject):
     """
-    A generic wrapper for the backend of a graph.  Various graph classes use
-    extensions of this class.  Note, this graph has a number of placeholder
-    functions, so the doctests are rather silly.
+    A generic wrapper for the backend of a graph.
+
+    Various graph classes use extensions of this class.  Note, this graph has a
+    number of placeholder functions, so the doctests are rather silly.
 
     TESTS::
 
@@ -77,10 +78,13 @@ cdef class GenericGraphBackend(SageObject):
     _loops = False
     _multiple_edges = False
     _name = ''
+
     def add_edge(self, u, v, l, directed):
-        """
-        Add an edge (u,v) to self, with label l.  If directed is True, this is
-        interpreted as an arc from u to v.
+        r"""
+        Add an edge `(u,v)` to ``self``, with label `l`.
+
+        If ``directed`` is ``True``, this is interpreted as an arc from `u` to
+        `v`.
 
         INPUT:
 
@@ -97,14 +101,16 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
          """
         raise NotImplementedError()
+
     def add_edges(self, edges, directed):
         """
-        Add a sequence of edges to self.  If directed is True, these are
-        interpreted as arcs.
+        Add a sequence of edges to ``self``.
+
+        If ``directed`` is ``True``, these are interpreted as arcs.
 
         INPUT:
 
-        - ``edges`` -- list/iterator of edges to be added.
+        - ``edges`` -- list/iterator of edges to be added
 
         - ``directed`` -- boolean
 
@@ -120,7 +126,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def add_vertex(self, name):
         """
-        Add a labelled vertex to self.
+        Add a labelled vertex to ``self``.
 
         INPUT:
 
@@ -139,15 +145,16 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def add_vertices(self, vertices):
         """
-        Add labelled vertices to self.
+        Add labelled vertices to ``self``.
 
         INPUT:
 
-        - ``vertices`` -- iterator of vertex labels. A new label is created,
+        - ``vertices`` -- iterator of vertex labels; a new label is created,
           used and returned in the output list for all ``None`` values in
-          ``vertices``.
+          ``vertices``
 
         OUTPUT:
 
@@ -163,8 +170,9 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def degree(self, v, directed):
-        """
+        r"""
         Return the total number of vertices incident to `v`.
 
         INPUT:
@@ -174,7 +182,7 @@ cdef class GenericGraphBackend(SageObject):
 
         OUTPUT:
 
-            degree of v
+        degree of `v`
 
         TESTS::
 
@@ -185,6 +193,7 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def in_degree(self, v):
         r"""
         Return the in-degree of `v`
@@ -202,6 +211,7 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def out_degree(self, v):
         r"""
         Return the out-degree of `v`
@@ -219,8 +229,9 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def del_edge(self, u, v, l, directed):
-        """
+        r"""
         Delete the edge `(u,v)` with label `l`.
 
         INPUT:
@@ -238,9 +249,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def del_vertex(self, v):
         """
-        Delete a labelled vertex in self.
+        Delete a labelled vertex in ``self``.
 
         INPUT:
 
@@ -255,9 +267,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def del_vertices(self, vertices):
         """
-        Delete labelled vertices in self.
+        Delete labelled vertices in ``self``.
 
         INPUT:
 
@@ -272,9 +285,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def get_edge_label(self, u, v):
-        """
-        Return the edge label of `(u,v)`.
+        r"""
+        Return the edge label of `(u, v)`.
 
         INPUT:
 
@@ -293,9 +307,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def has_edge(self, u, v, l):
-        """
-        True if self has an edge (u,v) with label l.
+        r"""
+        Check whether ``self`` has an edge `(u,v)` with label `l`.
 
         INPUT:
 
@@ -315,9 +330,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def has_vertex(self, v):
-        """
-        True if self has a vertex with label v.
+        r"""
+        Check whether ``self`` has a vertex with label `v`.
 
         INPUT:
 
@@ -335,10 +351,15 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_edges(self, vertices, labels):
         """
-        Iterate over the edges incident to a sequence of vertices. Edges are
-        assumed to be undirected.
+        Iterate over the edges incident to a sequence of vertices.
+
+        Edges are assumed to be undirected.
+
+        This method returns an iterator over the edges `(u, v)` such that either
+        `u` or `v` is in ``vertices`` and the edge `(u, v)` is in ``self``.
 
         INPUT:
 
@@ -359,9 +380,13 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_in_edges(self, vertices, labels):
         """
         Iterate over the incoming edges incident to a sequence of vertices.
+
+        This method returns an iterator over the edges `(u, v)` such that `v` is
+        in ``vertices`` and the edge `(u, v)` is in ``self``.
 
         INPUT:
 
@@ -381,9 +406,13 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_out_edges(self, vertices, labels):
         """
         Iterate over the outbound edges incident to a sequence of vertices.
+
+        This method returns an iterator over the edges `(v, u)` such that `v` is
+        in ``vertices`` and the edge `(v, u)` is in ``self``.
 
         INPUT:
 
@@ -392,8 +421,8 @@ cdef class GenericGraphBackend(SageObject):
 
         OUTPUT:
 
-            a generator which yields edges, with or without labels
-            depending on the labels parameter.
+            a generator which yields edges, with or without labels depending on
+            the labels parameter.
 
         TESTS::
 
@@ -404,9 +433,14 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_nbrs(self, v):
-        """
-        Iterate over the vertices adjacent to v.
+        r"""
+        Iterate over the vertices adjacent to `v`.
+
+        This method returns an iterator over the vertices `u` such that either
+        the edge `(u, v)` or the edge `(v, u)` is in ``self`` (that is,
+        neighbors of `v`).
 
         INPUT:
 
@@ -425,10 +459,13 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_in_nbrs(self, v):
-        """
-        Iterate over the vertices u such that the edge (u,v) is in self
-        (that is, predecessors of v).
+        r"""
+        Iterate over the in-neighbors of vertex `v`.
+
+        This method returns an iterator over the vertices `u` such that the edge
+        `(u, v)` is in ``self`` (that is, predecessors of `v`).
 
         INPUT:
 
@@ -447,10 +484,13 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_out_nbrs(self, v):
-        """
-        Iterate over the vertices u such that the edge (v,u) is in self
-        (that is, successors of v).
+        r"""
+        Iterate over the out-neighbors of `v`.
+
+        This method returns an iterator over the vertices `u` such that the edge
+        `(v, u)` is in ``self`` (that is, successors of `v`).
 
         INPUT:
 
@@ -469,13 +509,14 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def iterator_verts(self, verts):
-        """
-        Iterate over the vertices v with labels in verts.
+        r"""
+        Iterate over the vertices `v` with labels in ``verts``.
 
         INPUT:
 
-        - ``vertex`` -- vertex labels
+        - ``verts`` -- vertex labels
 
         OUTPUT:
 
@@ -514,6 +555,7 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def multiple_edges(self, new=None):
         """
         Get/set whether or not self allows multiple edges.
@@ -537,6 +579,7 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def name(self, new=None):
         """
         Get/set name of self.
@@ -560,9 +603,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def num_edges(self, directed):
         """
-        The number of edges in self
+        Return the number of edges in ``self``
 
         INPUT:
 
@@ -581,9 +625,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def num_verts(self):
         """
-        The number of vertices in self
+        Return the number of vertices in ``self``
 
         TESTS::
 
@@ -594,9 +639,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def relabel(self, perm, directed):
         """
-        Relabel the vertices of self by a permutation.
+        Relabel the vertices of ``self`` by a permutation.
 
         INPUT:
 
@@ -612,9 +658,10 @@ cdef class GenericGraphBackend(SageObject):
             NotImplementedError
         """
         raise NotImplementedError()
+
     def set_edge_label(self, u, v, l, directed):
-        """
-        Label the edge (u,v) by l.
+        r"""
+        Label the edge `(u,v)` by `l`.
 
         INPUT:
 
@@ -633,8 +680,10 @@ cdef class GenericGraphBackend(SageObject):
         raise NotImplementedError()
 
     def __reduce__(self):
-        r""""
+        r"""
         Return a tuple used for pickling this graph.
+
+        OUTPUT:
 
         This function returns a pair ``(f, args)`` such that ``f(*args)``
         produces a copy of ``self``. The function returned is always
@@ -646,18 +695,18 @@ cdef class GenericGraphBackend(SageObject):
             sage: G = Graph(graphs.PetersenGraph(), immutable=True)
             sage: G == loads(dumps(G))
             True
-            sage: uc = [[2,3], [], [1], [1], [1], [3,4]]
-            sage: D = DiGraph(dict([[i,uc[i]] for i in range(len(uc))]), immutable=True)
+            sage: uc = [[2, 3], [], [1], [1], [1], [3, 4]]
+            sage: D = DiGraph({i: uc[i] for i in range(len(uc))}, immutable=True)
             sage: loads(dumps(D)) == D
             True
 
         No problems with loops and multiple edges, with Labels::
 
-            sage: g = Graph(multiedges = True, loops = True)
-            sage: g.add_edges(2*graphs.PetersenGraph().edges())
-            sage: g.add_edge(0,0)
-            sage: g.add_edge(1,1, "a label")
-            sage: g.add_edge([(0,1,"labellll"), (0,1,"labellll"), (0,1,"LABELLLL")])
+            sage: g = Graph(multiedges=True, loops=True)
+            sage: g.add_edges(2 * graphs.PetersenGraph().edges(sort=False))
+            sage: g.add_edge(0, 0)
+            sage: g.add_edge(1, 1, "a label")
+            sage: g.add_edges([(0, 1, "labellll"), (0, 1, "labellll"), (0, 1, "LABELLLL")])
             sage: g.add_vertex("isolated vertex")
             sage: gi = g.copy(immutable=True)
             sage: loads(dumps(gi)) == gi
@@ -665,12 +714,12 @@ cdef class GenericGraphBackend(SageObject):
 
         Similar, with a directed graph::
 
-            sage: g = DiGraph(multiedges = True, loops = True)
-            sage: H = 2*(digraphs.Circuit(15)+DiGraph(graphs.PetersenGraph()))
-            sage: g.add_edges(H.edges())
-            sage: g.add_edge(0,0)
-            sage: g.add_edge(1,1, "a label")
-            sage: g.add_edge([(0,1,"labellll"), (0,1,"labellll"), (0,1,"LABELLLL")])
+            sage: g = DiGraph(multiedges=True, loops=True)
+            sage: H = 2 * (digraphs.Circuit(15) + DiGraph(graphs.PetersenGraph()))
+            sage: g.add_edges(H.edge_iterator())
+            sage: g.add_edge(0, 0)
+            sage: g.add_edge(1, 1, "a label")
+            sage: g.add_edges([(0, 1, "labellll"), (0, 1, "labellll"), (0, 1, "LABELLLL")])
             sage: g.add_vertex("isolated vertex")
             sage: gi = g.copy(immutable=True)
             sage: loads(dumps(gi)) == gi
@@ -683,11 +732,11 @@ cdef class GenericGraphBackend(SageObject):
         # implementation, data_structure, multiedges, directed, loops
         if isinstance(self, CGraphBackend):
             implementation = "c_graph"
-            if isinstance(self,SparseGraphBackend):
+            if isinstance(self, SparseGraphBackend):
                 data_structure = "sparse"
-            elif isinstance(self,DenseGraphBackend):
+            elif isinstance(self, DenseGraphBackend):
                 data_structure = "dense"
-            elif isinstance(self,StaticSparseBackend):
+            elif isinstance(self, StaticSparseBackend):
                 implementation = "static_sparse"
             else:
                 raise Exception
@@ -700,16 +749,16 @@ cdef class GenericGraphBackend(SageObject):
         # Vertices and edges
         vertices = list(self.iterator_verts(None))
         if directed:
-            edges    = list(self.iterator_out_edges(vertices,True))
+            edges    = list(self.iterator_out_edges(vertices, True))
         else:
-            edges    = list(self.iterator_edges(vertices,True))
+            edges    = list(self.iterator_edges(vertices, True))
 
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
                   'multiedges': multiedges}))
 
-def unpickle_graph_backend(directed,vertices,edges,kwds):
+def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""
     Return a backend from its pickled data
 
@@ -724,14 +773,14 @@ def unpickle_graph_backend(directed,vertices,edges,kwds):
 
     INPUT:
 
-    - ``directed`` (boolean)
+    - ``directed`` -- boolean
 
-    - ``vertices`` -- list of vertices.
+    - ``vertices`` -- list of vertices
 
     - ``edges`` -- list of edges
 
     - ``kwds`` -- any dictionary whose keywords will be forwarded to the graph
-      constructor.
+      constructor
 
     This function builds a :class:`Graph` or :class:`DiGraph` from its data, and
     returns the ``_backend`` attribute of this object.
@@ -739,10 +788,10 @@ def unpickle_graph_backend(directed,vertices,edges,kwds):
     EXAMPLES::
 
         sage: from sage.graphs.base.graph_backends import unpickle_graph_backend
-        sage: b = unpickle_graph_backend(0,[0,1,2,3],[(0,3,'label'),(0,0,1)],{'loops':True})
+        sage: b = unpickle_graph_backend(0, [0, 1, 2, 3], [(0, 3, 'label'), (0, 0, 1)], {'loops': True})
         sage: b
         <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
-        sage: list(b.iterator_edges(range(4),1))
+        sage: list(b.iterator_edges(range(4), True))
         [(0, 0, 1), (0, 3, 'label')]
     """
     if directed:
@@ -750,150 +799,6 @@ def unpickle_graph_backend(directed,vertices,edges,kwds):
     else:
         from sage.graphs.graph import Graph as constructor
 
-    G = constructor(data=edges,**kwds)
+    G = constructor(data=edges, **kwds)
     G.add_vertices(vertices)
     return G._backend
-
-class NetworkXGraphDeprecated(SageObject):
-    """
-    Class for unpickling old networkx.XGraph formats
-
-    TESTS::
-
-        sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated as NXGD
-        sage: X = NXGD()
-        doctest:...
-
-    """
-
-    def __init__(self):
-        """
-        Issue deprecation warnings for the old networkx XGraph formats
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated
-            sage: NetworkXGraphDeprecated()
-            <sage.graphs.base.graph_backends.NetworkXGraphDeprecated object at ...>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(10900, "Your graph object is saved in an old format since networkx "+
-                    "was updated to 1.0.1. You can re-save your graph by typing "+
-                    "graph.save(filename) to make this warning go away.")
-
-    def mutate(self):
-        """
-        Change the old networkx XGraph format into the new one.
-
-        OUTPUT:
-
-        - The networkx.Graph or networkx.MultiGraph corresponding to the
-          unpickled data.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated as NXGD
-            sage: X = NXGD()
-            sage: X.adj = {1:{2:7}, 2:{1:7}, 3:{2:[4,5,6,7]}, 2:{3:[4,5,6,7]}}
-            sage: X.multiedges = True
-            sage: G = X.mutate()
-            sage: G.edges()
-            MultiEdgeDataView([(1, 2), (2, 3)])
-            sage: G.edges(data=True)
-            MultiEdgeDataView([(1, 2, {'weight': 7}), (2, 3, {4: {}, 5: {}, 6: {}, 7: {}})])
-
-        """
-        import networkx
-        new_adj = {}
-
-        for node1, edges in self.adj.iteritems():
-            new_adj[node1] = {}
-            for node2, weights in edges.iteritems():
-                new_adj[node1][node2] = {}
-                if weights is not None:
-                    try:
-                        for weight in weights:
-                            new_adj[node1][node2][weight] = {}
-                    except TypeError:
-                        new_adj[node1][node2]['weight'] = weights
-
-        if self.multiedges:
-            G = networkx.MultiGraph(new_adj)
-        else:
-            G = networkx.Graph(new_adj)
-
-        return G
-
-class NetworkXDiGraphDeprecated(SageObject):
-    """
-    Class for unpickling old networkx.XDiGraph formats
-
-    TESTS::
-
-        sage: import sage.graphs.base.graph_backends
-    """
-
-    def __init__(self):
-        """
-        Issue deprecation warnings for the old networkx XDiGraph formats
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXDiGraphDeprecated
-            sage: NetworkXDiGraphDeprecated()
-            doctest:...
-            <sage.graphs.base.graph_backends.NetworkXDiGraphDeprecated object at ...>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(10900, "Your digraph object is saved in an old format since networkx "+
-                    "was updated to 1.0.1. You can re-save your digraph by typing "+
-                    "digraph.save(filename) to make this warning go away.")
-
-    def mutate(self):
-        """
-        Change the old networkx XDiGraph format into the new one.
-
-        OUTPUT:
-
-        - The networkx.DiGraph or networkx.MultiDiGraph corresponding to the
-          unpickled data.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXDiGraphDeprecated as NXDGD
-            sage: X = NXDGD()
-            sage: X.adj = {1:{2:7}, 2:{1:[7,8], 3:[4,5,6,7]}}
-            sage: X.multiedges = True
-            sage: G = X.mutate()
-            sage: G.edges()
-            OutMultiEdgeDataView([(1, 2), (2, 1), (2, 3)])
-            sage: G.edges(data=True)
-            OutMultiEdgeDataView([(1, 2, {'weight': 7}),
-                                  (2, 1, {8: {}, 7: {}}),
-                                  (2, 3, {4: {}, 5: {}, 6: {}, 7: {}})])
-
-        """
-        import networkx
-        new_adj = {}
-
-        for node1, edges in self.adj.iteritems():
-            new_adj[node1] = {}
-            for node2, weights in edges.iteritems():
-                new_adj[node1][node2] = {}
-                if weights is not None:
-                    try:
-                        for weight in weights:
-                            new_adj[node1][node2][weight] = {}
-                    except TypeError:
-                        new_adj[node1][node2]['weight'] = weights
-
-        if self.multiedges:
-            G = networkx.MultiDiGraph(new_adj)
-        else:
-            G = networkx.DiGraph(new_adj)
-
-        return G
-
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('networkx.xgraph','XGraph', NetworkXGraphDeprecated)
-register_unpickle_override('networkx.xdigraph','XDiGraph', NetworkXDiGraphDeprecated)

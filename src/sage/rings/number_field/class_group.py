@@ -613,7 +613,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             sage: K.<a> = QuadraticField(-14)
             sage: CS = K.S_class_group(K.primes_above(2))
             sage: CS.number_field()
-            Number Field in a with defining polynomial x^2 + 14
+            Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
         """
         return self._number_field
 
@@ -634,8 +634,7 @@ class SClassGroup(ClassGroup):
 
         sage: K.<a> = QuadraticField(-974)
         sage: CS = K.S_class_group(K.primes_above(2)); CS
-        S-class group of order 18 with structure C6 x C3
-        of Number Field in a with defining polynomial x^2 + 974
+        S-class group of order 18 with structure C6 x C3 of Number Field in a with defining polynomial x^2 + 974 with a = 31.20897306865447?*I
         sage: CS.gen(0) # random
         Fractional S-ideal class (3, a + 2)
         sage: CS.gen(1) # random
@@ -653,10 +652,10 @@ class SClassGroup(ClassGroup):
             sage: I = K.ideal(2,a)
             sage: S = (I,)
             sage: K.S_class_group(S)
-            S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14
+            S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
             sage: K.<a> = QuadraticField(-105)
             sage: K.S_class_group([K.ideal(13, a + 8)])
-            S-class group of order 4 with structure C2 x C2 of Number Field in a with defining polynomial x^2 + 105
+            S-class group of order 4 with structure C2 x C2 of Number Field in a with defining polynomial x^2 + 105 with a = 10.24695076595960?*I
         """
         AbelianGroupWithValues_class.__init__(self, gens_orders, names, gens,
                                               values_group=number_field.ideal_monoid())
@@ -674,10 +673,10 @@ class SClassGroup(ClassGroup):
             sage: I = K.ideal(2,a)
             sage: S = (I,)
             sage: CS = K.S_class_group(S);CS
-            S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14
+            S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
             sage: T = tuple([])
             sage: CT = K.S_class_group(T);CT
-            S-class group of order 4 with structure C4 of Number Field in a with defining polynomial x^2 + 14
+            S-class group of order 4 with structure C4 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
             sage: CS.S()
             (Fractional ideal (2, a),)
             sage: CT.S()
@@ -741,7 +740,7 @@ class SClassGroup(ClassGroup):
             sage: K.<a> = QuadraticField(-14)
             sage: CS = K.S_class_group(K.primes_above(2))
             sage: CS._repr_()
-            'S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14'
+            'S-class group of order 2 with structure C2 of Number Field in a with defining polynomial x^2 + 14 with a = 3.741657386773942?*I'
         """
         s = 'S-class group of order %s ' % self.order()
         if self.order() > 1:

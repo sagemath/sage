@@ -207,7 +207,7 @@ class p_iter_fork(object):
                         # collect data from process that successfully terminated
                         sobj = os.path.join(dir, '%s.sobj'%pid)
                         try:
-                            with open(sobj) as file:
+                            with open(sobj, "rb") as file:
                                 data = file.read()
                         except IOError:
                             answer = "NO DATA" + W.failure

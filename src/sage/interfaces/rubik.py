@@ -151,7 +151,7 @@ class OptimalSolver:
         self.child.sendline(self.format_cube(facets))
         self.child.expect(r"([LRUDBF'2 ]+)\s+\((\d+)q\*?, (\d+)f\*?\)")
         self.child.sendline(chr(3)) # send ctrl-c
-        return self.child.match.groups()[0].strip()
+        return bytes_to_str(self.child.match.groups()[0]).strip()
 
     def format_cube(self, facets):
         L = []
@@ -209,19 +209,19 @@ class CubexSolver:
         """
         s = self.format_cube(facets)
         child = pexpect.spawn(self.__cmd+" "+s)
-        ix = child.expect(['210.*?:', '^5\d+(.*)'])
+        ix = child.expect(['210.*?:', r'^5\d+(.*)'])
         if ix == 0:
             child.expect(['211', pexpect.EOF])
             moves = bytes_to_str(child.before).strip().replace(',', '').split(' ')
             return " ".join([move_map[m] for m in reversed(moves)])
         else:
             s = child.after
-            while child.expect(['^5\d+', pexpect.EOF]) == 0:
+            while child.expect([r'^5\d+', pexpect.EOF]) == 0:
                 s += child.after
             raise ValueError(bytes_to_str(s))
 
     def format_cube(self, facets):
-        colors = sum([[i]*8 for i in range(1,7)], [])
+        colors = sum([[i]*8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = facets[i]-1

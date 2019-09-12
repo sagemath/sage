@@ -22,8 +22,8 @@ from sage.structure.element cimport Element, parent
 from .expression cimport new_Expression_from_GEx, Expression
 from .ring import SR
 
-from sage.structure.coerce cimport py_scalar_to_element, is_numpy_type, is_mpmath_type
-from sage.structure.element cimport coercion_model
+from sage.structure.coerce cimport (coercion_model,
+        py_scalar_to_element, is_numpy_type, is_mpmath_type)
 from sage.structure.richcmp cimport richcmp
 
 # we keep a database of symbolic functions initialized in a session

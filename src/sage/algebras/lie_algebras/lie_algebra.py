@@ -196,7 +196,7 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         h*e = e*h + 2*e
         h*f = f*h - 2*f
 
-    For convienence, there are two shorthand notations for computing
+    For convenience, there are two shorthand notations for computing
     Lie brackets::
 
         sage: L([h,e])
@@ -246,6 +246,21 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         [0 0 0], [0 0 0], [0 0 0], [0 1 0], [ 0  0  0], [ 0  0 -1]
         )
 
+    There is also the compact real form of matrix Lie algebras
+    implemented (the base ring must currently be a field)::
+
+        sage: L = LieAlgebra(QQ, cartan_type=['A',2], representation="compact real")
+        sage: list(L.basis())
+        [
+        [ 0  1  0]  [ 0  0  1]  [ 0  0  0]  [ i  0  0]  [0 i 0]  [0 0 i]
+        [-1  0  0]  [ 0  0  0]  [ 0  0  1]  [ 0  0  0]  [i 0 0]  [0 0 0]
+        [ 0  0  0], [-1  0  0], [ 0 -1  0], [ 0  0 -i], [0 0 0], [i 0 0],
+        <BLANKLINE>
+        [ 0  0  0]  [0 0 0]
+        [ 0  i  0]  [0 0 i]
+        [ 0  0 -i], [0 i 0]
+        ]
+
     **5.** We construct a free Lie algebra in a few different ways. There are
     two primary representations, as brackets and as polynomials::
 
@@ -287,6 +302,49 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         sage: P.bracket(a, b) + P.bracket(a - c, b + 3*c)
         2*a*b + 3*a*c - 2*b*a + b*c - 3*c*a - c*b
 
+    **6.** Nilpotent Lie algebras are Lie algebras such that there exists an
+    integer `s` such that all iterated brackets of length longer than `s`
+    are zero. They can be constructed from structural coefficients using the
+    ``nilpotent`` keyword::
+
+        sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, nilpotent=True)
+        sage: L
+        Nilpotent Lie algebra on 3 generators (X, Y, Z) over Rational Field
+        sage: L.category()
+        Category of finite dimensional nilpotent lie algebras with basis over Rational Field
+
+    A second example defining the Engel Lie algebra::
+
+        sage: sc = {('X','Y'): {'Z': 1}, ('X','Z'): {'W': 1}}
+        sage: E.<X,Y,Z,W> = LieAlgebra(QQ, sc, nilpotent=True); E
+        Nilpotent Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
+        sage: E.step()
+        3
+        sage: E[X, Y + Z]
+        Z + W
+        sage: E[X, [X, Y + Z]]
+        W
+        sage: E[X, [X, [X, Y + Z]]]
+        0
+
+    A nilpotent Lie algebra will also be constructed if given a ``category``
+    of a nilpotent Lie algebra::
+
+        sage: C = LieAlgebras(QQ).Nilpotent().FiniteDimensional().WithBasis()
+        sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}}, category=C); L
+        Nilpotent Lie algebra on 3 generators (X, Y, Z) over Rational Field
+
+    **7.** Free nilpotent Lie algebras are the truncated versions of the free
+    Lie algebras. That is, the only relations other than anticommutativity
+    and the Jacobi identity among the Lie brackets are that brackets of
+    length higher than the nilpotency step vanish. They can be created by
+    using the ``step`` keyword::
+
+        sage: L = LieAlgebra(ZZ, 2, step=3); L
+        Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Integer Ring
+        sage: L.step()
+        3
+
     REFERENCES:
 
     - [deG2000]_ Willem A. de Graaf. *Lie Algebras: Theory and Algorithms*.
@@ -297,7 +355,8 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
     #    __classcall_private__ will only be called when calling LieAlgebra
     @staticmethod
     def __classcall_private__(cls, R=None, arg0=None, arg1=None, names=None,
-                              index_set=None, abelian=False, **kwds):
+                              index_set=None, abelian=False, nilpotent=False,
+                              category=None, **kwds):
         """
         Select the correct parent based upon input.
 
@@ -314,7 +373,8 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
 
         assoc = kwds.get("associative", None)
         if assoc is not None:
-            return LieAlgebraFromAssociative(assoc, names=names, index_set=index_set)
+            return LieAlgebraFromAssociative(assoc, names=names, index_set=index_set,
+                                             category=category)
 
         # Parse input as a Cartan type
         # -----
@@ -336,6 +396,9 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             if rep == 'matrix':
                 from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra
                 return ClassicalMatrixLieAlgebra(R, ct)
+            if rep == 'compact real':
+                from sage.algebras.lie_algebras.classical_lie_algebra import MatrixCompactRealForm
+                return MatrixCompactRealForm(R, ct)
             raise ValueError("invalid representation")
 
         # Parse the remaining arguments
@@ -376,12 +439,28 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
 
         if isinstance(arg1, dict):
             # Assume it is some structure coefficients
-            from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
-            return LieAlgebraWithStructureCoefficients(R, arg1, names, index_set, **kwds)
+            if nilpotent or (category is not None and category.is_subcategory(LieAlgebras(R).Nilpotent())):
+                from sage.algebras.lie_algebras.nilpotent_lie_algebra import NilpotentLieAlgebra_dense
+                return NilpotentLieAlgebra_dense(R, arg1, names, index_set,
+                                                 category=category, **kwds)
 
-        # Otherwise it must be either a free or abelian Lie algebra
+            from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
+            return LieAlgebraWithStructureCoefficients(R, arg1, names, index_set,
+                                                       category=category, **kwds)
+
+        # Otherwise it must be either a free (nilpotent) or abelian Lie algebra
 
         if arg1 in ZZ:
+            step = kwds.get("step", None)
+            if step:
+                # Parse input as a free nilpotent Lie algebra
+                from sage.algebras.lie_algebras.nilpotent_lie_algebra import FreeNilpotentLieAlgebra
+                del kwds["step"]
+                return FreeNilpotentLieAlgebra(R, arg1, step, names=names, **kwds)
+            elif nilpotent:
+                raise ValueError("free nilpotent Lie algebras must have a"
+                                 " 'step' parameter given")
+
             if isinstance(arg0, str):
                 names = arg0
             if names is None:
@@ -395,6 +474,11 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
                 if arg1 != len(names):
                     raise ValueError("the number of names must equal the"
                                      " number of generators")
+
+        if "step" in kwds or nilpotent:
+            raise ValueError("free nilpotent Lie algebras must have both"
+                             " a number of generators and step parameters"
+                             " specified")
 
         if abelian:
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
@@ -434,7 +518,7 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
         """
         category = LieAlgebras(R).or_subcategory(category)
         Parent.__init__(self, base=R, names=names, category=category)
@@ -450,9 +534,20 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             x*y - y*x
             sage: elt.parent() is L
             True
+
+        TESTS:
+
+        Check that `0` gives the zero element::
+
+            sage: L = lie_algebras.pwitt(GF(5), 5)
+            sage: L(0)
+            0
         """
         if isinstance(x, list) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
+
+        if x == 0:
+            return self.zero()
 
         try:
             if x in self.module():
@@ -461,15 +556,16 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             pass
 
         if x in self.base_ring():
-            if x != 0:
-                raise ValueError("can only convert the scalar 0 into a Lie algebra element")
-            return self.zero()
+            # We have already handled the case when x == 0
+            raise ValueError("can only convert the scalar 0 into a Lie algebra element")
 
         return self.element_class(self, x)
 
     def __getitem__(self, x):
         """
-        If `x` is a pair `(a, b)`, return the Lie bracket `[a, b]`.
+        If ``x`` is a pair `(a, b)`, return the Lie bracket `[a, b]
+        (including if `a` or `b` are Lie (sub)algebras, in which case the
+        corresponding ideal is constructed).
         Otherwise try to return the `x`-th element of ``self``.
 
         EXAMPLES::
@@ -477,8 +573,33 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             sage: L.<x,y> = LieAlgebra(QQ, representation="polynomial")
             sage: L[x, [y, x]]
             -x^2*y + 2*x*y*x - y*x^2
+
+            sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
+            sage: L[L, L]
+            Ideal () of Abelian Lie algebra on 2 generators (x, y) over Rational Field
+
+            sage: L = lie_algebras.Heisenberg(QQ, 1)
+            sage: Z = L[L, L]; Z
+            Ideal (z) of Heisenberg algebra of rank 1 over Rational Field
+            sage: L[Z, L]
+            Ideal () of Heisenberg algebra of rank 1 over Rational Field
+
+            sage: p,q,z = L.basis(); (p, q, z)
+            (p1, q1, z)
+            sage: L[p, L]
+            Ideal (p1) of Heisenberg algebra of rank 1 over Rational Field
+            sage: L[L, p+q]
+            Ideal (p1 + q1) of Heisenberg algebra of rank 1 over Rational Field
         """
         if isinstance(x, tuple) and len(x) == 2:
+            # Check if we need to construct an ideal
+            if x[0] in LieAlgebras:
+                if x[1] in LieAlgebras:
+                    return x[0].product_space(x[1])
+                return x[0].ideal(x[1])
+            elif x[1] in LieAlgebras:
+                return x[1].ideal(x[0])
+            # Otherwise it is the bracket of two elements
             return self(x[0])._bracket_(self(x[1]))
         return super(LieAlgebra, self).__getitem__(x)
 
@@ -671,7 +792,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
         """
         self._indices = index_set
         LieAlgebra.__init__(self, R, names, category)
@@ -685,7 +806,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
 
             sage: L.<x,y> = LieAlgebra(QQ, representation="polynomial")
             sage: L.lie_algebra_generators()
-            Finite family {'y': y, 'x': x}
+            Finite family {'x': x, 'y': y}
         """
         return Family(self._indices, self.monomial, name="monomial map")
 
@@ -755,7 +876,7 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
 
             sage: L.<x,y> = LieAlgebra(QQ, abelian=True)
             sage: L.category()
-            Category of finite dimensional lie algebras with basis over Rational Field
+            Category of finite dimensional nilpotent lie algebras with basis over Rational Field
         """
         LieAlgebraWithGenerators.__init__(self, R, names, index_set, category)
         self.__ngens = len(self._indices)
@@ -921,7 +1042,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
     """
     @staticmethod
     def __classcall_private__(cls, A, gens=None, names=None, index_set=None,
-                              free_lie_algebra=False):
+                              free_lie_algebra=False, category=None):
         """
         Normalize input to ensure a unique representation.
 
@@ -993,15 +1114,24 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
 
         names, index_set = standardize_names_index_set(names, index_set, ngens)
 
+        # We strip the following axioms from the category of the assoc. algebra:
+        #   FiniteDimensional and WithBasis
+        category = LieAlgebras(A.base_ring()).or_subcategory(category)
+        if 'FiniteDimensional' in A.category().axioms():
+            category = category.FiniteDimensional()
+        if 'WithBasis' in A.category().axioms() and gens is None:
+            category = category.WithBasis()
+
         if isinstance(A, MatrixSpace):
             if gens is not None:
                 for g in gens:
                     g.set_immutable()
             return MatrixLieAlgebraFromAssociative(A, gens, names=names,
-                                                   index_set=index_set)
+                                                   index_set=index_set,
+                                                   category=category)
 
         return super(LieAlgebraFromAssociative, cls).__classcall__(cls,
-                     A, gens, names=names, index_set=index_set)
+                     A, gens, names=names, index_set=index_set, category=category)
 
     def __init__(self, A, gens=None, names=None, index_set=None, category=None):
         """
@@ -1022,14 +1152,6 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         """
         self._assoc = A
         R = self._assoc.base_ring()
-
-        # We strip the following axioms from the category of the assoc. algebra:
-        #   FiniteDimensional and WithBasis
-        category = LieAlgebras(R).or_subcategory(category)
-        if 'FiniteDimensional' in self._assoc.category().axioms():
-            category = category.FiniteDimensional()
-        if 'WithBasis' in self._assoc.category().axioms() and gens is None:
-            category = category.WithBasis()
 
         LieAlgebraWithGenerators.__init__(self, R, names, index_set, category)
 
@@ -1132,8 +1254,8 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
             sage: S = GroupAlgebra(G, QQ)
             sage: L = LieAlgebra(associative=S)
             sage: L.lie_algebra_generators()
-            Finite family {(2,3): (2,3), (1,2): (1,2), (1,3): (1,3),
-                           (1,2,3): (1,2,3), (1,3,2): (1,3,2), (): ()}
+            Finite family {(): (), (1,3,2): (1,3,2), (1,2,3): (1,2,3),
+                           (2,3): (2,3), (1,3): (1,3), (1,2): (1,2)}
         """
         if self._gens is not None:
             return self._gens

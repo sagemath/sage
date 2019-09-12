@@ -2,12 +2,6 @@ r"""
 Hall-Littlewood Polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
-
-REFERENCES:
-
-.. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
-   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-   by A. Zelevinsky, Oxford Science Publications.
 """
 from __future__ import absolute_import
 #*****************************************************************************
@@ -662,7 +656,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
                 sage: HLQ([2]).scalar_hl(HLQ([1,1]))
                 0
                 sage: HLP([2]).scalar_hl(HLP([2]))
-                1/(-t + 1)
+                -1/(t - 1)
             """
             parent = self.parent()
             if t is None:
@@ -837,13 +831,13 @@ class HallLittlewood_q(HallLittlewood_generic):
             sage: HLQp = Sym.hall_littlewood().Qp()
             sage: s = Sym.schur(); p = Sym.power()
             sage: HLQ( HLP([2,1]) + HLP([3]) )
-            (1/(t^2-2*t+1))*HLQ[2, 1] + (1/(-t+1))*HLQ[3]
+            (1/(t^2-2*t+1))*HLQ[2, 1] - (1/(t-1))*HLQ[3]
             sage: HLQ(HLQp([2])) # indirect doctest
-            (t/(t^3-t^2-t+1))*HLQ[1, 1] + (1/(-t+1))*HLQ[2]
+            (t/(t^3-t^2-t+1))*HLQ[1, 1] - (1/(t-1))*HLQ[2]
             sage: HLQ(s([2]))
-            (t/(t^3-t^2-t+1))*HLQ[1, 1] + (1/(-t+1))*HLQ[2]
+            (t/(t^3-t^2-t+1))*HLQ[1, 1] - (1/(t-1))*HLQ[2]
             sage: HLQ(p([2]))
-            (1/(t^2-1))*HLQ[1, 1] + (1/(-t+1))*HLQ[2]
+            (1/(t^2-1))*HLQ[1, 1] - (1/(t-1))*HLQ[2]
         """
         HallLittlewood_generic.__init__(self, hall_littlewood)
 

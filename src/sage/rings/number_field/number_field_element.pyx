@@ -1624,6 +1624,20 @@ cdef class NumberFieldElement(FieldElement):
             sage: t[1].norm(K)
             -a
 
+        Verify that :trac:`27469` has been fixed::
+
+            sage: L.<z24> = CyclotomicField(24); L
+            Cyclotomic Field of order 24 and degree 8
+            sage: K = L.subfield(z24^3, 'z8')[0]; K
+            Number Field in z8 with defining polynomial x^4 + 1 with z8 = 0.7071067811865475? + 0.7071067811865475?*I
+            sage: flag, c = K(-7).is_norm(K, element=True)
+            sage: flag
+            True
+            sage: c.norm(K)
+            -7
+            sage: c in L
+            True
+
         AUTHORS:
 
         - Craig Citro (2008-04-05)
@@ -1640,7 +1654,7 @@ cdef class NumberFieldElement(FieldElement):
 
         from sage.rings.number_field.number_field import is_AbsoluteNumberField
         if is_AbsoluteNumberField(L):
-            Lrel = L.relativize(K.hom(L), (L.variable_name()+'0', K.variable_name()+'0') )
+            Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]
             return b, h(x)
@@ -1801,6 +1815,50 @@ cdef class NumberFieldElement(FieldElement):
         else:
             return R(R.complex_field()(self))
 
+    def _acb_(self, R):
+        r"""
+        Convert this number field element to a complex ball.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = QQ[]
+            sage: NF.<a> = NumberField(x^7 + 2, embedding=CC(0.99, 0.47))
+            sage: CBF(a)
+            [0.9947502791976272 +/- 1.09e-17] + [0.4790464865132800 +/- 1.46e-17]*I
+            sage: NF.<a> = NumberField(x^7 + 2, embedding=QQbar(-2)^(1/7))
+            sage: CBF(a)
+            [0.9947502791976272 +/- 1.09e-17] + [0.4790464865132800 +/- 1.46e-17]*I
+            sage: NF.<a> = NumberField(x^7 + 2)
+            sage: CBF(NF(3))
+            3.000000000000000
+            sage: CBF(a)
+            Traceback (most recent call last):
+            ...
+            TypeError: Unable to coerce a to a rational
+        """
+        from sage.rings.complex_arb import ComplexBallField
+        if self.parent().coerce_embedding() is None:
+            return R(self.base_ring()(self))
+        coef = self._coefficients()
+        if not coef:
+            return R.zero()
+        cdef int ini_prec = R.precision()
+        cdef int max_prec = ini_prec + max(mpz_sizeinbase(mpq_numref((<Rational> c).value), 2)
+                                           for c in coef)
+        cdef int prec = ini_prec + 2*len(coef)
+        gen = self._parent.gen_embedding()
+        while True:
+            C = ComplexBallField(prec)
+            g = C(gen)
+            val = C(coef[0])
+            p = C.one()
+            for c in coef[1:]:
+                p *= g
+                val += C(c)*p
+            if prec > max_prec or val.accuracy() >= ini_prec - 4:
+                return R(val)
+            prec *= 2
+
     def __float__(self):
         """
         EXAMPLES::
@@ -1941,7 +1999,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: R(1).gcd(R(4*i))
             Traceback (most recent call last):
             ...
-            NotImplementedError: gcd() for Order in Number Field in i with defining polynomial x^2 + 1 is not implemented
+            NotImplementedError: gcd() for Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I is not implemented
 
         The following field has class number 3, but if the ideal
         ``(self, other)`` happens to be principal, this still works::
@@ -1960,6 +2018,8 @@ cdef class NumberFieldElement(FieldElement):
             ArithmeticError: ideal (a + 1, 2) is not principal, gcd is not defined
             sage: R(2*a - a^2).gcd(0)
             a
+            sage: R(a).gcd(R(2*a)).parent()
+            Maximal Order in Number Field in a with defining polynomial x^3 - 7
         """
         # gcd(0,0) = 0
         if not self and not other:
@@ -1977,7 +2037,7 @@ cdef class NumberFieldElement(FieldElement):
         if len(g) > 1:
             raise ArithmeticError("ideal (%r, %r) is not principal, gcd is not defined" % (self, other) )
 
-        return g[0]
+        return R(g[0])
 
 
     def is_totally_positive(self):
@@ -2229,7 +2289,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: a = K(0)^0; a
             1
             sage: a.parent()
-            Number Field in sqrt2 with defining polynomial x^2 - 2
+            Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
 
         TESTS::
 
@@ -2290,6 +2350,8 @@ cdef class NumberFieldElement(FieldElement):
         cdef ZZ_c gcd
         cdef ZZ_c t1
         cdef ZZX_c t2
+        if ZZ_IsOne(self.__denominator):
+            return
         ZZX_content(t1, self.__numerator)
         ZZ_GCD(gcd, t1, self.__denominator)
         if ZZ_sign(gcd) != ZZ_sign(self.__denominator):
@@ -2312,11 +2374,16 @@ cdef class NumberFieldElement(FieldElement):
         """
         cdef NumberFieldElement x
         cdef NumberFieldElement _right = right
+        cdef ZZ_c g, q1, q2
         x = self._new()
-        ZZ_mul(x.__denominator, self.__denominator, _right.__denominator)
+        ZZ_GCD(g, self.__denominator, _right.__denominator)
+        ZZ_div(q1, self.__denominator, g)
+        ZZ_div(q2, _right.__denominator, g)
+        ZZ_mul(x.__denominator, q1, q2)
+        ZZ_mul(x.__denominator, x.__denominator, g)
         cdef ZZX_c t1, t2
-        ZZX_mul_ZZ(t1, self.__numerator, _right.__denominator)
-        ZZX_mul_ZZ(t2, _right.__numerator, self.__denominator)
+        ZZX_mul_ZZ(t1, self.__numerator, q2)
+        ZZX_mul_ZZ(t2, _right.__numerator, q1)
         ZZX_add(x.__numerator, t1, t2)
         x._reduce_c_()
         return x
@@ -2331,11 +2398,16 @@ cdef class NumberFieldElement(FieldElement):
         """
         cdef NumberFieldElement x
         cdef NumberFieldElement _right = right
+        cdef ZZ_c g, q1, q2
         x = self._new()
-        ZZ_mul(x.__denominator, self.__denominator, _right.__denominator)
+        ZZ_GCD(g, self.__denominator, _right.__denominator)
+        ZZ_div(q1, self.__denominator, g)
+        ZZ_div(q2, _right.__denominator, g)
+        ZZ_mul(x.__denominator, q1, q2)
+        ZZ_mul(x.__denominator, x.__denominator, g)
         cdef ZZX_c t1, t2
-        ZZX_mul_ZZ(t1, self.__numerator, _right.__denominator)
-        ZZX_mul_ZZ(t2, _right.__numerator, self.__denominator)
+        ZZX_mul_ZZ(t1, self.__numerator, q2)
+        ZZX_mul_ZZ(t2, _right.__numerator, q1)
         ZZX_sub(x.__numerator, t1, t2)
         x._reduce_c_()
         return x
@@ -2572,11 +2644,13 @@ cdef class NumberFieldElement(FieldElement):
         EXAMPLES::
 
             sage: K.<a> = NumberField(x^10 - x - 1)
-            sage: long(a)
+            sage: long(a)  # py2
             Traceback (most recent call last):
             ...
             TypeError: cannot coerce nonconstant polynomial to long
-            sage: long(K(1234))
+            sage: long(K(1234)) # py2
+            doctest:...: DeprecationWarning: converting polynomials to longs is deprecated, since long() will no longer be supported in Python 3
+            See https://trac.sagemath.org/27675 for details.
             1234L
 
         The value does not have to be preserved, in the case of fractions.
@@ -3012,7 +3086,7 @@ cdef class NumberFieldElement(FieldElement):
             h ^= mpz_pythonhash(z) + (<Py_hash_t> 2701463124188384701) + (h << 16) + (h >> 2)
 
         ZZ_to_mpz(z, &self.__denominator)
-        # magic number below is floor((1+sqrt(5)) * 2^63)
+        # magic number below is floor((1+sqrt(5)) * 2^61)
         h += (mpz_pythonhash(z) - 1) * (<Py_hash_t> 7461864723258187525)
 
         mpz_clear(z)
@@ -3035,14 +3109,20 @@ cdef class NumberFieldElement(FieldElement):
             sage: (b^2 + 1)._coefficients()
             [1, 0, 1]
         """
-        cdef list coeffs = []
-        cdef Integer den = (<IntegerRing_class>ZZ)._coerce_ZZ(&self.__denominator)
-        cdef Integer numCoeff
+        cdef Rational coeff
         cdef int i
-        for i from 0 <= i <= ZZX_deg(self.__numerator):
-            numCoeff = Integer.__new__(Integer)
-            ZZX_getitem_as_mpz(numCoeff.value, &self.__numerator, i)
-            coeffs.append( numCoeff / den )
+        cdef mpz_t den
+        mpz_init(den)
+        ZZ_to_mpz(den, &self.__denominator)
+        cdef int size = ZZX_deg(self.__numerator) + 1
+        cdef list coeffs = [None]*size
+        for i in range(size):
+            coeff = Rational.__new__(Rational)
+            ZZX_getitem_as_mpz(mpq_numref(coeff.value), &self.__numerator, i)
+            mpz_set(mpq_denref(coeff.value), den)
+            mpq_canonicalize(coeff.value)
+            coeffs[i] = coeff
+        mpz_clear(den)
         return coeffs
 
     cdef void _ntl_coeff_as_mpz(self, mpz_t z, long i):
@@ -3488,7 +3568,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: ((a-b)/2).is_integral()
             False
         """
-        return all([a in ZZ for a in self.absolute_minpoly()])
+        return all(a in ZZ for a in self.absolute_minpoly())
 
     def matrix(self, base=None):
         r"""
@@ -5186,7 +5266,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
 
 
-class CoordinateFunction:
+class CoordinateFunction(object):
     r"""
     This class provides a callable object which expresses
     elements in terms of powers of a fixed field generator `\alpha`.
@@ -5197,7 +5277,7 @@ class CoordinateFunction:
         sage: f = (a + 1).coordinates_in_terms_of_powers(); f
         Coordinate function that writes elements in terms of the powers of a + 1
         sage: f.__class__
-        <class sage.rings.number_field.number_field_element.CoordinateFunction at ...>
+        <class 'sage.rings.number_field.number_field_element.CoordinateFunction'>
         sage: f(a)
         [-1, 1]
         sage: f == loads(dumps(f))

@@ -11,6 +11,7 @@ lists all GAP operations for which ``Operation(x, ...)`` is defined.
 
 import re
 import string
+
 from sage.structure.sage_object import SageObject
 from sage.libs.gap.libgap import libgap
 
@@ -18,11 +19,12 @@ Length = libgap.function_factory('Length')
 FlagsType = libgap.function_factory('FlagsType')
 TypeObj = libgap.function_factory('TypeObj')
 IS_SUBSET_FLAGS = libgap.function_factory('IS_SUBSET_FLAGS')
+GET_OPER_FLAGS = libgap.function_factory('GET_OPER_FLAGS')
 OPERATIONS = libgap.get_global('OPERATIONS')
 NameFunction = libgap.function_factory('NameFunction')
 
 
-NAME_RE = re.compile('(Setter|Getter|Tester)\((.*)\)')
+NAME_RE = re.compile(r'(Setter|Getter|Tester)\((.*)\)')
 
 
 class OperationInspector(SageObject):
@@ -52,7 +54,7 @@ class OperationInspector(SageObject):
 
         String
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.libs.gap.operations import OperationInspector
             sage: opr = OperationInspector(libgap(123))
@@ -74,7 +76,7 @@ class OperationInspector(SageObject):
 
             sage: from sage.libs.gap.operations import OperationInspector
             sage: x = OperationInspector(libgap(123))
-            sage: x.obj
+            sage: print(x.obj)
             123
         """
         return self._obj
@@ -95,20 +97,12 @@ class OperationInspector(SageObject):
             sage: Unknown in x.operations()
             True
         """
-        result = []
-        for i in range(len(OPERATIONS) // 2):
-            match = False
-            for flag_list in OPERATIONS[2*i + 1]:
-                if Length(flag_list) == 0:
-                    continue
-                first_flag = flag_list[0]
-                if IS_SUBSET_FLAGS(self.flags, first_flag):
-                    match = True
-                    break
-            if match:
-                op = OPERATIONS[2*i]
-                result.append(op)
-        return result
+        def mfi(o):
+            filts = GET_OPER_FLAGS(o)
+            return any(all(IS_SUBSET_FLAGS(self.flags, fl) for fl in fls)
+                       for fls in filts)
+
+        return filter(mfi, OPERATIONS)
 
     def op_names(self):
         """

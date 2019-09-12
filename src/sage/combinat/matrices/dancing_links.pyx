@@ -576,11 +576,11 @@ cdef class dancing_linksWrapper:
 
     def one_solution(self, ncpus=None, column=None):
         r"""
-        Return the first solution found after splitting the problem to
-        allow parallel computation.
+        Return the first solution found.
 
-        Usefull when it is very hard just to find one solution to a given
-        problem.
+        This method allows parallel computations which might be useful for
+        some kind of problems when it is very hard just to find one
+        solution.
 
         INPUT:
 
@@ -588,12 +588,20 @@ cdef class dancing_linksWrapper:
           subprocesses to use at the same time. If ``None``, it detects the
           number of effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
+          If ``ncpus=1``, the first solution is searched serially.
         - ``column`` -- integer (default: ``None``), the column used to split
-          the problem, if ``None`` a random column is chosen
+          the problem (see :meth:`restrict`). If ``None``, a random column
+          is chosen. This argument is ignored if ``ncpus=1``.
 
         OUTPUT:
 
         list of rows or ``None`` if no solution is found
+
+        .. NOTE::
+
+            For some case, increasing the number of cpus makes it
+            faster. For other instances, ``ncpus=1`` is faster. It all
+            depends on problem which is considered.
 
         EXAMPLES::
 
@@ -631,7 +639,7 @@ cdef class dancing_linksWrapper:
         big (less than 50ms in the example below)::
 
             sage: S = Subsets(range(11))
-            sage: rows = map(list, S)
+            sage: rows = list(map(list, S))
             sage: dlx = dlx_solver(rows)
             sage: dlx
             Dancing links solver for 11 columns and 2048 rows
@@ -646,6 +654,9 @@ cdef class dancing_linksWrapper:
             sage: any(p.intersection(q) for p,q in combinations(subsets, 2))
             False
         """
+        if ncpus == 1:
+            return self.get_solution() if self.search() else None
+
         if column is None:
             from random import randrange
             column = randrange(self.ncols())
@@ -721,6 +732,25 @@ cdef class dancing_linksWrapper:
              [7, 8],
              [15]]
 
+        If ``ncpus=1``, the computation is not done in parallel::
+
+            sage: sorted(sorted(s) for s in dlx.all_solutions(ncpus=1))
+            [[1, 2, 3, 4],
+             [1, 2, 10],
+             [1, 3, 9],
+             [1, 4, 8],
+             [1, 14],
+             [2, 3, 7],
+             [2, 4, 6],
+             [2, 13],
+             [3, 4, 5],
+             [3, 12],
+             [4, 11],
+             [5, 10],
+             [6, 9],
+             [7, 8],
+             [15]]
+
         TESTS:
 
         When no solution is found::
@@ -735,6 +765,14 @@ cdef class dancing_linksWrapper:
             sage: [d.all_solutions(column=i) for i in range(6)]
             [[], [], [], [], [], []]
         """
+        if ncpus == 1:
+            if self._x.search_is_started():
+                self.reinitialize()
+            L = []
+            while self.search():
+                L.append(self.get_solution())
+            return L
+
         if column is None:
             from random import randrange
             column = randrange(self.ncols())

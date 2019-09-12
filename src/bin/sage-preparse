@@ -126,6 +126,16 @@ def do_preparse(f, files_before=[]):
     # Preparse the body
     body = preparse_file(body)
 
+    # Check for "from __future__ import ..." statements. Those
+    # statements need to come at the top of the file (after the
+    # module-level docstring is okay), so we separate them from the
+    # body.
+    #
+    # Note: this will convert invalid Python to valid, because it will
+    # move all "from __future__ import ..." to the top of the file,
+    # even if they were not at the top originally.
+    future_imports, body = find_future_imports(body)
+
     # Check for load/attach commands.
     body = do_load_and_attach(body, f, files_before)
 
@@ -137,6 +147,8 @@ def do_preparse(f, files_before=[]):
     with atomic_write(fname) as f:
         f.write(coding)
         f.write(header)
+        f.write('\n')
+        f.write(future_imports)
         f.write('\n')
         f.write(sage_incl)
         f.write('\n')
@@ -195,6 +207,48 @@ def find_position_right_after_module_docstring(G):
         # including this one and return that
         return pos_after_line(i)
 
+
+def find_future_imports(G):
+    """
+    Parse a file G as a string, looking for "from __future__ import ...".
+
+    Return a tuple: (the import statements, the file G with those
+    statements removed)
+
+    INPUT:
+        G -- a string; the contents of a file
+
+    This can only handle "from __future__ import ..." statements which
+    are completely on a single line: nothing of the form ::
+
+        from __future__ import \
+            print_function
+
+    or ::
+
+        from __future__ import (print_function,
+                                division)
+
+    This function will raise an error if it detects lines of these forms.
+    """
+    import_statements = []
+    # "from __future__ import ..." should not be indented.
+    m = re.search("^(from __future__ import .*)$", G, re.MULTILINE)
+    while m:
+        statement = m.group(0)
+        # If the import statement ends in a line continuation marker
+        # or if it contains a left parenthesis but not a right one,
+        # then the statement is not complete, so raise an error. (This
+        # is not a perfect check and some bad cases may slip through,
+        # like two left parentheses and only one right parenthesis,
+        # but they should be rare.)
+        if (statement[-1] == '\\' or
+            (statement.find('(') > -1 and statement.find(')') == -1)):
+            raise NotImplementedError('the Sage preparser can only preparse "from __future__ import ..." statements which are on a single line')
+        import_statements.append(statement)
+        G = G[:m.start()] + G[m.end():]
+        m = re.search("^(from __future__ import .*)$", G, re.MULTILINE)
+    return ('\n'.join(import_statements), G)
 
 
 def do_load_and_attach(G, file, files_before):

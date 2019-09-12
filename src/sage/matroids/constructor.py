@@ -324,7 +324,9 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
             True
-            sage: [sorted(C) for C in M.circuits()]
+            sage: [sorted(C) for C in M.circuits()] # py2
+            [['a']]
+            sage: [sorted(C) for C in M.circuits()] # py3 random
             [['a']]
 
 
@@ -604,7 +606,15 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: N = Matroid(M, regular=True)
             sage: N
             Regular matroid of rank 3 on 6 elements with 16 bases
-            sage: Matrix(N)
+            sage: M == N
+            False
+            sage: M.is_isomorphic(N)
+            True
+            sage: Matrix(N) # py2
+            [1 0 0 1 1 0]
+            [0 1 0 1 1 1]
+            [0 0 1 0 1 1]
+            sage: Matrix(N) # py3 random
             [1 0 0 1 1 0]
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
@@ -762,7 +772,8 @@ def Matroid(groundset=None, data=None, **kwds):
                 b.discard(I.pop())
         rk = len(b)
         # Construct the basis matroid of appropriate rank. Note: slow!
-        BB = [frozenset(B) for B in combinations(groundset, rk) if not any([frozenset(C).issubset(B) for C in data])]
+        BB = [frozenset(B) for B in combinations(groundset, rk)
+              if not any(frozenset(C).issubset(B) for C in data)]
         M = BasisMatroid(groundset=groundset, bases=BB)
 
     # Graphs:
@@ -786,10 +797,10 @@ def Matroid(groundset=None, data=None, **kwds):
                 # 3. Use numbers
                 groundset = list(range(m))
         if want_regular:
-        # Construct the incidence matrix
-        # NOTE: we are not using Sage's built-in method because
-        # 1) we would need to fix the loops anyway
-        # 2) Sage will sort the columns, making it impossible to keep labels!
+            # Construct the incidence matrix
+            # NOTE: we are not using Sage's built-in method because
+            # 1) we would need to fix the loops anyway
+            # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices()
             n = G.num_verts()
             A = Matrix(ZZ, n, m, 0)

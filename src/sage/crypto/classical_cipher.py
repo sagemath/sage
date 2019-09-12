@@ -484,7 +484,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,15);
+            sage: E = TranspositionCryptosystem(S,15)
             sage: m = S("THECATANDTHEHAT")
             sage: G = E.key_space()
             sage: G

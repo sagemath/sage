@@ -17,7 +17,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
 from functools import reduce
-from sage.misc.cachefunc import cached_method
+
 
 class Rings(CategoryWithAxiom):
     """
@@ -907,22 +907,22 @@ class Rings(CategoryWithAxiom):
             Note that the same syntax can be used to create number fields::
 
                 sage: QQ[I]
-                Number Field in I with defining polynomial x^2 + 1
+                Number Field in I with defining polynomial x^2 + 1 with I = 1*I
                 sage: QQ[I].coerce_embedding()
                 Generic morphism:
-                 From: Number Field in I with defining polynomial x^2 + 1
-                 To:   Complex Lazy Field
-                 Defn: I -> 1*I
+                  From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+                  To:   Complex Lazy Field
+                  Defn: I -> 1*I
 
             ::
 
                 sage: QQ[sqrt(2)]
-                Number Field in sqrt2 with defining polynomial x^2 - 2
+                Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
                 sage: QQ[sqrt(2)].coerce_embedding()
                 Generic morphism:
-                 From: Number Field in sqrt2 with defining polynomial x^2 - 2
-                 To:   Real Lazy Field
-                 Defn: sqrt2 -> 1.414213562373095?
+                  From: Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
+                  To:   Real Lazy Field
+                  Defn: sqrt2 -> 1.414213562373095?
 
             ::
 
@@ -932,18 +932,18 @@ class Rings(CategoryWithAxiom):
             and orders in number fields::
 
                 sage: ZZ[I]
-                Order in Number Field in I with defining polynomial x^2 + 1
+                Order in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
                 sage: ZZ[sqrt(5)]
-                Order in Number Field in sqrt5 with defining polynomial x^2 - 5
+                Order in Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
                 sage: ZZ[sqrt(2)+sqrt(3)]
-                Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1
+                Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1 with a = 3.146264369941973?
 
             Embeddings are found for simple extensions (when that makes sense)::
 
                 sage: QQi.<i> = QuadraticField(-1, 'i')
                 sage: QQ[i].coerce_embedding()
                 Generic morphism:
-                  From: Number Field in i with defining polynomial x^2 + 1
+                  From: Number Field in i with defining polynomial x^2 + 1 with i = 1*I
                   To:   Complex Lazy Field
                   Defn: i -> 1*I
 
@@ -997,7 +997,7 @@ class Rings(CategoryWithAxiom):
                 sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)
                 sage: QQ[expr].coerce_embedding()
                 Generic morphism:
-                  From: Number Field in a with defining polynomial x^2 - 2
+                  From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
                   To:   Real Lazy Field
                   Defn: a -> 1.414213562373095?
             """
@@ -1046,7 +1046,7 @@ class Rings(CategoryWithAxiom):
                 # how to pass in names?
                 names = tuple(_gen_names(elts))
                 if len(elts) == 1:
-                    from sage.rings.all import CIF, CLF, RIF, RLF
+                    from sage.rings.all import CIF, CLF, RLF
                     elt = elts[0]
                     try:
                         iv = CIF(elt)

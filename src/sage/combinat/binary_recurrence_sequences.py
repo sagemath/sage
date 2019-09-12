@@ -45,13 +45,7 @@ AUTHORS:
 
 -Isabel Vogt (2013): initial version
 
-REFERENCES:
-
-    .. [SV13] Silliman and Vogt. "Powers in Lucas Sequences via Galois Representations." Proceedings of the American Mathematical Society, 2013. :arxiv:`1307.5078v2`
-
-    .. [BMS06] Bugeaud, Mignotte, and Siksek. "Classical and modular approaches to exponential Diophantine equations: I. Fibonacci and Lucas perfect powers." Annals of Math, 2006.
-
-    .. [SS] Shorey and Stewart. "On the Diophantine equation a x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence sequences." Mathematica Scandinavica, 1983.
+See [SV2013]_, [BMS2006]_, and [SS1983]_.
 """
 
 #****************************************************************************#
@@ -388,7 +382,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES:
 
         If `p = \\pm 1 \\mod 5`, then the period of the Fibonacci sequence
-        mod `p` is `p-1` (c.f. Lemma 3.3 of [BMS06]).
+        mod `p` is `p-1` (c.f. Lemma 3.3 of [BMS2006]_).
 
         ::
 
@@ -534,7 +528,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n` is a solution
         to `u_n = y^p` for some integer `y`.  There are only finitely many ``p`` th powers in
-        any recurrence sequence [SS]_.
+        any recurrence sequence [SS1983]_.
 
         INPUT:
 
@@ -549,7 +543,7 @@ class BinaryRecurrenceSequence(SageObject):
         EXAMPLES::
 
             sage: R = BinaryRecurrenceSequence(1,1)        #the Fibonacci sequence
-            sage: R.pthpowers(2, 10**30)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS06]
+            sage: R.pthpowers(2, 10**30)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS2006]_
             [0, 1, 2, 12]
 
             sage: S = BinaryRecurrenceSequence(8,1) #a Lucas sequence

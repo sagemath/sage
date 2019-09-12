@@ -1,8 +1,9 @@
 r"""
 Generation of trees
 
-This is an implementation of the algorithm for generating trees with `n` vertices
-(up to isomorphism) in constant time per tree described in [WRIGHT-ETAL]_.
+This is an implementation of the algorithm for generating trees with `n`
+vertices (up to isomorphism) in constant time per tree described in
+[WRIGHT-ETAL]_.
 
 AUTHORS:
 
@@ -10,9 +11,10 @@ AUTHORS:
 
 REFERENCES:
 
-    .. [WRIGHT-ETAL] Wright, Robert Alan; Richmond, Bruce; Odlyzko, Andrew; McKay, Brendan D.
-       Constant time generation of free trees. SIAM J. Comput. 15 (1986), no. 2,
-       540--548.
+.. [WRIGHT-ETAL] Wright, Robert Alan; Richmond, Bruce; Odlyzko, Andrew;
+  McKay, Brendan D.
+  Constant time generation of free trees. SIAM J. Comput. 15 (1986), no. 2,
+  540--548.
 """
 from __future__ import print_function
 
@@ -133,19 +135,18 @@ cdef class TreeIterator:
             [Graph on 0 vertices]
         """
 
-        if not self.first_time and self.q == 0:
+        if not self.first_time and not self.q:
             raise StopIteration
 
         if self.first_time == 1:
-            if self.vertices == 0:
-                self.first_time = 0
-                self.q = 0
-            else:
+            self.first_time = 0
+            if self.vertices:
                 self.l = <int *>check_allocarray(self.vertices, sizeof(int))
                 self.current_level_sequence = <int *>check_allocarray(self.vertices, sizeof(int))
 
                 self.generate_first_level_sequence()
-                self.first_time = 0
+            else:
+                self.q = 0
         else:
             self.generate_next_level_sequence()
 
@@ -154,25 +155,10 @@ cdef class TreeIterator:
         cdef int vertex2
         cdef object G
 
-#        from networkx import MultiGraph
-#        G = Graph(self.vertices)
-#        cdef object XG = G._backend._nxg
-#
-#        for i from 2 <= i <= self.vertices:
-#            vertex1 = i - 1
-#            vertex2 = self.current_level_sequence[i - 1] - 1
-#            XG.add_edge(vertex1, vertex2)
-#
-#        return G
-
-        # Currently, c_graph does not have all the same functionality as networkx.
-        # Until it does, we can't generate graphs using the c_graph backend even
-        # though it is twice as fast (for our purposes) as networkx.
-
-        G = Graph(self.vertices, implementation='c_graph', sparse=True)
+        G = Graph(self.vertices, sparse=True)
         cdef SparseGraph SG = (<SparseGraphBackend?> G._backend)._cg
 
-        for i from 2 <= i <= self.vertices:
+        for i in range(2, self.vertices + 1):
             vertex1 = i - 1
             vertex2 = self.current_level_sequence[i - 1] - 1
             SG.add_arc_unsafe(vertex1, vertex2)
@@ -196,18 +182,18 @@ cdef class TreeIterator:
         self.q = self.vertices - 1
         self.h1 = k
         self.h2 = self.vertices
-        if self.vertices % 2 == 0:
-            self.c = self.vertices + 1
-        else:
+        if self.vertices % 2:
             self.c = INT_MAX # oo
+        else:
+            self.c = self.vertices + 1
 
         self.r = k
 
-        for i from 1 <= i <= k:
+        for i in range(1, k + 1):
             self.l[i - 1] = i
-        for i from k < i <= self.vertices:
+        for i in range(k + 1, self.vertices + 1):
             self.l[i - 1] = i - k + 1
-        for i from 0 <= i < self.vertices:
+        for i in range(self.vertices):
             self.current_level_sequence[i] = i
         if self.vertices > 2:
             self.current_level_sequence[k] = 1
@@ -238,7 +224,7 @@ cdef class TreeIterator:
         cdef int *w = self.current_level_sequence
 
         if c == n + 1 or p == h2 and (l[h1 - 1] == l[h2 - 1] + 1 and n - h2 > r - h1 or l[h1 - 1] == l[h2 - 1] and n - h2 + 1 < r - h1):
-            if (l[r - 1] > 3):
+            if l[r - 1] > 3:
                 p = r
                 q = w[r - 1]
                 if h1 == r:
@@ -267,7 +253,7 @@ cdef class TreeIterator:
         cdef int oldwq = w[q - 1]
         p = INT_MAX
 
-        for i from oldp <= i <= n:
+        for i in range(oldp, n + 1):
             l[i - 1] = l[i - 1 + delta]
             if l[i - 1] == 2:
                 w[i - 1] = 1
@@ -298,7 +284,7 @@ cdef class TreeIterator:
 
         if fixit == 1:
             r = n - h1 + 1
-            for i from r < i <= n:
+            for i in range(r + 1, n + 1):
                 l[i - 1] = i - r + 1
                 w[i - 1] = i - 1
             w[r] = 1

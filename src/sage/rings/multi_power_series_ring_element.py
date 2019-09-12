@@ -123,7 +123,7 @@ Construct ring homomorphisms from one power series ring to another::
 
 Multiplicative inversion of power series::
 
-    sage: h = 1 + s + t + s*t + s^2*t^2 + 3*s^4 + 3*s^3*t + R.O(5);
+    sage: h = 1 + s + t + s*t + s^2*t^2 + 3*s^4 + 3*s^3*t + R.O(5)
     sage: k = h^-1; k
     1 - s - t + s^2 + s*t + t^2 - s^3 - s^2*t - s*t^2 - t^3 - 2*s^4 -
     2*s^3*t + s*t^3 + t^4 + O(s, t)^5
@@ -131,8 +131,8 @@ Multiplicative inversion of power series::
     1 + O(s, t)^5
 
     sage: f = 1 - 5*s^29 - 5*s^28*t + 4*s^18*t^35 + \
-    4*s^17*t^36 - s^45*t^25 - s^44*t^26 + s^7*t^83 + \
-    s^6*t^84 + R.O(101)
+    ....: 4*s^17*t^36 - s^45*t^25 - s^44*t^26 + s^7*t^83 + \
+    ....: s^6*t^84 + R.O(101)
     sage: h = ~f; h
     1 + 5*s^29 + 5*s^28*t - 4*s^18*t^35 - 4*s^17*t^36 + 25*s^58 + 50*s^57*t
     + 25*s^56*t^2 + s^45*t^25 + s^44*t^26 - 40*s^47*t^35 - 80*s^46*t^36
@@ -148,13 +148,12 @@ AUTHORS:
 - Simon King (08/2012): Use category and coercion framework, :trac:`13412`
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Niles Johnson <nilesj@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six import iteritems, integer_types
 
 from sage.structure.richcmp import richcmp
@@ -175,7 +174,7 @@ def is_MPowerSeries(f):
 
         sage: from sage.rings.power_series_ring_element import is_PowerSeries
         sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
-        sage: M = PowerSeriesRing(ZZ,4,'v');
+        sage: M = PowerSeriesRing(ZZ,4,'v')
         sage: is_PowerSeries(M.random_element(10))
         True
         sage: is_MPowerSeries(M.random_element(10))
@@ -300,6 +299,25 @@ class MPowerSeries(PowerSeries):
             - the background univariate power series ring
             - the foreground polynomial ring
             - a ring that coerces to one of the above two
+
+        EXAMPLES::
+
+            sage: R.<s,t> = PowerSeriesRing(ZZ); R
+            Multivariate Power Series Ring in s, t over Integer Ring
+            sage: f = 1 + t + s + s*t + R.O(3)
+            sage: g = (1/2) * f; g
+            1/2 + 1/2*s + 1/2*t + 1/2*s*t + O(s, t)^3
+            sage: g.parent()
+            Multivariate Power Series Ring in s, t over Rational Field
+            sage: g = (1/2)*f; g
+            1/2 + 1/2*s + 1/2*t + 1/2*s*t + O(s, t)^3
+            sage: g.parent()
+            Multivariate Power Series Ring in s, t over Rational Field
+
+            sage: K = NumberField(x-3,'a')
+            sage: g = K.random_element()*f
+            sage: g.parent()
+            Multivariate Power Series Ring in s, t over Number Field in a with defining polynomial x - 3
 
         TESTS::
 
@@ -578,7 +596,7 @@ class MPowerSeries(PowerSeries):
             -t0^4*t1^3*t2^4 - 2*t0*t1^4*t2^7 + 2*t1*t2^12 + 2*t0^7*t1^5*t2^2
             + O(t0, t1, t2)^15
             sage: f._latex_()
-            '- t_{0}^{4} t_{1}^{3} t_{2}^{4} + 3 t_{0} t_{1}^{4} t_{2}^{7} +
+            '-t_{0}^{4} t_{1}^{3} t_{2}^{4} + 3 t_{0} t_{1}^{4} t_{2}^{7} +
             2 t_{1} t_{2}^{12} + 2 t_{0}^{7} t_{1}^{5} t_{2}^{2}
             + O(t_{0}, t_{1}, t_{2})^{15}'
 
@@ -1033,46 +1051,6 @@ class MPowerSeries(PowerSeries):
         else:
             return quo
 
-#    def _r_action_(self, c):
-#        # multivariate power series rings are assumed to be commutative
-#        return self._l_action_(c)
-
-    def _l_action_(self, c):
-        """
-        Multivariate power series support multiplication by any ring for
-        which there is a supported action on the base ring.
-
-        EXAMPLES::
-
-            sage: R.<s,t> = PowerSeriesRing(ZZ); R
-            Multivariate Power Series Ring in s, t over Integer Ring
-            sage: f = 1 + t + s + s*t + R.O(3)
-            sage: g = f._l_action_(1/2); g
-            1/2 + 1/2*s + 1/2*t + 1/2*s*t + O(s, t)^3
-            sage: g.parent()
-            Multivariate Power Series Ring in s, t over Rational Field
-            sage: g = (1/2)*f; g
-            1/2 + 1/2*s + 1/2*t + 1/2*s*t + O(s, t)^3
-            sage: g.parent()
-            Multivariate Power Series Ring in s, t over Rational Field
-
-            sage: K = NumberField(x-3,'a')
-            sage: g = K.random_element()*f
-            sage: g.parent()
-            Multivariate Power Series Ring in s, t over Number Field in a with defining polynomial x - 3
-
-        """
-        try:
-            f = c * self._bg_value
-            if f.parent() == self.parent()._bg_ps_ring():
-                return MPowerSeries(self.parent(), f, prec=f.prec())
-            else:
-                from sage.rings.all import PowerSeriesRing
-                new_parent = PowerSeriesRing(f.base_ring().base_ring(), num_gens = f.base_ring().ngens(), names = f.base_ring().gens())
-                return MPowerSeries(new_parent, f, prec=f.prec())
-        except (TypeError, AttributeError):
-            raise TypeError("Action not defined.")
-
     def __mod__(self, other):
         """
         TESTS::
@@ -1183,11 +1161,11 @@ class MPowerSeries(PowerSeries):
             sage: R.<a,b,c> = PowerSeriesRing(ZZ); R
             Multivariate Power Series Ring in a, b, c over Integer Ring
             sage: f = 1 + a + b - a*b - b*c - a*c + R.O(4)
-            sage: f.monomials()
-            [1, b*c, b, a, a*c, a*b]
+            sage: sorted(f.monomials())
+            [b*c, a*c, a*b, b, a, 1]
             sage: f = 1 + 2*a + 7*b - 2*a*b - 4*b*c - 13*a*c + R.O(4)
-            sage: f.monomials()
-            [1, b*c, b, a, a*c, a*b]
+            sage: sorted(f.monomials())
+            [b*c, a*c, a*b, b, a, 1]
             sage: f = R.zero()
             sage: f.monomials()
             []
@@ -1654,7 +1632,7 @@ class MPowerSeries(PowerSeries):
                 sage: (a^2).integral(a)
                 Traceback (most recent call last):
                 ...
-                ZeroDivisionError: Inverse does not exist.
+                ZeroDivisionError: inverse of Mod(0, 3) does not exist
         """
         from sage.misc.derivative import derivative_parse
         res = self

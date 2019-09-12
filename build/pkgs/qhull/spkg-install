@@ -1,12 +1,6 @@
-if [ "$SAGE_LOCAL" = "" ]; then
-   echo "SAGE_LOCAL undefined ... exiting";
-   echo "Maybe run 'sage -sh'?"
-   exit 1
-fi
-
 cd src/
 
-cmake -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" -DCMAKE_VERBOSE_MAKEFILE=ON
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON
 
 sdh_make
 

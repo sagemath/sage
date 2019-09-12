@@ -125,6 +125,10 @@ export SAGE_ROOT
 # Note: relocate-once.py deletes itself upon successful completion
 if [ -x "$SAGE_ROOT/relocate-once.py" ]; then
     "$SAGE_ROOT/relocate-once.py"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error running the script 'relocate-once.py'."
+        exit 1
+    fi
 fi
 
 # Run the actual Sage script

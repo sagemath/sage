@@ -62,7 +62,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
                 sage: S = CommutativeAdditiveMonoids().example()
                 sage: (a,b,c,d) = S.additive_semigroup_generators()
                 sage: S.sum((a,b,a,c,a,b))
-                3*a + c + 2*b
+                3*a + 2*b + c
                 sage: S.sum(())
                 0
                 sage: S.sum(()).parent() == S

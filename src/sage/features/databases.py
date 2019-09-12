@@ -29,6 +29,6 @@ class DatabaseCremona(StaticFile):
         """
         filename = name.replace(' ', '_') + ".db"
         StaticFile.__init__(self, "Cremona's database of elliptic curves",
-            filename=os.path.join("cremona", filename),
-            spkg=spkg,
-            url="https://github.com/JohnCremona/ecdata")
+                            filename=os.path.join("cremona", filename),
+                            spkg=spkg,
+                            url="https://github.com/JohnCremona/ecdata")

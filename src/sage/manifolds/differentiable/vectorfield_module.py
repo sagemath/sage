@@ -2064,8 +2064,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             t = (x + 1) dx*dx - y dx*dy + x*y dy*dx + (-y^2 + 2) dy*dy
 
         """
-        from sage.tensor.modules.comp import (CompWithSym, CompFullySym,
-                                              CompFullyAntiSym)
+        from sage.tensor.modules.comp import (CompWithSym, CompFullyAntiSym)
 
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:

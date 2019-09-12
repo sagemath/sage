@@ -503,8 +503,8 @@ def matrix(*args, **kwds):
         [7 8 9]
         Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
         sage: n = matrix(QQ, 2, 2, [1, 1/2, 1/3, 1/4]).numpy(); n
-        array([[ 1.        ,  0.5       ],
-               [ 0.33333333,  0.25      ]])
+        array([[1.        , 0.5       ],
+               [0.33333333, 0.25      ]])
         sage: matrix(QQ, n)
         [  1 1/2]
         [1/3 1/4]

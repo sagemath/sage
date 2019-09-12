@@ -135,7 +135,7 @@ work with lower dimensional cones, you can easily get access to them using
     [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (0, 4),
      (2, 4), (3, 4), (1, 5), (3, 5), (4, 5), (0, 5)]
 
-In fact, you don't have to type ``.cones``::
+In fact, you do not have to type ``.cones``::
 
     sage: [cone.ambient_ray_indices() for cone in fan1(2)]
     [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (0, 4),
@@ -221,15 +221,14 @@ suggest them. (Or implement them on your own and submit a patch to Sage for
 inclusion!)
 """
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import collections
@@ -495,8 +494,9 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         # Construct the fan from Cone objects
         if lattice is None:
             lattice = cones[0].lattice()
-            # If we determine the lattice automatically, we don't want to force
-            # any conversion. TODO: take into account coercions?
+            # If we determine the lattice automatically, we do not
+            # want to force any conversion. TODO: take into account
+            # coercions?
             if check:
                 for cone in cones:
                     if cone.lattice() != lattice:
@@ -544,7 +544,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                     i_cone = cone.intersection(g_cone)
                     if i_cone.is_face_of(cone) and i_cone.is_face_of(g_cone):
                         if i_cone.dim() == cone.dim():
-                            is_generating = False # cone is a face of g_cone
+                            is_generating = False  # cone is a face of g_cone
                             break
                     else:
                         raise ValueError(
@@ -694,6 +694,9 @@ def NormalFan(polytope, lattice=None):
     r"""
     Construct the normal fan of the given rational ``polytope``.
 
+    This returns the inner normal fan. For the outer normal fan, use
+    ``NormalFan(-P)``.
+
     INPUT:
 
     - ``polytope`` -- a full-dimensional :func:`polytope
@@ -765,9 +768,9 @@ def NormalFan(polytope, lattice=None):
             raise dimension_error
         if not polytope.is_compact():
             raise NotImplementedError('the normal fan is only supported for polytopes (compact polyhedra).')
-        cones = [ [ ieq.index() for ieq in vertex.incident() ]
-                  for vertex in polytope.vertices() ]
-        rays =[ ieq.A() for ieq in polytope.inequalities() ]
+        cones = [[ieq.index() for ieq in vertex.incident()]
+                 for vertex in polytope.vertices()]
+        rays = [ieq.A() for ieq in polytope.inequalities()]
     return Fan(cones, rays, lattice=lattice, check=False, is_complete=True)
 
 
@@ -865,7 +868,7 @@ def Fan2d(rays, lattice=None):
         sage: Fan2d([(1,0), (0,1)]).is_complete()
         False
     """
-    if len(rays) == 0:
+    if not rays:
         if lattice is None or lattice.dimension() != 2:
             raise ValueError('you must specify a 2-dimensional lattice when '
                              'you construct a fan without rays.')
@@ -873,12 +876,12 @@ def Fan2d(rays, lattice=None):
 
     # remove multiple rays without changing order
     rays = normalize_rays(rays, lattice)
-    rays = sorted( (r,i) for i,r in enumerate(rays) )
+    rays = sorted( (r, i) for i, r in enumerate(rays) )
     distinct_rays = [ rays[i] for i in range(len(rays)) if rays[i][0] != rays[i-1][0] ]
     if distinct_rays:
-        rays = sorted( (i,r) for r,i in distinct_rays )
+        rays = sorted( (i, r) for r, i in distinct_rays )
         rays = [ r[1] for r in rays ]
-    else: # all given rays were the same
+    else:  # all given rays were the same
         rays = [ rays[0][0] ]
     lattice = rays[0].parent()
     if lattice.dimension() != 2:
@@ -1096,7 +1099,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
       whether this fan is complete or not. By default, it will be determined
       automatically if necessary;
 
-    - ``virtual_rays`` -- if given, must the a list of immutable primitive
+    - ``virtual_rays`` -- if given, must be a list of immutable primitive
       vectors in ``lattice``, see :meth:`virtual_rays` for details. By default,
       it will be determined automatically if necessary.
 
@@ -1360,12 +1363,12 @@ class RationalPolyhedralFan(IntegralRayCollection,
         def FanFace(rays, cones):
             if not cones:       # The top face, fan itself
                 return self
-            if len(cones) == 1: # MAY be a generating cone or NOT!!!
+            if len(cones) == 1:  # MAY be a generating cone or NOT!!!
                 g_cone = self.generating_cone(cones[0])
                 if g_cone.ambient_ray_indices() == rays:
                     return g_cone
             face = Cone_of_fan(ambient=self, ambient_ray_indices=rays)
-            face._star_generator_indices=cones
+            face._star_generator_indices = cones
             return face
         # Check directly if we know completeness already, since *determining*
         # completeness relies on this function
@@ -1375,13 +1378,13 @@ class RationalPolyhedralFan(IntegralRayCollection,
                                 # When there are no rays, fan is the only atom
                                 self._ray_to_cones() if self.rays() else [()],
                                 (cone.ambient_ray_indices() for cone in self),
-                                FanFace, key = id(self))
+                                FanFace, key=id(self))
         else:
             # For general fans we will "merge" face lattices of generating
             # cones.
             L = DiGraph()
-            face_to_rays = dict() # face |---> (indices of fan rays)
-            rays_to_index = dict() # (indices of fan rays) |---> face index
+            face_to_rays = dict()  # face |---> (indices of fan rays)
+            rays_to_index = dict()  # (indices of fan rays) |---> face index
             # face index |---> (indices of containing generating cones)
             index_to_cones = []
             # During construction index 0 will correspond to the fan
@@ -1420,10 +1423,10 @@ class RationalPolyhedralFan(IntegralRayCollection,
             new_order = L.topological_sort()
             # Make sure that generating cones are in the end in proper order
             tail = [rays_to_index[gc.ambient_ray_indices()] for gc in self]
-            tail.append(0) # We know that the fan itself has index 0
+            tail.append(0)  # We know that the fan itself has index 0
             new_order = [n for n in new_order if n not in tail] + tail
             # Make sure that rays are in the beginning in proper order
-            head = [rays_to_index[()]] # Empty face
+            head = [rays_to_index[()]]  # Empty face
             head.extend(rays_to_index[(n,)] for n in range(self.nrays()))
             new_order = head + [n for n in new_order if n not in head]
             # "Invert" this list to a dictionary
@@ -1440,9 +1443,9 @@ class RationalPolyhedralFan(IntegralRayCollection,
             # ray incidence information to the total list, it would be
             # confused with the generating cone in the case of a single cone.
             elements[labels[0]] = FanFace(tuple(range(self.nrays())), ())
-            D = {i:f for i,f in enumerate(elements)}
+            D = {i: f for i, f in enumerate(elements)}
             L.relabel(D)
-            self._cone_lattice = FinitePoset(L, elements, key = id(self))
+            self._cone_lattice = FinitePoset(L, elements, key=id(self))
 
     def _contains(self, cone):
         r"""
@@ -1544,7 +1547,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: f.support_contains(-1/2, sqrt(3))
             False
         """
-        if len(args)==1:
+        if len(args) == 1:
             point = args[0]
         else:
             point = args
@@ -1602,7 +1605,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         try:    # Is completeness of the result obvious?
             return RationalPolyhedralFan(new_cones, rc.rays(), rc.lattice(),
                                     self._is_complete and other._is_complete)
-        except AttributeError: # The result is either incomplete or unknown.
+        except AttributeError:  # The result is either incomplete or unknown.
             return RationalPolyhedralFan(new_cones, rc.rays(), rc.lattice())
 
     def __neg__(self):
@@ -1737,7 +1740,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         # convenient for internal purposes.
         if "_ray_to_cones_tuple" not in self.__dict__:
             ray_to_cones = []
-            for ray in self.rays():
+            for _ in self.rays():
                 ray_to_cones.append([])
             for k, cone in enumerate(self):
                 for j in cone.ambient_ray_indices():
@@ -2089,8 +2092,6 @@ class RationalPolyhedralFan(IntegralRayCollection,
         state.pop("_cone_lattice", None)
         return state
 
-
-
     def cones(self, dim=None, codim=None):
         r"""
         Return the specified cones of ``self``.
@@ -2147,7 +2148,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         """
         if "_cones" not in self.__dict__:
             levels = self.cone_lattice().level_sets()
-            levels.pop() # The very last level is this FAN, not cone.
+            levels.pop()  # The very last level is this FAN, not cone.
             # It seems that there is no reason to believe that the order of
             # faces in level sets has anything to do with the order of
             # vertices in the Hasse diagram of FinitePoset. So, while
@@ -2155,13 +2156,13 @@ class RationalPolyhedralFan(IntegralRayCollection,
             # we will sort faces corresponding to rays, as well as faces
             # corresponding to generating cones, if they are all of the same
             # dimension (otherwise it is not very useful).
-            if len(levels) >= 3: # There are cones of dimension higher than 1
+            if len(levels) >= 3:  # There are cones of dimension higher than 1
                 top_cones = list(levels[-1])
                 if len(top_cones) == self.ngenerating_cones():
                     top_cones.sort(key=lambda cone:
                                             cone.star_generator_indices()[0])
                 levels[-1] = top_cones
-            if len(levels) >= 2: # We have rays
+            if len(levels) >= 2:  # We have rays
                 rays = list(levels[1])
                 rays.sort(key=lambda cone: cone.ambient_ray_indices()[0])
                 levels[1] = rays
@@ -2444,11 +2445,12 @@ class RationalPolyhedralFan(IntegralRayCollection,
         from sage.geometry.cone import classify_cone_2d
         graph = {}
         cones_1d = list(self(1))
-        while len(cones_1d) > 0:
+        while cones_1d:
             c0 = cones_1d.pop()
             c0_edges = {}
             for c1 in c0.adjacent():
-                if c1 not in cones_1d: continue
+                if c1 not in cones_1d:
+                    continue
                 label = classify_cone_2d(c0.ray(0), c1.ray(0), check=False)
                 c0_edges[c1] = label
             graph[c0] = c0_edges
@@ -2547,10 +2549,10 @@ class RationalPolyhedralFan(IntegralRayCollection,
             False
         """
         if (self.lattice() != other.lattice()
-            or self.dim() != other.dim()
-            or self.ngenerating_cones() != other.ngenerating_cones()
-            or self.rays().set() != other.rays().set()
-            or self.virtual_rays().set() != other.virtual_rays().set()):
+              or self.dim() != other.dim()
+              or self.ngenerating_cones() != other.ngenerating_cones()
+              or self.rays().set() != other.rays().set()
+              or self.virtual_rays().set() != other.virtual_rays().set()):
             return False
         # Now we need to really compare cones, which can take a while
         return sorted(sorted(cone.rays()) for cone in self) \
@@ -2958,7 +2960,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         rays.extend(ray for ray in normalize_rays(new_rays, self.lattice())
                         if ray not in self.rays().set())
         if not rays:
-            return self # Nothing has to be done
+            return self  # Nothing has to be done
         if self.lattice().zero() in rays:
             raise ValueError("the origin cannot be used for fan subdivision!")
         if algorithm == "default":
@@ -3039,7 +3041,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
             sage: N = ToricLattice(4)
             sage: for i in range(10):
-            ....:      c = Cone([N.random_element() for j in range(i/2)], lattice=N)
+            ....:      c = Cone([N.random_element() for j in range(i//2)], lattice=N)
             ....:      f = Fan([c])
             ....:      assert matrix(f.rays() + f.virtual_rays()).rank() == 4
             ....:      assert f.dim() + len(f.virtual_rays()) == 4
@@ -3085,10 +3087,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
         REFERENCES:
 
-        ..
-
-            V.V. Batyrev, On the classification of smooth projective
-            toric varieties, Tohoku Math.J. 43 (1991), 569-585
+        - [Bat1991]_
 
         EXAMPLES::
 
@@ -3105,20 +3104,21 @@ class RationalPolyhedralFan(IntegralRayCollection,
             pass
 
         def is_not_facet(I):
-            return all( not(I<=f) for f in facets )
+            return all(not(I <= f) for f in facets)
 
         def is_in_SR(I):
-            return all( not(I>=sr) for sr in SR)
+            return all(not(I >= sr) for sr in SR)
 
         # Generators of SR are index sets I = {i1, ..., ik}
         # called "primitive collections" such that
         # 1) I is not contained in a face
         # 2) if you remove any one entry j, then I-{j} is contained in a facet
-        facets = [frozenset(c.ambient_ray_indices()) for c in self.generating_cones()]
-        all_points = frozenset( range(self.nrays()) )
-        d_max = max(map(len,facets))+1
+        facets = [frozenset(c.ambient_ray_indices())
+                  for c in self.generating_cones()]
+        all_points = frozenset(range(self.nrays()))
+        d_max = max(map(len, facets)) + 1
         SR = []
-        for d in range(1,d_max):
+        for d in range(1, d_max):
             checked = set([])
             for facet in facets:
                 for I_minus_j_list in Combinations(facet, d):
@@ -3161,7 +3161,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
     def linear_equivalence_ideal(self, ring):
         """
-        Return the ideal generated by linear relations
+        Return the ideal generated by linear relations.
 
         INPUT:
 
@@ -3218,12 +3218,11 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: fan = toric_varieties.P(3).fan()
             sage: cone = fan(2)[0]
             sage: bdry = fan.oriented_boundary(cone);  bdry
-            1-d cone of Rational polyhedral fan in 3-d lattice N
-            - 1-d cone of Rational polyhedral fan in 3-d lattice N
+            -1-d cone of Rational polyhedral fan in 3-d lattice N + 1-d cone of Rational polyhedral fan in 3-d lattice N
             sage: bdry[0]
-            (1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
-            sage: bdry[1]
             (-1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
+            sage: bdry[1]
+            (1, 1-d cone of Rational polyhedral fan in 3-d lattice N)
             sage: fan.oriented_boundary(bdry[0][1])
             -0-d cone of Rational polyhedral fan in 3-d lattice N
             sage: fan.oriented_boundary(bdry[1][1])
@@ -3259,7 +3258,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: fan.oriented_boundary(trivial_cone)
             0
         """
-        if not cone is self:
+        if cone is not self:
             cone = self.embed(cone)
         if '_oriented_boundary' in self.__dict__:
             return self._oriented_boundary[cone]
@@ -3267,16 +3266,19 @@ class RationalPolyhedralFan(IntegralRayCollection,
         # Fix (arbitrary) orientations of the generating cones. Induced
         # by ambient space orientation for full-dimensional cones
         from sage.structure.formal_sum import FormalSum
+
         def sign(x):
             assert x != 0
-            if x>0: return +1
-            else: return -1
+            if x > 0:
+                return +1
+            else:
+                return -1
         N_QQ = self.lattice().base_extend(QQ)
         dim = self.lattice_dim()
         outward_vectors = dict()
         generating_cones = []
         for c in self.generating_cones():
-            if c.dim()==dim:
+            if c.dim() == dim:
                 outward_v = []
             else:
                 Q = N_QQ.quotient(c.rays())
@@ -3349,7 +3351,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             0
 
         where the leftmost non-zero entry is in degree `0` and the
-        rightmost entry in degree `d`. See [Klyachko]_, eq. (3.2). This
+        rightmost entry in degree `d`. See [Kly1990]_, eq. (3.2). This
         complex computes the homology of `|\Sigma|\subset N_\RR` with
         arbitrary support,
 
@@ -3408,7 +3410,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: K_extended.homology()
             {-1: 0, 0: 0, 1: 0, 2: 0, 3: 0}
 
-        Homology computations are much faster over `\QQ` if you don't
+        Homology computations are much faster over `\QQ` if you do not
         care about the torsion coefficients::
 
             sage: toric_varieties.P2_123().fan().complex(extended=True, base_ring=QQ)
@@ -3518,5 +3520,6 @@ def discard_faces(cones):
         if not any(cone.is_face_of(other) for other in generators):
             generators.append(cone)
     return generators
+
 
 _discard_faces = discard_faces  # Due to a name conflict in Fan constructor

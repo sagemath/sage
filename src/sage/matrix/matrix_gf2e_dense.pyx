@@ -876,12 +876,12 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [          0           1 a^2 + a + 1           0           a]
             [          0           0           0           1 a^2 + a + 1]
 
-            sage: copy(A).echelon_form('naive');
+            sage: copy(A).echelon_form('naive')
             [          1           0       a + 1           0     a^2 + 1]
             [          0           1 a^2 + a + 1           0           a]
             [          0           0           0           1 a^2 + a + 1]
 
-            sage: copy(A).echelon_form('builtin');
+            sage: copy(A).echelon_form('builtin')
             [          1           0       a + 1           0     a^2 + 1]
             [          0           1 a^2 + a + 1           0           a]
             [          0           0           0           1 a^2 + a + 1]

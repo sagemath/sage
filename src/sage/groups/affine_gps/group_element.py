@@ -47,7 +47,7 @@ from sage.structure.richcmp import richcmp, richcmp_not_equal
 
 
 class AffineGroupElement(MultiplicativeGroupElement):
-    """
+    r"""
     An affine group element.
 
     INPUT:

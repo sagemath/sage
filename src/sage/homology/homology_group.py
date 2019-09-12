@@ -101,7 +101,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
         return times.join(g)
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation of ``self``.
 
         EXAMPLES::

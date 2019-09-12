@@ -8,9 +8,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [Lovasz1979] László Lovász,
-  "On the Shannon capacity of a graph",
-  IEEE Trans. Inf. Th. 25(1979), 1-7.
+[Lov1979]_
 
 Functions
 ---------
@@ -21,7 +19,8 @@ def lovasz_theta(graph):
     Return the value of Lovász theta-function of graph
 
     For a graph `G` this function is denoted by `\theta(G)`, and it can be
-    computed in polynomial time. Mathematically, its most important property is the following:
+    computed in polynomial time. Mathematically, its most important property is
+    the following:
 
     .. MATH::
 
@@ -45,7 +44,7 @@ def lovasz_theta(graph):
 
     EXAMPLES::
 
-          sage: C=graphs.PetersenGraph()
+          sage: C = graphs.PetersenGraph()
           sage: C.lovasz_theta()                             # optional csdp
           4.0
           sage: graphs.CycleGraph(5).lovasz_theta()          # optional csdp
@@ -58,7 +57,7 @@ def lovasz_theta(graph):
         0
     """
     n = graph.order()
-    if n == 0:
+    if not n:
         return 0
 
     from networkx import write_edgelist
@@ -68,11 +67,10 @@ def lovasz_theta(graph):
     from sage.features.csdp import CSDP
     CSDP().require()
 
-    g = graph.relabel(inplace=False, perm=range(1,n+1)).networkx_graph()
+    g = graph.relabel(inplace=False, perm=range(1, n + 1)).networkx_graph()
     tf_name = tmp_filename()
-    tf = open(tf_name, 'wb')
-    tf.write(str(n)+'\n'+str(g.number_of_edges())+'\n')
-    write_edgelist(g, tf, data=False)
-    tf.close()
+    with open(tf_name, 'wb') as tf:
+        tf.write("{}\n{}\n".format(n, g.number_of_edges()).encode())
+        write_edgelist(g, tf, data=False)
     lines = subprocess.check_output(['theta', tf_name])
     return float(lines.split()[-1])

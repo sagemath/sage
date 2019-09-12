@@ -195,8 +195,7 @@ REFERENCES:
 
 - [WP-Struve]_
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Benjamin Jones <benjaminfjones@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -208,30 +207,22 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.functions.other import sqrt
 from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh
+from sage.functions.trig import sin, cos
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.misc.latex import latex
-from sage.rings.all import RR, Integer
-from sage.structure.element import parent, get_coercion_model
+from sage.rings.all import Integer, ZZ, QQ
+from sage.structure.element import get_coercion_model
 from sage.symbolic.constants import pi
 from sage.symbolic.ring import SR
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
-
-# remove after deprecation period
-from sage.calculus.calculus import maxima
-from sage.functions.trig import sin, cos
-from sage.functions.other import real, imag, sqrt
-from sage.misc.sage_eval import sage_eval
-from sage.rings.real_mpfr import RealField
-from sage.plot.plot import plot
-from sage.rings.all import ZZ, QQ
 
 
 class Function_Bessel_J(BuiltinFunction):
@@ -1202,11 +1193,6 @@ def Bessel(*args, **kwds):
             _type = 'J'
     if not (_type in ['I', 'J', 'K', 'Y']):
         raise ValueError("type must be one of I, J, K, Y")
-    # record the numerical evaluation system
-    if 'algorithm' in kwds:
-        _system = kwds['algorithm']
-    else:
-        _system = 'mpmath'
 
     # return the function
     _f = bessel_type_dict[_type]

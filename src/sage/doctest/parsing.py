@@ -28,7 +28,6 @@ import six
 from six import text_type
 
 import re
-import sys
 import doctest
 import collections
 from sage.repl.preparse import preparse, strip_string_literals
@@ -38,10 +37,15 @@ from functools import reduce
 
 from .external import available_software
 
-float_regex = re.compile('\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
+float_regex = re.compile(r'\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
 optional_regex = re.compile(r'(py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w)*))')
 find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
 find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
+find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
+python_prompt = re.compile(r"^(\s*)>>>", re.M)
+# The following are used to allow ... at the beginning of output
+ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
+continuation_tag = "<TEMP_CONTINUATION_TAG>"
 random_marker = re.compile('.*random', re.I)
 tolerance_pattern = re.compile(r'\b((?:abs(?:olute)?)|(?:rel(?:ative)?))? *?tol(?:erance)?\b( +[0-9.e+-]+)?')
 backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
@@ -49,13 +53,18 @@ backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
 
 # Use this real interval field for doctest tolerances. It allows large
 # numbers like 1e1000, it parses strings with spaces like RIF(" - 1 ")
-# out of the box and it is slightly more precise than Python's 53 bits.
+# out of the box and it carries a lot of precision. The latter is
+# useful for testing libraries using arbitrary precision but not
+# guaranteed rounding such as PARI. We use 1044 bits of precision,
+# which should be good to deal with tolerances on numbers computed with
+# 1024 bits of precision.
+#
 # The interval approach also means that we do not need to worry about
 # rounding errors and it is also very natural to see a number with
 # tolerance as an interval.
 # We need to import from sage.all to avoid circular imports.
 from sage.all import RealIntervalField
-RIFtol = RealIntervalField(64)
+RIFtol = RealIntervalField(1044)
 
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
@@ -198,7 +207,7 @@ def normalize_bound_method_repr(s):
 
     This is slightly regressive since it means one can't use the repr of a
     bound method to test whether some element is getting a method from the
-    correct class (imporant sometimes in the cases of dynamic classes).
+    correct class (important sometimes in the cases of dynamic classes).
     However, such tests could be written could be written more explicitly to
     emphasize that they are testing such behavior.
 
@@ -353,7 +362,7 @@ def parse_tolerance(source, want):
         sage: marked.rel_tol
         0
         sage: marked.abs_tol
-        0.010000000000000000000?
+        0.010000000000000000000...?
     """
     safe, literals, state = strip_string_literals(source)
     first_line = safe.split('\n', 1)[0]
@@ -576,7 +585,6 @@ class OriginalSource(object):
             sage: from sage.doctest.parsing import OriginalSource
             sage: with OriginalSource(ex): # indirect doctest
             ....:     ex.source
-            ...
             u'doctest_var = 42; doctest_var^2\n'
         """
         if hasattr(self.example, 'sage_source'):
@@ -597,7 +605,6 @@ class OriginalSource(object):
             sage: from sage.doctest.parsing import OriginalSource
             sage: with OriginalSource(ex): # indirect doctest
             ....:     ex.source
-            ...
             u'doctest_var = 42; doctest_var^2\n'
             sage: ex.source # indirect doctest
             u'doctest_var = Integer(42); doctest_var**Integer(2)\n'
@@ -611,17 +618,18 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
-    def __init__(self, long=False, optional_tags=()):
+    def __init__(self, optional_tags=(), long=False):
         r"""
         INPUT:
 
-        - ``long`` -- boolean, whether to run doctests marked as taking a long time.
         - ``optional_tags`` -- a list or tuple of strings.
+        - ``long`` -- boolean, whether to run doctests marked as taking a
+          long time.
 
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageDocTestParser
-            sage: DTP = SageDocTestParser(True, ('sage','magma','guava'))
+            sage: DTP = SageDocTestParser(('sage','magma','guava'))
             sage: ex = DTP.parse("sage: 2 + 2\n")[1]
             sage: ex.sage_source
             '2 + 2\n'
@@ -653,8 +661,8 @@ class SageDocTestParser(doctest.DocTestParser):
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageDocTestParser
-            sage: DTP = SageDocTestParser(True, ('sage','magma','guava'))
-            sage: DTP2 = SageDocTestParser(False, ('sage','magma','guava'))
+            sage: DTP = SageDocTestParser(('sage','magma','guava'), True)
+            sage: DTP2 = SageDocTestParser(('sage','magma','guava'), False)
             sage: DTP == DTP2
             False
         """
@@ -669,8 +677,8 @@ class SageDocTestParser(doctest.DocTestParser):
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageDocTestParser
-            sage: DTP = SageDocTestParser(True, ('sage','magma','guava'))
-            sage: DTP2 = SageDocTestParser(False, ('sage','magma','guava'))
+            sage: DTP = SageDocTestParser(('sage','magma','guava'), True)
+            sage: DTP2 = SageDocTestParser(('sage','magma','guava'), False)
             sage: DTP != DTP2
             True
         """
@@ -696,7 +704,7 @@ class SageDocTestParser(doctest.DocTestParser):
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageDocTestParser
-            sage: DTP = SageDocTestParser(True, ('sage','magma','guava'))
+            sage: DTP = SageDocTestParser(('sage','magma','guava'))
             sage: example = 'Explanatory text::\n\n    sage: E = magma("EllipticCurve([1, 1, 1, -10, -10])") # optional: magma\n\nLater text'
             sage: parsed = DTP.parse(example)
             sage: parsed[0]
@@ -710,7 +718,7 @@ class SageDocTestParser(doctest.DocTestParser):
         optional argument, the corresponding examples will just be
         removed::
 
-            sage: DTP2 = SageDocTestParser(True, ('sage',))
+            sage: DTP2 = SageDocTestParser(('sage',))
             sage: parsed2 = DTP2.parse(example)
             sage: parsed2
             ['Explanatory text::\n\n', '\nLater text']
@@ -726,7 +734,7 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: type(ex.want)
             <class 'sage.doctest.parsing.MarkedOutput'>
             sage: ex.want.tol
-            2.000000000000000000?e-11
+            2.000000000000000000...?e-11
 
         You can use continuation lines::
 
@@ -754,6 +762,16 @@ class SageDocTestParser(doctest.DocTestParser):
             4321
             sage: print(m)
             87654321
+
+        Test that :trac:`26575` is resolved::
+
+            sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
+            sage: parsed3 = DTP.parse(example3)
+            sage: dte = parsed3[1]
+            sage: dte.sage_source
+            'Zp(5,4,print_mode="digits")(5)\n'
+            sage: dte.want
+            '...00010\n'
         """
         # Hack for non-standard backslash line escapes accepted by the current
         # doctest system.
@@ -768,6 +786,11 @@ class SageDocTestParser(doctest.DocTestParser):
             string = string[:m.start()] + g[0] + "sage:" + g[1] + future
             m = backslash_replacer.search(string,m.start())
 
+        replace_ellipsis = not python_prompt.search(string)
+        if replace_ellipsis:
+            # There are no >>> prompts, so we can allow ... to begin the output
+            # We do so by replacing ellipses with a special tag, then putting them back after parsing
+            string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
         res = doctest.DocTestParser.parse(self, string, *args)
@@ -797,6 +820,10 @@ class SageDocTestParser(doctest.DocTestParser):
                 elif self.optional_only:
                     self.optionals['sage'] += 1
                     continue
+                if replace_ellipsis:
+                    item.want = item.want.replace(ellipsis_tag, "...")
+                    if item.exc_msg is not None:
+                        item.exc_msg = item.exc_msg.replace(ellipsis_tag, "...")
                 item.want = parse_tolerance(item.source, item.want)
                 if item.source.startswith("sage: "):
                     item.sage_source = item.source[6:]
@@ -816,7 +843,7 @@ class SageOutputChecker(doctest.OutputChecker):
         sage: from sage.doctest.parsing import SageOutputChecker, MarkedOutput, SageDocTestParser
         sage: import doctest
         sage: optflag = doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS
-        sage: DTP = SageDocTestParser(True, ('sage','magma','guava'))
+        sage: DTP = SageDocTestParser(('sage','magma','guava'))
         sage: OC = SageOutputChecker()
         sage: example2 = 'sage: gamma(1.6) # tol 2.0e-11\n0.893515349287690'
         sage: ex = DTP.parse(example2)[1]
@@ -827,7 +854,7 @@ class SageOutputChecker(doctest.OutputChecker):
         sage: type(ex.want)
         <class 'sage.doctest.parsing.MarkedOutput'>
         sage: ex.want.tol
-        2.000000000000000000?e-11
+        2.000000000000000000...?e-11
         sage: OC.check_output(ex.want, '0.893515349287690', optflag)
         True
         sage: OC.check_output(ex.want, '0.8935153492877', optflag)
@@ -1106,7 +1133,7 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: zerotol = doctest.Example('',MarkedOutput("0.0\n").update(tol=.1))
             sage: zeroabs = doctest.Example('',MarkedOutput("0.0\n").update(abs_tol=.1))
             sage: zerorel = doctest.Example('',MarkedOutput("0.0\n").update(rel_tol=.1))
-            sage: tlist = doctest.Example('',MarkedOutput("[10.0, 10.0, 10.0, 10.0, 10.0, 10.0]\n").update(abs_tol=1.0))
+            sage: tlist = doctest.Example('',MarkedOutput("[10.0, 10.0, 10.0, 10.0, 10.0, 10.0]\n").update(abs_tol=0.987))
             sage: zero = "0.0"
             sage: nf = "9.5"
             sage: ten = "10.05"
@@ -1122,7 +1149,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 9.5
             Tolerance exceeded:
-                10.0 vs 9.5, tolerance 5e-01 > 1e-01
+                10.0 vs 9.5, tolerance 5e-1 > 1e-1
 
             sage: print(OC.output_difference(tentol,zero,optflag))
             Expected:
@@ -1130,7 +1157,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 0.0
             Tolerance exceeded:
-                10.0 vs 0.0, tolerance 1e+00 > 1e-01
+                10.0 vs 0.0, tolerance 1e0 > 1e-1
 
             sage: print(OC.output_difference(tentol,eps,optflag))
             Expected:
@@ -1138,7 +1165,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 -0.05
             Tolerance exceeded:
-                10.0 vs -0.05, tolerance 1e+00 > 1e-01
+                10.0 vs -0.05, tolerance 2e0 > 1e-1
 
             sage: print(OC.output_difference(tlist,L,optflag))
             Expected:
@@ -1146,8 +1173,8 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 [9.9, 8.7, 10.3, 11.2, 10.8, 10.0]
             Tolerance exceeded in 2 of 6:
-                10.0 vs 8.7, tolerance 1e+00 > 1e+00
-                10.0 vs 11.2, tolerance 1e+00 > 1e+00
+                10.0 vs 8.7, tolerance 2e0 > 9.87e-1
+                10.0 vs 11.2, tolerance 2e0 > 9.87e-1
 
         TESTS::
 
@@ -1157,7 +1184,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 0.0
             Tolerance exceeded:
-                10.0 vs 0.0, tolerance 1e+01 > 1e-01
+                10.0 vs 0.0, tolerance 1e1 > 1e-1
 
             sage: print(OC.output_difference(tenrel,zero,optflag))
             Expected:
@@ -1165,7 +1192,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 0.0
             Tolerance exceeded:
-                10.0 vs 0.0, tolerance 1e+00 > 1e-01
+                10.0 vs 0.0, tolerance 1e0 > 1e-1
 
             sage: print(OC.output_difference(tenrel,eps,optflag))
             Expected:
@@ -1173,7 +1200,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 -0.05
             Tolerance exceeded:
-                10.0 vs -0.05, tolerance 1e+00 > 1e-01
+                10.0 vs -0.05, tolerance 2e0 > 1e-1
 
             sage: print(OC.output_difference(zerotol,ten,optflag))
             Expected:
@@ -1181,7 +1208,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 10.05
             Tolerance exceeded:
-                0.0 vs 10.05, tolerance 1e+01 > 1e-01
+                0.0 vs 10.05, tolerance 2e1 > 1e-1
 
             sage: print(OC.output_difference(zeroabs,ten,optflag))
             Expected:
@@ -1189,7 +1216,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 10.05
             Tolerance exceeded:
-                0.0 vs 10.05, tolerance 1e+01 > 1e-01
+                0.0 vs 10.05, tolerance 2e1 > 1e-1
 
             sage: print(OC.output_difference(zerorel,eps,optflag))
             Expected:
@@ -1197,7 +1224,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 -0.05
             Tolerance exceeded:
-                0.0 vs -0.05, tolerance inf > 1e-01
+                0.0 vs -0.05, tolerance +infinity > 1e-1
 
             sage: print(OC.output_difference(zerorel,ten,optflag))
             Expected:
@@ -1205,7 +1232,7 @@ class SageOutputChecker(doctest.OutputChecker):
             Got:
                 10.05
             Tolerance exceeded:
-                0.0 vs 10.05, tolerance inf > 1e-01
+                0.0 vs 10.05, tolerance +infinity > 1e-1
         """
         got = self.human_readable_escape_sequences(got)
         want = example.want
@@ -1215,30 +1242,35 @@ class SageOutputChecker(doctest.OutputChecker):
                 diff += "\n"
             want_str = [g[0] for g in float_regex.findall(want)]
             got_str = [g[0] for g in float_regex.findall(got)]
-            want_values = [RIFtol(g) for g in want_str]
-            want_intervals = [self.add_tolerance(v, want) for v in want_values]
-            got_values = [RIFtol(g) for g in got_str]
-            if len(want_values) == len(got_values):
-                def failstr(astr, bstr, actual, desired):
-                    return "    %s vs %s, tolerance %.0e > %.0e"%(astr, bstr, RIFtol(actual).center(), RIFtol(desired).center())
+            if len(want_str) == len(got_str):
+                failures = []
+                def fail(x, y, actual, desired):
+                    failstr = "    {} vs {}, tolerance {} > {}".format(x, y,
+                        RIFtol(actual).upper().str(digits=1, no_sci=False),
+                        RIFtol(desired).center().str(digits=15, skip_zeroes=True, no_sci=False)
+                    )
+                    failures.append(failstr)
 
-                fails = []
-                for a, ainterval, b, astr, bstr in zip(want_values, want_intervals, got_values, want_str, got_str):
-                    if not ainterval.overlaps(b):
+                for wstr, gstr in zip(want_str, got_str):
+                    w = RIFtol(wstr)
+                    g = RIFtol(gstr)
+                    if not g.overlaps(self.add_tolerance(w, want)):
                         if want.tol:
-                            if a == 0:
-                                fails.append(failstr(astr, bstr, abs(b), want.tol))
+                            if not w:
+                                fail(wstr, gstr, abs(g), want.tol)
                             else:
-                                fails.append(failstr(astr, bstr, abs(1 - b/a), want.tol))
+                                fail(wstr, gstr, abs(1 - g/w), want.tol)
                         elif want.abs_tol:
-                            fails.append(failstr(astr, bstr, abs(a - b), want.abs_tol))
+                            fail(wstr, gstr, abs(g - w), want.abs_tol)
                         else:
-                            fails.append(failstr(astr, bstr, abs(1 - b/a), want.rel_tol))
+                            fail(wstr, gstr, abs(1 - g/w), want.rel_tol)
 
-                if fails:
-                    if len(want_values) == 1:
+                if failures:
+                    if len(want_str) == 1:
                         diff += "Tolerance exceeded:\n"
                     else:
-                        diff += "Tolerance exceeded in %s of %s:\n"%(len(fails), len(want_values))
-                    diff += "\n".join(fails) + "\n"
+                        diff += "Tolerance exceeded in %s of %s:\n"%(len(failures), len(want_str))
+                    diff += "\n".join(failures) + "\n"
+            elif "..." in want:
+                diff += "Note: combining tolerance (# tol) with ellipsis (...) is not supported\n"
         return diff

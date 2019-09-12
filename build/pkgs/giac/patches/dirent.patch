@@ -19,7 +19,7 @@ diff -ru a/src/help.cc b/src/help.cc
  #ifndef NO_NAMESPACE_GIAC
  namespace giac {
  #endif // ndef NO_NAMESPACE_GIAC
-@@ -933,7 +942,7 @@
+@@ -944,7 +953,7 @@
    static int dir_select (const struct dirent *d){
  #endif
      string s(d->d_name);
@@ -28,7 +28,7 @@ diff -ru a/src/help.cc b/src/help.cc
        return s!="." && s!="..";
      }
      int t=s.size();
-@@ -997,8 +1006,7 @@
+@@ -1008,8 +1017,7 @@
  	    index_done=find_index(subdir,s,mtt,mall);
  	}
  #else

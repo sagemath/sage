@@ -198,12 +198,18 @@ class ComplexField_class(ring.Field):
 
             sage: C = ComplexField(200)
             sage: C.category()
-            Join of Category of fields and Category of complete metric spaces
+            Join of Category of fields and Category of infinite sets and Category of complete metric spaces
             sage: TestSuite(C).run()
+
+            sage: CC.is_field()
+            True
+
+            sage: CC.is_finite()
+            False
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Metric().Complete())
+        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
 #        self._populate_coercion_lists_()
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)])
 
@@ -554,28 +560,6 @@ class ComplexField_class(ring.Field):
         if n != 0:
             raise IndexError("n must be 0")
         return ComplexNumber(self, 0, 1)
-
-    def is_field(self, proof = True):
-        """
-        Return ``True`` since the complex numbers are a field.
-
-        EXAMPLES::
-
-            sage: CC.is_field()
-            True
-        """
-        return True
-
-    def is_finite(self):
-        """
-        Return ``False`` since there are infinite number of complex numbers.
-
-        EXAMPLES::
-
-            sage: CC.is_finite()
-            False
-        """
-        return False
 
     def construction(self):
         """

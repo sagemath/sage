@@ -44,13 +44,13 @@ class GaloisGroup_v1(SageObject):
 
         sage: K = QQ[2^(1/3)]
         sage: G = K.galois_group(type="pari"); G
-        Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the Number Field in a with defining polynomial x^3 - 2
+        Galois group PARI group [6, -1, 2, "S3"] of degree 3 of the Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
         sage: G.order()
         6
         sage: G.group()
         PARI group [6, -1, 2, "S3"] of degree 3
         sage: G.number_field()
-        Number Field in a with defining polynomial x^3 - 2
+        Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
     """
 
     def __init__(self, group, number_field):
@@ -132,10 +132,10 @@ class GaloisGroup_v1(SageObject):
             sage: G = NumberField(x^3 + 2*x + 2, 'theta').galois_group(type="pari")
             sage: H = G.group(); H
             PARI group [6, -1, 2, "S3"] of degree 3
-            sage: P = H.permutation_group(); P  # optional - database_gap
+            sage: P = H.permutation_group(); P
             Transitive group number 2 of degree 3
-            sage: list(P)                       # optional - database_gap
-            [(), (1,2), (1,2,3), (2,3), (1,3,2), (1,3)]
+            sage: sorted(P)
+            [(), (2,3), (1,2), (1,2,3), (1,3,2), (1,3)]
         """
         return self.__group
 
@@ -190,7 +190,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23,'a').galois_group()
-            Galois group of Number Field in a with defining polynomial x^2 + 23
+            Galois group of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I
             sage: NumberField(x^3 - 2, 'b').galois_group()
             Traceback (most recent call last):
             ...
@@ -298,7 +298,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
 
             sage: G = QuadraticField(-23, 'a').galois_group()
             sage: G._repr_()
-            'Galois group of Number Field in a with defining polynomial x^2 + 23'
+            'Galois group of Number Field in a with defining polynomial x^2 + 23 with a = 4.795831523312720?*I'
             sage: G = NumberField(x^3 - 2, 'a').galois_group(names='b')
             sage: G._repr_()
             'Galois group of Galois closure in b of Number Field in a with defining polynomial x^3 - 2'
@@ -650,10 +650,11 @@ class GaloisGroup_subgroup(GaloisGroup_v2):
             sage: G = L.galois_group()
             sage: H = G.decomposition_group(L.primes_above(3)[0])
             sage: H.fixed_field()
-            (Number Field in a0 with defining polynomial x^2 + 2, Ring morphism:
-            From: Number Field in a0 with defining polynomial x^2 + 2
-            To:   Number Field in a with defining polynomial x^4 + 1
-            Defn: a0 |--> a^3 + a)
+            (Number Field in a0 with defining polynomial x^2 + 2 with a0 = a^3 + a,
+             Ring morphism:
+               From: Number Field in a0 with defining polynomial x^2 + 2 with a0 = a^3 + a
+               To:   Number Field in a with defining polynomial x^4 + 1
+               Defn: a0 |--> a^3 + a)
 
         """
         if self.order() == 1:
@@ -712,8 +713,8 @@ class GaloisGroupElement(PermutationGroupElement):
 
             sage: G = QuadraticField(-7,'w').galois_group()
             sage: G[1].as_hom()
-            Ring endomorphism of Number Field in w with defining polynomial x^2 + 7
-            Defn: w |--> -w
+            Ring endomorphism of Number Field in w with defining polynomial x^2 + 7 with w = 2.645751311064591?*I
+              Defn: w |--> -w
 
         TESTS:
 

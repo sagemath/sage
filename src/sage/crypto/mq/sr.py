@@ -184,9 +184,9 @@ Note that the S-Box object for SR can be constructed with a call to ``sr.sbox()`
    sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True)
    sage: S = sr.sbox()
 
-For example, we can now study the difference distribution matrix of ``S``::
+For example, we can now study the difference distribution table of ``S``::
 
-   sage: S.difference_distribution_matrix()
+   sage: S.difference_distribution_table()
    [16  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0]
    [ 0  2  2  2  2  0  0  0  2  0  0  0  2  4  0  0]
    [ 0  2  0  4  2  2  2  0  0  2  0  0  0  0  0  2]
@@ -1080,7 +1080,7 @@ class SR_generic(MPolynomialSystemGenerator):
         return random_matrix(self.base_ring(), self._r, self._c, *args, **kwds)
 
     def random_vector(self, *args, **kwds):
-        """
+        r"""
         Return a random vector as it might appear in the algebraic
         expression of self.
 
@@ -1534,7 +1534,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
 
     def varformatstr(self, name, n=None, rc=None, e=None):
-        """
+        r"""
         Return a format string which is understood by print et al.
 
         If a numerical value is omitted, the default value of ``self``
@@ -1913,7 +1913,7 @@ class SR_generic(MPolynomialSystemGenerator):
             return tuple(lin + sbox)
 
     def key_schedule_polynomials(self, i):
-        """
+        r"""
         Return polynomials for the `i`-th round of the key
         schedule.
 
@@ -2251,7 +2251,7 @@ class SR_gf2n(SR_generic):
             raise TypeError
 
     def antiphi(self, l):
-        """
+        r"""
         The operation `\phi^{-1}` from [MR2002]_ or the inverse of ``self.phi``.
 
         INPUT:
@@ -2472,7 +2472,7 @@ class SR_gf2n(SR_generic):
         return [xi[j, 0]*wi[j, 0] + 1 for j in range(length)]
 
     def field_polynomials(self, name, i, l=None):
-        """
+        r"""
         Return list of conjugacy polynomials for a given round ``i``
         and name ``name``.
 
@@ -2657,7 +2657,7 @@ class SR_gf2(SR_generic):
         else: raise TypeError
 
     def antiphi(self, l):
-        """
+        r"""
         The operation `\phi^{-1}` from [MR2002]_ or the inverse of ``self.phi``.
 
         INPUT:
@@ -3197,7 +3197,7 @@ class SR_gf2(SR_generic):
         return l
 
     def field_polynomials(self, name, i, l=None):
-        """
+        r"""
         Return list of field polynomials for a given round ``i`` and
         name ``name``.
 

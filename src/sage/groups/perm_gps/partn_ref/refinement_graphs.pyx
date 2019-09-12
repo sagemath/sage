@@ -11,19 +11,17 @@ REFERENCE:
   Vol. 30 (1981), pp. 45-87.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function
-
-from sage.misc.decorators import rename_keyword
 
 from .data_structures cimport *
 include "sage/data_structures/bitset.pxi"
@@ -177,7 +175,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     sig_free(output)
     return output_py
 
-@rename_keyword(deprecation=21111, certify='certificate')
+
 def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificate=False,
                     verbosity=0, use_indicator_function=True, sparse=True,
                     base=False, order=False):
@@ -376,14 +374,6 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
 
         sage: st(Graph(':Dkw'), [range(5)], lab=False, dig=True)
         [[4, 1, 2, 3, 0], [0, 2, 1, 3, 4]]
-
-    TESTS::
-
-        sage: G = Graph()
-        sage: st(G, [], certify=True)
-        doctest...: DeprecationWarning: use the option 'certificate' instead of 'certify'
-        See http://trac.sagemath.org/21111 for details.
-        ([], Graph on 0 vertices, {})
     """
     cdef CGraph G
     cdef int i, j, n

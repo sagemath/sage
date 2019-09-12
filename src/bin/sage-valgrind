@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ -z $SAGE_EXTCODE ]; then
+    SAGE_EXTCODE=`${0/-valgrind} -c "from sage.env import SAGE_EXTCODE; print(SAGE_EXTCODE)"`
+fi
+
 SUPP=""
 if [ -f "$SAGE_EXTCODE/valgrind/python.supp" ]; then
     SUPP+=" --suppressions=$SAGE_EXTCODE/valgrind/python.supp"
@@ -19,4 +23,4 @@ else
     echo "Using default flags: $MEMCHECK_FLAGS"
 fi
 
-valgrind --tool=memcheck $MEMCHECK_FLAGS python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
+valgrind --tool=memcheck $MEMCHECK_FLAGS sage-ipython "$@" -i

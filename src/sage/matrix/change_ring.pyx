@@ -21,7 +21,8 @@ def integer_to_real_double_dense(Matrix_integer_dense A):
     OUTPUT:
         -- a dense real double matrix
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: a = matrix(ZZ,2,3,[-2,-5,3,4,8,1030339830489349908])
         sage: a.change_ring(RDF)
         [                  -2.0                   -5.0                    3.0]

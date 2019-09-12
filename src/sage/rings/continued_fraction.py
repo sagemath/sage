@@ -773,24 +773,6 @@ class ContinuedFraction_base(SageObject):
 
     p = numerator
 
-    def pn(self, n):
-        r"""
-        Return the numerator of the `n`-th partial convergent of ``self``.
-
-        This method is deprecated since :trac:`14567` and :meth:`numerator`
-        should be used instead.
-
-        EXAMPLES::
-
-            sage: continued_fraction([1,2,3,5,4]).pn(3)
-            doctest:...: DeprecationWarning: pn is deprecated. Use the methods p or numerator instead.
-            See http://trac.sagemath.org/14567 for details.
-            53
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(14567, 'pn is deprecated. Use the methods p or numerator instead.')
-        return self.numerator(n)
-
     def denominator(self, n):
         """
         Return the denominator of the ``n``-th partial convergent of ``self``.
@@ -812,24 +794,6 @@ class ContinuedFraction_base(SageObject):
         return self._qn[n+2]
 
     q = denominator
-
-    def qn(self, n):
-        r"""
-        Return the denominator of the ``n``-th partial convergent of ``self``.
-
-        This method is deprecated since :trac:`14567`. Use :meth:`denominator`
-        instead.
-
-        EXAMPLES::
-
-            sage: continued_fraction([1,2,3,12,1]).qn(3)
-            doctest:...: DeprecationWarning: qn is deprecated. Use the methods q or denominator instead.
-            See http://trac.sagemath.org/14567 for details.
-            93
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(14567, 'qn is deprecated. Use the methods q or denominator instead.')
-        return self.denominator(n)
 
     def convergent(self, n):
         """
@@ -1966,7 +1930,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             x = R(value)
             y = R(self)
             if x.lower() > y.lower() or x.upper() < y.upper():
-                raise ValueError("value evaluates to %s while the continued fraction evaluates to %s in %s."%(x,y,R))
+                raise ValueError("value evaluates to %s while the continued fraction evaluates to %s in %s." % (x, y, R))
 
         self._value = value
 
@@ -2280,19 +2244,19 @@ def continued_fraction_list(x, type="std", partial_convergents=False, bits=None,
 
     if type == "hj":
         l = QQ(x).continued_fraction_list("hj")
-        ## The C-code in sage.rings.rational is much more faster than the pure
-        ## Python below
-        ## v = []
-        ## while True:
-        ##    div, mod = divmod(x.numerator(), x.denominator())
-        ##    if mod == 0:
-        ##        v.append(div)
-        ##        break
-        ##    v.append(div+1)
-        ##    if nterms is not None and len(v) >= nterms:
-        ##        break
-        ##    x = 1/(div+1-x)
-        ## return v
+        # The C-code in sage.rings.rational is much more faster than the pure
+        # Python below
+        # v = []
+        # while True:
+        #    div, mod = divmod(x.numerator(), x.denominator())
+        #    if mod == 0:
+        #        v.append(div)
+        #        break
+        #    v.append(div+1)
+        #    if nterms is not None and len(v) >= nterms:
+        #        break
+        #    x = 1/(div+1-x)
+        # return v
         if nterms is None:
             return l
         return l[:nterms]
@@ -2319,7 +2283,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False, bits=None,
             pass
 
     if cf is None:
-        raise ValueError("does not know how to compute the continued fraction of %s"%x)
+        raise ValueError("does not know how to compute the continued fraction of %s" % x)
 
     if nterms:
         limit = min(cf.length(), nterms)
@@ -2486,7 +2450,7 @@ def continued_fraction(x, value=None):
         raise ValueError("word with unknown length can not be converted to continued fractions")
 
     # input for numbers
-    #TODO: the approach used below might be not what the user expects as we
+    # TODO: the approach used below might be not what the user expects as we
     # have currently in sage (version 6.8)
     #
     #     sage: RR.random_element() in QQ
@@ -2515,7 +2479,7 @@ def continued_fraction(x, value=None):
         try:
             RIF(x)
             is_real = True
-        except (AttributeError,ValueError):
+        except (AttributeError, ValueError):
             pass
 
     if is_real is False:
@@ -2533,109 +2497,14 @@ def continued_fraction(x, value=None):
     return continued_fraction(continued_fraction_list(x))
 
 
-def Hirzebruch_Jung_continued_fraction_list(x, bits=None, nterms=None):
-    r"""
-    Return the Hirzebruch-Jung continued fraction of ``x`` as a list.
-
-    This function is deprecated since :trac:`14567`. See
-    :func:`continued_fraction_list` and the documentation therein.
-
-    INPUT:
-
-    - ``x`` -- exact rational or something that can be numerically
-      evaluated. The number to compute the continued fraction of.
-
-    - ``bits`` -- integer (default: the precision of ``x``). the
-      precision of the real interval field that is used
-      internally. This is only used if ``x`` is not an exact fraction.
-
-    - ``nterms`` -- integer (default: None). The upper bound on the
-      number of terms in the continued fraction expansion to return.
-      A lits of integers, the coefficients in the Hirzebruch-Jung continued
-      fraction expansion of ``x``.
-
-    EXAMPLES::
-
-        sage: Hirzebruch_Jung_continued_fraction_list(17/11)
-        doctest:...: DeprecationWarning: Hirzebruch_Jung_continued_fraction_list(x) is replaced by
-            continued_fraction_list(x,type="hj")
-        or for rationals
-            x.continued_fraction_list(type="hj")
-        See http://trac.sagemath.org/14567 for details.
-        [2, 3, 2, 2, 2, 2]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(14567, 'Hirzebruch_Jung_continued_fraction_list(x) is replaced by\n\tcontinued_fraction_list(x,type="hj")\nor for rationals\n\tx.continued_fraction_list(type="hj")')
-    return continued_fraction_list(x, type="hj", bits=bits, nterms=nterms)
-
 def convergents(x):
     r"""
     Return the (partial) convergents of the number ``x``.
 
     EXAMPLES::
 
+        sage: from sage.rings.continued_fraction import convergents
         sage: convergents(143/255)
         [0, 1, 1/2, 4/7, 5/9, 9/16, 14/25, 23/41, 60/107, 143/255]
     """
     return continued_fraction(x).convergents()
-
-
-def farey(v, lim):
-    """
-    Return the Farey sequence associated to the floating point number
-    v.
-
-    INPUT:
-
-
-    -  ``v`` - float (automatically converted to a float)
-
-    -  ``lim`` - maximum denominator.
-
-
-    OUTPUT: Results are (numerator, denominator); (1, 0) is "infinity".
-
-    EXAMPLES::
-
-        sage: farey(2.0, 100)
-        doctest:...: DeprecationWarning: farey is deprecated.
-        See http://trac.sagemath.org/14567 for details.
-        (2, 1)
-        sage: farey(2.0, 1000)
-        (2, 1)
-        sage: farey(2.1, 1000)
-        (21, 10)
-        sage: farey(2.1, 100000)
-        (21, 10)
-        sage: farey(pi, 100000)
-        (312689, 99532)
-
-    AUTHORS:
-
-    - Scott David Daniels: Python Cookbook, 2nd Ed., Recipe 18.13
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(14567, 'farey is deprecated.')
-
-    v = float(v)
-    if v < 0:
-        n, d = farey(-v, lim)
-        return -n, d
-    z = lim - lim    # Get a "0 of the right type" for denominator
-    lower, upper = (z, z+1), (z+1, z)
-    while True:
-        mediant = (lower[0] + upper[0]), (lower[1] + upper[1])
-        if v * mediant[1] > mediant[0]:
-            if lim < mediant[1]:
-                return upper
-            lower = mediant
-        elif v * mediant[1] == mediant[0]:
-            if lim >= mediant[1]:
-                return mediant
-            if lower[1] < upper[1]:
-                return lower
-            return upper
-        else:
-            if lim < mediant[1]:
-                return lower
-            upper = mediant

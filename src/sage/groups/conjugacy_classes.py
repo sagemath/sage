@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
             True
         """
         return not (self == other)
-    
+
     def __contains__(self, element):
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
@@ -398,14 +398,14 @@ class ConjugacyClassGAP(ConjugacyClass):
             )
         """
         try:
-            # GAP interface
-            self._gap_group = group._gap_()
-            self._gap_representative = element._gap_()
+            # LibGAP
+            self._gap_group = group.gap()
+            self._gap_representative = element.gap()
         except (AttributeError, TypeError):
+            # GAP interface
             try:
-                # LibGAP
-                self._gap_group = group.gap()
-                self._gap_representative = element.gap()
+                self._gap_group = group._gap_()
+                self._gap_representative = element._gap_()
             except (AttributeError, TypeError):
                 raise TypeError("The group %s cannot be defined as a GAP group" % group)
 
@@ -422,7 +422,7 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: g = G((1,2,3))
             sage: C = ConjugacyClassGAP(G,g)
             sage: C._gap_()
-            ConjugacyClass( SymmetricGroup( [ 1 .. 3 ] ), (1,2,3) )
+            (1,2,3)^G
         """
         return self._gap_conjugacy_class
 

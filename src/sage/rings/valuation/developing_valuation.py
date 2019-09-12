@@ -28,7 +28,7 @@ Often only the first few coefficients are necessary in computations, so for
 performance reasons, coefficients are computed lazily::
 
     sage: v.coefficients(f)
-    <generator object coefficients at 0x...>
+    <generator object ...coefficients at 0x...>
 
 Another example of a :class:`DevelopingValuation` is an :mod:`augmented
 valuation <sage.rings.valuation.augmented_valuation>`::
@@ -161,7 +161,7 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: v._pow(2*x + 1, 10, effective_degree=0, error=5)
-            (1 + O(2^5))
+            1 + O(2^5)
 
         """
         if e == 0:
@@ -195,10 +195,10 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 3
             sage: list(v.coefficients(f)) # note that these constants are in the polynomial ring
-            [(1 + 2 + O(2^5)), (2 + O(2^6)), (1 + O(2^5))]
+            [1 + 2 + O(2^5), 2 + O(2^6), 1 + O(2^5)]
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: list(v.coefficients(f))
-            [(1 + O(2^5))*x + (2 + O(2^5)), (1 + O(2^5))]
+            [(1 + O(2^5))*x + 2 + O(2^5), 1 + O(2^5)]
 
         """
         domain = self.domain()

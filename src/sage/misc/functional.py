@@ -769,9 +769,9 @@ def integral_closure(x):
         Rational Field
         sage: K.<a> = QuadraticField(5)
         sage: O2 = K.order(2*a); O2
-        Order in Number Field in a with defining polynomial x^2 - 5
+        Order in Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
         sage: integral_closure(O2)
-        Maximal Order in Number Field in a with defining polynomial x^2 - 5
+        Maximal Order in Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
     """
     return x.integral_closure()
 
@@ -799,8 +799,10 @@ def xinterval(a, b):
 
     EXAMPLES::
 
-        sage: I = xinterval(2,5); I
+        sage: I = xinterval(2,5); I  # py2
         xrange(2, 6)
+        sage: I = xinterval(2,5); I  # py3
+        range(2, 6)
         sage: 5 in I
         True
         sage: 6 in I
@@ -1553,6 +1555,7 @@ def round(x, ndigits=0):
     """
     try:
         if ndigits:
+            x = float(x)
             return RealDoubleElement(builtins.round(x, ndigits))
         else:
             try:

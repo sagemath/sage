@@ -1,4 +1,6 @@
 # distutils: libraries = flint
+# distutils: depends = flint/nmod_vec.h
+
 # This file was (manually) generated from FLINT's nmod_vec.h.
 #*****************************************************************************
 #       Copyright (C) 2010 William Hart
@@ -12,7 +14,8 @@
 
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/nmod_vec.h":
+# flint/nmod_vec.h
+cdef extern from "flint_wrap.h":
     mp_limb_t _nmod_add(mp_limb_t a, mp_limb_t b, nmod_t mod)
     mp_limb_t _nmod_sub(mp_limb_t a, mp_limb_t b, nmod_t mod)
     mp_limb_t nmod_add(mp_limb_t a, mp_limb_t b, nmod_t mod)

@@ -9,9 +9,14 @@ for use in doc-strings.
 """
 from __future__ import print_function
 
+import inspect
+
+from six import PY2
+
 from sage.misc.sageinspect import _extract_embedded_position
 
-def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_functions=True):
+
+def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
     r"""
     Return a ReST table describing a list of functions.
 
@@ -22,9 +27,9 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
 
     INPUT:
 
-    - ``list_of_entries`` -- a list of functions, a module or a class. If given
-      a list of functions, the generated table will consist of these. If given a
-      module or a class, all functions/methods it defines will be listed, except
+    - ``obj`` -- a list of functions, a module or a class. If given a list of
+      functions, the generated table will consist of these. If given a module
+      or a class, all functions/methods it defines will be listed, except
       deprecated or those starting with an underscore. In the case of a class,
       note that inherited methods are not displayed.
 
@@ -55,7 +60,7 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
            :widths: 30, 70
            :delim: @
         <BLANKLINE>
-           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` @ Returns the Petersen Graph.
+           :func:`~sage.graphs.generators.smallgraphs.PetersenGraph` @ Return the Petersen Graph.
 
     The table of a module::
 
@@ -143,34 +148,39 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
         sage: 'all_max_cliques`' in gen_rest_table_index(Graph)
         False
     """
-    import inspect
     if names is None:
         names = {}
 
     # If input is a class/module, we list all its non-private and methods/functions
-    if (inspect.isclass(list_of_entries) or
-        inspect.ismodule(list_of_entries)):
-        root = list_of_entries
-        list_of_entries,names = list_of_subfunctions(root, only_local_functions=only_local_functions)
+    if inspect.isclass(obj) or inspect.ismodule(obj):
+        list_of_entries, names = list_of_subfunctions(
+                obj, only_local_functions=only_local_functions)
+    else:
+        list_of_entries = obj
 
-    fname = lambda x:names.get(x,getattr(x,"__name__",""))
+    fname = lambda x: names.get(x, getattr(x, "__name__", ""))
 
-    assert isinstance(list_of_entries,list)
+    assert isinstance(list_of_entries, list)
 
-    s = (".. csv-table::\n"
-         "   :class: contentstable\n"
-         "   :widths: 30, 70\n"
-         "   :delim: @\n\n")
+    s = [".. csv-table::",
+         "   :class: contentstable",
+         "   :widths: 30, 70",
+         "   :delim: @\n"]
 
     if sort:
         list_of_entries.sort(key=fname)
 
     for e in list_of_entries:
-
         if inspect.ismethod(e):
-            link = ":meth:`~"+str(e.im_class.__module__)+"."+str(e.im_class.__name__)+"."+fname(e)+"`"
+            link = ":meth:`~{module}.{cls}.{func}`".format(
+                module=e.im_class.__module__, cls=e.im_class.__name__,
+                func=fname(e))
+        elif not PY2 and inspect.isfunction(e) and inspect.isclass(obj):
+            link = ":meth:`~{module}.{cls}.{func}`".format(
+                module=obj.__module__, cls=obj.__name__, func=fname(e))
         elif inspect.isfunction(e):
-            link = ":func:`~"+str(e.__module__)+"."+fname(e)+"`"
+            link = ":func:`~{module}.{func}`".format(
+                module=e.__module__, func=fname(e))
         else:
             continue
 
@@ -188,9 +198,10 @@ def gen_rest_table_index(list_of_entries, names=None, sort=True, only_local_func
         else:
             desc = "NO DOCSTRING"
 
-        s += "   {} @ {}\n".format(link,desc.lstrip())
+        s.append("   {} @ {}".format(link, desc.lstrip()))
 
-    return s+'\n'
+    return '\n'.join(s) + '\n'
+
 
 def list_of_subfunctions(root, only_local_functions=True):
     r"""
@@ -224,11 +235,13 @@ def list_of_subfunctions(root, only_local_functions=True):
 
         sage: class A:
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)
+        sage: list_of_subfunctions(A)  # py2
         ([<unbound method Graph.order>], {<unbound method Graph.order>: 'x'})
+        sage: list_of_subfunctions(A)  # py3
+        ([<function GenericGraph.order at 0x...>],
+         {<function GenericGraph.order at 0x...>: 'x'})
 
     """
-    import inspect
     if inspect.ismodule(root):
         ismodule = True
     elif inspect.isclass(root):

@@ -875,9 +875,8 @@ Variable ``b`` wurde nicht überschrieben.
 Die Notebook Umgebung
 =====================
 
-Folgendes beschreibt das alte Sage Browser Notebook,
-auch "sagenb" genannt.  Für weiteres siehe bitte
-`hier <https://doc.sagemath.org/html/en/reference/notebook/index.html>`_.
+Folgendes beschreibt das alte Sage Browser Notebook, auch "sagenb" genannt.
+
 SageMath wird demnächst die `Jupyter notebook
 <http://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_
 als Hauptnotebookoption verwenden.  Der wichtigste

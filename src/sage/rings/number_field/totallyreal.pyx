@@ -12,15 +12,15 @@ case using relative extensions.
 Algorithm
 ---------
 
-We use Hunter's algorithm ([Cohen2000]_, Section 9.3) with modifications
-due to Takeuchi [Takeuchi1999]_ and the author [Voight2008]_.
+We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
+due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
 
 We enumerate polynomials `f(x) = x^n + a_{n-1} x^{n-1} + \dots + a_0`.
 Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
 `a_{n-1}` and `a_{n-2}`, one can recursively compute bounds on `a_{n-3},
 \dots, a_0`, using the fact that the polynomial is totally real by
 looking at the zeros of successive derivatives and applying
-Rolle's theorem. See [Takeuchi1999]_ for more details.
+Rolle's theorem. See [Tak1999]_ for more details.
 
 Examples
 --------
@@ -65,22 +65,7 @@ Next, we compute all totally real quintic fields of discriminant `\le 10^5`::
 
 We see that there are 9 such fields (up to isomorphism!).
 
-References
-----------
-
-.. [Cohen2000] Henri Cohen, Advanced topics in computational number
-   theory, Graduate Texts in Mathematics, vol. 193,
-   Springer-Verlag, New York, 2000.
-
-.. [Martinet1980] Jacques Martinet, Petits discriminants des corps de nombres, Journ. Arithm. 1980,
-   Cambridge Univ. Press, 1982, 151--193.
-
-.. [Takeuchi1999] Kisao Takeuchi, Totally real algebraic number fields of
-   degree 9 with small discriminant, Saitama Math. J.
-   17 (1999), 63--85 (2000).
-
-.. [Voight2008] John Voight, Enumeration of totally real number fields of bounded root
-   discriminant, Lect. Notes in Comp. Sci. 5011 (2008).
+See also [Mar1980]_.
 
 Authors
 -------
@@ -156,7 +141,7 @@ cpdef double odlyzko_bound_totallyreal(int n):
     - John Voight (2007-09-03)
 
     NOTES:
-    The values are calculated by Martinet [Martinet1980]_.
+    The values are calculated by Martinet [Mar1980]_.
     """
 
     if n <= 10:
@@ -532,41 +517,3 @@ def weed_fields(S, Py_ssize_t lenS=0):
        i += 1
 
     return lenS
-
-def timestr(m):
-    r"""
-    Converts seconds to a human-readable time string.
-
-    INPUT:
-
-    - m -- integer, number of seconds
-
-    OUTPUT:
-
-    The time in days, hours, etc.
-
-    EXAMPLES::
-
-        sage: sage.rings.number_field.totallyreal.timestr(3765)
-        '1h 2m 45.0s'
-    """
-
-    n = math.floor(m)
-    p = m-n
-    outstr = ''
-    if m >= 60*60*24:
-        t = n//(60*60*24)
-        outstr += str(t)[:len(str(t))-2] + 'd '
-        n -= t*(60*60*24)
-    if m >= 60*60:
-        t = n//(60*60)
-        outstr += str(t)[:len(str(t))-2] + 'h '
-        n -= t*(60*60)
-    if m >= 60:
-        t = n//60
-        outstr += str(t)[:len(str(t))-2] + 'm '
-        n -= t*60
-    n += p
-    outstr += '%.1f' % n + 's'
-
-    return outstr

@@ -44,7 +44,7 @@ class Ellipse(GraphicPrimitive):
 
         sage: from sage.plot.ellipse import Ellipse
         sage: Ellipse(0, 0, 2, 1, pi/4, {})
-        Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.785398163397
+        Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.78539816339...
     """
     def __init__(self, x, y, r1, r2, angle, options):
         """
@@ -67,8 +67,9 @@ class Ellipse(GraphicPrimitive):
         self.r2 = float(r2)
         if self.r1 <= 0 or self.r2 <= 0:
             raise ValueError("both radii must be positive")
-        self.angle = fmod(angle,2*pi)
-        if self.angle < 0: self.angle += 2*pi
+        self.angle = fmod(angle, 2 * pi)
+        if self.angle < 0:
+            self.angle += 2 * pi
         GraphicPrimitive.__init__(self, options)
 
     def get_minmax_data(self):
