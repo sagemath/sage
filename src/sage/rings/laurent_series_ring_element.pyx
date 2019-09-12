@@ -274,8 +274,30 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return bool(self.__u)
 
-    def _im_gens_(self, codomain, im_gens):
-        return codomain(self(im_gens[0]))
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this series under the map that sends the generators of
+        the parent to im_gens.
+
+        EXAMPLES::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<t> = LaurentSeriesRing(K)
+            sage: z = t^-1 + i*t
+            sage: z._im_gens_(R, [t^2])
+            t^-2 + i*t^2
+
+        The argument base_map is not yet supported, because it isn't over power series::
+
+            sage: cc = K.hom([i])
+            sage: z._im_gens_(R, [t^2], base_map=cc)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        x = im_gens[0]
+        return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
     cdef __normalize(self):
         r"""

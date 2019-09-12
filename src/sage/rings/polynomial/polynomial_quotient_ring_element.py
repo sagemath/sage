@@ -154,8 +154,27 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 polynomial = R
         self._polynomial = polynomial
 
-    def _im_gens_(self, codomain, im_gens):
-        return self._polynomial._im_gens_(codomain, im_gens)
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
+            sage: T.<t> = S.quotient(y*(y+1))
+            sage: phi = Q.hom([t+1], base_map=cc, category=Rings())
+            sage: phi(q)
+            t + 1
+            sage: phi(i*q)
+            -i*t - i
+        """
+        return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)
 
     def __hash__(self):
         return hash(self._polynomial)
@@ -534,8 +553,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         if number_field_rel.is_RelativeNumberField(F):
 
-            base_hom = F.base_field().hom([R.base_ring().gen()])
-            g = F.Hom(R)(x, base_hom)
+            base_map = F.base_field().hom([R.base_ring().gen()])
+            g = F.Hom(R)(x, base_map)
 
         else:
             g = F.hom([x], R, check=False)

@@ -456,7 +456,7 @@ cdef class NumberFieldElement(FieldElement):
         K = self.number_field()
         return str(x).replace(x.parent().variable_name(), K.variable_name())
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         This is used in computing homomorphisms between number fields.
 
@@ -469,6 +469,7 @@ cdef class NumberFieldElement(FieldElement):
             b^2 + 1
             sage: (a+1)._im_gens_(m, [b^2])
             b^2 + 1
+
         """
         # NOTE -- if you ever want to change this so relative number
         # fields are in terms of a root of a poly.  The issue is that
@@ -477,7 +478,12 @@ cdef class NumberFieldElement(FieldElement):
         # gives the image of gen, which need not be a generator for
         # the absolute field.  The morphism has to be *over* the
         # relative element.
-        return codomain(self.polynomial()(im_gens[0]))
+        f = self.polynomial()
+        # The current implementation won't productively use base_map
+        # since the coefficients of f are in QQ.
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return codomain(f(im_gens[0]))
 
     def _latex_(self):
         """

@@ -455,9 +455,22 @@ class MPowerSeries(PowerSeries):
             sage: s = M.hom([u, u+v])
             sage: s(M.one())
             1
+
+        Since :trac:`26105` you can specify a map on the base ring::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<s,t> = PowerSeriesRing(K)
+            sage: f = s^2 + i*s*t + (3+4*i)*s^3 + R.O(4); f
+            s^2 + (i)*s*t + (4*i + 3)*s^3 + O(s, t)^4
+            sage: f(t, s, base_map=cc)
+            (-i)*s*t + t^2 + (-4*i + 3)*t^3 + O(s, t)^4
         """
         if len(x) != self.parent().ngens():
             raise ValueError("Number of arguments does not match number of variables in parent.")
+        if kwds:
+            return self._subs_formal(*x, **kwds)
 
         sub_dict = {}
         valn_list = []
@@ -467,7 +480,7 @@ class MPowerSeries(PowerSeries):
             except (AttributeError, TypeError):
                 # Input does not coerce to parent ring of self
                 # attempt formal substitution
-                return self._subs_formal(*x,**kwds)
+                return self._subs_formal(*x, **kwds)
             if xi.valuation() == 0 and self.prec() is not infinity:
                 raise TypeError("Substitution defined only for elements of positive valuation, unless self has infinite precision.")
             elif xi.valuation() > 0:
@@ -538,8 +551,11 @@ class MPowerSeries(PowerSeries):
             return self
 
         y = 0
+        base_map = kwds.get('base_map')
+        if base_map is None:
+            base_map = lambda t: t
         for m, c in iteritems(self.dict()):
-                y += c*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
+            y += base_map(c)*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
         if self.prec() == infinity:
             return y
         else:
@@ -617,7 +633,7 @@ class MPowerSeries(PowerSeries):
                  'prec':self._prec}
 
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Returns the image of this series under the map that sends the
         generators to ``im_gens``. This is used internally for computing
@@ -637,7 +653,11 @@ class MPowerSeries(PowerSeries):
             sage: phi(a+b+3*a*b^2 + A.O(5))  # indirect doctest
             x + 2*y + 12*x*y^2 + O(x, y)^5
         """
-        return codomain(self(*im_gens))
+        if base_map is None:
+            # __call__ might be faster if codomain coerces into the base ring
+            return codomain(self(*im_gens))
+        else:
+            return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
     def __getitem__(self,n):
         """

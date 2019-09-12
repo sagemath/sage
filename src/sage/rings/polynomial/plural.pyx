@@ -2221,7 +2221,7 @@ cdef class NCPolynomial_plural(RingElement):
             p = pNext(p)
         return pd
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` in codomain under the map that sends
         the images of the generators of the parent of ``self`` to the
@@ -2235,24 +2235,40 @@ cdef class NCPolynomial_plural(RingElement):
 
         EXAMPLES::
 
-            sage: A.<x,z,y> = FreeAlgebra(GF(389), 3)
+            sage: A.<x,z,y> = FreeAlgebra(GF(9), 3)
             sage: R = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
             sage: R.inject_variables()
             Defining x, z, y
-            sage: B.<a,b,c> = FreeAlgebra(GF(389), 3)
+            sage: B.<a,b,c> = FreeAlgebra(GF(9), 3)
             sage: S = B.g_algebra({b*a:2*a*b, c*a:-2*a*c})
             sage: S.inject_variables()
             Defining a, b, c
             sage: (x*y - x^2*z)._im_gens_(S, [a*b, b, a*b*c])
-            -2*a^2*b^3 + 2*a^2*b^2*c
+            a^2*b^3 - a^2*b^2*c
             sage: -(a*b)*(a*b)*b+(a*b)*(a*b*c)
-            -2*a^2*b^3 + 2*a^2*b^2*c
+            a^2*b^3 - a^2*b^2*c
+
+            sage: z2 = GF(9).gen()
+            sage: phi = R.hom([a*b, b, a*b*c], check=False)
+            sage: phi(x*y - x^2*z)
+            a^2*b^3 - a^2*b^2*c
+            sage: phi(x*y - z2*x^2*z)
+            (z2)*a^2*b^3 - a^2*b^2*c
+            sage: phi = R.hom([a*b, b, a*b*c], base_map=GF(9).frobenius_endomorphism(), category=Algebras(GF(9)), check=False)
+            sage: phi(x*y - x^2*z)
+            a^2*b^3 - a^2*b^2*c
+            sage: phi(x*y - z2*x^2*z)
+            (-z2 + 1)*a^2*b^3 - a^2*b^2*c
+            sage: z2^3
+            2*z2 + 1
         """
         if self.is_zero():
             return codomain.zero()
         from sage.misc.misc_c import prod
         d = self.dict()
-        return sum(prod(im_gens[i]**val for i, val in enumerate(t))*codomain(d[t]) for t in d)
+        if base_map is None:
+            base_map = codomain
+        return sum(prod(im_gens[i]**val for i, val in enumerate(t))*base_map(d[t]) for t in d)
 
 
     cdef long _hash_c(self):

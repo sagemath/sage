@@ -207,10 +207,11 @@ cdef class ParentWithGens(ParentWithBase):
     # Morphisms of objects with generators
     #################################################################################
 
-    def hom(self, im_gens, codomain=None, check=True):
+    def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""
         Return the unique homomorphism from self to codomain that
-        sends ``self.gens()`` to the entries of ``im_gens``.
+        sends ``self.gens()`` to the entries of ``im_gens``
+        and induces the map ``base_map`` on the base ring.
         Raises a TypeError if there is no such homomorphism.
 
         INPUT:
@@ -219,6 +220,9 @@ cdef class ParentWithGens(ParentWithBase):
           this object under the homomorphism
 
         - ``codomain`` - the codomain of the homomorphism
+
+        - ``base_map`` - a map from the base ring of the domain into something
+          that coerces into the codomain.
 
         - ``check`` - whether to verify that the images of generators extend
           to define a map (using only canonical coercions).
@@ -284,14 +288,19 @@ cdef class ParentWithGens(ParentWithBase):
             TypeError: natural coercion morphism from Rational Field to Integer Ring not defined
         """
         if self._element_constructor is not None:
-            return parent.Parent.hom(self, im_gens, codomain, check)
+            return parent.Parent.hom(self, im_gens, codomain, base_map=base_map, category=category, check=check)
         if isinstance(im_gens, parent.Parent):
             return self.Hom(im_gens).natural_map()
         if codomain is None:
             from sage.structure.all import Sequence
             im_gens = Sequence(im_gens)
             codomain = im_gens.universe()
-        return self.Hom(codomain)(im_gens, check=check)
+        kwds = {}
+        if check is not None:
+            kwds['check'] = check
+        if base_map is not None:
+            kwds['base_map'] = base_map
+        return self.Hom(codomain, category=category)(im_gens, **kwds)
 
 
 cdef class localvars:

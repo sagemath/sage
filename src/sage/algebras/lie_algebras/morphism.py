@@ -23,6 +23,7 @@ from sage.structure.element import get_coercion_model
 from sage.structure.richcmp import richcmp
 from sage.matrix.constructor import matrix
 from itertools import combinations
+from six import iteritems
 
 # TODO: Refactor out common functionality with RingHomomorphism_im_gens
 class LieAlgebraHomomorphism_im_gens(Morphism):
@@ -34,6 +35,18 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
     homomorphism (of Lie algebras) if `f([x, y]) = [f(x), f(y)]` for all
     `x, y \in \mathfrak{g}`. Thus homomorphisms are completely determined
     by the image of the generators of `\mathfrak{g}`.
+
+    INPUT:
+
+    - ``parent`` -- a homset between two Lie algebras
+    - ``im_gens`` -- the image of the generators of the domain
+    - ``base_map`` -- a homomorphism to apply to the coefficients.
+      It should be a map from the base ring of the domain to the
+      base ring of the codomain.
+      Note that if base_map is nontrivial then the result will
+      not be a morphism in the category of lie algebras over
+      the base ring.
+    - ``check`` -- whether to run checks on the validity of the defining data
 
     EXAMPLES::
 
@@ -51,7 +64,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
                 y |--> y
                 z |--> z
     """
-    def __init__(self, parent, im_gens, check=True):
+    def __init__(self, parent, im_gens, base_map=None, check=True):
         """
         EXAMPLES::
 
@@ -73,6 +86,8 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         if check:
             if len(im_gens) != len(parent.domain().lie_algebra_generators()):
                 raise ValueError("number of images must equal number of generators")
+            if base_map is not None and not (base_map.domain() is parent.domain().base_ring() and parent.codomain().base_ring().has_coerce_map_from(base_map.codomain())):
+                raise ValueError("Invalid base homomorphism")
             # TODO: Implement a (meaningful) _is_valid_homomorphism_()
             #if not parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens):
             #    raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators.")
@@ -81,6 +96,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             im_gens = copy.copy(im_gens)
             im_gens.set_immutable()
         self._im_gens = im_gens
+        self._base_map = base_map
 
     def _repr_type(self):
         """
@@ -116,6 +132,29 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         """
         return list(self._im_gens)
 
+    def base_map(self):
+        """
+        Return the map on the base ring that is part of the defining
+        data for this morphism.  May return ``None`` if a coercion is used.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+            sage: M.<A,B> = LieAlgebra(K, abelian=True)
+            sage: phi = L.morphism({X: A, Y: B}, base_map=cc)
+            sage: phi(X)
+            A
+            sage: phi(i*X)
+            -i*A
+            sage: phi.base_map()
+            Ring endomorphism of Number Field in i with defining polynomial x^2 + 1
+              Defn: i |--> -i
+        """
+        return self._base_map
+
     def _richcmp_(self, other, op):
         """
         Rich comparisons.
@@ -136,7 +175,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             sage: f != h
             True
         """
-        return richcmp(self._im_gens, other._im_gens, op)
+        return richcmp((self._im_gens, self._base_map), (other._im_gens, other._base_map), op)
 
     def __hash__(self):
         """
@@ -151,7 +190,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             sage: hash(phi) == hash(phi)
             True
         """
-        return hash(self._im_gens)
+        return hash((self._im_gens, self._base_map))
 
     def _repr_defn(self):
         """
@@ -169,8 +208,11 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             z |--> z
         """
         D = self.domain()
-        return '\n'.join('%s |--> %s' % (x, gen)
-                         for gen, x in zip(self._im_gens, D.gens()))
+        s = '\n'.join('%s |--> %s' % (x, gen)
+                      for gen, x in zip(self._im_gens, D.gens()))
+        if s and self._base_map is not None:
+            s += '\nwith map of base ring'
+        return s
 
     def _call_(self, x):
         """
@@ -188,7 +230,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
             [x, [[x, z], [y, z]]] + [x, [[[x, z], z], y]]
              + [[x, y], [[x, z], z]] + [[x, [y, z]], [x, z]]
         """
-        return x._im_gens_(self.codomain(), self.im_gens())
+        return x._im_gens_(self.codomain(), self.im_gens(), base_map=self.base_map())
 
 class LieAlgebraHomset(Homset):
     """
@@ -307,6 +349,12 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
       in ``codomain`` of elements `X` of ``domain``
     - ``codomain`` -- a Lie algebra (optional); this is inferred
       from the values of ``on_generators`` if not given
+    - ``base_map`` -- a homomorphism to apply to the coefficients.
+      It should be a map from the base ring of the domain to the
+      base ring of the codomain.
+      Note that if base_map is nontrivial then the result will
+      not be a morphism in the category of lie algebras over
+      the base ring.
     - ``check`` -- (default: ``True``) boolean; if ``False`` the
       values  on the Lie brackets implied by ``on_generators`` will
       not be checked for contradictory values
@@ -396,7 +444,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
                 Z |--> 0
                 W |--> 0
     """
-    def __init__(self, on_generators, domain=None, codomain=None, check=True):
+    def __init__(self, on_generators, domain=None, codomain=None, check=True, base_map=None, category=None):
         r"""
         Initialize ``self``.
 
@@ -456,7 +504,13 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
             if codomain not in LieAlgebras:
                 raise TypeError("codomain %s is not a Lie algebra" % codomain)
 
-        parent = Hom(domain, codomain)
+        if base_map is not None and category is None:
+            from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
+            # We can't make any guarantee about the category of this morphism
+            # (in particular, it won't usually be linear over the base)
+            # so we default to a very lax category
+            category = SetsWithPartialMaps()
+        parent = Hom(domain, codomain, category=category)
         m = domain.module()
         cm = codomain.module()
 
@@ -464,7 +518,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         im_gens = [Y.to_vector() for Y in on_generators.values()]
 
         if not im_gens:
-            LieAlgebraHomomorphism_im_gens.__init__(self, parent, [], check=check)
+            LieAlgebraHomomorphism_im_gens.__init__(self, parent, [], base_map=base_map, check=check)
             return
 
         # helper function to solve linear systems Ax = b, where both x and b
@@ -520,7 +574,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         A = matrix(m.base_ring(), spanning_set)
         im_gens = solve_linear_system(A, im_gens, check)
 
-        LieAlgebraHomomorphism_im_gens.__init__(self, parent, im_gens, check=check)
+        LieAlgebraHomomorphism_im_gens.__init__(self, parent, im_gens, base_map=base_map, check=check)
 
     def _call_(self, x):
         """
@@ -554,4 +608,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
             1/3*A - 1/3*B + 2/3*C
         """
         C = self.codomain()
-        return C.sum(c * self._im_gens[i] for i, c in x.to_vector().iteritems())
+        bh = self._base_map
+        if bh is None:
+            bh = lambda t: t
+        return C.sum(bh(c) * self._im_gens[i] for i, c in iteritems(x.to_vector()))

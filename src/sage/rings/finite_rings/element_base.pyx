@@ -110,14 +110,14 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         sage: k.<a> = GF(64)
         sage: TestSuite(a).run()
     """
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Used for applying homomorphisms of finite fields.
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(73^2, 'a')
-            sage: K.<b> = FiniteField(73^4, 'b')
+            sage: k.<a> = FiniteField(73^2)
+            sage: K.<b> = FiniteField(73^4)
             sage: phi = k.hom([ b^(73*73+1) ]) # indirect doctest
             sage: phi(0)
             0
@@ -130,7 +130,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         ## NOTE: see the note in sage/rings/number_field_element.pyx,
         ## in the comments for _im_gens_ there -- something analogous
         ## applies here.
-        return codomain(self.polynomial()(im_gens[0]))
+        f = self.polynomial()
+        if base_map is not None:
+            Cx = codomain['x']
+            f = Cx([base_map(c) for c in f])
+        return codomain(f(im_gens[0]))
 
     def minpoly(self,var='x',algorithm='pari'):
         """

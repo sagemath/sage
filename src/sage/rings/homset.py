@@ -157,7 +157,7 @@ class RingHomset_generic(HomsetWithBase):
         except Exception:
             raise TypeError
 
-    def __call__(self, im_gens, check=True):
+    def __call__(self, im_gens, check=True, base_map=None):
         """
         Create a homomorphism.
 
@@ -170,6 +170,20 @@ class RingHomset_generic(HomsetWithBase):
               To:   Rational Field
               Defn: 1 |--> 1
 
+        You can provide a morphism on the base::
+
+            sage: k = GF(9)
+            sage: z2 = k.gen()
+            sage: cc = k.frobenius_endomorphism()
+            sage: R.<x> = k[]
+            sage: H = Hom(R, R, category=Rings())
+            sage: phi = H([x^2], base_map=cc); phi
+            Ring endomorphism of Univariate Polynomial Ring in x over Finite Field in z2 of size 3^2
+              Defn: x |--> x^2
+                    with map of base ring
+            sage: phi(z2*x) == z2^3 * x^2
+            True
+
         TESTS::
 
             sage: H = Hom(ZZ, QQ)
@@ -178,9 +192,11 @@ class RingHomset_generic(HomsetWithBase):
         """
         from sage.categories.map import Map
         if isinstance(im_gens, Map):
+            if base_map is not None:
+                raise ValueError("Cannot specify base_map when providing a map")
             return self._coerce_impl(im_gens)
         else:
-            return morphism.RingHomomorphism_im_gens(self, im_gens, check=check)
+            return morphism.RingHomomorphism_im_gens(self, im_gens, base_map=base_map, check=check)
 
     def natural_map(self):
         """
@@ -264,7 +280,7 @@ class RingHomset_quo_ring(RingHomset_generic):
         sage: phi == loads(dumps(phi))
         True
     """
-    def __call__(self, im_gens, check=True):
+    def __call__(self, im_gens, base_map=None, check=True):
         """
         Create a homomorphism.
 
@@ -285,7 +301,7 @@ class RingHomset_quo_ring(RingHomset_generic):
             return morphism.RingHomomorphism_from_quotient(self, im_gens._phi())
         try:
             pi = self.domain().cover()
-            phi = pi.domain().hom(im_gens, check=check)
+            phi = pi.domain().hom(im_gens, base_map=base_map, check=check)
             return morphism.RingHomomorphism_from_quotient(self, phi)
         except (NotImplementedError, ValueError):
             try:
