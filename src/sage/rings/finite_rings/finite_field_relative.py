@@ -29,13 +29,16 @@ AUTHORS:
 
 from __future__ import absolute_import
 
+from sage.misc.cachefunc import cached_method
+
 from .finite_field_base import FiniteField
 from .element_relative import FiniteField_relativeElement
+from sage.rings.ring_extension import RingExtensionWithGen
 
 # TODO: Make sure that we run TestSuite for all the constellations that I can
 # imagine. TestSuite should test something for every method that I touched in
 # finite_field_base.pyx.
-class FiniteField_relative(FiniteField):
+class FiniteField_relative(FiniteField, RingExtensionWithGen):
     r"""
     A finite field extension which delegates all the computations to an
     absolute finite field, the ``_backend``. This is used for relative
@@ -81,17 +84,18 @@ class FiniteField_relative(FiniteField):
         """
         order = base.order() ** modulus.degree()
 
-        from sage.all import GF, FiniteFields
-        self._backend = GF(order, **kwds)
+        from sage.all import GF, FiniteFields, Hom
+        backend = GF(order, names=["b%s"%(order,)], **kwds)
 
         assert modulus.base_ring() is base
         self._modulus = modulus
         assert len(names) == 1
-        self._name = names[0]
 
         FiniteField.__init__(self, base, names, normalize=False, category=category or FiniteFields())
-        # TODO: Register coercion map from base
-        # TODO: Register conversions from and to the backend
+
+        defining_embedding = self.base_ring()._any_embedding(backend)
+        gen = modulus.map_coefficients(defining_embedding).any_root()
+        RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, name=names[0], coerce=False)
 
     def __reduce__(self):
         r"""
@@ -117,11 +121,15 @@ class FiniteField_relative(FiniteField):
             sage: k.absolute_field(map=True)
 
         """
-        E = self._backend.absolute_field(**kwds)
+        backend = self._backend()
+        absolute = backend.absolute_field(map=map, **kwds)
         if map:
-            return (E, self._from_backend, self._to_backend)
+            (absolute, absolute_to_backend, backend_to_absolute) = absolute
+            return (absolute,
+                backend.hom(self) * absolute_to_backend,
+                backend_to_absolute * self.hom(backend))
         else:
-            return E
+            return absolute
 
     def characteristic(self):
         r"""
@@ -134,6 +142,6 @@ class FiniteField_relative(FiniteField):
             3
 
         """
-        return self._backend.characteristic()
+        return self._backend().characteristic()
 
     Element = FiniteField_relativeElement

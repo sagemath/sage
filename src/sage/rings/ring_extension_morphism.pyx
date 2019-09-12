@@ -63,7 +63,7 @@ cdef class RingExtensionHomomorphism(RingHomomorphism):
         sage: E2 = RingExtension(L,K)
 
     """
-    def __init__(self, parent, backend):
+    def __init__(self, parent, backend, check=None):
         RingHomomorphism.__init__(self, parent)
         backend_domain = self.domain()
         if isinstance(backend_domain, RingExtension_class):

@@ -584,6 +584,31 @@ cdef class FiniteField(Field):
         """
         raise NotImplementedError("subclasses must implement gen()")
 
+    def _any_embedding(self, codomain):
+        r"""
+        Return an embedding of this field into ``codomain``.
+
+        EXAMPLES::
+
+            sage: GF(2)._any_embedding(GF(2^2))
+            Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z2 of size 2^2
+              Defn: 1 |--> 1
+            sage: GF(2^2)._any_embedding(GF(2^4))
+            Ring morphism:
+              From: Finite Field in z2 of size 2^2
+              To:   Finite Field in z4 of size 2^4
+              Defn: z2 |--> z4^2 + z4
+            sage: GF(3^2).extension(3, absolute=False)._any_embedding(GF(3^12))
+        """
+        if codomain.has_coerce_map_from(self):
+            return codomain.coerce_map_from(self)
+
+        base_hom = self.base_ring()._any_embedding(codomain)
+        minpoly = self.gen().minpoly().change_ring(base_hom)
+        return self.hom(codomain, [minpoly.any_root()], base_map=base_hom) 
+
     def zeta_order(self):
         """
         Return the order of the distinguished root of unity in ``self``.

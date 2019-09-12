@@ -21,8 +21,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.structure.element import CommutativeRingElement
+from sage.rings.ring_extension_element import RingExtensionElement
 
-class FiniteField_relativeElement(CommutativeRingElement):
+class FiniteField_relativeElement(RingExtensionElement):
     r"""
     Element of a
     :class:`sage.rings.finite_rings.finite_field_relative.FiniteField_relative`.
@@ -33,7 +34,7 @@ class FiniteField_relativeElement(CommutativeRingElement):
         sage: a = k.gen(); a
 
     """
-    def __init__(self, parent, backend):
+    def __init__(self, parent, x):
         r"""
         TESTS::
 
@@ -42,9 +43,8 @@ class FiniteField_relativeElement(CommutativeRingElement):
             sage: isinstance(k.gen(), FiniteField_relativeElement)
 
         """
-        if backend.parent() is not parent:
-            raise ValueError("parent must be %s but it is %s"%(parent, backend.parent()))
-        self._backend = backend
-        CommutativeRingElement.__init__(self, parent)
+#        if x.parent() is not parent:
+#            raise ValueError("parent must be %s but it is %s"%(parent, x.parent()))
+        RingExtensionElement.__init__(self, parent, x)
 
 
