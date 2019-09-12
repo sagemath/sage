@@ -444,7 +444,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return sage.rings.finite_rings.integer_mod.mod, (self.lift(), self.modulus(), self.parent())
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` under the map that sends the
         generators of the parent to ``im_gens``.
@@ -456,6 +456,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a._im_gens_(R, (R(1),))
             2
         """
+        # The generators are irrelevant (Zmod(n) is its own base), so we ignore base_map
         return codomain._coerce_(self)
 
     def __mod__(self, modulus):

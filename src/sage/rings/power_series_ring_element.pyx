@@ -245,7 +245,7 @@ cdef class PowerSeries(AlgebraElement):
         """
         return bool(self.__is_gen)
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of this series under the map that sends the
         generators to ``im_gens``. This is used internally for computing
@@ -258,7 +258,10 @@ cdef class PowerSeries(AlgebraElement):
             sage: f._im_gens_(ZZ, [3])
             13
         """
-        return codomain(self(im_gens[0]))
+        if base_map is None:
+            return codomain(self(im_gens[0]))
+        else:
+            raise NotImplementedError
 
     cpdef base_extend(self, R):
         """

@@ -1257,8 +1257,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
             raise TypeError("cannot coerce nonconstant polynomial to int")
         return int(self.get_coeff_c(0))
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
@@ -1271,18 +1275,26 @@ cdef class Polynomial(CommutativeAlgebraElement):
               Defn: x |--> 5
             sage: f(x)
             5
-            sage: f(x^2 + 3)
+            sage: f(x^2 + 3) # indirect doctest
             28
+
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: phi = S.hom([y^2], base_map=cc, category=Rings())
+            sage: phi(i*y)
+            -i*y^2
         """
         a = im_gens[0]
-        P = a.parent()
         d = self.degree()
         if d == -1:
-            return P.zero() # Special case: 0 should always coerce to 0
-        result = P._coerce_(self.get_unsafe(d))
+            return codomain.zero() # Special case: 0 should always coerce to 0
+        if base_map is None:
+            base_map = codomain.coerce_map_from(self.base_ring())
+        result = base_map(self.get_unsafe(d))
         i = d - 1
         while i >= 0:
-            result = result * a + P._coerce_(self.get_unsafe(i))
+            result = result * a + base_map(self.get_unsafe(i))
             i -= 1
         return result
 

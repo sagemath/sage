@@ -416,7 +416,7 @@ class QuotientRingElement(RingElement):
                                    "a multiple of the denominator.")
         return P(XY[0])
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` in ``codomain`` under the map
         that sends ``self.parent().gens()`` to ``im_gens``.
@@ -451,7 +451,7 @@ class QuotientRingElement(RingElement):
             sage: f(xbar/ybar)
             t
         """
-        return self.lift()._im_gens_(codomain, im_gens)
+        return self.lift()._im_gens_(codomain, im_gens, base_map=base_map)
 
     def __int__(self):
         """

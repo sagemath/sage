@@ -922,6 +922,8 @@ class Homset(Set_generic):
             try:
                 call_with_keywords = self.__call_on_basis__
             except AttributeError:
+                if 'base_map' in options:
+                    raise NotImplementedError("base_map not supported for this Homset; you may need to specify a category")
                 raise NotImplementedError("no keywords are implemented for constructing elements of {}".format(self))
             options.setdefault("category", self.homset_category())
             return call_with_keywords(**options)

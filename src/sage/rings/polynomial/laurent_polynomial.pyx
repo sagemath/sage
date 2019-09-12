@@ -377,10 +377,11 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return not self.__u.is_zero()
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
-        Return the image of ``self`` under the morphism defined by
-        ``im_gens`` in ``codomain``.
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
 
         EXAMPLES::
 
@@ -391,8 +392,23 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             17/4
             sage: 4 + 1/4
             17/4
+
+        You can specify a map on the base ring::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<t> = LaurentPolynomialRing(K)
+            sage: H = Hom(R, R)
+            sage: phi = H([t^-2], base_map=cc)
+            sage: phi(i*t)
+            -i*t^-2
         """
-        return codomain(self(im_gens[0]))
+        x = im_gens[0]
+        u = self.__u
+        if base_map is not None:
+            u = u.change_ring(base_map)
+        return codomain(u(x) * x**self.__n)
 
     cpdef __normalize(self):
         r"""

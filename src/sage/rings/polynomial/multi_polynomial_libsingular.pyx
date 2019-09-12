@@ -5107,7 +5107,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
         """
         return unpickle_MPolynomial_libsingular, (self._parent, self.dict())
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         INPUT:
 
@@ -5126,14 +5126,27 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: h = R.hom([0,0,0,u], S) # indirect doctest
             sage: h((a+d)^3)
             u^3
+
+        You can specify a map on the base ring::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<x,y> = K[]
+            sage: phi = R.hom([y,x], base_map=cc, category=Rings())
+            sage: phi(x + i*y)
+            (-i)*x + y
         """
         #TODO: very slow
         n = self.parent().ngens()
         if n == 0:
             return codomain._coerce_(self)
         y = codomain(0)
+        if base_map is None:
+            # Just use conversion
+            base_map = codomain
         for (m,c) in self.dict().iteritems():
-            y += codomain(c)*mul([ im_gens[i]**m[i] for i in range(n) if m[i]])
+            y += base_map(c)*mul([ im_gens[i]**m[i] for i in range(n) if m[i]])
         return y
 
 

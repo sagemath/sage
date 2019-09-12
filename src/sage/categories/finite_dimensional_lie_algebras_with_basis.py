@@ -1344,7 +1344,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
             return FiniteDimensionalAlgebra(R, mats, names=self._names)
 
-        def morphism(self, on_generators, codomain=None, check=True):
+        def morphism(self, on_generators, codomain=None, base_map=None, check=True):
             r"""
             Return a Lie algebra morphism defined by images of a Lie
             generating subset of ``self``.
@@ -1355,6 +1355,8 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
               in ``codomain`` of elements `X` of ``domain``
             - ``codomain`` -- a Lie algebra (optional); this is inferred
               from the values of ``on_generators`` if not given
+            - ``base_map`` -- a homomorphism from the base ring to something
+              coercing into the codomain
             - ``check`` -- (default: ``True``) boolean; if ``False`` the
               values  on the Lie brackets implied by ``on_generators`` will
               not be checked for contradictory values
@@ -1391,10 +1393,30 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ...
                 ValueError: this does not define a Lie algebra morphism;
                  contradictory values for brackets of length 2
+
+            However, it is still possible to create a morphism that acts nontrivially
+            on the coefficients, even though it's not a Lie algebra morphism
+            (since it isn't linear)::
+
+                sage: R.<x> = ZZ[]
+                sage: K.<i> = NumberField(x^2 + 1)
+                sage: cc = K.hom([-i])
+                sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z':1}, ('X','Z'): {'W':1}})
+                sage: M.<A,B> = LieAlgebra(K, abelian=True)
+                sage: phi = L.morphism({X: A, Y: B}, base_map=cc)
+                sage: phi(X)
+                A
+                sage: phi(i*X)
+                -i*A
+
+            Note that ``phi`` is not a morphism of Lie algebras over `K`::
+
+                sage: phi.category_for()
+                Category of sets with partial maps
             """
             from sage.algebras.lie_algebras.morphism import LieAlgebraMorphism_from_generators
             return LieAlgebraMorphism_from_generators(on_generators, domain=self,
-                                                      codomain=codomain, check=check)
+                                                      codomain=codomain, base_map=base_map, check=check)
 
     class ElementMethods:
         def adjoint_matrix(self): # In #11111 (more or less) by using matrix of a morphism

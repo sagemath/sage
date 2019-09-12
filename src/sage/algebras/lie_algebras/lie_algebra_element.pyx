@@ -82,7 +82,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             right = (<LieAlgebraElement> right).lift()
         return left * right
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` in ``codomain`` under the
         map that sends the generators of the parent of ``self``
@@ -119,7 +119,9 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         if not self: # If we are 0
             return s
         names = self.parent().variable_names()
-        return codomain.sum(c * t._im_gens_(codomain, im_gens, names)
+        if base_map is None:
+            base_map = lambda x: x
+        return codomain.sum(base_map(c) * t._im_gens_(codomain, im_gens, names)
                             for t, c in self._monomial_coefficients.iteritems())
 
     cpdef lift(self):

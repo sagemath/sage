@@ -608,7 +608,7 @@ cdef class Element(SageObject):
                 pass
         return res
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` in codomain under the map that sends
         the images of the generators of the parent of ``self`` to the

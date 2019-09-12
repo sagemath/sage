@@ -1118,7 +1118,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return hash(self._value)
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` under the homomorphism from the rational
         field to ``codomain``.

@@ -194,21 +194,34 @@ class MPolynomial_element(MPolynomial):
         return self.__element.rich_compare(right.__element, op,
                                            self.parent().term_order().sortkey)
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         EXAMPLES::
 
             sage: R.<x,y> = PolynomialRing(QQbar, 2)
             sage: f = R.hom([y,x], R)
-            sage: f(x^2 + 3*y^5)
+            sage: f(x^2 + 3*y^5) # indirect doctest
             3*x^5 + y^2
+
+        You can specify a map on the base ring::
+
+            sage: F.<x,y> = ZZ[]
+            sage: F = F.fraction_field(); x,y = F(x),F(y)
+            sage: cc = F.hom([y,x])
+            sage: R.<z,w> = F[]
+            sage: phi = R.hom([w,z], base_map=cc, category=Rings())
+            sage: phi(w/x)
+            1/y*z
         """
         n = self.parent().ngens()
         if n == 0:
             return codomain._coerce_(self)
         y = codomain(0)
+        if base_map is None:
+            # Just use conversion
+            base_map = codomain
         for (m,c) in iteritems(self.element().dict()):
-            y += codomain(c)*prod([ im_gens[i]**m[i] for i in range(n) if m[i] ])
+            y += base_map(c)*prod([ im_gens[i]**m[i] for i in range(n) if m[i] ])
         return y
 
     def number_of_terms(self):

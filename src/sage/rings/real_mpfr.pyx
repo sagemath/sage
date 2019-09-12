@@ -1776,7 +1776,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return hash(float(self))
 
-    def _im_gens_(self, codomain, im_gens):
+    def _im_gens_(self, codomain, im_gens, base_map=None):
         """
         Return the image of ``self`` under the homomorphism from the rational
         field to ``codomain``.
