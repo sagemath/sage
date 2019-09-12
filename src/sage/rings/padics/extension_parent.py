@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 General extensions of p-adic rings and fields; the base ring may also be an
 extension.
@@ -16,17 +17,18 @@ These are implemented as proxy parents, backed by an absolute extension.
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from .extension_element import pAdicGenericExtensionElement
+from .extension_element import pAdicGeneralExtensionElement
 from .padic_extension_generic import pAdicExtensionGeneric
+from sage.rings.ring_extension import RingExtensionWithBasis
 
 # NotImplementedError: AlgebraFromMorphism shouldn't inherit from UniqueRepresentation
-class pAdicGeneralExtension(AlgebraFromMorphism, pAdicExtensionGeneric):
+class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         self._exact_modulus = exact_modulus
         self._shift_seed = shift_seed
         self._implementation = 'proxy'
         defining_morphism = None # NotImplementedError
-        AlgebraFromMorphism.__init__(self, defining_morphism, False)
+        RingExtensionWithBasis.__init__(self, defining_morphism, False)
         pAdicGeneric.__init__(self, poly, prec, print_mode, names, pAdicGenericExtensionElement)
         # Fix the following
         self._gen = None

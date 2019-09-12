@@ -1,18 +1,29 @@
+# -*- coding: utf-8 -*-
 """
 Elements of general extensions of p-adic rings and fields; the base ring may also be an extension.
 
 These are implemented as proxy elements, backed by an absolute extension.
 """
+#*****************************************************************************
+#       Copyright (C) 2019 David Roe <roed.math@gmail.com>
+#                          Julian Rüth <julian.rueth@fsfe.org>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from copy import deepcopy
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
 from sage.rings.morphism import RingHomomorphism
-from sage.structure.element import AlgebraFMElement
+from sage.rings.ring_extension_element import RingExtensionElement
 from .padic_generic_element import pAdicGenericElement
 
-class pAdicGeneralExtensionElement(AlgebraFMElement, pAdicGenericElement):
+class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     # We start with the interesting functions; need to port these to two step extensions
     def polynomial(self, var='x'):
         raise NotImplementedError

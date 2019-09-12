@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Factory
 
@@ -20,6 +21,7 @@ TESTS::
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
+#                          2019 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -57,6 +59,7 @@ from . import padic_printing
 
 from .padic_extension_leaves import *
 from .relative_extension_leaves import *
+from .extension_parent import pAdicGeneralExtension
 from functools import reduce
 #This imports all of the classes used in the ext_table below.
 
@@ -67,10 +70,10 @@ ext_table['e', pAdicRingCappedRelative] = EisensteinExtensionRingCappedRelative
 ext_table['e', pAdicRingFixedMod] = EisensteinExtensionRingFixedMod
 #ext_table['e', pAdicRingFloatingPoint] = EisensteinExtensionRingFloatingPoint
 #ext_table['e', pAdicFieldFloatingPoint] = EisensteinExtensionFieldFloatingPoint
-#ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtensionFieldCappedRelative
-#ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtensionRingCappedAbsolute
-#ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtensionRingCappedRelative
-#ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtensionRingFixedMod
+ext_table['p', pAdicFieldCappedRelative] = pAdicGeneralExtension
+ext_table['p', pAdicRingCappedAbsolute] = pAdicGeneralExtension
+ext_table['p', pAdicRingCappedRelative] = pAdicGeneralExtension
+ext_table['p', pAdicRingFixedMod] = pAdicGeneralExtension
 ext_table['u', pAdicFieldCappedRelative] = UnramifiedExtensionFieldCappedRelative
 ext_table['u', pAdicRingCappedAbsolute] = UnramifiedExtensionRingCappedAbsolute
 ext_table['u', pAdicRingCappedRelative] = UnramifiedExtensionRingCappedRelative
