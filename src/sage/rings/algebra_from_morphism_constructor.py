@@ -148,8 +148,8 @@ def RingExtension(ring, base=None, defining_morphism=None):
     coerces to K1 (be careful at the direction) and the defining morphisms
     agree. For example::
 
-        sage: K1 = GF(3^4); L1 = GF(3^8);  E1 = L1/K1
-        sage: K2 = GF(3^2); L2 = GF(3^16); E2 = L2/K2
+        sage: K1 = GF(3^4); L1 = GF(3^8);  E1 = RingExtension(L1,K1)
+        sage: K2 = GF(3^2); L2 = GF(3^16); E2 = RingExtension(L2,K2)
         sage: E2.has_coerce_map_from(E1)
         True
 
@@ -164,9 +164,9 @@ def RingExtension(ring, base=None, defining_morphism=None):
 
     DEFINING MORPHISM:
 
-    When creating the extension E = L/K, we have not specified the defining
-    morphism. In that case, the coercion map from the base to the ring (if
-    it exists) is used by default::
+    When creating the extension ``E = L/K``, we have not specified the defining
+    morphism. In that case, the coercion map from the base to the ring (if it
+    exists) is used by default::
 
         sage: E.defining_morphism()
         Ring morphism:
@@ -237,7 +237,7 @@ def RingExtension(ring, base=None, defining_morphism=None):
         sage: aE = ExtFrob(a)
         sage: aE + c
         4*z4^3 + 4*z4^2 + 2
-        sage: a^5 + c
+        sage: a + c^5
         4*z4^3 + 4*z4^2 + 2
 
 
@@ -277,3 +277,10 @@ def RingExtension(ring, base=None, defining_morphism=None):
         else:
             raise ValueError("No coercion map from %s to %s" % (codomain,ring))
     return AlgebraFromMorphism(defining_morphism, coerce)
+
+
+def TowerExtensions(*rings):
+    tower = rings[-1]
+    for i in range(len(rings)-2, -1, -1):
+        tower = RingExtension(rings[i], tower)
+    return tower

@@ -10,13 +10,22 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
     - Xavier Caruso (2016)
     """
-    def __init__(self, parent, element, *args, **kwds):
+    def __init__(self, parent, x, *args, **kwds):
         from sage.rings.algebra_from_morphism import AlgebraFromMorphism
         if not isinstance(parent, AlgebraFromMorphism):
             raise TypeError("%s is not an instance of AlgebraFromMorphism" % parent)
+        if isinstance(x, AlgebraFMElement):
+            x = x._backend()
+        try:
+            parentx = x.parent()
+            if parent.base().has_coerce_map_from(parentx):
+                x = parent.base().coerce_map_from(parentx)(x)
+                x = parent.defining_morphism()(x)
+        except AttributeError:
+            pass
         Element.__init__(self, parent)
         ring = parent._backend()
-        self._element = ring(element, *args, **kwds)
+        self._element = ring(x, *args, **kwds)
 
     def _repr_(self):
         r"""
@@ -30,7 +39,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = L.gen()
             sage: E(x)._repr_()
@@ -52,7 +61,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = L.gen()
             sage: E(x)._latex_()
@@ -72,7 +81,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = E.random_element()
             sage: y = E.random_element()
@@ -90,7 +99,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = E.random_element()
             sage: y = E.random_element()
@@ -105,7 +114,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = E.random_element()
             sage: y = E.random_element()
@@ -125,7 +134,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = E.gen()
             sage: x.additive_order()
@@ -141,7 +150,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
 
             sage: K = GF(5^2)
             sage: L = GF(5^4)
-            sage: E = L/K
+            sage: E = RingExtension(L,K)
 
             sage: x = E.gen()
             sage: x.multiplicative_order()
@@ -157,7 +166,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: A.<x> = PolynomialRing(QQ)
-            sage: E = A/QQ
+            sage: E = RingExtension(A,QQ)
             sage: E(4).is_unit()
             True
             sage: E(x).is_unit()
@@ -173,7 +182,7 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: A.<x> = PolynomialRing(QQ)
-            sage: E = A/QQ
+            sage: E = RingExtension(A,QQ)
             sage: E(0).is_nilpotent()
             True
             sage: E(x).is_nilpotent()
@@ -189,10 +198,59 @@ cdef class AlgebraFMElement(CommutativeAlgebraElement):
         EXAMPLES::
 
             sage: A.<x> = PolynomialRing(QQ)
-            sage: E = A/QQ
+            sage: E = RingExtension(A,QQ)
             sage: E(x^2+1).is_prime()
             True
             sage: E(x^2-1).is_prime()
             False
         """
         return self._element.is_prime()
+
+
+cdef class RingExtensionWithBasisElement(AlgebraFMElement):
+    def _repr_(self):
+        parent = self._parent
+        names = parent._names
+        _, _, j = parent.vector_space()
+        coeffs = j(self)
+        s = ""
+        for i in range(len(names)):
+            if coeffs[i].is_zero(): continue
+            c = coeffs[i]
+            sign = 1
+            if (-c)._is_atomic():
+                c = -c
+                sign = -sign
+            if s == "":
+                if sign == -1: s = "-"
+            else:
+                s += " + " if sign == 1 else " - "
+            ss = ""
+            if c != 1:
+                if c._is_atomic():
+                    ss += "%s" % c
+                else:
+                    ss += "(%s)" % c
+                if names[i] != "": ss += "*"
+            ss += names[i]
+            if ss == "": ss += "1"
+            s += ss
+        if s == "": return "0"
+        return s
+
+    def matrix(self):
+        from sage.matrix.matrix_space import MatrixSpace
+        parent = self._parent
+        _, _, j = parent.vector_space()
+        x = self._backend()
+        M = [ j(x*b) for b in parent._basis ]
+        return MatrixSpace(parent._base, len(parent._basis))(M)
+
+    def trace(self):
+        return self.matrix().trace()
+
+    def norm(self):
+        return self.matrix().determinant()
+
+    def charpoly(self, var='x'):
+        return self.matrix().charpoly(var)

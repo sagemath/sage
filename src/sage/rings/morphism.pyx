@@ -2097,56 +2097,20 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
 from sage.rings.algebra_from_morphism import AlgebraFromMorphism
 
-cdef class AlgebraToRing(RingHomomorphism):
-    r"""
-    Coercion map between an extension and its ring
-
-    It acts as the identity, only modifies the parent
-
-    EXAMPLES::
-
-        sage: K = GF(5^2)
-        sage: L = GF(5^4)
-        sage: E = L/K
-
-        sage: coerce_map = L.coerce_map_from(E)
-        sage: coerce_map
-        Ring Coercion morphism:
-          From: Finite Field in z4 of size 5^4 viewed as an algebra over Finite Field in z2 of size 5^2
-          To:   Finite Field in z4 of size 5^4
-        sage: type(coerce_map)
-        <type 'sage.rings.morphism.AlgebraToRing'>
-
-        sage: x = E.random_element()
-        sage: x == coerce_map(x)
-        True
-    """
-    cpdef Element _call_(self, x):
-        r"""
-        TESTS::
-
-            sage: K = GF(5^2)
-            sage: L = GF(5^4)
-
-            sage: E = L/K
-            sage: coerce_map = L.coerce_map_from(E)
-            sage: x = coerce_map(E.gen()); x
-            z4
-            sage: x.parent() is L
-            True
-
-            sage: E = RingExtension(L, K, K.frobenius_endomorphism())
-            sage: coerce_map = L.coerce_map_from(E)
-            sage: x = coerce_map(E.gen()); x
-            z4
-            sage: x.parent() is L
-            True
-        """
-        return x._backend()
-
-
 cdef class AlgebraFromMorphismHomomorphism(RingHomomorphism):
-    def __init__(self, parent, backend_morphism):
+    r"""
+    Homomorphisms between extensions
+
+    EXAMPLES:
+
+        sage: F = GF(5^2)
+        sage: K = GF(5^4)
+        sage: L = GF(5^8)
+        sage: E1 = RingExtension(K,F)
+        sage: E2 = RingExtension(L,K)
+
+    """
+    def __init__(self, parent, backend):
         RingHomomorphism.__init__(self, parent)
         backend_domain = self.domain()
         if isinstance(backend_domain, AlgebraFromMorphism):
@@ -2154,11 +2118,12 @@ cdef class AlgebraFromMorphismHomomorphism(RingHomomorphism):
         backend_codomain = self.codomain()
         if isinstance(backend_codomain, AlgebraFromMorphism):
             backend_codomain = backend_codomain._backend()
-        if backend_morphism.domain() is not backend_domain:
+        backend = backend_morphism(backend)
+        if backend.domain() is not backend_domain:
             raise TypeError("the domain of the backend morphism is not correct")
-        if backend_morphism.codomain() is not backend_codomain:
+        if backend.codomain() is not backend_codomain:
             raise TypeError("the codomain of the backend morphism is not correct")
-        self._backend_morphism = backend_morphism
+        self._backend_morphism = backend
         # We should probably allow for more general constructions but
         #   self._backend_morphism = backend_domain.Hom(backend_codomain)(*args, **kwargs)
         # does not work currently
@@ -2171,13 +2136,8 @@ cdef class AlgebraFromMorphismHomomorphism(RingHomomorphism):
             y = self._codomain(y)
         return y
 
-    def _backend(self, forget=None):
-        backend = self._backend_morphism
-        if forget == "domain" and not isinstance(self.domain(), AlgebraFromMorphism):
-            return self.__class__(backend.domain().Hom(self._codomain), backend)
-        if forget == "codomain" and not isinstance(self.codomain(), AlgebraFromMorphism):
-            return self.__class__(self._domain.Hom(backend.codomain()), backend)
-        return backend
+    def _backend(self):
+        return self._backend_morphism
 
     cdef _update_slots(self, dict _slots):
         self._backend_morphism = _slots['_backend_morphism']
@@ -2188,3 +2148,34 @@ cdef class AlgebraFromMorphismHomomorphism(RingHomomorphism):
         slots['_backend_morphism'] = self._backend_morphism
         return slots
 
+
+
+def _backend_morphism(f):
+    from sage.categories.map import FormalCompositeMap
+    if not isinstance(f.domain(), AlgebraFromMorphism) and not isinstance(f.codomain(), AlgebraFromMorphism):
+        return f
+    elif isinstance(f, AlgebraFromMorphismHomomorphism):
+        return f._backend()
+    elif isinstance(f, FormalCompositeMap):
+        return _backend_morphism(f.then()) * _backend_morphism(f.first())
+    else:
+        raise NotImplementedError
+
+def backend_morphism(f, forget="all"):
+    try:
+        g = _backend_morphism(f)
+        if forget is None and (isinstance(f.domain(), AlgebraFromMorphism) or isinstance(f.codomain(), AlgebraFromMorphism)):
+            g = AlgebraFromMorphismHomomorphism(f.domain().Hom(f.codomain()), g)
+        if forget == "domain" and isinstance(f.codomain(), AlgebraFromMorphism):
+            g = AlgebraFromMorphismHomomorphism(g.domain().Hom(f.codomain()), g)
+        if forget == "codomain" and isinstance(f.domain(), AlgebraFromMorphism):
+            g = AlgebraFromMorphismHomomorphism(f.domain().Hom(g.codomain()), g)
+    except NotImplementedError:
+        g = f
+        if (forget == "all" or forget == "domain") and isinstance(f.domain(), AlgebraFromMorphism):
+            ring = f.domain()._backend()
+            g = g * AlgebraFromMorphismHomomorphism(ring.Hom(f.domain()), ring.Hom(ring).identity())
+        if (forget == "all" or forget == "codomain") and isinstance(f.codomain(), AlgebraFromMorphism):
+            ring = f.codomain()._backend()
+            g = AlgebraFromMorphismHomomorphism(f.codomain().Hom(ring), ring.Hom(ring).identity()) * g
+    return g

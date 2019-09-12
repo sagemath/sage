@@ -332,3 +332,24 @@ class RingHomset_quo_ring(RingHomset_generic):
         if x.parent() == self:
             return morphism.RingHomomorphism_from_quotient(self, x._phi())
         raise TypeError
+
+
+class AlgebraFromMorphismHomset(RingHomset_generic):
+    def __call__(self, *args, **kwargs):
+        from sage.rings.morphism import AlgebraFromMorphismHomomorphism
+        return AlgebraFromMorphismHomomorphism(self, *args, **kwargs)
+
+    def _coerce_impl(self, x):
+        from sage.rings.morphism import AlgebraFromMorphismHomomorphism
+        from sage.rings.algebra_from_morphism import AlgebraFromMorphism
+        if isinstance(x, AlgebraFromMorphismHomomorphism):
+            x = x._backend()
+        domain = self.domain()
+        if isinstance(domain, AlgebraFromMorphism):
+            domain = domain._backend()
+        codomain = self.codomain()
+        if isinstance(codomain, AlgebraFromMorphism):
+            codomain = codomain._backend()
+        if domain is x.domain() and codomain is x.codomain():
+            return AlgebraFromMorphismHomomorphism(self, x)
+        raise TypeError
