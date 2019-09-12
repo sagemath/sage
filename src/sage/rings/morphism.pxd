@@ -31,3 +31,6 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
     cdef Integer _p
     cdef Integer _q
     cdef long _power
+
+cdef class RingHomomorphism_coercion(RingHomomorphism):
+    pass

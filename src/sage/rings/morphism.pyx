@@ -481,6 +481,7 @@ cdef class RingMap_lift(RingMap):
         [0 1]
         [0 0]
     """
+    
     def __init__(self, R, S):
         """
         Create a lifting ring map.
@@ -899,7 +900,7 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
     r"""
     A ring homomorphism that is a coercion.
 
-    .. WARNING:;
+    .. WARNING::
 
         This class is obsolete. Set the category of your morphism to a
         subcategory of ``Rings`` instead.

@@ -571,5 +571,3 @@ cdef class ActionEndomorphism(Morphism):
                 return ActionEndomorphism(self._action, inv_g)
             else:
                 return (~self._action)(self._g)
-
-
