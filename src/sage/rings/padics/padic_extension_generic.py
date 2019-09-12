@@ -38,7 +38,7 @@ from sage.categories.homset import Hom
 
 
 class pAdicExtensionGeneric(pAdicGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, poly, prec, print_mode, names, element_class, category=None):
         """
         Initialization
 
@@ -59,7 +59,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         print_mode['ram_name'] = names[3]
         print_mode['var_name'] = names[0]
         names = names[0]
-        pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class)
+        pAdicGeneric.__init__(self, R, R.prime(), prec, print_mode, names, element_class, category=category)
         self._populate_coercion_lists_(coerce_list=[R])
 
     def _coerce_map_from_(self, R):

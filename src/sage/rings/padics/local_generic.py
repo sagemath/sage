@@ -66,11 +66,12 @@ class LocalGeneric(CommutativeRing):
         self._prec = prec
         self.Element = element_class
         default_category = getattr(self, '_default_category', None)
-        if self.is_field():
-            category = CompleteDiscreteValuationFields()
-        else:
-            category = CompleteDiscreteValuationRings()
-        category = category.Metric().Complete().Infinite()
+        if category is None:
+            if self.is_field():
+                category = CompleteDiscreteValuationFields()
+            else:
+                category = CompleteDiscreteValuationRings()
+            category = category.Metric().Complete().Infinite()
         if default_category is not None:
             category = check_default_category(default_category, category)
         Parent.__init__(self, base, names=(names,), normalize=False, category=category)

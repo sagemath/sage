@@ -4,6 +4,13 @@ General extensions of p-adic rings and fields; the base ring may also be an
 extension.
 
 These are implemented as proxy parents, backed by an absolute extension.
+
+EXAMPLES:
+
+A trivial extension::
+
+    sage: L.<a> = Qp(2).extension(x)
+
 """
 #*****************************************************************************
 #       Copyright (C) 2019 David Roe <roed.math@gmail.com>
@@ -23,15 +30,27 @@ from sage.rings.ring_extension import RingExtensionWithBasis
 
 # NotImplementedError: AlgebraFromMorphism shouldn't inherit from UniqueRepresentation
 class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
         self._exact_modulus = exact_modulus
         self._shift_seed = shift_seed
         self._implementation = 'proxy'
+        # TODO: To make things work for now, we use the base's prime pow.
+        self.prime_pow = poly.base_ring().prime_pow
+        self._prec_type = poly.base_ring()._prec_type
+        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category or poly.base_ring().category())
+
+        if self.f() == 1 and self.e() == 1:
+            raise NotImplementedError("trivial extension")
+        elif self.e() == 1:
+            raise NotImplementedError("unramified extension")
+        elif self.f() == 1:
+            raise NotImplementedError("totally ramified extension")
+        else:
+            raise NotImplementedError("general extension")
+
+
         defining_morphism = None # NotImplementedError
         RingExtensionWithBasis.__init__(self, defining_morphism, False)
-        pAdicGeneric.__init__(self, poly, prec, print_mode, names, pAdicGenericExtensionElement)
-        # Fix the following
-        self._gen = None
 
     @cached_method
     def f(self):
@@ -62,7 +81,7 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
             1
 
         """
-        return self.relative_degree() // self.f()
+        return self._exact_modulus.degree() // self.f()
 
     def teichmuller(self, x, prec=None):
         R = self._backend()
@@ -87,11 +106,6 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
     def inertia_subring(self):
         raise NotImplementedError
 
-    def gen(self, n=0):
-        if n != 0:
-            raise IndexError("only one generator")
-        return self._gen
-
     def uniformizer(self):
         return self(self._backend().uniformizer())
 
@@ -109,5 +123,3 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
 
     def has_root_of_unity(self, n):
         return self._backend().has_root_of_unity(self, n)
-
-    

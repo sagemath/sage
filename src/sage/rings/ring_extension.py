@@ -79,7 +79,7 @@ def _common_base(K, L, degree=False):
 # General extensions
 ####################
 
-class RingExtension_class(CommutativeAlgebra, UniqueRepresentation):
+class RingExtension_class(CommutativeAlgebra):
     r"""
     Create a ring extension
 

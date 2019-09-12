@@ -2976,8 +2976,6 @@ class pAdicExtension_class(UniqueFactory):
                 approx_modulus = modulus.change_ring(base)
             else:
                 raise ValueError("modulus must be a polynomial")
-            if exact_modulus.degree() <= 1:
-                raise NotImplementedError("degree of modulus must be at least 2")
             # need to add more checking here.
             if not unram and not exact_modulus.is_monic():
                 exact_modulus = exact_modulus / exact_modulus.leading_coefficient()
