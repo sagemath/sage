@@ -208,29 +208,6 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         """
         return True
 
-    def polynomial(self, name=None):
-        """
-        Returns the polynomial ``name``.
-
-        EXAMPLES::
-
-            sage: k.<a> = GF(3)
-            sage: k.polynomial()
-            x
-        """
-        if name is None:
-            name = self.variable_name()
-        try:
-            return self.__polynomial[name]
-        except  AttributeError:
-            f = self[name]([0, 1])
-            try:
-                self.__polynomial[name] = f
-            except (KeyError, AttributeError):
-                self.__polynomial = {}
-                self.__polynomial[name] = f
-            return f
-
     def order(self):
         """
         Return the order of this finite field.
