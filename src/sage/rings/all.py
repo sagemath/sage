@@ -172,4 +172,4 @@ from . import numbers_abc
 del absolute_import
 
 # Extensions
-from sage.rings.algebra_from_morphism_constructor import RingExtension, TowerExtensions
+from sage.rings.ring_extension_constructor import RingExtension

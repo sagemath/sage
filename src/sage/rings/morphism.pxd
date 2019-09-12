@@ -35,8 +35,3 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
 cdef class RingHomomorphism_coercion(RingHomomorphism):
     pass
-
-
-cdef class AlgebraFromMorphismHomomorphism(RingHomomorphism):
-    cdef _backend_morphism
-    cpdef Element _call_(self, x)

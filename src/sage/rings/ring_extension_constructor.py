@@ -9,7 +9,7 @@ AUTHOR:
 """
 
 #############################################################################
-#    Copyright (C) 2016 Xavier Caruso <xavier.caruso@normalesup.org>
+#    Copyright (C) 2019 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ AUTHOR:
 
 
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.algebra_from_morphism import AlgebraFromMorphism
+from sage.rings.ring_extension import RingExtension_class
 
 
 def RingExtension(ring, base=None, defining_morphism=None):
@@ -276,11 +276,11 @@ def RingExtension(ring, base=None, defining_morphism=None):
             defining_morphism = defining_morphism.post_compose(coercion)
         else:
             raise ValueError("No coercion map from %s to %s" % (codomain,ring))
-    return AlgebraFromMorphism(defining_morphism, coerce)
+    return RingExtension_class(defining_morphism, coerce)
 
 
-def TowerExtensions(*rings):
-    tower = rings[-1]
-    for i in range(len(rings)-2, -1, -1):
-        tower = RingExtension(rings[i], tower)
-    return tower
+#def TowerExtensions(*rings):
+#    tower = rings[-1]
+#    for i in range(len(rings)-2, -1, -1):
+#        tower = RingExtension(rings[i], tower)
+#    return tower
