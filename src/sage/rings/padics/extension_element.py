@@ -31,12 +31,6 @@ class pAdicGeneralExtensionElement(RingExtensionElement, pAdicGenericElement):
     def _poly_rep(self):
         return self.polynomial().change_ring(self.parent()._FP_base())
 
-    def trace(self, base=None):
-        raise NotImplementedError
-
-    def norm(self, base=None):
-        raise NotImplementedError
-
     # Now a bunch of trivial functions
     def frobenius(self, arithmetic=True):
         return self.__class__(self.parent(), self._element.frobenius(arithmetic=arithmetic))

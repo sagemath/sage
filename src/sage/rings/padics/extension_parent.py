@@ -31,16 +31,19 @@ from sage.rings.ring_extension import RingExtensionWithBasis
 # NotImplementedError: AlgebraFromMorphism shouldn't inherit from UniqueRepresentation
 class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT', category=None):
+        base = poly.base_ring()
         self._exact_modulus = exact_modulus
         self._shift_seed = shift_seed
         self._implementation = 'proxy'
         # TODO: To make things work for now, we use the base's prime pow.
-        self.prime_pow = poly.base_ring().prime_pow
-        self._prec_type = poly.base_ring()._prec_type
-        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category or poly.base_ring().category())
+        self.prime_pow = base.prime_pow
+        self._prec_type = base._prec_type
+        pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, pAdicGeneralExtensionElement, category=category or base.category())
 
         if self.f() == 1 and self.e() == 1:
-            raise NotImplementedError("trivial extension")
+            (backend, backend_to_base, base_to_backend) = base.absolute_ring(map=True)
+            defining_morphism = base_to_backend
+            basis = [backend.one()]
         elif self.e() == 1:
             raise NotImplementedError("unramified extension")
         elif self.f() == 1:
@@ -48,9 +51,7 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
         else:
             raise NotImplementedError("general extension")
 
-
-        defining_morphism = None # NotImplementedError
-        RingExtensionWithBasis.__init__(self, defining_morphism, False)
+        RingExtensionWithBasis.__init__(self, defining_morphism=defining_morphism, basis=basis)
 
     @cached_method
     def f(self):
@@ -82,6 +83,32 @@ class pAdicGeneralExtension(RingExtensionWithBasis, pAdicExtensionGeneric):
 
         """
         return self._exact_modulus.degree() // self.f()
+
+    def absolute_ring(self, map=False, **kwds):
+        r"""
+        Return an absolute extension of the absolute base isomorphic to this
+        field.
+
+        Note that this might not be a simple extension but a two step
+        extension, i.e., a totally ramified extension given by an Eisenstein
+        polynomial over an unramified extension.
+
+        EXAMPLES::
+
+            sage: L.<a> = Qp(2).extension(x^2 + 2*x + 4)
+            sage: L.absolute_filed()
+            sage: L.absolute_filed(map=True)
+
+        """
+        backend = self._backend()
+        absolute = backend.absolute_ring(map=map, **kwds)
+        if map:
+            (absolute, absolute_to_backend, backend_to_absolute) = absolute
+            return (absolute,
+                backend.hom(self) * absolute_to_backend,
+                backend_to_absolute * self.hom(backend))
+        else:
+            return absolute
 
     def teichmuller(self, x, prec=None):
         R = self._backend()
