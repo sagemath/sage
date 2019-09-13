@@ -933,15 +933,13 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         return m2("%s[symbol %s]"%(base_ring.name(), var))
 
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
-        try:
-            # all that is needed is that elements of the base ring
-            # of the polynomial ring canonically coerce into codomain.
-            # Since poly rings are free, any image of the gen
-            # determines a homomorphism
-            codomain.coerce(self.base_ring().one())
-        except TypeError:
-            return False
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+        # Since poly rings are free, any image of the gen
+        # determines a homomorphism
+        if base_map is not None:
+            # If no base map is given, the only requirement is that the
+            # base ring coerces into the codomain
+            return codomain.has_coerce_map_from(self.base_ring())
         return True
 
     #    Polynomial rings should be unique parents. Hence,

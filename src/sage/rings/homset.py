@@ -176,7 +176,7 @@ class RingHomset_generic(HomsetWithBase):
             sage: z2 = k.gen()
             sage: cc = k.frobenius_endomorphism()
             sage: R.<x> = k[]
-            sage: H = Hom(R, R, category=Rings())
+            sage: H = Hom(R, R)
             sage: phi = H([x^2], base_map=cc); phi
             Ring endomorphism of Univariate Polynomial Ring in x over Finite Field in z2 of size 3^2
               Defn: x |--> x^2

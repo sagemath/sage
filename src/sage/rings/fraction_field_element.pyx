@@ -155,7 +155,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: cc = K.hom([-i])
             sage: R.<a,b> = K[]
             sage: F = R.fraction_field()
-            sage: phi = F.hom([F(b),F(a)], base_map=cc, category=Fields())
+            sage: phi = F.hom([F(b),F(a)], base_map=cc)
             sage: phi(i/a)
             ((-i))/b
         """

@@ -1209,7 +1209,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     # Generators and Homomorphisms
     #################################################################################
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
        r"""
        Return True if ``im_gens`` defines a valid homomorphism
        from self to codomain; otherwise return False.
@@ -1351,13 +1351,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         if check is not None:
             kwds['check'] = check
         if base_map is not None:
-            if category is None:
-                from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
-                # It might be possible to be more precise with the category here
-                # by taking the meet of base_map.category_for() with the domain and
-                # codomain's categories.  But it's not clear that this is always correct
-                # so we conservatively choose just SetsWithPartialMaps
-                category = SetsWithPartialMaps()
+            # Ideally we would have machinery here to determine
+            # how the base map affects the category of the resulting
+            # morphism.  But for now it's not clear how to do this,
+            # so we leave the category as the default for now.
             kwds['base_map'] = base_map
         Hom_kwds = {} if category is None else {'category': category}
         return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)

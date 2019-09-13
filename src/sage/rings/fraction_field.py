@@ -771,7 +771,7 @@ class FractionField_generic(ring.Field):
         r = self._element_class(self, x, one, coerce=False, reduce=False)
         return r
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Check if the homomorphism defined by sending generators of this
         fraction field to ``im_gens`` in ``codomain`` is valid.
@@ -801,11 +801,13 @@ class FractionField_generic(ring.Field):
         """
         if len(im_gens) != self.ngens():
             return False
-        # it is enough to check if elements of the base ring coerce to
-        # the codomain
-        if codomain.has_coerce_map_from(self.base_ring()):
-            return True
-        return False
+        # It is very difficult to check that the image of any element
+        # is invertible.  Checking that the image of each generator
+        # is a unit is not sufficient.  So we just give up and check
+        # that elements of the base ring coerce to the codomain
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
+            return False
+        return True
 
     def random_element(self, *args, **kwds):
         """

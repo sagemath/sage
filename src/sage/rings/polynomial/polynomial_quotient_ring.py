@@ -562,15 +562,32 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             parent = Hom(R, self, category=self.category()._meet_(R.category()))
             return parent.__make_element_class__(PolynomialQuotientRing_coercion)(R, self, category=parent.homset_category())
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
-        # We need that elements of the base ring of the polynomial
-        # ring map canonically into codomain.
-        if not codomain.has_coerce_map_from(self.base_ring()):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+        """
+        EXAMPLES::
+
+            sage: T.<t> = ZZ[]
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: R.<x> = K[]
+            sage: S.<a> = R.quotient(x^2 - i)
+            sage: Q8.<z> = CyclotomicField(8)
+            sage: S._is_valid_homomorphism_(Q8, [z]) # no coercion from K to Q8
+            False
+            sage: S._is_valid_homomorphism_(Q8, [z], K.hom([z^2]))
+            True
+            sage: S._is_valid_homomorphism_(Q8, [1/z], K.hom([z^-2]))
+            True
+        """
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
+            # If no base_map given, we need that elements of the base ring
+            # of the polynomial ring map canonically into codomain.
             return False
 
-        # We also need that the polynomial modulus maps to 0.
+        # We also need that the polynomial modulus maps to 0, after twisting by the base_map
         f = self.modulus()
         try:
+            if base_map is not None:
+                f = f.change_ring(base_map)
             return codomain(f(im_gens[0])) == 0
         except (TypeError, ValueError):
             return False

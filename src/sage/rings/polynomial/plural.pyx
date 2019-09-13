@@ -2254,7 +2254,7 @@ cdef class NCPolynomial_plural(RingElement):
             a^2*b^3 - a^2*b^2*c
             sage: phi(x*y - z2*x^2*z)
             (z2)*a^2*b^3 - a^2*b^2*c
-            sage: phi = R.hom([a*b, b, a*b*c], base_map=GF(9).frobenius_endomorphism(), category=Algebras(GF(9)), check=False)
+            sage: phi = R.hom([a*b, b, a*b*c], base_map=GF(9).frobenius_endomorphism(), check=False)
             sage: phi(x*y - x^2*z)
             a^2*b^3 - a^2*b^2*c
             sage: phi(x*y - z2*x^2*z)

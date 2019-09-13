@@ -209,7 +209,7 @@ class MPolynomial_element(MPolynomial):
             sage: F = F.fraction_field(); x,y = F(x),F(y)
             sage: cc = F.hom([y,x])
             sage: R.<z,w> = F[]
-            sage: phi = R.hom([w,z], base_map=cc, category=Rings())
+            sage: phi = R.hom([w,z], base_map=cc)
             sage: phi(w/x)
             1/y*z
         """

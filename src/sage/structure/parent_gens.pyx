@@ -216,16 +216,18 @@ cdef class ParentWithGens(ParentWithBase):
 
         INPUT:
 
-        - ``im_gens`` - the images in the codomain of the generators of
+        - ``im_gens`` -- the images in the codomain of the generators of
           this object under the homomorphism
 
-        - ``codomain`` - the codomain of the homomorphism
+        - ``codomain`` -- the codomain of the homomorphism
 
-        - ``base_map`` - a map from the base ring of the domain into something
-          that coerces into the codomain.
+        - ``base_map`` -- a map from the base ring of the domain into something
+          that coerces into the codomain
 
-        - ``check`` - whether to verify that the images of generators extend
-          to define a map (using only canonical coercions).
+        - ``category`` -- the category of the resulting morphism
+
+        - ``check`` -- whether to verify that the images of generators extend
+          to define a map (using only canonical coercions)
 
         OUTPUT:
 
@@ -286,6 +288,31 @@ cdef class ParentWithGens(ParentWithBase):
             Traceback (most recent call last):
             ...
             TypeError: natural coercion morphism from Rational Field to Integer Ring not defined
+
+        You can specify a map on the base ring::
+
+            sage: k = GF(2)
+            sage: R.<a> = k[]
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)
+            sage: R.<b> = l[]
+            sage: m.<b> = l.extension(b^2 + b + a)
+            sage: n.<z> = GF(2^6)
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+
+        Note that the presence of a base map is ignored when determining the category of the
+        resulting morphism.  If you pass in a bad base morphism you can get nonsensical results::
+
+            sage: R.<x> = GF(3)[]
+            sage: f = R.hom([x+1], base_map=lambda t: t+1); f
+            sage: Ring endomorphism of Univariate Polynomial Ring in x over Finite Field of size 3
+              Defn: x |--> x + 1
+                    with map of base ring
+            sage: f.category_for()
+            Join of Category of euclidean domains and Category of commutative algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups) and Category of infinite sets
+            sage: f(-1)
+            0
+            sage: f(0)
+            1
         """
         if self._element_constructor is not None:
             return parent.Parent.hom(self, im_gens, codomain, base_map=base_map, category=category, check=check)
@@ -300,7 +327,8 @@ cdef class ParentWithGens(ParentWithBase):
             kwds['check'] = check
         if base_map is not None:
             kwds['base_map'] = base_map
-        return self.Hom(codomain, category=category)(im_gens, **kwds)
+        Hom_kwds = {} if category is None else {'category': category}
+        return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)
 
 
 cdef class localvars:
