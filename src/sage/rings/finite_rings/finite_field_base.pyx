@@ -43,7 +43,7 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
 from sage.rings.integer cimport Integer
-
+from sage.misc.superseded import deprecation
 
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
@@ -1064,7 +1064,7 @@ cdef class FiniteField(Field):
         """
         if self.absolute_degree() == 1:
             return self(randrange(self.order()))
-        v = self.vector_space().random_element(*args, **kwds)
+        v = self.vector_space(map=False).random_element(*args, **kwds)
         return self(v)
 
     def some_elements(self):
@@ -1103,21 +1103,21 @@ cdef class FiniteField(Field):
             else:
                 return PolynomialRing(self.base_ring(), variable_name)
 
-    def vector_space(self, subfield=None, basis=None, map=False):
+    def free_module(self, base=None, basis=None, map=None, subfield=None):
         """
         Return the vector space over the subfield isomorphic to this
         finite field as a vector space, along with the isomorphisms.
 
         INPUT:
 
-        - ``subfield`` -- a subfield of or a morphism into this finite field.
-          If not given, the base field is assumed. A subfield means
+        - ``base`` -- a subfield of or a morphism into this finite field.
+          If not given, the prime subfield is assumed. A subfield means
           a finite field with coercion to this finite field.
 
         - ``basis`` -- a basis of the finite field as a vector space
           over the subfield. If not given, one is chosen automatically.
 
-        - ``map`` -- boolean (default: ``False``); if ``True``, isomorphisms
+        - ``map`` -- boolean (default: ``True``); if ``True``, isomorphisms
           from and to the vector space are also returned.
 
         The ``basis`` maps to the standard basis of the vector space
@@ -1136,7 +1136,7 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: GF(27,'a').vector_space()
+            sage: GF(27,'a').vector_space(map=False)
             Vector space of dimension 3 over Finite Field of size 3
 
             sage: F = GF(8)
@@ -1195,31 +1195,39 @@ cdef class FiniteField(Field):
         """
         from sage.modules.all import VectorSpace
         from sage.categories.morphism import is_Morphism
+        if subfield is not None:
+            if base is not None:
+                raise ValueError
+            deprecation(28481, "The subfield keyword argument has been renamed to base")
+            base = subfield
+        if map is None:
+            deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
+            map = False
 
-        if subfield is None:
-            subfield = self.base_ring()
+        if base is None:
+            base = self.prime_subfield()
             s = self.relative_degree()
             if self.__vector_space is None:
-                self.__vector_space = VectorSpace(subfield, s)
+                self.__vector_space = VectorSpace(base, s)
             V = self.__vector_space
             inclusion_map = None
-        elif is_Morphism(subfield):
-            inclusion_map = subfield
-            subfield = inclusion_map.domain()
-            s = self.absolute_degree() // subfield.absolute_degree()
-            V = VectorSpace(subfield, s)
-        elif subfield.is_subring(self):
-            s = self.absolute_degree() // subfield.absolute_degree()
-            V = VectorSpace(subfield, s)
+        elif is_Morphism(base):
+            inclusion_map = base
+            base = inclusion_map.domain()
+            s = self.absolute_degree() // base.absolute_degree()
+            V = VectorSpace(base, s)
+        elif base.is_subring(self):
+            s = self.absolute_degree() // base.absolute_degree()
+            V = VectorSpace(base, s)
             inclusion_map = None
         else:
-            raise ValueError("{} is not a subfield".format(subfield))
+            raise ValueError("{} is not a subfield".format(base))
 
         if map is False: # shortcut
             return V
 
         if inclusion_map is None:
-            inclusion_map = self.coerce_map_from(subfield)
+            inclusion_map = self.coerce_map_from(base)
 
         from sage.modules.all import vector
         from sage.matrix.all import matrix
@@ -1227,7 +1235,7 @@ cdef class FiniteField(Field):
             MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)
 
         E = self
-        F = subfield
+        F = base
 
         alpha = E.gen()
         beta = F.gen()
@@ -1977,7 +1985,7 @@ cdef class FiniteField(Field):
             if len(basis) != self.degree():
                 msg = 'basis length should be {0}, not {1}'
                 raise ValueError(msg.format(self.degree(), len(basis)))
-            V = self.vector_space()
+            V = self.vector_space(map=False)
             vec_reps = [V(b) for b in basis]
             if matrix(vec_reps).is_singular():
                 raise ValueError("value of 'basis' keyword is not a basis")

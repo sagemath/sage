@@ -203,8 +203,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def _vector_(self, reverse=False):
         """
-        Return a vector in self.parent().vector_space() matching
-        self. The most significant bit is to the right.
+        Return a vector matching this element in the vector space attached
+        to the parent.  The most significant bit is to the right.
 
         INPUT:
 
@@ -245,7 +245,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         if reverse:
             ret.reverse()
-        return k.vector_space()(ret)
+        return k.vector_space(map=False)(ret)
 
     def matrix(self, reverse=False):
         r"""

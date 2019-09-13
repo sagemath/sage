@@ -1339,7 +1339,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def _is_normalized(self):
         """
-        Returns whether this element is currently normalized.
+        Whether this element is currently normalized.
 
         EXAMPLES::
 
@@ -1476,7 +1476,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef pAdicZZpXCRElement _new_c(self, long relprec):
         """
-        Returns a new element with the same parent as ``self`` and
+        Return a new element with the same parent as ``self`` and
         relative precision ``relprec``
 
         Note that if ``relprec`` is non-positive, the convention is that
@@ -1563,7 +1563,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def __invert__(self):
         """
-        Returns the inverse of ``self``.
+        Return the inverse of this element
 
         EXAMPLES::
 
@@ -1771,7 +1771,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _neg_(self):
         """
-        Returns ``-self``.
+        Negation
 
         EXAMPLES::
 
@@ -2169,7 +2169,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _sub_(self, right):
         """
-        Returns the difference of ``self`` and ``right``.
+        Return the difference of two elements
 
         EXAMPLES::
 
@@ -2195,7 +2195,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _mul_(self, _right):
         """
-        Returns the product of ``self`` and ``right``.
+        Return the product of two elements
 
         EXAMPLES::
 
@@ -2249,7 +2249,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _div_(self, right):
         """
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of two elements
 
         EXAMPLES::
 
@@ -2279,7 +2279,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def __copy__(self):
         """
-        Returns a copy of ``self``.
+        Return a copy of this element
 
         EXAMPLES::
 
@@ -2301,8 +2301,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def _integer_(self, Z=None):
         """
-        Returns an integer congruent to this element modulo
-        `\pi`^``self.absolute_precision()``, if possible.
+        Return an integer congruent to this element modulo
+        `\pi`^``self.absolute_precision()``, if possible
 
         EXAMPLES::
 
@@ -2341,11 +2341,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def is_zero(self, absprec = None):
         """
-        Returns whether the valuation of ``self`` is at least
-        ``absprec``.  If ``absprec`` is ``None``, returns if ``self``
+        Return whether the valuation of this element is at least
+        ``absprec``.  If ``absprec`` is ``None``, checks if this element
         is indistinguishable from zero.
 
-        If ``self`` is an inexact zero of valuation less than ``absprec``,
+        If this element is an inexact zero of valuation less than ``absprec``,
         raises a PrecisionError.
 
         EXAMPLES::
@@ -2393,9 +2393,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self):
         """
-        Returns an ``ntl_ZZ_pX`` holding the current unit part of ``self``.
+        Return an ``ntl_ZZ_pX`` holding the current unit part of this element
 
-        ``self`` is not normalized before this, so the polynomial
+        The element is not normalized before this operation, so the polynomial
         returned may not actually be a unit.
 
         EXAMPLES::
@@ -2422,7 +2422,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef ntl_ZZ_pX _ntl_rep(self):
         """
-        Returns an ``ntl_ZZ_pX`` that holds the unit part of ``self``.
+        Return an ``ntl_ZZ_pX`` that holds the unit part of this element
 
         EXAMPLES::
 
@@ -2443,7 +2443,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _ntl_rep_abs(self):
         """
-        Returns a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
+        Return a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
         non-positive integer such that ``self = f(self.parent.gen())*p^k``
 
         EXAMPLES::
@@ -2507,9 +2507,45 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ans.c = ctx
         return ans, ans_k
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: W.<w> = Qp(5).extension(x^3-5)
+            sage: (1 + w + O(w^11))._polynomial_list()
+            [1 + O(5^4), 1 + O(5^4)]
+            sage: (1 + w + O(w^11))._polynomial_list(pad=True)
+            [1 + O(5^4), 1 + O(5^4), O(5^3)]
+        """
+        R = self.base_ring()
+        if self.is_zero():
+            L = []
+        else:
+            f, k = self._ntl_rep_abs()
+            L = [Integer(c) for c in f.list()]
+        if pad:
+            n = self.parent().degree()
+            L.extend([R.zero()] * (n - len(L)))
+        if self._is_exact_zero():
+            return L
+        prec = self.relprec + self.ordp
+        e = self.parent().e()
+        if e == 1:
+            return [R(c, prec) >> k for c in L]
+        else:
+            return [R(c, (prec - i - 1) // e + 1) >> k for i, c in enumerate(L)]
+
     def polynomial(self, var='x'):
         """
-        Returns a polynomial over the base ring that yields this element
+        Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
 
         INPUT:
@@ -2525,21 +2561,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         R = self.base_ring()
         S = R[var]
-        if self.is_zero():
-            return S([])
-        prec = self.relprec + self.ordp
-        e = self.parent().e()
-        f, k = self._ntl_rep_abs()
-        L = [Integer(c) for c in f.list()]
-        if e == 1:
-            L = [R(c, prec) >> k for c in L]
-        else:
-            L = [R(c, (prec - i - 1) // e + 1) >> k for i, c in enumerate(L)]
-        return S(L)
+        return S(self._polynomial_list())
 
     cdef ZZ_p_c _const_term(self):
         """
-        Returns the constant term of ``self.unit``.
+        Return the constant term of ``self.unit``.
 
         Note: this may be divisible by `p` if ``self`` is not normalized.
 
@@ -2557,9 +2583,10 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def is_equal_to(self, right, absprec = None):
         """
-        Returns whether ``self`` is equal to ``right`` modulo ``self.uniformizer()^absprec``.
+        Return whether this element is equal to ``right`` modulo ``self.uniformizer()^absprec``.
 
-        If ``absprec`` is ``None``, returns if ``self`` is equal to ``right`` modulo the lower of their two precisions.
+        If ``absprec`` is ``None``, checks whether this element is equal to ``right``
+        modulo the lower of their two precisions.
 
         EXAMPLES::
 
@@ -2578,7 +2605,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #    def lift(self):
 #        """
-#        Returns an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
+#        Return an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
 
 #        Not currently implemented.
 #        """
@@ -2586,7 +2613,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None):
         """
-        Returns a ``pAdicZZpXCRElement`` congruent to ``self`` but with
+        Return a ``pAdicZZpXCRElement`` congruent to this element but with
         absolute precision at least ``absprec``.
 
         INPUT:
@@ -2671,7 +2698,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def expansion(self, n = None, lift_mode = 'simple'):
         """
-        Returns a list giving a series representation of self.
+        Return a list giving a series representation of self.
 
         - If ``lift_mode == 'simple'`` or ``'smallest'``, the returned
           list will consist of integers (in the Eisenstein case) or a
@@ -2778,7 +2805,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def matrix_mod_pn(self):
         """
-        Returns the matrix of right multiplication by the element on
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
@@ -2857,7 +2884,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #     def multiplicative_order(self, prec=None):
 #         """
-#         Returns the multiplicative order of self, ie the smallest
+#         Return the multiplicative order of self, ie the smallest
 #         positive n so that there is an exact p-adic element congruent
 #         to self modulo self's precision that is an nth root of unity.
 
@@ -2879,7 +2906,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def teichmuller_expansion(self, n = None):
         r"""
-        Returns a list [`a_0`, `a_1`,..., `a_n`] such that
+        Return a list [`a_0`, `a_1`,..., `a_n`] such that
 
         - `a_i^q = a_i`
         - ``self.unit_part()`` = `\sum_{i = 0}^n a_i \pi^i`, where `\pi` is a
@@ -3019,7 +3046,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #    def padded_list(self, n, lift_mode = 'simple'):
 #        """
-#        Returns a list of coefficients of pi starting with `pi^0` up to
+#        Return a list of coefficients of pi starting with `pi^0` up to
 #        `pi^n` exclusive (padded with zeros if needed)
 
 #        """
@@ -3027,7 +3054,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_absolute(self):
         """
-        Returns the absolute precision of ``self``, ie the power of the
+        Return the absolute precision of this element, ie the power of the
         uniformizer modulo which this element is defined.
 
         EXAMPLES::
@@ -3062,7 +3089,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_relative(self):
         """
-        Returns the relative precision of ``self``, ie the power of the
+        Return the relative precision of this element, ie the power of the
         uniformizer modulo which the unit part of ``self`` is defined.
 
         EXAMPLES::
@@ -3095,7 +3122,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of ``self``.
+        Return the valuation of this element
 
         EXAMPLES::
 
@@ -3119,7 +3146,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXCRElement unit_part(self):
         """
-        Returns the unit part of ``self``, ie ``self / uniformizer^(self.valuation())``
+        Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``
 
         EXAMPLES::
 
@@ -3157,7 +3184,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef ext_p_list(self, bint pos):
         """
-        Returns a list of integers (in the Eisenstein case) or a list
+        Return a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can be
         reconstructed as a sum of elements of the list times powers of
         the uniformiser (in the Eisenstein case), or as a sum of

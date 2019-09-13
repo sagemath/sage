@@ -275,7 +275,7 @@ cdef class Cache_ntl_gf2e(SageObject):
         EXAMPLES::
 
             sage: k.<a> = GF(2^17)
-            sage: V = k.vector_space()
+            sage: V = k.vector_space(map=False)
             sage: v = [1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0]
             sage: k._cache.import_data(v)
             a^13 + a^8 + a^5 + 1
@@ -320,7 +320,7 @@ cdef class Cache_ntl_gf2e(SageObject):
             return self._parent(eval(e.replace("^","**"),self._parent.gens_dict()))
 
         elif isinstance(e, FreeModuleElement):
-            if self._parent.vector_space() != e.parent():
+            if self._parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ztmp = Integer(e.list(),2)
             # Can't do the following since we can't cimport Integer because of circular imports.
@@ -1190,9 +1190,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def _vector_(FiniteField_ntl_gf2eElement self, reverse=False):
         r"""
-        Return a vector in ``self.parent().vector_space()``
-        matching ``self``. The most significant bit is to the
-        right.
+        Return a vector matching this element in the vector space attached
+        to the parent.  The most significant bit is to the right.
 
         INPUT:
 
@@ -1223,7 +1222,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             C.append(GF2_conv_to_long(GF2X_coeff(r,i)))
         if reverse:
             C = list(reversed(C))
-        return self._parent.vector_space()(C)
+        return self._parent.vector_space(map=False)(C)
 
     def __reduce__(FiniteField_ntl_gf2eElement self):
         """

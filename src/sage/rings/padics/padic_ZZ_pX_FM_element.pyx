@@ -1135,9 +1135,37 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.x = self.value
         return ans
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: W.<w> = ZpFM(5).extension(x^3-5)
+            sage: (1 + w)._polynomial_list()
+            [1, 1]
+            sage: (1 + w + O(w^11))._polynomial_list(pad=True)
+            [1, 1, 0]
+        """
+        R = self.base_ring()
+        if self.is_zero():
+            L = []
+        else:
+            L = [Integer(c) for c in self._ntl_rep().list()]
+        if pad:
+            n = self.parent().degree()
+            L.extend([R.zero()] * (n - len(L)))
+        return L
+
     def polynomial(self, var='x'):
         """
-        Returns a polynomial over the base ring that yields this element
+        Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
 
         INPUT:
@@ -1153,9 +1181,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         R = self.base_ring()
         S = R[var]
-        if self.is_zero():
-            return S([])
-        return S([Integer(c) for c in self._ntl_rep().list()])
+        return S(self._polynomial_list())
 
     cdef ZZ_p_c _const_term(self):
         """

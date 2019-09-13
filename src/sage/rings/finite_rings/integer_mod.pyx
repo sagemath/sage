@@ -1881,11 +1881,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         EXAMPLES::
 
             sage: F.<a> = GF(13)
-            sage: V = F.vector_space()
+            sage: V = F.vector_space(map=False)
             sage: V(a)
             (1)
         """
-        return self.parent().vector_space()([self])
+        return self.parent().vector_space(map=False)([self])
 
 
 ######################################################################

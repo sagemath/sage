@@ -730,7 +730,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         # Step 2: construct matrix M of rational functions in x such that
         # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-        V,fr,to = F.vector_space()
+        V,fr,to = F.free_module(map=True)
         B = matrix([to(b) for b in J.gens_over_base()])
         C = matrix([to(v) for v in I.gens_over_base()])
         M = C * B.inverse()
@@ -834,7 +834,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         F = self.parent()._field
         k = F.constant_base_field()
-        V, fr_V, to_V = F.vector_space()
+        V, fr_V, to_V = F.free_module(map=True)
         n = V.degree()
         m = len(basis)
 

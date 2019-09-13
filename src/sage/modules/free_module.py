@@ -5588,7 +5588,7 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
         EXAMPLES::
 
             sage: k.<a> = GF(3^4)
-            sage: VS = k.vector_space()
+            sage: VS = k.vector_space(map=False)
             sage: VS(a)
             (0, 1, 0, 0)
         """

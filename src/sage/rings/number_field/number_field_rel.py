@@ -1349,7 +1349,56 @@ class NumberField_relative(NumberField_generic):
         self.__is_CM_extension = False
         return False
 
-    def relative_vector_space(self):
+    @cached_method(key=lambda self, base, basis, map: (base or self.base_ring(), basis, map))
+    def free_module(self, base=None, basis=None, map=True):
+        """
+        Return a vector space over a specified subfield that is isomorphic to this number field,
+        together with the isomorphisms in each direction.
+
+        INPUT:
+
+        - ``base`` -- a subfield
+
+        - ``basis`` -- (optional) a list of elements giving a basis over the subfield
+
+        - ``map`` -- (default ``True``) whether to return isomorphisms to and from the vector space
+
+        EXAMPLES::
+
+            sage: K.<a,b,c> = NumberField([x^2 + 2, x^3 + 2, x^3 + 3]); K
+            Number Field in a with defining polynomial x^2 + 2 over its base field
+            sage: V, from_V, to_V = K.free_module()
+            sage: to_V(K.0)
+            (0, 1)
+            sage: W, from_W, to_W = K.free_module(base=QQ)
+            sage: w = to_W(K.0); len(w)
+            18
+            sage: w[0]
+            -127917622658689792301282/48787705559800061938765
+        """
+        if basis is not None:
+            raise NotImplementedError
+        if base is None:
+            base = self.base_field()
+        if base is self.base_field():
+            V = self.base_field()**self.relative_degree()
+            if not map:
+                return V
+            fr = maps.MapRelativeVectorSpaceToRelativeNumberField(V, self)
+            to = maps.MapRelativeNumberFieldToRelativeVectorSpace(self, V)
+        elif base is QQ:
+            if not map:
+                return QQ**self.absolute_degree()
+            K = self.absolute_field('a')
+            from_K, to_K = K.structure()
+            V, from_V, to_V = K.free_module()
+            fr = maps.MapVectorSpaceToRelativeNumberField(V, self, from_V, from_K)
+            to = maps.MapRelativeNumberFieldToVectorSpace(self, V, to_K, to_V)
+        else:
+            raise NotImplementedError
+        return V, fr, to
+
+    def relative_vector_space(self, base=None, *args, **kwds):
         """
         Return vector space over the base field of self and isomorphisms
         from the vector space to self and in the other direction.
@@ -1376,17 +1425,11 @@ class NumberField_relative(NumberField_generic):
             sage: V is W
             True
         """
-        try:
-            return self.__relative_vector_space
-        except AttributeError:
-            pass
-        V = self.base_field()**self.relative_degree()
-        from_V = maps.MapRelativeVectorSpaceToRelativeNumberField(V, self)
-        to_V   = maps.MapRelativeNumberFieldToRelativeVectorSpace(self, V)
-        self.__relative_vector_space = (V, from_V, to_V)
-        return self.__relative_vector_space
+        if base is not None and base is not self.base_field():
+            ValueError("Relative vector space base must be the base field")
+        return self.free_module(self.base_field(), *args, **kwds)
 
-    def absolute_vector_space(self):
+    def absolute_vector_space(self, base=None, *args, **kwds):
         r"""
         Return vector space over `\QQ` of ``self`` and isomorphisms from
         the vector space to ``self`` and in the other direction.
@@ -1414,20 +1457,11 @@ class NumberField_relative(NumberField_generic):
             sage: from_V(3*to_V(b))
             3*b
         """
-        try:
-            return self.__absolute_vector_space
-        except AttributeError:
-            pass
-        K = self.absolute_field('a')
-        from_K, to_K = K.structure()
-        V, from_V, to_V = K.vector_space()
-        fr = maps.MapVectorSpaceToRelativeNumberField(V, self, from_V, from_K)
-        to   = maps.MapRelativeNumberFieldToVectorSpace(self, V, to_K, to_V)
-        ans = (V, fr, to)
-        self.__absolute_vector_space = ans
-        return ans
+        if base is not None and base is not QQ:
+            raise ValueError("Absolute vector space base must be QQ")
+        return self.free_module(QQ, *args, **kwds)
 
-    def vector_space(self):
+    def vector_space(self, *args, **kwds):
         r"""
         For a relative number field, ``vector_space()`` is
         deliberately not implemented, so that a user cannot confuse

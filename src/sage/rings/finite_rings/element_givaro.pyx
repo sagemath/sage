@@ -326,7 +326,7 @@ cdef class Cache_givaro(SageObject):
             sage: k = GF(3^8, 'a')
             sage: type(k)
             <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
-            sage: e = k.vector_space().gen(1); e
+            sage: e = k.vector_space(map=False).gen(1); e
             (0, 1, 0, 0, 0, 0, 0, 0)
             sage: k(e) #indirect doctest
             a
@@ -401,7 +401,7 @@ cdef class Cache_givaro(SageObject):
             return self.parent(eval(e.replace("^","**"),self.parent.gens_dict()))
 
         elif isinstance(e, FreeModuleElement):
-            if self.parent.vector_space() != e.parent():
+            if self.parent.vector_space(map=False) != e.parent():
                 raise TypeError("e.parent must match self.vector_space")
             ret = self._zero_element
             for i in range(len(e)):
@@ -1656,8 +1656,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def _vector_(FiniteField_givaroElement self, reverse=False):
         """
-        Return a vector in ``self.parent().vector_space()`` matching
-        ``self``. The most significant bit is to the right.
+        Return a vector matching this element in the vector space attached
+        to the parent.  The most significant bit is to the right.
 
         INPUT:
 
@@ -1703,7 +1703,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             quo = quo // b
         if reverse:
             ret = list(reversed(ret))
-        return k.vector_space()(ret)
+        return k.vector_space(map=False)(ret)
 
     def __reduce__(FiniteField_givaroElement self):
         """

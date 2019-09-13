@@ -8129,24 +8129,37 @@ class NumberField_absolute(NumberField_generic):
         self._order.set_cache(ret, gens)
         return ret
 
-    def vector_space(self):
+    @cached_method(key=lambda self, base, basis, map: (base or self.base_ring(), basis, map))
+    def free_module(self, base=None, basis=None, map=True):
         """
         Return a vector space V and isomorphisms self --> V and V --> self.
+
+        INPUT:
+
+        - ``base`` -- a subfield (default: ``None``); the returned vector
+          space is over this subfield `R`, which defaults to the base field of this
+          function field
+
+        - ``basis`` -- a basis for this field over the base
+
+        - ``maps`` -- boolean (default ``True``), whether to return
+          `R`-linear maps to and from `V`
+
 
         OUTPUT:
 
 
         -  ``V`` - a vector space over the rational numbers
 
-        -  ``from_V`` - an isomorphism from V to self
+        -  ``from_V`` - an isomorphism from V to self (if requested)
 
-        -  ``to_V`` - an isomorphism from self to V
+        -  ``to_V`` - an isomorphism from self to V (if requested)
 
 
         EXAMPLES::
 
             sage: k.<a> = NumberField(x^3 + 2)
-            sage: V, from_V, to_V  = k.vector_space()
+            sage: V, from_V, to_V  = k.free_module()
             sage: from_V(V([1,2,3]))
             3*a^2 + 2*a + 1
             sage: to_V(1 + 2*a + 3*a^2)
@@ -8162,16 +8175,16 @@ class NumberField_absolute(NumberField_generic):
             sage: to_V(from_V(V([0,-1/7,0])))
             (0, -1/7, 0)
         """
-        try:
-            return self.__vector_space
-        except AttributeError:
-            V = QQ**self.degree()
-            from_V = maps.MapVectorSpaceToNumberField(V, self)
-            to_V   = maps.MapNumberFieldToVectorSpace(self, V)
-            self.__vector_space = (V, from_V, to_V)
-            return self.__vector_space
+        if basis is not None or base is not None:
+            raise NotImplementedError
+        V = QQ**self.degree()
+        if not map:
+            return V
+        from_V = maps.MapVectorSpaceToNumberField(V, self)
+        to_V   = maps.MapNumberFieldToVectorSpace(self, V)
+        return (V, from_V, to_V)
 
-    def absolute_vector_space(self):
+    def absolute_vector_space(self, *args, **kwds):
         r"""
         Return vector space over `\QQ` corresponding to this
         number field, along with maps from that space to this number field
@@ -8192,7 +8205,7 @@ class NumberField_absolute(NumberField_generic):
               From: Number Field in a with defining polynomial x^3 - 5
               To:   Vector space of dimension 3 over Rational Field)
         """
-        return self.vector_space()
+        return self.free_module(*args, **kwds)
 
     def _galois_closure_and_embedding(self, names=None):
         r"""
@@ -9032,7 +9045,7 @@ class NumberField_absolute(NumberField_generic):
         """
         return self.polynomial()
 
-    def relative_vector_space(self):
+    def relative_vector_space(self, *args, **kwds):
         """
         A synonym for vector_space.
 
@@ -9048,7 +9061,7 @@ class NumberField_absolute(NumberField_generic):
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Vector space of dimension 2 over Rational Field)
         """
-        return self.vector_space()
+        return self.free_module(*args, **kwds)
 
     def absolute_discriminant(self):
         """

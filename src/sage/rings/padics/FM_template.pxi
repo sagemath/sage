@@ -701,9 +701,36 @@ cdef class FMElement(pAdicTemplateElement):
         else:
             csetzero(self.value, self.prime_pow)
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = ZqFM(25)
+            sage: W.<w> = K.extension(x^3-5)
+            sage: (1 + w)._polynomial_list()
+            [1, 1]
+            sage: (1 + w)._polynomial_list(pad=True)
+            [1, 1, 0]
+        """
+        R = self.base_ring()
+        e = self.parent().relative_e()
+        L = ccoefficients(self.value, 0, self.prime_pow.ram_prec_cap, self.prime_pow)
+        if pad:
+            n = self.parent().relative_degree()
+            L.extend([R.zero()] * (n - len(L)))
+        return L
+
     def polynomial(self, var='x'):
         """
-        Returns a polynomial over the base ring that yields this element
+        Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
 
         INPUT:
@@ -722,14 +749,7 @@ cdef class FMElement(pAdicTemplateElement):
         """
         R = self.base_ring()
         S = R[var]
-        prec = self.precision_absolute()
-        e = self.parent().relative_e()
-        L = ccoefficients(self.value, 0, self.prime_pow.prec_cap, self.prime_pow)
-        if e == 1:
-            L = [R(c, prec) for c in L]
-        else:
-            L = [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
-        return S(L)
+        return S(self._polynomial_list())
 
     def precision_absolute(self):
         """

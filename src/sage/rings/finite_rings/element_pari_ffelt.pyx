@@ -180,7 +180,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
     respect to the basis consisting of powers of the generator:
 
         sage: k = FiniteField(3^11, 't', impl='pari_ffelt')
-        sage: V = k.vector_space()
+        sage: V = k.vector_space(map=False)
         sage: V
         Vector space of dimension 11 over Finite Field of size 3
         sage: v = V([0,1,2,0,1,2,0,1,2,0,1])
@@ -239,7 +239,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         2
         sage: a.parent()
         Finite Field in a of size 3^2
-        sage: V = k.vector_space(); v = V((1,2))
+        sage: V = k.vector_space(map=False); v = V((1,2))
         sage: k(v)
         2*a + 1
 
@@ -452,7 +452,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             raise TypeError(f"unable to convert PARI {x.type()} to finite field element")
 
         elif (isinstance(x, FreeModuleElement)
-              and x.parent() is self._parent.vector_space()):
+              and x.parent() is self._parent.vector_space(map=False)):
             g = (<pari_gen>self._parent._gen_pari).g
             t = g[1]  # codeword: t_FF_FpXQ, t_FF_Flxq, t_FF_F2xq
             n = len(x)
@@ -498,7 +498,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         elif isinstance(x, list):
             if len(x) == self._parent.degree():
-                self.construct_from(self._parent.vector_space()(x))
+                self.construct_from(self._parent.vector_space(map=False)(x))
             else:
                 Fp = self._parent.base_ring()
                 self.construct_from(self._parent.polynomial_ring()([Fp(y) for y in x]))

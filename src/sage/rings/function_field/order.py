@@ -996,7 +996,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         beta = S([sigma(c) for c in q.list()]).roots()[0][0]
 
         # V is a vector space over the prime subfield of k of degree r*s
-        V = K.vector_space()
+        V = K.vector_space(map=False)
 
         w = K.one()
         beta_pow = []

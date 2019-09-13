@@ -2674,7 +2674,7 @@ class SR_gf2(SR_generic):
             True
         """
         e = self.e
-        V = self.k.vector_space()
+        V = self.k.vector_space(map=False)
 
         if is_Matrix(l):
             l2 = l.transpose().list()
