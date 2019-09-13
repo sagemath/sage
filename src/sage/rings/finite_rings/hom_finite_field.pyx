@@ -186,7 +186,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     """
     A class implementing embeddings between finite fields.
     """
-    def __init__(self, parent, im_gens=None, check=True, section_class=None):
+    def __init__(self, parent, im_gens=None, base_map=None, check=True, section_class=None):
         """
         TESTS::
 
@@ -228,7 +228,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         if im_gens is None:
             im_gens = domain.modulus().any_root(codomain)
             check=False
-        RingHomomorphism_im_gens.__init__(self, parent, im_gens, check)
+        RingHomomorphism_im_gens.__init__(self, parent, im_gens, base_map=base_map, check=check)
         if section_class is None:
             self._section_class = SectionFiniteFieldHomomorphism_generic
         else:
@@ -300,7 +300,11 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             sage: f(a*b) == f(a) * f(b)
             True
         """
-        return x.polynomial()(self.im_gens()[0])
+        f = x.polynomial()
+        bm = self.base_map()
+        if bm is not None:
+            f = f.change_ring(bm)
+        return f(self.im_gens()[0])
 
 
     def is_injective(self):
@@ -370,6 +374,8 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
+        if self.base_map() is not None:
+            raise NotImplementedError
         return self._section_class(self)
 
     def inverse_image(self, b):
