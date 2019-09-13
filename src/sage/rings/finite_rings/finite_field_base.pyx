@@ -261,155 +261,6 @@ cdef class FiniteField(Field):
         """
         return "GF %s"%(self.order())
 
-    def _sage_input_(self, sib, coerced):
-        r"""
-        Produce an expression which will reproduce this value when evaluated.
-
-        EXAMPLES::
-
-            sage: sage_input(GF(5), verify=True)
-            # Verified
-            GF(5)
-            sage: sage_input(GF(32, 'a'), verify=True)
-            # Verified
-            R.<x> = GF(2)[]
-            GF(2^5, 'a', x^5 + x^2 + 1)
-            sage: K = GF(125, 'b')
-            sage: sage_input((K, K), verify=True)
-            # Verified
-            R.<x> = GF(5)[]
-            GF_5_3 = GF(5^3, 'b', x^3 + 3*x + 3)
-            (GF_5_3, GF_5_3)
-            sage: from sage.misc.sage_input import SageInputBuilder
-            sage: GF(81, 'a')._sage_input_(SageInputBuilder(), False)
-            {call: {atomic:GF}({binop:** {atomic:3} {atomic:4}}, {atomic:'a'}, {binop:+ {binop:+ {binop:** {gen:x {constr_parent: {subscr: {call: {atomic:GF}({atomic:3})}[{atomic:'x'}]} with gens: ('x',)}} {atomic:4}} {binop:* {atomic:2} {binop:** {gen:x {constr_parent: {subscr: {call: {atomic:GF}({atomic:3})}[{atomic:'x'}]} with gens: ('x',)}} {atomic:3}}}} {atomic:2}})}
-
-        TESTS:
-
-        Trivial extensions are not supported yet::
-
-            sage: k.<a> = GF(4)
-            sage: R.<x> = k[]
-            sage: sage_input(k.extension(x, 'b'), verify=True)
-
-        Relative extensions are not supported yet::
-
-            sage: sage_input(k.extension(x^2 + x + a, 'b'), verify=True)
-
-
-        """
-        if self.base_ring() is self:
-            v = sib.name('GF')(sib.int(self.characteristic()))
-            name = 'GF_%d' % self.characteristic()
-        elif self.base_ring() is self.base():
-            v = sib.name('GF')(sib.int(self.characteristic()) ** sib.int(self.degree()),
-                               self.variable_name(),
-                               self.modulus())
-            name = 'GF_%d_%d' % (self.characteristic(), self.degree())
-        else:
-            raise NotImplementedError("not implemented for this extension yet")
-        sib.cache(self, v, name)
-        return v
-
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    def __iter__(self):
-        """
-        Iterate over all elements of this finite field.
-
-        EXAMPLES::
-
-            sage: k.<a> = FiniteField(9, impl="pari")
-            sage: list(k)
-            [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
-
-        Partial iteration of a very large finite field::
-
-            sage: p = next_prime(2^64)
-            sage: k.<a> = FiniteField(p^2, impl="pari")
-            sage: it = iter(k); it
-            <generator object at ...>
-            sage: [next(it) for i in range(10)]
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-        TESTS:
-
-        Check that the generic implementation works in all cases::
-
-            sage: L = []
-            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: for impl in ("givaro", "pari", "ntl"):
-            ....:     k = GF(8, impl=impl, names="z")
-            ....:     print(list(FiniteField.__iter__(k)))
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-        """
-        if self.base_ring() is not self.base():
-            raise NotImplementedError("this relative extension does not provide iteration yet")
-
-        cdef Py_ssize_t n = self.degree()
-        cdef unsigned long lim  # maximum value for coefficients
-        try:
-            lim = (<unsigned long>self.characteristic()) - 1
-        except OverflowError:
-            # If the characteristic is too large to represent in an
-            # "unsigned long", it is reasonable to assume that we won't
-            # be able to iterate over all elements. Typically n >= 2,
-            # so that would mean >= 2^64 elements on a 32-bit system.
-            # Just in case that we iterate to the end anyway, we raise
-            # an exception at the end.
-            lim = <unsigned long>(-1)
-
-        elt = self.zero()
-        one = self.one()
-        x = self.gen()
-
-        # coeffs[] is an array of coefficients of the current finite
-        # field element (as unsigned longs)
-        #
-        # Stack represents an element
-        #   sum_{i=0}^{n-1}  coeffs[i] x^i
-        # as follows:
-        #   stack[k] = sum_{i=k}^{n-1} coeffs[i] x^(i-k)
-        #
-        # This satisfies the recursion
-        #   stack[k-1] = x * stack[k] + coeffs[k-1]
-        #
-        # Finally, elt is a shortcut for stack[k]
-        #
-        cdef list stack = [elt] * n
-        cdef array coeffsarr = array('L', [0] * n)
-        cdef unsigned long* coeffs = coeffsarr.data.as_ulongs
-
-        yield elt  # zero
-        cdef Py_ssize_t k = 0
-        while k < n:
-            # Find coefficients of next element
-            coeff = coeffs[k]
-            if coeff >= lim:
-                # We cannot increase coeffs[k], so we wrap around to 0
-                # and try to increase the next coefficient
-                coeffs[k] = 0
-                k += 1
-                continue
-            coeffs[k] = coeff + 1
-
-            # Now compute and yield the finite field element
-            sig_check()
-            elt = stack[k] + one
-            stack[k] = elt
-            # Fix lower elements of stack, until k == 0
-            while k > 0:
-                elt *= x
-                k -= 1
-                stack[k] = elt
-
-            yield elt
-
-        if lim == <unsigned long>(-1):
-            raise NotImplementedError("iterating over all elements of a large finite field is not supported")
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Return ``True`` if the map from self to codomain sending
@@ -873,7 +724,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree()==1
+        return self.degree() == 1
 
     @cached_method
     def modulus(self):
@@ -1102,164 +953,6 @@ cdef class FiniteField(Field):
                 return self.__polynomial_ring
             else:
                 return PolynomialRing(self.base_ring(), variable_name)
-
-    def free_module(self, base=None, basis=None, map=None, subfield=None):
-        """
-        Return the vector space over the subfield isomorphic to this
-        finite field as a vector space, along with the isomorphisms.
-
-        INPUT:
-
-        - ``base`` -- a subfield of or a morphism into this finite field.
-          If not given, the prime subfield is assumed. A subfield means
-          a finite field with coercion to this finite field.
-
-        - ``basis`` -- a basis of the finite field as a vector space
-          over the subfield. If not given, one is chosen automatically.
-
-        - ``map`` -- boolean (default: ``True``); if ``True``, isomorphisms
-          from and to the vector space are also returned.
-
-        The ``basis`` maps to the standard basis of the vector space
-        by the isomorphisms.
-
-        OUTPUT: if ``map`` is ``False``,
-
-        - vector space over the subfield or the domain of the morphism,
-          isomorphic to this finite field.
-
-        and if ``map`` is ``True``, then also
-
-        - an isomorphism from the vector space to the finite field.
-
-        - the inverse isomorphism to the vector space from the finite field.
-
-        EXAMPLES::
-
-            sage: GF(27,'a').vector_space(map=False)
-            Vector space of dimension 3 over Finite Field of size 3
-
-            sage: F = GF(8)
-            sage: E = GF(64)
-            sage: V, from_V, to_V = E.vector_space(F, map=True)
-            sage: V
-            Vector space of dimension 2 over Finite Field in z3 of size 2^3
-            sage: to_V(E.gen())
-            (0, 1)
-            sage: all(from_V(to_V(e)) == e for e in E)
-            True
-            sage: all(to_V(e1 + e2) == to_V(e1) + to_V(e2) for e1 in E for e2 in E)
-            True
-            sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
-            True
-
-            sage: basis = [E.gen(), E.gen() + 1]
-            sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
-            sage: all(from_W(to_W(e)) == e for e in E)
-            True
-            sage: all(to_W(c * e) == c * to_W(e) for e in E for c in F)
-            True
-            sage: all(to_W(e1 + e2) == to_W(e1) + to_W(e2) for e1 in E for e2 in E)  # long time
-            True
-            sage: to_W(basis[0]); to_W(basis[1])
-            (1, 0)
-            (0, 1)
-
-            sage: F = GF(9, 't', modulus=(x^2+x-1))
-            sage: E = GF(81)
-            sage: h = Hom(F,E).an_element()
-            sage: V, from_V, to_V = E.vector_space(h, map=True)
-            sage: V
-            Vector space of dimension 2 over Finite Field in t of size 3^2
-            sage: V.base_ring() is F
-            True
-            sage: all(from_V(to_V(e)) == e for e in E)
-            True
-            sage: all(to_V(e1 + e2) == to_V(e1) + to_V(e2) for e1 in E for e2 in E)
-            True
-            sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
-            True
-
-        In a tower of finite fields::
-
-            sage: k.<a> = GF(4)
-            sage: l.<b> = k.extension(3, absolute=False)
-            sage: m.<c> = l.extension(4, absolute=False)
-
-            sage: m.vector_space(subfield=m)
-            Vector space of dimension 1 over Finite Field in c of size 2^24
-            sage: m.vector_space(subfield=l)
-            sage: m.vector_space(subfield=k)
-            sage: m.vector_space(subfield=m.prime_subfield()
-
-        """
-        from sage.modules.all import VectorSpace
-        from sage.categories.morphism import is_Morphism
-        if subfield is not None:
-            if base is not None:
-                raise ValueError
-            deprecation(28481, "The subfield keyword argument has been renamed to base")
-            base = subfield
-        if map is None:
-            deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
-            map = False
-
-        if base is None:
-            base = self.prime_subfield()
-            s = self.relative_degree()
-            if self.__vector_space is None:
-                self.__vector_space = VectorSpace(base, s)
-            V = self.__vector_space
-            inclusion_map = None
-        elif is_Morphism(base):
-            inclusion_map = base
-            base = inclusion_map.domain()
-            s = self.absolute_degree() // base.absolute_degree()
-            V = VectorSpace(base, s)
-        elif base.is_subring(self):
-            s = self.absolute_degree() // base.absolute_degree()
-            V = VectorSpace(base, s)
-            inclusion_map = None
-        else:
-            raise ValueError("{} is not a subfield".format(base))
-
-        if map is False: # shortcut
-            return V
-
-        if inclusion_map is None:
-            inclusion_map = self.coerce_map_from(base)
-
-        from sage.modules.all import vector
-        from sage.matrix.all import matrix
-        from .maps_finite_field import (
-            MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)
-
-        E = self
-        F = base
-
-        alpha = E.gen()
-        beta = F.gen()
-
-        if basis is None:
-            basis = [alpha**i for i in range(s)] # of E over F
-
-        F_basis = [beta**i for i in range(F.degree())]
-
-        # E_basis_alpha is the implicit basis of E over the prime subfield
-        E_basis_beta = [inclusion_map(F_basis[i]) * basis[j]
-                        for j in range(s)
-                        for i in range(F.absolute_degree())]
-
-        C = matrix(E.prime_subfield(), E.absolute_degree(), E.absolute_degree(),
-                   [E_basis_beta[i]._vector_() for i in range(E.absolute_degree())])
-        C.set_immutable()
-        Cinv = C.inverse()
-        Cinv.set_immutable()
-
-        phi = MorphismVectorSpaceToFiniteField(V, self, C)
-        psi = MorphismFiniteFieldToVectorSpace(self, V, Cinv)
-
-        return V, phi, psi
 
     cpdef _coerce_map_from_(self, R):
         r"""
@@ -1994,6 +1687,313 @@ cdef class FiniteField(Field):
         B = matrix(self.base_ring(), self.degree(), entries).inverse()
         return [sum(x * y for x, y in zip(col, basis))
                 for col in B.columns()]
+
+cdef class FiniteFieldAbsolute(FiniteField):
+    r"""
+    Base class for finite fields that are not relative, i.e., prime fields and
+    absolute extensions thereof.
+
+    EXAMPLES::
+
+        sage: k = GF(4)
+
+    TESTS::
+
+        sage: from sage.rings.finite_rins.finite_field_base import FiniteFieldAbsolute
+        sage: isinstance(k, FiniteFieldAbsolute)
+        True
+    """
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    def __iter__(self):
+        """
+        Iterate over all elements of this finite field.
+
+        EXAMPLES::
+
+            sage: k.<a> = FiniteField(9, impl="pari")
+            sage: list(k)
+            [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
+
+        Partial iteration of a very large finite field::
+
+            sage: p = next_prime(2^64)
+            sage: k.<a> = FiniteField(p^2, impl="pari")
+            sage: it = iter(k); it
+            <generator object at ...>
+            sage: [next(it) for i in range(10)]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        TESTS:
+
+        Check that the generic implementation works in all cases::
+
+            sage: L = []
+            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+            sage: for impl in ("givaro", "pari", "ntl"):
+            ....:     k = GF(8, impl=impl, names="z")
+            ....:     print(list(FiniteField.__iter__(k)))
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+        """
+        cdef Py_ssize_t n = self.degree()
+        cdef unsigned long lim  # maximum value for coefficients
+        try:
+            lim = (<unsigned long>self.characteristic()) - 1
+        except OverflowError:
+            # If the characteristic is too large to represent in an
+            # "unsigned long", it is reasonable to assume that we won't
+            # be able to iterate over all elements. Typically n >= 2,
+            # so that would mean >= 2^64 elements on a 32-bit system.
+            # Just in case that we iterate to the end anyway, we raise
+            # an exception at the end.
+            lim = <unsigned long>(-1)
+
+        elt = self.zero()
+        one = self.one()
+        x = self.gen()
+
+        # coeffs[] is an array of coefficients of the current finite
+        # field element (as unsigned longs)
+        #
+        # Stack represents an element
+        #   sum_{i=0}^{n-1}  coeffs[i] x^i
+        # as follows:
+        #   stack[k] = sum_{i=k}^{n-1} coeffs[i] x^(i-k)
+        #
+        # This satisfies the recursion
+        #   stack[k-1] = x * stack[k] + coeffs[k-1]
+        #
+        # Finally, elt is a shortcut for stack[k]
+        #
+        cdef list stack = [elt] * n
+        cdef array coeffsarr = array('L', [0] * n)
+        cdef unsigned long* coeffs = coeffsarr.data.as_ulongs
+
+        yield elt  # zero
+        cdef Py_ssize_t k = 0
+        while k < n:
+            # Find coefficients of next element
+            coeff = coeffs[k]
+            if coeff >= lim:
+                # We cannot increase coeffs[k], so we wrap around to 0
+                # and try to increase the next coefficient
+                coeffs[k] = 0
+                k += 1
+                continue
+            coeffs[k] = coeff + 1
+
+            # Now compute and yield the finite field element
+            sig_check()
+            elt = stack[k] + one
+            stack[k] = elt
+            # Fix lower elements of stack, until k == 0
+            while k > 0:
+                elt *= x
+                k -= 1
+                stack[k] = elt
+
+            yield elt
+
+        if lim == <unsigned long>(-1):
+            raise NotImplementedError("iterating over all elements of a large finite field is not supported")
+
+    def _sage_input_(self, sib, coerced):
+        r"""
+        Produce an expression which will reproduce this value when evaluated.
+
+        EXAMPLES::
+
+            sage: sage_input(GF(5), verify=True)
+            # Verified
+            GF(5)
+            sage: sage_input(GF(32, 'a'), verify=True)
+            # Verified
+            R.<x> = GF(2)[]
+            GF(2^5, 'a', x^5 + x^2 + 1)
+            sage: K = GF(125, 'b')
+            sage: sage_input((K, K), verify=True)
+            # Verified
+            R.<x> = GF(5)[]
+            GF_5_3 = GF(5^3, 'b', x^3 + 3*x + 3)
+            (GF_5_3, GF_5_3)
+            sage: from sage.misc.sage_input import SageInputBuilder
+            sage: GF(81, 'a')._sage_input_(SageInputBuilder(), False)
+            {call: {atomic:GF}({binop:** {atomic:3} {atomic:4}}, {atomic:'a'}, {binop:+ {binop:+ {binop:** {gen:x {constr_parent: {subscr: {call: {atomic:GF}({atomic:3})}[{atomic:'x'}]} with gens: ('x',)}} {atomic:4}} {binop:* {atomic:2} {binop:** {gen:x {constr_parent: {subscr: {call: {atomic:GF}({atomic:3})}[{atomic:'x'}]} with gens: ('x',)}} {atomic:3}}}} {atomic:2}})}
+
+        """
+        if self.base_ring() is self:
+            v = sib.name('GF')(sib.int(self.characteristic()))
+            name = 'GF_%d' % self.characteristic()
+        elif self.base_ring() is self.base():
+            v = sib.name('GF')(sib.int(self.characteristic()) ** sib.int(self.degree()),
+                               self.variable_name(),
+                               self.modulus())
+            name = 'GF_%d_%d' % (self.characteristic(), self.degree())
+        else:
+            raise NotImplementedError("not implemented for this extension yet")
+        sib.cache(self, v, name)
+        return v
+
+    def free_module(self, base=None, basis=None, map=None, subfield=None):
+        """
+        Return the vector space over the subfield isomorphic to this
+        finite field as a vector space, along with the isomorphisms.
+
+        INPUT:
+
+        - ``base`` -- a subfield of or a morphism into this finite field.
+          If not given, the prime subfield is assumed. A subfield means
+          a finite field with coercion to this finite field.
+
+        - ``basis`` -- a basis of the finite field as a vector space
+          over the subfield. If not given, one is chosen automatically.
+
+        - ``map`` -- boolean (default: ``True``); if ``True``, isomorphisms
+          from and to the vector space are also returned.
+
+        The ``basis`` maps to the standard basis of the vector space
+        by the isomorphisms.
+
+        OUTPUT: if ``map`` is ``False``,
+
+        - vector space over the subfield or the domain of the morphism,
+          isomorphic to this finite field.
+
+        and if ``map`` is ``True``, then also
+
+        - an isomorphism from the vector space to the finite field.
+
+        - the inverse isomorphism to the vector space from the finite field.
+
+        EXAMPLES::
+
+            sage: GF(27,'a').vector_space(map=False)
+            Vector space of dimension 3 over Finite Field of size 3
+
+            sage: F = GF(8)
+            sage: E = GF(64)
+            sage: V, from_V, to_V = E.vector_space(F, map=True)
+            sage: V
+            Vector space of dimension 2 over Finite Field in z3 of size 2^3
+            sage: to_V(E.gen())
+            (0, 1)
+            sage: all(from_V(to_V(e)) == e for e in E)
+            True
+            sage: all(to_V(e1 + e2) == to_V(e1) + to_V(e2) for e1 in E for e2 in E)
+            True
+            sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
+            True
+
+            sage: basis = [E.gen(), E.gen() + 1]
+            sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
+            sage: all(from_W(to_W(e)) == e for e in E)
+            True
+            sage: all(to_W(c * e) == c * to_W(e) for e in E for c in F)
+            True
+            sage: all(to_W(e1 + e2) == to_W(e1) + to_W(e2) for e1 in E for e2 in E)  # long time
+            True
+            sage: to_W(basis[0]); to_W(basis[1])
+            (1, 0)
+            (0, 1)
+
+            sage: F = GF(9, 't', modulus=(x^2+x-1))
+            sage: E = GF(81)
+            sage: h = Hom(F,E).an_element()
+            sage: V, from_V, to_V = E.vector_space(h, map=True)
+            sage: V
+            Vector space of dimension 2 over Finite Field in t of size 3^2
+            sage: V.base_ring() is F
+            True
+            sage: all(from_V(to_V(e)) == e for e in E)
+            True
+            sage: all(to_V(e1 + e2) == to_V(e1) + to_V(e2) for e1 in E for e2 in E)
+            True
+            sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
+            True
+
+        In a tower of finite fields::
+
+            sage: k.<a> = GF(4)
+            sage: l.<b> = k.extension(3, absolute=False)
+            sage: m.<c> = l.extension(4, absolute=False)
+
+            sage: m.vector_space(subfield=m)
+            Vector space of dimension 1 over Finite Field in c of size 2^24
+            sage: m.vector_space(subfield=l)
+            sage: m.vector_space(subfield=k)
+            sage: m.vector_space(subfield=m.prime_subfield()
+
+        """
+        from sage.modules.all import VectorSpace
+        from sage.categories.morphism import is_Morphism
+        if subfield is not None:
+            if base is not None:
+                raise ValueError
+            deprecation(28481, "The subfield keyword argument has been renamed to base")
+            base = subfield
+        if map is None:
+            deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
+            map = False
+
+        if base is None:
+            base = self.prime_subfield()
+            s = self.relative_degree()
+            if self.__vector_space is None:
+                self.__vector_space = VectorSpace(base, s)
+            V = self.__vector_space
+            inclusion_map = None
+        elif is_Morphism(base):
+            inclusion_map = base
+            base = inclusion_map.domain()
+            s = self.absolute_degree() // base.absolute_degree()
+            V = VectorSpace(base, s)
+        elif base.is_subring(self):
+            s = self.absolute_degree() // base.absolute_degree()
+            V = VectorSpace(base, s)
+            inclusion_map = None
+        else:
+            raise ValueError("{} is not a subfield".format(base))
+
+        if map is False: # shortcut
+            return V
+
+        if inclusion_map is None:
+            inclusion_map = self.coerce_map_from(base)
+
+        from sage.modules.all import vector
+        from sage.matrix.all import matrix
+        from .maps_finite_field import (
+            MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)
+
+        E = self
+        F = base
+
+        alpha = E.gen()
+        beta = F.gen()
+
+        if basis is None:
+            basis = [alpha**i for i in range(s)] # of E over F
+
+        F_basis = [beta**i for i in range(F.degree())]
+
+        # E_basis_alpha is the implicit basis of E over the prime subfield
+        E_basis_beta = [inclusion_map(F_basis[i]) * basis[j]
+                        for j in range(s)
+                        for i in range(F.absolute_degree())]
+
+        C = matrix(E.prime_subfield(), E.absolute_degree(), E.absolute_degree(),
+                   [E_basis_beta[i]._vector_() for i in range(E.absolute_degree())])
+        C.set_immutable()
+        Cinv = C.inverse()
+        Cinv.set_immutable()
+
+        phi = MorphismVectorSpaceToFiniteField(V, self, C)
+        psi = MorphismFiniteFieldToVectorSpace(self, V, Cinv)
+
+        return V, phi, psi
+
 
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
