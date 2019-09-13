@@ -63,23 +63,96 @@ cdef class RingExtensionHomomorphism(RingHomomorphism):
         sage: E2 = RingExtension(L,K)
 
     """
-    def __init__(self, parent, backend, check=None):
+    def __init__(self, parent, defn, base_map=None, check=True):
         RingHomomorphism.__init__(self, parent)
-        backend_domain = self.domain()
+        backend_domain = domain = self.domain()
         if isinstance(backend_domain, RingExtension_class):
             backend_domain = backend_domain._backend()
-        backend_codomain = self.codomain()
+        backend_codomain = codomain = self.codomain()
         if isinstance(backend_codomain, RingExtension_class):
             backend_codomain = backend_codomain._backend()
-        backend = backend_morphism(backend)
-        if backend.domain() is not backend_domain:
-            raise TypeError("the domain of the backend morphism is not correct")
-        if backend.codomain() is not backend_codomain:
-            raise TypeError("the codomain of the backend morphism is not correct")
-        self._backend_morphism = backend
-        # We should probably allow for more general constructions but
-        #   self._backend_morphism = backend_domain.Hom(backend_codomain)(*args, **kwargs)
-        # does not work currently
+        # We construct the backend morphism
+        if isinstance(defn, Map):
+            if base_map is not None:
+                raise ValueError("base_map must not be set when providing the backend morphism")
+            backend = backend_morphism(defn)
+            if backend.domain() is not backend_domain:
+                raise TypeError("the domain of the backend morphism is not correct")
+            if backend.codomain() is not backend_codomain:
+                raise TypeError("the codomain of the backend morphism is not correct")
+            self._backend_morphism = backend
+            self._im_gens = None
+            self._base_map = False
+        elif isinstance(defn, (list, tuple)):
+            # We figure out what is the base
+            if base_map is not None:
+                base = base_map.domain()
+                gens = domain.gens(base)
+            else:
+                base = domain
+                gens = tuple([])
+                while True:
+                    if len(gens) == len(defn): 
+                        break  
+                    if len(gens) > len(defn) or base is base.base_ring():
+                        raise ValueError("the number of images does not match the number of generators")
+                    gens += base.gens()
+                    base = base.base_ring()
+            # We construct the backend morphism
+            im_gens = [ codomain(x) for x in defn ]
+            backend_bases = [ backend_domain ]
+            b = backend_domain.base_ring()
+            while b is not b.base_ring():
+                backend_bases.append(b)
+                b = b.base_ring()
+            backend_bases.reverse()
+            current_morphism = None
+            for current_domain in backend_bases:
+                current_im_gens = [ ]
+                for x in current_domain.gens():
+                    pol = domain(backend_domain(x)).polynomial(base)
+                    if base_map is not None:
+                        pol = pol.map_coefficients(base_map)
+                    y = pol(im_gens)
+                    if isinstance(codomain, RingExtension_class):
+                        y = y._backend()
+                    current_im_gens.append(y)
+                current_morphism = current_domain.hom(current_im_gens, base_map=current_morphism, check=check)
+            # We check that everything went well
+            if check:
+                for i in range(len(gens)):
+                    if current_morphism(domain(gens[i])._backend()) != im_gens[i]._backend():
+                        raise ValueError("images do not define a valid homomorphism")
+                # instead of the following code, it would be better to write
+                # if backend_morphism(base_map) != current_morphism.restriction(base._backend()):
+                #     raise ValueError("images do not define a valid homomorphism")
+                # but many things need to be implemented for that
+                current = base
+                while current is not current.base_ring():
+                    for g in current.gens():
+                        gg = domain(g)
+                        x = gg._backend()
+                        if base_map is None:
+                            y = codomain(gg)
+                        else:
+                            y = codomain(base_map(g))
+                        if isinstance(codomain, RingExtension_class):
+                            y = y._backend()
+                        if current_morphism(x) != y:
+                            raise ValueError("images do not define a valid homomorphism")
+                    current = current.base_ring()
+            self._backend_morphism = current_morphism
+            self._im_gens = im_gens[:domain.ngens()]
+            if base is domain.base_ring():
+                self._base_map = base_map
+            else:
+                self._base_map = { 
+                    'im_gens': defn[domain.ngens():], 
+                    'base_map': base_map, 
+                    'check': False
+                }
+        else:
+            raise TypeError
 
     cpdef Element _call_(self, x):
         if isinstance(self.domain(), RingExtension_class):
@@ -91,6 +164,29 @@ cdef class RingExtensionHomomorphism(RingHomomorphism):
 
     def _backend(self):
         return self._backend_morphism
+
+    def base_map(self):
+        if self._base_map is False:
+            raise NotImplementedError
+        if isinstance(self._base_map, dict):
+            self._base_map = self.domain().base_ring().hom(**self._base_map)
+        return self._base_map
+
+    def _repr_defn(self):
+        import re
+        s = ""
+        if self._im_gens is not None:
+            gens = self.domain().gens()
+            for i in range(len(gens)):
+                s += "%s |--> %s\n" % (gens[i], self._im_gens[i])
+            if self._base_map is not None:
+                s += "with base map"
+                ss = self.base_map()._repr_defn()
+                ss = re.sub('\nwith base map:?$', '', ss, 0, re.MULTILINE)
+                if ss != "": s += ":\n" + ss
+        if s[-1] == "\n":
+            s = s[:-1]
+        return s
 
     cdef _update_slots(self, dict _slots):
         self._backend_morphism = _slots['_backend_morphism']
