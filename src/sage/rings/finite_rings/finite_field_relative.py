@@ -99,6 +99,8 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         self.register_conversion(self.free_module(map=True)[1])
 
+    free_module = RingExtensionWithGen.vector_space
+
     def __reduce__(self):
         r"""
         TESTS::
