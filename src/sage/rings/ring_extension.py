@@ -693,10 +693,7 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         degree = ZZ(deg_codomain / deg_domain)
         names = [ "", self._name ] + [ "%s^%s" % (self._name, i) for i in range(2,degree) ]
         basis = [ gen ** i for i in range(degree) ]
-        try:
-            RingExtensionWithBasis.__init__(self, defining_morphism, basis, names, coerce, check)
-        except ValueError:
-            raise ValueError("the given element is not a generator")
+        RingExtensionWithBasis.__init__(self, defining_morphism, basis, names, coerce, check)
         self._gen = self(gen)._backend()
         self._type = "Ring"
         # if self._ring in Fields():
