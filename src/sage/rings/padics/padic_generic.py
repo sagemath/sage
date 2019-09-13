@@ -710,6 +710,50 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
         else:
             return E
 
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+        """
+        Check whether the given images and map on the base ring determine a
+        valid homomorphism to the codomain.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(25, modulus=x^2-2)
+            sage: L.<b> = Qq(625, modulus=x^4-2)
+            sage: K._is_valid_homomorphism_(L, [b^2])
+            True
+            sage: L._is_valid_homomorphism_(L, [b^3])
+            False
+            sage: z = L(-1).sqrt()
+            sage: L._is_valid_homomorphism_(L, [z*b])
+            True
+            sage: L._is_valid_homomorphism_(L, [-b])
+            True
+
+            sage: W.<w> = K.extension(x^2 - 5)
+            sage: cc = K.hom([-a])
+            sage: W._is_valid_homomorphism_(W, [w], base_map=cc)
+            True
+            sage: W._is_valid_homomorphism_(W, [-w], base_map=cc)
+            True
+            sage: W._is_valid_homomorphism_(W, [w+1])
+            False
+        """
+        K = self.base_ring()
+        if base_map is None and not codomain.has_coerce_map_from(K):
+            return False
+        if len(im_gens) != 1:
+            raise ValueError("Wrong number of generators")
+        if self is K:
+            # Qp or Zp, so either base_map is not None or there's a coercion to the codomain
+            # We check that the im_gens has the right length and value
+            return im_gens[0] == codomain(self.prime())
+        # Now we're an extension.  We check that the defining polynomial maps to zero
+        f = self.modulus()
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return f(im_gens[0]) == 0
+
     def _test_add(self, **options):
         """
         Test addition of elements of this ring.

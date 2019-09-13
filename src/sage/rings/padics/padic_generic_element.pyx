@@ -2242,6 +2242,50 @@ cdef class pAdicGenericElement(LocalGenericElement):
             L += [Kbase(0)] * (K.relative_degree() - len(L))
         return K(L)
 
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(25, modulus=x^2-2)
+            sage: L.<b> = Qq(625, modulus=x^4-2)
+            sage: phi = K.hom([b^2]); phi(a+1)
+            (b^2 + 1) + O(5^20)
+            sage: z = L(-1).sqrt()
+            sage: psi = L.hom([z*b]); psi(phi(a) + 5*b) == psi(phi(a)) + 5*psi(b)
+            True
+            sage: z = (1+5*b).log()
+            sage: w = (5 - 5*b).exp()
+            sage: psi(z*w) == psi(z) * psi(w)
+            True
+
+            sage: P.<pi> = K.extension(x^2 - 5)
+            sage: cc = K.hom([-a])
+            sage: alpha = P.hom([pi], base_map=cc); alpha(a) + a
+            O(pi^40)
+            sage: zz = (1 + a*pi).log()
+            sage: ww = pi.exp()
+            sage: beta = P.hom([-pi], base_map=cc)
+            sage: beta(ww*zz) == beta(ww)*beta(zz)
+            True
+        """
+        L = self.parent()
+        K = L.base_ring()
+        if L is K:
+            # Qp or Zp, so there is a unique map
+            if base_map is None:
+                return codomain.coerce(self)
+            else:
+                return base_map(self)
+        f = self.polynomial()
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return f(im_gens[0])
+
     def _log_generic(self, aprec, mina=0):
         r"""
         Return ``\log(self)`` for ``self`` equal to 1 in the residue field
