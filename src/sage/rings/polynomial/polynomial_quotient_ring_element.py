@@ -168,7 +168,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: S.<y> = K[]
             sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
             sage: T.<t> = S.quotient(y*(y+1))
-            sage: phi = Q.hom([t+1], base_map=cc, category=Rings())
+            sage: phi = Q.hom([t+1], base_map=cc)
             sage: phi(q)
             t + 1
             sage: phi(i*q)

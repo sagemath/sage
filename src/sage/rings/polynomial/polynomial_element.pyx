@@ -1281,7 +1281,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
             sage: S.<y> = K[]
-            sage: phi = S.hom([y^2], base_map=cc, category=Rings())
+            sage: phi = S.hom([y^2], base_map=cc)
             sage: phi(i*y)
             -i*y^2
         """

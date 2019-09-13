@@ -388,7 +388,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Check to see if the map into ``codomain`` determined by ``im_gens`` is
         a valid homomorphism.

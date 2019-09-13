@@ -3723,7 +3723,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 split_primes.append(p)
         return split_primes
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Return whether or not there is a homomorphism defined by the given
         images of generators.
@@ -3748,12 +3748,17 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         if len(im_gens) != 1:
             return False
-        # We need that elements of the base ring of the polynomial
-        # ring map canonically into codomain.
-        if not codomain.has_coerce_map_from(QQ):
+        if base_map is None and not codomain.has_coerce_map_from(QQ):
+            # We need that elements of the base ring of the polynomial
+            # ring map canonically into codomain.
             return False
         f = self.defining_polynomial()
         try:
+            # The current implementation won't productively use base_map
+            # since the coefficients of f are in QQ, if there is a hom
+            # from QQ to codomain it's probably unique and just the coercion
+            if base_map is not None:
+                f = f.change_ring(base_map)
             return codomain(f(im_gens[0])) == 0
         except (TypeError, ValueError):
             return False

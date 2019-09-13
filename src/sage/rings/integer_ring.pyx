@@ -784,7 +784,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         else:
             raise ValueError("Unknown distribution for the integers: %s" % distribution)
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
         Tests whether the map from `\ZZ` to codomain, which takes the
         generator of `\ZZ` to ``im_gens[0]``, is a ring homomorphism.
@@ -799,8 +799,12 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: ZZ._is_valid_homomorphism_(ZZ.quotient_ring(8),[ZZ.quotient_ring(8)(1)])
             True
         """
+        if base_map is None:
+            base_map = codomain.coerce_map_from(self)
+            if base_map is None:
+                return False
         try:
-            return im_gens[0] == codomain.coerce(self.gen(0))
+            return im_gens[0] == base_map(self.gen(0))
         except TypeError:
             return False
 

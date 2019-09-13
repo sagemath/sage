@@ -5133,7 +5133,7 @@ cdef class MPolynomial_libsingular(MPolynomial):
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
             sage: R.<x,y> = K[]
-            sage: phi = R.hom([y,x], base_map=cc, category=Rings())
+            sage: phi = R.hom([y,x], base_map=cc)
             sage: phi(x + i*y)
             (-i)*x + y
         """

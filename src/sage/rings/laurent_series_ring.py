@@ -587,7 +587,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             and A.has_coerce_map_from(P.base_ring())):
             return True
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         EXAMPLES::
 
@@ -600,15 +600,25 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: f = R.hom(x+x^3,R)
             sage: f(x^2)
             x^2 + 2*x^4 + x^6
+
+        The image of the generator needs to be a unit::
+
+            sage: R.<x> = LaurentSeriesRing(ZZ)
+            sage: R._is_valid_homomorphism_(R, [2*x])
+            False
         """
         ## NOTE: There are no ring homomorphisms from the ring of
         ## all formal power series to most rings, e.g, the p-adic
         ## field, since you can always (mathematically!) construct
         ## some power series that doesn't converge.
-        ## Note that 0 is not a *ring* homomorphism.
-        from .power_series_ring import is_PowerSeriesRing
-        if is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
-            return im_gens[0].valuation() > 0 and codomain.has_coerce_map_from(self.base_ring())
+        ## NOTE: The above claim is wrong when the base ring is Z.
+        ## See trac 28486.
+
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
+            return False
+        ## Note that 0 is not a *ring* homomorphism, and you cannot map to a power series ring
+        if is_LaurentSeriesRing(codomain):
+            return im_gens[0].valuation() > 0 and im_gens[0].is_unit()
         return False
 
     def characteristic(self):

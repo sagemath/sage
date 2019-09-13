@@ -875,7 +875,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common):
         """
         return QQbar
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=False):
         r"""
         Attempt to construct a homomorphism from self to codomain sending the
         generators to ``im_gens``. Since this field is not finitely generated,

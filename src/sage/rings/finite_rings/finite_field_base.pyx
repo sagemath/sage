@@ -390,7 +390,7 @@ cdef class FiniteField(Field):
         if lim == <unsigned long>(-1):
             raise NotImplementedError("iterating over all elements of a large finite field is not supported")
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Return ``True`` if the map from self to codomain sending
         ``self.0`` to the unique element of ``im_gens`` is a valid field
@@ -430,12 +430,19 @@ cdef class FiniteField(Field):
             ...
             TypeError: images do not define a valid homomorphism
         """
-        if self.characteristic() != codomain.characteristic():
-            raise ValueError("no map from %s to %s" % (self, codomain))
+        #if self.characteristic() != codomain.characteristic():
+        #    raise ValueError("no map from %s to %s" % (self, codomain))
+        # When the base is not just Fp, we want to ensure that there's a
+        # coercion map from the base rather than just checking the characteristic
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
+            return False
         if len(im_gens) != 1:
             raise ValueError("only one generator for finite fields")
 
-        return self.modulus()(im_gens[0]).is_zero()
+        f = self.modulus()
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return f(im_gens[0]).is_zero()
 
     def _Hom_(self, codomain, category=None):
         """

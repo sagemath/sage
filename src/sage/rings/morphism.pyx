@@ -1067,7 +1067,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         if check:
             if len(im_gens) != parent.domain().ngens():
                 raise ValueError("number of images must equal number of generators")
-            t = parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens)
+            tkwds = {} if base_map is None else {'base_map': base_map}
+            t = parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens, **tkwds)
             if not t:
                 raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
         if not im_gens.is_immutable():
@@ -1112,7 +1113,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
             sage: S.<y> = K[]
-            sage: phi = S.hom([y^2], base_map=cc, category=S.category())
+            sage: phi = S.hom([y^2], base_map=cc)
             sage: phi
             Ring endomorphism of Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
               Defn: y |--> y^2

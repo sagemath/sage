@@ -717,15 +717,22 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         EXAMPLES::
 
-            sage: L.<x,y> = LaurentPolynomialRing(QQ)
-            sage: L._is_valid_homomorphism_(QQ, (1/2, 3/2))
+            sage: T.<t> = ZZ[]
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: L.<x,y> = LaurentPolynomialRing(K)
+            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
+            True
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion
+            False
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))
             True
         """
-        if not codomain.has_coerce_map_from(self.base_ring()):
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             # we need that elements of the base ring
             # canonically coerce into codomain.
             return False
