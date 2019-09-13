@@ -142,8 +142,8 @@ class MapRelativeFieldToVectorSpace(Map):
         # EK, iK, jK = K.vector_space(base, map=True)
         # EL, iL, jL = L.vector_space(base, map=True)
         base = _common_base(K,L)
-        EK, iK, jK = K.absolute_vector_space()
-        EL, iL, jL = L.absolute_vector_space()
+        EK, iK, jK = K.free_module(base=base, map=True)
+        EL, iL, jL = L.free_module(base=base, map=True)
 
         self._dimK = EK.dimension()
         self._iK = iK
