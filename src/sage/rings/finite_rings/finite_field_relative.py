@@ -85,7 +85,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         order = base.order() ** modulus.degree()
 
         from sage.all import GF, FiniteFields, Hom
-        backend = GF(order, names=["b%s"%(order,)], **kwds)
+        backend = GF(order, names=["b%s"%(base.absolute_degree() * modulus.degree(),)], **kwds)
 
         assert modulus.base_ring() is base
         self._modulus = modulus
@@ -96,6 +96,8 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         defining_embedding = self.base_ring()._any_embedding(backend)
         gen = modulus.map_coefficients(defining_embedding).any_root()
         RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, name=names[0], coerce=False)
+
+        self.register_conversion(self.free_module(map=True)[1])
 
     def __reduce__(self):
         r"""

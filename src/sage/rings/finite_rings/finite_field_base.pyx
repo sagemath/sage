@@ -569,21 +569,6 @@ cdef class FiniteField(Field):
 
         return Factorization(factors, unit=unit, sort=False)
 
-    def gen(self):
-        r"""
-        Return a generator of this field over its base ring (typically the
-        prime field). As this is an abstract base class, this just raises a
-        ``NotImplementedError``.
-
-        EXAMPLES::
-
-            sage: K = GF(17)
-            sage: K.gen()
-            1
-
-        """
-        raise NotImplementedError("subclasses must implement gen()")
-
     def _any_embedding(self, codomain):
         r"""
         Return an embedding of this field into ``codomain``.

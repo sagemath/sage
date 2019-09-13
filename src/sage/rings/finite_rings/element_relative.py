@@ -32,6 +32,9 @@ class FiniteField_relativeElement(RingExtensionElement):
 
         sage: k = GF(9).extension(2, absolute=False)
         sage: a = k.gen(); a
+        2*b4^2 + 2
+        sage: k.modulus()(a) == 0
+        True
 
     """
     def __init__(self, parent, x):
@@ -41,10 +44,9 @@ class FiniteField_relativeElement(RingExtensionElement):
             sage: from sage.rings.finite_rings.element_relative import FiniteField_relativeElement
             sage: k = GF(2).extension(2, absolute=False)
             sage: isinstance(k.gen(), FiniteField_relativeElement)
+            True
 
         """
 #        if x.parent() is not parent:
 #            raise ValueError("parent must be %s but it is %s"%(parent, x.parent()))
         RingExtensionElement.__init__(self, parent, x)
-
-
