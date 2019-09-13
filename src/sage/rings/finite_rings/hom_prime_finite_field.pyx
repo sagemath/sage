@@ -51,7 +51,7 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
     A class implementing embeddings of prime finite fields into
     general finite fields.
     """
-    def __init__(self, parent, im_gens=None, check=False, section_class=None):
+    def __init__(self, parent, im_gens=None, base_map=None, check=False, section_class=None):
         """
         TESTS::
 
@@ -76,8 +76,8 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
             raise TypeError("The domain is not a finite prime field")
         if section_class is None:
             section_class = SectionFiniteFieldHomomorphism_prime
-        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check,
-                                                 section_class)
+        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, base_map=base_map,
+                                                 check=check, section_class=section_class)
 
     cpdef Element _call_(self, x):
         """
