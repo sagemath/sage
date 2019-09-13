@@ -199,9 +199,17 @@ class RingExtension_class(CommutativeAlgebra):
         return self.element_class(self, r)
 
     def _Hom_(self, other, category):
-        if isinstance(self, RingExtension_class) or isinstance(other, RingExtension_class):
-            from sage.rings.ring_extension_homset import RingExtensionHomset
-            return RingExtensionHomset(self, other, category)
+        from sage.rings.ring_extension_homset import RingExtensionHomset
+        return RingExtensionHomset(self, other, category)
+
+    def hom(self, im_gens, codomain=None, base_map=None, check=True, category=None):
+        from sage.rings.ring_extension_homset import RingExtensionHomset
+        from sage.rings.ring_extension_morphism import RingExtensionHomomorphism
+        if codomain is None:
+            from sage.structure.sequence import Sequence
+            codomain = Sequence(im_gens).universe()
+        parent = RingExtensionHomset(self, codomain, category)
+        return RingExtensionHomomorphism(parent, im_gens, base_map, check)
 
     def _pushout_(self, other):
         r"""
@@ -441,11 +449,11 @@ class RingExtension_class(CommutativeAlgebra):
         elt = self._ring.an_element()
         return self.element_class(self, elt)
 
-    def gens(self):
+    def gens(self, base=None):
         return tuple([ self(x) for x in self._ring.gens() ])
 
-    def ngens(self):
-        return len(self.gens())
+    def ngens(self, base=None):
+        return len(self.gens(base))
 
     def gen(self):
         r"""
@@ -710,8 +718,17 @@ class RingExtensionWithGen(RingExtensionWithBasis):
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 
-    def gens(self):
-        return (self(self._gen),)
+    def gens(self, base=None):
+        if base is None:
+            return (self(self._gen),)
+        gens = tuple([])
+        b = self
+        while b is not base:
+            gens += b.gens()
+            if b is b.base_ring():
+                raise ValueError("(%s) is not defined over (%s)" % (self, base))
+            b = b.base_ring()
+        return gens
 
-    def _repr_(self):
+    def _repr_(self, base=None):
         return "%s in %s with defining polynomial %s over its base" % (self._type, self._name, self.modulus())

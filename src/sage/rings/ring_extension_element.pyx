@@ -11,6 +11,8 @@
 
 from sage.structure.element cimport CommutativeAlgebraElement
 from sage.structure.element cimport Element
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 cdef class RingExtensionElement(CommutativeAlgebraElement):
@@ -225,10 +227,8 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
 cdef class RingExtensionWithBasisElement(RingExtensionElement):
     def _repr_(self):
-        parent = self._parent
-        names = parent._names
-        _, _, j = parent.vector_space()
-        coeffs = j(self)
+        names = self._parent._names
+        coeffs = self.vector()
         s = ""
         for i in range(len(names)):
             if coeffs[i].is_zero(): continue
@@ -253,6 +253,38 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             s += ss
         if s == "": return "0"
         return s
+
+    def vector(self, base=None):
+        _, _, j = self._parent.vector_space(base)
+        return j(self)
+
+    def polynomial(self, base=None, var='x'):
+        from sage.rings.ring_extension import RingExtensionWithGen
+        if base is None:
+            base = self._parent._base
+        degrees = [ ]
+        b = self._parent
+        degree = 1
+        while b is not base:
+            if not isinstance(b, RingExtensionWithGen):
+                raise NotImplementedError
+            reldeg = b.relative_degree()
+            degree *= reldeg
+            degrees.append(reldeg)
+            if b is b.base_ring():
+                raise ValueError("(%s) is not defined over (%s)" % (self, base))
+            b = b.base_ring()
+        v = self.vector(base)
+        coeffs = { }
+        S = PolynomialRing(base, len(degrees), names=var)
+        for i in range(degree):
+            ii = ZZ(i)
+            exponents = [ ]
+            for j in range(len(degrees)):
+                ii, exponent = ii.quo_rem(degrees[j])
+                exponents.append(exponent)
+            coeffs[tuple(exponents)] = v[i]
+        return S(coeffs)
 
     def matrix(self, base=None):
         from sage.matrix.matrix_space import MatrixSpace
