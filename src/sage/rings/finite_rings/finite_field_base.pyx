@@ -1203,13 +1203,19 @@ cdef class FiniteField(Field):
 
         if map:
             self_to_E = E.coerce_map_from(self)
-            assert self_to_E is not None
+            if self_to_E is None:
+                assert absolute, "created a relative extension but there is no coercion embedding"
+                # This code block can be dropped once absolute has been removed.
+                self_absolute, absolute_to_self, self_to_absolute = self.absolute_field(map=True)
+                absolute_to_E = self_absolute.hom([self_absolute.modulus().change_ring(E).any_root()], E)
+                base_hom = absolute_to_E * self_to_absolute * self.coerce_map_from(self.base_ring())
+                self_to_E = self.hom([self.modulus().change_ring(base_hom).any_root()], base_map=base_hom)
 
         if absolute:
             if not is_field:
                 raise NotImplementedError("non-field extensions of finite fields not supported yet when absolute=True")
 
-            F = E.absolute_field(map=map)
+            F = E.absolute_field(map=map, names=names)
             if map:
                 F, F_to_E, E_to_F = F
                 return F, E_to_F * self_to_E
