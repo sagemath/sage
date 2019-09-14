@@ -3256,9 +3256,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
         """
         if isinstance(R, Map):
-            # we're given a hom of the base ring extend to a poly hom
-            if R.domain() == self.base_ring():
-                R = self._parent.hom(R, self._parent.change_ring(R.codomain()))
+            # extend to a hom of the base ring of the polynomial
+            R = self._parent.hom(R, self._parent.change_ring(R.codomain()))
             return R(self)
         else:
             return self._parent.change_ring(R)(self.list(copy=False))
