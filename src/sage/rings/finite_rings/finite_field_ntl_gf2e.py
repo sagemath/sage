@@ -253,7 +253,7 @@ class FiniteField_ntl_gf2e(FiniteFieldAbsolute):
 
             sage: GF(2, impl='ntl').gen()
             1
-            sage: GF(2, impl='ntl', modulus=polygen(GF(2)) ).gen()
+            sage: GF(2, impl='ntl', modulus=polygen(GF(2))).gen()
             0
             sage: GF(2^19, 'a').gen(1)
             Traceback (most recent call last):

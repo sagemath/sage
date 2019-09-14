@@ -156,7 +156,7 @@ cdef class FiniteField(Field):
         """
         return True
 
-    def __repr__(self):
+    def _repr_(self):
         """
         String representation of this finite field.
 
@@ -450,7 +450,7 @@ cdef class FiniteField(Field):
 
         base_hom = self.base_ring()._any_embedding(codomain)
         minpoly = self.gen().minpoly().change_ring(base_hom)
-        return self.hom(codomain, [minpoly.any_root()], base_map=base_hom) 
+        return self.hom([minpoly.any_root()], codomain=codomain, base_map=base_hom) 
 
     def zeta_order(self):
         """
@@ -1191,9 +1191,13 @@ cdef class FiniteField(Field):
 
         absolute_degree = self.absolute_degree() * relative_degree
 
+        if not absolute and absolute_degree == 1:
+            # To get a trivial extension, we need to provide an explicit modulus
+            modulus = PolynomialRing(self, 'x').gen()
+
         # Create the actual (relative) extension ring E
         if is_field:
-            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=self, **kwds)
+            E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=None if absolute else self, **kwds)
         else:
             E = Field.extension(self, modulus, name=name, **kwds)
 
@@ -1205,7 +1209,12 @@ cdef class FiniteField(Field):
             if not is_field:
                 raise NotImplementedError("non-field extensions of finite fields not supported yet when absolute=True")
 
-            return E.absolute_field(map=map)
+            F = E.absolute_field(map=map)
+            if map:
+                F, F_to_E, E_to_F = F
+                return F, E_to_F * self_to_E
+            else:
+                return F
         else:
             if map:
                 return E, self_to_E
@@ -1699,7 +1708,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
 
     TESTS::
 
-        sage: from sage.rings.finite_rins.finite_field_base import FiniteFieldAbsolute
+        sage: from sage.rings.finite_rings.finite_field_base import FiniteFieldAbsolute
         sage: isinstance(k, FiniteFieldAbsolute)
         True
     """

@@ -11,7 +11,11 @@ EXAMPLES::
     sage: k.<a> = GF(4)
     sage: R.<x> = k[]
     sage: l.<b> = k.extension(x^2 + x + a, absolute=False); l
+    Finite Field in b of size 2^4 over its base
     sage: l.degree()
+    2
+    sage: l.absolute_degree()
+    4
 
 AUTHORS:
 
@@ -50,16 +54,19 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
         sage: k.<a> = GF(4)
         sage: R.<x> = k[]
         sage: l.<b> = k.extension(x^2 + x + a, absolute=False); l
+        Finite Field in b of size 2^4 over its base
 
     Extensions can also be constructed by just specifying degrees::
 
         sage: k = GF(4)
         sage: l = k.extension(3, absolute=False); l
+        Finite Field in z6 of size 2^6 over its base
 
     A trivial extension::
 
         sage: k = GF(2)
         sage: m = k.extension(1, absolute=False); m
+        Finite Field in z1 of size 2 over its base
 
     TESTS::
 
@@ -78,8 +85,9 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
             sage: k.<a> = GF(4)
             sage: R.<x> = k[]
-            sage: l.<b> = k.extension(x^2 + x + a)
-            sage: TestSuite(l).run()
+            sage: l.<b> = k.extension(x^2 + x + a, absolute=False)
+        
+        # TODO: actually do that
 
         """
         order = base.order() ** modulus.degree()
@@ -89,7 +97,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         assert modulus.base_ring() is base
         self._modulus = modulus
-        assert len(names) == 1
+        assert names and names[0]
 
         FiniteField.__init__(self, base, names, normalize=False, category=category or FiniteFields())
 
@@ -147,5 +155,16 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         """
         return self._backend().characteristic()
+
+    def _repr_(self):
+        """
+        Return a printable representation of this field.
+
+        EXAMPLES::
+
+            sage: k = GF(9).extension(3, absolute=False)
+            sage: k # indirect doctest
+        """
+        return "Finite Field in %s of size %s^%s over its base"%(self.variable_name(), self.characteristic(), self.absolute_degree())
 
     Element = FiniteField_relativeElement

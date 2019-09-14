@@ -264,6 +264,10 @@ class FiniteFieldFactory(UniqueFactory):
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
 
+    - ``base`` -- when given, the resulting field is a relative extension. Note
+      that over the prime field there is no distinction between a relative and
+      an absolute extension except for trivial extensions.
+
     - ``proof`` -- bool (default: ``True``): if ``True``, use provable
       primality test; otherwise only use pseudoprimality test.
 
@@ -408,11 +412,8 @@ class FiniteFieldFactory(UniqueFactory):
         sage: L = GF(7, 'b')
         sage: K is L           # name is ignored for prime fields
         True
-
-    Note, however, that with an explicit modulus you get the trivial extension of the prime field here::
-
-        sage: K is GF(7, modulus=K.modulus())
-        False
+        sage: K is GF(7, modulus=K.modulus())  # default modulus is ignored for prime fields
+        True
 
     You may print finite field elements as integers. This currently
     only works if the order of field is `<2^{16}`, though::
@@ -561,69 +562,89 @@ class FiniteFieldFactory(UniqueFactory):
             if order <= 1:
                 raise ValueError("the order of a finite field must be at least 2")
 
+            # determine p and absolute_degree
             p, absolute_degree = order.is_prime_power(get_data=True)
 
             if absolute_degree == 0:
                 raise ValueError("the order of a finite field must be a prime power")
 
-            if absolute_degree == 1 and base is None:
-                if impl is None:
-                    impl = 'modn'
-                names = ('x',)  # Ignore name
-                # Every polynomial of degree 1 is irreducible
-                check_irreducible = False
+            # determine relative_degree
+            if base is None:
+                relative_degree = absolute_degree
             else:
-                if names is None:
-                    names = name
-                if names is not None:
-                    names = normalize_names(1, names)
+                relative_degree = absolute_degree // base.absolute_degree()
 
-                if names is None:
-                    if prefix is None:
-                        prefix = 'z'
-                    names = (prefix + str(absolute_degree),)
-                    if modulus is not None:
-                        raise ValueError("no modulus may be specified if variable name not given")
+            # normalize base
+            if absolute_degree == relative_degree:
+                # There are no relative extension of Fp other than the trivial ones.
+                if absolute_degree != 1:
+                    base = None
 
-                    if base is None:
-                        # Fpbar will have a strong reference, since algebraic_closure caches its results,
-                        # and the coefficients of modulus lie in GF(p)
-                        Fpbar = GF(p).algebraic_closure(prefix)
-                        # This will give a Conway polynomial if p,absolute_degree is small enough to be in the database
-                        # and a pseudo-Conway polynomial if it's not.
-                        modulus = Fpbar._get_polynomial(absolute_degree)
-                        check_irreducible = False
+            # determine impl
+            if impl is None:
+                if absolute_degree == 1:
+                    impl = 'modn'
+                elif order < zech_log_bound:
+                    impl = 'givaro'
+                elif p == 2:
+                    impl = 'ntl'
+                else:
+                    impl = 'pari_ffelt'
 
-                if impl is None:
-                    if order < zech_log_bound:
-                        impl = 'givaro'
-                    elif p == 2:
-                        impl = 'ntl'
-                    else:
-                        impl = 'pari_ffelt'
-                if impl == 'modn':
-                    raise ValueError("finite field implementation 'modn' only allowed for prime fields")
+            # determine generator names and prefix
+            if names is None:
+                names = name
+            if names or modulus or base:
+                # The prefix is used as a flag to signal to the field that it
+                # lives in a compatible tower of finite fields inside Fpbar.
+                # When either of these are specified, we need to signal that
+                # this is not the case:
+                prefix = None
+            else:
+                prefix = prefix or 'z'
+            if absolute_degree == 1 and base is None:
+                # The name does not matter for Fp itself so we explicitly
+                # ignore it to get no distinct copies of Fp.
+                names = ('x',)
+            if names is None:
+                names = ((prefix or 'z') + str(absolute_degree),)
+            if names is not None:
+                names = normalize_names(1, names)
 
-            relative_degree = absolute_degree
-            if base is not None:
-                relative_degree //= base.absolute_degree()
+            # determine a modulus
+            from sage.rings.polynomial.polynomial_element import is_Polynomial
+            if absolute_degree == 1 and base is None and (
+                modulus is None or is_Polynomial(modulus) and modulus.coefficients(sparse=False) == [-1, 1]):
+                # Ignore the default modulus for a prime field (we cannot
+                # write down the modulus x-1 over Fp[x] here since we would
+                # recursively need Fp for that first.
+                modulus = None
+            elif modulus is None and prefix:
+                # When creating an absolute extension without a
+                # prescribed modulus, we need to make sure that it
+                # embeds into the compatible tower of finite fields
+                # inside Fpbar.
+                Fpbar = GF(p).algebraic_closure(prefix)
+                # This will give a Conway polynomial if
+                # p,absolute_degree is small enough to be in the
+                # database and a pseudo-Conway polynomial if it's not.
+                modulus = Fpbar._get_polynomial(absolute_degree)
+                check_irreducible = False
+            elif modulus is None or isinstance(modulus, str):
+                R = PolynomialRing(base or GF(p), 'x')
+                modulus = R.irreducible_element(relative_degree, algorithm=modulus)
+                check_irreducible = False
 
-            # A lazy polynomial ring over the base. We only create this on
-            # demand since otherwise creating GF(p) would lead to an infinite
-            # recursion.
-            R = lambda: PolynomialRing(base or GF(p), 'x')
 
-            if isinstance(modulus, str):
-                # a string specifies an algorithm to find a suitable modulus
-                modulus = R().irreducible_element(relative_degree, algorithm=modulus)
-
-            if modulus is None:
-                if impl != 'modn':
-                    modulus = R().irreducible_element(relative_degree)
-
+            # normalize modulus
             if modulus is not None:
-                modulus = R()(modulus).monic()
+                modulus = PolynomialRing(base or GF(p), 'x')(modulus)
+                modulus = modulus.monic()
 
+            # sanity checks
+            if impl == 'modn' and absolute_degree != 1:
+                raise ValueError("finite field implementation 'modn' only allowed for prime fields")
+            if modulus is not None:
                 if modulus.degree() != relative_degree:
                     raise ValueError("degree of the modulus does not match the relative degree of finite field")
                 if check_irreducible and not modulus.is_irreducible():
@@ -641,7 +662,7 @@ class FiniteFieldFactory(UniqueFactory):
                 repr = None
                 elem_cache = None
 
-            return (order, names, modulus, impl, p, absolute_degree, proof, prefix, repr, elem_cache), {}
+            return (order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache), {}
 
     def _change(self, obj, **kwds):
         r"""
@@ -661,7 +682,7 @@ class FiniteFieldFactory(UniqueFactory):
             return obj
 
         key = obj._factory_data[2]
-        order, names, modulus, impl, p, absolute_degree, proof, prefix, repr, elem_cache = key
+        order, names, modulus, base, impl, p, absolute_degree, proof, prefix, repr, elem_cache = key
 
         order = kwds.pop("order", order)
 
@@ -684,7 +705,7 @@ class FiniteFieldFactory(UniqueFactory):
 
         elem_cache = kwds.pop("elem_cache", elem_cache)
 
-        base = kwds.pop("base", None if obj.base() is obj.base_ring() else modulus.base_ring())
+        base = kwds.pop("base", base)
 
         if kwds:
             raise ValueError("can only change arguments that GF understands when changing a finite field")
@@ -744,6 +765,8 @@ class FiniteFieldFactory(UniqueFactory):
         # fields may not be created using this factory object, e.g., residue
         # class fields.
 
+        # TODO: This needs to change. Old pickles should unpickle to unique
+        # parents, not to copies.
         if len(key) == 5:
             # for backward compatibility of pickles (see trac 10975).
             order, name, modulus, impl, _ = key
@@ -762,29 +785,32 @@ class FiniteFieldFactory(UniqueFactory):
             #   as they are otherwise ignored
             repr = kwds.get('repr', 'poly')
             elem_cache = kwds.get('elem_cache', (order < 500))
-        else:
+        elif len(key) == 10:
             order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache = key
+            base = None
+        else:
+            order, name, modulus, base, impl, p, n, proof, prefix, repr, elem_cache = key
 
         from sage.structure.proof.all import WithProof
         with WithProof('arithmetic', proof):
-            if modulus is not None and modulus.base_ring().base() is not modulus.base_ring():
+            if modulus is not None and base:
                 from .finite_field_relative import FiniteField_relative
-                K = FiniteField_relative(base=modulus.base_ring(), modulus=modulus, names=name, impl=impl, proof=proof, prefix=prefix)
+                K = FiniteField_relative(base=base, modulus=modulus, names=name, impl=impl, proof=proof, prefix=prefix)
             elif impl =='modn':
-                if n != 1:
-                    raise ValueError("the 'modn' implementation requires a prime order")
                 from .finite_field_prime_modn import FiniteField_prime_modn
                 K = FiniteField_prime_modn(order, check=False, modulus=modulus)
-            elif impl == 'givaro':
-                K = FiniteField_givaro(order, name, modulus, repr, elem_cache)
-            elif impl == 'ntl':
-                from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-                K = FiniteField_ntl_gf2e(order, name, modulus)
-            elif impl == 'pari_ffelt' or impl == 'pari':
-                from .finite_field_pari_ffelt import FiniteField_pari_ffelt
-                K = FiniteField_pari_ffelt(p, modulus, name)
             else:
-                raise ValueError("no such finite field implementation: %r" % impl)
+                modulus = modulus or PolynomialRing(GF(p), 'x')([-1, 1])
+                if impl == 'givaro':
+                    K = FiniteField_givaro(order, name, modulus, repr, elem_cache)
+                elif impl == 'ntl':
+                    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+                    K = FiniteField_ntl_gf2e(order, name, modulus)
+                elif impl == 'pari_ffelt' or impl == 'pari':
+                    from .finite_field_pari_ffelt import FiniteField_pari_ffelt
+                    K = FiniteField_pari_ffelt(p, modulus, name)
+                else:
+                    raise ValueError("no such finite field implementation: %r" % impl)
 
         if prefix is not None:
             K._prefix = prefix
@@ -815,6 +841,6 @@ def is_PrimeFiniteField(x):
     from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 
     return isinstance(x, FiniteField_prime_modn) or \
-           (isinstance(x, FiniteField_generic) and x.degree() == 1)
+           (isinstance(x, FiniteField_generic) and x.base() is x)
 
 zech_log_bound = 2**16
