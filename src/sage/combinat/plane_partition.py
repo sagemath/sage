@@ -1323,9 +1323,9 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,3,2), symmetry='SPP')
+            sage: P = PlanePartitions((3,3,2), symmetry='SPP')
             sage: P.cardinality()
-            116424
+            35
         """
         A = self._box[0]
         B = self._box[1]
