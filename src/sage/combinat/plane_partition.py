@@ -1358,7 +1358,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSPP, self).__init__(category=FiniteEnumeratedSets())
@@ -1369,19 +1369,6 @@ class PlanePartitions_CSPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self):
-#        def componentwise_comparer(thing1,thing2):
-#            if len(thing1) == len(thing2):
-#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-#                    return True
-#            return False
-#        def componentwise_comparer2(thing1,thing2):
-#            x = thing2[0]
-#            y = thing2[1]
-#            z = thing2[2]
-
-#            if componentwise_comparer(thing1,(x,y,z)) or componentwise_comparer(thing1,(z,x,y)) or componentwise_comparer(thing1,(y,z,x)):
-#                return True
-#            return False
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1394,14 +1381,12 @@ class PlanePartitions_CSPP(PlanePartitions):
                     for z in range(x,c):
                         if y <= z  and (x != z or y == x):
                             pl.append((x,y,z))
-
-#        pocp = Poset((pl,componentwise_comparer2))
         pocp = Poset((pl, cmp2))
         matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
         #iterate through each antichain of product of chains poset with paramaters (a,b,c)
         for acl in pocp.antichains_iterator():
-            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-
+            ppMatrix = [[0] * (c) for i in range(b)] 
+            #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
             #ac format ex: [x,y,z]
             for ac in acl:
                 x = ac[0]
@@ -1412,7 +1397,9 @@ class PlanePartitions_CSPP(PlanePartitions):
                 ppMatrix[x][y] = (z+1)
 
 
-            #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+            #for each value in current antichain, fill in the rest of the 
+            #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
+            #now in plane partition format
             if acl != []:
                 for i in range(b):
                     i = b-(i+1)
@@ -1428,14 +1415,30 @@ class PlanePartitions_CSPP(PlanePartitions):
                             ppMatrix[i][j] = max(iValue,jValue)
             yield self.element_class(self, ppMatrix)
 
-#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
 
-#        matrixList.sort()
+        The number of cyclically symmetric plane partitions inside an 
+        `r \times r \times r` box is equal to
 
-#        current = 0
-#        while current < len(matrixList):
-#            yield self.element_class(self, matrixList[current])
-#            current += 1
+        .. MATH::
+
+            \prod_{i=1}^{r} \frac{3*i - 1}{3*i - 2}  *
+            \prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{2*i+j-1}
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions((4,4,4), symmetry='CSPP')
+            sage: P.cardinality()
+            132
+        """
+        A = self._box[0]
+        B = self._box[1]
+        C = self._box[2]
+        numerator = prod(3*i-1 for i in range(1, A+1)) * prod( (i+j+A-1) for j in range(1,A+1) for i in range(1,j+1))
+        denominator = prod(3*i-2 for i in range(1, A+1)) * prod( (2*i+j-1) for j in range(1,A+1) for i in range(1,j+1))
+        return numerator/denominator
 
 
 #Class 4
