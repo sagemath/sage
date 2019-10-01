@@ -1199,8 +1199,8 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((4,3,2), symmetry='SPP')
+            sage: P2 = PlanePartitions([4,3,2], symmetry='SPP')
             sage: P1 is P2
             True
         """
@@ -1210,7 +1210,7 @@ class PlanePartitions_SPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='SPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_SPP, self).__init__(category=FiniteEnumeratedSets())
@@ -1225,61 +1225,115 @@ class PlanePartitions_SPP(PlanePartitions):
 
 
     def __iter__(self):
-#        def componentwise_comparer(thing1,thing2):
-#            if len(thing1) == len(thing2):
-#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-#                    return True
-#            return False
-        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
+        #Construct poset whose order ideals are naturally in bijection
+        #with symmetric plane partitions
+        cmp = lambda x,y : all(x[i]<=y[i] for i in range(len(x)))
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
         pl = []
         for x in range(0,a):
-            for y in range(0, b):
-                    for z in range(0,c):
-                        if z <= y:
-                            pl.append((x,y,z))
-
-
+            for y in range(0,x+1):
+                for z in range(0,c):
+                    pl.append((x,y,z))
         pocp = Poset((pl,cmp))
-
-        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
-            #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+        #Iterate over antichains in this poset
         for acl in pocp.antichains_iterator():
-            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-                #ac format ex: [x,y,z]
-                #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
+            #Initialize an empty plane partition
+            ppMatrix = [[0] * (a) for i in range(b)]
+            #Antichain indicates where the 'corners' will be in the
+            #plane partition
             for ac in acl:
-                x = ac[0]
-                y = ac[1]
-                z = ac[2]
-                ppMatrix[y][z] = (x+1)
-
-                #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
-            if acl != []:
-                for i in range(b):
-                    i = b-(i+1)
-                    for j in range(c):
-                        j = c-(j+1)
+                x=ac[0]
+                y=ac[1]
+                z=ac[2]
+                ppMatrix[x][y] = (z+1)
+            #Fill out the rest of the plane partition using symmetry and the
+            #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
+            if acl!= []:
+                for i in range(a):
+                    i = a-(i+1)
+                    for j in range(b):
+                        j = b-(j+1)
                         if (ppMatrix[i][j] == 0) and i>=j:
                             iValue = 0
                             jValue = 0
-                            if i < b-1:
+                            if i < a-1:
                                 iValue = ppMatrix[i+1][j]
-                            if j < c-1:
+                            if j < b-1:
                                 jValue = ppMatrix[i][j+1]
                             ppMatrix[i][j] = max(iValue,jValue)
                         elif j>i:
                             ppMatrix[i][j] = ppMatrix[j][i]
             yield self.element_class(self, ppMatrix)
 
-#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
-#        matrixList.sort()
-#        current = 0
-#        while current < len(matrixList):
-#            yield self.element_class(self, matrixList[current])
-#            current += 1
+
+
+#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
+#        a=self._box[0]
+#        b=self._box[1]
+#        c=self._box[2]
+#        pl = []
+#        for x in range(0,a):
+#            for y in range(0, b):
+#                    for z in range(0,c):
+#                        if z <= y:
+#                            pl.append((x,y,z))
+#        pocp = Poset((pl,cmp))
+#            #iterate through each antichain of product of chains poset with paramaters (a,b,c)
+#        for acl in pocp.antichains_iterator():
+#            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+#                #ac format ex: [x,y,z]
+#                #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
+#            for ac in acl:
+#                x = ac[0]
+#                y = ac[1]
+#                z = ac[2]
+#                ppMatrix[y][z] = (x+1)
+
+#                #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+#            if acl != []:
+#                for i in range(b):
+#                    i = b-(i+1)
+#                    for j in range(c):
+#                        j = c-(j+1)
+#                        if (ppMatrix[i][j] == 0) and i>=j:
+#                            iValue = 0
+#                            jValue = 0
+#                            if i < b-1:
+#                                iValue = ppMatrix[i+1][j]
+#                            if j < c-1:
+#                                jValue = ppMatrix[i][j+1]
+#                            ppMatrix[i][j] = max(iValue,jValue)
+#                        elif j>i:
+#                            ppMatrix[i][j] = ppMatrix[j][i]
+#            yield self.element_class(self, ppMatrix)
+
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        The number of symmetric plane partitions inside an `r \times r \times t`
+        box is equal to
+
+        .. MATH::
+
+            \prod_{i=1}^{r} \frac{2*i + t - 1}{2*i - 1}  *
+            \prod_{1 \leq i \leq j \leq r} \frac{i+j+t-1}{i+j-1}
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions((4,3,2), symmetry='SPP')
+            sage: P.cardinality()
+            116424
+        """
+        A = self._box[0]
+        B = self._box[1]
+        C = self._box[2]
+        leftProduct = (prod( (2*i + C - 1) / (2*i - 1) for i in range(1,A+1)))
+        rightProduct = (prod( (i + j + C - 1) / (i + j - 1) for j in range(1, A+1) for i in range(1, j) ))
+        return leftProduct * rightProduct
+
 
 
 #Class 3
