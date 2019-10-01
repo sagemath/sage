@@ -1026,7 +1026,7 @@ class PlanePartitions_box(PlanePartitions):
         matrixList = [] #list of all PlanePartitions with parameters(a,b,c)
 
         #iterate through each antichain of product of chains poset with parameters (a,b,c)
-        for acl in pocp.antichains_iterator():
+        for acl in self.to_poset().antichains_iterator():
 #            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
 
 #            #ac format ex: [x,y,z]
@@ -1280,48 +1280,111 @@ class PlanePartitions_SPP(PlanePartitions):
         return PlanePartitions.__contains__(self, x) and x.is_SPP()
 
 
-    def __iter__(self):
-        #Construct poset whose order ideals are naturally in bijection
-        #with symmetric plane partitions
-        cmp = lambda x,y : all(x[i]<=y[i] for i in range(len(x)))
+    def to_poset(self):
+        r"""
+        Returns a poset whose order ideals are in bijection with
+        symmetric plane partitions.
+        """
         a=self._box[0]
-        b=self._box[1]
+        b=self._box[1]    
         c=self._box[2]
         pl = []
+        cmp = lambda x,y : all(x[i]<=y[i] for i in range(len(x)))
         for x in range(0,a):
             for y in range(0,x+1):
                 for z in range(0,c):
                     pl.append((x,y,z))
-        pocp = Poset((pl,cmp))
-        #Iterate over antichains in this poset
-        for acl in pocp.antichains_iterator():
-            #Initialize an empty plane partition
-            ppMatrix = [[0] * (a) for i in range(b)]
-            #Antichain indicates where the 'corners' will be in the
-            #plane partition
-            for ac in acl:
-                x=ac[0]
-                y=ac[1]
-                z=ac[2]
-                ppMatrix[x][y] = (z+1)
-            #Fill out the rest of the plane partition using symmetry and the
-            #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
-            if acl!= []:
+        return Poset((pl,cmp))
+
+    def from_order_ideal(self, I):
+        r"""
+        Return the plane partition corresponding to an order ideal in the
+        poset given in (LINK) to_poset().
+
+        Note: input may not be checked ? Optional check parameter if too much overhead?
+        """
+        return self.from_antichain(self.to_poset().order_ideal_generators(I))
+
+    def from_antichain(self, A):
+        r"""
+        Return the plane partition corresponding to an antichain in the poset
+        given in (LINK) to_poset().
+
+        Note: input may not be checked? Optional parameter if too much overhead?
+        """
+        #Initialize an empty plane partition
+        a=self._box[0]
+        b=self._box[1]    
+        c=self._box[2]
+        ppMatrix = [[0] * (a) for i in range(b)]
+        #Antichain indicates where the 'corners' will be in the
+        #plane partition
+        for ac in A:
+            x=ac[0]
+            y=ac[1]
+            z=ac[2]
+            ppMatrix[y][x] = (z+1)
+        #Fill out the rest of the plane partition using symmetry and the
+        #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
+        if A!= []:
+            for j in range(b):
+                j = b-(j+1)
                 for i in range(a):
                     i = a-(i+1)
-                    for j in range(b):
-                        j = b-(j+1)
-                        if (ppMatrix[i][j] == 0) and i>=j:
-                            iValue = 0
-                            jValue = 0
-                            if i < a-1:
-                                iValue = ppMatrix[i+1][j]
-                            if j < b-1:
-                                jValue = ppMatrix[i][j+1]
-                            ppMatrix[i][j] = max(iValue,jValue)
-                        elif j>i:
-                            ppMatrix[i][j] = ppMatrix[j][i]
-            yield self.element_class(self, ppMatrix)
+                    if (ppMatrix[j][i] == 0) and j>=i:
+                        iValue = 0
+                        jValue = 0
+                        if i < a-1:
+                            iValue = ppMatrix[j][i+1]
+                        if j < b-1:
+                            jValue = ppMatrix[j+1][i]
+                        ppMatrix[j][i] = max(iValue,jValue)
+                    elif i>j:
+                        ppMatrix[j][i] = ppMatrix[i][j]
+        return self.element_class(self, ppMatrix)
+
+    def __iter__(self):
+        #Construct poset whose order ideals are naturally in bijection
+        #with symmetric plane partitions
+#        cmp = lambda x,y : all(x[i]<=y[i] for i in range(len(x)))
+#        a=self._box[0]
+#        b=self._box[1]
+#        c=self._box[2]
+#        pl = []
+#        for x in range(0,a):
+#            for y in range(0,x+1):
+#                for z in range(0,c):
+#                    pl.append((x,y,z))
+#        pocp = Poset((pl,cmp))
+        #Iterate over antichains in this poset
+        for acl in self.to_poset().antichains_iterator():
+#            #Initialize an empty plane partition
+#            ppMatrix = [[0] * (a) for i in range(b)]
+#            #Antichain indicates where the 'corners' will be in the
+#            #plane partition
+#            for ac in acl:
+#                x=ac[0]
+#                y=ac[1]
+#                z=ac[2]
+#                ppMatrix[x][y] = (z+1)
+#            #Fill out the rest of the plane partition using symmetry and the
+#            #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
+#            if acl!= []:
+#                for i in range(a):
+#                    i = a-(i+1)
+#                    for j in range(b):
+#                        j = b-(j+1)
+#                        if (ppMatrix[i][j] == 0) and i>=j:
+#                            iValue = 0
+#                            jValue = 0
+#                            if i < a-1:
+#                                iValue = ppMatrix[i+1][j]
+#                            if j < b-1:
+#                                jValue = ppMatrix[i][j+1]
+#                            ppMatrix[i][j] = max(iValue,jValue)
+#                        elif j>i:
+#                            ppMatrix[i][j] = ppMatrix[j][i]
+            yield self.from_antichain(acl)
 
 
 
@@ -1390,7 +1453,25 @@ class PlanePartitions_SPP(PlanePartitions):
         rightProduct = (prod( (i + j + C - 1) / (i + j - 1) for j in range(1, A+1) for i in range(1, j) ))
         return leftProduct * rightProduct
 
+    def random_element(self):
+        r"""
+        Return a uniformly random element of ``self``.
 
+        ALGORITHM:
+
+        This uses the
+        :meth:`~sage.combinat.posets.posets.FinitePoset.random_order_ideal`
+        method and the natural bijection between symmetric plane partitions
+        and antichains in an associated poset. (FIX EXAMPLES)
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions((4,3,5))
+            sage: P.random_element()
+            Plane partition [[4, 3, 3], [4, 0, 0], [2, 0, 0], [0, 0, 0]]
+        """
+        Z = self.from_order_ideal(self.to_poset().random_order_ideal())
+        return self.element_class(self, Z, check=False)
 
 #Class 3
 
