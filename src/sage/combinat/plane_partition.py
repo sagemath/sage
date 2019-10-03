@@ -1505,52 +1505,100 @@ class PlanePartitions_CSPP(PlanePartitions):
         return "Cyclically symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def to_poset(self):
+        """
+        MAKE SURE DOC EXPLICITLY DESCRIBES WHAT FUNDAMENTAL DOMAIN LOOKS LIKE
+        """
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
         cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
         cmp2 = lambda x,y : cmp(x,y) or cmp(x,(y[2],y[0],y[1])) or cmp(x,(y[1],y[2],y[0]))
-
         pl = []
         for x in range(0,a):
             for y in range(0, b):
                     for z in range(x,c):
                         if y <= z  and (x != z or y == x):
                             pl.append((x,y,z))
-        pocp = Poset((pl, cmp2))
-        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
+        return Poset((pl, cmp2))
+
+    def from_antichain(self):
+        ppMatrix = [[0] * (c) for i in range(b)] 
+        #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        #ac format ex: [x,y,z]
+        for ac in acl:
+            x = ac[0]
+            y = ac[1]
+            z = ac[2]
+            ppMatrix[y][z] = (x+1)
+            ppMatrix[z][x] = (y+1)
+            ppMatrix[x][y] = (z+1)
+
+
+        #for each value in current antichain, fill in the rest of the 
+        #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
+        #now in plane partition format
+        if acl != []:
+            for i in range(b):
+                i = b-(i+1)
+                for j in range(c):
+                    j = c-(j+1)
+                    if (ppMatrix[i][j] == 0):
+                        iValue = 0
+                        jValue = 0
+                        if i < b-1:
+                            iValue = ppMatrix[i+1][j]
+                        if j < c-1:
+                            jValue = ppMatrix[i][j+1]
+                        ppMatrix[i][j] = max(iValue,jValue)
+        return self.element_class(self, ppMatrix)        
+
+    def __iter__(self):
+#        a=self._box[0]
+#        b=self._box[1]
+#        c=self._box[2]
+#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
+#        cmp2 = lambda x,y : cmp(x,y) or cmp(x,(y[2],y[0],y[1])) or cmp(x,(y[1],y[2],y[0]))
+
+#        pl = []
+#        for x in range(0,a):
+#            for y in range(0, b):
+#                    for z in range(x,c):
+#                        if y <= z  and (x != z or y == x):
+#                            pl.append((x,y,z))
+#        pocp = Poset((pl, cmp2))
+#        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
         #iterate through each antichain of product of chains poset with paramaters (a,b,c)
-        for acl in pocp.antichains_iterator():
-            ppMatrix = [[0] * (c) for i in range(b)] 
-            #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-            #ac format ex: [x,y,z]
-            for ac in acl:
-                x = ac[0]
-                y = ac[1]
-                z = ac[2]
-                ppMatrix[y][z] = (x+1)
-                ppMatrix[z][x] = (y+1)
-                ppMatrix[x][y] = (z+1)
+        for acl in self.to_poset().antichains_iterator():
+#            ppMatrix = [[0] * (c) for i in range(b)] 
+#            #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+#            #ac format ex: [x,y,z]
+#            for ac in acl:
+#                x = ac[0]
+#                y = ac[1]
+#                z = ac[2]
+#                ppMatrix[y][z] = (x+1)
+#                ppMatrix[z][x] = (y+1)
+#                ppMatrix[x][y] = (z+1)
 
 
-            #for each value in current antichain, fill in the rest of the 
-            #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
-            #now in plane partition format
-            if acl != []:
-                for i in range(b):
-                    i = b-(i+1)
-                    for j in range(c):
-                        j = c-(j+1)
-                        if (ppMatrix[i][j] == 0):
-                            iValue = 0
-                            jValue = 0
-                            if i < b-1:
-                                iValue = ppMatrix[i+1][j]
-                            if j < c-1:
-                                jValue = ppMatrix[i][j+1]
-                            ppMatrix[i][j] = max(iValue,jValue)
-            yield self.element_class(self, ppMatrix)
+#            #for each value in current antichain, fill in the rest of the 
+#            #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
+#            #now in plane partition format
+#            if acl != []:
+#                for i in range(b):
+#                    i = b-(i+1)
+#                    for j in range(c):
+#                        j = c-(j+1)
+#                        if (ppMatrix[i][j] == 0):
+#                            iValue = 0
+#                            jValue = 0
+#                            if i < b-1:
+#                                iValue = ppMatrix[i+1][j]
+#                            if j < c-1:
+#                                jValue = ppMatrix[i][j+1]
+#                            ppMatrix[i][j] = max(iValue,jValue)
+            yield self.from_antichain()
 
     def cardinality(self):
         r"""
