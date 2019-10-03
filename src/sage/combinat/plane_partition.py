@@ -1551,7 +1551,16 @@ class PlanePartitions_CSPP(PlanePartitions):
                         if j < c-1:
                             jValue = ppMatrix[i][j+1]
                         ppMatrix[i][j] = max(iValue,jValue)
-        return self.element_class(self, ppMatrix)        
+        return self.element_class(self, ppMatrix)
+
+    def from_order_ideal(self, I):
+        r"""
+        Return the plane partition corresponding to an order ideal in the
+        poset given in (LINK) to_poset().
+
+        Note: input may not be checked ? Optional check parameter if too much overhead?
+        """
+        return self.from_antichain(self.to_poset().order_ideal_generators(I))    
 
     def __iter__(self):
 #        a=self._box[0]
@@ -1649,7 +1658,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
@@ -1659,33 +1668,26 @@ class PlanePartitions_TSPP(PlanePartitions):
         return "Transpose symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def to_poset(self):
         cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
         pl = []
         for x in range(0,a):
             for y in range(x, b):
                     for z in range(y,c):
                         pl.append((x,y,z))
+        return Poset((pl,cmp))
 
-        myposet = Poset((pl,cmp))
+    def from_antichain(self):
+        x = ac[0]
+        y = ac[1]
+        z = ac[2]
+        ppMatrix[y][z] = (x+1) #x,y,z
+        ppMatrix[z][x] = (y+1) #y,z,x
+        ppMatrix[x][y] = (z+1) #z,x,y
 
-        R = myposet.random_order_ideal()
-        acl = R
-
-        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-
-        #ac format ex: [x,y,z]
-        for ac in acl:
-            x = ac[0]
-            y = ac[1]
-            z = ac[2]
-            ppMatrix[y][z] = (x+1) #x,y,z
-            ppMatrix[z][x] = (y+1) #y,z,x
-            ppMatrix[x][y] = (z+1) #z,x,y
-
-            ppMatrix[z][y] = (x+1) #x,z,y
-            ppMatrix[x][z] = (y+1) #y,x,z
-            ppMatrix[y][x] = (z+1) #z,y,x
+        ppMatrix[z][y] = (x+1) #x,z,y
+        ppMatrix[x][z] = (y+1) #y,x,z
+        ppMatrix[y][x] = (z+1) #z,y,x
 
 
         #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
@@ -1702,8 +1704,58 @@ class PlanePartitions_TSPP(PlanePartitions):
                         if j < c-1:
                             jValue = ppMatrix[i][j+1]
                         ppMatrix[i][j] = max(iValue,jValue)
+        return self.element_class(self, ppMatrix)
 
-        return PlanePartition(ppMatrix)
+    def random_element(self):
+        return self.to_poset().from_antichain(self.to_poset().random_antichain())
+
+    def __iter__(self):
+        for A in self.to_poset().antichains_iterator():
+            yield self.from_antichain(A)
+#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
+#        pl = []
+#        for x in range(0,a):
+#            for y in range(x, b):
+#                    for z in range(y,c):
+#                        pl.append((x,y,z))
+
+#        myposet = Poset((pl,cmp))
+
+#        R = myposet.random_order_ideal()
+#        acl = R
+
+#        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+
+#        #ac format ex: [x,y,z]
+#        for ac in acl:
+#            x = ac[0]
+#            y = ac[1]
+#            z = ac[2]
+#            ppMatrix[y][z] = (x+1) #x,y,z
+#            ppMatrix[z][x] = (y+1) #y,z,x
+#            ppMatrix[x][y] = (z+1) #z,x,y
+
+#            ppMatrix[z][y] = (x+1) #x,z,y
+#            ppMatrix[x][z] = (y+1) #y,x,z
+#            ppMatrix[y][x] = (z+1) #z,y,x
+
+
+#        #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+#        if acl != []:
+#            for i in range(b):
+#                i = b-(i+1)
+#                for j in range(c):
+#                    j = c-(j+1)
+#                    if (ppMatrix[i][j] == 0):
+#                        iValue = 0
+#                        jValue = 0
+#                        if i < b-1:
+#                            iValue = ppMatrix[i+1][j]
+#                        if j < c-1:
+#                            jValue = ppMatrix[i][j+1]
+#                        ppMatrix[i][j] = max(iValue,jValue)
+
+#        return PlanePartition(ppMatrix)
 
 
 
