@@ -1681,6 +1681,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         x = ac[0]
         y = ac[1]
         z = ac[2]
+        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
         ppMatrix[y][z] = (x+1) #x,y,z
         ppMatrix[z][x] = (y+1) #y,z,x
         ppMatrix[x][y] = (z+1) #z,x,y
