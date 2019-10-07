@@ -39,6 +39,7 @@ from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
+from sage.functions.other import floor, ceil
 
 
 
@@ -1787,39 +1788,6 @@ class PlanePartitions_TSPP(PlanePartitions):
 
 
 
-class PlanePartitions_SCPP(PlanePartitions):
-
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
-
-        EXAMPLES::
-
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_SCPP, cls).__classcall__(cls, tuple(box_size))
-
-    def __init__(self, box_size):
-        """
-        TESTS::
-    
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
-            sage: TestSuite(PP).run()
-        """
-        super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
-
-    def _repr_(self):
-        return "Self-complementary plane partitions inside a {} x {} x {} box".format(
-                    self._box[0], self._box[1], self._box[2])
-
-
-
-
 #Class 5
 
 class PlanePartitions_SCPP(PlanePartitions):
@@ -1830,8 +1798,8 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((4,3,2), symmetry='SCPP')
+            sage: P2 = PlanePartitions([4,3,2], symmetry='SCPP')
             sage: P1 is P2
             True
         """
@@ -1844,14 +1812,137 @@ class PlanePartitions_SCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
             sage: TestSuite(PP).run()
         """
-        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-            raise ValueError("box sides cannot all be odd")
+#        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+#            raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
         return "Self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __iter__(self):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        def Partitions_inside_lambda(la):
+            "Returns the list of partitions contained in la with the same number of parts including 0s."
+            if len(la)==0:
+                yield []
+                return
+            LIST = []
+            for mu_0 in range(la[0],0,-1):
+                new_la = [min(mu_0,la[i]) for i in range(1,len(la))]
+                for mu in Partitions_inside_lambda(new_la):
+                    yield [mu_0]+mu
+            yield [0 for i in la]
+            return
+
+        def Partitions_inside_lambda_with_smallest_at_least_k(la,k):
+            "Returns the list of partitions contained in la with the smallest entry at least k"
+            if len(la)==0:
+                yield []
+                return
+            if la[-1] < k:
+                yield
+                return
+            LIST = []
+            for mu in Partitions_inside_lambda([la[i]-k for i in range(len(la))]):
+                yield ([mu[i]+k for i in range(len(la))])
+            return
+
+        def possible_middle_row_for_b_odd(a,c):
+            "Returns the list of possible middle row for SCPP inside box(a,b,c) when b is odd"
+            if a*c % 2 == 1:
+                yield
+                return
+            LIST = []
+            for mu in Partitions_inside_lambda([floor(c/2) for i in range(floor(a/2))]):
+                nu = [c-mu[len(mu)-1-i] for i in range(len(mu))]
+                if a % 2 ==0:
+                    la = nu + mu
+                else:
+                    la = nu + [c/2] + mu
+                yield (la)
+            return
+
+        def possible_middle_row_for_b_even(a,c):
+            "Returns the list of possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even"
+            LIST = []
+            for mu in Partitions_inside_lambda([floor(c/2) for i in range((a+1)/2)]):
+                nu = [c-mu[len(mu)-1-i] for i in range(floor(a/2))]
+                for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu,mu[0]):
+                    la = tau + mu
+                    yield (la)
+            return
+
+
+
+        def PPs_with_first_row_la_and_with_k_rows(la,k):
+            "Returns PPs with first row la and with k rows in total"
+            if k == 0:
+                yield []
+                return
+            if k == 1:
+                yield [la]
+                return
+            LIST = []
+            for mu in Partitions_inside_lambda(la):
+                for PP in PPs_with_first_row_la_and_with_k_rows(mu,k-1):
+                    yield ([la]+PP)
+
+            return
+
+        def complement(PP,c):
+            "Returns the complement of PP with respect to height c"
+            if len(PP) == 0:
+                return []
+            b = len(PP)
+            a = len(PP[0])
+            return [[c-PP[b-1-i][a-1-j] for j in range(a)] for i in range(b)]
+
+        if a*b*c % 2 == 1:
+            return
+
+        if b % 2 == 1:
+            for la in possible_middle_row_for_b_odd(a,c):   # la is the middle row of SCPP
+                for PP in PPs_with_first_row_la_and_with_k_rows(la,(b+1)/2):
+                    PP_below = PP[1:]
+                    PP_above = complement(PP_below,c)
+                    print(PP_above,PP_below)
+                    #LIST.append(PP_above+[la]+PP_below)
+                    yield self.element_class(self, PP_above+[la]+PP_below)
+                    #yield PP_above+[la]+PP_below
+        else:
+            for la in possible_middle_row_for_b_even(a,c):   # la is the middle ((a/2)+1)st row of SCPP
+                for PP in PPs_with_first_row_la_and_with_k_rows(la,b/2):
+                    PP_below = PP
+                    PP_above = complement(PP_below,c)
+                    #LIST.append(PP_above+PP_below)
+                    print(PP_above,PP_below)
+                    yield self.element_class(self, PP_above+PP_below)
+                    #yield PP_above+PP_below
+        return
+
+    def cardinality(self):
+        r=self._box[0]
+        s=self._box[1]
+        t=self._box[2]
+        if r % 2 == 0 and s % 2 == 0 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in [1..r/2] for j in [1..s/2] for k in [1..t/2])))^2
+#        if r % 2 == 1 and s % 2 == 0 and t % 2 == 0:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..s/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..s/2] for k in [1..t/2])))
+#        if r % 2 == 0 and s % 2 == 1 and t % 2 == 0:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2+1] for k in [1..t/2])))
+#        if r % 2 == 0 and s % 2 == 0 and t % 2 == 1:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..s/2] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..s/2] for k in [1..(t-1)/2+1])))
+#        if r % 2 == 1 and s % 2 == 1 and t % 2 == 0:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..(s-1)/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..(s-1)/2+1] for k in [1..t/2])))
+#        if r % 2 == 1 and s % 2 == 0 and t % 2 == 1:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..s/2] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..s/2] for k in [1..(t-1)/2+1])))
+#        if r % 2 == 0 and s % 2 == 1 and t % 2 == 1:
+#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2+1] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2] for k in [1..(t-1)/2+1])))
+#        if r % 2 == 1 and s % 2 == 1 and t % 2 == 1:
 
 
 #Class 6
