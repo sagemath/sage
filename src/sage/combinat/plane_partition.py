@@ -1909,19 +1909,13 @@ class PlanePartitions_SCPP(PlanePartitions):
                 for PP in PPs_with_first_row_la_and_with_k_rows(la,(b+1)/2):
                     PP_below = PP[1:]
                     PP_above = complement(PP_below,c)
-                    print(PP_above,PP_below)
-                    #LIST.append(PP_above+[la]+PP_below)
                     yield self.element_class(self, PP_above+[la]+PP_below)
-                    #yield PP_above+[la]+PP_below
         else:
             for la in possible_middle_row_for_b_even(a,c):   # la is the middle ((a/2)+1)st row of SCPP
                 for PP in PPs_with_first_row_la_and_with_k_rows(la,b/2):
                     PP_below = PP
                     PP_above = complement(PP_below,c)
-                    #LIST.append(PP_above+PP_below)
-                    print(PP_above,PP_below)
                     yield self.element_class(self, PP_above+PP_below)
-                    #yield PP_above+PP_below
         return
 
     def cardinality(self):
@@ -1929,20 +1923,21 @@ class PlanePartitions_SCPP(PlanePartitions):
         s=self._box[1]
         t=self._box[2]
         if r % 2 == 0 and s % 2 == 0 and t % 2 == 0:
-            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in [1..r/2] for j in [1..s/2] for k in [1..t/2])))^2
-#        if r % 2 == 1 and s % 2 == 0 and t % 2 == 0:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..s/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..s/2] for k in [1..t/2])))
-#        if r % 2 == 0 and s % 2 == 1 and t % 2 == 0:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2+1] for k in [1..t/2])))
-#        if r % 2 == 0 and s % 2 == 0 and t % 2 == 1:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..s/2] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..s/2] for k in [1..(t-1)/2+1])))
-#        if r % 2 == 1 and s % 2 == 1 and t % 2 == 0:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..(s-1)/2] for k in [1..t/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..(s-1)/2+1] for k in [1..t/2])))
-#        if r % 2 == 1 and s % 2 == 0 and t % 2 == 1:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2+1] for j in [1..s/2] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..(r-1)/2] for j in [1..s/2] for k in [1..(t-1)/2+1])))
-#        if r % 2 == 0 and s % 2 == 1 and t % 2 == 1:
-#            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2+1] for k in [1..(t-1)/2]))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in [1..r/2] for j in [1..(s-1)/2] for k in [1..(t-1)/2+1])))
-#        if r % 2 == 1 and s % 2 == 1 and t % 2 == 1:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+r/2) for j in range(1,1+s/2) for k in range(1,1+t/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+r/2) for j in range(1,1+s/2) for k in range(1,1+t/2))))
+        if r % 2 == 1 and s % 2 == 0 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2) for j in range(1,1+s/2) for k in range(1,1+t/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2+1) for j in range(1,1+s/2) for k in range(1,1+t/2))))
+        if r % 2 == 0 and s % 2 == 1 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2) for k in range(1,1+t/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2+1) for k in range(1,1+t/2))))
+        if r % 2 == 0 and s % 2 == 0 and t % 2 == 1:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+s/2) for k in range(1,1+(t-1)/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+s/2) for k in range(1,1+(t-1)/2+1))))
+        if r % 2 == 1 and s % 2 == 1 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2+1) for j in range(1,1+(s-1)/2) for k in range(1,1+t/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2) for j in range(1,1+(s-1)/2+1) for k in range(1,1+t/2))))
+        if r % 2 == 1 and s % 2 == 0 and t % 2 == 1:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2+1) for j in range(1,1+s/2) for k in range(1,1+(t-1)/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+(r-1)/2) for j in range(1,1+s/2) for k in range(1,1+(t-1)/2+1))))
+        if r % 2 == 0 and s % 2 == 1 and t % 2 == 1:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2+1) for k in range(1,1+(t-1)/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2) for k in range(1,1+(t-1)/2+1))))
+        if r % 2 == 1 and s % 2 == 1 and t % 2 == 1:
+            return 0
 
 
 #Class 6
