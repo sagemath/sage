@@ -39,7 +39,7 @@ from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
-from sage.functions.other import floor, ceil
+from sage.functions.other import floor, ceil, binomial
 
 
 
@@ -155,7 +155,7 @@ class PlanePartition(ClonableList):
             sage: PP.z_tableau()
             [[4, 3, 3, 1], [2, 1, 1, 0], [1, 1, 0, 0]]
         """
-        Z = [[0 for i in range(self._max_y)] for j in range(self._max_x)]
+        Z = [[0 for i in range(self._max_x)] for j in range(self._max_y)]
         for C in self.cells():
             Z[C[0]][C[1]] += 1
         return Z
@@ -532,11 +532,11 @@ class PlanePartition(ClonableList):
         A = self._max_x
         B = self._max_y
         C = self._max_z
-        T = [[C for i in range(B)] for j in range(A)]
-        z_tab = self.z_tableau()
+        T = [[C for i in range(A)] for j in range(B)]
+        #z_tab = self.z_tableau()
         for r in range(A):
             for c in range(B):
-                T[A-1-r][B-1-c] = C - z_tab[r][c]
+                T[B-1-c][A-1-r] = C - self[c][r]
         if tableau_only:
             return T
         else:
@@ -584,7 +584,7 @@ class PlanePartition(ClonableList):
             sage: PP.is_SPP()
             True
             sage: PP = PlanePartition([[3,2,1],[2,0,0]])
-            sage: PP.is_SPP()
+            sage: PP.is_SPP()complement
             False
             sage: PP = PlanePartition([[3,2,0],[2,0,0]])
             sage: PP.is_SPP()
@@ -661,7 +661,7 @@ class PlanePartition(ClonableList):
             sage: PP.is_SCPP()
             True
         """
-        return self.z_tableau() == self.complement(True)
+        return self.z_tableau() == self.complement(tableau_only=True)
 
     def is_TCPP(self):
         r"""
@@ -840,11 +840,11 @@ class PlanePartitions_all(PlanePartitions):
 
     def __init__(self):
         r"""
-        Initializes the class of all increasing tableaux.
+        Initializes the class of all plane partitions.
 
         .. WARNING::
 
-            Input is not checked; please use :class:`IncreasingTableaux` to
+            Input is not checked; please use :class:`PlanePartitions` to
             ensure the options are properly parsed.
 
         TESTS::
@@ -1809,7 +1809,7 @@ class PlanePartitions_SCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([4,3,2], symmetry='SCPP')
             sage: TestSuite(PP).run()
         """
 #        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
@@ -1919,6 +1919,49 @@ class PlanePartitions_SCPP(PlanePartitions):
         return
 
     def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        The number of self complementary plane partitions inside a 
+        `2a \times 2b \times 2c` box is equal to
+
+        .. MATH::
+
+            \left(\prod_{i=1}^{r}\prod_{j=1}^{b} \frac{i + j + c - 1}{i + j - 1}\right)^2
+
+
+
+        The number of self complementary plane partitions inside an 
+        `2a+1 \times 2b \times 2c` box is equal to
+
+        .. MATH::
+
+            \left(\prod_{i=1}^{a}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
+            \left(\prod_{i=1}^{a+1}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
+
+
+        The number of self complementary plane partitions inside an 
+        `2a+1 \times 2b+1 \times 2c` box is equal to
+
+        .. MATH::
+
+            \left(\prod_{i=1}^{a+1}\prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1} \right)
+            \left(\prod_{i=1}^{a}\prod_{j=1}^{b+1} \frac{i+j+c-1}{i+j-1} \right)
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions((4,4,4), symmetry='SCPP')
+            sage: P.cardinality()
+            400
+
+            sage: P = PlanePartitions((5,4,4), symmetry='SCPP')
+            sage: P.cardinality()
+            1000
+
+            sage: P = PlanePartitions((5,5,4), symmetry='SCPP')
+            sage: P.cardinality()
+            2500
+        """
         r=self._box[0]
         s=self._box[1]
         t=self._box[2]
@@ -1950,8 +1993,8 @@ class PlanePartitions_TCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((4,3,2), symmetry='TCPP')
+            sage: P2 = PlanePartitions([4,3,2], symmetry='TCPP')
             sage: P1 is P2
             True
         """
@@ -1961,17 +2004,45 @@ class PlanePartitions_TCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='TCPP')
             sage: TestSuite(PP).run()
         """
-        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-            raise ValueError("box sides cannot all be odd")
+#        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+#            raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_TCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box=box_size
 
     def _repr_(self):
         return "Transpose complement plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __iter__(self):
+        for p in PlanePartitions(self._box):
+            if p.is_TCPP():
+                yield self.element_class(self,)
+        return
+
+
+
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        The number of transpose complement plane partitions inside an 
+        `a \times a \times 2b` box is equal to
+
+        .. MATH::
+
+            \binom{b+1-1}{a-1}\prod_{1\leq i\leq j a-2} \frac{i + j + 2b - 1}{i + j - 1}
+        """
+
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        if a==b and c % 2 == 0:
+            return Integer(binomial(c/2+a-1, a-1) * prod((c + i + j + 1)/(i + j + 1) for j in range(1,1+a-2) for i in range(1,1+j)))
+        else:
+            return 0
 
 #Class 7
 
@@ -1983,8 +2054,8 @@ class PlanePartitions_SSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((4,3,2), symmetry='SSCPP')
+            sage: P2 = PlanePartitions([4,3,2], symmetry='SSCPP')
             sage: P1 is P2
             True
         """
@@ -1994,7 +2065,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='SSCPP')
             sage: TestSuite(PP).run()
         """
         if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
@@ -2005,6 +2076,22 @@ class PlanePartitions_SSCPP(PlanePartitions):
     def _repr_(self):
         return "Symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __iter__(self):
+        for p in PlanePartitions(self._box):
+            if p.is_SSCPP():
+                yield self.element_class(self,)
+        return
+
+    def cardinality(self):
+        r=self._box[0]
+        s=self._box[1]
+        t=self._box[2]
+        if r % 2 == 0 and s % 2 == 0 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+r/2) for j in range(1,1+r/2) for k in range(1,1+t/2))))
+        if r % 2 == 1 and s % 2 == 1 and t % 2 == 0:
+            return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+(r-1)/2) for j in range(1,1+((r-1)/2)+1) for k in range(1,1+t/2))))
+        return 0
 
 #Class 8
 
@@ -2037,6 +2124,20 @@ class PlanePartitions_CSTCPP(PlanePartitions):
     def _repr_(self):
         return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __iter__(self):
+        for p in PlanePartitions(self._box):
+            if p.is_CSTCPP():
+                yield self.element_class(self,)
+        return
+
+    def cardinality(self):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        if a == b and b == c and a % 2 == 0:
+            return Integer(prod( ((3*i+1)*factorial(6*i)*factorial(2*i))/(factorial(4*i+1)*factorial(4*i)) for i in range(1+(a/2)-1)))
+        return 0
 
 #Class 9
 
@@ -2071,7 +2172,19 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         return "Cyclically symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
+    def __iter__(self):
+        for p in PlanePartitions(self._box):
+            if p.is_CSSCPP():
+                yield self.element_class(self,)
+        return
 
+    def cardinality(self):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        if a == b and b == c and a % 2 == 0:
+            return Integer(prod( ((factorial(3*i+1)**2/(factorial(a+i)**2) for i in range((a/2))))))
+        return 0
 
 
 
