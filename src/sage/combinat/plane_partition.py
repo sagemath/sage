@@ -1608,7 +1608,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 #                            if j < c-1:
 #                                jValue = ppMatrix[i][j+1]
 #                            ppMatrix[i][j] = max(iValue,jValue)
-            yield self.from_antichain()
+            yield self.from_antichain(acl)
 
     def cardinality(self):
         r"""
@@ -2222,8 +2222,8 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         return "Totally symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-
-    def __iter__(self):
+    def to_poset(self):
+        cmp = lambda x,y : all(x[i] <= y[i] for i in range(len(x)))
         def componentwise_comparer(thing1,thing2):
             if len(thing1) == len(thing2):
                 if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
@@ -2232,100 +2232,210 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
-        n = a
-        b = n
-        c = n
+        if a != b or b != c or a != c:
+            return
 
         pl = []
-        for x in range(0,n/2 - 2 + 1):
-            for y in range(x, n/2 - 2 + 1):
-                    for z in range(0,n/2 - 2 + 1):
-                        if z <= n/2 - 2 - y:
+        for x in range(0,a/2 - 2 + 1):
+            for y in range(x, a/2 - 2 + 1):
+                    for z in range(0,a/2 - 2 + 1):
+                        if z <= a/2 - 2 - y:
                             pl.append((x,y,z))
 
-        pocp = Poset((pl,componentwise_comparer))
-        cmp = lambda x,y : all(x[i] <= y[i] for i in range(len(x)))
+        return Poset((pl,cmp))
+        
+    def from_antichain(self, acl):
+        #ac format ex: [x,y,z]
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        n=a
+        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        width = n/2 - 1
+        height = n/2 - 1
+
+        #generate inner triagle
+        for i in range(width):
+            for j in range(height):
+                if(i <= j):
+                    for ac in acl:
+                        if ac[0] == i and ac[1] == j:
+                            zVal = ac[2]
+                            matrixVal = ppMatrix[j +(n/2)] [i+ (n/2)]
+                            if zVal + 1 > matrixVal:
+                                ppMatrix[j +(n/2)] [i+ (n/2)]= zVal + 1
+
+        #fill back
+        for i in range(width):
+            i = width-(i+1)
+            i = i + n/2
+            for j in range(height):
+                j = height-(j+1)
+                j = j + n/2
+                if (ppMatrix[i][j] == 0):
+                    if i >= j:
+                        iValue = 0
+                        jValue = 0
+                        if i < n:
+                            iValue = ppMatrix[i+1][j]
+                        if j < n:
+                           jValue = ppMatrix[i][j+1]
+                        ppMatrix[i][j] = max(iValue,jValue)
+
+
+        #fill half of triangle symmetrically
+        for i in range(width):
+            i = i + n/2
+            for j in range(height):
+                j = j + n/2
+                if i >= j:
+                    ppMatrix[j][i] = ppMatrix[i][j]
+
+        #upper left box
+        for i in range(n/2):
+            for j in range(n/2):
+                ppMatrix[i][j] = n - ppMatrix[n-(i+1)][n-(j+1)]
+
+
+        #fill in lower left cube with values n/2
+        for i in range(n/2):
+            for j in range(n/2):
+                x = i
+                y = j
+                if(ppMatrix[x][y+(n/2)]) == 0:
+                    ppMatrix[x][y+(n/2)] = n/2
+                if(ppMatrix[x+(n/2)][y]) == 0:
+                    ppMatrix[x+(n/2)][y] = n/2
+
+
+        #add and subtract values from lower left cube to be rotation of lower right cube
+        for i in range(n/2):
+            for j in range(n/2):
+                x = i+(n/2)
+                y = j+(n/2)
+                if ppMatrix[x][y] > 0:
+                    z = ppMatrix[x][y]
+                    for cVal in range(z):
+                        #build onto lower left cube
+                        ppMatrix[x][0+cVal] += 1
+                        #carve out of lower left cube
+                        ppMatrix[n-(1+cVal)][(n/2)-(j+1)] -=1
+
+        #fill in upper right cube symmetrically with lower left
+        for i in range(n/2):
+            for j in range(n/2):
+                ppMatrix[j][i+(n/2)] = ppMatrix[i+(n/2)][j]
+        return self.element_class(self, ppMatrix)
+        
+
+
+
+
+    def __iter__(self):
+#        def componentwise_comparer(thing1,thing2):
+#            if len(thing1) == len(thing2):
+#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
+#                    return True
+#            return False
+#        a=self._box[0]
+#        b=self._box[1]
+#        c=self._box[2]
+#        n = a
+#        b = n
+#        c = n
+
+#        pl = []
+#        for x in range(0,n/2 - 2 + 1):
+#            for y in range(x, n/2 - 2 + 1):
+#                    for z in range(0,n/2 - 2 + 1):
+#                        if z <= n/2 - 2 - y:
+#                            pl.append((x,y,z))
+
+#        pocp = Poset((pl,componentwise_comparer))
+#        cmp = lambda x,y : all(x[i] <= y[i] for i in range(len(x)))
 #        pocp = Poset((pl,cmp))
 
 #        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
         #iterate through each antichain of product of chains poset with paramaters (a,b,c)
-        for acl in pocp.antichains_iterator():
-            #ac format ex: [x,y,z]
-            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-            width = n/2 - 1
-            height = n/2 - 1
+        for acl in self.to_poset().antichains_iterator():
+            yield self.from_antichain(acl)
+        return
+#            #ac format ex: [x,y,z]
+#            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+#            width = n/2 - 1
+#            height = n/2 - 1
 
-            #generate inner triagle
-            for i in range(width):
-                for j in range(height):
-                    if(i <= j):
-                        for ac in acl:
-                            if ac[0] == i and ac[1] == j:
-                                zVal = ac[2]
-                                matrixVal = ppMatrix[j +(n/2)] [i+ (n/2)]
-                                if zVal + 1 > matrixVal:
-                                    ppMatrix[j +(n/2)] [i+ (n/2)]= zVal + 1
+#            #generate inner triagle
+#            for i in range(width):
+#                for j in range(height):
+#                    if(i <= j):
+#                        for ac in acl:
+#                            if ac[0] == i and ac[1] == j:
+#                                zVal = ac[2]
+#                                matrixVal = ppMatrix[j +(n/2)] [i+ (n/2)]
+#                                if zVal + 1 > matrixVal:
+#                                    ppMatrix[j +(n/2)] [i+ (n/2)]= zVal + 1
 
-            #fill back
-            for i in range(width):
-                i = width-(i+1)
-                i = i + n/2
-                for j in range(height):
-                    j = height-(j+1)
-                    j = j + n/2
-                    if (ppMatrix[i][j] == 0):
-                        if i >= j:
-                            iValue = 0
-                            jValue = 0
-                            if i < n:
-                                iValue = ppMatrix[i+1][j]
-                            if j < n:
-                               jValue = ppMatrix[i][j+1]
-                            ppMatrix[i][j] = max(iValue,jValue)
-
-
-            #fill half of triangle symmetrically
-            for i in range(width):
-                i = i + n/2
-                for j in range(height):
-                    j = j + n/2
-                    if i >= j:
-                        ppMatrix[j][i] = ppMatrix[i][j]
-
-            #upper left box
-            for i in range(n/2):
-                for j in range(n/2):
-                    ppMatrix[i][j] = n - ppMatrix[n-(i+1)][n-(j+1)]
+#            #fill back
+#            for i in range(width):
+#                i = width-(i+1)
+#                i = i + n/2
+#                for j in range(height):
+#                    j = height-(j+1)
+#                    j = j + n/2
+#                    if (ppMatrix[i][j] == 0):
+#                        if i >= j:
+#                            iValue = 0
+#                            jValue = 0
+#                            if i < n:
+#                                iValue = ppMatrix[i+1][j]
+#                            if j < n:
+#                               jValue = ppMatrix[i][j+1]
+#                            ppMatrix[i][j] = max(iValue,jValue)
 
 
-            #fill in lower left cube with values n/2
-            for i in range(n/2):
-                for j in range(n/2):
-                    x = i
-                    y = j
-                    if(ppMatrix[x][y+(n/2)]) == 0:
-                        ppMatrix[x][y+(n/2)] = n/2
-                    if(ppMatrix[x+(n/2)][y]) == 0:
-                        ppMatrix[x+(n/2)][y] = n/2
+#            #fill half of triangle symmetrically
+#            for i in range(width):
+#                i = i + n/2
+#                for j in range(height):
+#                    j = j + n/2
+#                    if i >= j:
+#                        ppMatrix[j][i] = ppMatrix[i][j]
+
+#            #upper left box
+#            for i in range(n/2):
+#                for j in range(n/2):
+#                    ppMatrix[i][j] = n - ppMatrix[n-(i+1)][n-(j+1)]
 
 
-            #add and subtract values from lower left cube to be rotation of lower right cube
-            for i in range(n/2):
-                for j in range(n/2):
-                    x = i+(n/2)
-                    y = j+(n/2)
-                    if ppMatrix[x][y] > 0:
-                        z = ppMatrix[x][y]
-                        for cVal in range(z):
-                            #build onto lower left cube
-                            ppMatrix[x][0+cVal] += 1
-                            #carve out of lower left cube
-                            ppMatrix[n-(1+cVal)][(n/2)-(j+1)] -=1
+#            #fill in lower left cube with values n/2
+#            for i in range(n/2):
+#                for j in range(n/2):
+#                    x = i
+#                    y = j
+#                    if(ppMatrix[x][y+(n/2)]) == 0:
+#                        ppMatrix[x][y+(n/2)] = n/2
+#                    if(ppMatrix[x+(n/2)][y]) == 0:
+#                        ppMatrix[x+(n/2)][y] = n/2
 
-            #fill in upper right cube symmetrically with lower left
-            for i in range(n/2):
-                for j in range(n/2):
-                    ppMatrix[j][i+(n/2)] = ppMatrix[i+(n/2)][j]
-            yield self.element_class(self, ppMatrix)
+
+#            #add and subtract values from lower left cube to be rotation of lower right cube
+#            for i in range(n/2):
+#                for j in range(n/2):
+#                    x = i+(n/2)
+#                    y = j+(n/2)
+#                    if ppMatrix[x][y] > 0:
+#                        z = ppMatrix[x][y]
+#                        for cVal in range(z):
+#                            #build onto lower left cube
+#                            ppMatrix[x][0+cVal] += 1
+#                            #carve out of lower left cube
+#                            ppMatrix[n-(1+cVal)][(n/2)-(j+1)] -=1
+
+#            #fill in upper right cube symmetrically with lower left
+#            for i in range(n/2):
+#                for j in range(n/2):
+#                    ppMatrix[j][i+(n/2)] = ppMatrix[i+(n/2)][j]
+#            yield self.element_class(self, ppMatrix)
 
 
