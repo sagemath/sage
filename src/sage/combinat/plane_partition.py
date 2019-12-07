@@ -39,7 +39,7 @@ from sage.rings.integer import Integer
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
-from sage.functions.other import floor, ceil, binomial
+from sage.functions.other import floor, ceil, binomial, factorial
 
 
 
@@ -53,12 +53,12 @@ class PlanePartition(ClonableList):
         EXAMPLES::
 
             sage: p = PlanePartition([[2,1],[1]])
-            sage: TestSuite(t).run()
+            sage: TestSuite(p).run()
 
             sage: p.parent()
             Plane partitions
             sage: p.category()
-            Category of elements of plane partitions
+            Category of elements of Plane partitions
             sage: type(p)
             <class 'sage.combinat.plane_partition.PlanePartitions_all_with_category.element_class'>
         """
@@ -74,7 +74,7 @@ class PlanePartition(ClonableList):
         TESTS::
 
             sage: a = PlanePartitions()([[2,1],[1]])
-            sage: b = PlanePartitions([2,2,2])([[2,1],[1]))
+            sage: b = PlanePartitions([2,2,2])([[2,1],[1]])
             sage: c = PlanePartitions(4)([[2,1],[1]])
 
         Add more tests to show which parent a,b,c receive, check that a==b, and b==c, but a is not b, and b is not c.
@@ -82,7 +82,7 @@ class PlanePartition(ClonableList):
         """
         if isinstance(pp, PlanePartition):
             ClonableList.__init__(self, parent, pp, check=False)
-        pp = [tuple(_) for _ in pp]
+        pp = [list(_) for _ in pp]
         ClonableList.__init__(self, parent, pp, check=check)
         if self.parent()._box is None:
             if pp:
@@ -155,7 +155,7 @@ class PlanePartition(ClonableList):
             sage: PP.z_tableau()
             [[4, 3, 3, 1], [2, 1, 1, 0], [1, 1, 0, 0]]
         """
-        Z = [[0 for i in range(self._max_x)] for j in range(self._max_y)]
+        Z = [[0 for i in range(self._max_y)] for j in range(self._max_x)]
         for C in self.cells():
             Z[C[0]][C[1]] += 1
         return Z
@@ -206,6 +206,18 @@ class PlanePartition(ClonableList):
                 for h in range(self[r][c]):
                     L.append([r,c,h])
         return L
+
+    def number_of_boxes(self):
+        r"""
+        Return the number of boxes in the plane partition.
+
+        EXAMPLES::
+
+            sage: PP = PlanePartition([[3,1],[2]])
+            sage: PP.number_of_boxes()
+            6
+        """
+        return sum(sum(k for k in row) for row in self)
 
     def _repr_diagram(self, show_box=False, use_unicode=False):
         r"""
@@ -510,14 +522,15 @@ class PlanePartition(ClonableList):
         return TP
 
     def complement(self, tableau_only=False):
+        # Complement needs to be more intelligent about which parent to return
         r"""
         Return the complement of ``self``.
 
-        If the parent of ``self'' consists only of partitions inside a given
+        If the parent of ``self`` consists only of partitions inside a given
         box, then the complement is taken in this box. Otherwise, the
         complement is taken in the smallest box containing the plane partition.
 
-        If ``tableau_only'' is set to ``True'', then only the tableau
+        If ``tableau_only`` is set to ``True``, then only the tableau
         consisting of the projection of boxes size onto the xy-plane
         is returned instead of a PlanePartition object.
 
@@ -532,11 +545,11 @@ class PlanePartition(ClonableList):
         A = self._max_x
         B = self._max_y
         C = self._max_z
-        T = [[C for i in range(A)] for j in range(B)]
-        #z_tab = self.z_tableau()
+        T = [[C for i in range(B)] for j in range(A)]
+        z_tab = self.z_tableau()
         for r in range(A):
             for c in range(B):
-                T[B-1-c][A-1-r] = C - self[c][r]
+                T[A-1-r][B-1-c] = C - z_tab[r][c]
         if tableau_only:
             return T
         else:
@@ -546,7 +559,7 @@ class PlanePartition(ClonableList):
         r"""
         Return the transpose of ``self``.
 
-        If ``tableau_only'' is set to ``True'', then only the tableau
+        If ``tableau_only`` is set to ``True``, then only the tableau
         consisting of the projection of boxes size onto the xy-plane
         is returned instead of a PlanePartition object.
 
@@ -584,7 +597,7 @@ class PlanePartition(ClonableList):
             sage: PP.is_SPP()
             True
             sage: PP = PlanePartition([[3,2,1],[2,0,0]])
-            sage: PP.is_SPP()complement
+            sage: PP.is_SPP()
             False
             sage: PP = PlanePartition([[3,2,0],[2,0,0]])
             sage: PP.is_SPP()
@@ -781,7 +794,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
             sage: PlanePartitions(3)
             Plane partitions of size 3
             sage: PlanePartitions([4,4,4], symmetry='TSSCPP')
-            Totally Symmetric Self-Complementary Plane partitions inside a 4 x 4 x 4 box
+            Totally symmetric self-complementary plane partitions inside a 4 x 4 x 4 box
         """
         symmetry = kwds.get('symmetry', None)
         if not args:
@@ -821,7 +834,25 @@ class PlanePartitions(UniqueRepresentation, Parent):
     Element = PlanePartition
 
 
+    def __contains__(self, pp):
+        """
+        Check to see that ``self`` is a valid plane partition.
 
+        .. TODO:
+            
+            Figure out how redundant this is, given that the check function
+            exists for the factor class. Maybe only need __contains__
+            on the fixed size and symmetry classes?
+        """
+        for row in pp:
+            if not all(c >= 0 for c in row):
+                return False
+            if not all(row[i] >= row[i+1] for i in range(len(row)-1)):
+                return False
+        for row, next in zip(pp, pp[1:]):
+            if not all(row[c] >= next[c] for c in range(len(next))):
+                return False
+        return True
 
 
 
@@ -849,8 +880,8 @@ class PlanePartitions_all(PlanePartitions):
 
         TESTS::
 
-            sage: from sage.combinat.plane_partition import PlanePartition_all
-            sage: P = PlanePartition_all()
+            sage: from sage.combinat.plane_partition import PlanePartitions_all
+            sage: P = PlanePartitions_all()
             sage: TestSuite(P).run()  # long time
         """
         self._box = None
@@ -867,25 +898,7 @@ class PlanePartitions_all(PlanePartitions):
         """
         return "Plane partitions"
 
-    def __contains__(self, pp):
-        """
-        Check to see that ``self`` is a valid plane partition.
 
-        .. TODO:
-            
-            Figure out how redundant this is, given that the check function
-            exists for the factor class. Maybe only need __contains__
-            on the fixed size and symmetry classes?
-        """
-        for row in pp:
-            if not all(c >= 0 for c in row):
-                return False
-            if not all(row[i] >= row[i+1] for i in range(len(row)-1)):
-                return False
-        for row, next in zip(pp, pp[1:]):
-            if not all(row[c] >= next[c] for c in range(len(next))):
-                return False
-        return True
 
 
 class PlanePartitions_box(PlanePartitions):
@@ -944,7 +957,7 @@ class PlanePartitions_box(PlanePartitions):
     def from_order_ideal(self, I):
         r"""
         Return the plane partition corresponding to an order ideal in the
-        poset given in (LINK) to_poset().
+        poset given in :meth:`to_poset`.
 
         Note: input may not be checked ? Optional check parameter if too much overhead?
         """
@@ -953,14 +966,14 @@ class PlanePartitions_box(PlanePartitions):
     def from_antichain(self, A):
         r"""
         Return the plane partition corresponding to an antichain in the poset
-        given in (LINK) to_poset().
+        given in :meth:`to_poset`.
 
         Note: input may not be checked? Optional parameter if too much overhead?
         """
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
-        ppMatrix = [[0] * (a) for i in range(b)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        ppMatrix = [[0] * (b) for i in range(a)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
 
         #ac format ex: [x,y,z]
         #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
@@ -968,7 +981,7 @@ class PlanePartitions_box(PlanePartitions):
             x = ac[0]
             y = ac[1]
             z = ac[2]
-            ppMatrix[y][x] = (z+1)
+            ppMatrix[x][y] = (z+1)
 
         #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
         if A != []:
@@ -976,14 +989,14 @@ class PlanePartitions_box(PlanePartitions):
                 i = a-(i+1)
                 for j in range(b):
                     j = b-(j+1)
-                    if (ppMatrix[j][i] == 0):
+                    if (ppMatrix[i][j] == 0):
                         iValue = 0
                         jValue = 0
                         if i < a-1:
-                            iValue = ppMatrix[j][i+1]
+                            iValue = ppMatrix[i+1][j]
                         if j < b-1:
-                            jValue = ppMatrix[j+1][i]
-                        ppMatrix[j][i] = max(iValue,jValue)
+                            jValue = ppMatrix[i][j+1]
+                        ppMatrix[i][j] = max(iValue,jValue)
         return self.element_class(self, ppMatrix)            
         
 
@@ -994,9 +1007,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: list(PlanePartitions((1,2,1)))
-            [Plane partition [[0, 0]],
-             Plane partition [[1, 0]],
-             Plane partition [[1, 1]]]
+            [Plane partition [[0, 0]], Plane partition [[1, 1]], Plane partition [[1, 0]]]
         """
 #        A = self._box[0]
 #        B = self._box[1]
@@ -1159,6 +1170,7 @@ class PlanePartitions_n(PlanePartitions):
         """
         super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
         self._n = n
+        self._box = (0,0,0)
 
     def _repr_(self):
         """
@@ -1168,6 +1180,9 @@ class PlanePartitions_n(PlanePartitions):
             Plane partitions of size 3
         """
         return "Plane partitions of size {}".format(self._n)
+
+    def __contains__(self, x):
+        return PlanePartitions.__contains__(self, x) and x.number_of_boxes() ==  self._n
 
     def __iter__(self):
         from sage.combinat.partition import Partitions
@@ -1217,7 +1232,8 @@ class PlanePartitions_n(PlanePartitions):
         for m in range(n,0,-1):
             for la in Partitions(m):
                 for a in PP_first_row_iter(n,la):
-                    yield PlanePartition(a)
+#                    yield PlanePartition(a)
+                    yield self.element_class(self, a, check=False)
             
     def cardinality(self):
         r"""
@@ -1237,7 +1253,7 @@ class PlanePartitions_n(PlanePartitions):
         for i in range(1,1+self._n):
             nextPPn = sum(PPn[i-k]*Sigma()(k,2) for k in range(1,i+1))/i
             PPn.append(nextPPn)
-        return(PPn[-1])
+        return(Integer(PPn[-1]))
 
 #Symmetry classes are enumerated and labelled in order as in Proofs and
 #Confirmations/Stanley (with all plane partitions being the first class)
@@ -1249,6 +1265,8 @@ class PlanePartitions_n(PlanePartitions):
 
 class PlanePartitions_SPP(PlanePartitions):
 
+#How to handle when a!=b ?
+
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -1256,8 +1274,8 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2), symmetry='SPP')
-            sage: P2 = PlanePartitions([4,3,2], symmetry='SPP')
+            sage: P1 = PlanePartitions((3,3,2), symmetry='SPP')
+            sage: P2 = PlanePartitions([3,3,2], symmetry='SPP')
             sage: P1 is P2
             True
         """
@@ -1267,7 +1285,7 @@ class PlanePartitions_SPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry='SPP')
+            sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_SPP, self).__init__(category=FiniteEnumeratedSets())
@@ -1313,35 +1331,36 @@ class PlanePartitions_SPP(PlanePartitions):
 
         Note: input may not be checked? Optional parameter if too much overhead?
         """
+        from copy import deepcopy
         #Initialize an empty plane partition
         a=self._box[0]
         b=self._box[1]    
         c=self._box[2]
-        ppMatrix = [[0] * (a) for i in range(b)]
+        ppMatrix = [[0] * (b) for i in range(a)]
         #Antichain indicates where the 'corners' will be in the
         #plane partition
         for ac in A:
             x=ac[0]
             y=ac[1]
             z=ac[2]
-            ppMatrix[y][x] = (z+1)
+            ppMatrix[x][y] = (z+1)
         #Fill out the rest of the plane partition using symmetry and the
         #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
         if A!= []:
-            for j in range(b):
-                j = b-(j+1)
-                for i in range(a):
-                    i = a-(i+1)
-                    if (ppMatrix[j][i] == 0) and j>=i:
+            for i in range(a):
+                i = a-(i+1)
+                for j in range(b):
+                    j = b-(j+1)
+                    if (ppMatrix[i][j] == 0) and i>=j:
                         iValue = 0
                         jValue = 0
                         if i < a-1:
-                            iValue = ppMatrix[j][i+1]
+                            iValue = ppMatrix[i+1][j]
                         if j < b-1:
-                            jValue = ppMatrix[j+1][i]
-                        ppMatrix[j][i] = max(iValue,jValue)
-                    elif i>j:
-                        ppMatrix[j][i] = ppMatrix[i][j]
+                            jValue = ppMatrix[i][j+1]
+                        ppMatrix[i][j] = max(iValue,jValue)
+                    elif j>i:
+                        ppMatrix[i][j] = ppMatrix[j][i]
         return self.element_class(self, ppMatrix)
 
     def __iter__(self):
@@ -1452,7 +1471,7 @@ class PlanePartitions_SPP(PlanePartitions):
         C = self._box[2]
         leftProduct = (prod( (2*i + C - 1) / (2*i - 1) for i in range(1,A+1)))
         rightProduct = (prod( (i + j + C - 1) / (i + j - 1) for j in range(1, A+1) for i in range(1, j) ))
-        return leftProduct * rightProduct
+        return Integer(leftProduct * rightProduct)
 
     def random_element(self):
         r"""
@@ -1477,6 +1496,8 @@ class PlanePartitions_SPP(PlanePartitions):
 #Class 3
 
 class PlanePartitions_CSPP(PlanePartitions):
+
+#For some reason works if not(a == b == c)
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1523,7 +1544,10 @@ class PlanePartitions_CSPP(PlanePartitions):
                             pl.append((x,y,z))
         return Poset((pl, cmp2))
 
-    def from_antichain(self):
+    def from_antichain(self, acl):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
         ppMatrix = [[0] * (c) for i in range(b)] 
         #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
         #ac format ex: [x,y,z]
@@ -1557,7 +1581,7 @@ class PlanePartitions_CSPP(PlanePartitions):
     def from_order_ideal(self, I):
         r"""
         Return the plane partition corresponding to an order ideal in the
-        poset given in (LINK) to_poset().
+        poset given in :meth:`to_poset`.
 
         Note: input may not be checked ? Optional check parameter if too much overhead?
         """
@@ -1633,13 +1657,15 @@ class PlanePartitions_CSPP(PlanePartitions):
         C = self._box[2]
         numerator = prod(3*i-1 for i in range(1, A+1)) * prod( (i+j+A-1) for j in range(1,A+1) for i in range(1,j+1))
         denominator = prod(3*i-2 for i in range(1, A+1)) * prod( (2*i+j-1) for j in range(1,A+1) for i in range(1,j+1))
-        return numerator/denominator
+        return Integer(numerator/denominator)
 
 
 #Class 4
 
 
 class PlanePartitions_TSPP(PlanePartitions):
+
+#Make sure inputs checked, code doesn't have a,b,c treated properly
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1666,10 +1692,13 @@ class PlanePartitions_TSPP(PlanePartitions):
         self._box=box_size
 
     def _repr_(self):
-        return "Transpose symmetric plane partitions inside a {} x {} x {} box".format(
+        return "Totally symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def to_poset(self):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
         cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
         pl = []
         for x in range(0,a):
@@ -1678,18 +1707,24 @@ class PlanePartitions_TSPP(PlanePartitions):
                         pl.append((x,y,z))
         return Poset((pl,cmp))
 
-    def from_antichain(self):
-        x = ac[0]
-        y = ac[1]
-        z = ac[2]
-        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-        ppMatrix[y][z] = (x+1) #x,y,z
-        ppMatrix[z][x] = (y+1) #y,z,x
-        ppMatrix[x][y] = (z+1) #z,x,y
+    def from_antichain(self, acl):
+        a=self._box[0]
+        b=self._box[1]
+        c=self._box[2]
+        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
+        for ac in acl:
+            x = ac[0]
+            y = ac[1]
+            z = ac[2]
 
-        ppMatrix[z][y] = (x+1) #x,z,y
-        ppMatrix[x][z] = (y+1) #y,x,z
-        ppMatrix[y][x] = (z+1) #z,y,x
+
+            ppMatrix[y][z] = (x+1) #x,y,z
+            ppMatrix[z][x] = (y+1) #y,z,x
+            ppMatrix[x][y] = (z+1) #z,x,y
+
+            ppMatrix[z][y] = (x+1) #x,z,y
+            ppMatrix[x][z] = (y+1) #y,x,z
+            ppMatrix[y][x] = (z+1) #z,y,x
 
 
         #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
@@ -1768,7 +1803,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of transpose symmetric plane partitions inside an 
+        The number of totally symmetric plane partitions inside an 
         `r \times r \times r` box is equal to
 
         .. MATH::
@@ -1784,7 +1819,7 @@ class PlanePartitions_TSPP(PlanePartitions):
         A = self._box[0]
         B = self._box[1]
         C = self._box[2]
-        return (prod((i + j + A - 1) / (i + 2*j - 2) for j in range(1,A+1) for i in range(1,j+1) ))
+        return Integer(prod((i + j + A - 1) / (i + 2*j - 2) for j in range(1,A+1) for i in range(1,j+1) ))
 
 
 
@@ -1980,7 +2015,7 @@ class PlanePartitions_SCPP(PlanePartitions):
         if r % 2 == 0 and s % 2 == 1 and t % 2 == 1:
             return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2+1) for k in range(1,1+(t-1)/2)))) * Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k - 2) for i in range(1,1+r/2) for j in range(1,1+(s-1)/2) for k in range(1,1+(t-1)/2+1))))
         if r % 2 == 1 and s % 2 == 1 and t % 2 == 1:
-            return 0
+            return Integer(0)
 
 
 #Class 6
@@ -2019,7 +2054,7 @@ class PlanePartitions_TCPP(PlanePartitions):
     def __iter__(self):
         for p in PlanePartitions(self._box):
             if p.is_TCPP():
-                yield self.element_class(self,)
+                yield self.element_class(self,p)
         return
 
 
@@ -2042,7 +2077,7 @@ class PlanePartitions_TCPP(PlanePartitions):
         if a==b and c % 2 == 0:
             return Integer(binomial(c/2+a-1, a-1) * prod((c + i + j + 1)/(i + j + 1) for j in range(1,1+a-2) for i in range(1,1+j)))
         else:
-            return 0
+            return Integer(0)
 
 #Class 7
 
@@ -2054,8 +2089,8 @@ class PlanePartitions_SSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2), symmetry='SSCPP')
-            sage: P2 = PlanePartitions([4,3,2], symmetry='SSCPP')
+            sage: P1 = PlanePartitions((4,4,2), symmetry='SSCPP')
+            sage: P2 = PlanePartitions([4,4,2], symmetry='SSCPP')
             sage: P1 is P2
             True
         """
@@ -2065,9 +2100,12 @@ class PlanePartitions_SSCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry='SSCPP')
+            sage: PP = PlanePartitions([4,4,2], symmetry='SSCPP')
             sage: TestSuite(PP).run()
         """
+
+#Think about how to check a=b and not all a,b,c odd
+
         if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
             raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_SSCPP, self).__init__(category=FiniteEnumeratedSets())
@@ -2080,7 +2118,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
     def __iter__(self):
         for p in PlanePartitions(self._box):
             if p.is_SSCPP():
-                yield self.element_class(self,)
+                yield self.element_class(self,p)
         return
 
     def cardinality(self):
@@ -2091,7 +2129,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
             return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+r/2) for j in range(1,1+r/2) for k in range(1,1+t/2))))
         if r % 2 == 1 and s % 2 == 1 and t % 2 == 0:
             return Integer((prod( Integer(i + j + k - 1) / Integer(i + j + k -2 ) for i in range(1,1+(r-1)/2) for j in range(1,1+((r-1)/2)+1) for k in range(1,1+t/2))))
-        return 0
+        return Integer(0)
 
 #Class 8
 
@@ -2104,8 +2142,8 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((3,3,3), symmetry='CSTCPP')
+            sage: P2 = PlanePartitions([3,3,3], symmetry='CSTCPP')
             sage: P1 is P2
             True
         """
@@ -2115,7 +2153,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='CSTCPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
@@ -2128,7 +2166,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
     def __iter__(self):
         for p in PlanePartitions(self._box):
             if p.is_CSTCPP():
-                yield self.element_class(self,)
+                yield self.element_class(self,p)
         return
 
     def cardinality(self):
@@ -2137,7 +2175,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         c=self._box[2]
         if a == b and b == c and a % 2 == 0:
             return Integer(prod( ((3*i+1)*factorial(6*i)*factorial(2*i))/(factorial(4*i+1)*factorial(4*i)) for i in range(1+(a/2)-1)))
-        return 0
+        return Integer(0)
 
 #Class 9
 
@@ -2151,8 +2189,8 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((3,3,3), symmetry='CSSCPP')
+            sage: P2 = PlanePartitions([3,3,3], symmetry='CSSCPP')
             sage: P1 is P2
             True
         """
@@ -2162,7 +2200,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([3,3,3], symmetry='CSSCPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
@@ -2184,7 +2222,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         c=self._box[2]
         if a == b and b == c and a % 2 == 0:
             return Integer(prod( ((factorial(3*i+1)**2/(factorial(a+i)**2) for i in range((a/2))))))
-        return 0
+        return Integer(0)
 
 
 
@@ -2199,8 +2237,8 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
+            sage: P1 = PlanePartitions((4,4,4), symmetry='TSSCPP')
+            sage: P2 = PlanePartitions([4,4,4], symmetry='TSSCPP')
             sage: P1 is P2
             True
         """
@@ -2210,7 +2248,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry=TSPP)
+            sage: PP = PlanePartitions([4,4,4], symmetry='TSSCPP')
             sage: TestSuite(PP).run()
         """
         if (box_size[0] != box_size[1] or (box_size[1] != box_size[2]) or box_size[0] % 2 != 0):
