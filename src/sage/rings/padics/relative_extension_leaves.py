@@ -1,4 +1,4 @@
-"""
+r"""
 Relative extensions of `p`-adic rings
 
 We represent general extensions of p-adic rings as a two-step extension:
@@ -182,6 +182,37 @@ class pAdicRelativeBaseringSection(Morphism):
             sage: f(a, 5) # indirect doctest
             a + O(2^5)
         """
+        return self.codomain()(self._call_(x), *args, **kwds)
+
+class MorphismFromRelativeRamified(Morphism):
+    def __init__(self, parent, im_pi, base_hom=None, check=True):
+        Morphism.__init__(self, parent)
+        R = parent.domain()
+        U = R.base_ring()
+        A = parent.codomain()
+        self._Ax = Ax = A['x']
+        if base_hom is None:
+            base_hom = A.coerce_map_from(U)
+            if base_hom is None:
+                raise ValueError("Must specify base_hom")
+        if check:
+            f = R.defining_polynomial()
+            f = Ax([base_hom(c) for c in f])
+            if f(im_pi) != 0:
+                raise ValueError("relations do not all (canonically) map to 0 under map determined by images of generators")
+        self._im_pi = im_pi
+        self._base_hom = base_hom
+
+    def _call_(self, x):
+        """
+        
+        """
+        f = x.polynomial()
+        A = self.codomain()
+        fA = self._Ax([self._base_hom(c) for c in f])
+        return fA(self._im_pi)
+
+    def _call_with_args(self, x, args=(), kwds={}):
         return self.codomain()(self._call_(x), *args, **kwds)
 
 class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModRingGeneric):

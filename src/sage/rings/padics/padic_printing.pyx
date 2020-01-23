@@ -1113,7 +1113,7 @@ cdef class pAdicPrinter_class(SageObject):
                     poly, k = elt._flint_rep_abs()
                     L = [repr(a) for a in poly.coefficients(sparse=False)]
                     ZZ_pEX = 1
-                elif elt.parent()._implementation == 'Polynomial':
+                elif elt.parent()._implementation in ['Polynomial', 'General']:
                     poly = elt._poly_rep()
                     if do_latex:
                         L = [a._latex_() for a in poly.coefficients(sparse=False)]

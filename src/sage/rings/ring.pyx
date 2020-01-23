@@ -660,10 +660,7 @@ cdef class Ring(ParentWithGens):
 
     def __truediv__(self, I):
         """
-        Dividing one ring by another is not supported because there is no good
-        way to specify generator names.
-
-        EXAMPLES::
+        TESTS::
 
             sage: QQ['x'] / ZZ
             Traceback (most recent call last):
@@ -2476,7 +2473,7 @@ cdef class CommutativeAlgebra(CommutativeRing):
     """
     Generic commutative algebra
     """
-    def __init__(self, base_ring, names=None, normalize=True, category = None):
+    def __init__(self, base_ring, names=None, normalize=True, category=None):
         r"""
         Standard init function. This just checks that the base is a commutative
         ring and then passes the buck.

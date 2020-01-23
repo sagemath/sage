@@ -66,11 +66,12 @@ class LocalGeneric(CommutativeRing):
         self._prec = prec
         self.Element = element_class
         default_category = getattr(self, '_default_category', None)
-        if self.is_field():
-            category = CompleteDiscreteValuationFields()
-        else:
-            category = CompleteDiscreteValuationRings()
-        category = category.Metric().Complete().Infinite()
+        if category is None:
+            if self.is_field():
+                category = CompleteDiscreteValuationFields()
+            else:
+                category = CompleteDiscreteValuationRings()
+            category = category.Metric().Complete().Infinite()
         if default_category is not None:
             category = check_default_category(default_category, category)
         Parent.__init__(self, base, names=(names,), normalize=False, category=category)
@@ -98,7 +99,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-rel'
 
     def is_capped_absolute(self):
         """
@@ -123,7 +124,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7 + O(5^22)
         """
-        return False
+        return self._prec_type() == 'capped-abs'
 
     def is_fixed_mod(self):
         """
@@ -150,7 +151,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7,absprec=9)
             5^7 + O(5^9)
         """
-        return False
+        return self._prec_type() == 'fixed-mod'
 
     def is_floating_point(self):
         """
@@ -175,7 +176,7 @@ class LocalGeneric(CommutativeRing):
             sage: S(5^7)
             5^7
         """
-        return False
+        return self._prec_type() == 'floating-point'
 
     def is_lattice_prec(self):
         """
@@ -204,7 +205,7 @@ class LocalGeneric(CommutativeRing):
             sage: x - x
             O(5^30)
         """
-        return False
+        return self._prec_type().startswith('lattice-')
 
     def is_lazy(self):
         """
