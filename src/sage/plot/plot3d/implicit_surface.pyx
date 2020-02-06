@@ -76,7 +76,6 @@ AUTHORS:
 # n^3 memory when it reads the JVXL file, but that might be on a different
 # computer; Tachyon would only allocate memory proportional to the
 # output size.)
-from __future__ import absolute_import
 
 cimport numpy as np
 import numpy as np

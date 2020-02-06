@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 #
 # Upstream does not have a setup.py file, so we use this instead
 #

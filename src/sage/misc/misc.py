@@ -61,7 +61,7 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 #################################################################
 
 
-def sage_makedirs(dirname):
+def sage_makedirs(dirname, mode=0o777):
     """
     Python version of ``mkdir -p``: try to create a directory, and also
     create all intermediate directories as necessary.  Succeed silently
@@ -89,33 +89,12 @@ def sage_makedirs(dirname):
             raise
 
 
-#################################################
-# Now that the variable DOT_SAGE has been set,
-# we make sure that the DOT_SAGE directory
-# has restrictive permissions, since otherwise
-# possibly just anybody can easily see every
-# command you type, since it is in the history,
-# and every worksheet you create, etc.
-# We do the following:
-#   1. If there is no DOT_SAGE, we create it.
-#   2. Check to see if the permissions on DOT_SAGE are
-#      sufficiently restrictive.  If not, we change them.
+# We create the DOT_SAGE directory (if it doesn't exist yet; note in particular
+# that it may already have been created by the bin/sage script) with
+# restrictive permissions, since otherwise possibly just anybody can easily see
+# every command you type.
 
-sage_makedirs(DOT_SAGE)
-
-if hasattr(os, 'chmod'):
-    _mode = os.stat(DOT_SAGE)[stat.ST_MODE]
-    _desired_mode = 0o40700     # drwx------
-    if _mode != _desired_mode:
-        # On Cygwin, if the sage directory is not in a filesystem mounted with
-        # 'acl' support, setting the permissions may fail silently, so only
-        # print the message after we've changed the permissions and confirmed
-        # that the change succeeded
-        os.chmod(DOT_SAGE, _desired_mode)
-        if os.stat(DOT_SAGE)[stat.ST_MODE] == _desired_mode:
-            print("Setting permissions of DOT_SAGE directory so only you "
-                  "can read and write it.")
-
+sage_makedirs(DOT_SAGE, mode=0o700)
 
 def try_read(obj, splitlines=False):
     r"""

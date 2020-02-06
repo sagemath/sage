@@ -44,7 +44,7 @@ ACKNOWLEDGEMENT (from sympow readme):
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function, absolute_import
 
@@ -53,6 +53,7 @@ import os
 from sage.structure.sage_object import SageObject
 from sage.misc.all import pager, verbose
 import sage.rings.all
+
 
 class Sympow(SageObject):
     r"""
@@ -68,7 +69,7 @@ class Sympow(SageObject):
     """
     def _repr_(self):
         """
-        Returns a string describing this calculator module
+        Return a string describing this calculator module
         """
         return "Watkins Symmetric Power L-function Calculator"
 
@@ -76,8 +77,9 @@ class Sympow(SageObject):
         """
         Used to call sympow with given args
         """
-        cmd = 'sympow %s'%args
-        v = os.popen(cmd).read().strip()
+        cmd = 'sympow %s' % args
+        with os.popen(cmd) as f:
+            v = f.read().strip()
         verbose(v, level=2)
         return v
 
@@ -152,7 +154,6 @@ class Sympow(SageObject):
             raise RuntimeError("failed to compute symmetric power")
         x = v[i+2:]
         return x
-
 
     def Lderivs(self, E, n, prec, d):
         r"""

@@ -1,5 +1,5 @@
 """
-Direct Access to Singular's Functions via libSingular.
+Direct Access to Singular's Functions via libSingular
 
 AUTHORS:
 

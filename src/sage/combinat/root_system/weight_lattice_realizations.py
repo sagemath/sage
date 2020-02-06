@@ -2,7 +2,7 @@
 Weight lattice realizations
 """
 from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #       (with contributions of many others)
@@ -16,8 +16,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -26,6 +26,7 @@ from sage.misc.all import prod
 from sage.categories.category_types import Category_over_base_ring
 from sage.combinat.family import Family
 from .root_lattice_realizations import RootLatticeRealizations
+
 
 class WeightLatticeRealizations(Category_over_base_ring):
     r"""
@@ -268,7 +269,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                        for base_ring in set([ZZ, self.base_ring()])
                        for extended  in set([self.cartan_type().is_affine(), self.is_extended()])]
             for domain in domains:
-                tester.assertTrue(self._internal_coerce_map_from(domain) is not None)
+                tester.assertIsNot(self._internal_coerce_map_from(domain), None)
                 for i in self.index_set():
                     # This embedding maps fundamental weights to fundamental weights
                     tester.assertEqual(self(domain.fundamental_weight(i)), Lambda[i])
@@ -688,7 +689,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                     permutation = [None for i in self.index_set()]
                     for i in self.index_set():
                         root = w.action(alpha[i])
-                        tester.assertTrue(root in rank_simple_roots)
+                        tester.assertIn(root, rank_simple_roots)
                         permutation[i] = rank_simple_roots[root]
                     tester.assertEqual(set(permutation), set(self.index_set()))
                     #print permutation

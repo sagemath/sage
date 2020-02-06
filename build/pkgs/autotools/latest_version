@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-system-python
 #
 # Read a whitespace-separated list of version numbers on stdin
 # and output the latest version.

@@ -1854,7 +1854,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         In particular, they sum to Hilbert series of the coinvariant
         algebra of ``self``.
 
-        ..NOTE::
+        .. NOTE::
 
             The ordering follows the one in Chevie and is not compatible with
             the current implementation of :meth:`irredubile_characters()`.

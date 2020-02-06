@@ -52,7 +52,6 @@ EXAMPLES::
     sage: c.is_sparse()
     True
 """
-from __future__ import absolute_import
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
@@ -227,7 +226,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     # LEVEL 2 functionality
     # x  * cdef _add_
     #    * cdef _mul_
-    #    * cpdef _cmp_
+    #    * cpdef _richcmp_
     #    * __neg__
     #    * __invert__
     # x  * __copy__
@@ -411,8 +410,8 @@ def Matrix_sparse_from_rows(X):
     cdef Py_ssize_t i, j
 
     if not isinstance(X, (list, tuple)):
-        raise TypeError("X (=%s) must be a list or tuple"%X)
-    if len(X) == 0:
+        raise TypeError("X (=%s) must be a list or tuple" % X)
+    if not X:
         raise ArithmeticError("X must be nonempty")
 
     from . import matrix_space

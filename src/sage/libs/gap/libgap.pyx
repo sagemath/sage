@@ -211,8 +211,6 @@ AUTHORS:
 #
 ##############################################################################
 
-from __future__ import print_function, absolute_import
-
 from .gap_includes cimport *
 from .util cimport *
 from .element cimport *

@@ -4,7 +4,6 @@ This is needed in setup.py only and not installed anywhere, thus is not
 a library file. It solves the issue from :trac:`11874`.
 """
 import types
-import copy
 from six.moves import copyreg
 from six import get_method_function, get_method_self
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 r"""
 sage-rst2txt
 ============
@@ -45,7 +45,7 @@ REFERENCES:
 
 .. [1] Escaping Mechanism, reStructuredText Markup Specification,
    http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#escaping-mechanism
-.. [2] Espcaping with backslashes, Quick reStructuredText Reference,
+.. [2] Escaping with backslashes, Quick reStructuredText Reference,
    http://docutils.sourceforge.net/docs/user/rst/quickref.html#escaping
 """
 #############################################################################
@@ -54,7 +54,7 @@ REFERENCES:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-import os, sys
+import sys
 from optparse import OptionParser
 
 # Set the parser

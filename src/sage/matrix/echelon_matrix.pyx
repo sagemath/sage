@@ -9,7 +9,6 @@ Echelon matrices over finite fields.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.matrix.matrix0 cimport Matrix
 

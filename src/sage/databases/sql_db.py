@@ -100,9 +100,12 @@ sqlite_keywords = ['ABORT','ACTION','ADD','AFTER','ALL','ALTER','ANALYZE',
 def regexp(expr, item):
     """
     Function to define regular expressions in pysqlite.
-    Returns ``True`` if parameter ``item`` matches the regular expression
-    parameter ``expr``.
-    Returns ``False`` otherwise (i.e.: no match).
+
+    OUTPUT:
+
+    - ``True`` if parameter ``item`` matches the regular expression
+      parameter ``expr``
+    - ``False`` otherwise (i.e.: no match)
 
     REFERENCES:
 
@@ -120,6 +123,7 @@ def regexp(expr, item):
     """
     r = re.compile(expr)
     return r.match(item) is not None
+
 
 def verify_type(type):
     """
@@ -142,6 +146,7 @@ def verify_type(type):
     if type.upper() not in types:
         raise TypeError('%s is not a legal type.'%type)
     return True
+
 
 def verify_column(col_dict):
     """
@@ -176,7 +181,7 @@ def verify_column(col_dict):
 
 def verify_operator(operator):
     """
-    Checks that ``operator`` is one of the allowed strings.
+    Check that ``operator`` is one of the allowed strings.
     Legal operators include the following strings:
 
     - '='
@@ -210,9 +215,10 @@ def verify_operator(operator):
         raise TypeError('%s is not a legal operator.'%operator)
     return True
 
+
 def construct_skeleton(database):
     """
-    Constructs a database skeleton from the sql data.  The skeleton data
+    Construct a database skeleton from the sql data.  The skeleton data
     structure is a triple indexed dictionary of the following format::
 
         | - skeleton -- a triple-indexed dictionary
@@ -271,7 +277,7 @@ def construct_skeleton(database):
 p = 0
 def _create_print_table(cur, col_titles, **kwds):
     """
-    Creates a nice printable table from the cursor given with the given
+    Create a nice printable table from the cursor given with the given
     column titles.
 
     KEYWORDS:
@@ -513,7 +519,7 @@ class SQLQuery(SageObject):
 
     def __repr__(self):
         """
-        Overrides the print output to display useful info regarding the
+        Override the print output to display useful info regarding the
         query.
 
         EXAMPLES::
@@ -540,7 +546,7 @@ class SQLQuery(SageObject):
 
     def get_query_string(self):
         """
-        Returns a copy of the query string.
+        Return a copy of the query string.
 
         EXAMPLES::
 
@@ -559,7 +565,7 @@ class SQLQuery(SageObject):
 
     def __iter__(self):
         """
-        Returns an iterator over the results of the query.
+        Return an iterator over the results of the query.
 
         EXAMPLES::
 
@@ -584,7 +590,7 @@ class SQLQuery(SageObject):
 
     def query_results(self):
         """
-        Runs the query by executing the ``__query_string__``. Returns the
+        Run the query by executing the ``__query_string__``. Return the
         results of the query in a list.
 
         EXAMPLES::
@@ -605,7 +611,7 @@ class SQLQuery(SageObject):
 
     def show(self, **kwds):
         """
-        Displays the result of the query in table format.
+        Display the result of the query in table format.
 
         KEYWORDS:
 
@@ -676,7 +682,7 @@ class SQLQuery(SageObject):
 
     def __copy__(self):
         """
-        Returns a copy of itself.
+        Return a copy of itself.
 
         EXAMPLES::
 
@@ -696,7 +702,7 @@ class SQLQuery(SageObject):
     def intersect(self, other, join_table=None, join_dict=None, \
                   in_place=False):
         """
-        Returns a new ``SQLQuery`` that is the intersection of ``self`` and
+        Return a new ``SQLQuery`` that is the intersection of ``self`` and
         ``other``. ``join_table`` and ``join_dict`` can be ``None`` iff the
         two queries only search one table in the database. All display columns
         will be concatenated in order: self display cols + other display cols.
@@ -826,7 +832,7 @@ class SQLQuery(SageObject):
 
     def union(self, other, join_table=None, join_dict=None, in_place=False):
         """
-        Returns a new ``SQLQuery`` that is the union of self and other.
+        Return a new ``SQLQuery`` that is the union of self and other.
         ``join_table`` and ``join_dict`` can be ``None`` iff the two queries
         only search one table in the database. All display columns will be
         concatenated in order: self display cols + other display cols.
@@ -1088,7 +1094,7 @@ class SQLDatabase(SageObject):
 
     def __repr__(self):
         """
-        Overrides the print output to display useful info regarding the
+        Override the print output to display useful info regarding the
         database.
 
         EXAMPLES::
@@ -1114,7 +1120,7 @@ class SQLDatabase(SageObject):
 
     def __copy__(self):
         """
-        Returns an instance of ``SQLDatabase`` that points to a copy database,
+        Return an instance of ``SQLDatabase`` that points to a copy database,
         and allows modification.
 
         EXAMPLES::
@@ -1197,7 +1203,7 @@ class SQLDatabase(SageObject):
 
     def get_skeleton(self, check=False):
         """
-        Returns a dictionary representing the hierarchical structure of the
+        Return a dictionary representing the hierarchical structure of the
         database, in the following format::
 
             | - skeleton -- a triple-indexed dictionary
@@ -1244,7 +1250,7 @@ class SQLDatabase(SageObject):
 
     def query(self, *args, **kwds):
         """
-        Creates a ``SQLQuery`` on this database.  For full class details,
+        Create a ``SQLQuery`` on this database.  For full class details,
         type ``SQLQuery?`` and press shift+enter.
 
         EXAMPLES::
@@ -1292,7 +1298,7 @@ class SQLDatabase(SageObject):
 
     def get_cursor(self, ignore_warning=None):
         """
-        Returns a pysqlite cursor for the database connection.
+        Return a pysqlite cursor for the database connection.
 
         A cursor is an input from which you can execute sqlite commands on the
         database.
@@ -1322,7 +1328,7 @@ class SQLDatabase(SageObject):
 
     def get_connection(self, ignore_warning=None):
         """
-        Returns a pysqlite connection to the database.
+        Return a pysqlite connection to the database.
 
         You most likely want ``get_cursor()`` instead, which is used for
         executing sqlite commands on the database.
@@ -1367,7 +1373,7 @@ class SQLDatabase(SageObject):
 
     def create_table(self, table_name, table_skeleton):
         """
-        Creates a new table in the database.
+        Create a new table in the database.
 
         To create a table, a column structure must be specified. The form for
         this is a Python dict, for example::
@@ -1530,7 +1536,7 @@ class SQLDatabase(SageObject):
 
     def _rebuild_table(self, table_name, col_name=None, default=''):
         """
-        Rebuilds the table ``table_name`` adding column ``col_name`` if not
+        Rebuild the table ``table_name`` adding column ``col_name`` if not
         ``None``. If a new column is added, each rows' value is set to
         ``default``.
 
@@ -1688,7 +1694,7 @@ class SQLDatabase(SageObject):
 
     def rename_table(self, table_name, new_name):
         """
-        Renames the table ``table_name`` to ``new_name``.
+        Rename the table ``table_name`` to ``new_name``.
 
         EXAMPLES::
 
@@ -1753,7 +1759,7 @@ class SQLDatabase(SageObject):
 
     def drop_data_from_table(self, table_name):
         """
-        Removes all rows from ``table_name``.
+        Remove all rows from ``table_name``.
 
         EXAMPLES::
 
@@ -2049,7 +2055,7 @@ class SQLDatabase(SageObject):
 
     def delete_rows(self, query):
         """
-        Uses a ``SQLQuery`` instance to modify (delete rows from) the
+        Use a ``SQLQuery`` instance to modify (delete rows from) the
         database.
 
         ``SQLQuery`` must have no join statements.  (As of now, you can only
@@ -2148,7 +2154,7 @@ class SQLDatabase(SageObject):
 
     def vacuum(self):
         """
-        Cleans the extra hard disk space used up by a database that has
+        Clean the extra hard disk space used up by a database that has
         recently shrunk.
 
         EXAMPLES::
@@ -2166,7 +2172,7 @@ class SQLDatabase(SageObject):
 
     def commit(self):
         """
-        Commits changes to file.
+        Commit changes to file.
 
         EXAMPLES::
 

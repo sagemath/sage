@@ -150,7 +150,7 @@ AUTHORS:
 
     - Marshall Hampton: improved documentation and doctest coverage
 
-    - Volker Braun: rewrite using Parent/Element and catgories. Added
+    - Volker Braun: rewrite using Parent/Element and categories. Added
       a Point class. More doctests. Less zombies.
 
     - Volker Braun: Cythonized parts of it, added a C++ implementation
@@ -1844,7 +1844,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         A tuple of points that span a simplex of dimension
         :meth:`dim`. If ``large==True``, the simplex is constructed by
-        sucessively picking the farthest point. This will ensure that
+        successively picking the farthest point. This will ensure that
         the simplex is not unnecessarily small, but will in general
         not return a maximal simplex.
         If a ``point_order`` is specified, the simplex is greedily

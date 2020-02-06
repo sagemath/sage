@@ -11,8 +11,6 @@ Helper code for ternary quadratic forms
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-
 
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
@@ -250,7 +248,8 @@ def _reduced_ternary_form_eisenstein_with_matrix(a1, a2, a3, a23, a13, a12):
         M*=matrix(ZZ,3,[0,-1,0,-1,0,0,0,0,-1])
         [a13,a23]=[a23,a13]
 
-    return((a1,a2,a3,a23,a13,a12),M)
+    return (a1, a2, a3, a23, a13, a12), M
+
 
 def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
     """
@@ -418,7 +417,7 @@ def _reduced_ternary_form_eisenstein_without_matrix(a1, a2, a3, a23, a13, a12):
     if a1 == a2 and abs(a23) > abs(a13):
         [a13,a23]=[a23,a13]
 
-    return((a1,a2,a3,a23,a13,a12))
+    return a1, a2, a3, a23, a13, a12
 
 
 def primitivize(long long v0, long long v1, long long v2, p):

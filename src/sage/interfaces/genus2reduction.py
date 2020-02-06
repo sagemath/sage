@@ -54,7 +54,7 @@ class ReductionData(SageObject):
 
     The first line contains information about the stable reduction
     after field extension. Here are the meanings of the symbols of
-    stable reduction :
+    stable reduction:
 
     (I) The stable reduction is smooth (i.e. the curve has potentially
     good reduction).

@@ -2,7 +2,7 @@
 Quiver Homspace
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
 #                2013 Simon King <simon.king@uni-jena.de>
 #
@@ -15,12 +15,12 @@ Quiver Homspace
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.categories.homset import Homset
 from sage.quivers.morphism import QuiverRepHom
 from sage.misc.cachefunc import cached_method
+
 
 class QuiverHomSpace(Homset):
     r"""
@@ -104,7 +104,8 @@ class QuiverHomSpace(Homset):
         # Check that the bases are compatible, and then initialise the homset:
         if codomain.base_ring() != domain.base_ring():
             raise ValueError("representations are not over the same base ring")
-        Homset.__init__(self, domain, codomain, category=category, base = domain.base_ring())
+        Homset.__init__(self, domain, codomain, category=category,
+                        base=domain.base_ring())
 
         # To compute the Hom Space we set up a 'generic' homomorphism where the
         # maps at each vertex are described by matrices whose entries are
@@ -121,20 +122,20 @@ class QuiverHomSpace(Homset):
         # ith vertex. (So varstart[0] will be 0.)
         eqs = 0
         verts = domain._quiver.vertices()
-        varstart = [0]*(len(verts) + 1)
+        varstart = [0] * (len(verts) + 1)
 
         # First assign to varstart the dimension of the matrix assigned to the
         # previous vertex.
         for v in verts:
-            varstart[verts.index(v) + 1] = domain._spaces[v].dimension()*codomain._spaces[v].dimension()
+            varstart[verts.index(v) + 1] = domain._spaces[v].dimension() * codomain._spaces[v].dimension()
         for e in domain._semigroup._sorted_edges:
-            eqs += domain._spaces[e[0]].dimension()*codomain._spaces[e[1]].dimension()
+            eqs += domain._spaces[e[0]].dimension() * codomain._spaces[e[1]].dimension()
 
         # After this cascading sum varstart[v] will be the sum of the
         # dimensions of the matrices assigned to vertices ordered before v.
         # This is equal to the number of the first variable assigned to v.
         for i in range(2, len(varstart)):
-            varstart[i] += varstart[i-1]
+            varstart[i] += varstart[i - 1]
 
         # This will be the coefficient matrix for the system of equations.  We
         # start with all zeros and will fill in as we go.  We think of this
@@ -158,12 +159,12 @@ class QuiverHomSpace(Homset):
         for e in domain._semigroup._sorted_edges:
             X = domain._maps[e].matrix()
             Y = codomain._maps[e].matrix()
-            for i in range(0, X.nrows()):
-                for j in range(0, Y.ncols()):
-                    for k in range(0, Y.nrows()):
-                        coef_mat[varstart[verts.index(e[0])] + i*Y.nrows() + k, eqn] = Y[k, j]
-                    for k in range(0, X.ncols()):
-                        coef_mat[varstart[verts.index(e[1])] + k*Y.ncols() + j, eqn] = -X[i, k]
+            for i in range(X.nrows()):
+                for j in range(Y.ncols()):
+                    for k in range(Y.nrows()):
+                        coef_mat[varstart[verts.index(e[0])] + i * Y.nrows() + k, eqn] = Y[k, j]
+                    for k in range(X.ncols()):
+                        coef_mat[varstart[verts.index(e[1])] + k * Y.ncols() + j, eqn] = -X[i, k]
                     eqn += 1
 
         # Now we can create the hom space
@@ -330,8 +331,8 @@ class QuiverHomSpace(Homset):
             sage: H2(im).is_surjective() # indirect doctest
             True
         """
-        if kwds or (len(data)>1):
-            return super(Homset,self).__call__(*data,**kwds)
+        if kwds or len(data) > 1:
+            return super(Homset, self).__call__(*data, **kwds)
 
         if not data:
             return self.natural_map()
@@ -342,7 +343,7 @@ class QuiverHomSpace(Homset):
         try:
             return self.element_class(self._domain, self._codomain, data0)
         except (TypeError, ValueError):
-            return super(QuiverHomSpace,self).__call__(*data,**kwds)
+            return super(QuiverHomSpace, self).__call__(*data, **kwds)
 
     def _repr_(self):
         """
@@ -395,9 +396,10 @@ class QuiverHomSpace(Homset):
             True
         """
         from sage.matrix.constructor import Matrix
-        maps = dict((v, Matrix(self._domain._spaces[v].dimension(),
-                               self._domain._spaces[v].dimension(), self._base.one()))
-                               for v in self._quiver)
+        maps = {v: Matrix(self._domain._spaces[v].dimension(),
+                          self._domain._spaces[v].dimension(),
+                          self._base.one())
+                for v in self._quiver}
         return self.element_class(self._domain, self._codomain, maps)
 
     ###########################################################################
@@ -542,7 +544,7 @@ class QuiverHomSpace(Homset):
             sage: H.coordinates(f)
             [1, -1]
         """
-        #Use the coordinates function on space
+        # Use the coordinates function on space
         return self._space.coordinates(hom._vector)
 
         ###########################################################################
@@ -624,7 +626,7 @@ class QuiverHomSpace(Homset):
         # Create the spaces
         spaces = {}
         for v in self._quiver:
-            im_gens = [self([self._codomain.left_edge_action((v, v), f(x)) 
+            im_gens = [self([self._codomain.left_edge_action((v, v), f(x))
                              for x in self._domain.gens()])._vector
                        for f in self.gens()]
             spaces[v] = self._space.submodule(im_gens)
@@ -648,4 +650,3 @@ class QuiverHomSpace(Homset):
             return (QuiverRep(self._base, self._semigroup.reverse(), spaces, maps), basis_dict)
         else:
             return QuiverRep(self._base, self._semigroup.reverse(), spaces, maps)
-

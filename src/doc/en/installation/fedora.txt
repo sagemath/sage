@@ -1,0 +1,8 @@
+     $ sudo yum install binutils xz gcc gcc-c++ gcc-gfortran make m4 perl \
+       tar git patch perl-ExtUtils-MakeMaker openssl openssl-devel zlib-devel \
+       bzip2 bzip2-devel xz-devel gmp gmp-devel libcurl-devel curl yasm \
+       pkg-config ntl-devel mpfr-devel libmpc-devel libsymmetrica-devel \
+       eclib-devel gmp-ecm-devel lrcalc-devel isl-devel givaro-devel \
+       pari-devel pari-elldata pari-seadata pari-galdata pari-galpol \
+       m4ri-devel m4rie-devel L-function-devel \
+       openblas openblas-devel R R-devel gsl gsl-devel cliquer cliquer-devel

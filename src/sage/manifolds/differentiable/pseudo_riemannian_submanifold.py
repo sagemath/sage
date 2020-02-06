@@ -651,7 +651,14 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             ....:                              (sin(the)*cos(phi)/(1-cos(the)),
             ....:                               sin(the)*sin(phi)/(1-cos(the))))
             sage: spher_to_stereoN.set_inverse(2*atan(1/sqrt(x^2+y^2)),
-            ....:                                    atan2(-y,-x)+pi)
+            ....:                              atan2(-y,-x)+pi)
+            Check of the inverse coordinate transformation:
+              the == 2*arctan(sqrt(-cos(the) + 1)/sqrt(cos(the) + 1))  **failed**
+              phi == pi + arctan2(sin(phi)*sin(the)/(cos(the) - 1),
+                                  cos(phi)*sin(the)/(cos(the) - 1))  **failed**
+              x == x  *passed*
+              y == y  *passed*
+            NB: a failed report can reflect a mere lack of simplification.
             sage: stereoN_to_S_A = stereoN_to_S.restrict(A)
             sage: spher_to_stereoS = stereoN_to_S_A * spher_to_stereoN
             sage: stereoS_to_N_A = stereoN_to_S.inverse().restrict(A)
@@ -1051,6 +1058,23 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.extrinsic_curvature().display()  # long time
             K = -4/(x^4 + 8*x^2 + 16) dx*dx
 
+        An example with a non-Euclidean ambient metric::
+
+            sage: M = Manifold(2, 'M', structure='Riemannian')
+            sage: N = Manifold(1, 'N', ambient=M, structure='Riemannian',
+            ....:              start_index=1)
+            sage: CM.<x,y> = M.chart()
+            sage: CN.<u> = N.chart()
+            sage: g = M.metric()
+            sage: g[0, 0], g[1, 1] = 1, 1/(1 + y^2)^2
+            sage: phi = N.diff_map(M, (u, u))
+            sage: N.set_embedding(phi)
+            sage: N.second_fundamental_form()
+            Field of symmetric bilinear forms K on the 1-dimensional Riemannian
+             submanifold N embedded in the 2-dimensional Riemannian manifold M
+            sage: N.second_fundamental_form().display()
+            K = 2*sqrt(u^4 + 2*u^2 + 2)*u/(u^6 + 3*u^4 + 4*u^2 + 2) du*du
+
         """
         if self._ambient._dim - self._dim != 1:
             raise ValueError("second_fundamental_form is defined only for"
@@ -1073,15 +1097,19 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                 n = self.normal()
 
                 for chart in self.atlas():
-                    gamma_n = matrix(self._dim + 1, self._dim + 1)
+                    gamma_n = matrix(SR, self._dim + 1, self._dim + 1)
+                    subs = dict(zip(self._ambient.default_chart()[:],
+                                    self._immersion.expression(chart)))
                     for i in range(self._dim + 1):
                         for j in range(self._dim + 1):
-                            gamma_n[i, j] = sum(
-                                nab[self._ambient.frames()[0], :][i][j][k].expr() *
+                            Gam_ij = [nab[self._ambient.frames()[0],
+                                          :][i][j][k].expr().subs(subs)
+                                      for k in range(self._dim + 1)]
+                            gamma_n[i, j] = chart.simplify(sum(
+                                Gam_ij[k] *
                                 n.restrict(chart.domain()).comp(
-                                    n.restrict(chart.domain())._fmodule.bases()[0])
-                                [:][k].expr() for k in
-                                range(self._dim + 1))
+                                  n.restrict(chart.domain())._fmodule.bases()[0])
+                                [:][k].expr() for k in range(self._dim + 1)))
                     dXdu = self._immersion.differential_functions(chart)
                     dNdu = matrix(SR, self._dim + 1, self._dim)
                     for i in range(self._dim + 1):
@@ -1093,7 +1121,11 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                         self._immersion.restrict(chart.domain())).restrict(
                         chart.domain())[:, chart]
                     K = dXdu.transpose() * g * (dNdu + gamma_n * dXdu)
-                    resu[chart.frame(), :] = K
+                    si = self._sindex
+                    for i in self.irange():
+                        for j in self.irange(i):  # since K is symmetric
+                            resu[chart.frame(), i, j, chart] = chart.simplify(
+                                                      K[i - si, j - si].expr())
 
             self._second_fundamental_form = resu
         return self._second_fundamental_form
@@ -1485,6 +1517,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.principal_curvatures(stereoN)[0].display()  # long time
             k_0: N --> R
             on U: x |--> -1
+            on W: y |--> -1
 
         """
         if self._ambient._dim - self._dim != 1:

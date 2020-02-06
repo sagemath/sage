@@ -28,10 +28,6 @@ EXAMPLES::
     sage: H.base_ring()
     Integer Ring
     sage: d = H.decomposition(); d
-    doctest:warning
-    ...
-    DeprecationWarning: The default order on free modules has changed. The old ordering is in sage.modules.free_module.EchelonMatrixKey
-    See http://trac.sagemath.org/23978 for details.
     [
     Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3,
     Submodule of rank 4 of Integral Homology of Abelian variety J0(43) of dimension 3
@@ -45,15 +41,15 @@ EXAMPLES::
 """
 from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 from sage.modular.hecke.all import HeckeModule_free_module

@@ -67,11 +67,11 @@ For general help, enter ``Sandpile.help()``, ``SandpileConfig.help()``, and
 A weighted directed graph given as a Python dictionary::
 
     sage: from sage.sandpiles import *
-    sage: g = {0: {},                    \
-               1: {0: 1, 2: 1, 3: 1},    \
-               2: {1: 1, 3: 1, 4: 1},    \
-               3: {1: 1, 2: 1, 4: 1},    \
-               4: {2: 1, 3: 1}}
+    sage: g = {0: {},
+    ....:      1: {0: 1, 2: 1, 3: 1},
+    ....:      2: {1: 1, 3: 1, 4: 1},
+    ....:      3: {1: 1, 2: 1, 4: 1},
+    ....:      4: {2: 1, 3: 1}}
 
 The associated sandpile with 0 chosen as the sink::
 
@@ -530,8 +530,8 @@ class Sandpile(DiGraph):
 
         ::
 
-            sage: g = {'a': {'a':2, 'b':1, 'c':3}, 'b': {'a':1, 'd':1},\
-                       'c': {'a':1,'d': 1}, 'd': {'b':1, 'c':1}}
+            sage: g = {'a': {'a':2, 'b':1, 'c':3}, 'b': {'a':1, 'd':1},
+            ....:      'c': {'a':1,'d': 1}, 'd': {'b':1, 'c':1}}
             sage: G = Sandpile(g,'d')
 
         Here is a square with unweighted edges.  In this example, the graph is
@@ -1081,8 +1081,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1}, \
-                       3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S._set_burning_config()
         """
@@ -1122,8 +1122,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1}, \
-                       3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S.burning_config()
             {1: 2, 2: 0, 3: 1, 4: 1, 5: 0}
@@ -1174,8 +1174,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},\
-            3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S.burning_config()
             {1: 2, 2: 0, 3: 1, 4: 1, 5: 0}

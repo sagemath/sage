@@ -8,7 +8,7 @@ AUTHORS:
 - Sebastien Labbe (2008-12-17): merged into sage
 - Arnaud Bergeron (2008-12-17): merged into sage
 - Amy Glen (2008-12-17): merged into sage
-- Sebastien Labbe (2009-12-19): Added S-adic words (:trac:`7543`)
+- Sébastien Labbé (2009-12-19): Added S-adic words (:trac:`7543`)
 
 USE:
 
@@ -41,7 +41,7 @@ EXAMPLES::
     sage: t = words.ThueMorseWord(); t
     word: 0110100110010110100101100110100110010110...
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>,
 #                          Sebastien Labbe <slabqc@gmail.com>,
 #                          Arnaud Bergeron <abergeron@gmail.com>,
@@ -51,8 +51,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from six.moves import range
@@ -738,7 +738,7 @@ class WordGenerator(object):
 
         INPUT:
 
-        -  ``slope`` - the slope of the word. It can be one of the following :
+        -  ``slope`` - the slope of the word. It can be one of the following:
 
            -  real number in `]0, 1[`
 
@@ -1892,7 +1892,7 @@ class WordGenerator(object):
         elif hasattr(morphisms, '__call__'):
             seq = (morphisms(i) for i in sequence)
         else:
-            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method."%morphisms)
+            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method." % morphisms)
 
         from sage.combinat.words.word import FiniteWord_class
         if isinstance(sequence,(tuple,list,str,FiniteWord_class)) \
@@ -1901,12 +1901,12 @@ class WordGenerator(object):
             return prod(seq)(letters)
 
         from itertools import tee
-        seq_it,seq= tee(seq)
+        seq_it, seq = tee(seq)
         m = next(seq_it)
         W = m.codomain()
 
         kwds = {}
-        kwds['data'] = self._s_adic_iterator(seq,letters)
+        kwds['data'] = self._s_adic_iterator(seq, letters)
         kwds['datatype'] = 'iter'
         kwds['caching'] = True
         #kwds['check'] = False

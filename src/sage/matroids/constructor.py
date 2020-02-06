@@ -109,6 +109,7 @@ from sage.matrix.constructor import Matrix
 from sage.graphs.all import Graph
 from sage.structure.element import is_Matrix
 from sage.rings.all import ZZ, QQ
+from sage.categories.all import Fields, Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -694,11 +695,11 @@ def Matroid(groundset=None, data=None, **kwds):
     base_ring = None
     if 'field' in kwds:
         base_ring = kwds.pop('field')
-        if check and not base_ring.is_field():
+        if check and not base_ring in Fields:
             raise TypeError("{} is not a field".format(base_ring))
     elif 'ring' in kwds:
         base_ring = kwds.pop('ring')
-        if check and not base_ring.is_ring():
+        if check and not base_ring in Rings:
             raise TypeError("{} is not a ring".format(base_ring))
 
     # "key" is the kind of data we got

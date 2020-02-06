@@ -376,7 +376,6 @@ class DIMACS(SatSolver):
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
 
         self.write()
-
         output_filename = None
         self._output = []
 
@@ -399,11 +398,11 @@ class DIMACS(SatSolver):
 
         try:
             while process.poll() is None:
-                for line in iter(process.stdout.readline,''):
+                for line in iter(process.stdout.readline, b''):
                     if get_verbose() or self._verbosity:
                         print(line)
                         sys.stdout.flush()
-                    self._output.append(line)
+                    self._output.append(line.decode('utf-8'))
                 sleep(0.1)
             if output_filename:
                 self._output.extend(open(output_filename).readlines())

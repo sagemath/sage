@@ -28,6 +28,9 @@ AUTHORS:
 
 -  David Zureick-Brown (2017-09): Added is_weil_polynomial.
 
+-  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more 
+   cases of proper integral domains (see :trac:`26421`)
+
 TESTS::
 
     sage: R.<x> = ZZ[]
@@ -47,7 +50,6 @@ TESTS::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 cdef is_FractionField, is_RealField, is_ComplexField
 cdef ZZ, QQ, RR, CC, RDF, CDF
@@ -3254,11 +3256,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
             sage: x.change_ring(ZZ['x']) == ZZ['x']['x'].gen()
             True
+
+        Check that :trac:`28541` is fixed::
+
+            sage: F.<a> = GF(7^2)
+            sage: S.<x> = F[]
+            sage: P = x^2 + a*x + a^2
+            sage: P.change_ring(F.frobenius_endomorphism())
+            x^2 + (6*a + 1)*x + 6*a + 5
         """
         if isinstance(R, Map):
-            # extend to a hom of the base ring of the polynomial
-            R = self._parent.hom(R, self._parent.change_ring(R.codomain()))
-            return R(self)
+            return self.map_coefficients(R)
         else:
             return self._parent.change_ring(R)(self.list(copy=False))
 
@@ -3696,6 +3704,19 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: t = K.gen()
             sage: t.derivative(t)
             1
+
+        Check that :trac:`28187` is fixed::
+
+            sage: R.<x> = GF(65537)[]
+            sage: x._derivative(2*x)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to 2*x
+            sage: y = var('y')
+            sage: R.gen()._derivative(y)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to y
         """
         if var is not None and var != self._parent.gen():
             try:
@@ -4248,6 +4269,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: x2 = ZZ['x']['x'].gen()
             sage: (x1 - x2).factor()
             -x + x
+
+        Check that :trac:`26421' is fixed::
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: P.<x> = R[]
+            sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
+            sage: p.factor()
+            (x - 5) * (x - 2*t) * (x^2 - 2)
         """
         # PERFORMANCE NOTE:
         #     In many tests with SMALL degree PARI is substantially
@@ -4360,6 +4389,15 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 F.sort()
                 return F
             except (TypeError, AttributeError):
+                if R.is_integral_domain() and not R.is_field():
+                    try:
+                        F = R.fraction_field()
+                        PF = F[self.variable_name()]
+                        pol_frac = PF(self) 
+                        return pol_frac.factor(**kwargs).base_change(self.parent())
+                    except (TypeError, AttributeError):
+                        raise NotImplementedError
+                    
                 raise NotImplementedError
 
         return self._factor_pari_helper(G, n)
@@ -5896,7 +5934,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         for i in range(2, len(e)):
             v = c[i].valuation(p)
             s = -(v-points[-1][1])/(e[i]-points[-1][0])
-            while len(slopes) > 0 and s >= slopes[-1][0]:
+            while slopes and s >= slopes[-1][0]:
                 slopes = slopes[:-1]
                 points = points[:-1]
                 s = -(v-points[-1][1])/(e[i]-points[-1][0])
@@ -6988,7 +7026,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 raise ValueError("degree argument must be a non-negative integer, got %s"%(degree))
             if len(v) < degree+1:
                 v.reverse()
-                v = [0]*(degree+1-len(v)) + v
+                v = [self.base_ring().zero()]*(degree+1-len(v)) + v
             elif len(v) > degree+1:
                 v = v[:degree+1]
                 v.reverse()
@@ -7598,9 +7636,24 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: eq = x^6+x-17
             sage: eq.roots(multiplicities=False)
             [3109038, 17207405]
+
+        Test that roots in fixed modulus p-adic fields work (:trac:`17598`)::
+
+            sage: len(cyclotomic_polynomial(3).roots(ZpFM(739, 566)))
+            2
+
+        Check that :trac:`26421` is fixed::
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: P.<x> = R[]
+            sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
+            sage: p.roots()
+            [(5, 1), (2*t, 1)]
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
+
+
         # If the base ring has a method _roots_univariate_polynomial,
         # try to use it. An exception is raised if the method does not
         # handle the current parameters
@@ -7811,9 +7864,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
                         # get rid of the content of self since we don't need it
                         # and we really don't want to factor it if it's a huge
                         # integer
-                        c = self.content()
+                        c = self.content_ideal().gen()
                         self = self//c
-                    except AttributeError:
+                    except (AttributeError, NotImplementedError):
                         pass
                 return self._roots_from_factorization(self.factor(), multiplicities)
             else:
@@ -7867,11 +7920,13 @@ cdef class Polynomial(CommutativeAlgebraElement):
         for fac in F:
             g = fac[0]
             if g.degree() == 1:
-                rt = -g[0] / g[1]
-                # We need to check that this root is actually in K;
-                # otherwise we'd return roots in the fraction field of K.
-                if rt in K:
-                    rt = K(rt)
+                try:
+                    # We need to check that this root is actually in K;
+                    # otherwise we'd return roots in the fraction field of K.
+                    rt = K(-g[0] / g[1])
+                except (ValueError, ArithmeticError, TypeError):
+                    pass
+                else:
                     if multiplicities:
                         seq.append((rt,fac[1]))
                     else:
@@ -7963,10 +8018,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
         [a,b], counted without multiplicity. The endpoints a, b default to
         -Infinity, Infinity (which are also valid input values).
 
-        Calls the PARI routine polsturm. Note that as of version 2.8, PARI
-        includes the left endpoint of the interval (and no longer uses
-        Sturm's algorithm on exact inputs). polsturm requires a polynomial
-        with real coefficients; in case PARI returns an error, we try again
+        Calls the PARI routine :pari:`polsturm`.
+
+        Note that as of version 2.8, PARI includes the left endpoint
+        of the interval (and no longer uses Sturm's algorithm on exact
+        inputs). polsturm requires a polynomial with real
+        coefficients; in case PARI returns an error, we try again
         after taking the GCD of `self` with its complex conjugate.
 
         EXAMPLES::
@@ -8005,7 +8062,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             3
 
         """
-        pol = self // self.gcd(self.derivative()) #squarefree part
+        pol = self // self.gcd(self.derivative())  # squarefree part
         if a is None:
             a1 = -infinity.infinity
         else:
@@ -8015,12 +8072,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             b1 = b
         try:
-            return(pari(pol).polsturm([a1,b1]))
+            return pari(pol).polsturm([a1, b1])
         except PariError:
             # Take GCD with the conjugate, to extract the maximum factor
             # with real coefficients.
             pol2 = pol.gcd(pol.map_coefficients(lambda z: z.conjugate()))
-            return(pari(pol2).polsturm([a1,b1]))
+            return pari(pol2).polsturm([a1, b1])
 
     def number_of_real_roots(self):
         r"""
@@ -8067,7 +8124,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
         """
         pol = self // self.gcd(self.derivative())
-        return(pol.number_of_roots_in_interval(a,b) == pol.degree())
+        return pol.number_of_roots_in_interval(a, b) == pol.degree()
 
     def is_real_rooted(self):
         r"""
@@ -8251,6 +8308,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
             False
             sage: P2.is_weil_polynomial()
             False
+
+        .. SEEALSO::
+
+            Polynomial rings have a method `weil_polynomials` to compute sets of Weil
+            polynomials. This computation uses the iterator
+            :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`.
 
         TESTS:
 
@@ -9088,7 +9151,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 # Be careful with the content: return the
                 # radical of the content times the radical of
                 # (self/content)
-                content = self.content()
+                content = self.content_ideal().gen()
                 self_1 = (self//content)
                 return (self_1 // self_1.gcd(self_1.derivative())) * content.radical()
         else:  # The above method is not always correct (see Trac 8736)
@@ -9638,9 +9701,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
         # stable under squaring. This factor is constant if and only if
         # the original polynomial has no cyclotomic factor.
         while True:
-            if pol1.is_constant(): return(False)
+            if pol1.is_constant():
+                return False
             pol2 = pol1.gcd(polRing((pol1*pol1(-x)).list()[::2]))
-            if pol1.degree() == pol2.degree(): return(True)
+            if pol1.degree() == pol2.degree():
+                return True
             pol1 = pol2
 
     def homogenize(self, var='h'):
@@ -10179,6 +10244,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             from sage.rings.polynomial.flatten import SpecializationMorphism
             phi = SpecializationMorphism(self._parent,D)
         return phi(self)
+
 
     def _log_series(self, long n):
         r"""

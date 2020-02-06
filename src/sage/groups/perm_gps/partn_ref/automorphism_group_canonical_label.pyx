@@ -109,8 +109,6 @@ REFERENCE:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
-
 from libc.string cimport memcmp, memcpy
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 

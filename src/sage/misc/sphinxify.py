@@ -128,7 +128,8 @@ smart_quotes = no""")
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        output = open(output_name, 'r').read()
+        with open(output_name, 'r') as f:
+            output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 
         # Translate URLs for media from something like

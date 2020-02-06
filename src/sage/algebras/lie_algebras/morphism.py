@@ -80,16 +80,16 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         sage: all(phi(x.bracket(y)) == phi(x).bracket(phi(y)) for x,y in cartesian_product_iterator([[X,Y,Z,W],[X,Y,Z,W]]))
         True
 
-    However, if the structure constants are not fixed by the base map,
-    the Lie bracket may not be preserved::
+    Note that the Lie bracket should still be preserved, even though the map is no longer linear
+    over the base ring::
 
         sage: L.<X,Y,Z,W> = LieAlgebra(K, {('X','Y'): {'Z':i}, ('X','Z'): {'W':1}})
-        sage: M.<A,B,C,D> = LieAlgebra(K, {('A','B'): {'C':i}, ('A','C'): {'D':1}})
+        sage: M.<A,B,C,D> = LieAlgebra(K, {('A','B'): {'C':-i}, ('A','C'): {'D':1}})
         sage: phi = L.morphism({X:A, Y:B, Z:C, W:D}, base_map=cc)
         sage: phi(X.bracket(Y))
         -i*C
         sage: phi(X).bracket(phi(Y))
-        i*C
+        -i*C
     """
     def __init__(self, parent, im_gens, base_map=None, check=True):
         """
@@ -514,6 +514,19 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
             Traceback (most recent call last):
             ...
             ValueError: no elements to infer codomain from
+
+        We check that we can specify a base map to get a semi-linear morphism of Lie algebras::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: L.<X,Y,Z> = LieAlgebra(K, {('X','Y'): {'Z':i}})
+            sage: M.<A,B,C> = LieAlgebra(K, {('A','B'): {'C':-i}})
+            sage: phi = L.morphism({X:A, Y:B, Z:C}, base_map=cc)
+            sage: phi(Z)
+            C
+            sage: phi(i*Z)
+            -i*C
         """
         from sage.categories.lie_algebras import LieAlgebras
 
@@ -569,6 +582,8 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
         while True:
             sm = m.submodule(spanning_set)
             A = matrix(sm.base_ring(), [sm.coordinate_vector(X) for X in spanning_set])
+            if base_map is not None:
+                A = A.apply_map(base_map)
             try:
                 im_gens = solve_linear_system(A, im_gens, check)
             except ValueError:

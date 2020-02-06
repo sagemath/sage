@@ -1416,7 +1416,7 @@ class MPowerSeries(PowerSeries):
             # at this stage, self is probably a non-zero
             # element of the base ring
             for a in range(len(self._bg_value.list())):
-                if self._bg_value.list()[a] is not 0:
+                if self._bg_value.list()[a] != 0:
                     return a
 
     def is_nilpotent(self):

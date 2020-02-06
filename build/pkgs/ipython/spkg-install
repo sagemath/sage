@@ -4,6 +4,10 @@ if [ "$SAGE_LOCAL" = "" ]; then
    exit 1
 fi
 
+# Old installations of ipython can leave a symlink which can interfere
+# with proper installation.
+rm -f "$SAGE_LOCAL"/bin/ipython
+
 cd src
 
 sdh_pip_install .
@@ -11,11 +15,4 @@ sdh_pip_install .
 if [ $? -ne 0 ]; then
     echo >&2 "Error installing IPython"
     exit 1
-fi
-
-# add symlink if we are running on python3
-if python -c 'import sys; sys.exit(sys.version_info.major != 3)'; then
-    cd "$SAGE_LOCAL"/bin
-    rm -f ipython
-    ln -s ipython3 ipython
 fi

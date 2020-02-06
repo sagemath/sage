@@ -1,5 +1,5 @@
 """
-Optimized Cython code for computing relation matrices in certain cases.
+Optimized Cython code for computing relation matrices in certain cases
 """
 
 #############################################################################
@@ -8,7 +8,6 @@ Optimized Cython code for computing relation matrices in certain cases.
 #  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 #############################################################################
-from __future__ import absolute_import
 
 import sage.misc.misc as misc
 from sage.rings.rational cimport Rational

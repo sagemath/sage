@@ -91,12 +91,7 @@ This module is used for the recognition of Interval Graphs (see
    our sets satisfying our constraints, or to prove that no such ordering
    exists. This is the whole purpose of this module, and is explained with more
    details in many places, for example in the following document from Hajiaghayi
-   [Haj]_.
-
-REFERENCES:
-
-.. [Haj] \M. Hajiaghayi
-   http://www-math.mit.edu/~hajiagha/pp11.ps
+   [Haj2000]_.
 
 Authors:
 

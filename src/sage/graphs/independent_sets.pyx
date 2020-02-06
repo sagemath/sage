@@ -14,7 +14,6 @@ Classes and methods
 -------------------
 
 """
-from __future__ import print_function
 
 include "sage/data_structures/binary_matrix.pxi"
 from sage.misc.cachefunc import cached_method

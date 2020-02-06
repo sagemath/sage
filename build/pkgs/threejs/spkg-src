@@ -3,7 +3,7 @@
 set -e
 
 # https://github.com/mrdoob/three.js/releases
-GIT_VERSION=r105
+GIT_VERSION=r110
 
 [ -n "${SAGE_ROOT}" ] || SAGE_ROOT="$(pwd)/../../../"
 

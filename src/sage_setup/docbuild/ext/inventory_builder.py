@@ -7,18 +7,9 @@
     inventory files and pickle files. The documentation files are not written.
 """
 from sphinx.builders.html import StandaloneHTMLBuilder
-from sphinx.util.console import bold
 from os import path
-
-from six import iteritems, text_type
-
 import shutil
 
-try:
-    from hashlib import md5
-except ImportError:
-    # 2.4 compatibility
-    from md5 import md5
 
 class InventoryBuilder(StandaloneHTMLBuilder):
     """
@@ -30,37 +21,17 @@ class InventoryBuilder(StandaloneHTMLBuilder):
     epilog = "The inventory files are in %(outdir)s."
 
     def get_outdated_docs(self):
-        def md5hash_obj(obj):
-            return md5(text_type(obj).encode('utf-8')).hexdigest()
-
-        cfgdict = dict((name, self.config[name])
-                       for (name, desc) in iteritems(self.config.values)
-                       if desc[1] == 'html')
-        self.config_hash = md5hash_obj(cfgdict)
-        self.tags_hash = md5hash_obj(sorted(self.tags))
-        old_config_hash = old_tags_hash = ''
+        from sphinx.builders.html import BuildInfo
+        old = BuildInfo()
         try:
-            fp = open(path.join(self.outdir, '.buildinfo'))
-            try:
-                version = fp.readline()
-                if version.rstrip() != '# Sphinx build info version 1':
-                    raise ValueError
-                fp.readline()  # skip commentary
-                cfg, old_config_hash = fp.readline().strip().split(': ')
-                if cfg != 'config':
-                    raise ValueError
-                tag, old_tags_hash = fp.readline().strip().split(': ')
-                if tag != 'tags':
-                    raise ValueError
-            finally:
-                fp.close()
+            with open(path.join(self.outdir, '.buildinfo')) as fp:
+                old = BuildInfo.load(fp)
         except ValueError:
             self.warn('unsupported build info format in %r, building all' %
                       path.join(self.outdir, '.buildinfo'))
         except Exception:
             pass
-        if old_config_hash != self.config_hash or \
-               old_tags_hash != self.tags_hash:
+        if self.build_info != old:
             for docname in self.env.found_docs:
                 yield docname
             return

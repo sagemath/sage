@@ -635,7 +635,7 @@ class FockSpace(Parent, UniqueRepresentation):
             h = a.height()
             l = AsciiArt(['|']*h)
             r = AsciiArt([' '*i + '\\' for i in range(h//2)], baseline=0)
-            if h % 2 != 0:
+            if h % 2:
                 r *= AsciiArt([' '*(h//2) + '>'], baseline=0)
             r *= AsciiArt([' '*i + '/' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
@@ -668,7 +668,7 @@ class FockSpace(Parent, UniqueRepresentation):
             h = a.height()
             l = UnicodeArt([u'│']*h, baseline=0)
             r = UnicodeArt([u" "*i + u'╲' for i in range(h//2)], baseline=0)
-            if h % 2 != 0:
+            if h % 2:
                 r *= UnicodeArt([u" "*(h//2) + u'〉'], baseline=0)
             r *= UnicodeArt([u" "*i + u'╱' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
@@ -2213,4 +2213,3 @@ class FockSpaceTruncated(FockSpace):
 
     lower_global_crystal = G
     canonical = G
-

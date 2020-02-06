@@ -28,16 +28,15 @@ EXAMPLES::
     [(-1, 0, 0), (1, 0, 0), (-9, -6, -4)]
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #        Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from __future__ import print_function, absolute_import
 import operator
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE
@@ -1386,16 +1385,16 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         1) The denominators in the Hecke eigenvalue
         2) the denominators appearing when solving the difference equation,
-        3) those denominators who might be also present in self.
+        3) those denominators who might be also present in ``self``.
 
-        INPUT :
+        INPUT:
 
         - ``p`` -- working prime
         - ``M`` -- precision
         - ``alpha`` -- the Up-eigenvalue
         - ``check`` -- whether to check that ``self`` is a `T_q` eigensymbol
 
-        OUTPUT :
+        OUTPUT:
 
         A tuple (newM, eisenloss, q, aq), where ``newM`` is the new precision, `q` is
         a prime different from `p`, and ``aq`` is the eigenvalue of `T_q` of the eigensymbol.

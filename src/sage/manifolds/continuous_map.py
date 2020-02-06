@@ -1407,12 +1407,13 @@ class ContinuousMap(Morphism):
             sage: c_cart.<x,y> = M.chart() # Declaration of Cartesian coordinates
             sage: ch_spher_cart = c_spher.transition_map(c_cart,
             ....:                 [r*cos(ph), r*sin(ph)]) # relation to spherical coordinates
-            sage: ch_spher_cart.set_inverse(sqrt(x^2+y^2), atan2(y,x), verbose=True)
+            sage: ch_spher_cart.set_inverse(sqrt(x^2+y^2), atan2(y,x))
             Check of the inverse coordinate transformation:
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
-               x == x
-               y == y
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              x == x  *passed*
+              y == y  *passed*
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot.expr(c_cart, c_cart)
             (-1/2*sqrt(3)*y + 1/2*x, 1/2*sqrt(3)*x + 1/2*y)
 
@@ -1452,12 +1453,13 @@ class ContinuousMap(Morphism):
             sage: # Links between spherical coordinates and Cartesian ones:
             sage: ch_cart_spher = c_cart.transition_map(c_spher,
             ....:                                       [sqrt(x*x+y*y), atan2(y,x)])
-            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph), verbose=True)
+            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
             Check of the inverse coordinate transformation:
-               x == x
-               y == y
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot.display(c_cart, c_cart)
@@ -1506,6 +1508,12 @@ class ContinuousMap(Morphism):
             sage: ch_cart_spher = c_cart.transition_map(c_spher,
             ....:                                       [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
+            Check of the inverse coordinate transformation:
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot2 = copy(rot)
@@ -1579,12 +1587,13 @@ class ContinuousMap(Morphism):
         Cartesian ones::
 
             sage: ch_cart_spher = c_cart.transition_map(c_spher, [sqrt(x*x+y*y), atan2(y,x)])
-            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph), verbose=True)
+            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
             Check of the inverse coordinate transformation:
-               x == x
-               y == y
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot.display(c_cart, c_cart)

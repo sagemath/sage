@@ -38,7 +38,6 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import absolute_import
 
 from sage.rings.real_double import RDF
 

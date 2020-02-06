@@ -36,7 +36,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -455,7 +454,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     # x * cdef _sub_
     #   * cdef _mul_
     # x * cdef _lmul_    -- scalar multiplication
-    # x * cpdef _cmp_
+    # x * cpdef _richcmp_
     # x * __neg__
     #   * __invert__
     # x * __copy__

@@ -14,7 +14,6 @@ from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.superseded import deprecated_function_alias
 from sage.combinat.combinatorial_algebra import CombinatorialAlgebra
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
@@ -1181,9 +1180,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             self._idempotent_cache[mu] = ret
         return ret
 
-    cpis = deprecated_function_alias(25942, central_orthogonal_idempotents)
-    cpi = deprecated_function_alias(25942, central_orthogonal_idempotent)
-
     @lazy_attribute
     def _blocks_dictionary(self):
         r"""
@@ -1970,7 +1966,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         I = self._indices
         z_elts = {}
         epik = epsilon_ik(it, kt, star=star)
-        for m,c in six.iteritems(epik._monomial_coefficients):
+        for m, c in six.iteritems(epik._monomial_coefficients):
             z_elts[I(m)] = BR(c)
         z = self._from_dict(z_elts)
 

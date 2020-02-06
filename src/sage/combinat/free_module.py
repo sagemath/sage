@@ -258,6 +258,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         False
         sage: XQ == XQ
         True
+
+    We check that ticket :trac:`28681` is fixed::
+
+        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename("F")
+        sage: FF = tensor((F,F))
+        sage: cartesian_product((FF,FF))
+        F # F (+) F # F
     """
 
     @staticmethod
@@ -1323,13 +1330,13 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: T = tensor([F, G])
                 sage: T # indirect doctest
                 F # G
-                sage: T.print_options(tensor_symbol= ' @ ')  # note the spaces
+                sage: T.print_options(tensor_symbol=' @ ')  # note the spaces
                 sage: T # indirect doctest
                 F @ G
 
             To avoid a side\--effect on another doctest, we revert the change::
 
-                sage: T.print_options(tensor_symbol= ' # ')
+                sage: T.print_options(tensor_symbol=' # ')
             """
             from sage.categories.tensor import tensor
             if hasattr(self, "_print_options"):

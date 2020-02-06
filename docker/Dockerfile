@@ -32,11 +32,11 @@
 # takes about five minutes but you don't have to go through the sadly frequent #
 # rebuilds the whole Sage distribution...                                      #
 # To build Sage, run this command from your sage/ directory:                   #
-# $ docker build --build-arg MAKEOPTS="-j4" --build-arg SAGE_NUM_THREADS="4" --build-arg ARTIFACT_BASE="sagemath/sagemath-dev:develop" -f docker/Dockerfile --target=make-build --tag sage .
+# $ docker build --build-arg MAKEFLAGS="-j4" --build-arg SAGE_NUM_THREADS="4" --build-arg ARTIFACT_BASE="sagemath/sagemath-dev:develop" -f docker/Dockerfile --target=make-build --tag sage .
 # To run Sage:                                                                 #
 # $ docker run -it sage                                                        #
 # To run doctests:                                                             #
-# $ docker run -e "MAKEOPTS=-j4" -e "SAGE_NUM_THREADS=4" -it sage sage -tp src/sage
+# $ docker run -e "MAKEFLAGS=-j4" -e "SAGE_NUM_THREADS=4" -it sage sage -tp src/sage
 # Make sure that you always have the latest develop branch merged into your    #
 # local branch for this to work.                                               #
 ################################################################################
@@ -126,7 +126,7 @@ ARG SAGE_ROOT=/home/sage/sage
 WORKDIR $SAGE_ROOT
 # We create a list of all files present in the artifact-base (with a timestamp
 # of now) so we can find out later which files were added/changed/removed.
-RUN find . -type f > $HOME/artifact-base.manifest
+RUN find . \( -type f -or -type l \) > $HOME/artifact-base.manifest
 RUN git fetch "$HOME/sage-context" HEAD \
     && if [ -e docker/.commit ]; then \
           git reset `cat docker/.commit` \
@@ -160,13 +160,17 @@ ENV SAGE_FAT_BINARY yes
 # Just to be sure Sage doesn't try to build its own GCC (even though
 # it shouldn't with a recent GCC package from the system and with gfortran)
 ENV SAGE_INSTALL_GCC no
-# Set MAKEOPTS and SAGE_NUM_THREADS to build things in parallel during the
+# Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.
-ARG MAKEOPTS="-j2"
-ENV MAKEOPTS $MAKEOPTS
+ARG WITH_PYTHON=2
+ENV WITH_PYTHON $WITH_PYTHON
+ARG MAKEFLAGS="-j2"
+ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
+RUN make configure
+RUN ./configure --with-python=$WITH_PYTHON
 RUN make build
 
 ################################################################################
@@ -177,10 +181,10 @@ FROM make-build as make-all
 # os.fork() to spawn an external program which then exceeds easily the
 # overcommit limit of the system (no RAM is actually used, but this limit is
 # very low because there is not even swap on most CI systems.)
-ARG MAKEOPTS_DOCBUILD=$MAKEOPTS
-ENV MAKEOPTS_DOCBUILD $MAKEOPTS_DOCBUILD
+ARG MAKEFLAGS_DOCBUILD=$MAKEFLAGS
+ENV MAKEFLAGS_DOCBUILD $MAKEFLAGS_DOCBUILD
 ARG SAGE_NUM_THREADS_DOCBUILD=$SAGE_NUM_THREADS
-ENV SAGE_NUM_THREADS_DOCBUILD $SAGE_NUM_THREADS_DOCBUILD
+ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS_DOCBUILD
 RUN make
 
 ################################################################################
@@ -228,9 +232,9 @@ ARG SAGE_ROOT=/home/sage/sage
 # and a list of all modified files (added/updated/removed).
 RUN if [ x"$ARTIFACT_BASE" != x"source-clean" ]; then \
         mkdir -p $HOME/patch \
-        && find . -type f > $HOME/make-fast-rebuild-clean.manifest \
+        && find . \( -type f -or -type l \) > $HOME/make-fast-rebuild-clean.manifest \
         && cat $HOME/make-fast-rebuild-clean.manifest $HOME/artifact-base.manifest | sort | uniq -u > $HOME/obsolete \
-        && find . -type f -cnewer $HOME/artifact-base.manifest > $HOME/modified \
+        && find . \( -type f -or -type l \) -cnewer $HOME/artifact-base.manifest > $HOME/modified \
         && tar -cJf $HOME/patch/modified.tar.xz -T $HOME/modified \
         && cat $HOME/obsolete $HOME/modified | xz > $HOME/patch/modified.xz \
         && rm -rf $SAGE_ROOT \

@@ -1,7 +1,6 @@
 """
 Cremona matrices
 """
-from __future__ import print_function
 
 from ..eclib cimport scalar, addscalar
 

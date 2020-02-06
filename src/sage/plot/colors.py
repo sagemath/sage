@@ -850,7 +850,9 @@ class Color(object):
 
         OUTPUT:
 
-        - an integer with encoding `256^2 r + 256 g + b`
+        - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
+          are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+          to the integer range 0, 1, ..., 255.
 
         EXAMPLES::
 
@@ -1283,7 +1285,9 @@ def float_to_integer(r, g, b):
 
     OUTPUT:
 
-    - an integer with encoding `256^2 r + 256 g + b`
+    - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
+      are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+      to the integer range 0, 1, ..., 255.
 
     EXAMPLES::
 

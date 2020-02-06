@@ -12,10 +12,13 @@ AUTHORS:
 - Ben Salisbury, Travis Scrimshaw (2013): Refactored tensor products to handle
   non-regular crystals and created new subclass to take advantage of
   the regularity
+- Travis Scrimshaw (2020): Added queer crystal
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
+#                     2020 Travis Scrimshaw <tcscrims at gmail.com>
+#                          Ben Salisbury <salis1bt at cmich.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -645,9 +648,9 @@ class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
     class Element(TensorProductOfSuperCrystalsElement):
         pass
 
-class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals):
-    r"""
-    Tensor product of queer super crystals.
+class QueerSuperCrystalsMixin(object):
+    """
+    Mixin class with methods for a finite queer supercrystal.
     """
     @cached_method
     def index_set(self):
@@ -662,7 +665,7 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals):
             (-4, -3, -2, -1, 1, 2)
         """
         n = self.cartan_type().n
-        return tuple(range(-2*n,0)) + tuple(range(1,n+1))
+        return tuple(range(-2*n, 0)) + tuple(range(1, n+1))
 
     @cached_method
     def _long_element(self):
@@ -683,6 +686,10 @@ class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals):
         n = self.cartan_type().n
         return tuple(Permutations(n+1).long_element().reduced_word())
 
+class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSuperCrystalsMixin):
+    r"""
+    Tensor product of queer super crystals.
+    """
     class Element(TensorProductOfQueerSuperCrystalsElement):
         pass
 
@@ -806,6 +813,13 @@ class CrystalOfTableaux(CrystalOfWords):
         sage: T.cardinality()
         1392
 
+    We can also construct the tableaux for `\mathfrak{q}(n)` as
+    given by [GJK+2014]_::
+
+        sage: T = crystals.Tableaux(['Q', 3], shape=[3,1])
+        sage: T.cardinality()
+        24
+
     TESTS:
 
     Base cases::
@@ -887,6 +901,11 @@ class CrystalOfTableaux(CrystalOfWords):
                 shape = shapes
             from sage.combinat.crystals.bkk_crystals import CrystalOfBKKTableaux
             return CrystalOfBKKTableaux(cartan_type, shape=shape)
+        if cartan_type.letter == 'Q':
+            if any(shape[i] == shape[i+1] for i in range(len(shape)-1)):
+                raise ValueError("not a strict partition")
+            shape = Partition(shape)
+            return CrystalOfQueerTableaux(cartan_type, shape=shape)
         n = cartan_type.rank()
         # standardize shape/shapes input into a tuple of tuples
         assert operator.xor(shape is not None, shapes is not None)
@@ -1016,3 +1035,115 @@ class CrystalOfTableaux(CrystalOfWords):
 
     class Element(CrystalOfTableauxElement):
         pass
+
+class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
+    """
+    A queer crystal of the semistandard decomposition tableaux of a given shape.
+
+    INPUT:
+
+    - ``cartan_type`` -- a Cartan type
+    - ``shape``       -- a shape
+    """
+    def __init__(self, cartan_type, shape):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: T = crystals.Tableaux(['Q',3], shape=[4,2])
+            sage: TestSuite(T).run()
+            sage: T = crystals.Tableaux(['Q',4], shape=[4,1])
+            sage: TestSuite(T).run()  # long time
+        """
+        from sage.categories.regular_supercrystals import RegularSuperCrystals
+        from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+        Parent.__init__(self, category=(RegularSuperCrystals(), FiniteEnumeratedSets()))
+        self.shape = shape
+        self._cartan_type = cartan_type
+        self.letters = CrystalOfLetters(cartan_type)
+        n = cartan_type.rank() + 1
+        data = sum(([self.letters(n-i)] * row_len for i,row_len in enumerate(shape)), [])
+        mg = self.element_class(self, list=data)
+        self.module_generators = (mg,)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: crystals.Tableaux(['Q',3], shape=[4,2])
+            The crystal of tableaux of type ['Q', 3] and shape [4, 2]
+        """
+        return "The crystal of tableaux of type {} and shape {}".format(self._cartan_type, self.shape)
+
+    class Element(TensorProductOfQueerSuperCrystalsElement):
+        def _repr_(self):
+            """
+            Return a string representation of ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: B.an_element()
+                [[3, 3, 3], [2, 2], [1]]
+            """
+            return repr([list(reversed(row)) for row in self.rows()])
+
+        def _ascii_art_(self):
+            r"""
+            Return an ASCII art representation of ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: t._ascii_art_()
+                  3  3  3
+                     2  2
+                        1
+            """
+            from sage.typeset.ascii_art import AsciiArt
+            ret = [" "*(3*i) + "".join("%3s" % str(x) for x in reversed(row))
+                   for i, row in enumerate(self.rows())]
+            return AsciiArt(ret)
+
+        def _latex_(self):
+            r"""
+            Return latex code for ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: latex(t)
+                {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+                \raisebox{-.6ex}{$\begin{array}[b]{*{3}c}\cline{1-3}
+                \lr{3}&\lr{3}&\lr{3}\\\cline{1-3}
+                &\lr{2}&\lr{2}\\\cline{2-3}
+                &&\lr{1}\\\cline{3-3}
+                \end{array}$}
+                }
+            """
+            from sage.combinat.output import tex_from_array
+            return tex_from_array([[None]*i + list(reversed(row))
+                                  for i, row in enumerate(self.rows())])
+
+        def rows(self):
+            """
+            Return the list of rows of ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: t.rows()
+                [[3, 3, 3], [2, 2], [1]]
+            """
+            ret = []
+            pos = 0
+            for l in self.parent().shape:
+                ret.append(self[pos:pos+l])
+                pos += l
+            return ret

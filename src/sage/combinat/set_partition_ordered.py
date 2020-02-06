@@ -22,7 +22,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from six import add_metaclass
 
@@ -311,7 +311,7 @@ class OrderedSetPartition(ClonableArray):
             sage: y.to_composition()
             [2, 1, 2]
         """
-        return Composition([len(_) for _ in self])
+        return Composition([len(p) for p in self])
 
     @staticmethod
     def sum(osps):
@@ -703,7 +703,7 @@ class OrderedSetPartition(ClonableArray):
         """
         co1 = self
         if co1.base_set() != co2.base_set():
-            raise ValueError("ordered set partitions self (= %s) and co2 (= %s) must be of the same set"%(self, co2))
+            raise ValueError("ordered set partitions self (= %s) and co2 (= %s) must be of the same set" % (self, co2))
 
         i1 = 0
         for j2 in co2:
@@ -811,7 +811,8 @@ class OrderedSetPartition(ClonableArray):
         for i in range(len(self)):
             for letter in self[i]:
                 out[letter] = i
-        return Words()([out[letter]+1 for letter in X])
+        return Words()([out[letter] + 1 for letter in X])
+
 
 class OrderedSetPartitions(UniqueRepresentation, Parent):
     """
@@ -1009,7 +1010,7 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
             sage: OrderedSetPartitions([1,2,3,4])
             Ordered set partitions of {1, 2, 3, 4}
         """
-        return "Ordered set partitions of %s"%Set(self._set)
+        return "Ordered set partitions of %s" % Set(self._set)
 
     def cardinality(self):
         """
@@ -1030,7 +1031,8 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
             sage: OrderedSetPartitions(5).cardinality()
             541
         """
-        return sum([factorial(k)*stirling_number2(len(self._set),k) for k in range(len(self._set)+1)])
+        return sum([factorial(k)*stirling_number2(len(self._set), k)
+                    for k in range(len(self._set)+1)])
 
     def __iter__(self):
         """
@@ -1088,7 +1090,8 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
             sage: OrderedSetPartitions([1,2,3,4], 2)
             Ordered set partitions of {1, 2, 3, 4} into 2 parts
         """
-        return "Ordered set partitions of %s into %s parts"%(Set(self._set),self.n)
+        return "Ordered set partitions of %s into %s parts" % (Set(self._set),
+                                                               self.n)
 
     def cardinality(self):
         """
@@ -1105,7 +1108,7 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
             sage: OrderedSetPartitions(4,1).cardinality()
             1
         """
-        return factorial(self.n)*stirling_number2(len(self._set), self.n)
+        return factorial(self.n) * stirling_number2(len(self._set), self.n)
 
     def __iter__(self):
         """
@@ -1128,8 +1131,9 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
              [{4}, {1, 2, 3}]]
         """
         for x in Compositions(len(self._set),length=self.n):
-            for z in OrderedSetPartitions_scomp(self._set,x):
+            for z in OrderedSetPartitions_scomp(self._set, x):
                 yield self.element_class(self, z)
+
 
 class OrderedSetPartitions_scomp(OrderedSetPartitions):
     def __init__(self, s, comp):
@@ -1190,7 +1194,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
             sage: OrderedSetPartitions(5, [2,0,3]).cardinality()
             10
         """
-        return factorial(len(self._set))/prod([factorial(i) for i in self.c])
+        return factorial(len(self._set)) / prod([factorial(i) for i in self.c])
 
     def __iter__(self):
         """
@@ -1242,8 +1246,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
         for j in range(l):
             p += [j + 1] * comp[j]
 
-        from sage.combinat.permutation import Permutations_mset
-        for x in Permutations_mset(p):
+        for x in permutation.Permutations_mset(p):
             res = permutation.to_standard(x).inverse()
             res = [lset[x - 1] for x in res]
             yield self.element_class(self, [Set(res[dcomp[i]+1:dcomp[i+1]+1])
@@ -1406,4 +1409,3 @@ class SplitNK(OrderedSetPartitions_scomp):
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.split_nk", "SplitNK_nk", SplitNK)
-

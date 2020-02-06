@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 # -*- coding: utf-8 -*-
 
 import os
@@ -78,7 +78,7 @@ class NotebookJupyter(object):
     PREREQUISITE_ERROR = textwrap.dedent("""
     The Jupyter notebook requires ssl, even if you do not use
     https. Install the openssl development packages in your system and
-    then rebuild Python (sage -f python2).
+    then rebuild Python (sage -f python3).
     """)
 
     def print_banner(self):
@@ -239,7 +239,7 @@ def trac_23428_browser_workaround():
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
-    if len(unknown) > 0 and unknown[0] == '--':
+    if unknown and unknown[0] == '--':
         unknown = unknown[1:]
     trac_23428_browser_workaround()
     if args.log is not None:
@@ -248,6 +248,12 @@ if __name__ == '__main__':
         logger.setLevel(level=level)
     logger.info('Main parser got arguments %s', args)
     logger.info('Passing on to notebook implementation: %s', unknown)
+
+    if sys.version_info.major == 3 and args.notebook == "sagenb":
+        logger.critical('trying to use old notebook under Python 3')
+        print('old notebook not working under Python 3, use Jupyter notebook')
+        print('see https://wiki.sagemath.org/Python3-Switch')
+        sys.exit(1)
 
     try:
         launcher = notebook_launcher[args.notebook]
@@ -265,5 +271,3 @@ if __name__ == '__main__':
         sys.exit(0)
 
     launcher(unknown)
-
-

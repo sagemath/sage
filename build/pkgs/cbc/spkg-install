@@ -15,4 +15,4 @@ sed -i -e "s/clock\_gettime ()/Grrrrrrrrrrrr\ ()/g" Cbc/configure || \
 sdh_configure --enable-cbc-parallel --enable-parallel \
               --enable-gnu-packages --enable-static
 sdh_make
-sdh_make_install
+sdh_make_install -j1

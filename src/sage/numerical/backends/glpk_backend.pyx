@@ -18,7 +18,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -1625,9 +1624,11 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: p.write_lp(os.path.join(SAGE_TMP, "lp_problem.lp"))
-            Writing problem data to ...
-            9 lines were written
+            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.lp")
+            sage: p.write_lp(fnam)
+            ...
+            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            9
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         glp_write_lp(self.lp, NULL, filename)
@@ -1648,9 +1649,11 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
-            sage: p.write_mps(os.path.join(SAGE_TMP, "lp_problem.mps"), 2)
-            Writing problem data to ...
-            17 records were written
+            sage: fnam = os.path.join(SAGE_TMP, "lp_problem.mps")
+            sage: p.write_mps(fnam, 2)
+            ...
+            sage: len([(x,y) for x,y in enumerate(open(fnam,"r"))])
+            17
         """
         filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
         glp_write_mps(self.lp, modern, NULL, filename)
@@ -2286,36 +2289,30 @@ cdef class GLPKBackend(GenericBackend):
             1
             sage: p.solve()
             0
-            sage: p.print_ranges()
-            Write sensitivity analysis report to ...
+            sage: p.print_ranges() # this writes out "ranges.tmp"
+            ...
+            sage: fnam = os.path.join(SAGE_TMP, "ranges.tmp")
+            sage: for ll in open(fnam, "r"):
+            ....:     if ll != '': print(ll)
             GLPK ... - SENSITIVITY ANALYSIS REPORT                                                                         Page   1
-            <BLANKLINE>
             Problem:
             Objective:  7.5 (MAXimum)
-            <BLANKLINE>
                No. Row name     St      Activity         Slack   Lower bound       Activity      Obj coef  Obj value at Limiting
                                                       Marginal   Upper bound          range         range   break point variable
             ------ ------------ -- ------------- ------------- -------------  ------------- ------------- ------------- ------------
                  1              NU       3.00000        .               -Inf         .           -2.50000        .
                                                        2.50000       3.00000           +Inf          +Inf          +Inf
-            <BLANKLINE>
             GLPK ... - SENSITIVITY ANALYSIS REPORT                                                                         Page   2
-            <BLANKLINE>
             Problem:
             Objective:  7.5 (MAXimum)
-            <BLANKLINE>
                No. Column name  St      Activity      Obj coef   Lower bound       Activity      Obj coef  Obj value at Limiting
                                                       Marginal   Upper bound          range         range   break point variable
             ------ ------------ -- ------------- ------------- -------------  ------------- ------------- ------------- ------------
                  1              NL        .            2.00000        .                -Inf          -Inf          +Inf
                                                        -.50000          +Inf        3.00000       2.50000       6.00000
-            <BLANKLINE>
                  2              BS       1.50000       5.00000        .                -Inf       4.00000       6.00000
                                                         .               +Inf        1.50000          +Inf          +Inf
-            <BLANKLINE>
             End of report
-            <BLANKLINE>
-            0
         """
 
         from sage.misc.all import SAGE_TMP

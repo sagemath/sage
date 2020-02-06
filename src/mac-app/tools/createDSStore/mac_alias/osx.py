@@ -2,12 +2,11 @@
 from __future__ import unicode_literals
 
 from ctypes import *
-import struct
 import os
 import datetime
 import uuid
 
-from .utils import *
+from .utils import unix_epoch
 
 libc = cdll.LoadLibrary('/usr/lib/libc.dylib')
 

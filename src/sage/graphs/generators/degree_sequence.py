@@ -31,7 +31,7 @@ def DegreeSequence(deg_sequence):
     which constructs a simple graph by connecting vertices of highest
     degree to other vertices of highest degree, resorting the remaining
     vertices by degree and repeating the process. See Theorem 1.4 in
-    [CharLes1996]_.
+    [CL1996]_.
 
     INPUT:
 
@@ -60,11 +60,6 @@ def DegreeSequence(deg_sequence):
 
         sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])
         sage: G.show()  # long time
-
-    REFERENCE:
-
-    .. [CharLes1996] Chartrand, G. and Lesniak, L.: Graphs and Digraphs.
-      Chapman and Hall/CRC, 1996.
     """
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
@@ -171,8 +166,7 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
 
     REFERENCE:
 
-    .. [Newman2003] Newman, M.E.J. The Structure and function of complex
-      networks, SIAM Review vol. 45, no. 2 (2003), pp. 167-256.
+    [New2003]_
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -230,9 +224,7 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
 
     REFERENCE:
 
-    .. [ChungLu2002] Chung, Fan and Lu, L. Connected components in random
-      graphs with given expected degree sequences.
-      Ann. Combinatorics (6), 2002 pp. 125-145.
+    [CL2002]_
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)

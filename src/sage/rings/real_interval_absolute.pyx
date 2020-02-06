@@ -1,7 +1,6 @@
 """
 Real intervals with a fixed absolute precision
 """
-from __future__ import print_function, absolute_import
 
 from sage.ext.stdsage cimport PY_NEW
 

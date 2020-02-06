@@ -688,7 +688,7 @@ class GraphLatex(SageObject):
           ``'#2D87A7'``, or a single character from the choices ``'rgbcmykw'``.
           Additionally, a number between 0 and 1 will create a grayscale value.
           These color specifications are consistent throughout the options for
-          a ``tkzpicture``.
+          a ``tikzpicture``.
 
         - ``vertex_colors`` -- a dictionary whose keys are vertices of the graph
           and whose values are colors. These will be used to color the outline
@@ -1333,14 +1333,14 @@ class GraphLatex(SageObject):
             sage: print(g.latex_options().dot2tex_picture())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-              \node (node_3) at (...bp,...bp) [draw,draw=none] {$\left(0, 1\right)$};
-              \node (node_2) at (...bp,...bp) [draw,draw=none] {$\left(1, 0\right)$};
-              \node (node_1) at (...bp,...bp) [draw,draw=none] {$\left(0, 0\right)$};
-              \node (node_0) at (...bp,...bp) [draw,draw=none] {$\left(1, 1\right)$};
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_3);
-              \draw [black,->] (node_2) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_3);
-              \draw [black,->] (node_2) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
 
@@ -1352,9 +1352,9 @@ class GraphLatex(SageObject):
             sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_1) at (...bp,...bp) [draw,draw=none] {$3333$};
-              \node (node_0) at (...bp,...bp) [draw,draw=none] {$88$};
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
+            \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
               \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
               \pgfsetstrokecolor{strokecol}
               \draw (...bp,...bp) node {$\text{\texttt{my{\char`\_}label}}$};
@@ -1371,7 +1371,6 @@ class GraphLatex(SageObject):
             \draw [red,] (node_0) ... (node_1);
             ...
             \end{tikzpicture}
-
 
         .. NOTE::
 

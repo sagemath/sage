@@ -46,7 +46,8 @@ preparsed when calling ``%runfile`` ::
     sage: bool(re.search('/[0-9]+/', TMP))
     True
     sage: tmp = os.path.join(TMP, 'run_cell.py')
-    sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
+    sage: with open(tmp, 'w') as f:
+    ....:     _ = f.write('a = 2\n')
     sage: shell.run_cell('%runfile '+tmp)
     sage: shell.run_cell('a')
     2
@@ -109,7 +110,8 @@ class SageMagics(Magics):
             sage: from sage.misc.all import tmp_dir
             sage: shell = get_test_shell()
             sage: tmp = os.path.join(tmp_dir(), 'run_cell.py')
-            sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
+            sage: with open(tmp, 'w') as f:
+            ....:     _ = f.write('a = 2\n')
             sage: shell.run_cell('%runfile '+tmp)
             sage: shell.run_cell('a')
             2
@@ -133,12 +135,12 @@ class SageMagics(Magics):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: tmp = os.path.normpath(os.path.join(SAGE_TMP, 'run_cell.py'))
-            sage: f = open(tmp, 'w'); _ = f.write('a = 2\n'); f.close()
+            sage: with open(tmp, 'w') as f: _ = f.write('a = 2\n')
             sage: shell.run_cell('%attach ' + tmp)
             sage: shell.run_cell('a')
             2
             sage: sleep(1)  # filesystem timestamp granularity
-            sage: f = open(tmp, 'w'); _ = f.write('a = 3\n'); f.close()
+            sage: with open(tmp, 'w') as f: _ = f.write('a = 3\n')
 
         Note that the doctests are never really at the command prompt, so
         we call the input hook manually::
@@ -234,14 +236,14 @@ class SageMagics(Magics):
             sage: shell.run_cell('%display ascii_art')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [
-            [                                                                  1  4
-            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
-            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
+            [                                                                  1  4    1  3
+            [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
+            [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4   ,
             <BLANKLINE>
-                               1 ]
-               1  3    1  2    2 ]
-               2       3       3 ]
-               4   ,   4   ,   4 ]
+                       1 ]
+               1  2    2 ]
+               3       3 ]
+               4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
             sage: shell.run_cell('StandardTableaux(4).list()')
             [

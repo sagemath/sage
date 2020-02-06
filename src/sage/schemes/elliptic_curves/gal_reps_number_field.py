@@ -262,7 +262,7 @@ class GaloisRepresentation(SageObject):
         """
         if self.E.has_cm():
             return False
-        return (_exceptionals(self.E, [p], A) == [])
+        return not _exceptionals(self.E, [p], A)
 
     def isogeny_bound(self, A=100):
         r"""
@@ -713,7 +713,7 @@ def _exceptionals(E, L, patience=1000):
             D.pop(l)
         unexc = []
 
-        if (D == {}) or (patience == 0):
+        if (not D) or (patience == 0):
             break
 
     for l in D:
@@ -1010,7 +1010,7 @@ def _possible_normalizers(E, SA):
 
     selmer_group = K.selmer_group(SA, 2) # Generators of the selmer group.
 
-    if selmer_group == []:
+    if not selmer_group:
         return []
 
     V = VectorSpace(GF(2), len(selmer_group))

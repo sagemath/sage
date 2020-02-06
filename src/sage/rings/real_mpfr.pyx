@@ -117,8 +117,6 @@ Make sure we don't have a new field for every new literal::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 import math # for log
 import sys
 import re
@@ -2369,7 +2367,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         Return a sympy object of ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
+
+            sage: RealField(100)(1/7)._sympy_()
+            0.14285714285714285714285714286
+            sage: type(_)
+            <class 'sympy.core.numbers.Float'>
+
+        TESTS:
 
         An indirect doctest to check this (see :trac:`14915`)::
 
@@ -2377,9 +2382,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: integrate(y, y, 0.5, 8*log(x), algorithm='sympy')
             32*log(x)^2 - 0.125000000000000
 
+        Check that :trac:`28903` is fixed::
+
+            sage: (10.0^400)._sympy_()
+            1.00000000000000e+400
         """
-        from sympy import simplify
-        return simplify(float(self))
+        import sympy
+        return sympy.Float(self, precision=self._parent.precision())
 
     cpdef _mul_(self, right):
         """

@@ -415,10 +415,12 @@ class DiffScalarField(ScalarField):
         sage: s.display()
         M --> R
         on U: (x, y) |--> (x^3 + x*y^2 + x + 1)/(x^2 + y^2 + 1)
+        on W: (u, v) |--> (u^4 + v^4 + u^3 + (2*u^2 + u)*v^2 + u)/(u^4 + v^4 + (2*u^2 + 1)*v^2 + u^2)
         sage: s = f + u; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
         M --> R
+        on W: (x, y) |--> (x^3 + (x + 1)*y^2 + x^2 + x)/(x^4 + y^4 + (2*x^2 + 1)*y^2 + x^2)
         on V: (u, v) |--> (u^3 + (u + 1)*v^2 + u^2 + u)/(u^2 + v^2 + 1)
 
     The addition of two scalar fields with different domains is possible if
@@ -430,13 +432,13 @@ class DiffScalarField(ScalarField):
         sage: g.domain()
         Open subset U of the 2-dimensional differentiable manifold M
         sage: s = f + g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f+g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.domain()
         Open subset U of the 2-dimensional differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> (x*y^3 + (x^3 + x)*y + 1)/(x^2 + y^2 + 1)
+        f+g: U --> R
+           (x, y) |--> (x*y^3 + (x^3 + x)*y + 1)/(x^2 + y^2 + 1)
         on W: (u, v) |--> (u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6 + u*v^3
          + (u^3 + u)*v)/(u^6 + v^6 + (3*u^2 + 1)*v^4 + u^4 + (3*u^4 + 2*u^2)*v^2)
 
@@ -487,10 +489,12 @@ class DiffScalarField(ScalarField):
         sage: s.display()
         M --> R
         on U: (x, y) |--> x/(x^2 + y^2 + 1)
+        on W: (u, v) |--> u/(u^2 + v^2 + 1)
         sage: s = u*f; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
         M --> R
+        on W: (x, y) |--> x/(x^4 + y^4 + (2*x^2 + 1)*y^2 + x^2)
         on V: (u, v) |--> (u^2 + v^2)*u/(u^2 + v^2 + 1)
 
     Some tests::
@@ -530,11 +534,11 @@ class DiffScalarField(ScalarField):
         (2-dimensional differentiable manifold M,
          Open subset U of the 2-dimensional differentiable manifold M)
         sage: s = f*g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f*g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> x*y/(x^2 + y^2 + 1)
+        f*g: U --> R
+           (x, y) |--> x*y/(x^2 + y^2 + 1)
         on W: (u, v) |--> u*v/(u^4 + v^4 + (2*u^2 + 1)*v^2 + u^2)
         sage: s == f.restrict(U)*g
         True
@@ -555,11 +559,11 @@ class DiffScalarField(ScalarField):
            (x, y) |--> x*y/H(x, y)
         on W: (u, v) |--> u*v/((u^4 + 2*u^2*v^2 + v^4)*H(u/(u^2 + v^2), v/(u^2 + v^2)))
         sage: s = f/g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f/g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> 1/(x*y^3 + (x^3 + x)*y)
+        f/g: U --> R
+           (x, y) |--> 1/(x*y^3 + (x^3 + x)*y)
         on W: (u, v) |--> (u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6)/(u*v^3 + (u^3 + u)*v)
         sage: s == f.restrict(U)/g
         True
@@ -631,6 +635,7 @@ class DiffScalarField(ScalarField):
         ScalarField.__init__(self, parent, coord_expression=coord_expression,
                              chart=chart, name=name, latex_name=latex_name)
         self._tensor_type = (0,0)
+        self._tensor_rank = 0
 
     ####### Required methods for an algebra element (beside arithmetic) #######
 
@@ -1021,12 +1026,12 @@ class DiffScalarField(ScalarField):
             sage: a = M.diff_form(2, name='a')
             sage: a[0,1] = x*y
             sage: s = f.wedge(a); s
-            2-form on the 2-dimensional differentiable manifold M
+            2-form f*a on the 2-dimensional differentiable manifold M
             sage: s.display()
-            (x*y^3 + x^2*y) dx/\dy
+            f*a = (x*y^3 + x^2*y) dx/\dy
 
         """
-        return self*other
+        return self * other
 
     def degree(self):
         r"""
@@ -1053,7 +1058,7 @@ class DiffScalarField(ScalarField):
             0
 
         """
-        return 0
+        return self._tensor_rank
 
     def gradient(self, metric=None):
         r"""

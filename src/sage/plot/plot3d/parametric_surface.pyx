@@ -298,6 +298,13 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: s = P.json_repr(P.default_render_params())
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
+
+        One test for :trac:`22688`::
+
+            sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
+            sage: s = P.json_repr(P.default_render_params())
+            sage: 'nan' in s or 'NaN' in s
+            False
         """
         self.triangulate(render_params)
         return IndexFaceSet.json_repr(self, render_params)

@@ -5,9 +5,7 @@ AUTHORS:
 
 - William Stein
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,8 +17,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.rational_field
 
@@ -63,10 +61,10 @@ def berlekamp_massey(a):
 
     if not isinstance(a, list):
         raise TypeError("Argument 1 must be a list.")
-    if len(a)%2 != 0:
+    if len(a) % 2:
         raise ValueError("Argument 1 must have an even number of terms.")
 
-    M = len(a)//2
+    M = len(a) // 2
 
     try:
         K = a[0].parent().fraction_field()
@@ -95,4 +93,3 @@ def berlekamp_massey(a):
     t = s[j].reverse()
     f = ~(t[t.degree()]) * t  # make monic  (~ is inverse in python)
     return f
-

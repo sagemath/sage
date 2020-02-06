@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 
 import sys
 from sage.repl.load import load_cython

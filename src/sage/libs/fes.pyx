@@ -1,5 +1,5 @@
 """
-Binding for the FES library.
+Binding for the FES library
 
 Finding solutions of systems of boolean equations by exhaustive
 search, via the fes library. This is usually (much) faster than
@@ -61,8 +61,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import print_function
 
 from libc.stdint cimport uint64_t
 from cysignals.memory cimport sig_calloc, sig_free

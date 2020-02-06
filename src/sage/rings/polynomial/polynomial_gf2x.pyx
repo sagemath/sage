@@ -1,5 +1,5 @@
 """
-Univariate Polynomials over GF(2) via NTL's GF2X.
+Univariate Polynomials over GF(2) via NTL's GF2X
 
 AUTHOR:
 - Martin Albrecht (2008-10) initial implementation

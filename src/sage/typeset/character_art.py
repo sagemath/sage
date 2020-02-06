@@ -137,17 +137,10 @@ class CharacterArt(SageObject):
             hsize = MAX_WIDTH
         else:
             hsize = self._terminal_width()
-        #########
-        # if the draw is larger than the max length it try to split...
+        # if the draw is larger than the max length, try to split it
         if hsize <= self._l and self._breakpoints:
             return self._split_repr_(hsize)
-        #########
-        output = ""
-        if self._matrix:
-            for i in range(len(self._matrix) - 1):
-                output += self._matrix[i] + "\n"
-            return output + self._matrix[len(self._matrix) - 1]
-        return output
+        return '\n'.join(self._matrix)
 
     def __format__(self, fmt):
         r"""
@@ -271,7 +264,7 @@ class CharacterArt(SageObject):
 
     def _split_repr_(self, size):
         r"""
-        Split the draw and the left part has length ``size``.
+        Split the representation into chunks of length at most ``size``.
 
         TESTS::
 
@@ -287,18 +280,42 @@ class CharacterArt(SageObject):
                 *   ]
                * *  ]
               ***** ]
+
+        ::
+
+            sage: ascii_art(['a' * k for k in (1..10)])._split_repr_(20)
+            '[ a, aa, aaa, aaaa,\n\n aaaaa, aaaaaa,\n\n aaaaaaa, aaaaaaaa,\n\n aaaaaaaaa,\n\n aaaaaaaaaa ]'
+
+        Check that wrapping happens exactly at the given size (:trac:`28527`)::
+
+            sage: len(ascii_art(*(['']*90), sep=',')._split_repr_(80).split('\n')[0])
+            80
         """
-        f_split = self._breakpoints[0]
-        i = 1
-        while i < len(self._breakpoints) and self._breakpoints[i] < size:
-            f_split = self._breakpoints[i]
-            i += 1
-        if size <= f_split:
-            import warnings
-            warnings.warn("the console size is smaller than the pretty "
-                          "representation of the object")
-        top, bottom = self.split(f_split)
-        return repr(top * self.empty()) + "\n" + repr(bottom)
+        def splitting_points(size):
+            idx = 0
+            breakpoints = iter(self._breakpoints)
+            bp_old = next(breakpoints)
+            for bp in breakpoints:
+                # advance bp_old as far as possible without passing size limit,
+                # then yield
+                if bp - idx > size:
+                    yield bp_old
+                    idx = bp_old
+                bp_old = bp
+            if self._l - idx > size:
+                yield bp_old
+            yield self._l
+        idx = 0
+        parts = []
+        for bp in splitting_points(size):
+            if bp - idx > size:
+                import warnings
+                warnings.warn("the console size is smaller than the pretty "
+                              "representation of the object")
+            # Note that this is faster than calling self.split() repeatedly
+            parts.append('\n'.join(line[idx:bp] for line in self))
+            idx = bp
+        return '\n\n'.join(parts)
 
     def split(self, pos):
         r"""
@@ -389,30 +406,8 @@ class CharacterArt(SageObject):
              |
              |
              |
-            sage: l5._baseline = None
-            sage: AsciiArt._compute_new_baseline(l3, l5)
-            2
-            sage: l3._baseline = 2
-            sage: AsciiArt._compute_new_baseline(l3, l5)
-            4
-            sage: l3 + l5
-            ||
-            ||
-            ||
-             |
-             |
-
         """
-        if obj1.get_baseline() is None:
-            if obj2.get_baseline() is None:
-                return None
-            return obj2.get_baseline() + max(obj1._h - obj2._h, 0)
-        if obj2.get_baseline() is None:
-            return obj1.get_baseline() + max(obj2._h - obj1._h, 0)
-        return max(
-            obj1.get_baseline(),
-            obj2.get_baseline()
-        )
+        return max(obj1.get_baseline(), obj2.get_baseline())
 
     @staticmethod
     def _compute_new_h(obj1, obj2):
@@ -470,8 +465,6 @@ class CharacterArt(SageObject):
              |
              |
         """
-        if obj1.get_baseline() is None or obj2.get_baseline() is None:
-            return max(obj1._h, obj2._h)
         return max(
             obj1.get_baseline(),
             obj2.get_baseline()
@@ -524,7 +517,7 @@ class CharacterArt(SageObject):
 
     def __add__(self, Nelt):
         r"""
-        Concatenate two ascii art objects.
+        Concatenate two character art objects.
 
         By default, when two objects are concatenated, the new one will be
         splittable between both.
@@ -556,14 +549,7 @@ class CharacterArt(SageObject):
              / \ [7 8 9]
             o   o
 
-        If one of the objects has not baseline, the concatenation is realized
-        from the top::
-
-            o    [1 2 3]
-             \   [4 5 6]
-              o  [7 8 9]
-             / \
-            o   o
+        Since :trac:`28527`, the baseline must always be a number.
 
         TESTS::
 
@@ -680,8 +666,7 @@ class CharacterArt(SageObject):
 
     def __mul__(self, Nelt):
         r"""
-        The operator ``*`` is use to the representation ``self`` at
-        the top of an other ``Nelt``.
+        Stack two character art objects vertically.
 
         TESTS::
 

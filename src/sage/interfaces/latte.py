@@ -247,7 +247,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         sage: integrate(P.cdd_Hrepresentation(), '[[1,[2,2,2]]]', cdd=True)   # optional - latte_int
         4096/27
 
-    TESTS::
+    TESTS:
 
     Testing raw output::
 
@@ -399,7 +399,7 @@ def to_latte_polynomial(polynomial):
 
     A string that describes the monomials list and exponent vectors.
 
-    TESTS::
+    TESTS:
 
     Testing a polynomial in three variables::
 

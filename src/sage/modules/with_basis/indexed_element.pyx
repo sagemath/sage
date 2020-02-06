@@ -17,8 +17,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division, print_function
-
 from sage.structure.element cimport parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from cpython.object cimport Py_NE, Py_EQ

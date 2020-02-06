@@ -114,9 +114,10 @@ from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.categories.simplicial_complexes import SimplicialComplexes
 
+
 def is_SimplicialComplexMorphism(x):
     """
-    Returns ``True`` if and only if ``x`` is a morphism of simplicial complexes.
+    Return ``True`` if and only if ``x`` is a morphism of simplicial complexes.
 
     EXAMPLES::
 
@@ -129,7 +130,8 @@ def is_SimplicialComplexMorphism(x):
         True
 
     """
-    return isinstance(x,SimplicialComplexMorphism)
+    return isinstance(x, SimplicialComplexMorphism)
+
 
 class SimplicialComplexMorphism(Morphism):
     """
@@ -178,7 +180,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def __eq__(self,x):
         """
-        Returns ``True`` if and only if ``self == x``.
+        Return ``True`` if and only if ``self == x``.
 
         EXAMPLES::
 
@@ -305,7 +307,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def associated_chain_complex_morphism(self,base_ring=ZZ,augmented=False,cochain=False):
         """
-        Returns the associated chain complex morphism of ``self``.
+        Return the associated chain complex morphism of ``self``.
 
         EXAMPLES::
 
@@ -466,7 +468,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def is_surjective(self):
         """
-        Returns ``True`` if and only if ``self`` is surjective.
+        Return ``True`` if and only if ``self`` is surjective.
 
         EXAMPLES::
 
@@ -493,7 +495,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def is_injective(self):
         """
-        Returns ``True`` if and only if ``self`` is injective.
+        Return ``True`` if and only if ``self`` is injective.
 
         EXAMPLES::
 

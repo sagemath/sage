@@ -382,6 +382,39 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         s +=  ']' if self._upper_closed else ')'
         return s
 
+    def _sympy_condition_(self, variable):
+        """
+        Convert to a sympy conditional expression.
+
+        INPUT:
+
+        - ``variable`` -- a symbolic variable
+
+        EXAMPLES::
+
+            sage: RealSet(0, 4)._sympy_condition_(x)
+            (0 < x) & (x < 4)
+        """
+        x = variable
+        if self.is_point():
+            return (x == self.lower())._sympy_()
+        true = (x == 0)._sympy_() | True  # trick to get sympy's True
+        if self.lower() is not minus_infinity:
+            if self._lower_closed:
+                lower_condition = (self.lower() <= x)._sympy_()
+            else:
+                lower_condition = (self.lower() < x)._sympy_()
+        else:
+            lower_condition = true
+        if self.upper() is not infinity:
+            if self._upper_closed:
+                upper_condition = (x <= self.upper())._sympy_()
+            else:
+                upper_condition = (x < self.upper())._sympy_()
+        else:
+            upper_condition = true
+        return lower_condition & upper_condition
+
     def closure(self):
         """
         Return the closure
@@ -1060,6 +1093,44 @@ class RealSet(UniqueRepresentation, Parent):
         else:
             # Switch to u'\u222A' (cup sign) with Python 3
             return ' + '.join(map(repr, self._intervals))
+            # return u' ∪ '.join(map(repr, self._intervals)) # py3 only
+
+
+    def _sympy_condition_(self, variable):
+        """
+        Convert to a sympy conditional expression.
+
+        INPUT:
+
+        - ``variable`` -- a symbolic variable
+
+        EXAMPLES::
+
+            sage: RealSet(0, 1)._sympy_condition_(x)
+            (0 < x) & (x < 1)
+            sage: RealSet((0,1), [2,3])._sympy_condition_(x)
+            ((2 <= x) & (x <= 3)) | ((0 < x) & (x < 1))
+            sage: RealSet.unbounded_below_open(0)._sympy_condition_(x)
+            x < 0
+            sage: RealSet.unbounded_above_closed(2)._sympy_condition_(x)
+            2 <= x
+
+        TESTS::
+
+            sage: RealSet(6,6)._sympy_condition_(x)
+            False
+            sage: RealSet([6,6])._sympy_condition_(x)
+            Eq(x, 6)
+        """
+        x = variable
+        false = (x == 0)._sympy_() & False  # trick to get sympy's False
+        if self.n_components() == 0:
+            return false
+        else:
+            cond = false
+            for it in self._intervals:
+                cond = cond | it._sympy_condition_(x)
+            return cond
 
     @staticmethod
     def _prep(lower, upper=None):

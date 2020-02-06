@@ -13,16 +13,17 @@ This module defines the class ``EllipticCurve_field``, based on
 #*****************************************************************************
 from __future__ import absolute_import
 
-from . import ell_generic
 import sage.rings.all as rings
 from sage.rings.complex_field import is_ComplexField
 from sage.rings.real_mpfr import is_RealField
-from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
+from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from . import ell_generic
 
-class EllipticCurve_field(ell_generic.EllipticCurve_generic):
+class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
     base_field = ell_generic.EllipticCurve_generic.base_ring
 
@@ -136,13 +137,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: E.change_ring(k2).is_isomorphic(Et.change_ring(k2))
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
+        K = self.base_ring()
+        char = K.characteristic()
 
         if D is None:
             if K.is_finite():
                 x = rings.polygen(K)
-                if char==2:
+                if char == 2:
                     # We find D such that x^2+x+D is irreducible. If the
                     # degree is odd we can take D=1; otherwise it suffices to
                     # consider odd powers of a generator.
@@ -150,14 +151,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                     if K.degree()%2==0:
                         D = K.gen()
                         a = D**2
-                        while len((x**2+x+D).roots())>0:
+                        while (x**2 + x + D).roots():
                             D *= a
                 else:
                     # We could take a multiplicative generator but
                     # that might be expensive to compute; otherwise
                     # half the elements will do
                     D = K.random_element()
-                    while len((x**2-D).roots())>0:
+                    while (x**2 - D).roots():
                         D = K.random_element()
             else:
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
@@ -440,7 +441,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 um = c6E/c6F
                 x=rings.polygen(K)
                 ulist=(x**3-um).roots(multiplicities=False)
-                if len(ulist)==0:
+                if  not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -448,7 +449,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 um=c4E/c4F
                 x=rings.polygen(K)
                 ulist=(x**2-um).roots(multiplicities=False)
-                if len(ulist)==0:
+                if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -705,7 +706,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 return []
         elif f is None:
             embeddings = K.embeddings(L)
-            if len(embeddings) == 0:
+            if not embeddings:
                 raise TypeError("Input must be a subfield of the base field of the curve.")
             for g in embeddings:
                 try:

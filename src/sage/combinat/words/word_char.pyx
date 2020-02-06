@@ -10,7 +10,6 @@ Fast word datatype using an array of unsigned char
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -238,7 +237,7 @@ cdef class WordDatatype_char(WordDatatype):
         cdef int res = 5381
         cdef size_t i
         if self._hash is None:
-            for i in range(min(1024,self._length)):
+            for i in range(min(<size_t>1024, self._length)):
                 res = ((res << 5) + res) + self._data[i]
             self._hash = res
         return self._hash
@@ -385,7 +384,7 @@ cdef class WordDatatype_char(WordDatatype):
             i = key    # cast key into a size_t
             if i < 0:
                 i += self._length;
-            if i < 0 or i >= self._length:
+            if i < 0 or <size_t>i >= self._length:
                 raise IndexError("word index out of range")
             return self._data[i]
 
@@ -568,7 +567,7 @@ cdef class WordDatatype_char(WordDatatype):
         # now consider non trivial powers
         if w._length > SIZE_T_MAX / (i+1):
             raise OverflowError("the length of the result is too large")
-        cdef size_t new_length = w._length * i + rest
+        cdef Py_ssize_t new_length = w._length * i + rest
         cdef unsigned char * data = <unsigned char *>check_allocarray(new_length, sizeof(unsigned char))
 
         cdef Py_ssize_t j = w._length
@@ -619,7 +618,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w.has_prefix([0,1,0])
             True
         """
-        cdef size_t i
+        cdef Py_ssize_t i
         cdef WordDatatype_char w
 
         if isinstance(other, WordDatatype_char):

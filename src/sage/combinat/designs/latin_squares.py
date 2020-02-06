@@ -221,7 +221,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
     - ``n`` (integer) -- size of the latin square.
 
     - ``partitions`` (boolean) -- a Latin Square can be seen as 3 partitions of
-      the `n^2` cells of the array into `n` sets of size `n`, respectively :
+      the `n^2` cells of the array into `n` sets of size `n`, respectively:
 
       * The partition of rows
       * The partition of columns

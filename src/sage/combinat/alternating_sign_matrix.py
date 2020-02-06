@@ -752,7 +752,7 @@ class AlternatingSignMatrix(Element):
 
         for k in range(len(output)):
             output[k] = M.from_height_function(output[k]/2)
-        return(output)
+        return output
 
     def ASM_compatible_smaller(self):
         r"""
@@ -809,7 +809,7 @@ class AlternatingSignMatrix(Element):
                 output.append(d)
         for k in range(len(output)):
             output[k] = M.from_height_function((output[k]-matrix.ones(n,n))/2)
-        return(output)
+        return output
 
     @combinatorial_map(name='to Dyck word')
     def to_dyck_word(self, algorithm):

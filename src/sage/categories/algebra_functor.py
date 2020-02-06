@@ -274,7 +274,7 @@ into `A` in two ways -- via `S`, or via the base ring `R` -- and *the
 answers are different*. It that case the coercion to `R` takes
 precedence. In particular, if `\ZZ` is the ring (or group) of
 integers, then `\ZZ` will coerce to any `RS`, by sending `\ZZ` to `R`.
-In generic code, it is therefore recommented to always explicitly use
+In generic code, it is therefore recommended to always explicitly use
 ``A.monomial(g)`` to convert an element of the group into `A`.
 
 TESTS:
@@ -448,12 +448,12 @@ AUTHORS:
   generalization to a covariant functorial construction for
   monoid algebras, and beyond -- see e.g. :trac:`18700`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2017 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.pushout import ConstructionFunctor
 from sage.categories.morphism import SetMorphism
@@ -584,7 +584,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
         r"""
         Create the group algebra with given base ring over ``self.group()``.
 
-        INPUT :
+        INPUT:
 
         - ``base_ring`` -- the base ring of the group algebra
 

@@ -2026,77 +2026,6 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Fv = OK.residue_field(place)
         return self.change_ring(Fv)
 
-    def _torsion_bound(self, number_of_places=20):
-        r"""
-        An upper bound on the order of the torsion subgroup.
-
-        INPUT:
-
-        - ``number_of_places`` (positive integer, default = 20) -- the
-          number of places that will be used to find the bound.
-
-        OUTPUT:
-
-        (integer) An upper bound on the torsion order.
-
-        ALGORITHM:
-
-        An upper bound on the order of the torsion.group of the
-        elliptic curve is obtained by counting points modulo several
-        primes of good reduction.  Note that the upper bound returned
-        by this function is a multiple of the order of the torsion
-        group, and in general will be greater than the order.
-
-        EXAMPLES::
-
-            sage: CDB=CremonaDatabase()
-            sage: [E._torsion_bound() for E in CDB.iter([14])]
-            [6, 6, 6, 6, 6, 6]
-            sage: [E.torsion_order() for E in CDB.iter([14])]
-            [6, 6, 2, 6, 2, 6]
-
-        An example over a relative number field (see :trac:`16011`)::
-
-            sage: R.<x> = QQ[]
-            sage: F.<a> = QuadraticField(5)
-            sage: K.<b> = F.extension(x^2-3)
-            sage: E = EllipticCurve(K,[0,0,0,b,1])
-            sage: E.torsion_subgroup().order()
-            1
-
-        """
-        E = self
-        bound = ZZ.zero()
-        k = 0
-        K = E.base_field()
-        disc = E.discriminant()
-        p = ZZ.one()
-        # runs through primes, decomposes them into prime ideals
-        while k < number_of_places:
-            p = p.next_prime()
-            f = K.primes_above(p)
-            # runs through prime ideals above p
-            for qq in f:
-                fqq = qq.residue_class_degree()
-                charqq = qq.smallest_integer()
-                # take only places with small residue field (so that the
-                # number of points will be small)
-                if fqq == 1 or charqq**fqq < 3*number_of_places:
-                    # check if the model is integral at the place
-                    if all(K.ideal(a).valuation(qq) >= 0
-                           for a in E.a_invariants()):
-                        eqq = qq.absolute_ramification_index()
-                        # check if the formal group at the place is torsion-free
-                        # if so the torsion injects into the reduction
-                        if eqq < charqq - 1 and disc.valuation(qq) == 0:
-                            Etilda = E.reduction(qq)
-                            Npp = Etilda.cardinality()
-                            bound = bound.gcd(Npp)
-                            if bound == 1:
-                                return bound
-                            k += 1
-        return bound
-
     @cached_method
     def torsion_subgroup(self):
         r"""
@@ -3873,7 +3802,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         from sage.rings.all import prime_range
         if full_saturation:
             if lower_ht_bound is None:
-                # TODO (robertb): verify this for rank > 1
+                # TODO (robertwb): verify this for rank > 1
                 if verbose:
                     print("Computing lower height bound..")
                 lower_ht_bound = self.height_function().min(.1, 5) ** n

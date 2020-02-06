@@ -141,8 +141,8 @@ class Fields(CategoryWithAxiom):
             sage: P.<x> = QQ[]
             sage: Q = P.quotient(x^2+2)
             sage: Q.category()
-            Category of commutative no zero divisors quotients
-            of algebras over Rational Field
+            Category of commutative no zero divisors quotients of algebras
+             over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -532,6 +532,14 @@ class Fields(CategoryWithAxiom):
             - ``V`` -- a vector space over ``base``
             - ``from_V`` -- an isomorphism from ``V`` to this field
             - ``to_V`` -- the inverse isomorphism from this field to ``V``
+
+            EXAMPLES::
+
+                sage: K.<a> = Qq(125)
+                sage: V, fr, to = K.vector_space()
+                sage: v = V([1,2,3])
+                sage: fr(v, 7)
+                (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)
 
@@ -617,7 +625,7 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(15.0,12.0)
                 3.00000000000000
 
-            But for others floating point numbers, the gcd is just `0.0` or `1.0`::
+            But for other floating point numbers, the gcd is just `0.0` or `1.0`::
 
                 sage: gcd(3.2, 2.18)
                 1.00000000000000

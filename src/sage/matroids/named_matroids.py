@@ -1,5 +1,5 @@
 r"""
-Named matroids.
+Named matroids
 
 A module containing several interesting matroids that have names in the
 literature. A list of all matroids in this database is available via tab

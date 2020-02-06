@@ -360,6 +360,15 @@ class Function_zetaderiv(GinacFunction):
         from mpmath import zeta
         return mpmath_utils.call(zeta, x, 1, n, parent=parent)
 
+    def _method_arguments(self, k, x, **args):
+        r"""
+        TESTS::
+
+            sage: zetaderiv(1, RBF(3/2, 0.0001))
+            [-3.93 +/- ...e-3]
+        """
+        return [x, k]
+
 zetaderiv = Function_zetaderiv()
 
 def zeta_symmetric(s):

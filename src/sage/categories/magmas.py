@@ -2,12 +2,12 @@ r"""
 Magmas
 """
 from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
@@ -515,13 +515,13 @@ class Magmas(Category_singleton):
                 one = self.one()
                 tester.assertTrue(self.is_parent_of(one))
                 for x in tester.some_elements():
-                    tester.assertTrue(x * one == x)
-                    tester.assertTrue(one * x == x)
+                    tester.assertEqual(x * one, x)
+                    tester.assertEqual(one * x, x)
                 # Check that one is immutable if it looks like we can test this
                 if hasattr(one,"is_immutable"):
-                    tester.assertEqual(one.is_immutable(),True)
+                    tester.assertTrue(one.is_immutable())
                 if hasattr(one,"is_mutable"):
-                    tester.assertEqual(one.is_mutable(),False)
+                    tester.assertFalse(one.is_mutable())
 
             def is_empty(self):
                 r"""
@@ -758,7 +758,7 @@ class Magmas(Category_singleton):
                         sage: PvW0.one()
                         1
                     """
-                    return(self(self.realization_of().a_realization().one()))
+                    return self(self.realization_of().a_realization().one())
 
     class ParentMethods:
 

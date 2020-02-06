@@ -921,8 +921,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Left scalar multiplication by Integer Ring on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
         """
         try:
-            from sage.schemes.generic.algebraic_scheme import AlgebraicScheme
             from sage.schemes.generic.homset import SchemeHomset_generic
+            from sage.schemes.generic.homset import SchemeHomset_points
             if op is operator.mul:
                 from . import action as matrix_action
                 if self_on_left:
@@ -931,6 +931,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         return matrix_action.MatrixMatrixAction(self, S)
                     elif sage.modules.free_module.is_FreeModule(S):
                         return matrix_action.MatrixVectorAction(self, S)
+                    elif isinstance(S, SchemeHomset_points):
+                        return matrix_action.MatrixSchemePointAction(self, S)
                     elif isinstance(S, SchemeHomset_generic):
                         return matrix_action.MatrixPolymapAction(self, S)
                     else:
@@ -1811,7 +1813,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
     def matrix_space(self, nrows=None, ncols=None, sparse=False):
         """
         Return the matrix space with given number of rows, columns and
-        sparcity over the same base ring as self, and defaults the same as
+        sparsity over the same base ring as self, and defaults the same as
         self.
 
         EXAMPLES::
@@ -1983,8 +1985,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Check that this works for sparse matrices::
 
             sage: M = MatrixSpace(ZZ, 1000, 1000, sparse=True).an_element()
-            sage: M.density()
-            99/1000000
+            sage: 96 <= M.density() * 10^6 <= 99
+            True
         """
         from .args import MatrixArgs
         dim = self.dimension()

@@ -1,7 +1,7 @@
 """
 Divisors of function fields
 
-Sage allows extensive computations with divisors on global function fields.
+Sage allows extensive computations with divisors on function fields.
 
 EXAMPLES:
 
@@ -121,6 +121,7 @@ def prime_divisor(field, place, m=1):
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, {place: Integer(m)})
 
+
 class FunctionFieldDivisor(ModuleElement):
     """
     Divisors of function fields.
@@ -133,9 +134,9 @@ class FunctionFieldDivisor(ModuleElement):
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
-        sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
-        sage: f = x/(y+1)
+        sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+        sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+        sage: f = x/(y + 1)
         sage: f.divisor()
         Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
          + Place (1/x, 1/x^2*y + 1)
@@ -162,9 +163,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
-            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: f = x/(y + 1)
             sage: d = f.divisor()
             sage: {d: 1}
             {Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
@@ -234,9 +235,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: f = x/(y + 1)
             sage: d = f.divisor()
             sage: d._repr_(split=False)
             'Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1) + Place (1/x, 1/x^2*y + 1)
@@ -250,9 +251,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^3-x^2*(x^2+x+1)^2)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: f = x/(y + 1)
             sage: d = f.divisor()
             sage: d._latex_()
             \left(\frac{1}{x}, \frac{1}{x^{4}} y^{2} + \frac{1}{x^{2}} y + 1\right)
@@ -277,8 +278,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 +x^3*Y + x)
             sage: pls1 = L.places()
             sage: D1 = pls1[0] + pls1[1]
             sage: D2 = pls1[1] + 2*pls1[2]
@@ -309,9 +310,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: D
             - Place (1/x, 1/x^3*y^2 + 1/x)
@@ -340,9 +341,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: D + 2*D == 3*D
             True
@@ -368,9 +369,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: (-3)*(2*D) == -6*D
             True
@@ -389,9 +390,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: D.dict()
             {Place (1/x, 1/x^3*y^2 + 1/x): -1,
@@ -407,9 +408,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: D.list()
             [(Place (1/x, 1/x^3*y^2 + 1/x), -1),
@@ -425,9 +426,9 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
-            sage: f = x/(y+1)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: f = x/(y + 1)
             sage: D = f.divisor()
             sage: D.support()
             [Place (1/x, 1/x^3*y^2 + 1/x),
@@ -447,8 +448,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1,p2 = L.places()[:2]
             sage: D = 2*p1 - 3*p2
             sage: D.multiplicity(p1)
@@ -468,8 +469,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y> = K.extension(Y^3+x+x^3*Y)
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1,p2 = L.places()[:2]
             sage: D = 2*p1 - 3*p2
             sage: D.degree()
@@ -483,13 +484,13 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: P1 = I.divisor().support()[0]
             sage: Pinf = F.places_infinite()[0]
-            sage: D = 3*Pinf+2*P1
+            sage: D = 3*Pinf + 2*P1
             sage: D.dimension()
             5
         """
@@ -501,10 +502,10 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = K[]
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: D = I.divisor()
             sage: D.basis_function_space()
             [x/(x + 3), 1/(x + 3)]
@@ -524,10 +525,10 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2-x^3-1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: D = I.divisor()
             sage: V, from_V, to_V = D.function_space()
             sage: all(to_V(from_V(e)) == e for e in V)
@@ -566,10 +567,10 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: D = I.divisor()
             sage: basis, coordinates = D._function_space()
             sage: basis
@@ -596,8 +597,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         We check the Riemann-Roch theorem::
 
-            sage: K.<x>=FunctionField(GF(4)); _.<Y>=K[]
-            sage: L.<y>=K.extension(Y^3+x+x^3*Y)
+            sage: K.<x>=FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y>=K.extension(Y^3 + x^3*Y + x)
             sage: d = 3*L.places()[0]
             sage: l = len(d.basis_function_space())
             sage: i = len(d.basis_differential_space())
@@ -624,8 +625,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = K[]
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x - 2)
             sage: P1 = I.divisor().support()[0]
@@ -670,10 +671,10 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: D = -I.divisor()
             sage: basis, coordinates = D._differential_space()
             sage: basis
@@ -700,10 +701,10 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2-x^3-1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x-2)
+            sage: I = O.ideal(x - 2)
             sage: D = I.divisor()
             sage: D._basis()
             [1/(x + 3), x/(x + 3)]
@@ -814,8 +815,8 @@ class FunctionFieldDivisor(ModuleElement):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: D = F.divisor_group().zero()
             sage: echelon_basis, coordinates = D._echelon_basis([x/y, (x + 1)/y])
             sage: echelon_basis
@@ -906,6 +907,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         return newbasis, coordinates
 
+
 class DivisorGroup(UniqueRepresentation, Parent):
     """
     Groups of divisors of function fields.
@@ -916,8 +918,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-        sage: F.<y> = K.extension(t^2 - x^3 - 1)
+        sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+        sage: F.<y> = K.extension(Y^2 - x^3 - 1)
         sage: F.divisor_group()
         Divisor group of Function field in y defined by y^2 + 4*x^3 + 4
     """
@@ -929,8 +931,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: G = F.divisor_group()
             sage: TestSuite(G).run()
         """
@@ -944,8 +946,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: F.divisor_group()
             Divisor group of Function field in y defined by y^2 + 4*x^3 + 4
         """
@@ -957,8 +959,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: G = F.divisor_group()
             sage: G(0)
             0
@@ -975,8 +977,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         A place is converted to a prime divisor::
 
-            sage: K.<x> = FunctionField(GF(5)); R.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
             sage: I = O.ideal(x + 1,y)
             sage: P = I.place()
@@ -995,8 +997,8 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(GF(5)); _.<t> = PolynomialRing(K)
-            sage: F.<y> = K.extension(t^2 - x^3 - 1)
+            sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: G = F.divisor_group()
             sage: G.function_field()
             Function field in y defined by y^2 + 4*x^3 + 4

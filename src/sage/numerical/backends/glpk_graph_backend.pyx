@@ -68,8 +68,6 @@ Classes and methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport check_allocarray, sig_free
 
 from sage.cpython.string cimport str_to_bytes, char_to_str

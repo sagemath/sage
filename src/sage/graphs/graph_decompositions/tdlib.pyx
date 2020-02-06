@@ -48,17 +48,11 @@ AUTHOR: Lukas Larisch (10-25-2015): Initial version
 
 REFERENCE:
 
-.. [ST93] \P. D. Seymour and Robin Thomas,
-   Graph searching and a min-max theorem for tree-width,
-   J. Comb. Theory Ser. B 58, 1 (May 1993), 22-33.
+- [ST1993]_
 
-.. [AP86] \S. Arnborg, A. Proskurowski,
-   Characterization and Recognition of Partial 3-Trees,
-   SIAM Journal of Alg. and Discrete Methods,
-   Vol. 7, pp. 305-314, 1986
+- [AP1986]_
 
-.. [Bodlaender93] \H. L. Bodlaender,
-   A Tourist Guide through Treewidth, Acta Cybern. 1993
+- [Bod1993]_
 
 Methods
 -------
@@ -118,7 +112,7 @@ def treedecomposition_exact(G, lb=-1):
     A tree decomposition of ``G`` of ``tw(G)``, if the lower bound was not
     greater than ``tw(G)``, otherwise a tree decomposition of ``width = lb``.
 
-    ..  WARNING::
+    .. WARNING::
 
         The computation can take a lot of time for a graph `G` on more than
         about 30 vertices and `tw(G) > 3`.

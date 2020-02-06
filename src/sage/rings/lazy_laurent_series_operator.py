@@ -634,6 +634,7 @@ class LazyLaurentSeriesOperator_apply(LazyLaurentSeriesOperator):
         return (isinstance(other, LazyLaurentSeriesOperator_apply)
                 and self._series == other._series and self._function is other._function)
 
+
 class LazyLaurentSeriesOperator_truncate(LazyLaurentSeriesOperator):
     """
     Operator for truncation.
@@ -642,7 +643,7 @@ class LazyLaurentSeriesOperator_truncate(LazyLaurentSeriesOperator):
 
     - ``series`` -- a lazy Laurent series
 
-    - ``d`` -- an interger; the series is truncated the terms of degree `> d`
+    - ``d`` -- an integer; the series is truncated the terms of degree `> d`
 
     """
     def __init__(self, series, d):

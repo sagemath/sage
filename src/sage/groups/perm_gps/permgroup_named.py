@@ -1830,16 +1830,14 @@ class TransitiveGroup(PermutationGroup_unique):
         max_n = TransitiveGroups(d).cardinality()
         if n > max_n or n <= 0:
             raise ValueError("Index n must be in {1,..,%s}" % max_n)
-        gap_group = 'Group([()])' if d in [0, 1] else 'TransitiveGroup(%s,%s)' % (d, n)
-        try:
+        if d <= 1:
+            PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
+        else:
+            gap_group = libgap.TransitiveGroup(d, n)
             PermutationGroup_generic.__init__(self, gap_group=gap_group)
-        except RuntimeError:
-            from sage.misc.misc import verbose
-            verbose("Error: TransitiveGroups requires a standard GAP package. Not having it installed is a packaging error.", level=0)
 
         self._d = d
         self._n = n
-        self._domain = list(range(1, d + 1))
 
     def _repr_(self):
         """
@@ -2170,21 +2168,16 @@ class PrimitiveGroup(PermutationGroup_unique):
         if n > max_n or n <= 0:
             raise ValueError("Index n must be in {1,..,%s}" % max_n)
 
-        if d in [0,1]:
-            gap_group = libgap.Group(libgap.eval('[()]'))
+        if d <= 1:
+            PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
             self._pretty_name = "Trivial group"
         else:
             gap_group = libgap.PrimitiveGroup(d, n)
             self._pretty_name = str(gap_group)
-        try:
             PermutationGroup_generic.__init__(self, gap_group=gap_group)
-        except RuntimeError:
-            from sage.misc.misc import verbose
-            verbose("Error: GAP should come with PrimitiveGroups installed.", level=0)
 
         self._d = d
         self._n = n
-        self._domain = list(range(1, d + 1))
 
     def _repr_(self):
         """
@@ -3169,7 +3162,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         if self._p == 1:
             gens.append([tuple(range(self._n, self._m*self._n + 1, self._n))])
         else:
-            from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+            from sage.groups.perm_gps.constructor import PermutationGroupElement
             snm = PermutationGroupElement(gens[-1])
             sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
             gens.append(sn**(self._m-1) * snm * sn)
@@ -3255,7 +3248,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         if self._p == 1:
             return self([tuple(range(self._n, self._m*self._n + 1, self._n))])
 
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+        from sage.groups.perm_gps.constructor import PermutationGroupElement
         sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
         if i == self._n + 1:
             return self(sn**self._p)

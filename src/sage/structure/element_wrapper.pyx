@@ -408,7 +408,7 @@ cdef class ElementWrapper(Element):
 
 class DummyParent(UniqueRepresentation, Parent):
     """
-    A class for creating dummy parents for testing ElementWrapper
+    A class for creating dummy parents for testing :class:`ElementWrapper`
     """
     def __init__(self, name):
         """
@@ -416,14 +416,12 @@ class DummyParent(UniqueRepresentation, Parent):
 
             sage: from sage.structure.element_wrapper import DummyParent
             sage: parent = DummyParent("A Parent")
-            sage: TestSuite(parent).run(skip = ["_test_an_element",\
-                                                "_test_category",\
-                                                "_test_elements",\
-                                                "_test_elements_eq_reflexive",\
-                                                "_test_elements_eq_symmetric",\
-                                                "_test_elements_eq_transitive",\
-                                                "_test_elements_neq",\
-                                                "_test_some_elements"])
+            sage: skipped = ["_test_an_element", "_test_category",
+            ....:            "_test_elements", "_test_elements_eq_reflexive",
+            ....:            "_test_elements_eq_symmetric",
+            ....:            "_test_elements_eq_transitive",
+            ....:            "_test_elements_neq", "_test_some_elements"]
+            sage: TestSuite(parent).run(skip=skipped)
         """
         self.name = name
 
@@ -436,6 +434,7 @@ class DummyParent(UniqueRepresentation, Parent):
             A Parent
         """
         return self.name
+
 
 class ElementWrapperTester(ElementWrapper):
     """

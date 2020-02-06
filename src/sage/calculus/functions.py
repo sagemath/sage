@@ -11,9 +11,10 @@ from .functional import diff
 
 def wronskian(*args):
     """
-    Returns the Wronskian of the provided functions, differentiating with
-    respect to the given variable. If no variable is provided,
-    diff(f) is called for each function f.
+    Return the Wronskian of the provided functions, differentiating with
+    respect to the given variable.
+
+    If no variable is provided, diff(f) is called for each function f.
 
     wronskian(f1,...,fn, x) returns the Wronskian of f1,...,fn, with
     derivatives taken with respect to x.

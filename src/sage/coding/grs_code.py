@@ -38,15 +38,15 @@ Here is a list of all content related to GRS codes:
   using the key equation on syndrome polynomials
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six.moves import range
 
@@ -1242,9 +1242,9 @@ class GRSBerlekampWelchDecoder(Decoder):
         t  = (C.minimum_distance()-1) // 2
         l0 = n-1-t
         l1 = n-1-t-(k-1)
-        S  = matrix(C.base_field(), n, l0+l1+2, lambda i,j :
-                (C.evaluation_points()[i])**j if j<(l0+1)
-                else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
+        S  = matrix(C.base_field(), n, l0+l1+2,
+                    lambda i, j: (C.evaluation_points()[i])**j if j<(l0+1)
+                    else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
         S  = S.right_kernel()
         S  = S.basis_matrix().row(0)
         R = C.base_field()['x']

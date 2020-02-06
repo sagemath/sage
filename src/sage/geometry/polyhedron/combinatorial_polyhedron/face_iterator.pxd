@@ -19,7 +19,9 @@ cdef class FaceIterator(SageObject):
     cdef MemoryAllocator _mem
     cdef tuple newfaces_lists       # tuple to hold the ListOfFaces corresponding to maybe_newfaces
     cdef size_t face_length         # stores length of the faces in terms of uint64_t
-    cdef tuple _V, _H, _equalities  # some copies from ``CombinatorialPolyhedron``
+
+    # some copies from ``CombinatorialPolyhedron``
+    cdef tuple _Vrep, _facet_names, _equalities
 
     # Atoms and coatoms are the vertices/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
@@ -63,6 +65,6 @@ cdef class FaceIterator(SageObject):
     cdef inline CombinatorialFace next_face(self)
     cdef inline int next_dimension(self) except -1
     cdef inline int next_face_loop(self) except -1
-    cdef size_t length_atom_repr(self) except -1
+    cdef size_t n_atom_rep(self) except -1
     cdef size_t set_coatom_repr(self) except -1
     cdef size_t set_atom_repr(self) except -1

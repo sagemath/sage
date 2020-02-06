@@ -141,7 +141,7 @@ Test if :trac:`24883` is fixed::
     1/4*((I + 1)*sqrt(2) - 2)*(-(I + 1)*sqrt(2) - 2)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Burcin Erocal <burcin@erocal.org>
 #
@@ -149,9 +149,8 @@ Test if :trac:`24883` is fixed::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -782,6 +781,47 @@ cdef class Expression(CommutativeRingElement):
             ⎮ ─────── dx
             ⎮  x + 1
             ⌡
+
+        TESTS:
+
+        Check that :trac:`28891` is fixed::
+
+            sage: unicode_art(exp(x).series(x, 4))
+                     2    3
+                    x    x     ⎛ 4⎞
+            1 + x + ── + ── + O⎝x ⎠
+                    2    6
+            sage: unicode_art(exp(x).series(x==1, 3))
+                                     2
+                            ℯ⋅(x - 1)     ⎛       3       ⎞
+            ℯ + ℯ⋅(x - 1) + ────────── + O⎝(x - 1) ; x → 1⎠
+                                2
+
+        Check that complex numbers are handled correctly (:trac:`28903`)::
+
+            sage: unicode_art(I)
+            ⅈ
+            sage: unicode_art(13 - I)
+            13 - ⅈ
+            sage: unicode_art(1.3 - I)
+            1.3 - 1.0⋅ⅈ
+            sage: unicode_art(cos(I))
+            cosh(1)
+
+            sage: unicode_art(SR(CC(1/3, 1)))
+            0.333333333333333 + 1.0⋅ⅈ
+            sage: unicode_art(SR(CDF(1/3, 1)))
+            0.333333333333333 + 1.0⋅ⅈ
+            sage: unicode_art(SR(RealField(100)(1/7)))
+            0.14285714285714285714285714286
+
+            sage: K.<a> = QuadraticField(-1)
+            sage: unicode_art(SR(2 + a))
+            2 + ⅈ
+            sage: unicode_art(SR(1/3 + a/2))
+            1   ⅈ
+            ─ + ─
+            3   2
         """
         from sage.typeset.unicode_art import UnicodeArt
         return UnicodeArt(self._sympy_character_art(True).splitlines())
@@ -1605,6 +1645,11 @@ cdef class Expression(CommutativeRingElement):
             sage: hash(-oo) == hash((-x).subs(x=oo))
             True
             sage: hash(unsigned_infinity) == hash(SR(unsigned_infinity))
+            True
+
+        Check a corner case for rational numbers (:trac:`28219`)::
+
+            sage: hash(-1/3) == hash(SR(-1/3))
             True
         """
         sig_on()
@@ -5718,6 +5763,8 @@ cdef class Expression(CommutativeRingElement):
             <built-in function ge>
             sage: SR._force_pyobject( (x, x + 1, x + 2) ).operator()
             <... 'tuple'>
+            sage: exp(x).series(x,3).operator()
+            <function add_vararg ...>
         """
         cdef operators o
         cdef unsigned serial
@@ -5762,6 +5809,8 @@ cdef class Expression(CommutativeRingElement):
             return res
         elif is_exactly_a_exprseq(self._gobj):
             return tuple
+        elif is_a_series(self._gobj):
+            return add_vararg
 
         # self._gobj is either a symbol, constant or numeric
         return None
@@ -7114,9 +7163,9 @@ cdef class Expression(CommutativeRingElement):
             sage: gcd(I + I*x, x^2 - 1)
             x + 1
             sage: alg = SR(QQbar(sqrt(2) + I*sqrt(3)))
-            sage: gcd(alg + alg*x, x^2 - 1)
+            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (trac #28489)
             x + 1
-            sage: gcd(alg - alg*x, x^2 - 1)
+            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (trac #28489)
             x - 1
             sage: sqrt2 = SR(QQbar(sqrt(2)))
             sage: gcd(sqrt2 + x, x^2 - 2)    # known bug
@@ -9080,7 +9129,7 @@ cdef class Expression(CommutativeRingElement):
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_Order, self._gobj, hold))
 
-    def gamma(self, hold=False):
+    def gamma(self, *, hold=False):
         """
         Return the Gamma function evaluated at self.
 
@@ -9126,6 +9175,17 @@ cdef class Expression(CommutativeRingElement):
 
             sage: a = SR(1/2).gamma(hold=True); a.unhold()
             sqrt(pi)
+
+        TESTS:
+
+        Check that no confusion with the incomplete gamma function is
+        possible::
+
+            sage: x, y = SR.var('x,y')
+            sage: x.gamma(y)
+            Traceback (most recent call last):
+            ...
+            TypeError: gamma() takes exactly 0 positional arguments (1 given)
         """
         cdef GEx x
         sig_on()
@@ -10945,7 +11005,7 @@ cdef class Expression(CommutativeRingElement):
         Distribute some indexed operators over similar operators in
         order to allow further groupings or simplifications.
 
-        Implemented cases (so far) :
+        Implemented cases (so far):
 
         - Symbolic sum of a sum ==> sum of symbolic sums
 
@@ -12196,7 +12256,7 @@ cdef class Expression(CommutativeRingElement):
 
            #. Sage can currently only understand a subset of the output of Maxima, Maple and
               Mathematica, so even if the chosen backend can perform the summation the
-              result might not be convertable into a usable Sage expression.
+              result might not be convertible into a usable Sage expression.
 
         TESTS:
 

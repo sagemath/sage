@@ -174,6 +174,7 @@ Comprehensive Module list
     sage/combinat/partition
     sage/combinat/partition_algebra
     sage/combinat/partition_kleshchev
+    sage/combinat/partition_shifting_algebras
     sage/combinat/partition_tuple
     sage/combinat/partitions
     sage/combinat/perfect_matching
@@ -350,6 +351,7 @@ Comprehensive Module list
     sage/combinat/superpartition
     sage/combinat/symmetric_group_algebra
     sage/combinat/symmetric_group_representations
+    sage/combinat/super_tableau
     sage/combinat/tableau
     sage/combinat/tableau_residues
     sage/combinat/tableau_tuple

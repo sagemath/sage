@@ -30,7 +30,6 @@ from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.misc.superseded import deprecated_function_alias
 
 
 cdef class Matrix_polynomial_dense(Matrix_generic_dense):
@@ -1394,8 +1393,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if not row_wise:
             return self.T.reduced_form(transformation, shifts, row_wise=True).T
         return self.weak_popov_form(transformation, shifts)
-
-    row_reduced_form = deprecated_function_alias(23619, reduced_form)
 
     def hermite_form(self, include_zero_rows=True, transformation=False):
         """

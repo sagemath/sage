@@ -9,9 +9,8 @@ Utility classes for multi-modular algorithms
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 
@@ -776,7 +775,7 @@ cdef class MultiModularBasis_base(object):
 
     def __len__(self):
         """
-        Returns the number of moduli stored.
+        Return the number of moduli stored.
 
         EXAMPLES::
 

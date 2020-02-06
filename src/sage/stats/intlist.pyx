@@ -61,10 +61,10 @@ cdef class IntList:
 
         INPUT:
 
-            - values -- int, long, Integer, list of integers, or a TimeSeries
+        - values -- int, long, Integer, list of integers, or a TimeSeries
 
         If the input is a time series or list of floats, then the
-        integer parts of the intries are taken (not the floor).
+        integer parts of the entries are taken (not the floor).
 
         EXAMPLES::
 

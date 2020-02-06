@@ -3,20 +3,12 @@ Generation of trees
 
 This is an implementation of the algorithm for generating trees with `n`
 vertices (up to isomorphism) in constant time per tree described in
-[WRIGHT-ETAL]_.
+[WROM1986]_.
 
 AUTHORS:
 
 - Ryan Dingman (2009-04-16): initial version
-
-REFERENCES:
-
-.. [WRIGHT-ETAL] Wright, Robert Alan; Richmond, Bruce; Odlyzko, Andrew;
-  McKay, Brendan D.
-  Constant time generation of free trees. SIAM J. Comput. 15 (1986), no. 2,
-  540--548.
 """
-from __future__ import print_function
 
 from libc.limits cimport INT_MAX
 from cysignals.memory cimport check_allocarray, sig_free

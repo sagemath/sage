@@ -122,6 +122,20 @@ def _xmrange_iter( iter_list, typ=list ):
         ...
         StopIteration
 
+    We check that :trac:`28521` is fixed::
+
+        sage: next(sage.misc.mrange._xmrange_iter([[], [1]]))
+        Traceback (most recent call last):
+        ...
+        StopIteration
+        sage: next(sage.misc.mrange._xmrange_iter([[1], []]))
+        Traceback (most recent call last):
+        ...
+        StopIteration
+        sage: next(sage.misc.mrange._xmrange_iter([[1], [], [2]]))
+        Traceback (most recent call last):
+        ...
+        StopIteration
     """
     if len(iter_list) == 0:
         yield typ()
@@ -136,7 +150,11 @@ def _xmrange_iter( iter_list, typ=list ):
         if n == 0:
             return
     curr_iters = [iter(i) for i in iter_list]
-    curr_elt = [next(i) for i in curr_iters[:-1]] + [None]
+    try:
+        curr_elt = [next(i) for i in curr_iters[:-1]]
+    except StopIteration:
+        return
+    curr_elt.append(None)
     place = len(iter_list) - 1
     while True:
         try:
@@ -605,6 +623,17 @@ def cartesian_product_iterator(X):
         [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]
         sage: list(cartesian_product_iterator([]))
         [()]
+
+    TESTS:
+
+    Check that :trac:`28521` is fixed::
+
+        sage: list(cartesian_product_iterator([[], [1]]))
+        []
+        sage: list(cartesian_product_iterator([[1], []]))
+        []
+        sage: list(cartesian_product_iterator([[1], [], [2]]))
+        []
     """
     return xmrange_iter(X, tuple)
 

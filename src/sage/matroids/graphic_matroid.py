@@ -78,15 +78,15 @@ Methods
 =======
 """
 from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Zachary Gershkoff <zgersh2@lsu.edu>
 #
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .matroid import Matroid
 
 from sage.graphs.graph import Graph
@@ -112,7 +112,7 @@ class GraphicMatroid(Matroid):
     A ``GraphicMatroid`` instance where the ground set elements are
     the edges of ``G``.
 
-    ..NOTE::
+    .. NOTE::
 
         If a disconnected graph is given as input, the instance of
         ``GraphicMatroid`` will connect the graph components and store
@@ -194,7 +194,7 @@ class GraphicMatroid(Matroid):
 
         groundset_set = frozenset(groundset)
 
-        # if the provided ground set is incomplete, it gets overwriten
+        # if the provided ground set is incomplete, it gets overwritten
         # invalidate `None` as label
         if None in groundset_set or len(groundset_set) != G.num_edges():
             groundset = range(G.num_edges())
@@ -297,7 +297,7 @@ class GraphicMatroid(Matroid):
 
     def _repr_(self):
         """
-        Returns a string representation of the matroid.
+        Return a string representation of the matroid.
 
         EXAMPLES::
 
@@ -2020,7 +2020,18 @@ class GraphicMatroid(Matroid):
             True
             sage: M == N
             False
+
+        TESTS:
+
+        Check that :trac:`28482` is fixed::
+
+            sage: G = Graph([[3, 4], [4, 1], [1, 2], [2, 3], [3, 5], [5, 6], [6, 3]])
+            sage: M = Matroid(G)
+            sage: R = M.regular_matroid()
+            sage: set(M.circuits()) == set(R.circuits())
+            True
         """
         from sage.matroids.constructor import Matroid as ConstructorMatroid
-        return ConstructorMatroid(groundset=self._groundset, graph=self._G,
-            regular=True)
+        X = [l for u,v,l in self._G.edge_iterator()]
+        return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
+

@@ -97,7 +97,7 @@ class HallAlgebra(CombinatorialFreeModule):
         I_\mu \cdot I_\lambda = \sum_\nu P^{\nu}_{\mu, \lambda}(q) I_\nu,
 
     where `P^{\nu}_{\mu, \lambda}` is a Hall polynomial (see
-    :meth:`~sage.combinat.hall_polynomial.hall_polynomial`). The
+    :func:`~sage.combinat.hall_polynomial.hall_polynomial`). The
     unity of this algebra is `I_{\emptyset}`.
 
     The (classical) Hall algebra is also known as the Hall-Steinitz

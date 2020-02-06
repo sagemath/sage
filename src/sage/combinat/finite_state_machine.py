@@ -5596,9 +5596,7 @@ class FiniteStateMachine(SageObject):
             sage: [s.label() for s in F.iter_initial_states()]
             ['A']
         """
-        from six.moves import filter
-        return filter(lambda s:s.is_initial, self.iter_states())
-
+        return (s for s in self.iter_states() if s.is_initial)
 
     def final_states(self):
         """
@@ -5647,8 +5645,7 @@ class FiniteStateMachine(SageObject):
             sage: [s.label() for s in F.iter_final_states()]
             ['A', 'C']
         """
-        from six.moves import filter
-        return filter(lambda s:s.is_final, self.iter_states())
+        return (s for s in self.iter_states() if s.is_final)
 
     def state(self, state):
         """
@@ -6910,7 +6907,7 @@ class FiniteStateMachine(SageObject):
             ....:                        final_states=[1],
             ....:                        input_alphabet=[0])
             sage: def transition_function(state, letter):
-            ....:     return(1-state, [])
+            ....:     return 1 - state, []
             sage: F.add_from_transition_function(transition_function)
             sage: F.transitions()
             [Transition from 0 to 1: 0|-,
@@ -6924,7 +6921,7 @@ class FiniteStateMachine(SageObject):
             ....:                        final_states=[1],
             ....:                        input_alphabet=[0])
             sage: def transition_function(state, letter):
-            ....:     return(1-state, [])
+            ....:     return 1 - state, []
             sage: F.add_from_transition_function(transition_function,
             ....:                                explore_existing_states=False)
             sage: F.transitions()
@@ -9151,15 +9148,13 @@ class FiniteStateMachine(SageObject):
              Transition from 1 to 0: 0|0,
              Transition from 1 to 1: 1|1,(0, 0)]
         """
-        from six.moves import filter
-
         def find_common_output(state):
-            if any(filter(
-                    lambda transition: not transition.word_out,
-                    self.transitions(state))) \
-                   or state.is_final and not state.final_word_out:
+            if (any(transition for transition in self.transitions(state)
+                    if not transition.word_out)
+                        or state.is_final and not state.final_word_out):
                 return tuple()
-            first_letters = [transition.word_out[0] for transition in self.transitions(state)]
+            first_letters = [transition.word_out[0]
+                             for transition in self.transitions(state)]
             if state.is_final:
                 first_letters = first_letters + [state.final_word_out[0]]
             if not first_letters:
@@ -10036,8 +10031,7 @@ class FiniteStateMachine(SageObject):
                 open.extend(candidates)
                 unhandeled_direct_predecessors[s] = None
                 done.append(s)
-        return(done)
-
+        return done
 
     def number_of_words(self, variable=var('n'),
                         base_ring=None):

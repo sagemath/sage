@@ -414,7 +414,6 @@ the parent as its first argument::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 cdef extern from "methodobject.h":
     cdef int METH_NOARGS, METH_O
@@ -925,7 +924,7 @@ cdef class CachedFunction(object):
             sage: P.<x,y> = QQ[]
             sage: I = P*[x,y]
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: l = "        elif algorithm == 'macaulay2:gb':\n"
+            sage: l = '        elif algorithm.startswith("macaulay2:"):\n'
             sage: l in sage_getsourcelines(I.groebner_basis)[0] # indirect doctest
             True
 
@@ -1319,7 +1318,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: mod_ring(1,algorithm="default") is mod_ring(1,algorithm="algorithm") is mod_ring(1) is mod_ring(1,'default')
         True
 
-    TESTS::
+    TESTS:
 
     Check that :trac:`16316` has been fixed, i.e., caching works for
     immutable unhashable objects which define
@@ -3350,7 +3349,7 @@ class FileCache(object):
             1
         """
         from sage.misc.misc import sage_makedirs
-        if len(dir) == 0 or dir[-1] != '/':
+        if not dir or dir[-1] != '/':
             dir += '/'
         self._dir = dir
         sage_makedirs(dir)

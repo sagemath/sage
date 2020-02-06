@@ -26,7 +26,7 @@ docker_build() {
     # Docker's --cache-from does not really work with multi-stage builds: https://github.com/moby/moby/issues/34715
     # So we just have to rely on the local cache.
     time docker build -f docker/Dockerfile \
---build-arg "MAKEOPTS=${MAKEOPTS}" --build-arg "SAGE_NUM_THREADS=${SAGE_NUM_THREADS}" --build-arg "MAKEOPTS_DOCBUILD=${MAKEOPTS}" --build-arg "SAGE_NUM_THREADS_DOCBUILD=${SAGE_NUM_THREADS_DOCBUILD}" --build-arg ARTIFACT_BASE=$ARTIFACT_BASE $@
+--build-arg "WITH_PYTHON=${WITH_PYTHON}" --build-arg "MAKEFLAGS=${MAKEFLAGS}" --build-arg "SAGE_NUM_THREADS=${SAGE_NUM_THREADS}" --build-arg "MAKEFLAGS_DOCBUILD=${MAKEFLAGS}" --build-arg "SAGE_NUM_THREADS_DOCBUILD=${SAGE_NUM_THREADS_DOCBUILD}" --build-arg ARTIFACT_BASE=$ARTIFACT_BASE $@
 }
 
 # We use a multi-stage build /docker/Dockerfile. For the caching to be
@@ -38,6 +38,12 @@ docker_build() {
 docker_build --target run-time-dependencies --tag run-time-dependencies:$DOCKER_TAG .
 docker_build --target build-time-dependencies --tag build-time-dependencies:$DOCKER_TAG .
 docker_build --target make-all --tag make-all:$DOCKER_TAG .
+
+# Copy docs out of the docker image to save them into browseable GitLab artifacts
+container=$(docker create make-all:$DOCKER_TAG)
+docker cp $container:/home/sage/sage/local/share/doc/sage/html html_
+# GitLab's browser does not like symlinks, so we flatten them
+rsync html_/ html/ -a --copy-links
 
 # Build the release image without build artifacts.
 docker_build --target sagemath --tag "$DOCKER_IMAGE_CLI" .

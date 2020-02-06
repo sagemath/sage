@@ -33,8 +33,6 @@ speed, we provide a class that wraps our struct.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
-
 cimport cython
 
 from cpython.object cimport PyObject

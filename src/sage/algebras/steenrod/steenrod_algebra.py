@@ -2173,7 +2173,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def basis(self, d=None):
         """
-        Returns basis for self, either the whole basis or the basis in
+        Return basis for ``self``, either the whole basis or the basis in
         degree `d`.
 
         INPUT:
@@ -3473,12 +3473,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             def excess_odd(mono):
                 """
-                Excess of mono, where mono has the form ((s0, s1, ...), (r1, r2,
-                ...)).
+                Excess of mono, where mono has the form
+                ((s0, s1, ...), (r1, r2, ...)).
 
-                Returns the length of the first component, since that is the number
-                of factors, plus twice the sum of the terms in the second
-                component.
+                Return the length of the first component, since that
+                is the number of factors, plus twice the sum of the
+                terms in the second component.
                 """
                 if not mono:
                     return 0

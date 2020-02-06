@@ -1,7 +1,6 @@
 r"""
 Lists of Manin symbols (elements of `\mathbb{P}^1(\ZZ/N\ZZ)`) over `\QQ`
 """
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check

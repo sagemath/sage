@@ -1170,7 +1170,7 @@ class VermaModuleHomset(Homset):
                 return None
             elt = F[i]**ZZ(exp) * elt
             wt = wt.dot_action([i])
-        return elt * C.highest_weight_vector()
+        return C.highest_weight_vector()._acted_upon_(elt, False)
 
     @cached_method
     def natural_map(self):

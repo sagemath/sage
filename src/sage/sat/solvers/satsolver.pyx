@@ -14,7 +14,6 @@ AUTHORS:
 
 - Martin Albrecht (2012): first version
 """
-from __future__ import absolute_import
 
 cdef class SatSolver:
     def __cinit__(self, *args, **kwds):

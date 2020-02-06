@@ -86,16 +86,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
     EXAMPLES::
 
          sage: Lambda = RootSystem(['A',3,1]).weight_lattice(extended=true).fundamental_weights()
-         sage: IntegrableRepresentation(Lambda[1]+Lambda[2]+Lambda[3]).print_strings() # py2
+         sage: IntegrableRepresentation(Lambda[1]+Lambda[2]+Lambda[3]).print_strings()
          2*Lambda[0] + Lambda[2]: 4 31 161 665 2380 7658 22721 63120 166085 417295 1007601 2349655
          Lambda[0] + 2*Lambda[1]: 2 18 99 430 1593 5274 16005 45324 121200 308829 754884 1779570
          Lambda[0] + 2*Lambda[3]: 2 18 99 430 1593 5274 16005 45324 121200 308829 754884 1779570
-         Lambda[1] + Lambda[2] + Lambda[3]: 1 10 60 274 1056 3601 11199 32354 88009 227555 563390 1343178
-         3*Lambda[2] - delta: 3 21 107 450 1638 5367 16194 45687 121876 310056 757056 1783324
-         sage: IntegrableRepresentation(Lambda[1]+Lambda[2]+Lambda[3]).print_strings() # py3
-         2*Lambda[0] + Lambda[2]: 4 31 161 665 2380 7658 22721 63120 166085 417295 1007601 2349655
-         Lambda[0] + 2*Lambda[3]: 2 18 99 430 1593 5274 16005 45324 121200 308829 754884 1779570
-         Lambda[0] + 2*Lambda[1]: 2 18 99 430 1593 5274 16005 45324 121200 308829 754884 1779570
          Lambda[1] + Lambda[2] + Lambda[3]: 1 10 60 274 1056 3601 11199 32354 88009 227555 563390 1343178
          3*Lambda[2] - delta: 3 21 107 450 1638 5367 16194 45687 121876 310056 757056 1783324
          sage: Lambda = RootSystem(['D',4,1]).weight_lattice(extended=true).fundamental_weights()
@@ -165,38 +159,23 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         {Lambda[0]: [1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42, 56]}
         sage: Lambda = RootSystem(['G',2,1]).dual.weight_lattice(extended=true).fundamental_weights()
         sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[2])
-        sage: V.print_strings() # long time py2
-        6*Lambdacheck[0]: 4 28 100 320 944 2460 6064 14300 31968 69020 144676 293916
-        4*Lambdacheck[0] + Lambdacheck[2]: 4 22 84 276 800 2124 5288 12470 28116 61056 128304 261972
-        3*Lambdacheck[0] + Lambdacheck[1]: 2 16 58 192 588 1568 3952 9520 21644 47456 100906 207536
-        Lambdacheck[0] + Lambdacheck[1] + Lambdacheck[2]: 1 6 26 94 294 832 2184 5388 12634 28390 61488 128976
-        2*Lambdacheck[1] - deltacheck: 2 8 32 120 354 980 2576 6244 14498 32480 69776 145528
-        2*Lambdacheck[0] + 2*Lambdacheck[2]: 2 12 48 164 492 1344 3428 8256 18960 41844 89208 184512
-        3*Lambdacheck[2] - deltacheck: 4 16 60 208 592 1584 4032 9552 21728 47776 101068 207888
-        sage: V.print_strings() # long time py3
+        sage: V.print_strings() # long time
         6*Lambdacheck[0]: 4 28 100 320 944 2460 6064 14300 31968 69020 144676 293916
         3*Lambdacheck[0] + Lambdacheck[1]: 2 16 58 192 588 1568 3952 9520 21644 47456 100906 207536
         4*Lambdacheck[0] + Lambdacheck[2]: 4 22 84 276 800 2124 5288 12470 28116 61056 128304 261972
-        Lambdacheck[0] + Lambdacheck[1] + Lambdacheck[2]: 1 6 26 94 294 832 2184 5388 12634 28390 61488 128976
         2*Lambdacheck[1] - deltacheck: 2 8 32 120 354 980 2576 6244 14498 32480 69776 145528
+        Lambdacheck[0] + Lambdacheck[1] + Lambdacheck[2]: 1 6 26 94 294 832 2184 5388 12634 28390 61488 128976
         2*Lambdacheck[0] + 2*Lambdacheck[2]: 2 12 48 164 492 1344 3428 8256 18960 41844 89208 184512
         3*Lambdacheck[2] - deltacheck: 4 16 60 208 592 1584 4032 9552 21728 47776 101068 207888
         sage: Lambda = RootSystem(['A',6,2]).weight_lattice(extended=true).fundamental_weights()
         sage: V = IntegrableRepresentation(Lambda[0]+2*Lambda[1])
-        sage: V.print_strings() # long time py2
+        sage: V.print_strings() # long time
         5*Lambda[0]: 3 42 378 2508 13707 64650 272211 1045470 3721815 12425064 39254163 118191378
         3*Lambda[0] + Lambda[2]: 1 23 234 1690 9689 47313 204247 800029 2893198 9786257 31262198 95035357
         Lambda[0] + 2*Lambda[1]: 1 14 154 1160 6920 34756 153523 612354 2248318 7702198 24875351 76341630
         Lambda[0] + Lambda[1] + Lambda[3] - 2*delta: 6 87 751 4779 25060 113971 464842 1736620 6034717 19723537 61152367 181068152
         Lambda[0] + 2*Lambda[2] - 2*delta: 3 54 499 3349 18166 84836 353092 1341250 4725259 15625727 48938396 146190544
         Lambda[0] + 2*Lambda[3] - 4*delta: 15 195 1539 9186 45804 200073 789201 2866560 9723582 31120281 94724550 275919741
-        sage: V.print_strings() # long time py3
-        5*Lambda[0]: 3 42 378 2508 13707 64650 272211 1045470 3721815 12425064 39254163 118191378
-        3*Lambda[0] + Lambda[2]: 1 23 234 1690 9689 47313 204247 800029 2893198 9786257 31262198 95035357
-        Lambda[0] + Lambda[1] + Lambda[3] - 2*delta: 6 87 751 4779 25060 113971 464842 1736620 6034717 19723537 61152367 181068152
-        Lambda[0] + 2*Lambda[3] - 4*delta: 15 195 1539 9186 45804 200073 789201 2866560 9723582 31120281 94724550 275919741
-        Lambda[0] + 2*Lambda[1]: 1 14 154 1160 6920 34756 153523 612354 2248318 7702198 24875351 76341630
-        Lambda[0] + 2*Lambda[2] - 2*delta: 3 54 499 3349 18166 84836 353092 1341250 4725259 15625727 48938396 146190544
     """
     def __init__(self, Lam):
         """
@@ -931,20 +910,13 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         EXAMPLES::
 
             sage: Lambda = RootSystem(['C',3,1]).weight_lattice(extended=true).fundamental_weights()
-            sage: IntegrableRepresentation(2*Lambda[0]).dominant_maximal_weights() # py2
+            sage: IntegrableRepresentation(2*Lambda[0]).dominant_maximal_weights()
             (2*Lambda[0],
              Lambda[0] + Lambda[2] - delta,
              2*Lambda[1] - delta,
              Lambda[1] + Lambda[3] - 2*delta,
              2*Lambda[2] - 2*delta,
              2*Lambda[3] - 3*delta)
-            sage: IntegrableRepresentation(2*Lambda[0]).dominant_maximal_weights() # py3
-            (2*Lambda[0],
-             Lambda[0] + Lambda[2] - delta,
-             Lambda[1] + Lambda[3] - 2*delta,
-             2*Lambda[3] - 3*delta,
-             2*Lambda[1] - delta,
-             2*Lambda[2] - 2*delta)
         """
         k = self.level()
         Lambda = self._P.fundamental_weights()

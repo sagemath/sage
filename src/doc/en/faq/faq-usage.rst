@@ -98,7 +98,7 @@ or something along that line. Next, reinstall Sage's Python:
 
 .. CODE-BLOCK:: shell-session
 
-    $ sage -f python2
+    $ sage -f python3
 
 This will pick up the tcl/tk library automatically. After successfully
 reinstalling Sage's Python, from within the Sage command line interface,
@@ -167,14 +167,8 @@ every change applied to the file simple.py will be automatically updated in Sage
 Can I use SageMath with Python 3.x?
 """""""""""""""""""""""""""""""""""
 
-As of August 2019, most of SageMath works fine with Python 3. However, we still
-consider Python 3 support to be experimental and no official Python 3 release
-has been made yet.
+Since release 9.0 from January 2020, SageMath is running on top of Python 3.
 
-You can build the source code of SageMath with Python 3 using the instructions
-at the bottom of https://wiki.sagemath.org/Python3-compatible%20code
-
-See :trac:`15530` and :trac:`26212` for tracking the current progress.
 
 I'm seeing an error about "Permission denied" on a file called "sage-flags.txt".
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -8,7 +8,7 @@ AUTHORS:
 - David Roe (2012-03-27) -- initial version, based on Robert Bradshaw's code.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 David Roe <roed.math@gmail.com>
 #                          Robert Bradshaw <robertwb@gmail.com>
 #                          William Stein <wstein@gmail.com>
@@ -16,12 +16,13 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 from six import iteritems
 
 from sage.misc.misc import walltime, cputime
+
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     """
@@ -457,7 +458,7 @@ class NestedName:
 
     def __str__(self):
         """
-        Returns a .-separated string giving the full name.
+        Return a .-separated string giving the full name.
 
         EXAMPLES::
 
@@ -472,7 +473,7 @@ class NestedName:
 
     def __repr__(self):
         """
-        Returns a .-separated string giving the full name.
+        Return a .-separated string giving the full name.
 
         EXAMPLES::
 

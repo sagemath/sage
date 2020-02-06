@@ -182,7 +182,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.stdsage cimport PY_NEW
@@ -209,7 +208,6 @@ from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.padics.unramified_extension_generic import UnramifiedExtensionGeneric
-from sage.misc.superseded import deprecated_function_alias, deprecation
 
 from sage.rings.real_double cimport RealDoubleElement
 
@@ -2767,11 +2765,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             zero = []
         else:
             zero = Integer(0)
-        if n in ('simple', 'smallest', 'teichmuller'):
-            deprecation(14825, "Interface to expansion has changed; first argument now n")
-            lift_mode = n
-            n = None
-        elif isinstance(n, slice):
+        if isinstance(n, slice):
             return self.slice(n.start, n.stop, n.step)
         elif n is not None:
             if self._is_exact_zero() or n < self.ordp:
@@ -2800,8 +2794,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.prime_pow.in_field == 0 and self.ordp > 0:
             ulist = [zero] * self.ordp + ulist
         return ulist
-
-    list = deprecated_function_alias(14825, expansion)
 
     def matrix_mod_pn(self):
         """
@@ -2993,8 +2985,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             v = self._new_c(0)
             v._set_inexact_zero(rp)
             return v
-
-    teichmuller_list = deprecated_function_alias(14825, teichmuller_expansion)
 
     def _teichmuller_set_unsafe(self):
         """

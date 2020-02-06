@@ -196,7 +196,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
         sage: from sage.graphs.orientations import _strong_orientations_of_a_mixed_graph
         sage: g = graphs.CycleGraph(5)
         sage: Dg = DiGraph(g) # all edges of g will be doubly oriented
-        sage: it = _strong_orientations_of_a_mixed_graph(Dg, g.vertices(), g.edges(labels=False))
+        sage: it = _strong_orientations_of_a_mixed_graph(Dg, list(g), list(g.edges(labels=False, sort=False)))
         sage: len(list(it)) # there are two orientations of this multigraph
         2
     """

@@ -2,7 +2,7 @@
 r"""
 Factory for Character-Based Art
 """
-#*******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2013 Jean-Baptiste Priez <jbp@kerios.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,9 +14,10 @@ Factory for Character-Based Art
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ******************************************************************************
 from six import iteritems, string_types, text_type, binary_type
+from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -251,14 +252,29 @@ class CharacterArtFactory(SageObject):
             [ /\/\/\, /\/  \, /  \/\, /    \, /    \ ]
             sage: l.get_breakpoints()
             [9, 17, 25, 33]
+
+        Check that zero-height strings are handled (:trac:`28527`)::
+
+            sage: s = ascii_art(''); s.height()
+            0
+            sage: sage.typeset.ascii_art._ascii_art_factory.build_container(
+            ....:     s,
+            ....:     sage.typeset.symbols.ascii_left_parenthesis,
+            ....:     sage.typeset.symbols.ascii_right_parenthesis)
+            (  )
         """
         w = content.width()
         h = content.height()
+        if not h:
+            h = 1
+            matrix = ['']
+        else:
+            matrix = content._matrix
         left_border = left_border.character_art(h)
         right_border = right_border.character_art(h)
         lines = []
         pad = self.string_type(' ')
-        for left, line, right in zip(left_border, content, right_border):
+        for left, line, right in zip(left_border, matrix, right_border):
             lines.append(left + pad + line.ljust(w) + pad + right)
         shift = len(left_border) + len(pad)
         basepoints = [bp + shift for bp in content.get_breakpoints()]
@@ -266,7 +282,7 @@ class CharacterArtFactory(SageObject):
 
     def build_set(self, s, baseline=0):
         r"""
-        Return an character art output of a set.
+        Return a character art output of a set.
 
         TESTS:
 
@@ -279,8 +295,8 @@ class CharacterArtFactory(SageObject):
             {  /\      /\/\              /\    /  \  }
             { /  \/\, /    \, /\/\/\, /\/  \, /    \ }
 
-        We can also call this method directly an pass an iterable that is not a
-        set, but still obtain the same output formatting::
+        We can also call this method directly and pass an iterable that is not
+        a set, but still obtain the same output formatting::
 
             sage: from sage.typeset.ascii_art import _ascii_art_factory as factory
             sage: factory.build_set(sorted(set(DyckWords(3))))
@@ -296,7 +312,7 @@ class CharacterArtFactory(SageObject):
 
     def build_dict(self, d, baseline=0):
         r"""
-        Return an character art output of a dictionary.
+        Return a character art output of a dictionary.
 
         TESTS::
 
@@ -330,7 +346,7 @@ class CharacterArtFactory(SageObject):
 
     def build_list(self, l, baseline=0):
         r"""
-        Return an character art output of a list.
+        Return a character art output of a list.
 
         TESTS::
 
@@ -347,6 +363,11 @@ class CharacterArtFactory(SageObject):
             sage: l = ascii_art([DyckWords(2).list(), DyckWords(2).list()])
             sage: l.get_breakpoints()
             [9, 17, 25]
+
+        The parentheses only stretch as high as the content (:trac:`28527`)::
+
+            sage: ascii_art([ascii_art('a', baseline=1)])
+            [ a ]
         """
         comma = self.art_type([self.string_type(', ')],
                               baseline=0,
@@ -358,7 +379,7 @@ class CharacterArtFactory(SageObject):
 
     def build_tuple(self, t, baseline=0):
         r"""
-        Return an character art output of a tuple.
+        Return a character art output of a tuple.
 
         TESTS::
 
@@ -376,7 +397,7 @@ class CharacterArtFactory(SageObject):
             baseline)
 
     def concatenate(self, iterable, separator, empty=None, baseline=0):
-        """
+        r"""
         Concatenate multiple character art instances
 
         The breakpoints are set as the breakpoints of the ``separator``
@@ -402,27 +423,75 @@ class CharacterArtFactory(SageObject):
                  1     1
             [1 0]-[1 0]-[1 0]
             [0 1]x[0 1]x[0 1]
+
+        TESTS::
+
+            sage: ascii_art(['aa\na', ascii_art('bb', baseline=1), 'c',
+            ....:     'd\ndd', ascii_art('e\ne', baseline=1),
+            ....:     ascii_art('f', baseline=-1)])
+            [ aa         d      f ]
+            [ a ,   , c, dd, e,   ]
+            [     bb         e    ]
+            sage: ascii_art([''])
+            [  ]
+
+        Check that ``empty`` is not prepended to non-empty objects
+        (:trac:`28527`)::
+
+            sage: s = 'abc'
+            sage: [sage.typeset.ascii_art._ascii_art_factory.concatenate(
+            ....:     s[:k], ascii_art(':'), ascii_art('0')) for k in (0..3)]
+            [0, a, a:b, a:b:c]
         """
-        if empty is None:
-            empty = self.build_empty()
-        result = empty
-        breakpoints = []
+        iterable = [self.build(obj) for obj in iterable]
+        if not iterable:
+            return empty if empty is not None else self.build_empty()
+        if len(iterable) == 1:
+            return iterable[0]
+
         separator = self.build(separator)
-        bk = separator.get_breakpoints()
-        if not bk:
-            bk = [separator._l]
+        bot = separator.get_baseline()
+        top = separator._h - bot
         for obj in iterable:
-            if result is not empty:
-                l = result._l
-                result += separator
-                breakpoints.extend([l+x for x in bk])
-            l = result._l
-            obj = self.build(obj)
-            result += self.build(obj)
-            breakpoints.extend([l+x for x in obj.get_breakpoints()])
-        result._breakpoints = breakpoints
-        result._baseline = baseline
-        return result
+            bot1 = obj.get_baseline()
+            if bot1 > bot:
+                bot = bot1
+            top1 = obj._h - bot1
+            if top1 > top:
+                top = top1
+        # bot + top is the new height
+
+        def padded_line(obj, i):
+            bot1 = obj.get_baseline()
+            top1 = obj._h - bot1
+            if i >= top1 or i < -bot1:
+                return ' ' * obj._l
+            else:
+                line = obj._matrix[top1 - 1 - i]
+                return line + ' ' * (obj._l - len(line))
+
+        # Note that this scales linearly with the length of the string
+        new_matrix = [padded_line(separator, i).join(
+            padded_line(obj, i) for obj in iterable)
+            for i in range(top - 1, -bot - 1, -1)]
+
+        breakpoints = []
+        bk_sep = separator.get_breakpoints()
+        if not bk_sep:
+            bk_sep = [separator._l]
+        idx = None
+        for obj in iterable:
+            if idx is None:
+                idx = 0
+            else:
+                breakpoints.extend(idx + x for x in bk_sep)
+                idx += separator._l
+            breakpoints.extend(idx + x for x in obj.get_breakpoints())
+            idx += obj._l
+        baseline = bot if baseline is None else bot + baseline
+        return self.art_type(new_matrix,
+                             breakpoints=sorted(set(breakpoints)),
+                             baseline=baseline)
 
     def parse_keywords(self, kwds):
         """

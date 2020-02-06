@@ -14,8 +14,6 @@ Helpers for creating matrices
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, generator_stop
-
 cimport cython
 from cpython.sequence cimport PySequence_Fast
 from cysignals.signals cimport sig_check

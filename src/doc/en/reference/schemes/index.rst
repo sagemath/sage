@@ -83,4 +83,15 @@ Toric Varieties
    sage/schemes/toric/sheaf/constructor
    sage/schemes/toric/sheaf/klyachko
 
+Cyclic Covers
+---------------
+.. toctree::
+   :maxdepth: 2
+
+
+   sage/schemes/cyclic_covers/cycliccover_finite_field
+   sage/schemes/cyclic_covers/cycliccover_generic
+   sage/schemes/cyclic_covers/charpoly_frobenius
+   sage/schemes/cyclic_covers/constructor
+
 .. include:: ../footer.txt

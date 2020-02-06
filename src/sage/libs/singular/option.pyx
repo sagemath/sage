@@ -99,7 +99,6 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.libs.singular.decl cimport singular_options, singular_verbose_options, Kstd1_deg, Kstd1_mu
 

@@ -396,14 +396,25 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         sage: C2 = sage.structure.dynamic_class.dynamic_class_internal("C2", (UniqueRepresentation, Morphism))
         sage: type(C2)
         <class 'sage.structure.dynamic_class.DynamicInheritComparisonClasscallMetaclass'>
+
+    We check that :trac:`28392` has been resolved::
+
+        sage: class A:
+        ....:     pass
+        sage: Foo1 = sage.structure.dynamic_class.dynamic_class("Foo", (), A)
+        sage: "__weakref__" in Foo1.__dict__
+        False
+        sage: "__dict__" in Foo1.__dict__
+        False
     """
     if reduction is None:
         reduction = (dynamic_class, (name, bases, cls, reduction, doccls))
     if cls is not None:
         methods = dict(cls.__dict__)
         # Anything else that should not be kept?
-        if "__dict__" in methods:
-            methods.__delitem__("__dict__")
+        for key in ["__dict__", "__weakref__"]:
+            if key in methods:
+                del methods[key]
         if prepend_cls_bases:
             cls_bases = cls.__bases__
             all_bases = set()

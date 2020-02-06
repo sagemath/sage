@@ -93,7 +93,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     :trac:`19213`)::
 
         sage: from sage.misc.package import pip_remote_version
-        sage: pip_remote_version('beautifulsoup') # optional - internet # not tested
+        sage: pip_remote_version('beautifulsoup4') # optional - internet # not tested
         u'...'
 
     These tests are reliable since the tested package does not exist::
@@ -140,7 +140,7 @@ def pip_installed_packages():
         True
         sage: d['scipy']  # optional - build
         u'...'
-        sage: d['beautifulsoup']   # optional - build beautifulsoup
+        sage: d['beautifulsoup4']   # optional - build beautifulsoup4
         u'...'
     """
     with open(os.devnull, 'w')  as devnull:
@@ -199,14 +199,14 @@ def list_packages(*pkg_types, **opts):
          'type': 'standard'}
 
         sage: L = list_packages('pip', local=True)  # optional - build
-        sage: L['beautifulsoup']                    # optional - build
+        sage: L['beautifulsoup4']                    # optional - build
         {'installed': ...,
          'installed_version': ...,
          'remote_version': None,
          'type': 'pip'}
 
         sage: L = list_packages('pip')   # optional - build internet
-        sage: L['beautifulsoup']         # optional - build internet
+        sage: L['beautifulsoup4']         # optional - build internet
         {'installed': ...,
          'installed_version': ...,
          'remote_version': u'...',
@@ -422,14 +422,10 @@ def optional_packages():
 
         sage: from sage.misc.package import optional_packages
         sage: installed, not_installed = optional_packages()  # optional - build
-        sage: 'ore_algebra' in installed+not_installed  # optional - build
-        True
-        sage: 'beautifulsoup' in installed+not_installed  # optional - build
+        sage: 'beautifulsoup4' in installed+not_installed  # optional - build
         True
 
-        sage: 'beautifulsoup' in installed   # optional - build beautifulsoup
-        True
-        sage: 'ore_algebra' in installed     # optional - build ore_algebra
+        sage: 'beautifulsoup4' in installed   # optional - build beautifulsoup4
         True
     """
     pkgs = list_packages('optional', local=True)

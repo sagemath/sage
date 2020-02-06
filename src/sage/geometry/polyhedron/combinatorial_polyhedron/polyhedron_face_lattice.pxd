@@ -10,11 +10,13 @@ cdef class PolyhedronFaceLattice:
     cdef int dimension              # dimension of Polyhedron
     cdef readonly bint dual         # if True, then List of all faces by dual Polyhedron
     cdef size_t face_length         # stores length of the faces in terms of uint64_t
-    cdef tuple _V, _H, _equalities  # some copies from CombinatorialPolyhedron
     cdef size_t *f_vector           # a copy of the f-vector, is reversed if dual
     cdef size_t *face_counter       # how many faces of each dimension have been initialized
     cdef size_t *atom_repr          # a place where atom-representaion of face will be stored
     cdef size_t *coatom_repr        # a place where coatom-representaion of face will be stored
+
+    # some copies from CombinatorialPolyhedron
+    cdef tuple _Vrep, _facet_names, _equalities
 
     # Atoms and coatoms are the Vrepr/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms Vrepresentatives and vice versa.

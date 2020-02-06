@@ -26,10 +26,9 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-
 
 from sage.ext.stdsage cimport PY_NEW
+from cysignals.memory cimport sig_malloc, sig_free
 
 cimport sage.rings.padics.local_generic_element
 from sage.libs.gmp.mpz cimport mpz_set_si
@@ -40,13 +39,12 @@ from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.structure.element import coerce_binop
-
+from sage.structure.richcmp cimport rich_to_bool
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 
-
 cdef class pAdicGenericElement(LocalGenericElement):
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         First compare valuations, then compare normalized
         residue of unit part.
@@ -103,22 +101,41 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: a < b
             True
         """
+        # handle exact zeros
+        left_zero = left._is_exact_zero()
+        right_zero = right._is_exact_zero()
+        if left_zero and right_zero:
+            return rich_to_bool(op, 0)
+        elif left_zero:
+            if right.is_zero():
+                return rich_to_bool(op, 0)
+            return rich_to_bool(op, 1)
+        elif right_zero:
+            if left.is_zero():
+                return rich_to_bool(op, 0)
+            return rich_to_bool(op, -1)
+
         m = min(left.precision_absolute(), right.precision_absolute())
         x_ordp = left.valuation()
-        if x_ordp >= m :
-            x_ordp = infinity
+        left_zero =  bool(x_ordp >= m)
         y_ordp = right.valuation()
-        if y_ordp >= m :
-            y_ordp = infinity
+        right_zero = bool(y_ordp >= m)
+        # handle approximate zeros
+        if left_zero and right_zero:
+            return rich_to_bool(op, 0)
+        elif left_zero:
+            return rich_to_bool(op, 1)
+        elif right_zero:
+            return rich_to_bool(op, -1)
+
+        # no more zeros
         if x_ordp < y_ordp:
-            return -1
+            return rich_to_bool(op, -1)
         elif x_ordp > y_ordp:
-            return 1
+            return rich_to_bool(op, 1)
         else:  # equal ordp
-            if x_ordp is infinity:
-                return 0 # since both are zero
-            else:
-                return (<pAdicGenericElement>left.unit_part())._cmp_units(right.unit_part())
+            test = (<pAdicGenericElement>left.unit_part())._cmp_units(right.unit_part())
+            return rich_to_bool(op, test)
 
     cdef int _cmp_units(left, pAdicGenericElement right) except -2:
         raise NotImplementedError
@@ -1213,7 +1230,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         INPUT:
 
-        - ``bd`` -- integer. Is a bound for precision, defaults to 20
+        - ``bd`` -- integer. Precision bound, defaults to 20
         - ``a``  -- integer. Offset parameter, defaults to 0
 
         OUTPUT:
@@ -1248,6 +1265,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
             4 + 4*5 + 4*5^2 + 4*5^3 + 2*5^4 + 4*5^5 + 5^7 + 3*5^9 + 4*5^10 + 3*5^11 
             + 5^13 + 4*5^14 + 2*5^15 + 2*5^16 + 2*5^17 + 3*5^18 + O(5^20)
 
+        TESTS:
+
         This test was added in :trac:`24433`::
 
             sage: F = Qp(7)
@@ -1257,36 +1276,19 @@ cdef class pAdicGenericElement(LocalGenericElement):
             6 + 4*7^19 + O(7^20)
         """
         R = self.parent()
-        cdef int p = R.prime()
-        cdef int b = a
-        cdef int k
+        p = R.prime()
 
-        s = R.zero().add_bigoh(bd)
-        t = R.one().add_bigoh(bd)
+        # If p == 2, must work in Qp rather than Zp.
+        if p == 2 and not R.is_field():
+            S = R.fraction_field()
+            return R(S(self).dwork_expansion(bd, a))
         try:
             v = R.dwork_coeffs
+            if len(v) < p*bd:
+                raise AttributeError
         except AttributeError:
-            v = None
-        if v is not None and len(v) < p * bd:
-            v = None
-        if v is not None:
-            for k in range(bd):
-                s += t * v[p*k+b]
-                t *= (self + k)
-        else:
-            u = [t]
-            v = []
-            for j in range(1, p):
-                u.append(u[j-1] / j)
-            for k in range(bd):
-                v += [x << k for x in u]
-                s += t * (u[a] << k)
-                t *= (self + k)
-                u[0] = ((u[-1] + u[0]) / (k+1)) >> 1
-                for j in range(1, p):
-                    u[j] = (u[j-1] + u[j]) / (j + (k+1) * p )
-            R.dwork_coeffs = v
-        return -s
+            v = dwork_mahler_coeffs(R, bd)
+        return evaluate_dwork_mahler(v, self, p, bd, a)
 
     def gamma(self, algorithm='pari'):
         r"""
@@ -1366,6 +1368,20 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: l2 = [F(a/(p-1)).gamma(algorithm='sage') for a in range(p-1)]
             sage: all(l1[i] == l2[i] for i in range(p-1))
             True
+
+        The `p`-adic Gamma function has anomalous behavior for the prime 2::
+
+            sage: F = Qp(2)
+            sage: x = F(-1) + O(2^2)
+            sage: x.gamma(algorithm='pari')
+            1 + O(2)
+            sage: x.gamma(algorithm='sage')
+            1 + O(2)
+            sage: x = F(-1) + O(2^3)
+            sage: x.gamma(algorithm='pari')
+            1 + O(2^3)
+            sage: x.gamma(algorithm='sage')
+            1 + O(2^3)
         """
         if self.parent().absolute_degree() > 1 or self.valuation() < 0:
             raise ValueError('The p-adic gamma function only works '
@@ -1379,10 +1395,10 @@ cdef class pAdicGenericElement(LocalGenericElement):
             return parent(self.__pari__().gamma())
         elif algorithm == 'sage':
             p = parent.prime()
-            bd = n + 2*n // p
-            k = Integer(-self.residue(field=False)) # avoid GF(p) for efficiency
+            bd = -((-n*p) // (p-1))
+            k = (-self) % p
             x = (self+k) >> 1
-            return -x.dwork_expansion(bd, a=k)
+            return -x.dwork_expansion(bd, k.lift())
 
     @coerce_binop
     def gcd(self, other):
@@ -1405,7 +1421,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             0 and 3 in the 3-adic ring `\ZZ_3`. The greatest common
             divisor of `O(3)` and `O(3)` could be (among others) 3 or 0 which
             have different valuation. The algorithm implemented here, will
-            return an element of minimal valuation among the possible greatest
+            return an element of minimal valuation among the possible greatest
             common divisors.
 
         EXAMPLES:
@@ -2241,6 +2257,50 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if len(L) < K.relative_degree():
             L += [Kbase(0)] * (K.relative_degree() - len(L))
         return K(L)
+
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(25, modulus=x^2-2)
+            sage: L.<b> = Qq(625, modulus=x^4-2)
+            sage: phi = K.hom([b^2]); phi(a+1)
+            (b^2 + 1) + O(5^20)
+            sage: z = L(-1).sqrt()
+            sage: psi = L.hom([z*b]); psi(phi(a) + 5*b) == psi(phi(a)) + 5*psi(b)
+            True
+            sage: z = (1+5*b).log()
+            sage: w = (5 - 5*b).exp()
+            sage: psi(z*w) == psi(z) * psi(w)
+            True
+
+            sage: P.<pi> = K.extension(x^2 - 5)
+            sage: cc = K.hom([-a])
+            sage: alpha = P.hom([pi], base_map=cc); alpha(a) + a
+            O(pi^40)
+            sage: zz = (1 + a*pi).log()
+            sage: ww = pi.exp()
+            sage: beta = P.hom([-pi], base_map=cc)
+            sage: beta(ww*zz) == beta(ww)*beta(zz)
+            True
+        """
+        L = self.parent()
+        K = L.base_ring()
+        if L is K:
+            # Qp or Zp, so there is a unique map
+            if base_map is None:
+                return codomain.coerce(self)
+            else:
+                return base_map(self)
+        f = self.polynomial()
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return f(im_gens[0])
 
     def _log_generic(self, aprec, mina=0):
         r"""
@@ -4334,3 +4394,191 @@ def _compute_g(p, n, prec, terms):
     for i in range(n):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
+
+cpdef dwork_mahler_coeffs(R, int bd=20):
+    r"""
+    Compute Dwork's formula for Mahler coefficients of `p`-adic Gamma.
+
+    This is called internally when one computes Gamma for a `p`-adic
+    integer. Normally there is no need to call it directly.
+
+    INPUT:
+
+    - ``R`` -- p-adic ring in which to compute
+    - ``bd`` -- integer. Number of terms in the expansion to use
+
+    OUTPUT:
+
+    A list of `p`-adic integers.
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.padic_generic_element import dwork_mahler_coeffs, evaluate_dwork_mahler
+        sage: R = Zp(3)
+        sage: v = dwork_mahler_coeffs(R)
+        sage: x = R(1/7)
+        sage: evaluate_dwork_mahler(v, x, 3, 20, 1)
+        2 + 2*3 + 3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^11 + 2*3^12 + 3^13 + 3^14 + 2*3^16 + 3^17 + 3^19 + O(3^20)
+        sage: x.dwork_expansion(a=1) # Same result
+        2 + 2*3 + 3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^11 + 2*3^12 + 3^13 + 3^14 + 2*3^16 + 3^17 + 3^19 + O(3^20)
+    """
+    from sage.rings.padics.factory import Qp
+    cdef int i
+    cdef long k, p
+
+    v = [R.one()]
+    p = R.prime()
+    for k in range(1, p):
+        v.append(v[-1] / R(k))
+    if bd > 1:
+        R1 = Qp(p, prec=bd) # Need divisions in this calculation
+        u = [R1(x) for x in v]
+        for i in range(1, bd):
+            u[0] = ((u[-1] + u[0]) / i) >> 1
+            for j in range(1, p):
+                u[j] = (u[j-1] + u[j]) / (j + i * p)
+            for x in u:
+                v.append(R(x << i))
+    return v
+
+cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a):
+    """
+    Evaluate Dwork's Mahler series for `p`-adic Gamma.
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.padic_generic_element import dwork_mahler_coeffs, evaluate_dwork_mahler
+        sage: R = Zp(3)
+        sage: v = dwork_mahler_coeffs(R)
+        sage: x = R(1/7)
+        sage: evaluate_dwork_mahler(v, x, 3, 20, 1)
+        2 + 2*3 + 3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^11 + 2*3^12 + 3^13 + 3^14 + 2*3^16 + 3^17 + 3^19 + O(3^20)
+        sage: x.dwork_expansion(a=1) # Same result
+        2 + 2*3 + 3^2 + 3^3 + 3^4 + 3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^11 + 2*3^12 + 3^13 + 3^14 + 2*3^16 + 3^17 + 3^19 + O(3^20)
+    """
+    cdef int k
+    bd -= 1
+    a1 = a + bd*p
+    s = v[a1]
+    u = x + bd
+    one = x.parent().one()
+    for k in range(bd):
+        a1 -= p
+        u -= one
+        s = s*u + v[a1]
+    return -s
+
+cdef long long evaluate_dwork_mahler_long(array.array v, long long x, long long p, int bd,
+                                     long long a, long long q):
+    cdef int k
+    cdef long long a1, s, u
+    bd -= 1
+    a1 = a + bd*p
+    s = v[a1]
+    u = x + bd
+    for k in range(bd):
+        a1 -= p
+        u -= 1
+        s = s*u + v[a1] # force cast to long long
+        s = s % q
+    return -s
+
+cpdef gauss_table(long long p, int f, int prec, bint use_longs):
+    r"""
+    Compute a table of Gauss sums using the Gross-Koblitz formula.
+
+    This is used in the computation of L-functions of hypergeometric motives.
+    The Gross-Koblitz formula is used as in `sage.rings.padics.misc.gauss_sum`,
+    but further unpacked for efficiency.
+
+    INPUT:
+
+    - `p` - prime
+    - `f`, `prec` - positive integers
+    - `use_longs` - boolean; if True, computations are done in C long long
+        integers rather than Sage `p`-adics, and the results are returned
+        as a Python array rather than a list.
+
+    OUTPUT:
+
+    A list of length `q-1=p^f-1`. The entries are `p`-adic units created with
+    absolute precision `prec`.
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.padic_generic_element import gauss_table
+        sage: gauss_table(2,2,4,False)
+        [1 + 2 + 2^2 + 2^3, 1 + 2 + 2^2 + 2^3, 1 + 2 + 2^2 + 2^3]
+        sage: gauss_table(3,2,4,False)[3]
+        2 + 3 + 2*3^2
+    """
+    from sage.rings.padics.factory import Zp, Qp
+
+    cdef int i, j, bd
+    cdef long long q, q1, q3, r, r1, r2, s1, s2, k
+    cdef array.array vv, ans1
+
+    if (f == 1 and prec == 1): # Shortcut for this key special case
+        ans1 = array.array('l', [0]) * p
+        ans1[0] = p-1
+        for r in range(1, p-1):
+            k = ans1[r-1]
+            ans1[r] = k * r % p
+        return ans1
+
+    q = p ** f
+    q1 = q - 1
+    bd = (p*prec+p-2) // (p-1) - 1
+    R = Zp(p, prec, 'fixed-mod')
+    if p == 2: # Dwork expansion has denominators when p = 2
+        R1 = Qp(p, prec)
+        use_longs = False
+    else:
+        R1 = R
+    d = ~R1(q1)
+    v = dwork_mahler_coeffs(R1, bd)
+    if use_longs:
+        q3 = p ** prec
+        r2 = d.lift() % q3
+        vv = array.array('l', [0]) * len(v)
+        for k in range(len(v)):
+            vv[k] = v[k].lift() % q3
+        ans1 = array.array('l', [0]) * q1
+        ans1[0] = -1
+        ans = ans1
+    else:
+        u = R1.one()
+        ans = [0 for r in range(q1)]
+        ans[0] = -u
+    for r in range(1, q1):
+        if ans[r]: continue
+        if use_longs:
+            s1 = 1
+        else:
+            s = u
+        r1 = r
+        for j in range(1, f+1):
+            k = r1 % p
+            r1 = (r1 + k * q1) // p
+            if use_longs: # Use Dwork expansion to compute p-adic Gamma
+                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2%q3, p, bd, k, q3)
+                s1 %= q3
+            else:
+                s *= -evaluate_dwork_mahler(v, R1(r1)*d, p, bd, k)
+            if r1 == r:
+                break
+        if use_longs:
+            if j < f:
+                s2 = s1
+                for i in range(f//j-1):
+                    s1 = s1 * s2 % q3
+            ans1[r] = -s1
+        else:
+            if j < f:
+                s **= f // j
+            ans[r] = -s
+        for i in range(j-1):
+            r1 = r1 * p % q1 # Initially r1 == r
+            ans[r1] = ans[r]
+    if p != 2: return ans
+    return [R(x) for x in ans]

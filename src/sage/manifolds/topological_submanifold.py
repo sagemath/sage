@@ -219,6 +219,7 @@ class TopologicalSubmanifold(TopologicalManifold):
             self._ambient = self
         else:
             self._ambient = ambient
+            self._codim = ambient._dim-self._dim
         self._immersed = False
         self._embedded = False
         self._adapted_charts = None
@@ -467,12 +468,12 @@ class TopologicalSubmanifold(TopologicalManifold):
         INPUT:
 
         - ``postscript`` -- (default: ``None``) string defining the name of the
-          coordinates of the adapated chart. This string will be appended to
+          coordinates of the adapted chart. This string will be appended to
           the names of the coordinates `(x_1,\ldots,x_n)` and of the parameters
           `(t_1,\ldots,t_{m-n})`. If ``None``, ``"_" + self.ambient()._name``
           is used
         - ``latex_postscript`` -- (default: ``None``) string defining the LaTeX
-          name of the coordinates of the adapated chart. This string will be
+          name of the coordinates of the adapted chart. This string will be
           appended to the LaTeX names of the coordinates `(x_1,\ldots,x_n)` and
           of the parameters `(t_1,\ldots,t_{m-n})`, If ``None``,
           ``"_" + self.ambient()._latex_()`` is used

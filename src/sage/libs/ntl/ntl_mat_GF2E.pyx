@@ -22,7 +22,6 @@
 #    2006-01: initial version (based on code by William Stein)
 #
 ##############################################################################
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr

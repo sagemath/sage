@@ -72,6 +72,8 @@ following methods are available:
     - :func:`linear_extensions() <sage.matroids.linear_matroid.LinearMatroid.linear_extensions>`
     - :func:`linear_coextensions() <sage.matroids.linear_matroid.LinearMatroid.linear_coextensions>`
 
+    - :meth:`orlik_terao_algebra() <sage.matroids.linear_matroid.LinearMatroid.orlik_terao_algebra>`
+
 - :class:`BinaryMatroid` has all of the :class:`LinearMatroid` ones, and
 
     - :func:`bicycle_dimension() <sage.matroids.linear_matroid.BinaryMatroid.bicycle_dimension>`
@@ -108,7 +110,6 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 include 'sage/data_structures/bitset.pxi'
 from cpython.object cimport Py_EQ, Py_NE
@@ -2343,9 +2344,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             [{0: 1, 1: 1, 2: 1}]
             sage: N = Matroid(ring=QQ,
             ....:         reduced_matrix=[[-1, -1, 0], [1, 0, -1], [0, 1, 1]])
-            sage: N.linear_extension_chains(F=[0, 1], simple=True,
+            sage: L = N.linear_extension_chains(F=[0, 1], simple=True,
             ....:                           fundamentals=set([1, -1, 1/2, 2]))
-            [{0: 1, 1: 1}, {0: -1/2, 1: 1}, {0: -2, 1: 1}]
+            sage: result = [{0: 1, 1: 1}, {0: -1/2, 1: 1}, {0: -2, 1: 1}]
+            sage: all(D in L for D in result)
+            True
         """
         if F is None:
             FI = self.basis()
@@ -2821,6 +2824,37 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if certificate:
             return True, None
         return True
+
+    def orlik_terao_algebra(self, R=None, ordering=None):
+        """
+        Return the Orlik-Terao algebra of ``self``.
+
+        INPUT:
+
+        - ``R`` -- (default: the base ring of ``self``) the base ring
+        - ``ordering`` -- (optional) an ordering of the ground set
+
+        .. SEEALSO::
+
+            :class:`~sage.algebras.orlik_terao.OrlikTeraoAlgebra`
+
+        EXAMPLES::
+
+            sage: M = matroids.Wheel(3)
+            sage: OS = M.orlik_terao_algebra()
+            sage: OS
+            Orlik-Terao algebra of Wheel(3):
+             Regular matroid of rank 3 on 6 elements with 16 bases
+             over Integer Ring
+            sage: OS.base_ring()
+            Integer Ring
+            sage: M.orlik_terao_algebra(QQ).base_ring()
+            Rational Field
+        """
+        if R is None:
+            R = self.base_ring()
+        from sage.algebras.orlik_terao import OrlikTeraoAlgebra
+        return OrlikTeraoAlgebra(R, self, ordering)
 
     # Copying, loading, saving
 

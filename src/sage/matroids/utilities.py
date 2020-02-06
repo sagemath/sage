@@ -300,7 +300,7 @@ def make_regular_matroid_from_matroid(matroid):
         for f in C.difference([e]):
             A[dB[f], dNB[e]] = 1
     # Change some entries from -1 to 1
-    entries = BipartiteGraph(A.transpose()).edges(labels=False)
+    entries = list(BipartiteGraph(A.transpose()).edges(labels=False, sort=False))
     while entries:
         L = [G.shortest_path(u, v) for u, v in entries]
         mindex, minval = min(enumerate(L), key=lambda x: len(x[1]))
@@ -403,7 +403,7 @@ def spanning_forest(M):
 
 def spanning_stars(M):
     r"""
-    Returns the edges of a connected subgraph that is a union of
+    Return the edges of a connected subgraph that is a union of
     all edges incident some subset of vertices.
 
     INPUT:
@@ -756,15 +756,13 @@ def split_vertex(G, u, v=None, edges=None):
 
         sage: from sage.matroids.utilities import split_vertex
         sage: G = graphs.BullGraph()
-        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3)])
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])
         Traceback (most recent call last):
         ...
         ValueError: the edges are not all incident with u
-        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3, None)])
-        sage: G.edges() # py2
-        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 'a', None)]
-        sage: [a for a in G.edge_iterator()] # py3 random
-        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), ('a', 3, None)]
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])
+        sage: list(G.edges(sort=True))
+        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 55, None)]
     """
     if v is None:
         v = G.add_vertex()

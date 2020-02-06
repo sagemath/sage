@@ -75,7 +75,6 @@ need to spend time and memory four times.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp

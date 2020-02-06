@@ -289,23 +289,26 @@ EXAMPLES::
     sage: T == S
     True
 
-Additionally all these monomial orders may be combined to product or block orders, defined as:
+Additionally all these monomial orders may be combined to product or block
+orders, defined as:
 
-Let `x = (x_1, x_2, \dots, x_n)` and `y = (y_1, y_2, \dots, y_m)` be two ordered sets of
-variables, `<_1` a monomial order on `k[x]` and `<_2` a monomial order on `k[y]`.
+Let `x = (x_1, x_2, \dots, x_n)` and `y = (y_1, y_2, \dots, y_m)` be two
+ordered sets of variables, `<_1` a monomial order on `k[x]` and `<_2` a
+monomial order on `k[y]`.
 
-The product order (or block order) `<` `:=` `(<_1,<_2)` on `k[x,y]` is defined as:
-`x^a y^b < x^A y^B` if and only if `x^a <_1 x^A` or (`x^a =x^A` and `y^b <_2 y^B`).
+The product order (or block order) `<` `:=` `(<_1,<_2)` on `k[x,y]` is defined
+as: `x^a y^b < x^A y^B` if and only if `x^a <_1 x^A` or (`x^a =x^A` and `y^b
+<_2 y^B`).
 
-These block orders are constructed in Sage by giving a comma separated list of monomial orders
-with the length of each block attached to them.
+These block orders are constructed in Sage by giving a comma separated list of
+monomial orders with the length of each block attached to them.
 
 EXAMPLES:
 
-As an example, consider constructing a block order where the
-first four variables are compared using the degree reverse
-lexicographical order while the last two variables in the second
-block are compared using negative lexicographical order.
+As an example, consider constructing a block order where the first four
+variables are compared using the degree reverse lexicographical order while the
+last two variables in the second block are compared using negative
+lexicographical order.
 
 ::
 
@@ -328,11 +331,10 @@ The same result can be achieved by::
     sage: a > e^4
     True
 
-If any other unsupported term order is given the provided string
-can be forced to be passed through as is to Singular, Macaulay2, and Magma.
-This ensures that it is for example possible to calculate a Groebner
-basis with respect to some term order Singular supports but Sage
-doesn't::
+If any other unsupported term order is given the provided string can be forced
+to be passed through as is to Singular, Macaulay2, and Magma.  This ensures
+that it is for example possible to calculate a Groebner basis with respect to
+some term order Singular supports but Sage doesn't::
 
     sage: T = TermOrder("royalorder")
     Traceback (most recent call last):
@@ -352,9 +354,11 @@ AUTHORS:
 
 - Martin Albrecht: implemented native term orders, refactoring
 
-- Kwankyu Lee: implemented matrix and weighted degree term orders, refactoring
-"""
+- Kwankyu Lee: implemented matrix and weighted degree term orders
 
+- Simon King (2011-06-06): added termorder_from_singular
+
+"""
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -362,8 +366,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-
 import re
 from sage.structure.sage_object import SageObject
 
@@ -648,6 +650,35 @@ class TermOrder(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: the length of the given term order (16) differs from the number of variables (15)
+
+        If ``_singular_ringorder_column`` attribute is set, then it is regarded
+        as a different term order::
+
+            sage: T = TermOrder('degrevlex')
+            sage: R.<x,y,z> = PolynomialRing(QQ, order=T)
+            sage: R._singular_()
+            polynomial ring, over a field, global ordering
+            // coefficients: QQ
+            // number of vars : 3
+            //        block   1 : ordering dp
+            //                  : names    x y z
+            //        block   2 : ordering C
+            sage: T2 = copy(T)
+            sage: T2 == T
+            True
+            sage: T2._singular_ringorder_column = 0
+            sage: T2 == T
+            False
+            sage: S = R.change_ring(order=T2)
+            sage: S == T
+            False
+            sage: S._singular_()
+            polynomial ring, over a field, global ordering
+            // coefficients: QQ
+            // number of vars : 3
+            //        block   1 : ordering C
+            //        block   2 : ordering dp
+            //                  : names    x y z
         """
         if isinstance(name, TermOrder):
             self.__copy(name)
@@ -673,6 +704,22 @@ class TermOrder(SageObject):
         self._weights = None
         self._matrix = None
         self._singular_moreblocks = 0
+
+        # Singular has special C block in ring order, that compares columns of
+        # monomials. This does not affect ordering of monomials of a ring, but
+        # does ordering of monomials of modules over the ring.
+        #
+        # If the attribute below is set to an integer i, then i divided by 2
+        # gives the position of the C block in the ring order; negative i means
+        # the default position at the end. The remainder of i divided by 2
+        # decides the ascending order if 0, or descending order if 1, of the
+        # column generators. Note that the ascending and descending orders of
+        # generators are written as 'C'  and 'c', respectively, in Singular
+        # ring order string. See singular_str() method of this class.
+        #
+        # This is to be used for internal code that constructs Singular modules
+        # over the ring.
+        self._singular_ringorder_column = None
 
         if name == "block": # block term order with blocks in a list
             length = 0
@@ -1350,7 +1397,6 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f < g )) and f or g
 
-
     def greater_tuple_neglex(self,f,g):
         """
         Return the greater exponent tuple with respect to the negative
@@ -1595,10 +1641,8 @@ class TermOrder(SageObject):
             //                  : names    x8 x9
             //        block   4 : ordering C
 
-        TESTS:
-
-        The 'degneglex' ordering is somehow special, it looks like a block
-        ordering in SINGULAR.
+        The ``degneglex`` ordering is somehow special, it looks like a block
+        ordering in SINGULAR::
 
             sage: T = TermOrder("degneglex", 2)
             sage: P = PolynomialRing(QQ,2, names='x', order=T)
@@ -1626,8 +1670,80 @@ class TermOrder(SageObject):
             //        block   4 : ordering ls
             //                  : names    x2 x3
             //        block   5 : ordering C
-            """
-        return self._singular_str
+
+        The position of the ``ordering C`` block can be controlled by setting
+        ``_singular_ringorder_column`` attribute to an integer::
+
+            sage: T = TermOrder("degneglex", 2) + TermOrder("degneglex", 2)
+            sage: T._singular_ringorder_column = 0
+            sage: P = PolynomialRing(QQ, 4, names='x', order=T)
+            sage: P._singular_()
+            polynomial ring, over a field, global ordering
+            // coefficients: QQ
+            // number of vars : 4
+            //        block   1 : ordering C
+            //        block   2 : ordering a
+            //                  : names    x0 x1
+            //                  : weights   1  1
+            //        block   3 : ordering ls
+            //                  : names    x0 x1
+            //        block   4 : ordering a
+            //                  : names    x2 x3
+            //                  : weights   1  1
+            //        block   5 : ordering ls
+            //                  : names    x2 x3
+
+            sage: T._singular_ringorder_column = 1
+            sage: P = PolynomialRing(QQ, 4, names='y', order=T)
+            sage: P._singular_()
+            polynomial ring, over a field, global ordering
+            // coefficients: QQ
+            // number of vars : 4
+            //        block   1 : ordering c
+            //        block   2 : ordering a
+            //                  : names    y0 y1
+            //                  : weights   1  1
+            //        block   3 : ordering ls
+            //                  : names    y0 y1
+            //        block   4 : ordering a
+            //                  : names    y2 y3
+            //                  : weights   1  1
+            //        block   5 : ordering ls
+            //                  : names    y2 y3
+
+            sage: T._singular_ringorder_column = 2
+            sage: P = PolynomialRing(QQ, 4, names='z', order=T)
+            sage: P._singular_()
+            polynomial ring, over a field, global ordering
+            // coefficients: QQ
+            // number of vars : 4
+            //        block   1 : ordering a
+            //                  : names    z0 z1
+            //                  : weights   1  1
+            //        block   2 : ordering C
+            //        block   3 : ordering ls
+            //                  : names    z0 z1
+            //        block   4 : ordering a
+            //                  : names    z2 z3
+            //                  : weights   1  1
+            //        block   5 : ordering ls
+            //                  : names    z2 z3
+        """
+        if self._singular_ringorder_column is not None:
+            singular_str = self._singular_str
+            if singular_str.startswith('('):
+                singular_str = singular_str[1:-1]  # remove parenthesis
+            split_pattern = r"([^(),]+(?:\([^()]*\)[^(),]*)*)"  # regex to split by outermost commas
+            singular_str_blocks = re.findall(split_pattern, singular_str)
+            if (self._singular_ringorder_column < 0 or
+                self._singular_ringorder_column >= 2*len(singular_str_blocks)+2):
+                singular_str_blocks.append("C")
+            else:
+                singular_str_blocks.insert(self._singular_ringorder_column // 2,
+                       "C" if self._singular_ringorder_column % 2 == 0 else "c")
+            return "(" + ",".join(singular_str_blocks) + ")"
+        else:
+            return self._singular_str
 
     def singular_moreblocks(self):
         """
@@ -1810,7 +1926,8 @@ class TermOrder(SageObject):
             and (not self.is_block_order()
                 or all(len(t1) == len(t2) for (t1, t2) in zip(self._blocks, other._blocks)))
             and self._weights == other._weights
-            and self._matrix == other._matrix)
+            and self._matrix == other._matrix
+            and self._singular_ringorder_column == other._singular_ringorder_column)
 
     def __ne__(self, other):
         """
@@ -2011,17 +2128,11 @@ def termorder_from_singular(S):
 
     An instance of the Singular interface.
 
-    NOTE:
-
-    A term order in Singular also involves information on
-    orders for modules. This is not taken into account in
-    Sage.
-
     EXAMPLES::
 
+        sage: from sage.rings.polynomial.term_order import termorder_from_singular
         sage: singular.eval('ring r1 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp)')
         ''
-        sage: from sage.rings.polynomial.term_order import termorder_from_singular
         sage: termorder_from_singular(singular)
         Block term order with blocks:
         (Matrix term order with matrix
@@ -2030,19 +2141,58 @@ def termorder_from_singular(S):
          Weighted degree reverse lexicographic term order with weights (2, 3),
          Lexicographic term order of length 2)
 
-    AUTHOR:
+    A term order in Singular also involves information on orders for modules.
+    This information is reflected in ``_singular_ringorder_column`` attribute of
+    the term order. ::
 
-    - Simon King (2011-06-06)
+        sage: singular.ring(0, '(x,y,z,w)', '(C,dp(2),lp(2))')
+        polynomial ring, over a field, global ordering
+        // coefficients: QQ
+        // number of vars : 4
+        //        block   1 : ordering C
+        //        block   2 : ordering dp
+        //                  : names    x y
+        //        block   3 : ordering lp
+        //                  : names    z w
+        sage: T = termorder_from_singular(singular)
+        sage: T
+        Block term order with blocks:
+        (Degree reverse lexicographic term order of length 2,
+         Lexicographic term order of length 2)
+        sage: T._singular_ringorder_column
+        0
 
+        sage: singular.ring(0, '(x,y,z,w)', '(c,dp(2),lp(2))')
+        polynomial ring, over a field, global ordering
+        // coefficients: QQ
+        // number of vars : 4
+        //        block   1 : ordering c
+        //        block   2 : ordering dp
+        //                  : names    x y
+        //        block   3 : ordering lp
+        //                  : names    z w
+        sage: T = termorder_from_singular(singular)
+        sage: T
+        Block term order with blocks:
+        (Degree reverse lexicographic term order of length 2,
+         Lexicographic term order of length 2)
+        sage: T._singular_ringorder_column
+        1
     """
     from sage.all import ZZ
     singular = S
     T = singular('ringlist(basering)[3]')
     order = []
+    ringorder_column = None
     for block in T:
         blocktype = singular.eval('%s[1]'%block.name())
-        if blocktype in ['c','C','a']:
+        if blocktype in ['a']:
             continue
+        elif blocktype == 'c':
+            ringorder_column = 2*len(order) + 1
+        elif blocktype == 'C':
+            if len(order) < len(T) - 1:  # skip Singular default
+                ringorder_column = 2*len(order)
         elif blocktype == 'M':
             from sage.matrix.constructor import matrix
             coefs = list(block[2].sage())
@@ -2052,9 +2202,14 @@ def termorder_from_singular(S):
             order.append(TermOrder(inv_singular_name_mapping[blocktype], list(block[2].sage())))
         else:
             order.append(TermOrder(inv_singular_name_mapping[blocktype], ZZ(singular.eval("size(%s[2])"%block.name()))))
+
     if not order:
         raise ValueError("invalid term order in Singular")
     out = order.pop(0)
     while order:
         out = out + order.pop(0)
+
+    if ringorder_column is not None:
+        out._singular_ringorder_column = ringorder_column
+
     return out

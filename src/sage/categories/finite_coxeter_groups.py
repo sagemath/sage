@@ -63,7 +63,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         """
         Ambiguity resolution: the implementation of ``some_elements``
         is preferable to that of :class:`FiniteGroups`. The same holds
-        for ``__iter__``, although a breath first search would be more
+        for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
         :trac:`13589`.
 

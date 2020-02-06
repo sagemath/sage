@@ -855,6 +855,27 @@ class ChartFunction(AlgebraElement):
         curr = self._calc_method._current
         return self._calc_method.is_trivial_zero(self.expr(curr))
 
+    # TODO: Remove this method as soon as ticket #28629 is solved?
+    def is_unit(self):
+        r"""
+        Return ``True`` iff ``self`` is not trivially zero since most chart
+        functions are invertible and an actual computation would take too much
+        time.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: X.<x,y> = M.chart()
+            sage: f = X.function(x^2+3*y+1)
+            sage: f.is_unit()
+            True
+            sage: zero = X.function(0)
+            sage: zero.is_unit()
+            False
+
+        """
+        return not self.is_trivial_zero()
+
     def copy(self):
         r"""
         Return an exact copy of the object.
@@ -2269,7 +2290,7 @@ class ChartFunction(AlgebraElement):
         If ``self`` has been defined with the small parameter
         ``expansion_symbol`` and some truncation order, the coordinate
         expression of ``self`` will be expanded in power series of that
-        parameter and truncated to the the given order.
+        parameter and truncated to the given order.
 
         OUTPUT:
 
@@ -2645,7 +2666,7 @@ class ChartFunctionRing(Parent, UniqueRepresentation):
         """
         return "Ring of chart functions on {}".format(self._chart)
 
-    def is_integral_domain(self):
+    def is_integral_domain(self, proof=True):
         """
         Return ``False`` as ``self`` is not an integral domain.
 

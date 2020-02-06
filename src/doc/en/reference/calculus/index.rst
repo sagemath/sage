@@ -1,3 +1,5 @@
+.. _symbolic-calculus:
+
 Symbolic Calculus
 =================
 

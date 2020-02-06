@@ -11,7 +11,6 @@ import uuid
 import datetime
 import os
 import sys
-import pprint
 
 try:
     from urlparse import urljoin
@@ -223,11 +222,11 @@ class URL (object):
         if self.base is None:
             return self.relative
         else:
-            base_abs = self.base.absolute
             return urljoin(self.base.absolute, self.relative)
 
     def __repr__(self):
         return 'URL(%r)' % self.absolute
+
 
 class Bookmark (object):
     def __init__(self, tocs=None):

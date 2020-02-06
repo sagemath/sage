@@ -58,7 +58,7 @@ def reproducible_repr(val):
     covered by the examples below. If a doctest requires special
     handling for additional types, this function may be extended
     appropriately. It is an error if an argument to this function has
-    a non-reproducible ``repr`` implementation and is not explicitely
+    a non-reproducible ``repr`` implementation and is not explicitly
     mentioned in an example case below.
 
     INPUT:

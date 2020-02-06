@@ -242,7 +242,7 @@ class ShiftedPrimedTableau(ClonableArray):
             raise ValueError("{} is not an element of Shifted Primed Tableaux".format(self))
 
     def is_standard(self):
-        """
+        r"""
         Return ``True`` if the entries of ``self`` are in bijection with
         positive primed integers `1', 1, 2', \ldots, n`.
 

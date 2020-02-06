@@ -22,16 +22,15 @@ AUTHOR:
   doctest errors
 
 """
-
-#############################################################################
+# ***************************************************************************
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from __future__ import print_function, absolute_import, division
 
@@ -42,14 +41,12 @@ from sage.structure.element import Element
 from sage.rings.ring import Algebra
 from sage.categories.rings import Rings
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import Field
-from sage.structure.category_object import normalize_names
-from sage.categories.morphism import Morphism
-from sage.categories.morphism import IdentityMorphism
-from sage.rings.polynomial.skew_polynomial_element import (SkewPolynomial,
-                                                           SkewPolynomialBaseringInjection)
+from sage.categories.morphism import Morphism, IdentityMorphism
+from sage.rings.polynomial.skew_polynomial_element import SkewPolynomialBaseringInjection
 
-#########################################################################################
+############################################################################
 
 def _base_ring_to_fraction_field(S):
     """
@@ -485,7 +482,7 @@ class SkewPolynomialRing_general(Algebra, UniqueRepresentation):
                     return False
                 if P.variable_name() == self.variable_name():
                     if (P.base_ring() is self.base_ring()
-                            and self.base_ring() is ZZ_sage):
+                            and self.base_ring() is ZZ):
                        if self._implementation_names == ('NTL',):
                             return False
                     return self.base_ring().has_coerce_map_from(P.base_ring())

@@ -570,7 +570,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 res = self[m] % (self.k + 1)
                 if res == i:
                     l.append(self[m] + 1)
-                elif res == 0 :
+                elif res == 0:
                     l.append(self[m] - 1)
                 else:
                     l.append(self[m])
@@ -1541,42 +1541,42 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
             raise ValueError('index not in index set')
         j = self.N - i
         l = []
-        if i != self.k and i != 0:
+        if i and i != self.k:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==i  :
+                res = self[m] % self.N
+                if res == i:
                     l.append(self[m]+1)
-                elif res==i+1:
+                elif res == i+1:
                     l.append(self[m]-1)
-                elif res==j:
+                elif res == j:
                     l.append(self[m]-1)
-                elif res==j-1:
+                elif res == j-1:
                     l.append(self[m]+1)
                 else:
                     l.append(self[m])
         elif i == 0:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==1:
+                res = self[m] % self.N
+                if res == 1:
                     l.append(self[m]-3)
-                elif res==self.N-2:
+                elif res == self.N-2:
                     l.append(self[m]+3)
-                elif res==2:
+                elif res == 2:
                     l.append(self[m]-3)
-                elif res==self.N-1:
+                elif res == self.N-1:
                     l.append(self[m]+3)
                 else:
                     l.append(self[m])
         elif i == self.k:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==self.k:
+                res = self[m] % self.N
+                if res == self.k:
                     l.append(self[m]+2)
-                elif res==self.k+2:
+                elif res == self.k+2:
                     l.append(self[m]-2)
-                elif res==self.k-1:
+                elif res == self.k-1:
                     l.append(self[m]+2)
-                elif res==self.k+1:
+                elif res == self.k+1:
                     l.append(self[m]-2)
                 else:
                     l.append(self[m])

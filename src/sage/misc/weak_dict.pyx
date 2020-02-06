@@ -117,7 +117,6 @@ See :trac:`13394` for a discussion of some of the design considerations.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 import weakref
 import six

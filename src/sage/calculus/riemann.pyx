@@ -10,7 +10,7 @@ AUTHORS:
 Development supported by NSF award No. 0702939.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Ethan Van Andel <evlutte@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,9 +22,8 @@ Development supported by NSF award No. 0702939.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -383,7 +382,7 @@ cdef class Riemann_Map:
 
     def get_szego(self, int boundary=-1, absolute_value=False):
         """
-        Returns a discretized version of the Szego kernel for each boundary
+        Return a discretized version of the Szego kernel for each boundary
         function.
 
         INPUT:
@@ -457,7 +456,7 @@ cdef class Riemann_Map:
 
     def get_theta_points(self, int boundary=-1):
         """
-        Returns an array of points of the form
+        Return an array of points of the form
         ``[t value, theta in e^(I*theta)]``, that is, a discretized version
         of the theta/boundary correspondence function. In other words, a point
         in this array [t1, t2] represents that the boundary point given by f(t1)
@@ -575,12 +574,13 @@ cdef class Riemann_Map:
 
     cpdef riemann_map(self, COMPLEX_T pt):
         """
-        Returns the Riemann mapping of a point. That is, given ``pt`` on
-        the interior of the mapped region, ``riemann_map`` will return
-        the point on the unit disk that ``pt`` maps to. Note that this
-        method only works for interior points; accuracy breaks down very close
-        to the boundary. To get boundary correspondance, use
-        :meth:`get_theta_points`.
+        Return the Riemann mapping of a point.
+
+        That is, given ``pt`` on the interior of the mapped region,
+        ``riemann_map`` will return the point on the unit disk that
+        ``pt`` maps to. Note that this method only works for interior
+        points; accuracy breaks down very close to the boundary. To
+        get boundary correspondance, use :meth:`get_theta_points`.
 
         INPUT:
 
@@ -663,11 +663,12 @@ cdef class Riemann_Map:
 
     cpdef inverse_riemann_map(self, COMPLEX_T pt):
         """
-        Returns the inverse Riemann mapping of a point. That is, given ``pt``
-        on the interior of the unit disc, ``inverse_riemann_map()`` will
-        return the point on the original region that would be Riemann
-        mapped to ``pt``. Note that this method does not work for multiply
-        connected domains.
+        Return the inverse Riemann mapping of a point.
+
+        That is, given ``pt`` on the interior of the unit disc,
+        ``inverse_riemann_map()`` will return the point on the
+        original region that would be Riemann mapped to ``pt``. Note
+        that this method does not work for multiply connected domains.
 
         INPUT:
 

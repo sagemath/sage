@@ -26,8 +26,6 @@ REFERENCE:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
-
 from libc.string cimport memcmp
 
 from .data_structures cimport *

@@ -1,5 +1,5 @@
 """
-Capped relative template for complete discrete valuation rings and their fraction fields.
+Capped relative template for complete discrete valuation rings and their fraction fields
 
 In order to use this template you need to write a linkage file and gluing file.
 For an example see mpz_linkage.pxi (linkage file) and padic_capped_relative_element.pyx (gluing file).
@@ -1510,9 +1510,12 @@ cdef class CRElement(pAdicTemplateElement):
             sage: hash(R(17)) #indirect doctest
             17
 
-            sage: hash(R(-1))
-            1977822444 # 32-bit
-            95367431640624 # 64-bit
+            sage: hash(R(-1))     # py3
+            1977844648            # 32-bit
+            95367431640624        # 64-bit
+            sage: hash(R(-1))     # py2
+            1977822444            # 32-bit
+            95367431640624        # 64-bit
         """
         if exactzero(self.ordp):
             return 0

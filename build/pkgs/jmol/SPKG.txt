@@ -13,9 +13,11 @@ GPLv2+
 
 == Upstream Contact ==
 
- * Jonathan Gutow
- * e-mail: gutow@uwosh.edu
- * Homepage: http://www.uwosh.edu/facstaff/gutow
+ * Bob Hanson
+ * e-mail: hansonr@stolaf.edu
+ * Homepage: https://www.stolaf.edu/people/hansonr/
+ * Development page: https://github.com/BobHanson/Jmol-SwingJS
+ * Download page: https://sourceforge.net/projects/jmol/files/Jmol/
 
 == Dependencies ==
 
@@ -25,23 +27,7 @@ The commandline jmol requires java at runtime.
 
 == Special Build Instructions ==
 
-First, unpack the upstream release (actual version number will of
-course differ):
+To avoid depending on `unzip` at build time, we have to repack the tarball, see
+`spkg-src`. We take the opportunity to remove some unnecessary subdirectories,
+see http://wiki.jmol.org/index.php/Jmol_JavaScript_Object#In_detail
 
-$ unzip ~/Download/Jmol-14.2.4_2014.08.03-binary.zip
-$ cd jmol-14.2.4_2014.08.03/
-
-Extract and then delete the contained jsmol.zip
-
-$ unzip jsmol.zip
-$ rm jsmol.zip
-
-Delete unnecessary subdirectories, see http://wiki.jmol.org/index.php/Jmol_JavaScript_Object#In_detail
-
-$ cd jsmol
-$ rm -rf data flot images inchi jcse jsme
-
-Tar up the remaining files
-
-$ cd ../..
-$ tar cjf jmol-14.2.4_2014.08.03.tar.bz2 jmol-14.2.4_2014.08.03/

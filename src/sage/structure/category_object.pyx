@@ -55,8 +55,6 @@ This example illustrates generators for a free module over `\ZZ`.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division, print_function
-
 from sage.cpython.getattr import dir_with_other_class
 from sage.cpython.getattr cimport getattr_from_other_class
 from sage.categories.category import Category

@@ -57,7 +57,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 import re
 from . import real_mpfr
@@ -79,7 +78,6 @@ from .complex_number cimport ComplexNumber
 from .complex_field import ComplexField_class
 
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.superseded import deprecated_function_alias
 from .real_mpfr cimport RealField_class, RealNumber
 from .real_mpfr import mpfr_prec_min, mpfr_prec_max
 from sage.structure.richcmp cimport rich_to_bool, richcmp
@@ -281,7 +279,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
 
         - ``prec`` -- (integer) precision; default = 53
 
-          prec is the number of bits used to represent the matissa of
+          prec is the number of bits used to represent the mantissa of
           both the real and imaginary part of complex floating-point number.
 
         - ``rnd`` -- (string) the rounding mode; default = ``'RNDNN'``
@@ -1381,7 +1379,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         Return an irreducible polynomial of degree at most `n` which is
         approximately satisfied by this complex number.
 
-        ALGORITHM: Uses the PARI C-library algdep command.
+        ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
 
         INPUT: Type ``algdep?`` at the top level prompt. All additional
         parameters are passed onto the top-level algdep command.
@@ -1396,19 +1394,9 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             x^2 - x + 1
             sage: p(z)
             1.11022302462516e-16
-
-        TESTS::
-
-            sage: z.algebraic_dependancy(2)
-            doctest:...: DeprecationWarning: algebraic_dependancy is deprecated. Please use algebraic_dependency instead.
-            See http://trac.sagemath.org/22714 for details.
-            x^2 - x + 1
         """
         from sage.arith.all import algdep
         return algdep(self, n, **kwds)
-
-    # Former misspelling
-    algebraic_dependancy = deprecated_function_alias(22714, algebraic_dependency)
 
     ################################
     # Basic Arithmetic

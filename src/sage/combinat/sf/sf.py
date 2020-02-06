@@ -1486,7 +1486,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from sage.combinat.sf.new_kschur import KBoundedSubspace
         return KBoundedSubspace(self, k, t=t)
 
-    def kschur(self, k, t ='t'):
+    def kschur(self, k, t='t'):
         r"""
         Returns the `k`-Schur functions.
 
@@ -1506,9 +1506,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.kBoundedSubspace(k, t=t).kschur()
 
-    def ksplit(self, k, t ='t'):
+    def ksplit(self, k, t='t'):
         r"""
-        Returns the `k`-split basis of the `k`-bounded subspace.
+        Return the `k`-split basis of the `k`-bounded subspace.
 
         EXAMPLES::
 

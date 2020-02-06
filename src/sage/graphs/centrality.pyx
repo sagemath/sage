@@ -15,7 +15,6 @@ This module is meant for all functions related to centrality in networks.
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
 
 from libc.string cimport memset
 from libc.stdint cimport uint32_t
@@ -269,7 +268,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
             # We enumerate vertices in reverse order of discovery.
             for i in range(layer_current_end - 1, -1, -1):
                 u = queue[i]
-                for j in range(degrees[u]):
+                for j in range(<int>degrees[u]):
                     v = bfs_dag.neighbors[u][j]
                     if v != source: # better to not 'if' but set it to 0 afterwards?
                         if numerical_type is double:
@@ -455,7 +454,7 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
 
     for i in range(n):
         reachL[i] = reachL_scc[scc[i]]
-        reachU[i] = <int> min(reachU_scc[scc[i]], g.n)
+        reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
 cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable):
     r"""

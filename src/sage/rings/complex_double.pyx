@@ -66,8 +66,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 import operator
 from cpython.object cimport Py_NE
 from cysignals.signals cimport sig_on, sig_off
@@ -1015,6 +1013,23 @@ cdef class ComplexDoubleElement(FieldElement):
             '0.50000000000000000 + 1.0000000000000000*%i'
         """
         return CC(self)._maxima_init_(I)
+
+    def _sympy_(self):
+        """
+        Convert this complex number to Sympy.
+
+        EXAMPLES::
+
+            sage: CDF(1, 0)._sympy_()
+            1.00000000000000
+            sage: CDF(1/3, 1)._sympy_()
+            0.333333333333333 + 1.0*I
+            sage: type(_)
+            <class 'sympy.core.add.Add'>
+        """
+        x, y = self._complex.dat
+        import sympy
+        return sympy.Float(x) + sympy.Float(y) * sympy.I
 
     def _repr_(self):
         """

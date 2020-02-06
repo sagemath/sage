@@ -128,13 +128,13 @@ REFERENCES:
    generators.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                          David Joyner <wdjoyner@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six.moves import range
 from six import integer_types
@@ -149,7 +149,8 @@ from sage.interfaces.expect import is_ExpectElement
 from sage.interfaces.gap import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement as LibGapElement
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement, standardize_generator
+from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor, standardize_generator
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
@@ -311,7 +312,7 @@ def PermutationGroup(gens=None, gap_group=None, domain=None, canonicalize=True, 
     according to the order of the elements of the domain::
 
         sage: list(PermutationGroup([['b','c','a']], domain=['a','b','c']))
-        [(), ('a','c','b'), ('a','b','c')]
+        [(), ('a','b','c'), ('a','c','b')]
         sage: list(PermutationGroup([['b','c','a']], domain=['b','c','a']))
         [()]
         sage: list(PermutationGroup([['b','c','a']], domain=['a','c','b']))
@@ -434,7 +435,7 @@ class PermutationGroup_generic(FiniteGroup):
             gens = [gen for gen in gap_group.GeneratorsOfGroup()]
 
         if domain is None:
-            gens = [standardize_generator(x) for x in gens]
+            gens = [standardize_generator(x, as_cycles=True) for x in gens]
             domain = set()
             for x in gens:
                 for cycle in x:
@@ -761,7 +762,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G([(1,2)])
             Traceback (most recent call last):
             ...
-            TypeError: permutation [(1, 2)] not in Permutation Group with generators [(1,2,3,4)]
+            ValueError: permutation [(1, 2)] not in Permutation Group with generators [(1,2,3,4)]
 
         TESTS:
 
@@ -783,14 +784,14 @@ class PermutationGroup_generic(FiniteGroup):
             #   so we can pass check=False for speed.
             if (isinstance(x_parent, PermutationGroup_subgroup)
                 and x_parent._ambient_group is self):
-                return self.element_class(x.cycle_tuples(), self, check=False)
+                return self.element_class(x, self, check=False)
 
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             compatible_domains = all(point in self._domain_to_gap
                                      for point in x_parent.domain())
             if compatible_domains and (isinstance(self, SymmetricGroup)
                                        or x.gap() in self.gap()):
-                return self.element_class(x.cycle_tuples(), self, check=False)
+                return self.element_class(x, self, check=False)
 
         return self.element_class(x, self, check=check)
 
@@ -851,7 +852,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G(2)
             Traceback (most recent call last):
             ...
-            TypeError: 'sage.rings.integer.Integer' object is not iterable
+            ValueError: invalid data to initialize a permutation
 
         We check consistency of coercion maps::
 
@@ -1019,8 +1020,42 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([('A','B'),('B','C')])
             sage: [g for g in G]
             [(), ('A','B','C'), ('A','C','B'), ('B','C'), ('A','B'), ('A','C')]
+
+            sage: G = SymmetricGroup(5).subgroup([])
+            sage: list(G)
+            [()]
+
+            sage: G = SymmetricGroup(5).subgroup(['(1,2,3)(4,5)'])
+            sage: list(G)
+            [(), (1,2,3)(4,5), (1,3,2), (4,5), (1,2,3), (1,3,2)(4,5)]
         """
-        return self.iteration(algorithm="SGS")
+        if len(self._gens) == 1:
+            return self._iteration_monogen()
+        else:
+            # TODO: this is too slow for moderatly small permutation groups
+            return self.iteration(algorithm="SGS")
+
+    def _iteration_monogen(self):
+        r"""
+        An iterator for cyclic group.
+
+        EXAMPLES::
+
+            sage: for g in PermutationGroup(['(1,2,4)(3,5)'])._iteration_monogen():
+            ....:     print(g)
+            ()
+            (1,2,4)(3,5)
+            (1,4,2)
+            (3,5)
+            (1,2,4)
+            (1,4,2)(3,5)
+        """
+        g = self._gens[0]
+        h = self.one()
+        yield h
+        for i in range(g.order() - 1):
+            h *= g
+            yield h
 
     def iteration(self, algorithm="SGS"):
         """
@@ -1054,7 +1089,7 @@ class PermutationGroup_generic(FiniteGroup):
             [(), (1,2,3), (1,3,2), (2,3), (1,2), (1,3)]
 
             sage: list(G.iteration(algorithm="BFS"))
-            [(), (2,3), (1,2), (1,3,2), (1,2,3), (1,3)]
+            [(), (2,3), (1,2), (1,2,3), (1,3,2), (1,3)]
 
             sage: list(G.iteration(algorithm="DFS"))
             [(), (1,2), (1,3,2), (1,3), (1,2,3), (2,3)]
@@ -1067,9 +1102,12 @@ class PermutationGroup_generic(FiniteGroup):
             sage: A.cardinality()
             60000
 
-            sage: for x in A.iteration(): pass
-            sage: for x in A.iteration(algorithm="BFS"): pass
-            sage: for x in A.iteration(algorithm="DFS"): pass
+            sage: sum(1 for x in A.iteration()) == 60000
+            True
+            sage: sum(1 for x in A.iteration(algorithm="BFS")) == 60000
+            True
+            sage: sum(1 for x in A.iteration(algorithm="DFS")) == 60000
+            True
         """
         if algorithm == "SGS":
             def elements(SGS):
@@ -1219,7 +1257,8 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return len(self.gens())
 
-    def identity(self):
+    @cached_method
+    def one(self):
         """
         Return the identity element of this group.
 
@@ -1239,7 +1278,9 @@ class PermutationGroup_generic(FiniteGroup):
             sage: S.identity()
             ()
         """
-        return self.element_class([], self, check=True)
+        return self.element_class([], self, check=False)
+
+    identity = one
 
     def exponent(self):
         r"""
@@ -2409,7 +2450,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
 
         try:
-            g = PermutationGroupElement(g)
+            g = PermutationConstructor(g)
         except Exception:
             raise TypeError("{0} does not convert to a permutation group element".format(g))
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
@@ -3541,7 +3582,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         This method returns a description of *all* block systems. Hence, the
         output is a "list of lists of lists" or a "list of lists" depending on
-        the value of ``representatives``. A bit more clearly, output is :
+        the value of ``representatives``. A bit more clearly, output is:
 
         * A list of length (#number of different block systems) of
 
@@ -4504,7 +4545,7 @@ class PermutationGroup_generic(FiniteGroup):
             1/(x^2 - 2*x + 1)
         """
         pi = self._libgap_().NaturalCharacter()
-        # because NaturalCharacter forgets about fixed points :
+        # because NaturalCharacter forgets about fixed points:
         pi += self._libgap_().TrivialCharacter() * len(self.fixed_points())
 
         # TODO: pi is a Character from a CharacterTable on self, however libgap
@@ -4646,7 +4687,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         Subgroup generated by [(1,2,3,4)] of (Dihedral group of order 8 as a permutation group)
         sage: K = H.subgroup(gens)
         sage: K.list()
-        [(), (1,3)(2,4), (1,4,3,2), (1,2,3,4)]
+        [(), (1,2,3,4), (1,3)(2,4), (1,4,3,2)]
         sage: K.ambient_group()
         Dihedral group of order 8 as a permutation group
         sage: K.gens()
@@ -4687,7 +4728,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             sage: S
             Subgroup generated by [(1,2,3,4)] of (Dihedral group of order 8 as a permutation group)
             sage: S.list()
-            [(), (1,3)(2,4), (1,4,3,2), (1,2,3,4)]
+            [(), (1,2,3,4), (1,3)(2,4), (1,4,3,2)]
             sage: S.ambient_group()
             Dihedral group of order 8 as a permutation group
 

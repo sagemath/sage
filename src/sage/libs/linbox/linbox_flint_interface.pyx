@@ -33,8 +33,6 @@ and C. Pernet. The functions available are:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from sage.libs.gmp.types cimport mpz_t, mpz_srcptr, mpz_ptr
 from sage.libs.gmp.mpz cimport mpz_set
 from sage.libs.flint.types cimport fmpz, fmpz_t

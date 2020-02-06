@@ -1726,7 +1726,7 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
             S += [[u0,v0] for v0 in (X**2-f(u0)).roots(multiplicities=False)]
         else:
             S += [[u0,(2*j-a(u0))/b(u0)]]
-    if len(S) == 0:
+    if not S:
         return []
     S.sort()
 

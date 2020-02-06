@@ -64,7 +64,7 @@ multiplied by the `(n-1)`-simplex obtained by omitting vertex `v_i`.
 In the implementation here, the vertex set must be finite. To define a
 simplicial complex, specify its *facets*: the maximal subsets (with
 respect to inclusion) of the vertex set belonging to `K`. Each facet
-can be specifed as a list, a tuple, or a set.
+can be specified as a list, a tuple, or a set.
 
 .. NOTE::
 
@@ -2943,7 +2943,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
-        Returns the largest sub-simplicial complex of ``self`` containing
+        Return the largest sub-simplicial complex of ``self`` containing
         exactly ``sub_vertex_set`` as vertices.
 
         :param sub_vertex_set: The sub-vertex set.
@@ -3616,9 +3616,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def delta_complex(self, sort_simplices=False):
         r"""
-        Returns ``self`` as a `\Delta`-complex.  The `\Delta`-complex
-        is essentially identical to the simplicial complex: it has
-        same simplices with the same boundaries.
+        Return ``self`` as a `\Delta`-complex.
+
+        The `\Delta`-complex is essentially identical to the
+        simplicial complex: it has same simplices with the same
+        boundaries.
 
         :param sort_simplices: if ``True``, sort the list of simplices in
           each dimension
@@ -3651,7 +3653,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_flag_complex(self):
         """
-        Returns ``True`` if and only if ``self`` is a flag complex.
+        Return ``True`` if and only if ``self`` is a flag complex.
 
         A flag complex is a simplicial complex that is the largest simplicial
         complex on its 1-skeleton. Thus a flag complex is the clique complex
@@ -4713,9 +4715,10 @@ def facets_for_RP4():
                 facets.append(new)
     return facets
 
+
 def facets_for_K3():
     """
-    Returns the facets for a minimal triangulation of the K3 surface.
+    Return the facets for a minimal triangulation of the K3 surface.
 
     This is a pure simplicial complex of dimension 4 with 16
     vertices and 288 facets. The facets are obtained by constructing a

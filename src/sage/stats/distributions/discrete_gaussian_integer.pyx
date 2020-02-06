@@ -109,8 +109,6 @@ REFERENCES:
 # policies, either expressed or implied, of the FreeBSD Project.
 #*****************************************************************************/
 
-from __future__ import print_function
-
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.real_mpfr cimport RealNumber, RealField

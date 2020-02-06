@@ -47,7 +47,7 @@ AUTHORS:
 
 - Simon King (2013-02): added examples
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>, William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -59,8 +59,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import absolute_import, print_function
 
@@ -897,13 +897,13 @@ class Homset(Set_generic):
             ...
             TypeError: unable to convert 0 to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: H("whatever")
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'whatever' to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: HH = Hom(H, H)
             sage: HH(HH.identity(), foo="bar")
             Traceback (most recent call last):

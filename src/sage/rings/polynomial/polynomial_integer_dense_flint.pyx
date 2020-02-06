@@ -1,5 +1,5 @@
 """
-Dense univariate polynomials over `\ZZ`, implemented using FLINT.
+Dense univariate polynomials over `\ZZ`, implemented using FLINT
 
 AUTHORS:
 
@@ -31,8 +31,6 @@ We check that the buggy gcd is fixed (see :trac:`17816`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
@@ -40,7 +38,7 @@ include "sage/libs/ntl/decl.pxi"
 
 from cpython.int cimport PyInt_AS_LONG
 from sage.libs.gmp.mpz cimport *
-from sage.arith.long cimport pyobject_to_long
+from sage.arith.long cimport pyobject_to_long, is_small_python_int
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.structure.element cimport ModuleElement, Element
@@ -241,7 +239,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             # now fill them in
             for ii, a in x:
                 i = ii[0] if type(ii) is tuple else ii
-                if type(a) is int:
+                if is_small_python_int(a):
                     sig_on()
                     fmpz_poly_set_coeff_si(self.__poly, i, a)
                     sig_off()
@@ -279,7 +277,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         for i from 0 <= i < len(x):
             a = x[i]
-            if type(a) is int:
+            if is_small_python_int(a):
                 sig_on()
                 fmpz_poly_set_coeff_si(self.__poly, i, a)
                 sig_off()
@@ -398,7 +396,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                     (<Polynomial_integer_dense_flint> x0).__poly)
                 sig_off()
                 return f
-            if isinstance(x0, int):
+            if is_small_python_int(x0):
                 z = Integer.__new__(Integer)
                 sig_on()
                 fmpz_init(a_fmpz)
@@ -410,7 +408,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 fmpz_clear(z_fmpz)
                 sig_off()
                 return z
-            if isinstance(x0, long):
+            if isinstance(x0, (int, long)):
                 x0 = Integer(x0)
             if isinstance(x0, Integer):
                 a = <Integer> x0
@@ -1757,8 +1755,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         Return a polynomial with the coefficients of this polynomial reversed.
 
         If an optional degree argument is given the coefficient list will be
-        truncated or zero padded as necessary and the reverse polynomial will
-        have the specified degree.
+        truncated or zero padded as necessary before computing the reverse.
 
         EXAMPLES::
 
@@ -1778,10 +1775,17 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got 1.5
+
+        Check that this implementation is compatible with the generic one::
+
+            sage: p = R([0,1,0,2])
+            sage: all(p.reverse(d) == Polynomial.reverse(p, d)
+            ....:     for d in [None, 0, 1, 2, 3, 4])
+            True
         """
         cdef Polynomial_integer_dense_flint res = self._new()
         cdef unsigned long d
-        if degree:
+        if degree is not None:
             d = degree
             if d != degree:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % degree)

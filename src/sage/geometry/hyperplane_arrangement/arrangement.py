@@ -1103,30 +1103,116 @@ class HyperplaneArrangementElement(Element):
         return self.rank() == self.dimension()
 
     @cached_method
-    def is_central(self):
+    def is_central(self, certificate=False):
         r"""
         Test whether the intersection of all the hyperplanes is nonempty.
 
+        A hyperplane arrangement is central if the intersection of all the
+        hyperplanes in the arrangement is nonempty.
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); specifies whether
+          to return the center as a polyhedron (possibly empty) as part
+          of the output
+
         OUTPUT:
 
-        A boolean whether the hyperplane arrangement is such that the
-        intersection of all the hyperplanes in the arrangement is
-        nonempty.
+        If ``certificate`` is ``True``, returns a tuple containing:
+
+        1. A boolean
+        2. The polyhedron defined to be the intersection of all the hyperplanes
+
+        If ``certificate`` is ``False``, returns a boolean.
 
         EXAMPLES::
 
             sage: a = hyperplane_arrangements.braid(2)
             sage: a.is_central()
             True
+
+        The Catalan arrangement in dimension 3 is not central::
+
+            sage: b = hyperplane_arrangements.Catalan(3)
+            sage: b.is_central(certificate=True)
+            (False, The empty polyhedron in QQ^3)
+
+        The empty arrangement in dimension 5 is central::
+
+            sage: H = HyperplaneArrangements(QQ,names=tuple(['x'+str(i) for i in range(7)]))
+            sage: c = H()
+            sage: c.is_central(certificate=True)
+            (True, A 7-dimensional polyhedron in QQ^7 defined as the convex
+            hull of 1 vertex and 7 lines)
         """
         R = self.base_ring()
+        # If there are no hyperplanes in the arrangement,
+        # the center is the entire ambient space
+        if self.n_hyperplanes() == 0:
+            if certificate:
+                from sage.geometry.polyhedron.parent import Polyhedra
+                pp = Polyhedra(R, self.dimension())
+                return (True, pp.universe())
+            else:
+                return True
+        # The center is the set of points contained in all hyperplanes,
+        # expressible as the solution set of m*x=b with m and b as follows:
         m = matrix(R, [h.normal() for h in self])
         b = vector(R, [h.b() for h in self])
         try:
-            m.solve_right(b)
-            return True
+            x = m.solve_right(b)
         except ValueError:
-            return False
+            # The solution set is empty, therefore the center is empty
+            if certificate:
+                from sage.geometry.polyhedron.parent import Polyhedra
+                pp = Polyhedra(R, self.dimension())
+                return (False, pp.empty())
+            else:
+                return False
+        # The center is the kernel of m translated by x.
+        if certificate:
+            Ker = m.right_kernel()
+            from sage.geometry.polyhedron.constructor import Polyhedron
+            return (True, Polyhedron(base_ring=R, vertices=[x], lines=Ker.basis()))
+        else:
+            return True
+
+    def center(self):
+        r"""
+        Return the center of the hyperplane arrangement.
+
+        The polyhedron defined to be the set of all points in the
+        ambient space of the arrangement that lie on all of the
+        hyperplanes.
+
+        OUTPUT:
+
+        A polyhedron.
+
+        EXAMPLES:
+
+        The empty hyperplane arrangement has the entire ambient space as its
+        center::
+
+            sage: H.<x,y> = HyperplaneArrangements(QQ)
+            sage: A = H()
+            sage: A.center()
+            A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 lines
+
+        The Shi arrangement in dimension 3 has an empty center::
+
+            sage: A = hyperplane_arrangements.Shi(3)
+            sage: A.center()
+            The empty polyhedron in QQ^3
+
+        The Braid arrangement in dimension 3 has a center that is neither
+        empty nor full-dimensional::
+
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: A.center()
+            A 1-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex and 1 line
+        """
+        return self.is_central(certificate=True)[1]
 
     @cached_method
     def is_simplicial(self):
@@ -2615,6 +2701,32 @@ class HyperplaneArrangementElement(Element):
         if base_ring is None:
             base_ring = self.base_ring()
         return self.matroid().orlik_solomon_algebra(base_ring, ordering)
+
+    def orlik_terao_algebra(self, base_ring=None, ordering=None):
+        """
+        Return the Orlik-Terao algebra of ``self``.
+
+        INPUT:
+
+        - ``base_ring`` -- (default: the base field of ``self``) the ring
+          over which the Orlik-Terao algebra will be defined
+        - ``ordering`` -- (optional) an ordering of the ground set
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = P(x, y, z, x+y+z, 2*x+y+z, 2*x+3*y+z, 2*x+3*y+4*z)
+            sage: A.orlik_terao_algebra()
+            Orlik-Terao algebra of Linear matroid of rank 3 on 7 elements
+             represented over the Rational Field over Rational Field
+            sage: A.orlik_terao_algebra(base_ring=QQ['t'])
+            Orlik-Terao algebra of Linear matroid of rank 3 on 7 elements
+             represented over the Rational Field
+             over Univariate Polynomial Ring in t over Rational Field
+        """
+        if base_ring is None:
+            base_ring = self.base_ring()
+        return self.matroid().orlik_terao_algebra(base_ring, ordering)
 
     @cached_method
     def minimal_generated_number(self):

@@ -1,5 +1,5 @@
 """
-Fast computation of combinatorial functions (Cython + mpz).
+Fast computation of combinatorial functions (Cython + mpz)
 
 Currently implemented:
 

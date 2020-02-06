@@ -18,7 +18,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.numerical.mip import MIPSolverException
 from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression, Constraint, Generator

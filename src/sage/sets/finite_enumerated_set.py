@@ -55,7 +55,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         Category of facade finite enumerated sets
         sage: TestSuite(S).run()
 
-    Note that being and enumerated set, the result depends on the order::
+    Note that being an enumerated set, the result depends on the order::
 
         sage: S1 = FiniteEnumeratedSet((1, 2, 3))
         sage: S1
@@ -75,7 +75,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         sage: S1
         {1, 2, 1, 2, 2, 3}
 
-    Finaly the elements are not aware of their parent::
+    Finally, the elements are not aware of their parent::
 
         sage: S.first().parent()
         Integer Ring

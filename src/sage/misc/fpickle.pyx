@@ -5,7 +5,6 @@ Function pickling
 
 REFERENCE: The python cookbook.
 """
-from __future__ import absolute_import
 
 import types
 import six

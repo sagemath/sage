@@ -956,7 +956,7 @@ class GpElement(ExpectElement):
         """
         return float(pari(str(self)))
 
-    def bool(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -969,6 +969,8 @@ class GpElement(ExpectElement):
         """
         P = self._check_valid()
         return P.eval('%s != 0'%(self.name())) == '1'
+
+    __nonzero__ = __bool__
 
     def _complex_mpfr_field_(self, CC):
         """

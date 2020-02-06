@@ -1,15 +1,15 @@
 r"""
 Super Hopf algebras with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.super_modules import SuperModulesCategory
+
 
 class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
     """
@@ -108,14 +108,18 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
                     y_odd = y.odd_component()
 
                     # The antipode is a graded anti-homomorphism.
-                    tester.assertTrue(S(x_even) * S(y_even) == S(y_even * x_even))
-                    tester.assertTrue(S(x_even) * S(y_odd) == S(y_odd * x_even))
-                    tester.assertTrue(S(x_odd) * S(y_even) == S(y_even * x_odd))
-                    tester.assertTrue(S(x_odd) * S(y_odd) == -S(y_odd * x_odd))
+                    tester.assertEqual(S(x_even) * S(y_even),
+                                       S(y_even * x_even))
+                    tester.assertEqual(S(x_even) * S(y_odd),
+                                       S(y_odd * x_even))
+                    tester.assertEqual(S(x_odd) * S(y_even),
+                                       S(y_even * x_odd))
+                    tester.assertEqual(S(x_odd) * S(y_odd),
+                                       -S(y_odd * x_odd))
 
                 # mu * (S # I) * delta == counit * unit
-                tester.assertTrue(SI(x) == self.counit(x) * self.one())
+                tester.assertEqual(SI(x), self.counit(x) * self.one())
 
                 # mu * (I # S) * delta == counit * unit
-                tester.assertTrue(IS(x) == self.counit(x) * self.one())
+                tester.assertEqual(IS(x), self.counit(x) * self.one())
 

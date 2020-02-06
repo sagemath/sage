@@ -80,7 +80,7 @@
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *      along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <stdio.h>
@@ -481,7 +481,7 @@ static int compute_extra_precision(unsigned int n, double error = .25) {
 
 
 static double compute_remainder(unsigned int n, unsigned int N) {
-    // This computes the remainer left after N terms have been computed.
+    // This computes the remainder left after N terms have been computed.
     // The formula is exactly the same as the one used to compute the required
     // precision, but once we know the necessary precision is small, we can
     // call this function to determine the actual error (rather than the precision).

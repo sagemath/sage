@@ -24,7 +24,6 @@ method of univariate polynomial ring objects and the top-level
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 import sys
 

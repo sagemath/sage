@@ -15,7 +15,6 @@ Complex Plots
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, division
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
 from cysignals.signals cimport sig_on, sig_off, sig_check

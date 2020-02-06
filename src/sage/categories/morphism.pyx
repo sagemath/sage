@@ -19,7 +19,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport *
 from sage.misc.constant_function import ConstantFunction
@@ -439,7 +438,7 @@ cdef class IdentityMorphism(Morphism):
         return x
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}): 
-        if len(args) == 0 and len(kwds) == 0:
+        if not args and not kwds:
             return x
         cdef Parent C = self._codomain
         if C._element_init_pass_parent:

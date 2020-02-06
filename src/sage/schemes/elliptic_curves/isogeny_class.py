@@ -1068,7 +1068,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
                 raise RuntimeError("unable to find %s in the database" % self.E)
             db = sage.databases.cremona.CremonaDatabase()
             curves = db.isogeny_class(label)
-            if len(curves) == 0:
+            if not curves:
                 raise RuntimeError("unable to find %s in the database" % self.E)
             # All curves will have the same conductor and isogeny class,
             # and there are most 8 of them, so lexicographic sorting is okay.

@@ -13,7 +13,6 @@ Elements of Arithmetic Subgroups
 #                  https://www.gnu.org/licenses/
 #
 ################################################################################
-from __future__ import absolute_import
 
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
 from sage.structure.richcmp cimport richcmp

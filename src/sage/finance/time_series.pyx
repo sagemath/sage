@@ -46,8 +46,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 cimport cython
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
 from libc.math cimport exp, floor, log, pow, sqrt
@@ -703,7 +701,7 @@ cdef class TimeSeries:
         """
         if not isinstance(right, TimeSeries):
             right = TimeSeries(right)
-        if len(right) == 0:
+        if not right:
             return
         cdef TimeSeries T = right
         cdef double* z = <double*> sig_malloc(sizeof(double)*(self._length + T._length))
@@ -1674,7 +1672,8 @@ cdef class TimeSeries:
 
     def hurst_exponent(self):
         """
-        Returns an estimate of the Hurst exponent of this time series.
+        Return an estimate of the Hurst exponent of this time series.
+
         We use the algorithm from pages 61 -- 63 of [Peteres, Fractal
         Market Analysis (1994); see Google Books].
 
@@ -1739,7 +1738,7 @@ cdef class TimeSeries:
             except ZeroDivisionError:   # 0 standard deviation
                 pass
             k *= 2
-        if len(v0) == 0:
+        if not v0:
             return float(1)
         if len(v0) == 1:
             return v1[0]/v0[0]

@@ -16,8 +16,6 @@ elements. For general information about GAP, you should read the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.signals cimport sig_on, sig_off
 
@@ -177,10 +175,9 @@ cdef char *gap_element_str(Obj obj):
     This mirrors somewhat how Python uses ``str()`` on an object when passing
     it to the ``print()`` function.  This is also how the GAP pexpect interface
     has traditionally repr'd objects; for the libgap interface we take a
-    slightly different approach more closesly mirroring Python's str/repr
+    slightly different approach more closely mirroring Python's str/repr
     difference (though this does not map perfectly onto GAP).
     """
-
     cdef Obj func = GAP_ValueGlobalVariable("Print")
     return capture_stdout(func, obj)
 
@@ -608,7 +605,7 @@ cdef class GapElement(RingElement):
         This is inspired in part by
         ``sage.interfaces.interface.Interface._reduce``, though for a fallback
         we use ``str(self)`` instead of ``repr(self)``, since the former is
-        equivalent in the libgap interace to the latter in the pexpect
+        equivalent in the libgap interface to the latter in the pexpect
         interface.
 
         TESTS:
@@ -672,7 +669,7 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0L, 'T_INT (integer)')
+            (0, 'T_INT (integer)')
         """
         n = TNUM_OBJ(self.value)
         global decode_type_number

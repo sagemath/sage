@@ -229,7 +229,6 @@ from sage.combinat.words.word_options import word_options
 from sage.rings.all import Integer, Infinity, ZZ, QQ
 from sage.sets.set import Set
 
-
 class FiniteWord_class(Word_class):
     def __str__(self):
         r"""
@@ -268,7 +267,6 @@ class FiniteWord_class(Word_class):
             sage: print(w)
             012340123401234012340123401234012340123401234012340123401234
         """
-        global word_options
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
             letters = [str(_) for _ in self]
@@ -290,7 +288,6 @@ class FiniteWord_class(Word_class):
             sage: Word(range(100))._repr_()
             'word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...'
         """
-        global word_options
         if word_options['old_repr']:
             if word_options['truncate'] and \
                     self.length() > word_options['truncate_length']:
@@ -2686,7 +2683,7 @@ class FiniteWord_class(Word_class):
 
             if pal in palindromes:
                 lacunas.append(i)
-            else :
+            else:
                 palindromes.add(pal)
 
         return lengths_lps, lacunas, palindromes
@@ -2946,7 +2943,7 @@ class FiniteWord_class(Word_class):
             sage: Word('abbabaab').lengths_maximal_palindromes(f)
             [0, 0, 2, 0, 0, 0, 2, 0, 8, 0, 2, 0, 0, 0, 2, 0, 0]
         """
-        if f is not None :
+        if f is not None:
             from sage.combinat.words.morphism import WordMorphism
             if not isinstance(f, WordMorphism):
                 f = WordMorphism(f)
@@ -4062,7 +4059,7 @@ class FiniteWord_class(Word_class):
             while k < i:
                 F.append(k + j - i + 1)
                 k = k + j - i
-        return Factorization([self[F[i]:F[i+1]] for i in range(len(F)-1)])
+        return Factorization([self[F[l]:F[l+1]] for l in range(len(F)-1)])
 
     def inversions(self):
         r"""
@@ -4302,7 +4299,7 @@ class FiniteWord_class(Word_class):
         while s <= lm - lf:
             for j in range(lf-1, -1, -1):
                 a = other[s+j]
-                if self[j] != a :
+                if self[j] != a:
                     s += max(suff[j + 1], j - occ.get(a,-1))
                     break
             else:
@@ -4891,7 +4888,7 @@ class FiniteWord_class(Word_class):
         else:
             return Partition(p)
 
-    def overlap_partition(self, other, delay=0, p=None, involution=None) :
+    def overlap_partition(self, other, delay=0, p=None, involution=None):
         r"""
         Return the partition of the alphabet induced by the overlap of
         ``self`` and ``other`` with the given ``delay``.
@@ -6864,14 +6861,27 @@ class FiniteWord_class(Word_class):
             sage: Word('3211').is_square_free()
             False
         """
-        L = self.length()
-        if L < 2:
-            return True
-        for start in range(0, L-1):
-            for end in range(start+2, L+1, 2):
-                if self[start:end].is_square():
-                    return False
-        return True
+        from sage.combinat.words.suffix_trees import DecoratedSuffixTree
+        T = DecoratedSuffixTree(self)
+        return T.square_vocabulary() == [(0, 0)]
+
+    def squares(self):
+        r"""
+        Returns a set of all distinct squares of ``self``.
+
+        EXAMPLES::
+
+            sage: sorted(Word('cacao').squares())
+            [word: , word: caca]
+            sage: sorted(Word('1111').squares())
+            [word: , word: 11, word: 1111]
+            sage: w = Word('00110011010')
+            sage: sorted(w.squares())
+            [word: , word: 00, word: 00110011, word: 01100110, word: 1010, word: 11]
+        """
+        from sage.combinat.words.suffix_trees import DecoratedSuffixTree
+        T = DecoratedSuffixTree(self)
+        return set(T.square_vocabulary(output='word'))
 
     def is_cube(self):
         r"""

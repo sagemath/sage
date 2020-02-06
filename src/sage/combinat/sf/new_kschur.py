@@ -980,8 +980,8 @@ class kSchur(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='ks%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='ks%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1236,8 +1236,8 @@ class kSplit(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='ksp%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='ksp%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1350,8 +1350,8 @@ class kHomogeneous(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='h%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='h%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1425,8 +1425,8 @@ class K_kSchur(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.base_ring().one()),
-            prefix='Kks%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.base_ring().one()),
+            prefix='Kks%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 

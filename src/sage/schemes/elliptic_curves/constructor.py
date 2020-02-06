@@ -1087,7 +1087,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         dx, dy, dz = [L.coefficient(v) for v in R.gens()]
 
         # find an invertible matrix M such that (0,1,0)M=P and
-        # ML'=(0,0,1)' where L=[dx,dy,dx].  Then the linea transform
+        # ML'=(0,0,1)' where L=[dx,dy,dx].  Then the linear transform
         # by M takes P to [0,1,0] and L to Z=0:
 
         if P[0]:

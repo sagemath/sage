@@ -4,4 +4,4 @@ if [ -z "$SAGE_LOCAL" ]; then
     exit 1
 fi
 
-cd src && $MAKE check-install
+cd src && $MAKE check-install PYTHON=sage-python23

@@ -801,6 +801,25 @@ class Function_lambert_w(BuiltinFunction):
         else:
             raise TypeError("lambert_w takes either one or two arguments.")
 
+    def _method_arguments(self, n, z):
+        r"""
+        TESTS::
+
+            sage: b = RBF(1, 0.001)
+            sage: lambert_w(b)
+            [0.567 +/- 6.44e-4]
+            sage: lambert_w(CBF(b))
+            [0.567 +/- 6.44e-4]
+            sage: lambert_w(2r, CBF(b))
+            [-2.40 +/- 2.79e-3] + [10.78 +/- 4.91e-3]*I
+            sage: lambert_w(2, CBF(b))
+            [-2.40 +/- 2.79e-3] + [10.78 +/- 4.91e-3]*I
+        """
+        if n == 0:
+            return [z]
+        else:
+            return [z, n]
+
     def _eval_(self, n, z):
         """
         EXAMPLES::

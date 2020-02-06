@@ -1390,10 +1390,11 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                 othervars = other.vars
             else:
                 othervars = [other.var]
-            OverlappingGens = [] ## Generator names of variable names of the MultiPolynomialFunctor
-                              ## that can be interpreted as variables in self
-            OverlappingVars = [] ## The variable names of the MultiPolynomialFunctor
-                                 ## that can be interpreted as variables in self
+
+            OverlappingVars = []
+            # The variable names of the MultiPolynomialFunctor
+            # that can be interpreted as variables in self
+
             RemainingVars = [x for x in othervars]
             IsOverlap = False
             BadOverlap = False
@@ -1741,7 +1742,6 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         if self.multi_variate and is_LaurentPolynomialRing(R):
             return LaurentPolynomialRing(R.base_ring(), (list(R.variable_names()) + [self.var]))
         else:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             return LaurentPolynomialRing(R, self.var)
 
     def __eq__(self, other):
@@ -2746,7 +2746,6 @@ class QuotientFunctor(ConstructionFunctor):
             Quotient of Rational Field by the ideal (1)
         """
         I = self.I
-        from sage.all import QQ
         if not I.is_zero():
             from sage.categories.fields import Fields
             if R in Fields():

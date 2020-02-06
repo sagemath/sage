@@ -176,9 +176,9 @@ class pAdicLseries(SageObject):
         if E.conductor() % (self._p)**2 == 0:
             raise NotImplementedError("p (=%s) must be a prime of semi-stable reduction" % p)
 
-        try :
+        try:
             E.label()
-        except RuntimeError :
+        except RuntimeError:
             print("Warning : Curve outside Cremona's table. Computations of modular symbol space might take very long !")
 
         self._modular_symbol = E.modular_symbol(sign=+1,
@@ -306,8 +306,8 @@ class pAdicLseries(SageObject):
             sage: lpt.modular_symbol(0) == lp.modular_symbol(0,quadratic_twist=-4) / eta
             True
         """
-        if quadratic_twist == +1 :
-            if sign == +1 :
+        if quadratic_twist == +1:
+            if sign == +1:
                 return self._modular_symbol(r)
             elif sign == -1:
                 try:
@@ -317,7 +317,7 @@ class pAdicLseries(SageObject):
                         self.__add_negative_space()
                         m = self._negative_modular_symbol
                 return m(r)
-        else :
+        else:
             D = quadratic_twist
             if sign == -1:
                 raise NotImplementedError("Quadratic twists for negative modular symbols are not yet implemented.")
@@ -413,10 +413,10 @@ class pAdicLseries(SageObject):
             alpha = self.alpha(prec=prec)
             z = 1/(alpha**n)
             w = p**(n-1)
-            if s == +1 :
+            if s == +1:
                 f = self._modular_symbol
-            else :
-                try :
+            else:
+                try:
                     f = self._negative_modular_symbol
                 except (KeyError, AttributeError):
                     if not hasattr(self, '_modular_symbol_negative'):
@@ -862,9 +862,9 @@ class pAdicLseriesOrdinary(pAdicLseries):
                     raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field"%D)
             if gcd(D,self._p) != 1:
                 raise ValueError("quadratic twist (=%s) must be coprime to p (=%s) "%(D,self._p))
-            if gcd(D,self._E.conductor())!= 1:
+            if gcd(D, self._E.conductor()) != 1:
                 for ell in prime_divisors(D):
-                    if valuation(self._E.conductor(),ell) > valuation(D,ell) :
+                    if valuation(self._E.conductor(), ell) > valuation(D, ell):
                         raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)."%(self._E.conductor(),D))
         p = self._p
 
@@ -948,7 +948,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         R = PowerSeriesRing(K,'T',res_series_prec)
         L = R(L,res_series_prec)
         aj = L.list()
-        if len(aj) > 0:
+        if aj:
             aj = [aj[0].add_bigoh(padic_prec-2)] + \
                  [aj[j].add_bigoh(bounds[j]) for j in range(1,len(aj))]
         L = R(aj,res_series_prec )
@@ -1135,14 +1135,14 @@ class pAdicLseriesSupersingular(pAdicLseries):
             else:
                 if not D.is_squarefree() or D % 4 != 1:
                     raise ValueError("quadratic_twist (=%s) must be a fundamental discriminant of a quadratic field" % D)
-            if gcd(D,self._E.conductor()) != 1:
+            if gcd(D, self._E.conductor()) != 1:
                 for ell in prime_divisors(D):
-                    if valuation(self._E.conductor(), ell) > valuation(D,ell) :
+                    if valuation(self._E.conductor(), ell) > valuation(D, ell):
                         raise ValueError("can not twist a curve of conductor (=%s) by the quadratic twist (=%s)." % (self._E.conductor(), D))
 
         p = self._p
         eta = ZZ(eta) % (p - 1)
-        #if p == 2 and self._normalize :
+        #if p == 2 and self._normalize:
             #print('Warning : for p = 2 the normalization might not be correct !')
 
         if prec == 1:
@@ -1214,7 +1214,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         # the coefficients are now treated as alpha-adic numbers (trac 20254)
         L = R(L,prec)
         aj = L.list()
-        if len(aj) > 0:
+        if aj:
             bj = [aj[0].add_bigoh(2*(padic_prec-2))]
             j = 1
             while j < len(aj):
@@ -1480,7 +1480,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
             # this is the equation eq[0]*x+eq[1]*y+eq[2] == 0
             # such that delta_ = delta + d^dpr*x ...
             eq = [(p**dpr*cs[k]) % p**k,(-p**dga*ds[k]) % p**k , (delta*cs[k]-gamma*ds[k]-cs[k-1]) % p**k ]
-            verbose("valuations : %s"%([x.valuation(p) for x in eq]))
+            verbose("valuations : %s" % ([x.valuation(p) for x in eq]))
             v = min([x.valuation(p) for x in eq])
             if v == infinity:
                 verbose("no new information at step k=%s"%k)

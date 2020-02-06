@@ -299,7 +299,6 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import operator
 from copy import copy
@@ -315,7 +314,7 @@ def fast_callable(x, domain=None, vars=None,
                   _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality=False,
                   expect_one_var=False):
     r"""
-    Given an expression x, compiles it into a form that can be quickly
+    Given an expression x, compile it into a form that can be quickly
     evaluated, given values for the variables in x.
 
     Currently, x can be an expression object, an element of SR, or a
@@ -539,7 +538,7 @@ def fast_callable(x, domain=None, vars=None,
 
 def function_name(fn):
     r"""
-    Given a function, returns a string giving a name for the function.
+    Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
     function (so operator.add becomes 'add', and sage.all.sin becomes 'sin').
@@ -701,7 +700,7 @@ cdef class ExpressionTreeBuilder:
 
     def var(self, v):
         r"""
-        Turn the argument into an ExpressionVariable.  Looks it up in
+        Turn the argument into an ExpressionVariable.  Look it up in
         the list of variables.  (Variables are matched by name.)
 
         EXAMPLES::
@@ -753,6 +752,7 @@ cdef class ExpressionTreeBuilder:
     def call(self, fn, *args):
         r"""
         Construct a call node, given a function and a list of arguments.
+
         The arguments will be converted to Expressions using
         ExpressionTreeBuilder.__call__.
 
@@ -819,7 +819,7 @@ cdef op_inv = operator.inv
 
 cdef class Expression:
     r"""
-    Represents an expression for fast_callable.
+    Represent an expression for fast_callable.
 
     Supports the standard Python arithmetic operators; if arithmetic
     is attempted between an Expression and a non-Expression, the
@@ -864,7 +864,7 @@ cdef class Expression:
 
     def _get_etb(self):
         r"""
-        Returns the ExpressionTreeBuilder used to build a given expression.
+        Return the ExpressionTreeBuilder used to build a given expression.
 
         EXAMPLES::
 
@@ -1544,7 +1544,7 @@ cdef class ExpressionChoice(Expression):
 
 cpdef _expression_binop_helper(s, o, op):
    r"""
-   Makes an Expression for (s op o).  Either s or o (or both) must already
+   Make an Expression for (s op o).  Either s or o (or both) must already
    be an expression.
 
    EXAMPLES::
@@ -1624,7 +1624,7 @@ class IntegerPowerFunction(object):
 
     def __init__(self, n):
         r"""
-        Initializes an IntegerPowerFunction.
+        Initialize an IntegerPowerFunction.
 
         EXAMPLES::
 
@@ -2188,7 +2188,7 @@ cdef class InstructionStream:
 
     def get_metadata(self):
         r"""
-        Returns the interpreter metadata being used by the current
+        Return the interpreter metadata being used by the current
         InstructionStream.
 
         The code generator sometimes uses this to decide which code
@@ -2207,7 +2207,7 @@ cdef class InstructionStream:
 
     def current_op_list(self):
         r"""
-        Returns the list of instructions that have been added to this
+        Return the list of instructions that have been added to this
         InstructionStream so far.
 
         It's OK to call this, then add more instructions.
@@ -2307,9 +2307,10 @@ cdef class InterpreterMetadata(object):
         self.by_opcode = by_opcode
         self.ipow_range = ipow_range
 
+
 class CompilerInstrSpec(object):
     r"""
-    Describes a single instruction to the fast_callable code generator.
+    Describe a single instruction to the fast_callable code generator.
 
     An instruction has a number of stack inputs, a number of stack
     outputs, and a parameter list describing extra arguments that

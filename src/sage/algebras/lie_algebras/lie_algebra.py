@@ -534,9 +534,20 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             x*y - y*x
             sage: elt.parent() is L
             True
+
+        TESTS:
+
+        Check that `0` gives the zero element::
+
+            sage: L = lie_algebras.pwitt(GF(5), 5)
+            sage: L(0)
+            0
         """
         if isinstance(x, list) and len(x) == 2:
             return self(x[0])._bracket_(self(x[1]))
+
+        if x == 0:
+            return self.zero()
 
         try:
             if x in self.module():
@@ -545,9 +556,8 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             pass
 
         if x in self.base_ring():
-            if x != 0:
-                raise ValueError("can only convert the scalar 0 into a Lie algebra element")
-            return self.zero()
+            # We have already handled the case when x == 0
+            raise ValueError("can only convert the scalar 0 into a Lie algebra element")
 
         return self.element_class(self, x)
 
@@ -1490,7 +1500,47 @@ class LiftMorphismToAssociative(LiftMorphism):
 class MatrixLieAlgebraFromAssociative(LieAlgebraFromAssociative):
     """
     A Lie algebra constructed from a matrix algebra.
+
+    This means a Lie algebra consisting of matrices,
+    with commutator as Lie bracket.
     """
     class Element(LieAlgebraMatrixWrapper, LieAlgebraFromAssociative.Element):
-        pass
+        def matrix(self):
+            r"""
+            Return ``self`` as element of the underlying matrix algebra.
+
+            OUTPUT:
+
+            An instance of the element class of MatrixSpace.
+
+            EXAMPLES::
+
+                sage: sl3m = lie_algebras.sl(ZZ, 3, representation='matrix')
+                sage: e1,e2, f1, f2, h1, h2 = sl3m.gens()
+                sage: h1m = h1.matrix(); h1m
+                [ 1  0  0]
+                [ 0 -1  0]
+                [ 0  0  0]
+                sage: h1m.parent()
+                Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+                sage: matrix(h2)
+                [ 0  0  0]
+                [ 0  1  0]
+                [ 0  0 -1]
+                sage: L = lie_algebras.so(QQ['z'], 5, representation='matrix')
+                sage: matrix(L.an_element())
+                [ 1  1  0  0  0]
+                [ 1  1  0  0  2]
+                [ 0  0 -1 -1  0]
+                [ 0  0 -1 -1 -1]
+                [ 0  1  0 -2  0]
+
+                sage: gl2 = lie_algebras.gl(QQ, 2)
+                sage: matrix(gl2.an_element())
+                [1 1]
+                [1 1]
+            """
+            return self.value
+
+        _matrix_ = matrix
 

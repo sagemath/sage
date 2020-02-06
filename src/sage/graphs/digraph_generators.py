@@ -65,6 +65,7 @@ from __future__ import print_function, division
 from six.moves import range
 from six import PY2
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
 import sys
 from sage.misc.randstate import current_randstate
@@ -528,7 +529,7 @@ class DiGraphGenerators():
 
         nauty_input +=  " " + str(n) + " "
 
-        sp = subprocess.Popen("gentourng {0}".format(nauty_input), shell=True,
+        sp = subprocess.Popen(nautyprefix+"gentourng {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 
@@ -642,7 +643,7 @@ class DiGraphGenerators():
 
         # Build directg input (graphs6 format)
         input = ''.join(g.graph6_string()+'\n' for g in graphs)
-        sub = subprocess.Popen('directg {0}'.format(options),
+        sub = subprocess.Popen(nautyprefix+'directg {0}'.format(options),
                                shell=True,
                                stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE,

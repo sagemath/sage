@@ -65,8 +65,10 @@ class LCalc(SageObject):
         return "Rubinsteins L-function Calculator"
 
     def __call__(self, args):
-        cmd = 'lcalc %s'%args
-        return os.popen(cmd).read().strip()
+        cmd = 'lcalc %s' % args
+        with os.popen(cmd) as f:
+            res = f.read().strip()
+        return res
 
     def _compute_L(self, L):
         if isinstance(L, str):

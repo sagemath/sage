@@ -298,55 +298,69 @@ spherical_harmonic = SphericalHarmonic()
 
 ####### elliptic functions and integrals
 
-def elliptic_j(z):
-   r"""
-   Returns the elliptic modular `j`-function evaluated at `z`.
+def elliptic_j(z, prec=53):
+    r"""
+    Returns the elliptic modular `j`-function evaluated at `z`.
 
-   INPUT:
+    INPUT:
 
-   - ``z`` (complex) -- a complex number with positive imaginary part.
+    - ``z`` (complex) -- a complex number with positive imaginary part.
 
-   OUTPUT:
+    - ``prec`` (default: 53) -- precision in bits for the complex field.
 
-   (complex) The value of `j(z)`.
+    OUTPUT:
 
-   ALGORITHM:
+    (complex) The value of `j(z)`.
 
-   Calls the ``pari`` function ``ellj()``.
+    ALGORITHM:
 
-   AUTHOR:
+    Calls the ``pari`` function ``ellj()``.
 
-   John Cremona
+    AUTHOR:
 
-   EXAMPLES::
+    John Cremona
 
-       sage: elliptic_j(CC(i))
-       1728.00000000000
-       sage: elliptic_j(sqrt(-2.0))
-       8000.00000000000
-       sage: z = ComplexField(100)(1,sqrt(11))/2
-       sage: elliptic_j(z)
-       -32768.000...
-       sage: elliptic_j(z).real().round()
-       -32768
+    EXAMPLES::
+
+        sage: elliptic_j(CC(i))
+        1728.00000000000
+        sage: elliptic_j(sqrt(-2.0))
+        8000.00000000000
+        sage: z = ComplexField(100)(1,sqrt(11))/2
+        sage: elliptic_j(z)
+        -32768.000...
+        sage: elliptic_j(z).real().round()
+        -32768
 
     ::
 
-       sage: tau = (1 + sqrt(-163))/2
-       sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)
-       640320
+        sage: tau = (1 + sqrt(-163))/2
+        sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)
+        640320
 
-   """
-   CC = z.parent()
-   from sage.rings.complex_field import is_ComplexField
-   if not is_ComplexField(CC):
-      CC = ComplexField()
-      try:
-         z = CC(z)
-      except ValueError:
-         raise ValueError("elliptic_j only defined for complex arguments.")
-   from sage.libs.all import pari
-   return CC(pari(z).ellj())
+    This example shows the need for higher precision than the default one of
+    the `ComplexField`, see :trac:`28355`::
+
+        sage: -elliptic_j(tau) # rel tol 1e-2
+        2.62537412640767e17 - 732.558854258998*I
+        sage: -elliptic_j(tau,75) # rel tol 1e-2
+        2.625374126407680000000e17 - 0.0001309913593909879441262*I
+        sage: -elliptic_j(tau,100) # rel tol 1e-2
+        2.6253741264076799999999999999e17 - 1.3012822400356887122945119790e-12*I
+        sage: (-elliptic_j(tau, 100).real().round())^(1/3)
+        640320
+    """
+
+    CC = z.parent()
+    from sage.rings.complex_field import is_ComplexField
+    if not is_ComplexField(CC):
+        CC = ComplexField(prec)
+        try:
+            z = CC(z)
+        except ValueError:
+            raise ValueError("elliptic_j only defined for complex arguments.")
+    from sage.libs.all import pari
+    return CC(pari(z).ellj())
 
 #### elliptic integrals
 

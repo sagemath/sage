@@ -327,7 +327,7 @@ class table(SageObject):
         initialization process, the header is merged with the rest of
         the data, so changing the header option later using
         ``table.options(...)`` doesn't affect the contents of the
-        table, just whether the row or column is highlighed. When
+        table, just whether the row or column is highlighted. When
         using this :meth:`options` method, no merging of data occurs,
         so here ``header_row`` and ``header_column`` should just be
         ``True`` or ``False``, not a list. ::

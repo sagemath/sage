@@ -55,7 +55,7 @@ Test comparison by equality::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.modules.free_module import FreeModule
@@ -63,6 +63,7 @@ from sage.algebras.algebra import Algebra
 from sage.algebras.free_algebra import is_FreeAlgebra
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
     @staticmethod
@@ -88,12 +89,13 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
     Element = FreeAlgebraQuotientElement
     def __init__(self, A, mons, mats, names):
         """
-        Returns a quotient algebra defined via the action of a free algebra
-        A on a (finitely generated) free module. The input for the quotient
-        algebra is a list of monomials (in the underlying monoid for A)
-        which form a free basis for the module of A, and a list of
-        matrices, which give the action of the free generators of A on this
-        monomial basis.
+        Return a quotient algebra defined via the action of a free algebra
+        A on a (finitely generated) free module.
+
+        The input for the quotient algebra is a list of monomials (in
+        the underlying monoid for A) which form a free basis for the
+        module of A, and a list of matrices, which give the action of
+        the free generators of A on this monomial basis.
 
         EXAMPLES:
 

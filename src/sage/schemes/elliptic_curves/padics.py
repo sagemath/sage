@@ -701,9 +701,9 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: h = E.padic_height(7,10)
         sage: P = E.gen(0)
         sage: h(P)
-        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + O(7^9)
+        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + 4*7^9 + 5*7^10 + O(7^11)
         sage: h(P+P)
-        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + O(7^9)
+        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + 2*7^9 + 7^10 + O(7^11)
     """
     if check_hypotheses:
         if not p.is_prime():

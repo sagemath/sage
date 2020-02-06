@@ -480,7 +480,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         self._zero_element = integer_mod.IntegerMod(self, 0)
         self._one_element = integer_mod.IntegerMod(self, 1)
 
-    def _macaulay2_init_(self):
+    def _macaulay2_init_(self, macaulay2=None):
         """
         EXAMPLES::
 

@@ -1,4 +1,4 @@
-$(PYTHON) | $(SAGERUNTIME) pip babel flask flask_autoindex flask_babel flask_oldsessions flask_openid mathjax twisted sphinx
+$(STARTED) | pip babel flask flask_autoindex flask_babel flask_oldsessions flask_openid mathjax twisted sphinx
 
 ----------
 All lines of this file are ignored except the first.

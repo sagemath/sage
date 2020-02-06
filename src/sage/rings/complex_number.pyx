@@ -26,8 +26,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 import math
 import operator
 
@@ -39,7 +37,6 @@ from .complex_double cimport ComplexDoubleElement
 from .real_mpfr cimport RealNumber
 
 import sage.misc.misc
-from sage.misc.superseded import deprecated_function_alias
 import sage.rings.integer as integer
 import sage.rings.infinity as infinity
 
@@ -647,6 +644,22 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         re = mpfr_to_mpfval(self.__re)
         im = mpfr_to_mpfval(self.__im)
         return make_mpc((re, im))
+
+    def _sympy_(self):
+        """
+        Convert this complex number to Sympy.
+
+        EXAMPLES::
+
+            sage: CC(1, 0)._sympy_()
+            1.00000000000000
+            sage: CC(1/3, 1)._sympy_()
+            0.333333333333333 + 1.0*I
+            sage: type(_)
+            <class 'sympy.core.add.Add'>
+        """
+        import sympy
+        return self.real()._sympy_() + self.imag()._sympy_() * sympy.I
 
     cpdef _add_(self, right):
         """
@@ -2432,7 +2445,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         Return an irreducible polynomial of degree at most `n` which is
         approximately satisfied by this complex number.
 
-        ALGORITHM: Uses the PARI C-library algdep command.
+        ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
 
         INPUT: Type algdep? at the top level prompt. All additional
         parameters are passed onto the top-level algdep command.
@@ -2446,15 +2459,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             x^2 - x + 1
             sage: p(z)
             1.11022302462516e-16
-
-        TESTS::
-
-            sage: z.algdep(2)
-            x^2 - x + 1
-            sage: z.algebraic_dependancy(2)
-            doctest:...: DeprecationWarning: algebraic_dependancy is deprecated. Please use algebraic_dependency instead.
-            See http://trac.sagemath.org/22714 for details.
-            x^2 - x + 1
         """
         from sage.arith.all import algdep
         return algdep(self, n, **kwds)
@@ -2462,11 +2466,8 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
     # Alias
     algdep = algebraic_dependency
 
-    # Former misspelling
-    algebraic_dependancy = deprecated_function_alias(22714, algebraic_dependency)
 
-
-def make_ComplexNumber0( fld, mult_order, re, im ):
+def make_ComplexNumber0(fld, mult_order, re, im):
     """
     Create a complex number for pickling.
 
@@ -2476,10 +2477,9 @@ def make_ComplexNumber0( fld, mult_order, re, im ):
         sage: loads(dumps(a)) == a # indirect doctest
         True
     """
-    x = ComplexNumber( fld, re, im )
-    x._set_multiplicative_order( mult_order )
+    x = ComplexNumber(fld, re, im)
+    x._set_multiplicative_order(mult_order)
     return x
-
 
 
 def create_ComplexNumber(s_real, s_imag=None, int pad=0, min_prec=53):

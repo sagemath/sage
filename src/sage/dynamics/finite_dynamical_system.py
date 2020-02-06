@@ -72,7 +72,7 @@ dynamical systems:
       knows the latter part of the Sage library well.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Darij Grinberg <darijgrinberg@gmail.com>,
 #                     2018 Tom Roby <tomrobyuconn@gmail.com>
 #
@@ -85,17 +85,13 @@ dynamical systems:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-#from sage.categories.enumerated_sets import EnumeratedSets
-#from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-#from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-#from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six import add_metaclass
 from sage.categories.sets_cat import Sets
-from sage.misc.abstract_method import abstract_method
 from sage.structure.sage_object import SageObject
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+
 
 @add_metaclass(ClasscallMetaclass)
 class DiscreteDynamicalSystem(SageObject):

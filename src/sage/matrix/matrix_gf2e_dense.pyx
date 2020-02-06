@@ -1,5 +1,5 @@
 """
-Dense matrices over `\GF{2^e}` for `2 <= e <= 10` using the M4RIE library.
+Dense matrices over `\GF{2^e}` for `2 <= e <= 10` using the M4RIE library
 
 The M4RIE library offers two matrix representations:
 
@@ -79,15 +79,15 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix, Vector
 from sage.structure.element cimport ModuleElement, Element, RingElement
+from sage.structure.richcmp cimport rich_to_bool
 
 from sage.rings.all import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
@@ -661,7 +661,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -675,8 +675,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             False
         """
         if self._nrows == 0 or self._ncols == 0:
-            return 0
-        return mzed_cmp(self._entries, (<Matrix_gf2e_dense>right)._entries)
+            return rich_to_bool(op, 0)
+        return rich_to_bool(op, mzed_cmp(self._entries,
+                                         (<Matrix_gf2e_dense>right)._entries))
 
     def __copy__(self):
         """

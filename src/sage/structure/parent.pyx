@@ -102,7 +102,6 @@ This came up in some subtle bug once::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 from cpython.object cimport PyObject, Py_NE, Py_EQ, Py_LE, Py_GE
 from cpython.bool cimport *
@@ -117,6 +116,7 @@ cimport sage.categories.map as map
 from sage.structure.debug_options cimport debug
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.misc.lazy_format import LazyFormat
@@ -881,7 +881,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             raise NotImplementedError(f"cannot construct elements of {self}")
         cdef Py_ssize_t i
         cdef R = parent(x)
-        cdef bint no_extra_args = len(args) == 0 and len(kwds) == 0
+        cdef bint no_extra_args = (not args and not kwds)
         if R is self and no_extra_args:
             return x
 
@@ -1684,21 +1684,21 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: S3 = AlternatingGroup(3)
             sage: G = SL(3, QQ)
             sage: p = S3[2]; p.matrix()
-            [0 1 0]
             [0 0 1]
             [1 0 0]
+            [0 1 0]
 
         In general one can't mix matrices and permutations::
 
             sage: G(p)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert (1,2,3) to a rational
+            TypeError: unable to convert (1,3,2) to a rational
             sage: phi = S3.hom(lambda p: G(p.matrix()), codomain = G)
             sage: phi(p)
-            [0 1 0]
             [0 0 1]
             [1 0 0]
+            [0 1 0]
             sage: S3._unset_coercions_used()
             sage: S3.register_embedding(phi)
 
@@ -1710,9 +1710,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               From: Alternating group of order 3!/2 as a permutation group
               To:   Special Linear Group of degree 3 over Rational Field
             sage: phi(p)
-            [0 1 0]
             [0 0 1]
             [1 0 0]
+            [0 1 0]
 
         This does not work since matrix groups are still old-style
         parents (see :trac:`14014`)::
@@ -1722,9 +1722,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Though one can have a permutation act on the rows of a matrix::
 
             sage: G(1) * p
-            [0 1 0]
             [0 0 1]
             [1 0 0]
+            [0 1 0]
 
         Some more advanced examples::
 
@@ -2703,6 +2703,44 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return True
 
+    @cached_method
+    def _is_numerical(self):
+        r"""
+        Test if elements of this parent can be numerically evaluated as complex
+        numbers (in a canonical way).
+
+        EXAMPLES::
+
+            sage: [R._is_numerical() for R in [RR, CC, QQ, QuadraticField(-1)]]
+            [True, True, True, True]
+            sage: [R._is_numerical() for R in [SR, QQ['x'], QQ[['x']]]]
+            [False, False, False]
+            sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
+            [False, False, False, False]
+        """
+        from sage.rings.complex_field import ComplexField
+        from sage.rings.real_mpfr import mpfr_prec_min
+        return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
+
+    @cached_method
+    def _is_real_numerical(self):
+        r"""
+        Test if elements of this parent can be numerically evaluated as real
+        numbers (in a canonical way).
+
+        EXAMPLES::
+
+            sage: [R._is_real_numerical() for R in [RR, QQ, ZZ, RLF, QuadraticField(2)]]
+            [True, True, True, True, True]
+            sage: [R._is_real_numerical() for R in [CC, QuadraticField(-1)]]
+            [False, False]
+            sage: [R._is_real_numerical() for R in [SR, QQ['x'], QQ[['x']]]]
+            [False, False, False]
+            sage: [R._is_real_numerical() for R in [RIF, RBF, CIF, CBF]]
+            [False, False, False, False]
+        """
+        from sage.rings.real_mpfr import RealField, mpfr_prec_min
+        return RealField(mpfr_prec_min()).has_coerce_map_from(self)
 
 ############################################################################
 # Set base class --

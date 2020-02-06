@@ -49,7 +49,6 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from libc.math cimport sqrt, sin, cos, tan, asin, acos, atan, M_PI
 from sage.rings.real_double import RDF
@@ -946,7 +945,7 @@ cdef class Sphere(ParametricSurface):
 
             sage: from sage.plot.plot3d.shapes import Sphere
             sage: Sphere(1).get_grid(100)
-            ([-10.0, ..., 0.0, ..., 10.0],
+            ([-10.0, ..., 10.0],
              [0.0, ..., 3.141592653589793, ..., 0.0])
         """
         cdef int K, u_res, v_res

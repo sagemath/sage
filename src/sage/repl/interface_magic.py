@@ -260,7 +260,7 @@ class InterfaceMagic(object):
             2
             120
             sage: shell.run_cell('%%gap foo\n1+1;\n')
-            File "<string>", line unknown
+            ...File "<string>", line unknown
             SyntaxError: Interface magics have no options, got "foo"
             <BLANKLINE>
             sage: shell.run_cell('%%gap?')

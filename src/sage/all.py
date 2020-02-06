@@ -19,7 +19,7 @@ We exclude the dependencies and check to see that there are no others
 except for the known bad apples::
 
     sage: allowed = [
-    ....:     'IPython', 'prompt_toolkit',     # sage dependencies
+    ....:     'IPython', 'prompt_toolkit', 'jedi',     # sage dependencies
     ....:     'threading', 'multiprocessing',  # doctest dependencies
     ....:     '__main__', 'sage.doctest',      # doctesting
     ....:     'signal', 'enum',                # may appear in Python 3
@@ -68,6 +68,40 @@ import sys
 import operator
 import math
 
+############ setup warning filters before importing Sage stuff ####
+import warnings
+
+__with_pydebug = hasattr(sys, 'gettotalrefcount')   # This is a Python debug build (--with-pydebug) 
+if __with_pydebug:
+    # a debug build does not install the default warning filters. Sadly, this breaks doctests so we
+    # have to re-add them:
+    warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
+    warnings.filterwarnings('ignore', category=ImportWarning)
+    warnings.filterwarnings('ignore', category=ResourceWarning)
+else:
+    warnings.filters.remove(('ignore', None, DeprecationWarning, None, 0))
+
+# The psutil swap_memory() function tries to collect some statistics
+# that may not be available and that we don't need. Hide the warnings
+# that are emitted if the stats aren't available (Trac #28329). That
+# function is called in two places, so let's install this filter
+# before the first one is imported from sage.misc.all below.
+warnings.filterwarnings('ignore', category=RuntimeWarning,
+  message=r"'sin' and 'sout' swap memory stats couldn't be determined")
+
+# Ignore all deprecations from IPython etc.
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic)')
+# Ignore collections.abc warnings, there are a lot of them but they are
+# harmless.
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+    message='.*collections[.]abc.*')
+# However, be sure to keep OUR deprecation warnings
+warnings.filterwarnings('default', category=DeprecationWarning,
+    message=r'[\s\S]*See https\?://trac\.sagemath\.org/[0-9]* for details.')
+################ end setup warnings ###############################
+
+
 from sage.env import SAGE_ROOT, SAGE_SRC, SAGE_DOC_SRC, SAGE_LOCAL, DOT_SAGE, SAGE_ENV
 
 
@@ -81,6 +115,7 @@ from time                import sleep
 from functools import reduce  # in order to keep reduce in python3
 
 import sage.misc.lazy_import
+
 from sage.misc.all       import *         # takes a while
 from sage.typeset.all    import *
 from sage.repl.all       import *
@@ -299,20 +334,6 @@ def _write_started_file():
     O = open(started_file, 'w')
     O.write("Sage {} was started at {}\n".format(sage.version.version, t))
     O.close()
-
-
-import warnings
-warnings.filters.remove(('ignore', None, DeprecationWarning, None, 0))
-# Ignore all deprecations from IPython etc.
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic)')
-# Ignore collections.abc warnings, there are a lot of them but they are
-# harmless.
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    message='.*collections[.]abc.*')
-# However, be sure to keep OUR deprecation warnings
-warnings.filterwarnings('default', category=DeprecationWarning,
-    message=r'[\s\S]*See https\?://trac.sagemath.org/[0-9]* for details.')
 
 
 # Set a new random number seed as the very last thing

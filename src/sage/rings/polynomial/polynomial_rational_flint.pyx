@@ -1176,6 +1176,13 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             RuntimeError: FLINT exception
 
+        Flush the output buffer to get rid of stray output -- see
+        :trac:`28649`::
+
+            sage: from sage.misc.misc_c import cyflush
+            sage: cyflush()
+            ...
+
         Test fractional powers (:trac:`20086`)::
 
             sage: P.<R> = QQ[]
@@ -1433,7 +1440,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def _derivative(self, var = None):
         """
-        Returns the derivative of self with respect to ``var``.
+        Return the derivative of this polynomial with respect to ``var``.
 
         INPUT:
 
@@ -1458,18 +1465,19 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f._derivative(2*x)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot differentiate with respect to 2*x
-            sage: y = var("y")
-            sage: f._derivative(y)
-            Traceback (most recent call last):
-            ...
-            ValueError: Cannot differentiate with respect to y
+            ValueError: cannot differentiate with respect to 2*x
+
+        Check that :trac:`28187` is fixed::
+
+            sage: x = var("x")
+            sage: f._derivative(x)
+            4*x^3 - 1
         """
         cdef Polynomial_rational_flint der
         cdef bint do_sig
 
         if var is not None and var != self._parent.gen():
-            raise ValueError("Cannot differentiate with respect to %s" % var)
+            raise ValueError("cannot differentiate with respect to {}".format(var))
 
         der = self._new()
         do_sig = _do_sig(self.__poly)

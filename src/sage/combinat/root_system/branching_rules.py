@@ -451,8 +451,8 @@ def branch_weyl_character(chi, R, S, rule="default"):
          B4(0,0,0,0) + B4(1/2,1/2,1/2,1/2) + B4(1,0,0,0)]
 
         sage: E6 = WeylCharacterRing("E6", style="coroots")
-        sage: A2xA2xA2=WeylCharacterRing("A2xA2xA2",style="coroots")
-        sage: A5xA1=WeylCharacterRing("A5xA1",style="coroots")
+        sage: A2xA2xA2 = WeylCharacterRing("A2xA2xA2",style="coroots")
+        sage: A5xA1 = WeylCharacterRing("A5xA1",style="coroots")
         sage: G2 = WeylCharacterRing("G2", style="coroots")
         sage: A1xA1 = WeylCharacterRing("A1xA1", style="coroots")
         sage: F4 = WeylCharacterRing("F4",style="coroots")
@@ -470,7 +470,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: D6xA1 = WeylCharacterRing("D6xA1",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(D6xA1,rule="extended")
          D6xA1(0,0,0,0,1,0,1) + D6xA1(0,1,0,0,0,0,0) + D6xA1(0,0,0,0,0,0,2)
-        sage: A5xA2 =WeylCharacterRing("A5xA2",style="coroots")
+        sage: A5xA2 = WeylCharacterRing("A5xA2",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(A5xA2,rule="extended")
         A5xA2(0,0,0,1,0,1,0) + A5xA2(0,1,0,0,0,0,1) + A5xA2(1,0,0,0,1,0,0) + A5xA2(0,0,0,0,0,1,1)
         sage: E8 = WeylCharacterRing("E8",style="coroots")

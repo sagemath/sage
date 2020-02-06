@@ -3,8 +3,8 @@ cd src
 if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
 else
-    LINBOX_BLAS="$(pkg-config --libs cblas)"
-    BLAS_CFLAGS="$(pkg-config --cflags cblas)"
+    LINBOX_BLAS="$(pkg-config --libs blas cblas)"
+    BLAS_CFLAGS="$(pkg-config --cflags blas cblas)"
     if [ "$BLAS_CFLAGS" != "" ]; then
         LINBOX_BLAS_CFLAGS="--with-blas-cflags=$BLAS_CFLAGS"
     else
@@ -18,7 +18,7 @@ echo "*************************************************"
 
 # If SAGE_FAT_BINARY is set, disable all processor-specific optimizations
 if [ "$SAGE_FAT_BINARY" = yes ]; then
-    FFLAS_FFPACK_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 $FFLAS_FFPACK_CONFIGURE"
+    FFLAS_FFPACK_CONFIGURE="--disable-sse --disable-sse2 --disable-sse3 --disable-ssse3 --disable-sse41 --disable-sse42 --disable-fma --disable-fma4 --disable-avx --disable-avx2 --disable-avx512f --disable-avx512dq --disable-avx512vl $FFLAS_FFPACK_CONFIGURE"
 fi
 
 # Need to use 'bash' for configure, see

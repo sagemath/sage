@@ -9,9 +9,9 @@ Collaborative Development with Git-Trac
 Sometimes you will only want to work on local changes to Sage, for
 your own private needs.  However, typically it is beneficial to
 share code and ideas with others; the manner in which the
-`Sage project <http://sagemath.org>`_ does this (as well as fixing
+`Sage project <https://www.sagemath.org>`_ does this (as well as fixing
 bugs and upgrading components) is in a very collaborative and
-public setting on `the Sage Trac server <http://trac.sagemath.org>`_
+public setting on `the Sage Trac server <https://trac.sagemath.org>`_
 (the Sage bug and enhancement tracker).
 
 One can use ``git`` :ref:`the hard way <chapter-manual-git>` for this,
@@ -71,10 +71,10 @@ Git and Trac Configuration
 
 .. NOTE::
 
-    * `trac <http://trac.sagemath.org>`_ uses username/password for
+    * `trac <https://trac.sagemath.org>`_ uses username/password for
       authentication.
 
-    * Our `git repository server <http://git.sagemath.org>`_ uses SSH
+    * Our `git repository server <https://git.sagemath.org>`_ uses SSH
       public key authentication for write access.
 
 You need to set up both authentication mechanisms to be able to upload
@@ -84,8 +84,8 @@ to the Sage directory and tell ``git trac`` about your trac account::
 
     [user@localhost sage]$ git trac config --user USERNAME --pass 'PASSWORD'
     Trac xmlrpc URL:
-        http://trac.sagemath.org/xmlrpc (anonymous)
-        http://trac.sagemath.org/login/xmlrpc (authenticated)
+        https://trac.sagemath.org/xmlrpc (anonymous)
+        https://trac.sagemath.org/login/xmlrpc (authenticated)
         realm sage.math.washington.edu
     Username: USERNAME
     Password: PASSWORD
@@ -165,7 +165,7 @@ want to add it to Sage. You would first open a ticket for that::
     [user@localhost sage]$ git trac create 'Last Twin Prime'
     Remote branch: u/user/last_twin_prime
     Newly-created ticket number: 12345
-    Ticket URL: http://trac.sagemath.org/12345
+    Ticket URL: https://trac.sagemath.org/12345
     Local branch: t/12345/last_twin_prime
 
 This will create a new trac ticket titled "Last Twin Prime" with a
@@ -190,7 +190,7 @@ Check out an Existing Ticket
 ----------------------------
 
 Alternatively, you can use the `web interface to the Sage trac
-development server <http://trac.sagemath.org>`_ to open a new ticket.
+development server <https://trac.sagemath.org>`_ to open a new ticket.
 Just log in and click on "Create Ticket".
 
 Or maybe somebody else already opened a ticket. Then, to get a suitable
@@ -266,7 +266,7 @@ done by::
     Changing the trac "Branch:" field...
 
 This uploads your changes to a remote branch on the `Sage git server
-<http://git.sagemath.org/sage.git>`_. The ``git trac`` command uses
+<https://git.sagemath.org/sage.git>`_. The ``git trac`` command uses
 the following logic to find out the remote branch name:
 
 * By default, the remote branch name will be whatever is already on
@@ -567,7 +567,7 @@ For an explanation of what should be checked by the reviewer, see
 :ref:`chapter-review`.
 
 If you go to the `web interface to the Sage trac development server
-<http://trac.sagemath.org>`_ then you can click on the "Branch:" field and see
+<https://trac.sagemath.org>`_ then you can click on the "Branch:" field and see
 the code that is added by combining all commits of the ticket. This is what
 needs to be reviewed.
 

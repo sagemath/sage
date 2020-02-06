@@ -16,10 +16,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [NisOst2003] Sampo Niskanen and Patric R. J. Ostergard,
-  "Cliquer User's  Guide, Version 1.0,"
-  Communications Laboratory, Helsinki University of Technology,
-  Espoo, Finland, Tech. Rep. T48, 2003.
+[NO2003]_
 
 Methods
 -------
@@ -108,7 +105,7 @@ def all_max_clique(graph):
 
     ALGORITHM:
 
-    This function is based on Cliquer [NisOst2003]_.
+    This function is based on Cliquer [NO2003]_.
 
     EXAMPLES::
 

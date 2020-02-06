@@ -145,6 +145,11 @@ def Texture(id=None, **kwds):
         sage: Texture((.2,.3,.4))
         Texture(texture..., 334c66)
 
+    Now accepting negative arguments, reduced modulo 1::
+
+        sage: Texture((-3/8, 1/2, 3/8))
+        Texture(texture..., 9f7f5f)
+
     Textures using other keywords::
 
         sage: Texture(specular=0.4)
@@ -176,15 +181,16 @@ def Texture(id=None, **kwds):
         kwds['color'] = id
         id = None
     elif isinstance(id, tuple):
-        kwds['color'] = id
+        kwds['color'] = Color(id).rgb()
         id = None
     if id is None:
         id = _new_global_texture_id()
     return Texture_class(id, **kwds)
 
+
 def parse_color(info, base=None):
     r"""
-    Parses the color.
+    Parse the color.
 
     It transforms a valid color string into a color object and
     a color object into an RBG tuple of length 3. Otherwise,
@@ -193,7 +199,7 @@ def parse_color(info, base=None):
     INPUT:
 
     - ``info`` - color, valid color str or number
-    - ``base`` - tuple of length 3 (optional, default: None)
+    - ``base`` - tuple of length 3 (optional, default: ``None``)
 
     OUTPUT:
 
@@ -234,14 +240,17 @@ def parse_color(info, base=None):
         try:
             return Color(info)
         except KeyError:
-            raise ValueError("unknown color '%s'"%info)
+            raise ValueError("unknown color '%s'" % info)
     else:
         r, g, b = base
         # We don't want to lose the data when we split it into its respective components.
-        if not r: r = 1e-5
-        if not g: g = 1e-5
-        if not b: b = 1e-5
-        return (float(info*r), float(info*g), float(info*b))
+        if not r:
+            r = 1e-5
+        if not g:
+            g = 1e-5
+        if not b:
+            b = 1e-5
+        return (float(info * r), float(info * g), float(info * b))
 
 
 class Texture_class(WithEqualityById, SageObject):
@@ -299,7 +308,8 @@ class Texture_class(WithEqualityById, SageObject):
         else:
             if len(color) == 4:
                 opacity = color[3]
-            color = (float(color[0]), float(color[1]), float(color[2]))
+            color = tuple(float(1) if c == 1 else float(c) % 1
+                          for c in color[0: 3])
 
         self.color = color
         self.opacity = float(opacity)
@@ -319,7 +329,7 @@ class Texture_class(WithEqualityById, SageObject):
 
     def _repr_(self):
         """
-        Gives string representation of the Texture object.
+        Return a string representation of the Texture object.
 
         EXAMPLES::
 

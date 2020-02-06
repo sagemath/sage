@@ -99,7 +99,6 @@ All of this is not perfect. In the following scenario::
 
 The name for ``"A1.A2"`` could potentially be set to ``"B1.A2"``. But that will work anyway.
 """
-from __future__ import print_function, absolute_import
 
 import sys
 cdef dict sys_modules = sys.modules

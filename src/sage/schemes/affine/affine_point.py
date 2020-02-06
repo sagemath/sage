@@ -48,12 +48,12 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
 
     INPUT:
 
-    - ``X`` -- a subscheme of an ambient affine space over a ring `R`.
+    - ``X`` -- a subscheme of an ambient affine space over a ring `R`
 
-    - ``v`` -- a list/tuple/iterable of coordinates in `R`.
+    - ``v`` -- a list/tuple/iterable of coordinates in `R`
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
-      check the input for consistency.
+    - ``check`` -- boolean (optional, default:``True``); whether to
+      check the input for consistency
 
     EXAMPLES::
 
@@ -97,6 +97,53 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             X.extended_codomain()._check_satisfies_equations(v)
         self._coords = tuple(v)
 
+    def _matrix_times_point_(self, mat, dom):
+        r"""
+        Multiplies the point on the left by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        - ``dom`` -- (unused) needed for consistent function call with projective 
+
+        OUTPUT: a scheme point given by ``mat*self``
+
+        EXAMPLES::
+
+            sage: P = AffineSpace(QQ,2)
+            sage: Q = P(1,2)
+            sage: m = matrix(ZZ, 3, 3, [0,1,1,0,0,1,1,1,1])
+            sage: m*Q
+            (3/4, 1/4)
+
+        ::
+
+            sage: P = AffineSpace(QQ,1)
+            sage: Q = P(0)
+            sage: m = matrix(RR, 2, 2, [0,1,1,0])
+            sage: m*Q
+            Traceback (most recent call last):
+            ...
+            ValueError: resulting point not affine
+
+        ::
+
+            sage: P = AffineSpace(QQ,2)
+            sage: Q = P(1,1)
+            sage: m = matrix(RR, 2, 2, [0,1,1,0])
+            sage: m*Q
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix size is incompatible
+        """
+        #input checking done in projective implementation
+        d = self.codomain().ngens()
+        P = mat*self.homogenize(d)
+        if P[-1] == 0:
+            raise ValueError("resulting point not affine")
+        return P.dehomogenize(d)
+
     def __hash__(self):
         r"""
         Computes the hash value of this affine point.
@@ -107,7 +154,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             sage: hash(A([1, 1]))
             1300952125                      # 32-bit
             3713081631935493181             # 64-bit
-        
+
         ::
 
             sage: A.<x,y,z> = AffineSpace(CC, 3)
@@ -163,9 +210,9 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             else:
                 R = RealField(prec)
             H = max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative())])
-            return(R(max(H,1)).log())
+            return R(max(H,1)).log()
         if self.domain().base_ring() in _NumberFields or is_NumberFieldOrder(self.domain().base_ring()):
-            return(max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())]))
+            return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
         else:
             raise NotImplementedError("must be over a number field or a number field Order")
 
@@ -197,7 +244,8 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
             True
         """
         phi = self.codomain().projective_embedding(n)
-        return(phi(self))
+        return phi(self)
+
 
 class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
 
@@ -212,7 +260,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
            sage: hash(X([1, 1]))
            1300952125                      # 32-bit
            3713081631935493181             # 64-bit
-       
+
        ::
 
            sage: A.<x,y> = AffineSpace(QQ, 2)
@@ -222,7 +270,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
            True
 
        """
-       return hash(tuple(self)) 
+       return hash(tuple(self))
 
     def weil_restriction(self):
         r"""
@@ -271,7 +319,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         if L.is_finite():
             d = L.degree()
             if d == 1:
-                return(self)
+                return self
             newP = []
             for t in self:
                 c = t.polynomial().coefficients(sparse=False)
@@ -280,7 +328,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         else:
             d = L.relative_degree()
             if d == 1:
-                return(self)
+                return self
             #create a CoordinateFunction that gets the relative coordinates in terms of powers
             from sage.rings.number_field.number_field_element import CoordinateFunction
             v = L.gen()
@@ -296,7 +344,7 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
             newP = []
             for t in self:
                 newP += p(t)
-        return(WR(newP))
+        return WR(newP)
 
     def intersection_multiplicity(self, X):
         r"""

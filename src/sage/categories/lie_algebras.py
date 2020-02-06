@@ -724,7 +724,7 @@ class LieAlgebras(Category_over_base_ring):
                     if x == y:
                         continue
                     for z in elts:
-                        tester.assertTrue(jacobi(x, y, z) == zero)
+                        tester.assertEqual(jacobi(x, y, z), zero)
 
         def _test_antisymmetry(self, **options):
             """
@@ -756,7 +756,7 @@ class LieAlgebras(Category_over_base_ring):
             elts = tester.some_elements()
             zero = self.zero()
             for x in elts:
-                tester.assertTrue(self.bracket(x, x) == zero)
+                tester.assertEqual(self.bracket(x, x), zero)
 
         def _test_distributivity(self, **options):
             r"""
@@ -798,11 +798,11 @@ class LieAlgebras(Category_over_base_ring):
             from sage.misc.misc import some_tuples
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 # left distributivity
-                tester.assertTrue(self.bracket(x, (y + z))
-                               == self.bracket(x, y) + self.bracket(x, z))
+                tester.assertEqual(self.bracket(x, (y + z)),
+                                   self.bracket(x, y) + self.bracket(x, z))
                 # right distributivity
-                tester.assertTrue(self.bracket((x + y), z)
-                               == self.bracket(x, z) + self.bracket(y, z))
+                tester.assertEqual(self.bracket((x + y), z),
+                                   self.bracket(x, z) + self.bracket(y, z))
 
     class ElementMethods:
         @coerce_binop

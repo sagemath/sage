@@ -74,7 +74,6 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from libc.string cimport memcpy
 from cysignals.signals cimport sig_on, sig_off
@@ -593,7 +592,7 @@ cdef class Converter(SageObject):
 
             if attributes and a in attributes:
                 for attrib in attributes[a]:
-                    if attrib == "isSB" :
+                    if attrib == "isSB":
                         val = <long>(attributes[a][attrib])
                         atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
@@ -1310,6 +1309,11 @@ cdef class SingularFunction(SageObject):
             RuntimeError: error in Singular function call 'triangL':
             The input is no groebner basis.
             leaving triang.lib::triangL
+
+        Flush any stray output -- see :trac:`28622`::
+
+            sage: sys.stdout.flush()
+            ...
 
             sage: G= Ideal(I.groebner_basis())
             sage: triangL(G,attributes={G:{'isSB':1}})

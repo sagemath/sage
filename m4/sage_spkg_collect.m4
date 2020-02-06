@@ -6,7 +6,7 @@
 #
 #   This macro gathers up information about SPKGs defined in the build/pkgs
 #   directory of the Sage source tree, and generates variables to be
-#   substitued into the build/make/Makefile.in template which list all the
+#   substituted into the build/make/Makefile.in template which list all the
 #   SPKGs, their versions, their dependencies, and categorizes them based
 #   on how they should be installed.
 #
@@ -52,6 +52,22 @@
 #        type which are installed by running a custom script, which may
 #        download additional source files.
 #
+
+dnl ==========================================================================
+dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Trac #29001
+m4_ifndef([PKG_CHECK_VAR], [
+AC_DEFUN([PKG_CHECK_VAR],
+[AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
+AC_ARG_VAR([$1], [value of $3 for $2, overriding pkg-config])dnl
+
+_PKG_CONFIG([$1], [variable="][$3]["], [$2])
+AS_VAR_COPY([$1], [pkg_cv_][$1])
+
+AS_VAR_IF([$1], [""], [$5], [$4])dnl
+])dnl PKG_CHECK_VAR
+])
+dnl ==========================================================================
+
 AC_DEFUN_ONCE([SAGE_SPKG_COLLECT], [
 # Configure all spkgs with configure-time checks
 m4_include([m4/sage_spkg_configures.m4])
@@ -88,9 +104,11 @@ SAGE_DUMMY_PACKAGES='\
 # List of all standard packages
 SAGE_STANDARD_PACKAGES='\
 '
-# List of all currently installed optional packages
-SAGE_OPTIONAL_INSTALLED_PACKAGES='\
-'
+# List of all installed and to-be-installed optional packages - filled in SAGE_SPKG_ENABLE
+#SAGE_OPTIONAL_INSTALLED_PACKAGES
+# List of optional packages to be uninstalled - filled in SAGE_SPKG_ENABLE
+#SAGE_OPTIONAL_CLEANED_PACKAGES
+
 # List of all packages that should be downloaded
 SAGE_SDIST_PACKAGES='\
 '
@@ -132,11 +150,7 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         SAGE_STANDARD_PACKAGES+="    $SPKG_NAME \\"$'\n'
         in_sdist=yes
         ;;
-    optional)
-        if test -f $SAGE_SPKG_INST/$SPKG_NAME-*; then
-            SAGE_OPTIONAL_INSTALLED_PACKAGES+="    $SPKG_NAME \\"$'\n'
-        fi;
-        ;;
+    optional) ;;
     experimental) ;;
     script) ;;
     pip) ;;
@@ -221,5 +235,6 @@ AC_SUBST([SAGE_BUILT_PACKAGES])
 AC_SUBST([SAGE_DUMMY_PACKAGES])
 AC_SUBST([SAGE_STANDARD_PACKAGES])
 AC_SUBST([SAGE_OPTIONAL_INSTALLED_PACKAGES])
+AC_SUBST([SAGE_OPTIONAL_CLEANED_PACKAGES])
 AC_SUBST([SAGE_SDIST_PACKAGES])
 ])

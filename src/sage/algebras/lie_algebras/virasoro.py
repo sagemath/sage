@@ -17,7 +17,9 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.lie_algebras import LieAlgebras
+from sage.categories.modules import Modules
 from sage.rings.all import ZZ
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.sets.family import Family
 from sage.sets.set import Set
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
@@ -63,7 +65,7 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
             sage: L = lie_algebras.regular_vector_fields(QQ)
             sage: TestSuite(L).run()
         """
-        cat = LieAlgebras(R).WithBasis()
+        cat = LieAlgebras(R).WithBasis().Graded()
         InfinitelyGeneratedLieAlgebra.__init__(self, R, index_set=ZZ, category=cat)
         IndexedGenerators.__init__(self, ZZ, prefix='d', bracket='[')
 
@@ -114,6 +116,19 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
             0
         """
         return self.term(i + j, i - j)
+
+    def degree_on_basis(self, i):
+        r"""
+        Return the degree of the basis element indexed by ``i``,
+        which is ``i``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.regular_vector_fields(QQ)
+            sage: L.degree_on_basis(2)
+            2
+        """
+        return i
 
     def _an_element_(self):
         """
@@ -173,13 +188,16 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
             sage: L = lie_algebras.pwitt(GF(5), 5); L
             The 5-Witt Lie algebra over Finite Field of size 5
             sage: TestSuite(L).run()
+
+        We skip the grading test as we need to be able to echelonize a
+        matrix over the base ring as part of the test::
+
             sage: L = lie_algebras.pwitt(Zmod(6), 6)
-            sage: TestSuite(L).run()  # not tested -- universal envelope doesn't work
-            sage: L._test_jacobi_identity()
+            sage: TestSuite(L).run(skip="_test_grading")
         """
         if R(p) != 0:
             raise ValueError("{} is not 0 in {}".format(p, R))
-        cat = LieAlgebras(R).FiniteDimensional().WithBasis()
+        cat = LieAlgebras(R).FiniteDimensional().WithBasis().Graded()
         FinitelyGeneratedLieAlgebra.__init__(self, R, index_set=list(range(p)),
                                              category=cat)
         IndexedGenerators.__init__(self, list(range(p)), prefix='d',
@@ -264,6 +282,21 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
                 self.monomial((-2) % self._p),
                 self.an_element()]
 
+    def degree_on_basis(self, i):
+        r"""
+        Return the degree of the basis element indexed by ``i``,
+        which is ``i`` mod `p`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.pwitt(Zmod(5), 5)
+            sage: L.degree_on_basis(7)
+            2
+            sage: L.degree_on_basis(2).parent()
+            Ring of integers modulo 5
+        """
+        return IntegerModRing(self._p)(i)
+
     class Element(LieAlgebraElement):
         pass
 
@@ -326,7 +359,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
             sage: d = lie_algebras.VirasoroAlgebra(QQ)
             sage: TestSuite(d).run()
         """
-        cat = LieAlgebras(R).WithBasis()
+        cat = LieAlgebras(R).WithBasis().Graded()
         InfinitelyGeneratedLieAlgebra.__init__(self, R, index_set=ZZ, category=cat)
         IndexedGenerators.__init__(self, ZZ, prefix='d', bracket='[',
                                    sorting_key=_basis_key)
@@ -473,6 +506,25 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         if i == -j:
             ret += R(i ** 3 - i) / R(12) * self.c()
         return ret
+
+    def degree_on_basis(self, i):
+        r"""
+        Return the degree of the basis element indexed by ``i``,
+        which is ``i`` and `0` for ``'c'``.
+
+        EXAMPLES::
+
+            sage: d = lie_algebras.VirasoroAlgebra(QQ)
+            sage: d.degree_on_basis(2)
+            2
+            sage: d.c().degree()
+            0
+            sage: (d.c() + d.basis()[0]).is_homogeneous()
+            True
+        """
+        if i == 'c':
+            return ZZ.zero()
+        return i
 
     def _an_element_(self):
         """
@@ -629,10 +681,11 @@ class ChargelessRepresentation(CombinatorialFreeModule):
         self._a = a
         self._b = b
         self._V = V
-        if V.base_ring().characteristic() in [2,3]:
+        R = V.base_ring()
+        if R.characteristic() in [2, 3]:
             raise NotImplementedError("not implemented for characteristic 2,3")
-        CombinatorialFreeModule.__init__(self, V.base_ring(), ZZ,
-                                         prefix='v')
+        cat = Modules(R).WithBasis().Graded()
+        CombinatorialFreeModule.__init__(self, R, ZZ, prefix='v', category=cat)
 
     def _repr_(self):
         """
@@ -673,6 +726,20 @@ class ChargelessRepresentation(CombinatorialFreeModule):
             True
         """
         return self._V
+
+    def degree_on_basis(self, i):
+        r"""
+        Return the degree of the basis element indexed by ``i``,
+        which is `i`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.VirasoroAlgebra(QQ)
+            sage: M = L.chargeless_representation(1/2, 3/4)
+            sage: M.degree_on_basis(-3)
+            -3
+        """
+        return i
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
@@ -823,8 +890,9 @@ class VermaModule(CombinatorialFreeModule):
         self._V = V
         from sage.combinat.partition import _Partitions
         indices = _Partitions.map(VermaModule._partition_to_neg_tuple)
-        CombinatorialFreeModule.__init__(self, V.base_ring(),
-                                         indices, prefix='v')
+        R = V.base_ring()
+        cat = Modules(R).WithBasis().Graded()
+        CombinatorialFreeModule.__init__(self, R, indices, prefix='v', category=cat)
 
     def _repr_term(self, k):
         """
@@ -998,6 +1066,20 @@ class VermaModule(CombinatorialFreeModule):
         return (self._d_action_on_basis(n, k)._acted_upon_(d[m], False)
                 + self.monomial(k)._acted_upon_(d[n].bracket(d[m]), False))
 
+    def degree_on_basis(self, d):
+        r"""
+        Return the degree of the basis element indexed by ``d``, which
+        is the sum of the entries of ``d``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.VirasoroAlgebra(QQ)
+            sage: M = L.verma_module(-2/7, 3)
+            sage: M.degree_on_basis((-3,-3,-1))
+            -7
+        """
+        return sum(d)
+
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
             """
@@ -1025,11 +1107,18 @@ class VermaModule(CombinatorialFreeModule):
             """
             P = self.parent()
             # We implement only a left action
-            if not self_on_left and scalar in P._V:
-                scalar = P._V(scalar)
-                return P.linear_combination((P._d_action_on_basis(n, k), cv * cm)
-                                            for n,cv in scalar.monomial_coefficients(copy=False).items()
-                                            for k,cm in self.monomial_coefficients(copy=False).items())
+            if not self_on_left:
+                S = scalar.parent()
+                R = P.base_ring()
+                if S is R or scalar in R:
+                    scalar = R(scalar)
+                    return P._from_dict({k: scalar*c for k,c in self._monomial_coefficients.items()})
+                elif S is P._V or scalar in P._V:
+                    scalar = P._V(scalar)
+                    return P.linear_combination((P._d_action_on_basis(n, k), cv * cm)
+                                                for n,cv in scalar.monomial_coefficients(copy=False).items()
+                                                for k,cm in self._monomial_coefficients.items())
             return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
 
         _rmul_ = _lmul_ = _acted_upon_
+

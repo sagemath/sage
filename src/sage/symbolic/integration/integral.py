@@ -77,6 +77,14 @@ class IndefiniteIntegral(BuiltinFunction):
             e^x
             sage: indefinite_integral(exp(x), x^2)
             2*(x - 1)*e^x
+
+        TESTS:
+
+        Check that :trac:`28842` is fixed::
+
+            sage: integrate(1/(x^4 + x^3 + 1), x)
+            integrate(1/(x^4 + x^3 + 1), x)
+
         """
         # Check for x
         if not is_SymbolicVariable(x):
@@ -92,7 +100,7 @@ class IndefiniteIntegral(BuiltinFunction):
         for integrator in self.integrators:
             try:
                 A = integrator(f, x)
-            except (NotImplementedError, TypeError):
+            except (NotImplementedError, TypeError, AttributeError):
                 pass
             except ValueError:
                 # maxima is telling us something
@@ -195,7 +203,7 @@ class DefiniteIntegral(BuiltinFunction):
         for integrator in self.integrators:
             try:
                 A = integrator(*args)
-            except (NotImplementedError, TypeError):
+            except (NotImplementedError, TypeError, AttributeError):
                 pass
             except ValueError:
                 # maxima is telling us something
@@ -884,6 +892,13 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: integrate(abs(x^2 - 1), x, -2, 2)
         4
+
+    Some tests for :trac:`17468`::
+
+        sage: integral(log(abs(2*sin(x))), x, 0, pi/3)
+        1/36*I*pi^2 + I*dilog(1/2*I*sqrt(3) + 1/2) + I*dilog(-1/2*I*sqrt(3) - 1/2)
+        sage: integral(log(abs(sin(x))), x, 0, pi/2)
+        -1/2*pi*log(2)
 
     Check that :trac:`25823` is fixed::
 

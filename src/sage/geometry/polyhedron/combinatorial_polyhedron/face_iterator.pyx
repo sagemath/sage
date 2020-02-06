@@ -69,33 +69,33 @@ Obtain the Vrepresentation::
 
     sage: it = FaceIterator(C, False)
     sage: face = next(it)
-    sage: face.Vrepr()
+    sage: face.ambient_Vrepresentation()
     (A vertex at (0, -1, 0), A vertex at (0, 0, -1), A vertex at (1, 0, 0))
-    sage: face.length_Vrepr()
+    sage: face.n_ambient_Vrepresentation()
     3
 
 Obtain the facet-representation::
 
     sage: it = FaceIterator(C, True)
     sage: face = next(it)
-    sage: face.Hrepr()
+    sage: face.ambient_Hrepresentation()
     (An inequality (-1, -1, 1) x + 1 >= 0,
      An inequality (-1, -1, -1) x + 1 >= 0,
       An inequality (-1, 1, -1) x + 1 >= 0,
        An inequality (-1, 1, 1) x + 1 >= 0)
-    sage: face.Hrepr(names=False)
+    sage: face.ambient_H_indices()
     (4, 5, 6, 7)
-    sage: face.length_Hrepr()
+    sage: face.n_ambient_Hrepresentation()
     4
 
 In non-dual mode one can ignore all faces contained in the current face::
 
     sage: it = FaceIterator(C, False)
     sage: face = next(it)
-    sage: face.Hrepr(names=False)
+    sage: face.ambient_H_indices()
     (7,)
     sage: it.ignore_subfaces()
-    sage: [face.Hrepr(names=False) for face in it]
+    sage: [face.ambient_H_indices() for face in it]
     [(6,),
     (5,),
     (4,),
@@ -120,10 +120,10 @@ In dual mode one can ignore all faces that contain the current face::
 
     sage: it = FaceIterator(C, True)
     sage: face = next(it)
-    sage: face.Vrepr(names=False)
+    sage: face.ambient_V_indices()
     (5,)
     sage: it.ignore_supfaces()
-    sage: [face.Vrepr(names=False) for face in it]
+    sage: [face.ambient_V_indices() for face in it]
     [(4,),
     (3,),
     (2,),
@@ -156,8 +156,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, division, print_function
 
 from sage.rings.integer     cimport smallInteger
 from cysignals.signals      cimport sig_check, sig_on, sig_off
@@ -212,7 +210,7 @@ cdef class FaceIterator(SageObject):
         sage: P = Polyhedron(rays=[[0,0,1], [0,1,0], [1,0,0]])
         sage: C = CombinatorialPolyhedron(P)
         sage: it = C.face_iter()
-        sage: [face.Vrepr() for face in it]
+        sage: [face.ambient_Vrepresentation() for face in it]
         [(A vertex at (0, 0, 0),
           A ray in the direction (0, 1, 0),
           A ray in the direction (1, 0, 0)),
@@ -250,10 +248,10 @@ cdef class FaceIterator(SageObject):
         sage: C = CombinatorialPolyhedron(P)
         sage: it = C.face_iter(dual=False)
         sage: face = next(it)
-        sage: face.Hrepr(names=False)
+        sage: face.ambient_H_indices()
         (5,)
         sage: it.ignore_subfaces()
-        sage: [face.Hrepr(names=False) for face in it]
+        sage: [face.ambient_H_indices() for face in it]
         [(4,),
          (3,),
          (2,),
@@ -286,9 +284,9 @@ cdef class FaceIterator(SageObject):
         sage: next(it)
         A 0-dimensional face of a 3-dimensional combinatorial polyhedron
         sage: face = next(it)
-        sage: face.Vrepr(names=False)
+        sage: face.ambient_V_indices()
         (6,)
-        sage: [face.Vrepr(names=False) for face in it]
+        sage: [face.ambient_V_indices() for face in it]
         [(5,),
          (4,),
          (3,),
@@ -342,7 +340,7 @@ cdef class FaceIterator(SageObject):
             # Assumes ``visited_all`` to be some list of faces of
             # a polyhedron `P_2`, which contains `P` as one of its faces.
 
-            while len(facets) > 0:
+            while facets:
                 one_face = faces.pop()
                 maybe_newfaces = [one_face.intersection(face) for face in faces]
 
@@ -365,7 +363,7 @@ cdef class FaceIterator(SageObject):
                 # and not contained in any of the ``visited_all``,
                 # it is a facet of ``one_face``.
                 # Any facet in ``maybe_newfaces`` of ``one_face``
-                # is inlcusion maximal.
+                # is inclusion maximal.
                 maybe_newfaces2 = []
                 for face1 in maybe_newfaces:
                     # ``face1`` is a facet of ``one_face``,
@@ -412,7 +410,7 @@ cdef class FaceIterator(SageObject):
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator).run()
         """
-        if dual and C._unbounded:
+        if dual and not C.is_bounded():
             raise ValueError("cannot iterate over dual of unbounded Polyedron")
         cdef int i
         cdef ListOfFaces some_list  # make Cython aware of type
@@ -442,15 +440,15 @@ cdef class FaceIterator(SageObject):
             self.output_dimension = -2
 
         if dual:
-            self.atoms = C.bitrep_facets
-            self.coatoms = C.bitrep_Vrepr
+            self.atoms = C.bitrep_facets()
+            self.coatoms = C.bitrep_Vrepr()
         else:
-            self.coatoms = C.bitrep_facets
-            self.atoms = C.bitrep_Vrepr
+            self.coatoms = C.bitrep_facets()
+            self.atoms = C.bitrep_Vrepr()
         self.face_length = self.coatoms.face_length
-        self._V = C._V
-        self._H = C._H
-        self._equalities = C._equalities
+        self._Vrep = C.Vrep()
+        self._facet_names = C.facet_names()
+        self._equalities = C.equalities()
 
         self.atom_repr = <size_t *> self._mem.allocarray(self.coatoms.n_atoms, sizeof(size_t))
         self.coatom_repr = <size_t *> self._mem.allocarray(self.coatoms.n_faces, sizeof(size_t))
@@ -477,7 +475,7 @@ cdef class FaceIterator(SageObject):
         self.visited_all = <uint64_t **> self._mem.allocarray(self.coatoms.n_faces, sizeof(uint64_t *))
         self.n_visited_all = <size_t *> self._mem.allocarray(self.dimension, sizeof(size_t))
         self.n_visited_all[self.dimension -1] = 0
-        if C._unbounded:
+        if not C.is_bounded():
             # Treating the far face as if we had visited all its elements.
             # Hence we will visit all intersections of facets unless contained in the far face.
 
@@ -486,7 +484,7 @@ cdef class FaceIterator(SageObject):
             # needs to be at most ``n_facets - 1``.
             # Hence it is fine to use the first entry already for the far face,
             # as ``self.visited_all`` holds ``n_facets`` pointers.
-            some_list = C.far_face
+            some_list = C.far_face()
             self.visited_all[0] = some_list.data[0]
             self.n_visited_all[self.dimension -1] = 1
 
@@ -610,7 +608,7 @@ cdef class FaceIterator(SageObject):
             sage: it = C.face_iter(dual=False)
             sage: n_non_simplex_faces = 1
             sage: for face in it:
-            ....:     if face.length_Vrepr() > face.dimension() + 1:
+            ....:     if face.n_ambient_Vrepresentation() > face.dimension() + 1:
             ....:         n_non_simplex_faces += 1
             ....:     else:
             ....:         it.ignore_subfaces()
@@ -643,7 +641,7 @@ cdef class FaceIterator(SageObject):
             sage: it = C.face_iter(dual=True)
             sage: n_faces_with_non_simplex_quotient = 1
             sage: for face in it:
-            ....:     if face.length_Hrepr() > C.dimension() - face.dimension() + 1:
+            ....:     if face.n_ambient_Hrepresentation() > C.dimension() - face.dimension() + 1:
             ....:         n_faces_with_non_simplex_quotient += 1
             ....:     else:
             ....:         it.ignore_supfaces()
@@ -787,12 +785,12 @@ cdef class FaceIterator(SageObject):
             self.first_time[self.current_dimension] = True
             return 0
 
-    cdef size_t length_atom_repr(self) except -1:
+    cdef size_t n_atom_rep(self) except -1:
         r"""
         Compute the number of atoms in the current face by counting the
         number of set bits.
 
-        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.length_atom_repr`
+        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.n_atom_rep`
         """
         if self.face:
             return count_atoms(self.face, self.face_length)

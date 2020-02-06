@@ -4,8 +4,6 @@ The unix cksum tool
 This is a weak checksum, only included for legacy reasons.
 """
 
-import sys
-
 # Fun table, e.g. http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/util/sorc/wgrib2.cd/grib2/wgrib2/crc32.c
 
 crctab = [

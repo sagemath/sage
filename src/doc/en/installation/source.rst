@@ -100,7 +100,7 @@ computer:
 - **perl**: version 5.8.0 or later.
 - **ar** and **ranlib**: can be obtained as part of GNU binutils.
 - **tar**: GNU tar version 1.17 or later, or BSD tar.
-- **python**: Python >= 2.6.
+- **python**: Python >= 3.6.
 
 
 Libraries
@@ -221,37 +221,27 @@ The method of installing additional software varies from distribution to
 distribution, but on a `Debian <https://www.debian.org/>`_ based system (e.g.
 `Ubuntu <https://www.ubuntu.com/>`_ or `Mint <https://www.linuxmint.com/>`_),
 you would use
-`apt-get <https://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_::
+`apt-get <https://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_.
 
-     # debian (Buster or newer) / ubuntu
-     $ sudo apt-get install binutils pixz gcc g++ gfortran make m4 perl tar \
-       git patch openssl libssl-dev libz-dev bc libbz2-dev liblzma-dev libgmp-dev \
-       libffi-dev libgf2x-dev libcurl4-openssl-dev libzmq3-dev curl yasm \
-       pkg-config libntl-dev libmpfr-dev libmpc-dev libflint-dev \
-       libpcre3-dev libgd-dev libflint-dev libflint-arb-dev \
-       libsymmetrica2-dev gmp-ecm libecm-dev libisl-dev libgivaro-dev \
-       libpari-dev pari-gp2c libec-dev liblrcalc-dev \
-       libm4ri-dev libm4rie-dev liblfunction-dev lcalc
+On Debian ("buster" or newer) or Ubuntu ("bionic" or newer):
 
-     # redhat / fedora / centos
-     $ sudo yum install binutils xz gcc gcc-c++ gcc-gfortran make m4 perl \
-       tar git patch perl-ExtUtils-MakeMaker openssl openssl-devel zlib-devel \
-       bzip2 bzip2-devel xz-devel gmp gmp-devel libcurl-devel curl yasm \
-       pkg-config ntl-devel mpfr-devel libmpc-devel libsymmetrica-devel \
-       eclib-devel gmp-ecm-devel lrcalc-devel isl-devel givaro-devel \
-       pari-devel pari-elldata pari-seadata pari-galdata pari-galpol \
-       m4ri-devel m4rie-devel L-function-devel
+.. literalinclude:: debian.txt
+
+On Fedora / Redhat / CentOS:
+
+.. literalinclude:: fedora.txt
 
 (These examples suppose that you choose to use a systemwide OpenSSL library.)
-In addition, if you don't want Sage to build other packages that might be available from
-your OS, cf. the growing list of such packages on :trac:`27330`, install::
 
-     # debian / ubuntu --  not for standard Sage spkgs
-     $ sudo apt-get install cmake libterm-readline-gnu-perl ninja-build \
-     librw-dev
+In addition to these, if you don't want Sage to build optional packages that might
+be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+install on Debian ("buster" or newer) or Ubuntu ("bionic" or newer):
 
-     # redhat / fedora / centos -- not for standard Sage spkgs
-     $ sudo yum install cmake perl-Term-ReadLine-Gnu ninja-build rw-devel
+.. literalinclude:: debian-optional.txt
+
+On Fedora / Redhat / CentOS:
+
+.. literalinclude:: fedora-optional.txt
 
 On other Linux systems, you might use
 `rpm <https://en.wikipedia.org/wiki/RPM_Package_Manager>`_,
@@ -471,7 +461,7 @@ or similar commands.
 If you installed Sage first, all is not lost. You just need to rebuild
 Sage's Python and any part of Sage relying on it::
 
-    $ sage -f python2  # rebuild Python2
+    $ sage -f python3  # rebuild Python3
     $ make             # rebuild components of Sage depending on Python
 
 after installing the Tcl/Tk development libraries as above.
@@ -628,7 +618,7 @@ Running Sage from a directory with spaces in its name will also fail.
        $ sage
        ┌────────────────────────────────────────────────────────────────────┐
        │ SageMath version 8.8, Release Date: 2019-06-26                     │
-       │ Using Python 2.7.15. Type "help()" for help.                       │
+       │ Using Python 3.7.3. Type "help()" for help.                        │
        └────────────────────────────────────────────────────────────────────┘
        sage:
 
@@ -808,7 +798,7 @@ Starting from a fresh Sage tarball::
 And if you've already built Sage::
 
     $ ./sage -i openssl
-    $ ./sage -f python2
+    $ ./sage -f python3
     $ make ssl
 
 The third line will rebuild all parts of Sage that depend on Python;
@@ -1005,8 +995,8 @@ Here are some of the more commonly used variables affecting the build process:
   An entry ``package-name`` means to run the test suite for the named package
   regardless of the setting of :envvar:`SAGE_CHECK`.
   An entry ``!package-name`` means to skip its test suite.
-  So if this is set to ``mpir,!python2``, then always run the test suite for
-  MPIR, but always skip the test suite for Python 2.
+  So if this is set to ``mpir,!python3``, then always run the test suite for
+  MPIR, but always skip the test suite for Python 3.
 
   .. note::
 
@@ -1431,4 +1421,4 @@ the directory where you want to install Sage.
 
 
 
-**This page was last updated in August 2019 (Sage 8.8).**
+**This page was last updated in August 2019 (Sage 9.0).**

@@ -32,7 +32,7 @@ def Minkowski(positive_spacelike=True, names=None):
     Generate a Minkowski space of dimension 4.
 
     By default the signature is set to `(- + + +)`, but can be changed to
-    `(+ - - -)` by setting the optionnal argument ``positive_spacelike`` to
+    `(+ - - -)` by setting the optional argument ``positive_spacelike`` to
     ``False``. The shortcut operator ``.<,>`` can be used to
     specify the coordinates.
 
@@ -119,7 +119,6 @@ def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
         gamma = 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dx*dx
          + 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dy*dy
     """
-    from functools import reduce
     from sage.functions.trig import cos, sin, atan, atan2
     from sage.functions.other import sqrt
     from sage.symbolic.constants import pi
@@ -154,7 +153,8 @@ def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
         stereoN_to_S = stereoN.transition_map(stereoS,
           (x / (x**2 + y**2), y / (x**2 + y**2)), intersection_name='W',
           restrictions1=x**2 + y**2 != 0, restrictions2=xp**2+yp**2!=0)
-        stereoN_to_S.set_inverse(xp / (xp**2 + yp**2), yp / (xp**2 + yp**2))
+        stereoN_to_S.set_inverse(xp / (xp**2 + yp**2), yp / (xp**2 + yp**2),
+                                 check=False)
         W = U.intersection(V)
         stereoN_W = stereoN.restrict(W)
         stereoS_W = stereoS.restrict(W)
@@ -171,7 +171,8 @@ def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
         th, ph = spher[:]
         spher_to_stereoN = spher.transition_map(stereoN_A, (sin(th)*cos(ph) / (1-cos(th)),
                                                             sin(th)*sin(ph) / (1-cos(th))))
-        spher_to_stereoN.set_inverse(2*atan(1/sqrt(x**2+y**2)), atan2(-y, -x)+pi)
+        spher_to_stereoN.set_inverse(2*atan(1/sqrt(x**2+y**2)), atan2(-y, -x)+pi,
+                                     check=False)
         stereoN_to_S_A = stereoN_to_S.restrict(A)
         stereoN_to_S_A * spher_to_stereoN # generates spher_to_stereoS
         stereoS_to_N_A = stereoN_to_S.inverse().restrict(A)

@@ -5,6 +5,11 @@ This module makes up a list of external software that Sage interfaces. Availabil
 of each software is tested only when necessary. This is mainly used for the doctests
 which require certain external software installed on the system.
 
+Even though the functions in this module should also work when an external
+software is not present, most doctests in this module are only tested if
+testing of external software is explicitly enabled in order to avoid invoking
+external software otherwise. See :trac:`28819` for details.
+
 AUTHORS:
 
 - Kwankyu Lee (2016-03-09) -- initial version, based on code by Robert Bradshaw and Nathann Cohen
@@ -36,7 +41,7 @@ def has_internet():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_internet
-        sage: has_internet() # optional -- internet
+        sage: has_internet() # random, optional -- internet
         True
     """
     from six.moves import urllib
@@ -55,7 +60,7 @@ def has_latex():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_latex
-        sage: has_latex() # random
+        sage: has_latex() # random, optional - latex
         True
     """
     from sage.misc.latex import _run_latex_, _latex_file_
@@ -77,7 +82,7 @@ def has_magma():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_magma
-        sage: has_magma() # random
+        sage: has_magma() # random, optional - magma
         True
     """
     from sage.interfaces.magma import magma
@@ -94,7 +99,7 @@ def has_matlab():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_matlab
-        sage: has_matlab() # random
+        sage: has_matlab() # random, optional - matlab
         True
     """
     from sage.interfaces.matlab import matlab
@@ -111,7 +116,7 @@ def has_mathematica():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_mathematica
-        sage: has_mathematica() # random
+        sage: has_mathematica() # random, optional - mathematica
         True
     """
     from sage.interfaces.mathematica import mathematica
@@ -128,7 +133,7 @@ def has_maple():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_maple
-        sage: has_maple() # random
+        sage: has_maple() # random, optional - maple
         True
     """
     from sage.interfaces.maple import maple
@@ -145,7 +150,7 @@ def has_macaulay2():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_macaulay2
-        sage: has_macaulay2() # random
+        sage: has_macaulay2() # random, optional - macaulay2
         True
     """
     from sage.interfaces.macaulay2 import macaulay2
@@ -162,7 +167,7 @@ def has_octave():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_octave
-        sage: has_octave() # random
+        sage: has_octave() # random, optional - octave
         True
     """
     from sage.interfaces.octave import octave
@@ -192,7 +197,7 @@ def has_scilab():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_scilab
-        sage: has_scilab() # random
+        sage: has_scilab() # random, optional - scilab
         True
     """
     from sage.interfaces.scilab import scilab
@@ -209,7 +214,7 @@ def has_cplex():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_cplex
-        sage: has_cplex() # random
+        sage: has_cplex() # random, optional - CPLEX
         True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram
@@ -226,7 +231,7 @@ def has_gurobi():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_gurobi
-        sage: has_gurobi() # random
+        sage: has_gurobi() # random, optional - Gurobi
         True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram
@@ -299,7 +304,7 @@ def _lookup(software):
     
     EXAMPLES::
 
-        sage: sage.doctest.external._lookup('internet') # random
+        sage: sage.doctest.external._lookup('internet') # random, optional - internet
         True
     """
     if software in external_software:
@@ -332,9 +337,9 @@ class AvailableSoftware(object):
          'octave',
          'pandoc',
          'scilab']
-        sage: 'internet' in available_software # random
+        sage: 'internet' in available_software # random, optional - internet
         True
-        sage: available_software.issuperset(set(['internet','latex'])) # random
+        sage: available_software.issuperset(set(['internet','latex'])) # random, optional - internet latex
         True
     """
     def __init__(self):
@@ -360,7 +365,7 @@ class AvailableSoftware(object):
         EXAMPLES::
 
             sage: from sage.doctest.external import available_software
-            sage: 'internet' in available_software # random
+            sage: 'internet' in available_software # random, optional - internet
             True
         """
         try:
@@ -386,7 +391,7 @@ class AvailableSoftware(object):
         EXAMPLES::
 
             sage: from sage.doctest.external import available_software
-            sage: available_software.issuperset(set(['internet','latex','magma'])) # random
+            sage: available_software.issuperset(set(['internet','latex','magma'])) # random, optional - internet latex magma
             True
         """
         for item in other:

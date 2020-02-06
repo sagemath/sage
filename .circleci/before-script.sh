@@ -18,7 +18,7 @@
 . .ci/protect-secrets.sh
 # Collect debug infos about the system we are running on
 .ci/describe-system.sh
-# Set MAKEOPTS and SAGE_NUM_THREADS 
+# Set MAKEFLAGS and SAGE_NUM_THREADS
 . .ci/setup-make-parallelity.sh
 
 # Set DOCKER_TAG according to the current branch/tag

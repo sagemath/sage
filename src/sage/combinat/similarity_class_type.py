@@ -55,7 +55,7 @@ For `2 \times 2` matrices there are four types::
     [[2, [1]]]
 
 These four types correspond to the regular split semisimple matrices, the
-non-semisimple matrices, the central matrices and the irreducble matrices
+non-semisimple matrices, the central matrices and the irreducible matrices
 respectively.
 
 For any matrix `A` in a given similarity class type, it is possible to calculate

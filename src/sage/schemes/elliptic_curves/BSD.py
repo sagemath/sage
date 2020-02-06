@@ -598,7 +598,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         if verbosity > 0:
             s = str(BSD.primes)[1:-1]
             if 2 not in BSD.primes:
-                if len(s) == 0: s = '2'
+                if not s:
+                    s = '2'
                 else: s = '2, '+s
             print('True for p not in {' + s + '} by Kolyvagin.')
         BSD.proof['finite'] = copy(BSD.primes)
@@ -899,7 +900,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # print some extra information
     if verbosity > 1:
-        if len(BSD.primes) > 0:
+        if BSD.primes:
             print('Remaining primes:')
         for p in BSD.primes:
             s = 'p = ' + str(p) + ': '

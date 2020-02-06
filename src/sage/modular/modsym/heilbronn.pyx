@@ -15,7 +15,6 @@ Heilbronn matrix computation
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off, sig_check

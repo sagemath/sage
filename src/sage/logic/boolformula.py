@@ -545,7 +545,7 @@ class BooleanFormula(object):
         - ``start`` -- (default: 0) an integer; this is the first
           row of the truth table to be created
 
-        - ``end`` -- (default: -1) an integer; this is the laste
+        - ``end`` -- (default: -1) an integer; this is the last
           row of the truth table to be created
 
         OUTPUT:

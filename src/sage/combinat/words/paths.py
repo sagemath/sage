@@ -231,16 +231,16 @@ def WordPaths(alphabet, steps=None):
       - ``None``: In this case, the type of steps are guessed from the
         length of alphabet.
 
-      - 'square_grid' or 'square' : (default when size of alphabet is 4)
+      - 'square_grid' or 'square': (default when size of alphabet is 4)
         The order is : East, North, West, South.
 
       - 'triangle_grid' or 'triangle':
 
-      - 'hexagonal_grid' or 'hexagon' :(default when size of alphabet is 6)
+      - 'hexagonal_grid' or 'hexagon': (default when size of alphabet is 6)
 
-      - 'cube_grid' or 'cube' :
+      - 'cube_grid' or 'cube':
 
-      - 'north_east', 'ne' or 'NE' : (the default when size of alphabet is 2)
+      - 'north_east', 'ne' or 'NE': (the default when size of alphabet is 2)
 
       - 'dyck':
 
@@ -250,7 +250,7 @@ def WordPaths(alphabet, steps=None):
 
     EXAMPLES:
 
-    The steps can be given explicitely::
+    The steps can be given explicitly::
 
         sage: WordPaths('abc', steps=[(1,2), (-1,4), (0,-3)])
         Word Paths over 3 steps
@@ -2139,8 +2139,8 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
 
         REFERENCES:
 
-        - Provençal, X., Combinatoires des mots, geometrie discrete et
-          pavages, These de doctorat en Mathematiques, Montreal, UQAM,
+        - Provençal, X., *Combinatoires des mots, géometrie discrète et
+          pavages*, Thèse de doctorat en Mathématiques, Montréal, UQAM,
           septembre 2008, 115 pages.
         """
         return super(FiniteWordPath_square_grid,self).is_simple()
@@ -2230,6 +2230,7 @@ class FiniteWordPath_triangle_grid(FiniteWordPath_2d):
             8.66025403784439
         """
         return max(RR(y) for (_,y) in self.points())
+
 
 #TODO: faire une verification du mot pour etre sur hexagonal grid
 class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):

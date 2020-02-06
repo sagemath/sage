@@ -2025,6 +2025,16 @@ def spherical_bessel_f(F, n, z):
         mpf('0.22924385795503024')
         sage: spherical_bessel_f('hankel1', 3, 4)
         mpc(real='0.22924385795503024', imag='-0.21864196590306359')
+
+    TESTS:
+
+    Check that :trac:`28474` is fixed::
+
+        sage: from sage.functions.bessel import spherical_bessel_f
+        sage: spherical_bessel_f('besselj', 3, -4)
+        mpc(real='-0.22924385795503024', imag='0.0')
+        sage: spherical_bessel_f('bessely', 3, -4)
+        mpc(real='-0.21864196590306359', imag='0.0')
     """
     from mpmath import mp
     ctx = mp
@@ -2036,11 +2046,12 @@ def spherical_bessel_f(F, n, z):
         Fz = getattr(ctx, F)(n + 0.5, z)
         hpi = 0.5 * ctx.pi()
         ctx.prec += 10
-        hpioz = hpi / z
+        sqrthpi = ctx.sqrt(hpi)
+        sqrtz = ctx.sqrt(z)
         ctx.prec += 10
-        sqrthpioz = ctx.sqrt(hpioz)
+        quotient = sqrthpi / sqrtz
         ctx.prec += 10
-        return sqrthpioz * Fz
+        return quotient * Fz
     finally:
         ctx.prec = prec
 

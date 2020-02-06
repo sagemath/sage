@@ -12,7 +12,6 @@ cardinality).
 In the following code, sets are represented as integers, where the ith bit is
 set if element i belongs to the set.
 """
-from __future__ import print_function
 
 from libc.stdint cimport uint8_t
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free

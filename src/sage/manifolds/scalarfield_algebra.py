@@ -254,8 +254,10 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         sage: h = CM(a+x); h.display()
         M --> R
         on U: (x, y) |--> a + x
+        on W: (u, v) |--> (a*u^2 + a*v^2 + u)/(u^2 + v^2)
         sage: h = CM(a+u); h.display()
         M --> R
+        on W: (x, y) |--> (a*x^2 + a*y^2 + x)/(x^2 + y^2)
         on V: (u, v) |--> a + u
 
     If the symbolic expression involves coordinates of different charts,
@@ -442,34 +444,30 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: U = M.open_subset('U', coord_def={X: x>0})
             sage: CU = U.scalar_field_algebra()
             sage: fU = CU(f); fU
-            Scalar field on the Open subset U of the
-             2-dimensional topological manifold M
+            Scalar field f on the Open subset U of the 2-dimensional topological
+             manifold M
             sage: fU.display()
-            U --> R
-            (x, y) |--> y^2 + x
+            f: U --> R
+               (x, y) |--> y^2 + x
 
         """
         if isinstance(coord_expression, ScalarField):
             if self._domain.is_subset(coord_expression._domain):
                 # restriction of the scalar field to self._domain:
-                sexpress = {}
-                for chart, funct in coord_expression._express.items():
-                    for schart in self._domain.atlas():
-                        if schart in chart._subcharts:
-                            sexpress[schart] = funct.expr()
+                return coord_expression.restrict(self._domain)
+        else:
+            ###
+            # Anything going wrong here should produce a readable error:
+            try:
+                # generic constructor:
                 resu = self.element_class(self,
-                                          coord_expression=sexpress, name=name,
-                                          latex_name=latex_name)
-            else:
+                                          coord_expression=coord_expression,
+                                          name=name, latex_name=latex_name,
+                                          chart=chart)
+            except TypeError:
                 raise TypeError("cannot convert " +
                                 "{} to a scalar ".format(coord_expression) +
                                 "field on {}".format(self._domain))
-        else:
-            # generic constructor:
-            resu = self.element_class(self,
-                                      coord_expression=coord_expression,
-                                      name=name, latex_name=latex_name,
-                                      chart=chart)
         return resu
 
     def _an_element_(self):

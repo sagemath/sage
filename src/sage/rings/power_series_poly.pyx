@@ -4,13 +4,11 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-from __future__ import absolute_import, print_function
 
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from .infinity import infinity, is_Infinite
 from sage.libs.all import pari_gen, PariError
-from sage.misc.superseded import deprecated_function_alias
 
 
 cdef class PowerSeries_poly(PowerSeries):
@@ -104,7 +102,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def polynomial(self):
         """
-        Return the underlying polynomial of self.
+        Return the underlying polynomial of ``self``.
 
         EXAMPLES::
 
@@ -117,7 +115,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def valuation(self):
         """
-        Return the valuation of self.
+        Return the valuation of ``self``.
 
         EXAMPLES::
 
@@ -138,10 +136,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def degree(self):
         """
-        Return the degree of the underlying polynomial of self. That
-        is, if self is of the form f(x) + O(x^n), we return the degree
-        of f(x). Note that if f(x) is 0, we return -1, just as with
-        polynomials.
+        Return the degree of the underlying polynomial of ``self``.
+
+        That is, if ``self`` is of the form `f(x) + O(x^n)`, we return
+        the degree of `f(x)`. Note that if `f(x)` is `0`, we return `-1`,
+        just as with polynomials.
 
         EXAMPLES::
 
@@ -157,7 +156,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __nonzero__(self):
         """
-        Return True if self is nonzero, and False otherwise.
+        Return ``True`` if ``self`` is nonzero, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -180,14 +179,14 @@ cdef class PowerSeries_poly(PowerSeries):
         -  ``x``:
 
            - a tuple of elements the first of which can be meaningfully
-             substituted in self, with the remainder used for substitution
-             in the coefficients of self.
+             substituted in ``self``, with the remainder used for substitution
+             in the coefficients of ``self``.
 
            - a dictionary for kwds:value pairs. If the variable name of
              self is a keyword it is substituted for.  Other keywords
              are used for substitution in the coefficients of self.
 
-        OUTPUT: the value of self after substitution.
+        OUTPUT: the value of ``self`` after substitution.
 
         EXAMPLES::
 
@@ -405,14 +404,14 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __getitem__(self, n):
         """
-        Return the nth coefficient of self.
+        Return the ``n``-th coefficient of ``self``.
 
-        If n is a slice object, this will return a power series of the
-        same precision, whose coefficients are the same as self for
+        If ``n`` is a slice object, this will return a power series of the
+        same precision, whose coefficients are the same as ``self`` for
         those indices in the slice, and 0 otherwise.
 
-        Returns 0 for negative coefficients. Raises an IndexError if
-        try to access beyond known coefficients.
+        This returns 0 for negative coefficients and raises an
+        ``IndexError`` if trying to access beyond known coefficients.
 
         EXAMPLES::
 
@@ -546,7 +545,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     cpdef _rmul_(self, Element c):
         """
-        Multiply self on the right by a scalar.
+        Multiply ``self`` on the right by a scalar.
 
         EXAMPLES::
 
@@ -559,7 +558,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     cpdef _lmul_(self, Element c):
         """
-        Multiply self on the left by a scalar.
+        Multiply ``self`` on the left by a scalar.
 
         EXAMPLES::
 
@@ -572,7 +571,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __lshift__(PowerSeries_poly self, n):
         """
-        Shift self to the left by n, i.e. multiply by x^n.
+        Shift ``self`` to the left by ``n``, i.e. multiply by `x^n`.
 
         EXAMPLES::
 
@@ -588,7 +587,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __rshift__(PowerSeries_poly self, n):
         """
-        Shift self to the right by n, i.e. multiply by x^-n and
+        Shift ``self`` to the right by ``n``, i.e. multiply by `x^{-n}` and
         remove any terms of negative exponent.
 
         EXAMPLES::
@@ -721,9 +720,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
     cdef _inplace_truncate(self, long prec):
         """
-        Truncate self to precision ``prec`` in place.
+        Truncate ``self`` to precision ``prec`` in place.
 
-        NOTE::
+        .. NOTE::
 
             This is very unsafe, since power series are supposed to
             be immutable in Sage. Use at your own risk!
@@ -750,9 +749,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def list(self):
         """
-        Return the list of known coefficients for self. This is just
-        the list of coefficients of the underlying polynomial, so in
-        particular, need not have length equal to self.prec().
+        Return the list of known coefficients for ``self``.
+
+        This is just the list of coefficients of the underlying
+        polynomial, so in particular, need not have length equal to
+        ``self.prec()``.
 
         EXAMPLES::
 
@@ -765,9 +766,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def dict(self):
         """
-        Return a dictionary of coefficients for self. This is simply a
-        dict for the underlying polynomial, so need not have keys
-        corresponding to every number smaller than self.prec().
+        Return a dictionary of coefficients for ``self``.
+
+        This is simply a dict for the underlying polynomial, so need
+        not have keys corresponding to every number smaller than
+        ``self.prec()``.
 
         EXAMPLES::
 
@@ -781,17 +784,17 @@ cdef class PowerSeries_poly(PowerSeries):
     def _derivative(self, var=None):
         """
         Return the derivative of this power series with respect
-        to the variable var.
+        to the variable ``var``.
 
-        If var is None or is the generator of this ring, we take the derivative
-        with respect to the generator.
+        If ``var`` is ``None`` or is the generator of this ring, we
+        take the derivative with respect to the generator.
 
-        Otherwise, we call _derivative(var) on each coefficient of
+        Otherwise, we call ``_derivative(var)`` on each coefficient of
         the series.
 
-        SEEALSO::
+        .. SEEALSO::
 
-            self.derivative()
+            ``self.derivative()``
 
         EXAMPLES::
 
@@ -812,11 +815,24 @@ cdef class PowerSeries_poly(PowerSeries):
             4*x^3*y^3 + O(y^4)
             sage: f._derivative(x)
             3*x^2*y^4 + O(y^5)
+
+        TESTS::
+
+            sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
+            sage: x = var('x')
+            sage: t.derivative(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to x
         """
-        if var is not None and var is not self._parent.gen():
-            # call _derivative() recursively on coefficients
-            return PowerSeries_poly(self._parent, self.__f._derivative(var),
+        if var is not None and var != self._parent.gen():
+            try:
+                # call _derivative() recursively on coefficients
+                return PowerSeries_poly(self._parent, self.__f._derivative(var),
                                     self.prec(), check=False)
+            except AttributeError:
+                raise ValueError('cannot differentiate with respect to {}'.format(var))
+
 
         # compute formal derivative with respect to generator
         return PowerSeries_poly(self._parent, self.__f._derivative(),
@@ -824,7 +840,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def integral(self,var=None):
         """
-        The integral of this power series
+        Return the integral of this power series.
 
         By default, the integration variable is the variable of the
         power series.
@@ -868,6 +884,7 @@ cdef class PowerSeries_poly(PowerSeries):
     def reverse(self, precision=None):
         """
         Return the reverse of f, i.e., the series g such that g(f(x)) = x.
+
         Given an optional argument ``precision``, return the reverse with given
         precision (note that the reverse can have precision at most
         ``f.prec()``).  If ``f`` has infinite precision, and the argument
@@ -979,7 +996,6 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: (x - x^2).reverse(precision=3)
             x + x^2 + O(x^3)
 
-
         TESTS::
 
             sage: R.<x> = PowerSeriesRing(QQ)
@@ -988,9 +1004,6 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Series must have valuation one for reversion.
-
-
-
         """
         if self.valuation() != 1:
             raise ValueError("Series must have valuation one for reversion.")
@@ -1026,8 +1039,7 @@ cdef class PowerSeries_poly(PowerSeries):
             from sage.misc.all import verbose
             verbose("passing to pari failed; trying Lagrange inversion")
 
-
-        if f.parent().characteristic() > 0:
+        if f.parent().characteristic():
             # over a ring of positive characteristic, attempt lifting to
             # characteristic zero ring
             verbose("parent ring has positive characteristic; attempting lift to characteristic zero")
@@ -1052,7 +1064,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def pade(self, m, n):
         r"""
-        Returns the Padé approximant of ``self`` of index `(m, n)`.
+        Return the Padé approximant of ``self`` of index `(m, n)`.
 
         The Padé approximant of index `(m, n)` of a formal power
         series `f` is the quotient `Q/P` of two polynomials `Q` and `P`
@@ -1137,7 +1149,6 @@ cdef class PowerSeries_poly(PowerSeries):
         u, v = c.rational_reconstruct(z**(n + m + 1), m, n);
         return u/v
 
-
     def _symbolic_(self, ring):
         """
         Conversion to symbolic series.
@@ -1176,9 +1187,9 @@ cdef class PowerSeries_poly(PowerSeries):
         return pex.series(var, self.prec())
 
 
-def make_powerseries_poly_v0(parent,  f, prec, is_gen):
+def make_powerseries_poly_v0(parent, f, prec, is_gen):
     """
-    Return the power series specified by f, prec, and is_gen.
+    Return the power series specified by ``f``, ``prec``, and ``is_gen``.
 
     This function exists for the purposes of pickling. Do not delete
     this function -- if you change the internal representation,

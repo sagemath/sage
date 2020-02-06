@@ -3,16 +3,16 @@ sage -c "import sage.libs.meataxe" || sdh_die "sage.libs.meataxe cannot be impor
 
 cd src
 
-# building modular_resolution-1.1
-cd csources
-sdh_configure
-sdh_make
+# building modular_resolution
+cd `ls -d modular_resolution*`
+sdh_configure || sdh_die "Error configuring modular_resolution"
+sdh_make || sdh_die "Error making modular_resolution"
 # sdh_make install got broken by trac ticket #24106
-$MAKE install
+$MAKE install || sdh_die "Error installing modular_resolution"
 cd ..
 
 # building pGroupCohomology
-cd pyxsources
+cd `ls -d pGroupCohomology*`
 sdh_pip_install .
 
 if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then

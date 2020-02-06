@@ -1345,9 +1345,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: print(P._latex_()) #optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_1) at (6.0...bp,5...bp) [draw,draw=none] {$2$};
-              \node (node_0) at (6.0...bp,...bp) [draw,draw=none] {$1$};
-              \draw [black,->] (node_0) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_1);
+            \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (6.0...bp,...bp) [draw,draw=none] {$...$};
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
         """
@@ -3597,7 +3597,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return Integer(self._hasse_diagram.order())
 
-    def moebius_function(self,x,y):
+    def moebius_function(self, x, y):
         r"""
         Return the value of the Möbius function of the poset on the
         elements x and y.
@@ -3630,12 +3630,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: sum([Q.moebius_function(Q(0),v) for v in Q])
             0
         """
-        i,j = map(self._element_to_vertex,(x,y))
-        return self._hasse_diagram.moebius_function(i,j)
+        i, j = map(self._element_to_vertex, (x, y))
+        return self._hasse_diagram.moebius_function(i, j)
 
-    def moebius_function_matrix(self, ring = ZZ, sparse = False):
+    def moebius_function_matrix(self, ring=ZZ, sparse=False):
         r"""
-        Returns a matrix whose ``(i,j)`` entry is the value of the Möbius
+        Return a matrix whose ``(i,j)`` entry is the value of the Möbius
         function evaluated at ``self.linear_extension()[i]`` and
         ``self.linear_extension()[j]``.
 
@@ -3674,9 +3674,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             M = M.dense_matrix()
         return M
 
-    def lequal_matrix(self, ring = ZZ, sparse = False):
+    def lequal_matrix(self, ring=ZZ, sparse=False):
         """
-        Computes the matrix whose ``(i,j)`` entry is 1 if
+        Compute the matrix whose ``(i,j)`` entry is 1 if
         ``self.linear_extension()[i] < self.linear_extension()[j]`` and 0
         otherwise.
 
@@ -3712,7 +3712,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.lequal_matrix(ring=QQ, sparse=False).parent()
             Full MatrixSpace of 8 by 8 dense matrices over Rational Field
         """
-        M = self._hasse_diagram.lequal_matrix()
+        M = self._hasse_diagram.lequal_matrix(boolean=False)
         if ring is not ZZ:
             M = M.change_ring(ring)
         if not sparse:
@@ -8108,6 +8108,28 @@ class FinitePoset(UniqueRepresentation, Parent):
         # or not, either remove this note or remove .hasse_diagram() below.
         return (set(self).issubset(set(other)) and
                 other.subposet(self).hasse_diagram() == self.hasse_diagram())
+
+    def _libgap_(self):
+        """
+        Conversion to gap.
+
+        This uses the QPA package (https://folk.ntnu.no/oyvinso/QPA/).
+
+        EXAMPLES::
+
+            sage: P = posets.TamariLattice(3)
+            sage: libgap(P)  # optional - gap_packages
+            <A poset on 5 points>
+            sage: A = libgap(GF(2)).PosetAlgebra(P); A  # optional - gap_packages
+            <GF(2)[<quiver with 5 vertices and 5 arrows>]/<two-sided ideal in <GF(2)[<quiver with 5 vertices and 5 arrows>]>, (1 generators)>>
+            sage: A.Dimension()  # optional - gap_packages
+            13
+        """
+        from sage.libs.gap.libgap import libgap
+        libgap.LoadPackage("QPA")
+        L = list(self)
+        g = libgap.Poset(L, [self.principal_order_filter(x) for x in L])
+        return g
 
 
 FinitePoset._dual_class = FinitePoset

@@ -308,8 +308,8 @@ def p_saturation(Plist, p, sieve=True, lin_combs = dict(), verbose=False):
         for Q in K.primes_above(q, degree=1):
             if not E.is_local_integral_model(Q) or Edisc.valuation(Q)!=0:
                 continue
-            vecs = projections(Q,p)
-            if len(vecs) == 0:
+            vecs = projections(Q, p)
+            if not vecs:
                 continue
             for v in vecs:
                 A = matrix(A.rows()+[v])
@@ -421,8 +421,8 @@ def full_p_saturation(Plist, p, lin_combs = dict(), verbose=False):
         1)
 
     """
-    if len(Plist) == 0:
-        return Plist, ZZ(0)
+    if not Plist:
+        return Plist, ZZ.zero()
 
     exponent = ZZ(0)
 

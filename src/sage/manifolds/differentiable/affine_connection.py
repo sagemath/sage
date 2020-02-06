@@ -428,6 +428,7 @@ class AffineConnection(SageObject):
                                   # (key: vector frame)
         self._curvature_forms = {}  # dict. of dict. of curvature 2-forms
                                     # (key: vector frame)
+        self._hash = -1
 
     def _del_derived(self):
         r"""
@@ -640,7 +641,7 @@ class AffineConnection(SageObject):
 
         """
         if frame is None:
-            frame = self._domain._def_frame
+            frame = self._domain.default_frame()
         if frame not in self._coefficients:
             # the coefficients must be computed
             #
@@ -657,13 +658,14 @@ class AffineConnection(SageObject):
             else:
                 # If not, the coefficients must be computed from scratch:
                 manif = self._domain
-                ev = frame  # the vector frame
-                ef = ev._coframe # the dual frame
+                ev = frame        # the vector frame
+                ef = ev.coframe() # the dual frame
                 gam = self._new_coef(ev)
-                for k in manif.irange():
-                    for i in manif.irange():
+                for i in manif.irange():
+                    nab_evi = self(ev[i])
+                    for k in manif.irange():
                         for j in manif.irange():
-                            gam[[k,i,j]] = self(ev[i])(ef[k],ev[j])
+                            gam[[k,i,j]] = nab_evi(ef[k],ev[j])
                 self._coefficients[frame] = gam
         return self._coefficients[frame]
 
@@ -1062,7 +1064,7 @@ class AffineConnection(SageObject):
           default frame of the connection's domain is used
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the connection coefficients; if ``None``,
-          the default chart of the connection's domain is used
+          the default chart of the domain of ``frame`` is used
         - ``symbol`` -- (default: ``None``) string specifying the
           symbol of the connection coefficients; if ``None``, 'Gam' is used
         - ``latex_symbol`` -- (default: ``None``) string specifying the LaTeX
@@ -1175,7 +1177,7 @@ class AffineConnection(SageObject):
         if frame is None:
             frame = self._domain.default_frame()
         if chart is None:
-            chart = self._domain.default_chart()
+            chart = frame.domain().default_chart()
         if symbol is None:
             symbol = 'Gam'
         if latex_symbol is None:
@@ -2038,7 +2040,8 @@ class AffineConnection(SageObject):
             frame = self._domain._def_frame
         if frame not in self._connection_forms:
             forms = {}
-            frame_dom = frame._domain
+            frame_dom = frame.domain()
+            coef_frame = self.coef(frame)
             for i1 in self._domain.irange():
                 for j1 in self._domain.irange():
                     name = self._name + " connection 1-form (" + str(i1) + \
@@ -2049,7 +2052,7 @@ class AffineConnection(SageObject):
                                                latex_name=latex_name)
                     comega = omega.set_comp(frame)
                     for k in self._domain.irange():
-                        comega[k] = self.coef(frame)[[i1,j1,k]]
+                        comega[k] = coef_frame[[i1,j1,k]]
                     forms[(i1,j1)] = omega
             self._connection_forms[frame] = forms
         return  self._connection_forms[frame][(i,j)]
@@ -2142,7 +2145,8 @@ class AffineConnection(SageObject):
             frame = self._domain._def_frame
         if frame not in self._torsion_forms:
             forms = {}
-            frame_dom = frame._domain
+            frame_dom = frame.domain()
+            torsion_comp = self.torsion().comp(frame)
             for i1 in self._domain.irange():
                 name = "torsion ({}) of connection ".format(i1) + \
                        self._name + " w.r.t. {}".format(frame)
@@ -2152,7 +2156,7 @@ class AffineConnection(SageObject):
                 ctheta = theta.set_comp(frame)
                 for k in self._domain.irange():
                     for l in self._domain.irange(start=k+1):
-                        ctheta[k,l] = self.torsion().comp(frame)[[i1,k,l]]
+                        ctheta[k,l] = torsion_comp[[i1,k,l]]
                 forms[i1] = theta
             self._torsion_forms[frame] = forms
         return  self._torsion_forms[frame][i]
@@ -2250,7 +2254,8 @@ class AffineConnection(SageObject):
             frame = self._domain._def_frame
         if frame not in self._curvature_forms:
             forms = {}
-            frame_dom = frame._domain
+            frame_dom = frame.domain()
+            riemann_comp = self.riemann().comp(frame)
             for i1 in self._domain.irange():
                 for j1 in self._domain.irange():
                     name = "curvature ({},{}) of connection ".format(i1,j1) + \
@@ -2262,8 +2267,7 @@ class AffineConnection(SageObject):
                     comega = omega.set_comp(frame)
                     for k in self._domain.irange():
                         for l in self._domain.irange(start=k+1):
-                            comega[k,l] = \
-                                        self.riemann().comp(frame)[[i1,j1,k,l]]
+                            comega[k,l] = riemann_comp[[i1,j1,k,l]]
                     forms[(i1,j1)] = omega
             self._curvature_forms[frame] = forms
         return  self._curvature_forms[frame][(i,j)]
@@ -2318,3 +2322,25 @@ class AffineConnection(SageObject):
                 if truncate:
                     coef[ind].simplify()
         self._del_derived()
+
+    def __hash__(self):
+        r"""
+        Hash function.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: nab = M.affine_connection('nabla', latex_name=r'\nabla')
+            sage: hash(nab) == nab.__hash__()
+            True
+
+        Let us check that ``nab`` can be used as a dictionary key::
+
+            sage: {nab: 1}[nab]
+            1
+
+        """
+        if self._hash == -1:
+            self._hash = hash(repr(self))
+        return self._hash

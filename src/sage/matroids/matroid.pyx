@@ -316,7 +316,7 @@ AUTHORS:
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com >
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz >
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -325,9 +325,8 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -7291,12 +7290,12 @@ cdef class Matroid(SageObject):
 
     cpdef partition(self):
         r"""
-        Returns a minimum number of disjoint independent sets that covers the
+        Return a minimum number of disjoint independent sets that covers the
         groundset.
 
         OUTPUT:
 
-        A list of disjoint independent sets that covers the goundset.
+        A list of disjoint independent sets that covers the groundset.
 
         EXAMPLES::
 

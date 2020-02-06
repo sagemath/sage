@@ -2653,7 +2653,7 @@ def ZpLC(p, prec=None, *args, **kwds):
 
     The SOMOS sequence is the sequence defined by the recurrence:
 
-    ..MATH::
+    .. MATH::
 
         u_n = \frac {u_{n-1} u_{n-3} + u_{n-2}^2} {u_{n-4}}
 

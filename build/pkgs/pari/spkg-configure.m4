@@ -30,14 +30,14 @@ SAGE_SPKG_CONFIGURE([pari], [
         if test x$gp_gal_check = x16; then
             AC_MSG_RESULT([yes])
         else
-            AC_MSG_RESULT([no; cannot use system pari/GP without gapdata package])
+            AC_MSG_RESULT([no; cannot use system pari/GP without galdata package])
             AC_MSG_NOTICE([Install galdata package and reconfigure.])
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes
         fi
         AC_MSG_CHECKING([is pari_galpol installed? ])
-        gp_galp_check=`echo "galoisgetname(12,1)" | $GP -qf 2>> config.log`
-        if test "x$gp_galp_check = xC3\ \:\ C4"; then
+        gp_galp_check=`echo "galoisgetname(12,1) == \"C3 : C4\"" |  $GP -qf 2>> config.log`
+        if test x$gp_galp_check = x1; then
             AC_MSG_RESULT([yes])
         else
             AC_MSG_RESULT([no; cannot use system pari/GP without galpol package])

@@ -19,7 +19,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from libc.string cimport strchr
 from cpython.bytes cimport PyBytes_FromStringAndSize
@@ -229,7 +228,8 @@ cdef class Tokenizer:
 
     cdef int find(self) except -1:
         """
-        This function actually does all the work, and extensively is tested above.
+        This function actually does all the work, and is extensively tested
+        above.
         """
         cdef bint seen_exp, seen_decimal
         cdef int type

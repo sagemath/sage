@@ -21,7 +21,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.integer import Integer

@@ -8,6 +8,19 @@ Sage has a number of `thematic tutorials <index.html>`_ and contains everything
 needed to turn a worksheet created in the `Sage notebook
 <https://github.com/sagemath/sagenb>`_ (sagenb) into a tutorial.
 
+.. WARNING::
+
+   The following will only work if Sage is built using Python 2 rather
+   than Python 3. As of version 9.0, the default is to build Sage with
+   Python 3. So either use an older version of Sage, or build a new
+   version of Sage with Python 2 by obtaining a Sage tarball and doing
+
+  .. CODE-BLOCK:: shell-session
+
+      $ make configure
+      $ ./configure --with-python=2
+      $ make
+
 * Once you have created a worksheet and are satisfied with the text and
   computations, download it to a directory.
 
@@ -40,7 +53,7 @@ using the Mac app and have placed it in your Applications directory.
   files (which may be empty if there are no images).
 
   You can find help for ``sws2rst`` with the command
-  ``sage --sws2rst -h`` once you have installed beautifulsoup.
+  ``sage --sws2rst -h`` once you have installed beautifulsoup4.
 
 * In principle, such a file could be added directly to Sage's documentation (see
   the `developer's manual <../developer/index.html>`_). However, you probably

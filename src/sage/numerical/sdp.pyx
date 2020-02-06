@@ -217,7 +217,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element

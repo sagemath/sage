@@ -91,8 +91,6 @@ Authors
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport check_calloc, sig_free
 
 import math

@@ -180,7 +180,6 @@ with C arguments).
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 include "sage/data_structures/bitset.pxi"
 cimport cpython
@@ -768,7 +767,8 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     which should be empty at the beginning.
     """
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int v, w, i
+    cdef size_t v, w, i
+    cdef size_t s_nscc = <size_t>nscc
     cdef int tmp = nscc + 1
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
@@ -778,15 +778,15 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef uint32_t degv
     cdef uint32_t *p_tmp
 
-    for v in range(nscc):
+    for v in range(s_nscc):
         scc_list[v] = vector[int]()
         sons[v] = vector[int]()
     sons[nscc] = vector[int]()
 
-    for i in range(g.n):
+    for i in range(<size_t>g.n):
         scc_list[scc[i]].push_back(i)
 
-    for v in range(nscc):
+    for v in range(s_nscc):
         for i in range(scc_list[v].size()):
             p_tmp = g.neighbors[scc_list[v][i]]
             while p_tmp<g.neighbors[scc_list[v][i]+1]:
@@ -806,13 +806,13 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
 
     if not m:
         output.edges = NULL
-        for v in range(1, nscc + 1):
+        for v in range(1, s_nscc + 1):
             output.neighbors[v] = NULL
 
     output.edges = <uint32_t *> check_allocarray(m, sizeof(uint32_t))
     output.neighbors[0] = output.edges
 
-    for v in range(1, nscc + 1):
+    for v in range(1, s_nscc + 1):
         degv = sons[v].size()
         output.neighbors[v] = output.neighbors[v-1] + sons[v-1].size()
         for i in range(sons[v].size()):
@@ -929,8 +929,8 @@ def triangles_count(G):
     cdef uint32_t * p1
     cdef uint32_t * p2
 
-    for u in range(g.n):
-        for i in range(out_degree(g, u)):
+    for u in range(<uint32_t>g.n):
+        for i in range(<uint32_t>out_degree(g, u)):
             v = g.neighbors[u][i]
             if v <= u:
                 continue
@@ -1146,8 +1146,8 @@ def spectral_radius(G, prec=1e-10):
     G = G.copy(immutable=True)
     g[0] = (<StaticSparseCGraph> (<StaticSparseBackend> G._backend)._cg).g[0]
 
-    cdef long n = g.n
-    cdef long m = g.m
+    cdef size_t n = <size_t>g.n
+    cdef size_t m = <size_t>g.m
     cdef uint32_t ** neighbors = g.neighbors
 
     # v1 and v2 are two arrays of length n, allocated as one array

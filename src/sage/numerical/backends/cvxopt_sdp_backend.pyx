@@ -18,7 +18,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.numerical.sdp import SDPSolverException
 from sage.matrix.all import Matrix

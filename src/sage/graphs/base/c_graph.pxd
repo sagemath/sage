@@ -9,8 +9,8 @@ from sage.data_structures.bitset cimport bitset_t
 from .graph_backends cimport GenericGraphBackend
 
 cdef class CGraph:
-    cdef int num_verts
-    cdef int num_arcs
+    cdef size_t num_verts
+    cdef size_t num_arcs
     cdef int *in_degrees
     cdef int *out_degrees
 

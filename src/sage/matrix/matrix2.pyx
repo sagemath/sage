@@ -7,22 +7,53 @@ AUTHORS:
 
 - William Stein: initial version
 
-- Sebastian Pancratz (2009-06-12): implemented ``adjoint`` and ``charpoly`` methods
+- Jaap Spies (2006-02-24): added ``prod_of_row_sums``, ``permanent``,
+  ``permanental_minor``, ``rook_vector`` methods
 
-- Sebastian Pancratz (2009-06-25): fixed ``adjoint`` reflecting the change that
-  ``_adjoint`` is now implemented in :class:`Matrix`
+- Robert Bradshaw (2007-06-14): added ``subdivide`` method
 
-- Sebastian Pancratz (2009-06-25): use the division-free algorithm for ``charpoly``
+- Jaap Spies (2007-11-14): implemented ``_binomial``, ``_choose`` auxiliary functions
+
+- William Stein (2007-11-18): added ``_gram_schmidt_noscale`` method
+
+- David Loeffler (2008-12-05): added ``smith_form`` method
+
+- David Loeffler (2009-06-01): added ``_echelon_form_PID`` method
+
+- Sebastian Pancratz (2009-06-25): implemented ``adjoint`` and ``charpoly``
+  methods; fixed ``adjoint`` reflecting the change that ``_adjoint`` is now
+  implemented in :class:`Matrix`; used the division-free algorithm for
+  ``charpoly``
+
+- Rob Beezer (2009-07-13): added ``elementwise_product`` method
 
 - Miguel Marco (2010-06-19): modified eigenvalues and eigenvectors functions to
   allow the option ``extend=False``
 
-- Thierry Monteil (2010-10-05): Bugfix for :trac:`10063`, so that the
+- Thierry Monteil (2010-10-05): bugfix for :trac:`10063`, so that the
   determinant is computed even for rings for which the ``is_field`` method is not
   implemented.
 
-- Rob Beezer (2011-02-05): refactored all of the matrix kernel routines
+- Rob Beezer (2010-12-13): added ``conjugate_transpose`` method
 
+- Rob Beezer (2011-02-05): refactored all of the matrix kernel routines; added
+  ``extended_echelon_form``, ``right_kernel_matrix``, ``QR``,
+  ``_gram_schmidt_noscale``, ``is_similar`` methods
+
+- Moritz Minzlaff (2011-03-17): corrected ``_echelon_form_PID`` method for
+  matrices of one row, fixed in :trac:`9053`
+
+- Rob Beezer (2011-06-09): added ``is_normal``, ``is_diagonalizable``, ``LU``,
+  ``cyclic_subspace``, ``zigzag_form``, ``rational_form`` methods
+
+- Rob Beezer (2012-05-27): added ``indefinite_factorization``,
+  ``is_positive_definite``, ``cholesky`` methods
+
+- Darij Grinberg (2013-10-01): added first (slow) pfaffian implementation
+
+- Mario Pernici (2014-07-01): modified ``rook_vector`` method
+
+- Rob Beezer (2015-05-25): modified ``is_similar`` method
 """
 
 # ****************************************************************************
@@ -33,7 +64,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from cpython cimport *
 from cysignals.signals cimport sig_check
@@ -45,6 +75,7 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.misc import verbose, get_verbose
+from sage.categories.fields import Fields
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -67,6 +98,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 # used to deprecate only adjoint method
 from sage.misc.superseded import deprecated_function_alias
 
+_Fields = Fields()
 
 cdef class Matrix(Matrix1):
     """
@@ -444,7 +476,7 @@ cdef class Matrix(Matrix1):
                     ret = ret.Vec().sage()
                     return (K ** self.ncols())(ret)
             raise TypeError("base ring must be an integral domain or a ring of integers mod n")
-        if not K.is_field():
+        if K not in _Fields:
             K = K.fraction_field()
             self = self.change_ring(K)
 
@@ -603,10 +635,6 @@ cdef class Matrix(Matrix1):
             [2 5 6]
             sage: a.prod_of_row_sums([1,2])
             55
-
-        AUTHORS:
-
-        - Jaap Spies (2006-02-18)
         """
         cdef Py_ssize_t c, row
         pr = 1
@@ -775,10 +803,6 @@ cdef class Matrix(Matrix1):
             sage: C = A.elementwise_product(B)
             sage: len(C.nonzero_positions()) == 0
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2009-07-13)
         """
         # Optimized routines for specialized classes would likely be faster
         # See the "pairwise_product" of vectors for some guidance on doing this
@@ -894,10 +918,6 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(R,2,2,[x, y, x^2, y^2])
             sage: A.permanent()
             x^2*y + x*y^2
-
-        AUTHORS:
-
-        - Jaap Spies (2006-02-16 and 2006-02-21)
         """
         if algorithm == "Ryser":
             return self._permanent_ryser()
@@ -1011,10 +1031,6 @@ cdef class Matrix(Matrix1):
 
             sage: A.permanental_minor(5)
             0
-
-        AUTHORS:
-
-        - Jaap Spies (2006-02-19)
         """
         if algorithm == "Ryser":
             return self._permanental_minor_ryser(k)
@@ -1355,11 +1371,6 @@ cdef class Matrix(Matrix1):
             ....:     v = m.rook_vector(complement=True, use_complement=False)
             ....:     if v != [1, 16, 78, 128, 53]:
             ....:         print("ERROR with algorithm={} use_complement=False".format(algorithm))
-
-        AUTHORS:
-
-        - Jaap Spies (2006-02-24)
-        - Mario Pernici (2014-07-01)
         """
         cdef Py_ssize_t i,j
         cdef unsigned int num_ones
@@ -1497,6 +1508,18 @@ cdef class Matrix(Matrix1):
                 m.append(self.matrix_from_rows_and_columns(rows,cols).determinant())
         return m
 
+    def det(self, *args, **kwds):
+        """
+        Synonym for self.determinant(...).
+
+        EXAMPLES::
+
+            sage: A = MatrixSpace(Integers(8),3)([1,7,3, 1,1,1, 3,4,5])
+            sage: A.det()
+            6
+        """
+        return self.determinant(*args, **kwds)
+
     def determinant(self, algorithm=None):
         r"""
         Returns the determinant of self.
@@ -1624,7 +1647,7 @@ cdef class Matrix(Matrix1):
         f = self.fetch('charpoly')
         if f is not None:
             c = f[0]
-            if self._nrows % 2 != 0:
+            if self._nrows % 2:
                 c = -c
             d = self._coerce_element(c)
             self.cache('det', d)
@@ -1673,12 +1696,7 @@ cdef class Matrix(Matrix1):
         # asymptotics.
         # TODO: Find a reasonable cutoff point.  (This is field specific, but
         # seems to be quite large for Q[x].)
-        if algorithm is None:
-            try:
-                R_is_field_attempt = R.is_field()
-            except NotImplementedError:
-                R_is_field_attempt = False
-        if (algorithm is None and R_is_field_attempt and R.is_exact()) or (algorithm == "hessenberg"):
+        if (algorithm is None and R in _Fields and R.is_exact()) or (algorithm == "hessenberg"):
             try:
                 c = self.charpoly('x', algorithm="hessenberg")[0]
             except ValueError:
@@ -1866,11 +1884,6 @@ cdef class Matrix(Matrix1):
             sage: AA = Matrix(ZZ, A)
             sage: AA.pfaffian() ** 2 == AA.det()
             True
-
-        AUTHORS:
-
-        - Darij Grinberg (1 Oct 2013): first (slow)
-          implementation.
         """
         k = self._nrows
 
@@ -1908,19 +1921,6 @@ cdef class Matrix(Matrix1):
             res += sgn * prod([self.get_unsafe(edge[0], edge[1]) for edge in edges2])
 
         return res
-
-    # shortcuts
-    def det(self, *args, **kwds):
-        """
-        Synonym for self.determinant(...).
-
-        EXAMPLES::
-
-            sage: A = MatrixSpace(Integers(8),3)([1,7,3, 1,1,1, 3,4,5])
-            sage: A.det()
-            6
-        """
-        return self.determinant(*args, **kwds)
 
     def apply_morphism(self, phi):
         """
@@ -2339,28 +2339,29 @@ cdef class Matrix(Matrix1):
             x^2 - 3.00000000000000*x - 2.00000000000000
 
         """
-
         f = self.fetch('charpoly')
         if f is not None:
             return f.change_variable_name(var)
 
-        from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-
         if algorithm is None:
+            from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+
             R = self._base_ring
             if is_NumberField(R):
                 f = self._charpoly_over_number_field(var)
             elif is_IntegerModRing(R):
                 f = self.lift().charpoly(var).change_ring(R)
-            elif R.is_field(proof = False) and R.is_exact():
+            elif R in _Fields and R.is_exact():
                 f = self._charpoly_hessenberg(var)
             else:
                 f = self._charpoly_df(var)
         else:
             if algorithm == "hessenberg":
                 f = self._charpoly_hessenberg(var)
-            else:
+            elif algorithm == "df":
                 f = self._charpoly_df(var)
+            else:
+                raise ValueError('algorithm must be "hessenberg" or "df"')
 
         # Cache the result, and return it.
         self.cache('charpoly', f)
@@ -2662,48 +2663,48 @@ cdef class Matrix(Matrix1):
         return d
 
     def diagonal(self):
-      r"""
-      Return the diagonal entries of ``self``.
+        r"""
+        Return the diagonal entries of ``self``.
 
-      OUTPUT:
+        OUTPUT:
 
-      A list containing the entries of the matrix that
-      have equal row and column indices, in order of the
-      indices.  Behavior is not limited to square matrices.
+        A list containing the entries of the matrix that
+        have equal row and column indices, in order of the
+        indices.  Behavior is not limited to square matrices.
 
-      EXAMPLES::
+        EXAMPLES::
 
-          sage: A = matrix([[2,5],[3,7]]); A
-          [2 5]
-          [3 7]
-          sage: A.diagonal()
-          [2, 7]
+            sage: A = matrix([[2,5],[3,7]]); A
+            [2 5]
+            [3 7]
+            sage: A.diagonal()
+            [2, 7]
 
-      Two rectangular matrices.  ::
+        Two rectangular matrices. ::
 
-          sage: B = matrix(3, 7, range(21)); B
-          [ 0  1  2  3  4  5  6]
-          [ 7  8  9 10 11 12 13]
-          [14 15 16 17 18 19 20]
-          sage: B.diagonal()
-          [0, 8, 16]
+            sage: B = matrix(3, 7, range(21)); B
+            [ 0  1  2  3  4  5  6]
+            [ 7  8  9 10 11 12 13]
+            [14 15 16 17 18 19 20]
+            sage: B.diagonal()
+            [0, 8, 16]
 
-          sage: C = matrix(3, 2, range(6)); C
-          [0 1]
-          [2 3]
-          [4 5]
-          sage: C.diagonal()
-          [0, 3]
+            sage: C = matrix(3, 2, range(6)); C
+            [0 1]
+            [2 3]
+            [4 5]
+            sage: C.diagonal()
+            [0, 3]
 
-      Empty matrices behave properly. ::
+        Empty matrices behave properly. ::
 
-          sage: E = matrix(0, 5, []); E
-          []
-          sage: E.diagonal()
-          []
-      """
-      n = min(self.nrows(), self.ncols())
-      return [self[i,i] for i in range(n)]
+            sage: E = matrix(0, 5, []); E
+            []
+            sage: E.diagonal()
+            []
+        """
+        n = min(self.nrows(), self.ncols())
+        return [self[i,i] for i in range(n)]
 
     def trace(self):
         """
@@ -2794,7 +2795,7 @@ cdef class Matrix(Matrix1):
         if not X is None:
             return X
         R = self._base_ring
-        if not R.is_field():
+        if R not in _Fields:
             try:
                 K = self._base_ring.fraction_field()
                 H = self.change_ring(K)
@@ -2853,7 +2854,7 @@ cdef class Matrix(Matrix1):
         if not self.is_square():
             raise TypeError("self must be square")
 
-        if not self._base_ring.is_field():
+        if self._base_ring not in _Fields:
             raise TypeError("Hessenbergize only possible for matrices over a field")
 
         self.check_mutability()
@@ -3032,9 +3033,9 @@ cdef class Matrix(Matrix1):
         """
         return self.ncols() - self.rank()
 
-    ######################################
+    #####################################################################################
     # Kernel Helper Functions
-    ######################################
+    #####################################################################################
 
     def _right_kernel_matrix_over_number_field(self):
         r"""
@@ -3270,7 +3271,7 @@ cdef class Matrix(Matrix1):
             returned exactly as provided by whichever routine actually
             computed the basis.  Request this for the least possible
             computation possible, but with no guarantees about the format
-            of the basis.
+            of the basis. This option is recommended for inexact rings.
 
         OUTPUT:
 
@@ -3677,6 +3678,28 @@ cdef class Matrix(Matrix1):
             [-1 -y  1]
             sage: set_verbose(0)
 
+        Over inexact rings:
+
+        For inexact rings one should avoid echolonizing if possible::
+
+            sage: A = Matrix(
+            ....: [[          0.0,           0.5,  0.8090169944],
+            ....:  [          0.0,           0.5, -0.8090169944],
+            ....:  [          0.0,          -0.5,  0.8090169944],
+            ....:  [          0.0,          -0.5, -0.8090169944],
+            ....:  [          0.5,  0.8090169944,           0.0],
+            ....:  [          0.5, -0.8090169944,           0.0],
+            ....:  [         -0.5,  0.8090169944,           0.0],
+            ....:  [         -0.5, -0.8090169944,           0.0],
+            ....:  [ 0.8090169944,           0.0,           0.5],
+            ....:  [-0.8090169944,           0.0,           0.5],
+            ....:  [ 0.8090169944,           0.0,          -0.5],
+            ....:  [-0.8090169944,           0.0,          -0.5]]).transpose()
+            sage: (A*A.right_kernel_matrix().transpose()).norm() > 2
+            True
+            sage: (A*A.right_kernel_matrix(basis='computed').transpose()).norm() < 1e-15
+            True
+
         Trivial Cases:
 
         We test two trivial cases.  Any possible values for the
@@ -3751,10 +3774,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: 'proof' flag only valid for matrices over the integers
-
-        AUTHOR:
-
-        - Rob Beezer (2011-02-05)
         """
         R = self.base_ring()
 
@@ -3771,7 +3790,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'pari' and not (is_IntegerRing(R) or (is_NumberField(R) and not is_RationalField(R))):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
-        elif algorithm == 'generic' and not R.is_field():
+        elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
         elif algorithm == 'pluq' and not isinstance(self, sage.matrix.matrix_mod2_dense.Matrix_mod2_dense):
             raise ValueError("'pluq' matrix kernel algorithm only available over integers mod 2, not over %s" % R)
@@ -3782,7 +3801,7 @@ cdef class Matrix(Matrix1):
             basis = 'echelon'
         elif not basis in ['computed', 'echelon', 'pivot', 'LLL']:
             raise ValueError("matrix kernel basis format '%s' not recognized" % basis )
-        elif basis == 'pivot' and not R.is_field():
+        elif basis == 'pivot' and R not in _Fields:
             raise ValueError('pivot basis only available over a field, not over %s' % R)
         elif basis == 'LLL' and not is_IntegerRing(R):
             raise ValueError('LLL-reduced basis only available over the integers, not over %s' % R)
@@ -3827,7 +3846,7 @@ cdef class Matrix(Matrix1):
         if M is None and is_NumberField(R):
             format, M = self._right_kernel_matrix_over_number_field()
 
-        if M is None and R.is_field():
+        if M is None and R in _Fields:
             format, M = self._right_kernel_matrix_over_field()
 
         if M is None and R.is_integral_domain():
@@ -3881,6 +3900,9 @@ cdef class Matrix(Matrix1):
 
             For the left kernel, use :meth:`left_kernel`.  The method
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
+
+            For inexact rings use :meth:`right_kernel_matrix` with
+            ``basis='computed'`` to avoid echolonizing.
 
         INPUT:
 
@@ -4238,6 +4260,9 @@ cdef class Matrix(Matrix1):
             For the right kernel, use :meth:`right_kernel`.  The method
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
 
+            For inexact rings use :meth:`right_kernel_matrix` with
+            ``basis='computed'`` (on the transpose of the matrix) to avoid echolonizing.
+
         INPUT:
 
         - ``algorithm`` - default: 'default' - a keyword that selects the
@@ -4380,7 +4405,6 @@ cdef class Matrix(Matrix1):
         verbose("done computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()),level=1,t=tm)
         return K
 
-    # .kernel() is a an alias for .left_kernel()
     kernel = left_kernel
 
     def kernel_on(self, V, poly=None, check=True):
@@ -4759,7 +4783,7 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  1 -2  1], False)
             ]
         """
-        if algorithm == 'kernel' or not self.base_ring().is_field():
+        if algorithm == 'kernel' or self.base_ring() not in _Fields:
             return self._decomposition_using_kernels(is_diagonalizable = is_diagonalizable, dual=dual)
         elif algorithm == 'spin':
             X = self._decomposition_spin_generic(is_diagonalizable = is_diagonalizable)
@@ -4779,15 +4803,11 @@ cdef class Matrix(Matrix1):
         - ``self`` - a matrix with field entries
 
         OUTPUT: a list of reduced row echelon form basis
-
-        AUTHORS:
-
-        - William Stein
         """
         if not self.is_square():
             raise ValueError("self must be a square matrix")
 
-        if not self.base_ring().is_field():
+        if self.base_ring() not in _Fields:
             raise TypeError("self must be over a field.")
 
         if self.nrows() == 0:
@@ -5082,7 +5102,7 @@ cdef class Matrix(Matrix1):
         if V.rank() == 0 or V.degree() == 0:
             return self.new_matrix(nrows=0, ncols=0)
 
-        if not check and V.base_ring().is_field() and not V.has_user_basis():
+        if not check and V.base_ring() in _Fields and not V.has_user_basis():
             B = V.echelonized_basis_matrix()
             P = B.pivots()
             return B*self.matrix_from_columns(P)
@@ -5995,12 +6015,8 @@ cdef class Matrix(Matrix1):
 
         # now we need to find a natural algebraic closure for the base ring
         K = self.base_ring()
-        try:
-            is_field = K.is_field()
-        except (ValueError, AttributeError):
-            is_field = False
 
-        if not is_field:
+        if K not in _Fields:
             if not K.is_integral_domain():
                 raise NotImplementedError("eigenvalues() not implemented for non integral domains")
             K = K.fraction_field()
@@ -6405,7 +6421,7 @@ cdef class Matrix(Matrix1):
 
     #####################################################################################
     # Generic Echelon Form
-    ###################################################################################
+    #####################################################################################
 
     def rref(self, *args, **kwds):
         """
@@ -6497,11 +6513,11 @@ cdef class Matrix(Matrix1):
             [0 1 0]
             [0 0 1]
         """
-        R=self.base_ring()
-        if R.is_field():
+        R = self.base_ring()
+        if R in _Fields:
             return self.echelon_form()
         else:
-            F=R.fraction_field()
+            F = R.fraction_field()
             return self.change_ring(F).echelon_form()
 
     def _echelonize_ring(self, **kwds):
@@ -6751,7 +6767,7 @@ cdef class Matrix(Matrix1):
             else:
                 algorithm = 'classical'
         try:
-            if self.base_ring().is_field():
+            if self.base_ring() in _Fields:
                 if algorithm in ['classical', 'partial_pivoting', 'scaled_partial_pivoting', 'scaled_partial_pivoting_valuation']:
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
@@ -6925,7 +6941,7 @@ cdef class Matrix(Matrix1):
         self.cache('echelon_' + algorithm, E)
         return E
 
-    # This is for backward compatibility
+    # for backward compatibility
 
     def _echelon_classical(self):
         """
@@ -7298,10 +7314,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: subdivide must be True or False, not junk
-
-        AUTHOR:
-
-        - Rob Beezer (2011-02-02)
         """
         if not subdivide in [True, False]:
             raise TypeError("subdivide must be True or False, not %s" % subdivide)
@@ -7318,9 +7330,9 @@ cdef class Matrix(Matrix1):
             extended.set_immutable()
         return extended
 
-    ##########################################################################
-    # Functions for symmetries of a matrix under row and column permutations #
-    ##########################################################################
+    #####################################################################################
+    # Functions for symmetries of a matrix under row and column permutations
+    #####################################################################################
     def as_bipartite_graph(self):
         r"""
         Construct a bipartite graph ``B`` representing
@@ -7406,7 +7418,7 @@ cdef class Matrix(Matrix1):
             sage: j.automorphisms_of_rows_and_columns()
             [((), ()), ((1,3)(2,5), (1,3)(2,5))]
         """
-        from sage.groups.perm_gps.permgroup_element import \
+        from sage.groups.perm_gps.constructor import \
             PermutationGroupElement
         B = self.as_bipartite_graph()
         nrows = self.nrows()
@@ -7667,7 +7679,7 @@ cdef class Matrix(Matrix1):
         N_B = N.as_bipartite_graph()
         if check:
             truth, perm = N_B.is_isomorphic(M_B, certificate=True, edge_labels=True)
-            from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+            from sage.groups.perm_gps.constructor import PermutationGroupElement
             if perm:
                 s = sorted(perm.items(), key=lambda x:x[0])
                 row_perms = [value for k, value in s if k <= nrows]
@@ -7755,7 +7767,7 @@ cdef class Matrix(Matrix1):
 
         self.check_mutability()
 
-        if not self._base_ring.is_field():
+        if self._base_ring not in _Fields:
             raise ValueError("Echelon form not defined over this base ring.")
 
         if cutoff == 0:
@@ -7936,11 +7948,6 @@ cdef class Matrix(Matrix1):
             [53|59 61|67 71]
             [--+-----+-----]
             [73|79 83|89 97]
-
-
-        AUTHORS:
-
-        - Robert Bradshaw (2007-06-14)
         """
 
         self.check_mutability()
@@ -8187,7 +8194,7 @@ cdef class Matrix(Matrix1):
         else:
             return (self._subdivisions[0][1:-1], self._subdivisions[1][1:-1])
 
-    # 'get_subdivisions' is kept for backwards compatibility: see #4983.
+    # for backwards compatibility: see #4983.
     get_subdivisions = subdivisions
 
     def tensor_product(self, A, subdivide=True):
@@ -8669,10 +8676,6 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(QQ, 0, 0)
             sage: A.is_normal()
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-03-31)
         """
         key = 'normal'
         n = self.fetch(key)
@@ -9090,33 +9093,13 @@ cdef class Matrix(Matrix1):
             This is all left to the method `adjugate`.
 
         """
-        # self must be square
-        if self._nrows != self._ncols:
+        n  = self._ncols
+
+        if self._nrows != n:
             raise ValueError("self must be a square matrix")
 
-        # as self is square, we do not need to test for 0 x n or m x 0
-        # matrices
-        if self._ncols == 0:
-            return self.copy()
-
-        # extract parameters
-        n  = self._ncols
-        R  = self._base_ring
-        MS = self._parent
-
-        f = self.charpoly()
-
-        # A will be the adjugate of M and N is used to store powers of M
-        A = f[1] * MS.identity_matrix()
-        N = R(1) * MS.identity_matrix()
-        for i in range(1, n):
-            # set N to M^i
-            N = N * self
-            A = A + f[i+1] * N
-        if not (n % 2):
-            A = - A
-
-        return A
+        A = self.charpoly().shift(-1)(self)
+        return A if n%2 else -A
 
     def QR(self, full=True):
         r"""
@@ -9349,10 +9332,6 @@ cdef class Matrix(Matrix1):
             sage: R
             [2 3]
             [0 1]
-
-        AUTHOR:
-
-        - Rob Beezer (2011-02-17)
         """
         from sage.modules.free_module_element import zero_vector
         from sage.matrix.constructor import zero_matrix, matrix
@@ -9528,11 +9507,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: Gram-Schmidt orthogonalization requires a base ring with a fraction field, not Ring of integers modulo 6
-
-        AUTHORS:
-
-        - William Stein (2007-11-18)
-        - Rob Beezer (2011-02-25)
         """
         from sage.matrix.constructor import matrix, zero_matrix
         R = self.base_ring()
@@ -9556,7 +9530,7 @@ cdef class Matrix(Matrix1):
                 R[nnz, i] = 1
                 nnz = nnz + 1
         R = R[0:nnz]
-        if Bstar == []:
+        if not Bstar:
             Q = matrix(F, 0, self.nrows()).transpose()
         else:
             Q = matrix(F, Bstar).transpose()
@@ -10265,7 +10239,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("Jordan normal form not implemented over inexact rings.")
 
         # Make sure we're working with a field.
-        if inferred_base_ring.is_field():
+        if inferred_base_ring in _Fields:
             if base_ring is not None:
                 A = self.change_ring(inferred_base_ring)
             else:
@@ -10383,33 +10357,159 @@ cdef class Matrix(Matrix1):
         else:
             return J
 
-    def is_diagonalizable(self, base_field=None):
-        r"""
-        Determines if the matrix is similar to a diagonal matrix.
+    def diagonalization(self, base_field=None):
+        """
+        Return a diagonal matrix similar to ``self`` along with the
+        transformation matrix.
 
         INPUT:
 
-        - ``base_field`` - a new field to use for entries
-          of the matrix.
+        - ``base_field`` -- if given, ``self`` is regarded as a matrix over it
+
+        OUTPUT: a diagonal matrix `D` and an invertible matrix `P` such
+        that `P^{-1}AP=D`, if ``self`` is a diagonalizable matrix `A`.
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ, 4, [-4, 6, 3, 3, -3, 5, 3, 3, 3, -6, -4, -3, -3, 6, 3, 2])
+            sage: A
+            [-4  6  3  3]
+            [-3  5  3  3]
+            [ 3 -6 -4 -3]
+            [-3  6  3  2]
+            sage: A.is_diagonalizable()
+            True
+            sage: A.diagonalization()
+            (
+            [ 2  0  0  0]  [ 1  1  0  0]
+            [ 0 -1  0  0]  [ 1  0  1  0]
+            [ 0  0 -1  0]  [-1  0  0  1]
+            [ 0  0  0 -1], [ 1  1 -2 -1]
+            )
+            sage: D, P = A.diagonalization()
+            sage: P^-1*A*P == D
+            True
+
+            sage: A = matrix(QQ, 2, [0, 2, 1, 0])
+            sage: A.is_diagonalizable()
+            False
+            sage: A.is_diagonalizable(QQbar)
+            True
+            sage: D, P = A.diagonalization(QQbar)
+            sage: P^-1*A*P == D
+            True
+
+        Matrices may fail to be diagonalizable for various reasons::
+
+            sage: A = matrix(QQ, 2, [1,2,3,4,5,6])
+            sage: A
+            [1 2 3]
+            [4 5 6]
+            sage: A.diagonalization()
+            Traceback (most recent call last):
+            ...
+            TypeError: not a square matrix
+
+            sage: B = matrix(ZZ, 2, [1, 2, 3, 4])
+            sage: B
+            [1 2]
+            [3 4]
+            sage: B.diagonalization()
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix entries must be from a field
+
+            sage: C = matrix(RR, 2, [1., 2., 3., 4.])
+            sage: C
+            [1.00000000000000 2.00000000000000]
+            [3.00000000000000 4.00000000000000]
+            sage: C.diagonalization()
+            Traceback (most recent call last):
+            ...
+            ValueError: base field must be exact, but Real Field with 53 bits of precision is not
+
+            sage: D = matrix(QQ, 2, [0, 2, 1, 0])
+            sage: D
+            [0 2]
+            [1 0]
+            sage: D.diagonalization()
+            Traceback (most recent call last):
+            ...
+            ValueError: not diagonalizable over Rational Field
+
+            sage: E = matrix(QQ, 2, [3, 1, 0, 3])
+            sage: E
+            [3 1]
+            [0 3]
+            sage: E.diagonalization()
+            Traceback (most recent call last):
+            ...
+            ValueError: not diagonalizable
+            sage: E.jordan_form()
+            [3 1]
+            [0 3]
+        """
+        if not self.is_square():
+            raise TypeError('not a square matrix')
+
+        if base_field is not None:
+            A = self.change_ring(base_field)
+        else:
+            A = self
+
+        if not A.base_ring() in _Fields:
+            raise ValueError('matrix entries must be from a field')
+        if not A.base_ring().is_exact():
+            raise ValueError('base field must be exact, but {} is not'.format(A.base_ring()))
+
+        from sage.matrix.constructor import diagonal_matrix, matrix
+
+        # check if the sum of algebraic multiplicities equals the number of rows
+        evals = A.charpoly().roots()
+        if sum(mult for (_, mult) in evals) < self._nrows:
+            raise ValueError('not diagonalizable over {}'.format(A.base_ring()))
+
+        # compute diagonalization from the eigenspaces
+        dia = []
+        bas = []
+        for e, am in evals:
+            b = (A - e).right_kernel().basis()
+            if len(b) != am:
+                raise ValueError('not diagonalizable')
+            dia += [e]*am
+            bas += b
+
+        return diagonal_matrix(dia), matrix(bas).transpose()
+
+    def is_diagonalizable(self, base_field=None):
+        r"""
+        Determine if the matrix is similar to a diagonal matrix.
+
+        INPUT:
+
+        - ``base_field`` - a new field to use for entries of the matrix.
 
         OUTPUT:
 
         If ``self`` is the matrix `A`, then it is diagonalizable
-        if there is an invertible matrix `S` and a diagonal matrix
+        if there is an invertible matrix `P` and a diagonal matrix
         `D` such that
 
         .. MATH::
 
-            S^{-1}AS = D
+            P^{-1}AP = D
 
         This routine returns ``True`` if ``self`` is diagonalizable.
         The diagonal entries of the matrix `D` are the eigenvalues
-        of `A`.  It may be necessary to "increase" the base field to
-        contain all of the eigenvalues.  Over the rationals, the field
-        of algebraic numbers, :mod:`sage.rings.qqbar` is a good choice.
+        of `A`.
 
-        To obtain the matrices `S` and `D` use the :meth:`jordan_form`
-        method with the ``transformation=True`` keyword.
+        A matrix not diagonalizable over the base field may become
+        diagonalizable by extending the base field to contain all of the
+        eigenvalues. Over the rationals, the field of algebraic numbers,
+        :mod:`sage.rings.qqbar` is a good choice.
+
+        To obtain the matrices `D` and `P`, use the :meth:`diagonalization`
+        method.
 
         ALGORITHM:
 
@@ -10417,47 +10517,48 @@ cdef class Matrix(Matrix1):
         multiplicity (number of occurrences as a root of the characteristic
         polynomial) is equal to the geometric multiplicity (dimension
         of the eigenspace), which is sufficient to ensure a basis of
-        eigenvectors for the columns of `S`.
+        eigenvectors for the columns of `P`.
 
         EXAMPLES:
 
-        A matrix that is diagonalizable over the rationals, as evidenced
-        by its Jordan form.  ::
+        A matrix that is diagonalizable over the rationals::
 
             sage: A = matrix(QQ, [[-7, 16, 12,  0,    6],
             ....:                 [-9, 15,  0,  12, -27],
             ....:                 [ 9, -8, 11, -12,  51],
             ....:                 [ 3, -4,  0,  -1,   9],
             ....:                 [-1,  0, -4,   4, -12]])
-            sage: A.jordan_form(subdivide=False)
-            [ 2  0  0  0  0]
-            [ 0  3  0  0  0]
-            [ 0  0  3  0  0]
-            [ 0  0  0 -1  0]
-            [ 0  0  0  0 -1]
             sage: A.is_diagonalizable()
             True
+            sage: A.diagonalization()
+            (
+            [ 2  0  0  0  0]  [    1     1     0     1     0]
+            [ 0  3  0  0  0]  [  1/2     0     1     0     1]
+            [ 0  0  3  0  0]  [  1/6     1  -3/2   2/3 -14/9]
+            [ 0  0  0 -1  0]  [ -1/6     0  -1/4     0  -1/3]
+            [ 0  0  0  0 -1], [ -1/6  -1/3   1/3  -1/3   4/9]
+            )
 
-        A matrix that is not diagonalizable over the rationals, as evidenced
-        by its Jordan form.  ::
+        This is a matrix not diagonalizable over the rationals, but you
+        can still get its Jordan form. ::
 
             sage: A = matrix(QQ, [[-3, -14, 2, -1, 15],
             ....:                 [4, 6, -2, 3, -8],
             ....:                 [-2, -14, 0, 0, 10],
             ....:                 [3, 13, -2, 0, -11],
             ....:                 [-1, 6, 1, -3, 1]])
+            sage: A.is_diagonalizable()
+            False
             sage: A.jordan_form(subdivide=False)
             [-1  1  0  0  0]
             [ 0 -1  0  0  0]
             [ 0  0  2  1  0]
             [ 0  0  0  2  1]
             [ 0  0  0  0  2]
-            sage: A.is_diagonalizable()
-            False
 
-        If any eigenvalue of a matrix is outside the base ring, then
-        this routine raises an error.  However, the ring can be
-        "expanded" to contain the eigenvalues.  ::
+        If any eigenvalue of a matrix is outside the base ring, then this
+        routine raises an error. However, the ring can be extended to contain
+        the eigenvalues. ::
 
             sage: A = matrix(QQ, [[1,  0,  1,  1, -1],
             ....:                 [0,  1,  0,  4,  8],
@@ -10468,9 +10569,11 @@ cdef class Matrix(Matrix1):
             sage: [e in QQ for e in A.eigenvalues()]
             [False, False, False, False, False]
             sage: A.is_diagonalizable()
+            False
+            sage: A.diagonalization()
             Traceback (most recent call last):
             ...
-            RuntimeError: an eigenvalue of the matrix is not contained in Rational Field
+            ValueError: not diagonalizable over Rational Field
 
             sage: [e in QQbar for e in A.eigenvalues()]
             [True, True, True, True, True]
@@ -10478,37 +10581,39 @@ cdef class Matrix(Matrix1):
             True
 
         Other exact fields may be employed, though it will not always
-        be possible to expand their base fields to contain all
-        the eigenvalues.  ::
+        be possible to extend their base fields to contain all
+        the eigenvalues. ::
 
             sage: F.<b> = FiniteField(5^2)
             sage: A = matrix(F, [[      4, 3*b + 2, 3*b + 1, 3*b + 4],
             ....:                [2*b + 1,     4*b,       0,       2],
             ....:                [    4*b,   b + 2, 2*b + 3,       3],
             ....:                [    2*b,     3*b, 4*b + 4, 3*b + 3]])
+            sage: A.is_diagonalizable()
+            False
             sage: A.jordan_form()
             [      4       1|      0       0]
             [      0       4|      0       0]
             [---------------+---------------]
             [      0       0|2*b + 1       1]
             [      0       0|      0 2*b + 1]
-            sage: A.is_diagonalizable()
-            False
 
             sage: F.<c> = QuadraticField(-7)
             sage: A = matrix(F, [[   c + 3,   2*c - 2,   -2*c + 2,     c - 1],
             ....:                [2*c + 10, 13*c + 15, -13*c - 17, 11*c + 31],
             ....:                [2*c + 10, 14*c + 10, -14*c - 12, 12*c + 30],
             ....:                [       0,   2*c - 2,   -2*c + 2,   2*c + 2]])
-            sage: A.jordan_form(subdivide=False)
-            [    4     0     0     0]
-            [    0    -2     0     0]
-            [    0     0 c + 3     0]
-            [    0     0     0 c + 3]
             sage: A.is_diagonalizable()
             True
+            sage: A.diagonalization()
+            (
+            [    4     0     0     0]  [   1    0    1    0]
+            [    0    -2     0     0]  [   4    1    0    1]
+            [    0     0 c + 3     0]  [   5    1 -2/9 10/9]
+            [    0     0     0 c + 3], [   1    0 -4/9  2/9]
+            )
 
-        A trivial matrix is diagonalizable, trivially.  ::
+        A trivial matrix is diagonalizable, trivially. ::
 
             sage: A = matrix(QQ, 0, 0)
             sage: A.is_diagonalizable()
@@ -10518,39 +10623,42 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, 4)
             sage: A.is_diagonalizable()
-            False
+            Traceback (most recent call last):
+            ...
+            TypeError: not a square matrix
 
-        The matrix must have entries from a field,
-        and it must be an exact field.  ::
+        The matrix must have entries from a field, and it must be an exact
+        field. ::
 
             sage: A = matrix(ZZ, 4, range(16))
             sage: A.is_diagonalizable()
             Traceback (most recent call last):
             ...
-            ValueError: matrix entries must be from a field, not Integer Ring
+            ValueError: matrix entries must be from a field
 
             sage: A = matrix(RDF, 4, range(16))
             sage: A.is_diagonalizable()
             Traceback (most recent call last):
             ...
-            ValueError: base field must be exact, not Real Double Field
-
-        AUTHOR:
-
-        - Rob Beezer (2011-04-01)
+            ValueError: base field must be exact, but Real Double Field is not
         """
         if not self.is_square():
-            return False
-        if not base_field is None:
-            self = self.change_ring(base_field)
-        if not self.base_ring().is_exact():
-            raise ValueError('base field must be exact, not {0}'.format(self.base_ring()))
-        if not self.base_ring().is_field():
-            raise ValueError('matrix entries must be from a field, not {0}'.format(self.base_ring()))
+            raise TypeError('not a square matrix')
 
-        evals = self.charpoly().roots()
+        if base_field is not None:
+            A = self.change_ring(base_field)
+        else:
+            A = self
+
+        if not A.base_ring() in _Fields:
+            raise ValueError('matrix entries must be from a field')
+        if not A.base_ring().is_exact():
+            raise ValueError('base field must be exact, but {} is not'.format(A.base_ring()))
+
+        # check if the sum of algebraic multiplicities equals to the number of rows
+        evals = A.charpoly().roots()
         if sum(mult for (_, mult) in evals) < self._nrows:
-            raise RuntimeError('an eigenvalue of the matrix is not contained in {0}'.format(self.base_ring()))
+            return False
 
         # Obtaining a generic minimal polynomial requires much more
         # computation with kernels and their dimensions than the following.
@@ -10559,9 +10667,10 @@ cdef class Matrix(Matrix1):
 
         # check equality of algebraic multiplicity and geometric multiplicity
         for e, am in evals:
-            gm = (self - e).right_kernel().dimension()
+            gm = (A - e).right_kernel().dimension()
             if am != gm:
                 return False
+
         return True
 
     def is_similar(self, other, transformation=False):
@@ -10858,10 +10967,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: similarity only makes sense for square matrices
-
-        AUTHOR:
-
-        - Rob Beezer (2011-03-15, 2015-05-25)
         """
         from sage.structure.element import is_Matrix
 
@@ -11068,10 +11173,6 @@ cdef class Matrix(Matrix1):
             True
             sage: (QQ^4).span(iterates) == (QQ^4).span(augmented[:, 0:4].rows())
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-05-20)
         """
         cdef Py_ssize_t n, i, j, k, pivcol
         cdef Matrix aug
@@ -11287,10 +11388,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             TypeError: unable to make vector entries compatible with matrix entries
-
-        AUTHOR:
-
-        - Rob Beezer (2011-05-20)
         """
         import sage.rings.polynomial.polynomial_ring
         n = self.ncols()
@@ -11313,7 +11410,7 @@ cdef class Matrix(Matrix1):
             raise TypeError('matrix must be square, not {0} x {1}'.format(self.nrows(), self.ncols()))
         if v.degree() != n:
             raise TypeError('vector must have degree equal to the size of the matrix, not {0}'.format(v.degree()))
-        if not (R.is_field() and R.is_exact()):
+        if not (R in _Fields and R.is_exact()):
             try:
                 fraction_field = R.fraction_field()
             except TypeError:
@@ -11621,10 +11718,6 @@ cdef class Matrix(Matrix1):
             sage: E = matrix(QQ, [[2, 1], [1, 1]])
             sage: E.cholesky().base_ring()
             Algebraic Real Field
-
-        AUTHOR:
-
-        - Rob Beezer (2012-05-27)
         """
         from copy import copy
         C = self.fetch('cholesky')
@@ -12048,10 +12141,6 @@ cdef class Matrix(Matrix1):
             sage: P, L, U = C.LU(pivot='partial')
             sage: C == P*L*U
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-04-26)
         """
         if not pivot in [None, 'partial', 'nonzero']:
             msg = "pivot strategy must be None, 'partial' or 'nonzero', not {0}"
@@ -12065,7 +12154,7 @@ cdef class Matrix(Matrix1):
         if not R.is_exact():
             msg = 'base ring of the matrix must be exact, not {0}'
             raise TypeError(msg.format(R))
-        if not R.is_field():
+        if R not in _Fields:
             try:
                 F = R.fraction_field()
             except Exception:
@@ -12332,10 +12421,6 @@ cdef class Matrix(Matrix1):
             [-2 10 -2 -7]
             [ 4 -2  8  4]
             [ 2 -7  4  7]
-
-        AUTHOR:
-
-        - Rob Beezer (2012-05-24)
         """
         # Implementation note:  L begins as a copy of self.
         # Entries below the diagonal are replaced as the loops proceed.
@@ -12570,10 +12655,6 @@ cdef class Matrix(Matrix1):
 
             sage: Matrix(0).indefinite_factorization()
             ([], ())
-
-        AUTHOR:
-
-        - Rob Beezer (2012-05-24)
         """
         from sage.modules.free_module_element import vector
         L, d = self._indefinite_factorization(algorithm, check=check)
@@ -12622,7 +12703,7 @@ cdef class Matrix(Matrix1):
         The base ring for the elements of the matrix needs to
         have a fraction field implemented and the computations
         that result from the indefinite factorization must be
-        convertable to real numbers that are comparable to zero.
+        convertible to real numbers that are comparable to zero.
 
         EXAMPLES:
 
@@ -12749,10 +12830,6 @@ cdef class Matrix(Matrix1):
 
             sage: Matrix(0).is_positive_definite()
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2012-05-24)
         """
         from sage.rings.real_lazy import RLF,CLF
 
@@ -13085,10 +13162,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             AttributeError: 'sage.rings.finite_rings.integer_mod.IntegerMod_int' object has no attribute 'conjugate'
-
-        AUTHOR:
-
-        Rob Beezer (2010-12-13)
         """
         # limited testing on a 1000 x 1000 matrix over CC:
         #   transpose is fast, conjugate is slow
@@ -13372,7 +13445,20 @@ cdef class Matrix(Matrix1):
             sage: a.change_ring(RDF).exp()  # rel tol 1e-14
             [42748127.31532951 7368259.244159399]
             [234538976.1381042 40426191.45156228]
+
+        TESTS:
+
+        Check that sparse matrices are handled correctly (:trac:`28935`)::
+
+            sage: matrix.diagonal([0], sparse=True).exp()
+            [1]
+            sage: matrix.zero(CBF, 2, sparse=True).exp()
+            [1.000000000000000                 0]
+            [                0 1.000000000000000]
         """
+        if self.is_sparse():
+            # exp is only implemented for dense matrices (:trac:`28935`)
+            return self.dense_matrix().exp().sparse_matrix()
         from sage.symbolic.ring import SR
         return self.change_ring(SR).exp()
 
@@ -13478,10 +13564,6 @@ cdef class Matrix(Matrix1):
         can affect the precision of future calculations.
 
         See ``_matrix_smith_form`` on the base ring for more detail.
-
-        AUTHORS:
-
-        - David Loeffler (2008-12-05)
 
         EXAMPLES:
 
@@ -13839,14 +13921,6 @@ cdef class Matrix(Matrix1):
         When ideals of the base ring have a "small_residue" method (as is the
         case for number field ideals), we use this to reduce entries above each
         column pivot.
-
-        AUTHOR:
-
-        - David Loeffler (2009-06-01)
-
-        - Moritz Minzlaff (2011-03-17): corrected code for matrices of one row;
-          this fixed :trac:`9053`
-
         EXAMPLES::
 
             sage: L.<a> = NumberField(x^3 - 2)
@@ -14050,10 +14124,6 @@ cdef class Matrix(Matrix1):
             True
             sage: U.inverse()*A*U == X
             True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-06-09)
         """
         cdef Py_ssize_t n, s, c, i, j, k
 
@@ -14455,15 +14525,11 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: 'subdivide' keyword must be True or False, not garbage
-
-        AUTHOR:
-
-        - Rob Beezer (2011-06-09)
         """
         R = self.base_ring()
         if not self.is_square():
             raise TypeError("matrix must be square, not {0} x {1}".format(self.nrows(), self.ncols()))
-        if not (R.is_field() and R.is_exact()):
+        if not (R in _Fields and R.is_exact()):
             raise TypeError("matrix entries must come from an exact field, not {0}".format(R))
         if transformation not in [True, False]:
             raise ValueError("'transformation' keyword must be True or False, not {0}".format(transformation))
@@ -14840,10 +14906,6 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: 'subdivide' keyword must be True or False, not garbage
-
-        AUTHOR:
-
-        - Rob Beezer (2011-06-09)
         """
         from sage.arith.all import gcd
         import sage.rings.polynomial.polynomial_ring_constructor
@@ -14853,7 +14915,7 @@ cdef class Matrix(Matrix1):
         R = self.base_ring()
         if not self.is_square():
             raise TypeError("matrix must be square, not {0} x {1}".format(self.nrows(), self.ncols()))
-        if not (R.is_field() and R.is_exact()):
+        if not (R in _Fields and R.is_exact()):
             raise TypeError("matrix entries must come from an exact field, not {0}".format(R))
         if format not in ['right', 'bottom', 'left', 'top', 'invariants']:
             raise ValueError("'format' keyword must be 'right', 'bottom', 'left', 'top' or 'invariants', not {0}".format(format))
@@ -15477,7 +15539,7 @@ cdef class Matrix(Matrix1):
         return all(s * (self * x) == 0
                    for (x, s) in K.discrete_complementarity_set())
 
-    # A limited number of access-only properties are provided for matrices
+    # a limited number of access-only properties are provided for matrices
     @property
     def T(self):
         r"""
@@ -15719,7 +15781,6 @@ def _generic_clear_column(m):
 
     return left_mat, a
 
-
 def _smith_onestep(m):
     r"""
     Carry out one step of Smith normal form for matrix m. Returns three matrices a,b,c over
@@ -15776,7 +15837,6 @@ def _smith_onestep(m):
 
     return left_mat, a, right_mat
 
-
 def decomp_seq(v):
     """
     This function is used internally be the decomposition matrix
@@ -15796,7 +15856,6 @@ def decomp_seq(v):
     list.sort(v, key=lambda x: x[0].dimension())
     return Sequence(v, universe=tuple, check=False, cr=True)
 
-
 def _choose(Py_ssize_t n, Py_ssize_t t):
     """
     Returns all possible sublists of length t from range(n)
@@ -15814,10 +15873,6 @@ def _choose(Py_ssize_t n, Py_ssize_t t):
         [[0], [1], [2], [3]]
         sage: _choose(4,4)
         [[0, 1, 2, 3]]
-
-    AUTHORS:
-
-    - Jaap Spies (2007-11-14)
     """
     cdef Py_ssize_t j, temp
 
@@ -15860,7 +15915,6 @@ def _choose(Py_ssize_t n, Py_ssize_t t):
 
     return x
 
-
 def _binomial(Py_ssize_t n, Py_ssize_t k):
     """
     Fast and unchecked implementation of binomial(n,k) This is only for
@@ -15873,10 +15927,6 @@ def _binomial(Py_ssize_t n, Py_ssize_t k):
         45
         sage: _binomial(10,5)
         252
-
-    AUTHORS:
-
-    - Jaap Spies (2007-10-26)
     """
     cdef Py_ssize_t i
 
@@ -15892,7 +15942,6 @@ def _binomial(Py_ssize_t n, Py_ssize_t k):
         result = (result * n) // i
         i, n, k = i + 1, n - 1, k - 1
     return result
-
 
 def _jordan_form_vector_in_difference(V, W):
     r"""
@@ -15922,7 +15971,6 @@ def _jordan_form_vector_in_difference(V, W):
         if v not in W_space:
             return v
     return None
-
 
 def _matrix_power_symbolic(A, n):
     r"""

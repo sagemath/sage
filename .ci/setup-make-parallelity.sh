@@ -3,10 +3,10 @@
 # Source this to set CPUTHREADS (the number of apparent cores) and RAMTHREADS
 # (free RAM divided by the maximum amount needed per thread typically)
 # From this this script infers reasonable defaults for SAGE_NUM_THREADS and
-# MAKEOPTS.
+# MAKEFLAGS.
 
 # We do exactly the same for CPUTHREADS_DOCBUILD, RAMTHREADS_DOCBUILD,
-# SAGE_NUM_THREADS_DOCBUILD, MAKEOPTS_DOCBUILD. As the docbuild needs
+# SAGE_NUM_THREADS_DOCBUILD, MAKEFLAGS_DOCBUILD. As the docbuild needs
 # substantially more RAM as of May 2018.
 
 # ****************************************************************************
@@ -61,5 +61,5 @@ else
     export SAGE_NUM_THREADS_DOCBUILD=$RAMTHREADS_DOCBUILD
 fi
 # Set -j and -l for make (though -l is probably ignored by Sage)
-export MAKEOPTS="-j $SAGE_NUM_THREADS -l $((CPUTHREADS - 1)).8"
-export MAKEOPTS_DOCBUILD="-j $SAGE_NUM_THREADS_DOCBUILD -l $((CPUTHREADS_DOCBUILD - 1)).8"
+export MAKEFLAGS="-j $SAGE_NUM_THREADS -l $((CPUTHREADS - 1)).8"
+export MAKEFLAGS_DOCBUILD="-j $SAGE_NUM_THREADS_DOCBUILD -l $((CPUTHREADS_DOCBUILD - 1)).8"

@@ -27,7 +27,8 @@ class Decoder(SageObject):
     r"""
     Abstract top-class for :class:`Decoder` objects.
 
-    Every decoder class should inherit from this abstract class.
+    Every decoder class for linear codes (of any metric) should inherit from
+    this abstract class.
 
     To implement an decoder, you need to:
 

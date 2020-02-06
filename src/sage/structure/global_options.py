@@ -570,7 +570,7 @@ class Option(object):
     def __add__(self, other):
         r"""
         Return the object obtained by adding ``self`` and ``other``, where
-        ``self`` behaves likes it's value.
+        ``self`` behaves like its value.
 
         EXAMPLES::
 
@@ -582,7 +582,7 @@ class Option(object):
     def __radd__(self, other):
         r"""
         Return the object obtained by adding ``other`` and ``self``, where
-        ``self`` behaves likes it's value.
+        ``self`` behaves like its value.
 
         EXAMPLES::
 
@@ -594,7 +594,7 @@ class Option(object):
     def __mul__(self, other):
         r"""
         Return the object obtained by adding ``self`` and ``other``, where
-        ``self`` behaves likes it's value.
+        ``self`` behaves like its value.
 
         EXAMPLES::
 
@@ -606,7 +606,7 @@ class Option(object):
     def __rmul__(self, other):
         r"""
         Return the object obtained by r-adding ``other`` and ``self``, where
-        ``self`` behaves likes it's value.
+        ``self`` behaves like its value.
 
         EXAMPLES::
 
@@ -617,7 +617,7 @@ class Option(object):
 
     def __bool__(self):
         r"""
-        Return the value of ye option interpreted as a boolean.
+        Return the value of this option interpreted as a boolean.
 
         EXAMPLES::
 
@@ -1277,7 +1277,7 @@ class GlobalOptions(object):
             sage: Partitions.options._reset()
         """
         # open the options for the corresponding "parent" and copy all of
-        # the data from its' options class into unpickle
+        # the data from its options class into unpickle
         options_class = getattr(import_module(state['options_module']), state['option_class'])
         unpickle = options_class.options
         state.pop('option_class')

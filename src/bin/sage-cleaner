@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 
 #*****************************************************************************
 # This is the sage monitor *daemon*, which cleans up after Sage.
@@ -39,7 +39,7 @@ def mkdir_p(path):
     """
     try:
         os.makedirs(path)
-    except OSError as e:
+    except OSError:
         if not os.path.isdir(path):
             raise
 

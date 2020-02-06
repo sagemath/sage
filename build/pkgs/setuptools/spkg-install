@@ -9,8 +9,14 @@ export PYTHON_EGG_CACHE="$DOT_SAGE/.python-eggs"
 
 cd src
 
+if [ "$SAGE_PYTHON3" = "yes" ]; then
+    versions="3"
+else
+    versions="2 3"
+fi
+
 # Prevent setuptools from installing itself with easy_install
-for vers in 2 3; do
+for vers in $versions; do
     python${vers} setup.py --no-user-cfg install \
             --single-version-externally-managed --root="$SAGE_DESTDIR" || \
         sdh_die "Error building / installing setuptools for Python ${vers}"

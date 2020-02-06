@@ -102,7 +102,6 @@ TESTS::
     True
 
 """
-from __future__ import print_function, absolute_import
 
 from cysignals.memory cimport sig_malloc, sig_free
 from sage.cpython.string cimport bytes_to_str

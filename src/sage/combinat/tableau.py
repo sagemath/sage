@@ -74,7 +74,7 @@ For display options, see :meth:`Tableaux.options`.
     - Add a class for tableaux of a given shape (eg Tableaux_shape)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #                     2011 Jason Bandlow <jbandlow@gmail.com>
 #
@@ -82,8 +82,8 @@ For display options, see :meth:`Tableaux.options`.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import range, zip, map
 from six import add_metaclass, text_type
@@ -1506,7 +1506,7 @@ class Tableau(ClonableList):
         sk = SkewTableau(self).bender_knuth_involution(k, rows, False)
         return SemistandardTableaux()(list(sk))
 
-    @combinatorial_map(name ='reading word permutation')
+    @combinatorial_map(name='reading word permutation')
     def reading_word_permutation(self):
         """
         Return the permutation obtained by reading the entries of the
@@ -8015,8 +8015,8 @@ class StandardTableaux_shape(StandardTableaux):
 
             #Convert the tableau vector back to the regular tableau
             #format
-            row_count= [0]*len(pi)
-            tableau = [[None]*n for n in pi]
+            row_count = [0] * len(pi)
+            tableau = [[None] * n for n in pi]
 
             for i in range(size):
                 tableau[tableau_vector[i]][row_count[tableau_vector[i]]] = i+1

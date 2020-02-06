@@ -43,7 +43,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
     So to exercise this class we consider some non simply laced affine
-    Cartan types and also create explicitely `F_4^*` as a dual cartan
+    Cartan types and also create explicitly `F_4^*` as a dual cartan
     type::
 
         sage: from sage.combinat.root_system.type_dual import CartanType as CartanTypeDual

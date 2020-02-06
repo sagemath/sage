@@ -79,6 +79,7 @@ from sage.rings.all import QQ
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
 
+
 def random_inequalities(d, n):
     """
     Random collections of inequalities for testing purposes.
@@ -91,7 +92,7 @@ def random_inequalities(d, n):
 
     OUTPUT:
 
-    A random set of inequalites as a :class:`StandardAlgorithm` instance.
+    A random set of inequalities as a :class:`StandardAlgorithm` instance.
 
     EXAMPLES::
 

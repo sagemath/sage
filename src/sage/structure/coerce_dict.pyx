@@ -62,8 +62,6 @@ However, this leak was fixed by :trac:`715`, using weak references::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 cimport cython
 from cpython.object cimport *
 from cpython.ref cimport Py_XINCREF, Py_XDECREF, Py_CLEAR

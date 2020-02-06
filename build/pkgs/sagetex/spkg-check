@@ -33,9 +33,13 @@ cd src
 
 typeset example.tex
 checkdotsage example
+typeset example.tex
+typeset example.tex
 
 typeset sagetex.dtx
 checkdotsage sagetex
+typeset sagetex.dtx
+typeset sagetex.dtx
 
 # if we get here, we assume the .sage files are good, and exit successfully
 exit 0

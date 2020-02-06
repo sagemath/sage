@@ -190,49 +190,42 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
              manifold M
 
         """
+        res = self.element_class(self, name=name, latex_name=latex_name)
         if comp is None:
-            return self.element_class(self, name=name, latex_name=latex_name)
-        # Treat one and zero separately for cache:
+            return res
         elif comp in ZZ and comp == 0:
             return self.zero()
         elif comp in ZZ and comp == 1:
             return self.one()
-        # Prepare list:
-        if isinstance(comp, list):
+        elif isinstance(comp, (tuple, list)):
             if len(comp) != self._max_deg + 1:
-                raise IndexError(
-                    "input list must have length {}".format(self._max_deg + 1))
-            comp_list = comp
+                raise IndexError("input list must have "
+                                 "length {}".format(self._max_deg + 1))
+            if isinstance(comp, tuple):
+                comp = list(comp)
+            res[:] = comp[:]
         elif isinstance(comp, self.Element):
-            comp_list = comp[:]
-        elif comp in self._domain.scalar_field_algebra():
-            comp_list = [0] * (self._max_deg + 1)
-            comp_list[0] = comp
+            res[:] = comp[:]
         else:
-            comp_list = [0] * (self._max_deg + 1)
-            # Try...except?
-            deg = comp.degree()
-            if deg <= self._max_deg:
-                comp_list[deg] = comp
-        # Use already existing coercions:
-        comp_list = [self._domain.diff_form_module(j,
-                            self._dest_map)(comp_list[j])
-                     for j in range(self._max_deg + 1)]
-        # Now, define names:
-        try:
-            if name is None and comp._name is not None:
-                name = comp._name
-            if latex_name is None and comp._latex_name is not None:
-                latex_name = comp._latex_name
-        except AttributeError:
-            # AttributeError? Then comp might be in SR:
-            if comp in SR:
-                if name is None:
-                    name = repr(comp)
-                if latex_name is None:
-                    from sage.misc.latex import latex
-                    latex_name = latex(comp)
-        return self.element_class(self, comp_list, name, latex_name)
+            for d in self.irange():
+                dmodule = self._domain.diff_form_module(d, dest_map=self._dest_map)
+                if dmodule.has_coerce_map_from(comp.parent()):
+                    deg = d
+                    break
+            else:
+                raise TypeError("cannot convert {} into an element of "
+                                "the {}".format(comp, self))
+            res[:] = [0] * (self._max_deg + 1)  # fill up with zeroes...
+            res[deg] = comp                     # ...and set comp at deg of res;
+                                                # the coercion is performed here
+            # In case, no other name is given, use name of comp:
+            if name is None:
+                if hasattr(comp, '_name'):
+                    res._name = comp._name
+            if latex_name is None:
+                if hasattr(comp, '_latex_name'):
+                    res._latex_name = comp._latex_name
+        return res
 
     def _an_element_(self):
         r"""
@@ -250,10 +243,10 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
              manifold M
 
         """
-        resu_comp = [self._domain.diff_form_module(j,
-                            self._dest_map)._an_element_()
-                     for j in range(self._max_deg + 1)]
-        return self.element_class(self, comp=resu_comp)
+        res = self.element_class(self)
+        res[:] = [self._domain.diff_form_module(j, self._dest_map)._an_element_()
+                  for j in self.irange()]
+        return res
 
     def _coerce_map_from_(self, S):
         r"""
@@ -271,6 +264,8 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             True
             sage: A._coerce_map_from_(M.diff_form_module(3))
             True
+            sage: A._coerce_map_from_(M.tensor_field_module((0,1)))
+            True
             sage: U = M.open_subset('U')
             sage: AU = U.mixed_form_algebra()
             sage: AU._coerce_map_from_(A)
@@ -279,22 +274,26 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             False
 
         """
-        if isinstance(S, self.__class__):
+        if isinstance(S, type(self)):
             # coercion by domain restriction
-            return (self._domain.is_subset(S._domain) and
-                   self._ambient_domain.is_subset(S._ambient_domain))
-        # Test scalar_field_algebra separately to ensure coercion from SR:
-        if self._domain.scalar_field_algebra().has_coerce_map_from(S):
-            return True
-        # This is tricky, we need to check the degree first:
-        try:
-            deg = S.degree()
-            if self._domain.diff_form_module(deg,
-                                        self._dest_map).has_coerce_map_from(S):
+            if (self._domain.is_subset(S._domain) and
+                             self._ambient_domain.is_subset(S._ambient_domain)):
                 return True
-        except (NotImplementedError, AttributeError, TypeError):
-            pass
-        return False
+            # Still, there could be a coerce map
+            if self.irange() != S.irange():
+                return False
+            # Check coercions on each degree:
+            for deg in self.irange():
+                dmodule1 = self._domain.diff_form_module(deg, self._dest_map)
+                dmodule2 = S._domain.diff_form_module(deg, S._dest_map)
+                if not dmodule1.has_coerce_map_from(dmodule2):
+                    return False
+            # Each degree is coercible so there must be a coerce map:
+            return True
+        # Let us check for each degree consecutively:
+        return any(self._domain.diff_form_module(deg,
+                                          self._dest_map).has_coerce_map_from(S)
+                   for deg in self.irange())
 
     @cached_method
     def zero(self):
@@ -310,14 +309,11 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
              manifold M
 
         """
-        dmap = self._dest_map
-        # Prepare and fill comp list:
-        resu_comp = list()
-        resu_comp.append(self._domain.scalar_field_algebra().zero())
-        resu_comp.extend([self._domain.diff_form_module(j, dest_map=dmap).zero()
-                          for j in range(1, self._max_deg + 1)])
-        return self.element_class(self, comp=resu_comp, name='zero',
-                                  latex_name='0')
+        res = self.element_class(self, name='zero', latex_name='0')
+        res._comp[:] = [self._domain.diff_form_module(j,
+                        dest_map=self._dest_map).zero() for j in self.irange()]
+        res._is_zero = True  # This element is certainly zero
+        return res
 
     @cached_method
     def one(self):
@@ -333,14 +329,12 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
              manifold M
 
         """
-        dmap = self._dest_map
-        # Prepare and fill comp list:
-        resu_comp = list()
-        resu_comp.append(self._domain.scalar_field_algebra().one())
-        resu_comp.extend([self._domain.diff_form_module(j, dest_map=dmap).zero()
-                          for j in range(1, self._max_deg + 1)])
-        return self.element_class(self, comp=resu_comp, name='one',
-                                          latex_name='1')
+        res = self.element_class(self, name='one', latex_name='1')
+        res._comp[0] = self._domain.one_scalar_field()
+        res._comp[1:] = [self._domain.diff_form_module(j,
+                         dest_map=self._dest_map).zero()
+                            for j in self.irange(1)]
+        return res
 
     def vector_field_module(self):
         r"""
@@ -351,15 +345,16 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: M = Manifold(2, 'M')
             sage: N = Manifold(3, 'N')
             sage: Phi = M.diff_map(N, name='Phi'); Phi
-            Differentiable map Phi from the 2-dimensional differentiable manifold M
-             to the 3-dimensional differentiable manifold N
+            Differentiable map Phi from the 2-dimensional differentiable
+             manifold M to the 3-dimensional differentiable manifold N
             sage: A = M.mixed_form_algebra(Phi); A
             Graded algebra Omega^*(M,Phi) of mixed differential forms along the
-             2-dimensional differentiable manifold M mapped into the 3-dimensional
-             differentiable manifold N via Phi
+             2-dimensional differentiable manifold M mapped into the
+             3-dimensional differentiable manifold N via Phi
             sage: A.vector_field_module()
-            Module X(M,Phi) of vector fields along the 2-dimensional differentiable
-             manifold M mapped into the 3-dimensional differentiable manifold N
+            Module X(M,Phi) of vector fields along the 2-dimensional
+             differentiable manifold M mapped into the 3-dimensional
+             differentiable manifold N
 
         """
         return self._vmodule
@@ -376,19 +371,18 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
              3-dimensional differentiable manifold M
 
         """
-        description = ("Graded algebra " + self._name +
-                      " of mixed differential forms ")
+        desc = ("Graded algebra " + self._name + " of mixed differential forms ")
         if self._dest_map is self._domain.identity_map():
-            description += "on the {}".format(self._domain)
+            desc += "on the {}".format(self._domain)
         else:
-            description += "along the {} mapped into the {} ".format(
-                self._domain, self._ambient_domain)
+            desc += "along the {} mapped into the {} ".format(self._domain,
+                                                           self._ambient_domain)
             if self._dest_map._name is None:
                 dm_name = "unnamed map"
             else:
                 dm_name = self._dest_map._name
-            description += "via " + dm_name
-        return description
+            desc += "via " + dm_name
+        return desc
 
     def _latex_(self):
         r"""
@@ -406,3 +400,38 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
         """
         return self._latex_name
 
+    def irange(self, start=None):
+        r"""
+        Single index generator.
+
+        INPUT:
+
+        - ``start`` -- (default: ``None``) initial value `i_0` of the index
+          between 0 and `n`, where `n` is the manifold's dimension; if none is
+          provided, the value 0 is assumed
+
+        OUTPUT:
+
+        - an iterable index, starting from `i_0` and ending at
+          `n`, where `n` is the manifold's dimension
+
+        EXAMPLES::
+
+            sage: M = Manifold(3, 'M')
+            sage: A = M.mixed_form_algebra()
+            sage: list(A.irange())
+            [0, 1, 2, 3]
+            sage: list(A.irange(2))
+            [2, 3]
+
+        """
+        imax = self._max_deg + 1
+        if start is None:
+            i = 0
+        elif start < 0 or start > imax:
+            raise ValueError("start index must be between 0 and " + str(imax))
+        else:
+            i = start
+        while i < imax:
+            yield i
+            i += 1

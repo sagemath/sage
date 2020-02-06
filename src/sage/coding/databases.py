@@ -156,6 +156,7 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     - David Joyner (2008-03)
     """
     from six.moves.urllib.request import urlopen
+    from sage.cpython.string import bytes_to_str
     q = F.order()
     if not q in [2, 3, 4, 5, 7, 8, 9]:
         raise ValueError("q (=%s) must be in [2,3,4,5,7,8,9]" % q)
@@ -167,16 +168,16 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     url = "http://www.codetables.de/" + "BKLC/BKLC.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
-    f = urlopen(url)
-    s = f.read()
-    f.close()
+    with urlopen(url) as f:
+        s = f.read()
 
+    s = bytes_to_str(s)
     i = s.find("<PRE>")
     j = s.find("</PRE>")
     if i == -1 or j == -1:
         raise IOError("Error parsing data (missing pre tags).")
-    text = s[i+5:j].strip()
-    return text
+    return s[i+5:j].strip()
+
 
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     in_test=None):

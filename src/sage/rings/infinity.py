@@ -1243,8 +1243,8 @@ class InfinityRing_class(Singleton, Ring):
             sage: CC(0, oo) < CC(1)   # does not coerce to infinity ring
             True
         """
-        from sage.rings.real_mpfr import mpfr_prec_min, RealField
-        if RealField(mpfr_prec_min()).has_coerce_map_from(R):
+        from sage.structure.coerce import parent_is_real_numerical
+        if parent_is_real_numerical(R):
             return True
         from sage.rings.real_mpfi import RealIntervalField_class
         if isinstance(R, RealIntervalField_class):

@@ -419,7 +419,7 @@ lazy_import('sage.interfaces.maxima_lib','maxima')
 ########################################################
 def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     r"""
-    Returns the symbolic sum `\sum_{v = a}^b expression` with respect
+    Return the symbolic sum `\sum_{v = a}^b expression` with respect
     to the variable `v` with endpoints `a` and `b`.
 
     INPUT:
@@ -592,7 +592,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
        Sage can currently only understand a subset of the output of Maxima,
        Maple and Mathematica, so even if the chosen backend can perform
-       the summation the result might not be convertable into a Sage
+       the summation the result might not be convertible into a Sage
        expression.
     """
     if not is_SymbolicVariable(v):
@@ -793,7 +793,7 @@ def nintegral(ex, x, a, b,
             raise TypeError(err)
 
     # Maxima returns unevaluated expressions when the underlying library fails
-    # to perfom numerical integration. See:
+    # to perform numerical integration. See:
     # http://www.math.utexas.edu/pipermail/maxima/2008/012975.html
     if 'quad_qags' in str(v):
         raise ValueError("Maxima (via quadpack) cannot compute the integral")

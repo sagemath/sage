@@ -196,11 +196,11 @@ class DiffForm(TensorField):
 
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*a ; s
-        1-form on the 2-dimensional differentiable manifold M
+        1-form f*a on the 2-dimensional differentiable manifold M
         sage: s.display(eU)
-        (-x^2*y - 2*x*y^2 - y^3) dx + (x^3 + 2*x^2*y + x*y^2) dy
+        f*a = (-x^2*y - 2*x*y^2 - y^3) dx + (x^3 + 2*x^2*y + x*y^2) dy
         sage: s.display(eV)
-        1/2*u^2*v du - 1/2*u^3 dv
+        f*a = 1/2*u^2*v du - 1/2*u^3 dv
 
 
     .. RUBRIC:: Examples with SymPy as the symbolic engine
@@ -263,9 +263,9 @@ class DiffForm(TensorField):
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*a
         sage: s.display(eU)
-        -y*(x**2 + 2*x*y + y**2) dx + x*(x**2 + 2*x*y + y**2) dy
+        f*a = -y*(x**2 + 2*x*y + y**2) dx + x*(x**2 + 2*x*y + y**2) dy
         sage: s.display(eV)
-        u**2*v/2 du - u**3/2 dv
+        f*a = u**2*v/2 du - u**3/2 dv
 
     """
     def __init__(self, vector_field_module, degree, name=None, latex_name=None):
@@ -505,7 +505,17 @@ class DiffForm(TensorField):
             sage: c1.display(e_xy)
             c = (-x^3 - (x - 1)*y^2) dx/\dy
 
+        Wedging with scalar fields yields the multiplication from right::
+
+            sage: f = M.scalar_field(x, name='f')
+            sage: f.add_expr_by_continuation(c_uv, W)
+            sage: t = a.wedge(f)
+            sage: t.display()
+            f*a = x*y dx + x^2 dy
+
         """
+        if other._tensor_rank == 0:
+            return self * other
         from sage.tensor.modules.format_utilities import is_atomic
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
@@ -515,6 +525,21 @@ class DiffForm(TensorField):
                 raise ValueError("incompatible ambient domains for exterior product")
         dom_resu = self._domain.intersection(other._domain)
         ambient_dom_resu = self._ambient_domain.intersection(other._ambient_domain)
+        resu_degree = self._tensor_rank + other._tensor_rank
+        dest_map = self._vmodule._dest_map
+        dest_map_resu = dest_map.restrict(dom_resu,
+                                          subcodomain=ambient_dom_resu)
+        # Facilitate computations involving zero:
+        if resu_degree > ambient_dom_resu._dim:
+            return dom_resu.diff_form_module(resu_degree,
+                                             dest_map=dest_map_resu).zero()
+        if self._is_zero or other._is_zero:
+            return dom_resu.diff_form_module(resu_degree,
+                                             dest_map=dest_map_resu).zero()
+        if self is other and (self._tensor_rank % 2) == 1:
+            return dom_resu.diff_form_module(resu_degree,
+                                             dest_map=dest_map_resu).zero()
+        # Generic case:
         self_r = self.restrict(dom_resu)
         other_r = other.restrict(dom_resu)
         if ambient_dom_resu.is_manifestly_parallelizable():
@@ -539,11 +564,7 @@ class DiffForm(TensorField):
             if not is_atomic(olname):
                 olname = '(' + olname + ')'
             resu_latex_name = slname + r'\wedge ' + olname
-        dest_map = self._vmodule._dest_map
-        dest_map_resu = dest_map.restrict(dom_resu,
-                                          subcodomain=ambient_dom_resu)
         vmodule = dom_resu.vector_field_module(dest_map=dest_map_resu)
-        resu_degree = self._tensor_rank + other._tensor_rank
         resu = vmodule.alternating_form(resu_degree, name=resu_name,
                                         latex_name=resu_latex_name)
         for dom in self_r._restrictions:
@@ -963,6 +984,14 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
         ....:                [r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)])
         sage: cart_to_spher = spher_to_cart.set_inverse(sqrt(x^2+y^2+z^2),
         ....:                              atan2(sqrt(x^2+y^2),z), atan2(y, x))
+        Check of the inverse coordinate transformation:
+          r == r  *passed*
+          th == arctan2(r*sin(th), r*cos(th))  **failed**
+          ph == arctan2(r*sin(ph)*sin(th), r*cos(ph)*sin(th))  **failed**
+          x == x  *passed*
+          y == y  *passed*
+          z == z  *passed*
+        NB: a failed report can reflect a mere lack of simplification.
         sage: eps.comp(c_spher.frame()) # computation of the components in the spherical frame
         Fully antisymmetric 3-indices components w.r.t. Coordinate frame
          (R3, (d/dr,d/dth,d/dph))
@@ -1407,7 +1436,16 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal):
             sage: s[1,2,3] == a[1]*b[2,3] + a[2]*b[3,1] + a[3]*b[1,2]
             True
 
+        Wedging with scalar fields yields the multiplication from right::
+
+            sage: f = M.scalar_field(x, name='f')
+            sage: t = a.wedge(f)
+            sage: t.display()
+            f*a = 2*x dx + (x^2 + x) dy + x*y*z dz
+
         """
+        if other._tensor_rank == 0:
+            return self * other
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior " +

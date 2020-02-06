@@ -14,8 +14,6 @@ Wrapper around Pynac's constants
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division, print_function
-
 from .pynac cimport *
 from sage.symbolic.expression cimport new_Expression_from_GEx
 from sage.symbolic.ring import SR

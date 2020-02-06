@@ -55,12 +55,41 @@ import os
 from distutils.errors import CCompilerError
 from distutils.spawn import find_executable
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc import six
 from sage.env import SAGE_SHARE
 
+class TrivialClasscallMetaClass(type):
+    """
+    A trivial version of :class:`ClasscallMetaclass` without Cython dependencies.
+    """
+    def __call__(cls, *args, **kwds):
+        r"""
+        This method implements ``cls(<some arguments>)``.
+        """
+        if hasattr(cls, '__classcall__'):
+            return cls.__classcall__(cls, *args, **kwds)
+        else:
+            return type.__call__(cls, *args, **kwds)
 
-class Feature(UniqueRepresentation):
+_trivial_unique_representation_cache = dict()
+
+class TrivialUniqueRepresentation(six.with_metaclass(TrivialClasscallMetaClass)):
+    """
+    A trivial version of :class:`UniqueRepresentation` without Cython dependencies.
+    """
+
+    @staticmethod
+    def __classcall__(cls, *args, **options):
+        """
+        Construct a new object of this class or reuse an existing one.
+        """
+        key = (cls, tuple(args), frozenset(options.items()))
+        cached = _trivial_unique_representation_cache.get(key, None)
+        if cached is None:
+            cached = _trivial_unique_representation_cache[key] = type.__call__(cls, *args, **options)
+        return cached
+
+class Feature(TrivialUniqueRepresentation):
     r"""
     A feature of the runtime environment
 
@@ -89,8 +118,8 @@ class Feature(UniqueRepresentation):
         self.name = name
         self.spkg = spkg
         self.url = url
+        self._cache_is_present = None
 
-    @cached_method
     def is_present(self):
         r"""
         Return whether the feature is present.
@@ -126,10 +155,14 @@ class Feature(UniqueRepresentation):
             sage: TestFeature("other").is_present()
             FeatureTestResult('other', True)
         """
-        res = self._is_present()
-        if not isinstance(res, FeatureTestResult):
-            res = FeatureTestResult(self, res)
-        return res
+        # We do not use @cached_method here because we wish to use
+        # Feature early in the build system of sagelib.
+        if self._cache_is_present is None:
+            res = self._is_present()
+            if not isinstance(res, FeatureTestResult):
+                res = FeatureTestResult(self, res)
+            self._cache_is_present = res
+        return self._cache_is_present
 
     def _is_present(self):
         """

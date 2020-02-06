@@ -63,6 +63,18 @@ latex_documents = [
 ('index', name + '.tex', project, u'The Sage Development Team', 'manual')
 ]
 
+latex_elements['hyperref'] = r"""
+\usepackage{xcite}
+\usepackage{xr-hyper}
+\externaldocument[../references/]{../references/references}
+\externalcitedocument[../references/]{../references/references}
+% Include hyperref last.
+\usepackage{hyperref}
+% Fix anchor placement for figures with captions.
+\usepackage{hypcap}% it must be loaded after hyperref.
+% Set up styles of URL: it should be placed after hyperref.
+\urlstyle{same}"""
+
 #Ignore all .rst in the _sage subdirectory
 exclude_patterns = exclude_patterns + ['_sage']
 

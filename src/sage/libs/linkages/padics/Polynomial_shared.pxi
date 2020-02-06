@@ -572,4 +572,4 @@ cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec,
         c = QQ(prime_pow.powhelper_cconv_out.__coeffs[0])
         mpq_set(out, c.value)
     else:
-        raise ValueError("cannot convert to ratioal")
+        raise ValueError("cannot convert to rational")

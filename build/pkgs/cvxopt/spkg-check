@@ -1,28 +1,22 @@
-if [ -z "$SAGE_LOCAL" ] ; then
+if [ -z "$SAGE_LOCAL" ]; then
     echo >&2 "SAGE_LOCAL undefined ... exiting"
-    echo >&2 "Maybe run 'sage -sh'?"
+    echo >&2 "Maybe run 'sage --sh'?"
     exit 1
 fi
 
-CUR=`pwd`
+cd src
 
-if [ "x$SAGE_DEBUG" = xyes ] ; then
-    CFLAGS="$CFLAGS -g -O0" # No optimisation, aids debugging.
-else
-    CFLAGS="$CFLAGS -g -O2" # Normal optimisation.
+if ! command -v nosetests ; then 
+    echo >&2 'Testing cvxopt requires the package nose to be installed'
+    exit 1
 fi
 
-export CFLAGS
+echo "Testing cvxopt..."
 
-for di in "$CUR"/src/examples/doc/chap* ; do
-    echo "Testing in $di"
-    cd "$di"
-    for i in `ls | grep -v bin` ; do
-        echo "Testing $i ..."
-        sage-python23 $i
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error: test $di/$i failed"
-            exit 1
-        fi
-    done
-done
+nosetests
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error running self tests."
+    exit 1
+fi
+

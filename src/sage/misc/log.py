@@ -179,9 +179,8 @@ class Log:
                 # this s. Commenting out for now.
                 #s = '# ' + '\n# '.join(str(O[m]).split('\n')) + '\n\n'
             self._n += 1
-        A = open(self._filename,'w')
-        A.write(self._header() + '\n' + self._text + '\n' + self._footer())
-        A.close()
+        with open(self._filename,'w') as A:
+            A.write(self._header() + '\n' + self._text + '\n' + self._footer())
         self._update_plain()
         self._build()
 
@@ -195,7 +194,8 @@ class Log:
         return os.path.join(self._dir, 'input-' + self._time)
 
     def _update_plain(self):
-        open(self._input_log_name(),'w').write(self._input_text)
+        with open(self._input_log_name(), 'w') as f:
+            f.write(self._input_text)
 
 
 class log_html(Log):
@@ -264,7 +264,8 @@ class log_html(Log):
         except AttributeError:
             latex.png(x, single_png, debug=self._debug)
         oi = os.path.join(self._dir, 'images', 'o' + '%s.html' % n)
-        open(oi,'w').write('<pre>OUTPUT:\n%s\n\n\nLATEX:\n%s</pre><img src="%s">'%(
+        with open(oi, 'w') as file:
+            file.write('<pre>OUTPUT:\n%s\n\n\nLATEX:\n%s</pre><img src="%s">'%(
             x, L, single_png))
         extra_img_opts = ''
         #if sage.plot.graphics.is_Graphics(x):

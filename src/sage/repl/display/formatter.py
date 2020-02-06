@@ -36,14 +36,14 @@ generally, all sage expression as an ASCII art object::
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
     sage: shell.run_cell('StandardTableaux(4).list()')
     [
-    [                                                                  1  4
-    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
-    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
+    [                                                                  1  4    1  3
+    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
+    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4   ,
     <BLANKLINE>
-                       1 ]
-       1  3    1  2    2 ]
-       2       3       3 ]
-       4   ,   4   ,   4 ]
+               1 ]
+       1  2    2 ]
+       3       3 ]
+       4   ,   4 ]
     sage: shell.run_cell('%display default')
     sage: shell.quit()
 

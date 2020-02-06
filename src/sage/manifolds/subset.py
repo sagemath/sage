@@ -570,7 +570,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
               Open subset V of the 2-dimensional topological manifold M]]
 
         """
-        return self._open_covers
+        return list(self._open_covers)
 
     def subsets(self):
         r"""

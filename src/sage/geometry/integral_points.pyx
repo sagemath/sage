@@ -12,7 +12,6 @@ Cython helper methods to compute integral points in polyhedra.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cysignals.signals cimport sig_check
 import copy

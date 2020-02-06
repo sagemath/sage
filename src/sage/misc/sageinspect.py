@@ -1567,6 +1567,20 @@ def sage_getargspec(obj):
         sage: sage_getargspec(range)
         ArgSpec(args=[], varargs='args', keywords='kwds', defaults=None)
 
+    Test that :trac:`28524` is fixed::
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: shell = get_test_shell()
+        sage: shell.run_cell(
+        ....:     'class Foo:\n'
+        ....:     '    def __call__(self):\n'
+        ....:     '        return None\n'
+        ....:     '    def _sage_src_(self):\n'
+        ....:     '        return "the source code string"')
+        sage: shell.run_cell('f = Foo()')
+        sage: shell.run_cell('f??')
+        ...the source code string...
+
     AUTHORS:
 
     - William Stein: a modified version of inspect.getargspec from the
@@ -1606,13 +1620,15 @@ def sage_getargspec(obj):
     if isclassinstance(obj):
         if hasattr(obj,'_sage_src_'): #it may be a decorator!
             source = sage_getsource(obj)
-            # we try to find the definition and parse it by _sage_getargspec_ast
-            proxy = 'def dummy' + _grep_first_pair_of_parentheses(source) + ':\n    return'
             try:
+                # we try to find the definition and parse it by
+                # _sage_getargspec_ast
+                proxy = 'def dummy' + _grep_first_pair_of_parentheses(source) \
+                        + ':\n    return'
                 return _sage_getargspec_from_ast(proxy)
             except SyntaxError:
                 # To fix trac #10860. See #11913 for more information.
-                # See also #26906.
+                # See also #26906 and #28524.
                 pass
         if isinstance(obj, functools.partial):
             base_spec = sage_getargspec(obj.func)
@@ -2246,7 +2262,7 @@ def sage_getsourcelines(obj):
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
         sage: sage_getsourcelines(matrix)[1]
-        22
+        20
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 

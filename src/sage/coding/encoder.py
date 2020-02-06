@@ -27,7 +27,8 @@ class Encoder(SageObject):
     r"""
     Abstract top-class for :class:`Encoder` objects.
 
-    Every encoder class should inherit from this abstract class.
+    Every encoder class for linear codes (of any metric) should inherit from
+    this abstract class.
 
     To implement an encoder, you need to:
 

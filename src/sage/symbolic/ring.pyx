@@ -12,7 +12,6 @@ The symbolic ring
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.ext.cplusplus cimport ccrepr
 
@@ -203,7 +202,7 @@ cdef class SymbolicRing(CommutativeRing):
 
             from .subring import GenericSymbolicSubring
 
-            if ComplexField(mpfr_prec_min()).has_coerce_map_from(R):
+            if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
             elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or is_LaurentPolynomialRing(R):

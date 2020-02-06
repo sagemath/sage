@@ -50,7 +50,9 @@ class POVRay:
         os.system(cmd)
 
     def usage(self):
-        r = os.popen('povray').read()
+        with os.popen('povray') as f:
+            r = f.read()
         pager()(r)
+
 
 povray = POVRay()

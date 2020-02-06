@@ -453,11 +453,16 @@ class SkewPartition(CombinatorialElement):
               ┌┐
             ┌┬┴┘
             └┘
+
+        TESTS::
+
+            sage: unicode_art(SkewPartition([[],[]]))
+            ∅
         """
         from sage.typeset.unicode_art import UnicodeArt
         out, inn = self
         inn = inn + [0] * (len(out) - len(inn))
-        if not self._list:
+        if not any(self._list):
             return UnicodeArt(u'∅')
         if self.parent().options.convention == "French":
             s, t, b, l, r, tr, tl, br, bl, x, h = list(u' ┴┬├┤┘└┐┌┼─')

@@ -47,7 +47,7 @@ EXAMPLES::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #*****************************************************************************
 
@@ -56,9 +56,10 @@ from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.categories.category_types import ChainComplexes
 
+
 def is_ChainComplexMorphism(x):
     """
-    Returns ``True`` if and only if ``x`` is a chain complex morphism.
+    Return ``True`` if and only if ``x`` is a chain complex morphism.
 
     EXAMPLES::
 
@@ -77,7 +78,8 @@ def is_ChainComplexMorphism(x):
         sage: is_ChainComplexMorphism(x)
         True
     """
-    return isinstance(x,ChainComplexMorphism)
+    return isinstance(x, ChainComplexMorphism)
+
 
 class ChainComplexMorphism(Morphism):
     """
@@ -289,7 +291,7 @@ class ChainComplexMorphism(Morphism):
 
     def __neg__(self):
         """
-        Returns ``-x``.
+        Return ``-x``.
 
         EXAMPLES::
 
@@ -322,7 +324,7 @@ class ChainComplexMorphism(Morphism):
 
     def __add__(self,x):
         """
-        Returns ``self + x``.
+        Return ``self + x``.
 
         EXAMPLES::
 
@@ -444,7 +446,7 @@ class ChainComplexMorphism(Morphism):
 
     def __rmul__(self,x):
         """
-        Returns ``x * self`` if ``x`` is an element of the base ring.
+        Return ``x * self`` if ``x`` is an element of the base ring.
 
         EXAMPLES::
 

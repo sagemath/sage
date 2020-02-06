@@ -62,8 +62,6 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: R = Zp(17) #indirect doctest
         """
         if category is None:
-            from sage.categories.modules_with_basis import ModulesWithBasis
-            all_base = base.ground_ring_of_tower()
             if self.is_field():
                 category = Fields()
             else:
@@ -691,6 +689,50 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
                     else:
                         print_mode[option] = self._printer.dict()[option]
         return ExtensionFactory(base=self, modulus=modulus, prec=prec, names=names, check = True, implementation=implementation, **print_mode)
+
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+        """
+        Check whether the given images and map on the base ring determine a
+        valid homomorphism to the codomain.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(25, modulus=x^2-2)
+            sage: L.<b> = Qq(625, modulus=x^4-2)
+            sage: K._is_valid_homomorphism_(L, [b^2])
+            True
+            sage: L._is_valid_homomorphism_(L, [b^3])
+            False
+            sage: z = L(-1).sqrt()
+            sage: L._is_valid_homomorphism_(L, [z*b])
+            True
+            sage: L._is_valid_homomorphism_(L, [-b])
+            True
+
+            sage: W.<w> = K.extension(x^2 - 5)
+            sage: cc = K.hom([-a])
+            sage: W._is_valid_homomorphism_(W, [w], base_map=cc)
+            True
+            sage: W._is_valid_homomorphism_(W, [-w], base_map=cc)
+            True
+            sage: W._is_valid_homomorphism_(W, [w+1])
+            False
+        """
+        K = self.base_ring()
+        if base_map is None and not codomain.has_coerce_map_from(K):
+            return False
+        if len(im_gens) != 1:
+            raise ValueError("Wrong number of generators")
+        if self is K:
+            # Qp or Zp, so either base_map is not None or there's a coercion to the codomain
+            # We check that the im_gens has the right length and value
+            return im_gens[0] == codomain(self.prime())
+        # Now we're an extension.  We check that the defining polynomial maps to zero
+        f = self.modulus()
+        if base_map is not None:
+            f = f.change_ring(base_map)
+        return f(im_gens[0]) == 0
 
     def _test_add(self, **options):
         """
@@ -1468,12 +1510,12 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: P = x * (x-1) * (x-2) * (x-3) * (x-4)
             sage: P.roots(multiplicities=False)
             [39370 + O(3^10),
-             19684 + O(3^10), 
+             19684 + O(3^10),
              2 + O(3^10),
              3 + O(3^10),
              O(3^10)]
 
-        The result is not quite what we excepted. 
+        The result is not quite what we expected.
         In fact, the roots are correct but the precision is not::
 
             sage: [ root.add_bigoh(9) for root in P.roots(multiplicities=False) ]
@@ -1485,7 +1527,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
 
         This is due to the fact that we are using ``"pari"`` which does not
         track precision (it can only compute `p`-adic roots of exact polynomials).
-        If we are switching to ``"sage"`` then the precision on the result 
+        If we are switching to ``"sage"`` then the precision on the result
         becomes correct (but the computation is much slower)::
 
             sage: P.roots(multiplicities=False, algorithm="sage")
@@ -1562,7 +1604,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             try:
                 return self._roots_univariate_polynomial(P, ring, multiplicities, "pari", secure)
             except (NotImplementedError, PrecisionError):
-                return self._roots_univariate_polynomial(P, ring, multiplicities, "sage", secure)                
+                return self._roots_univariate_polynomial(P, ring, multiplicities, "sage", secure)
         elif algorithm == "pari":
             P = P.change_ring(ring)
             try:

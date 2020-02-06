@@ -147,6 +147,7 @@ from .expect import Expect, ExpectElement
 import pexpect
 from sage.misc.misc import verbose
 from sage.docs.instancedoc import instancedoc
+from sage.cpython.string import bytes_to_str
 
 
 class Octave(Expect):
@@ -297,7 +298,7 @@ class Octave(Expect):
             verbose("in = '%s'"%line,level=3)
             E.sendline(line)
             E.expect(self._prompt)
-            out = E.before
+            out = bytes_to_str(E.before)
             # debug
             verbose("out = '%s'"%out,level=3)
         except EOF:

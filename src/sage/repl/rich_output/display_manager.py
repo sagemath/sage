@@ -747,7 +747,7 @@ class DisplayManager(SageObject):
         if online:
             import sage.env, re, os
             with open(os.path.join(sage.env.THREEJS_DIR, 'build', 'three.min.js')) as f:
-                text = f.read()
+                text = f.read().replace('\n','')
             version = re.search(r'REVISION="(\d+)"', text).group(1)
             return """
 <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/build/three.min.js"></script>

@@ -144,7 +144,7 @@ def isogeny_determine_algorithm(E, kernel):
     """
     kernel_is_list = isinstance(kernel, list)
 
-    if not kernel_is_list and kernel in E :
+    if not kernel_is_list and kernel in E:
         kernel = [kernel]
         kernel_is_list = True
 
@@ -980,7 +980,7 @@ class EllipticCurveIsogeny(Morphism):
         if not is_EllipticCurve(E):
             raise ValueError("E parameter must be an EllipticCurve.")
 
-        if not isinstance(kernel, list) and kernel in E :
+        if not isinstance(kernel, list) and kernel in E:
             # a single point was given, we put it in a list
             # the first condition assures that [1,1] is treated as x+1
             kernel = [kernel]

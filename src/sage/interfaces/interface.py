@@ -268,6 +268,14 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: a = gp(2); gp(a) is a
             True
 
+        TESTS:
+
+        Check conversion of Booleans (:trac:`28705`)::
+
+            sage: giac(True)
+            true
+            sage: maxima(True)
+            true
         """
         cls = self._object_class()
 
@@ -325,7 +333,9 @@ class Interface(WithEqualityById, ParentWithBase):
             return self(x._interface_init_())
 
     def _coerce_impl(self, x, use_special=True):
-        if isinstance(x, integer_types):
+        if isinstance(x, bool):
+            return self(self._true_symbol() if x else self._false_symbol())
+        elif isinstance(x, integer_types):
             import sage.rings.all
             return self(sage.rings.all.Integer(x))
         elif isinstance(x, float):
@@ -1270,13 +1280,7 @@ class InterfaceElement(Element):
 
     def bool(self):
         """
-        Return whether this element is equal to ``True``.
-
-        NOTE:
-
-        This method needs to be overridden if the subprocess would
-        not return a string representation of a boolean value unless
-        an explicit print command is used.
+        Convert this element to a boolean.
 
         EXAMPLES::
 
@@ -1286,21 +1290,37 @@ class InterfaceElement(Element):
             True
 
         """
-        P = self._check_valid()
-        t = P._true_symbol()
-        cmd = '%s %s %s'%(self._name, P._equality_symbol(), t)
-        return P.eval(cmd) == t
+        return bool(self)
 
     def __bool__(self):
         """
+        Return whether this element is not ``False``.
+
+        .. NOTE::
+
+            This method needs to be overridden if the subprocess would
+            not return a string representation of a boolean value unless
+            an explicit print command is used.
+
         EXAMPLES::
 
             sage: bool(maxima(0))
             False
             sage: bool(maxima(1))
             True
+
+        TESTS:
+
+        By default this returns ``True`` for elements that are considered to be
+        not ``False`` by the interface (:trac:`28705`)::
+
+            sage: bool(giac('"a"'))
+            True
         """
-        return self.bool()
+        P = self._check_valid()
+        cmd = '%s %s %s' % (self._name, P._equality_symbol(),
+                            P._false_symbol())
+        return P.eval(cmd) != P._true_symbol()
 
     __nonzero__ = __bool__
 

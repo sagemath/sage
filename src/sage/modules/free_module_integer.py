@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Discrete Subgroups of `\\ZZ^n`.
+Discrete Subgroups of `\\ZZ^n`
 
 AUTHORS:
 
@@ -20,7 +20,7 @@ from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>
-#       Copyright (C) 2014 Martin Albrecht <martinralbecht@googlemail.com>
+#       Copyright (C) 2014 Martin Albrecht <martinralbrecht@googlemail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -31,7 +31,7 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 from sage.rings.integer_ring import ZZ

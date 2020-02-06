@@ -108,7 +108,8 @@ class JonesDatabase:
         while filename[j].isalpha() or filename[j] in [".", "_"]:
             j -= 1
         S = sorted([eval(z) for z in filename[i:j + 1].split("-")])
-        data = open(path + "/" + filename).read()
+        with open(path + "/" + filename) as f:
+            data = f.read()
         data = data.replace("^", "**")
         x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)

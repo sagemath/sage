@@ -1,5 +1,5 @@
 """
-Testing modular symbols spaces.
+Testing modular symbols spaces
 
 TESTS::
 

@@ -28,7 +28,6 @@ AUTHOR:
 - Yann Laigle-Chapuy (2009-08-28): first implementation
 
 """
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
@@ -835,13 +834,13 @@ cdef class BooleanFunction(SageObject):
             sage: B.correlation_immunity()
             2
         """
-        cdef int c
+        cdef size_t c
         if self._correlation_immunity is None:
             c = self._nvariables
             W = self.walsh_hadamard_transform()
             for 0 < i < len(W):
                 sig_check()
-                if (W[i] != 0):
+                if W[i]:
                     c = min( c , hamming_weight_int(i) )
             self._correlation_immunity = ZZ(c-1)
         return self._correlation_immunity
@@ -1031,8 +1030,10 @@ cdef class BooleanFunction(SageObject):
 
     def algebraic_immunity(self, annihilator = False):
         """
-        Returns the algebraic immunity of the Boolean function. This is the smallest
-        integer `i` such that there exists a non trivial annihilator for `self` or `~self`.
+        Return the algebraic immunity of the Boolean function.
+
+        This is the smallest integer `i` such that there exists a non
+        trivial annihilator for `self` or `~self`.
 
         INPUT:
 
@@ -1421,9 +1422,10 @@ cdef class BooleanFunctionIterator:
 # cryptographic Boolean function.        #
 ##########################################
 
+
 def random_boolean_function(n):
     """
-    Returns a random Boolean function with `n` variables.
+    Return a random Boolean function with `n` variables.
 
     EXAMPLES::
 

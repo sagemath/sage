@@ -70,7 +70,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
     - :class:`groups.misc.RightAngledArtin <sage.groups.raag.RightAngledArtinGroup>`
     - :func:`groups.misc.WeylGroup <sage.combinat.root_system.weyl_group.WeylGroup>`
 
-  - other miscellanous groups
+  - other miscellaneous groups
 
     - :func:`groups.misc.AdditiveAbelian <sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup>`
     - :class:`groups.misc.AdditiveCyclic <sage.rings.finite_rings.integer_mod_ring.IntegerModFactory>`

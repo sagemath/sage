@@ -231,7 +231,7 @@ index 84e4e88..5d263a6 100644
 -	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
 +	cp -f lcalc$(EXEEXT) $(INSTALL_DIR)/bin/.
 +	cp -f libLfunction$(LIBEXT) $(INSTALL_DIR)/lib/.
-+	cp -rf ../include $(INSTALL_DIR)/include/libLfunction
++	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
  
  
  SRCS = Lcommandline.cc Lcommandline_elliptic.cc Lcommandline_globals.cc Lcommandline_misc.cc Lcommandline_numbertheory.cc Lcommandline_twist.cc Lcommandline_values_zeros.cc Lgamma.cc Lglobals.cc Lmisc.cc Lriemannsiegel.cc Lriemannsiegel_blfi.cc cmdline.c

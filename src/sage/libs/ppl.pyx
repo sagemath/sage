@@ -153,7 +153,7 @@ AUTHORS:
 #  the License, or (at youroption) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+
 from sage.misc.superseded import deprecation
 from cysignals.signals cimport sig_on, sig_off
 
@@ -3904,7 +3904,7 @@ cdef class Variables_Set(object):
             sage: Variables_Set()
             Variables_Set of cardinality 0
         """
-        if len(args)==0:
+        if not args:
             self.thisptr = new PPL_Variables_Set()
         elif len(args)==1:
             v = <Variable?>args[0]
@@ -4096,12 +4096,12 @@ cdef class Linear_Expression(object):
             a = args[0]
             b = args[1]
             ex = Linear_Expression(0)
-            for i in range(0,len(a)):
+            for i in range(len(a)):
                 ex += Variable(i) * Integer(a[i])
             arg = ex + b
         elif len(args)==1:
             arg = args[0]
-        elif len(args)==0:
+        elif not args:
             self.thisptr = new PPL_Linear_Expression()
             return
         else:

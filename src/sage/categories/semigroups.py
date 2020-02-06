@@ -119,8 +119,8 @@ class Semigroups(CategoryWithAxiom):
             tester = self._tester(**options)
             S = tester.some_elements()
             from sage.misc.misc import some_tuples
-            for x,y,z in some_tuples(S, 3, tester._max_runs):
-                tester.assertTrue((x * y) * z == x * (y * z))
+            for x, y, z in some_tuples(S, 3, tester._max_runs):
+                tester.assertEqual((x * y) * z, x * (y * z))
 
         @abstract_method(optional=True)
         def semigroup_generators(self):

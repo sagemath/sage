@@ -193,7 +193,7 @@ FriCAS does some limits right::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 from __future__ import print_function
 
@@ -756,7 +756,7 @@ http://fricas.sourceforge.net.
             sage: a = fricas(x==6); a                                           # optional - fricas, indirect doctest
             x = 6
 
-        A warning:
+        A warning::
 
             sage: fricas.set("x", 2);                                           # optional - fricas
             sage: a = fricas(x==6); a                                           # optional - fricas
@@ -768,7 +768,7 @@ http://fricas.sourceforge.net.
 
     def _true_symbol(self):
         """
-        Return the string used for True in FriCAS.
+        Return the string used for ``True`` in FriCAS.
 
         EXAMPLES::
 
@@ -779,7 +779,7 @@ http://fricas.sourceforge.net.
 
     def _false_symbol(self):
         """
-        Return the string used for False in FriCAS.
+        Return the string used for ``False`` in FriCAS.
 
         EXAMPLES::
 
@@ -1569,11 +1569,11 @@ class FriCASElement(ExpectElement):
         register_symbol(_convert_sum, {'fricas': 'sum'})
         register_symbol(_convert_prod, {'fricas': 'product'})
 
-        def explicitely_not_implemented(*args):
+        def explicitly_not_implemented(*args):
             raise NotImplementedError("the translation of the FriCAS Expression '%s' to sage is not yet implemented" % args)
 
-        register_symbol(lambda *args: explicitely_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'})
-        register_symbol(lambda *args: explicitely_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'})
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'})
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'})
 
         rootOf = dict()  # (variable, polynomial)
         rootOf_ev = dict()  # variable -> (complex) algebraic number

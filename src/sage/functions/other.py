@@ -639,8 +639,6 @@ class Function_Order(GinacFunction):
             Order(x)
             sage: (x^2 + x).Order()
             Order(x^2 + x)
-            sage: x.Order()._sympy_()
-            O(x)
 
         TESTS:
 
@@ -650,10 +648,40 @@ class Function_Order(GinacFunction):
             Order
         """
         GinacFunction.__init__(self, "Order",
-                conversions=dict(sympy='O'),
+                conversions=dict(),
                 latex_name=r"\mathcal{O}")
 
+    def _sympy_(self, arg):
+        """
+        EXAMPLES::
+
+            sage: x.Order()._sympy_()
+            O(x)
+            sage: SR(1).Order()._sympy_()
+            O(1)
+            sage: ((x-1)^3).Order()._sympy_()
+            O((x - 1)**3, (x, 1))
+            sage: exp(x).series(x==1, 3)._sympy_()
+            E + E*(x - 1) + E*(x - 1)**2/2 + O((x - 1)**3, (x, 1))
+
+            sage: (-(pi-x)^3).Order()._sympy_()
+            O((x - pi)**3, (x, pi))
+            sage: cos(x).series(x==pi, 3)._sympy_()
+            -1 + (pi - x)**2/2 + O((x - pi)**3, (x, pi))
+        """
+        roots = arg.solve(arg.default_variable(), algorithm='sympy',
+                          multiplicities=False, explicit_solutions=True)
+        if len(roots) == 1:
+            arg = (arg, (roots[0].lhs(), roots[0].rhs()))
+        elif len(roots) > 1:
+            raise ValueError("order term %s has multiple roots" % arg)
+        # else there are no roots, e.g. O(1), so we leave arg unchanged
+        import sympy
+        return sympy.O(*sympy.sympify(arg, evaluate=False))
+
+
 Order = Function_Order()
+
 
 class Function_frac(BuiltinFunction):
     def __init__(self):

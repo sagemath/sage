@@ -3292,7 +3292,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             try:
                 tau = f.numerator().parent().gen()
             except (ValueError, TypeError, AttributeError):
-                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitely!".format(f))
+                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitly!".format(f))
 
         if (tau in HyperbolicPlane()):
             tau = tau.to_model('UHP').coordinates()

@@ -50,8 +50,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"

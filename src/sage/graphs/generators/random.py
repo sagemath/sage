@@ -36,7 +36,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
       number generator (default: ``None``).
 
     - ``fast`` -- boolean set to True (default) to use the algorithm with
-      time complexity in `O(n+m)` proposed in [BatBra2005]_. It is designed
+      time complexity in `O(n+m)` proposed in [BB2005a]_. It is designed
       for generating large sparse graphs. It is faster than other algorithms for
       *LARGE* instances (try it to know whether it is useful for you).
 
@@ -50,14 +50,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
 
     REFERENCES:
 
-    .. [ErdRen1959] \P. Erdos and A. Renyi. On Random Graphs, Publ.
-       Math. 6, 290 (1959).
+    - [ER1959]_
 
-    .. [Gilbert1959] \E. N. Gilbert. Random Graphs, Ann. Math. Stat.,
-       30, 1141 (1959).
-
-    .. [BatBra2005] \V. Batagelj and U. Brandes. Efficient generation of
-       large random networks. Phys. Rev. E, 71, 036113, 2005.
+    - [Gil1959]_
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.
@@ -702,7 +697,10 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
     We check that the generated graph contains a cycle of order `n`::
 
         sage: G = graphs.RandomNewmanWattsStrogatz(7, 2, 0.2)
-        sage: G.order(), G.size()
+        sage: G.order(), G.size()   # py3
+        (7, 9)                      # 64-bit
+        (7, 10)                     # 32-bit
+        sage: G.order(), G.size()   # py2
         (7, 9)
         sage: C7 = graphs.CycleGraph(7)
         sage: G.subgraph_search(C7)
@@ -732,9 +730,7 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
 
     REFERENCE:
 
-    .. [NWS99] Newman, M.E.J., Watts, D.J. and Strogatz, S.H.  Random
-      graph models of social networks. Proc. Nat. Acad. Sci. USA
-      99, 2566-2572.
+    [NWS2002]_
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -789,8 +785,7 @@ def RandomHolmeKim(n, m, p, seed=None):
 
     REFERENCE:
 
-    .. [HolmeKim2002] Holme, P. and Kim, B.J. Growing scale-free networks
-      with tunable clustering, Phys. Rev. E (2002). vol 65, no 2, 026107.
+    [HK2002a]_
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -812,7 +807,7 @@ def RandomIntervalGraph(n):
     being generated from the uniform distribution on the interval
     `[0,1]`.
 
-    This definitions follows [boucheron2001]_.
+    This definitions follows [BF2001]_.
 
     .. NOTE::
 
@@ -833,14 +828,6 @@ def RandomIntervalGraph(n):
         sage: g = graphs.RandomIntervalGraph(8)
         sage: g.clique_number() == g.chromatic_number()
         True
-
-    REFERENCE:
-
-    .. [boucheron2001] Boucheron, S. and FERNANDEZ de la VEGA, W.,
-       On the Independence Number of Random Interval Graphs,
-       Combinatorics, Probability and Computing v10, issue 05,
-       Pages 385--396,
-       Cambridge Univ Press, 2001
     """
 
     from sage.misc.prandom import random
@@ -1435,13 +1422,9 @@ def RandomRegular(d, n, seed=None):
 
     REFERENCES:
 
-    .. [KimVu2003] Kim, Jeong Han and Vu, Van H. Generating random regular
-      graphs. Proc. 35th ACM Symp. on Thy. of Comp. 2003, pp
-      213-222. ACM Press, San Diego, CA, USA.
-      http://doi.acm.org/10.1145/780542.780576
+    - [KV2003]_
 
-    .. [StegerWormald1999] Steger, A. and Wormald, N. Generating random
-      regular graphs quickly. Prob. and Comp. 8 (1999), pp 377-396.
+    - [SW1999]_
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1848,14 +1831,6 @@ def RandomTriangulation(n, set_position=False, k=3):
         sage: for k in range(3, 10):
         ....:     g = graphs.RandomTriangulation(10, k=k) # random
         ....:     assert g.is_planar(on_embedding=g.get_embedding())
-
-    REFERENCES:
-
-    .. [PS2006] Dominique Poulalhon and Gilles Schaeffer,
-       *Optimal coding and sampling of triangulations*,
-       Algorithmica 46 (2006), no. 3-4, 505-527,
-       http://www.lix.polytechnique.fr/~poulalho/Articles/PoSc_Algorithmica06.pdf
-
     """
     if k < 3:
         raise ValueError("The size 'k' of the outer face must be at least 3.")
@@ -2011,7 +1986,7 @@ def RandomBicubicPlanar(n):
 
     a graph with multiple edges (no embedding is provided)
 
-    The algorithm used is described in [Schaeffer99]_. This samples
+    The algorithm used is described in [Sch1999]_. This samples
     a random rooted bipartite cubic map, chosen uniformly at random.
 
     First one creates a random binary tree with `n` vertices. Next one
@@ -2051,11 +2026,6 @@ def RandomBicubicPlanar(n):
         V1 = [v for v in G.vertices() if v[0] != 'n']
         dic = {'red': V0, 'blue': V1}
         sphinx_plot(G.plot(vertex_labels=False,vertex_colors=dic))
-
-    REFERENCES:
-
-    .. [Schaeffer99] Gilles Schaeffer, *Random Sampling of Large Planar Maps and Convex Polyhedra*,
-       Annual ACM Symposium on Theory of Computing (Atlanta, GA, 1999)
     """
     from sage.combinat.binary_tree import BinaryTrees
     from sage.rings.finite_rings.integer_mod_ring import Zmod

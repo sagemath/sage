@@ -311,7 +311,7 @@ class Category(UniqueRepresentation, SageObject):
         sage: Ds().parent_class.mro()
         [<class '__main__.Ds.parent_class'>, <class '__main__.Cs.parent_class'>, <class '__main__.Bs.parent_class'>, <class '__main__.As.parent_class'>, <... 'object'>]
 
-    Note that that two categories in the same class need not have the
+    Note that two categories in the same class need not have the
     same ``super_categories``. For example, ``Algebras(QQ)`` has
     ``VectorSpaces(QQ)`` as super category, whereas ``Algebras(ZZ)``
     only has ``Modules(ZZ)`` as super category. In particular, the
@@ -1367,7 +1367,7 @@ class Category(UniqueRepresentation, SageObject):
         Any semigroup morphism between two groups is automatically a
         monoid morphism (in a group the unit is the unique idempotent,
         so it has to be mapped to the unit). Yet, due to the
-        limitation of the model advertised above, Sage currently can't
+        limitation of the model advertised above, Sage currently cannot
         be taught that the category of groups is a full subcategory of
         the category of semigroups::
 
@@ -1407,8 +1407,8 @@ class Category(UniqueRepresentation, SageObject):
 
         """
         tester = self._tester(**options)
-        tester.assertTrue(self.parent_class.mro() == [C.parent_class for C in self._all_super_categories] + [object])
-        tester.assertTrue(self.element_class.mro() == [C.element_class for C in self._all_super_categories] + [object])
+        tester.assertEqual(self.parent_class.mro(), [C.parent_class for C in self._all_super_categories] + [object])
+        tester.assertEqual(self.element_class.mro(), [C.element_class for C in self._all_super_categories] + [object])
 
     def _test_category(self, **options):
         r"""
@@ -2539,7 +2539,7 @@ class Category(UniqueRepresentation, SageObject):
         shall be kept to a strict minimum. The object is therefore not
         meant to be used for other applications; most of the time a
         full featured version is available elsewhere in Sage, and
-        should be used insted.
+        should be used instead.
 
         Technical note: by default ``FooBar(...).example()`` is
         constructed by looking up

@@ -14,8 +14,6 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division
-
 from sage.ext.cplusplus cimport ccrepr
 
 include 'misc.pxi'

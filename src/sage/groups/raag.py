@@ -26,6 +26,8 @@ AUTHORS:
 from __future__ import division, absolute_import, print_function
 import six
 
+from sage.libs.gap.element import GapElement
+
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp
 from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
@@ -387,15 +389,51 @@ class RightAngledArtinGroup(ArtinGroup):
                 sage: G = RightAngledArtinGroup(Gamma)
                 sage: elt = G.prod(G.gens())
                 sage: TestSuite(elt).run()
+
+                sage: g = G([[0,-3], [2,2], [3,-1], [2,4]])
+                sage: h = G.element_class(G, g.gap())
+                sage: assert g.gap() == h.gap()
+                sage: assert g._data == h._data
+
+                sage: g = G.one()
+                sage: h = G.element_class(G, g.gap())
+                sage: assert g.gap() == h.gap()
+                sage: assert g._data == h._data
             """
-            self._data = lst
-            elt = []
-            for i, p in lst:
-                if p > 0:
-                    elt.extend([i + 1] * p)
-                elif p < 0:
-                    elt.extend([-i - 1] * -p)
-            FinitelyPresentedGroupElement.__init__(self, parent, elt)
+            if isinstance(lst, GapElement):
+                # e.g. direct call from GroupLibGAP
+                FinitelyPresentedGroupElement.__init__(self, parent, lst)
+                data = []
+                j = None
+                mult = 0
+                for i in self.Tietze():
+                    if j is None:
+                        j = i
+                        mult = 1
+                    elif j == i:
+                        mult += 1
+                    else:
+                        if j < 0:
+                            data.append([-j-1, -mult])
+                        else:
+                            data.append([j-1, mult])
+                        j = i
+                        mult = 1
+                if j is not None:
+                    if j < 0:
+                        data.append([-j-1, -mult])
+                    else:
+                        data.append([j-1, mult])
+                self._data = tuple(data)
+            else:
+                self._data = lst
+                elt = []
+                for i, p in lst:
+                    if p > 0:
+                        elt.extend([i + 1] * p)
+                    elif p < 0:
+                        elt.extend([-i - 1] * -p)
+                FinitelyPresentedGroupElement.__init__(self, parent, elt)
 
         def __reduce__(self):
             """

@@ -116,6 +116,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
 
         sage: d = sage.databases.cremona.build('cremona','ecdata.tgz')   # not tested
     """
+    from sage.env import SAGE_SHARE
     db_path = os.path.join(SAGE_SHARE,'cremona',name.replace(' ','_')+'.db')
     if os.path.exists(db_path):
         raise RuntimeError('Please (re)move %s before building ' % db_path \
@@ -125,10 +126,13 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
     t = walltime()
 
     if decompress:
-        cmd = "tar zxvf %s"%data_tgz
+        cmd = "tar zxf {} ecdata/allcurves ecdata/allbsd ecdata/degphi ecdata/allgens".format(data_tgz)
+        print("Extracting files from {}...".format(data_tgz))
         n = os.system(cmd)
         if n:
             raise RuntimeError("Error extracting tarball.")
+        else:
+            print("...finished file extraction")
     if mini:
         c = MiniCremonaDatabase(name,False,True)
     else:
@@ -556,7 +560,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
 
 def lmfdb_to_cremona(lmfdb_label, CDB=None):
     """
-    Convert an LMFDB labe into a Cremona label.
+    Convert an LMFDB label into a Cremona label.
 
     See :func:`parse_lmfdb_label` for an explanation of LMFDB labels.
 
@@ -1314,18 +1318,24 @@ class MiniCremonaDatabase(SQLDatabase):
     # Functions for loading data from Cremona's ftpdata directory.
     ###############################################################################
     def _init_from_ftpdata(self, ftpdata, largest_conductor=0):
-        """
-        Create the SQL Cremona Database from the Cremona data directory,
-        which is available from Cremona's website. I.e., just wget
-        Cremona's database to a local directory.
+        """Create the SQL Cremona Database from the Cremona elliptic curve
+        data repository ecdata, which is available from
+        https://github.com/JohnCremona/ecdata.
 
         To create the large database from Cremona's text files, see
-        sage.databases.cremona.build, do NOT run this method directly.
+        sage.databases.cremona.build.  Alternatively:
+
+        If the cremona database has already been installed, remove
+        `SAGE_DATA/cremona/cremona.db`. Then run::
+
+            sage: C = sage.databases.cremona.LargeCremonaDatabase('cremona',False, True)  # not tested
+            sage: C._init_from_ftpdata('path/to/ecdata/',0)                               # not tested
 
         EXAMPLES::
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
-            sage: d._init_from_ftpdata('.')     # not tested
+            sage: d._init_from_ftpdata('/home/jec/ecdata')                                                        # not tested
+
         """
         if self.__read_only__:
             raise RuntimeError("The database must not be read_only.")

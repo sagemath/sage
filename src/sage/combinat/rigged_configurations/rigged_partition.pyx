@@ -580,7 +580,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             sage: RiggedConfigurations.options._reset()
         """
         # If it is empty, return saying so
-        if len(self._list) == 0:
+        if not self._list:
             return("(/)\n")
 
         from sage.combinat.partition import Partitions

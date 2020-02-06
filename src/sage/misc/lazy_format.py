@@ -15,7 +15,7 @@ class LazyFormat(str):
 
     An instance of :class:`LazyFormat` behaves like a usual format
     string, except that the evaluation of the ``__repr__`` method of
-    the formated arguments it postponed until actual printing.
+    the formatted arguments it postponed until actual printing.
 
     EXAMPLES:
 

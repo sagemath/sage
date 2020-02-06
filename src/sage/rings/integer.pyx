@@ -138,7 +138,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 # Do not create any Integer, especially non cdef'ed ones, before the hooked
 # creation and deletion are setup by the call to hook_fast_tp_functions
@@ -2039,7 +2038,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 3 / QQbar.zero()
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: rational division by zero
+            ZeroDivisionError: division by zero in algebraic field
         """
         cdef Rational x
         if type(left) is type(right):
@@ -5700,13 +5699,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 F = factor_trial_division(self,bound)
             n = one
             for pp, e in F:
-                if e % 2 != 0:
+                if e % 2:
                     n = n * pp
             return n * F.unit()
 
     def next_probable_prime(self):
         """
-        Returns the next probable prime after self, as determined by PARI.
+        Return the next probable prime after self, as determined by PARI.
 
         EXAMPLES::
 

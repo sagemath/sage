@@ -36,7 +36,6 @@ from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.metric_spaces import MetricSpaces
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
-from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.misc.flatten import flatten
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
@@ -567,7 +566,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
     @cached_method(key=(lambda self, base, basis, map: (base or self.base_ring(), map)))
     def free_module(self, base=None, basis=None, map=True):
         """
-        Return a free module V over a specified base ring together with maps to and from V.
+        Return a free module `V` over a specified base ring together with maps to and from `V`.
 
         INPUT:
 
@@ -576,18 +575,18 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
         - ``basis`` -- a basis for this ring/field over the base
 
-        - ``maps`` -- boolean (default ``True``), whether to return
+        - ``map`` -- boolean (default ``True``), whether to return
           `R`-linear maps to and from `V`
 
         OUTPUT:
 
         - A finite-rank free `R`-module `V`
 
-        - An `R`-module isomorphism ``from_V`` from `V` to this ring/field
-          (only included if ``maps`` is ``True``)
+        - An `R`-module isomorphism from `V` to this ring/field
+          (only included if ``map`` is ``True``)
 
-        - An `R`-module isomorphism ``to_V`` from this ring/field to `V`
-          (only included if ``maps`` is ``True``)
+        - An `R`-module isomorphism from this ring/field to `V`
+          (only included if ``map`` is ``True``)
 
         EXAMPLES::
 
@@ -607,6 +606,10 @@ class pAdicExtensionGeneric(pAdicGeneric):
             (O(5^21), 1 + O(5^20))
             sage: to_W0(pi + O(pi^11))
             (O(5^6), O(5^6), O(5^6), 1 + O(5^5), O(5^5), O(5^5))
+
+            sage: X, from_X, to_X = K.free_module(K)
+            sage: to_X(a)
+            (a + O(5^20))
         """
         if basis is not None:
             raise NotImplementedError
@@ -625,6 +628,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
             V = A**d
             from_V = MapFreeModuleToTwoStep
             to_V = MapTwoStepToFreeModule
+        elif base is self:
+            return super(pAdicExtensionGeneric, self).free_module(base=base, basis=basis, map=map)
         else:
             raise NotImplementedError
         FromV = Hom(V, self)
@@ -713,8 +718,11 @@ class pAdicModuleIsomorphism(Map):
             sage: fr == fr
             True
         """
-        # Equality depends only on the parent
-        return rich_to_bool(op, 0)
+        # For maps of this type, equality depends only on the parent
+        if isinstance(other, pAdicModuleIsomorphism):
+            return rich_to_bool(op, 0)
+        else:
+            return rich_to_bool(op, 1)
 
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):
     """
@@ -773,7 +781,6 @@ class MapOneStepToFreeModule(pAdicModuleIsomorphism):
             sage: to(1 + pi + O(pi^11))
             (1 + O(5^4), 1 + O(5^4), O(5^3))
         """
-        V = self.codomain()
         return self.codomain()(x._polynomial_list(pad=True))
 
 class MapFreeModuleToTwoStep(pAdicModuleIsomorphism):
@@ -843,8 +850,8 @@ class MapTwoStepToFreeModule(pAdicModuleIsomorphism):
             sage: R.<x> = ZZ[]
             sage: L.<pi> = K.extension(x^3 - 5)
             sage: V, fr, to = L.free_module(base=Qp(5))
-            sage: a = 1 + a*pi + O(pi^7)
-            sage: to(a)
+            sage: b = 1 + a*pi + O(pi^7)
+            sage: to(b)
             (1 + O(5^3), O(5^3), O(5^2), 1 + O(5^2), O(5^2), O(5^2))
         """
         v = flatten([c._polynomial_list(pad=True) for c in x._polynomial_list(pad=True)])

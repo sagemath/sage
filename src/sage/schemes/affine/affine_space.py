@@ -2,13 +2,13 @@
 Affine `n` space over a ring
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from __future__ import print_function
 from six import integer_types
 
@@ -35,11 +35,9 @@ from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine,
                                               SchemeMorphism_point_affine_finite_field)
 from sage.matrix.constructor import matrix
 
-
-
 def is_AffineSpace(x):
     r"""
-    Returns True if ``x`` is an affine space.
+    Return ``True`` if ``x`` is an affine space.
 
     EXAMPLES::
 
@@ -760,7 +758,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             #assume that if you've passed in a new codomain you want to override
             #the existing embedding
             if PP is None or phi.codomain() == PP:
-                return(phi)
+                return phi
         except AttributeError:
             self.__projective_embedding = {}
         except KeyError:
@@ -867,7 +865,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         - ``kind`` -- ``first`` or ``second`` specifying which kind of chebyshev the user would like
           to generate. Defaults to ``first``.
 
-        - ``monic`` -- ``True`` or ``False`` specifying if the polynomial defining the system 
+        - ``monic`` -- ``True`` or ``False`` specifying if the polynomial defining the system
           should be monic or not. Defaults to ``False``.
 
         OUTPUT: :class:`DynamicalSystem_affine`
@@ -1164,7 +1162,7 @@ class AffineSpace_finite_field(AffineSpace_field):
         """
         return SchemeMorphism_polynomial_affine_space_finite_field(*args, **kwds)
 
-#fix the pickles from moving affine_space.py
+# fix the pickles from moving affine_space.py
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.schemes.generic.affine_space',
                            'AffineSpace_generic',

@@ -411,9 +411,7 @@ class GenericSymbolicSubring(SymbolicRing):
             # Workaround; can be deleted once #19231 is fixed
             return False
 
-        from sage.rings.real_mpfr import mpfr_prec_min
-        from sage.rings.all import (ComplexField,
-                                    RLF, CLF, AA, QQbar, InfinityRing)
+        from sage.rings.all import RLF, CLF, AA, QQbar, InfinityRing
         from sage.rings.real_mpfi import is_RealIntervalField
         from sage.rings.complex_interval_field import is_ComplexIntervalField
 
@@ -430,7 +428,7 @@ class GenericSymbolicSubring(SymbolicRing):
               is_RealIntervalField(P) or is_ComplexIntervalField(P)):
             return True
 
-        elif ComplexField(mpfr_prec_min()).has_coerce_map_from(P):
+        elif P._is_numerical():
             return P not in (RLF, CLF, AA, QQbar)
 
     def __eq__(self, other):

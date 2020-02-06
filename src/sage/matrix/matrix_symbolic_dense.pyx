@@ -153,7 +153,6 @@ Check that :trac:`12778` is fixed::
     sage: parent(M)
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
-from __future__ import absolute_import
 
 from sage.rings.polynomial.all import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element

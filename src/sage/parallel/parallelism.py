@@ -14,14 +14,14 @@ AUTHORS:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Marco Mancini <marco.mancini@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from __future__ import absolute_import
 
 from sage.structure.sage_object import SageObject
@@ -237,7 +237,7 @@ class Parallelism(Singleton, SageObject):
             for fi in self._nproc:
                 self.set(field=fi, nproc=nproc)
         else:
-            if field not in self._nproc :
+            if field not in self._nproc:
                 raise KeyError("entry for field {} is not ".format(field) +
                                "implemented in Parallelism")
             if nproc is None:

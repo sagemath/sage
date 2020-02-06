@@ -5,7 +5,7 @@ if [ "$SAGE_LOCAL" = "" ]; then
 fi
 
 # Write a configuration file to src/setup.cfg
-python make-setup-config.py
+sage-system-python make-setup-config.py
 
 cd src
 

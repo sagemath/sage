@@ -207,9 +207,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: P = PolynomialRing(QQ,5, 'x') # optional - giacpy_sage
         sage: I = ideal([P.random_element(3,7) for j in range(5)]) # optional - giacpy_sage
         sage: B1 = gb_giac(I.gens(),1e-16) # optional - giacpy_sage, long time (1s)
-        ...adding reconstructed ideal generators...
-        ...
-        Running a probabilistic check for the reconstructed Groebner basis.
+        ...Running a probabilistic check for the reconstructed Groebner basis.
         If successfull, error probability is less than 1e-16 ...
         sage: sage.structure.proof.all.polynomial(True) # optional - giacpy_sage
         sage: B2 = gb_giac(I.gens()) # optional - giacpy_sage, long time (4s)

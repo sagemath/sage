@@ -73,18 +73,18 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_group_gap import AbelianGroup_gap
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
-from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.all import ZZ
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class AbelianGroupAutomorphism(ElementLibGAP):
     """

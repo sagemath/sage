@@ -1904,9 +1904,9 @@ class RingConverter(Converter):
 
     def symbol(self, ex):
         """
-        All symbols appearing in the expression must either appear in *subs_dict*
-        or be convertable by the ring's element constructor in order for the
-        conversion to be successful.
+        All symbols appearing in the expression must either appear in
+        *subs_dict* or be convertible by the ring's element
+        constructor in order for the conversion to be successful.
 
         EXAMPLES::
 

@@ -75,11 +75,20 @@ install_config_rpath() {
 bootstrap () {
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
-    for filename in $(find build/pkgs -type f -name spkg-configure.m4); do
+    for filename in $(find build/pkgs -type f -name spkg-configure.m4 | sort); do
         pkgname="$(echo $filename | cut -d/ -f3)"
         echo "m4_sinclude([$filename])" >> m4/sage_spkg_configures.m4
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
+    done
+    for filename in $(find build/pkgs -type f -name type); do
+        pkgtype="$(cat $filename)"
+        pkgname="$(echo $filename | cut -d/ -f3)"
+        case "$pkgtype" in
+            optional|experimental)
+                spkg_configures="$spkg_configures
+SAGE_SPKG_ENABLE([$pkgname], [$pkgtype])" ;;
+        esac
     done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 

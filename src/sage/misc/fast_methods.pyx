@@ -28,8 +28,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.constant_function import ConstantFunction
 

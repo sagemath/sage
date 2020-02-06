@@ -973,7 +973,7 @@ class ClusterSeed(SageObject):
             name += ' with %s frozen variables'%self._m
         return name
 
-    def plot(self, circular=False, mark=None, save_pos=False, force_c =False, with_greens=False, add_labels = False):
+    def plot(self, circular=False, mark=None, save_pos=False, force_c=False, with_greens=False, add_labels=False):
         r"""
         Returns the plot of the quiver of ``self``.
 
@@ -1011,7 +1011,7 @@ class ClusterSeed(SageObject):
         return quiver.plot(circular=circular, mark=mark, save_pos=save_pos,
                            greens=greens)
 
-    def show(self, fig_size=1, circular=False, mark=None, save_pos=False, force_c = False, with_greens= False, add_labels = False):
+    def show(self, fig_size=1, circular=False, mark=None, save_pos=False, force_c=False, with_greens=False, add_labels=False):
         r"""
         Shows the plot of the quiver of ``self``.
 
@@ -2236,7 +2236,7 @@ class ClusterSeed(SageObject):
         - ``"vertices"``: interprets the input sequence as vertices
         - ``"indices"``: interprets the input sequence as indices
         - ``"cluster_vars"``: interprets the input sequence as cluster variables
-          this must be selected if inputing a sequence of cluster variables.
+          this must be selected if inputting a sequence of cluster variables.
 
         EXAMPLES::
 
@@ -2866,7 +2866,7 @@ class ClusterSeed(SageObject):
         if 'red_vertices_diff' in options or ('all' in options and self._use_c_vec):
             initial_red_vertices = self.red_vertices()
         if 'urban_renewals_diff' in options or 'all' in options:
-            initial_urban_renewals= self.urban_renewals()
+            initial_urban_renewals = self.urban_renewals()
         if 'sources_diff' in options or 'all' in options:
             initial_sources = self.quiver().sources()
         if 'sinks_diff' in options or 'all' in options:
@@ -4122,7 +4122,7 @@ class ClusterSeed(SageObject):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += self._R(coeff_recurs(p, q, a1, a2, b, c))*self.x(0)**(b*p-a1)*self.x(1)**(c*q-a2)
-                return(ans)
+                return ans
             elif algorithm == 'by_combinatorics':
                 if b == 0:
                     S = ClusterSeed([['A', 1], ['A', 1]])
@@ -4153,7 +4153,7 @@ class ClusterSeed(SageObject):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += coeff_recurs(p, q, a1, a2, b, c)
-                return(ans)
+                return ans
             else:
                 raise ValueError("The third input should be 'by_recursion', "
                                  "'by_combinatorics', or 'just_numbers'.")

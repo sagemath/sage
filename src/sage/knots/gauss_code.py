@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Helper functions related to Gauss codes of knots.
+Helper functions related to Gauss codes of knots
 
 This contains in particular a function that takes a signed Gauss code
 and builds the list of local orientations at every crossing. This involves
@@ -73,7 +73,7 @@ def recover_orientations(gauss):
 
     - signed Gauss code
 
-    OUTPUT
+    OUTPUT:
 
     - word, a permutation of the (unsigned) Gauss code
     - list of positive (upwards) couplings in this word

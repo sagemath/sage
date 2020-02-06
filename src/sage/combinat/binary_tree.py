@@ -2674,10 +2674,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         composing it. A left (resp. right) branch is maximal if it is not
         included in a strictly longer left (resp. right) branch.
 
+        OUTPUT:
 
-        OUTPUT :
-
-        A list of two integers.
+        A list of two integers
 
         EXAMPLES::
 

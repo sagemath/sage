@@ -99,6 +99,7 @@ if [ -n "$SAGE_PARI_PREFIX" ]; then
 fi
 export SAGE_PARI_CFG="@SAGE_PARI_CFG@"
 
+export SAGE_GLPK_PREFIX="@SAGE_GLPK_PREFIX@"
 export SAGE_FREETYPE_PREFIX="@SAGE_FREETYPE_PREFIX@"
 export SAGE_ARB_LIBRARY="@SAGE_ARB_LIBRARY@"
 
@@ -108,3 +109,5 @@ if [ -n "$SAGE_PKG_CONFIG_PATH" ]; then
     # (Sage's pkgconf spkg takes care of this, if installed)
     export PKG_CONFIG_PATH="$SAGE_PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 fi
+
+export SAGE_NAUTY_BINS_PREFIX="@SAGE_NAUTY_BINS_PREFIX@"

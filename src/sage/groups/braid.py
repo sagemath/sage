@@ -310,7 +310,7 @@ class Braid(FiniteTypeArtinGroupElement):
                         A[-j-1, -j-1] = -t**(-1)
                         if -j > 1:
                             A[-j-1, -j-2] = 1
-                        if -j < n-1 :
+                        if -j < n - 1:
                             A[-j-1, -j] = t**(-1)
                     M = M * A
 
@@ -1210,7 +1210,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``other`` -- the other breaid to check for conjugacy
+        - ``other`` -- the other braid to check for conjugacy
 
         EXAMPLES::
 

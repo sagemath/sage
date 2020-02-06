@@ -8,9 +8,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [Lovasz1979] László Lovász,
-  "On the Shannon capacity of a graph",
-  IEEE Trans. Inf. Th. 25(1979), 1-7.
+[Lov1979]_
 
 Functions
 ---------

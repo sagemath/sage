@@ -2354,9 +2354,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                 S = self.linear_subspace()
                 subspace_rays = []
                 atom_to_ray = []
-                atom_to_facets = []
-                normals = self.facet_normals()
-                facet_to_atoms = [[] for normal in normals]
                 for i, ray in enumerate(self):
                     # This try...except tests whether ray lies in S;
                     # "ray in S" does not work because ray lies in a
@@ -2367,12 +2364,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                         S(ray)
                         subspace_rays.append(i)
                     except (TypeError, ValueError):
-                        facets = [j for j, normal in enumerate(normals)
-                                    if ray * normal == 0]
-                        atom_to_facets.append(facets)
-                        atom = len(atom_to_ray)
-                        for j in facets:
-                            facet_to_atoms[j].append(atom)
                         atom_to_ray.append(i)
 
                 def ConeFace(atoms, facets):
@@ -2388,6 +2379,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
                         return face
                     else:
                         return self
+
+                # Obtain a modified version of the incidence matrix,
+                # with rows corresponding to rays in subspace removed.
+                mod_incidence_matrix = self.incidence_matrix()[atom_to_ray]
+
+                atom_to_facets = [row.nonzero_positions()
+                                  for row in mod_incidence_matrix.rows()]
+                facet_to_atoms = [column.nonzero_positions()
+                                  for column in mod_incidence_matrix.columns()]
 
                 self._face_lattice = lattice_from_incidences(
                                     atom_to_facets, facet_to_atoms, ConeFace,
@@ -2732,6 +2732,51 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
              1-d face of 2-d cone in 2-d lattice N)
         """
         return self.faces(codim=1)
+
+    @cached_method
+    def incidence_matrix(self):
+        r"""
+        Return the incidence matrix.
+
+        .. NOTE::
+
+           The columns correspond to facets/facet normals
+           in the order of :meth:`facet_normals`, the rows
+           correspond to the rays in the order of
+           :meth:`rays`.
+
+        EXAMPLES::
+
+            sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: octant.incidence_matrix()
+            [0 1 1]
+            [1 0 1]
+            [1 1 0]
+
+            sage: halfspace = Cone([(1,0,0), (0,1,0), (-1,-1,0), (0,0,1)])
+            sage: halfspace.incidence_matrix()
+            [0]
+            [1]
+            [1]
+            [1]
+            [1]
+
+        TESTS::
+
+            sage: halfspace.incidence_matrix().is_immutable()
+            True
+        """
+        normals = self.facet_normals()
+        incidence_matrix = matrix(ZZ, self.nrays(),
+                                  len(normals), 0)
+
+        for Hindex, normal in enumerate(self.facet_normals()):
+            for Vindex, ray in enumerate(self.rays()):
+                if normal*ray == 0:
+                    incidence_matrix[Vindex, Hindex] = 1
+
+        incidence_matrix.set_immutable()
+        return incidence_matrix
 
     def intersection(self, other):
         r"""
@@ -6526,8 +6571,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                     pm = choice([-1,1])
 
                     # rays has immutable elements
-                    from copy import copy
-                    rays = [copy(ray) for ray in rays]
+                    rays = [copy.copy(ray) for ray in rays]
 
                     for i, ray in enumerate(rays):
                         rays[i][0] = pm * (ray[0].abs() + 1)

@@ -344,14 +344,30 @@ class Function_gamma_inc(BuiltinFunction):
             sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas
             gamma(t, x)
 
-    .. SEEALSO::
+        .. SEEALSO::
 
-        :meth:`gamma`
+            :meth:`gamma`
         """
         BuiltinFunction.__init__(self, "gamma", nargs=2, latex_name=r"\Gamma",
                 conversions={'maxima':'gamma_incomplete', 'mathematica':'Gamma',
                              'maple':'GAMMA', 'sympy':'uppergamma', 'fricas':'Gamma',
                              'giac':'ugamma'})
+
+    def _method_arguments(self, x, y):
+        r"""
+        TESTS::
+
+            sage: b = RBF(1, 1e-10)
+            sage: gamma(b)
+            [1.00000000 +/- 8.07e-10]
+            sage: gamma(CBF(b))
+            [1.00000000 +/- 8.07e-10]
+            sage: gamma(CBF(b), 4)
+            [0.01831564 +/- 2.65e-9]
+            sage: gamma(CBF(1), b)
+            [0.3678794412 +/- 6.54e-11]
+        """
+        return [x, y]
 
     def _eval_(self, x, y):
         """

@@ -987,7 +987,7 @@ def _normalize_odd_2x2(G):
     OUTPUT:
 
     - A transformation matrix ``B`` such that
-      ``B * G * B.T`` is the identiy matrix
+      ``B * G * B.T`` is the identity matrix
 
     EXAMPLES::
 

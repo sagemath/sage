@@ -17,13 +17,15 @@ cdef class CombinatorialFace(SageObject):
     cdef int _dimension             # dimension of current face, dual dimension if ``dual``
     cdef int _ambient_dimension     # dimension of the polyhedron
     cdef size_t face_length         # stores length of the faces in terms of uint64_t
-    cdef tuple _V, _H, _equalities  # some copies from ``CombinatorialPolyhedron``
     cdef size_t _hash_index         # an index to give different hashes for all faces of a Polyhedron
+
+    # some copies from ``CombinatorialPolyhedron``
+    cdef tuple _ambient_Vrep, _ambient_facets, _equalities
 
     # Atoms and coatoms are the vertices/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms
 
-    cdef size_t length_atom_repr(self) except -1
+    cdef size_t n_atom_rep(self) except -1
     cdef size_t set_coatom_repr(self) except -1
     cdef size_t set_atom_repr(self) except -1

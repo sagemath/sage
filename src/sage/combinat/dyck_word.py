@@ -1678,7 +1678,7 @@ class DyckWord(CombinatorialElement):
         tp.extend(self.returns_to_zero())
         l = len(self)
         if usemap[0] == '1':  # we check what kind of reduction we want
-            s0 = 1  # start point for first substree
+            s0 = 1  # start point for first subtree
             e0 = tp[1] - 1  # end point for first subtree
             s1 = e0 + 1  # start point for second subtree
             e1 = l  # end point for second subtree

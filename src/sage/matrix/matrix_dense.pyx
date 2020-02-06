@@ -7,8 +7,6 @@ TESTS::
     sage: m = matrix(R,2,[0,a,b,b^2])
     sage: TestSuite(m).run()
 """
-from __future__ import absolute_import
-from __future__ import print_function
 
 cimport sage.matrix.matrix as matrix
 

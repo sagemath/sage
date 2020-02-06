@@ -803,7 +803,7 @@ class FindStatStatistic(SageObject):
 
             sage: from sage.databases.findstat import FindStatStatistic
             sage: FindStatStatistic(1)._find_by_id()                            # optional -- internet
-            St000001: The number of ways to write a permutation as a minimal length product of simple transpositions.
+            St000001: The number of reduced words for a permutation.
         """
         self._depth = depth
         self._query = None
@@ -1414,14 +1414,16 @@ class FindStatStatistic(SageObject):
             sage: st = findstat(18)                                             # optional -- internet
 
             sage: st.generating_functions()                                     # optional -- internet
-            {2: q + 1,
+            {1: 1,
+             2: q + 1,
              3: q^3 + 2*q^2 + 2*q + 1,
              4: q^6 + 3*q^5 + 5*q^4 + 6*q^3 + 5*q^2 + 3*q + 1,
              5: q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1,
              6: q^15 + 5*q^14 + 14*q^13 + 29*q^12 + 49*q^11 + 71*q^10 + 90*q^9 + 101*q^8 + 101*q^7 + 90*q^6 + 71*q^5 + 49*q^4 + 29*q^3 + 14*q^2 + 5*q + 1}
 
             sage: st.generating_functions(style="dictionary")                   # optional -- internet
-            {2: {0: 1, 1: 1},
+            {1: {0: 1},
+             2: {0: 1, 1: 1},
              3: {0: 1, 1: 2, 2: 2, 3: 1},
              4: {0: 1, 1: 3, 2: 5, 3: 6, 4: 5, 5: 3, 6: 1},
              5: {0: 1, 1: 4, 2: 9, 3: 15, 4: 20, 5: 22, 6: 20, 7: 15, 8: 9, 9: 4, 10: 1},
@@ -1443,7 +1445,8 @@ class FindStatStatistic(SageObject):
               15: 1}}
 
             sage: st.generating_functions(style="list")                         # optional -- internet
-            {2: [1, 1],
+            {1: [1],
+             2: [1, 1],
              3: [1, 2, 2, 1],
              4: [1, 3, 5, 6, 5, 3, 1],
              5: [1, 4, 9, 15, 20, 22, 20, 15, 9, 4, 1],
@@ -1490,14 +1493,12 @@ class FindStatStatistic(SageObject):
             sage: st = findstat(18)                                             # optional -- internet
 
             sage: st.oeis_search()                                              # optional -- internet
-            Searching the OEIS for "1,1  1,2,2,1  1,3,5,6,5,3,1  1,4,9,15,20,22,20,15,9,4,1  1,5,14,29,49,71,90,101"
+            Searching the OEIS for "1  1,1  1,2,2,1  1,3,5,6,5,3,1  1,4,9,15,20,22,20,15,9,4,1  ..."
             0: A008302: Triangle of Mahonian numbers T(n,k)...
 
             sage: st.oeis_search(search_size=13)                                # optional -- internet
-            Searching the OEIS for "1,1  1,2,2,1  1,3,5,6,5,3,1"
+            Searching the OEIS for "1  1,1  1,2,2,1  ..."
             0: A008302: Triangle of Mahonian numbers T(n,k)...
-            1: A115570: Array read by rows: row n (n>= 1) gives the Betti numbers...
-            2: A187447: Array for all multiset choices...
         """
         from sage.databases.oeis import oeis
 
@@ -1539,9 +1540,9 @@ class FindStatStatistic(SageObject):
         EXAMPLES::
 
             sage: print(findstat(1).description())                              # optional -- internet
-            The number of ways to write a permutation as a minimal length product of simple transpositions.
+            The number of reduced words for a permutation.
             <BLANKLINE>
-            That is, the number of reduced words for the permutation.  E.g., there are two reduced words for $[3,2,1] = (1,2)(2,3)(1,2) = (2,3)(1,2)(2,3)$.
+            This is...
         """
         return self._description
 
@@ -1593,7 +1594,7 @@ class FindStatStatistic(SageObject):
         EXAMPLES::
 
             sage: findstat(1).name()                                            # optional -- internet
-            'The number of ways to write a permutation as a minimal length product of simple transpositions.'
+            'The number of reduced words for a permutation.'
         """
         # this needs to be decided how to do properly
         if hasattr(self,"_name"):
@@ -2050,7 +2051,7 @@ class FindStatCollection(Element):
 
     def __hash__(self):
         """
-        Returns a hash value for the collection.
+        Return a hash value for the collection.
 
         EXAMPLES::
 
@@ -2821,7 +2822,7 @@ class FindStatMap(Element):
 
     def __hash__(self):
         """
-        Returns a hash value for the map.
+        Return a hash value for the map.
 
         EXAMPLES::
 

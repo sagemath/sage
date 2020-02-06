@@ -7,7 +7,7 @@ represent the integer sequences of length `n`::
     sage: DegreeSequences(6)
     Degree sequences on 6 elements
 
-With the object ``DegreeSequences(n)``, one can :
+With the object ``DegreeSequences(n)``, one can:
 
     * Check whether a sequence is indeed a degree sequence ::
 
@@ -64,13 +64,13 @@ degree sequence if and only if* `\sum_i d_i` is even and `\forall i`
 .. MATH::
     \sum_{j\leq i}d_j \leq j(j-1) + \sum_{j>i}\min(d_j,i)
 
-Alternatively, a degree sequence can be defined recursively :
+Alternatively, a degree sequence can be defined recursively:
 
 **Havel and Hakimi:** *The sequence of integers* `d_1\geq ... \geq d_n` *is a
 degree sequence if and only if* `d_2-1,...,d_{d_1+1}-1, d_{d_1+2}, ...,d_n` *is
 also a degree sequence.*
 
-Or equivalently :
+Or equivalently:
 
 **Havel and Hakimi (bis):** *If there is a realization of an integer sequence as
 a graph (i.e. if the sequence is a degree sequence), then it can be realized in
@@ -94,7 +94,7 @@ a current degree sequence on `n` elements into a degree sequence on `n+1`
 elements by adding a vertex of degree larger than those already present in the
 sequence. This can be seen as **reversing** the reduction operation described in
 Havel and Hakimi's characterization. This operation can appear in several
-different ways :
+different ways:
 
     * Extensions of a degree sequence that do **not** change the value of the
       maximum element
@@ -123,7 +123,7 @@ different ways :
               3, 2, 2, 2, 1 \xrightarrow{Extension} {\bf 3}, 3, (2+1), (2+1), (2+1), 1 =  {\bf 3}, 3, 3, 3, 3, 1 \xrightarrow{Reduction} 3, 2, 2, 2, 1
 
     * Extension of a degree sequence that changes the value of the maximum
-      element :
+      element:
 
         * In the general case, i.e. when the number of elements of value
           `\Delta,\Delta-1` is small compared to `\Delta` (i.e. the maximum
@@ -338,7 +338,7 @@ class DegreeSequences:
             return False
 
         # Is the sum even ?
-        if sum(seq)%2 == 1:
+        if sum(seq) % 2:
             return False
 
         # Partial represents the left side of Erdos and Gallai's inequality,
@@ -511,7 +511,7 @@ cdef void enum(int k, int M):
             seq[current_box] = 0
             continue
 
-        # The degree of the new vertex will be taken + i + j where :
+        # The degree of the new vertex will be taken + i + j where:
         #
         # * i is the number of vertices taken in the *current* box
         # * j the number of vertices taken in the *previous* one
@@ -519,7 +519,7 @@ cdef void enum(int k, int M):
         n_current_box = seq[current_box]
         n_previous_box = seq[current_box-1]
 
-        # Note to self, and others :
+        # Note to self, and others:
         #
         # In the following lines, there are many incrementation/decrementation
         # that *may* be replaced by only +1 and -1 and save some

@@ -30,7 +30,7 @@ one can query it through :meth:`designs.best_known_covering_design_from_LJCR
 
 **Design constructors**
 
-This module gathers the following designs :
+This module gathers the following designs:
 
 .. csv-table::
     :class: contentstable

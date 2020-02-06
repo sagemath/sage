@@ -33,7 +33,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 
 import os
 import sys
@@ -2300,7 +2300,7 @@ class DocTestWorker(multiprocessing.Process):
 
     def kill(self):
         """
-        Kill this worker.  Returns ``True`` if the signal(s) are sent
+        Kill this worker.  Return ``True`` if the signal(s) are sent
         successfully or ``False`` if the worker process no longer exists.
 
         This method is only called if there is something wrong with the

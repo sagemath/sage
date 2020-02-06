@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 
 # This script is a deprecated wrapper around the "cython" program.
 # It is deprecated since Trac #27041 (Sage 8.7) because one should

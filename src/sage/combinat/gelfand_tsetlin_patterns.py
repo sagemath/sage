@@ -708,6 +708,37 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     Element = GelfandTsetlinPattern
 
+    def _coerce_map_from_(self, S):
+        """
+        TESTS::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: t == 0
+            False
+            sage: t == GelfandTsetlinPattern([[1]])
+            True
+
+        Check that :trac:`25919` is fixed::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: u = GelfandTsetlinPatterns()[1]
+            sage: v = GelfandTsetlinPatterns(top_row=(1,))[0]
+            sage: t == u
+            True
+            sage: u == t
+            True
+            sage: t == v
+            True
+            sage: v == t
+            True
+            sage: u == v
+            True
+            sage: v == u
+            True
+        """
+        if isinstance(S, GelfandTsetlinPatternsTopRow):
+            return True
+
     def __iter__(self):
         """
         Iterate through ``self`` by using a backtracing algorithm.

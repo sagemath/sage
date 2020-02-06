@@ -21,17 +21,15 @@ AUTHOR:
    - William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.math cimport log
 from cysignals.signals cimport sig_on, sig_off
@@ -385,9 +383,11 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
     def emission_matrix(self):
         """
         Return the matrix whose i-th row specifies the emission
-        probability distribution for the i-th state.  More precisely,
+        probability distribution for the i-th state.
+
+        More precisely,
         the i,j entry of the matrix is the probability of the Markov
-        model outputing the j-th symbol when it is in the i-th state.
+        model outputting the j-th symbol when it is in the i-th state.
 
         OUTPUT:
 

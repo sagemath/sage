@@ -466,7 +466,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._reverse_variables = bool(kwargs.get("reverse_variables", True))
 
         with AllowZeroInversionsContext(self):
-            sub_byte_lookup = dict([(e, self.sub_byte(e)) for e in self._base])
+            sub_byte_lookup = dict([(v, self.sub_byte(v)) for v in self._base])
         self._sub_byte_lookup = sub_byte_lookup
 
         if self._gf2:
@@ -1643,7 +1643,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         """
         gd = self.variable_dict()
-        return tuple([gd[e] for e in self.varstrs(name, nr, rc, e)])
+        return tuple([gd[s] for s in self.varstrs(name, nr, rc, e)])
 
     def variable_dict(self):
         """
@@ -2498,13 +2498,12 @@ class SR_gf2n(SR_generic):
         r = self._r
         c = self._c
         e = self._e
-        n = self._n
 
         if l is None:
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+i]**2 - _vars[e*j+(i+1)%e]   for j in range(l)  for i in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1)%e]   for j in range(l)  for k in range(e)]
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -3225,7 +3224,6 @@ class SR_gf2(SR_generic):
         r = self._r
         c = self._c
         e = self._e
-        n = self._n
 
         if l is None:
             l = r*c
@@ -3233,7 +3231,7 @@ class SR_gf2(SR_generic):
         if self._polybori:
             return []
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+i]**2 - _vars[e*j+i]   for j in range(l)  for i in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+k]   for j in range(l)  for k in range(e)]
 
 class SR_gf2_2(SR_gf2):
     """

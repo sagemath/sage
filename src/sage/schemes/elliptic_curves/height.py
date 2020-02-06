@@ -24,7 +24,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 from __future__ import print_function
 from six.moves import zip
@@ -1435,7 +1435,7 @@ class EllipticCurveCanonicalHeight:
             sage: err(CIF(z))
             2.71750621458744e-31
 
-        The same, but in the domain ``CDF`` instad of ``CIF``::
+        The same, but in the domain ``CDF`` instead of ``CIF``::
 
             sage: fk, err = E.height_function().fk_intervals(N=10, domain=CDF)
             sage: fk(z)

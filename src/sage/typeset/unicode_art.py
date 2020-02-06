@@ -155,7 +155,5 @@ def unicode_art(*obj, **kwds):
         from copy import copy
         separator = copy(separator)
         separator._baseline = sep_baseline
-    obj = map(_unicode_art_factory.build, obj)
     return _unicode_art_factory.concatenate(obj, separator, empty_unicode_art,
                                             baseline=baseline)
-

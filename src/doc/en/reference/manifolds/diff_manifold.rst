@@ -29,3 +29,5 @@ Differentiable Manifolds
    sage/manifolds/differentiable/affine_connection
 
    sage/manifolds/differentiable/differentiable_submanifold
+
+   diff_vector_bundle

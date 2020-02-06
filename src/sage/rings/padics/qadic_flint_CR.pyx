@@ -81,6 +81,8 @@ cdef class qAdicCappedRelativeElement(CRElement):
             sage: (1+a)*(41*a^2+40*a+42)
             1 + O(3^4)
         """
+        if exactzero(self.ordp):
+            raise ValueError("zero does not have a flint rep")
         return self.prime_pow._new_fmpz_poly(self.unit, var)
 
     def _flint_rep_abs(self, var='x'):
@@ -96,9 +98,18 @@ cdef class qAdicCappedRelativeElement(CRElement):
             3 + O(3^5)
             sage: (3+3*a)._flint_rep_abs()
             (3*x + 3, 0)
+
+        TESTS::
+
+            sage: R(0)._flint_rep_abs()
+            Traceback (most recent call last):
+            ...
+            ValueError: zero does not have a flint rep
         """
         if self.ordp < 0:
             return self._flint_rep(var), Integer(self.ordp)
+        elif exactzero(self.ordp):
+            raise ValueError("zero does not have a flint rep")
         cshift_notrunc(self.prime_pow.poly_flint_rep, self.unit, self.ordp, self.ordp + self.relprec, self.prime_pow, False)
         return self.prime_pow._new_fmpz_poly(self.prime_pow.poly_flint_rep, var), Integer(0)
 

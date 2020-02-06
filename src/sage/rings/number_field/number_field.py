@@ -143,7 +143,6 @@ from . import structure
 from . import number_field_morphisms
 from itertools import count
 from builtins import zip
-from sage.misc.superseded import deprecated_function_alias
 
 
 _NumberFields = NumberFields()
@@ -154,7 +153,7 @@ def is_NumberFieldHomsetCodomain(codomain):
     Returns whether ``codomain`` is a valid codomain for a number
     field homset. This is used by NumberField._Hom_ to determine
     whether the created homsets should be a
-    :class:`sage.rings.number_field.morphism.NumberFieldHomset`.
+    :class:`sage.rings.number_field.homset.NumberFieldHomset`.
 
     EXAMPLES:
 
@@ -933,6 +932,11 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         False
         sage: QuadraticField(-11, 'a') is QuadraticField(-11, 'a', latex_name=None)
         False
+
+    Check quadratic fields without embedding (:trac:`28932`)::
+
+        sage: QuadraticField(3, embedding=False)
+        Number Field in a with defining polynomial x^2 - 3
     """
     D = QQ(D)
     if check:
@@ -945,6 +949,8 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
             embedding = RLF(D).sqrt()
         else:
             embedding = CLF(D).sqrt()
+    elif embedding is False:
+        embedding = None
     if latex_name == 'sqrt':
         latex_name = r'\sqrt{%s}' % D
     return NumberField(f, name, check=False, embedding=embedding, latex_name=latex_name, **args)
@@ -1918,7 +1924,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             # Using LazyFormat fixes #28036 - infinite loop
             from sage.misc.lazy_format import LazyFormat
             raise TypeError(LazyFormat("%s is not suitable as codomain for homomorphisms from %s") % (codomain, self))
-        from .morphism import NumberFieldHomset
+        from sage.rings.number_field.homset import NumberFieldHomset
         return NumberFieldHomset(self, codomain, category)
 
     @cached_method
@@ -2950,12 +2956,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
               Defn: a -> 3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8 + 6*7^9 + 6*7^10 + 2*7^11 + 7^12 + 7^13 + 2*7^15 + 7^16 + 7^17 + 4*7^18 + 6*7^19 + O(7^20)
         """
         embedding = self.coerce_embedding()
-        if embedding is not None:
-            from sage.rings.real_mpfr import mpfr_prec_min
-            from sage.rings.complex_field import ComplexField
-            if ComplexField(mpfr_prec_min()).has_coerce_map_from(embedding.codomain()):
-                 return embedding
+        if embedding is not None and embedding.codomain()._is_numerical():
+            return embedding
 
+    @cached_method
     def gen_embedding(self):
         """
         If an embedding has been specified, return the image of the
@@ -3758,7 +3762,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             # since the coefficients of f are in QQ, if there is a hom
             # from QQ to codomain it's probably unique and just the coercion
             if base_map is not None:
-                f = f.change_ring(base_map)
+                f = f.map_coefficients(base_map)
             return codomain(f(im_gens[0])) == 0
         except (TypeError, ValueError):
             return False
@@ -8175,7 +8179,11 @@ class NumberField_absolute(NumberField_generic):
             sage: to_V(from_V(V([0,-1/7,0])))
             (0, -1/7, 0)
         """
-        if basis is not None or base is not None:
+        if base is None:
+            base = QQ
+        elif base is self:
+            return super(NumberField_absolute, self).free_module(base=base, basis=basis, map=map)
+        if basis is not None or base is not QQ:
             raise NotImplementedError
         V = QQ**self.degree()
         if not map:
@@ -8537,13 +8545,6 @@ class NumberField_absolute(NumberField_generic):
             [0.740078950105127]
             [ 3.7193258428...]
             [ 1.54308184421...]
-
-        TESTS::
-
-            sage: emb = F.Minkowski_embedding()
-            doctest:warning...:
-            DeprecationWarning: Minkowski_embedding is deprecated. Please use minkowski_embedding instead.
-            See http://trac.sagemath.org/23685 for details.
         """
         n = self.degree()
         if prec is None:
@@ -8572,12 +8573,7 @@ class NumberField_absolute(NumberField_generic):
                 d[(r+2*i,col)] = z.real()*sqrt2
                 d[(r+2*i+1,col)] = z.imag()*sqrt2
 
-
-        M = sage.matrix.all.matrix(d)
-
-        return M
-
-    Minkowski_embedding = deprecated_function_alias(23685, minkowski_embedding)
+        return sage.matrix.all.matrix(d)
 
     def places(self, all_complex=False, prec=None):
         r"""
@@ -9415,7 +9411,7 @@ class NumberField_absolute(NumberField_generic):
         b = self(b)
         if b == 0:
             raise ValueError("second argument must be nonzero")
-        if len(S) % 2 != 0:
+        if len(S) % 2:
             raise ValueError("the list should be of even cardinality")
         if check:
             for p in S:
@@ -10573,8 +10569,8 @@ class NumberField_cyclotomic(NumberField_absolute):
             Automorphism group of Cyclotomic Field of order 21 and degree 12
         """
         if is_NumberFieldHomsetCodomain(codomain):
-            from . import morphism
-            return morphism.CyclotomicFieldHomset(self, codomain)
+            from sage.rings.number_field.homset import CyclotomicFieldHomset
+            return CyclotomicFieldHomset(self, codomain)
         else:
             raise TypeError
 
@@ -10696,7 +10692,7 @@ class NumberField_cyclotomic(NumberField_absolute):
         n = self._n()
         z = CC.zeta(n)
         X = [m for m in range(n) if arith.gcd(m,n) == 1]
-        v = [self.hom([z**n], check=False) for n in X]
+        v = [self.hom([z**i], check=False) for i in X]
         self.__embeddings[CC] = Sequence(v, cr=True, immutable=True,
                                          check=False, universe=self.Hom(CC))
         return self.__embeddings[CC]

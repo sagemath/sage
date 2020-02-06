@@ -58,8 +58,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.stdint cimport int64_t
 from libc.string cimport strcpy, strlen
 
@@ -79,6 +77,7 @@ from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power
 from sage.structure.element cimport Element
 from sage.structure.proof.proof import get_flag as get_proof_flag
+from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
@@ -588,7 +587,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
     # x * cdef _add_
     # x * cdef _sub_
     # x * cdef _mul_
-    # x * cpdef _cmp_
+    # x * cpdef _richcmp_
     # x * __neg__
     # x * __invert__  -> SEE LEVEL 3 FUNCTIONALITIES
     # x * __copy__
@@ -876,7 +875,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: M(range(9)) ** -1
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Matrix is singular
+            ZeroDivisionError: matrix must be nonsingular
 
         TESTS::
 
@@ -977,8 +976,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         r"""
         Compare ``self`` with ``right``, examining entries in
         lexicographic (row major) ordering.
@@ -998,17 +996,18 @@ cdef class Matrix_integer_dense(Matrix_dense):
         cdef int k
 
         sig_on()
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                k = fmpz_cmp(fmpz_mat_entry(self._matrix,i,j),fmpz_mat_entry((<Matrix_integer_dense>right)._matrix,i,j))
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                k = fmpz_cmp(fmpz_mat_entry(self._matrix,i,j),
+                             fmpz_mat_entry((<Matrix_integer_dense>right)._matrix,i,j))
                 if k:
                     sig_off()
                     if k < 0:
-                        return -1
+                        return rich_to_bool(op, -1)
                     else:
-                        return 1
+                        return rich_to_bool(op, 1)
         sig_off()
-        return 0
+        return rich_to_bool(op, 0)
 
     # TODO: Implement better
     cdef _vector_times_matrix_(self, Vector v):
@@ -1017,9 +1016,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-
         -  ``v`` - a free module element.
-
 
         OUTPUT: The vector times matrix product v\*A.
 
@@ -1226,7 +1223,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return self, ZZ(1)
 
     def charpoly(self, var='x', algorithm=None):
-        """
+        r"""
         .. NOTE::
 
             The characteristic polynomial is defined as `\det(xI-A)`.
@@ -1348,7 +1345,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return g
 
     def minpoly(self, var='x', algorithm=None):
-        """
+        r"""
         INPUT:
 
 
@@ -4068,7 +4065,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         fmpz_clear(fden)
         if res == 0:
-            raise ZeroDivisionError('Matrix is singular')
+            raise ZeroDivisionError('matrix must be nonsingular')
         if den < 0:
             return -M, -den
         else:
@@ -4105,7 +4102,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: ~M.zero_matrix()
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Matrix is singular
+            ZeroDivisionError: matrix must be nonsingular
         """
         A, d = self._invert_flint()
         return A / d
@@ -5430,7 +5427,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 1  0  3]
             [-1  0  5]
         """
-        if len(cols) == 0:
+        if not cols:
             return self
         cdef Py_ssize_t i, c, r, nc = max(self._ncols + len(cols), max(cols)+1)
         cdef Matrix_integer_dense A = self.new_matrix(self._nrows, nc)

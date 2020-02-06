@@ -97,16 +97,15 @@ AUTHORS:
 - Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugennt.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_check, sig_on, sig_off
 include 'sage/data_structures/bitset.pxi'
@@ -259,7 +258,7 @@ cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
 
 cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     """
-    Returns the position in ``S`` of an item in ``S[start:]``, or -1 if
+    Return the position in ``S`` of an item in ``S[start:]``, or -1 if
     ``S[start:]`` does not contain the item.
 
     """
@@ -445,9 +444,11 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
 # behaves like a tuple
 
 from sage.rings.integer cimport smallInteger
+
+
 cdef class BoundedIntegerSequence:
     """
-    A sequence of non-negative uniformely bounded integers.
+    A sequence of non-negative uniformly bounded integers.
 
     INPUT:
 
@@ -1238,9 +1239,9 @@ cdef class BoundedIntegerSequence:
 
     cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
         """
-        Returns ``self``'s maximal trailing sub-sequence that ``other`` starts with.
+        Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
-        Returns ``None`` if there is no overlap
+        Return ``None`` if there is no overlap.
 
         EXAMPLES::
 

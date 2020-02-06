@@ -19,8 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division, print_function
-
 from cysignals.signals cimport sig_on
 
 from sage.libs.flint.fmpz cimport fmpz_get_mpz, COEFF_IS_MPZ, COEFF_TO_PTR, fmpz_is_one

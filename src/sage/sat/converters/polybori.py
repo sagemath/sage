@@ -414,11 +414,10 @@ class CNFEncoder(ANF2CNFConverter):
 
         INPUT:
 
-        - ``length`` - the number of variables
-        - ``equal_zero`` - should the sum be equal to zero?
+        - ``length`` -- the number of variables
+        - ``equal_zero`` -- should the sum be equal to zero?
 
         EXAMPLES::
-
 
             sage: from sage.sat.converters.polybori import CNFEncoder
             sage: from sage.sat.solvers.dimacs import DIMACS
@@ -431,13 +430,13 @@ class CNFEncoder(ANF2CNFConverter):
             [[1, -1, -1], [-1, 1, -1], [-1, -1, 1], [1, 1, 1]]
         """
         E = []
-        for num_negated in range(0, length+1) :
-            if (((num_negated % 2) ^ ((length+1) % 2)) == equal_zero) :
+        for num_negated in range(length + 1):
+            if (((num_negated % 2) ^ ((length + 1) % 2)) == equal_zero):
                 continue
             start = []
-            for i in range(num_negated) :
+            for i in range(num_negated):
                 start.append(1)
-            for i in range(length - num_negated) :
+            for i in range(length - num_negated):
                 start.append(-1)
             E.extend(Permutations(start))
         return E

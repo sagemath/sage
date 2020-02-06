@@ -1,5 +1,5 @@
 """
-Infinite Polynomial Rings.
+Infinite Polynomial Rings
 
 By Infinite Polynomial Rings, we mean polynomial rings in a countably
 infinite number of variables. The implementation consists of a wrapper
@@ -238,6 +238,7 @@ from six.moves import range
 
 import six
 from sage.rings.ring import CommutativeRing
+from sage.categories.rings import Rings
 from sage.structure.all import SageObject, parent
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
@@ -684,17 +685,14 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             names = ['x']
         for n in names:
             if not (isinstance(n, six.string_types) and n.isalnum() and (not n[0].isdigit())):
-                raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s isn't"%n)
-        if len(names)!=len(set(names)):
+                raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s isn't" % n)
+        if len(names) != len(set(names)):
             raise ValueError("generator names must be pairwise different")
         self._names = tuple(names)
         if not isinstance(order, six.string_types):
             raise TypeError("The monomial order must be given as a string")
-        try:
-            if not (hasattr(R,'is_ring') and R.is_ring() and hasattr(R,'is_commutative') and R.is_commutative()):
-                raise TypeError
-        except Exception:
-            raise TypeError("The given 'base ring' (= %s) must be a commutative ring"%(R))
+        if not R in Rings().Commutative():
+            raise TypeError("The given 'base ring' (= %s) must be a commutative ring" % R)
 
         # now, the input is accepted
         if hasattr(R,'_underlying_ring'):
@@ -1119,7 +1117,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             False
         """
         return False
- 
+
     def varname_key(self, x):
         """
         Key for comparison of variable names.

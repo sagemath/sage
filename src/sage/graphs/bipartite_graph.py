@@ -84,6 +84,14 @@ class BipartiteGraph(Graph):
       partition raises an exception. In the other case offending edges simply
       won't be included.
 
+    - ``loops`` -- ignored; bipartite graphs cannot have loops
+
+    - ``multiedges`` -- boolean (default: ``None``); whether to allow multiple
+      edges
+
+    - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
+      itself as weighted or not. See ``self.weighted()``
+
     .. NOTE::
 
         All remaining arguments are passed to the ``Graph`` constructor
@@ -327,6 +335,7 @@ class BipartiteGraph(Graph):
         self.add_vertex = MethodType(Graph.add_vertex, self)
         self.add_vertices = MethodType(Graph.add_vertices, self)
         self.add_edge = MethodType(Graph.add_edge, self)
+        self.add_edges = MethodType(Graph.add_edges, self)
 
         from sage.structure.element import is_Matrix
         if isinstance(data, BipartiteGraph):
@@ -420,6 +429,7 @@ class BipartiteGraph(Graph):
         del self.add_vertex
         del self.add_vertices
         del self.add_edge
+        del self.add_edges
 
         # post-processing
         if isinstance(data, str):
@@ -574,7 +584,7 @@ class BipartiteGraph(Graph):
     def add_vertices(self, vertices, left=False, right=False):
         """
         Add vertices to the bipartite graph from an iterable container of
-        vertices. 
+        vertices.
 
         Vertices that already exist in the graph will not be added again.
 
@@ -844,6 +854,63 @@ class BipartiteGraph(Graph):
         Graph.add_edge(self, u, v, label)
         return
 
+    def add_edges(self, edges, loops=True):
+        """
+        Add edges from an iterable container.
+
+        INPUT:
+
+        - ``edges`` -- an iterable of edges, given either as ``(u, v)``
+          or ``(u, v, label)``.
+
+        - ``loops`` -- ignored
+
+        See :meth:`~sage.graphs.graph.Graph.add_edges` for more detail.
+
+        This method simply checks that the edge endpoints are in different
+        partitions. If a new vertex is to be created, it will be added to the
+        proper partition. If both vertices are created, the first one will be
+        added to the left partition, the second to the right partition.
+
+        EXAMPLES::
+
+            sage: bg = BipartiteGraph()
+            sage: bg.add_vertices([0, 1, 2], left=[True, False, True])
+            sage: bg.add_edges([(0, 1), (2, 1)])
+            sage: bg.add_edges([[0, 2]])
+            Traceback (most recent call last):
+            ...
+            RuntimeError: edge vertices must lie in different partitions
+
+        Loops will raise an error::
+
+            sage: bg.add_edges([[0, 3], [3, 3]])
+            Traceback (most recent call last):
+            ...
+            RuntimeError: edge vertices must lie in different partitions
+        """
+        for edge in edges:
+            try:
+                if len(edge) == 3:
+                    u, v, label = edge
+                else:
+                    u, v = edge
+                    label = None
+            except Exception:
+                raise TypeError("cannot interpret {!r} as graph edge".format(edge))
+
+            # check for endpoints in different partitions
+            if self.left.issuperset((u, v)) or self.right.issuperset((u, v)):
+                raise RuntimeError("edge vertices must lie in different partitions")
+
+            # automatically decide partitions for the newly created vertices
+            if u not in self:
+                self.add_vertex(u, left=(v in self.right or v not in self), right=(v in self.left))
+            if v not in self:
+                self.add_vertex(v, left=(u in self.right), right=(u in self.left))
+
+            self._backend.add_edge(u, v, label, self._directed)
+
     def allow_loops(self, new, check=True):
         """
         Change whether loops are permitted in the (di)graph
@@ -1021,7 +1088,7 @@ class BipartiteGraph(Graph):
         r"""
         Compute the matching polynomial.
 
-        The *matching polynomial* is defined as in [Godsil93]_, where `p(G, k)`
+        The *matching polynomial* is defined as in [God1993]_, where `p(G, k)`
         denotes the number of `k`-matchings (matchings with `k` edges) in `G` :
 
         .. MATH::
@@ -1667,7 +1734,7 @@ class BipartiteGraph(Graph):
         # matching
         Z = left.difference(M.vertex_iterator())
 
-        # Alternate: extend Z with all vertices reacheable by alternate paths
+        # Alternate: extend Z with all vertices reachable by alternate paths
         # (match / non-match edges).
         X = set(Z)
         while X:

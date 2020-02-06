@@ -1180,7 +1180,7 @@ class SetPartition(AbstractSetPartition):
         The algorithm proceeds as follows: non-attacking rooks are
         placed beginning at the top row.  The columns corresponding
         to the closers of the set partition remain empty.  Let `rs_j`
-        be the the number of closers which are larger than `j` and
+        be the number of closers which are larger than `j` and
         whose block is before the block of `j`.
 
         We then place a rook into row `j`, such that the number of

@@ -21,7 +21,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 #from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -462,7 +461,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     # This likely could be done when performing chain_of_reduced_words
     # Things in here get called the most (about 50x more than enhance_braid_move_chain)
     for pos in range(1, len(braid_move_chain)):
-        # This gets the smallest continguous half-open interval [a, b)
+        # This gets the smallest contiguous half-open interval [a, b)
         # that contains the indices where current_word and previous_word differ.
         current_word = <tuple> (braid_move_chain[pos])
         for k in range(ell):

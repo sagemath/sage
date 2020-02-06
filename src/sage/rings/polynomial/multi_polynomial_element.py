@@ -484,6 +484,30 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         return self.element().poly_repr(varnames,
                                         atomic_coefficients=atomic, sortkey=key)
 
+    def _macaulay2_(self, macaulay2=None):
+        """
+        EXAMPLES::
+
+            sage: R = GF(13)['a,b']['c,d']
+            sage: macaulay2(R('a^2 + c'))  # optional - macaulay2
+                 2
+            c + a
+
+        TESTS:
+
+        Elements of the base ring are coerced to the polynomial ring
+        correctly::
+
+            sage: macaulay2(R('a^2')).ring()._operator('===', R)  # optional - macaulay2
+            true
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+        m2_parent = macaulay2(self.parent())
+        macaulay2.use(m2_parent)
+        return macaulay2('substitute(%s,%s)' % (repr(self), m2_parent._name))
+
     def degrees(self):
         r"""
         Returns a tuple (precisely - an ``ETuple``) with the
@@ -1720,9 +1744,15 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ...
             NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
 
+        Check that we can factor over the algebraic field (:trac:`25390`)::
+
+            sage: R.<x,y> = PolynomialRing(QQbar)
+            sage: factor(x^2 + y^2)
+            (x + (-1*I)*y) * (x + 1*I*y)
+
         Check that the global proof flag for polynomials is honored::
 
-            sage: R.<x,y> = QQbar[]
+            sage: R.<x,y> = PolynomialRing(QQ['z'])
             sage: f = x^2 + y^2
             sage: with proof.WithProof('polynomial', True):
             ....:     f.factor()

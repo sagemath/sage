@@ -3498,10 +3498,10 @@ class CohomologyClass(QuotientRingElement):
         Q = self.parent()
         # We iterate over monomials of self.lift()
         p = [x for x in self.lift() if x[1].total_degree() == d]
-        if len(p)==0:
+        if not p:
             return Q.zero()
         else:
-            return Q(sum(x[0]*x[1] for x in p))
+            return Q.sum(x[0] * x[1] for x in p)
 
     def exp(self):
         r"""

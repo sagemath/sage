@@ -19,7 +19,6 @@ fields (generally `\RR` or `\CC`).
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import sage.rings.complex_double
 
@@ -488,9 +487,9 @@ def root_from_approx(f, a):
     P = a.parent()
     if P.is_exact() and not f(a):
         return a
-    elif RealField(mpfr_prec_min()).has_coerce_map_from(P):
+    elif P._is_real_numerical():
         return LazyAlgebraic(RLF, f, a, prec=0)
-    elif ComplexField(mpfr_prec_min()).has_coerce_map_from(P):
+    elif P._is_numerical():
         return LazyAlgebraic(CLF, f, a, prec=0)
     # p-adic lazy, when implemented, would go here
     else:

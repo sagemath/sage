@@ -1,7 +1,11 @@
 # Shell functions for making spkg-install scripts a little easier to write,
 # eliminating duplication.  All Sage helper functions begin with sdh_ (for
 # Sage-distribution helper).  Consult the below documentation for the list of
-# available helper functions:
+# available helper functions.
+#
+# This documentation is also repeated in the Sage docs in
+# src/doc/en/developer/packaging.rst, so if anything here changes, or
+# if you add anything, please modify that file accordingly.
 #
 # - sdh_die MESSAGE
 #
@@ -35,7 +39,9 @@
 #
 # - sdh_configure [...]
 #
-#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`.
+#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`,
+#    (for autoconf'd projects with extra
+#        --disable-maintainer-mode --disable-dependency-tracking)
 #    Additional arguments to `./configure` may be given as arguments.
 #
 # - sdh_make [...]
@@ -154,8 +160,10 @@ sdh_configure() {
     if [ -z "$CONFIG_SHELL" ]; then
         export CONFIG_SHELL=`command -v bash`
     fi
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" "$@"
-    if [ $? -ne 0 ]; then
+    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --disable-maintainer-mode --disable-dependency-tracking "$@"
+    if [ $? -ne 0 ]; then # perhaps it is a non-autoconf'd project
+      ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" "$@"
+      if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/config.log" ]; then
             sdh_die <<_EOF_
 Error configuring $PKG_NAME
@@ -165,6 +173,7 @@ for details.
 _EOF_
         fi
         sdh_die "Error configuring $PKG_NAME"
+      fi
     fi
 }
 

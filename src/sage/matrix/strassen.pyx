@@ -14,7 +14,6 @@ multiplication algorithms.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from .matrix_window cimport MatrixWindow
 
@@ -561,7 +560,7 @@ class int_range:
             self._intervals = [(int(indices), int(range))]
         else:
             self._intervals = []
-            if len(indices) == 0:
+            if not indices:
                 return
             indices.sort()
             start = None

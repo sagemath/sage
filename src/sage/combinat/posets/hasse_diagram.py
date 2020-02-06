@@ -22,6 +22,7 @@ from six.moves import range
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.misc.rest_index_of_methods import gen_rest_table_index
@@ -300,7 +301,7 @@ class HasseDiagram(DiGraph):
         .. note::
 
             If the :meth:`lequal_matrix` has been computed, then this method is
-            redefined to use the cached matrix (see :meth:`_alternate_is_lequal`).
+            redefined to use the cached data (see :meth:`_alternate_is_lequal`).
 
         TESTS::
 
@@ -974,7 +975,12 @@ class HasseDiagram(DiGraph):
 
         .. TODO::
 
-            Use an inversion algorithm for triangular matrices.
+            Try to make a specific multimodular matrix inversion
+            algorithm for this kind of sparse triangular matrices
+            where the non-zero entries of the inverse are in known
+            positions.
+
+        .. SEEALSO:: :meth:`lequal_matrix`, :meth:`coxeter_transformation`
 
         EXAMPLES::
 
@@ -1011,16 +1017,18 @@ class HasseDiagram(DiGraph):
         if not hasattr(self, '_moebius_function_matrix'):
             if algorithm == 'recursive':
                 n = self.cardinality()
-                L = self.lequal_matrix()
-                m = L.dict(copy=True)
-                greater_than = [sorted(L[i].dict()) for i in range(n)]
+                gt = self._leq_storage
+                greater_than = [sorted(gt[i]) for i in range(n)]
+                m = {}
                 for i in range(n - 1, -1, -1):
+                    m[(i, i)] = ZZ.one()
+                    available = []
                     for k in greater_than[i]:
                         if k != i:
+                            available.append(k)
                             m[(i, k)] = -ZZ.sum(m[(j, k)]
-                                                for j in greater_than[i]
-                                                if i != j and
-                                                k in greater_than[j])
+                                                for j in available
+                                                if k in greater_than[j])
                 M = matrix(ZZ, n, n, m, sparse=True)
             else:
                 M = self.lequal_matrix().inverse_of_unit()
@@ -1056,6 +1064,8 @@ class HasseDiagram(DiGraph):
         Return the matrix of the Auslander-Reiten translation acting on
         the Grothendieck group of the derived category of modules on the
         poset, in the basis of simple modules.
+
+        .. SEEALSO:: :meth:`lequal_matrix`, :meth:`moebius_function_matrix`
 
         EXAMPLES::
 
@@ -1130,51 +1140,45 @@ class HasseDiagram(DiGraph):
         return self.order_ideal([i])
 
     @lazy_attribute
-    def _leq_matrix(self):
-        r"""
-        Computes a matrix whose ``(i,j)`` entry is 1 if ``i`` is less than
-        ``j`` in the poset, and 0 otherwise; and redefines ``__lt__`` to
-        use this matrix.
+    def _leq_storage(self):
+        """
+        Store the comparison relation as a list of Python sets.
+
+        The `i`-th item in the list is the set of elements greater than `i`.
 
         EXAMPLES::
 
-            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
-            sage: H = P._hasse_diagram
-            sage: H._leq_matrix
-            [1 1 1 1 1 1 1 1]
-            [0 1 0 1 0 0 0 1]
-            [0 0 1 1 1 0 1 1]
-            [0 0 0 1 0 0 0 1]
-            [0 0 0 0 1 0 0 1]
-            [0 0 0 0 0 1 1 1]
-            [0 0 0 0 0 0 1 1]
-            [0 0 0 0 0 0 0 1]
-
+            sage: H = posets.DiamondPoset(7)._hasse_diagram
+            sage: H._leq_storage
+            [{0, 1, 2, 3, 4, 5, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6}]
         """
-        # Create the matrix
         n = self.order()
-        D = {}
-        for i in range(n):
-            for v in self.breadth_first_search(i):
-                D[(i, v)] = 1
-        M = matrix(ZZ, n, n, D, sparse=True)
-        M.set_immutable()
+        greater_than = [set([i]) for i in range(n)]
+        for i in range(n - 1, -1, -1):
+            gt = greater_than[i]
+            for j in self.neighbors_out(i):
+                gt = gt.union(greater_than[j])
+            greater_than[i] = gt
+
         # Redefine self.is_lequal
         self.is_lequal = self._alternate_is_lequal
-        # Return the matrix
-        return M
 
-    def lequal_matrix(self):
-        """
-        Return the matrix whose ``(i,j)`` entry is 1 if ``i`` is less
-        than ``j`` in the poset, and 0 otherwise; and redefines
-        ``__lt__`` to use this matrix.
+        return greater_than
+
+    @lazy_attribute
+    def _leq_matrix_boolean(self):
+        r"""
+        Compute a boolean matrix whose ``(i,j)`` entry is 1 if ``i``
+        is less than ``j`` in the poset, and 0 otherwise; and
+        redefines ``__lt__`` to use this matrix.
+
+        .. SEEALSO:: :meth:`_leq_matrix`
 
         EXAMPLES::
 
             sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
             sage: H = P._hasse_diagram
-            sage: H.lequal_matrix()
+            sage: M = H._leq_matrix_boolean; M
             [1 1 1 1 1 1 1 1]
             [0 1 0 1 0 0 0 1]
             [0 0 1 1 1 0 1 1]
@@ -1183,13 +1187,96 @@ class HasseDiagram(DiGraph):
             [0 0 0 0 0 1 1 1]
             [0 0 0 0 0 0 1 1]
             [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Finite Field of size 2
+        """
+        n = self.order()
+        R = GF(2)
+        one = R.one()
+        greater_than = self._leq_storage
+        D = {(i, j): one for i in range(n) for j in greater_than[i]}
+        M = matrix(R, n, n, D, sparse=True)
+        M.set_immutable()
+        return M
+
+    @lazy_attribute
+    def _leq_matrix(self):
+        r"""
+        Compute an integer matrix whose ``(i,j)`` entry is 1 if ``i``
+        is less than ``j`` in the poset, and 0 otherwise.
+
+        .. SEEALSO:: :meth:`_leq_matrix_boolean`
+
+        EXAMPLES::
+
+            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
+            sage: H = P._hasse_diagram
+            sage: M = H._leq_matrix; M
+            [1 1 1 1 1 1 1 1]
+            [0 1 0 1 0 0 0 1]
+            [0 0 1 1 1 0 1 1]
+            [0 0 0 1 0 0 0 1]
+            [0 0 0 0 1 0 0 1]
+            [0 0 0 0 0 1 1 1]
+            [0 0 0 0 0 0 1 1]
+            [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Integer Ring
+        """
+        n = self.order()
+        one = ZZ.one()
+        greater_than = self._leq_storage
+        D = {(i, j): one for i in range(n) for j in greater_than[i]}
+        M = matrix(ZZ, n, n, D, sparse=True)
+        M.set_immutable()
+        return M
+
+    def lequal_matrix(self, boolean=False):
+        r"""
+        Return a matrix whose ``(i,j)`` entry is 1 if ``i`` is less
+        than ``j`` in the poset, and 0 otherwise; and redefines
+        ``__lt__`` to use the boolean version of this matrix.
+
+        INPUT:
+
+        - ``boolean`` -- optional flag (default ``False``) telling whether to
+          return a matrix with coefficients in `\GF(2)` or in `\ZZ`
+
+        .. SEEALSO::
+
+            :meth:`moebius_function_matrix`, :meth:`coxeter_transformation`
+
+        EXAMPLES::
+
+            sage: P = Poset([[1,3,2],[4],[4,5,6],[6],[7],[7],[7],[]])
+            sage: H = P._hasse_diagram
+            sage: M = H.lequal_matrix(); M
+            [1 1 1 1 1 1 1 1]
+            [0 1 0 1 0 0 0 1]
+            [0 0 1 1 1 0 1 1]
+            [0 0 0 1 0 0 0 1]
+            [0 0 0 0 1 0 0 1]
+            [0 0 0 0 0 1 1 1]
+            [0 0 0 0 0 0 1 1]
+            [0 0 0 0 0 0 0 1]
+            sage: M.base_ring()
+            Integer Ring
+
+            sage: P = posets.DiamondPoset(6)
+            sage: H = P._hasse_diagram
+            sage: M = H.lequal_matrix(boolean=True)
+            sage: M.base_ring()
+            Finite Field of size 2
 
         TESTS::
 
             sage: H.lequal_matrix().is_immutable()
             True
         """
-        return self._leq_matrix
+        if boolean:
+            return self._leq_matrix_boolean
+        else:
+            return self._leq_matrix
 
     def _alternate_is_lequal(self, i, j):
         r"""
@@ -1199,7 +1286,7 @@ class HasseDiagram(DiGraph):
         .. NOTE::
 
             If the :meth:`lequal_matrix` has been computed, then
-            :meth:`is_lequal` is redefined to use the cached matrix.
+            :meth:`is_lequal` is redefined to use the cached data.
 
         EXAMPLES::
 
@@ -1223,7 +1310,7 @@ class HasseDiagram(DiGraph):
             sage: H._alternate_is_lequal(z,z)
             True
         """
-        return bool(self._leq_matrix[i, j])
+        return j in self._leq_storage[i]
 
     def prime_elements(self):
         r"""
@@ -2026,7 +2113,7 @@ class HasseDiagram(DiGraph):
             sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
-        mat = self._leq_matrix
+        mat = self._leq_matrix_boolean
         return not mat[i, j] and not mat[j, i]
 
     def are_comparable(self, i, j):
@@ -2046,7 +2133,7 @@ class HasseDiagram(DiGraph):
             sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
         """
-        mat = self._leq_matrix
+        mat = self._leq_matrix_boolean
         return bool(mat[i, j]) or bool(mat[j, i])
 
     def antichains(self, element_class=list):
@@ -2528,8 +2615,8 @@ class HasseDiagram(DiGraph):
         EXAMPLES::
 
             sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H= HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4, 5],
-            ....:                  4: [6], 5:[6]})
+            sage: H = HasseDiagram({0: [1, 2], 1: [4], 2: [3], 3: [4, 5],
+            ....:                   4: [6], 5:[6]})
             sage: sorted(H.neutral_elements())
             [0, 4, 6]
 

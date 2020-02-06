@@ -135,9 +135,9 @@ from .tableau_tuple import (StandardTableaux_residue,
                             RowStandardTableauTuples_residue,
                             RowStandardTableauTuples_residue_shape)
 
-#--------------------------------------------------
+# -------------------------------------------------
 # Residue sequences
-#--------------------------------------------------
+# -------------------------------------------------
 
 # needed for __classcall_private__
 @add_metaclass(InheritComparisonClasscallMetaclass)
@@ -216,7 +216,7 @@ class ResidueSequence(ClonableArray):
     def __classcall_private__(cls, e, multicharge, residues=None, check=True):
         r"""
         Magic to allow class to accept a list (which is not hashable) instead
-        of a partition (which is). At the same time we ensue that every
+        of a partition (which is). At the same time we ensure that every
         residue sequence is constructed as an ``element_class`` call of
         an appropriate parent.
 
@@ -303,9 +303,10 @@ class ResidueSequence(ClonableArray):
             sage: ResidueSequence(3,(0,0,1),[0,0,1,1,2,2,3,3]).__str__('and')
             '3-residue sequence (0,0,1,1,2,2,0,0) and multicharge (0,0,1)'
         """
-        return '{e}-residue sequence ({res}) {join} multicharge ({charge})'.format(
-                  e=self.quantum_characteristic(),  res=','.join('%s'%r for r in self), 
-                  join=join, charge=','.join('%s'%r for r in self.multicharge()))
+        string = '{e}-residue sequence ({res}) {join} multicharge ({charge})'
+        return string.format(e=self.quantum_characteristic(),
+                             res=','.join('%s' % r for r in self), join=join,
+                             charge=','.join('%s' % r for r in self.multicharge()))
 
     def __getitem__(self, k):
         r"""
@@ -336,7 +337,7 @@ class ResidueSequence(ClonableArray):
             IndexError: k must be in the range 1, 2, ..., 8
         """
         try:
-            return ClonableArray.__getitem__(self, k-1)
+            return ClonableArray.__getitem__(self, k - 1)
         except (IndexError, KeyError):
             raise IndexError('k must be in the range 1, 2, ..., {}'.format(len(self)))
 
@@ -352,7 +353,7 @@ class ResidueSequence(ClonableArray):
         """
         return [r for r in self]
 
-    def restrict(self,m):
+    def restrict(self, m):
         r"""
         Return the subsequence of this sequence of length `m`.
 
@@ -391,36 +392,39 @@ class ResidueSequence(ClonableArray):
             sage: ResidueSequence(3, [1,0], [0,1,2,2,0,1]).restrict_row((1,1,2),1)
             3-residue sequence (2,0,1,0,1) with multicharge (1,0)
         """
-        residues = self.residues() # residue sequence
-        residues.reverse()         # reversed residue sequence
+        residues = self.residues()  # residue sequence
+        residues.reverse()          # reversed residue sequence
 
         if residues[0] + row == residues[0]:
-            # if the residues in the two rows are the same we don't need to do
-            # anything special
-            return self.restrict(len(residues)-1)
+            # if the residues in the two rows are the same we do not
+            # need to do anything special
+            return self.restrict(len(residues) - 1)
 
         # determine the sets of residues, one_res and two_res, that need to be
         # interchanged in order to swap the corresponding rows
-        row_len = cell[-1] # length of the row being swapped
-        one_res = [0]      # last row of tableau will move
-        two_res = [0]      # will prune this entry later
+        row_len = cell[-1]  # length of the row being swapped
+        one_res = [0]       # last row of tableau will move
+        two_res = [0]       # will prune this entry later
         try:
-            for c in range(1, row_len+1):
+            for c in range(1, row_len + 1):
                 # residues decrease by 1 from right to left in each row
-                one_res.append(residues.index(residues[0]-c, one_res[c-1]+1))
-            for c in range(row_len+1):
-                two_res.append(residues.index(residues[0]-c+row, two_res[c]+1))
+                one_res.append(residues.index(residues[0] - c,
+                                              one_res[c - 1] + 1))
+            for c in range(row_len + 1):
+                two_res.append(residues.index(residues[0] - c + row,
+                                              two_res[c] + 1))
                 while two_res[-1] in one_res:
                     # entries in one_res and two_res must be disjoint
-                    two_res[-1] = residues.index(residues[0]-c+row, two_res[-1]+1)
+                    two_res[-1] = residues.index(residues[0] - c + row,
+                                                 two_res[-1] + 1)
         except ValueError:
             return None
 
         # now add row to the residues in two_res and subtract row from those in
         # one_res
-        for c in range(row_len+1):
+        for c in range(row_len + 1):
             residues[one_res[c]] += row
-            residues[two_res[c+1]] -= row # jump over two_res[0]
+            residues[two_res[c + 1]] -= row  # jump over two_res[0]
 
         # remove the first residue, reverse the order and return
         return ResidueSequence(self.quantum_characteristic(),
@@ -463,7 +467,7 @@ class ResidueSequence(ClonableArray):
             try:
                 # we have overridden __getitem__ so that indices are 1-based but
                 # __setitem__ is still 0-based so we need to renormalise the LHS
-                swap[i-1], swap[j-1] = self[j], self[i]
+                swap[i - 1], swap[j - 1] = self[j], self[i]
             except IndexError:
                 raise IndexError('%s and %s must be between 1 and %s' % (i, j, self.size()))
         return swap
@@ -498,7 +502,8 @@ class ResidueSequence(ClonableArray):
         if shape is None:
             return StandardTableaux_residue(residue=self)
         else:
-            return StandardTableaux_residue_shape(residue=self,shape=PartitionTuple(shape))
+            return StandardTableaux_residue_shape(residue=self,
+                                                  shape=PartitionTuple(shape))
 
     def row_standard_tableaux(self, shape=None):
         r"""
@@ -660,7 +665,7 @@ class ResidueSequence(ClonableArray):
 
     def size(self):
         r"""
-        Return the size of the residue sequence. 
+        Return the size of the residue sequence.
 
         This is the size, or length, of the residue sequence, which is the
         same as  the size of the :meth:`standard_tableaux` that belong to
@@ -722,7 +727,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         """
         self._quantum_characteristic = e
         self._base_ring = IntegerModRing(self._quantum_characteristic)
-        self._multicharge=tuple(self._base_ring(i) for i in multicharge)
+        self._multicharge = tuple(self._base_ring(i) for i in multicharge)
         super(ResidueSequences, self).__init__(category=Sets())
 
     def _repr_(self):
@@ -753,7 +758,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         """
         return self.element_class(self, self._multicharge, check=True)
 
-    def _cell_residue_level_one(self, r,c):
+    def _cell_residue_level_one(self, r, c):
         r"""
         Return the residue a cell of level 1. It is called indirectly via
         :meth:`cell_residue`.
@@ -764,12 +769,13 @@ class ResidueSequences(UniqueRepresentation, Parent):
             sage: ResidueSequences(3).cell_residue(1,0)  # indirect doctest
             2
         """
-        return self._base_ring(c-r)
+        return self._base_ring(c - r)
 
-    def _cell_residue_higher_levels(self, k,r,c):
+    def _cell_residue_higher_levels(self, k, r, c):
         r"""
-        Return the residue a cell of level greater than 1. It is called
-        indirectly via :meth:`cell_residue`.
+        Return the residue a cell of level greater than 1.
+
+        It is called indirectly via :meth:`cell_residue`.
 
         EXAMPLES::
 
@@ -777,7 +783,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
             sage: ResidueSequences(3,(0,0,1)).cell_residue(2,0,0) # indirect doctest
             1
         """
-        return self._base_ring(self._multicharge[k]+c-r)
+        return self._base_ring(self._multicharge[k] + c - r)
 
     @lazy_attribute
     def cell_residue(self, *args):
@@ -851,4 +857,4 @@ class ResidueSequences(UniqueRepresentation, Parent):
             3-residue sequence (2,0,1,1,2,2,0,0) with multicharge (0,0,1)
         """
         if any(r not in self._base_ring for r in element):
-            raise ValueError('not a {}-residue sequence {}'.format(self._quantum_characteristic))
+            raise ValueError('not a {}-residue sequence'.format(self._quantum_characteristic))

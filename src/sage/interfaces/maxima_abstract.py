@@ -1119,7 +1119,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         return self.display2d(onscreen=False)
 
-    def bool(self):
+    def __bool__(self):
         """
         Convert ``self`` into a boolean.
 
@@ -1129,13 +1129,22 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: maxima(0).bool()
+            sage: bool(maxima(0))
             False
-            sage: maxima(1).bool()
+            sage: bool(maxima(1))
+            True
+            sage: bool(maxima('false'))
+            False
+            sage: bool(maxima('true'))
             True
         """
         P = self._check_valid()
-        return P.eval('is(%s = 0);'%self.name()) == P._false_symbol() # but be careful, since for relations things like is(equal(a,b)) are what Maxima needs
+        return (P.eval('is({0} = 0 or {0} = false);'.format(self.name()))
+                != P._true_symbol())
+        # but be careful, since for relations things like is(equal(a,b)) are
+        # what Maxima needs
+
+    __nonzero__ = __bool__
 
     def _richcmp_(self, other, op):
         """
@@ -1226,12 +1235,19 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             [  1   y y^2]
             [  1 1/2 1/4]
 
+        TESTS:
+
         Check if :trac:`7661` is fixed::
 
             sage: var('delta')
             delta
             sage: (2*delta).simplify()
             2*delta
+
+        Check conversion of Booleans (:trac:`28705`)::
+
+            sage: maxima('true')._sage_(), maxima('false')._sage_()
+            (True, False)
         """
         import sage.calculus.calculus as calculus
         return calculus.symbolic_expression_from_maxima_string(self.name(),

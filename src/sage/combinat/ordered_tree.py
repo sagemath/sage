@@ -451,7 +451,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         lower_path.append(0)
         lower_path += [1] * (self.node_number() - len(lower_path))
 
-        upper_path =[]
+        upper_path = []
         for i in range(1, len(upper_nodes)):
             upper_path.append(1)
             upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))

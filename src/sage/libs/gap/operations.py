@@ -102,7 +102,7 @@ class OperationInspector(SageObject):
             return any(all(IS_SUBSET_FLAGS(self.flags, fl) for fl in fls)
                        for fls in filts)
 
-        return filter(mfi, OPERATIONS)
+        return (op for op in OPERATIONS if mfi(op))
 
     def op_names(self):
         """

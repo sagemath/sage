@@ -2,15 +2,13 @@ r"""
 Base class for sparse matrices
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
 from cysignals.memory cimport check_allocarray, sig_free
@@ -42,8 +40,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         Return the matrix obtained by coercing the entries of this matrix
         into the given ring.
 
-        Always returns a copy (unless self is immutable, in which case
-        returns self).
+        Always returns a copy (unless ``self`` is immutable, in which case
+        returns ``self``).
 
         EXAMPLES::
 
@@ -307,11 +305,11 @@ cdef class Matrix_sparse(matrix.Matrix):
         INPUT:
 
         - `right` -- a ring element which must already be in the basering
-          of self (no coercion done here).
+          of ``self`` (no coercion done here).
 
         OUTPUT:
 
-        - the matrix self * right
+        the matrix ``self * right``
 
         EXAMPLES::
 
@@ -332,13 +330,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             [ 3/2  7/4    2  9/4  5/2 11/4]
             [   3 13/4  7/2 15/4    4 17/4]
 
-        Really Large Example you wouldn't want to do with normal matrices::
+        Really Large Example you would not want to do with normal matrices::
 
-            sage: M=MatrixSpace(QQ, 100000, 1000000, sparse=True)
-            sage: m=M.random_element(density=1/100000000)
-            sage: m==(97/42)*(42/97*m)
+            sage: M = MatrixSpace(QQ, 100000, 1000000, sparse=True)
+            sage: m = M.random_element(density=1/100000000)
+            sage: m == (97/42)*(42/97*m)
             True
-
         """
         cdef Py_ssize_t k, r, c
         cdef Matrix_sparse M
@@ -404,22 +401,20 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def transpose(self):
         """
-        Returns the transpose of self, without changing self.
+        Return the transpose of ``self``, without changing ``self``.
 
         EXAMPLES: We create a matrix, compute its transpose, and note that
         the original matrix is not changed.
 
         ::
 
-            sage: M = MatrixSpace(QQ,  2, sparse=True)
-            sage: A = M([1,2,3,4])
-            sage: B = A.transpose()
-            sage: print(B)
-            [1 3]
-            [2 4]
-            sage: print(A)
+            sage: M = MatrixSpace(QQ, 2, sparse=True)
+            sage: A = M([1,2,3,4]); A
             [1 2]
             [3 4]
+            sage: B = A.transpose(); B
+            [1 3]
+            [2 4]
 
         ``.T`` is a convenient shortcut for the transpose::
 
@@ -427,6 +422,7 @@ cdef class Matrix_sparse(matrix.Matrix):
            [1 3]
            [2 4]
 
+        .. SEEALSO:: :meth:`antitranspose`
         """
         cdef Matrix_sparse A
         A = self.new_matrix(self._ncols, self._nrows)
@@ -443,6 +439,23 @@ cdef class Matrix_sparse(matrix.Matrix):
         return A
 
     def antitranspose(self):
+        """
+        Return the antitranspose of ``self``, without changing ``self``.
+
+        This is the mirror image along the other diagonal.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(QQ, 2, sparse=True)
+            sage: A = M([1,2,3,4]); A
+            [1 2]
+            [3 4]
+            sage: A.antitranspose()
+            [4 2]
+            [3 1]
+
+        .. SEEALSO:: :meth:`transpose`
+        """
         cdef Matrix_sparse A
         A = self.new_matrix(self._ncols, self._nrows)
 
@@ -505,10 +518,13 @@ cdef class Matrix_sparse(matrix.Matrix):
         """
         Return the characteristic polynomial of this matrix.
 
-        Note - the generic sparse charpoly implementation in Sage is to
-        just compute the charpoly of the corresponding dense matrix, so
-        this could use a lot of memory. In particular, for this matrix, the
-        charpoly will be computed using a dense algorithm.
+        .. NOTE::
+
+            the generic sparse charpoly implementation in Sage is to
+            just compute the charpoly of the corresponding dense
+            matrix, so this could use a lot of memory. In particular,
+            for this matrix, the charpoly will be computed using a
+            dense algorithm.
 
         EXAMPLES::
 
@@ -555,7 +571,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def _elementwise_product(self, right):
         r"""
-        Returns the elementwise product of two sparse
+        Return the elementwise product of two sparse
         matrices with identical base rings.
 
         This routine assumes that ``self`` and ``right``
@@ -601,19 +617,17 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def apply_morphism(self, phi):
         """
-        Apply the morphism phi to the coefficients of this sparse matrix.
+        Apply the morphism ``phi`` to the coefficients of this sparse matrix.
 
-        The resulting matrix is over the codomain of phi.
+        The resulting matrix is over the codomain of ``phi``.
 
         INPUT:
 
+        - ``phi`` -- a morphism, so ``phi`` is callable and
+           ``phi.domain()`` and ``phi.codomain()`` are defined. The
+           codomain must be a ring.
 
-        -  ``phi`` - a morphism, so phi is callable and
-           phi.domain() and phi.codomain() are defined. The codomain must be a
-           ring.
-
-
-        OUTPUT: a matrix over the codomain of phi
+        OUTPUT: a matrix over the codomain of ``phi``
 
         EXAMPLES::
 
@@ -628,26 +642,27 @@ cdef class Matrix_sparse(matrix.Matrix):
         """
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
-                   self._ncols, sparse=True)
-        return M(dict([(ij,phi(z)) for ij,z in self.dict().iteritems()]))
+                                                 self._ncols, sparse=True)
+        return M({ij: phi(z) for ij, z in self.dict().iteritems()})
 
     def apply_map(self, phi, R=None, sparse=True):
-        """
-        Apply the given map phi (an arbitrary Python function or callable
-        object) to this matrix. If R is not given, automatically determine
-        the base ring of the resulting matrix.
+        r"""
+        Apply the given map ``phi`` (an arbitrary Python function or callable
+        object) to this matrix.
+
+        If ``R`` is not given, automatically determine the base ring
+        of the resulting matrix.
 
         INPUT:
-            sparse -- False to make the output a dense matrix; default True
 
+        - ``phi`` -- arbitrary Python function or callable object
 
-        -  ``phi`` - arbitrary Python function or callable
-           object
+        -  ``R`` -- (optional) ring
 
-        -  ``R`` - (optional) ring
+        - ``sparse`` -- (optional, default ``True``) whether to return
+          a sparse or a dense matrix
 
-
-        OUTPUT: a matrix over R
+        OUTPUT: a matrix over ``R``
 
         EXAMPLES::
 
@@ -670,8 +685,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: n[1,2]
             2
 
-        If we didn't specify the codomain, the resulting matrix in the
-        above case ends up over ZZ again::
+        If we did not specify the codomain, the resulting matrix in the
+        above case ends up over `\ZZ` again::
 
             sage: n = m.apply_map(lambda x:x%3)
             sage: n.parent()
@@ -716,7 +731,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m.apply_map(lambda x: x*x, sparse=False).parent()
             Full MatrixSpace of 0 by 0 dense matrices over Integer Ring
 
-        Check that we don't unnecessarily apply phi to 0 in the sparse case::
+        Check that we do not unnecessarily apply phi to 0 in the sparse case::
 
             sage: m = matrix(QQ, 2, 2, range(1, 5), sparse=True)
             sage: m.apply_map(lambda x: 1/x)
@@ -752,7 +767,7 @@ cdef class Matrix_sparse(matrix.Matrix):
                 w.append(zero_res)
             w = sage.structure.sequence.Sequence(w)
             R = w.universe()
-            v = dict([(v[i][0],w[i]) for i in range(len(v))])
+            v = {v[i][0]: w[i] for i in range(len(v))}
         else:
             v = dict(v)
         if zero_res is not None:
@@ -774,8 +789,8 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def _derivative(self, var=None, R=None):
         """
-        Differentiate with respect to var by differentiating each element
-        with respect to var.
+        Differentiate with respect to ``var`` by differentiating each element
+        with respect to ``var``.
 
         .. SEEALSO::
 
@@ -788,17 +803,17 @@ cdef class Matrix_sparse(matrix.Matrix):
             [    0     1]
             [  2*x 3*x^2]
         """
-        # We would just use apply_map, except that Cython doesn't
+        # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij,z in self.dict().iteritems()]
+        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
             R = w.universe()
-            v = dict([(v[i][0],w[i]) for i in range(len(v))])
+            v = {v[i][0]: w[i] for i in range(len(v))}
         else:
             v = dict(v)
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
@@ -810,8 +825,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         Return the density of the matrix.
 
         By density we understand the ratio of the number of nonzero
-        positions and the self.nrows() \* self.ncols(), i.e. the number of
-        possible nonzero positions.
+        positions and the number ``self.nrows() * self.ncols()``,
+        i.e. the number of possible nonzero positions.
 
         EXAMPLES::
 
@@ -825,12 +840,11 @@ cdef class Matrix_sparse(matrix.Matrix):
         if nc == 0 or nr == 0:
             return 0
         from sage.rings.rational_field import QQ
-        d = QQ(len(self.nonzero_positions(copy=False))) / (nr*nc)
-        return d
+        return QQ(len(self.nonzero_positions(copy=False))) / (nr * nc)
 
     def matrix_from_rows_and_columns(self, rows, columns):
         """
-        Return the matrix constructed from self from the given rows and
+        Return the matrix constructed from ``self`` from the given rows and
         columns.
 
         EXAMPLES::
@@ -1092,13 +1106,13 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     cdef _vector_times_matrix_(self, Vector v):
         """
-        Returns the vector times matrix product.
+        Return the vector times matrix product.
 
         INPUT:
 
-            -  ``v`` - a free module element.
+        -  ``v`` -- a free module element
 
-        OUTPUT: The vector times matrix product v*A.
+        OUTPUT: the vector times matrix product ``v*A``
 
         EXAMPLES::
 
@@ -1125,13 +1139,13 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     cdef _matrix_times_vector_(self, Vector v):
         """
-        Returns the matrix times vector product.
+        Return the matrix times vector product.
 
         INPUT:
 
-            -  ``v`` - a free module element.
+        - ``v`` -- a free module element
 
-        OUTPUT: The matrix times vector product A*v.
+        OUTPUT: the matrix times vector product ``A*v``
 
         EXAMPLES::
 

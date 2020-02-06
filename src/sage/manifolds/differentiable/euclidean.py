@@ -1205,7 +1205,7 @@ class EuclideanPlane(EuclideanSpace):
         r, ph = chart_pol[:]
         pol_to_cart = chart_pol.transition_map(chart_cart,
                                                [r*cos(ph), r*sin(ph)])
-        pol_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y,x))
+        pol_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y,x), check=False)
         # Automorphism Cartesian frame --> orthonormal polar frame:
         oframe = self._polar_frame
         cframe = chart_cart.frame()
@@ -1795,7 +1795,8 @@ class Euclidean3dimSpace(EuclideanSpace):
         spher_to_cart = chart_spher.transition_map(chart_cart,
                              [r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)])
         spher_to_cart.set_inverse(sqrt(x**2+y**2+z**2),
-                                  atan2(sqrt(x**2+y**2),z), atan2(y, x))
+                                  atan2(sqrt(x**2+y**2),z), atan2(y, x),
+                                  check=False)
         # Automorphism Cartesian frame --> orthonormal spherical frame:
         oframe = self._spherical_frame
         cframe = chart_cart.frame()
@@ -1872,7 +1873,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         rh, ph, z = chart_cylind[:]
         cylind_to_cart = chart_cylind.transition_map(chart_cart,
                                                      [rh*cos(ph), rh*sin(ph), z])
-        cylind_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y, x), z)
+        cylind_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y, x), z, check=False)
         # Automorphism Cartesian frame --> orthonormal cylindrical frame:
         oframe = self._cylindrical_frame
         cframe = chart_cart.frame()
@@ -1949,7 +1950,8 @@ class Euclidean3dimSpace(EuclideanSpace):
         r, th, ph = spher[:]
         spher_to_cylind = spher.transition_map(cylind,
                                                [r*sin(th), ph, r*cos(th)])
-        spher_to_cylind.set_inverse(sqrt(rh**2 + z**2), atan2(rh,z), ph)
+        spher_to_cylind.set_inverse(sqrt(rh**2 + z**2), atan2(rh,z), ph,
+                                    check=False)
         # Automorphism orthon. cylindrical frame -> orthon. spherical frame
         cf = cylind.frame() # coordinate cylindrical frame
         sf = spher.frame()  # coordinate spherical frame

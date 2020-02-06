@@ -95,7 +95,7 @@ r"""
     sage: B.inverse()
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Matrix is singular
+    ZeroDivisionError: matrix must be nonsingular
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

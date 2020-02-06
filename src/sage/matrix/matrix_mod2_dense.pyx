@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-Dense matrices over GF(2) using the M4RI library.
+Dense matrices over GF(2) using the M4RI library
 
 AUTHOR: Martin Albrecht <malb@informatik.uni-bremen.de>
 
@@ -99,7 +100,6 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_str, sig_off
@@ -115,6 +115,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.misc import verbose, get_verbose, cputime
 from sage.modules.free_module import VectorSpace
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
+from sage.structure.richcmp cimport rich_to_bool
 from sage.cpython.string cimport bytes_to_str, char_to_str, str_to_bytes
 from sage.cpython.string import FS_ENCODING
 
@@ -333,27 +334,39 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             return self._zero
 
 
-    def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None):
+    def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
+            *, unicode=False, shape=None):
         r"""
         Return a nice string representation of the matrix.
 
         INPUT:
 
-        - ``rep_mapping`` - a dictionary or callable used to override
+        - ``rep_mapping`` -- a dictionary or callable used to override
           the usual representation of elements.  For a dictionary,
           keys should be elements of the base ring and values the
           desired string representation.
 
-        - ``zero`` - string (default: ``None``); if not ``None`` use
+        - ``zero`` -- string (default: ``None``); if not ``None`` use
           the value of ``zero`` as the representation of the zero
           element.
 
-        - ``plus_one`` - string (default: ``None``); if not ``None``
+        - ``plus_one`` -- string (default: ``None``); if not ``None``
           use the value of ``plus_one`` as the representation of the
           one element.
 
-        - ``minus_one`` - Ignored.  Only for compatibility with
+        - ``minus_one`` -- Ignored.  Only for compatibility with
           generic matrices.
+
+        - ``unicode`` -- boolean (default: ``False``).
+          Whether to use Unicode symbols instead of ASCII symbols
+          for brackets and subdivision lines.
+
+        - ``shape`` -- one of ``"square"`` or ``"round"`` (default: ``None``).
+          Switches between round and square brackets.
+          The default depends on the setting of the ``unicode`` keyword
+          argument. For Unicode symbols, the default is round brackets
+          in accordance with the TeX rendering,
+          while the ASCII rendering defaults to square brackets.
 
         EXAMPLES::
 
@@ -372,7 +385,28 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             [0 0 0|0 0 0]
             sage: B.str(zero='.')
             '[. 1 .]\n[. 1 1]\n[. . .]'
+
+            sage: M = matrix.identity(GF(2), 3)
+            sage: M.subdivide(None, 2)
+            sage: print(M.str(unicode=True, shape='square'))
+            ⎡1 0│0⎤
+            ⎢0 1│0⎥
+            ⎣0 0│1⎦
+            sage: print(unicode_art(M))  # indirect doctest
+            ⎛1 0│0⎞
+            ⎜0 1│0⎟
+            ⎝0 0│1⎠
         """
+        # Set the mapping based on keyword arguments
+        # We ignore minus_one (it's only there for compatibility with Matrix)
+        if (rep_mapping is not None or zero is not None or plus_one is not None
+                or unicode or shape is not None):
+            # Shunt mappings off to the generic code since they might not be
+            # single characters
+            return matrix_dense.Matrix_dense.str(self, rep_mapping=rep_mapping,
+                                                 zero=zero, plus_one=plus_one,
+                                                 unicode=unicode, shape=shape)
+
         if self._nrows == 0 or self._ncols == 0:
             return "[]"
 
@@ -381,12 +415,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         empty_row = b' '*(self._ncols*2-1)
         cdef char *row_s
         cdef char *div_s
-
-        # Set the mapping based on keyword arguments
-        # We ignore minus_one (it's only there for compatibility with Matrix)
-        if rep_mapping is not None or zero is not None or plus_one is not None:
-        # Shunt mappings off to the generic code since they might not be single characters
-            return matrix_dense.Matrix_dense.str(self, rep_mapping=rep_mapping, zero=zero, plus_one=plus_one)
 
         cdef list row_div, col_div
         if self._subdivisions is not None:
@@ -478,7 +506,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     #   * def _pickle
     #   * def _unpickle
     #   * cdef _mul_
-    #   * cpdef _cmp_
+    #   * cpdef _richcmp_
     #   * _list -- list of underlying elements (need not be a copy)
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
     ########################################################################
@@ -1374,9 +1402,11 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.subdivide(*self.subdivisions())
         return A
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
-        Compares ``self`` with ``right``. While equality and
+        Compare ``self`` with ``right``.
+
+        While equality and
         inequality are clearly defined, ``<`` and ``>`` are not.  For
         those first the matrix dimensions of ``self`` and ``right``
         are compared. If these match then ``<`` means that there is a
@@ -1401,9 +1431,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             False
         """
         if self._nrows == 0 or self._ncols == 0:
-            return 0
-        return mzd_cmp(self._entries, (<Matrix_mod2_dense>right)._entries)
-
+            return rich_to_bool(op, 0)
+        return rich_to_bool(op, mzd_cmp(self._entries,
+                                        (<Matrix_mod2_dense>right)._entries))
 
     def augment(self, right, subdivide=False):
         r"""

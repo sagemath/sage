@@ -289,6 +289,5 @@ def ascii_art(*obj, **kwds):
         from copy import copy
         separator = copy(separator)
         separator._baseline = sep_baseline
-    obj = map(_ascii_art_factory.build, obj)
-    return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art, baseline=baseline)
-
+    return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art,
+                                          baseline=baseline)

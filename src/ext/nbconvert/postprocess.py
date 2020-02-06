@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 
 r"""
 This postprocess script fixes some issues with .rst files returned by nbconvert:

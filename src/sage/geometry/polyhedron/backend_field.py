@@ -65,6 +65,11 @@ class Polyhedron_field(Polyhedron_base):
         sage: P2 = Polyhedron(ieqs=[[-1,-phi,0]])
         sage: P1.intersection(P2)
         The empty polyhedron in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
+
+    Check that :trac:`28654` is fixed::
+
+        sage: Polyhedron(lines=[[1]], backend='field')
+        A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex and 1 line
     """
     def _is_zero(self, x):
         """

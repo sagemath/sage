@@ -16,7 +16,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.numerical.mip import MIPSolverException
 from .generic_backend cimport GenericBackend

@@ -40,8 +40,6 @@ Test NumPy conversions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 cimport libc.math
 from libc.string cimport memcpy
 from cpython.object cimport *

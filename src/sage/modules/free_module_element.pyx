@@ -109,7 +109,6 @@ This is a test from :trac:`20211`::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
@@ -146,14 +145,15 @@ def is_FreeModuleElement(x):
     """
     return isinstance(x, FreeModuleElement)
 
-def vector(arg0, arg1=None, arg2=None, sparse=None):
+def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     r"""
     Return a vector or free module element with specified entries.
 
     CALL FORMATS:
 
     This constructor can be called in several different ways.
-    In each case, ``sparse=True`` or ``sparse=False`` can be
+    In each case, ``sparse=True`` or ``sparse=False`` as well
+    as ``immutable=True`` or ``immutable=False`` can be
     supplied as an option.  ``free_module_element()`` is an
     alias for ``vector()``.
 
@@ -181,6 +181,9 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
 
     - ``sparse`` -- boolean, whether the result should be a sparse
       vector
+
+    - ``immutable`` -- boolean (default: ``False``); whether the result
+      should be an immutable vector
 
     In call format 4, an error is raised if the ``degree`` does not match
     the length of ``object`` so this call can provide some safeguards.
@@ -429,6 +432,36 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
         ()
         sage: x.parent()
         Ambient free module of rank 0 over the principal ideal domain Integer Ring
+
+    The ``immutable`` switch allows to create an immutable vector. ::
+
+        sage: v = vector(QQ, {0:1/2, 4:-6, 7:0}, immutable=True); v
+        (1/2, 0, 0, 0, -6, 0, 0, 0)
+        sage: v.is_immutable()
+        True
+
+    The ``immutable`` switch works regardless of the type of valid input to the
+    constructor. ::
+
+        sage: v = vector(ZZ, 4, immutable=True)
+        sage: v.is_immutable()
+        True
+        sage: w = vector(ZZ, [1,2,3])
+        sage: v = vector(w, ZZ, immutable=True)
+        sage: v.is_immutable()
+        True
+        sage: v = vector(QQ, w, immutable=True)
+        sage: v.is_immutable()
+        True
+        sage: import numpy as np
+        sage: w = np.array([1, 2, pi], np.float)
+        sage: v = vector(w, immutable=True)
+        sage: v.is_immutable()
+        True
+        sage: w = np.array([i, 2, 3], np.complex)
+        sage: v = vector(w, immutable=True)
+        sage: v.is_immutable()
+        True
     """
     # We first efficiently handle the important special case of the zero vector
     # over a ring. See trac 11657.
@@ -439,15 +472,24 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
             M = FreeModule(arg0, arg1, sparse=True)
         else:
             M = arg0 ** arg1
-        return M.zero_vector()
+        v = M.zero_vector()
+        if immutable:
+            v.set_immutable()
+        return v
 
     # WARNING TO FUTURE OPTIMIZERS: The following two hasattr's take
     # quite a significant amount of time.
     if hasattr(arg0, '_vector_'):
-        return arg0._vector_(arg1)
+        v = arg0._vector_(arg1)
+        if immutable:
+            v.set_immutable()
+        return v
 
     if hasattr(arg1, '_vector_'):
-        return arg1._vector_(arg0)
+        v = arg1._vector_(arg0)
+        if immutable:
+            v.set_immutable()
+        return v
 
     # consider a possible degree specified in second argument
     degree = None
@@ -491,11 +533,17 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
         if (R is None or R is RDF) and v.dtype.kind == 'f':
             V = VectorSpace(RDF, v.shape[0])
             from .vector_real_double_dense import Vector_real_double_dense
-            return Vector_real_double_dense(V, v)
+            v = Vector_real_double_dense(V, v)
+            if immutable:
+                v.set_immutable()
+            return v
         if (R is None or R is CDF) and v.dtype.kind == 'c':
             V = VectorSpace(CDF, v.shape[0])
             from .vector_complex_double_dense import Vector_complex_double_dense
-            return Vector_complex_double_dense(V, v)
+            v = Vector_complex_double_dense(V, v)
+            if immutable:
+                v.set_immutable()
+            return v
         # Use slower conversion via list
         v = list(v)
 
@@ -516,7 +564,11 @@ def vector(arg0, arg1=None, arg2=None, sparse=None):
         M = FreeModule(R, len(v), sparse=True)
     else:
         M = R ** len(v)
-    return M(v)
+
+    w = M(v)
+    if immutable:
+        w.set_immutable()
+    return w
 
 
 free_module_element = vector
@@ -3484,6 +3536,41 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             True
         """
         return True
+
+    def _macaulay2_(self, macaulay2=None):
+        r"""
+        Convert this vector to a Macaulay2 vector.
+
+        EXAMPLES::
+
+            sage: vector(QQ, [1, 2, 3])._macaulay2_()  # optional - macaulay2
+            | 1 |
+            | 2 |
+            | 3 |
+            sage: _.ring()                             # optional - macaulay2
+            QQ
+
+        ::
+
+            sage: R.<x,y> = QQ[]
+            sage: macaulay2(vector(R, [1, x+y]))  # optional - macaulay2
+            |  1  |
+            | x+y |
+
+        TESTS:
+
+        Entries of the vector get promoted to the base ring::
+
+            sage: R.<x,y> = QQ[]
+            sage: v = macaulay2(vector(R, [1, 2]))      # optional - macaulay2
+            sage: v.ring()._operator('===', R).sage()   # optional - macaulay2
+            True
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+        return (macaulay2(self.base_ring()).matrix([self.list()]).transpose()
+                .vector())
 
     def _mathematica_init_(self):
         """

@@ -9,13 +9,14 @@ Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
 from __future__ import absolute_import
 from six.moves import range
 
 from sage.groups.old import Group
+from sage.categories.groups import Groups
 from sage.rings.all import ZZ
 from sage.arith.all import lcm
 from sage.misc.cachefunc import cached_method
@@ -29,9 +30,10 @@ from sage.structure.element import parent
 
 from .arithgroup_element import ArithmeticSubgroupElement, M2Z as Mat2Z
 
+
 def is_ArithmeticSubgroup(x):
     r"""
-    Return True if x is of type ArithmeticSubgroup.
+    Return ``True`` if ``x`` is of type :class:`ArithmeticSubgroup`.
 
     EXAMPLES::
 
@@ -41,7 +43,6 @@ def is_ArithmeticSubgroup(x):
         sage: is_ArithmeticSubgroup(Gamma0(4))
         True
     """
-
     return isinstance(x, ArithmeticSubgroup)
 
 
@@ -63,9 +64,9 @@ class ArithmeticSubgroup(Group):
 
             sage: G = Gamma1(7)
             sage: G.category() # indirect doctest
-            Category of groups
+            Category of infinite groups
         """
-        Group.__init__(self)
+        Group.__init__(self, category=Groups().Infinite())
 
     def _repr_(self):
         r"""

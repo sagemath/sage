@@ -9,7 +9,6 @@ Library interface to Embeddable Common Lisp (ECL)
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 #This version of the library interface prefers to convert ECL integers and
 #rationals to SAGE types Integer and Rational. These parts could easily be
@@ -478,8 +477,8 @@ cdef cl_object python_to_ecl(pyobj) except NULL:
                 python_to_ecl( (<Rational>pyobj).denominator()))
     elif isinstance(pyobj,EclObject):
         return (<EclObject>pyobj).obj
-    elif isinstance(pyobj,list):
-        if len(pyobj) == 0:
+    elif isinstance(pyobj, list):
+        if not pyobj:
             return Cnil
         else:
             L=cl_cons(python_to_ecl(pyobj[0]),Cnil)
@@ -488,8 +487,8 @@ cdef cl_object python_to_ecl(pyobj) except NULL:
                 cl_rplacd(ptr,cl_cons(python_to_ecl(a),Cnil))
                 ptr=cl_cdr(ptr)
             return L
-    elif isinstance(pyobj,tuple):
-        if len(pyobj) == 0:
+    elif isinstance(pyobj, tuple):
+        if not pyobj:
             return Cnil
         elif len(pyobj) == 1:
             return python_to_ecl(pyobj[0])

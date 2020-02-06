@@ -384,7 +384,6 @@ compare equal::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -481,7 +480,6 @@ cdef class RingMap_lift(RingMap):
         [0 1]
         [0 0]
     """
-    
     def __init__(self, R, S):
         """
         Create a lifting ring map.
@@ -808,10 +806,55 @@ cdef class RingHomomorphism(RingMap):
                       From: Multivariate Polynomial Ring in a, b over Rational Field
                       To:   Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field
 
+        We check that composition works when there is a base map::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = GF(7^2)
+            sage: L.<u> = K.extension(x^3 - 3)
+            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
+            sage: phi
+            Ring endomorphism of Univariate Quotient Polynomial Ring in u over Finite Field in a of size 7^2 with modulus u^3 + 4
+              Defn: u |--> 2*u
+                    with map of base ring
+            sage: psi = phi^3; psi
+            Ring endomorphism of Univariate Quotient Polynomial Ring in u over Finite Field in a of size 7^2 with modulus u^3 + 4
+              Defn: u |--> u
+                    with map of base ring
+            sage: psi(a) == phi(phi(phi(a)))
+            True
+
+        It also works when the image of the base map is not contained within the base ring of the codomain::
+
+            sage: S.<x> = QQ[]
+            sage: T.<y> = S[]
+            sage: cc = S.hom([x+y])
+            sage: f = T.hom([x-y], base_map=cc)
+            sage: f*f
+            Ring endomorphism of Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+              Defn: y |--> 2*y
+                    with map of base ring
+            sage: (f*f).base_map()
+            Ring morphism:
+              From: Univariate Polynomial Ring in x over Rational Field
+              To:   Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Rational Field
+              Defn: x |--> 2*x
+                    with map of base ring
+
+            sage: S.<x> = QQ[]
+            sage: T.<y> = S[]
+            sage: cc = S.hom([x+y])
+            sage: f = T.hom([x-y], base_map=cc)
+            sage: g = T.hom([x-y])
+            sage: (f*g)(x)
+            y + x
+            sage: f(g(x))
+            y + x
+
         AUTHORS:
 
         - Simon King (2010-05)
         - Francis Clarke (2011-02)
+        - David Roe (2019-10)
         """
         from sage.categories.morphism import IdentityMorphism
         from sage.categories.rings import Rings
@@ -819,8 +862,14 @@ cdef class RingHomomorphism(RingMap):
             return self
         if homset.homset_category().is_subcategory(Rings()):
             if isinstance(right, RingHomomorphism_im_gens):
+                rbm = right.base_map()
+                kwds = {'check': False}
+                if rbm is None and isinstance(self, RingHomomorphism_im_gens) and self.base_map() is not None:
+                    rbm = right.codomain().coerce_map_from(right.domain().base_ring())
+                if rbm is not None:
+                    kwds['base_map'] = self * rbm
                 try:
-                    return homset([self(g) for g in right.im_gens()], check=False)
+                    return homset([self(g) for g in right.im_gens()], **kwds)
                 except ValueError:
                     pass
             from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
@@ -1037,7 +1086,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: phi = S.hom([xx+1,xx-1])
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
         You can give a map of the base ring::
 
@@ -1049,14 +1098,28 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: z._im_gens_(R, [t^2], base_map=cc)
             (-4*i + 3)*t^4 - i*t^2 + 1
 
+        The base map's codomain is extended to the whole codomain::
+
+            sage: S.<x> = QQ[]
+            sage: T.<y> = S[]
+            sage: cc = S.hom([x+1])
+            sage: f = T.hom([x-y], base_map=cc)
+            sage: g = T.hom([x-y], base_map=cc.extend_codomain(T))
+            sage: f == g
+            True
+            sage: f.base_map() == cc.extend_codomain(T)
+            True
+
         There is a check option, but it may be ignored in some cases
         -- it's purpose isn't so you can lie to Sage, but to sometimes
         speed up creation of a homomorphism::
 
-            sage: phi = S.hom([xx+1,xx-1],check=False)
+            sage: R.<x,y> = QQ[]
+            sage: S.<xx,yy> = R.quotient(x - y)
+            sage: phi = S.hom([xx+1,xx-1], check=False)
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
         """
         RingHomomorphism.__init__(self, parent)
         if not isinstance(im_gens, sage.structure.sequence.Sequence_generic):
@@ -1067,6 +1130,12 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         if check:
             if len(im_gens) != parent.domain().ngens():
                 raise ValueError("number of images must equal number of generators")
+            if base_map is None:
+                tkwds = {}
+            else:
+                if base_map.codomain() is not self.codomain():
+                    base_map = base_map.extend_codomain(self.codomain())
+                tkwds = {'base_map': base_map}
             tkwds = {} if base_map is None else {'base_map': base_map}
             t = parent.domain()._is_valid_homomorphism_(parent.codomain(), im_gens, **tkwds)
             if not t:
@@ -1123,8 +1192,15 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: phi(i*y)
             -i*y^2
             sage: phi.base_map()
-            Ring endomorphism of Number Field in i with defining polynomial x^2 + 1
-              Defn: i |--> -i
+            Composite map:
+              From: Number Field in i with defining polynomial x^2 + 1
+              To:   Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
+              Defn:   Ring endomorphism of Number Field in i with defining polynomial x^2 + 1
+                      Defn: i |--> -i
+                    then
+                      Polynomial base injection morphism:
+                      From: Number Field in i with defining polynomial x^2 + 1
+                      To:   Univariate Polynomial Ring in y over Number Field in i with defining polynomial x^2 + 1
         """
         return self._base_map
 
@@ -1589,6 +1665,104 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             raise TypeError("invalid argument %s" % repr(x))
 
 
+cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
+    r"""
+    Morphisms between fraction fields.
+
+    TESTS::
+
+        sage: S.<x> = QQ[]
+        sage: f = S.hom([x^2])
+        sage: g = f.extend_to_fraction_field()
+        sage: type(g)
+        <type 'sage.rings.morphism.RingHomomorphism_from_fraction_field'>
+    """
+    def __init__(self, parent, morphism):
+        r"""
+        Initialize this morphism.
+
+        TESTS::
+
+            sage: A.<a> = ZZ.extension(x^2 - 2)
+            sage: f = A.coerce_map_from(ZZ)
+            sage: g = f.extend_to_fraction_field()   # indirect doctest
+            sage: g
+            Ring morphism:
+              From: Rational Field
+              To:   Number Field in a with defining polynomial x^2 - 2
+        """
+        RingHomomorphism.__init__(self, parent)
+        self._morphism = morphism
+
+    def _repr_defn(self):
+        r"""
+        Return a string definition of this morphism.
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = S.hom([x^2]).extend_to_fraction_field()
+            sage: f
+            Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+              Defn: x |--> x^2
+            sage: f._repr_defn()
+            'x |--> x^2'
+        """
+        return self._morphism._repr_defn()
+
+    cpdef Element _call_(self, x):
+        r"""
+        Return the value of this morphism at ``x``.
+
+        INPUT:
+
+        - ``x`` -- an element in the domain of this morphism
+
+        EXAMPLES::
+
+            sage: S.<x> = QQ[]
+            sage: f = S.hom([x+1]).extend_to_fraction_field()
+            sage: f(1/x)
+            1/(x + 1)
+            sage: f(1/(x-1))
+            1/x
+        """
+        return self._morphism(x.numerator()) / self._morphism(x.denominator())
+
+    cdef _update_slots(self, dict _slots):
+        """
+        Helper function for copying and pickling.
+
+        TESTS::
+
+            sage: S.<x> = QQ[]
+            sage: f = S.hom([x+1]).extend_to_fraction_field()
+
+            sage: g = copy(f)    # indirect doctest
+            sage: f == g
+            True
+            sage: f is g
+            False
+        """
+        self._morphism = _slots['_morphism']
+        RingHomomorphism._update_slots(self, _slots)
+
+    cdef dict _extra_slots(self):
+        """
+        Helper function for copying and pickling.
+
+        TESTS::
+
+            sage: S.<x> = QQ[]
+            sage: f = S.hom([x+1]).extend_to_fraction_field()
+            sage: loads(dumps(f)) == f
+            True
+        """
+        slots = RingHomomorphism._extra_slots(self)
+        slots['_morphism'] = self._morphism
+        return slots
+
+
 cdef class RingHomomorphism_cover(RingHomomorphism):
     r"""
     A homomorphism induced by quotienting a ring out by an ideal.
@@ -1760,7 +1934,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         sage: S.hom([b^2, c^2, a^2])
         Traceback (most recent call last):
         ...
-        TypeError: images do not define a valid homomorphism
+        ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
     """
     def __init__(self, parent, phi):
         """

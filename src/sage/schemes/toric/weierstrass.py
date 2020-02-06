@@ -134,7 +134,7 @@ REFERENCES:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function
 
@@ -606,9 +606,9 @@ def _extract_coefficients(polynomial, monomials, variables):
         i = index(m)
         coeffs[i] = c*m + coeffs.pop(i, R.zero())
     result = tuple(coeffs.pop(index(m), R.zero()) // m for m in monomials)
-    if len(coeffs) != 0:
+    if coeffs:
         raise ValueError('The polynomial contains more monomials than '
-                         'given: '+str(coeffs))
+                         'given: ' + str(coeffs))
     return result
 
 

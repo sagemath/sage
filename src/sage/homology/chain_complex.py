@@ -460,13 +460,13 @@ class Chain_class(ModuleElement):
             sage: unicode_art(c)
                                         ⎛1⎞
                d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
-            0 ⟵──── (0) ⟵──── ⎝5⎠ ⟵──── ⎝3⎠ ⟵───── 0
+            0 <──── (0) <──── ⎝5⎠ <──── ⎝3⎠ <───── 0
         """
         from sage.typeset.unicode_art import UnicodeArt
 
         def arrow_art(d):
             d_str = [u'  d_{0}  '.format(d)]
-            arrow = u' ⟵' + u'─' * (len(d_str[0]) - 3) + u' '
+            arrow = u' <' + u'─' * (len(d_str[0]) - 3) + u' '
             d_str.append(arrow)
             return UnicodeArt(d_str, baseline=0)
 
@@ -875,7 +875,7 @@ class ChainComplex_class(Parent):
         if start is None:
             result = []
             degrees = set(self._diff)
-            while len(degrees) > 0:
+            while degrees:
                 ordered = self.ordered_degrees(degrees.pop())
                 degrees.difference_update(ordered)
                 if exclude_first:
@@ -1420,7 +1420,7 @@ class ChainComplex_class(Parent):
 
     def betti(self, deg=None, base_ring=None):
         """
-        The Betti number the chain complex.
+        The Betti number of the chain complex.
 
         That is, write the homology in this degree as a direct sum
         of a free module and a torsion module; the Betti number is the
@@ -1803,22 +1803,22 @@ class ChainComplex_class(Parent):
             sage: unicode_art(C)
                                 ⎛3 0 0⎞
                       (0 0)     ⎝0 0 0⎠
-            0 ⟵── C_2 ⟵──── C_1 ⟵────── C_0 ⟵── 0
+            0 <── C_2 <──── C_1 <────── C_0 <── 0
 
             sage: one = matrix(ZZ, [[1]])
             sage: D = ChainComplex({0: one, 2: one, 6:one})
             sage: unicode_art(D)
                       (1)                           (1)     (0)     (1)
-            0 ⟵── C_7 ⟵── C_6 ⟵── 0  ...  0 ⟵── C_3 ⟵── C_2 ⟵── C_1 ⟵── C_0 ⟵── 0
+            0 <── C_7 <── C_6 <── 0  ...  0 <── C_3 <── C_2 <── C_1 <── C_0 <── 0
         """
         from sage.typeset.unicode_art import UnicodeArt
 
         def arrow_art(n):
             d_n = self.differential(n)
             if not d_n.nrows() or not d_n.ncols():
-                return UnicodeArt([u'⟵──'])
+                return UnicodeArt([u'<──'])
             d_str = list(d_n._unicode_art_())
-            arrow = u'⟵' + u'─' * (len(d_str[0]) - 1)
+            arrow = u'<' + u'─' * (len(d_str[0]) - 1)
             d_str.append(arrow)
             return UnicodeArt(d_str)
 

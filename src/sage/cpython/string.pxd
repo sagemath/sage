@@ -51,6 +51,8 @@ cpdef inline str bytes_to_str(b, encoding=None, errors=None):
         ...
         TypeError: expected bytes, list found
     """
+    if isinstance(b, str):
+        return b
     if type(b) is not bytes:
         raise TypeError(f"expected bytes, {type(b).__name__} found")
 
@@ -89,4 +91,6 @@ cpdef inline bytes str_to_bytes(s, encoding=None, errors=None):
     # Implemented in C to avoid relying on PY_MAJOR_VERSION
     # compile-time variable. We keep the Cython wrapper to deal with
     # the default arguments.
+    if isinstance(s, bytes):
+        return s
     return _str_to_bytes(s, encoding, errors)

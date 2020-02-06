@@ -1,4 +1,3 @@
-from __future__ import print_function
 
 from sage.ext.memory_allocator cimport MemoryAllocator
 

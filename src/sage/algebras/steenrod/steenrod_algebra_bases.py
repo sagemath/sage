@@ -586,7 +586,7 @@ def milnor_basis(n, p=2, **kwds):
     if not generic:
         for mono in WeightedIntegerVectors(n, xi_degrees(n, reverse=False)):
             exponents = list(mono)
-            while len(exponents) > 0 and exponents[-1] == 0:
+            while exponents and exponents[-1] == 0:
                 exponents.pop(-1)
             # check profile:
             okay = True
@@ -613,9 +613,9 @@ def milnor_basis(n, p=2, **kwds):
                 P_result = []
             for mono in WeightedIntegerVectors(dim, xi_degrees(dim, p=p, reverse=False)):
                 p_mono = list(mono)
-                while len(p_mono) > 0 and p_mono[-1] == 0:
+                while p_mono and p_mono[-1] == 0:
                     p_mono.pop(-1)
-                if len(p_mono) > 0:
+                if p_mono:
                     P_result.append(p_mono)
             # now find the Q part of the basis element.
             # dimensions here are back to normal.

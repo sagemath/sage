@@ -19,8 +19,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from cpython.sequence cimport PySequence_Fast
 
 import sage.modules.free_module
@@ -440,10 +438,32 @@ cdef class Matrix(Matrix0):
             sage: macaulay2(m)                  #optional - macaulay2
             | x   y   |
             | x+1 y+1 |
+
+        TESTS:
+
+        Entries of the matrix get promoted to the base ring (:trac:`28566`)::
+
+            sage: R.<x,y> = QQ[]
+            sage: m = macaulay2(matrix(R, [[1, 2], [3, 4]]))    # optional - macaulay2
+            sage: m.ring()._operator('===', R).sage()           # optional - macaulay2
+            True
+
+        Check that degenerate matrix dimensions are handled correctly
+        (:trac:`28591`)::
+
+            sage: macaulay2(matrix(QQ, 2, 0)).numrows()  # optional - macaulay2
+            2
+            sage: macaulay2(matrix(QQ, 0, 2)).numcols()  # optional - macaulay2
+            2
         """
-        base_ring = macaulay2(self.base_ring())
-        entries = list(map(list, self))
-        return macaulay2(entries).matrix()
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+        if not self.nrows():
+            return (macaulay2(self.base_ring())
+                    .matrix('toList(%s:{})' % self.ncols()).transpose())
+        entries = [list(row) for row in self]
+        return macaulay2(self.base_ring()).matrix(entries)
 
 
     def _scilab_init_(self):

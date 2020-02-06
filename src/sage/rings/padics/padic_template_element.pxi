@@ -37,7 +37,6 @@ from sage.rings.rational import Rational
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
 from sage.structure.element import canonical_coercion
-from sage.misc.superseded import deprecation
 import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
@@ -549,29 +548,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             else:
                 return expansion[n]
 
-    def list(self, lift_mode = 'simple', start_val = None):
-        r"""
-        Returns the list of coefficients in a `\pi`-adic expansion of this element.
-
-        EXAMPLES::
-
-            sage: R = Zp(7,6); a = R(12837162817); a
-            3 + 4*7 + 4*7^2 + 4*7^4 + O(7^6)
-            sage: L = a.list(); L
-            doctest:warning
-            ...
-            DeprecationWarning: list is deprecated. Please use expansion instead.
-            See http://trac.sagemath.org/14825 for details.
-            [3, 4, 4, 0, 4, 0]
-
-        .. SEEALSO::
-
-            :meth:`expansion`
-
-        """
-        deprecation(14825, "list is deprecated. Please use expansion instead.")
-        return list(self.expansion(lift_mode=lift_mode, start_val=start_val))
-
     def teichmuller_expansion(self, n = None):
         r"""
         Returns an iterator over coefficients `a_0, a_1, \dots, a_n` such that
@@ -618,77 +594,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)
         """
         return self.expansion(n, lift_mode='teichmuller')
-
-    def teichmuller_list(self):
-        r"""
-        Returns the list of coefficients in the Teichmuller expansion of this element.
-
-        EXAMPLES::
-
-            sage: R = Qp(5,5); R(70).teichmuller_list()[1]
-            doctest:warning
-            ...
-            DeprecationWarning: teichmuller_list is deprecated. Please use teichmuller_expansion instead.
-            See http://trac.sagemath.org/14825 for details.
-            3 + 3*5 + 2*5^2 + 3*5^3 + O(5^4)
-
-        .. SEEALSO::
-
-            :meth:`teichmuller_expansion`
-
-        """
-        deprecation(14825, "teichmuller_list is deprecated. Please use teichmuller_expansion instead.")
-        return list(self.teichmuller_expansion())
-
-    def padded_list(self, n, lift_mode = 'simple'):
-        """
-        Returns a list of coefficients of the uniformizer `\pi`
-        starting with `\pi^0` up to `\pi^n` exclusive (padded with
-        zeros if needed).
-
-        For a field element of valuation `v`, starts at `\pi^v`
-        instead.
-
-        INPUT:
-
-        - ``n`` - an integer
-
-        - ``lift_mode`` - 'simple', 'smallest' or 'teichmuller'
-
-        EXAMPLES::
-
-            sage: R = Zp(7,4,'capped-abs'); a = R(2*7+7**2); a.padded_list(5)
-            doctest:warning
-            ...
-            DeprecationWarning: padded_list is deprecated.  Please use expansion or Integer.digits with the padto keyword instead.
-            See http://trac.sagemath.org/14825 for details.
-            [0, 2, 1, 0, 0]
-            sage: R = Zp(7,4,'fixed-mod'); a = R(2*7+7**2); a.padded_list(5)
-            [0, 2, 1, 0, 0]
-
-        For elements with positive valuation, this function will
-        return a list with leading 0s if the parent is not a field::
-
-            sage: R = Zp(7,3,'capped-rel'); a = R(2*7+7**2); a.padded_list(5)
-            [0, 2, 1, 0, 0]
-            sage: R = Qp(7,3); a = R(2*7+7**2); a.padded_list(5)
-            [2, 1, 0, 0]
-            sage: a.padded_list(3)
-            [2, 1]
-        """
-        deprecation(14825, "padded_list is deprecated.  Please use expansion or Integer.digits with the padto keyword instead.")
-        L = list(self.expansion(lift_mode=lift_mode))
-        if lift_mode == 'simple' or lift_mode == 'smallest':
-            # defined in the linkage file.
-            zero = _expansion_zero
-        else:
-            zero = self.parent()(0,0)
-        if self.prime_pow.in_field == 1:
-            if self._is_exact_zero():
-                n = 0
-            else:
-                n -= self.valuation()
-        return list(itertools.chain(itertools.islice(L, int(n)), itertools.repeat(zero, n - len(L))))
 
     def _ext_p_list(self, pos):
         """

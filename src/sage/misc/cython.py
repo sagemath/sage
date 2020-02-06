@@ -19,7 +19,7 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import builtins
-from six import iteritems
+from six import iteritems, PY2
 
 import os
 import sys
@@ -32,6 +32,7 @@ from sage.misc.misc import SPYX_TMP, sage_makedirs
 from .temporary_file import tmp_filename
 from sage.repl.user_globals import get_globals
 from sage.misc.sage_ostools import restore_cwd, redirection
+from sage.cpython.string import str_to_bytes
 
 
 # CBLAS can be one of multiple implementations
@@ -63,6 +64,11 @@ standard_libdirs = [os.path.join(SAGE_LOCAL, "lib")] + cblas_library_dirs
 ################################################################
 
 sequence_number = {}
+
+
+# Only used on Cygwin; see note below about --enable-auto-image-base
+CYTHON_IMAGE_BASE = 0x580000000
+
 
 def cython(filename, verbose=0, compile_message=False,
            use_cache=False, create_local_c_file=False, annotate=True, sage_namespace=True,
@@ -221,7 +227,7 @@ def cython(filename, verbose=0, compile_message=False,
             prev_so = [F for F in os.listdir(target_dir) if F.endswith(loadable_module_extension())]
             if len(prev_so) > 0:
                 prev_so = prev_so[0]     # should have length 1 because of deletes below
-                if os.path.getmtime(filename) <= os.path.getmtime('%s/%s'%(target_dir, prev_so)):
+                if os.path.getmtime(filename) <= os.path.getmtime('%s/%s' % (target_dir, prev_so)):
                     # We do not have to rebuild.
                     return prev_so[:-len(loadable_module_extension())], target_dir
 
@@ -243,7 +249,7 @@ def cython(filename, verbose=0, compile_message=False,
         global sequence_number
         if base not in sequence_number:
             sequence_number[base] = 0
-        name = '%s_%s'%(base, sequence_number[base])
+        name = '%s_%s' % (base, sequence_number[base])
 
         # increment the sequence number so will use a different one next time.
         sequence_number[base] += 1
@@ -273,9 +279,39 @@ def cython(filename, verbose=0, compile_message=False,
     Cython.Compiler.Options.embed_pos_in_docstring = True
     Cython.Compiler.Options.pre_import = "sage.all" if sage_namespace else None
 
+    extra_compile_args = ['-w']  # no warnings
+    extra_link_args = []
+    if sys.platform == 'cygwin':
+        # Link using --enable-auto-image-base, reducing the likelihood of the
+        # new DLL colliding with existing DLLs in memory.
+        # Note: Cygwin locates --enable-auto-image-base DLLs in the range
+        # 0x4:00000000 up to 0x6:00000000; this is documented in heap.cc in the
+        # Cygwin sources, while 0x6:00000000 and up is reserved for the Cygwin
+        # heap.
+        # In practice, Sage has enough DLLs that when rebasing everything we
+        # use up through, approximately, 0x4:80000000 though there is nothing
+        # precise here.  When running 'rebase' it just start from 0x2:00000000
+        # (below that is reserved for Cygwin's DLL and some internal
+        # structures).
+        # Therefore, to minimize the likelihood of collision with one of Sage's
+        # standard DLLs, while giving ~2GB (should be more than enough) for
+        # Sage to grow, we base these DLLs from 0x5:8000000, leaving again ~2GB
+        # for temp DLLs which in normal use should be more than enough.
+        # See https://trac.sagemath.org/ticket/28258
+        # It should be noted, this is not a bulletproof solution; there is
+        # still a potential for DLL overlaps with this.  But this reduces the
+        # probability thereof, especially in normal practice.
+        dll_filename = os.path.splitext(pyxfile)[0] + '.dll'
+        image_base = _compute_dll_image_base(dll_filename)
+        extra_link_args.extend([
+                '-Wl,--disable-auto-image-base',
+                '-Wl,--image-base=0x{:x}'.format(image_base)
+        ])
+
     ext = Extension(name,
                     sources=[pyxfile],
-                    extra_compile_args=["-w"],  # no warnings
+                    extra_compile_args=extra_compile_args,
+                    extra_link_args=extra_link_args,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
@@ -287,12 +323,12 @@ def cython(filename, verbose=0, compile_message=False,
         with restore_cwd(target_dir):
             try:
                 ext, = cythonize([ext],
-                        aliases=cython_aliases(),
-                        include_path=includes,
-                        compiler_directives=directives,
-                        quiet=(verbose <= 0),
-                        errors_to_stderr=False,
-                        use_listing_file=True)
+                                 aliases=cython_aliases(),
+                                 include_path=includes,
+                                 compiler_directives=directives,
+                                 quiet=(verbose <= 0),
+                                 errors_to_stderr=False,
+                                 use_listing_file=True)
             finally:
                 # Read the "listing file" which is the file containing
                 # warning and error messages generated by Cython.
@@ -408,7 +444,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
     if isinstance(vars, str):
         v = vars
     else:
-        v = ', '.join(['%s %s'%(typ,var) for typ, var in vars])
+        v = ', '.join(['%s %s' % (typ, var) for typ, var in vars])
 
     s = """
 cdef class _s:
@@ -428,66 +464,16 @@ sage = _s()
 
 def f(%s):
     return %s
-    """%(v, expr)
+    """ % (v, expr)
     if verbose > 0:
         print(s)
     tmpfile = tmp_filename(ext=".pyx")
-    with open(tmpfile,'w') as f:
+    with open(tmpfile, 'w') as f:
         f.write(s)
 
     d = {}
     cython_import_all(tmpfile, d, verbose=verbose, **kwds)
     return d['f']
-
-
-def cython_create_local_so(filename):
-    r"""
-    Compile filename and make it available as a loadable shared object file.
-
-    INPUT:
-
-    - ``filename`` - string: a Cython (.spyx) file
-
-    OUTPUT: None
-
-    EFFECT: A compiled, python "importable" loadable shared object file is created.
-
-    .. note::
-
-        Shared object files are *not* reloadable. The intent is for
-        imports in other scripts. A possible development cycle might
-        go thus:
-
-        - Attach a .spyx file
-        - Interactively test and edit it to your satisfaction
-        - Use ``cython_create_local_so`` to create the shared object file
-        - Import the .so file in other scripts
-
-    EXAMPLES::
-
-        sage: curdir = os.path.abspath(os.curdir)
-        sage: dir = tmp_dir(); os.chdir(dir)
-        sage: f = open('hello.spyx', 'w')
-        sage: s = "def hello():\n    print('hello')\n"
-        sage: _ = f.write(s)
-        sage: f.close()
-        sage: cython_create_local_so('hello.spyx')
-        doctest:...: DeprecationWarning: cython_create_local_so is deprecated, call cython() with the create_local_so_file=True keyword
-        See http://trac.sagemath.org/24722 for details.
-        Compiling hello.spyx...
-        sage: sys.path.append('.')
-        sage: import hello
-        sage: hello.hello()
-        hello
-        sage: os.chdir(curdir)
-
-    AUTHORS:
-
-    - David Fu (2008-04-09): initial version
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(24722, "cython_create_local_so is deprecated, call cython() with the create_local_so_file=True keyword")
-    cython(filename, compile_message=True, use_cache=False, create_local_so_file=True)
 
 
 ################################################################
@@ -643,6 +629,91 @@ def cython_compile(code, **kwds):
         compiled once.
     """
     tmpfile = tmp_filename(ext=".pyx")
-    with open(tmpfile,'w') as f:
+    with open(tmpfile, 'w') as f:
         f.write(code)
     return cython_import_all(tmpfile, get_globals(), **kwds)
+
+
+# THe following utility functions are used on Cygwin only to work around a
+# shortcoming in ld/binutils; see https://trac.sagemath.org/ticket/28258
+def _strhash(s):
+    """
+    Implementation of the strhash function from binutils
+
+    See
+    https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=binutils/dllwrap.c;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l449
+
+    This is used to re-implement support for --enable-auto-image-base with a
+    custom base address, which is currently broken in ld/binutils for PE32+
+    binaries.
+
+    TESTS::
+
+        sage: from sage.misc.cython import _strhash
+        sage: hex(_strhash('test.pyx'))
+        '0x3d99a20'
+    """
+
+    s = str_to_bytes(s)
+    h = 0
+    l = len(s)
+
+    for c in s:
+        if PY2:
+            c = ord(c)
+
+        h += c + (c << 17)
+        h ^= h >> 2
+
+    h += l + (l << 17)
+    h ^= h >> 2
+    return h
+
+
+def _compute_dll_image_base(filename, auto_image_base=None):
+    """
+    Compute a DLL image base address from a hash of its filename, using the
+    same implementation as --enable-auto-image-base from binutils, but with
+    support for a custom minimum base address.
+
+    See
+    https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=ld/emultempl/pe.em;h=c18cb266beb23d14108044571382e0c7f4dbedb3;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l919
+    which implements this for PE32 images (for PE32+ images the support for
+    custom base addresses is broken).
+
+    See also :trac:`28258`.
+
+    TESTS::
+
+        sage: from sage.misc.cython import _compute_dll_image_base
+        sage: hex(_compute_dll_image_base('test.pyx'))
+        '0x59a200000'
+
+    Test that given a random filename it is always below 0x6:00000000; in
+    principle this could fail randomly, but if it never fails then no problem.
+    We do not test for collisions since there is always a random chance of
+    collisions with two arbitrary filenames::
+
+        sage: from sage.misc.temporary_file import tmp_filename
+        sage: image_base = _compute_dll_image_base(tmp_filename(ext='.pyx'))
+        sage: hex(image_base)  # random
+        '0x59a200000'
+        sage: image_base <= (0x600000000 - 0x10000)
+        True
+    """
+
+    if auto_image_base is None:
+        # The default, which can in principle be modified at runtime if needed
+        auto_image_base = CYTHON_IMAGE_BASE
+
+    # See https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=ld/emultempl/pep.em;h=dca36cc341aabfa2ec9db139b8ec94690165201a;hb=d0e6d77b3fb64561ca66535f8ed6ca523eac923e#l113
+    # where move_default_addr_high=1 on Cygwin targets.
+    # This is actually derived from taking the upper limit 0x6:00000000 minus
+    # the lower limit 0x4:00000000 minus a gap of at least 0x10000.  I don't
+    # know why but this is supposed to work: https://narkive.com/HCyWCS6h.23
+    # Currently in binutils auto_image_base of 0x4:00000000 is hard-coded, so
+    # this comes out to 0x1:ffff0000, but here we must compute it.
+    NT_DLL_AUTO_IMAGE_MASK = 0x600000000 - auto_image_base - 0x10000
+
+    h = _strhash(filename)
+    return auto_image_base + ((h << 16) & NT_DLL_AUTO_IMAGE_MASK)

@@ -311,7 +311,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         sage: P.<x> = QQ[]
         sage: Q = P.quotient(x^2+2)
         sage: Q.category()
-        Category of commutative no zero divisors quotients of algebras over Rational Field
+        Category of commutative no zero divisors quotients of algebras over
+         (number fields and quotient fields and metric spaces)
 
     We verify that the elements belong to the correct element class.
     Also, we list the attributes that are provided by the element
@@ -330,8 +331,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         sage: Q in Fields()
         True
         sage: Q.category()
-        Category of commutative division no zero divisors
-        quotients of algebras over Rational Field
+        Category of commutative division no zero divisors quotients of algebras
+         over (number fields and quotient fields and metric spaces)
         sage: first_class == Q.__class__
         False
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
@@ -399,7 +400,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
         self.__ring = ring
         self.__polynomial = polynomial
-        category = CommutativeAlgebras(ring.base_ring()).Quotients().or_subcategory(category)
+        category = CommutativeAlgebras(ring.base_ring().category()).Quotients().or_subcategory(category)
         CommutativeRing.__init__(self, ring, names=name, category=category)
 
     def _element_constructor_(self, x):
@@ -587,7 +588,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         f = self.modulus()
         try:
             if base_map is not None:
-                f = f.change_ring(base_map)
+                f = f.map_coefficients(base_map)
             return codomain(f(im_gens[0])) == 0
         except (TypeError, ValueError):
             return False
@@ -2057,8 +2058,17 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
 
             sage: S in IntegralDomains()
             True
+
+        Check that :trac:`29017` is fixed::
+
+            sage: R.<x> = ZZ[]
+            sage: Q = R.quo(x-1)
+            sage: H = R.Hom(Q)
+            sage: h = R.hom(Q)
+            sage: h.parent() is H
+            True
         """
-        category = CommutativeAlgebras(ring.base_ring()).Quotients().NoZeroDivisors().or_subcategory(category)
+        category = CommutativeAlgebras(ring.base_ring().category()).Quotients().NoZeroDivisors().or_subcategory(category)
         PolynomialQuotientRing_generic.__init__(self, ring, polynomial, name, category)
 
     def field_extension(self, names):

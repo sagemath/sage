@@ -20,3 +20,6 @@ cdef class MatrixPolymapAction(MatrixMulAction):
 
 cdef class PolymapMatrixAction(MatrixMulAction):
     pass
+
+cdef class MatrixSchemePointAction(MatrixMulAction):
+    pass

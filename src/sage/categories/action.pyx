@@ -53,8 +53,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from cpython.tuple cimport PyTuple_GET_ITEM
 
 from .functor cimport Functor

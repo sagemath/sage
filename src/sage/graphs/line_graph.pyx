@@ -43,7 +43,7 @@ Root graph
 ----------
 
 A graph whose line graph is `LG` is called the *root graph* of `LG`. The root
-graph of a (connected) graph is unique ([Whitney32]_, [Harary69]_), except when
+graph of a (connected) graph is unique ([Whi1932]_, [Har1969]_), except when
 `LG=K_3`, as both `L(K_3)` and `L(K_{1,3})` are equal to `K_3`.
 
 Here is how we can *"see"* `G` by staring (very intently) at `LG` :
@@ -84,7 +84,7 @@ while an even triangle could result from either a vertex of degree 3 in `G` or a
 triangle in `G`. And in order to build the root graph we obviously have to
 decide *which*.
 
-Beineke proves in [Beineke70]_ that the collection of sets we are looking for
+Beineke proves in [Bei1970]_ that the collection of sets we are looking for
 can be easily found. Indeed it turns out that it is the union of :
 
 #. The family of all maximal cliques of `LG` of size 2 or `\geq 4`, as well as
@@ -123,26 +123,9 @@ This decomposition turns out to be very easy to implement :-)
     answer in this case, and we deal with it by returning one of the two
     possible answers.
 
-.. [Whitney32] Congruent graphs and the connectivity of graphs,
-  Whitney,
-  American Journal of Mathematics,
-  pages 150--168, 1932,
-  `available on JSTOR <http://www.jstor.org/stable/2371086>`_
-
-.. [Harary69] Graph Theory,
-  Harary,
-  Addison-Wesley, 1969
-
-.. [Beineke70] Lowell Beineke,
-  Characterizations of derived graphs,
-  Journal of Combinatorial Theory,
-  Vol. 9(2), pages 129-135, 1970
-  :doi:`10.1016/S0021-9800(70)80019-9`
-
 Functions
 ---------
 """
-from __future__ import print_function
 
 def is_line_graph(g, certificate=False):
     r"""

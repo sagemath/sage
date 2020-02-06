@@ -1,4 +1,4 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://github.com/sagemath/sage/COPYING.txt) [![Maintained](https://img.shields.io/maintenance/yes/2019.svg)](https://github.com/sagemath/sage/commits/master)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://github.com/sagemath/sage/COPYING.txt) [![Maintained](https://img.shields.io/maintenance/yes/2020.svg)](https://github.com/sagemath/sage/commits/master)
 
 # Supported tags
 

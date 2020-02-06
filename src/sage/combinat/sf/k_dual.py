@@ -903,8 +903,8 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedQuotientBases(kBoundedRing),
-            prefix='%s%d'%(prefix, kBoundedRing.k))
+            category=KBoundedQuotientBases(kBoundedRing),
+            prefix='%s%d' % (prefix, kBoundedRing.k))
 
         self._kBoundedRing = kBoundedRing
         self.k = kBoundedRing.k

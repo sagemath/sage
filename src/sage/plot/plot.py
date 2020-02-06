@@ -62,6 +62,8 @@ The following plotting functions are supported:
 
 -  :func:`graphics_array`
 
+-  :func:`multi_graphics`
+
 -  The following log plotting functions:
 
    - :func:`plot_loglog`
@@ -255,10 +257,10 @@ We can put text in a graph::
 
     sage: L = [[cos(pi*i/100)^3,sin(pi*i/100)] for i in range(200)]
     sage: p = line(L, rgbcolor=(1/4,1/8,3/4))
-    sage: t = text('A Bulb', (1.5, 0.25))
-    sage: x = text('x axis', (1.5,-0.2))
-    sage: y = text('y axis', (0.4,0.9))
-    sage: g = p+t+x+y
+    sage: tt = text('A Bulb', (1.5, 0.25))
+    sage: tx = text('x axis', (1.5,-0.2))
+    sage: ty = text('y axis', (0.4,0.9))
+    sage: g = p + tt + tx + ty
     sage: g.show(xmin=-1.5, xmax=2, ymin=-1, ymax=1)
 
 .. PLOT::
@@ -275,9 +277,23 @@ We can put text in a graph::
     g.ymax(1)
     sphinx_plot(g)
 
+We can add a graphics object to another one as an inset::
+
+    sage: g1 = plot(x^2*sin(1/x), (x, -2, 2), axes_labels=['$x$', '$y$'])
+    sage: g2 = plot(x^2*sin(1/x), (x, -0.3, 0.3), axes_labels=['$x$', '$y$'],
+    ....:           frame=True)
+    sage: g1.inset(g2, pos=(0.15, 0.7, 0.25, 0.25))
+    Multigraphics with 2 elements
+
+.. PLOT::
+
+    g1 = plot(x**2*sin(1/x), (x, -2, 2), axes_labels=['$x$', '$y$'])
+    g2 = plot(x**2*sin(1/x), (x, -0.3, 0.3), axes_labels=['$x$', '$y$'], \
+              frame=True)
+    sphinx_plot(g1.inset(g2, pos=(0.15, 0.7, 0.25, 0.25)))
+
 We can add a title to a graph::
 
-    sage: x = var('x')
     sage: plot(x^2, (x,-2,2), title='A plot of $x^2$')
     Graphics object consisting of 1 graphics primitive
 
@@ -543,8 +559,10 @@ AUTHORS:
 - Aaron Lauve (2016-07-13): reworked handling of 'color' when passed
   a list of functions; now more in-line with other CAS's. Added list functionality
   to linestyle and legend_label options as well. (:trac:`12962`)
+
+- Eric Gourgoulhon (2019-04-24): add :func:`multi_graphics` and insets
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>
 #       Copyright (C) 2006-2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2010 Jason Grout
@@ -552,8 +570,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, absolute_import
 from six.moves import range
 from six import iteritems
@@ -578,12 +596,13 @@ from sage.ext.fast_eval import fast_float, is_fast_float
 from sage.misc.decorators import options
 
 from .graphics import Graphics
-from .multigraphics import GraphicsArray
+from .multigraphics import GraphicsArray, MultiGraphics
 from sage.plot.polygon import polygon
 
 # import of line2d below is only for redirection of imports
-from sage.plot.line import line, line2d
-
+from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 
 #Currently not used - see comment immediately above about
 #figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
@@ -2594,6 +2613,12 @@ def parametric_plot(funcs, *args, **kwargs):
         Traceback (most recent call last):
         ...
         ValueError: there are more variables than variable ranges
+
+    One test for :trac:`7165`::
+
+        sage: m = SR.var('m')
+        sage: parametric_plot([real(exp(i*m)),imaginary(exp(i*m))], (m,0,7))
+        Graphics object consisting of 1 graphics primitive
     """
     num_ranges = 0
     for i in args:
@@ -3542,7 +3567,6 @@ def graphics_array(array, nrows=None, ncols=None):
 
         :class:`~sage.plot.multigraphics.GraphicsArray` for more examples
 
-
     """
     # TODO: refactor the whole array flattening and reshaping into a class
     if nrows is None and ncols is None:
@@ -3572,6 +3596,81 @@ def graphics_array(array, nrows=None, ncols=None):
         array = reshape(array, nrows, ncols)
     return GraphicsArray(array)
 
+def multi_graphics(graphics_list):
+    r"""
+    Plot a list of graphics at specified positions on a single canvas.
+
+    If the graphics positions define a regular array, use
+    :func:`graphics_array` instead.
+
+    INPUT:
+
+    - ``graphics_list`` -- a list of graphics along with their
+      positions on the canvas; each element of ``graphics_list`` is either
+
+      - a pair ``(graphics, position)``, where ``graphics`` is a
+        :class:`~sage.plot.graphics.Graphics` object and ``position`` is
+        the 4-tuple ``(left, bottom, width, height)`` specifying the location
+        and size of the graphics on the canvas, all quantities being in
+        fractions of the canvas width and height
+
+      - or a single :class:`~sage.plot.graphics.Graphics` object; its position
+        is then assumed to occupy the whole canvas, except for some padding;
+        this corresponds to the default position
+        ``(left, bottom, width, height) = (0.125, 0.11, 0.775, 0.77)``
+
+    OUTPUT:
+
+    - instance of :class:`~sage.plot.multigraphics.MultiGraphics`
+
+    EXAMPLES:
+
+    ``multi_graphics`` is to be used for plot arrangements that cannot be
+    achieved with :func:`graphics_array`, for instance::
+
+        sage: g1 = plot(sin(x), (x, -10, 10), frame=True)
+        sage: g2 = EllipticCurve([0,0,1,-1,0]).plot(color='red', thickness=2,
+        ....:                    axes_labels=['$x$', '$y$']) \
+        ....:      + text(r"$y^2 + y = x^3 - x$", (1.2, 2), color='red')
+        sage: g3 = matrix_plot(matrix([[1,3,5,1], [2,4,5,6], [1,3,5,7]]))
+        sage: G = multi_graphics([(g1, (0.125, 0.65, 0.775, 0.3)),
+        ....:                     (g2, (0.125, 0.11, 0.4, 0.4)),
+        ....:                     (g3, (0.55, 0.18, 0.4, 0.3))])
+        sage: G
+        Multigraphics with 3 elements
+
+    .. PLOT::
+
+        g1 = plot(sin(x), (x, -10, 10), frame=True)
+        g2 = EllipticCurve([0,0,1,-1,0]).plot(color='red', thickness=2, \
+                           axes_labels=['$x$', '$y$']) \
+             + text(r"$y^2 + y = x^3 - x$", (1.2, 2), color='red')
+        g3 = matrix_plot(matrix([[1,3,5,1], [2,4,5,6], [1,3,5,7]]))
+        G = multi_graphics([(g1, (0.125, 0.65, 0.775, 0.3)), \
+                            (g2, (0.125, 0.11, 0.4, 0.4)), \
+                            (g3, (0.55, 0.18, 0.4, 0.3))])
+        sphinx_plot(G)
+
+    An example with a list containing a graphics object without any specified
+    position (the graphics, here ``g3``, occupies then the whole canvas)::
+
+        sage: G = multi_graphics([g3, (g1, (0.4, 0.4, 0.2, 0.2))])
+        sage: G
+        Multigraphics with 2 elements
+
+    .. PLOT::
+
+        g1 = plot(sin(x), (x, -10, 10), frame=True)
+        g3 = matrix_plot(matrix([[1,3,5,1], [2,4,5,6], [1,3,5,7]]))
+        G = multi_graphics([g3, (g1, (0.4, 0.4, 0.2, 0.2))])
+        sphinx_plot(G)
+
+    .. SEEALSO::
+
+        :class:`~sage.plot.multigraphics.MultiGraphics` for more examples
+
+    """
+    return MultiGraphics(graphics_list)
 
 def minmax_data(xdata, ydata, dict=False):
     """

@@ -1459,15 +1459,13 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
         """
         TESTS::
 
-            sage: L = list(SetPartitionsPRk(2.5)); L
-            [{{-3, 3}, {-2}, {-1}, {1}, {2}}, {{-3, 3}, {-2}, {-1, 1}, {2}},
-             {{-3, 3}, {-2, 1}, {-1}, {2}}, {{-3, 3}, {-2}, {-1, 2}, {1}},
-             {{-3, 3}, {-2, 2}, {-1}, {1}}, {{-3, 3}, {-2, 2}, {-1, 1}}]
-            sage: len(L)
+            sage: next(iter(SetPartitionsPRk(2.5)))
+            {{-3, 3}, {-2}, {-1}, {1}, {2}}
+            sage: len(list(SetPartitionsPRk(2.5)))
             6
         """
-        positives = Set(range(1, self.k+1))
-        negatives = Set( [ -i for i in positives ] )
+        positives = Set(range(1, self.k + 1))
+        negatives = Set(-i for i in positives)
 
         yield self.element_class(self, to_set_partition([[self.k+1, -self.k-1]],k=self.k+1))
         for n in range(1,self.k+1):

@@ -27,7 +27,7 @@ Check that :trac:`20829` is fixed::
 # ****************************************************************************
 
 from sage.structure.element cimport AlgebraElement, RingElement, ModuleElement, Element
-from sage.structure.richcmp cimport rich_to_bool, richcmp_item
+from sage.structure.richcmp cimport rich_to_bool, rich_to_bool_sgn, richcmp_item
 from sage.algebras.quatalg.quaternion_algebra_element cimport QuaternionAlgebraElement_abstract
 from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer
@@ -380,7 +380,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         if c: v.append(c)
         c = print_coeff(w,k,atomic)
         if c: v.append(c)
-        if len(v) == 0: return '0'
+        if not v:
+            return '0'
         return ' + '.join(v).replace('+ -','- ')
 
     def _repr_(self):
@@ -961,7 +962,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         return bool(mpz_sgn(self.x) or mpz_sgn(self.y) or mpz_sgn(self.z) or mpz_sgn(self.w))
 
-    cpdef int _cmp_(self, _right) except -2:
+    cpdef _richcmp_(self, _right, int op):
         """
         Compare two quaternions.
 
@@ -978,25 +979,27 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             True
             sage: i == i
             True
+            sage: Q.one() != -Q.one()
+            True
         """
         cdef QuaternionAlgebraElement_rational_field right = _right
         cdef int i
         i = mpz_cmp(self.d, right.d)
-        if i < 0: return -1
-        elif i > 0: return 1
+        if i:
+            return rich_to_bool_sgn(op, i)
         i = mpz_cmp(self.x, right.x)
-        if i < 0: return -1
-        elif i > 0: return 1
+        if i:
+            return rich_to_bool_sgn(op, i)
         i = mpz_cmp(self.y, right.y)
-        if i < 0: return -1
-        elif i > 0: return 1
+        if i:
+            return rich_to_bool_sgn(op, i)
         i = mpz_cmp(self.z, right.z)
-        if i < 0: return -1
-        elif i > 0: return 1
+        if i:
+            return rich_to_bool_sgn(op, i)
         i = mpz_cmp(self.w, right.w)
-        if i < 0: return -1
-        elif i > 0: return 1
-        return 0
+        if i:
+            return rich_to_bool_sgn(op, i)
+        return rich_to_bool(op, 0)
 
     def __init__(self, parent, v, bint check=True):
         """

@@ -95,14 +95,14 @@ var randomcontentdisplay={
 	},
 
 	showone:function(){
-		for (group in this.divholders){ //loop thru each array within object
+		for (var group in this.divholders){ //loop thru each array within object
 			var chosenOne=Math.floor(Math.random()*this.divholders[group].length) //randomly pick one entry from array
 			this.divholders[group][chosenOne].style.display="block" //display content corresponding to the chosen entry
 		}
 	},
 
 	showall:function(){
-		for (group in this.divholders){ //loop thru each array within object
+		for (var group in this.divholders){ //loop thru each array within object
 			for (var i=0; i<this.divholders[group].length; i++) {
                 this.divholders[group][i].style.display="block" //display content corresponding to the chosen entry
             }

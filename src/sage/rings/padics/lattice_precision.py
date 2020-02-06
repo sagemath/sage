@@ -27,7 +27,7 @@ TESTS::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from __future__ import division
@@ -1266,7 +1266,7 @@ class DifferentialPrecisionGeneric(SageObject):
 
         - ``separate_reduce`` -- a boolean (default: ``False``); specify
           whether partial/full Hermite reduction should be displayed
-          separatedly
+          separately
 
         - ``timings`` -- a boolean (default: ``True``); specify whether
           timings should be displayed
@@ -1893,7 +1893,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         The new precision lattice is computed as the intersection
         of the current precision lattice with the subspace
 
-        ..MATH::
+        .. MATH::
 
             p^{prec} \Z_p dx \oplus \bigoplus_{y \neq x} \Q_p dy
 
@@ -2519,12 +2519,12 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
 
         - ``prec`` -- the new precision
 
-        NOTE:
+        .. NOTE::
 
-        The new precision lattice is computed as the intersection
-        of the current precision lattice with the subspace
+            The new precision lattice is computed as the intersection
+            of the current precision lattice with the subspace.
 
-        ..MATH::
+        .. MATH::
 
             p^{prec} \Z_p dx \oplus \bigoplus_{y \neq x} \Q_p dy
 

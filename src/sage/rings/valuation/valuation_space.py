@@ -1548,7 +1548,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             except ValueError:
                 from sage.categories.fields import Fields
                 # a discrete valuation on a field has a residue field
-                tester.assertFalse(self.domain() in Fields())
+                tester.assertNotIn(self.domain(), Fields())
                 return
             except NotImplementedError:
                 # over non-fields (and especially polynomial rings over
@@ -1641,8 +1641,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                             tester.assertNotEqual(self(x), 0)
                         tester.assertFalse(x.is_unit())
                         continue
-                    
-                    tester.assertTrue(y.parent() is self.domain())
+
+                    tester.assertIs(y.parent(), self.domain())
                     if self.domain().is_exact():
                         tester.assertGreaterEqual(self(x*y - 1), prec)
 

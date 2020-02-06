@@ -11,15 +11,15 @@ REFERENCES:
 - [Reu2003]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from six import iteritems
 
 from sage.misc.abstract_method import abstract_method
@@ -876,7 +876,7 @@ class FreeLieAlgebraBases(Category_realization_of_parent):
 
     def _repr_(self):
         r"""
-        Returns the representation of ``self``.
+        Return the representation of ``self``.
 
         EXAMPLES::
 

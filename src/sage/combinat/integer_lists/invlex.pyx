@@ -28,8 +28,6 @@ limitations and lack of robustness w.r.t. input.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 import builtins
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall

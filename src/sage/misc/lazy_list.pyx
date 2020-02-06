@@ -103,7 +103,6 @@ Classes and Methods
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 cdef extern from "Python.h":
     Py_ssize_t PY_SSIZE_T_MAX

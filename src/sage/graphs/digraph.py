@@ -165,6 +165,7 @@ from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
+from sage.graphs.views import EdgesView
 
 class DiGraph(GenericGraph):
     r"""
@@ -580,7 +581,7 @@ class DiGraph(GenericGraph):
             sage: g.add_edge("Hey", "Heyyyyyyy")
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            ValueError: graph is immutable; please change a copy instead (use function copy())
             sage: {g:1}[g]
             1
             sage: copy(g) is g    # copy is mutable again
@@ -665,9 +666,10 @@ class DiGraph(GenericGraph):
         if (format is None            and
             isinstance(data, list)    and
             len(data) == 2            and
-            isinstance(data[0], list) and # a list of two lists, the second of
-            isinstance(data[1], list) and # which contains iterables (the edges)
-            (not data[1] or callable(getattr(data[1][0], "__iter__", None)))):
+            isinstance(data[0], list) and    # a list of two lists, the second of
+            ((isinstance(data[1], list) and  # which contains iterables (the edges)
+              (not data[1] or callable(getattr(data[1][0], "__iter__", None)))) or
+             (isinstance(data[1], EdgesView)))):
             format = "vertices_and_edges"
 
         if format is None and isinstance(data, dict):
@@ -703,8 +705,8 @@ class DiGraph(GenericGraph):
             format = 'int'
             data = 0
 
-        # Input is a list of edges
-        if format is None and isinstance(data,list):
+        # Input is a list of edges or an EdgesView
+        if format is None and isinstance(data, (list, EdgesView)):
             format = "list_of_edges"
             if weighted is None:
                     weighted = False
@@ -2943,13 +2945,14 @@ class DiGraph(GenericGraph):
 
         The faces and volume of these polytopes are of interest. Examples of
         these polytopes are the Chan-Robbins-Yuen polytope and the
-        Pitman-Stanley polytope [PitSta]_.
+        Pitman-Stanley polytope [PS2002]_.
 
         INPUT:
 
-        - ``edges`` -- (optional, default: ``self.edges()``) a list or tuple of
-          all edges of ``self`` (each only once). This determines which
-          coordinate of a point in the polytope will correspond to which edge of
+        - ``edges`` -- list (default: ``None``); a list of edges of ``self``. If
+          not specified, the list of all edges of ``self`` is used with the
+          default ordering of ``self.edges()``. This determines which coordinate
+          of a point in the polytope will correspond to which edge of
           ``self``. It is also possible to specify a list which contains not all
           edges of ``self``; this results in a polytope corresponding to the
           flows which are `0` on all remaining edges. Notice that the edges
@@ -3056,17 +3059,24 @@ class DiGraph(GenericGraph):
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull
             of 1 vertex
 
-        REFERENCES:
+        A digraph with multiple edges (:trac:`28837`)::
 
-        .. [PitSta] Jim Pitman, Richard Stanley, "A polytope related to
-           empirical distributions, plane trees, parking functions, and
-           the associahedron", :arxiv:`math/9908029`
+            sage: G = DiGraph([(0, 1), (0,1)], multiedges=True)
+            sage: G
+            Multi-digraph on 2 vertices
+            sage: P = G.flow_polytope()
+            sage: P
+            A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices
+            sage: P.vertices()
+            (A vertex at (1, 0), A vertex at (0, 1))
+            sage: P.lines()
+            ()
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         if edges is None:
             edges = self.edges(sort=False)
-        ineqs = [[0] + [Integer(j == u) for j in edges]
-                 for u in edges]
+        m = len(edges)
+        ineqs = [[0] * (i + 1) + [1] + [0] * (m - i - 1) for i in range(m)]
 
         eqs = []
         for u in self:

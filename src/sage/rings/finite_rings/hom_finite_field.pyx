@@ -100,7 +100,6 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.integer cimport Integer
 
@@ -303,7 +302,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         f = x.polynomial()
         bm = self.base_map()
         if bm is not None:
-            f = f.change_ring(bm)
+            f = f.map_coefficients(bm)
         return f(self.im_gens()[0])
 
 

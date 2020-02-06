@@ -208,7 +208,7 @@ Suppose that we wish to compute the integral
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
+compact subgroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
 of `U(n)` may be regarded as the basis elements of the WeylCharacterRing of
 type `A_r`, where `r=n-1` so we might work in that ring. The trace `tr(g)` is
 then just the character of the standard representation. We may realize
@@ -462,7 +462,7 @@ Suppose that we wish to compute the integral
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
+compact subgroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
 `U(n)`, normalized so that the volume of the group is 1.
 
 The irreducible unitary representations of `U(n)` may be regarded as the basis

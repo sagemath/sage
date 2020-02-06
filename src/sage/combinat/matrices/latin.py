@@ -135,6 +135,7 @@ from sage.rings.all import ZZ
 from sage.rings.all import Integer
 from sage.matrix.matrix_integer_dense import Matrix_integer_dense
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
 from sage.interfaces.gap import GapElement
 from sage.combinat.permutation import Permutation
 from sage.interfaces.gap import gap
@@ -1463,7 +1464,7 @@ def isotopism(p):
 
     INPUT:
 
-    According to the type of input (see examples below) :
+    According to the type of input (see examples below):
 
     - an integer `n` -- the function returns the identity on `1,...,n`.
 
@@ -2315,7 +2316,8 @@ def group_to_LatinSquare(G):
 
     EXAMPLES::
 
-        sage: from sage.combinat.matrices.latin import *
+        sage: from sage.combinat.matrices.latin import group_to_LatinSquare
+
         sage: group_to_LatinSquare(DihedralGroup(2))
         [0 1 2 3]
         [1 0 3 2]
@@ -2381,9 +2383,9 @@ def alternating_group_bitrade_generators(m):
 
     b = tuple(range(m + 1, 0, -1)) + tuple(range(2*m+2, 3*m+1 + 1))
 
-    a = PermutationGroupElement(a)
-    b = PermutationGroupElement(b)
-    c = PermutationGroupElement((a*b)**(-1))
+    a = PermutationConstructor(a)
+    b = PermutationConstructor(b)
+    c = PermutationConstructor((a*b)**(-1))
 
     G = PermutationGroup([a, b])
 
@@ -2436,9 +2438,9 @@ def pq_group_bitrade_generators(p, q):
     assert G.order() == p*q
     assert not G.is_abelian()
 
-    a = PermutationGroupElement(P)
-    b = PermutationGroupElement(Q)
-    c = PermutationGroupElement((a*b)**(-1))
+    a = PermutationConstructor(P)
+    b = PermutationConstructor(Q)
+    c = PermutationConstructor((a*b)**(-1))
 
     return (a, b, c, PermutationGroup([P, Q]))
 
@@ -2473,8 +2475,8 @@ def p3_group_bitrade_generators(p):
 
     iso = gap.IsomorphismPermGroup(G)
 
-    x = PermutationGroupElement(gap.Image(iso, G.gen(1)))
-    y = PermutationGroupElement(gap.Image(iso, G.gen(2)))
+    x = PermutationConstructor(gap.Image(iso, G.gen(1)))
+    y = PermutationConstructor(gap.Image(iso, G.gen(2)))
 
     return (x, y, (x*y)**(-1), PermutationGroup([x, y]))
 

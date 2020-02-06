@@ -104,10 +104,9 @@ class AmbientSpace(CombinatorialFreeModule):
             self._v0 = self([0,0,0,0,0, 0,1, 1])
             self._v1 = self([0,0,0,0,0,-2,1,-1])
 
-
     def _test_norm_of_simple_roots(self, **options):
         """
-        Tests that the norm of the roots is, up to an overal constant factor,
+        Test that the norm of the roots is, up to an overall constant factor,
         given by the symmetrizer of the Cartan matrix.
 
         .. SEEALSO:: :class:`TestSuite`

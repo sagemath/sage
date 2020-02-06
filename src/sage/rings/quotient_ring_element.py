@@ -6,15 +6,15 @@ AUTHORS:
 - William Stein
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.element import RingElement
@@ -646,7 +646,7 @@ class QuotientRingElement(RingElement):
         # elements of different degrees. The whole quotient stuff relies
         # in I.reduce(x) returning a normal form of x with respect to I.
         # Hence, we will not use more than that.
-        #return cmp(self.__rep, other.__rep)
+
         # Since we have to compute normal forms anyway, it makes sense
         # to use it for comparison in the case of an inequality as well.
         if self.__rep == other.__rep: # Use a shortpath, so that we
@@ -828,6 +828,71 @@ class QuotientRingElement(RingElement):
         g = magma(self.__rep)
         R = magma(self.parent())
         return '{}!{}'.format(R.name(), g._ref())
+
+    def _macaulay2_(self, macaulay2=None):
+        """
+        The Macaulay2 element corresponding to this polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)
+            sage: Q = R.quotient([x^2 - y])
+            sage: x, y = Q.gens()
+            sage: f = (x^3 + 2*y^2*x)^7; f
+            2*xbar*ybar^17 + xbar*ybar^10
+            sage: mf = macaulay2(f); mf             # optional - macaulay2
+                17      10
+            2x*y   + x*y
+            sage: mf.sage()                         # optional - macaulay2
+            2*x*y^17 + x*y^10
+            sage: mf.sage() == f                    # optional - macaulay2
+            True
+            sage: Q(mf)                             # optional - macaulay2
+            2*xbar*ybar^17 + xbar*ybar^10
+
+        In Macaulay2, the variable names for a quotient ring are inherited from
+        the variable names of the ambient ring. This is in contrast to Sage's
+        default behaviour in which the variable names for the quotient ring are
+        obtained by appending ``bar`` to the variable names of the ambient
+        ring. This can be controlled using the ``names`` argument of the
+        ``quotient`` method.
+
+        ::
+
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)
+            sage: Q = R.quotient([x^2 - y], names=R.gens())
+            sage: x, y = Q.gens()
+            sage: f = (x^3 + 2*y^2*x)^7; f
+            2*x*y^17 + x*y^10
+            sage: macaulay2(f)                      # optional - macaulay2
+                17      10
+            2x*y   + x*y
+            sage: _.sage()                          # optional - macaulay2
+            2*x*y^17 + x*y^10
+
+        TESTS:
+
+        Check that changing the currently defined global variables (`x`, `y`,
+        ...) in Macaulay2 does not affect the result of this conversion::
+
+            sage: R.<x,y> = PolynomialRing(GF(7), 2)
+            sage: Q = R.quotient([x^2 - y], names=R.gens())
+            sage: x, y = Q.gens()
+            sage: f = (x^3 + 2*y^2*x)^7
+            sage: macaulay2(f)                      # optional - macaulay2
+                17      10
+            2x*y   + x*y
+            sage: macaulay2.use(R.quotient([x, y])) # optional - macaulay2
+            sage: macaulay2(f)                      # optional - macaulay2
+                17      10
+            2x*y   + x*y
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+        m2_parent = self.parent()._macaulay2_(macaulay2)
+        macaulay2.use(m2_parent)
+        return macaulay2.substitute(repr(self.lift()), m2_parent)
 
     def reduce(self, G):
         r"""

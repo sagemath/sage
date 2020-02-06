@@ -48,7 +48,7 @@ There are three possible underlying implementations:
    * zn_poly_interval_products.
 This function is a wrapper which takes ZZ_p input, calls one of the three
 above implementations depending on the size of the current ZZ_p modulus, and
-produces ouptut in ZZ_p format.
+produces output in ZZ_p format.
 
 If the force_ntl flag is set, it will never use the zn_poly version.
 

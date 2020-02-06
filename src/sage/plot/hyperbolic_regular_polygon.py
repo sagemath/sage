@@ -109,13 +109,13 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             Hyperbolic regular polygon (sides=5, i_angle=1/2*pi, center=1.00000000000000*I)
         """
         self.center = CC(center)
-        if self.center.imag() <= 0 :
+        if self.center.imag() <= 0:
             raise ValueError("center: %s is not a valid point in the upper half plane model of the hyperbolic plane"%(self.center))
-        if sides < 3 :
+        if sides < 3:
             raise ValueError("degenerated polygons (sides<=2) are not supported")
-        if i_angle <=0 or i_angle >= pi:
+        if i_angle <= 0 or i_angle >= pi:
             raise ValueError("interior angle %s must be in (0, pi) interval"%(i_angle))
-        if pi*(sides-2) - sides*i_angle <= 0 :
+        if pi*(sides-2) - sides*i_angle <= 0:
             raise ValueError("there exists no hyperbolic regular compact polygon, for sides=%s the interior angle must be less than %s"%(sides, pi * (sides-2) / sides))
         self.sides = sides
         self.i_angle = i_angle

@@ -31,8 +31,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 cimport cython
 from cysignals.signals cimport sig_check
 from cpython.array cimport array
@@ -244,22 +242,39 @@ cdef class FiniteField(Field):
         s = "ext<%s|%s>"%(B._magma_init_(magma),p._magma_init_(magma))
         return magma._with_names(s, self.variable_names())
 
-    def _macaulay2_init_(self):
+    def _macaulay2_init_(self, macaulay2=None):
         """
-        Returns the string representation of ``self`` that Macaulay2 can
-        understand.
+        Return the string representation of this finite field that Macaulay2
+        can understand.
+
+        Note that, in the case of a prime field, this returns ``ZZ/p`` instead
+        of the Galois field ``GF p``, since computations in polynomial rings
+        over ``ZZ/p`` are faster in Macaulay2 (as of 2019).
 
         EXAMPLES::
 
-            sage: GF(97,'a')._macaulay2_init_()
-            'GF 97'
-
-            sage: macaulay2(GF(97, 'a'))       # optional - macaulay2
-            GF 97
-            sage: macaulay2(GF(49, 'a'))       # optional - macaulay2
+            sage: macaulay2(GF(97, 'a'))       # indirect doctest, optional - macaulay2
+            ZZ
+            --
+            97
+            sage: macaulay2(GF(49, 'a'))       # indirect doctest, optional - macaulay2
             GF 49
+
+        TESTS:
+
+        The variable name is preserved (:trac:`28566`)::
+
+            sage: K = macaulay2(GF(49, 'b'))  # optional - macaulay2
+            sage: K.gens()                    # optional - macaulay2
+            {b}
+            sage: K._sage_()                  # optional - macaulay2
+            Finite Field in b of size 7^2
         """
-        return "GF %s"%(self.order())
+        if self.is_prime_field():
+            return "ZZ/%s" % self.order()
+        return "GF(%s,Variable=>symbol %s)" % (self.order(),
+                                               self.variable_name())
+
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -312,7 +327,7 @@ cdef class FiniteField(Field):
 
         f = self.modulus()
         if base_map is not None:
-            f = f.change_ring(base_map)
+            f = f.map_coefficients(base_map)
         return f(im_gens[0]).is_zero()
 
     def _Hom_(self, codomain, category=None):
@@ -1281,6 +1296,52 @@ cdef class FiniteField(Field):
         return GF._change(self, **kwds)
         # TODO: Add test: switching trivial stuff back and forth works, say the name.
 
+    def subfield(self, degree, name=None):
+        """
+        Return the subfield of the field of ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- integer; degree of the subfield
+
+        - ``name`` -- string; name of the generator of the subfield
+
+        EXAMPLES::
+
+            sage: k = GF(2^21)
+            sage: k.subfield(3)
+            Finite Field in z3 of size 2^3
+            sage: k.subfield(7, 'a')
+            Finite Field in a of size 2^7
+            sage: k.coerce_map_from(_)
+            Ring morphism:
+              From: Finite Field in a of size 2^7
+              To:   Finite Field in z21 of size 2^21
+              Defn: a |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14 + z21^6 + z21^4 + z21^3 + z21
+            sage: k.subfield(8)
+            Traceback (most recent call last):
+            ...
+            ValueError: no subfield of order 2^8
+        """
+        from .finite_field_constructor import GF
+        p = self.characteristic()
+        n = self.degree()
+        if not n % degree == 0:
+            raise ValueError("no subfield of order {}^{}".format(p, degree))
+
+        if hasattr(self, '_prefix'):
+            K = GF(p**degree, name=name, prefix=self._prefix)
+        elif degree == 1:
+            K = GF(p)
+        else:
+            gen = self.gen()**((self.order() - 1)//(p**degree - 1))
+            K = GF(p**degree, modulus=gen.minimal_polynomial(), name=name)
+            try: # to register a coercion map, embedding of K to self
+                self.register_coercion(K.hom([gen], codomain=self, check=False))
+            except AssertionError: # coercion already exists
+                pass
+        return K
+
     def subfields(self, degree=0, name=None):
         """
         Return all subfields of the given ``degree``, or of all possible
@@ -1335,36 +1396,35 @@ cdef class FiniteField(Field):
                   To:   Finite Field in z21 of size 2^21
                   Defn: z21 |--> z21)]
         """
-        from sage.rings.integer import Integer
-        from .finite_field_constructor import GF
-        p = self.characteristic()
-        n = self.absolute_degree()
+        n = self.degree()
+
         if degree != 0:
-            degree = Integer(degree)
-            if not degree.divides(n):
+            if not n % degree == 0:
                 return []
-            elif hasattr(self, '_prefix'):
-                K = GF(p**degree, name=name, prefix=self._prefix)
-                return [(K, self.coerce_map_from(K))]
-            elif degree == 1:
-                K = GF(p)
-                return [(K, self.coerce_map_from(K))]
             else:
-                gen = self.gen()**((self.order() - 1)//(p**degree - 1))
-                K = GF(p**degree, modulus=gen.minimal_polynomial(base=self.prime_subfield()), name=name)
-                return [(K, K.hom((gen,)))]
-        else:
-            divisors = n.divisors()
-            if name is None:
-                if hasattr(self, '_prefix'):
-                    name = self._prefix
-                else:
-                    name = self.variable_name()
-            if isinstance(name, str):
-                name = {m: name + str(m) for m in divisors}
-            elif not isinstance(name, dict):
-                raise ValueError("name must be None, a string or a dictionary indexed by divisors of the degree")
-            return [self.subfields(m, name=name[m])[0] for m in divisors]
+                #gen = self.gen()**((self.order() - 1)//(p**degree - 1))
+                #K = GF(p**degree, modulus=gen.minimal_polynomial(base=self.prime_subfield()), name=name)
+                #return [(K, K.hom((gen,)))]
+                K = self.subfield(degree, name=name)
+                return [(K, self.coerce_map_from(K))]
+
+        divisors = n.divisors()
+
+        if name is None:
+            if hasattr(self, '_prefix'):
+                name = self._prefix
+            else:
+                name = self.variable_name()
+        if isinstance(name, str):
+            name = {m: name + str(m) for m in divisors}
+        elif not isinstance(name, dict):
+            raise ValueError("name must be None, a string or a dictionary indexed by divisors of the degree")
+
+        pairs = []
+        for m in divisors:
+            K = self.subfield(m, name=name[m])
+            pairs.append((K, self.coerce_map_from(K)))
+        return pairs
 
     @cached_method
     def algebraic_closure(self, name='z', **kwds):

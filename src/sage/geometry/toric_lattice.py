@@ -1745,15 +1745,15 @@ class ToricLattice_quotient(FGP_Module_class):
 
     def coordinate_vector(self, x, reduce=False):
         """
-        Return coordinates of x with respect to the optimized
-        representation of self.
+        Return coordinates of ``x`` with respect to the optimized
+        representation of ``self``.
 
         INPUT:
 
-        - ``x`` -- element of ``self`` or convertable to ``self``.
+        - ``x`` -- element of ``self`` or convertible to ``self``
 
-        - ``reduce`` -- (default: False); if True, reduce coefficients
-          modulo invariants.
+        - ``reduce`` -- (default: ``False``); if ``True``, reduce coefficients
+          modulo invariants
 
         OUTPUT:
 

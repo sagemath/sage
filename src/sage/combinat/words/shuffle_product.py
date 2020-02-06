@@ -26,7 +26,6 @@ from sage.combinat.combinat import CombinatorialClass
 from sage.arith.all import binomial
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.composition import Composition
-from sage.misc.lazy_import import lazy_import
 
 
 class ShuffleProduct_w1w2(CombinatorialClass):
@@ -59,7 +58,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: W = Words([1,2,3,4])
             sage: s = ShuffleProduct_w1w2(W([1,2]),W([3,4]))
             sage: sorted(list(s))
-            [word: 1234, word: 1324, word: 1342, word: 3124, word: 3142, word: 3412]
+            [word: 1234, word: 1324, word: 1342, word: 3124,
+             word: 3142, word: 3412]
             sage: s == loads(dumps(s))
             True
 
@@ -122,7 +122,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             except IndexError:
                 return False
             if w1 and w2 and letter == w1[0] == w2[0]:
-                return Word(wx) in self._w1[1:].shuffle(self._w2) or Word(wx) in self._w1.shuffle(self._w2[1:])
+                return (Word(wx) in self._w1[1:].shuffle(self._w2) or
+                        Word(wx) in self._w1.shuffle(self._w2[1:]))
             if w1 and letter == w1[0]:
                 w1.pop(0)
             elif w2 and letter == w2[0]:
@@ -155,7 +156,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: S.cardinality()
             6
         """
-        return binomial(self._w1.length()+self._w2.length(), self._w1.length())
+        return binomial(self._w1.length() + self._w2.length(),
+                        self._w1.length())
 
     def _proc(self, vect):
         """
@@ -230,11 +232,12 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: w, u = map(Words("abcd"), ["ab", "cd"])
             sage: S = ShuffleProduct_w1w2(w,u)
             sage: S.list() #indirect test
-            [word: abcd, word: acbd, word: acdb, word: cabd, word: cadb, word: cdab]
+            [word: abcd, word: acbd, word: acdb, word: cabd,
+             word: cadb, word: cdab]
         """
         n1 = len(self._w1)
         n2 = len(self._w2)
-        for iv in IntegerVectors(n1, n1+n2, max_part=1):
+        for iv in IntegerVectors(n1, n1 + n2, max_part=1):
             yield self._proc(iv)
 
 
@@ -272,6 +275,3 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             'Shuffle product of word: 01 and word: 45'
         """
         return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
-
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping_r', deprecation=15597)
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping', deprecation=15597)

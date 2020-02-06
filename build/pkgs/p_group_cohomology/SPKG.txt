@@ -68,6 +68,9 @@ more efficiently.
 We owe Peter Symonds the idea of using the Poincaré series in a
 rather efficient completeness criterion.
 
+We are greatful to John Palmieri for his help on making p_group_cohomology
+work with python-3.
+
 == Dependencies ==
 
 - The SharedMeatAxe needs to be installed, as a build time dependency.
@@ -95,6 +98,10 @@ SAGE_ROOT/local/share/doc/p_group_cohomology/.
 
 == Changelog ==
 
+  * v3.3 (September 2019):
+    - Python-3 support.
+    - Cleaner code and tests for the mechanism that updates moved data.
+    - Use proper isomorphism tests in unit_test_64.
   * v3.2 (Simon King, July 2019):
     - Detection of graded non-induced isomorphisms of cohomology rings.
     - Easier creation of a cohomology ring from a tower of subgroups.

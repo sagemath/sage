@@ -61,7 +61,7 @@ Tables are typeset as html in SageNB::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import io
@@ -70,7 +70,6 @@ import stat
 from sage.misc.cachefunc import cached_method
 from sage.misc.html import html
 from sage.misc.temporary_file import graphics_filename
-from sage.doctest import DOCTEST_MODE
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
 from sage.repl.rich_output.output_video import OutputVideoBase
@@ -220,8 +219,8 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             sage: j = SageNbOutputSceneJmol.example()
             sage: os.path.exists('sage0-size32.jmol')
             False
-            sage: j.save_launch_script()  # py2: requires sagenb
-            sage: os.path.exists('sage0-size32.jmol')  # py2
+            sage: j.save_launch_script()  # py2 # optional -- sagenb
+            sage: os.path.exists('sage0-size32.jmol')  # py2 # optional -- sagenb
             True
         """
         from sagenb.notebook.interact import SAGE_CELL_ID
@@ -246,7 +245,7 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
             sage: import shutil
             sage: shutil.rmtree('.jmol_images', ignore_errors=True)
             sage: j.save_preview()
-            sage: os.listdir('.jmol_images')  # py2
+            sage: os.listdir('.jmol_images')  # py2 # optional -- sagenb
             ['sage1-size32.jmol.png']
         """
         from sage.misc.misc import sage_makedirs
@@ -266,10 +265,10 @@ class SageNbOutputSceneJmol(OutputSceneJmol):
 
             sage: from sage.repl.rich_output.backend_sagenb import SageNbOutputSceneJmol
             sage: j = SageNbOutputSceneJmol.example()
-            sage: j.embed()  # py2 - requires sagenb
-            sage: sorted(os.listdir('.'))  # py2
+            sage: j.embed()  # py2 # optional -- sagenb
+            sage: sorted(os.listdir('.'))  # py2 # optional -- sagenb
             ['.jmol_images', 'sage0-size32-....jmol.zip', 'sage0-size32.jmol']
-            sage: sorted(os.listdir('.jmol_images'))  # py2
+            sage: sorted(os.listdir('.jmol_images'))  # py2 # optional -- sagenb
             ['sage0-size32.jmol.png']
         """
         self.save_preview()

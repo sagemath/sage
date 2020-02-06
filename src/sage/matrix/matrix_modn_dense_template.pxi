@@ -1,5 +1,5 @@
 """
-Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK).
+Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK)
 
 FFLAS/FFPACK are libraries to provide BLAS/LAPACK-style routines for
 working with finite fields. Additionally, these routines reduce to
@@ -119,6 +119,7 @@ from sage.misc.misc import verbose, get_verbose, cputime
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.proof.proof import get_flag as get_proof_flag
+from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
 from .args cimport MatrixArgs_init
@@ -190,7 +191,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     if nrows*ncols > 1000: sig_on()
     if nbthreads > 1 :
         r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
-    else : 
+    else :
         r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
     if nrows*ncols > 1000: sig_off()
 
@@ -939,10 +940,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         r"""
-        Compare two dense matrices over `\Z/n\Z`
+        Compare two dense matrices over `\Z/n\Z`.
 
         EXAMPLES::
 
@@ -982,16 +982,15 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Py_ssize_t i
         cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
         sig_on()
-        for i in range(self._nrows*self._ncols):
+        for i in range(self._nrows * self._ncols):
             if self._entries[i] < other_ent[i]:
                 sig_off()
-                return -1
+                return rich_to_bool(op, -1)
             elif self._entries[i] > other_ent[i]:
                 sig_off()
-                return 1
+                return rich_to_bool(op, 1)
         sig_off()
-        return 0
-
+        return rich_to_bool(op, 0)
 
     cdef _matrix_times_matrix_(self, Matrix right):
         """

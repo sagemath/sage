@@ -1,7 +1,7 @@
 """
 `p`-Adic ``ZZ_pX`` CA Element
 
-This file implements elements of eisenstein and unramified extensions
+This file implements elements of Eisenstein and unramified extensions
 of ``Zp`` with capped absolute precision.
 
 For the parent class see padic_extension_leaves.pyx.
@@ -14,7 +14,7 @@ element contains the following data:
   which the element is well defined.
 
 - ``value`` (``ZZ_pX_c``) -- An ntl ``ZZ_pX`` storing the value.  The
-  variable `x` is the uniformizer in the case of eisenstein extensions.
+  variable `x` is the uniformizer in the case of Eisenstein extensions.
   This ZZ_pX is created with global ntl modulus determined by absprec.
   Let `a` be absprec and `e` be the ramification index over
   `\QQ_p` or `\ZZ_p`.  Then the modulus is given by
@@ -33,11 +33,11 @@ element contains the following data:
   + ``prime_pow.f``   -- The inertia degree
 
   + ``prime_pow.prec_cap`` -- the unramified precision cap.  For
-    eisenstein extensions this is the smallest power of p that is
+    Eisenstein extensions this is the smallest power of p that is
     zero.
 
   + ``prime_pow.ram_prec_cap`` -- the ramified precision cap.  For
-    eisenstein extensions this will be the smallest power of `x` that
+    Eisenstein extensions this will be the smallest power of `x` that
     is indistinguishable from zero.
 
   + ``prime_pow.pow_ZZ_tmp``, prime_pow.pow_mpz_t_tmp``,
@@ -63,7 +63,7 @@ element contains the following data:
 
 EXAMPLES:
 
-An eisenstein extension::
+An Eisenstein extension::
 
     sage: R = ZpCA(5,5)
     sage: S.<x> = ZZ[]
@@ -145,8 +145,7 @@ AUTHORS:
 - Julian Rueth (2012-10-15): fixed an initialization bug
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #                     2012 Julian Rueth <julian.rueth@fsfe.org>
@@ -155,8 +154,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.stdsage cimport PY_NEW
@@ -182,7 +181,6 @@ from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_small_Eis
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_big_Eis
-from sage.misc.superseded import deprecated_function_alias, deprecation
 
 cdef object infinity
 from sage.rings.infinity import infinity
@@ -192,7 +190,7 @@ cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) -1
 cdef class pAdicZZpXCAElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
         """
-        Creates an element of a capped absolute precision, unramified or eisenstein extension of Zp or Qp.
+        Creates an element of a capped absolute precision, unramified or Eisenstein extension of Zp or Qp.
 
         INPUT:
 
@@ -1835,15 +1833,15 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         ZZ_pX_conv_modulus(ans.value, self.value, self.prime_pow.get_context_capdiv(aprec).x)
         return ans
 
-    def expansion(self, n = None, lift_mode = 'simple'):
+    def expansion(self, n=None, lift_mode='simple'):
         """
-        Returns a list giving a series representation of ``self``.
+        Return a list giving a series representation of ``self``.
 
         - If ``lift_mode == 'simple'`` or ``'smallest'``, the returned
-          list will consist of integers (in the eisenstein case) or a
+          list will consist of integers (in the Eisenstein case) or a
           list of lists of integers (in the unramified case).
           ``self`` can be reconstructed as a sum of elements of the
-          list times powers of the uniformiser (in the eisenstein
+          list times powers of the uniformiser (in the Eisenstein
           case), or as a sum of powers of `p` times polynomials in the
           generator (in the unramified case).
 
@@ -1860,8 +1858,8 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
-          entry in the expansion.
+        - ``n`` -- integer (default ``None``).  If given, returns the
+          corresponding entry in the expansion.
 
         EXAMPLES::
 
@@ -1901,7 +1899,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: L.<a> = K.extension(a^2 - 3)
             sage: a.residue()
             0
-
         """
         if lift_mode == 'teichmuller':
             zero = self.parent()(0)
@@ -1910,11 +1907,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             zero = Integer(0)
         ordp = self.valuation()
-        if n in ('simple', 'smallest', 'teichmuller'):
-            deprecation(14825, "Interface to expansion has changed; first argument now n")
-            lift_mode = n
-            n = None
-        elif isinstance(n, slice):
+        if isinstance(n, slice):
             return self.slice(n.start, n.stop, n.step)
         elif n is not None:
             if self.is_zero() or n < ordp:
@@ -1940,8 +1933,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             except IndexError:
                 return zero
         return [zero] * ordp + ulist
-
-    list = deprecated_function_alias(14825, expansion)
 
     def matrix_mod_pn(self):
         """
@@ -2101,8 +2092,6 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             return L
         else:
             return self.parent()(0, rp)
-
-    teichmuller_list = deprecated_function_alias(14825, teichmuller_expansion)
 
     def _teichmuller_set_unsafe(self):
         """
@@ -2277,10 +2266,10 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
     cdef ext_p_list(self, bint pos):
         """
-        Returns a list of integers (in the eisenstein case) or a list
+        Returns a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can
         be reconstructed as a sum of elements of the list times powers
-        of the uniformizer (in the eisenstein case), or as a sum of
+        of the uniformizer (in the Eisenstein case), or as a sum of
         powers of `p` times polynomials in the generator (in the
         unramified case).
 

@@ -1,3 +1,4 @@
+# cython: language_level=2
 r"""
 Elements of `\ZZ/n\ZZ`
 
@@ -85,7 +86,8 @@ import operator
 cdef bint use_32bit_type(int_fast64_t modulus):
     return modulus <= INTEGER_MOD_INT32_LIMIT
 
-from sage.arith.long cimport integer_check_long, integer_check_long_py, ERR_OVERFLOW
+from sage.arith.long cimport (
+    integer_check_long, integer_check_long_py, is_small_python_int, ERR_OVERFLOW)
 
 import sage.rings.rational as rational
 from sage.libs.pari.all import pari, PariError
@@ -426,9 +428,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: abs(Mod(2,3))
             Traceback (most recent call last):
             ...
-            ArithmeticError: absolute valued not defined on integers modulo n.
+            ArithmeticError: absolute value not defined on integers modulo n.
         """
-        raise ArithmeticError("absolute valued not defined on integers modulo n.")
+        raise ArithmeticError("absolute value not defined on integers modulo n.")
 
     def __reduce__(IntegerMod_abstract self):
         """
@@ -3634,9 +3636,8 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 cdef int mpz_pow_helper(mpz_t res, mpz_t base, object exp, mpz_t modulus) except -1:
     cdef bint invert = False
     cdef long long_exp
-
-    if type(exp) is int:
-        long_exp = PyInt_AS_LONG(exp)
+    if is_small_python_int(exp):
+        long_exp = exp
         if long_exp < 0:
             long_exp = -long_exp
             invert = True

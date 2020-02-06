@@ -463,7 +463,7 @@ sage_setup() {
         # make sure that $DOT_SAGE exists so that ipython will happily
         # create its config directories there.  If DOT_SAGE doesn't
         # exist, ipython complains.
-        mkdir -p "$DOT_SAGE"
+        mkdir -p -m 700 "$DOT_SAGE"
     fi
     sage-cleaner &>/dev/null &
 }
@@ -598,7 +598,7 @@ fi
 
 if [ "$1" = '-pip' -o "$1" = '--pip' ]; then
     shift
-    exec sage-python23 -m pip "$@"
+    exec sage-python -m pip "$@"
 fi
 
 if [ "$1" = '--pip3' ]; then
@@ -1036,7 +1036,7 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
     # tends to ask interactive questions if something goes wrong. These
     # cause the build to hang. If stdin is /dev/null, TeX just aborts.
     shift
-    exec sage-python23 -m sage_setup.docbuild "$@" </dev/null
+    exec sage-python -m sage_setup.docbuild "$@" </dev/null
 fi
 
 if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
@@ -1046,7 +1046,7 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
         gdb -x "$0-gdb-commands" \
             -args python "$0-ipython" "$@" -i
     else
-        sage_dir=$(sage-python23 -c 'import os, sage; print(os.path.dirname(sage.__file__))')
+        sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
             -- -x "$0-gdb-commands" \
             -args python "$0-ipython" "$@" -i

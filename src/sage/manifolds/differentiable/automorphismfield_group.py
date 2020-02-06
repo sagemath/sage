@@ -21,6 +21,7 @@ AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
 - Travis Scrimshaw (2016): review tweaks
+- Michael Jung (2019): improve treatment of the identity element
 
 REFERENCES:
 
@@ -300,7 +301,16 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             [0 1]
 
         """
-        return self.element_class(self._vmodule, is_identity=True)
+        # Specific initializations for the field of identity maps:
+        resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
+        resu._inverse = resu
+        for dom in resu._domain._subsets:
+            if dom.is_manifestly_parallelizable():
+                fmodule = dom.vector_field_module()
+                resu._restrictions[dom] = fmodule.identity_map(name='Id',
+                                                      latex_name=r'\mathrm{Id}')
+        resu._is_identity = True
+        return resu
 
     #### End of monoid methods ####
 

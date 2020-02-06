@@ -259,7 +259,7 @@ class HTMLFragmentFactory(SageObject):
         s = str(s)
         s = math_parse(s)
         t = ''
-        while len(s) > 0:
+        while s:
             i = s.find('<sage>')
             if i == -1:
                  t += s

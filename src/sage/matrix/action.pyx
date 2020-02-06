@@ -59,7 +59,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import operator
 
@@ -67,7 +66,7 @@ from .matrix_space import MatrixSpace, is_MatrixSpace
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
-from sage.schemes.generic.homset import SchemeHomset_generic
+from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
 
 
 cdef class MatrixMulAction(Action):
@@ -517,3 +516,62 @@ cdef class PolymapMatrixAction(MatrixMulAction):
                     (x^2 + 2*x*y + 2*y^2 : y^2)
         """
         return f._polymap_times_matrix_(mat, self._codomain)
+
+cdef class MatrixSchemePointAction(MatrixMulAction):
+    r"""
+    Action class for left multiplication of schemes points by matricies.
+    """
+    def __init__(self, G, S):
+        """
+        Initialization of action class.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.action import MatrixSchemePointAction
+            sage: M = MatrixSpace(QQ, 2, 2)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: A = MatrixSchemePointAction(M, P(QQ))
+            sage: A
+            Left action by Full MatrixSpace of 2 by 2 dense matrices over
+            Rational Field on Set of rational points of Projective Space
+            of dimension 1 over Rational Field
+        """
+        if not isinstance(S, SchemeHomset_points):
+            raise TypeError("not a homset of scheme points: %s"% S)
+        MatrixMulAction.__init__(self, G, S, True)
+
+    def _create_codomain(self, base):
+        """
+        Create the point homset for the resulting point.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.action import MatrixSchemePointAction
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: M = MatrixSpace(QQ, 2, 2)
+            sage: A = MatrixSchemePointAction(M, P(QQ))
+            sage: A.codomain()
+            Set of rational points of Projective Space of dimension 1 over Rational Field
+        """
+        #need to extend the base of the ambient space
+        #and return the set of point over the base
+        amb = self.underlying_set().codomain()
+        return amb.change_ring(base)(base)
+
+    cpdef _act_(self, mat, P):
+        """
+        Action of matrices on scheme points.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.action import MatrixSchemePointAction
+            sage: P.<x, y> = ProjectiveSpace(QQ, 1)
+            sage: Q = P(1,1)
+            sage: M = MatrixSpace(QQ, 2, 2)
+            sage: A = MatrixSchemePointAction(M, Q.parent())
+            sage: m = matrix([[1,1], [0,1]])
+            sage: A._act_(m, Q)
+            (2 : 1)
+        """
+        return P._matrix_times_point_(mat, self._codomain)
+

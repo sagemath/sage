@@ -1420,7 +1420,7 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(7)[0].decomposition_group()
-            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
+            Subgroup [(), (1,2)] of Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
         return self.number_field().galois_group().decomposition_group(self)
 
@@ -1436,7 +1436,7 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(23)[0].ramification_group(0)
-            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
+            Subgroup [(), (1,2)] of Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
             sage: QuadraticField(-23, 'w').primes_above(23)[0].ramification_group(1)
             Subgroup [()] of Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
@@ -1454,7 +1454,7 @@ class NumberFieldIdeal(Ideal_generic):
         EXAMPLES::
 
             sage: QuadraticField(-23, 'w').primes_above(23)[0].inertia_group()
-            Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
+            Subgroup [(), (1,2)] of Galois group of Number Field in w with defining polynomial x^2 + 23 with w = 4.795831523312720?*I
         """
         return self.ramification_group(0)
 

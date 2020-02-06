@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 
 import os, sys
 from subprocess import call

@@ -17,6 +17,7 @@ Groups
    sage/groups/finitely_presented
    sage/groups/finitely_presented_named
    sage/groups/braid
+   sage/groups/cubic_braid
    sage/groups/indexed_free_group
    sage/groups/raag
    sage/groups/group_exp
@@ -54,6 +55,7 @@ Permutation Groups
    :maxdepth: 2
 
    sage/groups/perm_gps/permutation_groups_catalog
+   sage/groups/perm_gps/constructor
    sage/groups/perm_gps/permgroup
    sage/groups/perm_gps/permgroup_named
    sage/groups/perm_gps/permgroup_element

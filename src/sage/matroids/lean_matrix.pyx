@@ -29,7 +29,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 include 'sage/data_structures/bitset.pxi'
 from libc.string cimport memcpy, memset

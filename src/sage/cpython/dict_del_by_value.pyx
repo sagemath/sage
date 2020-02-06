@@ -15,23 +15,24 @@ AUTHORS:
 
 - Nils Bruin (2017-05)
 """
-########################################################################
+
+# ****************************************************************************
 #       Copyright (C) 2017 Nils Bruin <nbruin@sfu.ca>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-########################################################################
-from __future__ import print_function, absolute_import
+# ****************************************************************************
 
 import weakref
 from weakref import KeyedRef
-from copy import deepcopy
 
 from cpython.list cimport PyList_New
 from cpython cimport Py_XINCREF, Py_XDECREF
 
-IF PY_VERSION_HEX<=0x02ffffff:
+IF PY_VERSION_HEX <= 0x02ffffff:
     cdef extern from "Python.h":
         ctypedef struct PyDictEntry:
             Py_ssize_t me_hash
@@ -44,22 +45,11 @@ IF PY_VERSION_HEX<=0x02ffffff:
             PyDictEntry* ma_table
             PyDictEntry* (*ma_lookup)(PyDictObject *mp, PyObject *key, Py_hash_t hash) except NULL
 
-        PyObject* Py_None
         #we need this redefinition because we want to be able to call
         #PyWeakref_GetObject with borrowed references. This is the recommended
         #strategy according to Cython/Includes/cpython/__init__.pxd
         PyObject* PyWeakref_GetObject(PyObject * wr)
         int PyList_SetItem(object list, Py_ssize_t index, PyObject * item) except -1
-
-    from cpython.object cimport PyObject_Hash
-    cdef PyObject* PyDict_GetItemWithError(dict op, object key) except? NULL:
-        cdef PyDictEntry* ep
-        cdef PyDictObject* mp = <PyDictObject*><void *>op
-        ep = mp.ma_lookup(mp, <PyObject*><void*>key, PyObject_Hash(key))
-        if ep:
-            return ep.me_value
-        else:
-            return NULL
 
     #this routine extracts the "dummy" sentinel value that is used in dicts to mark
     #"freed" slots. We need that to delete things ourselves.
@@ -89,7 +79,7 @@ IF PY_VERSION_HEX<=0x02ffffff:
 
     #this routine looks for the first entry in dict D with given hash of the
     #key and given (identical!) value and deletes that entry.
-    cdef del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_t hash):
+    cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_t hash) except -1:
         """
         This is used in callbacks for the weak values of :class:`WeakValueDictionary`.
 
@@ -149,18 +139,18 @@ IF PY_VERSION_HEX<=0x02ffffff:
 
         if ep.me_key == NULL:
             # key not found
-            return
+            return 0
 
         perturb = hash
         while (<PyObject *>(ep.me_value) != value or ep.me_hash != hash):
-            i = (i << 2) + i + perturb +1
-            ep = &ep0[i & mask]
+            i = mask & (i * 5 + perturb + 1)
+            ep = &ep0[i]
             if ep.me_key == NULL:
                 # key not found
-                return
+                return 0
             perturb = perturb >> 5 #this is the value of PERTURB_SHIFT
 
-        T=PyList_New(2)
+        T = PyList_New(2)
         PyList_SetItem(T, 0, ep.me_key)
         if dummy == NULL:
             raise RuntimeError("dummy needs to be initialized")
@@ -179,25 +169,26 @@ ELIF PY_VERSION_HEX>=0x03060000:
 
     from libc.stdint cimport int8_t,int16_t,int32_t,int64_t
     cdef extern from "Python.h":
+        ctypedef struct PyDictKeysObject
+
         ctypedef struct PyDictObject:
             Py_ssize_t ma_used
             PyDictKeysObject * ma_keys
             PyObject ** ma_values
 
-        PyObject* Py_None
         #we need this redefinition because we want to be able to call
         #PyWeakref_GetObject with borrowed references. This is the recommended
         #strategy according to Cython/Includes/cpython/__init__.pxd
         PyObject* PyWeakref_GetObject(PyObject * wr)
         int PyList_SetItem(object list, Py_ssize_t index, PyObject * item) except -1
-        PyObject* PyDict_GetItemWithError(dict op, object key) except? NULL
         int PyWeakref_Check(PyObject * ob)
-
-        ctypedef struct PyDictKeysObject
     ####
     #definitions replicated from CPython's Objects/dict-common.h
     #(this file is not exported from CPython, so we need to be
     #careful the definitions are in step with what happens there.
+
+    ctypedef void* dict_lookup_func  # Precise definition not needed
+
     ctypedef union IndexBlock:
         int8_t as_1[8]
         int16_t as_2[4]
@@ -207,7 +198,7 @@ ELIF PY_VERSION_HEX>=0x03060000:
     ctypedef struct MyPyDictKeysObject:
         Py_ssize_t dk_refcnt
         Py_ssize_t dk_size
-        Py_ssize_t (*dk_lookup)(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject ** value_addr, Py_ssize_t *hashpos)
+        dict_lookup_func dk_lookup
         Py_ssize_t dk_usable
         Py_ssize_t dk_nentries
         IndexBlock dk_indices
@@ -227,34 +218,30 @@ ELIF PY_VERSION_HEX>=0x03060000:
 
     cdef inline int DK_IXSIZE(MyPyDictKeysObject *keys):
         cdef Py_ssize_t s = keys.dk_size
-        cdef int i
         if s <= 0xff:
-            i = 1
+            return 1
         elif s <= 0xffff:
-            i = 2
+            return 2
         elif s <= 0xffffffff:
-            i = 4
+            return 4
         else:
-            i = 8
-        return i
+            return 8
 
     cdef inline PyDictKeyEntry * DK_ENTRIES(MyPyDictKeysObject *keys):
         return <PyDictKeyEntry*> &(keys.dk_indices.as_1[keys.dk_size * DK_IXSIZE(keys)])
 
     cdef inline Py_ssize_t dk_get_index(MyPyDictKeysObject *keys, Py_ssize_t i):
         cdef Py_ssize_t s = keys.dk_size
-        cdef Py_ssize_t ix
         if s <= 0xff:
-            ix = keys.dk_indices.as_1[i]
+            return keys.dk_indices.as_1[i]
         elif s <= 0xffff:
-            ix = keys.dk_indices.as_2[i]
+            return keys.dk_indices.as_2[i]
         elif s <= 0xffffffff:
-            ix = keys.dk_indices.as_4[i]
+            return keys.dk_indices.as_4[i]
         else:
-            ix = keys.dk_indices.as_8[i]
-        return ix
+            return keys.dk_indices.as_8[i]
 
-    cdef inline dk_set_index(MyPyDictKeysObject *keys, Py_ssize_t i, Py_ssize_t ix):
+    cdef inline void dk_set_index(MyPyDictKeysObject *keys, Py_ssize_t i, Py_ssize_t ix):
         cdef Py_ssize_t s = keys.dk_size
         if s <= 0xff:
             keys.dk_indices.as_1[i] = ix
@@ -264,36 +251,26 @@ ELIF PY_VERSION_HEX>=0x03060000:
             keys.dk_indices.as_4[i] = ix
         else:
             keys.dk_indices.as_8[i] = ix
-        return ix
+
     #End of replication of Object/dictobject.c
     ######
 
-    cdef void * lookdict
+    cdef dict_lookup_func lookdict
 
-    cdef void * DK_LOOKUP(PyDictObject *mp):
-        return <void *>((<MyPyDictKeysObject *>(mp.ma_keys)).dk_lookup)
+    cdef dict_lookup_func DK_LOOKUP(PyDictObject *mp):
+        return (<MyPyDictKeysObject *>(mp.ma_keys)).dk_lookup
 
     def init_lookdict():
         global lookdict
-        cdef dict D={}
-        #this should trigger the initialization of the general
-        #lookup function on the dict.
-        PyDict_GetItemWithError(D,None)
-        #which we store in a global variable
-        lookdict=DK_LOOKUP(<PyDictObject *>D)
+        # A dict which a non-string key uses the generic "lookdict"
+        # as lookup function
+        cdef object D = {}
+        D[0] = 0
+        lookdict = DK_LOOKUP(<PyDictObject *>D)
 
     init_lookdict()
 
-    cdef ensure_allows_deletions(PyDictObject *mp):
-        if DK_LOOKUP(mp) != lookdict:
-            #on normal dictionaries (non-split table), looking up a key
-            #that is not a unicode object triggers installation of the
-            #general lookup function (which can deal with DKIX_DUMMY)
-            PyDict_GetItemWithError(<dict>mp,None)
-            #this can actually fail if mp is a dictionary with split table
-            assert DK_LOOKUP(mp) == lookdict
-
-    cdef del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_t hash):
+    cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_t hash) except -1:
         """
         This is used in callbacks for the weak values of :class:`WeakValueDictionary`.
 
@@ -341,39 +318,39 @@ ELIF PY_VERSION_HEX>=0x03060000:
             sage: M = WeakValueDictionary()
             sage: for i in range(10^3+10): newA = A(); M[newA] = prev; prev = newA
             sage: del a
-
         """
-        cdef size_t i
-        cdef MyPyDictKeysObject * keys = <MyPyDictKeysObject *>(mp.ma_keys)
+        keys = <MyPyDictKeysObject *>(mp.ma_keys)
         cdef size_t perturb
         cdef size_t mask = <size_t> keys.dk_size-1
-        cdef PyDictKeyEntry *entries, *ep
-        entries = DK_ENTRIES(keys)
+        cdef PyDictKeyEntry *entries = DK_ENTRIES(keys)
+        cdef PyDictKeyEntry *ep
 
-        if mp.ma_values != NULL:
-            print ("del_dictitem_by_exact_value cannot be applied to a shared key dict")
-            return
+        if mp.ma_values is not NULL:
+            raise TypeError("del_dictitem_by_exact_value cannot be applied to a shared key dict")
 
-        i = <size_t>hash & mask
+        cdef size_t i = <size_t>hash & mask
         ix = dk_get_index(keys, i)
 
         if ix == DKIX_EMPTY:
             # key not found
-            return
+            return 0
 
         ep = &(entries[ix])
         perturb = hash
         while (ep.me_value != value or ep.me_hash != hash):
             perturb = perturb >> 5 #this is the value of PERTURB_SHIFT
-            i = ((i << 2) + i + perturb +1) & mask
+            i = mask & (i * 5 + perturb + 1)
             ix = dk_get_index(keys, i)
             if ix == DKIX_EMPTY:
                 # key not found
-                return
+                return 0
             ep = &(entries[ix])
 
-        ensure_allows_deletions(mp)
-        T=PyList_New(2)
+        # We need the lookup function to be the generic lookdict, otherwise
+        # deletions may not work correctly
+        keys.dk_lookup = lookdict
+
+        T = PyList_New(2)
         PyList_SetItem(T, 0, ep.me_key)
         PyList_SetItem(T, 1, ep.me_value)
         ep.me_key = NULL
@@ -439,4 +416,4 @@ def test_del_dictitem_by_exact_value(D, value, h):
         sage: D
         {1: Integer Ring}
     """
-    return del_dictitem_by_exact_value(<PyDictObject *>D, <PyObject *>value, h)
+    del_dictitem_by_exact_value(<PyDictObject *>D, <PyObject *>value, h)

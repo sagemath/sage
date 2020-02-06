@@ -2,7 +2,7 @@ r"""
 Tutte polynomial
 
 This module implements a deletion-contraction algorithm for computing
-the Tutte polynomial as described in the paper [Gordon10]_.
+the Tutte polynomial as described in the paper [HPR2010]_.
 
 .. csv-table::
     :class: contentstable
@@ -27,13 +27,6 @@ connected components we define the Tutte polynomial of `G` as
     \sum_H (x-1) ^{k(H) - c} (y-1)^{k(H) - |E(H)|-n}
 
 where the sum ranges over all induced subgraphs `H` of `G`.
-
-REFERENCES:
-
-.. [Gordon10] Computing Tutte Polynomials. Gary Haggard, David
-   J. Pearce and Gordon Royle. In ACM Transactions on Mathematical
-   Software, Volume 37(3), article 24, 2010. Preprint:
-   http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf
 
 Functions
 ---------
@@ -232,7 +225,7 @@ class Ear(object):
     r"""
     An ear is a sequence of vertices
 
-    Here is the definition from [Gordon10]_:
+    Here is the definition from [HPR2010]_:
 
     An ear in a graph is a path `v_1 - v_2 - \dots - v_n - v_{n+1}`
     where `d(v_1) > 2`, `d(v_{n+1}) > 2` and
@@ -448,10 +441,9 @@ class MinimizeDegree(EdgeSelection):
             (0, 1, None)
         """
         degrees = dict(graph.degree_iterator(labels=True))
-        edges = graph.edges(labels=True)
-        edges.sort(key=lambda x: degrees[x[0]]+degrees[x[1]])  # Sort by degree
-        for e in edges:
-            return e
+        edges = graph.edges(labels=True, sort=False)
+        if edges:
+            return min(edges, key=lambda x: degrees[x[0]] + degrees[x[1]])
         raise RuntimeError("no edges left to select")
 
 
@@ -463,14 +455,14 @@ class MaximizeDegree(EdgeSelection):
             sage: from sage.graphs.tutte_polynomial import MaximizeDegree
             sage: G = graphs.PathGraph(6)
             sage: MaximizeDegree()(G)
-            (3, 4, None)
+            (1, 2, None)
         """
         degrees = dict(graph.degree_iterator(labels=True))
-        edges = graph.edges(labels=True)
-        edges.sort(key=lambda x: degrees[x[0]]+degrees[x[1]])  # Sort by degree
-        for e in reversed(edges):
-            return e
+        edges = graph.edges(labels=True, sort=False)
+        if edges:
+            return max(edges, key=lambda x: degrees[x[0]] + degrees[x[1]])
         raise RuntimeError("no edges left to select")
+
 
 ###########
 # Caching #

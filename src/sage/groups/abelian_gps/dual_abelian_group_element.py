@@ -1,5 +1,5 @@
 """
-Elements (characters) of the dual group of a finite Abelian group.
+Elements (characters) of the dual group of a finite Abelian group
 
 To obtain the dual group of a finite Abelian group, use the
 :meth:`~sage.groups.abelian_gps.abelian_group.dual_group` method::

@@ -4,27 +4,24 @@ Controller for the commandline actions
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
-import sys
 import logging
 log = logging.getLogger()
 
-from sage_bootstrap.env import SAGE_DISTFILES
 from sage_bootstrap.package import Package
 from sage_bootstrap.tarball import Tarball
 from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 from sage_bootstrap.creator import PackageCreator
-
 
 
 class Application(object):

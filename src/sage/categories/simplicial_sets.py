@@ -15,7 +15,6 @@ from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.interfaces.gap import gap
 
 class SimplicialSets(Category_singleton):
     r"""
@@ -323,6 +322,12 @@ class SimplicialSets(Category_singleton):
                     6
                     sage: pi.is_abelian()
                     False
+
+                The sphere has a trivial fundamental group::
+
+                    sage: S2 = simplicial_sets.Sphere(2)
+                    sage: S2.fundamental_group()
+                    Finitely presented group <  |  >
                 """
                 # Import this here to prevent importing libgap upon startup.
                 from sage.groups.free_group import FreeGroup
@@ -337,7 +342,7 @@ class SimplicialSets(Category_singleton):
                 gens = [e for e in edges if e not in spanning_tree]
 
                 if not gens:
-                    return gap.TrivialGroup()
+                    return FreeGroup([]).quotient([])
 
                 gens_dict = dict(zip(gens, range(len(gens))))
                 FG = FreeGroup(len(gens), 'e')

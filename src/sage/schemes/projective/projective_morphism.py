@@ -598,6 +598,94 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return h(list(F)).as_dynamical_system()
         return h(list(F))
 
+    def _matrix_times_polymap_(self, mat, h):
+        """
+        Multiplies the morphism on the left by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``self*mat``
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: matrix([[1,2], [0,1]]) * f
+            Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + 3*y^2 : y^2)
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2+1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
+            sage: matrix([[i,0], [0,i]]) * f
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((1/3*i)*x^2 + (1/2*i)*y^2 : (i)*y^2)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if not mat.is_square():
+            raise ValueError("matrix must be square")
+        if mat.ncols() != self.codomain().ngens():
+            raise ValueError("matrix size is incompatible")
+        F = mat * vector(list(self))
+        if isinstance(self, DynamicalSystem):
+            return h(list(F)).as_dynamical_system()
+        return h(list(F))
+
+    def _polymap_times_matrix_(self, mat, h):
+        """
+        Multiplies the morphism on the right by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``mat*self``
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: f * matrix([[1,2], [0,1]])
+            Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + 4*x*y + 5*y^2 : y^2)
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2+1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
+            sage: f * matrix([[i,0], [0,i]])
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
+              Defn: Defined on coordinates by sending (x : y) to
+                    (-1/3*x^2 - 1/2*y^2 : -y^2)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if not mat.is_square():
+            raise ValueError("matrix must be square")
+        if mat.nrows() != self.domain().ngens():
+            raise ValueError("matrix size is incompatible")
+        X = mat * vector(self[0].parent().gens())
+        F = vector(self._polys)
+        F = F(list(X))
+        if isinstance(self, DynamicalSystem):
+            return h(list(F)).as_dynamical_system()
+        return h(list(F))
+
     def as_dynamical_system(self):
         """
         Return this endomorphism as a :class:`DynamicalSystem_projective`.
@@ -719,9 +807,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def normalize_coordinates(self):
         """
-        Scales by 1/gcd of the coordinate functions.
+        Ensures that this morphism has integral coefficients, and,
+        if the number field has a GCD, then it ensures that the 
+        coefficients have no common factor.
 
-        Scales to clear any denominators from the coefficients.
         Also, makes the leading coefficients of the first polynomial
         positive. This is done in place.
 
@@ -770,28 +859,50 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: K.<w> = QuadraticField(5)
             sage: P.<x,y> = ProjectiveSpace(K, 1)
             sage: f = DynamicalSystem([w*x^2 + (1/5*w)*y^2, w*y^2])
-            sage: f.normalize_coordinates();f
+            sage: f.normalize_coordinates(); f
             Dynamical System of Projective Space of dimension 1 over Number Field in
             w with defining polynomial x^2 - 5 with w = 2.236067977499790?
               Defn: Defined on coordinates by sending (x : y) to
                     (5*x^2 + y^2 : 5*y^2)
 
-        .. NOTE:: gcd raises an error if the base_ring does not support gcds.
+        ::
+            
+            sage: R.<t> = PolynomialRing(ZZ)
+            sage: K.<b> = NumberField(t^3 - 11)
+            sage: a = 7/(b-1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([a*y^2 - (a*y-x)^2, y^2])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over Number Field in b with defining polynomial t^3 - 11
+            Defn: Defined on coordinates by sending (x : y) to
+                    (-100*x^2 + (140*b^2 + 140*b + 140)*x*y + (-77*b^2 - 567*b - 1057)*y^2 : 100*y^2)
+
         """
-        GCD = gcd(self[0], self[1])
-        index = 2
+        # clear any denominators from the coefficients
+        N = self.codomain().ambient_space().dimension_relative() + 1
+        LCM = lcm([self[i].denominator() for i in range(N)])
+        self.scale_by(LCM)
+
         R = self.domain().base_ring()
 
-        N = self.codomain().ambient_space().dimension_relative() + 1
+        # There are cases, such as the example above over GF(7),
+        # where we want to compute GCDs, but NOT in the case 
+        # where R is a NumberField of class number > 1. 
+        if R in NumberFields:
+            if R.class_number() > 1:
+                return 
+        
+        # R is a Number Field with class number 1 (i.e., a UFD) then 
+        # we can compute GCDs, so we attempt to remove any common factors. 
+        
+        GCD = gcd(self[0], self[1])
+        index = 2
+
         while GCD != 1 and index < N:
             GCD = gcd(GCD, self[index])
             index += +1
         if GCD != 1:
             self.scale_by(R(1) / GCD)
-
-        #clears any denominators from the coefficients
-        LCM = lcm([self[i].denominator() for i in range(N)])
-        self.scale_by(LCM)
 
         #scales by 1/gcd of the coefficients.
         if R in _NumberFields:
@@ -854,7 +965,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.degree()
             2
         """
-        return(self._polys[0].degree())
+        return self._polys[0].degree()
 
     def dehomogenize(self, n):
         r"""
@@ -1130,7 +1241,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             C = f[i].coefficients()
             h = max([c.global_height(prec) for c in C])
             H = max(H, h)
-        return(H)
+        return H
 
     def local_height(self, v, prec=None):
         r"""
@@ -1261,7 +1372,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         N = dom.dimension_relative()+1
         R = dom.coordinate_ring()
         J = jacobian(self.defining_polynomials(),dom.gens())
-        return(R.ideal(J.minors(N)))
+        return R.ideal(J.minors(N))
 
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
@@ -1394,11 +1505,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         """
         k = ZZ(k)
         if k <= 0:
-            raise ValueError("k (=%s) must be a positive integer"%(k))
+            raise ValueError("k (=%s) must be a positive integer" % k)
         #first check if subscheme
         from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
-            return(Q.preimage(self, k))
+            return Q.preimage(self, k)
 
         #else assume a point
         BR = self.base_ring()
@@ -1778,7 +1889,6 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         if K in NumberFields() or K is QQbar:
             return self._number_field_from_algebraics()
         if K in FiniteFields():
-            CR = self.domain().coordinate_ring()
             #find the degree of the extension containing the coefficients
             c = [v for g in self for v in g.coefficients()]
             d = lcm([a.minpoly().degree() for a in c])
@@ -1786,9 +1896,10 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 return self.change_ring(GF(K.characteristic()))
             if d == K.degree():
                 return self
-            # otherwise we are not in the prime subfield so coercsion to it doesn't work
+            # otherwise we are not in the prime subfield so coercion
+            # to it does not work
             for L,phi in K.subfields():
-                #find the right subfield and it's embedding
+                # find the right subfield and its embedding
                 if L.degree() == d:
                     break
             # we need to rewrite each of the coefficients in terms of the generator

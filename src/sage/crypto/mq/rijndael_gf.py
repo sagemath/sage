@@ -412,15 +412,15 @@ Since ``expand_key_poly`` is not actually a
     TypeError: keyword 'f' must be a Round_Component_Poly_Constr
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Thomas Gagne <thomasgagne100@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function, division
 from six import string_types
 
@@ -431,6 +431,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.structure.sage_object import SageObject
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.sageinspect import sage_getargspec
+
 
 class RijndaelGF(SageObject):
 
@@ -516,10 +517,10 @@ class RijndaelGF(SageObject):
         self._all_PR = PolynomialRing(self._F, len(state_names + subkey_names),
                                       state_names + subkey_names)
         self.state_vrs = matrix(4, self._Nb, self._state_PR.gens())
-        self.subkey_vrs_list = list(self._all_PR.gens()[4 * self._Nb:])
+        fNb =  4 * self._Nb
+        self.subkey_vrs_list = list(self._all_PR.gens()[fNb:])
         self.subkey_vrs = [matrix(4, self._Nb,
-                           self.subkey_vrs_list[(4 * self._Nb)*i :
-                                        (4 * self._Nb)*(i+1)])
+                           self.subkey_vrs_list[fNb * i: fNb * (i + 1)])
                            for i in range(self._Nr)]
         self.key_vrs = column_matrix([
                        self.subkey_vrs[int(i / self._Nb)].column(i % 4)
@@ -569,7 +570,7 @@ class RijndaelGF(SageObject):
 
     def __call__(self, text, key, algorithm='encrypt', format='hex'):
         r"""
-        Returns the encryption/decryption of ``text`` with key ``key``.
+        Return the encryption/decryption of ``text`` with key ``key``.
 
         INPUT:
 
@@ -618,7 +619,7 @@ class RijndaelGF(SageObject):
 
     def __repr__(self):
         r"""
-        Returns the string representation of ``self``.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -634,7 +635,7 @@ class RijndaelGF(SageObject):
 
     def block_length(self):
         r"""
-        Returns the block length of this instantiation of Rijndael-GF.
+        Return the block length of this instantiation of Rijndael-GF.
 
         EXAMPLES::
 
@@ -647,7 +648,7 @@ class RijndaelGF(SageObject):
 
     def key_length(self):
         r"""
-        Returns the key length of this instantiation of Rijndael-GF.
+        Return the key length of this instantiation of Rijndael-GF.
 
         EXAMPLES::
 
@@ -660,7 +661,7 @@ class RijndaelGF(SageObject):
 
     def number_rounds(self):
         r"""
-        Returns the number of rounds used in this instantiation of Rijndael-GF.
+        Return the number of rounds used in this instantiation of Rijndael-GF.
 
         EXAMPLES::
 
@@ -673,15 +674,15 @@ class RijndaelGF(SageObject):
 
     def _hex_to_GF(self, H, matrix=True):
         r"""
-        Returns a matrix/list of elements of `\GF{2^8}` corresponding to ``H``.
+        Return a matrix/list of elements of `\GF{2^8}` corresponding to ``H``.
 
         INPUT:
 
         - ``H`` -- A hex string where every two hex characters correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Returns a list if ``False``;
-          returns a state matrix if ``True``.
+        - ``matrix`` -- (default: ``True``) Return a list if ``False``;
+          return a state matrix if ``True``.
 
         OUTPUT:
 
@@ -722,7 +723,7 @@ class RijndaelGF(SageObject):
 
     def _GF_to_hex(self, GF):
         r"""
-        Returns the hex string representation of ``GF``.
+        Return the hex string representation of ``GF``.
 
         INPUT:
 
@@ -790,15 +791,15 @@ class RijndaelGF(SageObject):
 
     def _bin_to_GF(self, B, matrix=True):
         r"""
-        Returns a matrix/list of elements of `\GF{2^8}` corresponding to ``B``.
+        Return a matrix/list of elements of `\GF{2^8}` corresponding to ``B``.
 
         INPUT:
 
         - ``B`` -- A binary string where every eight bits correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Returns a list if ``False``.
-          Returns a state matrix over `\GF{2^8}` if ``True``.
+        - ``matrix`` -- (default: ``True``) Return a list if ``False``.
+          Return a state matrix over `\GF{2^8}` if ``True``.
 
         OUTPUT:
 
@@ -850,7 +851,7 @@ class RijndaelGF(SageObject):
 
     def _GF_to_bin(self, GF):
         r"""
-        Returns the binary string representation of ``GF``.
+        Return the binary string representation of ``GF``.
 
         INPUT:
 
@@ -916,7 +917,7 @@ class RijndaelGF(SageObject):
 
     def encrypt(self, plain, key, format='hex'):
         r"""
-        Returns the plaintext ``plain`` encrypted with the key ``key``.
+        Return the plaintext ``plain`` encrypted with the key ``key``.
 
         INPUT:
 
@@ -1005,7 +1006,7 @@ class RijndaelGF(SageObject):
 
     def decrypt(self, ciphertext, key, format='hex'):
         r"""
-        Returns the ciphertext ``ciphertext`` decrypted with the key ``key``.
+        Return the ciphertext ``ciphertext`` decrypted with the key ``key``.
 
         INPUT:
 
@@ -1157,7 +1158,7 @@ class RijndaelGF(SageObject):
 
     def expand_key(self, key):
         r"""
-        Returns the expanded key schedule from ``key``.
+        Return the expanded key schedule from ``key``.
 
         INPUT:
 
@@ -1224,7 +1225,7 @@ class RijndaelGF(SageObject):
 
     def expand_key_poly(self, row, col, round):
         r"""
-        Returns a polynomial representing the ``row,col`` th entry of the
+        Return a polynomial representing the ``row,col`` th entry of the
         ``round`` th round key.
 
         INPUT:
@@ -1315,7 +1316,7 @@ class RijndaelGF(SageObject):
     def apply_poly(self, state, poly_constr, algorithm='encrypt', keys=None,
                    poly_constr_attr=None):
         r"""
-        Returns a state matrix where ``poly_method`` is applied to each entry.
+        Return a state matrix where ``poly_method`` is applied to each entry.
 
         INPUT:
 
@@ -1635,7 +1636,7 @@ class RijndaelGF(SageObject):
 
     def _add_round_key_pc(self, row, col, algorithm='encrypt', round=0):
         r"""
-        Returns a polynomial representing an element of a round-key addition.
+        Return a polynomial representing an element of a round-key addition.
 
         INPUT:
 
@@ -1684,7 +1685,7 @@ class RijndaelGF(SageObject):
 
     def add_round_key(self, state, round_key):
         r"""
-        Returns the round-key addition of matrices ``state`` and ``round_key``.
+        Return the round-key addition of matrices ``state`` and ``round_key``.
 
         INPUT:
 
@@ -1795,7 +1796,7 @@ class RijndaelGF(SageObject):
 
     def _sub_bytes_pc(self, row, col, algorithm='encrypt', no_inversion=False):
         r"""
-        Returns a polynomial representing `SubBytes(A)_{\textit{row, col}}`.
+        Return a polynomial representing `SubBytes(A)_{\textit{row, col}}`.
 
         INPUT:
 
@@ -1878,7 +1879,7 @@ class RijndaelGF(SageObject):
 
     def _srd(self, el, algorithm='encrypt'):
         r"""
-        Returns the application of SubBytes (`S_{RD}`) to ``el``.
+        Return the application of SubBytes (`S_{RD}`) to ``el``.
 
         INPUT:
 
@@ -1916,7 +1917,7 @@ class RijndaelGF(SageObject):
 
     def sub_bytes(self, state, algorithm='encrypt'):
         r"""
-        Returns the application of SubBytes to the state matrix ``state``.
+        Return the application of SubBytes to the state matrix ``state``.
 
         INPUT:
 
@@ -1970,7 +1971,7 @@ class RijndaelGF(SageObject):
 
     def _mix_columns_pc(self, row, col, algorithm='encrypt'):
         r"""
-        Returns a polynomial representing `MixColumns(A)_{\textit{row, col}}`.
+        Return a polynomial representing `MixColumns(A)_{\textit{row, col}}`.
 
         INPUT:
 
@@ -2020,7 +2021,7 @@ class RijndaelGF(SageObject):
 
     def mix_columns(self, state, algorithm='encrypt'):
         r"""
-        Returns the application of MixColumns to the state matrix ``state``.
+        Return the application of MixColumns to the state matrix ``state``.
 
         INPUT:
 
@@ -2072,7 +2073,7 @@ class RijndaelGF(SageObject):
 
     def _shift_rows_pc(self, row, col, algorithm='encrypt'):
         r"""
-        Returns a polynomial representing `ShiftRows(A)_{\textit{row,col}}`.
+        Return a polynomial representing `ShiftRows(A)_{\textit{row,col}}`.
 
         INPUT:
 
@@ -2123,7 +2124,7 @@ class RijndaelGF(SageObject):
 
     def shift_rows(self, state, algorithm='encrypt'):
         r"""
-        Returns the application of ShiftRows to the state matrix ``state``.
+        Return the application of ShiftRows to the state matrix ``state``.
 
         INPUT:
 
@@ -2283,7 +2284,7 @@ class RijndaelGF(SageObject):
 
         def __call__(self, row, col, algorithm='encrypt', **kwargs):
             r"""
-            Returns ``polynomial_constr(row, col, algorithm, **attr_dict)``.
+            Return ``polynomial_constr(row, col, algorithm, **attr_dict)``.
 
             INPUT:
 
@@ -2331,7 +2332,7 @@ class RijndaelGF(SageObject):
 
         def __repr__(self):
             r"""
-            Returns a string representation of this object.
+            Return a string representation of this object.
 
             EXAMPLES::
 

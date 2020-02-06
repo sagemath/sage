@@ -1,5 +1,5 @@
 """
-Vectors over the symbolic ring.
+Vectors over the symbolic ring
 
 Implements vectors over the symbolic ring.
 

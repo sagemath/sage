@@ -17,8 +17,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off
 

@@ -1,0 +1,2 @@
+pari-galdata
+pari-seadata-small

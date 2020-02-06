@@ -1257,7 +1257,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
 
     EXAMPLES:
 
-    This example indictes a case where we must increase precision::
+    This example indicates a case where we must increase precision::
 
         sage: from sage.rings.number_field.S_unit_solver import p_adic_LLL_bound_one_prime
         sage: prec = 50
@@ -2408,7 +2408,7 @@ def sieve_below_bound(K, S, bound = 10, bump = 10, split_primes_list=[], verbose
     SUK = UnitGroup(K, S=tuple(S))
     initial_bound = bound
 
-    while len(split_primes_list) == 0:
+    while not split_primes_list:
         try:
             split_primes_list = split_primes_large_lcm(SUK, initial_bound)
         except ValueError:

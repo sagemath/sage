@@ -269,12 +269,12 @@ class Groups(CategoryWithAxiom):
                 sage: M.cayley_table()
                 *  a b c d e f
                  +------------
-                a| c e a f b d
-                b| d f b e a c
-                c| a b c d e f
-                d| b a d c f e
-                e| f d e b c a
-                f| e c f a d b
+                a| a b c d e f
+                b| b a d c f e
+                c| c e a f b d
+                d| d f b e a c
+                e| e c f a d b
+                f| f d e b c a
                 <BLANKLINE>
 
             ::

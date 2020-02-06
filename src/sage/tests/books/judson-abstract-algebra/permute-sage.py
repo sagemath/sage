@@ -145,7 +145,7 @@ r"""
     sage: tauH = H(tau)
     Traceback (most recent call last):
     ...
-    ValueError: Invalid permutation vector: (1,2,3,4,5,6)
+    ValueError: invalid data to initialize a permutation
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -242,7 +242,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: sg.list()
-    [(), (1,4,2), (1,2,4)]
+    [(), (1,2,4), (1,4,2)]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

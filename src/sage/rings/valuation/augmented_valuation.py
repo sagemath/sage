@@ -1932,14 +1932,13 @@ class FinalFiniteAugmentedValuation(FiniteAugmentedValuation, FinalAugmentedValu
 class NonFinalFiniteAugmentedValuation(FiniteAugmentedValuation, NonFinalAugmentedValuation):
     r"""
     An augmented valuation which is discrete, i.e., which assigns a finite
-    valuation to its last key polynomial, and which can be augmented furter.
+    valuation to its last key polynomial, and which can be augmented further.
 
     EXAMPLES::
 
         sage: R.<x> = QQ[]
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x, 1)
-
     """
     def __init__(self, parent, v, phi, mu):
         r"""

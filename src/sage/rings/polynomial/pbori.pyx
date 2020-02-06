@@ -174,7 +174,6 @@ native PolyBoRi counterparts. For instance, sets of points can be
 represented as tuples of tuples (Sage) or as ``BooleSet`` (PolyBoRi)
 and naturally the second option is faster.
 """
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport Py_EQ, Py_NE
 from cython.operator cimport dereference as deref

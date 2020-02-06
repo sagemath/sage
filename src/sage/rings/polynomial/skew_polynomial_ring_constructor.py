@@ -15,24 +15,21 @@ AUTHOR:
 - Johan Rosenkilde (2016-08-03): changes to import format
 
 """
-
-#############################################################################
+# ***************************************************************************
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from __future__ import print_function, absolute_import, division
 from sage import categories
-import cysignals
-import sage.rings.ring as ring
 from sage.structure.category_object import normalize_names
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.categories.morphism import Morphism, IdentityMorphism
+
 
 def SkewPolynomialRing(base_ring, base_ring_automorphism=None, names=None, sparse=False):
     r"""

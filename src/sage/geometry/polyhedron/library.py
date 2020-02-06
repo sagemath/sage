@@ -89,7 +89,6 @@ from .constructor import Polyhedron
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.associahedron import Associahedron
 
-
 def zero_sum_projection(d, base_ring=RDF):
     r"""
     Return a matrix corresponding to the projection on the orthogonal of
@@ -311,7 +310,7 @@ class Polytopes():
         TESTS::
 
             sage: b4norm = polytopes.Birkhoff_polytope(4,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(b4norm).run(skip='_test_pickling')                # optional - pynormaliz
+            sage: TestSuite(b4norm).run()                                     # optional - pynormaliz
         """
         from itertools import permutations
         verts = []
@@ -385,7 +384,7 @@ class Polytopes():
         TESTS::
 
             sage: s6norm = polytopes.simplex(6,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(s6norm).run(skip='_test_pickling')      # optional - pynormaliz
+            sage: TestSuite(s6norm).run()                           # optional - pynormaliz
         """
         verts = list((ZZ**(dim + 1)).basis())
         if project:
@@ -550,9 +549,9 @@ class Polytopes():
 
         The faces are `8` equilateral triangles and `18` squares::
 
-            sage: sum(1 for f in sr.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 3)
             8
-            sage: sum(1 for f in sr.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in sr.facets() if len(f.vertices()) == 4)
             18
 
         Its non exact version::
@@ -622,13 +621,13 @@ class Polytopes():
             sage: gr.f_vector()
             (1, 48, 72, 26, 1)
 
-        Its faces are 4 squares, 8 regular hexagons and 6 regular octagons::
+        Its facets are 4 squares, 8 regular hexagons and 6 regular octagons::
 
-            sage: sum(1 for f in gr.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in gr.facets() if len(f.vertices()) == 4)
             12
-            sage: sum(1 for f in gr.faces(2) if len(f.vertices()) == 6)
+            sage: sum(1 for f in gr.facets() if len(f.vertices()) == 6)
             8
-            sage: sum(1 for f in gr.faces(2) if len(f.vertices()) == 8)
+            sage: sum(1 for f in gr.facets() if len(f.vertices()) == 8)
             6
         """
         if base_ring is None and exact:
@@ -670,9 +669,9 @@ class Polytopes():
             sage: rd.f_vector()
             (1, 14, 24, 12, 1)
 
-        Its faces are 12 quadrilaterals (not all identical)::
+        Its facets are 12 quadrilaterals (not all identical)::
 
-            sage: sum(1 for f in rd.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in rd.facets() if len(f.vertices()) == 4)
             12
 
         Some more computations::
@@ -688,7 +687,7 @@ class Polytopes():
         TESTS::
 
             sage: rd_norm = polytopes.rhombic_dodecahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(rd_norm).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(rd_norm).run()                                      # optional - pynormaliz
         """
         v = [[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]]
         v.extend((itertools.product([1, -1], repeat=3)))
@@ -718,11 +717,11 @@ class Polytopes():
             sage: co.f_vector()
             (1, 12, 24, 14, 1)
 
-        Its faces are 8 triangles and 6 squares::
+        Its facets are 8 triangles and 6 squares::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
             8
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 4)
             6
 
         Some more computation::
@@ -735,7 +734,7 @@ class Polytopes():
         TESTS::
 
             sage: co_norm = polytopes.cuboctahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(co_norm).run(skip='_test_pickling')          # optional - pynormaliz
+            sage: TestSuite(co_norm).run()                               # optional - pynormaliz
         """
         v = [[0, -1, -1], [0, 1, -1], [0, -1, 1], [0, 1, 1],
              [-1, -1, 0], [1, -1, 0], [-1, 1, 0], [1, 1, 0],
@@ -770,11 +769,11 @@ class Polytopes():
             sage: co.f_vector()
             (1, 24, 36, 14, 1)
 
-        Its faces are 8 triangles and 6 octogons::
+        Its facets are 8 triangles and 6 octogons::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
             8
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 8)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 8)
             6
 
         Some more computation::
@@ -829,9 +828,9 @@ class Polytopes():
             sage: co.f_vector()
             (1, 4, 6, 4, 1)
 
-        Its faces are 4 triangles::
+        Its facets are 4 triangles::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
             4
 
         Some more computation::
@@ -844,7 +843,7 @@ class Polytopes():
         TESTS::
 
             sage: t_norm = polytopes.tetrahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(t_norm).run(skip='_test_pickling')        # optional - pynormaliz
+            sage: TestSuite(t_norm).run()                             # optional - pynormaliz
         """
         v = [[0, 0, 0], [1, 0, 1], [1, 1, 0], [0, 1, 1]]
         return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
@@ -869,11 +868,11 @@ class Polytopes():
             sage: co.f_vector()
             (1, 12, 18, 8, 1)
 
-        Its faces are 4 triangles and 4 hexagons::
+        Its facets are 4 triangles and 4 hexagons::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
             4
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 6)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 6)
             4
 
         Some more computation::
@@ -886,7 +885,7 @@ class Polytopes():
         TESTS::
 
             sage: tt_norm = polytopes.truncated_tetrahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(tt_norm).run(skip='_test_pickling')                  # optional - pynormaliz
+            sage: TestSuite(tt_norm).run()                                       # optional - pynormaliz
         """
         v = [(3,1,1), (1,3,1), (1,1,3),
              (-3,-1,1), (-1,-3,1), (-1,-1,3),
@@ -915,11 +914,11 @@ class Polytopes():
             sage: co.f_vector()
             (1, 24, 36, 14, 1)
 
-        Its faces are 6 squares and 8 hexagons::
+        Its facets are 6 squares and 8 hexagons::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 4)
             6
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 6)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 6)
             8
 
         Some more computation::
@@ -932,7 +931,7 @@ class Polytopes():
         TESTS::
 
             sage: to_norm = polytopes.truncated_octahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(to_norm).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(to_norm).run()                                      # optional - pynormaliz
         """
         v = [(0, e, f) for e in [-1, 1] for f in [-2, 2]]
         v = [(xyz[sigma(1) - 1], xyz[sigma(2) - 1], xyz[sigma(3) - 1])
@@ -959,9 +958,9 @@ class Polytopes():
             sage: co.f_vector()
             (1, 6, 12, 8, 1)
 
-        Its faces are 8 triangles::
+        Its facets are 8 triangles::
 
-            sage: sum(1 for f in co.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in co.facets() if len(f.vertices()) == 3)
             8
 
         Some more computation::
@@ -974,7 +973,7 @@ class Polytopes():
         TESTS::
 
             sage: o_norm = polytopes.octahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(o_norm).run(skip='_test_pickling')       # optional - pynormaliz
+            sage: TestSuite(o_norm).run()                            # optional - pynormaliz
         """
         v = [[0, 0, -1], [0, 0, 1], [1, 0, 0],
              [-1, 0, 0], [0, 1, 0], [0, -1, 0]]
@@ -1014,31 +1013,31 @@ class Polytopes():
             sage: sc_exact = polytopes.snub_cube(exact=True)  # long time - 30secs
             sage: sc_exact.f_vector()               # long time
             (1, 24, 60, 38, 1)
-            sage: sc_exact.vertices()               # long time
-            (A vertex at (-1, -z, -z^2),
-             A vertex at (-z^2, -1, -z),
-             A vertex at (-z, -z^2, -1),
-             A vertex at (-1, z^2, -z),
-             A vertex at (-z, -1, z^2),
-             A vertex at (z^2, -z, -1),
-             A vertex at (z, -1, -z^2),
-             A vertex at (-z^2, z, -1),
+            sage: sorted(sc_exact.vertices())       # long time
+            [A vertex at (-1, -z, -z^2),
              A vertex at (-1, -z^2, z),
-             A vertex at (z, z^2, -1),
+             A vertex at (-1, z^2, -z),
              A vertex at (-1, z, z^2),
-             A vertex at (z^2, -1, z),
-             A vertex at (-z, 1, -z^2),
-             A vertex at (z^2, 1, -z),
-             A vertex at (-z^2, -z, 1),
+             A vertex at (-z, -1, z^2),
+             A vertex at (-z, -z^2, -1),
              A vertex at (-z, z^2, 1),
+             A vertex at (-z, 1, -z^2),
+             A vertex at (-z^2, -1, -z),
+             A vertex at (-z^2, -z, 1),
+             A vertex at (-z^2, z, -1),
              A vertex at (-z^2, 1, z),
-             A vertex at (1, -z^2, -z),
-             A vertex at (1, -z, z^2),
-             A vertex at (1, z, -z^2),
-             A vertex at (z, -z^2, 1),
-             A vertex at (z, 1, z^2),
+             A vertex at (z^2, -1, z),
+             A vertex at (z^2, -z, -1),
              A vertex at (z^2, z, 1),
-             A vertex at (1, z^2, z))
+             A vertex at (z^2, 1, -z),
+             A vertex at (z, -1, -z^2),
+             A vertex at (z, -z^2, 1),
+             A vertex at (z, z^2, -1),
+             A vertex at (z, 1, z^2),
+             A vertex at (1, -z, z^2),
+             A vertex at (1, -z^2, -z),
+             A vertex at (1, z^2, z),
+             A vertex at (1, z, -z^2)]
             sage: sc_exact.is_combinatorially_isomorphic(sc_inexact) #long time
             True
 
@@ -1123,11 +1122,11 @@ class Polytopes():
             sage: bb.base_ring()
             Real Double Field
 
-        Its faces are 5 regular pentagons and 6 regular hexagons::
+        Its facets are 5 regular pentagons and 6 regular hexagons::
 
-            sage: sum(1 for f in bb.faces(2) if len(f.vertices()) == 5)
+            sage: sum(1 for f in bb.facets() if len(f.vertices()) == 5)
             12
-            sage: sum(1 for f in bb.faces(2) if len(f.vertices()) == 6)
+            sage: sum(1 for f in bb.facets() if len(f.vertices()) == 6)
             20
 
         TESTS::
@@ -1230,11 +1229,11 @@ class Polytopes():
             sage: id.base_ring()
             Real Double Field
 
-        Its faces are 20 triangles and 12 regular pentagons::
+        Its facets are 20 triangles and 12 regular pentagons::
 
-            sage: sum(1 for f in id.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in id.facets() if len(f.vertices()) == 3)
             20
-            sage: sum(1 for f in id.faces(2) if len(f.vertices()) == 5)
+            sage: sum(1 for f in id.facets() if len(f.vertices()) == 5)
             12
 
         TESTS::
@@ -1293,11 +1292,11 @@ class Polytopes():
             sage: td.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
 
-        Its faces are 20 triangles and 12 regular decagons::
+        Its facets are 20 triangles and 12 regular decagons::
 
-            sage: sum(1 for f in td.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in td.facets() if len(f.vertices()) == 3)
             20
-            sage: sum(1 for f in td.faces(2) if len(f.vertices()) == 10)
+            sage: sum(1 for f in td.facets() if len(f.vertices()) == 10)
             12
 
         The faster implementation using floating point approximations does not
@@ -1314,7 +1313,7 @@ class Polytopes():
             sage: td.f_vector()
             Traceback (most recent call last):
             ...
-            KeyError: ...
+            ValueError: not all vertices are intersections of facets
             sage: td.base_ring()
             Real Double Field
 
@@ -1356,8 +1355,8 @@ class Polytopes():
 
         The pentakis dodecahedron (orkisdodecahedron) is a face-regular,
         vertex-uniform polytope dual to the truncated icosahedron.  It has 60
-        faces and 32 vertices. See the :wikipedia:`Pentakis_dodecahedron` for
-        more information.
+        facets and 32 vertices. See the :wikipedia:`Pentakis_dodecahedron` for more
+        information.
 
         INPUT:
 
@@ -1389,7 +1388,7 @@ class Polytopes():
 
         The 60 are triangles::
 
-            sage: all(len(f.vertices()) == 3 for f in pd.faces(2))
+            sage: all(len(f.vertices()) == 3 for f in pd.facets())
             True
         """
         return self.buckyball(exact=exact, base_ring=base_ring, backend=backend).polar()
@@ -1424,7 +1423,7 @@ class Polytopes():
         TESTS::
 
             sage: ki_norm = polytopes.Kirkman_icosahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(ki_norm).run(skip='_test_pickling')                # optional - pynormaliz
+            sage: TestSuite(ki_norm).run()                                     # optional - pynormaliz
         """
         vertices = [[9, 6, 6], [-9, 6, 6], [9, -6, 6], [9, 6, -6],
                     [-9, -6, 6], [-9, 6, -6], [9, -6, -6], [-9, -6, -6],
@@ -1469,13 +1468,13 @@ class Polytopes():
             sage: rid.base_ring()
             Real Double Field
 
-        Its faces are 20 triangles, 30 squares and 12 pentagons::
+        Its facets are 20 triangles, 30 squares and 12 pentagons::
 
-            sage: sum(1 for f in rid.faces(2) if len(f.vertices()) == 3)
+            sage: sum(1 for f in rid.facets() if len(f.vertices()) == 3)
             20
-            sage: sum(1 for f in rid.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in rid.facets() if len(f.vertices()) == 4)
             30
-            sage: sum(1 for f in rid.faces(2) if len(f.vertices()) == 5)
+            sage: sum(1 for f in rid.facets() if len(f.vertices()) == 5)
             12
 
         TESTS::
@@ -1546,13 +1545,13 @@ class Polytopes():
             sage: ti.base_ring()
             Real Double Field
 
-        Its faces are 30 squares, 20 hexagons and 12 decagons::
+        Its facets are 30 squares, 20 hexagons and 12 decagons::
 
-            sage: sum(1 for f in ti.faces(2) if len(f.vertices()) == 4)
+            sage: sum(1 for f in ti.facets() if len(f.vertices()) == 4)
             30
-            sage: sum(1 for f in ti.faces(2) if len(f.vertices()) == 6)
+            sage: sum(1 for f in ti.facets() if len(f.vertices()) == 6)
             20
-            sage: sum(1 for f in ti.faces(2) if len(f.vertices()) == 10)
+            sage: sum(1 for f in ti.facets() if len(f.vertices()) == 10)
             12
 
         TESTS::
@@ -1617,11 +1616,11 @@ class Polytopes():
             sage: sd.base_ring()                                                     # optional - pynormaliz, long time
             Algebraic Real Field
 
-        Its faces are 80 triangles and 12 pentagons::
+        Its facets are 80 triangles and 12 pentagons::
 
-            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 3)              # optional - pynormaliz, long time
+            sage: sum(1 for f in sd.facets() if len(f.vertices()) == 3)              # optional - pynormaliz, long time
             80
-            sage: sum(1 for f in sd.faces(2) if len(f.vertices()) == 5)              # optional - pynormaliz, long time
+            sage: sum(1 for f in sd.facets() if len(f.vertices()) == 5)              # optional - pynormaliz, long time
             12
 
         TESTS:
@@ -1697,7 +1696,7 @@ class Polytopes():
         TESTS::
 
             sage: tfcell = polytopes.twenty_four_cell(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(tfcell).run(skip='_test_pickling')             # optional - pynormaliz
+            sage: TestSuite(tfcell).run()                                  # optional - pynormaliz
         """
         q12 = QQ((1, 2))
         verts = list(itertools.product([q12, -q12], repeat=4))
@@ -2067,7 +2066,7 @@ class Polytopes():
         TESTS::
 
             sage: G321 = polytopes.Gosset_3_21(backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(G321).run(skip='_test_pickling')         # optional - pynormaliz
+            sage: TestSuite(G321).run()                              # optional - pynormaliz
         """
         from itertools import combinations
         verts = []
@@ -2107,7 +2106,7 @@ class Polytopes():
         TESTS::
 
             sage: cp = polytopes.cyclic_polytope(4,10,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(cp).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(cp).run()                                      # optional - pynormaliz
         """
         verts = [[t**i for i in range(1, dim+1)] for t in range(n)]
         return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
@@ -2211,7 +2210,7 @@ class Polytopes():
         TESTS::
 
             sage: p4 = polytopes.permutahedron(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(p4).run(skip='_test_pickling')             # optional - pynormaliz
+            sage: TestSuite(p4).run()                                  # optional - pynormaliz
         """
         verts = list(itertools.permutations(range(1, n + 1)))
         if project:
@@ -2350,7 +2349,7 @@ class Polytopes():
 
         TESTS::
 
-            sage: TestSuite(perm_h3).run(skip='_test_pickling')    # optional - pynormaliz
+            sage: TestSuite(perm_h3).run()  # optional - pynormaliz
         """
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
         try:
@@ -2627,7 +2626,7 @@ class Polytopes():
         """
         return self.generalized_permutahedron(['H', 4], point=[0, 0, 1, 0], exact=exact, backend=backend, regular=True)
 
-    def one_hundred_twenty_cell(self, exact=True, backend=None):
+    def one_hundred_twenty_cell(self, exact=True, backend=None, construction='coxeter'):
         """
         Return the 120-cell.
 
@@ -2643,33 +2642,108 @@ class Polytopes():
 
         INPUT:
 
-        - ``exact`` - (boolean, default ``True``) if ``True`` use exact
+        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
           coordinates instead of floating point approximations.
 
         - ``backend`` -- the backend to use to create the polytope.
 
-        EXAMPLES::
+        - ``construction`` -- the construction to use (string, default 'coxeter');
+          the other possibility is 'as_permutahedron'.
 
-            sage: polytopes.one_hundred_twenty_cell(backend='normaliz') # not tested - long time
+`       EXAMPLES:
+
+        The classical construction given by Coxeter in [Cox1969]_ is given by::
+
+            sage: polytopes.one_hundred_twenty_cell()                    # not tested - long time ~15 sec.
+            A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
+            polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as
+            the convex hull of 600 vertices
+
+        The ``'normaliz'`` is faster::
+
+            sage: polytopes.one_hundred_twenty_cell(backend='normaliz')  # optional - pynormaliz
+            A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
+            polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as the convex hull of 600 vertices
+
+        It is also possible to realize it using the generalized permutahedron
+        of type `H_4`::
+
+            sage: polytopes.one_hundred_twenty_cell(backend='normaliz',construction='as_permutahedron') # not tested - long time
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 600 vertices
         """
-        return self.generalized_permutahedron(['H', 4], point=[0, 0, 0, 1], exact=exact, backend=backend, regular=True)
+        if construction == 'coxeter':
+            if not exact:
+                raise ValueError("The 'cdd' backend produces numerical inconsistencies, use 'exact=True'.")
+            from sage.rings.number_field.number_field import QuadraticField
+            base_ring = QuadraticField(5, 'sqrt5')
+            sqrt5 = base_ring.gen()
+            phi = (1 + sqrt5) / 2
+            phi_inv = base_ring.one() / phi
 
-    def hypercube(self, dim, backend=None):
+            # The 24 permutations of [0,0,±2,±2] (the ± are independant)
+            verts = Permutations([0,0,2,2]).list() + Permutations([0,0,-2,-2]).list() + Permutations([0,0,2,-2]).list()
+
+            # The 64 permutations of the following vectors:
+            # [±1,±1,±1,±sqrt(5)]
+            # [±1/phi^2,±phi,±phi,±phi]
+            # [±1/phi,±1/phi,±1/phi,±phi^2]
+            from sage.categories.cartesian_product import cartesian_product
+            full_perm_vectors = [[[1,-1],[1,-1],[1,-1],[-sqrt5,sqrt5]],
+                                 [[phi_inv**2,-phi_inv**2],[phi,-phi],[phi,-phi],[-phi,phi]],
+                                 [[phi_inv,-phi_inv],[phi_inv,-phi_inv],[phi_inv,-phi_inv],[-(phi**2),phi**2]]]
+            for vect in full_perm_vectors:
+                cp = cartesian_product(vect)
+                # The group action creates duplicates, so we reduce it:
+                verts += list(set([tuple(p) for c in cp for p in Permutations(list(c))]))
+
+            # The 96 even permutations of [0,±1/phi^2,±1,±phi^2]
+            # The 96 even permutations of [0,±1/phi,±phi,±sqrt(5)]
+            # The 192 even permutations of [±1/phi,±1,±phi,±2]
+            even_perm_vectors = [[[0],[phi_inv**2,-phi_inv**2],[1,-1],[-(phi**2),phi**2]],
+                                 [[0],[phi_inv,-phi_inv],[phi,-phi],[-sqrt5,sqrt5]],
+                                 [[phi_inv,-phi_inv],[1,-1],[phi,-phi],[-2,2]]]
+            even_perm = AlternatingGroup(4)
+            for vect in even_perm_vectors:
+                cp = cartesian_product(vect)
+                verts += [p(tuple(c)) for p in even_perm for c in cp]
+
+            return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
+
+        elif construction == 'as_permutahedron':
+            return self.generalized_permutahedron(['H', 4], point=[0, 0, 0, 1], exact=exact, backend=backend, regular=True)
+        else:
+            raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
+
+    def hypercube(self, dim, intervals=None, backend=None):
         r"""
-        Return a hypercube in the given dimension.
+        Return a hypercube of the given dimension.
 
-        The `d` dimensional hypercube is the convex hull of the points `(\pm 1,
-        \pm 1, \ldots, \pm 1)` in `\RR^d`. For more information see
-        the :wikipedia:`Hypercube`.
+        The ``dim``-dimensional hypercube is by default the convex hull of the
+        `2^{\text{dim}}` `\pm 1` vectors of length ``dim``. Alternatively,
+        it is the product of ``dim`` line segments given in the ``intervals``.
+        For more information see the wikipedia article :wikipedia:`Hypercube`.
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the cube.
+        - ``dim`` -- integer. The dimension of the hypercube.
+
+        - ``intervals`` -- (default = None). It takes the following
+          possible inputs:
+
+          - If ``None`` (the default), it returns the the `\pm 1`-cube of
+            dimension ``dim``.
+
+          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+
+          - a list of length ``dim``. Its elements are pairs of
+            numbers `(a,b)` with `a < b`. The cube will be the product of
+            these intervals.
 
         - ``backend`` -- the backend to use to create the polytope.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Create the `\pm 1`-hypercube of dimension 4::
 
             sage: four_cube = polytopes.hypercube(4)
             sage: four_cube.is_simple()
@@ -2681,20 +2755,71 @@ class Polytopes():
             sage: four_cube.ehrhart_polynomial()    # optional - latte_int
             16*t^4 + 32*t^3 + 24*t^2 + 8*t + 1
 
+        Return the `0/1`-hypercube of dimension 4::
+
+            sage: z_cube = polytopes.hypercube(4,intervals = 'zero_one')
+            sage: z_cube.vertices()[0]
+            A vertex at (0, 0, 0, 0)
+            sage: z_cube.is_simple()
+            True
+            sage: z_cube.base_ring()
+            Integer Ring
+            sage: z_cube.volume()
+            1
+            sage: z_cube.ehrhart_polynomial()    # optional - latte_int
+            t^4 + 4*t^3 + 6*t^2 + 4*t + 1
+
+        Return the 4-dimensional combinatorial cube that is the product of
+        [0,3]^4::
+
+            sage: t_cube = polytopes.hypercube(4, intervals = [[0,3]]*4)
+
+        Checking that t_cube is three times the previous `0/1`-cube::
+
+            sage: t_cube == 3 * z_cube
+            True
+
         TESTS::
 
             sage: fc = polytopes.hypercube(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(fc).run(skip='_test_pickling')         # optional - pynormaliz
-        """
-        return Polyhedron(vertices=list(itertools.product([1, -1], repeat=dim)), base_ring=ZZ, backend=backend)
+            sage: TestSuite(fc).run()                              # optional - pynormaliz
 
-    def cube(self, backend=None):
+        If the dimension ``dim`` is not equal to the length of intervals, an
+        error is raised::
+
+            sage: u_cube = polytopes.hypercube(2,intervals = [[0,1],[0,2],[0,3]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the dimension of the hypercube must match the number of intervals
+
+        If a string besides 'zero_one' is passed to ``intervals``, return an
+        error::
+
+            sage: v_cube = polytopes.hypercube(3,intervals = 'a_string')
+            Traceback (most recent call last):
+            ...
+            ValueError: the only allowed string is 'zero_one'
+        """
+        if intervals is None:
+            cp = list(itertools.product([-1,1], repeat=dim))
+        elif isinstance(intervals, str):
+            if intervals == 'zero_one':
+                cp = list(itertools.product([0,1], repeat=dim))
+            else:
+                raise ValueError("the only allowed string is 'zero_one'")
+        elif len(intervals) == dim:
+            cp = list(itertools.product(*intervals))
+        else:
+            raise ValueError("the dimension of the hypercube must match the number of intervals")
+        return Polyhedron(vertices=cp, backend=backend)
+
+    def cube(self, intervals=None, backend=None):
         r"""
         Return the cube.
 
         The cube is the Platonic solid that is obtained as the convex hull of
-        the points `(\pm 1, \pm 1, \pm 1)`. It generalizes into several
-        dimension into hypercubes.
+        the eight `\pm 1` vectors of length 3 (by default). Alternatively, the
+        cube is the product of three intervals from ``intervals``.
 
         .. SEEALSO::
 
@@ -2702,9 +2827,26 @@ class Polytopes():
 
         INPUT:
 
+        - ``intervals`` -- list (default=None). It takes the following
+          possible inputs:
+
+            - If the input is ``None`` (the default), returns the convex hull of
+              the eight `\pm 1` vectors of length three.
+
+            - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+
+            - a list of 3 lists of length 2. The cube will be a product of
+              these three intervals.
+
         - ``backend`` -- the backend to use to create the polytope.
 
-        EXAMPLES::
+        OUTPUT:
+
+        A cube as a polyhedron object.
+
+        EXAMPLES:
+
+        Return the `\pm 1`-cube::
 
             sage: c = polytopes.cube()
             sage: c
@@ -2715,8 +2857,21 @@ class Polytopes():
             8
             sage: c.plot()
             Graphics3d Object
+
+        Return the `0/1`-cube::
+
+            sage: cc = polytopes.cube(intervals ='zero_one')
+            sage: cc.vertices_list()
+            [[0, 0, 0],
+            [0, 0, 1],
+            [0, 1, 0],
+            [0, 1, 1],
+            [1, 0, 0],
+            [1, 0, 1],
+            [1, 1, 0],
+            [1, 1, 1]]
         """
-        return self.hypercube(3, backend=backend)
+        return self.hypercube(3, backend=backend, intervals=intervals)
 
     def cross_polytope(self, dim, backend=None):
         r"""
@@ -2744,7 +2899,7 @@ class Polytopes():
         TESTS::
 
             sage: cp = polytopes.cross_polytope(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(cp).run(skip='_test_pickling')              # optional - pynormaliz
+            sage: TestSuite(cp).run()                                   # optional - pynormaliz
         """
         verts = list((ZZ**dim).basis())
         verts.extend([-v for v in verts])

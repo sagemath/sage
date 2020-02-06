@@ -530,8 +530,10 @@ class InductiveValuation(DevelopingValuation):
 
         """
         tester = self._tester(**options)
-        tester.assertTrue(isinstance(self, InfiniteInductiveValuation) != isinstance(self, FiniteInductiveValuation))
-        tester.assertTrue(isinstance(self, FinalInductiveValuation) != isinstance(self, NonFinalInductiveValuation))
+        tester.assertNotEqual(isinstance(self, InfiniteInductiveValuation),
+                              isinstance(self, FiniteInductiveValuation))
+        tester.assertNotEqual(isinstance(self, FinalInductiveValuation),
+                              isinstance(self, NonFinalInductiveValuation))
 
 
 class FiniteInductiveValuation(InductiveValuation, DiscreteValuation):
@@ -1528,7 +1530,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                 g = self._eliminate_denominators(f)
             except ValueError:
                 continue
-            tester.assertTrue(g.parent() is self.domain())
+            tester.assertIs(g.parent(), self.domain())
             tester.assertTrue(w.is_equivalent(f, g))
 
     def _test_lift_to_key(self, **options):

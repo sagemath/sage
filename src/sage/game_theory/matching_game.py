@@ -1,5 +1,5 @@
 """
-Matching games.
+Matching games
 
 This module implements a class for matching games (stable marriage problems)
 [DI1989]_. At present the extended Gale-Shapley algorithm is implemented

@@ -123,6 +123,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 include "sage/libs/ntl/decl.pxi"
 
+from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.element cimport Element
 from sage.rings.padics.padic_printing cimport pAdicPrinter_class
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -144,7 +145,7 @@ from sage.interfaces.gp import GpElement
 from sage.rings.finite_rings.integer_mod import is_IntegerMod
 from sage.rings.all import IntegerModRing
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_FM_Eis
-from sage.misc.superseded import deprecated_function_alias, deprecation
+
 
 cdef class pAdicZZpXFMElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec=None, relprec=None, empty=False):
@@ -431,7 +432,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.prime_pow = self.prime_pow
         return ans
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         First compare valuations, then compare the values.
 
@@ -453,18 +454,18 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef long x_ordp = _left.valuation_c()
         cdef long y_ordp = _right.valuation_c()
         if x_ordp < y_ordp:
-            return -1
+            return rich_to_bool(op, -1)
         elif x_ordp > y_ordp:
-            return 1
+            return rich_to_bool(op, 1)
         else:  # equal ordp
             _left.prime_pow.restore_top_context()
             if x_ordp == left.prime_pow.ram_prec_cap:
-                return 0 # since both are zero
+                return rich_to_bool(op, 0)  # since both are zero
             elif _left.value == _right.value:
-                return 0
+                return rich_to_bool(op, 0)
             else:
                 # for now just return 1
-                return 1
+                return rich_to_bool(op, 1)
 
     def __invert__(self):
         """
@@ -1330,11 +1331,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         else:
             zero = Integer(0)
         ordp = self.valuation()
-        if n in ('simple', 'smallest', 'teichmuller'):
-            deprecation(14825, "Interface to expansion has changed; first argument now n")
-            lift_mode = n
-            n = None
-        elif isinstance(n, slice):
+        if isinstance(n, slice):
             return self.slice(n.start, n.stop, n.step)
         elif n is not None:
             if self.is_zero() or n >= self.prime_pow.ram_prec_cap or n < ordp:
@@ -1358,8 +1355,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             except IndexError:
                 return zero
         return [zero] * ordp + ulist
-
-    list = deprecated_function_alias(14825, expansion)
 
     def teichmuller_expansion(self, n = None):
         r"""
@@ -1449,8 +1444,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return L
         else:
             return self.parent()(0)
-
-    teichmuller_list = deprecated_function_alias(14825, teichmuller_expansion)
 
     def _teichmuller_set_unsafe(self):
         """

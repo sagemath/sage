@@ -51,9 +51,9 @@ AUTHORS:
 
 from __future__ import absolute_import
 
+from sage.categories.groups import Groups
+from sage.categories.rings import Rings
 from sage.rings.integer import is_Integer
-from sage.rings.ring import is_Ring
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.latex import latex
 from sage.structure.richcmp import (richcmp_not_equal, rich_to_bool,
@@ -102,8 +102,14 @@ class MatrixGroup_base(Group):
     larger than the degree of the affine group. Makes no assumption
     about the group except that its elements have a ``matrix()``
     method.
-    """
 
+    TESTS::
+
+        sage: G = SO(3, GF(11)); G
+        Special Orthogonal Group of degree 3 over Finite Field of size 11
+        sage: G.category()
+        Category of finite groups
+    """
     _ambient = None  # internal attribute to register the ambient group in case this instance is a subgroup
 
     def _check_matrix(self, x, *args):
@@ -211,13 +217,15 @@ class MatrixGroup_base(Group):
             sage: TestSuite(G).run()
             sage: TestSuite(S).run()
         """
-        # this method enlarges the method with same name of ParentLibGAP to cases where the ambient group is not inheritet from ParentLibGAP.
+        # this method enlarges the method with same name of
+        # ParentLibGAP to cases where the ambient group is not
+        # inherited from ParentLibGAP.
         if isinstance(self, ParentLibGAP):
             return ParentLibGAP.subgroup(self, generators)
 
         for g in generators:
             if g not in self:
-                raise ValueError("generator %s is not in the group"%(g))
+                raise ValueError("generator %s is not in the group" % (g))
 
         from sage.groups.matrix_gps.finitely_generated import MatrixGroup
         subgroup =  MatrixGroup(generators, check=check)
@@ -265,7 +273,7 @@ class MatrixGroup_base(Group):
             [4 1], [0 1]
             )
 
-        case of being a subroup::
+        case of being a subgroup::
 
             sage: CF3 = CyclotomicField(3)
             sage: G  = GL(2, CF3)
@@ -364,17 +372,19 @@ class MatrixGroup_generic(MatrixGroup_base):
             sage: isinstance(G, MatrixGroup_generic)
             True
         """
-        assert is_Ring(base_ring)
+        assert base_ring in Rings
         assert is_Integer(degree)
 
         self._deg = degree
         if self._deg <= 0:
             raise ValueError('the degree must be at least 1')
 
-        if (category is None) and is_FiniteField(base_ring):
-            from sage.categories.finite_groups import FiniteGroups
-            category = FiniteGroups()
-        super(MatrixGroup_generic, self).__init__(base=base_ring, category=category)
+        if category is None:
+            category = Groups()
+        if base_ring in Rings().Finite():
+            category = category.Finite()
+        super(MatrixGroup_generic, self).__init__(base=base_ring,
+                                                  category=category)
 
     def degree(self):
         """
@@ -564,8 +574,8 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             24
             sage: v[:5]
             (
-            [0 1]  [0 1]  [0 1]  [0 2]  [0 2]
-            [2 0], [2 1], [2 2], [1 0], [1 1]
+            [1 0]  [2 0]  [0 1]  [0 2]  [1 2]
+            [0 1], [0 2], [2 0], [1 0], [2 2]
             )
             sage: all(g in G for g in G.list())
             True
@@ -578,12 +588,12 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             sage: MG = MatrixGroup([M1, M2, M3])
             sage: MG.list()
             (
-            [-1  0]  [-1  0]  [ 1  0]  [1 0]
-            [ 0 -1], [ 0  1], [ 0 -1], [0 1]
+            [1 0]  [ 1  0]  [-1  0]  [-1  0]
+            [0 1], [ 0 -1], [ 0  1], [ 0 -1]
             )
             sage: MG.list()[1]
-            [-1  0]
-            [ 0  1]
+            [ 1  0]
+            [ 0 -1]
             sage: MG.list()[1].parent()
             Matrix group over Integer Ring with 3 generators (
             [-1  0]  [ 1  0]  [-1  0]

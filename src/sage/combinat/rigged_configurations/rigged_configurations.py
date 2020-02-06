@@ -678,7 +678,6 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
             sage: RC = RiggedConfigurations(['A', 4, 1], [[2, 2]])
             sage: ascii_art(RC.classically_highest_weight_vectors())
-            (                    )
             ( (/)  (/)  (/)  (/) )
         """
         return self.module_generators

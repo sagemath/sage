@@ -456,9 +456,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Vrep`` -- a list `[vertices, rays, lines]`` or ``None``.
+        - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
 
-        - ``Hrep`` -- a list `[ieqs, eqns]`` or ``None``.
+        - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
 
         - ``convert`` -- boolean keyword argument (default:
           ``True``). Whether to convert the coordinates into the base
@@ -629,7 +629,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
     def _coerce_base_ring(self, other):
         r"""
-        Return the common base rincg for both ``self`` and ``other``.
+        Return the common base ring for both ``self`` and ``other``.
 
         This method is not part of the coercion framework, but only a
         convenience function for :class:`Polyhedra_base`.
@@ -672,24 +672,46 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             Rational Field
             sage: triangle_QQ._coerce_base_ring(0.5)
             Real Double Field
+
+        TESTS:
+
+        Test that :trac:`28770` is fixed::
+
+            sage: z = QQ['z'].0
+            sage: K = NumberField(z^2 - 2,'s')
+            sage: triangle_QQ._coerce_base_ring(K)
+            Number Field in s with defining polynomial z^2 - 2
+            sage: triangle_QQ._coerce_base_ring(K.gen())
+            Number Field in s with defining polynomial z^2 - 2
+
+            sage: z = QQ['z'].0
+            sage: K = NumberField(z^2 - 2,'s')
+            sage: K.gen()*polytopes.simplex(backend='field')
+            A 3-dimensional polyhedron in (Number Field in s with defining polynomial z^2 - 2)^4 defined as the convex hull of 4 vertices
         """
-        try:
-            other_ring = other.base_ring()
-        except AttributeError:
+        from sage.structure.element import Element
+        if isinstance(other, Element):
+            other = other.parent()
+        if hasattr(other, "is_ring") and other.is_ring():
+            other_ring = other
+        else:
             try:
-                # other is a constant?
-                other_ring = other.parent()
+                other_ring = other.base_ring()
             except AttributeError:
-                other_ring = None
-                for ring in (ZZ, QQ, RDF):
-                    try:
-                        ring.coerce(other)
-                        other_ring = ring
-                        break
-                    except TypeError:
-                        pass
-                if other_ring is None:
-                    raise TypeError('Could not coerce '+str(other)+' into ZZ, QQ, or RDF.')
+                try:
+                    # other is a constant?
+                    other_ring = other.parent()
+                except AttributeError:
+                    other_ring = None
+                    for ring in (ZZ, QQ, RDF):
+                        try:
+                            ring.coerce(other)
+                            other_ring = ring
+                            break
+                        except TypeError:
+                            pass
+                    if other_ring is None:
+                        raise TypeError('Could not coerce '+str(other)+' into ZZ, QQ, or RDF.')
 
         if not other_ring.is_exact():
             other_ring = RDF  # the only supported floating-point numbers for now

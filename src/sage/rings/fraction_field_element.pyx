@@ -19,8 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
 # from sage.rings.polynomial.flatten import SpecializationMorphism

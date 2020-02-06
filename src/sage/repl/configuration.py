@@ -126,6 +126,21 @@ class SageIpythonConfiguration(object):
             True
         """
         from sage.repl.interpreter import SageTerminalInteractiveShell
+
+        # Use the same config for both InteractiveShell, and its subclass
+        # TerminalInteractiveShell (note: in fact some configs like term_title
+        # only apply to the latter, but we can still use the same config for
+        # both for simplicity's sake; see Trac #28289)
+        InteractiveShell=Config(
+            prompts_class=SagePrompts,
+            ast_node_interactivity='all',
+            colors=self.colors(),
+            simple_prompt=self.simple_prompt(),
+            term_title=self.term_title(),
+            confirm_exit=False,
+            separate_in=''
+        )
+
         cfg = Config(
             TerminalIPythonApp=Config(
                 display_banner=False,
@@ -133,15 +148,8 @@ class SageIpythonConfiguration(object):
                 test_shell=False,
                 shell_class=SageTerminalInteractiveShell,
             ),
-            InteractiveShell=Config(
-                prompts_class=SagePrompts,
-                ast_node_interactivity='all',
-                colors=self.colors(),
-                simple_prompt=self.simple_prompt(),
-                term_title=self.term_title(),
-                confirm_exit=False,
-                separate_in=''
-            ),
+            InteractiveShell=InteractiveShell,
+            TerminalInteractiveShell=InteractiveShell,
             InteractiveShellApp=Config(extensions=[SAGE_EXTENSION]),
         )
         if self._doctest_mode():

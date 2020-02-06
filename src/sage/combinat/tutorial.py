@@ -1272,13 +1272,6 @@ or select only the elements in positions 2, 3, and 4 (analogue of
     sage: list(itertools.islice(Permutations(3), int(1), int(4)))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
-The itertools methods ``imap`` and ``ifilter`` have been renamed to
-``map`` and ``filter`` in Python 3. You can get them also in Python 2 using::
-
-    sage: from six.moves import map, filter
-
-but they should rather be avoided, using list comprehension instead.
-
 To apply a function to all the elements, one can do::
 
     sage: list(z.cycle_type() for z in Permutations(3))

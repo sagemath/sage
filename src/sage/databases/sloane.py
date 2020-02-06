@@ -118,7 +118,7 @@ class SloaneEncyclopediaClass:
 
     def __iter__(self):
         """
-        Returns an iterator through the encyclopedia. Elements are of the
+        Return an iterator through the encyclopedia. Elements are of the
         form [number, sequence].
         """
         for i in self.__data__:

@@ -1,5 +1,5 @@
 """
-A fast bitset datatype in Cython.
+A fast bitset datatype in Cython
 
 Operations between bitsets are only guaranteed to work if the bitsets
 have the same size, with the exception of ``bitset_realloc``.  Similarly, you
@@ -226,7 +226,7 @@ cdef inline bint bitset_eq(bitset_t a, bitset_t b):
 
 cdef inline int bitset_cmp(bitset_t a, bitset_t b):
     """
-    Compare bitsets a and b.  Returns 0 if the two sets are
+    Compare bitsets a and b.  Return 0 if the two sets are
     identical, and consistently return -1 or 1 for two sets that are
     not equal.
 
@@ -426,13 +426,14 @@ cdef inline long bitset_first_in_complement(bitset_t a):
     Calculate the index of the first element not in the set. If the set
     is full, returns -1.
     """
-    cdef mp_size_t i, j
+    cdef mp_size_t i
+    cdef mp_bitcnt_t j
     for i from 0 <= i < a.limbs:
         if ~a.bits[i]:
             j = (i << index_shift) | _bitset_first_in_limb_nonzero(~a.bits[i])
             if j >= a.size:
-                j = -1
-            return j
+                return -1
+            return <mp_size_t>j
     return -1
 
 cdef inline long bitset_pop(bitset_t a) except -1:
@@ -727,7 +728,7 @@ cdef char* bitset_chars(char* s, bitset_t bits, char zero=c'0', char one=c'1'):
     The string is both stored in s and returned.  If s is NULL, then a
     new string is allocated.
     """
-    cdef long i
+    cdef mp_bitcnt_t i
     if s == NULL:
         s = <char *>sig_malloc(bits.size + 1)
     for i from 0 <= i < bits.size:
@@ -742,7 +743,7 @@ cdef int bitset_from_char(bitset_t bits, char* s, char zero=c'0', char one=c'1')
     represents the character indicating set membership.
     """
     bitset_init(bits, strlen(s))
-    cdef long i
+    cdef mp_bitcnt_t i
     for i from 0 <= i < bits.size:
         bitset_set_to(bits, i, s[i] == one)
     return 0

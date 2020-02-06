@@ -19,7 +19,7 @@ over which one would like to perform the following kind of operations:
 
 * Apply any map/reduce kind of operation over the elements of `S`
 
-AUTHORS :
+AUTHORS:
 
 - Florent Hivert -- code, documentation (2012--2016)
 

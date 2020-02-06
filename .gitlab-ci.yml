@@ -58,7 +58,7 @@ before_script:
   - .ci/describe-system.sh
   # Set DOCKER_TAG according to the current branch/tag
   - . .ci/update-env.sh
-  # Set MAKEOPTS and SAGE_NUM_THREADS according to the machine we are running on
+  # Set MAKEFLAGS and SAGE_NUM_THREADS according to the machine we are running on
   - . .ci/setup-make-parallelity.sh
 
 # We use docker-in-docker to build our docker images, i.e., we run a
@@ -82,23 +82,29 @@ services:
 # Build Sage and its documentation.
 # The build starts from the build artifacts of DEFAULT_ARTIFACT_BASE which is
 # usually much faster than building from a clean checkout of Sage.
-build-from-latest: &build
+build-from-latest:
   stage: build
   artifacts:
     when: always
     paths:
     - gitlab-build-docker.log
+    - html
     expire_in: 1 month
   script:
-    - apk --update add coreutils
-    # The output of the build can get larger than gitlab.com's limit; only print the first 3MB (and the last 80 lines.)
-    - .ci/build-docker.sh | tee gitlab-build-docker.log | .ci/head-tail.sh 3145728
+    - apk --update add coreutils rsync
+    # The output of the build can get larger than gitlab.com's limit; only
+    # print the first 1MB (and the last 80 lines.) GitLab's limit is 4MB,
+    # however, the list of all branches and tags that shows up in the initial
+    # checkout takes already 1.5 MB:
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/4142
+    - .ci/build-docker.sh | tee gitlab-build-docker.log | .ci/head-tail.sh 1048576
     - .ci/push-gitlab.sh sagemath-dev
     - .ci/push-gitlab.sh sagemath
   except:
     - master
     - develop
     - tags
+    - web
 
 # Build Sage and its documentation from a clean checkout of Sage.
 # Note that this takes several hours. You probably want to run this on your own
@@ -108,13 +114,23 @@ build-from-latest: &build
 # you could just retry it and hope to be scheduled on a machine with more disk
 # space, or provision your own runner.
 build-from-clean:
-  << : *build
+  extends:
+    - build-from-latest
+  artifacts:
+    when: always
+    paths:
+    - gitlab-build-docker.log
+    - html
+    expire_in: 99 years
   variables:
     ARTIFACT_BASE: "source-clean"
   only:
     - master
     - develop
     - tags
+    # Run build-from-clean for a pipeline that has been explicitly created
+    # through GitLab's web interface.
+    - web
   except: []
   tags:
     # 60 GB of HDD are available
@@ -127,18 +143,21 @@ build-from-clean:
 
 test-dev:
   stage: test
+  dependencies: []
   script:
     - . .ci/pull-gitlab.sh sagemath-dev
     - sh .ci/test-dev.sh "$DOCKER_IMAGE"
 
 test-cli:
   stage: test
+  dependencies: []
   script:
     - . .ci/pull-gitlab.sh sagemath
     - sh .ci/test-cli.sh "$DOCKER_IMAGE"
 
 test-jupyter:
   stage: test
+  dependencies: []
   script:
     - . .ci/pull-gitlab.sh sagemath
     - sh .ci/test-jupyter.sh "$DOCKER_IMAGE" docker
@@ -147,6 +166,7 @@ test-jupyter:
 # variables DOCKER_USER and SECRET_DOCKER_PASS have been set up.
 push-dockerhub:
   stage: release
+  dependencies: []
   only:
     refs:
       - branches
@@ -161,6 +181,7 @@ push-dockerhub:
 # variables DOCKER_USER and SECRET_DOCKER_PASS have been set up.
 push-dockerhub-dev:
   stage: release
+  dependencies: []
   only:
     refs:
       - master
@@ -171,3 +192,43 @@ push-dockerhub-dev:
   script:
     - . .ci/pull-gitlab.sh sagemath-dev
     - sh .ci/push-dockerhub.sh sagemath-dev
+
+.py3:
+  variables:
+    WITH_PYTHON: 3
+    DEFAULT_ARTIFACT_BASE: sagemath/sagemath-dev:develop-py3
+
+build-from-latest-py3:
+  extends:
+    - build-from-latest
+    - .py3
+
+build-from-clean-py3:
+  extends:
+    - build-from-clean
+    - .py3
+
+test-dev-py3:
+  extends:
+    - test-dev
+    - .py3
+
+test-cli-py3:
+  extends:
+    - test-cli
+    - .py3
+
+test-jupyter-py3:
+  extends:
+    - test-jupyter
+    - .py3
+
+push-dockerhub-py3:
+  extends:
+    - push-dockerhub
+    - .py3
+
+push-dockerhub-dev-py3:
+  extends:
+    - push-dockerhub-dev
+    - .py3

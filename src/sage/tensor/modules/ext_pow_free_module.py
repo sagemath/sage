@@ -55,6 +55,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
@@ -238,8 +239,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         self._fmodule = fmodule
         self._degree = degree
         rank = binomial(fmodule._rank, degree)
-        self._zero_element = 0 # provisory (to avoid infinite recursion
-                               # in what follows)
         if name is None and fmodule._name is not None:
             name = r'/\^{}('.format(degree) + fmodule._name + ')'
         if latex_name is None and fmodule._latex_name is not None:
@@ -257,13 +256,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
                              " has already been created")
         else:
             self._fmodule._exterior_powers[self._degree] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                     self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
 
     #### Parent methods
 
@@ -289,7 +281,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
 
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)
         if comp:
@@ -329,6 +321,30 @@ class ExtPowerFreeModule(FiniteRankFreeModule):
         return resu
 
     #### End of parent methods
+
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: A = M.exterior_power(2)
+            sage: A.zero()
+            Alternating contravariant tensor zero of degree 2 on the Rank-3 free
+             module M over the Integer Ring
+            sage: A(0) is A.zero()
+            True
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        return resu
 
     def _repr_(self):
         r"""
@@ -611,8 +627,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
         self._fmodule = fmodule
         self._degree = degree
         rank = binomial(fmodule._rank, degree)
-        self._zero_element = 0 # provisory (to avoid infinite recursion in what
-                               # follows)
         if degree == 1:  # case of the dual
             if name is None and fmodule._name is not None:
                 name = fmodule._name + '*'
@@ -635,13 +649,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
                              " has already been created")
         else:
             self._fmodule._dual_exterior_powers[self._degree] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                            self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
 
     #### Parent methods
 
@@ -674,7 +681,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         if isinstance(comp, FreeModuleTensor):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -775,6 +782,30 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
     #### End of parent methods
 
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: A = M.dual_exterior_power(2)
+            sage: A.zero()
+            Alternating form zero of degree 2 on the Rank-3 free module M over
+             the Integer Ring
+            sage: A(0) is A.zero()
+            True
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._components[basis] = resu._new_comp(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        return resu
+
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -847,5 +878,3 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule):
 
         """
         return self._degree
-
-

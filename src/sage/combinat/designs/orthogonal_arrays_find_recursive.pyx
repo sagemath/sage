@@ -44,7 +44,6 @@ REFERENCES:
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_function
 from .orthogonal_arrays import orthogonal_array

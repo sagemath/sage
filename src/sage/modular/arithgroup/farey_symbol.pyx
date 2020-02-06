@@ -20,8 +20,6 @@ for speed.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division
-
 from cpython.object cimport PyObject_RichCompare
 from itertools import groupby
 from cysignals.signals cimport sig_on, sig_off

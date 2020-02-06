@@ -14,8 +14,6 @@ context class, and related utilities.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
@@ -1657,10 +1655,11 @@ cdef class mpnumber:
         """
         return global_context.almosteq(s, t, rel_eps, abs_eps)
 
+
 cdef class mpf_base(mpnumber):
 
     # Shared methods for mpf, constant. However, somehow some methods
-    # (hash?, __richcmp__?) aren't inerited, so they have to
+    # (hash?, __richcmp__?) are not inherited, so they have to
     # be defined multiple times. TODO: fix this.
 
     def __hash__(self):

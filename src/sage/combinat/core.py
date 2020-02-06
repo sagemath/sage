@@ -11,7 +11,7 @@ Authors:
 - Anne Schilling and Mike Zabrocki (2011): initial version
 - Travis Scrimshaw (2012): Added latex output for Core class
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Anne Schilling <anne at math.ucdavis.edu>
 #                          Mike Zabrocki  <zabrocki at mathstat.yorku.ca>
 #
@@ -24,8 +24,8 @@ Authors:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -34,6 +34,7 @@ from sage.combinat.combinat import CombinatorialElement
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.functions.other import floor
 from sage.combinat.combinatorial_map import combinatorial_map
+
 
 class Core(CombinatorialElement):
     r"""
@@ -318,11 +319,11 @@ class Core(CombinatorialElement):
 
     def affine_symmetric_group_action(self, w, transposition = False):
         r"""
-        Returns the (left) action of the affine symmetric group on ``self``.
+        Return the (left) action of the affine symmetric group on ``self``.
 
         INPUT:
 
-        - ``w`` is a tupe of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
+        - ``w`` is a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
           If transposition is set to be True, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
           (see :meth:`_transposition_to_reduced_word`).

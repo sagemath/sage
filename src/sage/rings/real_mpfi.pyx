@@ -242,8 +242,6 @@ Comparisons with numpy types are right (see :trac:`17758` and :trac:`18076`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.string cimport strlen
 from cpython.mem cimport *
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE

@@ -68,8 +68,6 @@ This example illustrates generators for a free module over `\ZZ`.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 import sage.misc.defaults
 from sage.misc.latex import latex_variable_name
 from . import gens_py
@@ -298,21 +296,11 @@ cdef class ParentWithGens(ParentWithBase):
             sage: m.<b> = l.extension(b^2 + b + a)
             sage: n.<z> = GF(2^6)
             sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
-
-        Note that the presence of a base map is ignored when determining the category of the
-        resulting morphism.  If you pass in a bad base morphism you can get nonsensical results::
-
-            sage: R.<x> = GF(3)[]
-            sage: f = R.hom([x+1], base_map=lambda t: t+1); f
-            sage: Ring endomorphism of Univariate Polynomial Ring in x over Finite Field of size 3
-              Defn: x |--> x + 1
+            Ring morphism:
+              From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
+              To:   Finite Field in z of size 2^6
+              Defn: b |--> z^4 + z^3 + 1
                     with map of base ring
-            sage: f.category_for()
-            Join of Category of euclidean domains and Category of commutative algebras over (finite enumerated fields and subquotients of monoids and quotients of semigroups) and Category of infinite sets
-            sage: f(-1)
-            0
-            sage: f(0)
-            1
         """
         if self._element_constructor is not None:
             return parent.Parent.hom(self, im_gens, codomain, base_map=base_map, category=category, check=check)

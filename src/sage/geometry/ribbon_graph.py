@@ -24,7 +24,7 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
 from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -492,8 +492,8 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         #Now we convert this data that is on the form of lists of lists
         #to actual permutations that form a ribbon graph.
-        return RibbonGraph(PermutationGroupElement([tuple(x) for x in aux_sigma]), 
-                           PermutationGroupElement([tuple(x) for x in aux_rho]))
+        return RibbonGraph(PermutationConstructor([tuple(x) for x in aux_sigma]),
+                           PermutationConstructor([tuple(x) for x in aux_rho]))
 
     def extrude_edge(self, vertex, dart1, dart2):
         r"""
@@ -582,8 +582,8 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         for val in val_one:
             repr_sigma += [[val]]
 
-        # We find which is the highes value a dart has, in order to 
-        #   add new darts that do not conflict with previous ones.
+        # We find which is the highest value a dart has, in order to 
+        # add new darts that do not conflict with previous ones.
         k = max(darts_rho)
 
         # We create the new vertex and append it to sigma.
@@ -599,8 +599,8 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         #We update rho
         repr_rho.append([k+1, k+2])
 
-        return RibbonGraph(PermutationGroupElement([tuple(x) for x in repr_sigma]), 
-                           PermutationGroupElement([tuple(x) for x in repr_rho]))
+        return RibbonGraph(PermutationConstructor([tuple(x) for x in repr_sigma]),
+                           PermutationConstructor([tuple(x) for x in repr_rho]))
 
     @cached_method
     def genus(self):
@@ -1079,8 +1079,8 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                 aux_rho[pos_rho[0]][pos_rho[1]]=i+1
 
         return RibbonGraph(
-                        PermutationGroupElement([tuple(x) for x in aux_sigma]), 
-                        PermutationGroupElement([tuple(x) for x in aux_rho])
+                        PermutationConstructor([tuple(x) for x in aux_sigma]),
+                        PermutationConstructor([tuple(x) for x in aux_rho])
                         )
 
 def make_ribbon(g, r):
@@ -1154,8 +1154,8 @@ def make_ribbon(g, r):
         repr_sigma[1].insert(j+1, max_dart+2*(j+1))
         repr_rho += [[max_dart+2*(j+1)-1, max_dart+2*(j+1)]]
 
-    return RibbonGraph(PermutationGroupElement([tuple(x) for x in repr_sigma]), 
-                       PermutationGroupElement([tuple(x) for x in repr_rho]))
+    return RibbonGraph(PermutationConstructor([tuple(x) for x in repr_sigma]),
+                       PermutationConstructor([tuple(x) for x in repr_rho]))
 
 def bipartite_ribbon_graph(p, q):
     r"""
@@ -1226,7 +1226,7 @@ def bipartite_ribbon_graph(p, q):
         aux_edge = [i+1, p*q + k*p - ((i+1 + t*q)/q).floor() +1]
         rho += [aux_edge]
     return RibbonGraph(
-                       PermutationGroupElement([tuple(x) for x in sigma]), 
-                       PermutationGroupElement([tuple(x) for x in rho])
+                       PermutationConstructor([tuple(x) for x in sigma]),
+                       PermutationConstructor([tuple(x) for x in rho])
                        )
 

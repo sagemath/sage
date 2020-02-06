@@ -29,7 +29,6 @@ from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
 from sage.combinat.tableau import Tableaux
 from sage.combinat.partition import Partition, _Partitions
-from sage.misc.superseded import deprecated_function_alias
 from . import permutation
 import functools
 

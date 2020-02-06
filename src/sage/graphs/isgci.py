@@ -329,8 +329,8 @@ bipartite graphs. Therefore bipartite graphs are perfect !
         sage: Perfect == Berge
         True
 
-Information for developpers
-----------------------------
+Information for developers
+--------------------------
 
 * The database is loaded not *so* large, but it is still preferable to
   only load it on demand. This is achieved through the cached methods

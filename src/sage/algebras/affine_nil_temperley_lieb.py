@@ -1,12 +1,12 @@
 """
 Affine nilTemperley Lieb Algebra of type A
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.categories.all import AlgebrasWithBasis
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
@@ -15,9 +15,10 @@ from sage.rings.all import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 
+
 class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
     r"""
-    Constructs the affine nilTemperley Lieb algebra of type `A_{n-1}^{(1)}` as used in [Pos2005]_.
+    Construct the affine nilTemperley Lieb algebra of type `A_{n-1}^{(1)}` as used in [Pos2005]_.
 
     INPUT:
 
@@ -94,7 +95,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the unit of the underlying Weyl group, which index
+        Return the unit of the underlying Weyl group, which index
         the one of this algebra, as per
         :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
@@ -171,7 +172,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
     def product_on_basis(self, w, w1):
         """
-        Returns `a_w a_{w1}`, where `w` and `w1` are in the Weyl group
+        Return `a_w a_{w1}`, where `w` and `w1` are in the Weyl group
         assuming that `w` does not contain any braid relations.
 
         EXAMPLES::

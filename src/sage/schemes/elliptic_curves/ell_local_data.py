@@ -727,13 +727,15 @@ class EllipticCurveLocalData(SageObject):
         else:
             principal_flag = False
 
-        if (K is QQ) or principal_flag :
+        if (K is QQ) or principal_flag:
             pi = P.gens_reduced()[0]
-            verbose("P is principal, generator pi = %s"%pi, t, 1)
+            verbose("P is principal, generator pi = %s" % pi, t, 1)
         else:
             pi = K.uniformizer(P, 'positive')
-            verbose("uniformizer pi = %s"%pi, t, 1)
-        pi2 = pi*pi; pi3 = pi*pi2; pi4 = pi*pi3
+            verbose("uniformizer pi = %s" % pi, t, 1)
+        pi2 = pi * pi
+        pi3 = pi * pi2
+        pi4 = pi * pi3
         pi_neg = None
         prime = pi if K is QQ else P
 

@@ -154,7 +154,7 @@ def load(filename, globals, attach=False):
 
     We can load files using secure http (https)::
 
-        sage: sage.repl.load.load('https://github.com/jasongrout/minimum_rank/raw/minimum_rank_1_0_0/minrank.py', globals())  # optional - internet
+        sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
     We attach a file::
 
@@ -166,12 +166,12 @@ def load(filename, globals, attach=False):
         sage: t in attached_files()
         True
 
-    You can't attach remote URLs (yet)::
+    You cannot attach remote URLs (yet)::
 
         sage: sage.repl.load.load('http://www.sagemath.org/files/loadtest.py', globals(), attach=True)  # optional - internet
         Traceback (most recent call last):
         ...
-        NotImplementedError: you can't attach a URL
+        NotImplementedError: you cannot attach a URL
 
     The default search path for loading and attaching files is the
     current working directory, i.e., ``'.'``.  But you can modify the
@@ -230,7 +230,7 @@ def load(filename, globals, attach=False):
             # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
             # http://www.diveintopython.net/http_web_services/etags.html
-            raise NotImplementedError("you can't attach a URL")
+            raise NotImplementedError("you cannot attach a URL")
         from sage.misc.remote_file import get_remote_file
         filename = get_remote_file(filename, verbose=False)
 

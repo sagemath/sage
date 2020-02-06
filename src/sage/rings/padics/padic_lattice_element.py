@@ -52,7 +52,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
-
+from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.lattice_precision import pRational
 
@@ -484,7 +484,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             return ZZ(0)
         return self.precision_absolute() - self.valuation(secure=secure)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare this element with ``other``.
 
@@ -505,10 +505,10 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: z - x
             2^7 + O(2^10)
         """
-        if (self-other).is_zero():
-            return 0
+        if (self - other).is_zero():
+            return rich_to_bool(op, 0)
         else:
-            return QQ(self.lift())._cmp_(QQ(other.lift()))
+            return richcmp(QQ(self.lift()), QQ(other.lift()), op)
 
     def is_equal_to(self, other, prec):
         r"""

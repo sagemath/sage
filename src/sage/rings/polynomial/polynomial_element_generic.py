@@ -49,7 +49,6 @@ from sage.structure.factorization import Factorization
 
 from sage.rings.padics.precision_error import PrecisionError
 
-
 class Polynomial_generic_sparse(Polynomial):
     """
     A generic sparse polynomial.
@@ -206,7 +205,7 @@ class Polynomial_generic_sparse(Polynomial):
 
     def _derivative(self, var=None):
         """
-        Computes formal derivative of this polynomial with respect to
+        Return the formal derivative of this polynomial with respect to
         the given variable.
 
         If ``var`` is ``None`` or is the generator of this ring, the
@@ -235,12 +234,27 @@ class Polynomial_generic_sparse(Polynomial):
             4*x^3*y^3
             sage: f._derivative(x)
             3*x^2*y^4
+
+        Check that :trac:`28187` is fixed::
+
+            sage: R = PolynomialRing(ZZ, 't', sparse=True)
+            sage: t, u = var('t, u')
+            sage: R.gen()._derivative(t)
+            1
+            sage: R.gen()._derivative(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to u
         """
         P = self.parent()
-        if var is not None and var is not P.gen():
-            # call _derivative() recursively on coefficients
-            return P(dict([(n, c._derivative(var)) \
-                                     for (n, c) in six.iteritems(self.__coeffs)]))
+        if var is not None and var != P.gen():
+            try:
+                # call _derivative() recursively on coefficients
+                return P({n:self.__coeffs[n]._derivative(var)
+                            for n in self.__coeffs})
+            except AttributeError:
+                raise ValueError('cannot differentiate with respect to {}'.format(var))
+
 
         # compute formal derivative with respect to generator
         d = {}

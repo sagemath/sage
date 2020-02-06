@@ -718,9 +718,97 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         FreeModuleTensor._del_derived(self)
         TensorField._del_derived(self)
         if del_restrictions:
-            self._restrictions.clear()
-            self._extensions_graph = {self._domain: self}
-            self._restrictions_graph = {self._domain: self}
+            self._del_restrictions()
+
+    def _set_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of the tensor field in a given vector frame
+        for assignment. This private method invokes no security check. Use
+        this method at your own risk.
+
+        The components with respect to other frames on the same domain are
+        deleted, in order to avoid any inconsistency. To keep them, use the
+        method :meth:`_add_comp_unsafe` instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) vector frame in which the
+          components are defined; if none is provided, the components are
+          assumed to refer to the tensor field domain's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as an instance of the
+          class :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: e_xy = X.frame()
+            sage: t = M.tensor_field(1,1, name='t')
+            sage: t._set_comp_unsafe(e_xy)
+            2-indices components w.r.t. Coordinate frame (M, (d/dx,d/dy))
+            sage: t._set_comp_unsafe(e_xy)[1,0] = 2
+            sage: t.display(e_xy)
+            t = 2 d/dy*dx
+
+        Setting components in a new frame (``e``)::
+
+            sage: e = M.vector_frame('e')
+            sage: t._set_comp_unsafe(e)
+            2-indices components w.r.t. Vector frame (M, (e_0,e_1))
+            sage: t._set_comp_unsafe(e)[0,1] = x
+            sage: t.display(e)
+            t = x e_0*e^1
+
+        The components with respect to the frame ``e_xy`` have be erased::
+
+            sage: t.display(e_xy)
+            Traceback (most recent call last):
+            ...
+            ValueError: no basis could be found for computing the components
+             in the Coordinate frame (M, (d/dx,d/dy))
+
+        Setting components in a frame defined on a subdomain deletes
+        previously defined components as well::
+
+            sage: U = M.open_subset('U', coord_def={X: x>0})
+            sage: f = U.vector_frame('f')
+            sage: t._set_comp_unsafe(f)
+            2-indices components w.r.t. Vector frame (U, (f_0,f_1))
+            sage: t._set_comp_unsafe(f)[0,1] = 1+y
+            sage: t.display(f)
+            t = (y + 1) f_0*f^1
+            sage: t.display(e)
+            Traceback (most recent call last):
+            ...
+            ValueError: no basis could be found for computing the components
+             in the Vector frame (M, (e_0,e_1))
+
+        """
+        if basis is None:
+            basis = self._fmodule._def_basis
+
+        if basis._domain == self._domain:
+            # Setting components on the tensor field domain with an unsafe
+            # method:
+            return FreeModuleTensor._set_comp_unsafe(self, basis=basis)
+
+        # Setting components on a subdomain:
+        #
+        # Creating or saving the restriction to the subdomain:
+        rst = self.restrict(basis._domain, dest_map=basis._dest_map)
+        # Deleting all the components on self._domain and the derived
+        # quantities:
+        self._components.clear()
+        self._del_derived()
+        # Restoring the restriction to the subdomain (which has been
+        # deleted by _del_derived):
+        self._restrictions[basis._domain] = rst
+        # The _set_comp_unsafe operation is performed on the subdomain:
+        return rst._set_comp_unsafe(basis)
 
     def set_comp(self, basis=None):
         r"""
@@ -792,6 +880,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         if basis is None:
             basis = self._fmodule._def_basis
 
+        self._is_zero = False  # a priori
+
         if basis._domain == self._domain:
             # Setting components on the tensor field domain:
             return FreeModuleTensor.set_comp(self, basis=basis)
@@ -809,6 +899,94 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         self._restrictions[basis._domain] = rst
         # The set_comp operation is performed on the subdomain:
         return rst.set_comp(basis=basis)
+
+    def _add_comp_unsafe(self, basis=None):
+        r"""
+        Return the components of the tensor field in a given vector frame
+        for assignment. This private method invokes no security check. Use
+        this method at your own risk.
+
+        The components with respect to other frames on the same domain are
+        kept. To delete them, use the method :meth:`_set_comp_unsafe` instead.
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) vector frame in which the
+          components are defined; if none is provided, the components are
+          assumed to refer to the tensor field domain's default frame
+
+        OUTPUT:
+
+        - components in the given frame, as an instance of the
+          class :class:`~sage.tensor.modules.comp.Components`; if such
+          components did not exist previously, they are created
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: e_xy = X.frame()
+            sage: t = M.tensor_field(1,1, name='t')
+            sage: t._add_comp_unsafe(e_xy)
+            2-indices components w.r.t. Coordinate frame (M, (d/dx,d/dy))
+            sage: t._add_comp_unsafe(e_xy)[1,0] = 2
+            sage: t.display(e_xy)
+            t = 2 d/dy*dx
+
+        Adding components with respect to a new frame (``e``)::
+
+            sage: e = M.vector_frame('e')
+            sage: t._add_comp_unsafe(e)
+            2-indices components w.r.t. Vector frame (M, (e_0,e_1))
+            sage: t._add_comp_unsafe(e)[0,1] = x
+            sage: t.display(e)
+            t = x e_0*e^1
+
+        The components with respect to the frame ``e_xy`` are kept::
+
+            sage: t.display(e_xy)
+            t = 2 d/dy*dx
+
+        Adding components in a frame defined on a subdomain::
+
+            sage: U = M.open_subset('U', coord_def={X: x>0})
+            sage: f = U.vector_frame('f')
+            sage: t._add_comp_unsafe(f)
+            2-indices components w.r.t. Vector frame (U, (f_0,f_1))
+            sage: t._add_comp_unsafe(f)[0,1] = 1+y
+            sage: t.display(f)
+            t = (y + 1) f_0*f^1
+
+        The components previously defined are kept::
+
+            sage: t.display(e_xy)
+            t = 2 d/dy*dx
+            sage: t.display(e)
+            t = x e_0*e^1
+
+        """
+        if basis is None:
+            basis = self._fmodule._def_basis
+
+        if basis._domain == self._domain:
+            # Adding components on the tensor field domain:
+            # We perform a backup of the restrictions, since
+            # they are deleted by FreeModuleTensor._add_comp_unsafe (which
+            # invokes del_derived()), and restore them afterwards
+            restrictions_save = self._restrictions.copy()
+            comp = FreeModuleTensor._add_comp_unsafe(self, basis=basis)
+            self._restrictions = restrictions_save
+            return comp
+
+        # Adding components on a subdomain:
+        #
+        # Creating or saving the restriction to the subdomain:
+        rst = self.restrict(basis._domain, dest_map=basis._dest_map)
+        # Deleting the derived quantities except for the restrictions to
+        # subdomains:
+        self._del_derived(del_restrictions=False)
+        # The _add_comp_unsafe operation is performed on the subdomain:
+        return rst._add_comp_unsafe(basis)
 
     def add_comp(self, basis=None):
         r"""
@@ -876,6 +1054,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         """
         if basis is None:
             basis = self._fmodule._def_basis
+
+        self._is_zero = False  # a priori
 
         if basis._domain == self._domain:
             # Adding components on the tensor field domain:
@@ -949,7 +1129,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         # components on a subdomain:
         rst = self.restrict(basis._domain, dest_map=basis._dest_map)
         return rst.comp(basis=basis, from_basis=from_basis)
-
 
     def _common_coord_frame(self, other):
         r"""
@@ -1632,11 +1811,11 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             sage: f = M.scalar_field({X: x+y}, name='f')
             sage: s = a.__mul__(f); s
-            Tensor field of type (0,2) on the 2-dimensional differentiable
+            Tensor field f*a of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: s.display()
-            (x^2 + (x + 1)*y + x) dx*dx + (2*x + 2*y) dx*dy + (x*y + y^2) dy*dx
-             + (-x^3 - x^2*y) dy*dy
+            f*a = (x^2 + (x + 1)*y + x) dx*dx + (2*x + 2*y) dx*dy
+             + (x*y + y^2) dy*dx + (-x^3 - x^2*y) dy*dy
             sage: s == f*a
             True
 

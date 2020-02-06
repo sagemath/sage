@@ -5,7 +5,6 @@ The ``timeit`` command
 
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
-from __future__ import absolute_import
 
 from . import sage_timeit
 

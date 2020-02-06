@@ -85,6 +85,7 @@ config()
                   --enable-factory \
                   --disable-doc \
                   --disable-polymake \
+                  --with-python=sage-python23 \
                   $SINGULAR_CONFIGURE
 }
 

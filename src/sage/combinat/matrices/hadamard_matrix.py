@@ -66,6 +66,7 @@ from math import sqrt
 from sage.matrix.constructor import identity_matrix as I
 from sage.matrix.constructor import ones_matrix     as J
 from sage.misc.unknown import Unknown
+from sage.cpython.string import bytes_to_str
 
 
 def normalise_hadamard(H):
@@ -454,16 +455,17 @@ def hadamard_matrix(n,existence=False, check=True):
 
     return M
 
+
 def hadamard_matrix_www(url_file, comments=False):
     """
-    Pulls file from Sloane's database and returns the corresponding Hadamard
+    Pull file from Sloane's database and return the corresponding Hadamard
     matrix as a Sage matrix.
 
     You must input a filename of the form "had.n.xxx.txt" as described
     on the webpage http://neilsloane.com/hadamard/, where
     "xxx" could be empty or a number of some characters.
 
-    If comments=True then the "Automorphism..." line of the had.n.xxx.txt
+    If ``comments=True`` then the "Automorphism..." line of the had.n.xxx.txt
     file is printed if it exists. Otherwise nothing is done.
 
     EXAMPLES::
@@ -495,24 +497,20 @@ def hadamard_matrix_www(url_file, comments=False):
     n = eval(url_file.split(".")[1])
     rws = []
     url = "http://neilsloane.com/hadamard/" + url_file
-    f = urlopen(url)
-    s = f.readlines()
+    with urlopen(url) as f:
+        s = [bytes_to_str(line) for line in f.readlines()]
     for i in range(n):
-        r = []
-        for j in range(n):
-            if s[i][j] == "+":
-                r.append(1)
-            else:
-                r.append(-1)
-        rws.append(r)
-    f.close()
+        line = s[i]
+        rws.append([1 if line[j] == "+" else -1 for j in range(n)])
     if comments:
         lastline = s[-1]
         if lastline[0] == "A":
             print(lastline)
     return matrix(rws)
 
+
 _rshcd_cache = {}
+
 
 def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False):
     r"""
@@ -832,7 +830,7 @@ def rshcd_from_close_prime_powers(n):
     r"""
     Return a `(n^2,1)`-RSHCD when `n-1` and `n+1` are odd prime powers and `n=0\pmod{4}`.
 
-    The construction implemented here appears in Theorem 4.3 from [GS70]_.
+    The construction implemented here appears in Theorem 4.3 from [GS1970]_.
 
     Note that the authors of [SWW72]_ claim in Corollary 5.12 (page 342) to have
     proved the same result without the `n=0\pmod{4}` restriction with a *very*
@@ -1084,6 +1082,13 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
         sage: skew_hadamard_matrix(100,existence=True)
         Unknown
 
+    Check that :trac:`28526` is fixed::
+
+        sage: skew_hadamard_matrix(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be strictly positive
+
     REFERENCES:
 
     .. [Ha83] \M. Hall,
@@ -1091,6 +1096,8 @@ def skew_hadamard_matrix(n,existence=False, skew_normalize=True, check=True):
       2nd edition,
       Wiley, 1983
     """
+    if n < 1:
+        raise ValueError("parameter n must be strictly positive")
     def true():
         _skew_had_cache[n]=True
         return True

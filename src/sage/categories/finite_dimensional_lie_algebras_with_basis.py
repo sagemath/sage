@@ -67,7 +67,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     class ParentMethods:
         @cached_method
         def _construct_UEA(self):
-            """
+            r"""
             Construct the universal enveloping algebra of ``self``.
 
             EXAMPLES::
@@ -87,6 +87,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  nc-relations: {...}
                 sage: sorted(UEA.relations().items(), key=str)
                 [(y*x, x*y - z), (z*x, x*z + y), (z*y, y*z - x)]
+
+            Singular's ``nc_algebra`` does not work over `\ZZ/6\ZZ`,
+            so we fallback to the PBW basis in this case::
+
+                sage: L = lie_algebras.pwitt(Zmod(6), 6)
+                sage: L._construct_UEA()
+                Universal enveloping algebra of
+                 The 6-Witt Lie algebra over Ring of integers modulo 6
+                 in the Poincare-Birkhoff-Witt basis
             """
             # Create the UEA relations
             # We need to get names for the basis elements, not just the generators
@@ -117,7 +126,12 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     rels[g1*g0] = g0*g1 - F.sum(val*get_var(g) for g, val in S[k])
                 else:
                     rels[g0*g1] = g1*g0 + F.sum(val*get_var(g) for g, val in S[k])
-            return F.g_algebra(rels)
+            try:
+                return F.g_algebra(rels)
+            except RuntimeError:
+                # Something went wrong with the computation, so fallback to
+                #   the generic PBW basis implementation
+                return self.pbw_basis()
 
         @lazy_attribute
         def _basis_ordering(self):
@@ -1408,11 +1422,6 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 A
                 sage: phi(i*X)
                 -i*A
-
-            Note that ``phi`` is not a morphism of Lie algebras over `K`::
-
-                sage: phi.category_for()
-                Category of sets with partial maps
             """
             from sage.algebras.lie_algebras.morphism import LieAlgebraMorphism_from_generators
             return LieAlgebraMorphism_from_generators(on_generators, domain=self,

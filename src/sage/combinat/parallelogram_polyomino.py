@@ -527,21 +527,21 @@ r"""
 This global option contains all the data needed by the Parallelogram classes
 to draw, display in ASCII, compile in latex a parallelogram polyomino.
 
-The available options are :
+The available options are:
 
 - tikz_options : this option configurate all the information useful to
   generate TIKZ code. For example, color, line size, etc ...
 
 - drawing_components : this option is used to explain to the system
   which component of the drawing you want to draw. For example,
-  you can ask to draw some elements of the following list :
+  you can ask to draw some elements of the following list:
   - the diagram,
   - the tree inside the parallelogram polyomino,
   - the bounce paths inside the parallelogram polyomino,
   - the value of the bounce on each square of a bounce path.
 
 - display : this option is used to configurate the ASCII display.
-  The available options are :
+  The available options are:
   - list : (this is the default value) is used to represent PP as a list
   containing the upper and lower path.
   - drawing : this value is used to explain we want to display an array with
@@ -1316,7 +1316,7 @@ class ParallelogramPolyomino(ClonableList):
         Convert to a binary tree using the Aval-Boussicault algorithm.
 
         You can use the parameter ``position`` to use the bijection on
-        a new parallelogram polyomino (PP). This PP is obtained by cuting the
+        a new parallelogram polyomino (PP). This PP is obtained by cutting the
         PP in such a way the cell at position ``position`` becomes the
         top-left most corner of the PP.
 
@@ -1479,7 +1479,7 @@ class ParallelogramPolyomino(ClonableList):
             This is a technical function that converts binary tree to ordered
             tree with the following construction.
 
-            Add a virtual root v such that the root become :
+            Add a virtual root v such that the root become:
 
             - the left son of v if ``d`` is equal to 0;
 
@@ -1488,7 +1488,7 @@ class ParallelogramPolyomino(ClonableList):
             Then now the vertices of the ordered tree are the vertices of
             the binary tree and the virtual root.
 
-            The edges are defined as follow :
+            The edges are defined as follow:
             - if v1 is a left (resp. right) son of v2 and v2 is a right
               (resp. left) son of v3, then, in the ordered tree, v2 is the
               father of v1;
@@ -2660,7 +2660,7 @@ class ParallelogramPolyomino(ClonableList):
             sage: pp.to_tikz() == pp._to_tikz_bounce()
             False
             sage: pp.set_options(drawing_components=dict(
-            ....:     diagram= False, bounce_0=True)
+            ....:     diagram=False, bounce_0=True)
             ....: )
             sage: pp.to_tikz() == pp._to_tikz_bounce([0])
             True

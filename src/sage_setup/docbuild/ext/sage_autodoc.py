@@ -36,7 +36,6 @@ from docutils.statemachine import ViewList
 
 import sphinx
 from sphinx.ext.autodoc.importer import mock, import_object, get_object_members
-from sphinx.ext.autodoc.inspector import format_annotation
 from sphinx.locale import _, __
 from sphinx.pycode import ModuleAnalyzer
 from sphinx.errors import PycodeError
@@ -779,9 +778,18 @@ class Documenter(object):
             logger.debug('[autodoc] module analyzer failed: %s', err)
             # no source file -- e.g. for builtin and C modules
             self.analyzer = None
-            # at least add the module.__file__ as a dependency
-            if hasattr(self.module, '__file__') and self.module.__file__:
-                self.directive.filename_set.add(self.module.__file__)
+            # at least add the module as a dependency
+            name = self.module.__name__ if hasattr(self.module, '__name__') else None
+            fname = self.module.__file__ if hasattr(self.module, '__file__') else None
+            if name != self.real_modname:
+                # !!! SageMath Specific for make fast-rebuild-clean !!!
+                # try not to record a dependency to a .pyc file but to the corresponding .py files instead.
+                try:
+                    fname = ModuleAnalyzer.for_module(name).srcname
+                except PycodeError:
+                    pass
+            if fname is not None:
+                self.directive.filename_set.add(fname)
         else:
             self.directive.filename_set.add(self.analyzer.srcname)
 
@@ -1042,12 +1050,12 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         # However, there is an exception: CachedFunction(f) returns a class instance,
         # whose doc string coincides with that of f and is thus different from
         # that of the class CachedFunction. In that situation, we want that f is documented.
-        # This is part of SAGE TRAC 9976
+        # This is part of trac #9976.
         return (inspect.isfunction(member) or inspect.isbuiltin(member)
                 or (isclassinstance(member)
                     and sage_getdoc_original(member) != sage_getdoc_original(member.__class__)))
 
-    # Sage Trac #9976: This function has been rewritten to support the
+    # Trac #9976: This function has been rewritten to support the
     # _sage_argspec_ attribute which makes it possible to get argument
     # specification of decorated callables in documentation correct.
     # See e.g. sage.misc.decorators.sage_wraps
@@ -1410,10 +1418,10 @@ class MethodDocumenter(DocstringSignatureMixin, ClassLevelDocumenter):
             self.directivetype = 'method'
         return ret
 
-    # Sage Trac #9976: This function has been rewritten to support the
+    # Trac #9976: This function has been rewritten to support the
     # _sage_argspec_ attribute which makes it possible to get argument
     # specification of decorated callables in documentation correct.
-    # See e.g. sage.misc.decorators.sage_wraps
+    # See e.g. sage.misc.decorators.sage_wraps.
     #
     # Note, however, that sage.misc.sageinspect.sage_getargspec already
     # uses a method _sage_argspec_, that only works on objects, not on classes, though.
@@ -1483,8 +1491,13 @@ class AttributeDocumenter(DocstringStripSignatureMixin, ClassLevelDocumenter):  
         # descriptors.
         isattribute = isattribute or isinstance(type(member), ClasscallMetaclass)
 
-        if PY2:
-            return isattribute
+        return isattribute
+
+        # We ignore the obscure case supported in the following return
+        # statement. The additional check opens a door for attributes without
+        # docstrings to appear in the Sage documentation, and more seriously
+        # effectively prevents certain attributes to get properly documented.
+        # See trac #28698.
 
         # That last condition addresses an obscure case of C-defined
         # methods using a deprecated type in Python 3, that is not otherwise

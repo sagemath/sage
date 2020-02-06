@@ -59,8 +59,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from __future__ import print_function, absolute_import, division
-
 import re
 from copy import copy
 from sage.rings.infinity import infinity

@@ -445,8 +445,8 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
           To:   Number Field in b with defining polynomial x^2 + a0 over its base field
           Defn: a |--> b
         sage: type(fr), type(to)
-        (<class 'sage.rings.number_field.morphism.RelativeNumberFieldHomomorphism_from_abs'>,
-         <class 'sage.rings.number_field.morphism.NumberFieldHomomorphism_im_gens'>)
+        (<class 'sage.rings.number_field.homset.RelativeNumberFieldHomset_with_category.element_class'>,
+         <class 'sage.rings.number_field.homset.NumberFieldHomset_with_category.element_class'>)
 
         sage: M.<c> = L.absolute_field(); M
         Number Field in c with defining polynomial x^6 + 4*x^2 + 200

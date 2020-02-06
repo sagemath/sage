@@ -32,11 +32,12 @@ from copy import copy
 #                  /       \               /      |    \
 #           Inequality  Equation        Vertex   Ray   Line
 
+
 @richcmp_method
 class PolyhedronRepresentation(SageObject):
     """
     The internal base class for all representation objects of
-    ``Polyhedron`` (vertices/rays/lines and inequalites/equations)
+    ``Polyhedron`` (vertices/rays/lines and inequalities/equations)
 
     .. note::
 
@@ -447,7 +448,9 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def neighbors(self):
         """
-        Iterate over the adjacent facets (i.e. inequalities/equations)
+        Iterate over the adjacent facets (i.e. inequalities).
+
+        Only defined for inequalities.
 
         EXAMPLES::
 
@@ -459,11 +462,36 @@ class Hrepresentation(PolyhedronRepresentation):
             An inequality (0, -1, 0) x + 1 >= 0
             sage: list(a[0])
             [1, 0, -1, 0]
+
+        TESTS:
+
+        Checking that :trac:`28463` is fixed::
+
+            sage: P = polytopes.simplex()
+            sage: F1 = P.Hrepresentation()[1]
+            sage: list(F1.neighbors())
+            [An inequality (0, 1, 0, 0) x + 0 >= 0,
+             An inequality (0, 0, 1, 0) x + 0 >= 0,
+             An inequality (0, 0, 0, 1) x + 0 >= 0]
+
+        Does not work for equalities::
+
+            sage: F0 = P.Hrepresentation()[0]
+            sage: list(F0.neighbors())
+            Traceback (most recent call last):
+            ...
+            TypeError: must be inequality
         """
+        # The adjacency matrix does not include equations.
+        n_eqs = self.polyhedron().n_equations()
+        if not self.is_inequality():
+            raise TypeError("must be inequality")
+
         adjacency_matrix = self.polyhedron().facet_adjacency_matrix()
         for x in self.polyhedron().Hrep_generator():
-            if adjacency_matrix[self.index(), x.index()] == 1:
-                yield x
+            if not x.is_equation():
+                if adjacency_matrix[self.index()-n_eqs, x.index()-n_eqs] == 1:
+                    yield x
 
     def adjacent(self):
         """
@@ -777,9 +805,9 @@ class Inequality(Hrepresentation):
         Return the outer normal vector of ``self``.
 
         OUTPUT:
-        
+
         The normal vector directed away from the interior of the polyhedron.
-        
+
         EXAMPLES::
 
             sage: p = Polyhedron(vertices = [[0,0,0],[1,1,0],[1,2,0]])

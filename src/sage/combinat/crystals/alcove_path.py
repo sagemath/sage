@@ -445,7 +445,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
                         l.append((temp,x[1]+[j]))
             if lst2 == []:
                 break
-            else :
+            else:
                 lst = lst2
 
         return [ [] ] + [i[1] for i in l]
@@ -898,15 +898,13 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         J = list(self.value)
         positions, gi = self._gi(i)
 
-        m=max(gi)
-        m_index = len(gi)-1-list(reversed(gi)).index(m) # last max in gi
+        m = max(gi)
+        m_index = len(gi)-1-list(reversed(gi)).index(m)  # last max in gi
 
-
-        if finite_cartan_type and i==0 :
+        if finite_cartan_type and i == 0:
             M = Integer(m)/2 + Integer(1)/2
         else:
             M = Integer(m)/2 - Integer(1)/2
-
 
         KR_test = finite_cartan_type and i==0 and m_index < len(gi) - 1
         KR_test = KR_test and M >= 1
@@ -1023,17 +1021,15 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         J = list(self.value)
         positions, gi = self._gi(i)
 
-        m=max(gi)
+        m = max(gi)
         m_index=gi.index(m)
 
-
-        if finite_cartan_type and i==0 :
+        if finite_cartan_type and i == 0:
 
             # python doesn't handle fractions natively
             M = Integer(m)/2 + Integer(1)/2
         else:
             M = Integer(m)/2 - Integer(1)/2
-
 
         # boolean determining when to move a folding in KR case
         KR_test = finite_cartan_type and i == 0

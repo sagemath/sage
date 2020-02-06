@@ -707,7 +707,7 @@ suspicious at first! However, as mentioned in the primer, this is
 actually a big selling point of the axioms infrastructure: by
 calculating automatically the hierarchy relation between categories
 with axioms one avoids the nightmare of maintaining it by hand.
-Instead, only a rather minimal number of links needs to be maintainted
+Instead, only a rather minimal number of links needs to be maintained
 in the code (one per category with axiom).
 
 Besides, with the flexibility introduced by runtime deduction rules

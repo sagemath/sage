@@ -348,11 +348,12 @@ def kirkman_triple_system(v,existence=False):
                                             k=3,
                                             lambd=1,
                                             check=True,
-                                            copy =False)
+                                            copy=False)
         KTS._classes = classes
         assert KTS.is_resolvable()
 
         return KTS
+
 
 def v_4_1_rbibd(v,existence=False):
     r"""

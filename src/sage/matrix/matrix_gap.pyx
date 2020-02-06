@@ -11,8 +11,6 @@ Wrappers on GAP matrices
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 from sage.libs.gap.libgap import libgap
 from . import matrix_space
 from sage.structure.element cimport Matrix

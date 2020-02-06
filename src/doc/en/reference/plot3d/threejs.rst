@@ -33,7 +33,7 @@ Options currently supported by the viewer:
 - ``axes_labels`` -- (default: ['x','y','z']) list or tuple of three strings;
   set to False to remove all labels
 
-- ``color`` -- (default: 'blue') color of the 3d object
+- ``color`` -- (default: 'blue') color of the 3D object
 
 - ``decimals`` -- (default: 2) integer determining decimals displayed in labels
 
@@ -51,7 +51,17 @@ Options currently supported by the viewer:
   lines thicker than available using ``thickness`` or on Windows platforms where
   ``thickness`` is ignored
 
+- ``render_order`` -- (default: 0) numeric value for rendering order of transparent surfaces;
+  objects render from lowest to highest value ensuring that lower-valued objects render completely
+
+- ``single_side`` -- (default: False) Boolean determining whether both sides of a surface material
+  are rendered; set to True to reduce rendering artifacts for closed transparent surfaces
+
 - ``thickness`` -- (default: 1) numeric value for thickness of lines
+
+Clicking on the information icon in the lower right-hand corner of the viewer opens
+a menu of available actions. These include saving the three-dimensional scene as a static
+PNG image or as complete HTML source code.
 
 AUTHORS:
 

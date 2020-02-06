@@ -4,7 +4,7 @@ Cellular Basis
 
 Cellular algebras are a class of algebras introduced by Graham and Lehrer
 [GrLe1996]_. The :class:`CellularBasis` class provides a general framework for
-implementing cellular algebras and their the cell modules and simple modules.
+implementing cellular algebras and their cell modules and simple modules.
 
 Let `R` be a commutative ring. A `R`-algebra `A` is a *cellular algebra*
 if it has a *cell datum*, which is a tuple `(\Lambda, i, M, C)`,
@@ -54,7 +54,7 @@ and with `A`-action:
     a c^\mu_{s} = \sum_{u \in T(\mu)} r_a(s,u) c^\mu_{u},
 
 where the scalars `r_a(s,u)` are those appearing in the definition of the cell
-datum. It follows from the cellular basis axioms that that `C^\mu` comes
+datum. It follows from the cellular basis axioms that `C^\mu` comes
 equipped with a bilinear form `\langle\ ,\ \rangle` that is determined by:
 
 .. MATH::

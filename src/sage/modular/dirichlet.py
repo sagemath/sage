@@ -295,7 +295,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             if e.modulus() % 2 == 0:
                 if e.modulus() % 4 == 0:
                     val *= e.values_on_gens()[0] # first gen is -1 for 2-power modulus
-            elif (euler_phi(e.parent().modulus()) / e.order()) % 2 != 0:
+            elif (euler_phi(e.parent().modulus()) / e.order()) % 2:
                 val *= -1
         return val
 

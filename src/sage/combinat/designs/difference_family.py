@@ -1518,8 +1518,8 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         ...
         NotImplementedError: No construction available for (9,3,1)-difference family
 
-    Check that when ``existence=True`` we always obtain ``True``, ``False`` or ``Unknown``
-    and when ``explain_construction=True``it is a string (see :trac:`24513`)::
+    Check that when ``existence=True`` we always obtain ``True``, ``False`` or ``Unknown``,
+    and when ``explain_construction=True``, it is a string (see :trac:`24513`)::
 
         sage: designs.difference_family(3, 2, 1, existence=True)
         True

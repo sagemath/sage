@@ -94,7 +94,6 @@ With power series the behavior is the same.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import operator
 

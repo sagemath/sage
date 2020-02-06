@@ -77,7 +77,6 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cpython.object cimport PyObject_RichCompare
 from libcpp.vector cimport vector

@@ -407,7 +407,6 @@ Otherwise, it depends on what random number generator you want to use.
 Classes and methods
 ===================
 """
-from __future__ import absolute_import
 
 cdef extern from "stdlib.h":
     long c_libc_random "random"()

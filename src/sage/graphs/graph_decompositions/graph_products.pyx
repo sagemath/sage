@@ -6,12 +6,6 @@ This module gathers everything related to graph products. At the moment it
 contains an implementation of a recognition algorithm for graphs that can be
 written as a Cartesian product of smaller ones.
 
-References:
-
-  .. [HIK11] Handbook of Product Graphs,
-    R. Hammack, W. Imrich, S. Klavzar,
-    CRC press, 2011
-
 Author:
 
 - Nathann Cohen (May 2012 -- coded while watching the election of Francois
@@ -46,7 +40,7 @@ The problem that is of interest to us in the present module is the following:
 
 This problem can actually be solved, and the resulting factorization is
 unique. What is explained below can be found in the book *Handbook of Product
-Graphs* [HIK11]_.
+Graphs* [HIK2011]_.
 
 Everything is actually based on simple observations. Given a graph `G`, finding
 out whether `G` can be written as the product of several graphs can be attempted
@@ -112,7 +106,7 @@ All that is left to do is to compute the connected components of this new graph,
 as each of them representing the edges of a factor. Of course, only one
 connected component indicates that the graph has no factorization.
 
-Then again, please refer to [HIK11]_ for any technical question.
+Then again, please refer to [HIK2011]_ for any technical question.
 
 To Do
 ^^^^^
@@ -300,7 +294,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
 
-    cdef list edges = g_int.edges(labels=False, sort=False)
+    cdef list edges = list(g_int.edges(labels=False, sort=False))
     cdef dict d = g_int.distance_all_pairs()
     cdef int uu, vv
     for i, (u, v) in enumerate(edges):

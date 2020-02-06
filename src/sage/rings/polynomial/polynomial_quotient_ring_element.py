@@ -681,7 +681,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
     def norm(self):
         """
-        The norm of this element, which is the norm of the matrix of right
+        The norm of this element, which is the determinant of the matrix of right
         multiplication by this element.
 
         EXAMPLES::

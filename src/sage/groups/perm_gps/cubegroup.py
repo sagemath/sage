@@ -1016,7 +1016,7 @@ class CubeGroup(PermutationGroup_generic):
         try:
             g = self.parse(state)
             res = 1
-        except TypeError:
+        except ValueError:
             res = 0
             g = self.identity()
         if mode != 'quiet':

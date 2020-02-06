@@ -28,8 +28,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 import operator
 
 from cpython.int cimport *
@@ -482,7 +480,7 @@ cdef class NumberFieldElement(FieldElement):
         # The current implementation won't productively use base_map
         # since the coefficients of f are in QQ.
         if base_map is not None:
-            f = f.change_ring(base_map)
+            f = f.map_coefficients(base_map)
         return codomain(f(im_gens[0]))
 
     def _latex_(self):
@@ -3044,7 +3042,8 @@ cdef class NumberFieldElement(FieldElement):
             sage: g is f.polynomial()
             False
         """
-        return QQ[var](self._coefficients())
+        from sage.rings.polynomial.polynomial_ring_constructor import _single_variate as Pol
+        return Pol(QQ, var)(self._coefficients())
 
     def __hash__(self):
         """

@@ -15,7 +15,6 @@ might want to update this database with more values.
 Classes and methods
 -------------------
 """
-from __future__ import print_function, absolute_import
 
 cimport cython
 

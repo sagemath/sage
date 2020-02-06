@@ -233,7 +233,7 @@ class DoubleCosetReduction(SageObject):
 
     def sign(self):
         r"""
-        The direction of the edge.
+        Return the direction of the edge.
 
         The Bruhat-Tits quotients are directed graphs but we only store
         half the edges (we treat them more like unordered graphs).
@@ -241,9 +241,9 @@ class DoubleCosetReduction(SageObject):
         representative in the quotient (sign = +1), or to the
         opposite of one of the representatives (sign = -1).
 
-        OUTPUT :
+        OUTPUT:
 
-        an int that is +1 or -1 according to the sign of self
+        an int that is +1 or -1 according to the sign of ``self``
 
         EXAMPLES::
 
@@ -3086,7 +3086,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if valuation is None:
             valuation = v0.determinant().valuation(self._p)
         parity = valuation % 2
-        for v in filter(lambda v: v.parity == parity, V):
+        for v in V:
+            if v.parity != parity:
+                continue
             g = self._are_equivalent(v0, v.rep, False, valuation + v.valuation)
             if g is not None:
                 self._cached_vertices[v0] = (g, v)
@@ -3135,7 +3137,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 E = self._edge_list
             else:
                 E = [e.opposite for e in self._edge_list]
-        for e in filter(lambda x: x.parity == parity, E):
+        for e in E:
+            if e.parity != parity:
+                continue
             g = self._are_equivalent(e.rep, e0, True, valuation + e.valuation)
             if g is not None:
                 self._cached_edges[e0] = (g, e)
@@ -3385,7 +3389,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if twom is None:
             twom = v1.determinant().valuation(p) + v2.determinant().valuation(p)
         if check_parity:
-            if twom % 2 != 0:
+            if twom % 2:
                 self._cached_equivalent[(v1, v2, as_edges)] = None
                 return None
         E, A = self._find_lattice(v1, v2, as_edges, twom)
@@ -3542,8 +3546,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if norm > 10 ** 3:
             verbose('Warning: norm (= %s) is quite large, this may take some time!' % norm)
         V = OQuadForm.vectors_by_length(norm)[norm]
-        W = V if not primitive else filter(lambda v: any((vi % self._p != 0 for vi in v)), V)
-        return W if trace is None else filter(lambda v: self._conv(v).reduced_trace() == trace, W)
+        W = V if not primitive else (v for v in V
+                                     if any(vi % self._p for vi in v))
+        return W if trace is None else (v for v in W
+                                        if self._conv(v).reduced_trace() == trace)
 
     def _compute_quotient(self, check=True):
         r"""

@@ -472,7 +472,7 @@ import pexpect
 
 from random import randrange
 
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.env import DOT_SAGE, SAGE_LOCAL, MAXIMA
 from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
@@ -546,7 +546,7 @@ class Maxima(MaximaAbstract, Expect):
         Expect.__init__(self,
                         name = 'maxima',
                         prompt = r'\(\%i[0-9]+\) ',
-                        command = 'maxima -p "{0}"'.format(STARTUP),
+                        command = '"{0}" -p "{1}"'.format(MAXIMA, STARTUP),
                         env = {'TMPDIR': str(ECL_TMP)},
                         script_subdirectory = script_subdirectory,
                         restart_on_ctrlc = False,

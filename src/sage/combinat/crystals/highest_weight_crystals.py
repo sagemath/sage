@@ -261,7 +261,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         EXAMPLES::
 
             sage: C = CartanType(['E',6])
-            sage: La =C.root_system().weight_lattice().fundamental_weights()
+            sage: La = C.root_system().weight_lattice().fundamental_weights()
             sage: crystals.HighestWeight(2*La[2])
             Finite dimensional highest weight crystal of type ['E', 6] and highest weight 2*Lambda[2]
         """

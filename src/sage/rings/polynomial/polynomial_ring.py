@@ -154,6 +154,7 @@ import sage.rings.ring as ring
 from sage.structure.element import is_RingElement
 import sage.rings.polynomial.polynomial_element_generic as polynomial_element_generic
 import sage.rings.rational_field as rational_field
+from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import is_NumberField
@@ -913,30 +914,45 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         return sib.parent_with_gens(self, sie, self.variable_names(), 'R',
                                     gens_syntax=gens_syntax)
 
-    def _macaulay2_(self, m2=None):
+    def _macaulay2_init_(self, macaulay2=None):
         """
         EXAMPLES::
 
             sage: R = QQ['x']
             sage: macaulay2(R).describe()  # optional - macaulay2
-            QQ[x, Degrees => {1}, Heft => {1}, MonomialOrder => {MonomialSize => 32},
+            QQ[x, Degrees => {1}, Heft => {1}, MonomialOrder => {MonomialSize => 16},
                                                                 {GRevLex => {1}    }
                                                                 {Position => Up    }
             --------------------------------------------------------------------------------
             DegreeRank => 1]
+
+        TESTS:
+
+        Check that results are cached (:trac:`28074`)::
+
+            sage: R = ZZ['t']
+            sage: macaulay2(R) is macaulay2(R)  # optional - macaulay2
+            True
         """
-        if m2 is None:
-            import sage.interfaces.macaulay2
-            m2 = sage.interfaces.macaulay2.macaulay2
-        base_ring = m2( self.base_ring() )
-        var = self.gen()
-        return m2("%s[symbol %s]"%(base_ring.name(), var))
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+        return macaulay2._macaulay2_input_ring(self.base_ring(), self.gens())
 
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+        """
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: R._is_valid_homomorphism_(GF(7), [5])
+            False
+            sage: R._is_valid_homomorphism_(Qp(7), [5])
+            True
+        """
         # Since poly rings are free, any image of the gen
         # determines a homomorphism
-        if base_map is not None:
+        if base_map is None:
             # If no base map is given, the only requirement is that the
             # base ring coerces into the codomain
             return codomain.has_coerce_map_from(self.base_ring())
@@ -1794,6 +1810,108 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         PolynomialRing_commutative.__init__(self, base_ring, name=name,
                 sparse=sparse, element_class=element_class, category=category)
         self._has_singular = can_convert_to_singular(self)
+
+    @cached_method(key=lambda self, d, q, sign, lead: (d, q, sign, tuple([x if isinstance(x, (tuple, list)) else (x, 0) for x in lead]) if isinstance(lead, (tuple, list)) else ((lead, 0))))
+    def weil_polynomials(self, d, q, sign=1, lead=1):
+        r"""
+        Return all integer polynomials whose complex roots all have a specified absolute value.
+
+        Such polynomials `f` satisfy a functional equation
+
+        .. MATH::
+
+            T^d f(q/T) = s q^{d/2} f(T)
+
+        where `d` is the degree of `f`, `s` is a sign and `q^{1/2}` is the absolute value
+        of the roots of `f`.
+
+        INPUT:
+
+        - ``d`` -- integer, the degree of the polynomials
+
+        - ``q`` -- integer, the square of the complex absolute value of the roots
+
+        - ``sign`` -- integer (default `1`), the sign `s` of the functional equation
+
+        - ``lead`` -- integer, list of integers or list of pairs of integers (default `1`),
+            constraints on the leading few coefficients of the generated polynomials.
+            If pairs `(a, b)` of integers are given, they are treated as a constraint
+            of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
+            divisibility, and the modulus of the leading coefficient must be 0.
+
+        .. SEEALSO::
+
+            More documentation and additional options are available using the iterator
+            :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
+            directly. In addition, polynomials have a method `is_weil_polynomial` to
+            test whether or not the given polynomial is a Weil polynomial.
+
+        EXAMPLES::
+
+            sage: R.<T> = ZZ[]
+            sage: L = R.weil_polynomials(4, 2)
+            sage: len(L)
+            35
+            sage: L[9]
+            T^4 + T^3 + 2*T^2 + 2*T + 4
+            sage: all(p.is_weil_polynomial() for p in L)
+            True
+
+        Setting multiple leading coefficients:
+
+            sage: R.<T> = QQ[]
+            sage: l = R.weil_polynomials(4,2,lead=((1,0),(2,4),(1,2)))
+            sage: l
+            [T^4 + 2*T^3 + 5*T^2 + 4*T + 4,
+            T^4 + 2*T^3 + 3*T^2 + 4*T + 4,
+            T^4 - 2*T^3 + 5*T^2 - 4*T + 4,
+            T^4 - 2*T^3 + 3*T^2 - 4*T + 4]
+
+        We do not require Weil polynomials to be monic. This example generates Weil
+        polynomials associated to K3 surfaces over `GF(2)` of Picard number at least 12::
+
+            sage: R.<T> = QQ[]
+            sage: l = R.weil_polynomials(10,1,lead=2)
+            sage: len(l)
+            4865
+            sage: l[len(l)//2]
+            2*T^10 + T^8 + T^6 + T^4 + T^2 + 2
+
+        TESTS:
+
+        We check that products of Weil polynomials are also listed as Weil polynomials::
+
+            sage: all((f * g) in R.weil_polynomials(6, q) for q in [3,4] for f in R.weil_polynomials(2, q) for g in R.weil_polynomials(4, q))
+            True
+
+        We check that irreducible Weil polynomials of degree 6 are CM::
+
+            sage: simples = [f for f in R.weil_polynomials(6, 3) if f.is_irreducible()]
+            sage: len(simples)
+            348
+            sage: reals = [R([f[3+i] + sum((-3)^j * (i+2*j)/(i+j) * binomial(i+j,j) * f[3+i+2*j] for j in range(1,(3+i)//2+1)) for i in range(4)]) for f in simples]
+
+        Check that every polynomial in this list has 3 real roots between `-2 \sqrt{3}` and `2 \sqrt{3}`::
+
+            sage: roots = [f.roots(RR, multiplicities=False) for f in reals]
+            sage: all(len(L) == 3 and all(x^2 <= 12 for x in L) for L in roots)
+            True
+
+        Finally, check that the original polynomials are reconstructed as CM polynomials::
+
+            sage: all(f == T^3*r(T + 3/T) for (f, r) in zip(simples, reals))
+            True
+
+        A simple check (not sufficient)::
+
+            sage: all(f.number_of_real_roots() == 0 for f in simples)
+            True
+        """
+        R = self.base_ring()
+        if not (R is ZZ or R is QQ):
+            raise ValueError("Weil polynomials have integer coefficients")
+        from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
+        return list(WeilPolynomials(d, q, sign, lead, polring=self))
 
     @staticmethod
     def _implementation_names_impl(implementation, base_ring, sparse):

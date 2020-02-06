@@ -84,7 +84,7 @@ class SymbolicData:
 
     def get_ideal(self, name, base_ring=QQ, term_order="degrevlex"):
         """
-        Returns the ideal given by 'name' over the base ring given by
+        Return the ideal given by 'name' over the base ring given by
         'base_ring' in a polynomial ring with the term order given by
         'term_order'.
 

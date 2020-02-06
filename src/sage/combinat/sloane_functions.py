@@ -321,7 +321,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
 from sage.misc.all import prod
-import sage.interfaces.gap as gap
+
 
 # This one should be here!
 class A000001(SloaneSequence):
@@ -384,9 +384,10 @@ class A000001(SloaneSequence):
             GAPError: Error, the library of groups of size 5000 is not available
         """
         if n <= 50:
-            return self._small[n-1]
+            return self._small[n - 1]
         from sage.libs.gap.libgap import libgap
         return Integer(libgap.NumberSmallGroups(n))
+
 
 class A000027(SloaneSequence):
     def __init__(self):

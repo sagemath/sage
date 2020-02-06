@@ -50,8 +50,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division
-
 cimport cython
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -3243,7 +3241,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         return (function_log(self, dont_call_method_on_arg=True) /
                 function_log(m, dont_call_method_on_arg=True))
 
-    def gamma(self, prec=None):
+    def gamma(self, *, prec=None):
         """
         Return the gamma function evaluated at ``self``. This value is exact
         for integers and half-integers, and returns a symbolic value
@@ -3268,6 +3266,15 @@ cdef class Rational(sage.structure.element.FieldElement):
             2.6789385347077476336556929410
             sage: (1/2).gamma(prec=100)
             1.7724538509055160272981674833
+
+        TESTS:
+
+        This is not the incomplete gamma function! ::
+
+            sage: (1/2).gamma(5)
+            Traceback (most recent call last):
+            ...
+            TypeError: gamma() takes exactly 0 positional arguments (1 given)
         """
         if prec:
             return self.n(prec).gamma()

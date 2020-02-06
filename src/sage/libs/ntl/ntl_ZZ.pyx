@@ -12,7 +12,6 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -90,7 +89,7 @@ cdef class ntl_ZZ(object):
             self.set_from_sage_int(v)
         elif v is not None:
             v = str(v)
-            if len(v) == 0:
+            if not v:
                 v = '0'
             if not ((v[0].isdigit() or v[0] == '-') and \
                     (v[1:-1].isdigit() or (len(v) <= 2)) and \

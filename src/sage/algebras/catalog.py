@@ -40,6 +40,8 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
 - :class:`algebras.MalvenutoReutenauer <sage.combinat.fqsym.FreeQuasisymmetricFunctions>`
 - :class:`algebras.NilCoxeter
   <sage.algebras.nil_coxeter_algebra.NilCoxeterAlgebra>`
+- :class:`algebras.OrlikTerao
+  <sage.algebras.orlik_terao.OrlikTeraoAlgebra>`
 - :class:`algebras.OrlikSolomon
   <sage.algebras.orlik_solomon.OrlikSolomonAlgebra>`
 - :class:`algebras.QuantumMatrixCoordinate
@@ -85,6 +87,7 @@ lazy_import('sage.algebras.askey_wilson', 'AskeyWilsonAlgebra', 'AskeyWilson')
 lazy_import('sage.algebras.hall_algebra', 'HallAlgebra', 'Hall')
 lazy_import('sage.algebras.jordan_algebra', 'JordanAlgebra', 'Jordan')
 lazy_import('sage.algebras.orlik_solomon', 'OrlikSolomonAlgebra', 'OrlikSolomon')
+lazy_import('sage.algebras.orlik_terao', 'OrlikTeraoAlgebra', 'OrlikTerao')
 lazy_import('sage.algebras.shuffle_algebra', 'ShuffleAlgebra', 'Shuffle')
 lazy_import('sage.algebras.schur_algebra', 'SchurAlgebra', 'Schur')
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra', 'GradedCommutative')

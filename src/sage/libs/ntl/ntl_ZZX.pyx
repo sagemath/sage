@@ -12,7 +12,6 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import division, print_function, absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 

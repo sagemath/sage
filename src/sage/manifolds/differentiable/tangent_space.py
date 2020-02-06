@@ -245,7 +245,7 @@ class TangentSpace(FiniteRankFreeModule):
                             if frame is frame2:
                                 basis = basis2
                             if basis is not None:
-                                cauto = auto.add_comp(basis)
+                                cauto = auto.add_comp(basis=basis)
                                 for ind, val in comp._comp.items():
                                     cauto._comp[ind] = val(point)
                         except ValueError:

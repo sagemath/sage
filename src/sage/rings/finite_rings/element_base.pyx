@@ -457,7 +457,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         f = self.charpoly('x')
         n = f[0]
-        if f.degree() % 2 != 0:
+        if f.degree() % 2:
             return -n
         else:
             return n
@@ -841,9 +841,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             True
         """
         [(p, k2)] = list(self.parent().cardinality().factor())
-        if k2 % 2 != 0:
+        if k2 % 2:
             raise TypeError("cardinality of the field must be a square number")
         k = k2 / 2
 
         return self.pth_power(k=k)
-

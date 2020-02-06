@@ -54,7 +54,6 @@ AUTHOR:
 
 # Keep OLD division semantics for Python 2 compatibility, such that
 # lazy imports support old and true division.
-from __future__ import absolute_import
 
 cimport cython
 from cpython.object cimport PyObject_RichCompare

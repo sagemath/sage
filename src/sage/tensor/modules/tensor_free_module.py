@@ -59,6 +59,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
@@ -376,8 +377,6 @@ class TensorFreeModule(FiniteRankFreeModule):
         self._fmodule = fmodule
         self._tensor_type = tuple(tensor_type)
         rank = pow(fmodule._rank, tensor_type[0] + tensor_type[1])
-        self._zero_element = 0 # provisory (to avoid infinite recursion in what
-                               # follows)
         if self._tensor_type == (0,1):  # case of the dual
             if name is None and fmodule._name is not None:
                 name = fmodule._name + '*'
@@ -401,13 +400,6 @@ class TensorFreeModule(FiniteRankFreeModule):
                              " has already been created")
         else:
             self._fmodule._tensor_modules[self._tensor_type] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                            self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
 
     #### Parent Methods
 
@@ -438,7 +430,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         """
         from sage.rings.integer import Integer
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         if isinstance(comp, FiniteRankFreeModuleMorphism):
             # coercion of an endomorphism to a type-(1,1) tensor:
             endo = comp  # for readability
@@ -506,6 +498,33 @@ class TensorFreeModule(FiniteRankFreeModule):
                                       sym=sym, antisym=antisym)
             if comp:
                 resu.set_comp(basis)[:] = comp
+        return resu
+
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: T11 = M.tensor_module(1,1)
+            sage: T11.zero()
+            Type-(1,1) tensor zero on the Rank-3 free module M over the Integer
+             Ring
+
+        The zero element is cached::
+
+            sage: T11.zero() is T11(0)
+            True
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
         return resu
 
     def _an_element_(self):

@@ -13,14 +13,19 @@ docstrings.
 -  Catalan numbers, :func:`catalan_number` (not to be
    confused with the Catalan constant)
 
+-  Narayana numbers, :func:`narayana_number`
+
 -  Euler numbers, :func:`euler_number` (Maxima)
+
+-  Eulerian numbers, :func:`eulerian_number`
+
+-  Eulerian polynomial, :func:`eulerian_polynomial`
 
 -  Fibonacci numbers, :func:`fibonacci` (PARI) and
    :func:`fibonacci_number` (GAP) The PARI version is
    better.
 
--  Lucas numbers, :func:`lucas_number1`,
-   :func:`lucas_number2`.
+-  Lucas numbers, :func:`lucas_number1`, :func:`lucas_number2`.
 
 -  Stirling numbers, :func:`stirling_number1`,
    :func:`stirling_number2`.
@@ -130,7 +135,7 @@ Functions and classes
 ---------------------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 David Joyner <wdjoyner@gmail.com>,
 #                     2007 Mike Hansen <mhansen@gmail.com>,
 #                     2006 William Stein <wstein@gmail.com>
@@ -139,19 +144,21 @@ Functions and classes
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six.moves import range
 from six import iteritems, add_metaclass
 
 from sage.interfaces.all import maxima
 from sage.rings.all import ZZ, QQ, Integer, infinity
-from sage.arith.all import bernoulli, binomial, factorial
+from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.all import pari
 from sage.misc.prandom import randint
 from sage.misc.all import prod
+from sage.misc.cachefunc import cached_function
 from sage.structure.sage_object import SageObject
 from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
@@ -444,8 +451,9 @@ def catalan_number(n):
 
         sage: [catalan_number(i) for i in range(7)]
         [1, 1, 2, 5, 14, 42, 132]
-        sage: taylor((-1/2)*sqrt(1 - 4*x^2), x, 0, 15)
-        132*x^14 + 42*x^12 + 14*x^10 + 5*x^8 + 2*x^6 + x^4 + x^2 - 1/2
+        sage: x = (QQ[['x']].0).O(8)
+        sage: (-1/2)*sqrt(1 - 4*x)
+        -1/2 + x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + O(x^8)
         sage: [catalan_number(i) for i in range(-7,7)]
         [0, 0, 0, 0, 0, 0, -1/2, 1, 1, 2, 5, 14, 42, 132]
         sage: [catalan_number(n).mod(2) for n in range(16)]
@@ -462,7 +470,42 @@ def catalan_number(n):
         return ZZ.zero()
     if n == -1:
         return QQ((-1, 2))
-    return binomial(2 * n, n).divide_knowing_divisible_by(n + 1)
+    return (2 * n).binomial(n).divide_knowing_divisible_by(n + 1)
+
+
+def narayana_number(n, k):
+    r"""
+    Return the Narayana number of index ``(n, k)``.
+
+    For every integer `n \geq 1`, the sum of Narayana numbers `\sum_k N_{n,k}`
+    is the Catalan number `C_n`.
+
+    INPUT:
+
+    - ``n`` -- an integer
+
+    - ``k`` -- an integer between ``0`` and ``n - 1``
+
+    OUTPUT:
+
+    an integer
+
+    EXAMPLES::
+
+       sage: from sage.combinat.combinat import narayana_number
+       sage: [narayana_number(3, i) for i in range(3)]
+       [1, 3, 1]
+       sage: sum(narayana_number(7,i) for i in range(7)) == catalan_number(7)
+       True
+
+    REFERENCES:
+
+    - wikipedia:`Narayana_number`
+    """
+    n = ZZ(n)
+    if n <= 0:
+        return ZZ.zero()
+    return (n.binomial(k + 1) * n.binomial(k)).divide_knowing_divisible_by(n)
 
 
 def euler_number(n, algorithm='flint'):
@@ -492,6 +535,11 @@ def euler_number(n, algorithm='flint'):
         ...
         ValueError: n (=-1) must be a nonnegative integer
 
+    TESTS::
+
+        sage: euler_number(6, 'maxima')
+        -61
+
     REFERENCES:
 
     - :wikipedia:`Euler_number`
@@ -500,12 +548,107 @@ def euler_number(n, algorithm='flint'):
     if n < 0:
         raise ValueError("n (=%s) must be a nonnegative integer" % n)
     if algorithm == 'maxima':
-        return ZZ(maxima.eval("euler(%s)" % n))
+        return ZZ(maxima.euler(n))
     elif algorithm == 'flint':
         import sage.libs.flint.arith
         return sage.libs.flint.arith.euler_number(n)
     else:
         raise ValueError("algorithm must be 'flint' or 'maxima'")
+
+
+@cached_function(key=lambda n, k, a: (n, k))
+def eulerian_number(n, k, algorithm='recursive'):
+    """
+    Return the Eulerian number of index ``(n, k)``.
+
+    This is the coefficient of `t^k` in the Eulerian polynomial `A_n(t)`.
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    - ``k`` -- integer between ``0`` and ``n - 1``
+
+    - ``algorithm`` -- ``"recursive"`` (default) or ``"formula"``
+
+    OUTPUT:
+
+    an integer
+
+    .. SEEALSO:: :func:`eulerian_polynomial`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.combinat import eulerian_number
+        sage: [eulerian_number(5,i) for i in range(5)]
+        [1, 26, 66, 26, 1]
+
+    TESTS::
+
+        sage: [eulerian_number(6,i,"formula") for i in range(6)]
+        [1, 57, 302, 302, 57, 1]
+    """
+    n = ZZ(n)
+    if k == 0 or k == n - 1:
+        return ZZ.one()
+    if algorithm == "recursive":
+        s = (n - k) * eulerian_number(n - 1, k - 1, algorithm=algorithm)
+        s += (k + 1) * eulerian_number(n - 1, k, algorithm=algorithm)
+        return s
+    return sum((-1)**m * (n + 1).binomial(m) * (k + 1 - m)**n
+               for m in range(k + 1))
+
+
+@cached_function(key=lambda n, a: n)
+def eulerian_polynomial(n, algorithm='derivative'):
+    """
+    Return the Eulerian polynomial of index ``n``.
+
+    This is the generating polynomial counting permutations in the
+    symmetric group `S_n` according to their number of descents.
+
+    INPUT:
+
+    - ``n`` -- an integer
+
+    - ``algorithm`` -- ``"derivative"`` (default) or ``"coeffs"``
+
+    OUTPUT:
+
+    polynomial in one variable ``t``
+
+    .. SEEALSO:: :func:`eulerian_number`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.combinat import eulerian_polynomial
+        sage: eulerian_polynomial(5)
+        t^4 + 26*t^3 + 66*t^2 + 26*t + 1
+
+    TESTS::
+
+        sage: eulerian_polynomial(7)(1) == factorial(7)
+        True 
+
+        sage: eulerian_polynomial(6, algorithm='coeffs')
+        t^5 + 57*t^4 + 302*t^3 + 302*t^2 + 57*t + 1
+
+    REFERENCES:
+
+    - :wikipedia:`Eulerian_number`
+    """
+    n = ZZ(n)
+    R = PolynomialRing(ZZ, 't')
+    if n < 0:
+        return R.zero()
+    if n == 1:
+        return R.one()
+    t = R.gen()
+    if algorithm == 'derivative':
+        A = eulerian_polynomial(n - 1, algorithm=algorithm)
+        return t * (1 - t) * A.derivative() + (1 + (n - 1) * t) * A
+    elif algorithm == 'coeffs':
+        return R([eulerian_number(n, k, "formula") for k in range(n)])
 
 
 def fibonacci(n, algorithm="pari"):
@@ -1444,6 +1587,21 @@ class CombinatorialClass(Parent):
         """
         return not (self == other)
 
+    def __hash__(self):
+        """
+        Create a hash value. This is based on the string representation.
+
+        Note that in Python 3 objects that define __eq__ do not inherit their __hash__
+        function. Without an explicit __hash__ they are no longer hashable.
+
+        TESTS::
+
+            sage: C = CombinatorialClass()
+            sage: hash(C) == hash(repr(C))
+            True
+        """
+        return hash(repr(self))
+
     def __cardinality_from_iterator(self):
         """
         Default implementation of cardinality which just goes through the iterator
@@ -1569,7 +1727,7 @@ class CombinatorialClass(Parent):
             except (TypeError, ValueError):
                 break
 
-            if f is None or f is False :
+            if f is None or f is False:
                 break
             else:
                 yield f
@@ -2555,7 +2713,7 @@ def number_of_unordered_tuples(S, k, algorithm='naive'):
         1
     """
     if algorithm == 'naive':
-        return ZZ( len(set(S)) + k - 1 ).binomial(k) # The set is there to avoid duplicates
+        return ZZ(len(set(S)) + k - 1).binomial(k) # The set is there to avoid duplicates
     if algorithm == 'gap':
         k = ZZ(k)
         from sage.libs.gap.libgap import libgap
@@ -2679,7 +2837,6 @@ def bell_polynomial(n, k):
     - Blair Sutton (2009-01-26)
     - Thierry Monteil (2015-09-29): the result must always be a polynomial.
     """
-    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.combinat.partition import Partitions
     R = PolynomialRing(ZZ, 'x', n-k+1)
     vars = R.gens()
@@ -2865,7 +3022,7 @@ def bernoulli_polynomial(x, n):
         return x - ZZ(1)/2
 
     k = n.mod(2)
-    coeffs = [0]*k + sum(([binomial(n, i)*bernoulli(n-i), 0]
+    coeffs = [0]*k + sum(([n.binomial(i) * bernoulli(n-i), 0]
                           for i in range(k, n+1, 2)), [])
     coeffs[-3] = -n/2
 

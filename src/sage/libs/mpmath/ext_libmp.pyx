@@ -1,7 +1,6 @@
 """
-Faster versions of some key functions in mpmath.libmp.
+Faster versions of some key functions in mpmath.libmp
 """
-from __future__ import print_function, absolute_import
 
 from .ext_impl cimport *
 from sage.libs.gmp.all cimport *

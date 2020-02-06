@@ -17,10 +17,13 @@ AUTHORS:
 
 - David Joyner (2009-05): added "optional package" comments, fixed some
   docstrings to be sphinx compatible
+
+- Dima Pasechnik (2019-11): port to libgap
 """
 #*****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdj@usna.edu>
 #                     2006 Nick Alexander <ncalexan@math.uci.edu>
+#                     2019 Dima Pasechnik <dima@pasechnik.info>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -28,11 +31,10 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import absolute_import
 
-from sage.interfaces.all import gap
+from sage.libs.gap.libgap import libgap
 from sage.misc.randstate import current_randstate
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.interfaces.gap import gfq_gap_to_sage
 from .linear_code import LinearCode
 from sage.features.gap import GapPackage
 
@@ -66,15 +68,10 @@ def QuasiQuadraticResidueCode(p):
     AUTHOR: David Joyner (11-2005)
     """
     GapPackage("guava", spkg="gap_packages").require()
-    F = GF(2)
-    gap.load_package("guava")
-    gap.eval("C:=QQRCode(" + str(p) + ")")
-    gap.eval("G:=GeneratorMat(C)")
-    k = int(gap.eval("Length(G)"))
-    n = int(gap.eval("Length(G[1])"))
-    G = [[gfq_gap_to_sage(gap.eval("G[%s][%s]" % (i, j)), F)
-          for j in range(1, n + 1)] for i in range(1, k + 1)]
-    MS = MatrixSpace(F, k, n)
+    libgap.load_package("guava")
+    C=libgap.QQRCode(p)
+    G=C.GeneratorMat()
+    MS = MatrixSpace(GF(2), len(G), len(G[0]))
     return LinearCode(MS(G))
 
 
@@ -105,14 +102,9 @@ def RandomLinearCodeGuava(n, k, F):
     """
     current_randstate().set_seed_gap()
 
-    q = F.order()
     GapPackage("guava", spkg="gap_packages").require()
-    gap.load_package("guava")
-    gap.eval("C:=RandomLinearCode("+str(n)+","+str(k)+", GF("+str(q)+"))")
-    gap.eval("G:=GeneratorMat(C)")
-    k = int(gap.eval("Length(G)"))
-    n = int(gap.eval("Length(G[1])"))
-    G = [[gfq_gap_to_sage(gap.eval("G[%s][%s]" % (i, j)), F)
-          for j in range(1, n + 1)] for i in range(1, k + 1)]
-    MS = MatrixSpace(F, k, n)
+    libgap.load_package("guava")
+    C=libgap.RandomLinearCode(n,k,F)
+    G=C.GeneratorMat()
+    MS = MatrixSpace(F, len(G), len(G[0]))
     return LinearCode(MS(G))

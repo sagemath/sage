@@ -348,9 +348,9 @@ class GenericDeclaration(SageObject):
         elif self._assumption == 'noninteger':
             return value in ZZ
         elif self._assumption == 'even':
-            return value not in ZZ or ZZ(value) % 2 != 0
+            return value not in ZZ or bool(ZZ(value) % 2)
         elif self._assumption == 'odd':
-            return value not in ZZ or ZZ(value) % 2 != 1
+            return value not in ZZ or not (ZZ(value) % 2)
         elif self._assumption == 'rational':
             return value not in QQ
         elif self._assumption == 'irrational':
@@ -706,12 +706,13 @@ def _forget_all():
         sin(pi*m)
     """
     global _assumptions
-    if len(_assumptions) == 0:
+    if not(_assumptions):
         return
     #maxima._eval_line('forget([%s]);'%(','.join([x._maxima_init_() for x in _assumptions])))
     for x in _assumptions[:]: # need to do this because x.forget() removes x from _assumptions
         x.forget()
     _assumptions = []
+
 
 class assuming:
     """

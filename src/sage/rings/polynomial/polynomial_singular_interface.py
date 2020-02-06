@@ -47,7 +47,7 @@ from sage.rings.complex_double import is_ComplexDoubleField
 from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 from sage.rings.real_double import is_RealDoubleField
 from sage.rings.rational_field import is_RationalField
-from sage.rings.function_field.function_field import is_RationalFunctionField
+from sage.rings.function_field.function_field import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.integer_ring import ZZ
 
@@ -332,7 +332,7 @@ class PolynomialRing_singular_repr:
 
                 self.__singular = singular("std(ideal(%s))"%(self.base_ring().__minpoly),type='qring')
 
-        elif sage.rings.function_field.function_field.is_RationalFunctionField(base_ring) and base_ring.constant_field().is_prime_field():
+        elif isinstance(base_ring, sage.rings.function_field.function_field.RationalFunctionField) and base_ring.constant_field().is_prime_field():
             gen = str(base_ring.gen())
             self.__singular = singular.ring( "(%s,%s)"%(base_ring.characteristic(),gen), _vars, order=order, check=False)
 
@@ -401,7 +401,7 @@ def can_convert_to_singular(R):
     elif sage.rings.fraction_field.is_FractionField(base_ring):
         B = base_ring.base_ring()
         return B.is_prime_field() or B is ZZ or is_FiniteField(B)
-    elif is_RationalFunctionField(base_ring):
+    elif isinstance(base_ring, RationalFunctionField):
         return base_ring.constant_field().is_prime_field()
     else:
         return False

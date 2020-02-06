@@ -265,7 +265,6 @@ class PiecewiseFunction(BuiltinFunction):
             return result
         return is_piecewise(ex)
 
-
     @staticmethod
     def simplify(ex):
         """
@@ -1352,5 +1351,30 @@ class PiecewiseFunction(BuiltinFunction):
                                   self.fourier_series_sine_coefficient(n, L)*sin(n*pi*x/L))
                                  for n in srange(1, N+1)])
             return SR(result).expand()
+
+        def _sympy_(self, parameters, variable):
+            """
+            Convert this piecewise expression to its SymPy equivalent.
+
+            EXAMPLES::
+
+                sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
+                sage: f = ex._sympy_(); f
+                Piecewise((pi, (x > 0) & (x < 1)), (x, (x >= 1) & (x <= 2)))
+                sage: f.diff()
+                Piecewise((0, (x > 0) & (x < 1)), (1, (x >= 1) & (x <= 2)))
+
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._sympy_(); g
+                Piecewise((1/x, (x > -100) & (x < -2)), (cos(x), x > 1))
+                sage: g.diff()
+                Piecewise((-1/x**2, (x > -100) & (x < -2)), (-sin(x), x > 1))
+            """
+            from sympy import Piecewise as pw
+            args = [(func._sympy_(),
+                     domain._sympy_condition_(variable))
+                    for domain, func in parameters]
+            return pw(*args)
+
 
 piecewise = PiecewiseFunction()

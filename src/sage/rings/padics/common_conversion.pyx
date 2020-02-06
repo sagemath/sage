@@ -15,7 +15,7 @@ AUTHORS:
 - David Roe (2012-03-01)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -23,9 +23,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.int cimport *
 from sage.ext.stdsage cimport PY_NEW
@@ -374,13 +373,14 @@ cdef inline int cconv_mpq_t_out_shared(mpq_t out, mpz_t x, long valshift, long p
         mpz_set(mpq_numref(out), x)
         mpz_set_ui(mpq_denref(out), 1)
 
-    # if valshift is nonzero then we starte with x as a p-adic unit,
+    # if valshift is nonzero then we start with x as a p-adic unit,
     # so there will be no powers of p in the numerator or denominator
     # and the following operations yield reduced rationals.
     if valshift > 0:
         mpz_mul(mpq_numref(out), mpq_numref(out), prime_pow.pow_mpz_t_tmp(valshift))
     elif valshift < 0:
         mpz_mul(mpq_denref(out), mpq_denref(out), prime_pow.pow_mpz_t_tmp(-valshift))
+
 
 cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer_class prime_pow) except -2:
     """

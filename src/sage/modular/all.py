@@ -41,9 +41,6 @@ lazy_import("sage.modular.buzzard", 'buzzard_tpslopes', deprecation=27066)
 
 from .etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,
                           AllCusps, CuspFamily)
-lazy_import("sage.modular.etaproducts", ['num_cusps_of_width', 'qexp_eta',
-                                         'eta_poly_relations'],
-            deprecation=26196)
 
 from .overconvergent.all import *
 

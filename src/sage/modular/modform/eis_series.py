@@ -2,15 +2,15 @@
 """
 Eisenstein Series
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six import integer_types
 
@@ -21,6 +21,7 @@ from sage.rings.all import Integer, CyclotomicField, ZZ, QQ
 from sage.arith.all import bernoulli, divisors, is_squarefree, lcm
 from sage.rings.power_series_ring import PowerSeriesRing
 from .eis_series_cython import eisenstein_series_poly, Ek_ZZ
+
 
 def eisenstein_series_qexp(k, prec = 10, K=QQ, var='q', normalization='linear'):
     r"""
@@ -216,12 +217,12 @@ def __find_eisen_chars(character, k):
     """
     N = character.modulus()
     if character.is_trivial():
-        if k%2 != 0:
+        if k % 2:
             return []
         char_inv = ~character
-        V = [(character, char_inv, t) for t in divisors(N) if t>1]
+        V = [(character, char_inv, t) for t in divisors(N) if t > 1]
         if k != 2:
-            V.insert(0,(character, char_inv, 1))
+            V.insert(0, (character, char_inv, 1))
         if is_squarefree(N):
             return V
         # Now include all pairs (chi,chi^(-1)) such that cond(chi)^2 divides N:

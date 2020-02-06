@@ -16,17 +16,15 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 from six import integer_types
 
-from copy import copy
 from sage.categories.groups import Groups
 from sage.categories.poor_man_map import PoorManMap
 from sage.groups.group import Group, AbelianGroup
 from sage.monoids.indexed_free_monoid import (IndexedMonoid,
-        IndexedMonoidElement, IndexedFreeMonoidElement,
-        IndexedFreeAbelianMonoidElement)
+        IndexedFreeMonoidElement, IndexedFreeAbelianMonoidElement)
 from sage.misc.cachefunc import cached_method
 import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
@@ -257,7 +255,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
 
             ret = list(self._monomial)
             rhs = list(other._monomial)
-            while len(ret) > 0 and len(rhs) > 0 and ret[-1][0] == rhs[0][0]:
+            while ret and rhs and ret[-1][0] == rhs[0][0]:
                 rhs[0] = (rhs[0][0], rhs[0][1] + ret.pop()[1])
                 if rhs[0][1] == 0:
                     rhs.pop(0)

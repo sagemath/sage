@@ -538,7 +538,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             D = self.fetch('charpoly')
             if not D is None:
                 c = D[0]
-                if self._nrows % 2 != 0:
+                if self._nrows % 2:
                     c = -c
                 d = self._coerce_element(c)
         else:

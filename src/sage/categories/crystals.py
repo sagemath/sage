@@ -369,16 +369,10 @@ class Crystals(Category_singleton):
                 sage: C.__iter__.__module__
                 'sage.categories.crystals'
                 sage: g = C.__iter__()
-                sage: for _ in range(5): next(g) # py2
+                sage: for _ in range(5): next(g)
                 (-Lambda[0] + Lambda[2],)
-                (Lambda[0] - Lambda[1] + delta,)
                 (Lambda[1] - Lambda[2],)
-                (Lambda[0] - Lambda[1],)
-                (Lambda[1] - Lambda[2] + delta,)
-                sage: for _ in range(5): next(g) # py3 random
-                (-Lambda[0] + Lambda[2],)
                 (Lambda[0] - Lambda[1] + delta,)
-                (Lambda[1] - Lambda[2],)
                 (Lambda[0] - Lambda[1],)
                 (Lambda[1] - Lambda[2] + delta,)
 
@@ -442,15 +436,15 @@ class Crystals(Category_singleton):
 
                 sage: C = crystals.KirillovReshetikhin(['A',3,1], 1, 2)
                 sage: S = list(C.subcrystal(index_set=[1,2])); S
-                [[[1, 1]], [[1, 2]], [[1, 3]], [[2, 2]], [[2, 3]], [[3, 3]]]
+                [[[1, 1]], [[1, 2]], [[2, 2]], [[1, 3]], [[2, 3]], [[3, 3]]]
                 sage: C.cardinality()
                 10
                 sage: len(S)
                 6
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)]))
-                [[[1, 4]], [[1, 3]], [[2, 4]], [[2, 3]]]
+                [[[1, 4]], [[2, 4]], [[1, 3]], [[2, 3]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], max_depth=1))
-                [[[1, 4]], [[1, 3]], [[2, 4]]]
+                [[[1, 4]], [[2, 4]], [[1, 3]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], direction='upper'))
                 [[[1, 4]], [[1, 3]]]
                 sage: list(C.subcrystal(index_set=[1,3], generators=[C(1,4)], direction='lower'))
@@ -872,7 +866,7 @@ class Crystals(Category_singleton):
                 sage: t = B.highest_weight_vector()
                 sage: D = B.demazure_subcrystal(t, [2,1])
                 sage: list(D)
-                [[[1, 1], [2]], [[1, 1], [3]], [[1, 2], [2]],
+                [[[1, 1], [2]], [[1, 2], [2]], [[1, 1], [3]],
                  [[1, 3], [2]], [[1, 3], [3]]]
                 sage: view(D)  # optional - dot2tex graphviz, not tested (opens external window)
 
@@ -1727,9 +1721,9 @@ class Crystals(Category_singleton):
                 sage: C = crystals.KirillovReshetikhin(['A',3,1], 1, 2)
                 sage: elt = C(1,4)
                 sage: list(elt.subcrystal(index_set=[1,3]))
-                [[[1, 4]], [[1, 3]], [[2, 4]], [[2, 3]]]
+                [[[1, 4]], [[2, 4]], [[1, 3]], [[2, 3]]]
                 sage: list(elt.subcrystal(index_set=[1,3], max_depth=1))
-                [[[1, 4]], [[1, 3]], [[2, 4]]]
+                [[[1, 4]], [[2, 4]], [[1, 3]]]
                 sage: list(elt.subcrystal(index_set=[1,3], direction='upper'))
                 [[[1, 4]], [[1, 3]]]
                 sage: list(elt.subcrystal(index_set=[1,3], direction='lower'))

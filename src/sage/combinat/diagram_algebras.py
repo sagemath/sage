@@ -2676,7 +2676,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             sage: P2._orbit_to_diagram_on_basis(PD([[1,2,-2],[-1]]))
             -P{{-2, -1, 1, 2}} + P{{-2, 1, 2}, {-1}}
         """
-        # Mobius inversion in the poset of coarsenings of ``d``
+        # Moebius inversion in the poset of coarsenings of ``d``
         SPd = SetPartitions(len(d))
         return self.sum((-1)**(len(d)-len(sp)) * prod(ZZ(len(p)-1).factorial() for p in sp)
                         * self([sum((list(d[i-1]) for i in p),[]) for p in sp])
@@ -2718,7 +2718,7 @@ class OrbitBasis(DiagramAlgebra):
     where the sum is over all partitions `\tau` which are coarser than `\pi`
     and `O_\tau` is the orbit basis element indexed by the partition `\tau`.
 
-    If `\mu_{2k}(\pi,\tau)` represents the mobius function of the partition
+    If `\mu_{2k}(\pi,\tau)` represents the Moebius function of the partition
     lattice, then
 
     .. MATH::

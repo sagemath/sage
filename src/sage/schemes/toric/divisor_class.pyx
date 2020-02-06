@@ -54,7 +54,6 @@ divisor representing a divisor class::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.libs.gmp.mpq cimport *
 

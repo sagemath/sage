@@ -244,7 +244,8 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
             num_sets += 1
     tmp.m = num_sets
     tmp.n = n
-    tmp.limbs =1
+    tmp.limbs = 1
+
 
 cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp):
     r"""

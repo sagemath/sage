@@ -1710,8 +1710,8 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             sage: OMPs = OrderedMultisetPartitionsIntoSets(**c)
             sage: OMPs._satisfies_constraints([{2,4}, {1}, {1,4}])
             True
-            sage: failures = {((2,4), (2,4)), ((1,2,4), (1,), (1,4)), \
-                              ((2,4), (3,), (3,)), ((2,4), (1,), (2,4))}
+            sage: failures = {((2,4), (2,4)), ((1,2,4), (1,), (1,4)),
+            ....:             ((2,4), (3,), (3,)), ((2,4), (1,), (2,4))}
             sage: any(OMPs._satisfies_constraints(x) for x in failures)
             False
             sage: c = {"max_length":4, "weight":{1:2, 2:1, 4:2}}
@@ -1952,7 +1952,8 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # slice by 'order'
         if "alphabet" in fc:
-            no_alpha = {k: v for (k, v) in iteritems(self.constraints) if k is not "alphabet"}
+            no_alpha = {k: v for (k, v) in iteritems(self.constraints)
+                        if k != "alphabet"}
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], size, **no_alpha)
 
         # slice by 'size'
@@ -2744,7 +2745,7 @@ def _base_iterator(constraints):
     if "weight" in constraints:
         return _iterator_weight(constraints["weight"])
     elif "size" in constraints:
-        return _iterator_size(constraints["size"], \
+        return _iterator_size(constraints["size"],
             constraints.get("length",None), constraints.get("alphabet",None))
     elif "alphabet" in constraints:
         A = constraints["alphabet"]
@@ -2762,7 +2763,7 @@ def _base_iterator(constraints):
             min_ord = max_ord = constraints["order"]
             max_k = min(max_k, max_ord)
             if min_ord:
-                min_k =max(1, min_k, min_ord // len(A))
+                min_k = max(1, min_k, min_ord // len(A))
         if infinity not in (max_k, max_ord):
             return chain(*(_iterator_order(A, ord, range(min_k, max_k+1)) \
                         for ord in range(min_ord, max_ord+1)))
@@ -2790,9 +2791,9 @@ def _iterator_weight(weight):
         sage: OMP = OrderedMultisetPartitionsIntoSets(weight)
         sage: l = list(_iterator_weight(weight))
 
-        sage: sorted(map(OMP, l), key=str) == sorted(map(OMP, \
-        [[{1}, {1}, {'b'}], [{1}, {1,'b'}], [{1}, {'b'}, {1}], \
-         [{1,'b'}, {1}], [{'b'}, {1}, {1}]]), key=str)
+        sage: sorted(map(OMP, l), key=str) == sorted(map(OMP,
+        ....:     [[{1}, {1}, {'b'}], [{1}, {1,'b'}], [{1}, {'b'}, {1}],
+        ....:     [{1,'b'}, {1}], [{'b'}, {1}, {1}]]), key=str)
         True
         sage: OMP = OrderedMultisetPartitionsIntoSets({1:3, 3:1})
         sage: list(map(OMP, _iterator_weight([3,0,1])))

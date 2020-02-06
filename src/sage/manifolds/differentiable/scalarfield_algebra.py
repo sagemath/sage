@@ -266,8 +266,10 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
         sage: h = CM(a+x); h.display()
         M --> R
         on U: (x, y) |--> a + x
+        on W: (u, v) |--> (a*u^2 + a*v^2 + u)/(u^2 + v^2)
         sage: h = CM(a+u); h.display()
         M --> R
+        on W: (x, y) |--> (a*x^2 + a*y^2 + x)/(x^2 + y^2)
         on V: (u, v) |--> a + u
 
     If the symbolic expression involves coordinates of different charts,

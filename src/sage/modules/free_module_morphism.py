@@ -43,7 +43,9 @@ from __future__ import absolute_import
 
 import sage.modules.free_module as free_module
 from . import matrix_morphism
+from sage.categories.morphism import Morphism
 from sage.structure.sequence import Sequence
+from sage.structure.richcmp import richcmp, rich_to_bool
 
 from . import free_module_homspace
 
@@ -612,3 +614,178 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             raise TypeError("not an endomorphism")
 
     minpoly = minimal_polynomial
+
+class BaseIsomorphism1D(Morphism):
+    """
+    An isomorphism between a ring and a free rank-1 module over the ring.
+
+    EXAMPLES::
+
+        sage: R.<x,y> = QQ[]
+        sage: V, from_V, to_V = R.free_module(R)
+        sage: from_V
+        Isomorphism morphism:
+          From: Ambient free module of rank 1 over the integral domain Multivariate Polynomial Ring in x, y over Rational Field
+          To:   Multivariate Polynomial Ring in x, y over Rational Field
+    """
+    def _repr_type(self):
+        r"""
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: V, from_V, to_V = R.free_module(R)
+            sage: from_V._repr_type()
+            'Isomorphism'
+        """
+        return "Isomorphism"
+
+    def is_injective(self):
+        r"""
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: V, from_V, to_V = R.free_module(R)
+            sage: from_V.is_injective()
+            True
+        """
+        return True
+
+    def is_surjective(self):
+        r"""
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: V, from_V, to_V = R.free_module(R)
+            sage: from_V.is_surjective()
+            True
+        """
+        return True
+
+    def _richcmp_(self, other, op):
+        r"""
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: V, fr, to = R.free_module(R)
+            sage: fr == loads(dumps(fr))
+            True
+        """
+        if isinstance(other, BaseIsomorphism1D):
+            return richcmp(self._basis, other._basis, op)
+        else:
+            return rich_to_bool(op, 1)
+
+class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
+    """
+    An isomorphism from a ring to its 1-dimensional free module
+
+    INPUT:
+
+    - ``parent`` -- the homset
+    - ``basis`` -- (default 1) an invertible element of the ring
+
+    EXAMPLES::
+
+        sage: R = Zmod(8)
+        sage: V, from_V, to_V = R.free_module(R)
+        sage: v = to_V(2); v
+        (2)
+        sage: from_V(v)
+        2
+        sage: W, from_W, to_W = R.free_module(R, basis=3)
+        sage: W is V
+        True
+        sage: w = to_W(2); w
+        (6)
+        sage: from_W(w)
+        2
+
+    The basis vector has to be a unit so that the map is an isomorphism::
+
+        sage: W, from_W, to_W = R.free_module(R, basis=4)
+        Traceback (most recent call last):
+        ...
+        ValueError: Basis element must be a unit
+    """
+    def __init__(self, parent, basis=None):
+        """
+        TESTS::
+
+            sage: R = Zmod(8)
+            sage: W, from_W, to_W = R.free_module(R, basis=3)
+            sage: TestSuite(to_W).run()
+        """
+        Morphism.__init__(self, parent)
+        self._basis = basis
+
+    def _call_(self, x):
+        """
+        TESTS::
+
+            sage: R = Zmod(8)
+            sage: W, from_W, to_W = R.free_module(R, basis=3)
+            sage: to_W(6) # indirect doctest
+            (2)
+        """
+        if self._basis is not None:
+            x *= self._basis
+        return self.codomain()([x])
+
+class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
+    """
+    An isomorphism to a ring from its 1-dimensional free module
+
+    INPUT:
+
+    - ``parent`` -- the homset
+    - ``basis`` -- (default 1) an invertible element of the ring
+
+    EXAMPLES::
+
+        sage: R.<x> = QQ[[]]
+        sage: V, from_V, to_V = R.free_module(R)
+        sage: v = to_V(1+x); v
+        (1 + x)
+        sage: from_V(v)
+        1 + x
+        sage: W, from_W, to_W = R.free_module(R, basis=(1-x))
+        sage: W is V
+        True
+        sage: w = to_W(1+x); w
+        (1 - x^2)
+        sage: from_W(w)
+        1 + x + O(x^20)
+
+    The basis vector has to be a unit so that the map is an isomorphism::
+
+        sage: W, from_W, to_W = R.free_module(R, basis=x)
+        Traceback (most recent call last):
+        ...
+        ValueError: Basis element must be a unit
+    """
+    def __init__(self, parent, basis=None):
+        """
+        TESTS::
+
+            sage: R.<x> = QQ[[]]
+            sage: W, from_W, to_W = R.free_module(R, basis=(1-x))
+            sage: TestSuite(from_W).run(skip='_test_nonzero_equal')
+        """
+        Morphism.__init__(self, parent)
+        self._basis = basis
+
+    def _call_(self, x):
+        """
+        TESTS::
+
+            sage: R.<x> = QQ[[]]
+            sage: W, from_W, to_W = R.free_module(R, basis=(1-x))
+            sage: w = to_W(1+x); w
+            (1 - x^2)
+            sage: from_W(w)
+            1 + x + O(x^20)
+        """
+        if self._basis is None:
+            return x[0]
+        else:
+            return self.codomain()(x[0] / self._basis)

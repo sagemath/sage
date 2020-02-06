@@ -64,8 +64,6 @@ Test hashing::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.string cimport strcpy, strlen
 
 from sage.cpython.string cimport char_to_str, str_to_bytes
@@ -95,6 +93,7 @@ from sage.libs.flint.fmpq_mat cimport *
 cimport sage.structure.element
 
 from sage.structure.sequence import Sequence
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.rational cimport Rational
 from .matrix cimport Matrix
 from .args cimport SparseEntry, MatrixArgs_init
@@ -376,7 +375,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
     # x * cdef _add_
     # x * cdef _mul_
     # x * cdef _vector_times_matrix_
-    # x * cpdef _cmp_
+    # x * cpdef _richcmp_
     # x * __neg__
     #   * __invert__
     # x * __copy__
@@ -448,7 +447,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         r"""
         TESTS::
 
@@ -483,8 +482,11 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 k = fmpq_cmp(fmpq_mat_entry(self._matrix, i, j),
                              fmpq_mat_entry((<Matrix_rational_dense> right)._matrix, i, j))
                 if k:
-                    return (k > 0) - (k < 0)
-        return 0
+                    if k > 0:
+                        return rich_to_bool(op, 1)
+                    else:
+                        return rich_to_bool(op, -1)
+        return rich_to_bool(op, 0)
 
     cdef _vector_times_matrix_(self, Vector v):
         """

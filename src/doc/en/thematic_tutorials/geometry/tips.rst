@@ -27,7 +27,7 @@ You can obtain different operations using natural symbols:
     sage: Cube * Octahedron   # Cartesian product
     A 6-dimensional polyhedron in QQ^6 defined as the convex hull of 48 vertices
     sage: Cube - Polyhedron(vertices=[[-1,0,0],[1,0,0]])  # Minkowski difference
-    A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+    A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
 
 .. end of output
 
@@ -64,19 +64,19 @@ the latex presentation, there is a method for that!
 
     sage: Nice_repr = TCube.Hrepresentation_str()
     sage: print(Nice_repr)
-                  -2*x0 >= -1 
-                  -2*x1 >= -1 
-    -6*x0 + 6*x1 - 6*x2 >= -7 
-                   2*x0 >= -1 
-                   2*x1 >= -1 
-     6*x0 - 6*x1 - 6*x2 >= -7 
-     6*x0 + 6*x1 - 6*x2 >= -7 
-     6*x0 - 6*x1 + 6*x2 >= -7 
-     6*x0 + 6*x1 + 6*x2 >= -7 
-                   2*x2 >= -1 
-                  -2*x2 >= -1 
-    -6*x0 + 6*x1 + 6*x2 >= -7 
-    -6*x0 - 6*x1 + 6*x2 >= -7 
+                  -2*x0 >= -1
+                  -2*x1 >= -1
+    -6*x0 + 6*x1 - 6*x2 >= -7
+                   2*x0 >= -1
+                   2*x1 >= -1
+     6*x0 - 6*x1 - 6*x2 >= -7
+     6*x0 + 6*x1 - 6*x2 >= -7
+     6*x0 - 6*x1 + 6*x2 >= -7
+     6*x0 + 6*x1 + 6*x2 >= -7
+                   2*x2 >= -1
+                  -2*x2 >= -1
+    -6*x0 + 6*x1 + 6*x2 >= -7
+    -6*x0 - 6*x1 + 6*x2 >= -7
     -6*x0 - 6*x1 - 6*x2 >= -7
 
     sage: print(TCube.Hrepresentation_str(latex=True))
@@ -94,7 +94,7 @@ the latex presentation, there is a method for that!
                               -2 \, x_{2} & \geq & -1 \\
     -6 \, x_{0} + 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
     -6 \, x_{0} - 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
-    -6 \, x_{0} - 6 \, x_{1} - 6 \, x_{2} & \geq & -7 
+    -6 \, x_{0} - 6 \, x_{1} - 6 \, x_{2} & \geq & -7
     \end{array}
 
     sage: Latex_repr = LatexExpr(TCube.Hrepresentation_str(latex=True))

@@ -4,8 +4,9 @@ Sparse matrices over `\ZZ/n\ZZ` for `n` small
 This is a compiled implementation of sparse matrices over
 `\ZZ/n\ZZ` for `n` small.
 
-TODO: - move vectors into a Cython vector class - add _add_ and
-_mul_ methods.
+.. TODO::
+
+    move vectors into a Cython vector class - add _add_ and _mul_ methods.
 
 EXAMPLES::
 
@@ -68,17 +69,15 @@ TESTS::
     []
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from collections import Iterator, Sequence
 
@@ -760,7 +759,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         .. NOTE::
 
            For very sparse matrices Gaussian elimination is faster
-           because it barly has anything to do. If the fill in needs to
+           because it barely has anything to do. If the fill in needs to
            be considered, 'Symbolic Reordering' is usually much faster.
         """
         if self._nrows == 0 or self._ncols == 0:

@@ -237,7 +237,7 @@ In case of symmetries, only non-redundant components are stored::
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015 Marco Mancini <marco.mancini@obspm.fr>
@@ -245,8 +245,8 @@ In case of symmetries, only non-redundant components are stored::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from six.moves import range
 
 from sage.structure.sage_object import SageObject
@@ -1560,7 +1560,7 @@ class Components(SageObject):
         # only to add other:
         result = self.copy()
         nproc = Parallelism().get('tensor')
-        if nproc != 1 :
+        if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
             ind_list = [ind for ind in other._comp]
@@ -1793,7 +1793,7 @@ class Components(SageObject):
                 # result:
 
                 nproc = Parallelism().get('tensor')
-                if nproc != 1 :
+                if nproc != 1:
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
                     ind_list = [ind for ind in result.non_redundant_index_generator()]
@@ -1824,7 +1824,7 @@ class Components(SageObject):
             result = Components(self._ring, self._frame, self._nid + other._nid,
                                 self._sindex, self._output_formatter)
         nproc = Parallelism().get('tensor')
-        if nproc != 1 :
+        if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
             ind_list = [ind for ind  in self._comp]
@@ -2334,7 +2334,7 @@ class Components(SageObject):
                 return local_res
 
             for ii, val in make_Contraction(listParalInput):
-                for jj in val :
+                for jj in val:
                       res[[jj[0]]] = jj[1]
         else:
             # sequential
@@ -3454,7 +3454,7 @@ class CompWithSym(Components):
                 # The symmetries/antisymmetries are identical:
                 result = self.copy()
                 nproc = Parallelism().get('tensor')
-                if nproc != 1 :
+                if nproc != 1:
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in
                                            range(0, len(lst), sz)]
@@ -3509,7 +3509,7 @@ class CompWithSym(Components):
             result = Components(self._ring, self._frame, self._nid,
                                 self._sindex, self._output_formatter)
         nproc = Parallelism().get('tensor')
-        if nproc != 1 :
+        if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
             ind_list = [ind for ind in result.non_redundant_index_generator()]
@@ -3615,7 +3615,7 @@ class CompWithSym(Components):
         result = CompWithSym(self._ring, self._frame, self._nid + other._nid,
                              self._sindex, self._output_formatter, sym, antisym)
         nproc = Parallelism().get('tensor')
-        if nproc != 1 :
+        if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
             ind_list = [ind for ind in self._comp]
@@ -4955,7 +4955,7 @@ class CompFullySym(CompWithSym):
             # remains only to add other:
             result = self.copy()
             nproc = Parallelism().get('tensor')
-            if nproc != 1 :
+            if nproc != 1:
                 # parallel sum
                 lol = lambda lst, sz: [lst[i:i+sz] for i
                                        in range(0, len(lst), sz)]
@@ -5255,7 +5255,7 @@ class CompFullyAntiSym(CompWithSym):
             # only to add other:
             result = self.copy()
             nproc = Parallelism().get('tensor')
-            if nproc != 1 :
+            if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
                 ind_list = [ind for ind in other._comp]

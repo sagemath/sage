@@ -73,7 +73,6 @@ see the documentation for :class:`Parent`.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport (PyObject, PyTypeObject,
         PyObject_CallObject, PyObject_RichCompare, Py_TYPE,
@@ -364,6 +363,55 @@ cpdef bint parent_is_integers(P) except -1:
     else:
         from sage.rings.integer_ring import ZZ
         return P is ZZ
+
+def parent_is_numerical(P):
+    r"""
+    Test if elements of the parent or type ``P`` can be numerically evaluated
+    as complex numbers (in a canonical way).
+
+    EXAMPLES::
+
+        sage: from sage.structure.coerce import parent_is_numerical
+        sage: import gmpy2, numpy
+        sage: [parent_is_numerical(R) for R in [RR, CC, QQ, QuadraticField(-1),
+        ....:         int, complex, gmpy2.mpc, numpy.complexfloating]]
+        [True, True, True, True, True, True, True, True]
+        sage: [parent_is_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
+        [False, False, False, False]
+        sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        [False, False, False, False]
+    """
+    if not isinstance(P, Parent):
+        P = py_scalar_parent(P)
+        if P is None:
+            return False
+    return P._is_numerical()
+
+def parent_is_real_numerical(P):
+    r"""
+    Test if elements of the parent or type ``P`` can be numerically evaluated
+    as real numbers (in a canonical way).
+
+    EXAMPLES::
+
+        sage: from sage.structure.coerce import parent_is_real_numerical
+        sage: import gmpy2, numpy
+        sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF,
+        ....:         QuadraticField(2), int, float, gmpy2.mpq, numpy.integer]]
+        [True, True, True, True, True, True, True, True, True]
+        sage: [parent_is_real_numerical(R) for R in [CC, QuadraticField(-1),
+        ....:         complex, gmpy2.mpc, numpy.complexfloating]]
+        [False, False, False, False, False]
+        sage: [parent_is_real_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
+        [False, False, False, False]
+        sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        [False, False, False, False]
+    """
+    if not isinstance(P, Parent):
+        P = py_scalar_parent(P)
+        if P is None:
+            return False
+    return P._is_real_numerical()
 
 
 cpdef bint is_numpy_type(t):
@@ -844,7 +892,7 @@ cdef class CoercionModel:
 
         .. NOTE::
 
-           This function is accurate only in so far as analyse is kept
+           This function is accurate only in so far as :meth:`analyse` is kept
            in sync with the :meth:`bin_op` and
            :meth:`canonical_coercion` which are kept separate for
            maximal efficiency.

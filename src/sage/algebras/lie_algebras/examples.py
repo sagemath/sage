@@ -19,15 +19,15 @@ AUTHORS:
 
 - Travis Scrimshaw (07-15-2013): Initial implementation
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra
 from sage.algebras.lie_algebras.rank_two_heisenberg_virasoro import RankTwoHeisenbergVirasoro
@@ -637,7 +637,7 @@ def sp(R, n, representation='bracket'):
         [0 0 0 0]
         [0 0 0 0]
     """
-    if n % 2 != 0:
+    if n % 2:
         raise ValueError("n must be even")
     if representation == 'bracket':
         from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
@@ -646,4 +646,3 @@ def sp(R, n, representation='bracket'):
         from sage.algebras.lie_algebras.classical_lie_algebra import sp as sp_matrix
         return sp_matrix(R, n)
     raise ValueError("invalid representation")
-

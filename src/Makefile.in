@@ -37,7 +37,7 @@ sage:
 	    SAGE_DOC_SRC=/doesnotexist                            \
 	    SAGE_BUILD_DIR=/doesnotexist                          \
 	    SAGE_PKGS=$(abs_top_srcdir)/build/pkgs                \
-	&& sage-python23 -u setup.py --no-user-cfg build install
+	&& sage-python -u setup.py --no-user-cfg build install
 	if [ "$$UNAME" = "CYGWIN" ]; then                         \
 	    sage-rebase.sh "$$SAGE_LOCAL" 2>/dev/null;            \
 	fi

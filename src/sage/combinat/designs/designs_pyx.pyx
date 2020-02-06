@@ -6,7 +6,6 @@ This module implements the design methods that need to be somewhat efficient.
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import, division
 
 include "sage/data_structures/bitset.pxi"
 

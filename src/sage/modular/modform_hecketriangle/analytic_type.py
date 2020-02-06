@@ -17,7 +17,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.sets.set import Set
@@ -211,8 +211,8 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``reduce_type``  -- An analytic type or something which is
-                              convertable to an analytic type.
+        - ``reduce_type``  -- an analytic type or something which is
+          convertible to an analytic type
 
         OUTPUT:
 
@@ -241,8 +241,8 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``extend_type``  -- An analytic type or something which is
-                              convertable to an analytic type.
+        - ``extend_type``  -- an analytic type or something which is
+          convertible to an analytic type
 
         OUTPUT:
 

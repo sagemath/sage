@@ -14,5 +14,5 @@ from .c_graph cimport CGraph
 cdef class DenseGraph(CGraph):
     cdef int radix_div_shift
     cdef int radix_mod_mask
-    cdef int num_longs
+    cdef size_t num_longs
     cdef unsigned long *edges

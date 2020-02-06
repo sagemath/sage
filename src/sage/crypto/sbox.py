@@ -20,7 +20,6 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.sage_object import SageObject
 
-from sage.misc.superseded import deprecated_function_alias
 
 class SBox(SageObject):
     r"""
@@ -565,8 +564,6 @@ class SBox(SageObject):
 
         return A
 
-    difference_distribution_matrix = deprecated_function_alias(25708, difference_distribution_table)
-
     def maximal_difference_probability_absolute(self):
         """
         Return the difference probability of the difference with the
@@ -696,8 +693,6 @@ class SBox(SageObject):
         A.set_immutable()
 
         return A
-
-    linear_approximation_matrix = deprecated_function_alias(25708, linear_approximation_table)
 
     def maximal_linear_bias_absolute(self):
         """
@@ -1386,8 +1381,6 @@ class SBox(SageObject):
 
         return A
 
-    autocorrelation_matrix = deprecated_function_alias(25708, autocorrelation_table)
-
     @cached_method
     def boomerang_connectivity_table(self):
         r"""
@@ -1454,8 +1447,6 @@ class SBox(SageObject):
         A = Matrix(ZZ, nrows, ncols, A)
         A.set_immutable()
         return A
-
-    boomerang_connectivity_matrix = deprecated_function_alias(25708, boomerang_connectivity_table)
 
     def boomerang_uniformity(self):
         """

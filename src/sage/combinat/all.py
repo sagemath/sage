@@ -73,6 +73,9 @@ lazy_import('sage.combinat.skew_partition', ['SkewPartition', 'SkewPartitions'])
 #Partition algebra
 from .partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
 
+#Raising operators
+lazy_import('sage.combinat.partition_shifting_algebras', 'ShiftingOperatorAlgebra')
+
 #Diagram algebra
 from .diagram_algebras import PartitionAlgebra, BrauerAlgebra, TemperleyLiebAlgebra, PlanarAlgebra, PropagatingIdeal
 

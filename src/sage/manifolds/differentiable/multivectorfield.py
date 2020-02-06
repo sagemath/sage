@@ -147,11 +147,11 @@ class MultivectorField(TensorField):
 
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*s ; s
-        2-vector field on the 2-dimensional differentiable manifold M
+        2-vector field f*(a/\b) on the 2-dimensional differentiable manifold M
         sage: s.display(eU)
-        (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) d/dx/\d/dy
+        f*(a/\b) = (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) d/dx/\d/dy
         sage: s.display(eV)
-        (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
+        f*(a/\b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
           d/du/\d/dv
 
     """
@@ -808,6 +808,14 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         ....:                [r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)])
         sage: cart_to_spher = spher_to_cart.set_inverse(sqrt(x^2+y^2+z^2),
         ....:                              atan2(sqrt(x^2+y^2),z), atan2(y, x))
+        Check of the inverse coordinate transformation:
+          r == r  *passed*
+          th == arctan2(r*sin(th), r*cos(th))  **failed**
+          ph == arctan2(r*sin(ph)*sin(th), r*cos(ph)*sin(th))  **failed**
+          x == x  *passed*
+          y == y  *passed*
+          z == z  *passed*
+        NB: a failed report can reflect a mere lack of simplification.
         sage: a.comp(c_spher.frame()) # computation of components w.r.t. spherical frame
         Fully antisymmetric 3-indices components w.r.t. Coordinate frame
          (R3, (d/dr,d/dth,d/dph))

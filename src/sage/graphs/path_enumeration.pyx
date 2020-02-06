@@ -31,9 +31,9 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
+from libcpp.vector cimport vector
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ
@@ -1531,9 +1531,10 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
     if max_length < 1:
         return
 
+    cdef dict my_dict = {}
+    cdef dict edge_multiplicity
     if not data:
         if report_edges and labels:
-            my_dict = {}
             if use_multiedges:
                 for e in self.edge_iterator():
                     if (e[0], e[1]) in my_dict:
@@ -1546,23 +1547,23 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                         my_dict[(e[0], e[1])] = [e]
         elif use_multiedges and self.has_multiple_edges():
             from collections import Counter
-            edge_multiplicity = Counter(self.edge_iterator(labels=False))
+            edge_multiplicity = dict(Counter(self.edge_iterator(labels=False)))
     else:
         if report_edges and labels:
             my_dict = data
         elif use_multiedges and self.has_multiple_edges():
             edge_multiplicity = data
     # Start with the empty path; we will try all extensions of it
-    queue = []
-    path = [vertex]
-
+    cdef list queue = []
+    cdef list path = [vertex]
+    cdef list newpath
+    cdef int m
     if trivial and not report_edges and vertex in ending_vertices:
         yield path
     while True:
         # Build next generation of paths, one arc longer; max_length refers
         # to edges and not vertices, hence <= and not <
         if len(path) <= max_length:
-
             # We try all possible extensions
             if simple:
                 # We only keep simple extensions. An extension is simple iff
@@ -1620,8 +1621,8 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                 yield path
 
 def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
-                        simple=False, max_length=None, trivial=False,
-                        use_multiedges=False, report_edges=False, labels=False):
+                       simple=False, max_length=None, trivial=False,
+                       use_multiedges=False, report_edges=False, labels=False):
     r"""
     Return an iterator over the paths of ``self``.
 
@@ -1708,19 +1709,19 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
         sage: list(g.all_paths_iterator(starting_vertices=[0, 1], ending_vertices=[2], use_multiedges=False, report_edges=False, labels=True))
         [[1, 2], [0, 1, 2]]
         sage: list(g.all_paths_iterator(use_multiedges=True, report_edges=False, labels=True, max_length=1))
-        [[0, 1], [0, 1], [1, 2], [1, 2]]
+        [[1, 2], [1, 2], [0, 1], [0, 1]]
         sage: list(g.all_paths_iterator(use_multiedges=True, report_edges=True, labels=True, max_length=1))
-        [[(0, 1, 'b')], [(0, 1, 'a')], [(1, 2, 'd')], [(1, 2, 'c')]]
+        [[(1, 2, 'd')], [(1, 2, 'c')], [(0, 1, 'b')], [(0, 1, 'a')]]
 
         sage: g = DiGraph({'a': ['a', 'b'], 'b': ['c'], 'c': ['d'], 'd': ['c']}, loops=True)
         sage: pi = g.all_paths_iterator()
         sage: for _ in range(7):   # py2
         ....:     print(next(pi))  # py2
-        ['a', 'a']
-        ['a', 'b']
+        ['d', 'c']
         ['b', 'c']
         ['c', 'd']
-        ['d', 'c']
+        ['a', 'a']
+        ['a', 'b']
         ['a', 'a', 'a']
         ['a', 'a', 'b']
         sage: pi = g.all_paths_iterator()
@@ -1799,7 +1800,12 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
     """
     if starting_vertices is None:
         starting_vertices = self
-    data = {}
+    cdef dict data = {}
+    cdef dict vertex_iterators
+    cdef list paths = []
+    cdef list path
+    cdef list shortest_path
+
     if report_edges and labels:
         if use_multiedges:
             for e in self.edge_iterator():
@@ -1814,38 +1820,46 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
     elif use_multiedges and self.has_multiple_edges():
         from collections import Counter
         edge_multiplicity = Counter(self.edge_iterator(labels=False))
-        data = edge_multiplicity
+        data = dict(edge_multiplicity)
 
     # We create one paths iterator per vertex
     # This is necessary if we want to iterate over paths
     # with increasing length
     vertex_iterators = {v: self._all_paths_iterator(v, ending_vertices=ending_vertices,
-                                                       simple=simple, max_length=max_length,
-                                                       trivial=trivial, use_multiedges=use_multiedges,
-                                                       report_edges=report_edges, labels=labels, data=data)
-                                                       for v in starting_vertices}
-    paths = []
+                                                        simple=simple, max_length=max_length,
+                                                        trivial=trivial, use_multiedges=use_multiedges,
+                                                        report_edges=report_edges, labels=labels, data=data)
+                                                        for v in starting_vertices}
+
+    cdef priority_queue[pair[int, int]] pq
+    cdef int idx = 0
+    cdef dict idx_to_path = {}
     for vi in vertex_iterators.values():
         try:
             path = next(vi)
-            paths.append((len(path), path))
+            idx_to_path[idx] = path
+            pq.push((-len(path), idx))
+            idx = idx + 1
         except(StopIteration):
             pass
     # Since we always extract a shortest path, using a heap
     # can speed up the algorithm
-    from heapq import heapify, heappop, heappush
-    heapify(paths)
-    while paths:
+    while not pq.empty():
         # We choose the shortest available path
-        _, shortest_path = heappop(paths)
-        yield shortest_path
+        _, shortest_path_idx = pq.top()
+        pq.pop()
+        prev_path = idx_to_path[shortest_path_idx]
+        yield prev_path
+        del idx_to_path[shortest_path_idx]
         # We update the path iterator to its next available path if it exists
         try:
             if report_edges:
-                path = next(vertex_iterators[shortest_path[0][0]])
+                path = next(vertex_iterators[prev_path[0][0]])
             else:
-                path = next(vertex_iterators[shortest_path[0]])
-            heappush(paths, (len(path), path))
+                path = next(vertex_iterators[prev_path[0]])
+            idx_to_path[idx] = path
+            pq.push((-len(path), idx))
+            idx = idx + 1
         except(StopIteration):
             pass
 
@@ -1908,11 +1922,18 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
 
     EXAMPLES::
 
-        sage: g = DiGraph({'a': ['a', 'b'], 'b': ['c'], 'c': ['d'], 'd': ['c']}, loops=True)
+        sage: g = DiGraph({0: [0, 1], 1: [2], 2: [3], 3: [2]}, loops=True)
         sage: g.all_simple_paths()
-        [['a', 'a'], ['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'c'],
-         ['a', 'b', 'c'], ['b', 'c', 'd'], ['c', 'd', 'c'],
-         ['d', 'c', 'd'], ['a', 'b', 'c', 'd']]
+        [[3, 2],
+         [2, 3],
+         [1, 2],
+         [0, 0],
+         [0, 1],
+         [0, 1, 2],
+         [1, 2, 3],
+         [2, 3, 2],
+         [3, 2, 3],
+         [0, 1, 2, 3]]
 
         sage: g = DiGraph([(0, 1, 'a'), (0, 1, 'b'), (1, 2,'c'), (1, 2,'d')], multiedges=True)
         sage: g.all_simple_paths(starting_vertices=[0], ending_vertices=[2], use_multiedges=False)
@@ -1931,7 +1952,7 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
         sage: g.all_simple_paths(starting_vertices=[0, 1], ending_vertices=[2], use_multiedges=False, report_edges=False, labels=True)
         [[1, 2], [0, 1, 2]]
         sage: g.all_simple_paths(use_multiedges=True, report_edges=False, labels=True)
-        [[0, 1], [0, 1], [1, 2], [1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]
+        [[1, 2], [1, 2], [0, 1], [0, 1], [0, 1, 2], [0, 1, 2], [0, 1, 2], [0, 1, 2]]
         sage: g.all_simple_paths(starting_vertices=[0, 1], ending_vertices=[2], use_multiedges=False, report_edges=True, labels=True, trivial=True)
         [[(1, 2, 'd')], [(0, 1, 'b'), (1, 2, 'd')]]
 
@@ -1948,14 +1969,22 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
 
     It is also possible to bound the length of the paths::
 
+        sage: g = DiGraph({0: [0, 1], 1: [2], 2: [3], 3: [2]}, loops=True)
         sage: g.all_simple_paths(max_length=2)
-        [['a', 'a'], ['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'c'],
-         ['a', 'b', 'c'], ['b', 'c', 'd'], ['c', 'd', 'c'],
-         ['d', 'c', 'd']]
+        [[3, 2],
+         [2, 3],
+         [1, 2],
+         [0, 0],
+         [0, 1],
+         [0, 1, 2],
+         [1, 2, 3],
+         [2, 3, 2],
+         [3, 2, 3]]
 
     By default, empty paths are not enumerated, but this can be
     parametrized::
 
+        sage: g = DiGraph({'a': ['a', 'b'], 'b': ['c'], 'c': ['d'], 'd': ['c']}, loops=True)
         sage: g.all_simple_paths(starting_vertices=['a'], trivial=True)
         [['a'], ['a', 'a'], ['a', 'b'], ['a', 'b', 'c'],
          ['a', 'b', 'c', 'd']]

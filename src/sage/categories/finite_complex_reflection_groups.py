@@ -753,9 +753,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     sage: for (w, l) in W.absolute_order_ideal(return_lengths=True):
                     ....:     print(w.reduced_word(), l)
                     [1, 2] 2
-                    [1] 1
-                    [2] 1
                     [1, 2, 1] 1
+                    [2] 1
+                    [1] 1
                     [] 0
                 """
                 if gens is None:

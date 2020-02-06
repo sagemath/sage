@@ -25,7 +25,6 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
 include 'sage/data_structures/bitset.pxi'

@@ -53,7 +53,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import types
 
@@ -61,6 +60,7 @@ from .sage_object cimport SageObject
 
 cdef sage_version
 from sage.version import version as sage_version
+from sage.cpython.string cimport bytes_to_str
 
 sage_version = sage_version.split('.')
 for i in range(len(sage_version)):
@@ -746,6 +746,7 @@ def lookup_global(name):
         sage: lookup_global('sage.rings.all.ZZ')
         Integer Ring
     """
+    name = bytes_to_str(name, encoding='ASCII')
     try:
         return factory_unpickles[name]
     except KeyError:

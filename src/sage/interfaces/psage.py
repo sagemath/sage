@@ -59,9 +59,9 @@ class PSage(Sage):
         import sage.misc.misc
         T = sage.misc.temporary_file.tmp_dir('sage_smp')
         self.__tmp_dir = T
-        self.__tmp = '%s/lock'%T
+        self.__tmp = '%s/lock' % T
         self._unlock()
-        self._unlock_code = "open('%s','w').write('__unlocked__')"%self.__tmp
+        self._unlock_code = "with open('%s', 'w') as f: f.write('__unlocked__')" % self.__tmp
 
         global number
         self._number = number

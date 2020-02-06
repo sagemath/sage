@@ -251,9 +251,8 @@ class PHC_Object:
         start_data += str(sol_count) + ' ' + str(var_number) + '\n'
         start_data += jan_bar + sol_data
         if start_filename is not None:
-            start_file = open(start_filename, 'w')
-            start_file.write(start_data)
-            start_file.close()
+            with open(start_filename, 'w') as start_file:
+                start_file.write(start_data)
         return start_data
 
     def classified_solution_dicts(self):
@@ -445,7 +444,8 @@ class PHC:
         input = self._input_file(polys)
         if verbose:
             print("Writing the input file to %s" % input_filename)
-        open(input_filename, 'w').write(input)
+        with open(input_filename, 'w') as file:
+            file.write(input)
 
         if verbose:
             print("The following file will be the input polynomial file to phc.")
@@ -626,9 +626,8 @@ class PHC:
         # Probably unnecessarily redundant from the start_from function
         if start_filename_or_string.find('THE SOLUTIONS') != -1:
             start_filename = tmp_filename()
-            start_file = open(start_filename, 'w')
-            start_file.write(start_filename_or_string)
-            start_file.close()
+            with open(start_filename, 'w') as start_file:
+                start_file.write(start_filename_or_string)
         elif os.path.exists(start_filename_or_string):
             start_filename = start_filename_or_string
         else:
@@ -760,7 +759,8 @@ class PHC:
         """
         output_filename = self._output_from_command_list(['phc -m','4','n','n','n'], polys, verbose = verbose)
 
-        out = open(output_filename).read()
+        with open(output_filename) as out:
+            out.read()
         # All done
         out_lines = out.split('\n')
         for a_line in out_lines:
@@ -814,9 +814,8 @@ class PHC:
 
         if start_filename_or_string.find('THE SOLUTIONS') != -1:
             start_filename = tmp_filename()
-            start_file = open(start_filename,'w')
-            start_file.write(start_filename_or_string)
-            start_file.close()
+            with open(start_filename, 'w') as start_file:
+                start_file.write(start_filename_or_string)
         elif os.path.exists(start_filename_or_string):
             start_filename = start_filename_or_string
         else:
@@ -826,7 +825,8 @@ class PHC:
         input = self._input_file(polys)
         if verbose:
             print("Writing the input file to %s" % input_filename)
-        open(input_filename, 'w').write(input)
+        with open(input_filename, 'w') as f:
+            f.write(input)
 
         if verbose:
             print("The following file will be the input polynomial file to phc.")
@@ -870,7 +870,8 @@ class PHC:
             raise RuntimeError("The output file does not exist; something went wrong running phc.")
 
         # Read the output produced by PHC
-        out = open(output_filename).read()
+        with open(output_filename) as f:
+            out = f.read()
 
         # Delete the temporary files
         os.unlink(output_filename)
@@ -914,7 +915,8 @@ class PHC:
         input = self._input_file(polys)
         if verbose:
             print("Writing the input file to %s" % input_filename)
-        open(input_filename, 'w').write(input)
+        with open(input_filename, 'w') as f:
+            f.write(input)
 
         if verbose:
             print("The following file will be the input polynomial file to phc.")
@@ -937,13 +939,16 @@ class PHC:
                 print(os.system('which phc') + '  PHC needs to be installed and in your path')
                 raise RuntimeError
             # todo -- why? etc.
-            raise RuntimeError(open(log_filename).read() + "\nError running phc.")
+            with open(log_filename) as f:
+                msg = f.read()
+            raise RuntimeError(msg + "\nError running phc.")
 
         if not os.path.exists(output_filename):
             raise RuntimeError("The output file does not exist; something went wrong running phc.")
 
         # Read the output produced by PHC
-        out = open(output_filename).read()
+        with open(output_filename) as f:
+            out = f.read()
 
         # All done
         return PHC_Object(out, input_ring)

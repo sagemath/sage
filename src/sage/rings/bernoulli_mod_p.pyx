@@ -17,7 +17,6 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith

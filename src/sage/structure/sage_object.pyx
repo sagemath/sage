@@ -2,7 +2,6 @@
 r"""
 Abstract base class for Sage objects
 """
-from __future__ import absolute_import, print_function
 
 from sage.misc.persist import (_base_dumps, _base_save,
                                register_unpickle_override, make_None)
@@ -28,6 +27,10 @@ register_unpickle_override('sage.structure.generators', 'make_list_gens',
 
 
 __all__ = ['SageObject']
+
+
+# The _interface_init_ for these interfaces takes the interface as argument
+_interface_init_with_interface = set(['magma', 'macaulay2'])
 
 
 cdef class SageObject:
@@ -660,7 +663,10 @@ cdef class SageObject:
         nm = I.name()
         init_func = getattr(self, '_%s_init_' % nm, None)
         if init_func is not None:
-            s = init_func()
+            if nm in _interface_init_with_interface:
+                s = init_func(I)
+            else:
+                s = init_func()
         else:
             try:
                 s = self._interface_init_(I)
@@ -831,10 +837,11 @@ cdef class SageObject:
             G = sage.interfaces.macaulay2.macaulay2
         return self._interface_(G)
 
-    def _macaulay2_init_(self):
-        import sage.interfaces.macaulay2
-        I = sage.interfaces.macaulay2.macaulay2
-        return self._interface_init_(I)
+    def _macaulay2_init_(self, macaulay2=None):
+        if macaulay2 is None:
+            import sage.interfaces.macaulay2
+            macaulay2 = sage.interfaces.macaulay2.macaulay2
+        return self._interface_init_(macaulay2)
 
     def _maple_(self, G=None):
         if G is None:

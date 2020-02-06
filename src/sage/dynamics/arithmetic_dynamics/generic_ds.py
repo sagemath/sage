@@ -34,7 +34,9 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
+from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.qqbar import AlgebraicField_common
 from sage.rings.rational_field import QQ
 from copy import copy
 
@@ -395,8 +397,14 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         """
         ds = copy(self)
         space = ds.domain().ambient_space()
+        K = ds.base_ring()
         if space.dimension() != 1:
             raise ValueError('Ambient space of dynamical system must be either the affine line or projective line')
+        if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
+            if return_embedding:
+                return (K, K.hom(K))
+            else:
+                return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         f,g = ds[0].numerator(), ds[0].denominator()
@@ -501,11 +509,17 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         """
         ds = copy(self)
         n = int(n)
+        K = ds.base_ring()
         if n < 1:
             raise ValueError('`n` must be >= 1')
         space = ds.domain().ambient_space()
         if space.dimension() != 1:
             raise NotImplementedError("not implemented for affine or projective spaces of dimension >1")
+        if isinstance(K, (AlgebraicClosureFiniteField_generic, AlgebraicField_common)):
+            if return_embedding:
+                return (K, K.hom(K))
+            else:
+                return K
         if space.is_projective():
             ds = ds.dehomogenize(1)
         CR = space.coordinate_ring()
@@ -519,7 +533,7 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         else:
             fn = ds.nth_iterate_map(n)
             f,g = fn[0].numerator(), fn[0].denominator()
-            poly = (f - g*x).univariate_polynomial()        
+            poly = (f - g*x).univariate_polynomial()
         if is_FiniteField(ds.base_ring()):
             return poly.splitting_field(names, map=return_embedding)
         else:

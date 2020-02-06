@@ -65,7 +65,7 @@ def braid_from_piecewise(strands):
     INPUT:
 
     - ``strands`` -- a list of lists of tuples ``(t, c)``, where ``t``
-      is a number bewteen 0 and 1, and ``c`` is a complex number
+      is a number between 0 and 1, and ``c`` is a complex number
 
     OUTPUT:
 

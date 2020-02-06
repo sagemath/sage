@@ -181,8 +181,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from copy import copy
 
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free

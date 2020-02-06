@@ -1,5 +1,5 @@
 """
-Find isomorphisms between fans.
+Find isomorphisms between fans
 """
 
 

@@ -1,14 +1,15 @@
-Plane curves
-=========================
+Curves
+======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/curves/constructor
+   sage/schemes/curves/curve
    sage/schemes/curves/affine_curve
    sage/schemes/curves/projective_curve
-   sage/schemes/curves/curve
    sage/schemes/curves/point
+   sage/schemes/curves/closed_point
 
    sage/schemes/jacobians/abstract_jacobian
 
@@ -23,7 +24,6 @@ Plane conics
    sage/schemes/plane_conics/con_number_field
    sage/schemes/plane_conics/con_rational_field
    sage/schemes/plane_conics/con_finite_field
-   sage/schemes/plane_conics/con_prime_finite_field
    sage/schemes/plane_conics/con_rational_function_field
 
 Plane quartics

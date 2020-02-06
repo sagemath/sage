@@ -44,7 +44,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Roe       <roed@math.harvard.edu>
 #                          William Stein   <wstein@gmail.com>
 #
@@ -57,8 +57,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -152,7 +152,7 @@ class KodairaSymbol_class(SageObject):
             self._starred = (n < 0)
             self._pari = n
             return
-        elif len(symbol) == 0:
+        elif not symbol:
             raise TypeError("symbol must be a nonempty string")
         if symbol[0] == "I":
             symbol = symbol[1:]

@@ -1,5 +1,5 @@
 """
-Routines for Conway and pseudo-Conway polynomials.
+Routines for Conway and pseudo-Conway polynomials
 
 AUTHORS:
 
