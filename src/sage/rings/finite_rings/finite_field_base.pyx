@@ -16,7 +16,7 @@ AUTHORS:
 
 """
 #*****************************************************************************
-#       Copyright (C) 2009      David Roe <roed@math.harvard.edu>
+#       Copyright (C) 2009-2019 David Roe <roed.math@gmail.com>
 #       Copyright (C) 2010      Niles Johnson <nilesj@gmail.com>
 #       Copyright (C) 2011      Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #       Copyright (C) 2012      Adrien Brochard <aaa.brochard@gmail.com>
