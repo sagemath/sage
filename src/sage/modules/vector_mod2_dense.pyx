@@ -1,5 +1,5 @@
 """
-Vectors with elements in GF(2).
+Vectors with elements in GF(2)
 
 AUTHOR:
 
@@ -24,21 +24,21 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
+from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
 from .free_module_element import vector
 
@@ -211,19 +211,20 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         EXAMPLES::
 
-        sage: VS = VectorSpace(GF(2),10^3)
-        sage: import gc
-        sage: for i in range(10):
-        ....:     v = VS.random_element()
-        ....:     del v
-        ....:     _ = gc.collect()
+            sage: VS = VectorSpace(GF(2),10^3)
+            sage: import gc
+            sage: for i in range(10):
+            ....:     v = VS.random_element()
+            ....:     del v
+            ....:     _ = gc.collect()
         """
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
+
             sage: v = vector(GF(2), [0,0,0,0])
             sage: v == 0
             True
@@ -240,9 +241,11 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: w == w
             True
         """
+        cdef int c
         if left._degree == 0:
-            return 0
-        return mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+            return rich_to_bool(op, 0)
+        c = mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+        return rich_to_bool(op, c)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

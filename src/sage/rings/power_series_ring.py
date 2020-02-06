@@ -83,6 +83,15 @@ We make a sparse Laurent series from a power series generator::
     sage: S = parent(1/t); S
     Sparse Laurent Series Ring in t over Rational Field
 
+Choose another implementation of the attached polynomial ring::
+
+    sage: R.<t> = PowerSeriesRing(ZZ)
+    sage: type(t.polynomial())
+    <... 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+    sage: S.<s> = PowerSeriesRing(ZZ, implementation='NTL')
+    sage: type(s.polynomial())
+    <... 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+
 AUTHORS:
 
 - William Stein: the code
@@ -134,7 +143,7 @@ from sage.structure.nonexact import Nonexact
 from sage.interfaces.magma import MagmaElement
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.misc.sage_eval import sage_eval
-    
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import normalize_names
 from sage.structure.element import parent
@@ -474,8 +483,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
            sparse
 
         - ``implementation`` -- either ``'poly'``, ``'mpoly'``, or
-          ``'pari'``.  The default is ``'pari'`` if the base field is
-          a PARI finite field, and ``'poly'`` otherwise.
+          ``'pari'``. Other values (for example ``'NTL'``) are passed to
+          the attached polynomial ring.  The default is ``'pari'`` if
+          the base field is a PARI finite field, and ``'poly'`` otherwise.
 
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
@@ -524,8 +534,13 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                 implementation = 'pari'
             else:
                 implementation = 'poly'
+            R = PolynomialRing(base_ring, name, sparse=sparse)
+        elif implementation not in ['pari', 'mpoly']:     # see :trac:`28996`
+            R = PolynomialRing(base_ring, name, sparse=sparse, implementation=implementation)
+            implementation = 'poly'
+        else:
+            R = PolynomialRing(base_ring, name, sparse=sparse)
 
-        R = PolynomialRing(base_ring, name, sparse=sparse)
         self.__poly_ring = R
         self.__is_sparse = sparse
         if default_prec is None:

@@ -4122,7 +4122,7 @@ class ClusterSeed(SageObject):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += self._R(coeff_recurs(p, q, a1, a2, b, c))*self.x(0)**(b*p-a1)*self.x(1)**(c*q-a2)
-                return(ans)
+                return ans
             elif algorithm == 'by_combinatorics':
                 if b == 0:
                     S = ClusterSeed([['A', 1], ['A', 1]])
@@ -4153,7 +4153,7 @@ class ClusterSeed(SageObject):
                     for q in range(max(a1, 0)+1):
                         if p != 0 or q != 0:
                             ans += coeff_recurs(p, q, a1, a2, b, c)
-                return(ans)
+                return ans
             else:
                 raise ValueError("The third input should be 'by_recursion', "
                                  "'by_combinatorics', or 'just_numbers'.")

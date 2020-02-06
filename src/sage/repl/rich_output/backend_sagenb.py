@@ -61,7 +61,7 @@ Tables are typeset as html in SageNB::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import io
@@ -70,7 +70,6 @@ import stat
 from sage.misc.cachefunc import cached_method
 from sage.misc.html import html
 from sage.misc.temporary_file import graphics_filename
-from sage.doctest import DOCTEST_MODE
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
 from sage.repl.rich_output.output_video import OutputVideoBase

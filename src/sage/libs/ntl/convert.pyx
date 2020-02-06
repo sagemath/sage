@@ -1,6 +1,6 @@
 # distutils: depends = NTL/ZZ.h
 """
-Conversion between NTL's ``ZZ`` and various other types.
+Conversion between NTL's ``ZZ`` and various other types
 """
 
 #*****************************************************************************

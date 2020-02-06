@@ -32,12 +32,12 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
-from sage.functions.other import sqrt
 from sage.ext.fast_callable import fast_callable
 from sage.calculus.all import symbolic_expression
 from sage.calculus.var import var
 from sage.rings.fraction_field import is_FractionField
 from sage.categories.function_fields import FunctionFields
+from math import sqrt
 
 def _color_to_RGB(color):
     """
@@ -470,10 +470,14 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     cdef:
         M, pixel, color_list
         long i, j, col, row, level, color_value, iteration
-        double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
+        double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y, escape_radius_squared
 
     # Make sure image_width is positive
     image_width = abs(image_width)
+
+    # Calculate the escape radius. (Actually, we store the square of this radius.) If any
+    # iterate is farther from the origin than this distance, then the orbit goes to infinity.
+    escape_radius_squared = ((1.0 + sqrt(1.0 + 4.0*sqrt(c_real**2 + c_imag**2))))**2/4.0
 
     # Initialize an image to the color black and access the pixels
     J = Image("RGB", (pixel_count,pixel_count), 'black')
@@ -504,10 +508,11 @@ cpdef fast_julia_plot(double c_real, double c_imag,
 
             # We compute the orbit of each pixel under the map Q(z) = z^2 + c
             # until we either reach the maximum number of iterations
-            # or find a point in the orbit with modulus greater than 2
+            # or find a point in the orbit with modulus greater than
+            # the escape radius.
             new_x, new_y = x_coor, y_coor
             iteration = 0
-            while (new_x**2 + new_y**2 <= 4.0 and iteration < max_iteration):
+            while (new_x**2 + new_y**2 <= escape_radius_squared and iteration < max_iteration):
                 sig_check()
                 new_x, new_y = new_x**2 - new_y**2 + c_real, \
                  2*new_x*new_y + c_imag

@@ -5,10 +5,8 @@ from __future__ import division
 import struct
 import datetime
 import io
-import re
 import os
 import os.path
-import stat
 import sys
 
 if sys.platform == 'darwin':
@@ -19,7 +17,7 @@ try:
 except NameError:
     long = int
 
-from .utils import *
+from .utils import mac_epoch
     
 ALIAS_KIND_FILE = 0
 ALIAS_KIND_FOLDER = 1

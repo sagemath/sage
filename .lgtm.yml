@@ -2,6 +2,15 @@ queries:
   - exclude: py/call/wrong-named-class-argument
   - exclude: py/call/wrong-number-class-arguments
   - exclude: py/unsafe-cyclic-import
+path_classifiers:
+  imports_only:
+    - "**/all.py"
+    - "**/*catalog*.py"
+    - "**/species/library.py"
+    - "**/matroids/advanced.py"
+    - "**/categories/basic.py"
+    - "**/interacts/geometry.py"
+    - "**/combinat/ribbon.py"
 extraction:
   python:
     python_setup:

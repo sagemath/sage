@@ -27,7 +27,6 @@ import random
 import doctest
 from Cython.Utils import is_package_dir
 from sage.cpython.string import bytes_to_str
-from sage.repl.preparse import preparse
 from sage.repl.load import load
 from sage.misc.lazy_attribute import lazy_attribute
 from .parsing import SageDocTestParser
@@ -109,6 +108,7 @@ def get_basename(path):
     if os.path.split(path)[1] == '__init__.py':
         fully_qualified_path = fully_qualified_path[:-9]
     return fully_qualified_path.replace(os.path.sep, '.')
+
 
 class DocTestSource(object):
     """
@@ -278,7 +278,6 @@ class DocTestSource(object):
         self.linking = False
         doctests = []
         in_docstring = False
-        tab_found = False
         unparsed_doc = False
         doc = []
         start = None

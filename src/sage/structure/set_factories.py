@@ -1037,7 +1037,7 @@ class ParentWithSetFactory(Parent):
             sage: S._test_subset()
         """
         tester = self._tester(**options)
-        tester.assertTrue(self.subset() is self)
+        tester.assertIs(self.subset(), self)
 
     @abstract_method
     def check_element(self, x, check):

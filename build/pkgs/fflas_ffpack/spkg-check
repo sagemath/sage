@@ -1,0 +1,7 @@
+cd src
+sdh_make check
+
+if [ $? -ne 0 ]; then
+	cat tests/test-suite.log
+	exit 1
+fi

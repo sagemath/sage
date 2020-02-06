@@ -1,9 +1,9 @@
 r"""
-Elements of a semimonomial transformation group.
+Elements of a semimonomial transformation group
 
 The semimonomial transformation group of degree `n` over a ring `R` is
 the semidirect product of the monomial transformation group of degree `n`
-(also known as the complete monomial group over the group of units 
+(also known as the complete monomial group over the group of units
 `R^{\times}` of `R`) and the group of ring automorphisms.
 
 The multiplication of two elements `(\phi, \pi, \alpha)(\psi, \sigma, \beta)`
@@ -12,7 +12,7 @@ with
     - `\phi, \psi \in  {R^{\times}}^n`
 
     - `\pi, \sigma \in S_n` (with the multiplication `\pi\sigma`
-      done from left to right (like in GAP) -- 
+      done from left to right (like in GAP) --
       that is, `(\pi\sigma)(i) = \sigma(\pi(i))` for all `i`.)
 
     - `\alpha, \beta \in Aut(R)`
@@ -37,7 +37,7 @@ The parent is
 AUTHORS:
 
 - Thomas Feulner (2012-11-15): initial version
-- Thomas Feulner (2013-12-27): :trac:`15576` dissolve dependency on 
+- Thomas Feulner (2013-12-27): :trac:`15576` dissolve dependency on
     Permutations.options.mul
 
 EXAMPLES::
@@ -175,18 +175,18 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
     cpdef _mul_(left, _right):
         r"""
         Multiplication of elements.
-        
-        The multiplication of two elements `(\phi, \pi, \alpha)` and 
+
+        The multiplication of two elements `(\phi, \pi, \alpha)` and
         `(\psi, \sigma, \beta)` with
-        
+
             - `\phi, \psi \in  {R^{\times}}^n`
-        
+
             - `\pi, \sigma \in S_n`
-        
+
             - `\alpha, \beta \in Aut(R)`
-        
+
         is defined by:
-        
+
         .. MATH::
 
             (\phi, \pi, \alpha)(\psi, \sigma, \beta) =
@@ -198,7 +198,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
         of vectors is `0`-based here, so `\psi = (\psi_0, \psi_1, \ldots, \psi_{n-1})`.)
         Furthermore, the multiplication `\pi\sigma` is done from left to right
         (like in GAP) -- that is, `(\pi\sigma)(i) = \sigma(\pi(i))` for all `i`.
-        
+
         EXAMPLES::
 
             sage: F.<a> = GF(9)

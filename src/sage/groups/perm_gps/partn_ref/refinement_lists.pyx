@@ -1,5 +1,5 @@
 """
-Partition backtrack functions for lists -- a simple example of using partn_ref.
+Partition backtrack functions for lists -- a simple example of using partn_ref
 
 EXAMPLES::
 

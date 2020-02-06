@@ -89,7 +89,6 @@ from .constructor import Polyhedron
 from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.associahedron import Associahedron
 
-
 def zero_sum_projection(d, base_ring=RDF):
     r"""
     Return a matrix corresponding to the projection on the orthogonal of
@@ -311,7 +310,7 @@ class Polytopes():
         TESTS::
 
             sage: b4norm = polytopes.Birkhoff_polytope(4,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(b4norm).run(skip='_test_pickling')                # optional - pynormaliz
+            sage: TestSuite(b4norm).run()                                     # optional - pynormaliz
         """
         from itertools import permutations
         verts = []
@@ -385,7 +384,7 @@ class Polytopes():
         TESTS::
 
             sage: s6norm = polytopes.simplex(6,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(s6norm).run(skip='_test_pickling')      # optional - pynormaliz
+            sage: TestSuite(s6norm).run()                           # optional - pynormaliz
         """
         verts = list((ZZ**(dim + 1)).basis())
         if project:
@@ -688,7 +687,7 @@ class Polytopes():
         TESTS::
 
             sage: rd_norm = polytopes.rhombic_dodecahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(rd_norm).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(rd_norm).run()                                      # optional - pynormaliz
         """
         v = [[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]]
         v.extend((itertools.product([1, -1], repeat=3)))
@@ -735,7 +734,7 @@ class Polytopes():
         TESTS::
 
             sage: co_norm = polytopes.cuboctahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(co_norm).run(skip='_test_pickling')          # optional - pynormaliz
+            sage: TestSuite(co_norm).run()                               # optional - pynormaliz
         """
         v = [[0, -1, -1], [0, 1, -1], [0, -1, 1], [0, 1, 1],
              [-1, -1, 0], [1, -1, 0], [-1, 1, 0], [1, 1, 0],
@@ -844,7 +843,7 @@ class Polytopes():
         TESTS::
 
             sage: t_norm = polytopes.tetrahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(t_norm).run(skip='_test_pickling')        # optional - pynormaliz
+            sage: TestSuite(t_norm).run()                             # optional - pynormaliz
         """
         v = [[0, 0, 0], [1, 0, 1], [1, 1, 0], [0, 1, 1]]
         return Polyhedron(vertices=v, base_ring=ZZ, backend=backend)
@@ -886,7 +885,7 @@ class Polytopes():
         TESTS::
 
             sage: tt_norm = polytopes.truncated_tetrahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(tt_norm).run(skip='_test_pickling')                  # optional - pynormaliz
+            sage: TestSuite(tt_norm).run()                                       # optional - pynormaliz
         """
         v = [(3,1,1), (1,3,1), (1,1,3),
              (-3,-1,1), (-1,-3,1), (-1,-1,3),
@@ -932,7 +931,7 @@ class Polytopes():
         TESTS::
 
             sage: to_norm = polytopes.truncated_octahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(to_norm).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(to_norm).run()                                      # optional - pynormaliz
         """
         v = [(0, e, f) for e in [-1, 1] for f in [-2, 2]]
         v = [(xyz[sigma(1) - 1], xyz[sigma(2) - 1], xyz[sigma(3) - 1])
@@ -974,7 +973,7 @@ class Polytopes():
         TESTS::
 
             sage: o_norm = polytopes.octahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(o_norm).run(skip='_test_pickling')       # optional - pynormaliz
+            sage: TestSuite(o_norm).run()                            # optional - pynormaliz
         """
         v = [[0, 0, -1], [0, 0, 1], [1, 0, 0],
              [-1, 0, 0], [0, 1, 0], [0, -1, 0]]
@@ -1424,7 +1423,7 @@ class Polytopes():
         TESTS::
 
             sage: ki_norm = polytopes.Kirkman_icosahedron(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(ki_norm).run(skip='_test_pickling')                # optional - pynormaliz
+            sage: TestSuite(ki_norm).run()                                     # optional - pynormaliz
         """
         vertices = [[9, 6, 6], [-9, 6, 6], [9, -6, 6], [9, 6, -6],
                     [-9, -6, 6], [-9, 6, -6], [9, -6, -6], [-9, -6, -6],
@@ -1697,7 +1696,7 @@ class Polytopes():
         TESTS::
 
             sage: tfcell = polytopes.twenty_four_cell(backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(tfcell).run(skip='_test_pickling')             # optional - pynormaliz
+            sage: TestSuite(tfcell).run()                                  # optional - pynormaliz
         """
         q12 = QQ((1, 2))
         verts = list(itertools.product([q12, -q12], repeat=4))
@@ -2067,7 +2066,7 @@ class Polytopes():
         TESTS::
 
             sage: G321 = polytopes.Gosset_3_21(backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(G321).run(skip='_test_pickling')         # optional - pynormaliz
+            sage: TestSuite(G321).run()                              # optional - pynormaliz
         """
         from itertools import combinations
         verts = []
@@ -2107,7 +2106,7 @@ class Polytopes():
         TESTS::
 
             sage: cp = polytopes.cyclic_polytope(4,10,backend='normaliz')  # optional - pynormaliz
-            sage: TestSuite(cp).run(skip='_test_pickling')                 # optional - pynormaliz
+            sage: TestSuite(cp).run()                                      # optional - pynormaliz
         """
         verts = [[t**i for i in range(1, dim+1)] for t in range(n)]
         return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
@@ -2211,7 +2210,7 @@ class Polytopes():
         TESTS::
 
             sage: p4 = polytopes.permutahedron(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(p4).run(skip='_test_pickling')             # optional - pynormaliz
+            sage: TestSuite(p4).run()                                  # optional - pynormaliz
         """
         verts = list(itertools.permutations(range(1, n + 1)))
         if project:
@@ -2350,7 +2349,7 @@ class Polytopes():
 
         TESTS::
 
-            sage: TestSuite(perm_h3).run(skip='_test_pickling')    # optional - pynormaliz
+            sage: TestSuite(perm_h3).run()  # optional - pynormaliz
         """
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
         try:
@@ -2663,7 +2662,7 @@ class Polytopes():
         The ``'normaliz'`` is faster::
 
             sage: polytopes.one_hundred_twenty_cell(backend='normaliz')  # optional - pynormaliz
-            A 4-dimensional polyhedron in (Number Field in sqrt5 with defining 
+            A 4-dimensional polyhedron in (Number Field in sqrt5 with defining
             polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^4 defined as the convex hull of 600 vertices
 
         It is also possible to realize it using the generalized permutahedron
@@ -2715,21 +2714,36 @@ class Polytopes():
         else:
             raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
 
-    def hypercube(self, dim, backend=None):
+    def hypercube(self, dim, intervals=None, backend=None):
         r"""
-        Return a hypercube in the given dimension.
+        Return a hypercube of the given dimension.
 
-        The `d` dimensional hypercube is the convex hull of the points `(\pm 1,
-        \pm 1, \ldots, \pm 1)` in `\RR^d`. For more information see
-        the :wikipedia:`Hypercube`.
+        The ``dim``-dimensional hypercube is by default the convex hull of the
+        `2^{\text{dim}}` `\pm 1` vectors of length ``dim``. Alternatively,
+        it is the product of ``dim`` line segments given in the ``intervals``.
+        For more information see the wikipedia article :wikipedia:`Hypercube`.
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the cube.
+        - ``dim`` -- integer. The dimension of the hypercube.
+
+        - ``intervals`` -- (default = None). It takes the following
+          possible inputs:
+
+          - If ``None`` (the default), it returns the the `\pm 1`-cube of
+            dimension ``dim``.
+
+          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+
+          - a list of length ``dim``. Its elements are pairs of
+            numbers `(a,b)` with `a < b`. The cube will be the product of
+            these intervals.
 
         - ``backend`` -- the backend to use to create the polytope.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Create the `\pm 1`-hypercube of dimension 4::
 
             sage: four_cube = polytopes.hypercube(4)
             sage: four_cube.is_simple()
@@ -2741,20 +2755,71 @@ class Polytopes():
             sage: four_cube.ehrhart_polynomial()    # optional - latte_int
             16*t^4 + 32*t^3 + 24*t^2 + 8*t + 1
 
+        Return the `0/1`-hypercube of dimension 4::
+
+            sage: z_cube = polytopes.hypercube(4,intervals = 'zero_one')
+            sage: z_cube.vertices()[0]
+            A vertex at (0, 0, 0, 0)
+            sage: z_cube.is_simple()
+            True
+            sage: z_cube.base_ring()
+            Integer Ring
+            sage: z_cube.volume()
+            1
+            sage: z_cube.ehrhart_polynomial()    # optional - latte_int
+            t^4 + 4*t^3 + 6*t^2 + 4*t + 1
+
+        Return the 4-dimensional combinatorial cube that is the product of
+        [0,3]^4::
+
+            sage: t_cube = polytopes.hypercube(4, intervals = [[0,3]]*4)
+
+        Checking that t_cube is three times the previous `0/1`-cube::
+
+            sage: t_cube == 3 * z_cube
+            True
+
         TESTS::
 
             sage: fc = polytopes.hypercube(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(fc).run(skip='_test_pickling')         # optional - pynormaliz
-        """
-        return Polyhedron(vertices=list(itertools.product([1, -1], repeat=dim)), base_ring=ZZ, backend=backend)
+            sage: TestSuite(fc).run()                              # optional - pynormaliz
 
-    def cube(self, backend=None):
+        If the dimension ``dim`` is not equal to the length of intervals, an
+        error is raised::
+
+            sage: u_cube = polytopes.hypercube(2,intervals = [[0,1],[0,2],[0,3]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the dimension of the hypercube must match the number of intervals
+
+        If a string besides 'zero_one' is passed to ``intervals``, return an
+        error::
+
+            sage: v_cube = polytopes.hypercube(3,intervals = 'a_string')
+            Traceback (most recent call last):
+            ...
+            ValueError: the only allowed string is 'zero_one'
+        """
+        if intervals is None:
+            cp = list(itertools.product([-1,1], repeat=dim))
+        elif isinstance(intervals, str):
+            if intervals == 'zero_one':
+                cp = list(itertools.product([0,1], repeat=dim))
+            else:
+                raise ValueError("the only allowed string is 'zero_one'")
+        elif len(intervals) == dim:
+            cp = list(itertools.product(*intervals))
+        else:
+            raise ValueError("the dimension of the hypercube must match the number of intervals")
+        return Polyhedron(vertices=cp, backend=backend)
+
+    def cube(self, intervals=None, backend=None):
         r"""
         Return the cube.
 
         The cube is the Platonic solid that is obtained as the convex hull of
-        the points `(\pm 1, \pm 1, \pm 1)`. It generalizes into several
-        dimension into hypercubes.
+        the eight `\pm 1` vectors of length 3 (by default). Alternatively, the
+        cube is the product of three intervals from ``intervals``.
 
         .. SEEALSO::
 
@@ -2762,9 +2827,26 @@ class Polytopes():
 
         INPUT:
 
+        - ``intervals`` -- list (default=None). It takes the following
+          possible inputs:
+
+            - If the input is ``None`` (the default), returns the convex hull of
+              the eight `\pm 1` vectors of length three.
+
+            - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+
+            - a list of 3 lists of length 2. The cube will be a product of
+              these three intervals.
+
         - ``backend`` -- the backend to use to create the polytope.
 
-        EXAMPLES::
+        OUTPUT:
+
+        A cube as a polyhedron object.
+
+        EXAMPLES:
+
+        Return the `\pm 1`-cube::
 
             sage: c = polytopes.cube()
             sage: c
@@ -2775,8 +2857,21 @@ class Polytopes():
             8
             sage: c.plot()
             Graphics3d Object
+
+        Return the `0/1`-cube::
+
+            sage: cc = polytopes.cube(intervals ='zero_one')
+            sage: cc.vertices_list()
+            [[0, 0, 0],
+            [0, 0, 1],
+            [0, 1, 0],
+            [0, 1, 1],
+            [1, 0, 0],
+            [1, 0, 1],
+            [1, 1, 0],
+            [1, 1, 1]]
         """
-        return self.hypercube(3, backend=backend)
+        return self.hypercube(3, backend=backend, intervals=intervals)
 
     def cross_polytope(self, dim, backend=None):
         r"""
@@ -2804,7 +2899,7 @@ class Polytopes():
         TESTS::
 
             sage: cp = polytopes.cross_polytope(4,backend='normaliz')   # optional - pynormaliz
-            sage: TestSuite(cp).run(skip='_test_pickling')              # optional - pynormaliz
+            sage: TestSuite(cp).run()                                   # optional - pynormaliz
         """
         verts = list((ZZ**dim).basis())
         verts.extend([-v for v in verts])

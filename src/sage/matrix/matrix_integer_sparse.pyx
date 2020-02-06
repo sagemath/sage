@@ -1,5 +1,5 @@
 """
-Sparse integer matrices.
+Sparse integer matrices
 
 AUTHORS:
 

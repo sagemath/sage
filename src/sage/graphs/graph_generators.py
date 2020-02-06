@@ -18,6 +18,7 @@ build by typing ``graphs.`` in Sage and then hitting tab.
 from __future__ import print_function, absolute_import, division
 from six.moves import range
 from six import PY2
+from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
 import subprocess
 
@@ -899,7 +900,7 @@ class GraphGenerators():
 
             sage: gen = graphs.nauty_geng("4", debug=True)
             sage: print(next(gen))
-            >A geng -d0D3 n=4 e=0-6
+            >A ...geng -d0D3 n=4 e=0-6
             sage: gen = graphs.nauty_geng("4 -q", debug=True)
             sage: next(gen)
             ''
@@ -913,16 +914,16 @@ class GraphGenerators():
             ...
             ValueError: wrong format of parameter option
             sage: list(graphs.nauty_geng("-c3", debug=True))
-            ['>E Usage: geng [-cCmtfbd#D#] [-uygsnh] [-lvq] \n']
+            ['>E Usage: ...geng [-cCmtfbd#D#] [-uygsnh] [-lvq] ...
             sage: list(graphs.nauty_geng("-c 3", debug=True))
-            ['>A geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
+            ['>A ...geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
         if PY2:
             enc_kwargs = {}
         else:
             enc_kwargs = {'encoding': 'latin-1'}
 
-        sp = subprocess.Popen("geng {0}".format(options), shell=True,
+        sp = subprocess.Popen(nautyprefix+"geng {0}".format(options), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True,
                               **enc_kwargs)

@@ -154,7 +154,7 @@ def load(filename, globals, attach=False):
 
     We can load files using secure http (https)::
 
-        sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/2.8.4/sage_patchbot/util.py', globals())  # optional - internet
+        sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
     We attach a file::
 

@@ -367,7 +367,7 @@ Here we are told which of the vertices form each 2\-face:
 ::
 
     sage: [f.ambient_V_indices() for f in int34.faces(2)]
-    [(1, 3, 4), (0, 1, 3, 5), (0, 1, 2, 4, 6), (2, 3, 4, 5, 7), (2, 6, 7), (0, 5, 6, 7)]
+    [(2, 6, 7), (0, 1, 3, 5), (1, 3, 4), (0, 5, 6, 7), (0, 1, 2, 4, 6), (2, 3, 4, 5, 7)]
 
 .. end of output
 
@@ -377,10 +377,10 @@ hyperplane representations of the first face in the list.
 
 ::
 
-    sage: first2faceofint34 = P3.faces(2)[0]
+    sage: first2faceofint34 = int34.faces(2)[0]
     sage: first2faceofint34.ambient_Hrepresentation(); first2faceofint34.vertices()
-    (An inequality (1, 0, 0) x + 0 >= 0,)
-    (A vertex at (0, 0, 0), A vertex at (0, 0, 1/2), A vertex at (0, 1/2, 0))
+    (An inequality (0, 0, -1) x + 1 >= 0,)
+    (A vertex at (2/3, 2/15, 1), A vertex at (3/8, 1/10, 1), A vertex at (1/2, 3/10, 1))
 
 .. end of output
 

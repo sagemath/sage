@@ -271,10 +271,11 @@ class DiscretePseudoValuation(Morphism):
         EXAMPLES::
 
             sage: QQ.valuation(2)._test_valuation_inheritance()
-
         """
         tester = self._tester(**options)
-        tester.assertTrue(isinstance(self, InfiniteDiscretePseudoValuation) != isinstance(self, DiscreteValuation))
+        tester.assertNotEqual(isinstance(self, InfiniteDiscretePseudoValuation),
+                              isinstance(self, DiscreteValuation))
+
 
 class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
     r"""

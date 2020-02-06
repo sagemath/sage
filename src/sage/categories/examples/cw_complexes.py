@@ -1,20 +1,18 @@
 """
 Examples of CW complexes
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Element
 from sage.categories.cw_complexes import CWComplexes
-from sage.rings.integer import Integer
-from sage.rings.all import QQ
 from sage.sets.family import Family
+
 
 class Surface(UniqueRepresentation, Parent):
     r"""
@@ -161,4 +159,3 @@ class Surface(UniqueRepresentation, Parent):
             return self._dim
 
 Example = Surface
-

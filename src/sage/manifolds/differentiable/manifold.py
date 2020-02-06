@@ -3753,6 +3753,67 @@ class DifferentiableManifold(TopologicalManifold):
         vmodule = self.vector_field_module(dest_map)
         return vmodule.metric(name, signature=signature, latex_name=latex_name)
 
+    def degenerate_metric(self, name, latex_name=None, dest_map=None):
+        r"""
+        Define a degenerate (or null or lightlike) metric on the manifold.
+
+        A *degenerate metric* is a field of degenerate symmetric
+        bilinear forms acting in the tangent spaces.
+
+        See
+        :class:`~sage.manifolds.differentiable.metric.DegenerateMetric`
+        for a complete documentation.
+
+        INPUT:
+
+        - ``name`` -- name given to the metric
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
+          metric; if ``None``, it is formed from ``name``
+        - ``dest_map`` -- (default: ``None``) instance of
+          class :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
+          representing the destination map `\Phi:\ U \rightarrow M`, where `U`
+          is the current manifold; if ``None``, the identity map is assumed
+          (case of a metric tensor field *on* `U`)
+
+        OUTPUT:
+
+        - instance of
+          :class:`~sage.manifolds.differentiable.metric.DegenerateMetric`
+          representing the defined degenerate metric.
+
+        EXAMPLES:
+
+        Lightlike cone::
+
+            sage: M = Manifold(3, 'M'); X.<x,y,z> = M.chart()
+            sage: g = M.degenerate_metric('g'); g
+            degenerate metric g on the 3-dimensional differentiable manifold M
+            sage: det(g)
+            Scalar field zero on the 3-dimensional differentiable manifold M
+            sage: g.parent()
+            Free module T^(0,2)(M) of type-(0,2) tensors fields on the
+            3-dimensional differentiable manifold M
+            sage: g[0,0], g[0,1], g[0,2] = (y^2 + z^2)/(x^2 + y^2 + z^2), \
+            ....: - x*y/(x^2 + y^2 + z^2), - x*z/(x^2 + y^2 + z^2)
+            sage: g[1,1], g[1,2], g[2,2] = (x^2 + z^2)/(x^2 + y^2 + z^2), \
+            ....: - y*z/(x^2 + y^2 + z^2), (x^2 + y^2)/(x^2 + y^2 + z^2)
+            sage: g.disp()
+            g = (y^2 + z^2)/(x^2 + y^2 + z^2) dx*dx - x*y/(x^2 + y^2 + z^2) dx*dy
+            - x*z/(x^2 + y^2 + z^2) dx*dz - x*y/(x^2 + y^2 + z^2) dy*dx
+            + (x^2 + z^2)/(x^2 + y^2 + z^2) dy*dy - y*z/(x^2 + y^2 + z^2) dy*dz
+            - x*z/(x^2 + y^2 + z^2) dz*dx - y*z/(x^2 + y^2 + z^2) dz*dy
+            + (x^2 + y^2)/(x^2 + y^2 + z^2) dz*dz
+
+        .. SEEALSO::
+
+            :class:`~sage.manifolds.differentiable.metric.DegenerateMetric`
+            for more examples.
+
+        """
+        vmodule = self.vector_field_module(dest_map)
+        dim = vmodule.ambient_domain().dimension()
+        return vmodule.metric(name, signature=(0,dim-1,1), latex_name=latex_name)
+
     def riemannian_metric(self, name, latex_name=None, dest_map=None):
         r"""
         Define a Riemannian metric on the manifold.

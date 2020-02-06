@@ -852,7 +852,7 @@ And rerun the test::
       File ".../sage/categories/semigroups.py", line ..., in _test_associativity
         tester.assertTrue((x * y) * z == x * (y * z))
     ...
-    AssertionError: False is not true
+    AssertionError: '((aa)a)' != '(a(aa))'
 
 We can recover instantly the actual values of ``x``, ``y``, ``z``, that is,
 a counterexample to the associativity of our broken semigroup, using post

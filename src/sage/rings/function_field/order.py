@@ -168,7 +168,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         self._ideal_class = ideal_class # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self):
+    def is_field(self, proof=True):
         """
         Return ``False`` since orders are never fields.
 

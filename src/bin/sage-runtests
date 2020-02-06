@@ -46,8 +46,8 @@ if __name__ == "__main__":
     parser.add_option("-m", "--memlimit", type=int, default=3300,
                       help='maximum virtual memory to allow each test '
                            'process, in megabytes; no limit if zero or less, '
-                           'but tests tagged "high mem" are skipped if no limit '
-                           'is set (default: 3300 MB)')
+                           'but tests tagged "optional - memlimit" are '
+                           'skipped if no limit is set (default: 3300 MB)')
     parser.add_option("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
     parser.add_option("--logfile", metavar="FILE", help="log all output to FILE")
     parser.add_option("--sagenb", action="store_true", default=False, help="test all files from the Sage notebook sources")
@@ -128,10 +128,9 @@ if __name__ == "__main__":
 
     parser.set_usage("sage -t [options] filenames")
 
-
     options, args = parser.parse_args()
 
-    if len(args) == 0 and not (options.all or options.sagenb or options.new):
+    if not args and not (options.all or options.sagenb or options.new):
         parser.print_help()
         sys.exit(2)
 
@@ -145,7 +144,7 @@ if __name__ == "__main__":
 
     # Python's resource module only supports limits up to sys.maxsize,
     # even if the OS does support higher limits.
-    if memlimit > 0 and memlimit <= sys.maxsize:
+    if 0 < memlimit <= sys.maxsize:
         import resource
         lim, hard = resource.getrlimit(resource.RLIMIT_AS)
         if lim == resource.RLIM_INFINITY or lim > memlimit:

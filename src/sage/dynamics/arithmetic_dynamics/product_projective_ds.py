@@ -270,7 +270,6 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         D = int(n)
         if D < 0:
             raise TypeError("iterate number must be a nonnegative integer")
-        N = sum([E.ambient_space()[i].dimension_relative() + 1 for i in range(E.ambient_space().num_components())])
         F = list(self._polys)
         Coord_ring = E.coordinate_ring()
         if isinstance(Coord_ring, QuotientRing_generic):
@@ -285,6 +284,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
                 F = [poly(*F) for poly in F] #'square'
             D >>= 1
         return DynamicalSystem_projective(PHI, domain=self.domain())
+
 
 class DynamicalSystem_product_projective_field(DynamicalSystem_product_projective):
 

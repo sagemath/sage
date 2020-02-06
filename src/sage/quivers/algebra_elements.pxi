@@ -1,5 +1,5 @@
 """
-Boilerplate functions for a cython implementation of elements of path algebras.
+Boilerplate functions for a cython implementation of elements of path algebras
 
 AUTHORS:
 

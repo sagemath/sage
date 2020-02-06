@@ -1,5 +1,5 @@
 """
-Periods of modular forms.
+Periods of modular forms
 """
 
 # The following idea just occurred to me.

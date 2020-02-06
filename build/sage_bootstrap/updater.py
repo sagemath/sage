@@ -3,26 +3,23 @@
 Package Updater
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import re
 import os
 
 import logging
 log = logging.getLogger()
 
-from sage_bootstrap.env import SAGE_ROOT
 from sage_bootstrap.package import Package
 from sage_bootstrap.download import Download
-
 
 
 class ChecksumUpdater(object):

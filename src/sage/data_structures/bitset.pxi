@@ -1,5 +1,5 @@
 """
-A fast bitset datatype in Cython.
+A fast bitset datatype in Cython
 
 Operations between bitsets are only guaranteed to work if the bitsets
 have the same size, with the exception of ``bitset_realloc``.  Similarly, you

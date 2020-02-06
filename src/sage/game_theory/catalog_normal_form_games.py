@@ -1,5 +1,5 @@
 r"""
-A catalog of normal form games.
+A catalog of normal form games
 
 This allows us to construct common games directly::
 

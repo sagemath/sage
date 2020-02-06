@@ -215,7 +215,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
     It is possible to change the prefix used to display the basis
     elements using the method
     :meth:`~sage.structure.indexed_generators.IndexedGenerators.print_options`.
-    Say that for instance one wanted to display the 
+    Say that for instance one wanted to display the
     :class:`~NonCommutativeSymmetricFunctions.Complete` basis as having
     a prefix ``H`` instead of the default ``S``::
 
@@ -319,7 +319,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
     .. MATH::
 
-        \Phi^I = \sum_{J \geq I} (-1)^{\ell(J)-\ell(I)} 
+        \Phi^I = \sum_{J \geq I} (-1)^{\ell(J)-\ell(I)}
         \frac{\prod_i I_i}{\ell(J,I)} S^J
 
     where the coefficients `sp(J,I)` and `\ell(J,I)` are coefficients in the
@@ -421,17 +421,25 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         ribbon = self.ribbon()
 
         # complete to ribbon, and back
-        complete  .module_morphism(ribbon.sum_of_fatter_compositions,               codomain=ribbon    ).register_as_coercion()
-        ribbon    .module_morphism(complete.alternating_sum_of_fatter_compositions, codomain=complete  ).register_as_coercion()
+        complete.module_morphism(ribbon.sum_of_fatter_compositions,
+                                 codomain=ribbon).register_as_coercion()
+        ribbon.module_morphism(complete.alternating_sum_of_fatter_compositions,
+                               codomain=complete).register_as_coercion()
 
-        complete  .algebra_morphism(elementary.alternating_sum_of_compositions,     codomain=elementary).register_as_coercion()
-        elementary.algebra_morphism(complete.alternating_sum_of_compositions,       codomain=complete  ).register_as_coercion()
+        complete.algebra_morphism(elementary.alternating_sum_of_compositions,
+                                  codomain=elementary).register_as_coercion()
+        elementary.algebra_morphism(complete.alternating_sum_of_compositions,
+                                    codomain=complete).register_as_coercion()
 
-        complete  .algebra_morphism(Psi._from_complete_on_generators,               codomain=Psi       ).register_as_coercion()
-        Psi       .algebra_morphism(Psi._to_complete_on_generators,                 codomain=complete  ).register_as_coercion()
+        complete.algebra_morphism(Psi._from_complete_on_generators,
+                                  codomain=Psi).register_as_coercion()
+        Psi.algebra_morphism(Psi._to_complete_on_generators,
+                             codomain=complete).register_as_coercion()
 
-        complete  .algebra_morphism(Phi._from_complete_on_generators,               codomain=Phi       ).register_as_coercion()
-        Phi       .algebra_morphism(Phi._to_complete_on_generators,                 codomain=complete  ).register_as_coercion()
+        complete.algebra_morphism(Phi._from_complete_on_generators,
+                                  codomain=Phi).register_as_coercion()
+        Phi.algebra_morphism(Phi._to_complete_on_generators,
+                             codomain=complete).register_as_coercion()
 
     def _repr_(self): # could be taken care of by the category
         r"""
@@ -441,7 +449,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             sage: N._repr_()
             'Non-Commutative Symmetric Functions over the Integer Ring'
         """
-        return "Non-Commutative Symmetric Functions over the %s"%self.base_ring()
+        return "Non-Commutative Symmetric Functions over the %s" % self.base_ring()
 
     def a_realization(self):
         r"""
@@ -581,60 +589,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 on_basis = self.to_symmetric_function_on_basis
                 codom = on_basis([]).parent()
                 return self.module_morphism(on_basis, codomain=codom)
-
-            def to_ncsym_on_basis(self, I):
-                r"""
-                The image of the basis element indexed by ``I`` under
-                the map to `NCSym`.
-
-                This function is deprecated. Use the ``to_ncsym`` on the
-                corresponding element.
-
-                EXAMPLES::
-
-                    sage: R = NonCommutativeSymmetricFunctions(QQ).R()
-                    sage: R.to_ncsym_on_basis(Composition([2,1]))
-                    doctest:warning
-                    ...
-                    DeprecationWarning: This method is deprecated.
-                     Use to_ncsym on the corresponding element.
-                    See https://trac.sagemath.org/25141 for details.
-                    1/3*m{{1}, {2}, {3}} + 1/6*m{{1}, {2, 3}}
-                     + 2/3*m{{1, 2}, {3}} + 1/6*m{{1, 3}, {2}}
-                """
-                from sage.misc.superseded import deprecation
-                deprecation(25141, "This method is deprecated."
-                                   " Use to_ncsym on the corresponding element.")
-                return self.monomial(I).to_ncsym()
-
-            @lazy_attribute
-            def to_ncsym(self):
-                """
-                The image of the basis element indexed by ``I`` under
-                the map to `NCSym`.
-
-                This function is deprecated. Use the ``to_ncsym`` on the
-                corresponding element.
-
-                EXAMPLES::
-
-                    sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()
-                    sage: R.to_ncsym
-                    doctest:warning
-                    ...
-                    DeprecationWarning: This method is deprecated.
-                     Use to_ncsym on the corresponding element.
-                    See https://trac.sagemath.org/25141 for details.
-                    Generic morphism:
-                      From: Non-Commutative Symmetric Functions over the Rational Field in the Ribbon basis
-                      To:   Symmetric functions in non-commuting variables over the Rational Field in the monomial basis
-                """
-                from sage.misc.superseded import deprecation
-                deprecation(25141, "This method is deprecated."
-                                   " Use to_ncsym on the corresponding element.")
-                from sage.combinat.ncsym.ncsym import SymmetricFunctionsNonCommutingVariables
-                codomain = SymmetricFunctionsNonCommutingVariables(self.base_ring()).monomial()
-                return self.module_morphism(self.to_ncsym_on_basis, codomain=codomain)
 
             def immaculate_function(self, xs):
                 r"""
@@ -1842,7 +1796,9 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 def on_basis(I):
                     if not I._list:
                         return m.one()
-                    c_num = lambda A: R(prod(factorial(i) for i in A.shape()))
+
+                    def c_num(A):
+                        return R(prod(factorial(i) for i in A.shape()))
                     return prod(m.sum_of_terms([(SP(A), R(c_num(A) / factorial(n)))
                                                 for A in SetPartitions(n)], distinct=True)
                                 for n in I)
@@ -1903,6 +1859,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 P = self.parent()
                 S = P.realization_of().complete()
                 F = FreeQuasisymmetricFunctions(P.base_ring()).F()
+
                 def on_basis(I):
                     return F.prod(F[Permutations(i)(range(1, i+1))] for i in I)
                 return F.linear_combination((on_basis(I), coeff)
@@ -2028,6 +1985,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 from sage.algebras.free_algebra import FreeAlgebra
                 P = FreeAlgebra(NSym.base_ring(), n, alphabet)
                 x = P.gens()
+
                 def image_of_L_k(k, i):
                     # Return the expansion of `L_k` (for `k` nonnegative
                     # integer) in the first `i` of the variables.
@@ -2036,10 +1994,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     if k > i:
                         return P.zero()
                     return x[i-1] * image_of_L_k(k - 1, i - 1) + image_of_L_k(k, i - 1)
+
                 def on_basis(comp):
                     return P.prod((image_of_L_k(k, n) for k in comp))
                 return L._apply_module_morphism(L(self), on_basis, codomain=P)
-
 
     class MultiplicativeBases(Category_realization_of_parent):
         """
@@ -2412,9 +2370,11 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 """
                 if i < 1:
                     raise ValueError("Not a positive integer: {}".format(i))
-                def C(i): return self._indices([i]) if i else self._indices([])
+
+                def C(i):
+                    return self._indices([i]) if i else self._indices([])
                 T = self.tensor_square()
-                return T.sum_of_monomials( (C(j), C(i-j)) for j in range(0,i+1) )
+                return T.sum_of_monomials( (C(j), C(i-j)) for j in range(i+1) )
 
     class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
         r"""
@@ -2862,6 +2822,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 """
                 parent = self.parent()
                 C = parent._indices
+
                 def ribbon_mapper(I, coeff):
                     # return \mathbf{V}_n ( coeff * R_I ) as pair
                     # (composition, coefficient)
@@ -2869,7 +2830,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     m = M // n
                     J = I.meet([n] * m)
                     Jn = C([j // n for j in J])
-                    if (len(I) - len(J)) % 2 == 1:
+                    if (len(I) - len(J)) % 2:
                         return (Jn, - coeff)
                     else:
                         return (Jn, coeff)
@@ -4918,7 +4879,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         r"""
         The basis of NCSF dual to the Quasisymmetric-Schur basis of QSym.
 
-        The 
+        The
         :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Quasisymmetric_Schur`
         functions are defined in [QSCHUR]_ (see also
         Definition 5.1.1 of [LMvW13]_).  The dual basis in the algebra
@@ -5547,7 +5508,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         .. MATH::
 
             \sigma_1 = \sum_{n \geq 0} S_n .
-            
+
         It can be recursively computed by the formula
 
         .. MATH::
@@ -5704,4 +5665,3 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             return self._from_dict({J: coeffs[i] for i,J in enumerate(C)})
 
     ZR = Zassenhaus_right
-

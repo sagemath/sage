@@ -379,7 +379,7 @@ class ComplexLazyField_class(LazyField):
             sage: CLF._test_prod()
             Traceback (most recent call last):
             ...
-            AssertionError: False is not true
+            AssertionError: -1 != ...
 
         is due to (acceptable?) numerical noise::
 
@@ -393,7 +393,7 @@ class ComplexLazyField_class(LazyField):
     """
     def __init__(self):
         """
-        This lazy field doesn't evaluate its elements until they are cast into
+        This lazy field does not evaluate its elements until they are cast into
         a field of fixed precision.
 
         EXAMPLES::

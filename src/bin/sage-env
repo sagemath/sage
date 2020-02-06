@@ -284,6 +284,7 @@ fi
 export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
 export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
+export SAGE_PKGCONFIG="$SAGE_LOCAL/lib/pkgconfig"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
@@ -500,7 +501,7 @@ fi
 
 # Set AS to assembler used by $CC ("as" by default)
 if [ "$AS" = "" ]; then
-    CC_as=`$CC -print-file-name=as 2>/dev/null`
+    CC_as=`$CC -print-prog-name=as 2>/dev/null`
     if command -v $CC_as >/dev/null 2>/dev/null; then
         AS="$CC_as"
     fi
@@ -512,7 +513,7 @@ export AS
 
 # Set LD to linker used by $CC ("ld" by default)
 if [ "$LD" = "" ]; then
-    CC_ld=`$CC -print-file-name=ld 2>/dev/null`
+    CC_ld=`$CC -print-prog-name=ld 2>/dev/null`
     if command -v $CC_ld >/dev/null 2>/dev/null; then
         LD="$CC_ld"
     fi

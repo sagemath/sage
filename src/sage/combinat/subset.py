@@ -543,6 +543,23 @@ class Subsets_s(Parent):
         """
         return self.unrank(self.cardinality() // 2)
 
+    def lattice(self):
+        r"""
+        Return the lattice of subsets ordered by containment.
+
+        EXAMPLES::
+
+            sage: X = Subsets([7,8,9])
+            sage: X.lattice()
+            Finite lattice containing 8 elements
+            sage: Y = Subsets(0)
+            sage: Y.lattice()
+            Finite lattice containing 1 elements
+
+        """
+        S = self.underlying_set()
+        return S.subsets_lattice()
+
 class Subsets_sk(Subsets_s):
     r"""
     Subsets of fixed size of a set.

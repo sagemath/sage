@@ -7,6 +7,7 @@ AUTHORS:
 - David Kohel & Gabriele Nebe (2007): First created
 - Simon Brandhorst (2018): various bugfixes and printing
 - Simon Brandhorst (2018): enumeration of genera
+- Simon Brandhorst (2020): genus representative
 """
 # ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -26,6 +27,8 @@ from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import RationalField, QQ
 from sage.rings.integer import Integer
+from sage.interfaces.gp import gp
+from sage.libs.pari import pari
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from copy import copy, deepcopy
 from sage.misc.misc import verbose
@@ -111,7 +114,8 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
             genera.append(G)
     # render the output deterministic for testing
     genera.sort(key=lambda x: [s.symbol_tuple_list() for s in x.local_symbols()])
-    return(genera)
+    return genera
+
 
 def _local_genera(p, rank, det_val, max_scale, even):
     r"""
@@ -210,7 +214,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
                     # each equivalence class
                     if not g1 in symbols:
                         symbols.append(g1)
-    return(symbols)
+    return symbols
 
 
 def _blocks(b, even_only=False):
@@ -2242,6 +2246,7 @@ class GenusSymbol_global_ring(object):
         return p + n
 
     dim = dimension
+    rank = dimension
 
     def discriminant_form(self):
         r"""
@@ -2275,6 +2280,139 @@ class GenusSymbol_global_ring(object):
                 qL.append(_gram_from_jordan_block(p, block, True))
         q = matrix.block_diagonal(qL)
         return TorsionQuadraticForm(q)
+
+    def rational_representative(self):
+        r"""
+        Return a representative of the rational
+        bilinear form defined by this genus.
+
+        OUTPUT:
+
+        A diagonal_matrix.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.genera.genus import genera
+            sage: G = genera((8,0),1)[0]
+            sage: G
+            Genus of
+            None
+            Signature:  (8, 0)
+            Genus symbol at 2:    1^8
+            sage: G.rational_representative()
+            [1 0 0 0 0 0 0 0]
+            [0 1 0 0 0 0 0 0]
+            [0 0 1 0 0 0 0 0]
+            [0 0 0 1 0 0 0 0]
+            [0 0 0 0 1 0 0 0]
+            [0 0 0 0 0 2 0 0]
+            [0 0 0 0 0 0 1 0]
+            [0 0 0 0 0 0 0 2]
+        """
+        from sage.quadratic_forms.all import QuadraticForm, quadratic_form_from_invariants
+        sminus = self.signature_pair_of_matrix()[1]
+        det = self.determinant()
+        m = self.rank()
+        P = []
+        for sym in self._local_symbols:
+            p = sym._prime
+            # it is important to use the definition of Cassels here!
+            if QuadraticForm(QQ,2*sym.gram_matrix()).hasse_invariant(p) == -1:
+                P.append(p)
+        q = quadratic_form_from_invariants(F=QQ, rk=m, det=det,
+                                           P=P, sminus=sminus)
+        return q.Hessian_matrix()/2
+
+    def _compute_representative(self, LLL=True):
+        r"""
+        Compute a representative of this genus and cache it.
+
+        INPUT:
+
+        - ``LLL`` -- boolean (default: ``True``); whether or not to LLL reduce the result
+
+        TESTS::
+
+            sage: from sage.quadratic_forms.genera.genus import genera
+            sage: for det in range(1,5):
+            ....:     G = genera((4,0), det, even=False)
+            ....:     assert all(g==Genus(g.representative()) for g in G)
+            sage: for det in range(1,5):
+            ....:     G = genera((1,2), det, even=False)
+            ....:     assert all(g==Genus(g.representative()) for g in G)
+            sage: for det in range(1,9): # long time (8s, 2020)
+            ....:     G = genera((2,2), det, even=False) # long time
+            ....:     assert all(g==Genus(g.representative()) for g in G) # long time
+        """
+        from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice, local_modification
+        even = self.is_even()
+        q = self.rational_representative()
+        n = q.nrows()
+        # the associated quadratic form xGx.T/2 should be integral
+        L = IntegralLattice(4*q).maximal_overlattice()
+        p = 2
+        sym2 = self.local_symbols()[0]
+        if not self.is_even():
+            # the quadratic form of xGx.T/2 must be integral
+            # for things to work
+            # solve this by multiplying the basis by 2
+            L = local_modification(L, 4*sym2.gram_matrix(), p)
+            L = L.overlattice(L.basis_matrix()/2)
+        else:
+            L = local_modification(L, sym2.gram_matrix(), p)
+        for sym in self._local_symbols[1:]:
+            p = sym.prime()
+            L = local_modification(L, sym.gram_matrix(), p)
+        L = L.gram_matrix().change_ring(ZZ)
+        if LLL:
+            sig = self.signature_pair_of_matrix()
+            if sig[0]*sig[1] != 0:
+                from sage.env import SAGE_EXTCODE
+                m = pari(L)
+                gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
+                m = gp.eval('qflllgram_indefgoon(%s)'%m)
+                # convert the output string to sage
+                L = pari(m).sage()[0]
+            elif sig[1] != 0:
+                U = -(-L).LLL_gram()
+                L = U.T * L * U
+            else:
+                U = L.LLL_gram()
+                L = U.T * L * U
+        # confirm the computation
+        assert Genus(L) == self
+        L.set_immutable()
+        self._representative = L
+
+    def representative(self):
+        r"""
+        Return a representative in this genus.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.genera.genus import genera
+            sage: g = genera([1,3],24)[0]
+            sage: g
+            Genus of
+            None
+            Signature:  (1, 3)
+            Genus symbol at 2:    [1^-1 2^3]_0
+            Genus symbol at 3:     1^3 3^1
+
+        A representative of ``g`` is not known yet.
+        Let us trigger its computation:
+
+            sage: g.representative()
+            [ 0  0  0  2]
+            [ 0 -1  0  0]
+            [ 0  0 -6  0]
+            [ 2  0  0  0]
+            sage: g == Genus(g.representative())
+            True
+        """
+        if self._representative is None:
+            self._compute_representative()
+        return self._representative
 
     def local_symbols(self):
         r"""

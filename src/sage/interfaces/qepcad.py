@@ -612,6 +612,7 @@ import pexpect
 import re
 import sys
 
+from sage.cpython.string import bytes_to_str
 from sage.misc.flatten import flatten
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
@@ -1067,7 +1068,7 @@ class Qepcad:
         if match == pexpect.EOF:
             return 'EXITED'
         else:
-            return match.group(1)
+            return bytes_to_str(match.group(1))
 
     def _parse_answer_stats(self):
         r"""
@@ -1089,7 +1090,7 @@ class Qepcad:
         """
         if self.phase() != 'EXITED':
             raise ValueError("QEPCAD is not finished yet")
-        final = self._qex.expect().before
+        final = bytes_to_str(self._qex.expect().before)
         match = re.search('\nAn equivalent quantifier-free formula:(.*)\n=+  The End  =+\r\n\r\n(.*)$', final, re.DOTALL)
 
         if match:
@@ -1717,7 +1718,7 @@ def qepcad_banner():
     """
     qex = Qepcad_expect()
     qex._start()
-    banner = qex.expect().before
+    banner = bytes_to_str(qex.expect().before)
     return AsciiArtString(banner)
 
 def qepcad_version():

@@ -18,8 +18,8 @@ of commonly used git commands that you can print out and leave on your
 desk.  We have some :ref:`recommended references and tutorials
 <section-git-tutorials>` as well.
 
-You can alternatively fork and create a pull request at
-`github <http://github.com/sagemath/sage>`_ which will automatically fetch
+You can alternatively fork and create a merge request at
+`GitLab <https://gitlab.com/sagemath/sage>`_ which will automatically fetch
 your code and open a ticket on our trac server.
 
 

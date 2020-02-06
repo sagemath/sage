@@ -1,5 +1,5 @@
 """
-Utilities for subprocess management.
+Utilities for subprocess management
 """
 
 #*****************************************************************************

@@ -246,7 +246,8 @@ class PieriFactors(UniqueRepresentation, Parent):
             sage: WeylGroup(['B',5,1]).pieri_factors()._test_maximal_elements()
         """
         tester = self._tester(**options)
-        tester.assertTrue(set(self.maximal_elements()) == set(self.maximal_elements_combinatorial()))
+        tester.assertEqual(set(self.maximal_elements()),
+                           set(self.maximal_elements_combinatorial()))
 
     @cached_method
     def max_length(self):

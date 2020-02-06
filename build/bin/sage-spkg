@@ -349,10 +349,72 @@ fi
 if [ $INFO -ne 0 -a "$USE_LOCAL_SCRIPTS" = yes ]; then
     cat "$PKG_SCRIPTS/SPKG.txt"
     if [ -r "$PKG_SCRIPTS/type" ] ; then
+        echo
         echo "== Type =="
         echo
         cat "$PKG_SCRIPTS/type"
+        echo
     fi
+    echo "== Equivalent System Packages =="
+    echo
+    PKG_DISTROS="$PKG_SCRIPTS"/distros
+    for system_package_file in "$PKG_DISTROS"/debian*.txt "$PKG_DISTROS"/fedora*.txt "$PKG_DISTROS"/*conda*.txt "$PKG_DISTROS"/homebrew*.txt  "$PKG_DISTROS"/arch*.txt ; do
+        if [ -f "$system_package_file" ]; then
+            system=$(basename "$system_package_file" .txt)
+            system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
+            case $system in
+                debian)
+                    # Generic
+                    echo "Debian/Ubuntu:"
+                    echo "  sudo apt-get install $system_packages"
+                    ;;
+                debian*|ubuntu*)
+                    # Specific distribution
+                    echo "$system:"
+                    echo "  sudo apt-get install $system_packages"
+                    ;;
+                fedora)
+                    # Generic
+                    echo "Fedora/Redhat/CentOS:"
+                    echo "  sudo yum install $system_packages"
+                    ;;
+                fedora*|redhat*|centos*)
+                    # Specific distribution
+                    echo "$system:"
+                    echo "  sudo yum install $system_packages"
+                    ;;
+                arch*)
+                    echo "$system:"
+                    echo "  sudo pacman -S $system_packages"
+                    ;;
+                *conda*)
+                    echo "$system:"
+                    echo "  conda install $system_packages"
+                    ;;
+                homebrew*)
+                    echo "$system:"
+                    echo "  brew install $system_packages"
+                    ;;
+                *)
+                    echo "$system:"
+                    echo "  install the following packages: $system_packages"
+                    ;;
+            esac
+        fi
+    done
+    if [ -z "$system" ]; then
+        echo "(none known)"
+    else
+        echo
+        if [ -f "$PKG_SCRIPTS"/spkg-configure.m4 ]; then
+            echo "If the system package is installed, ./configure will check whether it can be used."
+        else
+            echo "However, these system packages will not be used for building Sage"
+            echo "because spkg-configure.m4 has not been written for this package;"
+            echo "see https://trac.sagemath.org/ticket/27330"
+        fi
+    fi
+    echo
     exit 0
 fi
 

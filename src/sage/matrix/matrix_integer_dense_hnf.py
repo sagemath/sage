@@ -1,5 +1,5 @@
 """
-Modular algorithm to compute Hermite normal forms of integer matrices.
+Modular algorithm to compute Hermite normal forms of integer matrices
 
 AUTHORS:
 
@@ -1084,7 +1084,7 @@ def hnf(A, include_zero_rows=True, proof=True):
     """
     if A.nrows() <= 1:
         np = A.nonzero_positions()
-        if len(np) == 0:
+        if not np:
             pivots = []
             if not include_zero_rows:
                 A = A.new_matrix(0)  # 0 rows

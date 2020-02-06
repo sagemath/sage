@@ -1,6 +1,5 @@
 """
-Dense matrices using a NumPy backend.
-
+Dense matrices using a NumPy backend
 
 This serves as a base class for dense matrices over
 Real Double Field and Complex Double Field.

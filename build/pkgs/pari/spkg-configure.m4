@@ -30,7 +30,7 @@ SAGE_SPKG_CONFIGURE([pari], [
         if test x$gp_gal_check = x16; then
             AC_MSG_RESULT([yes])
         else
-            AC_MSG_RESULT([no; cannot use system pari/GP without gapdata package])
+            AC_MSG_RESULT([no; cannot use system pari/GP without galdata package])
             AC_MSG_NOTICE([Install galdata package and reconfigure.])
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes

@@ -39,7 +39,11 @@ png_library_dirs = png_pc['library_dirs']
 png_include_dirs = png_pc['include_dirs']
 
 # zlib
-zlib_pc = pkgconfig.parse('zlib')
+try:
+    zlib_pc = pkgconfig.parse('zlib')
+except pkgconfig.PackageNotFoundError:
+    from collections import defaultdict
+    zlib_pc = defaultdict(list, {'libraries': ['z']})
 zlib_libs = zlib_pc['libraries']
 zlib_library_dirs = zlib_pc['library_dirs']
 zlib_include_dirs = zlib_pc['include_dirs']
@@ -421,6 +425,9 @@ ext_modules = [
               sources = ['sage/graphs/graph_decompositions/tdlib.pyx'],
               language="c++",
               package = 'tdlib'),
+
+    Extension('sage.graphs.graph_decompositions.clique_separators',
+              sources = ['sage/graphs/graph_decompositions/clique_separators.pyx']),
 
     Extension('sage.graphs.spanning_tree',
               sources = ['sage/graphs/spanning_tree.pyx']),
@@ -927,6 +934,9 @@ ext_modules = [
     Extension('sage.modular.arithgroup.arithgroup_element',
               sources = ['sage/modular/arithgroup/arithgroup_element.pyx']),
 
+    Extension('sage.modular.hypergeometric_misc',
+              sources = ['sage/modular/hypergeometric_misc.pyx']),
+
     Extension('sage.modular.modform.eis_series_cython',
               sources = ['sage/modular/modform/eis_series_cython.pyx']),
 
@@ -1056,27 +1066,6 @@ ext_modules = [
     Extension("sage.numerical.backends.interactivelp_backend",
               ["sage/numerical/backends/interactivelp_backend.pyx"]),
 
-    OptionalExtension("sage.numerical.backends.gurobi_backend",
-              ["sage/numerical/backends/gurobi_backend.pyx"],
-              libraries = ["gurobi"],
-              condition = os.path.isfile(SAGE_INC + "/gurobi_c.h") and
-                  os.path.isfile(SAGE_LOCAL + "/lib/libgurobi.so")),
-
-    OptionalExtension("sage.numerical.backends.cplex_backend",
-              ["sage/numerical/backends/cplex_backend.pyx"],
-              libraries = ["cplex"],
-              condition = os.path.isfile(SAGE_INC + "/cplex.h") and
-                  os.path.isfile(SAGE_LOCAL + "/lib/libcplex.a")),
-
-    OptionalExtension("sage.numerical.backends.coin_backend",
-              ["sage/numerical/backends/coin_backend.pyx"],
-              language = 'c++',
-              libraries = ["Cbc", "CbcSolver", "Cgl", "Clp", "CoinUtils",
-                           "OsiCbc", "OsiClp", "Osi"] + lapack_libs,
-              library_dirs = lapack_library_dirs,
-              include_dirs = lapack_include_dirs,
-              package = 'cbc'),
-
     ################################
     ##
     ## sage.plot
@@ -1203,6 +1192,9 @@ ext_modules = [
     Extension('sage.rings.tate_algebra_ideal',
               sources = ['sage/rings/tate_algebra_ideal.pyx']),
 
+    Extension('sage.rings.puiseux_series_ring_element',
+              sources = ['sage/rings/puiseux_series_ring_element.pyx']),
+
     Extension('sage.rings.rational',
               sources = ['sage/rings/rational.pyx'],
               libraries=['ntl']),
@@ -1231,11 +1223,17 @@ ext_modules = [
     Extension('sage.rings.ring',
               sources = ['sage/rings/ring.pyx']),
 
+    Extension('sage.rings.ring_extension',
+              sources = ['sage/rings/ring_extension.pyx']),
+
     Extension('sage.rings.ring_extension_element',
               sources = ['sage/rings/ring_extension_element.pyx']),
 
     Extension('sage.rings.ring_extension_morphism',
               sources = ['sage/rings/ring_extension_morphism.pyx']),
+
+    Extension('sage.rings.ring_extension_conversion',
+              sources = ['sage/rings/ring_extension_conversion.pyx']),
 
     Extension('*', ['sage/rings/convert/*.pyx']),
 
@@ -1529,6 +1527,11 @@ ext_modules = [
 
     Extension('sage.rings.polynomial.skew_polynomial_element',
               sources = ['sage/rings/polynomial/skew_polynomial_element.pyx']),
+
+    # Note that weil_polynomials includes distutils directives in order to support
+    # conditional OpenMP compilation (by uncommenting lines)
+    Extension('sage.rings.polynomial.weil.weil_polynomials',
+              sources = ['sage/rings/polynomial/weil/weil_polynomials.pyx']),
 
 
     ################################

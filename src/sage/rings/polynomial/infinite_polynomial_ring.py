@@ -1,5 +1,5 @@
 """
-Infinite Polynomial Rings.
+Infinite Polynomial Rings
 
 By Infinite Polynomial Rings, we mean polynomial rings in a countably
 infinite number of variables. The implementation consists of a wrapper
@@ -1117,7 +1117,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             False
         """
         return False
- 
+
     def varname_key(self, x):
         """
         Key for comparison of variable names.

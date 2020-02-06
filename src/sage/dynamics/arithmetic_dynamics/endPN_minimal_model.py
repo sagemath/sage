@@ -69,7 +69,8 @@ def bCheck(c, v, p, b):
     val = (v+1).floor()
     deg = c.degree()
     coeffs = c.coefficients(sparse=False)
-    lcoeff = coeffs[deg]; coeffs.remove(lcoeff)
+    lcoeff = coeffs[deg]
+    coeffs.remove(lcoeff)
     check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i) for i in range(0,len(coeffs)) if coeffs[i] != 0]
     check2 = (val - lcoeff.valuation(p))/deg
     check1.append(check2)
@@ -161,9 +162,10 @@ def blift(LF, Li, p, k, S=None, all_orbits=False):
     #as many times as needed.
     keepScaledIneqs = [scale(P(coeff),Li,p) for coeff in LF if coeff != 0]
     keptVals = [i[2] for i in keepScaledIneqs if i[0]]
-    if keptVals != []:
-        #Determine the valuation to lift until.
-        liftval = max(keptVals)
+    if keptVals:
+        # Determine the valuation to lift until.
+        # liftval = max(keptVals)
+        pass
     else:
         #All inequalities are satisfied.
         if all_orbits:
@@ -268,7 +270,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
         raise TypeError("affine minimality is only considered for maps not of the form f or 1/f for a polynomial f")
 
     z = F.parent().gen(0)
-    minF,minG = F,G
+    minG = G
     #If the valuation of a prime in the resultant is small enough, we can say the
     #map is affine minimal at that prime without using the local minimality loop. See
     #Theorem 3.2.2 in [Molnar, M.Sc. thesis]
@@ -276,13 +278,12 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
         g = d
     else:
         g = 2*d
-    Res = vp.resultant();
+    Res = vp.resultant()
 
     #Some quantities needed for the local minimization loop, but we compute now
     #since the value is constant, so we do not wish to compute in every local loop.
     #See Theorem 3.3.3 in [Molnar, M.Sc thesis]
-    H = F - z*minG
-    d1 = F.degree()
+    H = F - z * minG
     A = AffineSpace(BR, 1, H.parent().variable_name())
     ubRes = DynamicalSystem_affine([H/minG], domain=A).homogenize(1).resultant()
     #Set the primes to check minimality at, if not already prescribed
@@ -542,12 +543,10 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     BR = mp.domain().base_ring()
     MS = MatrixSpace(QQ, 2)
     M_Id = MS.one()
-    d = mp.degree()
     F, G = list(mp)  #coordinate polys
     aff_map = mp.dehomogenize(1)
     f, g = aff_map[0].numerator(), aff_map[0].denominator()
     z = aff_map.domain().gen(0)
-    dg = f.parent()(g).degree()
     Res = mp.resultant()
 
     ##### because of how the bound is compute in lemma 3.3
@@ -673,7 +672,6 @@ def HS_minimal(f, return_transformation=False, D=None):
     F.normalize_coordinates()
     MS = MatrixSpace(ZZ, 2, 2)
     m = MS.one()
-    prev = copy(m)
     res = ZZ(F.resultant())
     if D is None:
         D = res.prime_divisors()
@@ -957,21 +955,21 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
     n = F.degree()
 
     z0F, thetaF = covariant_z0(compF, prec=prec, emb=emb)
-    cosh_delta = coshdelta(z0F)
     d = f.degree()
     hF = e**f.global_height(prec=prec)
     #get precomputed constants C,k
     if m == 1:
-        C = 4*d+2;k=2
+        C = 4*d+2
+        k = 2
     else:
-        Ck_values = {(False, 2, 2): (322, 6), (False, 2, 3): (385034, 14),\
-                     (False, 2, 4): (4088003923454, 30), (False, 3, 2): (18044, 8),\
-                     (False, 4, 2): (1761410, 10), (False, 5, 2): (269283820, 12),\
-                     (True, 2, 2): (43, 4), (True, 2, 3): (106459, 12),\
-                     (True, 2, 4): (39216735905, 24), (True, 3, 2): (1604, 6),\
+        Ck_values = {(False, 2, 2): (322, 6), (False, 2, 3): (385034, 14),
+                     (False, 2, 4): (4088003923454, 30), (False, 3, 2): (18044, 8),
+                     (False, 4, 2): (1761410, 10), (False, 5, 2): (269283820, 12),
+                     (True, 2, 2): (43, 4), (True, 2, 3): (106459, 12),
+                     (True, 2, 4): (39216735905, 24), (True, 3, 2): (1604, 6),
                      (True, 4, 2): (114675, 8), (True, 5, 2): (14158456, 10)}
         try:
-            C,k = Ck_values[(dynatomic,d,m)]
+            C, k = Ck_values[(dynatomic,d,m)]
         except KeyError:
             raise ValueError("constants not computed for this (m,d) pair")
     if n == 2 and d == 2:

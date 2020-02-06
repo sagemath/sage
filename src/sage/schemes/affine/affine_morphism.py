@@ -564,7 +564,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             pass
         d = max([F[i].degree() for i in range(M+1)])
         F = [F[i].homogenize(str(newvar))*newvar**(d-F[i].degree()) for i in range(M+1)]
-        return(H(F))
+        return H(F)
 
     def as_dynamical_system(self):
         """
@@ -872,7 +872,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         result = R.ideal(self._polys).weil_restriction().gens()
         H = Hom(DS.weil_restriction(), self.codomain().weil_restriction())
 
-        return(H(result))
+        return H(result)
 
     def reduce_base_field(self):
         """

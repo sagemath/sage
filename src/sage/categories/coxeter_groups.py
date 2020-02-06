@@ -1019,11 +1019,11 @@ class CoxeterGroups(Category_singleton):
                 opi = self.simple_projections(side=side, length_increasing=False)
                 for i in self.index_set():
                     for w in tester.some_elements():
-                        tester.assertTrue(pi[i](w) == w.apply_simple_projection(i, side=side))
-                        tester.assertTrue(pi[i](w) == w.apply_simple_projection(i, side=side, length_increasing=True))
-                        tester.assertTrue(opi[i](w) == w.apply_simple_projection(i, side=side, length_increasing=False))
+                        tester.assertEqual(pi[i](w), w.apply_simple_projection(i, side=side))
+                        tester.assertEqual(pi[i](w), w.apply_simple_projection(i, side=side, length_increasing=True))
+                        tester.assertEqual(opi[i](w), w.apply_simple_projection(i, side=side, length_increasing=False))
                         tester.assertTrue(pi[i](w).has_descent(i, side=side))
-                        tester.assertTrue(not opi[i](w).has_descent(i, side=side))
+                        tester.assertFalse(opi[i](w).has_descent(i, side=side))
                         tester.assertEqual(set([pi[i](w), opi[i](w)]),
                                            set([w, w.apply_simple_reflection(i, side=side)]))
 

@@ -2613,6 +2613,12 @@ def parametric_plot(funcs, *args, **kwargs):
         Traceback (most recent call last):
         ...
         ValueError: there are more variables than variable ranges
+
+    One test for :trac:`7165`::
+
+        sage: m = SR.var('m')
+        sage: parametric_plot([real(exp(i*m)),imaginary(exp(i*m))], (m,0,7))
+        Graphics object consisting of 1 graphics primitive
     """
     num_ranges = 0
     for i in args:

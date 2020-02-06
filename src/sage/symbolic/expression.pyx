@@ -796,6 +796,32 @@ cdef class Expression(CommutativeRingElement):
                             ℯ⋅(x - 1)     ⎛       3       ⎞
             ℯ + ℯ⋅(x - 1) + ────────── + O⎝(x - 1) ; x → 1⎠
                                 2
+
+        Check that complex numbers are handled correctly (:trac:`28903`)::
+
+            sage: unicode_art(I)
+            ⅈ
+            sage: unicode_art(13 - I)
+            13 - ⅈ
+            sage: unicode_art(1.3 - I)
+            1.3 - 1.0⋅ⅈ
+            sage: unicode_art(cos(I))
+            cosh(1)
+
+            sage: unicode_art(SR(CC(1/3, 1)))
+            0.333333333333333 + 1.0⋅ⅈ
+            sage: unicode_art(SR(CDF(1/3, 1)))
+            0.333333333333333 + 1.0⋅ⅈ
+            sage: unicode_art(SR(RealField(100)(1/7)))
+            0.14285714285714285714285714286
+
+            sage: K.<a> = QuadraticField(-1)
+            sage: unicode_art(SR(2 + a))
+            2 + ⅈ
+            sage: unicode_art(SR(1/3 + a/2))
+            1   ⅈ
+            ─ + ─
+            3   2
         """
         from sage.typeset.unicode_art import UnicodeArt
         return UnicodeArt(self._sympy_character_art(True).splitlines())

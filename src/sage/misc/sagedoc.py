@@ -82,6 +82,8 @@ math_substitutes = [
     (r'\\lvert', '|'),
     (r'\\rvert', '|'),
     (r'\\mid', '|'),
+    (r' \\circ', ' o'),
+    (r'\\circ', ' o')
 ]
 nonmath_substitutes = [
     ('\\_','_'),

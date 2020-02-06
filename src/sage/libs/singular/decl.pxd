@@ -6,17 +6,17 @@
 """
 Declarations of Singular's C/C++ Functions
 
-AUTHOR:
-
-- Martin Albrecht (2009-07): initial implementation
-
 .. NOTE::
 
     Our ``ring``, ``poly``,... types are not the Singular ``ring``,
     ``poly``,... types. They are dereferences. So a Singular ``ring`` is
     a pointer to a ``ring`` from Sage.
-"""
 
+AUTHOR:
+
+- Martin Albrecht (2009-07): initial implementation
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
@@ -26,8 +26,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-
 from sage.libs.gmp.types cimport mpz_t, mpz_ptr
 
 cdef extern from "factory/factory.h":
@@ -221,11 +219,11 @@ cdef extern from "singular/Singular/libsingular.h":
 
     long p_FDeg(poly *p, ring *r)
     long p_LDeg(poly *p, int *l, ring *r)
-    long p_Deg(poly *p, ring *r)    
+    long p_Deg(poly *p, ring *r)
     long p_WTotaldegree(poly *p, ring *r)
     long p_Totaldegree(poly *p, ring *r)
     long p_WDegree(poly *p, ring *r)
-    
+
     # available ring orders
 
     ctypedef struct AlgExtInfo:
@@ -252,8 +250,6 @@ cdef extern from "singular/Singular/libsingular.h":
         ringorder_ws
         ringorder_Ws
         ringorder_L
-
-
 
     # groebner basis options
 
@@ -469,20 +465,15 @@ cdef extern from "singular/Singular/libsingular.h":
     ring *rDefault(int ch             , int nvars, char **names,int ord_size, rRingOrder_t *ord, int *block0, int *block1, int **wvhdl)
     ring *rDefault(const n_Procs_s* cf, int nvars, char **names,int ord_size, rRingOrder_t *ord, int *block0, int *block1, int **wvhdl)
 
-
-
-
     # see coeffs.h
     ctypedef struct  GFInfo:
         int GFChar;
         int GFDegree;
         const char* GFPar_name;
 
-
     # parameter is pointer to gGFInfo
     #
     n_Procs_s* nInitChar(n_coeffType t, void * parameter)
-
 
     # ring destructor
 
@@ -694,6 +685,10 @@ cdef extern from "singular/Singular/libsingular.h":
 
     int p_IsUnit(poly *p, ring *r)
 
+    # TRUE if poly  is one
+
+    bint p_IsOne(const poly *p, const ring *r)
+
     # substitute monomial for variable given by varidx in poly
 
     poly *pSubst(poly *p, int varidx, poly *value)
@@ -735,8 +730,6 @@ cdef extern from "singular/Singular/libsingular.h":
 
     poly *pDiff(poly *p, int i)
 
-
-
     # TRUE if p is a vector
 
     int pIsVector(poly *p)
@@ -760,6 +753,9 @@ cdef extern from "singular/Singular/libsingular.h":
     int n_IsUnit(number *n, const n_Procs_s *cf)
     number *n_Invers(number *n, const n_Procs_s *cf)
 
+    # Characteristic of coefficient domain
+    int n_GetChar(const ring* r)
+
     # rational number from int
 
     number *nlInit(int)
@@ -767,8 +763,6 @@ cdef extern from "singular/Singular/libsingular.h":
     # rational number from int
 
     number *nlRInit(int)
-
-
 
     # rational number from numerator and denominator
 
@@ -976,22 +970,16 @@ cdef extern from "singular/Singular/libsingular.h":
     void setFlag(leftv *A, int F)
     void resetFlag(leftv *A, int F)
 
-
-
-
 cdef extern from "singular/coeffs/rmodulo2m.h":
 
     #init 2^m from a long
     number *nr2mMapZp(number *,const n_Procs_s* src,const n_Procs_s* dst)
-
 
 cdef extern from "singular/kernel/maps/fast_maps.h":
 
     # mapping from ideal i1 in r1 by i2 to r2
 
     ideal *fast_map_common_subexp(ideal *i1, ring *r1, ideal *i2, ring *r2)
-
-
 
 cdef extern from "singular/polys/ext_fields/algext.h":
 
@@ -1015,18 +1003,14 @@ cdef extern from "singular/coeffs/rmodulon.h":
        mpz_ptr base;
        unsigned long exp;
 
-
 cdef extern from "singular/coeffs/rintegers.h":
 
     # init integer
     number *nrzInit(int i, const n_Procs_s* cf)
 
-
 cdef extern from "singular/polys/weight.h":
 
-
     double wFunctionalBuch(int *degw, int *lpol, int npol, double *rel, double wx, double wNsqr)
-
 
 cdef extern from "singular/polys/prCopy.h":
     poly *prCopyR_NoSort(poly *p, ring *r, ring *dest_r)
@@ -1099,7 +1083,6 @@ cdef extern from "singular/polys/nc/nc.h":
     int nc_CallPlural(matrix* CC, matrix* DD, poly* CN, poly* DN, ring* r)
     bint nc_SetupQuotient(ring *, ring *, bint)
 
-
 cdef extern from "singular/coeffs/longrat.h":
 
     # get numerator
@@ -1110,16 +1093,13 @@ cdef extern from "singular/coeffs/longrat.h":
 
     number *nlGetDenom(number *n, const n_Procs_s* cf)
 
-
     # rational number from numerator and denominator
 
     number *nlInit2gmp(mpz_t n, mpz_t d,const n_Procs_s* cf)
 
-
     # delete rational number
 
     void nlDelete(number **n, const n_Procs_s* cf)
-
 
 cdef extern from "singular/polys/nc/sca.h":
     void sca_p_ProcsSet(ring *, p_Procs_s *)

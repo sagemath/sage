@@ -1,5 +1,5 @@
 """
-Sparse rational matrices.
+Sparse rational matrices
 
 AUTHORS:
 

@@ -159,9 +159,9 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
         cmd_AS=`command -v $AS`
 
         if ! (test "$CXX_as" = "" -o "$CXX_as" -ef "$cmd_AS"); then
-            SAGE_SHOULD_INSTALL_GCC([there is a mismatch of assemblers])
-            AC_MSG_NOTICE([  $CXX uses $CXX_as])
-            AC_MSG_NOTICE([  \$AS equal to $AS])
+            AC_MSG_NOTICE([       $CXX uses $CXX_as])
+            AC_MSG_NOTICE([       \$AS equal to $AS])
+            AC_MSG_ERROR([unset \$AS or set it to match your compiler's assembler])
         fi
     fi
     if test -n "$LD"; then
@@ -169,9 +169,9 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
         CXX_ld=`command -v $CXX_ld 2>/dev/null`
         cmd_LD=`command -v $LD`
         if ! (test "$CXX_ld" = "" -o "$CXX_ld" -ef "$cmd_LD"); then
-            SAGE_SHOULD_INSTALL_GCC([there is a mismatch of linkers])
-            AC_MSG_NOTICE([  $CXX uses $CXX_ld])
-            AC_MSG_NOTICE([  \$LD equal to $LD])
+            AC_MSG_NOTICE([       $CXX uses $CXX_ld])
+            AC_MSG_NOTICE([       \$LD equal to $LD])
+            AC_MSG_ERROR([unset \$LD or set it to match your compiler's linker])
         fi
     fi
 

@@ -16,7 +16,7 @@ if "SAGE_ROOT" not in os.environ:
     raise RuntimeError("The environment variable SAGE_ROOT must be set.")
 SAGE_ROOT = os.environ["SAGE_ROOT"]
 
-from sage.misc.package import list_packages, pkgname_split
+from sage.misc.package import list_packages
 
 # Input parsing #
 #################
@@ -95,7 +95,7 @@ if args['installed_only']:
 elif args['not_installed_only']:
     L = [pkg for pkg in L if not pkg['installed']]
 
-L.sort(key = lambda pkg: pkg['name'])
+L.sort(key=lambda pkg: pkg['name'])
 
 # print (while getting rid of None in versions)
 for pkg in L:

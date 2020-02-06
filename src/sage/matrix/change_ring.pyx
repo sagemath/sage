@@ -1,5 +1,5 @@
 """
-Functions for changing the base ring of matrices quickly.
+Functions for changing the base ring of matrices quickly
 """
 
 from .matrix_space import MatrixSpace

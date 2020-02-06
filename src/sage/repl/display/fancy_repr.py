@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Representations of objects.
+Representations of objects
 """
 
 #*****************************************************************************
@@ -43,7 +43,7 @@ class ObjectReprABC(object):
             sage: ObjectReprABC()
             ObjectReprABC pretty printer
         """
-        return('{0} pretty printer'.format(self.__class__.__name__))
+        return '{0} pretty printer'.format(self.__class__.__name__)
 
     def __call__(self, obj, p, cycle):
         r"""
@@ -328,10 +328,10 @@ class TallListRepr(ObjectReprABC):
             sage: F = Foo()
             sage: [F, F]
             [
-            BBB    AA   RRR    BBB    AA   RRR  
-            B  B  A  A  R  R   B  B  A  A  R  R 
-            BBB   AAAA  RRR    BBB   AAAA  RRR  
-            B  B  A  A  R  R   B  B  A  A  R  R 
+            BBB    AA   RRR    BBB    AA   RRR
+            B  B  A  A  R  R   B  B  A  A  R  R
+            BBB   AAAA  RRR    BBB   AAAA  RRR
+            B  B  A  A  R  R   B  B  A  A  R  R
             BBB   A  A  R   R, BBB   A  A  R   R
             ]
         """
@@ -355,4 +355,4 @@ class TallListRepr(ObjectReprABC):
         p.text(output)
         return True
 
-            
+

@@ -109,3 +109,5 @@ if [ -n "$SAGE_PKG_CONFIG_PATH" ]; then
     # (Sage's pkgconf spkg takes care of this, if installed)
     export PKG_CONFIG_PATH="$SAGE_PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 fi
+
+export SAGE_NAUTY_BINS_PREFIX="@SAGE_NAUTY_BINS_PREFIX@"

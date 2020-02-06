@@ -1,0 +1,8 @@
+pari-devel
+# spkg-configure checks for gp
+pari-gp
+# spkg-configure checks for data
+pari-galdata
+pari-galpol
+pari-seadata
+pari-elldata

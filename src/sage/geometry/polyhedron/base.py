@@ -6,6 +6,7 @@ Base class for polyhedra
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2015 Jean-Philippe Labbe <labbe at math.huji.ac.il>
+#       Copyright (C) 2020 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2931,11 +2932,7 @@ class Polyhedron_base(Element):
 
         """
         if not self.is_compact(): return False
-
-        d = self.dim()
-        return all(len([facet for facet in vertex.incident()
-                        if not facet.is_equation()]) == d
-                   for vertex in self.Vrepresentation())
+        return self.combinatorial_polyhedron().is_simple()
 
     def is_simplicial(self):
         """
@@ -2974,10 +2971,7 @@ class Polyhedron_base(Element):
         """
         if not(self.is_compact()):
             raise NotImplementedError("this function is implemented for polytopes only")
-        d = self.dim()
-        return all(len([vertex for vertex in facet.incident()]) == d
-                   for facet in self.Hrepresentation()
-                   if not facet.is_equation())
+        return self.combinatorial_polyhedron().is_simplicial()
 
     def is_pyramid(self, certificate=False):
         """
@@ -3327,7 +3321,7 @@ class Polyhedron_base(Element):
             sage: p = Polyhedron(vertices = [[0,0],[0,1],[1,0]])
             sage: p2 = p.prism()
             sage: p2.gale_transform()
-            ((1, 0), (0, 1), (-1, -1), (-1, 0), (0, -1), (1, 1))
+            ((-1, -1), (1, 0), (0, 1), (1, 1), (-1, 0), (0, -1))
 
         REFERENCES:
 
@@ -3340,14 +3334,20 @@ class Polyhedron_base(Element):
             Traceback (most recent call last):
             ...
             ValueError: not a polytope
+
+        Check that :trac:`29073` is fixed::
+
+            sage: P = polytopes.icosahedron(exact=False)
+            sage: sum(P.gale_transform()).norm() < 1e-15
+            True
         """
         if not self.is_compact(): raise ValueError('not a polytope')
 
         A = matrix(self.n_vertices(),
                    [ [1]+x for x in self.vertex_generator()])
         A = A.transpose()
-        A_ker = A.right_kernel()
-        return tuple(A_ker.basis_matrix().transpose().rows())
+        A_ker = A.right_kernel_matrix(basis='computed')
+        return tuple(A_ker.columns())
 
     @cached_method
     def normal_fan(self, direction='inner'):
@@ -4526,13 +4526,13 @@ class Polyhedron_base(Element):
             sage: vertex_trunc1.f_vector()
             (1, 10, 15, 7, 1)
             sage: tuple(f.ambient_V_indices() for f in vertex_trunc1.faces(2))
-            ((0, 1, 2, 3),
+            ((4, 5, 6, 7, 9),
+             (0, 3, 4, 8, 9),
+             (0, 1, 6, 7, 8),
+             (7, 8, 9),
              (2, 3, 4, 5),
              (1, 2, 5, 6),
-             (0, 1, 6, 7, 8),
-             (4, 5, 6, 7, 9),
-             (7, 8, 9),
-             (0, 3, 4, 8, 9))
+             (0, 1, 2, 3))
             sage: vertex_trunc1.vertices()
             (A vertex at (1, -1, -1),
              A vertex at (1, 1, -1),
@@ -4548,13 +4548,13 @@ class Polyhedron_base(Element):
             sage: vertex_trunc2.f_vector()
             (1, 10, 15, 7, 1)
             sage: tuple(f.ambient_V_indices() for f in vertex_trunc2.faces(2))
-            ((0, 1, 2, 3),
+            ((4, 5, 6, 7, 9),
+             (0, 3, 4, 8, 9),
+             (0, 1, 6, 7, 8),
+             (7, 8, 9),
              (2, 3, 4, 5),
              (1, 2, 5, 6),
-             (0, 1, 6, 7, 8),
-             (4, 5, 6, 7, 9),
-             (7, 8, 9),
-             (0, 3, 4, 8, 9))
+             (0, 1, 2, 3))
             sage: vertex_trunc2.vertices()
             (A vertex at (1, -1, -1),
              A vertex at (1, 1, -1),
@@ -4578,18 +4578,18 @@ class Polyhedron_base(Element):
              A vertex at (-0.4, -1.0, -1.0),
              A vertex at (-1.0, -0.4, -1.0),
              A vertex at (-1.0, -1.0, -0.4))
-            sage: edge_trunc = Cube.face_truncation(Cube.faces(1)[0])
+            sage: edge_trunc = Cube.face_truncation(Cube.faces(1)[11])
             sage: edge_trunc.f_vector()
             (1, 10, 15, 7, 1)
             sage: tuple(f.ambient_V_indices() for f in edge_trunc.faces(2))
-            ((0, 1, 2, 3),
-             (1, 2, 4, 5),
-             (4, 5, 6, 7),
-             (0, 1, 5, 6, 8),
-             (2, 3, 4, 7, 9),
-             (6, 7, 8, 9),
-             (0, 3, 8, 9))
-             sage: face_trunc = Cube.face_truncation(Cube.faces(2)[0])
+            ((0, 4, 5, 6),
+             (0, 1, 6, 7),
+             (5, 6, 7, 8, 9),
+             (3, 4, 5, 9),
+             (1, 2, 7, 8),
+             (2, 3, 8, 9),
+             (0, 1, 2, 3, 4))
+             sage: face_trunc = Cube.face_truncation(Cube.faces(2)[2])
              sage: face_trunc.vertices()
              (A vertex at (1, -1, -1),
               A vertex at (1, 1, -1),
@@ -4713,7 +4713,7 @@ class Polyhedron_base(Element):
             ValueError: the chosen position is too large
 
             sage: s = polytopes.simplex(7)
-            sage: f = s.faces(3)[0]
+            sage: f = s.faces(3)[69]
             sage: sf = s.stack(f); sf
             A 7-dimensional polyhedron in QQ^8 defined as the convex hull of 9 vertices
             sage: sf.vertices()
@@ -4733,19 +4733,19 @@ class Polyhedron_base(Element):
             sage: E = Q.faces(1)
             sage: Q.stack(E[0],1/2).Vrepresentation()
             (A vertex at (0, 1),
+             A vertex at (1, 0),
+             A ray in the direction (1, 1),
+             A vertex at (2, 0))
+            sage: Q.stack(E[1],1/2).Vrepresentation()
+            (A vertex at (0, 1),
              A vertex at (0, 2),
              A vertex at (1, 0),
              A ray in the direction (1, 1))
-            sage: Q.stack(E[1],1/2).Vrepresentation()
+            sage: Q.stack(E[2],1/2).Vrepresentation()
             (A vertex at (0, 0),
              A vertex at (0, 1),
              A vertex at (1, 0),
              A ray in the direction (1, 1))
-            sage: Q.stack(E[2],1/2).Vrepresentation()
-            (A vertex at (0, 1),
-             A vertex at (1, 0),
-             A ray in the direction (1, 1),
-             A vertex at (2, 0))
 
         Stacking requires a proper face::
 
@@ -4774,6 +4774,12 @@ class Polyhedron_base(Element):
             Traceback (most recent call last):
             ...
             ValueError: the chosen position is too large
+
+        Testing that :trac:`29057` is fixed::
+
+            sage: P = polytopes.cross_polytope(4)
+            sage: P.stack(P.faces(3)[0])
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 9 vertices
         """
         from sage.geometry.polyhedron.face import PolyhedronFace
         if not isinstance(face, PolyhedronFace):
@@ -4809,7 +4815,8 @@ class Polyhedron_base(Element):
         locus_eqns = self.equations_list()
 
         locus_polyhedron = Polyhedron(ieqs=locus_ieqs, eqns=locus_eqns,
-                                      base_ring=self.parent().base_ring())
+                                      base_ring=self.base_ring().fraction_field(),
+                                      backend=self.backend())
 
         repr_point = locus_polyhedron.representative_point()
         new_vertex = (1-position)*barycenter + position*repr_point
@@ -4854,7 +4861,7 @@ class Polyhedron_base(Element):
             True
 
             sage: Q = polytopes.hypersimplex(4,2)
-            sage: W2 = Q.wedge(Q.faces(2)[0]); W2
+            sage: W2 = Q.wedge(Q.faces(2)[7]); W2
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 9 vertices
             sage: W2.vertices()
             (A vertex at (0, 1, 0, 1, 0),
@@ -4867,7 +4874,7 @@ class Polyhedron_base(Element):
              A vertex at (1, 0, 1, 0, -1),
              A vertex at (1, 1, 0, 0, 1))
 
-            sage: W3 = Q.wedge(Q.faces(1)[0]); W3
+            sage: W3 = Q.wedge(Q.faces(1)[11]); W3
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 10 vertices
             sage: W3.vertices()
             (A vertex at (0, 1, 0, 1, 0),
@@ -4904,7 +4911,7 @@ class Polyhedron_base(Element):
             sage: W2 = P.wedge(P.faces(2)[0], width=5/2); W2.base_ring(); W2.backend()
             Rational Field
             'field'
-            sage: W2 = P.wedge(P.faces(2)[0], width=4/2); W2.base_ring(); W2.backend()
+            sage: W2 = P.wedge(P.faces(2)[9], width=4/2); W2.base_ring(); W2.backend()
             Rational Field
             'field'
             sage: W2.vertices()
@@ -4919,7 +4926,7 @@ class Polyhedron_base(Element):
              A vertex at (4, 16, 64, 2),
              A vertex at (6, 36, 216, 10),
              A vertex at (5, 25, 125, 5))
-            sage: W2 = P.wedge(P.faces(2)[0], width=1.0); W2.base_ring(); W2.backend()
+            sage: W2 = P.wedge(P.faces(2)[2], width=1.0); W2.base_ring(); W2.backend()
             Real Double Field
             'cdd'
         """
@@ -5398,6 +5405,131 @@ class Polyhedron_base(Element):
         return lattice_from_incidences(atoms_incidences, coatoms_incidences,
              face_constructor=face_constructor, required_atoms=atoms_vertices)
 
+    def face_generator(self, face_dimension=None):
+        r"""
+        Return an iterator over the faces of given dimension.
+
+        If dimension is not specified return an iterator over all faces.
+
+        INPUT:
+
+        - ``face_dimension`` -- integer (default ``None``),
+          yield only faces of this dimension if specified
+
+        OUTPUT:
+
+        Each face is given as
+        :class:`~sage.geometry.polyhedron.face.PolyhedronFace`. See
+        :mod:`~sage.geometry.polyhedron.face` for details. The order
+        is random but fixed.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: list(P.face_generator())
+            [A 3-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 8 vertices,
+             A -1-dimensional face of a Polyhedron in ZZ^3,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 4 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices]
+
+             sage: P = polytopes.hypercube(4)
+             sage: list(P.face_generator(2))[:4]
+             [A 2-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 4 vertices,
+              A 2-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 4 vertices,
+              A 2-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 4 vertices,
+              A 2-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 4 vertices]
+
+        If a polytope has more facets than vertices, the output will be somewhat reversed::
+
+            sage: P = polytopes.cross_polytope(3)
+            sage: list(P.face_generator())
+            [A 3-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 6 vertices,
+             A -1-dimensional face of a Polyhedron in ZZ^3,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 0-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 1 vertex,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices,
+             A 2-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 3 vertices,
+             A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices]
+
+        ALGORITHM:
+
+        See :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`.
+
+        TESTS::
+
+            sage: P = polytopes.simplex()
+            sage: list(P.face_generator(-2))
+            []
+            sage: list(P.face_generator(-1))
+            [A -1-dimensional face of a Polyhedron in ZZ^4]
+            sage: list(P.face_generator(3))
+            [A 3-dimensional face of a Polyhedron in ZZ^4 defined as the convex hull of 4 vertices]
+
+            sage: list(Polyhedron().face_generator())
+            [A -1-dimensional face of a Polyhedron in ZZ^0]
+        """
+        from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace
+
+        if face_dimension is None or face_dimension == self.dimension():
+            # Yield the polyhedron.
+            yield PolyhedronFace(self, range(self.n_Vrepresentation()), [])
+
+        if face_dimension is None or face_dimension == -1:
+            if not self.dimension() == -1:
+                # Yield the empty face.
+                yield PolyhedronFace(self, [], range(self.n_Hrepresentation()))
+
+        if face_dimension is None or -1 < face_dimension < self.dimension():
+            # Yield proper faces.
+            it = self.combinatorial_polyhedron().face_iter(dimension=face_dimension)
+            for comb_face in it:
+                yield combinatorial_face_to_polyhedral_face(self, comb_face)
+
     def faces(self, face_dimension):
         """
         Return the faces of given dimension
@@ -5414,7 +5546,10 @@ class Polyhedron_base(Element):
         :mod:`~sage.geometry.polyhedron.face` for details. The order
         is random but fixed.
 
-        .. SEEALSO:: :meth:`facets`
+        .. SEEALSO::
+
+            :meth:`face_generator`,
+            :meth:`facet`.
 
         EXAMPLES:
 
@@ -5423,16 +5558,16 @@ class Polyhedron_base(Element):
 
             sage: p = polytopes.hypercube(4)
             sage: list(f.ambient_V_indices() for f in p.faces(3))
-            [(0, 1, 2, 3, 4, 5, 6, 7),
-             (0, 1, 2, 3, 8, 9, 10, 11),
+            [(0, 2, 4, 6, 8, 10, 12, 14),
              (0, 1, 4, 5, 8, 9, 12, 13),
-             (0, 2, 4, 6, 8, 10, 12, 14),
+             (0, 1, 2, 3, 8, 9, 10, 11),
+             (0, 1, 2, 3, 4, 5, 6, 7),
+             (1, 3, 5, 7, 9, 11, 13, 15),
              (2, 3, 6, 7, 10, 11, 14, 15),
-             (8, 9, 10, 11, 12, 13, 14, 15),
              (4, 5, 6, 7, 12, 13, 14, 15),
-             (1, 3, 5, 7, 9, 11, 13, 15)]
+             (8, 9, 10, 11, 12, 13, 14, 15)]
 
-            sage: face = p.faces(3)[0]
+            sage: face = p.faces(3)[3]
             sage: face.ambient_Hrepresentation()
             (An inequality (1, 0, 0, 0) x + 1 >= 0,)
             sage: face.vertices()
@@ -5454,14 +5589,14 @@ class Polyhedron_base(Element):
             sage: [ ([get_idx(_) for _ in face.ambient_Vrepresentation()],
             ....:    [get_idx(_) for _ in face.ambient_Hrepresentation()])
             ....:   for face in p.faces(3) ]
-            [([0, 1, 2, 3, 4, 5, 6, 7], [4]),
-             ([0, 1, 2, 3, 8, 9, 10, 11], [5]),
-             ([0, 1, 4, 5, 8, 9, 12, 13], [6]),
-             ([0, 2, 4, 6, 8, 10, 12, 14], [7]),
-             ([2, 3, 6, 7, 10, 11, 14, 15], [2]),
-             ([8, 9, 10, 11, 12, 13, 14, 15], [0]),
-             ([4, 5, 6, 7, 12, 13, 14, 15], [1]),
-             ([1, 3, 5, 7, 9, 11, 13, 15], [3])]
+                [([0, 2, 4, 6, 8, 10, 12, 14], [7]),
+                 ([0, 1, 4, 5, 8, 9, 12, 13], [6]),
+                 ([0, 1, 2, 3, 8, 9, 10, 11], [5]),
+                 ([0, 1, 2, 3, 4, 5, 6, 7], [4]),
+                 ([1, 3, 5, 7, 9, 11, 13, 15], [3]),
+                 ([2, 3, 6, 7, 10, 11, 14, 15], [2]),
+                 ([4, 5, 6, 7, 12, 13, 14, 15], [1]),
+                 ([8, 9, 10, 11, 12, 13, 14, 15], [0])]
 
         TESTS::
 
@@ -5477,14 +5612,9 @@ class Polyhedron_base(Element):
             sage: pr.faces(0)
             ()
             sage: pr.faces(-1)
-            ()
+            (A -1-dimensional face of a Polyhedron in QQ^3,)
         """
-        fl = self.face_lattice().level_sets()
-        codim = self.dim() - face_dimension
-        index = len(fl) - 1 - codim
-        if index >= len(fl) or index < 1:
-            return tuple()
-        return tuple(fl[index])
+        return tuple(self.face_generator(face_dimension))
 
     def facets(self):
         r"""
@@ -6355,7 +6485,7 @@ class Polyhedron_base(Element):
 
             sage: S = polytopes.regular_polygon(6); S
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 6 vertices
-            sage: edge = S.faces(1)[2].as_polyhedron()
+            sage: edge = S.faces(1)[4].as_polyhedron()
             sage: edge.vertices()
             (A vertex at (0.866025403784439?, 1/2), A vertex at (0, 1))
             sage: edge.volume()
@@ -6392,7 +6522,7 @@ class Polyhedron_base(Element):
             1.53406271079044
 
             sage: Dinexact = polytopes.dodecahedron(exact=False)
-            sage: w = Dinexact.faces(2)[0].as_polyhedron().volume(measure='induced', engine='internal'); RDF(w) # abs tol 1e-9
+            sage: w = Dinexact.faces(2)[2].as_polyhedron().volume(measure='induced', engine='internal'); RDF(w) # abs tol 1e-9
             1.534062710738235
 
             sage: [polytopes.simplex(d).volume(measure='induced') for d in range(1,5)] == [sqrt(d+1)/factorial(d) for d in range(1,5)]
@@ -8014,13 +8144,13 @@ class Polyhedron_base(Element):
             False
 
             sage: S = polytopes.simplex(3)
-            sage: S = S.face_truncation(S.faces(0)[0])
-            sage: S = S.face_truncation(S.faces(0)[0])
-            sage: S = S.face_truncation(S.faces(0)[0])
+            sage: S = S.face_truncation(S.faces(0)[3])
+            sage: S = S.face_truncation(S.faces(0)[4])
+            sage: S = S.face_truncation(S.faces(0)[5])
             sage: T = polytopes.simplex(3)
-            sage: T = T.face_truncation(T.faces(0)[0])
-            sage: T = T.face_truncation(T.faces(0)[0])
-            sage: T = T.face_truncation(T.faces(0)[1])
+            sage: T = T.face_truncation(T.faces(0)[3])
+            sage: T = T.face_truncation(T.faces(0)[4])
+            sage: T = T.face_truncation(T.faces(0)[4])
             sage: T.is_combinatorially_isomorphic(S)
             False
             sage: T.f_vector(), S.f_vector()

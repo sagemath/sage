@@ -130,6 +130,12 @@ def var(key, *fallbacks, **kwds):
         value = None
     else:
         value = os.environ.get(key)
+    if value is None:
+        try:
+            import sage_conf
+            value = getattr(sage_conf, key, None)
+        except ImportError:
+            pass
     # Try all fallbacks in order as long as we don't have a value
     for f in fallbacks:
         if value is not None:
@@ -186,7 +192,9 @@ var('MTXLIB',                        join(SAGE_SHARE, 'meataxe'))
 var('THREEJS_DIR',                   join(SAGE_SHARE, 'threejs'))
 var('SINGULARPATH',                  join(SAGE_SHARE, 'singular'))
 var('PPLPY_DOCS',                    join(SAGE_SHARE, 'doc', 'pplpy'))
+var('MAXIMA',                        'maxima')
 var('MAXIMA_FAS')
+var('SAGE_NAUTY_BINS_PREFIX', '')
 
 # misc
 var('SAGE_BANNER', '')

@@ -195,6 +195,49 @@ class Rings(CategoryWithAxiom):
             """
             return bool(self.codomain().one())
 
+        def extend_to_fraction_field(self):
+            r"""
+            Return the extension of the morphism to fraction fields of
+            the domain and the codomain.
+
+            EXAMPLES::
+
+                sage: S.<x> = QQ[]
+                sage: f = S.hom([x+1]); f
+                Ring endomorphism of Univariate Polynomial Ring in x over Rational Field
+                    Defn: x |--> x + 1
+
+                sage: g = f.extend_to_fraction_field(); g
+                Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+                    Defn: x |--> x + 1
+                sage: g(x)
+                x + 1
+                sage: g(1/x)
+                1/(x + 1)
+
+            If this morphism is not injective, it does not extend to the fraction
+            field and an error is raised::
+
+                sage: f = GF(5).coerce_map_from(ZZ)
+                sage: f.extend_to_fraction_field()
+                Traceback (most recent call last):
+                ...
+                ValueError: the morphism is not injective
+            """
+            from sage.rings.morphism import RingHomomorphism_from_fraction_field
+            if self.domain().is_field() and self.codomain().is_field():
+                return self
+            try:
+                if not self.is_injective():
+                    raise ValueError("the morphism is not injective")
+            except NotImplementedError:   # we trust the user
+                pass
+            domain = self.domain().fraction_field()
+            codomain = self.codomain().fraction_field()
+            parent = domain.Hom(codomain)   # category = category=self.category_for() ???
+            return RingHomomorphism_from_fraction_field(parent, self)
+
+
     class SubcategoryMethods:
 
         def NoZeroDivisors(self):
@@ -348,7 +391,7 @@ class Rings(CategoryWithAxiom):
                 <class 'sage.rings.homset.RingHomset_generic_with_category'>
 
                 sage: Hom(CyclotomicField(3), QQ, category = Rings()).__class__
-                <class 'sage.rings.number_field.morphism.CyclotomicFieldHomset_with_category'>
+                <class 'sage.rings.number_field.homset.CyclotomicFieldHomset_with_category'>
 
                 sage: TestSuite(Hom(QQ, QQ, category = Rings())).run() # indirect doctest
 

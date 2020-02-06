@@ -1500,7 +1500,47 @@ class LiftMorphismToAssociative(LiftMorphism):
 class MatrixLieAlgebraFromAssociative(LieAlgebraFromAssociative):
     """
     A Lie algebra constructed from a matrix algebra.
+
+    This means a Lie algebra consisting of matrices,
+    with commutator as Lie bracket.
     """
     class Element(LieAlgebraMatrixWrapper, LieAlgebraFromAssociative.Element):
-        pass
+        def matrix(self):
+            r"""
+            Return ``self`` as element of the underlying matrix algebra.
+
+            OUTPUT:
+
+            An instance of the element class of MatrixSpace.
+
+            EXAMPLES::
+
+                sage: sl3m = lie_algebras.sl(ZZ, 3, representation='matrix')
+                sage: e1,e2, f1, f2, h1, h2 = sl3m.gens()
+                sage: h1m = h1.matrix(); h1m
+                [ 1  0  0]
+                [ 0 -1  0]
+                [ 0  0  0]
+                sage: h1m.parent()
+                Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+                sage: matrix(h2)
+                [ 0  0  0]
+                [ 0  1  0]
+                [ 0  0 -1]
+                sage: L = lie_algebras.so(QQ['z'], 5, representation='matrix')
+                sage: matrix(L.an_element())
+                [ 1  1  0  0  0]
+                [ 1  1  0  0  2]
+                [ 0  0 -1 -1  0]
+                [ 0  0 -1 -1 -1]
+                [ 0  1  0 -2  0]
+
+                sage: gl2 = lie_algebras.gl(QQ, 2)
+                sage: matrix(gl2.an_element())
+                [1 1]
+                [1 1]
+            """
+            return self.value
+
+        _matrix_ = matrix
 

@@ -483,10 +483,10 @@ class DocTestReporter(SageObject):
                             if not self.controller.options.long:
                                 if self.controller.options.show_skipped:
                                     log("    %s not run"%(count_noun(nskipped, "long test")))
-                        elif tag == "high_mem":
+                        elif tag == "memlimit":
                             if self.controller.options.memlimit <= 0:
                                 seen_other = True
-                                log("    %s not run"%(count_noun(nskipped, "high mem")))
+                                log("    %s not run"%(count_noun(nskipped, "memlimit")))
                         elif tag == "not tested":
                             if self.controller.options.show_skipped:
                                 log("    %s not run"%(count_noun(nskipped, "not tested test")))

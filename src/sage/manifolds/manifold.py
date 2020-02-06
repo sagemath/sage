@@ -2254,12 +2254,23 @@ class TopologicalManifold(ManifoldSubset):
             F: M --> R
                (x, y) |--> x^2 + cos(y)*sin(x)
 
+        The calculus method chosen via ``set_calculus_method()`` applies to any
+        chart defined subsequently on the manifold::
+
+            sage: M.set_calculus_method('sympy')
+            sage: Y.<u,v> = M.chart()  # a new chart
+            sage: Y.calculus_method()
+            Available calculus methods (* = current):
+             - SR (default)
+             - sympy (*)
+
         .. SEEALSO::
 
             :meth:`~sage.manifolds.chart.Chart.calculus_method` for a
             control of the calculus method chart by chart
 
         """
+        self._calculus_method = method
         for chart in self._atlas:
             chart.calculus_method().set(method)
 
@@ -2645,9 +2656,11 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
     from sage.rings.infinity import infinity
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
     from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
+    from sage.manifolds.differentiable.degenerate import DegenerateManifold
     from sage.manifolds.topological_submanifold import TopologicalSubmanifold
     from sage.manifolds.differentiable.differentiable_submanifold import DifferentiableSubmanifold
     from sage.manifolds.differentiable.pseudo_riemannian_submanifold import PseudoRiemannianSubmanifold
+    from sage.manifolds.differentiable.degenerate_submanifold import DegenerateSubmanifold
 
     global _manifold_id
 
@@ -2711,7 +2724,7 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                                       latex_name=latex_name,
                                       start_index=start_index,
                                       unique_tag=unique_tag())
-    elif structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian']:
+    elif structure in ['pseudo-Riemannian', 'Riemannian', 'Lorentzian','degenerate_metric']:
         if 'diff_degree' in extra_kwds:
             diff_degree = extra_kwds['diff_degree']
         else:
@@ -2731,6 +2744,8 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                 signature = None
         elif structure == 'Riemannian':
             signature = dim
+        elif structure == 'degenerate_metric':
+            signature = (0,dim-1,1)
         elif structure == 'Lorentzian':
             if 'signature' in extra_kwds:
                 signat = extra_kwds['signature']
@@ -2746,12 +2761,13 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                 signature = dim - 2  # default value for a Lorentzian manifold
         if 'ambient' in extra_kwds:
             ambient = extra_kwds['ambient']
-            if not isinstance(ambient, PseudoRiemannianManifold):
+            if not isinstance(ambient, (PseudoRiemannianManifold, DegenerateManifold)):
                 raise TypeError("ambient must be a pseudo-Riemannian manifold")
             if dim>ambient._dim:
                 raise ValueError("the submanifold must be of smaller "
                                  + "dimension than its ambient manifold")
-            return PseudoRiemannianSubmanifold(dim, name, ambient=ambient,
+            if structure == 'degenerate_metric':
+                return DegenerateSubmanifold(dim, name, ambient = ambient,
                                                metric_name=metric_name,
                                                signature=signature,
                                                diff_degree=diff_degree,
@@ -2759,7 +2775,22 @@ def Manifold(dim, name, latex_name=None, field='real', structure='smooth',
                                                metric_latex_name=metric_latex_name,
                                                start_index=start_index,
                                                unique_tag=unique_tag())
-
+            return PseudoRiemannianSubmanifold(dim, name, ambient = ambient,
+                                               metric_name=metric_name,
+                                               signature=signature,
+                                               diff_degree=diff_degree,
+                                               latex_name=latex_name,
+                                               metric_latex_name=metric_latex_name,
+                                               start_index=start_index,
+                                               unique_tag=unique_tag())
+        if structure == 'degenerate_metric':
+                return DegenerateManifold(dim, name, metric_name=metric_name,
+                                               signature=signature,
+                                               diff_degree=diff_degree,
+                                               latex_name=latex_name,
+                                               metric_latex_name=metric_latex_name,
+                                               start_index=start_index,
+                                               unique_tag=unique_tag())
         return PseudoRiemannianManifold(dim, name, metric_name=metric_name,
                                         signature=signature,
                                         diff_degree=diff_degree,

@@ -12,14 +12,14 @@ EXAMPLES::
       Defn: Defined by sending (x : y , u : v) to
             (x^2*u : y^2*v , x*v^2 : y*u^2).
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -144,7 +144,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: F[2]
             z^2*u
         """
-        return(self._polys[i])
+        return self._polys[i]
 
     def _repr_defn(self):
         r"""
@@ -234,7 +234,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         A = self.codomain()
         Q = list(P)
         newP = [f(Q) for f in self.defining_polynomials()]
-        return(A.point(newP, check))
+        return A.point(newP, check)
 
     def __eq__(self, right):
         """

@@ -308,7 +308,7 @@ OTHER Examples::
     sage: def math_bessel_K(nu,x):
     ....:     return mathematica(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathematica
-    -2.5928861754911969782 + 0.1804899720669620266 I
+    -2.59288617549119697817 + 0.18048997206696202663*I
 
 ::
 
@@ -339,6 +339,21 @@ AUTHORS:
 
 - Felix Lawrence (2009-08-21): Added support for importing Mathematica lists
   and floats with exponents.
+
+TESTS:
+
+Check that numerical approximations via Mathematica's `N[]` function work
+correctly (:trac:`18888`, :trac:`28907`)::
+
+    sage: mathematica('Pi/2').N(10)           # optional -- mathematica
+    1.5707963268
+    sage: mathematica('Pi').N(10)             # optional -- mathematica
+    3.1415926536
+    sage: mathematica('Pi').N(50)             # optional -- mathematica
+    3.14159265358979323846264338327950288419716939937511
+    sage: str(mathematica('Pi*x^2-1/2').N())  # optional -- mathematica
+                    2
+    -0.5 + 3.14159 x
 """
 
 #*****************************************************************************
@@ -676,7 +691,7 @@ class MathematicaElement(ExpectElement):
         return float(P.eval('N[%s,%s]'%(self.name(),precision)))
 
     def _reduce(self):
-        return self.parent().eval('InputForm[%s]'%self.name())
+        return self.parent().eval('InputForm[%s]' % self.name()).strip()
 
     def __reduce__(self):
         return reduce_load, (self._reduce(), )
@@ -1002,37 +1017,6 @@ class MathematicaElement(ExpectElement):
         return P.eval(cmd).strip() != P._true_symbol()
 
     __nonzero__ = __bool__
-
-    def N(self, precision=None):
-        r"""
-        Numerical approximation by calling Mathematica's `N[]`
-
-        Calling Mathematica's `N[]` function, with optional precision in decimal digits.
-        Unlike Sage's `n()`, `N()` can be applied to symbolic Mathematica objects.
-
-        A workaround for :trac:`18888` backtick issue, stripped away by `get()`,
-        is included.
-
-        .. note::
-
-            The base class way up the hierarchy defines an `N` (modeled
-            after Mathematica's)  which overwrites the Mathematica one,
-            and doesn't work at all. We restore it here.
-
-        EXAMPLES::
-
-            sage: mathematica('Pi/2').N(10)        # optional -- mathematica
-            1.570796327
-            sage: mathematica('Pi').N(50)          # optional -- mathematica
-            3.1415926535897932384626433832795028841971693993751
-            sage: mathematica('Pi*x^2-1/2').N()    # optional -- mathematica
-                            2
-            -0.5 + 3.14159 x
-        """
-        P = self.parent()
-        if precision is None:
-            return P.eval('N[%s]'%self.name())
-        return P.eval('N[%s,%s]'%(self.name(),precision))
 
     def n(self, *args, **kwargs):
         r"""

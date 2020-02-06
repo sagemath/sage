@@ -328,8 +328,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             # Check the embeddings from the root lattice and the root space over the same base ring
             root_lattice = self.root_system.root_lattice()
             root_space   = self.root_system.root_space  (R)
-            tester.assertTrue(self.coerce_map_from(root_lattice) is not None)
-            tester.assertTrue(self.coerce_map_from(root_space  ) is not None)
+            tester.assertIsNot(self.coerce_map_from(root_lattice), None)
+            tester.assertIsNot(self.coerce_map_from(root_space), None)
             for i in self.index_set():
                 # This embedding maps simple roots to simple roots
                 tester.assertEqual(self(root_lattice.simple_root(i)), alpha[i])

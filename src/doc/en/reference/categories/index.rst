@@ -177,6 +177,7 @@ Individual Categories
    sage/categories/super_modules
    sage/categories/super_modules_with_basis
    sage/categories/supercommutative_algebras
+   sage/categories/supercrystals
    sage/categories/topological_spaces
    sage/categories/triangular_kac_moody_algebras
    sage/categories/unique_factorization_domains

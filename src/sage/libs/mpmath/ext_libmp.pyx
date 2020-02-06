@@ -1,5 +1,5 @@
 """
-Faster versions of some key functions in mpmath.libmp.
+Faster versions of some key functions in mpmath.libmp
 """
 
 from .ext_impl cimport *

@@ -1,6 +1,14 @@
 r"""
 Hyperelliptic curves over a finite field
 
+EXAMPLES::
+
+    sage: K.<a> = GF(9, 'a')
+    sage: x = polygen(K)
+    sage: C = HyperellipticCurve(x^7 - x^5 - 2, x^2 + a)
+    sage: C._points_fast_sqrt()
+    [(0 : 1 : 0), (a + 1 : a : 1), (a + 1 : a + 1 : 1), (2 : a + 1 : 1), (2*a : 2*a + 2 : 1), (2*a : 2*a : 1), (1 : a + 1 : 1)]
+
 AUTHORS:
 
 - David Kohel (2006)
@@ -17,13 +25,6 @@ AUTHORS:
 
 - Dean Bisogno (2017): Fixed Hasse-Witt computation
 
-EXAMPLES::
-
-    sage: K.<a> = GF(9, 'a')
-    sage: x = polygen(K)
-    sage: C = HyperellipticCurve(x^7 - x^5 - 2, x^2 + a)
-    sage: C._points_fast_sqrt()
-    [(0 : 1 : 0), (a + 1 : a : 1), (a + 1 : a + 1 : 1), (2 : a + 1 : 1), (2*a : 2*a + 2 : 1), (2*a : 2*a : 1), (1 : a + 1 : 1)]
 """
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
@@ -59,7 +60,10 @@ from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
 from sage.libs.all import pari
 
-class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_generic):
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
+
+class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_generic,
+                                      ProjectivePlaneCurve_finite_field):
     def _frobenius_coefficient_bound_charpoly(self):
         r"""
         Computes bound on number of `p`-adic digits needed to recover
@@ -1343,8 +1347,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             1408
             sage: H.cardinality(3)
             50116
-            
+
         The following example shows that :trac:`20391` has been resolved::
+
             sage: F=GF(23)
             sage: x=polygen(F)
             sage: C=HyperellipticCurve(x^8+1)
@@ -1409,7 +1414,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         x = P.parent().gen(0)
         return P.reverse() / ((1-x)*(1-q*x))
 
-    #This where Cartier Matrix is actually computed. This is either called by E.Cartier_matrix, E.a_number, or E.Hasse_Witt
+    # This where Cartier Matrix is actually computed. This is either called by
+    # E.Cartier_matrix, E.a_number, or E.Hasse_Witt.
     @cached_method
     def _Cartier_matrix_cached(self):
         r"""
@@ -1546,7 +1552,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             M.append(H)
         return matrix(Fq,M), Coeff, g, Fq,p, self
 
-    #This is what is called from command line
+    # This is what is called from command line
     def Cartier_matrix(self):
         r"""
         INPUT:
@@ -1744,7 +1750,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             N = N * l
         return N, E
 
-    #This is the function which is actually called by command line
+    # This is the function which is actually called by command line
     def Hasse_Witt(self):
         r"""
         INPUT:

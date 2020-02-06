@@ -825,7 +825,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
         nrows = nentries
 
     # provide a default ring for an empty list
-    if len(entries) == 0 and ring is None:
+    if not len(entries) and ring is None:
       ring = rings.ZZ
 
     # Convert entries to a list v over a common ring
@@ -1614,7 +1614,7 @@ def _determine_block_matrix_rows(sub_matrices):
                     raise ValueError("incompatible submatrix heights")
             elif not M:
                 found_zeroes = True
-        if len(R) == 0:
+        if not R:
             height = 0
 
         # If we have a height, then we know the dimensions of any
@@ -1882,7 +1882,7 @@ def block_matrix(*args, **kwds):
     args = list(args)
     sparse = kwds.get('sparse', None)
 
-    if len(args) == 0:
+    if not args:
         if sparse is not None:
             return matrix_space.MatrixSpace(rings.ZZ, 0, 0, sparse=sparse)([])
         else:
@@ -1925,7 +1925,7 @@ def block_matrix(*args, **kwds):
     # Now the rest of the arguments are a list of rows, a flat list of
     # matrices, or a single value.
 
-    if len(args) == 0:
+    if not args:
         args = [[]]
     if len(args) > 1:
         print(args)
@@ -1953,7 +1953,7 @@ def block_matrix(*args, **kwds):
     # Will we try to place the matrices in a rectangular grid?
     try_grid = True
 
-    if len(sub_matrices) == 0:
+    if not sub_matrices:
         if (nrows is not None and nrows != 0) or \
            (ncols is not None and ncols != 0):
             raise ValueError("invalid nrows/ncols passed to block_matrix")
@@ -3247,7 +3247,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         raise ValueError("the size of the matrix must equal the sum of the dimensions.")
     if min(dimensions) < 1:
         raise ValueError("eigenspaces must have a dimension of at least 1.")
-    if len(eigenvalues)!=len(dimensions):
+    if len(eigenvalues) != len(dimensions):
         raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.")
     #sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
     dimensions_sort = sorted(zip(dimensions, eigenvalues))

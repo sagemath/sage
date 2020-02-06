@@ -1350,7 +1350,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Test that ``coefficient`` also works for those parents that do
             not have an ``element_class``::
 
-                sage: H = End(ZZ)
+                sage: H = pAdicWeightSpace(3)
                 sage: F = CombinatorialFreeModule(QQ, H)
                 sage: hasattr(H, "element_class")
                 False

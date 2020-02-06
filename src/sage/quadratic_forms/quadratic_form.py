@@ -117,6 +117,21 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
         [ * -3 ]
         sage: all(q.hasse_invariant(p)==-1 for p in P)
         True
+
+    TESTS:
+
+    This shows that :trac:`28955` is fixed::
+
+        sage: quadratic_form_from_invariants(QQ,3,2,[2],2)
+        Quadratic form in 3 variables over Rational Field with coefficients:
+        [ -1 0 0 ]
+        [ * 1 0 ]
+        [ * * -2 ]
+
+        sage: quadratic_form_from_invariants(QQ,4,2,[2],4)
+        Traceback (most recent call last):
+        ...
+        ValueError: invariants do not define a rational quadratic form
     """
     from sage.arith.misc import hilbert_symbol
     # normalize input
@@ -135,7 +150,10 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
         for p in P:
             if QQ(-d).is_padic_square(p):
                 raise ValueError("invariants do not define a rational quadratic form")
-    if sminus % 4 in (2, 3) and len(P) % 2 == 0:
+    f = 0
+    if sminus % 4 in (2, 3):
+        f = 1
+    if (f + len(P)) % 2 == 1:
         raise ValueError("invariants do not define a rational quadratic form")
     D = []
     while rk >= 2:
@@ -162,9 +180,9 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
                 S += [-1]
             a = QQ.hilbert_symbol_negative_at_S(S,-d)
             a = ZZ(a)
-        P = [p for p in P if hilbert_symbol(a, -d, p) == 1]
-        P += [p for p in (2*a*d).prime_divisors()
-              if hilbert_symbol(a, -d, p)==-1 and p not in P]
+        P = ([p for p in P if hilbert_symbol(a, -d, p) == 1]
+            +[p for p in (2*a*d).prime_divisors()
+              if hilbert_symbol(a, -d, p)==-1 and p not in P])
         sminus = max(0, sminus-1)
         rk = rk - 1
         d = a*d

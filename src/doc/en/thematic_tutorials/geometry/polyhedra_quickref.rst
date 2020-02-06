@@ -159,6 +159,7 @@ List of Polyhedron methods
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.center` | returns the average of the vertices of the polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.representative_point` | returns the sum of the center and the rays
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_fan` | returns the fan spanned by the faces of the polyhedron
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_generator` | a generator over the faces
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.faces` | the list of faces
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.facets` | the list of facets
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.normal_fan` | returns the fan spanned by the normals of the supporting hyperplanes of the polyhedron

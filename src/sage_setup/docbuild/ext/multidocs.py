@@ -23,10 +23,7 @@ from six.moves import cPickle
 from six import text_type
 
 import os
-import sys
 import shutil
-import re
-import tempfile
 import sphinx
 from sphinx.util.console import bold
 from sage.env import SAGE_DOC

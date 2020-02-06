@@ -1,13 +1,21 @@
 """
-Base class for Jacobians of curves
+Jacobians of curves
+
+This module defines the base class of Jacobians as an abstract scheme.
+
+AUTHORS:
+
+- William Stein (2005)
+
 """
-
-#*******************************************************************************
-#  Copyright (C) 2005 William Stein
+#*****************************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
 #  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*******************************************************************************
-
+#*****************************************************************************
 from sage.categories.fields import Fields
 _Fields = Fields()
 from sage.schemes.generic.scheme import Scheme, is_Scheme
@@ -69,6 +77,8 @@ class Jacobian_generic(Scheme):
     """
     def __init__(self, C):
         """
+        Initialize.
+
         TESTS::
 
             sage: from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
@@ -98,13 +108,18 @@ class Jacobian_generic(Scheme):
             sage: Jacobian_generic(P2)
             Traceback (most recent call last):
             ...
-            ValueError: C (=Projective Space of dimension 2 over Rational Field) must have dimension 1.
+            ValueError: C (=Projective Space of dimension 2 over Rational Field)
+            must have dimension 1.
+
+        ::
+
             sage: P2.<x, y, z> = ProjectiveSpace(Zmod(6), 2)
-            sage: C = Curve(x + y + z)
+            sage: C = Curve(x + y + z, P2)
             sage: Jacobian_generic(C)
             Traceback (most recent call last):
             ...
-            TypeError: C (=Projective Plane Curve over Ring of integers modulo 6 defined by x + y + z) must be defined over a field.
+            TypeError: C (=Projective Plane Curve over Ring of integers modulo 6
+            defined by x + y + z) must be defined over a field.
         """
         if not is_Scheme(C):
             raise TypeError("Argument (=%s) must be a scheme."%C)

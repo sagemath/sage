@@ -1,10 +1,9 @@
 """
-Binary Recurrence Sequences.
+Binary Recurrence Sequences
 
-
-This class implements several methods relating to
-general linear binary recurrence sequences, including a sieve
-to find perfect powers in integral linear binary recurrence sequences.
+This class implements several methods relating to general linear binary
+recurrence sequences, including a sieve to find perfect powers in integral
+linear binary recurrence sequences.
 
 EXAMPLES::
 
@@ -48,14 +47,16 @@ AUTHORS:
 See [SV2013]_, [BMS2006]_, and [SS1983]_.
 """
 
-#****************************************************************************#
-#       Copyright (C) 2013 Isabel Vogt <ivogt161@gmail.com>                  #
-#                                                                            #
-#  Distributed under the terms of the GNU General Public License (GPL)       #
-#  as published by the Free Software Foundation; either version 2 of         #
-#  the License, or (at your option) any later version.                       #
-#                 http://www.gnu.org/licenses/                               #
-#****************************************************************************#
+# ****************************************************************************
+#       Copyright (C) 2013 Isabel Vogt <ivogt161@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from __future__ import division
 
 from six.moves import range

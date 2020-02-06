@@ -1,5 +1,5 @@
 """
-Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR.
+Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR
 
 AUTHOR:
 

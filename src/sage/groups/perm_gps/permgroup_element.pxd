@@ -1,15 +1,17 @@
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
 from sage.structure.list_clone cimport ClonableIntArray
+from sage.libs.gap.element cimport GapElement
 
 cdef class PermutationGroupElement(MultiplicativeGroupElement):
     cdef int* perm
     cdef int n
     cdef int perm_buf[15] # to avoid malloc for small elements
-    cdef Element _gap_element
+    cdef GapElement _libgap
     cdef PermutationGroupElement _new_c(self)
     cdef _alloc(self, int)
     cpdef _set_identity(self)
     cpdef _set_list_images(self, v, bint convert)
+    cpdef _set_libgap(self, GapElement p)
     cpdef _set_list_cycles(self, c, bint convert)
     cpdef _set_string(self, str s)
     cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert)

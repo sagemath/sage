@@ -606,15 +606,15 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         return ((m1, m2), (M1, M2))
 
     def _reduce_vector_horizontal(self, G, e, s, k=1):
-        """
+        r"""
         INPUT:
 
-        - a vector -- G \in W_{e, s}
+        - a vector -- `G \in W_{e, s}`
 
         OUTPUT:
 
-        - a vector -- H \in W_{e - k, s} such that
-            G x^e y^{-s} dx \cong H x^{e - k} y^{-s} dx
+        - a vector -- `H \in W_{e - k, s}` such that
+            `G x^e y^{-s} dx \cong H x^{e - k} y^{-s} dx`
 
         TESTS::
 
@@ -638,12 +638,12 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         r"""
         INPUT:
 
-        - a vector -- G \in W_{e, s}
+        - a vector -- `G \in W_{e, s}`
 
         OUTPUT:
 
-        - a vector -- H \in W_{e - p, s} such that
-            G x^e y^{-s} dx \cong H x^{e - p} y^{-s} dx
+        - a vector -- `H \in W_{e - p, s}` such that
+            `G x^e y^{-s} dx \cong H x^{e - p} y^{-s} dx`
 
         TESTS::
 
@@ -761,12 +761,12 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         r"""
         INPUT:
 
-        - a vector -- G \in W_{e, s}
+        - a vector -- `G \in W_{e, s}`
 
         OUTPUT:
 
-        - a vector -- H \in W_{e - k, s} such that
-            G x^e y^{-s} dx \cong H x^{e - k} y^{-s} dx
+        - a vector -- `H \in W_{e - k, s}` such that
+            `G x^e y^{-s} dx \cong H x^{e - k} y^{-s} dx`
 
         TESTS::
 
@@ -816,12 +816,12 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
         return vect
 
     def _reduce_vector_vertical(self, G, s0, s, k=1):
-        """
+        r"""
         Reduce the vector `G` representing an element of `W_{-1,rs + s0}` by `r k` steps
 
         INPUT:
 
-        - a vector -- G \in W_{-1, r*s + s0}
+        - a vector -- `G \in W_{-1, r*s + s0}`
 
         OUTPUT:
 
@@ -842,7 +842,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             r"""
             INPUT:
 
-            - a vector -- G \in W_{-1, r*s + s0}
+            - a vector -- `G \in W_{-1, r*s + s0}`
 
             OUTPUT:
 
@@ -1135,6 +1135,16 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3 - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
 
 
+        A non-monic example checking that :trac:`29015` is fixed::
+
+            sage: a = 3
+            sage: K.<s>=GF(83^3);
+            sage: R.<x>= PolynomialRing(K)
+            sage: h = s*x^4 +x*3+ 8;
+            sage: C = CyclicCover(a,h)
+            sage: C.frobenius_polynomial()
+            x^6 + 1563486*x^4 + 893980969482*x^2 + 186940255267540403
+
         Non-superelliptic curves::
 
             sage: p = 13
@@ -1234,7 +1244,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
                 L = f.splitting_field("a")
                 roots = [r for r, _ in f.change_ring(L).roots()]
                 roots_dict = dict([(r, i) for i, r in enumerate(roots)])
-                rootsfrob = [L.frobenius_endomorphism()(r) for r in roots]
+                rootsfrob = [L.frobenius_endomorphism(self._Fq.degree())(r) for r in roots]
                 m = zero_matrix(len(roots))
                 for i, r in enumerate(roots):
                     m[i, roots_dict[rootsfrob[i]]] = 1

@@ -463,7 +463,7 @@ sage_setup() {
         # make sure that $DOT_SAGE exists so that ipython will happily
         # create its config directories there.  If DOT_SAGE doesn't
         # exist, ipython complains.
-        mkdir -p "$DOT_SAGE"
+        mkdir -p -m 700 "$DOT_SAGE"
     fi
     sage-cleaner &>/dev/null &
 }

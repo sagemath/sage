@@ -33,7 +33,7 @@ from sage.structure.richcmp import richcmp
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
 
-from sage.algebras.lie_algebras.lie_algebra import LieAlgebraFromAssociative, FinitelyGeneratedLieAlgebra
+from sage.algebras.lie_algebras.lie_algebra import MatrixLieAlgebraFromAssociative, FinitelyGeneratedLieAlgebra
 from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.cartan_matrix import CartanMatrix
@@ -43,9 +43,12 @@ from sage.sets.family import Family
 from sage.modules.free_module import FreeModule
 
 
-class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
+class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
     """
     A classical Lie algebra represented using matrices.
+
+    This means a classical Lie algebra given as a Lie
+    algebra of matrices, with commutator as Lie bracket.
 
     INPUT:
 
@@ -122,6 +125,13 @@ class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: isinstance(sl2.indices(), FiniteEnumeratedSet)
             True
+
+        Check that elements are hashable (see :trac:`28961`)::
+
+            sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
+            sage: e,f,h = list(sl2.basis())
+            sage: len(set([e, e+f]))
+            2
         """
         n = len(e)
         names = ['e%s'%i for i in range(1, n+1)]
@@ -130,11 +140,11 @@ class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
         category = LieAlgebras(R).FiniteDimensional().WithBasis()
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         index_set = FiniteEnumeratedSet(names)
-        LieAlgebraFromAssociative.__init__(self, e[0].parent(),
-                                           gens=tuple(e + f + h),
-                                           names=tuple(names),
-                                           index_set=index_set,
-                                           category=category)
+        MatrixLieAlgebraFromAssociative.__init__(self, e[0].parent(),
+                                                 gens=tuple(e + f + h),
+                                                 names=tuple(names),
+                                                 index_set=index_set,
+                                                 category=category)
         self._cartan_type = ct
 
         gens = tuple(self.gens())
@@ -159,7 +169,7 @@ class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
 
     def f(self, i):
         r"""
-        Return the generator `f_i`.-
+        Return the generator `f_i`.
 
         EXAMPLES::
 
@@ -331,43 +341,8 @@ class ClassicalMatrixLieAlgebra(LieAlgebraFromAssociative):
         from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra
         return AffineLieAlgebra(self, kac_moody)
 
-    class Element(LieAlgebraFromAssociative.Element):
-        def matrix(self):
-            r"""
-            Return ``self`` as element of the underlying matrix algebra.
 
-            OUTPUT:
-
-            An instance of the element class of MatrixSpace.
-
-            EXAMPLES::
-
-                sage: sl3m = lie_algebras.sl(ZZ, 3, representation='matrix')
-                sage: e1,e2, f1, f2, h1, h2 = sl3m.gens()
-                sage: h1m = h1.matrix(); h1m
-                [ 1  0  0]
-                [ 0 -1  0]
-                [ 0  0  0]
-                sage: h1m.parent()
-                Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
-                sage: matrix(h2)
-                [ 0  0  0]
-                [ 0  1  0]
-                [ 0  0 -1]
-                sage: L = lie_algebras.so(QQ['z'], 5, representation='matrix')
-                sage: matrix(L.an_element())
-                [ 1  1  0  0  0]
-                [ 1  1  0  0  2]
-                [ 0  0 -1 -1  0]
-                [ 0  0 -1 -1 -1]
-                [ 0  1  0 -2  0]
-            """
-            return self.value
-
-        _matrix_ = matrix
-
-
-class gl(LieAlgebraFromAssociative):
+class gl(MatrixLieAlgebraFromAssociative):
     r"""
     The matrix Lie algebra `\mathfrak{gl}_n`.
 
@@ -413,10 +388,10 @@ class gl(LieAlgebraFromAssociative):
         category = LieAlgebras(R).FiniteDimensional().WithBasis()
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         index_set = FiniteEnumeratedSet(names)
-        LieAlgebraFromAssociative.__init__(self, MS, tuple(gens),
-                                           names=tuple(names),
-                                           index_set=index_set,
-                                           category=category)
+        MatrixLieAlgebraFromAssociative.__init__(self, MS, tuple(gens),
+                                                 names=tuple(names),
+                                                 index_set=index_set,
+                                                 category=category)
 
     def _repr_(self):
         """
@@ -494,7 +469,7 @@ class gl(LieAlgebraFromAssociative):
             return self.basis()['E_{}_{}'.format(*i)]
         return self.basis()[i]
 
-    class Element(ClassicalMatrixLieAlgebra.Element):
+    class Element(MatrixLieAlgebraFromAssociative.Element):
         def monomial_coefficients(self, copy=True):
             r"""
             Return the monomial coefficients of ``self``.

@@ -3,7 +3,7 @@
 Sage Packages
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -11,13 +11,13 @@ Sage Packages
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import re
 import os
 import logging
 
-from sage_bootstrap.env import SAGE_ROOT, SAGE_DISTFILES
+from sage_bootstrap.env import SAGE_ROOT
 
 
 log = logging.getLogger()

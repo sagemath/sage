@@ -80,6 +80,10 @@ def matrix(*args, **kwds):
       matrix. This determines ``ring``, ``nrows``, ``ncols`` and
       ``sparse``.
 
+    - ``immutable`` -- (boolean) make the matrix immutable. By default,
+      the output matrix is mutable.
+
+
     OUTPUT:
 
     a matrix
@@ -226,6 +230,14 @@ def matrix(*args, **kwds):
         [x6 x7 x8]
         sage: det(A)
         -x2*x4*x6 + x1*x5*x6 + x2*x3*x7 - x0*x5*x7 - x1*x3*x8 + x0*x4*x8
+
+    ::
+
+        sage: M = Matrix([[1,2,3],[4,5,6],[7,8,9]], immutable=True)
+        sage: M[0] = [9,9,9]
+        Traceback (most recent call last):
+        ...
+        ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
 
     TESTS:
 
@@ -620,8 +632,11 @@ def matrix(*args, **kwds):
     - Jeroen Demeyer (2018-02-20): completely rewritten using
       :class:`MatrixArgs`, see :trac:`24742`
     """
-    return MatrixArgs(*args, **kwds).matrix()
-
+    immutable = kwds.pop('immutable', False)
+    M = MatrixArgs(*args, **kwds).matrix()
+    if immutable:
+        M.set_immutable()
+    return M
 
 Matrix = matrix
 

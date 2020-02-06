@@ -16,8 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.matrix.all import MatrixSpace
-from sage.modules.all import FreeModule
 from sage.groups.affine_gps.affine_group import AffineGroup
 
 

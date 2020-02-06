@@ -29,7 +29,6 @@ from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import is_QuadraticForm
 from sage.rings.all import PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 
 from sage.rings.ring import IntegralDomain
 from sage.rings.rational_field import is_RationalField
@@ -48,7 +47,6 @@ from sage.structure.element import is_Matrix
 
 from .con_field import ProjectiveConic_field
 from .con_finite_field import ProjectiveConic_finite_field
-from .con_prime_finite_field import ProjectiveConic_prime_finite_field
 from .con_number_field import ProjectiveConic_number_field
 from .con_rational_field import ProjectiveConic_rational_field
 from .con_rational_function_field import ProjectiveConic_rational_function_field
@@ -234,8 +232,6 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)
-        if is_PrimeFiniteField(base_field):
-            return ProjectiveConic_prime_finite_field(P2, F)
         if is_FiniteField(base_field):
             return ProjectiveConic_finite_field(P2, F)
         if is_RationalField(base_field):
@@ -244,7 +240,7 @@ def Conic(base_field, F=None, names=None, unique=True):
             return ProjectiveConic_number_field(P2, F)
         if is_FractionField(base_field) and (is_PolynomialRing(base_field.ring()) or is_MPolynomialRing(base_field.ring())):
             return ProjectiveConic_rational_function_field(P2, F)
-            
+
         return ProjectiveConic_field(P2, F)
 
     raise TypeError("Number of variables of F (=%s) must be 2 or 3" % F)

@@ -1526,46 +1526,22 @@ cdef class GenericBackend:
 
 default_solver = None
 
-def default_mip_solver(solver = None):
+def default_mip_solver(solver=None):
     """
-    Returns/Sets the default MILP Solver used by Sage
+    Returns/sets the default MILP solver used by Sage
 
     INPUT:
 
-    - ``solver`` -- defines the solver to use:
+    - ``solver`` -- one of the following:
 
-        - GLPK (``solver="GLPK"``). See the `GLPK
-          <http://www.gnu.org/software/glpk/>`_ web site.
+        - a string indicating one of the available solvers
+          (see :class:`MixedIntegerLinearProgram`);
 
-        - GLPK's implementation of an exact rational simplex
-          method (``solver="GLPK/exact"``).
+        - a callable (typically a subclass of 
+          :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
-        - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-          <http://www.coin-or.org>`_ web site.
-
-        - CPLEX (``solver="CPLEX"``). See the
-          `CPLEX <http://www.ilog.com/products/cplex/>`_ web site.
-
-        - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT
-          <http://cvxopt.org/>`_ web site.
-
-        - Gurobi (``solver="Gurobi"``). See the `Gurobi
-          <http://www.gurobi.com/>`_ web site.
-
-        - PPL (``solver="PPL"``). See the `PPL
-          <http://bugseng.com/products/ppl/>`_ web site. This solver is
-          an exact rational solver.
-
-        - ``InteractiveLPProblem`` (``solver="InteractiveLP"``).  A didactical
-          implementation of the revised simplex method in Sage.  It works over
-          any exact ordered field, the default is ``QQ``.
-
-        ``solver`` should then be equal to one of ``"GLPK"``,
-        ``"Coin"``, ``"CPLEX"``,  ``"CVXOPT"``, ``"Gurobi"``, ``"PPL"`, or
-        ``"InteractiveLP"``,
-
-        - If ``solver=None`` (default), the current default solver's name is
-          returned.
+        - ``None`` (default), in which case the current default solver
+          is returned; this is either a string or a callable.
 
     OUTPUT:
 
@@ -1608,18 +1584,22 @@ def default_mip_solver(solver = None):
                 except ValueError:
                     pass
 
+    if callable(solver):
+        default_solver = solver
+        return
+
     solver = solver.capitalize()
 
     if solver == "Cplex":
         try:
-            from sage.numerical.backends.cplex_backend import CPLEXBackend
+            from sage_numerical_backends_cplex.cplex_backend import CPLEXBackend
             default_solver = solver
         except ImportError:
             raise ValueError("CPLEX is not available. Please refer to the documentation to install it.")
 
     elif solver == "Coin":
         try:
-            from sage.numerical.backends.coin_backend import CoinBackend
+            from sage_numerical_backends_coin.coin_backend import CoinBackend
             default_solver = solver
         except ImportError:
             raise ValueError("COIN is not available. Please refer to the documentation to install it.")
@@ -1640,7 +1620,7 @@ def default_mip_solver(solver = None):
 
     elif solver == "Gurobi":
         try:
-            from sage.numerical.backends.gurobi_backend import GurobiBackend
+            from sage_numerical_backends_gurobi.gurobi_backend import GurobiBackend
             default_solver = solver
         except ImportError:
             raise ValueError("Gurobi is not available. Please refer to the documentation to install it.")
@@ -1652,7 +1632,7 @@ def default_mip_solver(solver = None):
         default_solver = solver
 
     else:
-        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', or None.")
+        raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'Gurobi', 'PPL', 'InteractiveLP', a callable, or None.")
 
 cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
     """
@@ -1660,40 +1640,16 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     INPUT:
 
-    - ``solver`` -- 7 solvers should be available through this class:
+    - ``solver`` -- one of the following:
 
-        - GLPK (``solver="GLPK"``). See the `GLPK
-          <http://www.gnu.org/software/glpk/>`_ web site.
+        - a string indicating one of the available solvers
+          (see :class:`MixedIntegerLinearProgram`);
 
-        - GLPK's implementation of an exact rational simplex
-          method (``solver="GLPK/exact"``).
+        - ``None`` (default), in which case the default solver is used
+          (see :func:`default_mip_solver`);
 
-        - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-          <http://www.coin-or.org>`_ web site.
-
-        - CPLEX (``solver="CPLEX"``). See the
-          `CPLEX <http://www.ilog.com/products/cplex/>`_ web site.
-
-        - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT
-          <http://cvxopt.org/>`_ web site.
-
-        - Gurobi (``solver="Gurobi"``). See the `Gurobi
-          <http://www.gurobi.com/>`_ web site.
-
-        - PPL (``solver="PPL"``). See the `PPL
-          <http://bugseng.com/products/ppl/>`_ web site.  This solver is
-          an exact rational solver.
-
-        - ``InteractiveLPProblem`` (``solver="InteractiveLP"``).  A didactical
-          implementation of the revised simplex method in Sage.  It works over
-          any exact ordered field, the default is ``QQ``.
-
-        ``solver`` should then be equal to one of the above strings,
-        or ``None`` (default), in which case the default solver is used
-        (see ``default_mip_solver`` method).
-
-        ``solver`` can also be a callable, in which case it is called,
-        and its result is returned.
+        - or a callable (such as a class), in which case it is called,
+          and its result is returned.
 
     - ``base_ring`` -- If not ``None``, request a solver that works over this
         (ordered) field.  If ``base_ring`` is not a field, its fraction field
@@ -1759,6 +1715,18 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=glpk_exact_solver) # long time
         8
 
+    TESTS:
+
+    Test that it works when the default solver is a callable, see :trac:`28914`::
+
+        sage: old_default = default_mip_solver()
+        sage: from sage.numerical.backends.glpk_backend import GLPKBackend
+        sage: default_mip_solver(GLPKBackend)
+        sage: M = MixedIntegerLinearProgram()   # indirect doctest
+        sage: M.get_backend()
+        <...GLPKBackend...>
+        sage: default_mip_solver(old_default)
+
     """
     if solver is None:
 
@@ -1779,7 +1747,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         if solver == "Coin" and constraint_generation:
             solver = "Glpk"
 
-    elif callable(solver):
+    if callable(solver):
         kwds = {}
         if base_ring is not None:
             kwds['base_ring']=base_ring
@@ -1789,7 +1757,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         solver = solver.capitalize()
 
     if solver == "Coin":
-        from sage.numerical.backends.coin_backend import CoinBackend
+        from sage_numerical_backends_coin.coin_backend import CoinBackend
         return CoinBackend()
 
     elif solver == "Glpk":
@@ -1801,7 +1769,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         return GLPKExactBackend()
 
     elif solver == "Cplex":
-        from sage.numerical.backends.cplex_backend import CPLEXBackend
+        from sage_numerical_backends_cplex.cplex_backend import CPLEXBackend
         return CPLEXBackend()
 
     elif solver == "Cvxopt":
@@ -1809,7 +1777,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         return CVXOPTBackend()
 
     elif solver == "Gurobi":
-        from sage.numerical.backends.gurobi_backend import GurobiBackend
+        from sage_numerical_backends_gurobi.gurobi_backend import GurobiBackend
         return GurobiBackend()
 
     elif solver == "Ppl":

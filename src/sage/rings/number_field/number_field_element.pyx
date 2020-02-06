@@ -3042,7 +3042,8 @@ cdef class NumberFieldElement(FieldElement):
             sage: g is f.polynomial()
             False
         """
-        return QQ[var](self._coefficients())
+        from sage.rings.polynomial.polynomial_ring_constructor import _single_variate as Pol
+        return Pol(QQ, var)(self._coefficients())
 
     def __hash__(self):
         """

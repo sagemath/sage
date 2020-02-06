@@ -105,13 +105,15 @@ size_t get_next_level(\
             not visited yet.
     */
 
+    // We keep track, which face in ``maybe_newfaces`` is a new face.
+    int is_not_newface[n_faces -1];
+
     // Step 1:
     for (size_t j = 0; j < n_faces - 1; j++){
         intersection(faces[j], faces[n_faces - 1], maybe_newfaces[j], face_length);
+        is_not_newface[j] = 0;
     }
 
-    // We keep track, which face in ``maybe_newfaces`` is a new face.
-    int *is_not_newface = new int[n_faces -1]();
 
     // For each face we will Step 2 and Step 3.
     for (size_t j = 0; j < n_faces-1; j++){
@@ -166,7 +168,6 @@ size_t get_next_level(\
         newfaces[n_newfaces] = maybe_newfaces[j];
         n_newfaces++;
     }
-    delete[] is_not_newface;
     return n_newfaces;
 }
 

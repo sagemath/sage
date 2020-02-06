@@ -192,21 +192,19 @@ TESTS::
     sage: C == loads(dumps(C))
     True
 """
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2005 David Joyner <wdjoyner@gmail.com>
 #                     2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or later (at your preference).
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from __future__ import division, print_function, absolute_import
 
 from six.moves import range
-from six import iteritems
 
-import inspect
 from copy import copy
 
 from sage.cpython.string import bytes_to_str
@@ -230,12 +228,10 @@ from sage.structure.parent import Parent
 from sage.misc.all import prod
 from sage.misc.functional import is_even
 from sage.misc.cachefunc import cached_method
-from sage.misc.sageinspect import sage_getargspec
 from sage.misc.randstate import current_randstate
 from sage.combinat.subset import Subsets
 from sage.features.gap import GapPackage
-from sage.coding.abstract_code import *
-
+from sage.coding.abstract_code import AbstractCode
 from .encoder import Encoder
 from .decoder import Decoder
 
@@ -2343,7 +2339,7 @@ class AbstractLinearCode(AbstractCode, Module):
                         weights[wt].append(c)
                 weights.pop(0)
                 AutGps = []
-                for wt, words in iteritems(weights):
+                for wt, words in weights.items():
                     M = MatrixStruct(matrix(words))
                     autgp = M.automorphism_group()
                     L = [[j+1 for j in gen] for gen in autgp[0]]
@@ -3714,10 +3710,10 @@ class LinearCodeSyndromeDecoder(Decoder):
     And now, we build a third syndrome decoder, whose ``maximum_error_weight``
     is bigger than both the covering radius and half the minimum distance::
 
-        sage: D = C.decoder("Syndrome", maximum_error_weight = 5)
-        sage: D.decoder_type()
+        sage: D = C.decoder("Syndrome", maximum_error_weight = 5) # long time
+        sage: D.decoder_type() # long time
         {'complete', 'hard-decision', 'might-error'}
-        sage: D.decoding_radius()
+        sage: D.decoding_radius() # long time 
         4
 
     In that case, the decoder might still return an unexpected codeword, but
@@ -4035,12 +4031,12 @@ class LinearCodeSyndromeDecoder(Decoder):
             sage: D = codes.decoders.LinearCodeSyndromeDecoder(C)
             sage: D.syndrome_table()
             {(0, 0, 0): (0, 0, 0, 0, 0, 0, 0),
-             (0, 0, 1): (0, 0, 0, 1, 0, 0, 0),
-             (0, 1, 0): (0, 1, 0, 0, 0, 0, 0),
-             (0, 1, 1): (0, 0, 0, 0, 0, 1, 0),
              (1, 0, 0): (1, 0, 0, 0, 0, 0, 0),
-             (1, 0, 1): (0, 0, 0, 0, 1, 0, 0),
+             (0, 1, 0): (0, 1, 0, 0, 0, 0, 0),
              (1, 1, 0): (0, 0, 1, 0, 0, 0, 0),
+             (0, 0, 1): (0, 0, 0, 1, 0, 0, 0),
+             (1, 0, 1): (0, 0, 0, 0, 1, 0, 0),
+             (0, 1, 1): (0, 0, 0, 0, 0, 1, 0),
              (1, 1, 1): (0, 0, 0, 0, 0, 0, 1)}
         """
         return self._lookup_table

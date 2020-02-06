@@ -1,5 +1,5 @@
 """
-Linear Extensions of Directed Acyclic Graphs.
+Linear Extensions of Directed Acyclic Graphs
 
 A linear extension of a directed acyclic graph is a total (linear) ordering on
 the vertices that is compatible with the graph in the following sense:

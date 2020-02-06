@@ -865,7 +865,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         att_grp_elem = attached_group(elem)
         if self.is_finite() and self.strands() <= 7: # not realistic for larger number of strands
             att_grp_elem_back= self(att_grp_elem)
-            tester.assertTrue(att_grp_elem_back == elem)
+            tester.assertEqual(att_grp_elem_back, elem)
         return
 
 

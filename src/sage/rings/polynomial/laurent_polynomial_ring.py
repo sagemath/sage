@@ -29,7 +29,7 @@ AUTHORS:
 - David Roe (2008-2-23): created
 - David Loeffler (2009-07-10): cleaned up docstrings
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed@math.harvard.edu>,
 #                          William Stein <wstein@gmail.com>,
 #                          Mike Hansen <mhansen@gmail.com>
@@ -39,10 +39,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
-from six import iteritems, iterkeys
 from six.moves import range
 
 from sage.structure.element import parent
@@ -52,6 +51,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.latex import latex
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
 from sage.rings.ring import CommutativeRing
+
 
 def is_LaurentPolynomialRing(R):
     """
@@ -307,10 +307,10 @@ def _split_dict_(D, indices, group_by=None):
     def extract(T, indices):
         return tuple(get(T, i) for i in indices)
 
-    remaining = sorted(set(range(len(next(iterkeys(D)))))
+    remaining = sorted(set(range(len(next(iter(D)))))
                        - set(indices) - set(group_by))
     result = {}
-    for K, V in iteritems(D):
+    for K, V in D.items():
         if not all(r == 0 for r in extract(K, remaining)):
             raise SplitDictError('split not possible')
         G = extract(K, group_by)
@@ -364,7 +364,7 @@ def _split_laurent_polynomial_dict_(P, M, d):
     def value(d, R):
         assert d
         if len(d) == 1:
-            k, v = next(iteritems(d))
+            k, v = next(iter(d.items()))
             if all(i == 0 for i in k):
                 return R(v)
         return R(M(d))
@@ -376,10 +376,10 @@ def _split_laurent_polynomial_dict_(P, M, d):
             indices[g] = None
     D = _split_dict_(d, indices, group_by)
     try:
-        return {k: value(v, P.base_ring()) for k, v in iteritems(D)}
+        return {k: value(v, P.base_ring()) for k, v in D.items()}
     except (ValueError, TypeError):
         pass
-    return sum(P({k: 1}) * value(v, P) for k, v in iteritems(D)).dict()
+    return sum(P({k: 1}) * value(v, P) for k, v in D.items()).dict()
 
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
@@ -706,11 +706,23 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         # One may eventually want ideals in these guys.
         raise NotImplementedError
 
-    def ideal(self):
+    def ideal(self, *args, **kwds):
         """
         EXAMPLES::
 
-            sage: LaurentPolynomialRing(QQ,2,'x').ideal()
+            sage: LaurentPolynomialRing(QQ,2,'x').ideal([1])
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+
+        TESTS:
+ 
+        check that :trac:`26421` is fixed:
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: P.<x> = PolynomialRing(R)
+            sage: p = x-t
+            sage: p.content_ideal()    # indirect doctest
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -978,11 +990,11 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in iteritems(x.dict())}
+                    d = {(k,): v for k, v in x.dict().items()}
                 else:
                     d = x.dict()
                 x = _split_laurent_polynomial_dict_(self, P, d)
-                x = {k[0]: v for k, v in iteritems(x)}
+                x = {k[0]: v for k, v in x.items()}
             elif self.base_ring().has_coerce_map_from(P):
                 x = {0: self.base_ring()(x)}
             elif x.is_constant() and self.has_coerce_map_from(x.parent().base_ring()):
@@ -1185,7 +1197,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
                 pass
             elif set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in iteritems(x.dict())}
+                    d = {(k,): v for k, v in x.dict().items()}
                 else:
                     d = x.dict()
                 x = _split_laurent_polynomial_dict_(self, P, d)

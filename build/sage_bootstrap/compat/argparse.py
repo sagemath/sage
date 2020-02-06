@@ -96,27 +96,11 @@ import textwrap as _textwrap
 
 from gettext import gettext as _
 
-try:
-    set
-except NameError:
-    # for python < 2.4 compatibility (sets module is there since 2.3):
-    from sets import Set as set
 
 try:
     basestring
 except NameError:
     basestring = str
-
-try:
-    sorted
-except NameError:
-    # for python < 2.4 compatibility:
-    def sorted(iterable, reverse=False):
-        result = list(iterable)
-        result.sort()
-        if reverse:
-            result.reverse()
-        return result
 
 
 def _callable(obj):

@@ -542,6 +542,7 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     return valid_auto
 
+
 def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_autos):
     r"""
     If an element of `Aut_{F_p}` has been lifted to `\QQ`
@@ -1241,10 +1242,8 @@ def automorphism_group_FF_alg2(rational_function):
     # Define a field of definition for the absolute automorphism group
     r = lcm([x[0].degree() for x in T_poly.factor()])*F.degree()
     E = GF(p**r,'b')
-    b = E.gen(0)
     sigma = F.Hom(E)[0]
     S = PolynomialRing(E,'w')
-    w = S.gen(0)
     E_poly = rational_function_coerce(T_poly, sigma, S)
 
     T = [ [alpha, E(1)] for alpha in E_poly.roots(ring=E, multiplicities=False)]
@@ -1335,7 +1334,6 @@ def order_p_automorphisms(rational_function, pre_image):
         case = 'F-pre_images'
     else:
         factor_list = pre_image[0][2].factor()
-        minimal_fix_poly = R(prod(x[0] for x in factor_list))
         r2 = sum(x[0].degree() for x in factor_list)
         # Note that infinity is F-rational, so covered by preceding case
         case = 'all pre_images'
@@ -1405,9 +1403,8 @@ def order_p_automorphisms(rational_function, pre_image):
                 T_poly = pre_image[0][2]
                 e = lcm([x[0].degree() for x in T_poly.factor()])*F.degree()
                 E = GF(p**e, 'b')
-                b = E.gen(0)
                 sigma = F.Hom(E)[0]
-                S = PolynomialRing(E,'w')
+                S = PolynomialRing(E, 'w')
                 w = S.gen(0)
                 E_poly = rational_function_coerce(T_poly, sigma, S)
                 # List of roots permuted by elements of order p
@@ -1556,11 +1553,9 @@ def automorphism_group_FF_alg3(rational_function):
     D = max(f.degree(), g.degree())
 
     # For use in the quadratic extension parts of the algorithm
-    E = GF(p**(2*F.degree()),'b')
-    b = E.gen(0)
+    E = GF(p**(2 * F.degree()), 'b')
     sigma = F.Hom(E)[0]
     S = PolynomialRing(E, 'w')
-    w = S.gen(0)
     Phi = rational_function_coerce(phi, sigma, S)
 
     # Compute the set of distinct F-rational and F-quadratic
@@ -1617,7 +1612,6 @@ def automorphism_group_FF_alg3(rational_function):
     if n1%p == 1 and n2%p == 0 and sum(len(x[1]) for x in pre_images)%p == 0:
         # Compute total number of distinct fixed points as a final check for order p auts
         factor_list = fix.factor()
-        minimal_fix_poly = R(prod(x[0] for x in factor_list))
         n = sum(x[0].degree() for x in factor_list) + bool(fix.degree() < D+1)
         if n%p == 1:
             automorphisms = automorphisms + order_p_automorphisms(phi, pre_images)

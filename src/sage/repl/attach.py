@@ -250,13 +250,14 @@ def reset_load_attach_path():
         sage: reset_load_attach_path(); load_attach_path()
         ['.']
         sage: os.environ['SAGE_LOAD_ATTACH_PATH'] = '/veni/vidi:vici:'
-        sage: import imp
-        sage: imp.reload(sage.repl.attach)    # Simulate startup
+        sage: from imp import reload        # py2
+        sage: from importlib import reload  # py3
+        sage: reload(sage.repl.attach)    # Simulate startup
         <module 'sage.repl.attach' from '...'>
         sage: load_attach_path()
         ['.', '/veni/vidi', 'vici']
         sage: del os.environ['SAGE_LOAD_ATTACH_PATH']
-        sage: imp.reload(sage.repl.preparse)    # Simulate startup
+        sage: reload(sage.repl.preparse)    # Simulate startup
         <module 'sage.repl.preparse' from '...'>
         sage: reset_load_attach_path(); load_attach_path()
         ['.']

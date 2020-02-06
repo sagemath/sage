@@ -1,7 +1,7 @@
 r"""
 Cartesian Products
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,8 @@ Cartesian Products
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 
 from six.moves import range
@@ -25,7 +25,6 @@ from sage.sets.set_from_iterator import EnumeratedSetFromIterator
 from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
-from .combinat import CombinatorialClass
 from .ranker import unrank
 from sage.rings.infinity import infinity
 

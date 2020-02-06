@@ -1,5 +1,5 @@
 """
-Vectors with rational entries.
+Vectors with rational entries
 
 AUTHOR:
 
@@ -58,7 +58,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
@@ -163,7 +163,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                 mpq_clear(self._entries[i])
             sig_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -185,13 +185,13 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef int c
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             c = mpq_cmp(left._entries[i], (<Vector_rational_dense>right)._entries[i])
             if c < 0:
-                return -1
+                return rich_to_bool(op, -1)
             elif c > 0:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

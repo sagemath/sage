@@ -1,5 +1,5 @@
 """
-Floating point template for complete discrete valuation rings.
+Floating point template for complete discrete valuation rings
 
 In order to use this template you need to write a linkage file and
 gluing file.  For an example see mpz_linkage.pxi (linkage file) and

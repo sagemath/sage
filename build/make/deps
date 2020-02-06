@@ -53,6 +53,7 @@ all-sage: \
 		sagelib \
 		$(STANDARD_PACKAGE_INSTS) \
 		$(OPTIONAL_INSTALLED_PACKAGE_INSTS) \
+                $(OPTIONAL_CLEANED_PACKAGES_CLEANS) \
 		$(EXTCODE) \
 		$(SCRIPTS)
 
@@ -64,7 +65,7 @@ download-for-sdist:
 
 # TOOLCHAIN consists of dependencies determined by configure.
 # These are built after the "base" target but before anything else.
-toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname)))
+toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
 
 # Build all packages that GCC links against serially, otherwise this
 # leads to race conditions where some library which is used by GCC gets
@@ -170,11 +171,13 @@ sagelib: \
 		$(inst_ratpoints) \
 		$(inst_readline) \
 		$(inst_rw) \
+		$(inst_sage_conf) \
 		$(inst_singular) \
 		$(inst_six) \
 		$(inst_symmetrica) \
 		$(inst_zn_poly) \
-		$(EXTCODE)
+		$(EXTCODE) \
+		$(PCFILES)
 	$(AM_V_at)if [ -z "$$SAGE_INSTALL_FETCH_ONLY" ]; then \
 		cd $(SAGE_SRC) && source bin/sage-env && \
 		sage-logger -p 'time $(MAKE) sage' '$(SAGE_LOGS)/sagelib-$(SAGE_VERSION).log'; \
@@ -196,6 +199,11 @@ $(SAGE_LOCAL)/bin/%: $(SAGE_SRC)/bin/%
 $(SAGE_EXTCODE)/%: $(SAGE_SRC)/ext/%
 	@mkdir -p "$(@D)"
 	$(AM_V_at)cp $< $@
+
+# Install sage-specific generated .pc files
+$(SAGE_PKGCONFIG)/%.pc: $(SAGE_SRC)/lib/pkgconfig/%.pc
+	@mkdir -p "$(@D)"
+	$(AM_V_at)cp -P $< $@
 
 
 ###############################################################################

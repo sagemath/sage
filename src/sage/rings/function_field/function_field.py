@@ -737,15 +737,15 @@ class FunctionField(Field):
             tester.assertEqual(0, d(f))
         # Leibniz's law
         for x,y in tester.some_elements(product(S, S)):
-            tester.assertTrue(d(x*y) == x*d(y) + d(x)*y)
+            tester.assertEqual(d(x*y), x*d(y) + d(x)*y)
         # Linearity
         for x,y in tester.some_elements(product(S, S)):
-            tester.assertTrue(d(x+y) == d(x) + d(y))
+            tester.assertEqual(d(x+y), d(x) + d(y))
         for c,x in tester.some_elements(product(K, S)):
-            tester.assertTrue(d(c*x) == c*d(x))
+            tester.assertEqual(d(c*x), c*d(x))
         # Constants map to zero
         for c in tester.some_elements(K):
-            tester.assertTrue(d(c) == 0)
+            tester.assertEqual(d(c), 0)
 
     def _convert_map_from_(self, R):
         """

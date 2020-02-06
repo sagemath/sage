@@ -13,6 +13,7 @@ from six import integer_types
 
 import sage.arith.all as arith
 from . import laurent_series_ring_element
+from sage.rings.puiseux_series_ring_element import PuiseuxSeries
 import sage.rings.padics.factory as padics_factory
 import sage.rings.padics.padic_generic_element as padic_generic_element
 from . import power_series_ring_element
@@ -87,6 +88,15 @@ def O(*x, **kwds):
         sage: O(n)
         O(n)
 
+    Application with Puiseux series::
+
+        sage: P.<y> = PuiseuxSeriesRing(ZZ)
+        sage: y^(1/5) + O(y^(1/3))
+        y^(1/5) + O(y^(1/3))
+        sage: y^(1/3) + O(y^(1/5))
+        O(y^(1/5))
+
+
     TESTS::
 
         sage: var('x, y')
@@ -132,6 +142,9 @@ def O(*x, **kwds):
     elif isinstance(x, laurent_series_ring_element.LaurentSeries):
         return laurent_series_ring_element.LaurentSeries(x.parent(), 0).\
             add_bigoh(x.valuation(), **kwds)
+
+    elif isinstance(x, PuiseuxSeries):
+        return x.add_bigoh(x.valuation(), **kwds)
 
     elif isinstance(x, integer_types + (integer.Integer, rational.Rational)):
         # p-adic number

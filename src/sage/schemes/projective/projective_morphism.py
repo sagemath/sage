@@ -965,7 +965,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.degree()
             2
         """
-        return(self._polys[0].degree())
+        return self._polys[0].degree()
 
     def dehomogenize(self, n):
         r"""
@@ -1241,7 +1241,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             C = f[i].coefficients()
             h = max([c.global_height(prec) for c in C])
             H = max(H, h)
-        return(H)
+        return H
 
     def local_height(self, v, prec=None):
         r"""
@@ -1372,7 +1372,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         N = dom.dimension_relative()+1
         R = dom.coordinate_ring()
         J = jacobian(self.defining_polynomials(),dom.gens())
-        return(R.ideal(J.minors(N)))
+        return R.ideal(J.minors(N))
 
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
@@ -1505,11 +1505,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         """
         k = ZZ(k)
         if k <= 0:
-            raise ValueError("k (=%s) must be a positive integer"%(k))
+            raise ValueError("k (=%s) must be a positive integer" % k)
         #first check if subscheme
         from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
-            return(Q.preimage(self, k))
+            return Q.preimage(self, k)
 
         #else assume a point
         BR = self.base_ring()

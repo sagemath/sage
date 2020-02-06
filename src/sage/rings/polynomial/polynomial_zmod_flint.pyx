@@ -1,5 +1,5 @@
 """
-Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT.
+Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT
 
 This module gives a fast implementation of `(\ZZ/n\ZZ)[x]` whenever `n` is at
 most ``sys.maxsize``. We use it by default in preference to NTL when the modulus

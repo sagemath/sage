@@ -1,5 +1,4 @@
 #!/usr/bin/env sage-system-python
-
 from __future__ import print_function
 
 import os
@@ -70,7 +69,7 @@ def main():
             name = dir
             version = ""
 
-        if len(version) == 0:
+        if not version:
             print("Warning: no version number detected")
         else:
             m = re.match(r"[0-9]+[-.0-9a-zA-Z]*(\.p[0-9]+)?$", version)

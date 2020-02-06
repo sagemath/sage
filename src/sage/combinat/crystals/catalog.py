@@ -48,7 +48,7 @@ This is a catalog of crystals that are currently implemented in Sage:
 * :class:`KyotoPathModel <sage.combinat.crystals.kyoto_path_model.KyotoPathModel>`
 * :class:`Letters <sage.combinat.crystals.letters.CrystalOfLetters>`
 * :class:`LSPaths <sage.combinat.crystals.littelmann_path.CrystalOfLSPaths>`
-* :class:`Minimaj <from sage.combinat.multiset_partition_into_sets_ordered.MinimajCrystal>`
+* :class:`Minimaj <sage.combinat.multiset_partition_into_sets_ordered.MinimajCrystal>`
 * :class:`NakajimaMonomials <sage.combinat.crystals.monomial_crystals.CrystalOfNakajimaMonomials>`
 * :class:`OddNegativeRoots <sage.combinat.crystals.kac_modules.CrystalOfOddNegativeRoots>`
 * :class:`ProjectedLevelZeroLSPaths

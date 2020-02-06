@@ -232,13 +232,22 @@ class GaloisGroup_v2(PermutationGroup_generic):
         # PARI computes all the elements of self anyway, so we might as well store them
         self._elts = sorted([self(x, check=False) for x in g[5]])
 
-    def __call__(self, x, check=True):
-        r""" Create an element of self from x. Here x had better be one of:
-        -- the integer 1, denoting the identity of G
-        -- an element of G
-        -- a permutation of the right length which defines an element of G, or anything that
-            coerces into a permutation of the right length
-        -- an abstract automorphism of the underlying number field.
+    def _element_constructor_(self, x, check=True):
+        """
+        Create an element of ``self`` from ``x``.
+
+        INPUT:
+
+        - ``x`` -- one of the following (`G` is this Galois group):
+
+          - the integer 1, denoting the identity of `G`;
+
+          - an element of `G`;
+
+          - a permutation of the right length that defines an element
+            of `G`, or anything that coerces into such a permutation;
+
+          - an automorphism of the underlying number field.
 
         EXAMPLES::
 
@@ -256,7 +265,6 @@ class GaloisGroup_v2(PermutationGroup_generic):
         if x == 1:
             return self.identity()
 
-        from sage.rings.number_field.morphism import NumberFieldHomomorphism_im_gens
         if isinstance(x, NumberFieldHomomorphism_im_gens) and x.parent() == self.number_field().Hom(self.number_field()):
             l = [g for g in self if g.as_hom() == x]
             if len(l) != 1:

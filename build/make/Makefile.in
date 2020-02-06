@@ -29,11 +29,16 @@ endif
 # Directory to keep track of which packages are installed
 INST = $(SAGE_SPKG_INST)
 
-# Aliases for optional packages selected at configure time
+# Aliases for mutually exclusive standard packages selected at configure time
 TOOLCHAIN = @SAGE_TOOLCHAIN@
 PYTHON = python@SAGE_PYTHON_VERSION@
 MP_LIBRARY = @SAGE_MP_LIBRARY@
 BLAS = @SAGE_BLAS@
+
+# Because some .pc files are generated at configure time we can't write their
+# names explicitly the Makefile, so we use the wildcard function here at make
+# runtime
+PCFILES = $(subst $(SAGE_SRC),$(SAGE_LOCAL),$(wildcard $(SAGE_SRC)/lib/pkgconfig/*.pc))
 
 # Files to track installation of packages
 BUILT_PACKAGES = @SAGE_BUILT_PACKAGES@
@@ -62,9 +67,15 @@ STANDARD_PACKAGE_INSTS = \
 	$(foreach pkgname,$(STANDARD_PACKAGES),$(inst_$(pkgname)))
 
 # All optional installed packages (triggers the auto-update)
-OPTIONAL_INSTALLED_PACKAGES = @SAGE_OPTIONAL_INSTALLED_PACKAGES@
+OPTIONAL_INSTALLED_PACKAGES = \
+@SAGE_OPTIONAL_INSTALLED_PACKAGES@
 OPTIONAL_INSTALLED_PACKAGE_INSTS = \
     $(foreach pkgname,$(OPTIONAL_INSTALLED_PACKAGES),$(inst_$(pkgname)))
+
+# All previously installed optional packages that are to be uninstalled
+OPTIONAL_CLEANED_PACKAGES = \
+@SAGE_OPTIONAL_CLEANED_PACKAGES@
+OPTIONAL_CLEANED_PACKAGES_CLEANS = $(OPTIONAL_CLEANED_PACKAGES:%=%-clean)
 
 # All packages which should be downloaded
 SDIST_PACKAGES = @SAGE_SDIST_PACKAGES@

@@ -729,7 +729,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
             sage: ~a is a.inverse()
             True
-            sage: a^(-1) is a.inverse()
+            sage: (a)^(-1) is a.inverse()
             True
 
         The inverse of the identity map is of course itself::
@@ -740,23 +740,41 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         and we have::
 
-            sage: a*a^(-1) == id
+            sage: a*(a)^(-1) == id
             True
-            sage: a^(-1)*a == id
+            sage: (a)^(-1)*a == id
             True
+
+        If the name could cause some confusion, a bracket is added around the
+        element before taking the inverse::
+
+            sage: c = M.automorphism(name='a^(-1)*b')
+            sage: c[e,:] = [[1,0,0],[0,-1,1],[0,2,-1]]
+            sage: c.inverse()
+            Automorphism (a^(-1)*b)^(-1) of the Rank-3 free module M over the
+             Integer Ring
+
         """
         from .comp import Components
         if self._is_identity:
             return self
         if self._inverse is None:
+            from sage.tensor.modules.format_utilities import is_atomic
             if self._name is None:
                 inv_name = None
             else:
-                inv_name = self._name  + '^(-1)'
+                if is_atomic(self._name, ['*']):
+                    inv_name = self._name + '^(-1)'
+                else:
+                    inv_name = '(' + self._name + ')^(-1)'
             if self._latex_name is None:
                 inv_latex_name = None
             else:
-                inv_latex_name = self._latex_name + r'^{-1}'
+                if is_atomic(self._latex_name, ['\\circ', '\\otimes']):
+                    inv_latex_name = self._latex_name + r'^{-1}'
+                else:
+                    inv_latex_name = r'\left(' + self._latex_name + \
+                                     r'\right)^{-1}'
             fmodule = self._fmodule
             si = fmodule._sindex
             nsi = fmodule._rank + si

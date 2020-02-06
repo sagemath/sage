@@ -16,7 +16,8 @@ AUTHORS::
 
 """
 
-import os, sys, difflib
+import os
+import sys
 import subprocess
 from optparse import OptionParser
 from sage.misc.temporary_file import tmp_dir
@@ -28,7 +29,7 @@ parser.add_option('-l','--long',dest='long', action="store_true", default=False)
 
 options, args = parser.parse_args()
 
-if not (len(args) in [1,2]) :
+if len(args) not in [1, 2]:
     print(usage)
     sys.exit(1)
 

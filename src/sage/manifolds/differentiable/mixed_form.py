@@ -874,7 +874,7 @@ class MixedForm(AlgebraElement):
 
         INPUT:
 
-        - ``num`` -- an element of the symbolic ring
+        - ``other`` -- an element of the symbolic ring
 
         OUTPUT:
 
@@ -896,6 +896,11 @@ class MixedForm(AlgebraElement):
             y/\(x/\F) = [0] + [x^2*y^2 dx] + [0]
 
         """
+        # Simple checks:
+        if other.is_trivial_zero():
+            return self.parent().zero()
+        elif (other - 1).is_trivial_zero():
+            return self
         resu = self._new_instance()
         resu[:] = [other * form for form in self._comp]
         # Compose name:

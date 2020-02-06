@@ -133,6 +133,10 @@ lazy_import('sage.rings.lazy_laurent_series_ring', 'LazyLaurentSeriesRing')
 # Tate algebras
 from .tate_algebra import TateAlgebra
 
+# Puiseux series ring
+from .puiseux_series_ring import PuiseuxSeriesRing
+from .puiseux_series_ring_element import PuiseuxSeries
+
 # Pseudo-ring of PARI objects.
 from .pari_ring import PariRing, Pari
 
@@ -170,6 +174,3 @@ from .asymptotic.all import *
 from . import numbers_abc
 
 del absolute_import
-
-# Extensions
-from sage.rings.ring_extension_constructor import RingExtension

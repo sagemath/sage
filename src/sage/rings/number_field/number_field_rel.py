@@ -765,7 +765,7 @@ class NumberField_relative(NumberField_generic):
             sage: K.Hom(K) # indirect doctest
             Automorphism group of Number Field in a with defining polynomial x^3 - 2 over its base field
             sage: type(K.Hom(K))
-            <class 'sage.rings.number_field.morphism.RelativeNumberFieldHomset_with_category'>
+            <class 'sage.rings.number_field.homset.RelativeNumberFieldHomset_with_category'>
 
         TESTS::
 
@@ -776,7 +776,7 @@ class NumberField_relative(NumberField_generic):
         if not is_NumberFieldHomsetCodomain(codomain):
             raise TypeError("{} is not suitable as codomain for homomorphisms from {}".format(codomain, self))
 
-        from .morphism import RelativeNumberFieldHomset
+        from sage.rings.number_field.homset import RelativeNumberFieldHomset
         return RelativeNumberFieldHomset(self, codomain, category)
 
     def _latex_(self):

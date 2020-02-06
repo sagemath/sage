@@ -660,10 +660,10 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         PS = self.codomain()
         A = PS.affine_patch(n)
         Q = []
-        for i in range(0,PS.ambient_space().dimension_relative()+1):
-            if i !=n:
-                Q.append(self[i]/self[n])
-        return(A.point(Q))
+        for i in range(PS.ambient_space().dimension_relative() + 1):
+            if i != n:
+                Q.append(self[i] / self[n])
+        return A.point(Q)
 
     def global_height(self, prec=None):
         r"""
@@ -723,7 +723,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 P = self._number_field_from_algebraics()
             except TypeError:
                 raise TypeError("must be defined over an algebraic field")
-        return(max([P[i].global_height(prec=prec) for i in range(self.codomain().ambient_space().dimension_relative()+1)]))
+        return max([P[i].global_height(prec=prec) for i in range(self.codomain().ambient_space().dimension_relative()+1)])
 
     def local_height(self, v, prec=None):
         r"""
@@ -1185,7 +1185,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             P = [ psi(p) for p in P ] # The elements of P were elements of K_pre
         from sage.schemes.projective.projective_space import ProjectiveSpace
         PS = ProjectiveSpace(K,self.codomain().dimension_relative(),'z')
-        return(PS(P))
+        return PS(P)
 
     def clear_denominators(self):
         r"""

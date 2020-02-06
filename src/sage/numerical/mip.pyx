@@ -250,36 +250,46 @@ cdef class MixedIntegerLinearProgram(SageObject):
     constraints on these variables, and an objective function which is to be
     maximised or minimised under these constraints.
 
-    See the :wikipedia:`Linear_programming` for further information on linear
+    See the thematic tutorial on `Linear Programming (Mixed Integer)
+    <../../../../thematic_tutorials/linear_programming.html>`_
+    or :wikipedia:`Linear_programming` for further information on linear
     programming, and the :mod:`MILP module <sage.numerical.mip>` for its use in
     Sage.
 
     INPUT:
 
-    - ``solver`` -- selects a solver:
+    - ``solver`` -- selects a solver; see `Solvers (backends)
+      <../../../../thematic_tutorials/linear_programming.html#solvers-backends>`_
+      for more information and installation instructions for optional
+      solvers.
 
-      - GLPK (``solver="GLPK"``). See the `GLPK
-        <http://www.gnu.org/software/glpk/>`_ web site.
+      - ``solver="GLPK"``: The `GNU Linear Programming Kit
+        <http://www.gnu.org/software/glpk/>`_.
 
-      - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-        <http://www.coin-or.org>`_ web site.
+      - ``solver="GLPK/exact"``: GLPK's implementation of an exact rational simplex
+        method.
 
-      - CPLEX (``solver="CPLEX"``). See the `CPLEX
-        <http://www.ilog.com/products/cplex/>`_ web site.
+      - ``solver="Coin"``: The `COIN-OR CBC (COIN Branch and Cut) solver
+        <http://www.coin-or.org>`_.
 
-      - Gurobi (``solver="Gurobi"``). See the `Gurobi <http://www.gurobi.com/>`_
-          web site.
+      - ``solver="CPLEX"``, provided by the proprietary `IBM ILOG CPLEX
+        Optimization Studio <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_.
 
-      - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT <http://www.cvxopt.org/>`_
-          web site.
+      - ``solver="Gurobi"``: The proprietary `Gurobi solver <http://www.gurobi.com/>`_.
 
-      - PPL (``solver="PPL"``). See the `PPL <http://bugseng.com/products/ppl>`_
-          web site.
+      - ``solver="CVXOPT"``: See the `CVXOPT <http://www.cvxopt.org/>`_ web site.
+
+      - ``solver="PPL"``: An exact rational solver (for small scale instances)
+        provided by the `Parma Polyhedra Library (PPL) <http://bugseng.com/products/ppl>`_.
+
+      - ``solver="InteractiveLP"``: A didactical
+        implementation of the revised simplex method in Sage.  It works over
+        any exact ordered field, the default is ``QQ``.
 
       - If ``solver=None`` (default), the default solver is used (see
-        :func:`default_mip_solver`)
+        :func:`default_mip_solver`).
 
-      - ``solver`` can also be a callable,
+      - ``solver`` can also be a callable (such as a class),
         see :func:`sage.numerical.backends.generic_backend.get_solver` for
         examples.
 
@@ -347,36 +357,17 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``solver`` -- the following solvers should be available through this class:
+        - ``solver`` -- one of the following:
 
-          - GLPK (``solver="GLPK"``). See the `GLPK
-            <http://www.gnu.org/software/glpk/>`_ web site.
+          - a string indicating one of the available solvers
+            (see :class:`MixedIntegerLinearProgram`);
 
-          - GLPK's implementation of an exact rational simplex
-            method (``solver="GLPK/exact"``).
-
-          - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-            <http://www.coin-or.org>`_ web site.
-
-          - CPLEX (``solver="CPLEX"``). See the `CPLEX
-            <http://www.ilog.com/products/cplex/>`_ web site.  An interface to
-            CPLEX is not yet implemented.
-
-          - Gurobi (``solver="Gurobi"``). See the `Gurobi
-            <http://www.gurobi.com/>`_ web site.
-
-          - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT <http://www.cvxopt.org/>`_
-              web site.
-
-          - PPL (``solver="PPL"``). See the `PPL
-            <http://bugseng.com/products/ppl>`_ web site.
-
-          - If ``solver=None`` (default), the default solver is used, see
+          - ``None`` (default), the default solver is used, see
             :func:`default_mip_solver`.
 
-          - ``solver`` can also be a callable,
-            see :func:`sage.numerical.backends.generic_backend.get_solver` for
-            examples.
+          - or a callable (such as a class), see
+            :func:`sage.numerical.backends.generic_backend.get_solver`
+            for examples.
 
         - ``maximization``
 

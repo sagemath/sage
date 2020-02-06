@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Discrete Subgroups of `\\ZZ^n`.
+Discrete Subgroups of `\\ZZ^n`
 
 AUTHORS:
 

@@ -660,7 +660,10 @@ cdef class Ring(ParentWithGens):
 
     def __truediv__(self, I):
         """
-        TESTS::
+        Dividing one ring by another is not supported because there is no good
+        way to specify generator names.
+
+        EXAMPLES::
 
             sage: QQ['x'] / ZZ
             Traceback (most recent call last):

@@ -57,12 +57,13 @@ AUTHORS:
 """
 from subprocess import Popen, PIPE
 import os
+import sys
 import select
 
 import six
 
 
-def test_executable(args, input="", timeout=100.0, **kwds):
+def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False, **kwds):
     r"""
     Run the program defined by ``args`` using the string ``input`` on
     the standard input.
@@ -77,6 +78,13 @@ def test_executable(args, input="", timeout=100.0, **kwds):
 
     - ``timeout`` -- if the program produces no output for ``timeout``
       seconds, a RuntimeError is raised.
+
+    - ``pydebug_ignore_warnings`` -- boolean. Set the PYTHONWARNINGS environment variable to ignore
+      Python warnings when on a Python debug build (`--with-pydebug`, e.g. from building with
+      `SAGE_DEBUG=yes`). Debug builds do not install the default warning filters, which can break
+      some doctests. Unfortunately the environment variable does not support regex message filters,
+      so the filter will catch a bit more than the default filters. Hence we only enable it on debug
+      builds.
 
     - ``**kwds`` -- Additional keyword arguments passed to the
       :class:`Popen` constructor.
@@ -107,7 +115,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
 
     Run Sage itself with various options::
 
-        sage: (out, err, ret) = test_executable(["sage"])
+        sage: (out, err, ret) = test_executable(["sage"], pydebug_ignore_warnings=True)
         sage: out.find(version()) >= 0
         True
         sage: err
@@ -115,7 +123,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage"], "3^33\n")
+        sage: (out, err, ret) = test_executable(["sage"], "3^33\n", pydebug_ignore_warnings=True)
         sage: out.find(version()) >= 0
         True
         sage: out.find("5559060566555523") >= 0
@@ -125,7 +133,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "-q"], "3^33\n")
+        sage: (out, err, ret) = test_executable(["sage", "-q"], "3^33\n", pydebug_ignore_warnings=True)
         sage: out.find(version()) >= 0
         False
         sage: out.find("5559060566555523") >= 0
@@ -285,14 +293,14 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: F = open(fullname, 'w')
         sage: _ = F.write("from cysignals.signals cimport *\nfrom sage.rings.integer cimport Integer\ncdef long i, s = 0\nsig_on()\nfor i in range(1000): s += i\nsig_off()\nprint(Integer(s))")
         sage: F.close()
-        sage: (out, err, ret) = test_executable(["sage", fullname])
+        sage: (out, err, ret) = test_executable(["sage", fullname], pydebug_ignore_warnings=True)
         sage: print(out)
         499500
         sage: err
         'Compiling ...spyx...'
         sage: ret
         0
-        sage: (out, err, ret) = test_executable(["sage", name], cwd=dir)
+        sage: (out, err, ret) = test_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
         sage: print(out)
         499500
         sage: err
@@ -477,7 +485,7 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         sage: ret
         42
 
-        sage: (out, err, ret) = test_executable(["sage", "--ipython"], "\n3**33\n")
+        sage: (out, err, ret) = test_executable(["sage", "--ipython"], "\n3**33\n", pydebug_ignore_warnings=True)
         sage: out.find("5559060566555523") >= 0
         True
         sage: err
@@ -849,6 +857,12 @@ def test_executable(args, input="", timeout=100.0, **kwds):
         del pexpect_env["TERM"]
     except KeyError:
         pass
+
+    __with_pydebug = hasattr(sys, 'gettotalrefcount')   # This is a Python debug build (--with-pydebug) 
+    if __with_pydebug and pydebug_ignore_warnings:
+        pexpect_env['PYTHONWARNINGS'] = ','.join([
+            'ignore::DeprecationWarning',
+        ])
 
     encoding = kwds.pop('encoding', 'utf-8')
     errors = kwds.pop('errors', None)

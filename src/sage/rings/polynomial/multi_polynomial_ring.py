@@ -50,18 +50,17 @@ TESTS::
     (Multivariate Polynomial Ring in x, y, z over Finite Field of size 5,
     (x, y, z))
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import absolute_import
 from six.moves import range
-from six import iteritems, iterkeys, itervalues
 
 from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
@@ -446,7 +445,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
                 # no guarantees that this is mathematically solid."
                 K = self.base_ring()
                 D = x.element().dict()
-                for i, a in iteritems(D):
+                for i, a in D.items():
                     D[i] = K(a)
                 return MPolynomial_polydict(self, D)
             elif set(P.variable_names()).issubset(set(self.variable_names())) and self.base_ring().has_coerce_map_from(P.base_ring()):
@@ -470,7 +469,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
                 # no guarantees that this is mathematically solid."
                 K = self.base_ring()
                 D = x.dict()
-                for i, a in iteritems(D):
+                for i, a in D.items():
                     D[i] = K(a)
                 return MPolynomial_polydict(self, D)
             elif set(P.variable_names()).issubset(set(self.variable_names())) and self.base_ring().has_coerce_map_from(P.base_ring()):
@@ -487,7 +486,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
 
         elif isinstance(x, dict):
             K = self.base_ring()
-            return MPolynomial_polydict(self, {i: K(a) for i, a in iteritems(x)})
+            return MPolynomial_polydict(self, {i: K(a) for i, a in x.items()})
 
         elif isinstance(x, fraction_field_element.FractionFieldElement) and x.parent().ring() == self:
             if x.denominator() == 1:
@@ -615,11 +614,11 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             sage: P.monomial_quotient(x, P(1))
             x
 
-        .. note::
+        .. NOTE::
 
-           Assumes that the head term of f is a multiple of the head
-           term of g and return the multiplicant m. If this rule is
-           violated, funny things may happen.
+            Assumes that the head term of f is a multiple of the head
+            term of g and return the multiplicant m. If this rule is
+            violated, funny things may happen.
         """
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
@@ -628,13 +627,17 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         if not g:
             raise ZeroDivisionError
 
+        fd = f.dict()
+        gd = g.dict()
+
         if not coeff:
+            f = next(iter(fd))
+            g = next(iter(gd))
             coeff = self.base_ring().one()
         else:
-            coeff = self.base_ring()(next(itervalues(f.dict())) /  next(itervalues(g.dict())))
-
-        f = next(iterkeys(f.dict()))
-        g = next(iterkeys(g.dict()))
+            f, cf = next(iter(fd.items()))
+            g, cg = next(iter(gd.items()))
+            coeff = self.base_ring()(cf / cg)
 
         res = f.esub(g)
 

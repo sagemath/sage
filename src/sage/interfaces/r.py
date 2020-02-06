@@ -372,8 +372,14 @@ def _setup_r_to_sage_converter():
     # expect interface)
     cv = Converter('r to sage converter')
 
+    # support rpy version 2 and 3
+    try:
+        rpy2py = cv.rpy2py
+    except AttributeError:
+        rpy2py = cv.ri2py
+
     # fallback
-    cv.ri2py.register(object, lambda obj: obj)
+    rpy2py.register(object, lambda obj: obj)
 
     def float_to_int_if_possible(f):
         # First, round the float to at most 15 significant places.
@@ -383,7 +389,7 @@ def _setup_r_to_sage_converter():
         # Preserve the behaviour of the old r parser, e.g. return 1 instead of 1.0
         float_or_int = int(f) if isinstance(f, int) or f.is_integer() else f
         return float_or_int
-    cv.ri2py.register(float, float_to_int_if_possible)
+    rpy2py.register(float, float_to_int_if_possible)
 
     def list_to_singleton_if_possible(l):
         if len(l) == 1:
@@ -395,11 +401,11 @@ def _setup_r_to_sage_converter():
         attrs = vec.list_attrs()
         # Recursive calls have to be made explicitly
         # https://bitbucket.org/rpy2/rpy2/issues/363/custom-converters-are-not-applied
-        data = list_to_singleton_if_possible([ cv.ri2py(val) for val in vec ])
+        data = list_to_singleton_if_possible([ rpy2py(val) for val in vec ])
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
 
         if 'names' in attrs:
-            # separate names and values, call ri2py recursively to convert elements
+            # separate names and values, call rpy2py recursively to convert elements
             names = list_to_singleton_if_possible(list(vec.do_slot('names')))
             return {
                 'DATA': data,
@@ -409,7 +415,7 @@ def _setup_r_to_sage_converter():
         else:
             # if no names are present, convert to a normal list or a single value
             return data
-    cv.ri2py.register(SexpVector, _vector)
+    rpy2py.register(SexpVector, _vector)
 
     def _matrix(mat):
         if 'dim' in mat.list_attrs():
@@ -421,28 +427,28 @@ def _setup_r_to_sage_converter():
                 (nrow, ncol) = dimensions
                 # Since R does it the other way round, we assign transposed and
                 # then transpose the matrix :)
-                m = matrix(ncol, nrow, [cv.ri2py(i) for i in mat])
+                m = matrix(ncol, nrow, [rpy2py(i) for i in mat])
                 return m.transpose()
             except TypeError:
                 pass
         else:
             return _vector(mat)
-    cv.ri2py.register(FloatSexpVector, _matrix)
+    rpy2py.register(FloatSexpVector, _matrix)
 
     def _list_vector(vec):
         # we have a R list (vector of arbitrary elements)
         attrs = vec.list_attrs()
         names = vec.do_slot('names')
-        values = [ cv.ri2py(val) for val in vec ]
+        values = [ rpy2py(val) for val in vec ]
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
             'DATA': dict(data),
-            '_Names': cv.ri2py(names),
+            '_Names': rpy2py(names),
             # We don't give the rclass here because the old expect interface
             # didn't do that either and we want to maintain compatibility.
         };
-    cv.ri2py.register(ListSexpVector, _list_vector)
+    rpy2py.register(ListSexpVector, _list_vector)
 
     return cv
 

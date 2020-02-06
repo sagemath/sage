@@ -367,6 +367,17 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
         sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
         sage: Polyhedron_QQ_cdd(parent, [ [(1,0),(0,1),(0,0)], [], []], None, verbose=False)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 3 vertices
+
+    TESTS:
+
+    Check that :trac:`19803` is fixed::
+
+        sage: from sage.geometry.polyhedron.parent import Polyhedra
+        sage: P_cdd = Polyhedra(QQ, 3, 'cdd')
+        sage: P_cdd([[],[],[]], None)
+        The empty polyhedron in QQ^3
+        sage: Polyhedron(vertices=[], backend='cdd', base_ring=QQ)
+        The empty polyhedron in QQ^0
     """
 
     _cdd_type = 'rational'
@@ -439,6 +450,15 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         10
         sage: P.n_facets()
         10
+
+    Check that :trac:`19803` is fixed::
+
+        sage: from sage.geometry.polyhedron.parent import Polyhedra
+        sage: P_cdd = Polyhedra(RDF, 3, 'cdd')
+        sage: P_cdd([[],[],[]], None)
+        The empty polyhedron in RDF^3
+        sage: Polyhedron(vertices=[], backend='cdd', base_ring=RDF)
+        The empty polyhedron in RDF^0
     """
     _cdd_type = 'real'
 

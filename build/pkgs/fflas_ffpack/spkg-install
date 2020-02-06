@@ -3,8 +3,8 @@ cd src
 if [ "$LINBOX_BLAS" != "" ]; then
     echo "Using environment variable LINBOX_BLAS=$LINBOX_BLAS"
 else
-    LINBOX_BLAS="$(pkg-config --libs cblas)"
-    BLAS_CFLAGS="$(pkg-config --cflags cblas)"
+    LINBOX_BLAS="$(pkg-config --libs blas cblas)"
+    BLAS_CFLAGS="$(pkg-config --cflags blas cblas)"
     if [ "$BLAS_CFLAGS" != "" ]; then
         LINBOX_BLAS_CFLAGS="--with-blas-cflags=$BLAS_CFLAGS"
     else

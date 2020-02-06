@@ -1,5 +1,5 @@
 """
-Vectors with integer mod n entries, with n small.
+Vectors with integer mod n entries, with n small
 
 EXAMPLES::
 
@@ -102,18 +102,18 @@ AUTHOR:
 - William Stein (2007)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
-
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT64_LIMIT
 
 MAX_MODULUS = INTEGER_MOD_INT64_LIMIT
@@ -195,7 +195,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __dealloc__(self):
         sig_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -212,14 +212,14 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef mod_int l, r
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             l = left._entries[i]
             r = (<Vector_modn_dense>right)._entries[i]
             if l < r:
-                return -1
+                return rich_to_bool(op, -1)
             elif l > r:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """

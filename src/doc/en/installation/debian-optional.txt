@@ -1,0 +1,2 @@
+     $ sudo apt-get install cmake libterm-readline-gnu-perl ninja-build \
+     librw-dev

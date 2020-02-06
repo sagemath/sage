@@ -1,7 +1,6 @@
 r"""
 Common combinatorial tools
 
-
 REFERENCES:
 
 .. [NCSF] Gelfand, Krob, Lascoux, Leclerc, Retakh, Thibon,

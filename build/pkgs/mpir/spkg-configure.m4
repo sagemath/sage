@@ -21,11 +21,12 @@ dnl Implement cases for what to do on different options here
 ], [], [
     AC_ARG_WITH([mp],
     [AS_HELP_STRING([--with-mp=system],
-        [use the system GMP as multiprecision library, if possible (default)])]
-    [AS_HELP_STRING([--with-mp=mpir],
-        [use the Sage SPKG for MPIR as multiprecision library])]
-    [AS_HELP_STRING([--with-mp=gmp],
-        [use the Sage SPKG for GMP as multiprecision library])])
+                    [use the system GMP as multiprecision library, if possible (default)])
+dnl Not indented because whitespace ends up in the help text
+AS_HELP_STRING([--with-mp=mpir],
+               [use the Sage SPKG for MPIR as multiprecision library])
+AS_HELP_STRING([--with-mp=gmp],
+               [use the Sage SPKG for GMP as multiprecision library])])
 
 dnl Just parse the options here
     case "$with_mp" in

@@ -8,6 +8,8 @@ from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
+    cdef public dict __cached_methods
+
     # Do not assume any of those attributes to be initialized, use the corresponding methods instead.
     cdef tuple _Vrep                       # the names of VRep, if they exist
     cdef tuple _facet_names                # the names of HRep without equalities, if they exist

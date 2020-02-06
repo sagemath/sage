@@ -1,7 +1,6 @@
 """
 Hyperelliptic curves over a `p`-adic field
 """
-
 #*****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
@@ -11,11 +10,9 @@ Hyperelliptic curves over a `p`-adic field
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from __future__ import absolute_import
 from six.moves import range
 
-from . import hyperelliptic_generic
 
 from sage.rings.all import (PowerSeriesRing, PolynomialRing, ZZ, QQ,
                             pAdicField, GF, RR, RationalField, Infinity)
@@ -24,8 +21,13 @@ from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix
 from sage.modules.all import vector
 
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
-class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_generic):
+from . import hyperelliptic_generic
+
+
+class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_generic,
+                                     ProjectivePlaneCurve_field):
 
 # The functions below were prototyped at the 2007 Arizona Winter School by
 # Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and

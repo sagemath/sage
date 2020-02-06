@@ -109,6 +109,19 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         return self._exponents
 
+    def _libgap_(self):
+        r"""
+        TESTS::
+
+            sage: F.<a,b,c> = AbelianGroup([7,8,9])
+            sage: libgap(a**2 * c) * libgap(b * c**2)
+            f1^2*f2*f6
+        """
+        from sage.misc.misc_c import prod
+        from sage.libs.gap.libgap import libgap
+        G = libgap(self.parent())
+        return prod(g**i for g,i in zip(G.GeneratorsOfGroup(), self._exponents))
+
     def list(self):
         """
         Return a copy of the exponent vector.

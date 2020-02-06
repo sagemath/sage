@@ -9,11 +9,16 @@
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
+from libc.stdint cimport uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
 
 cdef extern from "gap/system.h" nogil:
     ctypedef char Char
     ctypedef int Int
-    ctypedef unsigned int UInt
+    ctypedef uintptr_t UInt
+    ctypedef uint8_t  UInt1
+    ctypedef uint16_t UInt2
+    ctypedef uint32_t UInt4
+    ctypedef uint64_t UInt8
     ctypedef void* Obj
 
 
@@ -144,6 +149,17 @@ cdef extern from "gap/objects.h" nogil:
         T_POSOBJ
         T_DATOBJ
         T_WPOBJ
+
+
+cdef extern from "gap/permutat.h" nogil:
+    UInt DEG_PERM2(Obj)
+    UInt DEG_PERM4(Obj)
+    Obj NEW_PERM2(UInt)
+    Obj NEW_PERM4(UInt)
+    UInt2* ADDR_PERM2(Obj)
+    UInt4* ADDR_PERM4(Obj)
+    const UInt2* CONST_ADDR_PERM2(Obj)
+    const UInt4* CONST_ADDR_PERM4(Obj)
 
 
 cdef extern from "gap/precord.h" nogil:

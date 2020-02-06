@@ -859,7 +859,7 @@ def is_integrally_closed(x):
     return x.is_integrally_closed()
 
 
-def is_field(x):
+def is_field(x, proof=True):
     """
     Return whether or not ``x`` is a field.
 
@@ -872,7 +872,7 @@ def is_field(x):
         sage: is_field(F)
         True
     """
-    return x.is_field()
+    return x.is_field(proof=proof)
 
 
 def is_odd(x):

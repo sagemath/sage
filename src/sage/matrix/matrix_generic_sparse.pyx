@@ -410,8 +410,8 @@ def Matrix_sparse_from_rows(X):
     cdef Py_ssize_t i, j
 
     if not isinstance(X, (list, tuple)):
-        raise TypeError("X (=%s) must be a list or tuple"%X)
-    if len(X) == 0:
+        raise TypeError("X (=%s) must be a list or tuple" % X)
+    if not X:
         raise ArithmeticError("X must be nonempty")
 
     from . import matrix_space

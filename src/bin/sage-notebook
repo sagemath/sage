@@ -239,7 +239,7 @@ def trac_23428_browser_workaround():
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
-    if len(unknown) > 0 and unknown[0] == '--':
+    if unknown and unknown[0] == '--':
         unknown = unknown[1:]
     trac_23428_browser_workaround()
     if args.log is not None:
@@ -271,5 +271,3 @@ if __name__ == '__main__':
         sys.exit(0)
 
     launcher(unknown)
-
-

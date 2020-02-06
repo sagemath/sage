@@ -46,6 +46,16 @@ Fraction Fields
    sage/rings/fraction_field
    sage/rings/fraction_field_element
 
+Ring Extensions
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/rings/ring_extension
+   sage/rings/ring_extension_element
+   sage/rings/ring_extension_morphism
+
 Utilities
 ---------
 

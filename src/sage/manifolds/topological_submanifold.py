@@ -219,6 +219,7 @@ class TopologicalSubmanifold(TopologicalManifold):
             self._ambient = self
         else:
             self._ambient = ambient
+            self._codim = ambient._dim-self._dim
         self._immersed = False
         self._embedded = False
         self._adapted_charts = None

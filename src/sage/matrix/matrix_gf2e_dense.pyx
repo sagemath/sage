@@ -1,5 +1,5 @@
 """
-Dense matrices over `\GF{2^e}` for `2 <= e <= 10` using the M4RIE library.
+Dense matrices over `\GF{2^e}` for `2 <= e <= 10` using the M4RIE library
 
 The M4RIE library offers two matrix representations:
 

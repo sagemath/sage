@@ -428,9 +428,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: abs(Mod(2,3))
             Traceback (most recent call last):
             ...
-            ArithmeticError: absolute valued not defined on integers modulo n.
+            ArithmeticError: absolute value not defined on integers modulo n.
         """
-        raise ArithmeticError("absolute valued not defined on integers modulo n.")
+        raise ArithmeticError("absolute value not defined on integers modulo n.")
 
     def __reduce__(IntegerMod_abstract self):
         """

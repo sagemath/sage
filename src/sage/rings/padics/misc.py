@@ -138,7 +138,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
             a = (a*p) % (q-1)
     s = sum(a.digits(base=p))
     if factored:
-        return(s, out)
+        return s, out
     X = PolynomialRing(R, name='X').gen()
     pi = R.ext(X**(p - 1) + p, names='pi').gen()
     out *= pi**s

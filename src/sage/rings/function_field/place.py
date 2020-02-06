@@ -865,8 +865,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 To:   Number Field in s with defining polynomial x^2 - 2*x + 2)]
             sage: for p in L.places_above(I.place()):
             ....:    k, fr_k, to_k = p.residue_field()
-            ....:    assert all([fr_k(k(e)) == e for e in range(10)])
-            ....:    assert all([to_k(fr_k(e)) == e for e in [k.random_element() for i in [1..10]]])
+            ....:    assert all(fr_k(k(e)) == e for e in range(10))
+            ....:    assert all(to_k(fr_k(e)) == e for e in [k.random_element() for i in [1..10]])
 
         ::
 

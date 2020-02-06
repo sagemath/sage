@@ -221,37 +221,27 @@ The method of installing additional software varies from distribution to
 distribution, but on a `Debian <https://www.debian.org/>`_ based system (e.g.
 `Ubuntu <https://www.ubuntu.com/>`_ or `Mint <https://www.linuxmint.com/>`_),
 you would use
-`apt-get <https://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_::
+`apt-get <https://en.wikipedia.org/wiki/Advanced_Packaging_Tool>`_.
 
-     # debian (Buster or newer) / ubuntu
-     $ sudo apt-get install binutils pixz gcc g++ gfortran make m4 perl tar \
-       git patch openssl libssl-dev libz-dev bc libbz2-dev liblzma-dev libgmp-dev \
-       libffi-dev libgf2x-dev libcurl4-openssl-dev libzmq3-dev curl yasm \
-       pkg-config libntl-dev libmpfr-dev libmpc-dev libflint-dev \
-       libpcre3-dev libgd-dev libflint-dev libflint-arb-dev \
-       libsymmetrica2-dev gmp-ecm libecm-dev libisl-dev libgivaro-dev \
-       libpari-dev pari-gp2c libec-dev liblrcalc-dev \
-       libm4ri-dev libm4rie-dev liblfunction-dev lcalc
+On Debian ("buster" or newer) or Ubuntu ("bionic" or newer):
 
-     # redhat / fedora / centos
-     $ sudo yum install binutils xz gcc gcc-c++ gcc-gfortran make m4 perl \
-       tar git patch perl-ExtUtils-MakeMaker openssl openssl-devel zlib-devel \
-       bzip2 bzip2-devel xz-devel gmp gmp-devel libcurl-devel curl yasm \
-       pkg-config ntl-devel mpfr-devel libmpc-devel libsymmetrica-devel \
-       eclib-devel gmp-ecm-devel lrcalc-devel isl-devel givaro-devel \
-       pari-devel pari-elldata pari-seadata pari-galdata pari-galpol \
-       m4ri-devel m4rie-devel L-function-devel
+.. literalinclude:: debian.txt
+
+On Fedora / Redhat / CentOS:
+
+.. literalinclude:: fedora.txt
 
 (These examples suppose that you choose to use a systemwide OpenSSL library.)
-In addition, if you don't want Sage to build other packages that might be available from
-your OS, cf. the growing list of such packages on :trac:`27330`, install::
 
-     # debian / ubuntu --  not for standard Sage spkgs
-     $ sudo apt-get install cmake libterm-readline-gnu-perl ninja-build \
-     librw-dev
+In addition to these, if you don't want Sage to build optional packages that might
+be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+install on Debian ("buster" or newer) or Ubuntu ("bionic" or newer):
 
-     # redhat / fedora / centos -- not for standard Sage spkgs
-     $ sudo yum install cmake perl-Term-ReadLine-Gnu ninja-build rw-devel
+.. literalinclude:: debian-optional.txt
+
+On Fedora / Redhat / CentOS:
+
+.. literalinclude:: fedora-optional.txt
 
 On other Linux systems, you might use
 `rpm <https://en.wikipedia.org/wiki/RPM_Package_Manager>`_,

@@ -80,8 +80,9 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
                 tester.assertEqual(Zdeg, i + j,
                     msg="Lie bracket [%s, %s] has degree %s, not degree %s " %
                         (X, Y, Zdeg, i + j))
-                tester.assertTrue(
-                    Z.to_vector() in self.homogeneous_component_as_submodule(i + j),
+                tester.assertIn(
+                    Z.to_vector(),
+                    self.homogeneous_component_as_submodule(i + j),
                     msg="Lie bracket [%s, %s] is not in the "
                         "homogeneous component of degree %s" % (X, Y, i + j))
 

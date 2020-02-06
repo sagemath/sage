@@ -1,5 +1,5 @@
 """
-Symmetric functions defined by orthogonality and triangularity.
+Symmetric functions defined by orthogonality and triangularity
 
 One characterization of Schur functions is that they are upper
 triangularly related to the monomial symmetric functions and

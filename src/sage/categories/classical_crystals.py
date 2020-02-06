@@ -391,10 +391,10 @@ class ClassicalCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             S = list(self)
-            SS  = list(Crystals().parent_class.__iter__(self))
-            tester.assertTrue( len(S) == len(SS) )
-            tester.assertTrue( len(S) == len(set(S)))
-            tester.assertTrue( set(S) == set(SS) )
+            SS = list(Crystals().parent_class.__iter__(self))
+            tester.assertEqual(len(S), len(SS))
+            tester.assertEqual(len(S), len(set(S)))
+            tester.assertEqual(set(S), set(SS))
 
         def cardinality(self):
             r"""

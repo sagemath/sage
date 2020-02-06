@@ -253,7 +253,10 @@ def normalize_bound_method_repr(s):
 # For example, on Python 3 we strip all u prefixes from unicode strings in the
 # expected output, because we never expect to see those on Python 3.
 if six.PY2:
-    _repr_fixups = []
+    _repr_fixups = [
+        (lambda g, w: '<class' in w and '<type' in g,
+         lambda g, w: (normalize_type_repr(g), w)),
+    ]
 else:
     _repr_fixups = [
         (lambda g, w: 'u"' in w or "u'" in w,
@@ -757,7 +760,7 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: print(n)
             12345678
             sage: type(n)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         It also works without the line continuation::
 
@@ -1063,9 +1066,9 @@ class SageOutputChecker(doctest.OutputChecker):
         classes) between Python 2 and Python 3::
 
             sage: int
-            <type 'int'>
+            <class 'int'>
             sage: float
-            <type 'float'>
+            <class 'float'>
         """
         got = self.human_readable_escape_sequences(got)
         if isinstance(want, MarkedOutput):

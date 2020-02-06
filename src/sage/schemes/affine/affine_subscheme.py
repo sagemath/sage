@@ -7,15 +7,15 @@ AUTHORS:
 - Ben Hutz (2013): affine subschemes
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2005 William Stein <wstein@gmail.com>
 # Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.interfaces.all import singular
@@ -231,7 +231,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             #assume that if you've passed in a new ambient projective space
             #you want to override the existing embedding
             if PP is None or phi.codomain().ambient_space() == PP:
-                return(phi)
+                return phi
         except AttributeError:
             self.__projective_embedding = {}
         except KeyError:

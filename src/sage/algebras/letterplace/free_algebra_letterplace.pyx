@@ -403,7 +403,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         """
         return self.__ngens-self._nb_slackvars <= 1
 
-    def is_field(self):
+    def is_field(self, proof=True):
         """
         Tell whether this free algebra is a field.
 
@@ -419,7 +419,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             False
 
         """
-        return (not (self.__ngens-self._nb_slackvars)) and self._base.is_field()
+        return (not (self.__ngens-self._nb_slackvars)) and self._base.is_field(proof=proof)
 
     def _repr_(self):
         """

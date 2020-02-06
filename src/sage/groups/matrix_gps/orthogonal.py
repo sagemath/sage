@@ -152,6 +152,15 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
         sage: GO(3,25).order()  # indirect doctest
         31200
+
+    Check that :trac:`28054` is fixed::
+
+        sage: G = SO(2, GF(3), -1)
+        sage: m = G.invariant_form()
+        sage: G2 = SO(2, GF(3), 1, invariant_form=m)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: invariant_form for finite groups is fixed by GAP
     """
     prefix = 'General'
     ltx_prefix ='G'
@@ -162,11 +171,12 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     e = normalize_args_e(degree, ring, e)
 
+    if invariant_form is not None:
+        if is_FiniteField(ring):
+            raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
+
     if e == 0:
         if invariant_form is not None:
-            if is_FiniteField(ring):
-                raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
-
             invariant_form = normalize_args_invariant_form(ring, degree, invariant_form)
             if not invariant_form.is_symmetric():
                 raise ValueError("invariant_form must be symmetric")

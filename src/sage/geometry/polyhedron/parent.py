@@ -456,9 +456,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Vrep`` -- a list `[vertices, rays, lines]`` or ``None``.
+        - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
 
-        - ``Hrep`` -- a list `[ieqs, eqns]`` or ``None``.
+        - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
 
         - ``convert`` -- boolean keyword argument (default:
           ``True``). Whether to convert the coordinates into the base

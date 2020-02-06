@@ -187,7 +187,7 @@ Headings of Sage Library Code Files
 The top of each Sage code file should follow this format::
 
     r"""
-    <Very short 1-line summary>
+    <Short one-line summary that ends with no period>
 
     <Paragraph description>
 

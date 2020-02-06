@@ -645,6 +645,22 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         im = mpfr_to_mpfval(self.__im)
         return make_mpc((re, im))
 
+    def _sympy_(self):
+        """
+        Convert this complex number to Sympy.
+
+        EXAMPLES::
+
+            sage: CC(1, 0)._sympy_()
+            1.00000000000000
+            sage: CC(1/3, 1)._sympy_()
+            0.333333333333333 + 1.0*I
+            sage: type(_)
+            <class 'sympy.core.add.Add'>
+        """
+        import sympy
+        return self.real()._sympy_() + self.imag()._sympy_() * sympy.I
+
     cpdef _add_(self, right):
         """
         Add ``self`` to ``right``.

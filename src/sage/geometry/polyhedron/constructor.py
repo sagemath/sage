@@ -100,15 +100,15 @@ but only one generating line::
     sage: strip.lines()
     (A line in the direction (0, 1),)
     sage: [f.ambient_V_indices() for f in strip.faces(1)]
-    [(0, 1), (0, 2)]
+    [(0, 2), (0, 1)]
     sage: for face in strip.faces(1):
     ....:      print(face.ambient_V_indices())
-    (0, 1)
     (0, 2)
+    (0, 1)
     sage: for face in strip.faces(1):
     ....:      print("{} = {}".format(face.ambient_V_indices(), face.as_polyhedron().Vrepresentation()))
-    (0, 1) = (A line in the direction (0, 1), A vertex at (-1, 0))
     (0, 2) = (A line in the direction (0, 1), A vertex at (1, 0))
+    (0, 1) = (A line in the direction (0, 1), A vertex at (-1, 0))
 
 EXAMPLES::
 

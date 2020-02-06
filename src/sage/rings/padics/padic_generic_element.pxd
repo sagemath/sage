@@ -1,3 +1,5 @@
+from cpython cimport array
+
 cimport sage.structure.element
 from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.structure.element cimport Element, RingElement
@@ -5,6 +7,8 @@ from sage.rings.padics.local_generic_element cimport LocalGenericElement
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
+
+cpdef gauss_table(long long p, int f, int prec, bint use_longs)
 
 cdef class pAdicGenericElement(LocalGenericElement):
     cdef long valuation_c(self)

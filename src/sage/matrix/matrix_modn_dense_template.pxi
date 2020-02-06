@@ -1,5 +1,5 @@
 """
-Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK).
+Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK)
 
 FFLAS/FFPACK are libraries to provide BLAS/LAPACK-style routines for
 working with finite fields. Additionally, these routines reduce to
@@ -191,7 +191,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     if nrows*ncols > 1000: sig_on()
     if nbthreads > 1 :
         r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
-    else : 
+    else :
         r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
     if nrows*ncols > 1000: sig_off()
 

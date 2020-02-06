@@ -8,7 +8,7 @@ EXAMPLES::
     sage: C = HyperellipticCurve(f); C
     Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 2*x^4 + 3*x^3 + x^2 + 3*x + 4
 
-EXAMPLES::
+::
 
     sage: P.<x> = QQ[]
     sage: f = 4*x^5 - 30*x^3 + 45*x - 22
@@ -263,7 +263,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         else:
             raise ValueError("No point with x-coordinate %s on %s"%(x, self))
 
-
     def genus(self):
         return self._genus
 
@@ -385,7 +384,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         """
         f, h = self._hyperelliptic_polynomials
         return 'HyperellipticCurve(%s, %s)'%(f._magma_init_(magma), h._magma_init_(magma))
-
 
     def monsky_washnitzer_gens(self):
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
@@ -570,7 +568,6 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             x = x - w(x)/wprime(x)
         y = x**g/t
         return x+O(t**(prec+2)) , y+O(t**(prec+2))
-
 
     def local_coord(self, P, prec = 20, name = 't'):
         """

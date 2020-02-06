@@ -669,7 +669,7 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0L, 'T_INT (integer)')
+            (0, 'T_INT (integer)')
         """
         n = TNUM_OBJ(self.value)
         global decode_type_number
