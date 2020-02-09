@@ -6197,6 +6197,303 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         return [ -cp for cp in self.cross_positive_operators_gens() ]
 
+    def critical_angles(self, other=None, exact=True, epsilon=0, debug=False):
+        r"""
+        Return all critical angles between ``self`` and ``other``.
+
+        A critical angle between two cones `P` and `Q` is any angle
+        `\theta` formed by two unit-norm vectors `u \in P` and `v \in
+        Q` such that `v - \left\langle u, v \right\rangle u` belongs
+        to the dual cone of `P` and `u - \left\langle u, v
+        \right\rangle v` belongs to the dual of `Q`. If one tries to
+        maximize the angle between two unit-norm vectors in `P` and
+        `Q`, the critical angles are the angles formed by vectors `u`
+        and `v` that satisfy the necessary Karush-Kuhn-Tucker
+        conditions for being a solution to that problem.
+
+        This method can miss some critical angles if an eigenspace of
+        dimension greather than one arises in the algorithm. This is
+        not currently fatal; you can set ``debug=True`` to be warned
+        when it happens. If no such warnings are emitted with
+        ``debug=True``, then you can be confident that all critical
+        angles have been found.
+
+        .. SEEALSO::
+
+            :meth:`max_angle`
+
+        INPUT:
+
+        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone.
+
+        - ``exact`` -- (default: ``True``) whether or not to use exact rational
+          arithmetic instead of floating point computations.
+
+        - ``epsilon`` -- (default: ``0``) the tolerance to use when making
+          comparisons.
+
+        - ``debug`` -- (default: ``False``) whether or not to complain about
+          eigenspaces of dimension greater than one.
+
+        OUTPUT:
+
+        A list of `\left( \theta, u, v \right)` triples where each
+        `\theta` is a critical angle formed by the vectors `u` in this
+        cone and `v` in the ``other`` cone. If ``other`` is ``None``
+        (the default), then the critical angles within this cone
+        (between this cone and itself) are returned.
+
+        REFERENCES:
+
+        - [IS2005]_
+        - [SS2016]_
+        - [Or2020]_
+
+        ALGORITHM:
+
+        Algorithm 2 in [Or2020]_ is used.
+
+        EXAMPLES:
+
+        There is one non-maximal critical angle (zero radians) within
+        the nonnegative quadrant::
+
+            sage: K = cones.nonnegative_orthant(2)
+            sage: K.critical_angles()
+            [(1/2*pi, (1, 0), (0, 1)), (0, (1, 0), (1, 0))]
+
+        The largest critical angle between the Schur cone and
+        nonnegative orthant in five dimensions agrees with
+        :meth:`max_angle`, and every returned pair/angle is indeed
+        critical according to Definition 2 in [Or2020]_::
+
+            sage: P = cones.nonnegative_orthant(5)               # long time
+            sage: Q = cones.schur(5)                             # long time
+            sage: gamma = P.critical_angles(Q)                   # long time
+            sage: actual = max([theta for (theta,_,_) in gamma]) # long time
+            sage: expected = P.max_angle(Q)[0]                   # long time
+            sage: bool(actual == expected)                       # long time
+            True
+            sage: set_random_seed()                              # long time
+            sage: (theta,u,v) = choice(gamma)                    # long time
+            sage: u.norm() == 1                                  # long time
+            True
+            sage: v.norm() == 1                                  # long time
+            True
+            sage: all(g.inner_product(u) >= 0 for g in P.dual()) # long time
+            True
+            sage: all(h.inner_product(v) >= 0 for h in Q.dual()) # long time
+            True
+            sage: u_dot_v = u.inner_product(v)                   # long time
+            sage: y = v - u_dot_v*u                              # long time
+            sage: all( y.inner_product(g) >= 0 for g in P )      # long time
+            True
+            sage: z = u - u_dot_v*v                              # long time
+            sage: all( z.inner_product(h) >= 0 for h in Q )      # long time
+            True
+            sage: bool(abs(cos(theta) - u_dot_v) <= 1e-12)       # long time
+            True
+
+        TESTS:
+
+        The largest critical angle between two random cones agrees
+        with the result of :meth:`max_angle`, and every returned
+        pair/angle is indeed critical. The :meth:`max_angle` method
+        can raise an error if there are big eigenspaces, so we just
+        punt in that case::
+
+            sage: set_random_seed()                                # long time
+            sage: from sage.geometry.cone_critical_angles import ( # long time
+            ....:   _is_critical,                                  # long time
+            ....:   _random_admissible_cone )                      # long time
+            sage: n = ZZ.random_element(1,3)                       # long time
+            sage: P = _random_admissible_cone(ambient_dim=n)       # long time
+            sage: Q = _random_admissible_cone(ambient_dim=n)       # long time
+            sage: gamma = P.critical_angles(Q)                     # long time
+            sage: actual = max([ theta for (theta,_,_) in gamma ]) # long time
+            sage: expected = actual                                # long time
+            sage: try:                                             # long time
+            ....:     expected = P.max_angle(Q)[0]                 # long time
+            ....: except ValueError:                               # long time
+            ....:     pass                                         # long time
+            sage: bool(actual == expected)                         # long time
+            True
+            sage: all( _is_critical(P,Q,theta,u,v)                 # long time
+            ....:      for (theta,u,v) in gamma )                  # long time
+            True
+        """
+        # We do the argument checking here, in the public cone method,
+        # because the error message should say something like "this
+        # cone" and not reference the argument of a function the user
+        # has never heard of in some internal module.
+        if self.is_trivial() or self.is_full_space():
+            raise ValueError("this cone cannot be trivial or the ambient space")
+
+        if other is None:
+            other = self
+        else:
+            if (other.lattice_dim() != self.lattice_dim()):
+                raise ValueError("lattice dimensions of self and other "
+                                 "must agree")
+            if other.is_trivial() or other.is_full_space():
+                raise ValueError("other cone cannot be trivial or the "
+                                 "ambient space")
+
+        # Use the names from the paper to keep things understandable.
+        P = self
+        Q = other
+
+        from sage.geometry.cone_critical_angles import critical_angles
+        return critical_angles(P,Q,exact,epsilon,debug)
+
+    def max_angle(self, other=None, exact=True, epsilon=0):
+        r"""
+        Return the maximal angle between ``self`` and ``other``.
+
+        The maximal angle between two closed convex cones is the
+        unique largest angle formed by any two unit-norm vectors in
+        those cones. The algorithm underlying this optimization
+        problem can fail if an eigenspace of dimension greater than
+        one is encountered. At present, that situation is fatal.
+
+        .. SEEALSO::
+
+            :meth:`critical_angles`
+
+        INPUT:
+
+        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone.
+
+        - ``exact`` -- (default: ``True``) whether or not to use exact
+          rational arithmetic instead of floating point computations.
+
+        - ``epsilon`` -- (default: ``0``) the tolerance to use when making
+          comparisons.
+
+        OUTPUT:
+
+        A triple `\left( \theta_{\text{max}}, u, v \right)` containing,
+
+        - The maximal angle `\theta_{\text{max}}` between ``self`` and
+          ``other``.
+
+        - A vector `u` in ``self`` that achieves the maximal angle.
+
+        - A vector `v` in ``other`` that achieves the maximal angle.
+
+        If ``other`` is ``None`` (the default), then the maximal angle
+        within this cone (between this cone and itself) is returned.
+
+        If an eigenspace of dimension greater than one is encountered,
+        and if the corresponding angle cannot be ruled out as a
+        maximum, then a ``ValueError`` is raised to indicate that we
+        have basically failed; the angle returned might not have been
+        maximal, and no workarounds are known.
+
+        REFERENCES:
+
+        - [IS2005]_
+        - [SS2016]_
+        - [Or2020]_
+
+        ALGORITHM:
+
+        Algorithm 3 in [Or2020]_ is used.
+
+        EXAMPLES:
+
+        The maximal angle in a single ray is zero::
+
+            sage: set_random_seed()
+            sage: K = random_cone(min_rays=1, max_rays=1, max_ambient_dim=5)
+            sage: K.max_angle()[0]
+            0
+
+        The maximal angle in the nonnegative octant is `\pi/2`::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: K.max_angle()[0]
+            1/2*pi
+
+        The maximal angle between the nonnegative quintant and the Schur
+        cone of dimension 5 is about `0.8524 \pi`::
+
+            sage: P = cones.nonnegative_orthant(5)           # long time
+            sage: Q = cones.schur(5)                         # long time
+            sage: actual = P.max_angle(Q)[0]                 # long time
+            sage: expected = 0.8524*pi                       # long time
+            sage: bool( (actual - expected).abs() < 0.0001 ) # long time
+            True
+
+        The maximal angle within the Schur cone is known explicitly via
+        Gourion and Seeger's Proposition 2 [GS2010]_::
+
+            sage: n = 3
+            sage: K = cones.schur(n)
+            sage: bool(K.max_angle()[0] == ((n-1)/n)*pi)
+            True
+
+        We check the numerical values for the next two, because otherwise
+        Maxima crashes for some unknown reason::
+
+            sage: n = 4
+            sage: K = cones.schur(n)
+            sage: bool(K.max_angle()[0].n() == (((n-1)/n)*pi).n())
+            True
+            sage: n = 5
+            sage: K = cones.schur(n)
+            sage: bool(K.max_angle()[0].n() == (((n-1)/n)*pi).n())
+            True
+
+        When there's a unit norm vector in ``self`` whose negation is
+        in ``other``, they form a maximal angle of `\pi`::
+
+            sage: P = Cone([(5,1), (1,-1)])
+            sage: Q = Cone([(-1,0), (-1,0)])
+            sage: P.max_angle(Q)[0]
+            pi
+
+        TESTS:
+
+        When ``self`` and ``-other`` have nontrivial intersection, we
+        expect the maximal angle to be `\pi`::
+
+            sage: set_random_seed()                                # long time
+            sage: from sage.geometry.cone_critical_angles import ( # long time
+            ....:   _random_admissible_cone )                      # long time
+            sage: n = ZZ.random_element(1,3)                       # long time
+            sage: P = _random_admissible_cone(ambient_dim=n)       # long time
+            sage: Q = _random_admissible_cone(ambient_dim=n)       # long time
+            sage: expected = P.intersection(-Q).is_trivial()       # long time
+            sage: actual = bool(P.max_angle(Q)[0] != pi)           # long time
+            sage: actual == expected                               # long time
+            True
+        """
+        # We do the argument checking here, in the public cone method,
+        # because the error message should say something like "this
+        # cone" and not reference the argument of a function the user
+        # has never heard of in some internal module.
+        if self.is_trivial() or self.is_full_space():
+            raise ValueError("this cone cannot be trivial or the ambient space")
+
+        if other is None:
+            other = self
+        else:
+            if (other.lattice_dim() != self.lattice_dim()):
+                raise ValueError("lattice dimensions of self and other "
+                                 "must agree")
+            if other.is_trivial() or other.is_full_space():
+                raise ValueError("other cone cannot be trivial or the "
+                                 "ambient space")
+
+        # Use the names from the paper to keep things understandable.
+        P = self
+        Q = other
+
+        from sage.geometry.cone_critical_angles import max_angle
+        return max_angle(P, Q, exact, epsilon)
+
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
