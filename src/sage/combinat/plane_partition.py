@@ -82,19 +82,27 @@ class PlanePartition(ClonableList):
         """
         if isinstance(pp, PlanePartition):
             ClonableList.__init__(self, parent, pp, check=False)
-        pp = [list(_) for _ in pp]
-        ClonableList.__init__(self, parent, pp, check=check)
-        if self.parent()._box is None:
-            if pp:
-                self._max_x = len(pp)
-                self._max_y = len(pp[0])
-                self._max_z = pp[0][0]
-            else:
-                self._max_x = 0
-                self._max_y = 0
-                self._max_z = 0
         else:
-            (self._max_x, self._max_y, self._max_z) = self.parent()._box
+            pp = [list(_) for _ in pp]
+            if pp:
+                for i in reversed(range(len(pp))):
+                    while pp[i] and not pp[i][-1]:
+                        del pp[i][-1]
+                    if not pp[i]:
+                        pp.pop(i)
+                            
+            ClonableList.__init__(self, parent, pp, check=check)
+            if self.parent()._box is None:
+                if pp:
+                    self._max_x = len(pp)
+                    self._max_y = len(pp[0])
+                    self._max_z = pp[0][0]
+                else:
+                    self._max_x = 0
+                    self._max_y = 0
+                    self._max_z = 0
+            else:
+                (self._max_x, self._max_y, self._max_z) = self.parent()._box
 
     def check(self):
         """
@@ -762,9 +770,100 @@ class PlanePartition(ClonableList):
             sage: PP.is_TSSCPP()
             True
         """
-        return self.is_TSPP() and self.is_SCPP() 
-  
+        return self.is_TSPP() and self.is_SCPP()
 
+    def to_order_ideal(self): 
+        """
+        Return the order ideal corresponding to ``self``.
+
+        TODO: As many families of symmetric plane partitions are in bijection
+              with order ideals in an associated poset, this function could
+              feasibly have options to send symmetric plane partitions
+              to the associated order ideal in that poset, instead.
+        
+        EXAMPLES::
+        
+            sage: PlanePartition([[3,2,1],[2,2],[2]]).to_order_ideal()
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (0, 1, 1), (0, 2, 0), (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1), (2, 0, 0), (2, 0, 1)]
+            sage: PlanePartition([[2,1],[1],[1]]).to_order_ideal()
+            [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0)]
+        """
+        (a, b, c) = (self._max_x, self._max_y, self._max_z)
+        Q = posets.ProductOfChains([a,b,c])
+        count = 0
+        generate = []
+        for i in range(len(self)):
+            for j in range(len(self[i])):
+                if (self[i][j] > 0):
+                    generate.append((i,j,self[i][j]-1))
+            count += 1
+        oi = Q.order_ideal(generate)
+        return oi
+
+    def maximal_boxes(self):
+        """
+        Return the coordinates of the maximal boxes of ``self``.
+        
+        EXAMPLES::
+        
+            sage: PlanePartition([[3,2,1],[2,2],[2]]).maximal_boxes()
+            [[0, 2, 0], [1, 1, 1], [0, 0, 2], [2, 0, 1]]
+            sage: PlanePartition([[2,1],[1],[1]]).maximal_boxes()
+            [[0, 1, 0], [0, 0, 1], [2, 0, 0]]
+        """
+        (a, b, c) = (self._max_x, self._max_y, self._max_z)
+        Q = posets.ProductOfChains([a,b,c])
+        count = 0
+        generate = []
+        for i in range(len(self)):
+            for j in range(len(self[i])):
+                if (self[i][j] > 0):
+                    generate.append((i,j,self[i][j]-1))
+            count+=1
+        oi = Q.order_ideal_generators(generate)
+        return [list(oi_elem) for oi_elem in oi]
+  
+    def cyclically_rotate(self):
+        """
+        Return the cyclic rotation of ``self``.
+
+        TODO: Ensure that parent is preserved under cyclic rotation.
+        
+        EXAMPLES::
+        
+            sage: PlanePartition([[3,2,1],[2,2],[2]]).cyclically_rotate()
+            Plane partition [[3, 3, 1], [2, 2, 0], [1, 0, 0]]
+            sage: PP = PlanePartition([[4,1],[1],[1]])
+            sage: PP.cyclically_rotate()
+            Plane partition [[3, 1, 1, 1], [1, 0, 0, 0]]
+            sage: PP == PP.cyclically_rotate().cyclically_rotate().cyclically_rotate()
+            True
+        """
+        (a, b, c) = (self._max_x, self._max_y, self._max_z)
+        new_antichain = []
+        for elem in self.maximal_boxes():
+            new = (elem[1], elem[2], elem[0])
+            new_antichain.append(new)
+        ppMatrix = [[0] * (c) for i in range(b)]
+        for box in new_antichain:
+            y = box[0]
+            z = box[1]
+            x = box[2]
+            ppMatrix[y][z] = (x+1)
+        if new_antichain != []:
+            for i in range(b):
+                i = b-(i+1)
+                for j in range(c):
+                    j = c-(j+1)
+                    if (ppMatrix[i][j] == 0):
+                        iValue = 0
+                        jValue = 0
+                        if i < b-1:
+                            iValue = ppMatrix[i+1][j]
+                        if j < c-1:
+                            jValue = ppMatrix[i][j+1]
+                        ppMatrix[i][j] = max(iValue,jValue)
+        return PlanePartition(ppMatrix)
 
 class PlanePartitions(UniqueRepresentation, Parent):
     r"""
@@ -942,7 +1041,9 @@ class PlanePartitions_box(PlanePartitions):
             Plane partitions inside a 4 x 3 x 2 box
         """
         return "Plane partitions inside a %s x %s x %s box" % (self._box[0], self._box[1], self._box[2])
-#        return "Plane partitions inside a box"
+
+    def __contains__(self, x):
+        return PlanePartitions.__contains__(self, x) and len(x) <= self._box[0] and len(x[0]) <= self._box[1] and x[0][0] <= self._box[2]
 
     def to_poset(self):
         r"""
@@ -1001,7 +1102,7 @@ class PlanePartitions_box(PlanePartitions):
         
 
     def __iter__(self):
-        """
+        r"""
         Iterate over ``self``.
 
         EXAMPLES::
@@ -1009,70 +1110,14 @@ class PlanePartitions_box(PlanePartitions):
             sage: list(PlanePartitions((1,2,1)))
             [Plane partition [[0, 0]], Plane partition [[1, 1]], Plane partition [[1, 0]]]
         """
-#        A = self._box[0]
-#        B = self._box[1]
-#        C = self._box[2]
-#        from sage.combinat.tableau import SemistandardTableaux
-#        for T in SemistandardTableaux([B for i in range(A)], max_entry=C+A):
-#            PP = [[0 for i in range(B)] for j in range(A)]
-#            for r in range(A):
-#                for c in range(B):
-#                    PP[A-1-r][B-1-c] = T[r][c] - r - 1
-#            yield self.element_class(self, PP, check=False)
-#        def componentwise_comparer(thing1,thing2):
-#            if len(thing1) == len(thing2):
-#                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
-#                    return True
-#            return False
-#        def product_of_chains_poset(list_of_chain_lengths):
-#            elem = cartesian_product([range(chain_length) for chain_length in list_of_chain_lengths])
-#            return Poset((elem, componentwise_comparer))
-
         a = self._box[0]
         b = self._box[1]
         c = self._box[2]
-
-#        pocp = product_of_chains_poset([a,b,c])
         pocp = posets.ProductOfChains([a,b,c])
-
         matrixList = [] #list of all PlanePartitions with parameters(a,b,c)
-
         #iterate through each antichain of product of chains poset with parameters (a,b,c)
         for acl in self.to_poset().antichains_iterator():
-#            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-
-#            #ac format ex: [x,y,z]
-#            #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
-#            for ac in acl:
-#                x = ac[0]
-#                y = ac[1]
-#                z = ac[2]
-#                ppMatrix[y][z] = (x+1)
-
-#            #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
-#            if acl != []:
-#                for i in range(b):
-#                    i = b-(i+1)
-#                    for j in range(c):
-#                        j = c-(j+1)
-#                        if (ppMatrix[i][j] == 0):
-#                            iValue = 0
-#                            jValue = 0
-#                            if i < b-1:
-#                                iValue = ppMatrix[i+1][j]
-#                            if j < c-1:
-#                                jValue = ppMatrix[i][j+1]
-#                            ppMatrix[i][j] = max(iValue,jValue)
-#            yield self.element_class(self, ppMatrix)
             yield self.from_antichain(acl)
-
-#            matrixList.append(ppMatrix) #add PlanePartition to list of plane partitions
-
-#        matrixList.sort()
-#        current = 0
-#        while current < len(matrixList):
-#            yield self.element_class(self, matrixList[current])
-#            current += 1
 
 
     def cardinality(self):
@@ -1129,19 +1174,6 @@ class PlanePartitions_box(PlanePartitions):
             sage: P.random_element()
             Plane partition [[4, 3, 3], [4, 0, 0], [2, 0, 0], [0, 0, 0]]
         """
-#        def leq(thing1, thing2):
-#            return all(thing1[i] <= thing2[i] for i in range(len(thing1)))
-#        elem = [(i,j,k) for i in range(self._box[0]) for j in range(self._box[1])
-#                for k in range(self._box[2])]
-#        myposet = Poset((elem, leq))
-#        a = self._box[0]
-#        b = self._box[1]
-#        c = self._box[2]
-#        P = posets.ProductOfChains([a,b,c])
-#        I = P.random_order_ideal()
-#        Z = [[0 for i in range(b)] for j in range(a)]
-#        for C in I:
-#            Z[C[0]][C[1]] += 1
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
         return self.element_class(self, Z, check=False)
 
@@ -1170,7 +1202,8 @@ class PlanePartitions_n(PlanePartitions):
         """
         super(PlanePartitions_n, self).__init__(category=FiniteEnumeratedSets())
         self._n = n
-        self._box = (0,0,0)
+#        self._box = (0,0,0)
+        self._box = None
 
     def _repr_(self):
         """
@@ -1185,6 +1218,14 @@ class PlanePartitions_n(PlanePartitions):
         return PlanePartitions.__contains__(self, x) and x.number_of_boxes() ==  self._n
 
     def __iter__(self):
+        r"""
+        An iterator to generate all plane partitions of a fixed size.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions(2))
+            [Plane partition [[2]], Plane partition [[1, 1]], Plane partition [[1], [1]]]
+        """
         from sage.combinat.partition import Partitions
         def PP_first_row_iter(n, la):
             m = n-sum(la)
@@ -1232,7 +1273,6 @@ class PlanePartitions_n(PlanePartitions):
         for m in range(n,0,-1):
             for la in Partitions(m):
                 for a in PP_first_row_iter(n,la):
-#                    yield PlanePartition(a)
                     yield self.element_class(self, a, check=False)
             
     def cardinality(self):
@@ -1241,7 +1281,7 @@ class PlanePartitions_n(PlanePartitions):
 
         Calculated using the recurrence relation
 
-        ..MATH:
+        .. MATH:
 
         PL(n) = \sum_{k=1}^n PL(n-k)\sigma_2(k)
 
@@ -1318,7 +1358,7 @@ class PlanePartitions_SPP(PlanePartitions):
     def from_order_ideal(self, I):
         r"""
         Return the plane partition corresponding to an order ideal in the
-        poset given in (LINK) to_poset().
+        poset given in :meth:`to_poset()`.
 
         Note: input may not be checked ? Optional check parameter if too much overhead?
         """
@@ -1327,11 +1367,10 @@ class PlanePartitions_SPP(PlanePartitions):
     def from_antichain(self, A):
         r"""
         Return the plane partition corresponding to an antichain in the poset
-        given in (LINK) to_poset().
+        given in :meth:`to_poset()`.
 
         Note: input may not be checked? Optional parameter if too much overhead?
         """
-        from copy import deepcopy
         #Initialize an empty plane partition
         a=self._box[0]
         b=self._box[1]    
@@ -1364,89 +1403,8 @@ class PlanePartitions_SPP(PlanePartitions):
         return self.element_class(self, ppMatrix)
 
     def __iter__(self):
-        #Construct poset whose order ideals are naturally in bijection
-        #with symmetric plane partitions
-#        cmp = lambda x,y : all(x[i]<=y[i] for i in range(len(x)))
-#        a=self._box[0]
-#        b=self._box[1]
-#        c=self._box[2]
-#        pl = []
-#        for x in range(0,a):
-#            for y in range(0,x+1):
-#                for z in range(0,c):
-#                    pl.append((x,y,z))
-#        pocp = Poset((pl,cmp))
-        #Iterate over antichains in this poset
         for acl in self.to_poset().antichains_iterator():
-#            #Initialize an empty plane partition
-#            ppMatrix = [[0] * (a) for i in range(b)]
-#            #Antichain indicates where the 'corners' will be in the
-#            #plane partition
-#            for ac in acl:
-#                x=ac[0]
-#                y=ac[1]
-#                z=ac[2]
-#                ppMatrix[x][y] = (z+1)
-#            #Fill out the rest of the plane partition using symmetry and the
-#            #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
-#            if acl!= []:
-#                for i in range(a):
-#                    i = a-(i+1)
-#                    for j in range(b):
-#                        j = b-(j+1)
-#                        if (ppMatrix[i][j] == 0) and i>=j:
-#                            iValue = 0
-#                            jValue = 0
-#                            if i < a-1:
-#                                iValue = ppMatrix[i+1][j]
-#                            if j < b-1:
-#                                jValue = ppMatrix[i][j+1]
-#                            ppMatrix[i][j] = max(iValue,jValue)
-#                        elif j>i:
-#                            ppMatrix[i][j] = ppMatrix[j][i]
             yield self.from_antichain(acl)
-
-
-
-#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
-#        a=self._box[0]
-#        b=self._box[1]
-#        c=self._box[2]
-#        pl = []
-#        for x in range(0,a):
-#            for y in range(0, b):
-#                    for z in range(0,c):
-#                        if z <= y:
-#                            pl.append((x,y,z))
-#        pocp = Poset((pl,cmp))
-#            #iterate through each antichain of product of chains poset with paramaters (a,b,c)
-#        for acl in pocp.antichains_iterator():
-#            ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-#                #ac format ex: [x,y,z]
-#                #iterate through each antichain, assigning the y,z position in ppMatrix = the height of the stack (x + 1)
-#            for ac in acl:
-#                x = ac[0]
-#                y = ac[1]
-#                z = ac[2]
-#                ppMatrix[y][z] = (x+1)
-
-#                #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
-#            if acl != []:
-#                for i in range(b):
-#                    i = b-(i+1)
-#                    for j in range(c):
-#                        j = c-(j+1)
-#                        if (ppMatrix[i][j] == 0) and i>=j:
-#                            iValue = 0
-#                            jValue = 0
-#                            if i < b-1:
-#                                iValue = ppMatrix[i+1][j]
-#                            if j < c-1:
-#                                jValue = ppMatrix[i][j+1]
-#                            ppMatrix[i][j] = max(iValue,jValue)
-#                        elif j>i:
-#                            ppMatrix[i][j] = ppMatrix[j][i]
-#            yield self.element_class(self, ppMatrix)
 
     def cardinality(self):
         r"""
@@ -1588,50 +1546,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         return self.from_antichain(self.to_poset().order_ideal_generators(I))    
 
     def __iter__(self):
-#        a=self._box[0]
-#        b=self._box[1]
-#        c=self._box[2]
-#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
-#        cmp2 = lambda x,y : cmp(x,y) or cmp(x,(y[2],y[0],y[1])) or cmp(x,(y[1],y[2],y[0]))
-
-#        pl = []
-#        for x in range(0,a):
-#            for y in range(0, b):
-#                    for z in range(x,c):
-#                        if y <= z  and (x != z or y == x):
-#                            pl.append((x,y,z))
-#        pocp = Poset((pl, cmp2))
-#        matrixList = [] #list of all PlaneParitions with parameters(a,b,c)
-        #iterate through each antichain of product of chains poset with paramaters (a,b,c)
         for acl in self.to_poset().antichains_iterator():
-#            ppMatrix = [[0] * (c) for i in range(b)] 
-#            #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-#            #ac format ex: [x,y,z]
-#            for ac in acl:
-#                x = ac[0]
-#                y = ac[1]
-#                z = ac[2]
-#                ppMatrix[y][z] = (x+1)
-#                ppMatrix[z][x] = (y+1)
-#                ppMatrix[x][y] = (z+1)
-
-
-#            #for each value in current antichain, fill in the rest of the 
-#            #matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is 
-#            #now in plane partition format
-#            if acl != []:
-#                for i in range(b):
-#                    i = b-(i+1)
-#                    for j in range(c):
-#                        j = c-(j+1)
-#                        if (ppMatrix[i][j] == 0):
-#                            iValue = 0
-#                            jValue = 0
-#                            if i < b-1:
-#                                iValue = ppMatrix[i+1][j]
-#                            if j < c-1:
-#                                jValue = ppMatrix[i][j+1]
-#                            ppMatrix[i][j] = max(iValue,jValue)
             yield self.from_antichain(acl)
 
     def cardinality(self):
@@ -1643,8 +1558,8 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         .. MATH::
 
-            \prod_{i=1}^{r} \frac{3*i - 1}{3*i - 2}  *
-            \prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{2*i+j-1}
+            \left(\prod_{i=1}^{r} \frac{3i - 1}{3i - 2}\right)  
+            \left(\prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{2i+j-1}\right)
 
         EXAMPLES::
 
@@ -1749,54 +1664,6 @@ class PlanePartitions_TSPP(PlanePartitions):
     def __iter__(self):
         for A in self.to_poset().antichains_iterator():
             yield self.from_antichain(A)
-#        cmp = lambda x,y : all(x[i]<= y[i] for i in range(len(x)))
-#        pl = []
-#        for x in range(0,a):
-#            for y in range(x, b):
-#                    for z in range(y,c):
-#                        pl.append((x,y,z))
-
-#        myposet = Poset((pl,cmp))
-
-#        R = myposet.random_order_ideal()
-#        acl = R
-
-#        ppMatrix = [[0] * (c) for i in range(b)] #creates a matrix for the plane parition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
-
-#        #ac format ex: [x,y,z]
-#        for ac in acl:
-#            x = ac[0]
-#            y = ac[1]
-#            z = ac[2]
-#            ppMatrix[y][z] = (x+1) #x,y,z
-#            ppMatrix[z][x] = (y+1) #y,z,x
-#            ppMatrix[x][y] = (z+1) #z,x,y
-
-#            ppMatrix[z][y] = (x+1) #x,z,y
-#            ppMatrix[x][z] = (y+1) #y,x,z
-#            ppMatrix[y][x] = (z+1) #z,y,x
-
-
-#        #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
-#        if acl != []:
-#            for i in range(b):
-#                i = b-(i+1)
-#                for j in range(c):
-#                    j = c-(j+1)
-#                    if (ppMatrix[i][j] == 0):
-#                        iValue = 0
-#                        jValue = 0
-#                        if i < b-1:
-#                            iValue = ppMatrix[i+1][j]
-#                        if j < c-1:
-#                            jValue = ppMatrix[i][j+1]
-#                        ppMatrix[i][j] = max(iValue,jValue)
-
-#        return PlanePartition(ppMatrix)
-
-
-
-
 
 
     def cardinality(self):
@@ -1808,7 +1675,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         .. MATH::
 
-            \prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{i+2*j-2}
+            \prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{i+2j-2}
 
         EXAMPLES::
 
@@ -1967,7 +1834,7 @@ class PlanePartitions_SCPP(PlanePartitions):
 
 
         The number of self complementary plane partitions inside an 
-        `2a+1 \times 2b \times 2c` box is equal to
+        `(2a+1) \times 2b \times 2c` box is equal to
 
         .. MATH::
 
@@ -1976,7 +1843,7 @@ class PlanePartitions_SCPP(PlanePartitions):
 
 
         The number of self complementary plane partitions inside an 
-        `2a+1 \times 2b+1 \times 2c` box is equal to
+        `(2a+1) \times (2b+1) \times 2c` box is equal to
 
         .. MATH::
 
