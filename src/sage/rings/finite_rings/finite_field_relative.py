@@ -103,11 +103,12 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         defining_embedding = self.base_ring()._any_embedding(backend)
         gen = modulus.map_coefficients(defining_embedding).any_root()
-        RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, name=names[0], coerce=False)
+        RingExtensionWithGen.__init__(self, defining_morphism=defining_embedding, gen=gen, names=names)
 
         self.register_conversion(self.free_module(map=True)[1])
 
-    free_module = RingExtensionWithGen.vector_space
+    # We want to use RingExtensionWithGen's free_module
+    #free_module = RingExtensionWithGen.free_module
 
     def __reduce__(self):
         r"""
@@ -119,6 +120,9 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         """
         return self._factory_data[0].reduce_data(self)
+
+    def absolute_gen(self):
+        return self(self._backend.absolute_gen())
 
     def absolute_field(self, map=False, **kwds):
         r"""
@@ -133,13 +137,13 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
             sage: k.absolute_field(map=True)
 
         """
-        backend = self._backend()
+        backend = self._backend
         absolute = backend.absolute_field(map=map, **kwds)
         if map:
             (absolute, absolute_to_backend, backend_to_absolute) = absolute
             return (absolute,
-                backend.hom(self) * absolute_to_backend,
-                backend_to_absolute * self.hom(backend))
+                self.convert_map_from(backend) * absolute_to_backend,
+                backend_to_absolute * backend.convert_map_from(self))
         else:
             return absolute
 
@@ -154,7 +158,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
             3
 
         """
-        return self._backend().characteristic()
+        return self._backend.characteristic()
 
     def _repr_(self):
         """

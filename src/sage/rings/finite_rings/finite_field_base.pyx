@@ -275,6 +275,101 @@ cdef class FiniteField(Field):
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    def __iter__(self):
+        """
+        Iterate over all elements of this finite field.
+
+        EXAMPLES::
+
+            sage: k.<a> = FiniteField(9, impl="pari")
+            sage: list(k)
+            [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
+
+        Partial iteration of a very large finite field::
+
+            sage: p = next_prime(2^64)
+            sage: k.<a> = FiniteField(p^2, impl="pari")
+            sage: it = iter(k); it
+            <generator object at ...>
+            sage: [next(it) for i in range(10)]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        TESTS:
+
+        Check that the generic implementation works in all cases::
+
+            sage: L = []
+            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+            sage: for impl in ("givaro", "pari", "ntl"):
+            ....:     k = GF(8, impl=impl, names="z")
+            ....:     print(list(FiniteField.__iter__(k)))
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+        """
+        cdef Py_ssize_t n = self.absolute_degree()
+        cdef unsigned long lim  # maximum value for coefficients
+        try:
+            lim = (<unsigned long>self.characteristic()) - 1
+        except OverflowError:
+            # If the characteristic is too large to represent in an
+            # "unsigned long", it is reasonable to assume that we won't
+            # be able to iterate over all elements. Typically n >= 2,
+            # so that would mean >= 2^64 elements on a 32-bit system.
+            # Just in case that we iterate to the end anyway, we raise
+            # an exception at the end.
+            lim = <unsigned long>(-1)
+
+        elt = self.zero()
+        one = self.one()
+        x = self.absolute_gen()
+
+        # coeffs[] is an array of coefficients of the current finite
+        # field element (as unsigned longs)
+        #
+        # Stack represents an element
+        #   sum_{i=0}^{n-1}  coeffs[i] x^i
+        # as follows:
+        #   stack[k] = sum_{i=k}^{n-1} coeffs[i] x^(i-k)
+        #
+        # This satisfies the recursion
+        #   stack[k-1] = x * stack[k] + coeffs[k-1]
+        #
+        # Finally, elt is a shortcut for stack[k]
+        #
+        cdef list stack = [elt] * n
+        cdef array coeffsarr = array('L', [0] * n)
+        cdef unsigned long* coeffs = coeffsarr.data.as_ulongs
+
+        yield elt  # zero
+        cdef Py_ssize_t k = 0
+        while k < n:
+            # Find coefficients of next element
+            coeff = coeffs[k]
+            if coeff >= lim:
+                # We cannot increase coeffs[k], so we wrap around to 0
+                # and try to increase the next coefficient
+                coeffs[k] = 0
+                k += 1
+                continue
+            coeffs[k] = coeff + 1
+
+            # Now compute and yield the finite field element
+            sig_check()
+            elt = stack[k] + one
+            stack[k] = elt
+            # Fix lower elements of stack, until k == 0
+            while k > 0:
+                elt *= x
+                k -= 1
+                stack[k] = elt
+
+            yield elt
+
+        if lim == <unsigned long>(-1):
+            raise NotImplementedError("iterating over all elements of a large finite field is not supported")
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -946,6 +1041,7 @@ cdef class FiniteField(Field):
         """
         return [self.random_element() for i in range(4)]
 
+    @cached_method
     def polynomial_ring(self, variable_name=None):
         """
         Return the polynomial ring over the base field in the same variable as
@@ -958,16 +1054,9 @@ cdef class FiniteField(Field):
             Univariate Polynomial Ring in alpha over Finite Field of size 3
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.finite_rings.finite_field_constructor import GF
-
-        if variable_name is None and self.__polynomial_ring is not None:
-            return self.__polynomial_ring
-        else:
-            if variable_name is None:
-                self.__polynomial_ring = PolynomialRing(self.base_ring(), self.variable_name())
-                return self.__polynomial_ring
-            else:
-                return PolynomialRing(self.base_ring(), variable_name)
+        if variable_name is None:
+            variable_name = self.variable_name()
+        return PolynomialRing(self.base_ring(), variable_name)
 
     cpdef _coerce_map_from_(self, R):
         r"""
@@ -1170,7 +1259,7 @@ cdef class FiniteField(Field):
         from sage.rings.all import PolynomialRing
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         from sage.rings.integer import Integer
-        
+
         if name is None and names is not None:
             name = names
 
@@ -1778,101 +1867,8 @@ cdef class FiniteFieldAbsolute(FiniteField):
         sage: isinstance(k, FiniteFieldAbsolute)
         True
     """
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    def __iter__(self):
-        """
-        Iterate over all elements of this finite field.
-
-        EXAMPLES::
-
-            sage: k.<a> = FiniteField(9, impl="pari")
-            sage: list(k)
-            [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
-
-        Partial iteration of a very large finite field::
-
-            sage: p = next_prime(2^64)
-            sage: k.<a> = FiniteField(p^2, impl="pari")
-            sage: it = iter(k); it
-            <generator object at ...>
-            sage: [next(it) for i in range(10)]
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-        TESTS:
-
-        Check that the generic implementation works in all cases::
-
-            sage: L = []
-            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: for impl in ("givaro", "pari", "ntl"):
-            ....:     k = GF(8, impl=impl, names="z")
-            ....:     print(list(FiniteField.__iter__(k)))
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-        """
-        cdef Py_ssize_t n = self.degree()
-        cdef unsigned long lim  # maximum value for coefficients
-        try:
-            lim = (<unsigned long>self.characteristic()) - 1
-        except OverflowError:
-            # If the characteristic is too large to represent in an
-            # "unsigned long", it is reasonable to assume that we won't
-            # be able to iterate over all elements. Typically n >= 2,
-            # so that would mean >= 2^64 elements on a 32-bit system.
-            # Just in case that we iterate to the end anyway, we raise
-            # an exception at the end.
-            lim = <unsigned long>(-1)
-
-        elt = self.zero()
-        one = self.one()
-        x = self.gen()
-
-        # coeffs[] is an array of coefficients of the current finite
-        # field element (as unsigned longs)
-        #
-        # Stack represents an element
-        #   sum_{i=0}^{n-1}  coeffs[i] x^i
-        # as follows:
-        #   stack[k] = sum_{i=k}^{n-1} coeffs[i] x^(i-k)
-        #
-        # This satisfies the recursion
-        #   stack[k-1] = x * stack[k] + coeffs[k-1]
-        #
-        # Finally, elt is a shortcut for stack[k]
-        #
-        cdef list stack = [elt] * n
-        cdef array coeffsarr = array('L', [0] * n)
-        cdef unsigned long* coeffs = coeffsarr.data.as_ulongs
-
-        yield elt  # zero
-        cdef Py_ssize_t k = 0
-        while k < n:
-            # Find coefficients of next element
-            coeff = coeffs[k]
-            if coeff >= lim:
-                # We cannot increase coeffs[k], so we wrap around to 0
-                # and try to increase the next coefficient
-                coeffs[k] = 0
-                k += 1
-                continue
-            coeffs[k] = coeff + 1
-
-            # Now compute and yield the finite field element
-            sig_check()
-            elt = stack[k] + one
-            stack[k] = elt
-            # Fix lower elements of stack, until k == 0
-            while k > 0:
-                elt *= x
-                k -= 1
-                stack[k] = elt
-
-            yield elt
-
-        if lim == <unsigned long>(-1):
-            raise NotImplementedError("iterating over all elements of a large finite field is not supported")
+    def absolute_gen(self):
+        return self.gen()
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -2015,9 +2011,9 @@ cdef class FiniteFieldAbsolute(FiniteField):
         if base is None:
             base = self.prime_subfield()
             s = self.relative_degree()
-            if self.__vector_space is None:
-                self.__vector_space = VectorSpace(base, s)
-            V = self.__vector_space
+            if not hasattr(self, '_vector_space'):
+                self._vector_space = VectorSpace(base, s)
+            V = self._vector_space
             inclusion_map = None
         elif is_Morphism(base):
             inclusion_map = base
