@@ -135,7 +135,22 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
             Finite Field in z6 of size 3^6
 
             sage: k.absolute_field(map=True)
-
+            (Finite Field in z6 of size 3^6,
+             Ring morphism:
+               From: Finite Field in z6 of size 3^6
+               To:   Finite Field in z6 of size 3^6 over its base
+               Defn: z6 |--> 1 + (2*z2 + 1)*z6 + (z2 + 1)*z6^2,
+             Composite map:
+               From: Finite Field in z6 of size 3^6 over its base
+               To:   Finite Field in z6 of size 3^6
+               Defn:   Canonical morphism:
+                       From: Finite Field in z6 of size 3^6 over its base
+                       To:   Finite Field in b6 of size 3^6
+                     then
+                       Ring morphism:
+                       From: Finite Field in b6 of size 3^6
+                       To:   Finite Field in z6 of size 3^6
+                       Defn: b6 |--> z6)
         """
         backend = self._backend
         absolute = backend.absolute_field(map=map, **kwds)
@@ -168,6 +183,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
             sage: k = GF(9).extension(3, absolute=False)
             sage: k # indirect doctest
+            Finite Field in z6 of size 3^6 over its base
         """
         return "Finite Field in %s of size %s^%s over its base"%(self.variable_name(), self.characteristic(), self.absolute_degree())
 

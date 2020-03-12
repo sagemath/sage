@@ -1400,9 +1400,9 @@ cdef class FiniteField(Field):
             sage: k = GF(2^21)
             sage: k.subfield(3)
             Finite Field in z3 of size 2^3
-            sage: k.subfield(7, 'a')
+            sage: k0 = k.subfield(7, 'a'); k0
             Finite Field in a of size 2^7
-            sage: k.coerce_map_from(_)
+            sage: k.coerce_map_from(k0)
             Ring morphism:
               From: Finite Field in a of size 2^7
               To:   Finite Field in z21 of size 2^21
@@ -1915,7 +1915,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
         INPUT:
 
         - ``base`` -- a subfield of or a morphism into this finite field.
-          If not given, the prime subfield is assumed. A subfield means
+          If not given, the base ring is assumed. A subfield means
           a finite field with coercion to this finite field.
 
         - ``basis`` -- a basis of the finite field as a vector space
@@ -2009,7 +2009,7 @@ cdef class FiniteFieldAbsolute(FiniteField):
             map = False
 
         if base is None:
-            base = self.prime_subfield()
+            base = self.base_ring()
             s = self.relative_degree()
             if not hasattr(self, '_vector_space'):
                 self._vector_space = VectorSpace(base, s)
