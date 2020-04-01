@@ -546,9 +546,9 @@ class PlanePartition(ClonableList):
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
             sage: PP.complement()
-            Plane partition [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1, 0]]
+            Plane partition [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1,]]
             sage: PP.complement(True)
-            [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1, 0]]
+            [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1]]
         """
         A = self._max_x
         B = self._max_y
@@ -575,9 +575,9 @@ class PlanePartition(ClonableList):
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
             sage: PP.transpose()
-            Plane partition [[4, 2, 1], [3, 1, 1], [3, 1, 0], [1, 0, 0]]
+            Plane partition [[4, 2, 1], [3, 1, 1], [3, 1], [1]]
             sage: PP.transpose(True)
-            [[4, 2, 1], [3, 1, 1], [3, 1, 0], [1, 0, 0]]
+            [[4, 2, 1], [3, 1, 1], [3, 1], [1]]
         """
         T = [[0 for i in range(self._max_x)] for j in range(self._max_y)]
         z_tab = self.z_tableau()
@@ -586,6 +586,8 @@ class PlanePartition(ClonableList):
                 T[c][r] = z_tab[r][c]
         if tableau_only:
             return T
+        elif self.box_size[0] != self.box_size[1]:
+            raise ValueError("Tranpose only supports parents with symmetric dimensions")           
         else:
             return type(self)(self.parent(), T, check=False)
 
@@ -832,10 +834,10 @@ class PlanePartition(ClonableList):
         EXAMPLES::
         
             sage: PlanePartition([[3,2,1],[2,2],[2]]).cyclically_rotate()
-            Plane partition [[3, 3, 1], [2, 2, 0], [1, 0, 0]]
+            Plane partition [[3, 3, 1], [2, 2], [1]]
             sage: PP = PlanePartition([[4,1],[1],[1]])
             sage: PP.cyclically_rotate()
-            Plane partition [[3, 1, 1, 1], [1, 0, 0, 0]]
+            Plane partition [[3, 1, 1, 1], [1]]
             sage: PP == PP.cyclically_rotate().cyclically_rotate().cyclically_rotate()
             True
         """
@@ -1043,6 +1045,8 @@ class PlanePartitions_box(PlanePartitions):
         return "Plane partitions inside a %s x %s x %s box" % (self._box[0], self._box[1], self._box[2])
 
     def __contains__(self, x):
+        if len(x) == 0:
+            return True
         return PlanePartitions.__contains__(self, x) and len(x) <= self._box[0] and len(x[0]) <= self._box[1] and x[0][0] <= self._box[2]
 
     def to_poset(self):
@@ -1108,7 +1112,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: list(PlanePartitions((1,2,1)))
-            [Plane partition [[0, 0]], Plane partition [[1, 1]], Plane partition [[1, 0]]]
+            [Plane partition [], Plane partition [[1, 1]], Plane partition [[1]]]
         """
         a = self._box[0]
         b = self._box[1]
@@ -1172,7 +1176,7 @@ class PlanePartitions_box(PlanePartitions):
 
             sage: P = PlanePartitions((4,3,5))
             sage: P.random_element()
-            Plane partition [[4, 3, 3], [4, 0, 0], [2, 0, 0], [0, 0, 0]]
+            Plane partition [[4, 3, 3], [4], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
         return self.element_class(self, Z, check=False)
@@ -1446,7 +1450,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
             sage: P = PlanePartitions((4,3,5))
             sage: P.random_element()
-            Plane partition [[4, 3, 3], [4, 0, 0], [2, 0, 0], [0, 0, 0]]
+            Plane partition [[4, 3, 3], [4], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
         return self.element_class(self, Z, check=False)
