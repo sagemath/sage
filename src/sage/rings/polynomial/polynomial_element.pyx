@@ -8361,6 +8361,74 @@ cdef class Polynomial(CommutativeAlgebraElement):
         else:
             return b
 
+    def is_lorentzian_polynomial(self, explain=False):
+        r"""
+        Return ``True`` if this is a Lorentzian polynomial.
+
+        A univariate real polynomial is Lorentzian if and only if it is a
+        monomial with positive coefficient, or zero.  The definition is more
+        involved for multivariate real polynomials.
+
+        INPUTS:
+
+        - ``explain`` -- boolean (default: ``False``); if ``True``
+          return a tuple whose first element is the boolean result of the test,
+          and the second element is a string describing the reason the test failed,
+          or ``None`` if the test succeeded.
+
+        EXAMPLES:
+
+            sage: P.<x> = QQ[]
+            sage: p1 = x^2
+            sage: p1.is_lorentzian_polynomial()
+            True
+            sage: p2 = 1 + x^2
+            sage: p2.is_lorentzian_polynomial()
+            False
+            sage: p3 = P.zero()
+            sage: p3.is_lorentzian_polynomial()
+            True
+            sage: p4 = -2*x^3
+            sage: p4.is_lorentzian_polynomial()
+            False
+
+        It is an error to check if a polynomial is Lorentzian if its base ring
+        is not a subring of the real numbers, as the notion is not defined in
+        this case::
+
+            sage: Q.<y> = CC[]
+            sage: q = y^2
+            sage: q.is_lorentzian_polynomial()
+            Traceback (most recent call last):
+            ...
+            TypeError: Lorentzian polynomials must have real coefficients
+
+        The method can give a reason for a polynomial failing to be Lorentzian::
+
+            sage: p = x^2 + 2*x
+            sage: p.is_lorentzian_polynomial(explain=True)
+            (False, 'inhomogeneous')
+
+        REFERENCES:
+
+        For full definitions and related discussion, see [BrHu2019] and
+        [HMMS2019].
+        """
+        def result(val, explanation=None):
+            if explain:
+                return (val, explanation)
+            else:
+                return val
+        if not self.base_ring().is_subring(RealField()):
+            raise TypeError("Lorentzian polynomials must have real coefficients")
+        if self.is_zero():
+            return result(True)
+        elif not self.is_homogeneous():
+            return result(False, "inhomogeneous")
+        elif not self.coefficients()[0] > 0:
+            return result(False, "negative coefficient")
+        else:
+            return result(True)
 
     def variable_name(self):
         """

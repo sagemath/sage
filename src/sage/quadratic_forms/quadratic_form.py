@@ -31,13 +31,16 @@ from sage.misc.functional import denominator, is_even, is_field
 from sage.arith.all import GCD, LCM
 from sage.rings.all import Ideal, QQ
 from sage.rings.ring import is_Ring, PrincipalIdealDomain
-from sage.structure.sage_object import SageObject
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.genera.genus import genera
 from sage.quadratic_forms.quadratic_form__evaluate import QFEvaluateVector, QFEvaluateMatrix
 
+from sage.structure.sage_object import SageObject
+from sage.combinat.integer_lists.invlex import IntegerListsLex
 
 
 def QuadraticForm__constructor(R, n=None, entries=None):
@@ -208,6 +211,10 @@ class QuadraticForm(SageObject):
          in `R` (given lexicographically, or equivalently, by rows of the
          matrix)
 
+    #. ``QuadraticForm(p)``, where
+
+      - `p` -- a homogeneous polynomial of degree `2`
+
     #. ``QuadraticForm(R, n)``, where
 
        - `R` -- a ring
@@ -285,6 +292,16 @@ class QuadraticForm(SageObject):
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 5 ]
         [ * 4 ]
+
+    ::
+
+        sage: P.<x,y,z> = QQ[]
+        sage: p = x^2 + 2*x*y + x*z/2 + y^2 + y*z/3
+        sage: QuadraticForm(p)
+        Quadratic form in 3 variables over Rational Field with coefficients:
+        [ 1 2 1/2 ]
+        [ * 1 1/3 ]
+        [ * * 0 ]
 
     ::
 
@@ -498,6 +515,26 @@ class QuadraticForm(SageObject):
             sage: s.dim()
             4
 
+            sage: P.<x,y,z> = QQ[]
+            sage: p = x^2 + y^2 + 2*x*z
+            sage: QuadraticForm(p)
+            Quadratic form in 3 variables over Rational Field with coefficients:
+            [ 1 0 2 ]
+            [ * 1 0 ]
+            [ * * 0 ]
+            sage: z = P.zero()
+            sage: QuadraticForm(z)
+            Quadratic form in 3 variables over Rational Field with coefficients:
+            [ 0 0 0 ]
+            [ * 0 0 ]
+            [ * * 0 ]
+            sage: q = x^2 + 3*y - z
+            sage: QuadraticForm(q)
+            Traceback (most recent call last):
+            ...
+            TypeError: Polynomial is not homogeneous of degree 2 or equal to zero
+
+
         TESTS::
 
             sage: s == loads(dumps(s))
@@ -509,9 +546,13 @@ class QuadraticForm(SageObject):
 
             sage: x = polygen(ZZ, 'x')
             sage: QuadraticForm(x**2)
+            Quadratic form in 1 variables over Integer Ring with coefficients:
+            [ 1 ]
+
+            sage: QuadraticForm(1)
             Traceback (most recent call last):
             ....
-            TypeError: wrong input for QuadraticForm
+            TypeError: Wrong input for QuadraticForm
         """
         # Deal with:  QuadraticForm(ring, matrix)
         matrix_init_flag = False
@@ -526,10 +567,7 @@ class QuadraticForm(SageObject):
                 M_ring = R
                 matrix_init_flag = True
 
-        elif not is_Matrix(R):
-            # first argument, if not a ring, must be a matrix
-            raise TypeError('wrong input for QuadraticForm')
-        else:
+        elif is_Matrix(R):
             # Deal with:  QuadraticForm(matrix)
             # Test if R is symmetric and has even diagonal
             if not self._is_even_symmetric_matrix_(R):
@@ -539,6 +577,31 @@ class QuadraticForm(SageObject):
             M = R
             M_ring = R.base_ring()
             matrix_init_flag = True
+
+        # Deal with:  QuadraticForm(polynomial)
+        elif is_Polynomial(R) or is_MPolynomial(R):
+            if (not R.is_homogeneous() or not R.degree() == 2) and not R.is_zero():
+                raise TypeError("Polynomial is not homogeneous of degree 2 or equal to zero")
+
+            ## Rename the polynomial and derive base ring
+            p = R
+            P = p.parent()
+            R, n = P.base_ring(), P.ngens()
+
+            ## Extract quadratic form coefficients
+            entries = []
+            if n == 0:
+                exponents = []
+            elif n == 1:
+                exponents = [2]
+            else:
+                exponents = IntegerListsLex(2, length=n)
+            for alpha in exponents:
+                entries.append(p[alpha])
+
+        # Deal with:  All other input is invalid
+        else:
+            raise TypeError('Wrong input for QuadraticForm')
 
         ## Perform the quadratic form initialization
         if matrix_init_flag:

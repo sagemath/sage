@@ -707,6 +707,9 @@ REFERENCES:
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
 
+.. [BrHu2019] Petter Br{\"a}nd{\'e}n, June Huh. *Lorentzian polynomials*.
+              Preprint (2019). :arxiv:`1902.03719`
+
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
               Palindromic Complexity of Infinite Words,
               in J. Berstel, J.  Karhumaki, D. Perrin, Eds,
@@ -1741,7 +1744,7 @@ REFERENCES:
 
 .. [DGH2020] \C. Donnot, A. Genitrini and Y. Herida. Unranking Combinations
             Lexicographically: an efficient new strategy compared with others, 2020,
-            https://hal.archives-ouvertes.fr/hal-02462764v1 
+            https://hal.archives-ouvertes.fr/hal-02462764v1
 
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
@@ -2777,6 +2780,10 @@ REFERENCES:
             *Spreads in strongly regular graphs*,
             Designs, Codes and Cryptography 8 (1996) 145-157.
             :doi:`10.1023/A:1018037025910`.
+
+.. [HMMS2019] June Huh, Jacob P.\ Matherne, Karola M{\'e}sz{\'a}ros, Avery
+              St.\ Dizier.  *Logarithmic concavity of Schur and related
+              polynomials*.  Preprint (2019). :arxiv:`1906.09633`
 
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater
               than one. PhD Thesis, Brown University 2007
@@ -4893,9 +4900,9 @@ REFERENCES:
 .. [St2011b] \W. Stein, *Toward a Generalization of the Gross-Zagier
             Conjecture*, Int Math Res Notices (2011),
             :doi:`10.1093/imrn/rnq075`
-            
-.. [St2007] \W. Stein. *Modular Forms, a Computational Approach*. 
-            With an appendix by Paul E. Gunnells. 
+
+.. [St2007] \W. Stein. *Modular Forms, a Computational Approach*.
+            With an appendix by Paul E. Gunnells.
             AMS Graduate Studies in Mathematics, Volume 79, 2007.
             :doi:`10.1090/gsm/079`
 
@@ -5376,11 +5383,11 @@ REFERENCES:
 .. [Wu2004] Wuthrich, Christian. *On p-adic heights in families of
             elliptic curves*. Journal of the London Mathematical
             Society, 70(1), 23-40, (2004).
-            
+
 .. [Wu2018] Wuthrich, Christian.
-            *Numerical modular symbols for elliptic curves*. 
-            Math. Comp. 87 (2018), no. 313, 2393–2423. 
-            
+            *Numerical modular symbols for elliptic curves*.
+            Math. Comp. 87 (2018), no. 313, 2393–2423.
+
 .. [WW1991] Michelle Wachs and Dennis White, *p, q-Stirling numbers
             and set partition statistics*, Journal of Combinatorial
             Theory, Series A 56.1 (1991): 27-46.
