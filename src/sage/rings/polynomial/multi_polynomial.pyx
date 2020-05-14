@@ -2457,7 +2457,7 @@ cdef class MPolynomial(CommutativeRingElement):
         r"""
         Return ``True`` if this is a Lorentzian polynomial.
 
-        INPUTS:
+        INPUT:
 
         - ``explain`` -- boolean (default: ``False``); if ``True``
           return a tuple whose first element is the boolean result of the test,
@@ -2535,8 +2535,8 @@ cdef class MPolynomial(CommutativeRingElement):
 
         REFERENCES:
 
-        For full definitions and related discussion, see [BrHu2019] and
-        [HMMS2019].  The second reference gives the characterization of
+        For full definitions and related discussion, see [BrHu2019]_ and
+        [HMMS2019]_.  The second reference gives the characterization of
         Lorentzian polynomials applied in this implementation explicitly.
         """
         # function to handle return value when reason requested
@@ -2646,7 +2646,7 @@ def _is_M_convex_(points, check_input=True):
 
     REFERENCES:
 
-    See [BrHu2019] for a definition of M-convexity.
+    See [BrHu2019]_ for a definition of M-convexity.
     """
     points_set = set(map(tuple, points))
     n_points = len(points_set)

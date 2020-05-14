@@ -707,7 +707,7 @@ REFERENCES:
              Stein. strassen_window_multiply_c. strassen.pyx, Sage
              3.0, 2008. http://www.sagemath.org
 
-.. [BrHu2019] Petter Br{\"a}nd{\'e}n, June Huh. *Lorentzian polynomials*.
+.. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Preprint (2019). :arxiv:`1902.03719`
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
@@ -2781,8 +2781,8 @@ REFERENCES:
             Designs, Codes and Cryptography 8 (1996) 145-157.
             :doi:`10.1023/A:1018037025910`.
 
-.. [HMMS2019] June Huh, Jacob P.\ Matherne, Karola M{\'e}sz{\'a}ros, Avery
-              St.\ Dizier.  *Logarithmic concavity of Schur and related
+.. [HMMS2019] June Huh, Jacob P. Matherne, Karola Mészáros, Avery
+              St. Dizier.  *Logarithmic concavity of Schur and related
               polynomials*.  Preprint (2019). :arxiv:`1906.09633`
 
 .. [Hutz2007] \B. Hutz. Arithmetic Dynamics on Varieties of dimension greater

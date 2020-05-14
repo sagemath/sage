@@ -28,7 +28,7 @@ AUTHORS:
 
 -  David Zureick-Brown (2017-09): Added is_weil_polynomial.
 
--  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more 
+-  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
    cases of proper integral domains (see :trac:`26421`)
 
 TESTS::
@@ -4404,14 +4404,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     try:
                         F = R.fraction_field()
                         PF = F[self.variable_name()]
-                        pol_frac = PF(self) 
+                        pol_frac = PF(self)
                         pol_frac_fact = pol_frac.factor(**kwargs)
                         if R(pol_frac_fact.unit()).is_unit():
                             # Note: :meth:`base_change` may convert the unit to a non unit
                             return pol_frac_fact.base_change(self.parent())
                     except (TypeError, AttributeError, NotImplementedError):
                         raise NotImplementedError
-                    
+
                 raise NotImplementedError
 
         return self._factor_pari_helper(G, n)
@@ -8369,14 +8369,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
         monomial with positive coefficient, or zero.  The definition is more
         involved for multivariate real polynomials.
 
-        INPUTS:
+        INPUT:
 
         - ``explain`` -- boolean (default: ``False``); if ``True``
           return a tuple whose first element is the boolean result of the test,
           and the second element is a string describing the reason the test failed,
           or ``None`` if the test succeeded.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: P.<x> = QQ[]
             sage: p1 = x^2
@@ -8411,8 +8411,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         REFERENCES:
 
-        For full definitions and related discussion, see [BrHu2019] and
-        [HMMS2019].
+        For full definitions and related discussion, see [BrHu2019]_ and
+        [HMMS2019]_.
         """
         def result(val, explanation=None):
             if explain:
