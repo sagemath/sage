@@ -540,15 +540,16 @@ class PlanePartition(ClonableList):
 
         If ``tableau_only`` is set to ``True``, then only the tableau
         consisting of the projection of boxes size onto the xy-plane
-        is returned instead of a PlanePartition object.
+        is returned instead of a PlanePartition object. This output will
+        not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
             sage: PP.complement()
-            Plane partition [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1,]]
+            Plane partition [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1]]
             sage: PP.complement(True)
-            [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1]]
+            [[4, 4, 3, 3], [4, 3, 3, 2], [3, 1, 1, 0]]
         """
         A = self._max_x
         B = self._max_y
@@ -569,7 +570,8 @@ class PlanePartition(ClonableList):
 
         If ``tableau_only`` is set to ``True``, then only the tableau
         consisting of the projection of boxes size onto the xy-plane
-        is returned instead of a PlanePartition object.
+        is returned instead of a PlanePartition object. This will
+        not necessarily have trailing rows or trailing zeros removed.
 
         EXAMPLES::
 
@@ -577,7 +579,7 @@ class PlanePartition(ClonableList):
             sage: PP.transpose()
             Plane partition [[4, 2, 1], [3, 1, 1], [3, 1], [1]]
             sage: PP.transpose(True)
-            [[4, 2, 1], [3, 1, 1], [3, 1], [1]]
+            [[4, 2, 1], [3, 1, 1], [3, 1, 0], [1, 0, 0]]
         """
         T = [[0 for i in range(self._max_x)] for j in range(self._max_y)]
         z_tab = self.z_tableau()
@@ -586,7 +588,7 @@ class PlanePartition(ClonableList):
                 T[c][r] = z_tab[r][c]
         if tableau_only:
             return T
-        elif self.box_size[0] != self.box_size[1]:
+        elif self._max_x != self._max_y:
             raise ValueError("Tranpose only supports parents with symmetric dimensions")           
         else:
             return type(self)(self.parent(), T, check=False)
