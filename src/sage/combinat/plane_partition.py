@@ -92,17 +92,17 @@ class PlanePartition(ClonableList):
                         pp.pop(i)
                             
             ClonableList.__init__(self, parent, pp, check=check)
-            if self.parent()._box is None:
-                if pp:
-                    self._max_x = len(pp)
-                    self._max_y = len(pp[0])
-                    self._max_z = pp[0][0]
-                else:
-                    self._max_x = 0
-                    self._max_y = 0
-                    self._max_z = 0
+        if self.parent()._box is None:
+            if pp:
+                self._max_x = len(pp)
+                self._max_y = len(pp[0])
+                self._max_z = pp[0][0]
             else:
-                (self._max_x, self._max_y, self._max_z) = self.parent()._box
+                self._max_x = 0
+                self._max_y = 0
+                self._max_z = 0
+        else:
+            (self._max_x, self._max_y, self._max_z) = self.parent()._box
 
     def check(self):
         """
@@ -573,6 +573,7 @@ class PlanePartition(ClonableList):
         is returned instead of a PlanePartition object. This will
         not necessarily have trailing rows or trailing zeros removed.
 
+
         EXAMPLES::
 
             sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
@@ -588,10 +589,14 @@ class PlanePartition(ClonableList):
                 T[c][r] = z_tab[r][c]
         if tableau_only:
             return T
-        elif self._max_x != self._max_y:
-            raise ValueError("Tranpose only supports parents with symmetric dimensions")           
-        else:
+        elif self.parent()._box == None or self.parent()._box[0] == self.parent()._box[1]:
             return type(self)(self.parent(), T, check=False)
+        new_box = (self.parent()._box[1],self.parent()._box[0],self.parent()._box[2])
+        return PlanePartitions(new_box,symmetry=self.parent._symmetry)
+ #       elif self._max_x != self._max_y:
+ #           raise ValueError("Tranpose only supports parents with symmetric dimensions")           
+ #       else:
+ #           return type(self)(self.parent(), T, check=False)
 
     def is_SPP(self):
         r"""
@@ -676,6 +681,10 @@ class PlanePartition(ClonableList):
     def is_SCPP(self):
         r"""
         Return whether ``self`` is a self-complementary plane partition.
+        
+        
+        
+        
 
         EXAMPLES::
 
@@ -683,6 +692,9 @@ class PlanePartition(ClonableList):
             sage: PP.is_SCPP()
             False
             sage: PP = PlanePartition([[4,4,4,4],[4,4,2,0],[4,2,0,0],[0,0,0,0]])
+            sage: PP.is_SCPP()
+            False
+            sage: PP = PlanePartitions([4,4,4])([[4,4,4,4],[4,4,2,0],[4,2,0,0],[0,0,0,0]])
             sage: PP.is_SCPP()
             True
         """
@@ -803,6 +815,8 @@ class PlanePartition(ClonableList):
             count += 1
         oi = Q.order_ideal(generate)
         return oi
+        
+
 
     def maximal_boxes(self):
         """
@@ -988,6 +1002,7 @@ class PlanePartitions_all(PlanePartitions):
             sage: TestSuite(P).run()  # long time
         """
         self._box = None
+        self._symmetry = None
         super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
 
     def __repr__(self):
@@ -1034,6 +1049,7 @@ class PlanePartitions_box(PlanePartitions):
         """
         super(PlanePartitions_box,self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
+        self._symmetry = None
 
     def __repr__(self):
         """
@@ -1210,6 +1226,7 @@ class PlanePartitions_n(PlanePartitions):
         self._n = n
 #        self._box = (0,0,0)
         self._box = None
+        self._symmetry = None
 
     def _repr_(self):
         """
@@ -1335,7 +1352,8 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_SPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'SPP'
 
     def _repr_(self):
         return "Symmetric plane partitions inside a {} x {} x {} box".format(
@@ -1485,7 +1503,8 @@ class PlanePartitions_CSPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'CSPP'
 
     def _repr_(self):
         return "Cyclically symmetric plane partitions inside a {} x {} x {} box".format(
@@ -1610,7 +1629,8 @@ class PlanePartitions_TSPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'TSPP'
 
     def _repr_(self):
         return "Totally symmetric plane partitions inside a {} x {} x {} box".format(
@@ -1723,7 +1743,8 @@ class PlanePartitions_SCPP(PlanePartitions):
 #        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
 #            raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'SCPP'
 
     def _repr_(self):
         return "Self-complementary plane partitions inside a {} x {} x {} box".format(
@@ -1918,7 +1939,8 @@ class PlanePartitions_TCPP(PlanePartitions):
 #        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
 #            raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_TCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'TCPP'
 
     def _repr_(self):
         return "Transpose complement plane partitions inside a {} x {} x {} box".format(
@@ -1982,7 +2004,8 @@ class PlanePartitions_SSCPP(PlanePartitions):
         if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
             raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_SSCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'SSCPP'
 
     def _repr_(self):
         return "Symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
@@ -2007,7 +2030,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
 #Class 8
 
 class PlanePartitions_CSTCPP(PlanePartitions):
-
+#Cyclically symmetric transpose complement partitions
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -2030,7 +2053,8 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'CSTCPP'
 
     def _repr_(self):
         return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
@@ -2050,11 +2074,11 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             return Integer(prod( ((3*i+1)*factorial(6*i)*factorial(2*i))/(factorial(4*i+1)*factorial(4*i)) for i in range(1+(a/2)-1)))
         return Integer(0)
 
-#Class 9
+# Class 9
 
 
 class PlanePartitions_CSSCPP(PlanePartitions):
-
+# Cyclically symmetric self-complementary plane partitions
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -2077,7 +2101,8 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'CSSCPP'
 
     def _repr_(self):
         return "Cyclically symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
@@ -2102,7 +2127,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 #Class 10
 
 class PlanePartitions_TSSCPP(PlanePartitions):
-
+#Totally symmetric self-complementary plane partitions
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -2127,7 +2152,8 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         if (box_size[0] != box_size[1] or (box_size[1] != box_size[2]) or box_size[0] % 2 != 0):
             raise ValueError("invalid box size; must be (2r,2r,2r)")
         super(PlanePartitions_TSSCPP, self).__init__(category=FiniteEnumeratedSets())
-        self._box=box_size
+        self._box = box_size
+        self._symmetry = 'TSSCPP'
 
     def _repr_(self):
         return "Totally symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
