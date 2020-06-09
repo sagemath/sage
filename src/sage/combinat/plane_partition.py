@@ -528,6 +528,41 @@ class PlanePartition(ClonableList):
                     TP += add_leftside(self.x_tableau()[r][c], r, c)
         TP.axes(show=False)
         return TP
+        
+    def contains(self, PP): 
+        """
+        
+        Return ``True`` if ``PP`` is a plane partition that fits
+        inside ``self``.
+        
+        Specifically, ``self`` contains ``PP`` if, for all `i`, `j`,
+        the height of ``PP`` at `ij` is less than or equal to the
+        height of ``self`` at `ij`.
+        
+        EXAMPLES::
+        
+            sage: P1 = PlanePartition([[5,4,3],[3,2,2],[1]])
+            sage: P2 = PlanePartition([[3,2],[1,1],[0,0],[0,0]])
+            sage: P3 = PlanePartition([[5,5,5],[2,1,0]])
+            sage: P1.contains(P2)
+            True
+            sage: P2.contains(P1)
+            False
+            sage: P1.contains(P3)
+            False
+            sage: P3.contains(P2)
+            True
+        """
+        PP = PlanePartition(PP)
+        if len(self) < len(PP):
+            return False
+        
+        for i in range(len(PP)):
+            if len(self[i]) < len(PP[i]):
+                return False
+        
+        return all([self[i][j] >= PP[i][j] for j in range(len(PP[i])) for i in range(len(PP))])        
+        
 
     def complement(self, tableau_only=False):
         # Complement needs to be more intelligent about which parent to return
@@ -841,11 +876,16 @@ class PlanePartition(ClonableList):
         oi = Q.order_ideal_generators(generate)
         return [list(oi_elem) for oi_elem in oi]
   
-    def cyclically_rotate(self):
+    def cyclically_rotate(self, preserve_parent=False):
         """
         Return the cyclic rotation of ``self``.
 
-        TODO: Ensure that parent is preserved under cyclic rotation.
+        By default, if the parent of ``self`` consists of plane
+        partitions inside an `a \times b \times c` box, the result 
+        will have a parent consisting of partitions inside
+        a `c \times a \times b` box, unless the optional parameter
+        ``preserve_parents`` is set to ``True``. Enabling this setting
+        may give an element that is NOT an element of its parent.
         
         EXAMPLES::
         
@@ -856,6 +896,13 @@ class PlanePartition(ClonableList):
             Plane partition [[3, 1, 1, 1], [1]]
             sage: PP == PP.cyclically_rotate().cyclically_rotate().cyclically_rotate()
             True
+            sage: PP = PlanePartitions([4,3,2]).random_element()
+            sage: PP.cyclically_rotate().parent()
+            Plane partitions inside a 2 x 4 x 3 box
+            sage: PP = PlanePartitions([3,4,2])([[2,2,2,2],[2,2,2,2],[2,2,2,2]])
+            sage: PP_rotated = PP.cyclically_rotate(preserve_parent=True)
+            sage: PP_rotated in PP_rotated.parent()
+            False
         """
         (a, b, c) = (self._max_x, self._max_y, self._max_z)
         new_antichain = []
@@ -881,7 +928,12 @@ class PlanePartition(ClonableList):
                         if j < c-1:
                             jValue = ppMatrix[i][j+1]
                         ppMatrix[i][j] = max(iValue,jValue)
-        return PlanePartition(ppMatrix)
+        # Start code for determining correct parent
+        if self.parent()._box == None or preserve_parent == True or (self.parent()._box[0] == self.parent()._box[1] == self.parent()._box[2]):
+            return type(self)(self.parent(), ppMatrix, check=False)
+        new_box = (self.parent()._box[2],self.parent()._box[0],self.parent()._box[1])
+        return PlanePartitions(new_box,symmetry=self.parent()._symmetry)(ppMatrix)
+        #return PlanePartition(ppMatrix)
 
 class PlanePartitions(UniqueRepresentation, Parent):
     r"""
@@ -1600,12 +1652,13 @@ class PlanePartitions_CSPP(PlanePartitions):
         return Integer(numerator/denominator)
 
 
-#Class 4
+# Class 4
 
 
 class PlanePartitions_TSPP(PlanePartitions):
+# Totally symmetric plane partitions
 
-#Make sure inputs checked, code doesn't have a,b,c treated properly
+# Make sure inputs checked, code doesn't have a,b,c treated properly
 
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1716,9 +1769,10 @@ class PlanePartitions_TSPP(PlanePartitions):
 
 
 
-#Class 5
+# Class 5
 
 class PlanePartitions_SCPP(PlanePartitions):
+# Self-complementary plane partitions
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
