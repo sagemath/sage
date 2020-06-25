@@ -31,8 +31,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import division
-from six.moves import range, zip
-from six import itervalues, add_metaclass
 
 import copy
 from sage.misc.classcall_metaclass import ClasscallMetaclass
@@ -79,8 +77,8 @@ def _inplace_height_function_gyration(hf):
                     hf[i,j] -= 2
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class AlternatingSignMatrix(Element):
+class AlternatingSignMatrix(Element,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     An alternating sign matrix.
 
@@ -1495,7 +1493,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
         bij = {t: self.from_monotone_triangle(t) for t in mts}
-        return (itervalues(bij), [(bij[a], bij[b]) for (a, b) in rels])
+        return (bij.values(), [(bij[a], bij[b]) for (a, b) in rels])
 
     def cover_relations(self):
         r"""
@@ -1798,8 +1796,7 @@ register_unpickle_override('sage.combinat.alternating_sign_matrix', 'Alternating
 register_unpickle_override('sage.combinat.alternating_sign_matrix', 'MonotoneTriangles_n', MonotoneTriangles)
 
 
-@add_metaclass(ClasscallMetaclass)
-class ContreTableaux(Parent):
+class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
     """
     Factory class for the combinatorial class of contre tableaux of size `n`.
 
@@ -1960,8 +1957,7 @@ def _previous_column_iterator(column, height, max_value):
     return _next_column_iterator(new_column, height)
 
 
-@add_metaclass(ClasscallMetaclass)
-class TruncatedStaircases(Parent):
+class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
     """
     Factory class for the combinatorial class of truncated staircases
     of size ``n`` with last column ``last_column``.

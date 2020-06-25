@@ -49,6 +49,8 @@ EXAMPLES::
 #*****************************************************************************
 from __future__ import absolute_import
 
+import builtins
+from io import StringIO
 from sage.structure.sage_object import SageObject
 
 
@@ -265,7 +267,6 @@ class BackendBase(SageObject):
             sage: backend._apply_pretty_printer(SagePrettyPrinter, 1/2)
             '1/2'
         """
-        from six import StringIO
         stream = StringIO()
         printer = pretty_printer_class(
             stream, self.max_width(), self.newline())
@@ -510,7 +511,6 @@ class BackendBase(SageObject):
             sage: _     # indirect doctest
             'foo'
         """
-        from six.moves import builtins
         builtins._ = obj
 
     def displayhook(self, plain_text, rich_output):

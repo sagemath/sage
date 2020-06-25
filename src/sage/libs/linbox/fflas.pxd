@@ -1,6 +1,7 @@
 # distutils: extra_compile_args = FFLASFFPACK_CFLAGS
 # distutils: libraries = FFLASFFPACK_LIBRARIES
 # distutils: library_dirs = FFLASFFPACK_LIBDIR
+# distutils: extra_link_args = FFLASFFPACK_LIBEXTRA
 # distutils: language = c++ 
 
 from .givaro cimport Modular_double, Modular_float, Dense, Sparse

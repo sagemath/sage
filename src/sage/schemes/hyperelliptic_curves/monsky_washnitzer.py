@@ -223,7 +223,7 @@ class SpecialCubicQuotientRing(CommutativeAlgebra):
 
     def __repr__(self):
         """
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -1851,7 +1851,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
         # which is not available at this point.
         # CommutativeAlgebra.__init__(self, R)  # moved to below.
 
-        x = PolynomialRing(R, 'xx').gen(0)
+        x = PolynomialRing(R, 'xx').gen()
         if is_EllipticCurve(Q):
             E = Q
             if E.a1() != 0 or E.a2() != 0:
@@ -2117,7 +2117,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
 
     def _precompute_monomial_diffs(self):
         """
-        Precompute coefficients of the basis representation of `d(x^iy^j)` for small `i`, `j`. 
+        Precompute coefficients of the basis representation of `d(x^iy^j)` for small `i`, `j`.
 
         EXAMPLES::
 
@@ -2557,7 +2557,6 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
         #         = (2y A + BQ') dx/2y
         parent = self.parent()
         R = parent.base_ring()
-        x, y = parent.gens()
         v = self._f.list()
         n = len(v)
         A = parent([R(i) * v[i] for i in range(1, n)])
@@ -3072,9 +3071,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
             val = val._coeff
         self._coeff = self.parent().base_ring()(val, offset)
 
-    def _add_(left, right):
+    def _add_(self, other):
         """
-        Return the sum of left and right, both elements of the
+        Return the sum of ``self`` and ``other``, both elements of the
         Monsky-Washnitzer ring of differentials.
 
         EXAMPLES::
@@ -3090,12 +3089,12 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: x*w + y*w
             (y*1 + x) dx/2y
         """
-        return MonskyWashnitzerDifferential(left.parent(),
-                                            left._coeff + right._coeff)
+        return MonskyWashnitzerDifferential(self.parent(),
+                                            self._coeff + other._coeff)
 
-    def _sub_(left, right):
+    def _sub_(self, other):
         """
-        Return the difference of ``left`` and ``right``, both elements of the
+        Return the difference of ``self`` and ``other``, both elements of the
         Monsky-Washnitzer ring of differentials.
 
         EXAMPLES::
@@ -3111,8 +3110,8 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: w - x*w - y*w
             ((1-y)*1 - x) dx/2y
         """
-        return MonskyWashnitzerDifferential(left.parent(),
-                                            left._coeff - right._coeff)
+        return MonskyWashnitzerDifferential(self.parent(),
+                                            self._coeff - other._coeff)
 
     def __neg__(self):
         """
@@ -3321,7 +3320,6 @@ class MonskyWashnitzerDifferential(ModuleElement):
         M = self.parent().helper_matrix()
         p = S._p
         n = S.degree()
-        x, y = S.gens()
         f = S(0)
         reduced = self
         for j in range(self.min_pow_y()+1, 0):
@@ -3485,7 +3483,6 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         S = self.parent().base_ring()
         n = S.Q().degree()
-        x, y = S.gens()
         f = S(0)
         reduced = self
         for j in range(self.max_pow_y(), 0, -1):

@@ -17,7 +17,8 @@ AUTHORS:
 # ***************************************************************************
 from __future__ import division, print_function, absolute_import
 
-from six.moves import range
+import os
+import pickle
 
 from sage.structure.sage_object import SageObject
 from copy import copy
@@ -2254,8 +2255,6 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
 
         sage: save_quiver_data(2,up_to=False, verbose=False) # indirect doctest
     """
-    import os.path
-    from six.moves import cPickle
     data = {}
     possible_types = ['Classical', 'ClassicalExceptional', 'Exceptional']
     if types not in possible_types:
@@ -2274,7 +2273,7 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
     sage_makedirs(types_path)
     from sage.misc.temporary_file import atomic_write
     with atomic_write(types_file, binary=True) as f:
-        cPickle.dump(data, f)
+        pickle.dump(data, f)
     if verbose:
         keys = sorted(data.keys(),key=str)
         print("\nThe following types are saved to file", types_file,"and will now be used to determine quiver mutation types:")

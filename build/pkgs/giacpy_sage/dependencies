@@ -1,4 +1,4 @@
-$(PYTHON) cython giac cysignals | $(SAGERUNTIME) pip sympy maxima
+$(PYTHON) cython giac cysignals | $(SAGERUNTIME) $(PYTHON_TOOLCHAIN) sympy maxima
 
 spkg-check uses the sage command. The doctest suite (SAGE_CHECK=yes)  also uses Sympy and Maxima
 ----------

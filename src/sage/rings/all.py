@@ -147,6 +147,9 @@ from .big_oh import O
 from .fraction_field import FractionField
 Frac = FractionField
 
+# Localization
+from .localization import Localization
+
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
 

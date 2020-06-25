@@ -87,14 +87,12 @@ dynamical systems:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import add_metaclass
 from sage.categories.sets_cat import Sets
 from sage.structure.sage_object import SageObject
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 
 
-@add_metaclass(ClasscallMetaclass)
-class DiscreteDynamicalSystem(SageObject):
+class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
     r"""
     A discrete dynamical system.
 

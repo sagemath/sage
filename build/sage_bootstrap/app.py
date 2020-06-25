@@ -108,12 +108,12 @@ class Application(object):
         """
         log.debug('Updating %s to %s', package_name, new_version)
         update = PackageUpdater(package_name, new_version)
-        if url is not None:
+        if url is not None or update.package.tarball_upstream_url:
             log.debug('Downloading %s', url)
             update.download_upstream(url)
         update.fix_checksum()
 
-    def download(self, package_name):
+    def download(self, package_name, allow_upstream=False):
         """
         Download a package
 
@@ -123,7 +123,7 @@ class Application(object):
         """
         log.debug('Downloading %s', package_name)
         package = Package(package_name)
-        package.tarball.download()
+        package.tarball.download(allow_upstream=allow_upstream)
         print(package.tarball.upstream_fqn)
 
     def fix_all_checksums(self):
@@ -137,10 +137,10 @@ class Application(object):
                 log.debug('Ignoring {0} because tarball is not cached'.format(pkg.tarball_filename))
                 continue
             if pkg.tarball.checksum_verifies():
-                log.debug('Checksum of {0} unchanged'.format(pkg.tarball_filename))
+                log.debug('Checksum of {0} (tarball {1}) unchanged'.format(pkg.name, pkg.tarball_filename))
                 continue
             update = ChecksumUpdater(pkg.name)
-            print('Updating checksum of {0}'.format(pkg.tarball_filename))
+            print('Updating checksum of {0} (tarball {1})'.format(pkg.name, pkg.tarball_filename))
             update.fix_checksum()
 
     def fix_checksum(self, package_name):
@@ -154,12 +154,12 @@ class Application(object):
         update = ChecksumUpdater(package_name)
         pkg = update.package
         if pkg.tarball.checksum_verifies():
-            print('Checksum of {0} unchanged'.format(pkg.tarball_filename))
+            print('Checksum of {0} (tarball {1}) unchanged'.format(package_name, pkg.tarball_filename))
         else:
-            print('Updating checksum of {0}'.format(pkg.tarball_filename))
+            print('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))
             update.fix_checksum()
         
-    def create(self, package_name, version, tarball, pkg_type):
+    def create(self, package_name, version, tarball, pkg_type, upstream_url):
         log.debug('Creating %s: %s, %s, %s', package_name, version, tarball, pkg_type)
         creator = PackageCreator(package_name)
         if version:
@@ -167,7 +167,11 @@ class Application(object):
         if pkg_type:
             creator.set_type(pkg_type)
         if tarball:
-            creator.set_tarball(tarball)
-            update = ChecksumUpdater(package_name)
+            creator.set_tarball(tarball, upstream_url)
+            if upstream_url and version:
+                update = PackageUpdater(package_name, version)
+                update.download_upstream()
+            else:
+                update = ChecksumUpdater(package_name)
             update.fix_checksum()
             

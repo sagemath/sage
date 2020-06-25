@@ -36,8 +36,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-import six
-from six import integer_types
 
 from sage.misc.latex import latex
 from sage.misc.prandom import choice
@@ -140,7 +138,6 @@ def Set(X=[]):
     Set also accepts iterators, but be careful to only give *finite*
     sets::
 
-        sage: from six.moves import range
         sage: sorted(Set(range(1,6)))
         [1, 2, 3, 4, 5]
         sage: sorted(Set(list(range(1,6))))
@@ -257,7 +254,7 @@ class Set_object(Set_generic):
             and 'Integer Ring'
         """
         from sage.rings.integer import is_Integer
-        if isinstance(X, integer_types) or is_Integer(X):
+        if isinstance(X, int) or is_Integer(X):
             # The coercion model will try to call Set_object(0)
             raise ValueError('underlying object cannot be an integer')
 
@@ -857,12 +854,9 @@ class Set_object_enumerated(Set_object):
             {}
         """
         py_set = self.set()
-        if six.PY3:
-            if not py_set:
-                return "{}"
-            return repr(py_set)
-        else:
-            return "{" + repr(py_set)[5:-2] + "}"
+        if not py_set:
+            return "{}"
+        return repr(py_set)
 
     def list(self):
         """

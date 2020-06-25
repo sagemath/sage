@@ -13,7 +13,6 @@ Testing Arithmetic subgroup
 #
 ################################################################################
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
 from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH

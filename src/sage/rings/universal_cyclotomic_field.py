@@ -163,7 +163,6 @@ AUTHORS:
 - Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
 from __future__ import absolute_import, print_function
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 

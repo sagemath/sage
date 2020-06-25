@@ -11,15 +11,15 @@ AUTHORS:
     and return as the ``construction()``.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -651,7 +651,7 @@ class VermaModule(CombinatorialFreeModule):
             try:
                 scalar = P._pbw(scalar)
             except (ValueError, TypeError):
-                # Cannot be made into a PBW element, so propogate it up
+                # Cannot be made into a PBW element, so propagate it up
                 return CombinatorialFreeModule.Element._acted_upon_(self,
                         scalar, self_on_left)
 
@@ -733,9 +733,11 @@ class VermaModuleMorphism(Morphism):
         return "Verma module"
 
     def _repr_defn(self):
-        """
+        r"""
         Return a string describing the definition of ``self``,
         to be used when printing ``self``.
+
+        EXAMPLES::
 
             sage: L = lie_algebras.sl(QQ, 3)
             sage: La = L.cartan_type().root_system().weight_lattice().fundamental_weights()

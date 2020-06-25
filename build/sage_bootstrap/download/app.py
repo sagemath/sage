@@ -36,9 +36,9 @@ class Application(object):
     def download_url(self, url, destination):
         Download(url, destination, progress=not self.quiet, ignore_errors=False).run()
 
-    def download_tarball(self, tarball_filename, destination=None):
+    def download_tarball(self, tarball_filename, destination=None, allow_upstream=False):
         tarball = Tarball(tarball_filename)
-        tarball.download()
+        tarball.download(allow_upstream=allow_upstream)
         if destination is not None:
             tarball.save_as(destination)
         

@@ -18,7 +18,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree, get_orbits

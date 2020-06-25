@@ -32,7 +32,6 @@ EXAMPLES::
 
 
 import os
-import six
 from sage.structure.sage_object import SageObject
 
 
@@ -232,10 +231,7 @@ class OutputBuffer(SageObject):
             True
         """
 
-        if six.PY2:
-            return self.get()
-        else:
-            return self.get_unicode()
+        return self.get_unicode()
 
     def filename(self, ext=None):
         """

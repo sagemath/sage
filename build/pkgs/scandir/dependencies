@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools pip six
+$(PYTHON) | $(PYTHON_TOOLCHAIN) six
 
 ----------
 All lines of this file are ignored except the first.

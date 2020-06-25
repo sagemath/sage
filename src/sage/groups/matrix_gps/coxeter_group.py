@@ -18,7 +18,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.coxeter_groups import CoxeterGroups

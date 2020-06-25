@@ -103,7 +103,7 @@ of the directory containing the Sage sources:
     SAGE_ROOT/
         sage          # the Sage launcher
         Makefile      # top level Makefile
-        build/        # sage's build system
+        build/        # Sage's build system
             deps
             install
             ...
@@ -112,12 +112,12 @@ of the directory containing the Sage sources:
             setup.py
             module_list.py
             ...
-            sage/     # sage library (formerly devel/sage-main/sage)
-            ext/      # extra sage resources (formerly devel/ext-main)
-            mac-app/  # would no longer have to awkwardly be in extcode
-            bin/      # the scripts in local/bin that are tracked
-        upstream/     # tarballs of upstream sources
-        local/        # installed binaries
+            sage/            # Sage library
+                ext_data/    # extra Sage resources (formerly src/ext)
+            mac-app/         # would no longer have to awkwardly be in extcode
+            bin/             # the scripts in local/bin that are tracked
+        upstream/            # tarballs of upstream sources
+        local/               # installed binaries
 
 Python Sage library code goes into ``src/`` and uses the following
 conventions. Directory names may be plural (e.g. ``rings``) and file
@@ -155,11 +155,11 @@ Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
     from sage.measure_theory.all import *
 
 Non-Python Sage source code and supporting files should be placed in
-appropriate subdirectories of ``SAGE_ROOT/src/ext/``. They will then be
+appropriate subdirectories of ``SAGE_ROOT/src/sage/ext_data/``. They will then be
 automatically copied to the corresponding subdirectories of
 ``SAGE_ROOT/local/share/sage/ext/`` during the build process and can be
 accessed at runtime using ``SAGE_EXTCODE``.  For example, if ``file`` is placed
-in ``SAGE_ROOT/src/ext/directory/`` it can be accessed with ::
+in ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')

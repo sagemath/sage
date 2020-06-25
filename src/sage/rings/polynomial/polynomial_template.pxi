@@ -451,8 +451,7 @@ cdef class Polynomial_template(Polynomial):
             sage: (x^2 + 1) % x^2
             1
 
-
-        TESTS::
+        TESTS:
 
         We test that :trac:`10578` is fixed::
 

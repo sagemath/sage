@@ -98,7 +98,6 @@ AUTHORS:
 #
 ################################################################################
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from .all import SL2Z
 from .arithgroup_generic import ArithmeticSubgroup

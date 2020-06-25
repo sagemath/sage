@@ -21,7 +21,8 @@ EXAMPLES::
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
-from six.moves import cPickle
+import pickle
+
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.saved_workspace import workspace
 
@@ -60,12 +61,12 @@ def load_or_compute(name, function):
     filename, up_to_date = workspace(name=name)
     if up_to_date:
         with open(filename, 'rb') as f:
-            return cPickle.load(f)
+            return pickle.load(f)
     else:
         value = function()
         from sage.misc.temporary_file import atomic_write
         with atomic_write(filename, binary=True) as f:
-            cPickle.dump(value, f)
+            pickle.dump(value, f)
         return value
 
 

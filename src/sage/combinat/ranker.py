@@ -17,7 +17,6 @@ Rankers
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from collections import Iterable, Sequence
 from sage.misc.cachefunc import cached_function

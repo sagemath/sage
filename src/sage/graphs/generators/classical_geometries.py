@@ -16,7 +16,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                         https://www.gnu.org/licenses/
 ###########################################################################
 from __future__ import absolute_import, division
-from six.moves import range
 
 from sage.graphs.graph import Graph
 from sage.arith.all import is_prime_power
@@ -865,7 +864,6 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
        raise ValueError('q must be an odd prime power')
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.rings.finite_rings.integer_mod import mod
-    from six.moves.builtins import sum
     Fq = FiniteField(q**2, 'a')
     PG = map(tuple,ProjectiveSpace(2, Fq))
 

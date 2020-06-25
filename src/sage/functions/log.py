@@ -8,8 +8,6 @@ AUTHORS:
 - Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:trac:`18085`)
 
 """
-from six.moves import range
-
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.symbolic.constants import e as const_e
 from sage.symbolic.constants import pi as const_pi
@@ -445,6 +443,7 @@ def log(*args, **kwds):
     except (AttributeError, TypeError):
         return logb(args[0], args[1])
 
+
 class Function_polylog(GinacFunction):
     def __init__(self):
         r"""
@@ -538,14 +537,21 @@ class Function_polylog(GinacFunction):
             [1.644934066848226 +/- ...]
             sage: parent(_)
             Complex ball field with 53 bits of precision
+
+            sage: polylog(1,-1)   # known bug
+            -log(2)
         """
-        GinacFunction.__init__(self, "polylog", nargs=2)
+        GinacFunction.__init__(self, "polylog", nargs=2,
+                conversions=dict(mathematica='PolyLog',
+                                 magma='Polylog',
+                                 matlab='polylog',
+                                 sympy='polylog'))
 
     def _maxima_init_evaled_(self, *args):
         """
         EXAMPLES:
 
-        These are indirect doctests for this function.::
+        These are indirect doctests for this function::
 
             sage: polylog(2, x)._maxima_()
             li[2](_SAGE_VAR_x)
@@ -562,13 +568,14 @@ class Function_polylog(GinacFunction):
                 args_maxima.append(str(a))
 
         n, x = args_maxima
-        if int(n) in [1,2,3]:
-            return 'li[%s](%s)'%(n, x)
+        if int(n) in [1, 2, 3]:
+            return 'li[%s](%s)' % (n, x)
         else:
-            return 'polylog(%s, %s)'%(n, x)
+            return 'polylog(%s, %s)' % (n, x)
 
 
 polylog = Function_polylog()
+
 
 class Function_dilog(GinacFunction):
     def __init__(self):
@@ -657,7 +664,26 @@ class Function_dilog(GinacFunction):
         """
         GinacFunction.__init__(self, 'dilog',
                 conversions=dict(maxima='li[2]',
+                                 magma='Dilog',
                                  fricas='(x+->dilog(1-x))'))
+
+    def _sympy_(self, z):
+        r"""
+        Special case for sympy, where there is no dilog function.
+
+        EXAMPLES::
+
+            sage: w = dilog(x)._sympy_(); w
+            polylog(2, x)
+            sage: w.diff()
+            polylog(1, x)/x
+            sage: w._sage_()
+            dilog(x)
+        """
+        import sympy
+        from sympy import polylog as sympy_polylog
+        return sympy_polylog(2, sympy.sympify(z, evaluate=False))
+
 
 dilog = Function_dilog()
 
@@ -674,9 +700,9 @@ class Function_lambert_w(BuiltinFunction):
 
     INPUT:
 
-    - ``n`` - an integer. `n=0` corresponds to the principal branch.
+    - ``n`` -- an integer. `n=0` corresponds to the principal branch.
 
-    - ``z`` - a complex number
+    - ``z`` -- a complex number
 
     If called with a single argument, that argument is ``z`` and the branch ``n`` is
     assumed to be 0 (the principal branch).
@@ -1020,7 +1046,7 @@ class Function_exp_polar(BuiltinFunction):
 
         INPUT:
 
-        - ``z`` - a complex number `z = a + ib`.
+        - ``z`` -- a complex number `z = a + ib`.
 
         OUTPUT:
 
@@ -1388,6 +1414,7 @@ from sage.libs.pynac.pynac import register_symbol
 
 register_symbol(_swap_harmonic,{'maxima':'gen_harmonic_number'})
 register_symbol(_swap_harmonic,{'maple':'harmonic'})
+
 
 class Function_harmonic_number(BuiltinFunction):
     r"""

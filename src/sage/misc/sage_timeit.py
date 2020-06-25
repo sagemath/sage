@@ -17,8 +17,6 @@ AUTHOR:
     -- William Stein, based on code by Fernando Perez included in IPython
 """
 
-import six
-
 
 class SageTimeitResult(object):
     r"""
@@ -89,9 +87,13 @@ class SageTimeitResult(object):
             sage: from sage.misc.sage_timeit import SageTimeitResult
             sage: stats = (1, 2, int(3), pi, 'ns')
             sage: SageTimeitResult(stats)           #indirect doctest
-            1 loops, best of 2: 3.14 ns per loop
+            1 loop, best of 2: 3.14 ns per loop
         """
-        s =  u"%d loops, best of %d: %.*g %s per loop" % self.stats
+        if self.stats[0] > 1:
+            s =  u"%d loops, best of %d: %.*g %s per loop" % self.stats
+        else:
+            s =  u"%d loop, best of %d: %.*g %s per loop" % self.stats
+
         if isinstance(s, str):
             return s
         return s.encode("utf-8")
@@ -199,7 +201,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: gc.isenabled()
         True
     """
-    import time, math
+    import math
     import timeit as timeit_
 
     import sage.repl.interpreter as interpreter
@@ -224,12 +226,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     # but is there a better way to achieve that the code stmt has access
     # to the shell namespace?
 
-    if six.PY2:
-        src = timeit_.template % {'stmt': timeit_.reindent(stmt, 8),
-                                 'setup': "pass", 'init': ''}
-    else:
-        src = timeit_.template.format(stmt=timeit_.reindent(stmt, 8),
-                                      setup="pass", init='')
+    src = timeit_.template.format(stmt=timeit_.reindent(stmt, 8),
+                                  setup="pass", init='')
     code = compile(src, "<magic-timeit>", "exec")
     ns = {}
     if not globals_dict:
@@ -269,3 +267,4 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         order = 3
     stats = (number, repeat, precision, best * scaling[order], units[order])
     return SageTimeitResult(stats,series=series)
+

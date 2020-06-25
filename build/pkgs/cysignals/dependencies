@@ -1,4 +1,4 @@
-$(PYTHON) cython pari | pip
+$(PYTHON) cython pari | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

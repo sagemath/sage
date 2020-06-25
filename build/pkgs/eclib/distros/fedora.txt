@@ -1,1 +1,1 @@
-eclib-devel
+eclib eclib-devel

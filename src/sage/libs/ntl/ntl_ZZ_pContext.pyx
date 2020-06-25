@@ -17,8 +17,8 @@ include 'misc.pxi'
 include 'decl.pxi'
 import weakref
 
+from sage.ext.cplusplus cimport ccrepr
 from sage.rings.integer cimport Integer
-
 
 
 cdef class ntl_ZZ_pContext_class(object):
@@ -94,7 +94,6 @@ cdef class ntl_ZZ_pContext_class(object):
         """
         return Integer(self.p)
 
-
     def restore(self):
         """
         EXAMPLES::
@@ -111,7 +110,48 @@ cdef class ntl_ZZ_pContext_class(object):
     cdef void restore_c(self):
         self.x.restore()
 
+    cpdef void _assert_is_current_modulus(self) except *:
+        """
+        Assert that is currently-set NTL modulus.
+
+        Mostly for debugging purposes. If false, an assertion is raised. This method segfaults if
+        the NTL modulus has never been set before.
+
+        EXAMPLES::
+
+            sage: c1 = ntl.ZZ_pContext(7)
+            sage: c2 = ntl.ZZ_pContext(5)
+            sage: c1.restore()
+            sage: c1._assert_is_current_modulus()
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 7
+            sage: c2.restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 7 != 5
+            sage: c2._assert_is_current_modulus()
+            sage: ntl.ZZ_pContext(3).restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 7 != 3
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 3
+        """
+        if self.p.x == ntl_ZZ_p_current_modulus():
+            return
+        raise AssertionError('modulus mismatch: {} != {}'.format(
+            self.p,
+            ccrepr(ntl_ZZ_p_current_modulus())))
+
+
 cdef class ntl_ZZ_pContext_factory(object):
+
     def __init__(self):
         self.context_dict = {}
 
@@ -131,11 +171,14 @@ cdef class ntl_ZZ_pContext_factory(object):
         self.context_dict[v] = weakref.ref(context)
         return context
 
+
 ZZ_pContext_factory = ntl_ZZ_pContext_factory()
+
 
 def ntl_ZZ_pContext( v ):
     """
     Create a new ZZ_pContext.
+
     EXAMPLES::
 
         sage: c = ntl.ZZ_pContext(178)

@@ -54,7 +54,6 @@ AUTHORS:
 
 """
 from __future__ import print_function
-from six.moves import range
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
@@ -144,7 +143,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
-            -y
+            y
         """
         # TODO: this is *very* slow
         # NOTE: the hash of a generator (e.g. z2, z3, ...) is always the
@@ -974,7 +973,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         roots = []    # a list of pair (root,multiplicity)
         while polys:
             g,m,l,phi = polys.pop()
-        
+
             if g.degree() == 1: # found a root
                 r = phi(-g.constant_coefficient())
                 roots.append((r,m))

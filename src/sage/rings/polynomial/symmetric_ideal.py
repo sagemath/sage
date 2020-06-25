@@ -55,7 +55,6 @@ equal to `x_1` in ``Q``. Indeed, we have
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 from sage.rings.ideal import Ideal_generic
 from sage.rings.integer import Integer

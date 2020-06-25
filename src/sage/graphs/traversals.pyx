@@ -1290,7 +1290,7 @@ def is_valid_lex_M_order(G, alpha, F):
     clique. The ordering `\alpha` is a perfect elimination ordering of `H`, so
     `H` is chordal. See [RTL76]_ for more details.
 
-    INPUTS:
+    INPUT:
 
     - ``G`` -- a Graph
 

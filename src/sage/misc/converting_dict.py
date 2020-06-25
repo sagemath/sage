@@ -45,7 +45,6 @@ result no matter how a generator is identified::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six import iteritems
 
 import collections
 
@@ -294,5 +293,5 @@ class KeyConvertingDict(dict):
                 seq = ((f(k), v) for k, v in arg)
             u(seq)
         if kwds:
-            seq = ((f(k), v) for k, v in iteritems(kwds))
+            seq = ((f(k), v) for k, v in kwds.items())
             u(seq)

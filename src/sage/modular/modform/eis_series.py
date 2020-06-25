@@ -12,7 +12,6 @@ Eisenstein Series
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six import integer_types
 
 from sage.misc.all import verbose, cputime
 import sage.modular.dirichlet as dirichlet
@@ -485,7 +484,7 @@ def compute_eisenstein_params(character, k):
         sage: len(sage.modular.modform.eis_series.compute_eisenstein_params(GammaH(15, [4]), 3))
         8
     """
-    if isinstance(character, integer_types + (Integer,)):
+    if isinstance(character, (int, Integer)):
         return __find_eisen_chars_gamma1(character, k)
     elif isinstance(character, GammaH_class):
         return __find_eisen_chars_gammaH(character.level(), character._generators_for_H(), k)

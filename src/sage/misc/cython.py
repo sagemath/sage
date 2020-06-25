@@ -18,9 +18,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import builtins
-from six import iteritems, PY2
 
+import builtins
 import os
 import sys
 import shutil
@@ -522,7 +521,7 @@ def cython_import_all(filename, globals, **kwds):
       code
     """
     m = cython_import(filename, **kwds)
-    for k, x in iteritems(m.__dict__):
+    for k, x in m.__dict__.items():
         if k[0] != '_':
             globals[k] = x
 
@@ -659,9 +658,6 @@ def _strhash(s):
     l = len(s)
 
     for c in s:
-        if PY2:
-            c = ord(c)
-
         h += c + (c << 17)
         h ^= h >> 2
 

@@ -134,7 +134,6 @@ REFERENCE:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 import bz2
 import os

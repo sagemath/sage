@@ -452,7 +452,6 @@ examples.
 #  Distributed under the terms of the GNU General Public License (GPL)
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute

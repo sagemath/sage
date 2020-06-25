@@ -83,7 +83,7 @@ from sage.groups.libgap_mixin import GroupMixinLibGAP
 from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.all import ZZ
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class AbelianGroupAutomorphism(ElementLibGAP):
@@ -207,7 +207,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m.set_immutable()
         return m
 
-class AbelianGroupAutomorphismGroup_gap(UniqueRepresentation,
+class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
                                         Group,
                                         ParentLibGAP):

@@ -1,0 +1,689 @@
+From 97477d7214b400f5b2b69f2cf5ffb0784cf8237d Mon Sep 17 00:00:00 2001
+From: Antony Lee <anntzer.lee@gmail.com>
+Date: Wed, 21 Aug 2019 17:51:16 +0200
+Subject: [PATCH 1/3] Simplify file handling in ft2font.
+
+Just call the Python-level seek(), read() and close() instead of trying
+to play with C-level FILE*.
+
+Note that unlike the png case, we can't just pass restrict ourselves to
+passing in file-like objects because FT2Font is public API.
+---
+ src/file_compat.h       | 220 ----------------------------------------
+ src/ft2font_wrapper.cpp | 141 +++++++++----------------
+ 2 files changed, 49 insertions(+), 312 deletions(-)
+ delete mode 100644 src/file_compat.h
+
+diff --git a/src/file_compat.h b/src/file_compat.h
+deleted file mode 100644
+index 4115d23e63f..00000000000
+--- a/src/file_compat.h
++++ /dev/null
+@@ -1,220 +0,0 @@
+-#ifndef MPL_FILE_COMPAT_H
+-#define MPL_FILE_COMPAT_H
+-#define PY_SSIZE_T_CLEAN
+-#include <Python.h>
+-#include <stdio.h>
+-#include "numpy/npy_common.h"
+-#include "numpy/ndarrayobject.h"
+-#include "mplutils.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-#if defined(_MSC_VER) && defined(_WIN64) && (_MSC_VER > 1400)
+-    #include <io.h>
+-    #define mpl_fseek _fseeki64
+-    #define mpl_ftell _ftelli64
+-    #define mpl_lseek _lseeki64
+-    #define mpl_off_t npy_int64
+-
+-    #if NPY_SIZEOF_INT == 8
+-        #define MPL_OFF_T_PYFMT "i"
+-    #elif NPY_SIZEOF_LONG == 8
+-        #define MPL_OFF_T_PYFMT "l"
+-    #elif NPY_SIZEOF_LONGLONG == 8
+-        #define MPL_OFF_T_PYFMT "L"
+-    #else
+-        #error Unsupported size for type off_t
+-    #endif
+-#else
+-    #define mpl_fseek fseek
+-    #define mpl_ftell ftell
+-    #define mpl_lseek lseek
+-    #define mpl_off_t off_t
+-
+-    #if NPY_SIZEOF_INT == NPY_SIZEOF_SHORT
+-        #define MPL_OFF_T_PYFMT "h"
+-    #elif NPY_SIZEOF_INT == NPY_SIZEOF_INT
+-        #define MPL_OFF_T_PYFMT "i"
+-    #elif NPY_SIZEOF_INT == NPY_SIZEOF_LONG
+-        #define MPL_OFF_T_PYFMT "l"
+-    #elif NPY_SIZEOF_INT == NPY_SIZEOF_LONGLONG
+-        #define MPL_OFF_T_PYFMT "L"
+-    #else
+-        #error Unsupported size for type off_t
+-    #endif
+-#endif
+-
+-/*
+- * PyFile_* compatibility
+- */
+-
+-/*
+- * Get a FILE* handle to the file represented by the Python object
+- */
+-static NPY_INLINE FILE *mpl_PyFile_Dup(PyObject *file, char *mode, mpl_off_t *orig_pos)
+-{
+-    int fd, fd2;
+-    PyObject *ret, *os;
+-    mpl_off_t pos;
+-    FILE *handle;
+-
+-    if (mode[0] != 'r') {
+-        /* Flush first to ensure things end up in the file in the correct order */
+-        ret = PyObject_CallMethod(file, (char *)"flush", (char *)"");
+-        if (ret == NULL) {
+-            return NULL;
+-        }
+-        Py_DECREF(ret);
+-    }
+-
+-    fd = PyObject_AsFileDescriptor(file);
+-    if (fd == -1) {
+-        return NULL;
+-    }
+-
+-    /* The handle needs to be dup'd because we have to call fclose
+-       at the end */
+-    os = PyImport_ImportModule("os");
+-    if (os == NULL) {
+-        return NULL;
+-    }
+-    ret = PyObject_CallMethod(os, (char *)"dup", (char *)"i", fd);
+-    Py_DECREF(os);
+-    if (ret == NULL) {
+-        return NULL;
+-    }
+-    fd2 = (int)PyNumber_AsSsize_t(ret, NULL);
+-    Py_DECREF(ret);
+-
+-/* Convert to FILE* handle */
+-#ifdef _WIN32
+-    handle = _fdopen(fd2, mode);
+-#else
+-    handle = fdopen(fd2, mode);
+-#endif
+-    if (handle == NULL) {
+-        PyErr_SetString(PyExc_IOError, "Getting a FILE* from a Python file object failed");
+-        return NULL;
+-    }
+-
+-    /* Record the original raw file handle position */
+-    *orig_pos = mpl_ftell(handle);
+-    if (*orig_pos == -1) {
+-        // handle is a stream, so we don't have to worry about this
+-        return handle;
+-    }
+-
+-    /* Seek raw handle to the Python-side position */
+-    ret = PyObject_CallMethod(file, (char *)"tell", (char *)"");
+-    if (ret == NULL) {
+-        fclose(handle);
+-        return NULL;
+-    }
+-    pos = PyNumber_AsSsize_t(ret, PyExc_OverflowError);
+-    Py_DECREF(ret);
+-    if (PyErr_Occurred()) {
+-        fclose(handle);
+-        return NULL;
+-    }
+-    if (mpl_fseek(handle, pos, SEEK_SET) == -1) {
+-        PyErr_SetString(PyExc_IOError, "seeking file failed");
+-        return NULL;
+-    }
+-    return handle;
+-}
+-
+-/*
+- * Close the dup-ed file handle, and seek the Python one to the current position
+- */
+-static NPY_INLINE int mpl_PyFile_DupClose(PyObject *file, FILE *handle, mpl_off_t orig_pos)
+-{
+-    PyObject *exc_type = NULL, *exc_value = NULL, *exc_tb = NULL;
+-    PyErr_Fetch(&exc_type, &exc_value, &exc_tb);
+-
+-    int fd;
+-    PyObject *ret;
+-    mpl_off_t position;
+-
+-    position = mpl_ftell(handle);
+-
+-    /* Close the FILE* handle */
+-    fclose(handle);
+-
+-    /* Restore original file handle position, in order to not confuse
+-       Python-side data structures.  Note that this would fail if an exception
+-       is currently set, which can happen as this function is called in cleanup
+-       code, so we need to carefully fetch and restore the exception state. */
+-    fd = PyObject_AsFileDescriptor(file);
+-    if (fd == -1) {
+-        goto fail;
+-    }
+-    if (mpl_lseek(fd, orig_pos, SEEK_SET) != -1) {
+-        if (position == -1) {
+-            PyErr_SetString(PyExc_IOError, "obtaining file position failed");
+-            goto fail;
+-        }
+-
+-        /* Seek Python-side handle to the FILE* handle position */
+-        ret = PyObject_CallMethod(file, (char *)"seek", (char *)(MPL_OFF_T_PYFMT "i"), position, 0);
+-        if (ret == NULL) {
+-            goto fail;
+-        }
+-        Py_DECREF(ret);
+-    }
+-    PyErr_Restore(exc_type, exc_value, exc_tb);
+-    return 0;
+-fail:
+-    Py_XDECREF(exc_type);
+-    Py_XDECREF(exc_value);
+-    Py_XDECREF(exc_tb);
+-    return -1;
+-}
+-
+-static NPY_INLINE int mpl_PyFile_Check(PyObject *file)
+-{
+-    int fd;
+-    fd = PyObject_AsFileDescriptor(file);
+-    if (fd == -1) {
+-        PyErr_Clear();
+-        return 0;
+-    }
+-    return 1;
+-}
+-
+-static NPY_INLINE PyObject *mpl_PyFile_OpenFile(PyObject *filename, const char *mode)
+-{
+-    PyObject *open;
+-    open = PyDict_GetItemString(PyEval_GetBuiltins(), "open");
+-    if (open == NULL) {
+-        return NULL;
+-    }
+-    return PyObject_CallFunction(open, (char *)"Os", filename, mode);
+-}
+-
+-static NPY_INLINE int mpl_PyFile_CloseFile(PyObject *file)
+-{
+-    PyObject *type, *value, *tb;
+-    PyErr_Fetch(&type, &value, &tb);
+-
+-    PyObject *ret;
+-
+-    ret = PyObject_CallMethod(file, (char *)"close", NULL);
+-    if (ret == NULL) {
+-        goto fail;
+-    }
+-    Py_DECREF(ret);
+-    PyErr_Restore(type, value, tb);
+-    return 0;
+-fail:
+-    Py_XDECREF(type);
+-    Py_XDECREF(value);
+-    Py_XDECREF(tb);
+-    return -1;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif /* ifndef MPL_FILE_COMPAT_H */
+diff --git a/src/ft2font_wrapper.cpp b/src/ft2font_wrapper.cpp
+index e4a12d9eee2..0f5b1edcbb0 100644
+--- a/src/ft2font_wrapper.cpp
++++ b/src/ft2font_wrapper.cpp
+@@ -1,6 +1,5 @@
+ #include "mplutils.h"
+ #include "ft2font.h"
+-#include "file_compat.h"
+ #include "py_converters.h"
+ #include "py_exceptions.h"
+ #include "numpy_cpp.h"
+@@ -365,12 +364,8 @@ typedef struct
+     FT2Font *x;
+     PyObject *fname;
+     PyObject *py_file;
+-    FILE *fp;
+     int close_file;
+-    mpl_off_t offset;
+     FT_StreamRec stream;
+-    FT_Byte *mem;
+-    size_t mem_size;
+     Py_ssize_t shape[2];
+     Py_ssize_t strides[2];
+     Py_ssize_t suboffsets[2];
+@@ -381,115 +376,84 @@ static unsigned long read_from_file_callback(FT_Stream stream,
+                                              unsigned char *buffer,
+                                              unsigned long count)
+ {
+-
+-    PyFT2Font *def = (PyFT2Font *)stream->descriptor.pointer;
+-
+-    if (fseek(def->fp, offset, SEEK_SET) == -1) {
+-        return 0;
++    PyObject *py_file = ((PyFT2Font *)stream->descriptor.pointer)->py_file;
++    PyObject *seek_result = NULL, *read_result = NULL;
++    Py_ssize_t n_read = 0;
++    if (!(seek_result = PyObject_CallMethod(py_file, "seek", "k", offset))
++        || !(read_result = PyObject_CallMethod(py_file, "read", "k", count))) {
++        goto exit;
+     }
+-
+-    if (count > 0) {
+-        return fread(buffer, 1, count, def->fp);
++    char *tmpbuf;
++    if (PyBytes_AsStringAndSize(read_result, &tmpbuf, &n_read) == -1) {
++        goto exit;
+     }
+-
+-    return 0;
++    memcpy(buffer, tmpbuf, n_read);
++exit:
++    Py_XDECREF(seek_result);
++    Py_XDECREF(read_result);
++    if (PyErr_Occurred()) {
++        PyErr_WriteUnraisable(py_file);
++        if (!count) {
++            return 1;  // Non-zero signals error, when count == 0.
++        }
++    }
++    return n_read;
+ }
+ 
+ static void close_file_callback(FT_Stream stream)
+ {
+-    PyFT2Font *def = (PyFT2Font *)stream->descriptor.pointer;
+-
+-    if (mpl_PyFile_DupClose(def->py_file, def->fp, def->offset)) {
+-        throw std::runtime_error("Couldn't close file");
++    PyObject *py_file = ((PyFT2Font *)stream->descriptor.pointer)->py_file;
++    PyObject *close_result = NULL;
++    if (!(close_result = PyObject_CallMethod(py_file, "close", ""))) {
++        goto exit;
+     }
+-
+-    if (def->close_file) {
+-        mpl_PyFile_CloseFile(def->py_file);
++exit:
++    Py_XDECREF(close_result);
++    Py_DECREF(py_file);
++    if (PyErr_Occurred()) {
++        PyErr_WriteUnraisable(py_file);
+     }
+-
+-    Py_DECREF(def->py_file);
+-    def->py_file = NULL;
+ }
+ 
+ static int convert_open_args(PyFT2Font *self, PyObject *py_file_arg, FT_Open_Args *open_args)
+ {
+-    PyObject *py_file = NULL;
+-    int close_file = 0;
+-    FILE *fp;
++    PyObject *open = NULL;
+     PyObject *data = NULL;
+-    char *data_ptr;
+-    Py_ssize_t data_len;
+-    long file_size;
+-    FT_Byte *new_memory;
+-    mpl_off_t offset = 0;
+ 
+     int result = 0;
+ 
+     memset((void *)open_args, 0, sizeof(FT_Open_Args));
+ 
+     if (PyBytes_Check(py_file_arg) || PyUnicode_Check(py_file_arg)) {
+-        if ((py_file = mpl_PyFile_OpenFile(py_file_arg, (char *)"rb")) == NULL) {
++        if (!(open = PyDict_GetItemString(PyEval_GetBuiltins(), "open"))  // Borrowed reference.
++            || !(self->py_file = PyObject_CallFunction(open, "Os", py_file_arg, "rb"))) {
+             goto exit;
+         }
+-        close_file = 1;
++        self->close_file = 1;
++    } else if (!PyObject_HasAttrString(py_file_arg, "read")
++               || !(data = PyObject_CallMethod(py_file_arg, "read", "i", 0))
++               || !PyBytes_Check(data)) {
++        PyErr_SetString(PyExc_TypeError,
++                        "First argument must be a path or binary-mode file object");
++        goto exit;
+     } else {
++        self->py_file = py_file_arg;
+         Py_INCREF(py_file_arg);
+-        py_file = py_file_arg;
+-    }
+-
+-    if ((fp = mpl_PyFile_Dup(py_file, (char *)"rb", &offset))) {
+-        Py_INCREF(py_file);
+-        self->py_file = py_file;
+-        self->close_file = close_file;
+-        self->fp = fp;
+-        self->offset = offset;
+-        fseek(fp, 0, SEEK_END);
+-        file_size = ftell(fp);
+-        fseek(fp, 0, SEEK_SET);
+-
+-        self->stream.base = NULL;
+-        self->stream.size = (unsigned long)file_size;
+-        self->stream.pos = 0;
+-        self->stream.descriptor.pointer = self;
+-        self->stream.read = &read_from_file_callback;
+-        self->stream.close = &close_file_callback;
+-
+-        open_args->flags = FT_OPEN_STREAM;
+-        open_args->stream = &self->stream;
+-    } else {
+-        if (PyObject_HasAttrString(py_file_arg, "read") &&
+-            (data = PyObject_CallMethod(py_file_arg, (char *)"read", (char *)""))) {
+-            if (PyBytes_AsStringAndSize(data, &data_ptr, &data_len)) {
+-                goto exit;
+-            }
+-
+-            if (self->mem) {
+-                free(self->mem);
+-            }
+-            self->mem = (FT_Byte *)malloc((self->mem_size + data_len) * sizeof(FT_Byte));
+-            if (self->mem == NULL) {
+-                goto exit;
+-            }
+-            new_memory = self->mem + self->mem_size;
+-            self->mem_size += data_len;
+-
+-            memcpy(new_memory, data_ptr, data_len);
+-            open_args->flags = FT_OPEN_MEMORY;
+-            open_args->memory_base = new_memory;
+-            open_args->memory_size = data_len;
+-            open_args->stream = NULL;
+-        } else {
+-            PyErr_SetString(PyExc_TypeError,
+-                            "First argument must be a path or file object reading bytes");
+-            goto exit;
+-        }
+     }
+ 
++    self->stream.base = NULL;
++    self->stream.size = 0x7fffffff;  // Unknown size.
++    self->stream.pos = 0;
++    self->stream.descriptor.pointer = self;
++    self->stream.read = &read_from_file_callback;
++    self->stream.close = &close_file_callback;
++    open_args->flags = FT_OPEN_STREAM;
++    open_args->stream = &self->stream;
++
+     result = 1;
+ 
+ exit:
+ 
+-    Py_XDECREF(py_file);
+     Py_XDECREF(data);
+ 
+     return result;
+@@ -504,12 +468,8 @@ static PyObject *PyFT2Font_new(PyTypeObject *type, PyObject *args, PyObject *kwd
+     self->x = NULL;
+     self->fname = NULL;
+     self->py_file = NULL;
+-    self->fp = NULL;
+     self->close_file = 0;
+-    self->offset = 0;
+     memset(&self->stream, 0, sizeof(FT_StreamRec));
+-    self->mem = 0;
+-    self->mem_size = 0;
+     return (PyObject *)self;
+ }
+ 
+@@ -542,8 +502,6 @@ const char *PyFT2Font_init__doc__ =
+ 
+ static void PyFT2Font_fail(PyFT2Font *self)
+ {
+-    free(self->mem);
+-    self->mem = NULL;
+     Py_XDECREF(self->py_file);
+     self->py_file = NULL;
+ }
+@@ -580,7 +538,6 @@ static int PyFT2Font_init(PyFT2Font *self, PyObject *args, PyObject *kwds)
+ static void PyFT2Font_dealloc(PyFT2Font *self)
+ {
+     delete self->x;
+-    free(self->mem);
+     Py_XDECREF(self->py_file);
+     Py_XDECREF(self->fname);
+     Py_TYPE(self)->tp_free((PyObject *)self);
+
+From 505cbed6a859a3fdf8455da0a339b0d09f7a6f17 Mon Sep 17 00:00:00 2001
+From: Antony Lee <anntzer.lee@gmail.com>
+Date: Mon, 11 May 2020 22:27:56 +0200
+Subject: [PATCH 2/3] Handle review comments.
+
+---
+ src/ft2font_wrapper.cpp | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+
+diff --git a/src/ft2font_wrapper.cpp b/src/ft2font_wrapper.cpp
+index 0f5b1edcbb0..3882e03eae5 100644
+--- a/src/ft2font_wrapper.cpp
++++ b/src/ft2font_wrapper.cpp
+@@ -364,7 +364,6 @@ typedef struct
+     FT2Font *x;
+     PyObject *fname;
+     PyObject *py_file;
+-    int close_file;
+     FT_StreamRec stream;
+     Py_ssize_t shape[2];
+     Py_ssize_t strides[2];
+@@ -402,16 +401,16 @@ static unsigned long read_from_file_callback(FT_Stream stream,
+ 
+ static void close_file_callback(FT_Stream stream)
+ {
+-    PyObject *py_file = ((PyFT2Font *)stream->descriptor.pointer)->py_file;
++    PyFT2Font *self = (PyFT2Font *)stream->descriptor.pointer;
+     PyObject *close_result = NULL;
+-    if (!(close_result = PyObject_CallMethod(py_file, "close", ""))) {
++    if (!(close_result = PyObject_CallMethod(self->py_file, "close", ""))) {
+         goto exit;
+     }
+ exit:
+     Py_XDECREF(close_result);
+-    Py_DECREF(py_file);
++    Py_CLEAR(self->py_file);
+     if (PyErr_Occurred()) {
+-        PyErr_WriteUnraisable(py_file);
++        PyErr_WriteUnraisable((PyObject*)self);
+     }
+ }
+ 
+@@ -421,6 +420,7 @@ static int convert_open_args(PyFT2Font *self, PyObject *py_file_arg, FT_Open_Arg
+     PyObject *data = NULL;
+ 
+     int result = 0;
++    bool close_file = false;
+ 
+     memset((void *)open_args, 0, sizeof(FT_Open_Args));
+ 
+@@ -429,7 +429,7 @@ static int convert_open_args(PyFT2Font *self, PyObject *py_file_arg, FT_Open_Arg
+             || !(self->py_file = PyObject_CallFunction(open, "Os", py_file_arg, "rb"))) {
+             goto exit;
+         }
+-        self->close_file = 1;
++        close_file = true;
+     } else if (!PyObject_HasAttrString(py_file_arg, "read")
+                || !(data = PyObject_CallMethod(py_file_arg, "read", "i", 0))
+                || !PyBytes_Check(data)) {
+@@ -446,7 +446,7 @@ static int convert_open_args(PyFT2Font *self, PyObject *py_file_arg, FT_Open_Arg
+     self->stream.pos = 0;
+     self->stream.descriptor.pointer = self;
+     self->stream.read = &read_from_file_callback;
+-    self->stream.close = &close_file_callback;
++    self->stream.close = close_file ? &close_file_callback : NULL;
+     open_args->flags = FT_OPEN_STREAM;
+     open_args->stream = &self->stream;
+ 
+@@ -468,7 +468,6 @@ static PyObject *PyFT2Font_new(PyTypeObject *type, PyObject *args, PyObject *kwd
+     self->x = NULL;
+     self->fname = NULL;
+     self->py_file = NULL;
+-    self->close_file = 0;
+     memset(&self->stream, 0, sizeof(FT_StreamRec));
+     return (PyObject *)self;
+ }
+@@ -500,12 +499,6 @@ const char *PyFT2Font_init__doc__ =
+     "  underline_thickness    vertical thickness of the underline\n"
+     "  postscript_name        PostScript name of the font\n";
+ 
+-static void PyFT2Font_fail(PyFT2Font *self)
+-{
+-    Py_XDECREF(self->py_file);
+-    self->py_file = NULL;
+-}
+-
+ static int PyFT2Font_init(PyFT2Font *self, PyObject *args, PyObject *kwds)
+ {
+     PyObject *fname;
+@@ -525,7 +518,8 @@ static int PyFT2Font_init(PyFT2Font *self, PyObject *args, PyObject *kwds)
+     }
+ 
+     CALL_CPP_FULL(
+-        "FT2Font", (self->x = new FT2Font(open_args, hinting_factor)), PyFT2Font_fail(self), -1);
++        "FT2Font", (self->x = new FT2Font(open_args, hinting_factor)),
++        Py_CLEAR(self->py_file), -1);
+ 
+     CALL_CPP_INIT("FT2Font->set_kerning_factor", (self->x->set_kerning_factor(kerning_factor)));
+ 
+
+From 23d36d9d39a5b41f54346fda66ba0207ffef7c28 Mon Sep 17 00:00:00 2001
+From: Antony Lee <anntzer.lee@gmail.com>
+Date: Mon, 11 May 2020 23:35:53 +0200
+Subject: [PATCH 3/3] Inline convert_open_args.
+
+---
+ src/ft2font_wrapper.cpp | 83 ++++++++++++++++-------------------------
+ 1 file changed, 32 insertions(+), 51 deletions(-)
+
+diff --git a/src/ft2font_wrapper.cpp b/src/ft2font_wrapper.cpp
+index 3882e03eae5..c5b4cbb5fdf 100644
+--- a/src/ft2font_wrapper.cpp
++++ b/src/ft2font_wrapper.cpp
+@@ -414,51 +414,6 @@ static void close_file_callback(FT_Stream stream)
+     }
+ }
+ 
+-static int convert_open_args(PyFT2Font *self, PyObject *py_file_arg, FT_Open_Args *open_args)
+-{
+-    PyObject *open = NULL;
+-    PyObject *data = NULL;
+-
+-    int result = 0;
+-    bool close_file = false;
+-
+-    memset((void *)open_args, 0, sizeof(FT_Open_Args));
+-
+-    if (PyBytes_Check(py_file_arg) || PyUnicode_Check(py_file_arg)) {
+-        if (!(open = PyDict_GetItemString(PyEval_GetBuiltins(), "open"))  // Borrowed reference.
+-            || !(self->py_file = PyObject_CallFunction(open, "Os", py_file_arg, "rb"))) {
+-            goto exit;
+-        }
+-        close_file = true;
+-    } else if (!PyObject_HasAttrString(py_file_arg, "read")
+-               || !(data = PyObject_CallMethod(py_file_arg, "read", "i", 0))
+-               || !PyBytes_Check(data)) {
+-        PyErr_SetString(PyExc_TypeError,
+-                        "First argument must be a path or binary-mode file object");
+-        goto exit;
+-    } else {
+-        self->py_file = py_file_arg;
+-        Py_INCREF(py_file_arg);
+-    }
+-
+-    self->stream.base = NULL;
+-    self->stream.size = 0x7fffffff;  // Unknown size.
+-    self->stream.pos = 0;
+-    self->stream.descriptor.pointer = self;
+-    self->stream.read = &read_from_file_callback;
+-    self->stream.close = close_file ? &close_file_callback : NULL;
+-    open_args->flags = FT_OPEN_STREAM;
+-    open_args->stream = &self->stream;
+-
+-    result = 1;
+-
+-exit:
+-
+-    Py_XDECREF(data);
+-
+-    return result;
+-}
+-
+ static PyTypeObject PyFT2FontType;
+ 
+ static PyObject *PyFT2Font_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+@@ -501,20 +456,43 @@ const char *PyFT2Font_init__doc__ =
+ 
+ static int PyFT2Font_init(PyFT2Font *self, PyObject *args, PyObject *kwds)
+ {
+-    PyObject *fname;
++    PyObject *filename = NULL, *open = NULL, *data = NULL;
+     FT_Open_Args open_args;
+     long hinting_factor = 8;
+     int kerning_factor = 0;
+     const char *names[] = { "filename", "hinting_factor", "_kerning_factor", NULL };
+ 
+     if (!PyArg_ParseTupleAndKeywords(
+-             args, kwds, "O|l$i:FT2Font", (char **)names, &fname,
++             args, kwds, "O|l$i:FT2Font", (char **)names, &filename,
+              &hinting_factor, &kerning_factor)) {
+         return -1;
+     }
+ 
+-    if (!convert_open_args(self, fname, &open_args)) {
+-        return -1;
++    self->stream.base = NULL;
++    self->stream.size = 0x7fffffff;  // Unknown size.
++    self->stream.pos = 0;
++    self->stream.descriptor.pointer = self;
++    self->stream.read = &read_from_file_callback;
++    memset((void *)&open_args, 0, sizeof(FT_Open_Args));
++    open_args.flags = FT_OPEN_STREAM;
++    open_args.stream = &self->stream;
++
++    if (PyBytes_Check(filename) || PyUnicode_Check(filename)) {
++        if (!(open = PyDict_GetItemString(PyEval_GetBuiltins(), "open"))  // Borrowed reference.
++            || !(self->py_file = PyObject_CallFunction(open, "Os", filename, "rb"))) {
++            goto exit;
++        }
++        self->stream.close = &close_file_callback;
++    } else if (!PyObject_HasAttrString(filename, "read")
++               || !(data = PyObject_CallMethod(filename, "read", "i", 0))
++               || !PyBytes_Check(data)) {
++        PyErr_SetString(PyExc_TypeError,
++                        "First argument must be a path or binary-mode file object");
++        goto exit;
++    } else {
++        self->py_file = filename;
++        self->stream.close = NULL;
++        Py_INCREF(filename);
+     }
+ 
+     CALL_CPP_FULL(
+@@ -523,8 +501,11 @@ static int PyFT2Font_init(PyFT2Font *self, PyObject *args, PyObject *kwds)
+ 
+     CALL_CPP_INIT("FT2Font->set_kerning_factor", (self->x->set_kerning_factor(kerning_factor)));
+ 
+-    Py_INCREF(fname);
+-    self->fname = fname;
++    Py_INCREF(filename);
++    self->fname = filename;
++
++exit:
++    Py_XDECREF(data);
+ 
+     return 0;
+ }

@@ -315,6 +315,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             True
             sage: L(prod(pbw.gens()))
             Traceback (most recent call last):
+            ...
             ValueError: PBW['X']*PBW['Y']*PBW['Z'] is not in the image
             sage: L(pbw.one())
             Traceback (most recent call last):

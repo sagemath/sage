@@ -14,7 +14,6 @@ Miscellaneous arithmetic functions
 # ****************************************************************************
 
 from __future__ import absolute_import, print_function
-from six.moves import range
 
 import math
 import collections
@@ -2023,8 +2022,8 @@ def xkcd(n=""):
     from sage.misc.html import html
 
     # import compatible with py2 and py3
-    from six.moves.urllib.request import urlopen
-    from six.moves.urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
+    from urllib.error import HTTPError, URLError
 
     data = None
     url = "http://dynamic.xkcd.com/api-0/jsonp/comic/{}".format(n)

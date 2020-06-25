@@ -6,10 +6,9 @@ Function pickling
 REFERENCE: The python cookbook.
 """
 
+import copyreg
+import pickle
 import types
-import six
-from six.moves import copyreg
-from six.moves import cPickle
 
 
 def code_ctor(*args):
@@ -38,12 +37,8 @@ def reduce_code(co):
     if co.co_freevars or co.co_cellvars:
         raise ValueError("Cannot pickle code objects from closures")
 
-    if six.PY2:
-        co_args = (co.co_argcount,)
-    else:
-        co_args = (co.co_argcount, co.co_kwonlyargcount)
-
-    co_args += (co.co_nlocals, co.co_stacksize, co.co_flags, co.co_code,
+    co_args = (co.co_argcount, co.co_kwonlyargcount, co.co_nlocals,
+                co.co_stacksize, co.co_flags, co.co_code,
                 co.co_consts, co.co_names, co.co_varnames, co.co_filename,
                 co.co_name, co.co_firstlineno, co.co_lnotab)
 
@@ -79,7 +74,7 @@ def pickle_function(func):
         sage: h(10)
         11
     """
-    return cPickle.dumps(func.__code__)
+    return pickle.dumps(func.__code__)
 
 def unpickle_function(pickled):
     """
@@ -92,7 +87,7 @@ def unpickle_function(pickled):
         sage: unpickle_function(pickle_function(f))(3,5)
         15
     """
-    recovered = cPickle.loads(pickled)
+    recovered = pickle.loads(pickled)
     return types.FunctionType(recovered, globals())
 
 

@@ -92,7 +92,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 import random

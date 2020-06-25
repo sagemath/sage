@@ -2,15 +2,15 @@
 Basic arithmetic with C integers
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 ###################################################################
 # We define the following functions in this file, both
@@ -47,34 +47,38 @@ from sage.rings.integer cimport Integer
 
 cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False):
     r"""
-    List of all primes between start and stop-1, inclusive.  If the
-    second argument is omitted, returns the primes up to the first
-    argument.
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 
-    This function is closely related to (and can use) the primes iterator.
-    Use algorithm "pari_primes" when both start and stop are not too large,
-    since in all cases this function makes a table of primes up to
-    stop. If both are large, use algorithm "pari_isprime" instead.
+    If the second argument is omitted, this returns the primes up to the
+    first argument.
 
-    Algorithm "pari_primes" is faster for most input, but crashes for larger input.
-    Algorithm "pari_isprime" is slower but will work for much larger input.
+    This function is closely related to (and can use) the primes
+    iterator.  Use algorithm ``"pari_primes"`` when both ``start`` and
+    ``stop`` are not too large, since in all cases this function makes
+    a table of primes up to ``stop``. If both are large, use algorithm
+    ``"pari_isprime"`` instead.
+
+    Algorithm ``"pari_primes"`` is faster for most input, but crashes
+    for larger input.
+    Algorithm ``"pari_isprime"`` is slower but will work for much larger input.
 
     INPUT:
 
-        - ``start`` -- lower bound
+    - ``start`` -- integer, lower bound
 
-        - ``stop`` -- upper bound
+    - ``stop`` -- integer, upper bound
 
-        - ``algorithm`` -- string, one of:
+    - ``algorithm`` -- optional string, one of:
 
-             - "pari_primes": Uses PARI's primes function.  Generates all primes up to stop.
-                              Depends on PARI's primepi function.
+         - ``"pari_primes"``: Uses PARI's :pari:`primes` function.
+            Generates all primes up to stop.
+            Depends on PARI's :pari:`primepi` function.
 
-             - "pari_isprime": Uses a mod 2 wheel and PARI's isprime function by calling
-                             the primes iterator.
+         - "pari_isprime": Uses a mod 2 wheel and PARI's :pari:`isprime`
+           function by calling the primes iterator.
 
-        - ``py_ints`` -- boolean (default False), return Python ints rather than Sage Integers (faster)
-
+    - ``py_ints`` -- optional boolean (default ``False``), return
+      Python ints rather than Sage Integers (faster)
 
     EXAMPLES::
 
@@ -117,6 +121,13 @@ cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False)
 
         sage: prime_range(4652360, 4652400)
         []
+
+    Test for non-existing algorithm::
+
+        sage: prime_range(55, algorithm='banana')
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be "pari_primes" or "pari_isprime"
 
     AUTHORS:
 
@@ -165,7 +176,7 @@ cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False)
         from sage.arith.all import primes
         res = list(primes(start, stop))
     else:
-        raise ValueError("algorithm argument must be either ``pari_primes`` or ``pari_isprime``")
+        raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
     return res
 
 

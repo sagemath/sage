@@ -11,7 +11,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/                           #
 ###########################################################################
 from __future__ import absolute_import
-from six import integer_types
 
 import weakref
 
@@ -172,7 +171,7 @@ def AbelianVariety(X):
         ...
         TypeError: X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups
     """
-    if isinstance(X, integer_types + (Integer,)):
+    if isinstance(X, (int, Integer)):
         X = Gamma0(X)
     if is_CongruenceSubgroup(X):
         X = X.modular_symbols().cuspidal_submodule()

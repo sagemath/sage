@@ -43,8 +43,7 @@ from __future__ import absolute_import
 from sage.structure.all import Sequence
 from datetime import date
 
-# import compatible with py2 and py3
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 
 
 class OHLC:
@@ -138,7 +137,7 @@ class OHLC:
             True
         """
         return not (self == other)
-    
+
 
 class Stock:
     """

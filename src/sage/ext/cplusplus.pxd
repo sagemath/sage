@@ -10,7 +10,7 @@
 
 cdef extern from "sage/ext/ccobject.h":
     # Print representation of any C++ object
-    str ccrepr[T](T x)
+    str ccrepr[T](const T& x)
 
     # Read a Python bytes/str into a C++ object
     int ccreadstr[T](T x, object b) except -1

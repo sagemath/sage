@@ -115,7 +115,7 @@ cdef class SatSolver:
 
         EXAMPLES::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file.\np cnf 3 2\n1 -3 0\n2 3 -1 0 ")
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: solver = DIMACS()
@@ -125,7 +125,7 @@ cdef class SatSolver:
 
         With xor clauses::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
             sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat          # optional - cryptominisat
             sage: solver = CryptoMiniSat()                                          # optional - cryptominisat
@@ -137,7 +137,7 @@ cdef class SatSolver:
 
         TESTS::
 
-            sage: from six import StringIO # for python 2/3 support
+            sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
             sage: from sage.sat.solvers.sat_lp import SatLP
             sage: solver = SatLP()

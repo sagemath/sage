@@ -167,22 +167,18 @@ and use the dual simplex method!
 Classes and functions
 ---------------------
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
-from six.moves import range, zip
 
 import operator
 import re
-
 
 from copy import copy
 
@@ -200,7 +196,6 @@ from sage.misc.all import (LatexExpr,
                            random)
 from sage.misc.html import HtmlFragment
 from sage.misc.misc import get_main_globals
-from sage.misc.superseded import deprecation
 from sage.modules.all import random_vector, vector
 from sage.plot.all import Graphics, arrow, line, point, rainbow, text
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
@@ -3983,86 +3978,6 @@ class LPDictionary(LPAbstractDictionary):
             lin = lin.replace(r"\color{red}\color{green}", r"\color{blue}")
             lines[l] = lin
         return  "\n".join(lines)
-
-    def ELLUL(self, entering, leaving):
-        r"""
-        Perform the Enter-Leave-LaTeX-Update-LaTeX step sequence on ``self``.
-
-        INPUT:
-
-        - ``entering`` -- the entering variable
-
-        - ``leaving`` -- the leaving variable
-
-        OUTPUT:
-
-        - a string with LaTeX code for ``self`` before and after update
-
-        EXAMPLES::
-
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveLPProblemStandardForm(A, b, c)
-            sage: D = P.initial_dictionary()
-            sage: D.ELLUL("x1", "x4")
-            doctest:...: DeprecationWarning: ELLUL is deprecated, please use separate enter-leave-update and output commands
-            See http://trac.sagemath.org/19097 for details.
-            \renewcommand{\arraystretch}{1.5} %notruncate
-            \begin{array}{|rcrcrcr|}
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\color{green}\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
-            \color{red}x_{4} \mspace{-6mu}&\color{red}\mspace{-6mu} = \mspace{-6mu}&\color{red}\mspace{-6mu} 1500 \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{blue}\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{red}\mspace{-6mu} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 0 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\color{green}\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2}\\
-            \hline
-            \\
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{2}{3} x_{2}\\
-            x_{1} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 5000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{10}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{5}{3} x_{2}\\
-            \hline
-            \end{array}
-
-        This is how the above output looks when rendered:
-
-        .. MATH::
-
-            \renewcommand{\arraystretch}{1.5}
-            \begin{array}{|rcrcrcr|}
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\color{green}\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
-            \color{red}x_{4} \mspace{-6mu}&\color{red}\mspace{-6mu} = \mspace{-6mu}&\color{red}\mspace{-6mu} 1500 \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{blue}\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{red}\mspace{-6mu} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 0 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\color{green}\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2}\\
-            \hline
-            \\
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{2}{3} x_{2}\\
-            x_{1} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 5000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{10}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{5}{3} x_{2}\\
-            \hline
-            \end{array}
-
-        The column of the entering variable is green, while the row of the
-        leaving variable is red in the original dictionary state on the top.
-        The new state after the update step is shown on the bottom.
-        """
-        deprecation(19097, "ELLUL is deprecated, please use separate "
-                    "enter-leave-update and output commands")
-        self.enter(entering)
-        self.leave(leaving)
-        result = latex(self).rsplit("\n", 1)[0] # Remove \end{array}
-        # Make an empty line in the array
-        if generate_real_LaTeX:
-            result += "\n" r"\multicolumn{2}{c}{}\\[-3ex]" "\n"
-        else:
-            result += "\n\\\\\n"
-        self.update()
-        result += latex(self).split("\n", 2)[2] # Remove array header
-        return LatexExpr(result)
 
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
         r"""

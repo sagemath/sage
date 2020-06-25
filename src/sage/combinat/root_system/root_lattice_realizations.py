@@ -12,7 +12,6 @@ Root lattice realizations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from sage.misc.abstract_method import abstract_method, AbstractMethod
 from sage.misc.misc import attrcall
@@ -1098,7 +1097,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             REFERENCES:
 
             .. [Reiner97] Victor Reiner. *Non-crossing partitions for
-               classical reflection groups*. Discrete Mathematics 177 (1997) 
+               classical reflection groups*. Discrete Mathematics 177 (1997)
             .. [Arm06] Drew Armstrong. *Generalized Noncrossing Partitions and
                Combinatorics of Coxeter Groups*. :arxiv:`math/0611106`
             """
@@ -3131,8 +3130,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(['A',2]).ambient_space()
                 sage: C = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: L.plot_crystal(C)
-                Graphics object consisting of 16 graphics primitives
+                sage: L.plot_crystal(C, plot_labels='multiplicities')
+                Graphics object consisting of 15 graphics primitives
                 sage: C = crystals.Tableaux(['A',2], shape=[8,4])
                 sage: p = L.plot_crystal(C, plot_labels='circles')
                 sage: p.show(figsize=15)
@@ -3143,6 +3142,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: C = crystals.Tableaux(['B',3], shape=[2,1])
                 sage: L.plot_crystal(C, plot_labels='circles', edge_labels=True) # long time
                 Graphics3d Object
+
+            TESTS:
+
+            Check that :trac:`29548` is fixed::
+
+                sage: LS = crystals.LSPaths(['A',2], [1,1])
+                sage: L = RootSystem(['A',2]).ambient_space()
+                sage: L.plot_crystal(LS)
+                Graphics object consisting of 16 graphics primitives
             """
             from sage.plot.arrow import arrow
             from sage.plot.circle import circle
@@ -3189,13 +3197,13 @@ class RootLatticeRealizations(Category_over_base_ring):
                         G += plot_options.text(elt, positions[wt], rgbcolor=label_color)
 
             for h,t,i in g.edges():
-                G += arrow(positions[h.weight()], positions[t.weight()],
+                G += arrow(positions[self(h.weight())], positions[self(t.weight())],
                            zorder=1, rgbcolor=plot_options.color(i),
                            arrowsize=plot_options._arrowsize)
                 if edge_labels:
-                    mid = (positions[h.weight()] + positions[t.weight()]) / QQ(2)
+                    mid = (positions[self(h.weight())] + positions[self(t.weight())]) / QQ(2)
                     if plot_options.dimension >= 2:
-                        diff = (positions[h.weight()] - positions[t.weight()]).normalized()
+                        diff = (positions[self(h.weight())] - positions[self(t.weight())]).normalized()
                         if plot_options.dimension >= 3:
                             from copy import copy
                             diff2 = copy(diff)

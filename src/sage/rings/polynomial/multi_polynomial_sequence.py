@@ -149,7 +149,6 @@ Classes
 -------
 """
 from __future__ import print_function
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 
@@ -1002,7 +1001,7 @@ class PolynomialSequence_generic(Sequence_generic):
             True
 
         """
-        return PolynomialSequence, (self._ring, self._parts, self._is_immutable, 
+        return PolynomialSequence, (self._ring, self._parts, self._is_immutable,
                                     self._Sequence_generic__cr, self._Sequence_generic__cr_str)
 
     @singular_gb_standard_options

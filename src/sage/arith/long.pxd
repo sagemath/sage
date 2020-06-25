@@ -136,12 +136,11 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
         ....: def long_max():
         ....:     return smallInteger(LONG_MAX)
         ....: ''')
-        sage: import six
-        sage: types = (ZZ, QQ) + six.integer_types
+        sage: types = (ZZ, QQ, int)
         sage: L = [1, 12345, 10^9, 2^30, long_max()//9, long_max()//3, long_max()]
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
-        ....:     for t in (Integer,) + six.integer_types:
+        ....:     for t in (Integer, int):
         ....:         assert check_long(t(v)) == v
         sage: check_long(2^100)
         Traceback (most recent call last):

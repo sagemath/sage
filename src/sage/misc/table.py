@@ -10,8 +10,8 @@ AUTHORS:
 - John H. Palmieri (2012-11)
 """
 from __future__ import absolute_import
-from six.moves import cStringIO as StringIO
-from six.moves import range, zip
+
+from io import StringIO
 
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -774,7 +774,7 @@ class table(SageObject):
         EXAMPLES::
 
             sage: T = table([['a', 'bb', 'ccccc'], [10, -12, 0], [1, 2, 3]])
-            sage: from six import StringIO
+            sage: from io import StringIO
             sage: s = StringIO()
             sage: T._html_table_row(s, ['a', 2, '$x$'])
             sage: print(s.getvalue())

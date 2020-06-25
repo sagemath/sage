@@ -78,7 +78,6 @@ from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.modules.vector_mod2_dense import Vector_mod2_dense
-from six import integer_types
 from sage.rings.integer import Integer
 from sage.crypto.sboxes import DES_S1_1, DES_S1_2, DES_S1_3, DES_S1_4
 from sage.crypto.sboxes import DES_S2_1, DES_S2_2, DES_S2_3, DES_S2_4
@@ -514,7 +513,7 @@ class DES(SageObject):
         """
         if isinstance(plaintext, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(plaintext, integer_types + (Integer,)):
+        elif isinstance(plaintext, (Integer, int)):
             inputType = 'integer'
         state = convert_to_vector(plaintext, self._blocksize)
         key = convert_to_vector(key, self._keySize)
@@ -571,7 +570,7 @@ class DES(SageObject):
         """
         if isinstance(ciphertext, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(ciphertext, integer_types + (Integer,)):
+        elif isinstance(ciphertext, (Integer, int)):
             inputType = 'integer'
         state = convert_to_vector(ciphertext, 64)
         key = convert_to_vector(key, self._keySize)
@@ -871,7 +870,7 @@ class DES_KS(SageObject):
         """
         if isinstance(key, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(key, integer_types + (Integer,)):
+        elif isinstance(key, (Integer, int)):
             inputType = 'integer'
         key = convert_to_vector(key, self._keySize)
         roundKeys = []

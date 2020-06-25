@@ -12,7 +12,7 @@ Interface to LattE integrale programs
 #*****************************************************************************
 
 from __future__ import print_function, absolute_import
-import six
+
 from sage.cpython.string import str_to_bytes, bytes_to_str
 
 from subprocess import Popen, PIPE
@@ -70,12 +70,12 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         sage: print(count(cddin, **opts))  # optional - latte_int
         x[0]^2*x[1]^(-2)*x[2]^(-2)/((1-x[1])*(1-x[2])*(1-x[0]^(-1)))
          + x[0]^(-2)*x[1]^(-2)*x[2]^(-2)/((1-x[1])*(1-x[2])*(1-x[0]))
-         + x[0]^2*x[1]^(-2)*x[2]^2/((1-x[1])*(1-x[0]^(-1))*(1-x[2]^(-1)))
+         + x[0]^2*x[1]^(-2)*x[2]^2/((1-x[1])*(1-x[2]^(-1))*(1-x[0]^(-1)))
          + x[0]^(-2)*x[1]^(-2)*x[2]^2/((1-x[1])*(1-x[0])*(1-x[2]^(-1)))
-         + x[0]^2*x[1]^2*x[2]^(-2)/((1-x[2])*(1-x[0]^(-1))*(1-x[1]^(-1)))
+         + x[0]^2*x[1]^2*x[2]^(-2)/((1-x[2])*(1-x[1]^(-1))*(1-x[0]^(-1)))
          + x[0]^(-2)*x[1]^2*x[2]^(-2)/((1-x[2])*(1-x[0])*(1-x[1]^(-1)))
-         + x[0]^2*x[1]^2*x[2]^2/((1-x[0]^(-1))*(1-x[1]^(-1))*(1-x[2]^(-1)))
-         + x[0]^(-2)*x[1]^2*x[2]^2/((1-x[0])*(1-x[1]^(-1))*(1-x[2]^(-1)))
+         + x[0]^2*x[1]^2*x[2]^2/((1-x[2]^(-1))*(1-x[1]^(-1))*(1-x[0]^(-1)))
+         + x[0]^(-2)*x[1]^2*x[2]^2/((1-x[0])*(1-x[2]^(-1))*(1-x[1]^(-1)))
 
     TESTS:
 
@@ -344,7 +344,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
             args.append('--{}={}'.format(key, value))
 
     if got_polynomial:
-        if not isinstance(polynomial, six.string_types):
+        if not isinstance(polynomial, str):
             # transform polynomial to LattE description
             monomials_list = to_latte_polynomial(polynomial)
         else:

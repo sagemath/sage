@@ -501,9 +501,12 @@ cdef class Element(SageObject):
 
     def __dir__(self):
         """
+        Emulate ``__dir__`` for elements with dynamically attached methods.
+
         Let cat be the category of the parent of ``self``. This method
         emulates ``self`` being an instance of both ``Element`` and
-        ``cat.element_class``, in that order, for attribute directory.
+        ``cat.element_class`` (and the corresponding ``morphism_class`` in the
+        case of a morphism), in that order, for attribute directory.
 
         EXAMPLES::
 
@@ -516,9 +519,26 @@ cdef class Element(SageObject):
             [..., 'is_idempotent', 'is_integer', 'is_integral', ...]
             sage: dir(1)         # todo: not implemented
             [..., 'is_idempotent', 'is_integer', 'is_integral', ...]
+
+        TESTS:
+
+        Check that morphism classes are handled correctly (:trac:`29776`)::
+
+            sage: R.<x,y> = QQ[]
+            sage: f = R.hom([x, y+1], R)
+            sage: 'cartesian_product' in dir(f)
+            True
+            sage: 'extend_to_fraction_field' in dir(f)
+            True
         """
         from sage.cpython.getattr import dir_with_other_class
-        return dir_with_other_class(self, self.parent().category().element_class)
+        ec = self.parent().category().element_class
+        try:
+            mc = self.category_for().morphism_class
+        except AttributeError:
+            return dir_with_other_class(self, ec)
+        else:
+            return dir_with_other_class(self, ec, mc)
 
     def _repr_(self):
         return "Generic element of a structure"

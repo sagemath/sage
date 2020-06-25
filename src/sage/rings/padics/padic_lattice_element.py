@@ -10,28 +10,17 @@ TESTS:
 We create some rings and run the test suite for them. We skip the Smith form
 tests because they take a few minutes as of mid 2018, see :trac:`25431`::
 
-    sage: R = ZpLC(2)
+    sage: R1 = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
     See http://trac.sagemath.org/23505 for details.
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: R2 = ZpLF(2)
+    sage: R3 = QpLC(2)
+    sage: R4 = QpLF(2)
 
-    sage: R = ZpLF(2) # py2
-    sage: R = ZpLF(2) # py3
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-
-    sage: R = QpLC(2) # py2
-    sage: R = QpLC(2) # py3
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-
-    sage: R = QpLF(2) # py2
-    sage: R = QpLF(2) # py3
-    doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-    See http://trac.sagemath.org/23505 for details.
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 """
 
 # ****************************************************************************

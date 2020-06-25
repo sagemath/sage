@@ -1755,7 +1755,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         return self.str()
 
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
-            *, unicode=False, shape=None):
+            *, unicode=False, shape=None, character_art=False):
         r"""
         Return a nice string representation of the matrix.
 
@@ -1800,6 +1800,11 @@ cdef class Matrix(sage.structure.element.Matrix):
           in accordance with the TeX rendering,
           while the ASCII rendering defaults to square brackets.
 
+        - ``character_art`` -- boolean (default: ``False``); if ``True``, the
+          result will be of type :class:`~sage.typeset.ascii_art.AsciiArt` or
+          :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
+          breaking of wide matrices that exceed the window width
+
         EXAMPLES::
 
             sage: R = PolynomialRing(QQ,6,'z')
@@ -1842,6 +1847,19 @@ cdef class Matrix(sage.structure.element.Matrix):
             ⎢│4 5│6││⎥
             ⎢│7 8│9││⎥
             ⎣┼───┼─┼┼⎦
+
+        If ``character_art`` is set, the lines of large matrices are wrapped in
+        a readable way::
+
+            sage: set_random_seed(0)
+            sage: matrix.random(RDF, 3, 5).str(unicode=True, character_art=True)
+            ⎛ -0.27440062056807446    0.5031965950979831 -0.001975438590219314
+            ⎜ -0.05461130074681608 -0.033673314214051286   -0.9401270875197381
+            ⎝  0.19906256610645512    0.3242250183948632    0.6026443545751128
+            <BLANKLINE>
+               -0.9467802263760512    0.5056889961514748⎞
+              -0.35104242112828943    0.5084492941557279⎟
+               -0.9541798283979341   -0.8948790563276592⎠
 
         TESTS:
 
@@ -1927,8 +1945,15 @@ cdef class Matrix(sage.structure.element.Matrix):
         brb = right.bottom          # - bottom right bracket
         srb = right.character       # - single-row right bracket
 
+        if character_art:
+            if unicode:
+                from sage.typeset.unicode_art import UnicodeArt as CharacterArt
+            else:
+                from sage.typeset.ascii_art import AsciiArt as CharacterArt
+
         if nr == 0 or nc == 0:
-            return slb + srb
+            result = slb + srb
+            return CharacterArt([result]) if character_art else result
 
         row_divs, col_divs = self.subdivisions()
         row_div_counts = [0] * (nr + 1)
@@ -1964,7 +1989,6 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         width = max(map(len, S))
         rows = []
-        m = 0
 
         hline = cl.join(hl * ((width + 1)*(b - a) - 1)
                        for a,b in zip([0] + col_divs, col_divs + [nc]))
@@ -1989,17 +2013,49 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         last_row = len(rows) - 1
         if last_row == 0:
-            return slb + rows[0] + srb
-        rows[0] = tlb + rows[0] + trb
-        for r from 1 <= r < last_row:
-            rows[r] = mlb + rows[r] + mrb
-        rows[last_row] = blb + rows[last_row] + brb
-        s = "\n".join(rows)
-        return s
+            rows[0] = slb + rows[0] + srb
+        else:
+            rows[0] = tlb + rows[0] + trb
+            for r from 1 <= r < last_row:
+                rows[r] = mlb + rows[r] + mrb
+            rows[last_row] = blb + rows[last_row] + brb
+
+        if character_art:
+            breakpoints = []
+            idx = len(tlb) + (col_div_counts[0] if nc > 0 else 0) + width
+            for c from 1 <= c < nc:
+                breakpoints.append(idx)
+                len_sep = max(col_div_counts[c], 1)
+                idx += len_sep + width
+            return CharacterArt(rows, breakpoints=breakpoints)
+        else:
+            return "\n".join(rows)
+
+    def _ascii_art_(self):
+        """
+        Return an ASCII art representation of this matrix.
+
+        EXAMPLES::
+
+            sage: set_random_seed(0)
+            sage: ascii_art(matrix.random(RDF, 3, 5))  # indirect doctest
+            [ -0.27440062056807446    0.5031965950979831 -0.001975438590219314
+            [ -0.05461130074681608 -0.033673314214051286   -0.9401270875197381
+            [  0.19906256610645512    0.3242250183948632    0.6026443545751128
+            <BLANKLINE>
+               -0.9467802263760512    0.5056889961514748]
+              -0.35104242112828943    0.5084492941557279]
+               -0.9541798283979341   -0.8948790563276592]
+        """
+        if self._nrows < max_rows and self._ncols < max_cols:
+            return self.str(character_art=True)
+        else:
+            from sage.typeset.ascii_art import AsciiArt
+            return AsciiArt(repr(self).splitlines())
 
     def _unicode_art_(self):
         """
-        Unicode art representation of matrices
+        Return a unicode art representation of this matrix.
 
         EXAMPLES::
 
@@ -2019,12 +2075,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: unicode_art(A)
             100 x 100 dense matrix over Integer Ring
         """
-        from sage.typeset.unicode_art import UnicodeArt
         if self._nrows < max_rows and self._ncols < max_cols:
-            output = self.str(unicode=True)
+            return self.str(unicode=True, character_art=True)
         else:
-            output = repr(self)
-        return UnicodeArt(output.splitlines())
+            from sage.typeset.unicode_art import UnicodeArt
+            return UnicodeArt(repr(self).splitlines())
 
     def _latex_(self):
         r"""
@@ -5477,7 +5532,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: matrix(RR, 1, 1, [2]).inverse_of_unit()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: Lifting of multivariate polynomials over non-fields is not implemented.
 
             sage: R = ZZ.cartesian_product(ZZ)
             sage: m = matrix(R, 2, [R((2,1)), R((1,1)), R((1,1)), R((1,2))])

@@ -30,7 +30,8 @@ AUTHORS:
 - Florentin Jaffredo (2018) : series expansion with respect to a given
   parameter
 - Michael Jung (2019): improve treatment of the zero element; add method
-  ``copy_from``
+  :meth:`TensorField.copy_from`
+- Eric Gourgoulhon (2020): add method :meth:`TensorField.apply_map`
 
 REFERENCES:
 
@@ -51,7 +52,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import print_function
-from six import itervalues, string_types
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -742,6 +742,15 @@ class TensorField(ModuleElement):
             sage: t.display(Y)
             t = 2*u d/du*du + v^3 d/dv*du + (u + v) d/dv*dv
 
+        TESTS:
+
+        Check that :trac:`29639` is fixed::
+
+            sage: v = M.vector_field()
+            sage: v._init_components(1/2, -1)
+            sage: v.display()
+            1/2 d/dx - d/dy
+
         """
         comp0 = comp[0]
         self._is_zero = False  # a priori
@@ -752,11 +761,11 @@ class TensorField(ModuleElement):
                     # frame is actually a pair (frame, chart):
                     frame, chart = frame
                 self.add_comp(frame)[:, chart] = components
-        elif isinstance(comp0, string_types):
+        elif isinstance(comp0, str):
             # For compatibility with previous use of tensor_field():
             self.set_name(comp0)
         else:
-            if hasattr(comp0, '__getitem__'):
+            if hasattr(comp0, '__len__') and hasattr(comp0, '__getitem__'):
                 # comp0 is a list/vector of components
                 # otherwise comp is the tuple of components in a specific frame
                 comp = comp0
@@ -1405,7 +1414,9 @@ class TensorField(ModuleElement):
         Components of a vector field on the sphere `S^2`::
 
             sage: M = Manifold(2, 'S^2', start_index=1)
-            sage: # The two open subsets covered by stereographic coordinates (North and South):
+
+        The two open subsets covered by stereographic coordinates (North and South)::
+
             sage: U = M.open_subset('U') ; V = M.open_subset('V')
             sage: M.declare_union(U,V)   # S^2 is the union of U and V
             sage: c_xy.<x,y> = U.chart() ; c_uv.<u,v> = V.chart() # stereographic coordinates
@@ -2180,7 +2191,6 @@ class TensorField(ModuleElement):
             False
             sage: t.parent().zero() == 0
             True
-
         """
         if other is self:
             return True
@@ -2410,7 +2420,7 @@ class TensorField(ModuleElement):
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] + other._restrictions[dom]
-        some_rst = next(itervalues(resu_rst))
+        some_rst = next(iter(resu_rst.values()))
         resu_sym = some_rst._sym
         resu_antisym = some_rst._antisym
         resu = self._vmodule.tensor(self._tensor_type, sym=resu_sym,
@@ -2479,7 +2489,7 @@ class TensorField(ModuleElement):
         resu_rst = {}
         for dom in self._common_subdomains(other):
             resu_rst[dom] = self._restrictions[dom] - other._restrictions[dom]
-        some_rst = next(itervalues(resu_rst))
+        some_rst = next(iter(resu_rst.values()))
         resu_sym = some_rst._sym
         resu_antisym = some_rst._antisym
         resu = self._vmodule.tensor(self._tensor_type, sym=resu_sym,
@@ -4458,3 +4468,128 @@ class TensorField(ModuleElement):
         for rst in self._restrictions.values():
             rst.set_calc_order(symbol, order, truncate)
         self._del_derived()
+
+    def apply_map(self, fun, frame=None, chart=None,
+                  keep_other_components=False):
+        r"""
+        Apply a function to the coordinate expressions of all components of
+        ``self`` in a given vector frame.
+
+        This method allows operations like factorization, expansion,
+        simplification or substitution to be performed on all components of
+        ``self`` in a given vector frame (see examples below).
+
+        INPUT:
+
+        - ``fun`` -- function to be applied to the coordinate expressions of
+          the components
+        - ``frame`` -- (default: ``None``) vector frame defining the
+          components on which the operation ``fun`` is to be performed; if
+          ``None``, the default frame of the domain of ``self`` is assumed
+        - ``chart`` -- (default: ``None``) coordinate chart; if specified, the
+          operation ``fun`` is performed only on the coordinate expressions
+          with respect to ``chart`` of the components w.r.t. ``frame``; if
+          ``None``, the operation ``fun`` is performed on all available
+          coordinate expressions
+        - ``keep_other_components`` -- (default: ``False``) determine whether
+          the components with respect to vector frames distinct from ``frame``
+          and having the same domain as ``frame`` are kept. If ``fun`` is
+          non-destructive, ``keep_other_components`` can be set to ``True``;
+          otherwise, it is advised to set it to ``False`` (the default) in
+          order to avoid any inconsistency between the various sets of
+          components
+
+        EXAMPLES:
+
+        Factorizing all components in the default frame of a vector field::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: a, b = var('a b')
+            sage: v = M.vector_field(x^2 - y^2, a*(b^2 - b)*x)
+            sage: v.display()
+            (x^2 - y^2) d/dx + (b^2 - b)*a*x d/dy
+            sage: v.apply_map(factor)
+            sage: v.display()
+            (x + y)*(x - y) d/dx + a*(b - 1)*b*x d/dy
+
+        Performing a substitution in all components in the default frame::
+
+            sage: v.apply_map(lambda f: f.subs({a: 2}))
+            sage: v.display()
+            (x + y)*(x - y) d/dx + 2*(b - 1)*b*x d/dy
+
+        Specifying the vector frame via the argument ``frame``::
+
+            sage: P.<p, q> = M.chart()
+            sage: X_to_P = X.transition_map(P, [x + 1, y - 1])
+            sage: P_to_X = X_to_P.inverse()
+            sage: v.display(P)
+            (p^2 - q^2 - 2*p - 2*q) d/dp + (-2*b^2 + 2*(b^2 - b)*p + 2*b) d/dq
+            sage: v.apply_map(lambda f: f.subs({b: pi}), frame=P.frame())
+            sage: v.display(P)
+            (p^2 - q^2 - 2*p - 2*q) d/dp + (2*pi - 2*pi^2 - 2*(pi - pi^2)*p) d/dq
+
+        Note that the required operation has been performed in all charts::
+
+            sage: v.display(P.frame(), P)
+            (p^2 - q^2 - 2*p - 2*q) d/dp + (2*pi - 2*pi^2 - 2*(pi - pi^2)*p) d/dq
+            sage: v.display(P.frame(), X)
+            (x^2 - y^2) d/dp - 2*(pi - pi^2)*x d/dq
+
+        By default, the components of ``v`` in frames distinct from the
+        specified one have been deleted::
+
+            sage: X.frame() in v._components
+            False
+
+        When requested, they are recomputed by change-of-frame formulas,
+        thereby enforcing the consistency between the representations in
+        various vector frames. In particular, we can check that the
+        substitution of ``b`` by ``pi``, which was asked in ``P.frame()``,
+        is effective in ``X.frame()`` as well::
+
+            sage: v.display(X.frame(), X)
+            (x^2 - y^2) d/dx - 2*(pi - pi^2)*x d/dy
+
+        When the requested operation does not change the value of the tensor
+        field, one can use the keyword argument ``keep_other_components=True``,
+        in order to avoid the recomputation of the components in other frames::
+
+            sage: v.apply_map(factor, keep_other_components=True)
+            sage: v.display()
+            (x + y)*(x - y) d/dx + 2*pi*(pi - 1)*x d/dy
+
+        The components with respect to ``P.frame()`` have been kept::
+
+            sage: P.frame() in v._components
+            True
+
+        One can restrict the operation to expressions in a given chart, via
+        the argument ``chart``::
+
+            sage: v.display(X.frame(), P)
+            (p + q)*(p - q - 2) d/dx + 2*pi*(pi - 1)*(p - 1) d/dy
+            sage: v.apply_map(expand, chart=P)
+            sage: v.display(X.frame(), P)
+            (p^2 - q^2 - 2*p - 2*q) d/dx + (2*pi + 2*pi^2*p - 2*pi^2 - 2*pi*p) d/dy
+            sage: v.display(X.frame(), X)
+            (x + y)*(x - y) d/dx + 2*pi*(pi - 1)*x d/dy
+
+        """
+        # The dictionary of components w.r.t. frame:
+        if keep_other_components:
+            comps = self.comp(frame)._comp
+        else:
+            comps = self.set_comp(frame)._comp # set_comp() deletes the
+                                               # components in other frames
+        if chart:
+            for scalar in comps.values():
+                scalar.add_expr(fun(scalar.expr(chart=chart)), chart=chart)
+        else:
+            for scalar in comps.values():
+                cfunc_dict = {}  # new dict of chart functions in order not to
+                                 # modify scalar._express while looping on it
+                for ch, fct in scalar._express.items():
+                    cfunc_dict[ch] = ch.function(fun(fct.expr()))
+                scalar._express = cfunc_dict

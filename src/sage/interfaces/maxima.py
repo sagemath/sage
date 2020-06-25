@@ -464,7 +464,6 @@ Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six import string_types
 
 import os
 import re
@@ -994,7 +993,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.get('xxxxx')
             '2'
         """
-        if not isinstance(value, string_types):
+        if not isinstance(value, str):
             raise TypeError
         cmd = '%s : %s$'%(var, value.rstrip(';'))
         if len(cmd) > self.__eval_using_file_cutoff:

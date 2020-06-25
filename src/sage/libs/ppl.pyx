@@ -281,6 +281,7 @@ cdef extern from "ppl.hh" namespace "Parma_Polyhedra_Library":
         bint OK()
 
     cdef cppclass PPL_Constraint:
+        PPL_Constraint()
         PPL_Constraint(PPL_Constraint &g)
         PPL_dimension_type space_dimension()
         PPL_ConstraintType type()
@@ -5728,8 +5729,16 @@ cdef class Generator_System_iterator(object):
 cdef _wrap_Constraint(PPL_Constraint constraint):
     """
     Wrap a C++ ``PPL_Constraint`` into a Cython ``Constraint``.
+
+    Check that :trac:`27278` is fixed::
+
+    sage: from sage.libs.ppl import Variable, Constraint
+    sage: x=Variable(0)
+    sage: c = x == 0
+    sage: type(Constraint(c))
+    <class 'sage.libs.ppl.Constraint'>
     """
-    cdef Constraint c = Constraint(True)
+    cdef Constraint c = Constraint.__new__(Constraint)
     c.thisptr = new PPL_Constraint(constraint)
     return c
 
@@ -5805,8 +5814,15 @@ cdef class Constraint(object):
 
     cdef PPL_Constraint *thisptr
 
+    def __init__(self, arg=None):
+        if arg is None:
+            self.thisptr = new PPL_Constraint()
+        elif isinstance(arg, Constraint):
+            self.thisptr = new PPL_Constraint((<Constraint> arg).thisptr[0])
+        else:
+            raise TypeError("invalid argument for Constraint")
 
-    def __cinit__(self, do_not_construct_manually=False):
+    def __cinit__(self):
         """
         The Cython constructor.
 
@@ -5819,7 +5835,6 @@ cdef class Constraint(object):
             sage: x>0   # indirect doctest
             x0>0
         """
-        assert(do_not_construct_manually)
         self.thisptr = NULL
 
 
@@ -6335,8 +6350,7 @@ cdef _wrap_Constraint_System(PPL_Constraint_System constraint_system):
     """
     Wrap a C++ ``PPL_Constraint_System`` into a Cython ``Constraint_System``.
     """
-    cdef Constraint_System cs = Constraint_System()
-    del cs.thisptr
+    cdef Constraint_System cs = Constraint_System.__new__(Constraint_System)
     cs.thisptr = new PPL_Constraint_System(constraint_system)
     return cs
 
@@ -6367,18 +6381,7 @@ cdef class Constraint_System(object):
     cdef PPL_Constraint_System *thisptr
 
 
-    def __cinit__(self, arg=None):
-        """
-        The Cython constructor.
-
-        See :class:`Constraint_System` for documentation.
-
-        TESTS::
-
-            sage: from sage.libs.ppl import Constraint_System
-            sage: Constraint_System()
-            Constraint_System {}
-        """
+    def __init__(self, arg=None):
         if arg is None:
             self.thisptr = new PPL_Constraint_System()
             return
@@ -6397,6 +6400,19 @@ cdef class Constraint_System(object):
             return
         raise ValueError('Cannot initialize with '+str(arg)+'.')
 
+    def __cinit__(self, arg=None):
+        """
+        The Cython constructor.
+
+        See :class:`Constraint_System` for documentation.
+
+        Tests:
+
+        >>> from ppl import Constraint_System
+        >>> Constraint_System()
+        Constraint_System {}
+        """
+        self.thisptr = NULL
 
     def __dealloc__(self):
         """

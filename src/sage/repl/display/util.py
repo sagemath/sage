@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Utility functions for pretty-printing 
+Utility functions for pretty-printing
 
 These utility functions are used in the implementations of ``_repr_``
 methods elsewhere.
@@ -15,7 +15,6 @@ methods elsewhere.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 
 class TallListFormatter(object):

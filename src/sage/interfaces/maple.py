@@ -244,6 +244,8 @@ from sage.env import DOT_SAGE
 from sage.misc.pager import pager
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
+
 
 COMMANDS_CACHE = '%s/maple_commandlist_cache.sobj' % DOT_SAGE
 
@@ -947,7 +949,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         """
         return int(maple.eval('StringTools:-Hash(convert(%s, string))'%self.name())[1:-1],16)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare equality between self and other, using maple.
 
@@ -1001,32 +1003,27 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         P = self.parent()
         if P.eval("evalb(%s %s %s)" % (self.name(), P._equality_symbol(),
                                        other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         # Maple does not allow comparing objects of different types and
         # it raises an error in this case.
         # We catch the error, and return True for <
         try:
             if P.eval("evalb(%s %s %s)" % (self.name(), P._lessthan_symbol(),
                                            other.name())) == P._true_symbol():
-                return -1
+                return rich_to_bool(op, -1)
         except RuntimeError as e:
             msg = str(e)
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
-                    return -1
+                    return rich_to_bool(op, -1)
                 else:
-                    return 1
+                    return rich_to_bool(op, 1)
             else:
                 raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)" % (self.name(), P._greaterthan_symbol(),
                                        other.name())) == P._true_symbol():
-            return 1
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparable in interfaced system.
-        if (hash(self) < hash(other)):
-            return -1
-        else:
-            return 1
+            return rich_to_bool(op, 1)
+        return NotImplemented
 
     def _mul_(self, right):
         """

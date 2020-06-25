@@ -63,7 +63,7 @@ cdef extern from *:
     int likely(int) nogil  # Defined by Cython
 
 import os
-from six.moves import cPickle as pickle
+import pickle
 import inspect
 from . import sageinspect
 
@@ -380,9 +380,8 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: import six
             sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: six.text_type(lazy_ZZ)
+            sage: str(lazy_ZZ)
             u'Integer Ring'
         """
         return unicode(self.get_object())

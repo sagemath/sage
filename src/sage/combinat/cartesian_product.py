@@ -17,94 +17,13 @@ Cartesian Products
 # ****************************************************************************
 from __future__ import absolute_import
 
-from six.moves import range
-
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.sets.set_from_iterator import EnumeratedSetFromIterator
 
-from inspect import isgenerator
 import sage.misc.prandom as rnd
 from sage.misc.mrange import xmrange_iter, _is_finite, _len
 from .ranker import unrank
 from sage.rings.infinity import infinity
-
-
-def CartesianProduct(*iters):
-    """
-    This is deprecated. Use :obj:`cartesian_product` instead.
-
-    EXAMPLES::
-
-        sage: cp = CartesianProduct([1,2], [3,4]); cp
-        doctest:...: DeprecationWarning: CartesianProduct is deprecated. Use
-        cartesian_product instead
-        See http://trac.sagemath.org/18411 for details.
-        The Cartesian product of ({1, 2}, {3, 4})
-        sage: cp.list()
-        [(1, 3), (1, 4), (2, 3), (2, 4)]
-
-    Note that you must not use a generator-type object that is
-    returned by a function (using "yield"). They cannot be copied or
-    rewound (you cannot jump back to the beginning), but this is
-    necessary to construct the Cartesian product::
-
-        sage: def a(n): yield 1*n; yield 2*n
-        sage: def b(): yield 'a'; yield 'b'
-        sage: CartesianProduct(a(3), b()).list()
-        Traceback (most recent call last):
-        ...
-        ValueError: generators are not allowed, see the
-        documentation (type "CartesianProduct?") for a workaround
-
-    The usage of iterable is also deprecated, so the following will no longer be
-    supported::
-
-        sage: from sage.combinat.misc import IterableFunctionCall
-        sage: C = CartesianProduct(IterableFunctionCall(a, 3), IterableFunctionCall(b))
-        doctest:...: DeprecationWarning: Usage of IterableFunctionCall in
-        CartesianProduct is deprecated. You can use EnumeratedSetFromIterator
-        (in sage.sets.set_from_iterator) instead.
-        See http://trac.sagemath.org/18411 for details.
-        sage: list(C)
-        doctest:...: UserWarning: Sage is not able to determine whether the
-        factors of this Cartesian product are finite. The lexicographic ordering
-        might not go through all elements.
-        [(3, 'a'), (3, 'b'), (6, 'a'), (6, 'b')]
-
-    You might use
-    :class:`~sage.sets.set_from_iterator.EnumeratedSetFromIterator` for that
-    purpose.::
-
-        sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-        sage: A = EnumeratedSetFromIterator(a, (3,), category=FiniteEnumeratedSets())
-        sage: B = EnumeratedSetFromIterator(b, category=FiniteEnumeratedSets())
-        sage: C = cartesian_product([A, B])
-        sage: C.list()
-        [(3, 'a'), (3, 'b'), (6, 'a'), (6, 'b')]
-    """
-    if any(isgenerator(i) for i in iters):
-        raise ValueError('generators are not allowed, see the documentation '+
-                         '(type "CartesianProduct?") for a workaround')
-
-    from sage.misc.superseded import deprecation
-    deprecation(18411, "CartesianProduct is deprecated. Use cartesian_product instead")
-
-    from sage.combinat.misc import IterableFunctionCall
-    deprecate_ifc = False
-    iiters = []
-    for a in iters:
-        if isinstance(a, IterableFunctionCall):
-            deprecate_ifc = True
-            iiters.append(EnumeratedSetFromIterator(a.f, a.args, a.kwargs))
-        else:
-            iiters.append(a)
-    iters = tuple(iiters)
-
-    if deprecate_ifc:
-        deprecation(18411, """Usage of IterableFunctionCall in CartesianProduct is deprecated. You can use EnumeratedSetFromIterator (in sage.sets.set_from_iterator) instead.""")
-
-    from sage.categories.cartesian_product import cartesian_product
-    return cartesian_product(iters)
 
 
 class CartesianProduct_iters(EnumeratedSetFromIterator):

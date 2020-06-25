@@ -1554,6 +1554,10 @@ class LocalGeneric(CommutativeRing):
             True
             sage: A.change_ring(QQ).det() == A.det()
             True
+            sage: matrix(Qp(37),[0]).determinant()
+            0
+            sage: matrix(Qp(37),[O(37)]).determinant()
+            O(37)
         """
         n = M.nrows()
     
@@ -1573,7 +1577,8 @@ class LocalGeneric(CommutativeRing):
         valdet = 0
         val = -Infinity
         for piv in range(n):
-            curval = Infinity
+            pivi = pivj = piv
+            curval = S[pivi, pivj].valuation()
             for i in range(piv,n):
                 for j in range(piv,n):
                     v = S[i,j].valuation()

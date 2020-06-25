@@ -318,9 +318,6 @@ see :trac:`11645`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types, string_types
-from six import reraise as raise_
 
 import io
 import os
@@ -815,7 +812,7 @@ class Singular(ExtraTabCompletion, Expect):
         if hasattr(S, 'an_element'):
             if hasattr(S.an_element(), '_singular_'):
                 return True
-        elif S in integer_types:
+        elif S is int:
             return True
         return None
 
@@ -901,7 +898,7 @@ class Singular(ExtraTabCompletion, Expect):
             x0*x1-x0*x2-x1*x2,
             x0^2*x2-x0*x2^2-x1*x2^2
         """
-        if isinstance(gens, string_types):
+        if isinstance(gens, str):
             gens = self(gens)
 
         if isinstance(gens, SingularElement):
@@ -1049,7 +1046,7 @@ class Singular(ExtraTabCompletion, Expect):
                            for x in vars[1:-1].split(',')])
             self.eval(s)
 
-        if check and isinstance(char, integer_types + (sage.rings.integer.Integer,)):
+        if check and isinstance(char, (int, sage.rings.integer.Integer)):
             if char != 0:
                 n = sage.rings.integer.Integer(char)
                 if not n.is_prime():
@@ -1280,7 +1277,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             # coercion to work properly.
             except SingularError as x:
                 self._session_number = -1
-                raise_(TypeError, TypeError(x), sys.exc_info()[2])
+                raise TypeError(x)
             except BaseException:
                 self._session_number = -1
                 raise
@@ -1678,6 +1675,18 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: P2.0.lift().parent()
             Multivariate Polynomial Ring in x, y over Rational Field
 
+        Test that :trac:`29396` is fixed::
+
+            sage: Rxz.<x,z> = RR[]
+            sage: f = x**3 + x*z + 1
+            sage: f.discriminant(x)
+            -4.00000000000000*z^3 - 27.0000000000000
+            sage: Rx.<x> = RR[]
+            sage: Rx("x + 7.5")._singular_().sage_poly()
+            x + 7.50000
+            sage: Rx("x + 7.5")._singular_().sage_poly(Rx)
+            x + 7.50000000000000
+
         AUTHORS:
 
         - Martin Albrecht (2006-05-18)
@@ -1766,7 +1775,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 exp = dict()
                 monomial = singular_poly_list[i]
 
-                if monomial!="1":
+                if monomial not in ['1', '(1.000e+00)']:
                     variables = [var.split("^") for var in monomial.split("*") ]
                     for e in variables:
                         var = e[0]
@@ -1794,7 +1803,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
                 monomial = singular_poly_list[i]
                 exp = int(0)
 
-                if monomial!="1":
+                if monomial not in ['1', '(1.000e+00)']:
                     term =  monomial.split("^")
                     if len(term)==int(2):
                         exp = int(term[1])

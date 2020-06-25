@@ -115,16 +115,18 @@ from sage.interfaces.all import singular
 from sage.matrix.all import matrix
 from sage.misc.all import add, sage_eval
 
-from sage.rings.all import degree_lowest_rational_function
+from sage.rings.all import degree_lowest_rational_function, IntegerRing
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import (number_field_elements_from_algebraics,
                               QQbar)
 from sage.rings.rational_field import is_RationalField
 from sage.rings.integer import Integer
+
 from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
 
-from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
+from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
+                                                          AlgebraicScheme_subscheme_projective_field)
 
 from .curve import Curve_generic
 
@@ -1481,7 +1483,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         return not self.tangents(P)[0] == C.tangents(P)[0]
 
 
-class ProjectiveCurve_field(ProjectiveCurve):
+class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projective_field):
     """
     Projective curves over fields.
     """
@@ -1556,6 +1558,32 @@ class ProjectiveCurve_field(ProjectiveCurve):
         I = singular.simplify(self.defining_ideal(), 10)
         L = singular.is_ci(I).sage()
         return len(self.ambient_space().gens()) - len(I.sage().gens()) == L[-1]
+
+    def tangent_line(self, p):
+        """
+        Return the tangent line at the point ``p``.
+
+        INPUT:
+
+        - ``p`` -- a rational point of the curve
+
+        EXAMPLES::
+
+            sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
+            sage: C = Curve([x*y - z*w, x^2 - y*w, y^2*w - x*z*w], P)
+            sage: p = C(1,1,1,1)
+            sage: C.tangent_line(p)
+            Projective Curve over Rational Field defined by -2*x + y + w, -3*x + z + 2*w
+
+        """
+        for i in range(len(p)):
+            if p[i]:
+                C = self.affine_patch(i)
+                q = p.dehomogenize(i)
+                T = C.tangent_line(q)
+                return T.projective_closure(i, self.ambient_space())
+
+        raise TypeError("{} does not define a point in the projective space".format(p))
 
 
 class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
@@ -2290,7 +2318,7 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             sage: C._coordinate_functions
             (1, y, z)
         """
-        # homogeneous cooridinate functions
+        # homogeneous coordinate functions
         coords = list(self._open_affine._coordinate_functions)
         coords.insert(self._open_affine_index, self._function_field.one())
         return tuple(coords)
@@ -2306,6 +2334,10 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             sage: C = Curve(y^2*z^7 - x^9 - x*z^8)
             sage: C._singularities
             [(Point (x, z), [Place (1/y, 1/y*z^5 + 4*y*z^4 + 1/y^2*z)])]
+            sage: D = Curve(x)
+            sage: D._singularities
+            []
+
         """
         S = self.ambient_space().coordinate_ring()
         to_F = self._lift_to_function_field
@@ -2316,19 +2348,20 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
         places = []
         for i in range(self.ngens()):
             denom = self._coordinate_functions[i]
-            funcs = []
-            for p in S._first_ngens(i) + sing.defining_polynomials():
-                f = to_F(p)/denom**p.degree()
-                if not f.is_zero():
-                    funcs.append(f)
+            if denom:
+                funcs = []
+                for p in S._first_ngens(i) + sing.defining_polynomials():
+                    f = to_F(p)/denom**p.degree()
+                    if not f.is_zero():
+                        funcs.append(f)
 
-            if funcs:
-                f = funcs.pop()
-                pls = f.zeros()
-                for f in funcs:
-                    pls = [p for p in pls if f.valuation(p) > 0]
+                if funcs:
+                    f = funcs.pop()
+                    pls = f.zeros()
+                    for f in funcs:
+                        pls = [p for p in pls if f.valuation(p) > 0]
 
-                places.extend(pls)
+                    places.extend(pls)
 
         # compute closed points below the places lying on the singular locus,
         # and then collect places lying on each closed points
@@ -2560,6 +2593,79 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             points.append(p)
 
         return points
+
+    @cached_method
+    def L_polynomial(self, name='t'):
+        """
+        Return the L-polynomial of this possibly singular curve.
+
+        INPUT:
+
+        - ``name`` -- (default: ``t``) name of the variable of the polynomial
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(3), 2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+            sage: Cbar = C.projective_closure()
+            sage: Cbar.L_polynomial()
+            9*t^4 - 3*t^3 + t^2 - t + 1
+
+        """
+        F = self.function_field()
+        L = F.L_polynomial()
+
+        R = L.parent()
+        T = R.gen()
+
+        f = R.one()
+        for p, places in self._singularities:
+            for place in places:
+                f = f * (1 - T**place.degree())
+            f = f // (1 - T**p.degree())
+
+        return L * f
+
+    def number_of_rational_points(self, r=1):
+        """
+        Return the number of rational points of the curve with
+        constant field extended by degree ``r``.
+
+        INPUT:
+
+        - ``r`` -- positive integer (default: `1`)
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(3), 2)
+            sage: C = Curve(y^2 - x^5 - x^4 - 2*x^3 - 2*x - 2)
+            sage: Cbar = C.projective_closure()
+            sage: Cbar.number_of_rational_points(3)
+            21
+            sage: D = Cbar.change_ring(Cbar.base_ring().extension(3))
+            sage: D.base_ring()
+            Finite Field in z3 of size 3^3
+            sage: len(D.closed_points())
+            21
+
+        """
+        q = self.base_ring().order()
+        L = self.L_polynomial()
+        Lp = L.derivative()
+
+        R = IntegerRing()[[L.parent().gen()]] # power series ring
+        L = R(L)
+        Lp = R(Lp)
+
+        previous_prec = R.default_prec()
+        R.set_default_prec(r)
+
+        f = Lp / L
+        n = f[r-1] + q**r + 1
+
+        R.set_default_prec(previous_prec)
+
+        return n
 
 
 class IntegralProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_finite_field, IntegralProjectiveCurve_finite_field):

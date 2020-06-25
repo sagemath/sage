@@ -134,7 +134,7 @@ Fix the checksum of a package
 EXAMPLE:
 
     $ sage --package fix-checksum pari
-    Updating checksum of pari-2.8-2044-g89b0f1e.tar.gz
+    Updating checksum of pari (tarball pari-2.8-2044-g89b0f1e.tar.gz)
 """
 
 epilog_create = \
@@ -208,6 +208,9 @@ def make_parser():
         help='Download tarball')
     parser_download.add_argument(
         'package_name', type=str, help='Package name')
+    parser_download.add_argument(
+        '--allow-upstream', action="store_true",
+        help='Whether to fall back to downloading from the upstream URL')
     
     parser_fix_checksum = subparsers.add_parser(
         'fix-checksum', epilog=epilog_fix_checksum,
@@ -230,6 +233,8 @@ def make_parser():
         '--tarball', type=str, default=None, help='Tarball filename pattern, e.g. Foo-VERSION.tar.bz2')
     parser_create.add_argument(
         '--type', type=str, default=None, help='Package type')
+    parser_create.add_argument(
+        '--url', type=str, default=None, help='Download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
 
     return parser
 
@@ -259,9 +264,9 @@ def run():
     elif args.subcommand == 'update':
         app.update(args.package_name, args.new_version, url=args.url)
     elif args.subcommand == 'download':
-        app.download(args.package_name)
+        app.download(args.package_name, args.allow_upstream)
     elif args.subcommand == 'create':
-        app.create(args.package_name, args.version, args.tarball, args.type)
+        app.create(args.package_name, args.version, args.tarball, args.type, args.url)
     elif args.subcommand == 'fix-checksum':
         if args.package_name is None:
             app.fix_all_checksums()

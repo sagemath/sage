@@ -49,8 +49,6 @@ vertex.
    page instead.
 """
 from __future__ import absolute_import
-from six.moves import range
-from six import integer_types
 
 from copy import copy
 from sage.homology.cell_complex import GenericCellComplex
@@ -297,7 +295,7 @@ class DeltaComplex(GenericCellComplex):
                     new_data[dim] = s
                     dim += 1
             elif isinstance(data, dict):
-                if all(isinstance(a, (Integer,) + integer_types) for a in data):
+                if all(isinstance(a, (int, Integer)) for a in data):
                     # a dictionary indexed by integers
                     new_data = data
                     if -1 not in new_data:

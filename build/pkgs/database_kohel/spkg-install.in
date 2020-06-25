@@ -1,0 +1,25 @@
+cd src
+
+TARGET="${SAGE_SHARE}/kohel/"
+rm -rf ${TARGET}
+
+mkdir ${TARGET}
+if [ $? -ne 0 ]
+then
+    echo "Error creating repertory ${TARGET}"
+    exit 1
+fi
+
+mv PolMod ${TARGET}
+if [ $? -ne 0 ]
+then
+    echo "Error moving PolMod to ${TARGET}"
+    exit 1
+fi
+
+mv PolHeeg ${TARGET}
+if [ $? -ne 0 ]
+then
+    echo "Error moving PolHeeg to ${TARGET}"
+    exit 1
+fi

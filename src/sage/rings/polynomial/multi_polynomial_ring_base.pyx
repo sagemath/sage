@@ -95,10 +95,6 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-
-        # Avoid calling __init_extra__ of Algebras(...).parent_class
-        self._no_generic_basering_coercion = True
-
         sage.rings.ring.Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof = True):
@@ -344,6 +340,50 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             Ring in x, z over Rational Field
         """
         return self.remove_var(x)[str(x)]
+
+    def _coerce_map_from_base_ring(self):
+        """
+        Return a coercion map from the base ring of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: R.coerce_map_from(QQ)
+            Polynomial base injection morphism:
+              From: Rational Field
+              To:   Multivariate Polynomial Ring in x, y over Rational Field
+            sage: R.coerce_map_from(ZZ)
+            Composite map:
+              From: Integer Ring
+              To:   Multivariate Polynomial Ring in x, y over Rational Field
+              Defn:   Natural morphism:
+                      From: Integer Ring
+                      To:   Rational Field
+                    then
+                      Polynomial base injection morphism:
+                      From: Rational Field
+                      To:   Multivariate Polynomial Ring in x, y over Rational Field
+
+            sage: A = Zmod(6^12)
+            sage: S.<x,y> = A[]; S
+            Multivariate Polynomial Ring in x, y over Ring of integers modulo 2176782336
+            sage: S.coerce_map_from(A)
+            Polynomial base injection morphism:
+              From: Ring of integers modulo 2176782336
+              To:   Multivariate Polynomial Ring in x, y over Ring of integers modulo 2176782336
+
+            sage: T = PolynomialRing(QQ, []); T
+            Multivariate Polynomial Ring in no variables over Rational Field
+            sage: T.coerce_map_from(QQ)
+            Call morphism:
+              From: Rational Field
+              To:   Multivariate Polynomial Ring in no variables over Rational Field
+        """
+        if self.ngens():
+            from sage.rings.polynomial.polynomial_element import PolynomialBaseringInjection
+            return PolynomialBaseringInjection(self.base_ring(), self)
+        else:
+            return self._generic_coerce_map(self.base_ring())
 
     cdef _coerce_c_impl(self, x):
         """
@@ -1106,8 +1146,8 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         INPUT:
 
         - ``mon_deg_tuple`` -- a list representing a monomial of a degree `d`
-        - ``dlist`` -- a list of degrees `d_i` of the polynomials in question, where
-        `d =  sum(dlist) - len(dlist) + 1`
+        - ``dlist`` -- a list of degrees ``d_i`` of the polynomials in
+          question, where ``d = sum(dlist) - len(dlist) + 1``
 
         OUTPUT:
 

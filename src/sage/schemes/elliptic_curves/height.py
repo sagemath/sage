@@ -27,7 +27,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 from __future__ import print_function
-from six.moves import zip
 
 import numpy
 import math
@@ -1210,7 +1209,7 @@ class EllipticCurveCanonicalHeight:
             ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
         """
         L = self.E.period_lattice(v)
-        w1, w2 = L.basis()
+        w1, w2 = L.basis(prec = v.codomain().prec())
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
@@ -1832,13 +1831,22 @@ class EllipticCurveCanonicalHeight:
         # a chance to prove the lower bound.  We try each in turn,
         # stopping if one gives a True result.
 
+        from sage.rings.number_field.number_field import refine_embedding
         for v in self.K.places():
-            if v(self.K.gen()) in RR:
-                if self.real_intersection_is_empty(Bk, v):
-                    return True
-            else:
-                if self.complex_intersection_is_empty(Bk, v):
-                    return True
+            ok = False
+            while not ok:
+                try:
+                    if v(self.K.gen()) in RR:
+                        if self.real_intersection_is_empty(Bk, v):
+                            return True
+                    else:
+                        if self.complex_intersection_is_empty(Bk, v):
+                            return True
+                    ok = True
+                except ArithmeticError:
+                    v = refine_embedding(v)
+                    if verbose:
+                        print("Refining embedding, codomain now {}".format(v.codomain()))
         return False # Couldn't prove it...
 
     def min_gr(self, tol, n_max, verbose=False):

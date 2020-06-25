@@ -146,8 +146,6 @@ List of (semi)lattice methods
 #
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from six.moves import range
-from six import iteritems
 
 from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.posets import Poset, FinitePoset
@@ -1830,7 +1828,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         for e1 in range(n - 1):
             C = Counter(flatten([H.neighbors_out(e2) for e2 in H.neighbors_out(e1)]))
-            for e3, c in iteritems(C):
+            for e3, c in C.items():
                 if c == 1 and len(H.closed_interval(e1, e3)) == 3:
                     if not certificate:
                         return False

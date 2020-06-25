@@ -210,7 +210,8 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         EXAMPLES::
 
-            sage: a = matrix([[1,10],[3,4]],sparse=True); a
+            sage: R.<x> = ZZ[]
+            sage: a = matrix(R, [[1,10],[3,4]],sparse=True); a
             [ 1 10]
             [ 3  4]
             sage: loads(dumps(a)) == a
@@ -239,7 +240,8 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         EXAMPLES::
 
-            sage: a = matrix([[1,10],[3,4]],sparse=True); a
+            sage: R.<x> = QQ[]
+            sage: a = matrix(R, [[1,10],[3,4]],sparse=True); a
             [ 1 10]
             [ 3  4]
             sage: a+a
@@ -248,7 +250,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
         ::
 
-            sage: a = matrix([[1,10,-5/3],[2/8,3,4]],sparse=True); a
+            sage: a = matrix(R, [[1,10,-5/3],[2/8,3,4]], sparse=True); a
             [   1   10 -5/3]
             [ 1/4    3    4]
             sage: a+a

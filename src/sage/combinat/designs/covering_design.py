@@ -46,7 +46,7 @@ Classes and methods
 # ****************************************************************************
 from __future__ import print_function
 
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject

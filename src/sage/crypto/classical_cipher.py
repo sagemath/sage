@@ -10,7 +10,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement

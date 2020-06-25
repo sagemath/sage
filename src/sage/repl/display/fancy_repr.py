@@ -13,6 +13,7 @@ Representations of objects
 #*****************************************************************************
 
 import types
+from io import StringIO
 
 from IPython.lib.pretty import (
     _safe_getattr, _baseclass_reprs,
@@ -90,7 +91,6 @@ class ObjectReprABC(object):
             'Error: ObjectReprABC.__call__ is abstract'
         """
         from sage.repl.display.pretty_print import SagePrettyPrinter
-        from six import StringIO
         stream = StringIO()
         p = SagePrettyPrinter(stream, 79, '\n')
         ok = self(obj, p, False)

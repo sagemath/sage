@@ -97,12 +97,10 @@ Functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from __future__ import absolute_import
-
-from six import itervalues
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
@@ -917,7 +915,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
         if groundset is None:
             groundset = set()
-            for X in itervalues(CC):
+            for X in CC.values():
                 for Y in X:
                     groundset.update(Y)
 

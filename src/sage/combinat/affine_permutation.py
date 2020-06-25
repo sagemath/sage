@@ -12,8 +12,6 @@ Affine Permutations
 #*****************************************************************************
 from __future__ import print_function, division
 
-from six.moves import range
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.constant_function import ConstantFunction

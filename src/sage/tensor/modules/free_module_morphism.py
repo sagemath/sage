@@ -14,17 +14,15 @@ REFERENCES:
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
 
 """
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from six import itervalues
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.rings.integer import Integer
 from sage.categories.morphism import Morphism
 
@@ -487,7 +485,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             False
         """
         # Some matrix representation is picked at random:
-        matrix_rep = next(itervalues(self._matrices))
+        matrix_rep = next(iter(self._matrices.values()))
         return not matrix_rep.is_zero()
 
     __nonzero__ = __bool__
@@ -914,8 +912,8 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         """
         # Some matrix representation is picked at random:
-        matrix_rep = next(itervalues(self._matrices))
-        return matrix_rep.right_kernel().rank() == 0
+        matrix_rep = next(iter(self._matrices.values()))
+        return not matrix_rep.right_kernel().rank()
 
     def is_surjective(self):
         r"""

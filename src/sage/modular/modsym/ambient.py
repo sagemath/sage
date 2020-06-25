@@ -72,7 +72,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 ################################################################################
-from six.moves import range
 # Sage packages
 import sage.misc.latex as latex
 import sage.misc.misc as misc

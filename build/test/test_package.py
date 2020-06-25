@@ -20,6 +20,8 @@ from sage_bootstrap.tarball import Tarball
 
 class PackageTestCase(unittest.TestCase):
 
+    maxDiff = None
+
     def test_package(self):
         pkg = Package('pari')
         self.assertTrue(pkg.name, 'pari')

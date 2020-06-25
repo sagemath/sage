@@ -161,7 +161,6 @@ Series expansions of confluent hypergeometric functions::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

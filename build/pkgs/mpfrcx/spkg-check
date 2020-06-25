@@ -1,7 +1,0 @@
-cd src
-
-$MAKE check
-if [ $? -ne 0 ]; then
-    echo >&2 "Error checking MPFRCX."
-    exit 1
-fi

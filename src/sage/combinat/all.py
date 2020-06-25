@@ -148,7 +148,6 @@ lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
                          'LabelledRootedTree', 'LabelledRootedTrees'))
 
 from .combination import Combinations
-from .cartesian_product import CartesianProduct
 
 from .set_partition import SetPartition, SetPartitions
 from .set_partition_ordered import OrderedSetPartition, OrderedSetPartitions

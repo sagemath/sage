@@ -15,10 +15,8 @@ Miscellaneous matrix functions
 #
 #  The full text of the GPL is available at:
 #
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
-from six import iteritems
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -59,10 +57,10 @@ def prm_mul(p1, p2, mask_free, prec):
     p = {}
     if not p2:
         return p
-    for exp1, v1 in iteritems(p1):
+    for exp1, v1 in p1.items():
         if v1.is_zero():
             continue
-        for exp2, v2 in iteritems(p2):
+        for exp2, v2 in p2.items():
             if exp1 & exp2:
                 continue
             v = v1 * v2

@@ -163,26 +163,33 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpq_vector* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        cdef list nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
-        for i from 0 <= i < right._nrows:
+        for i in range(right._nrows):
             v = &(right._matrix[i])
-            for j from 0 <= j < right._matrix[i].num_nonzero:
-                nonzero_positions_in_columns[v.positions[j]].add(i)
+            for j in range(v.num_nonzero):
+                (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
+        # pre-computes the list of nonzero columns of right
+        cdef list right_indices
+        right_indices = [j for j in range(right._ncols)
+                         if nonzero_positions_in_columns[j]]
 
         ans = self.new_matrix(self._nrows, right._ncols)
 
         # Now do the multiplication, getting each row completely before filling it in.
+        cdef set c
         cdef mpq_t x, y, s
         mpq_init(x)
         mpq_init(y)
         mpq_init(s)
-        for i from 0 <= i < self._nrows:
-            v = &self._matrix[i]
-            for j from 0 <= j < right._ncols:
+        for i in range(self._nrows):
+            v = &(self._matrix[i])
+            if not v.num_nonzero:
+                continue
+            for j in right_indices:
                 mpq_set_si(s, 0, 1)
-                c = nonzero_positions_in_columns[j]
-                for k from 0 <= k < v.num_nonzero:
+                c = <set> nonzero_positions_in_columns[j]
+                for k in range(v.num_nonzero):
                     if v.positions[k] in c:
                         mpq_vector_get_entry(y, &right._matrix[v.positions[k]], j)
                         mpq_mul(x, v.entries[k], y)

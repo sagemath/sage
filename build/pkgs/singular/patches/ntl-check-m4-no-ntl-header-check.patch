@@ -1,0 +1,26 @@
+diff --git a/m4/ntl-check.m4 b/m4/ntl-check.m4
+index 50af64be6b..ae81557a77 100644
+--- a/m4/ntl-check.m4
++++ b/m4/ntl-check.m4
+@@ -48,7 +48,7 @@ fi
+ 
+ for NTL_HOME in ${NTL_HOME_PATH}
+  do
+-if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
++## if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 
+ 	if test "x$NTL_HOME" != "x/usr"; then
+ 		NTL_CPPFLAGS="-I${NTL_HOME}/include"
+@@ -92,9 +92,9 @@ if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 	unset NTL_CPPFLAGS
+ 	unset NTL_LIBS
+ 	])
+-else
+-	ntl_found="no"
+-fi
++## else
++##	ntl_found="no"
++## fi
+ done
+ 
+ if test "x$ntl_found" = "xyes" ; then

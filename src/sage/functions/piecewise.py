@@ -77,8 +77,6 @@ from sage.sets.real_set import RealSet
 from sage.symbolic.ring import SR
 from sage.rings.infinity import minus_infinity, infinity
 
-from six import get_function_code
-
 
 class PiecewiseFunction(BuiltinFunction):
     def __init__(self):
@@ -149,7 +147,7 @@ class PiecewiseFunction(BuiltinFunction):
             if isinstance(function, FunctionType):
                 if var is None:
                     var = SR.var('x')
-                if get_function_code(function).co_argcount == 0:
+                if function.__code__.co_argcount == 0:
                     function = function()
                 else:
                     function = function(var)

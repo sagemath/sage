@@ -11,8 +11,6 @@ Root system data for super type A
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import iteritems
 
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
@@ -326,7 +324,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             lambdacheck_mc = lambdacheck._monomial_coefficients
 
             result = self.parent().base_ring().zero()
-            for t,c in iteritems(lambdacheck_mc):
+            for t,c in lambdacheck_mc.items():
                 if t not in self_mc:
                     continue
                 if t > 0:
@@ -375,7 +373,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             dep = V.linear_dependence([self._vector_()] +
                                       [al[i]._vector_() for i in P.index_set()])[0]
             I = P.index_set()
-            return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].iteritems())
+            return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].items())
 
         def has_descent(self, i, positive=False):
             """

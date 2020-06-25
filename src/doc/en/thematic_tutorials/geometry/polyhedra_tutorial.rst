@@ -166,6 +166,13 @@ The following example demonstrates the limitations of :code:`RDF`.
     sage: D
     A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3 defined as the convex hull of 20 vertices
     sage: D_RDF = Polyhedron(vertices = [n(v.vector(),digits=6) for v in D.vertices()], base_ring=RDF)
+    doctest:warning
+    ...
+    UserWarning: This polyhedron data is numerically complicated; cdd
+    could not convert between the inexact V and H representation
+    without loss of data. The resulting object might show
+    inconsistencies.
+    sage: D_RDF = Polyhedron(vertices = sorted([n(v.vector(),digits=6) for v in D.vertices()]), base_ring=RDF)
     Traceback (most recent call last):
     ...
     ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.

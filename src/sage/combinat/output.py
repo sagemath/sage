@@ -13,8 +13,6 @@ AUTHORS:
 
 from __future__ import absolute_import, print_function
 
-from six.moves import range
-
 from string import Template
 from sage.combinat.tableau import Tableaux
 

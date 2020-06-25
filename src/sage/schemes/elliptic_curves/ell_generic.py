@@ -44,7 +44,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six import integer_types
 
 import math
 
@@ -922,7 +921,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:     E = EllipticCurve([2, 3])
             ....:     p = E(3, 6, 1)
             ....:     return p
-            ....:
             sage: p = compute_E()
             sage: 2*p
             (-23/144 : 2827/1728 : 1)
@@ -1440,7 +1438,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2 + u*x*y + 3*u^3*y = x^3 + 2*u^2*x^2 + 4*u^4*x + 5*u^6 over Fraction Field of Univariate Polynomial Ring in u over Rational Field
 
         """
-        if isinstance(u, integer_types):
+        if isinstance(u, int):
             u = self.base_ring()(u)     # because otherwise 1/u would round!
         return self.change_weierstrass_model(1/u, 0, 0, 0)
 

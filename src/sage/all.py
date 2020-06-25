@@ -57,12 +57,6 @@ Check lazy import of ``interacts``::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# Future statements which apply to this module. We delete the
-# future globals because we do not want these to appear in the sage.all
-# namespace. This deleting does not affect the parsing of this module.
-from __future__ import absolute_import, division, print_function
-del absolute_import, division, print_function
-
 import os
 import sys
 import operator
@@ -79,7 +73,8 @@ if __with_pydebug:
     warnings.filterwarnings('ignore', category=ImportWarning)
     warnings.filterwarnings('ignore', category=ResourceWarning)
 else:
-    warnings.filters.remove(('ignore', None, DeprecationWarning, None, 0))
+    deprecationWarning = ('ignore', None, DeprecationWarning, None, 0)
+    if deprecationWarning in warnings.filters: warnings.filters.remove(deprecationWarning)
 
 # The psutil swap_memory() function tries to collect some statistics
 # that may not be available and that we don't need. Hide the warnings
@@ -91,7 +86,7 @@ warnings.filterwarnings('ignore', category=RuntimeWarning,
 
 # Ignore all deprecations from IPython etc.
 warnings.filterwarnings('ignore', category=DeprecationWarning,
-    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic)')
+    module='.*(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic|jedi)')
 # Ignore collections.abc warnings, there are a lot of them but they are
 # harmless.
 warnings.filterwarnings('ignore', category=DeprecationWarning,
@@ -207,13 +202,8 @@ from sage.manifolds.all import *
 from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import notebook functions and interacts (#15335)
-lazy_import('sagenb.notebook.notebook_object', 'notebook')
-lazy_import('sagenb.notebook.notebook_object', 'inotebook')
-lazy_import('sagenb.notebook.sage_email', 'email')
 lazy_import('sage.interacts.debugger', 'debug')
 lazy_import('sage.interacts', 'all', 'interacts')
-# interact decorator from SageNB (will be overridden by Jupyter)
-lazy_import('sagenb.notebook.interact', 'interact')
 
 from copy import copy, deepcopy
 

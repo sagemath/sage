@@ -24,8 +24,6 @@ EXAMPLES::
 
 import sys
 
-import six
-
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
 
@@ -300,10 +298,7 @@ class BackendDoctest(BackendBase):
             assert data[4:8] == b'ftyp'
             assert data.startswith(b'\0\0\0')
             # See http://www.ftyps.com/
-            if six.PY2:
-                ftyps = [data[i:i+4] for i in range(8, ord(data[3]), 4)]
-            else:
-                ftyps = [data[i:i+4] for i in range(8, data[3], 4)]
+            ftyps = [data[i:i+4] for i in range(8, data[3], 4)]
             del ftyps[1] # version number, not an ftyp
             expected = [b'avc1', b'iso2', b'mp41', b'mp42']
             assert any(i in ftyps for i in expected)

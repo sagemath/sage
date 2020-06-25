@@ -83,11 +83,12 @@ else:
 
 keep_going = False
 
-# search for dependencies and add to gcc -I<path>
+# Search for dependencies in the source tree and add to gcc -I<path>
 include_dirs = sage_include_directories(use_sources=True)
 
-# Look for libraries in $SAGE_LOCAL/lib
-library_dirs = [os.path.join(SAGE_LOCAL, "lib")]
+# Look for libraries only in what is configured already through distutils
+# and environment variables
+library_dirs = []
 
 # Manually add -fno-strict-aliasing, which is needed to compile Cython
 # and disappears from the default flags if the user has set CFLAGS.
@@ -836,6 +837,16 @@ class sage_install(install):
         # Construct the complete module name from this.
         py_modules = ["{0}.{1}".format(*m) for m in py_modules]
 
+        # Determine all files of package data and Cythonized package files
+        # example of entries of cmd_build_cython.get_cythonized_package_files():
+        #   ('sage/media', ['./sage/media/channels.pyx'])
+        data_files = cmd_build_cython.get_cythonized_package_files()
+        # examples of entries of build_py.data_files:
+        #   ('sage.libs.gap', 'sage/libs/gap', 'build/lib.macosx-10.9-x86_64-3.7/sage/libs/gap', ['sage.gaprc'])
+        #   ('sage', 'sage', 'build/lib.macosx-10.9-x86_64-3.7/sage', ['ext_data/nodoctest.py', 'ext_data/kenzo/S4.txt', ...])
+        nobase_data_files = [(src_dir, [os.path.join(src_dir, filename) for filename in filenames])
+                             for package, src_dir, build_dir, filenames in cmd_build_py.data_files]
+
         # Clean install directory (usually, purelib and platlib are the same)
         # and build directory.
         output_dirs = [self.install_purelib, self.install_platlib, self.build_lib]
@@ -846,8 +857,8 @@ class sage_install(install):
                     dist.packages,
                     py_modules,
                     dist.ext_modules,
-                    cmd_build_cython.get_cythonized_package_files())
-
+                    data_files,
+                    nobase_data_files)
 
 #########################################################
 ### Distutils
@@ -863,6 +874,31 @@ code = setup(name = 'sage',
       packages    = python_packages,
       package_data = {
           'sage.libs.gap': ['sage.gaprc'],
+          'sage.doctest':  ['tests/*'],
+          'sage': ['ext_data/*',
+                   'ext_data/kenzo/*',
+                   'ext_data/singular/*',
+                   'ext_data/singular/function_field/*',
+                   'ext_data/images/*',
+                   'ext_data/doctest/*',
+                   'ext_data/doctest/invalid/*',
+                   'ext_data/doctest/rich_output/*',
+                   'ext_data/doctest/rich_output/example_wavefront/*',
+                   'ext_data/gap/*',
+                   'ext_data/gap/joyner/*',
+                   'ext_data/mwrank/*',
+                   'ext_data/notebook-ipython/*',
+                   'ext_data/nbconvert/*',
+                   'ext_data/graphs/*',
+                   'ext_data/pari/*',
+                   'ext_data/pari/dokchitser/*',
+                   'ext_data/pari/buzzard/*',
+                   'ext_data/pari/simon/*',
+                   'ext_data/magma/*',
+                   'ext_data/magma/latex/*',
+                   'ext_data/magma/sage/*',
+                   'ext_data/valgrind/*',
+                   'ext_data/threejs/*']
       },
       cmdclass = dict(build=sage_build,
                       build_cython=sage_build_cython,

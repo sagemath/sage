@@ -504,7 +504,6 @@ class SearchForest(Parent):
             sage: from sage.combinat.backtrack import SearchForest
             sage: def children(l):
             ....:      return [l+[0], l+[1]]
-            ....:
             sage: C = SearchForest(([],), children)
             sage: f = C.__iter__()
             sage: next(f)

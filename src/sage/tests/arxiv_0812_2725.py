@@ -35,7 +35,6 @@ points since they cannot create any sort of crossing. ::
 #
 # See http://www.gnu.org/licenses/.
 #*****************************************************************************
-from six.moves import range
 from sage.combinat.set_partition import SetPartitions as SetPartitions
 
 

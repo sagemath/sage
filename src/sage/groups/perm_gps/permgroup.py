@@ -136,8 +136,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
-from six import integer_types
 
 from functools import wraps
 
@@ -158,7 +156,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.all import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
 from sage.structure.richcmp import (richcmp_method,
-                                    richcmp, rich_to_bool, op_EQ)
+                                    richcmp, rich_to_bool, op_EQ, op_NE)
 
 
 def load_hap():
@@ -450,7 +448,7 @@ class PermutationGroup_generic(FiniteGroup):
             #Here we need to check if all of the points are integers
             #to make the domain contain all integers up to the max.
             #This is needed for backward compatibility
-            if all(isinstance(p, (Integer,) + integer_types) for p in domain):
+            if all(isinstance(p, (int, Integer)) for p in domain):
                 domain = list(range(min([1] + domain), max([1] + domain)+1))
 
         if domain not in FiniteEnumeratedSets():
@@ -692,6 +690,18 @@ class PermutationGroup_generic(FiniteGroup):
             True
             sage: H3 < H1 # since H3 is a subgroup of H1
             True
+
+        TESTS:
+
+        Check that :trac:`29624` is fixed::
+
+            sage: G = SymmetricGroup(2)
+            sage: H = PermutationGroup([(1,2)])
+            sage: not G == H
+            False
+            sage: G != H
+            False
+
         """
         if not isinstance(right, PermutationGroup_generic):
             return NotImplemented
@@ -701,7 +711,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         gSelf = self._libgap_()
         gRight = right._libgap_()
-        if op == op_EQ:
+        if op in [op_EQ,op_NE]:
             return gSelf._richcmp_(gRight, op)
 
         if gSelf.IsSubgroup(gRight):
@@ -775,7 +785,7 @@ class PermutationGroup_generic(FiniteGroup):
             ....:         if elt in G2:
             ....:             assert G1(G2(elt)) == elt
         """
-        if isinstance(x, integer_types + (Integer,)) and x == 1:
+        if isinstance(x, (int, Integer)) and x == 1:
             return self.identity()
 
         if isinstance(x, PermutationGroupElement):
@@ -4671,6 +4681,28 @@ class PermutationGroup_generic(FiniteGroup):
         return [self.subgroup(gap_group=group) for group in UCS]
 
     from sage.groups.generic import structure_description
+    def sign_representation(self, base_ring=None, side="twosided"):
+        r"""
+        Return the sign representation of ``self`` over ``base_ring``.
+
+        INPUT:
+
+        - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
+        - ``side`` -- ignored
+
+        EXAMPLES::
+
+            sage: G = groups.permutation.Dihedral(4)
+            sage: G.sign_representation()
+            Sign representation of Dihedral group of order 8
+             as a permutation group over Integer Ring
+        """
+        if base_ring is None:
+            from sage.rings.all import ZZ
+            base_ring = ZZ
+        from sage.modules.with_basis.representation import SignRepresentationPermgroup
+        return SignRepresentationPermgroup(self, base_ring)
+
 
 
 class PermutationGroup_subgroup(PermutationGroup_generic):

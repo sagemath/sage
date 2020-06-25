@@ -67,9 +67,6 @@ from sage.misc.unknown import Unknown
 from sage.matrix.matrix_space import MatrixSpace
 
 
-import six
-
-
 BlockDesign = IncidenceStructure
 
 ###  utility functions  -------------------------------------------------------
@@ -275,7 +272,7 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
             blocks.append(b)
         B = BlockDesign(len(points), blocks, name="ProjectiveGeometryDesign", check=check)
         if point_coordinates:
-            B.relabel({i:p[0] for p,i in six.iteritems(points)})
+            B.relabel({i:p[0] for p,i in points.items()})
 
     elif algorithm == "gap":   # Requires GAP's Design
         from sage.interfaces.gap import gap
@@ -874,7 +871,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     B = BlockDesign(len(points), blocks, name="AffineGeometryDesign", check=check)
 
     if point_coordinates:
-        rd = {i:p[0][1:] for p,i in six.iteritems(points)}
+        rd = {i:p[0][1:] for p,i in points.items()}
         for v in rd.values(): v.set_immutable()
         B.relabel(rd)
 

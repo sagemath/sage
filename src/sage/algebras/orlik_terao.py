@@ -2,7 +2,7 @@ r"""
 Orlik-Terao Algebras
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,13 +10,14 @@ Orlik-Terao Algebras
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.algebras import Algebras
 from sage.matrix.constructor import matrix
 from sage.sets.family import Family
+
 
 class OrlikTeraoAlgebra(CombinatorialFreeModule):
     r"""
@@ -468,8 +469,8 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
                     if coeff:
                         r += mone**ind * R(coeff / lc) * self.subset_image(Si.difference({j}))
                 return r
-        else: # So ``S`` is an NBC set.
-            return self.monomial(S)
+        # So ``S`` is an NBC set.
+        return self.monomial(S)
 
     @cached_method
     def _flat_module(self, F):

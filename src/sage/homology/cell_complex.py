@@ -44,7 +44,6 @@ by developers producing new classes, not casual users.
 #                  http://www.gnu.org/licenses/
 ########################################################################
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ

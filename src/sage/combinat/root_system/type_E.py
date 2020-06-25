@@ -12,8 +12,6 @@ Root system data for type E
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 
-from six.moves import range
-
 from . import ambient_space
 from sage.rings.all import ZZ
 from sage.combinat.family import Family

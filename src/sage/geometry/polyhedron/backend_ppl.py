@@ -3,7 +3,7 @@ The PPL (Parma Polyhedra Library) backend for polyhedral computations
 """
 from __future__ import absolute_import
 
-from sage.rings.all import ZZ, QQ
+from sage.rings.all import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator

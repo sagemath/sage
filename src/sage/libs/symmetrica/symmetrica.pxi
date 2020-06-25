@@ -448,7 +448,7 @@ cdef void late_import():
     import sage.combinat.sf.sf
     SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
 
-    from six.moves import builtins
+    import builtins
     builtinlist = builtins.list
 
     import sage.rings.polynomial.multi_polynomial_ring

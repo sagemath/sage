@@ -150,8 +150,6 @@ Classes and their Methods
 # ****************************************************************************
 from __future__ import print_function
 
-from six import itervalues
-
 from sage.structure.sage_object import SageObject
 
 
@@ -1690,7 +1688,7 @@ class MutablePoset(SageObject):
         self._null_ = other._null_._copy_all_linked_(memo, self, mapping)
         self._oo_ = memo[id(other._oo_)]
         self._shells_ = {f.key: f for f in iter(memo[id(e)] for e in
-                                                itervalues(other._shells_))}
+                                                other._shells_.values())}
 
     def copy(self, mapping=None):
         r"""
@@ -1771,7 +1769,7 @@ class MutablePoset(SageObject):
         """
         if include_special:
             yield self.null
-        for e in itervalues(self._shells_):
+        for e in self._shells_.values():
             yield e
         if include_special:
             yield self.oo

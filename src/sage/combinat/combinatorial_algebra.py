@@ -65,8 +65,6 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import AlgebrasWithBasis
 from sage.structure.element import Element
 
-import six
-
 
 # TODO: migrate this completely to the combinatorial free module + categories framework
 
@@ -299,8 +297,8 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
 
         #Do the case where the user specifies how to multiply basis elements
         if hasattr(self, '_multiply_basis'):
-            for (left_m, left_c) in six.iteritems(left._monomial_coefficients):
-                for (right_m, right_c) in six.iteritems(right._monomial_coefficients):
+            for (left_m, left_c) in left._monomial_coefficients.items():
+                for (right_m, right_c) in right._monomial_coefficients.items():
                     res = self._multiply_basis(left_m, right_m)
                     coeffprod = left_c * right_c
                     #Handle the case where the user returns a dictionary
@@ -313,7 +311,7 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
                         else:
                             z_elt[res] = z_elt.get(res, ABRzero) + coeffprod
                             continue
-                    for m, c in six.iteritems(res):
+                    for m, c in res.items():
                         z_elt[m] = z_elt.get(m, ABRzero) + coeffprod * c
 
         #We assume that the user handles the multiplication correctly on
@@ -332,7 +330,7 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
         BR = self.base_ring()
         zero = BR(0)
         del_list = []
-        for m, c in six.iteritems(z_elt):
+        for m, c in z_elt.items():
             if c == zero:
                 del_list.append(m)
         for m in del_list:

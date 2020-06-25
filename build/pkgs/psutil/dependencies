@@ -1,1 +1,1 @@
-$(PYTHON) | pip
+$(PYTHON) | $(PYTHON_TOOLCHAIN)

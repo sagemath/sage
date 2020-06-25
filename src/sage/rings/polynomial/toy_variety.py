@@ -28,7 +28,7 @@ AUTHORS:
   documentation were stolen shamelessly from Martin Albrecht's
   ``toy_buchberger.py``.
 """
-from six.moves import range
+
 
 
 def is_triangular(B):

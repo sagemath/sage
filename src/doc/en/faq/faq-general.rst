@@ -85,7 +85,7 @@ previous and ongoing work of many authors of included components.
 
 A list of (some) direct contributors can be found on the
 `Sage Development Map <http://www.sagemath.org/development-map.html>`_
-and the history of changes can be found in the high-level
+and the history of changes can be found in the
 `changelogs <http://www.sagemath.org/changelogs/>`_. Refer
 to the
 `acknowledgment page <http://www.sagemath.org/development-ack.html>`_
@@ -204,9 +204,11 @@ functionalities are made possible through FOSS projects such as
   statistical computing and graphics.
 * And many more too numerous to list here.
 
-An up-to-date list can be found on the page for the
-`standard packages repository <http://www.sagemath.org/packages/upstream/>`_.
-The principle programming languages of Sage are
+An up-to-date list can be found in the section
+`External Packages <../reference/spkg/index.html>`_
+in the Sage Reference Manual.
+
+The principal programming languages of Sage are
 `Python <http://www.python.org>`_
 and
 `Cython <http://www.cython.org>`_.
@@ -237,29 +239,22 @@ See http://www.sagemath.org/help.html for a listing of other resources.
 Wouldn't it be way better if Sage did not ship as a gigantic bundle?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-This topic has been discussed over and over again. So before you
-resume the discussion, ensure you have read and understood the
-arguments below. Sage is a distribution of over 90 FOSS packages for
-symbolic, numerical, and scientific computation. In general, the
-combinatorial explosion of configurations to debug is way too
-large. It is next to impossible to find any Linux distribution
-(e.g. Arch, CentOS, Debian, Fedora, Gentoo, Mandriva, Ubuntu) where
-the version numbers of packages that Sage depends on even remotely
-match.
+The SageMath distribution continues to vendor versions of required
+software packages ("SPKGs") that work well together.
 
-The majority of people who contribute to Sage do so in their free
-time. These are people who hold day jobs that are not directly related
-to computer programming or software development. It is next to
-impossible for anyone to track down the correct versions of packages,
-configure and compile them on Linux, Mac OS X, Solaris, or Windows,
-just so that they could start using Sage or start working on their
-first contribution to Sage. While the Sage project aims to be useful
-to as wide an audience as possible, we believe that Sage first needs
-to be as easy as possible to install by anyone with any level of
-computer experience. If you want to help Sage realize this goal,
-please email the
-`sage-devel <http://groups.google.com/group/sage-devel>`_
-mailing list.
+However, in order to reduce compilation times and the size of the Sage
+installation, a development effort ongoing since the 8.x release
+series has made it possible to use many system packages provided by
+the OS distribution (or by the Homebrew or conda-forge distributions)
+instead of building SageMath's own copies.
+
+This so-called "spkg-configure" mechanism runs at the beginning of a
+build from source, during the ``./configure`` phase.
+
+To ensure that SageMath builds and runs correctly on a wide variety of
+systems, we use automated testing.  See the chapter `Portability
+testing <../developer/portability_testing.html>`_ in the Developer's
+Guide for details.
 
 
 With so many bugs in Sage and hundreds of open tickets, why don't you produce a stabilization release?

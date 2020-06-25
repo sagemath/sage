@@ -39,7 +39,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from six.moves import range
 
 from sage.rings.integer import Integer
 from sage.manifolds.differentiable.tensorfield import TensorField
@@ -96,7 +95,9 @@ class PseudoRiemannianMetric(TensorField):
     Standard metric on the sphere `S^2`::
 
         sage: M = Manifold(2, 'S^2', start_index=1)
-        sage: # The two open domains covered by stereographic coordinates (North and South):
+
+    The two open domains covered by stereographic coordinates (North and South)::
+
         sage: U = M.open_subset('U') ; V = M.open_subset('V')
         sage: M.declare_union(U,V)   # S^2 is the union of U and V
         sage: c_xy.<x,y> = U.chart() ; c_uv.<u,v> = V.chart() # stereographic coord
@@ -751,7 +752,9 @@ class PseudoRiemannianMetric(TensorField):
         `\RR^3`::
 
             sage: M = Manifold(3, 'R^3', start_index=1)
-            sage: # Let us use spherical coordinates on R^3:
+
+        Let us use spherical coordinates on `\RR^3`::
+
             sage: U = M.open_subset('U') # the complement of the half-plane (y=0, x>=0)
             sage: c_spher.<r,th,ph> = U.chart(r'r:(0,+oo) th:(0,pi):\theta ph:(0,2*pi):\phi')
             sage: g = U.metric('g')

@@ -2,7 +2,6 @@
 """
 Baxter permutations
 """
-from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent

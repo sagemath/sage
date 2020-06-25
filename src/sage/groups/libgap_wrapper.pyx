@@ -253,6 +253,14 @@ class ParentLibGAP(SageObject):
             sage: G.subgroup(subgroup_gens)
             Subgroup with 8 generators of Matrix group over Rational Field with 48 generators
 
+        TESTS:
+
+        Check that :trac:`19010` is fixed::
+
+            sage: G = WeylGroup(['B',3])
+            sage: H = G.subgroup([G[14], G[17]])
+            sage: all(g*h in G and h*g in G for g in G for h in H)
+            True
         """
         generators = [ g if isinstance(g, GapElement) else self(g).gap()
                        for g in generators ]

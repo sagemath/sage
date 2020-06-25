@@ -15,7 +15,7 @@ The ``codes.encoders`` object may be used to access the encoders that Sage can b
 **Generic encoders**
 
 - :class:`linear_code.LinearCodeGeneratorMatrixEncoder <sage.coding.linear_code.LinearCodeGeneratorMatrixEncoder>`
-- :class:`linear_code.LinearCodeSystematicEncoder <sage.coding.linear_code.LinearCodeSystematicEncoder>`
+- :class:`linear_code_no_metric.LinearCodeSystematicEncoder <sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder>`
 
 **Generalized Reed-Solomon code encoders**
 
@@ -49,8 +49,8 @@ _lazy_import('sage.coding.cyclic_code', ['CyclicCodePolynomialEncoder',
                                          'CyclicCodeVectorEncoder'])
 _lazy_import('sage.coding.extended_code', 'ExtendedCodeExtendedMatrixEncoder')
 _lazy_import('sage.coding.grs_code', ['GRSEvaluationVectorEncoder', 'GRSEvaluationPolynomialEncoder'])
-_lazy_import('sage.coding.linear_code', ['LinearCodeGeneratorMatrixEncoder',
-                                         'LinearCodeSystematicEncoder'])
+_lazy_import('sage.coding.linear_code', 'LinearCodeGeneratorMatrixEncoder')
+_lazy_import('sage.coding.linear_code_no_metric', 'LinearCodeSystematicEncoder')
 _lazy_import('sage.coding.punctured_code', 'PuncturedCodePuncturedMatrixEncoder')
 _lazy_import('sage.coding.reed_muller_code', ['ReedMullerVectorEncoder', 'ReedMullerPolynomialEncoder'])
 _lazy_import('sage.coding.subfield_subcode', 'SubfieldSubcodeParityCheckEncoder')

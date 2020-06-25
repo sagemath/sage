@@ -86,8 +86,7 @@ import bz2
 import os
 import re
 
-# import compatible with py2 and py3
-from six.moves.urllib.request import urlretrieve
+from urllib.request import urlretrieve
 
 from sage.misc.all import verbose
 from sage.env import SAGE_SHARE

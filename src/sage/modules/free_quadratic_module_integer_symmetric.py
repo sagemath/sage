@@ -1419,6 +1419,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
             return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
 
+
 def local_modification(M, G, p, check=True):
     r"""
     Return a local modification of `M` that matches `G` at `p`.
@@ -1466,7 +1467,6 @@ def local_modification(M, G, p, check=True):
 
     # notation
     d = G.inverse().denominator()
-    n = M.rank()
     scale = d.valuation(p)
     d = p**scale
 

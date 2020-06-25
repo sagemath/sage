@@ -2258,6 +2258,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         - ``other`` -- a growth group
 
         EXAMPLES::
+
             sage: from sage.rings.asymptotic.growth_group import ExponentialGrowthGroup, ExponentialNonGrowthGroup
             sage: from sage.groups.misc_gps.argument_groups import RootsOfUnityGroup
             sage: EQ = ExponentialGrowthGroup(QQ, 'n')

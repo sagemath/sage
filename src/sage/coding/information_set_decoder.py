@@ -41,7 +41,6 @@ AUTHORS:
 #******************************************************************************
 # python3
 from __future__ import division, print_function, absolute_import
-from six.moves import range
 
 from sage.all import ZZ, Integer, vector, SageObject, binomial
 from .decoder import Decoder

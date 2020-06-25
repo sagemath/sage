@@ -687,7 +687,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         """
         return FaceIter(self)
 
-    def face_list(self):
+    def face_list(self, render_params=None):
         """
         Return the list of faces.
 
@@ -697,14 +697,28 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: from sage.plot.plot3d.shapes import *
             sage: S = Box(1,2,3)
-            sage: S.face_list()[0]
+            sage: S.face_list(S.default_render_params())[0]
             [(1.0, 2.0, 3.0), (-1.0, 2.0, 3.0), (-1.0, -2.0, 3.0), (1.0, -2.0, 3.0)]
         """
-        points = self.vertex_list()
+        cdef Transformation transform
         cdef Py_ssize_t i, j
+        cdef point_c res
+        if render_params is not None:
+            transform = render_params.transform
+        else:
+            transform = None
+        if transform is None:
+            points = [(self.vs[i].x, self.vs[i].y, self.vs[i].z)
+                      for i in range(self.vcount)]
+        else:
+            points = []
+            for i in range(self.vcount):
+                transform.transform_point_c(&res, self.vs[i])
+                PyList_Append(points, (res.x, res.y, res.z))
+
         return [[points[self._faces[i].vertices[j]]
-                 for j from 0 <= j < self._faces[i].n]
-                for i from 0 <= i < self.fcount]
+                 for j in range(self._faces[i].n)]
+                for i in range(self.fcount)]
 
     def edges(self):
         """
@@ -757,7 +771,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             (0.0, 0.0, 1.0)
         """
         cdef Py_ssize_t i
-        return [(self.vs[i].x, self.vs[i].y, self.vs[i].z) for i from 0 <= i < self.vcount]
+        return [(self.vs[i].x, self.vs[i].y, self.vs[i].z) for i in range(self.vcount)]
 
     def x3d_geometry(self):
         """
@@ -1022,13 +1036,22 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: '"opacity":0.1' in L[-1]
             True
 
+        A test that this works with polygons::
+
+            sage: p = polygon3d([[2,0,0], [0,2,0], [0,0,3]])
+            sage: def f(x,y,z):
+            ....:     return bool(x*x+y*y+z*z<=5)
+            sage: cut = p.add_condition(f,80); cut.face_list()
+            [[(0.575, 0.0, 2.1375),...]
+
         .. TODO::
 
             - Use a dichotomy to search for the place where to cut,
             - Compute the cut only once for each edge.
         """
         index = 0
-        self.triangulate()
+        if hasattr(self, 'triangulate'):
+            self.triangulate()
         local_colored = self.has_local_colors()
         V = self.vertex_list()
         old_index_to_index = {}
@@ -1261,6 +1284,124 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         return json
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the surface suitable for plotting with three.js.
+
+        EXAMPLES:
+
+        A simple triangle::
+
+            sage: G = polygon([(0,0,1), (1,1,1), (2,0,1)])
+            sage: G.threejs_repr(G.default_render_params())
+            [('surface',
+              {'color': '#0000ff',
+               'faces': [[0, 1, 2]],
+               'opacity': 1.0,
+               'vertices': [{'x': 0.0, 'y': 0.0, 'z': 1.0},
+                {'x': 1.0, 'y': 1.0, 'z': 1.0},
+                {'x': 2.0, 'y': 0.0, 'z': 1.0}]})]
+
+        The same but with more options applied::
+
+            sage: G = polygon([(0,0,1), (1,1,1), (2,0,1)], color='red', opacity=0.5,
+            ....:             render_order=2, threejs_flat_shading=True,
+            ....:             single_side=True, mesh=True)
+            sage: G.threejs_repr(G.default_render_params())
+            [('surface',
+              {'color': '#ff0000',
+               'faces': [[0, 1, 2]],
+               'opacity': 0.5,
+               'renderOrder': 2.0,
+               'showMeshGrid': True,
+               'singleSide': True,
+               'useFlatShading': True,
+               'vertices': [{'x': 0.0, 'y': 0.0, 'z': 1.0},
+                {'x': 1.0, 'y': 1.0, 'z': 1.0},
+                {'x': 2.0, 'y': 0.0, 'z': 1.0}]})]
+
+        TESTS:
+
+        Transformations apply to the surface's vertices::
+
+            sage: G = polygon([(0,0,1), (1,1,1), (2,0,1)]).scale(2,1,-1)
+            sage: G.threejs_repr(G.default_render_params())
+            [('surface',
+              {'color': '#0000ff',
+               'faces': [[0, 1, 2]],
+               'opacity': 1.0,
+               'vertices': [{'x': 0.0, 'y': 0.0, 'z': -1.0},
+                {'x': 2.0, 'y': 1.0, 'z': -1.0},
+                {'x': 4.0, 'y': 0.0, 'z': -1.0}]})]
+
+        Per-face colors::
+
+            sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
+            sage: from sage.plot.plot3d.texture import Texture
+            sage: point_list = [(2,0,0),(0,2,0),(0,0,2),(0,1,1),(1,0,1),(1,1,0)]
+            sage: face_list = [[0,4,5],[3,4,5],[2,3,4],[1,3,5]]
+            sage: col = rainbow(10, 'rgbtuple')
+            sage: t_list=[Texture(col[i]) for i in range(10)]
+            sage: S = IndexFaceSet(face_list, point_list, texture_list=t_list)
+            sage: S.threejs_repr(S.default_render_params())
+            [('surface',
+              {'faceColors': ['#ff0000', '#ff9900', '#cbff00', '#33ff00'],
+               'faces': [[0, 4, 5], [3, 4, 5], [2, 3, 4], [1, 3, 5]],
+               'opacity': 1.0,
+               'vertices': [{'x': 2.0, 'y': 0.0, 'z': 0.0},
+                {'x': 0.0, 'y': 2.0, 'z': 0.0},
+                {'x': 0.0, 'y': 0.0, 'z': 2.0},
+                {'x': 0.0, 'y': 1.0, 'z': 1.0},
+                {'x': 1.0, 'y': 0.0, 'z': 1.0},
+                {'x': 1.0, 'y': 1.0, 'z': 0.0}]})]
+
+        """
+        surface = {}
+
+        vertices = []
+        cdef Transformation transform = render_params.transform
+        cdef point_c res
+        for i from 0 <= i < self.vcount:
+            if transform is None:
+                res = self.vs[i]
+            else:
+                transform.transform_point_c(&res, self.vs[i])
+            vertices.append(dict(x=float(res.x), y=float(res.y), z=float(res.z)))
+        surface['vertices'] = vertices
+
+        faces = []
+        cdef face_c face
+        for i from 0 <= i < self.fcount:
+            face = self._faces[i]
+            faces.append([int(face.vertices[j]) for j from 0 <= j < face.n])
+        surface['faces'] = faces
+
+        if self.global_texture:
+            surface['color'] = '#' + str(self.texture.hex_rgb())
+        else:
+            face_colors = []
+            for i from 0 <= i < self.fcount:
+                face = self._faces[i]
+                color = Color(face.color.r, face.color.g, face.color.b)
+                face_colors.append(str(color.html_color()))
+            surface['faceColors'] = face_colors
+
+        surface['opacity'] = float(self._extra_kwds.get('opacity', 1.0))
+
+        if 'render_order' in self._extra_kwds:
+            surface['renderOrder'] = float(self._extra_kwds['render_order'])
+
+        if self._extra_kwds.get('single_side'):
+            surface['singleSide'] = True
+
+        if self._extra_kwds.get('threejs_flat_shading'):
+            surface['useFlatShading'] = True
+
+        if self._extra_kwds.get('mesh'):
+            surface['showMeshGrid'] = True
+
+        return [('surface', surface)]
+
     def obj_repr(self, render_params):
         """
         Return an obj representation for ``self``.
@@ -1374,6 +1515,58 @@ cdef class IndexFaceSet(PrimitiveObject):
         if render_params.dots:
             s += '\npmesh %s dots\n' % name
         return [s]
+
+    def stl_binary_repr(self, render_params):
+        """
+        Return data for STL (STereoLithography) representation of the surface.
+
+        The STL binary representation is a list of binary strings,
+        one for each triangle.
+
+        EXAMPLES::
+
+            sage: G = sphere()
+            sage: data = G.stl_binary_repr(G.default_render_params()); len(data)
+            1368
+        """
+        import struct
+        from sage.modules.free_module import FreeModule
+        RR3 = FreeModule(RDF, 3)
+
+        if hasattr(self, 'triangulate'):
+            self.triangulate()
+        faces = self.face_list(render_params)
+        faces_iter = iter(faces)
+
+        def chopped_faces_iter():
+            for face in faces_iter:
+                n = len(face)
+                if n == 3:
+                    yield face
+                else:
+                    # naive cut into triangles
+                    v = face[-1]
+                    for i in range(n - 2):
+                        yield [v, face[i], face[i + 1]]
+
+        main_data = []
+        for i, j, k in chopped_faces_iter():
+            ij = RR3(j) - RR3(i)
+            ik = RR3(k) - RR3(i)
+            n = ij.cross_product(ik)
+            n = n / n.norm()
+            fill = struct.pack('H', 0)
+            # 50 bytes per facet
+            # 12 times 4 bytes (float) for n, i, j, k
+            fill = b''.join(struct.pack('<f', x) for x in n)
+            fill += b''.join(struct.pack('<f', x) for x in i)
+            fill += b''.join(struct.pack('<f', x) for x in j)
+            fill += b''.join(struct.pack('<f', x) for x in k)
+            # plus 2 more bytes
+            fill += b'00'
+            main_data.append(fill)
+
+        return main_data
 
     def dual(self, **kwds):
         """
@@ -1601,7 +1794,9 @@ cdef class VertexIter:
             raise StopIteration
         else:
             self.i += 1
-            return (self.set.vs[self.i-1].x, self.set.vs[self.i-1].y, self.set.vs[self.i-1].z)
+            return (self.set.vs[self.i-1].x,
+                    self.set.vs[self.i-1].y,
+                    self.set.vs[self.i-1].z)
 
 
 def len3d(v):

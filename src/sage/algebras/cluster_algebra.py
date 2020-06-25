@@ -353,8 +353,6 @@ mutating at the initial seed::
 # ****************************************************************************
 from __future__ import absolute_import
 
-from six.moves import range, map
-
 from copy import copy
 
 from sage.categories.homset import Hom

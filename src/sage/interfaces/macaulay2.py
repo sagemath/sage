@@ -117,7 +117,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six import string_types
 
 import os
 import re
@@ -858,7 +857,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
             sage: macaulay2._macaulay2_input_ring(R.base_ring(), R.gens(), 'Lex')   # optional - macaulay2
             'sage...[symbol x, MonomialSize=>16, MonomialOrder=>Lex]'
         """
-        if not isinstance(base_ring, string_types):
+        if not isinstance(base_ring, str):
             base_ring = self(base_ring).name()
 
         varstr = str(vars)[1:-1].rstrip(',')
@@ -1020,7 +1019,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         """
         if new_name is None:
             return self._name
-        if not isinstance(new_name, string_types):
+        if not isinstance(new_name, str):
             raise TypeError("new_name must be a string")
 
         P = self.parent()

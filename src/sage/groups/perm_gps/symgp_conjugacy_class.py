@@ -6,7 +6,6 @@ AUTHORS:
 - Vincent Delecroix, Travis Scrimshaw (2014-11-23)
 """
 from __future__ import print_function
-from six.moves import range
 
 from sage.groups.conjugacy_classes import ConjugacyClass, ConjugacyClassGAP
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
@@ -295,7 +294,7 @@ def conjugacy_class_iterator(part, S=None):
     r"""
     Return an iterator over the conjugacy class associated to
     the partition ``part``.
-    
+
     The elements are given as a list of tuples, each tuple being a cycle.
 
     INPUT:

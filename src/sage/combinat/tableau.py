@@ -85,8 +85,6 @@ For display options, see :meth:`Tableaux.options`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range, zip, map
-from six import add_metaclass, text_type
 
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
@@ -117,8 +115,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.posets.posets import Poset
 
 @richcmp_method
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class Tableau(ClonableList):
+class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     """
     A class to model a tableau.
 
@@ -605,7 +602,7 @@ class Tableau(ClonableList):
         if use_unicode:
             # Special handling of overline not adding to printed length
             def get_len(e):
-                return len(e) - list(text_type(e)).count(u"\u0304")
+                return len(e) - list(str(e)).count(u"\u0304")
         else:
             get_len = len
         for row in str_tab:
@@ -2463,8 +2460,7 @@ class Tableau(ClonableList):
             return SemistandardTableau(new_t), to_move
         return Tableau(new_t), to_move
 
-
-    def bump_multiply(left, right):
+    def bump_multiply(self, other):
         """
         Multiply two tableaux using Schensted's bump.
 
@@ -2482,18 +2478,18 @@ class Tableau(ClonableList):
             sage: t.bump_multiply(t2)
             [[1, 1, 2, 2, 3], [2, 2, 3, 5], [3, 4, 5], [4, 6, 6], [5]]
         """
-        if not isinstance(right, Tableau):
-            raise TypeError("right must be a Tableau")
+        if not isinstance(other, Tableau):
+            raise TypeError("other must be a Tableau")
 
-        row = len(right)
-        product = Tableau([list(a) for a in left])   # create deep copy of left
-        while row > 0:
+        row = len(other)
+        product = Tableau([list(a) for a in self])  # create deep copy of self
+        while row:
             row -= 1
-            for i in right[row]:
+            for i in other[row]:
                 product = product.bump(i)
         return product
 
-    def slide_multiply(left, right):
+    def slide_multiply(self, other):
         """
         Multiply two tableaux using jeu de taquin.
 
@@ -2513,14 +2509,14 @@ class Tableau(ClonableList):
             [[1, 1, 2, 2, 3], [2, 2, 3, 5], [3, 4, 5], [4, 6, 6], [5]]
         """
         st = []
-        if len(left) == 0:
-            return right
+        if len(self) == 0:
+            return other
         else:
-            l = len(left[0])
+            l = len(self[0])
 
-        for row in right:
+        for row in other:
             st.append((None,)*l + row)
-        for row in left:
+        for row in self:
             st.append(row)
 
         from sage.combinat.skew_tableau import SkewTableau
@@ -6501,9 +6497,9 @@ class SemistandardTableaux_size(SemistandardTableaux):
         from sage.rings.all import ZZ
         from sage.matrix.constructor import diagonal_matrix
         from sage.combinat.rsk import RSK
-        kchoose2m1 = self.max_entry * (self.max_entry - 1) / 2 - 1
+        kchoose2m1 = self.max_entry * (self.max_entry - 1) // 2 - 1
         km1 = self.max_entry - 1
-        weights = [binomial(self.size - i + km1, km1) * binomial((i/2) + kchoose2m1, kchoose2m1)
+        weights = [binomial(self.size - i + km1, km1) * binomial((i//2) + kchoose2m1, kchoose2m1)
                    for i in range(0, self.size + 1, 2)]
         randpos = ZZ.random_element(sum(weights))
         tot = weights[0]

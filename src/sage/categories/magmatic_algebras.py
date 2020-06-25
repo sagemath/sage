@@ -19,8 +19,6 @@ from sage.categories.magmas import Magmas
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.modules import Modules
 
-import six
-
 
 class MagmaticAlgebras(Category_over_base_ring):
     """
@@ -142,7 +140,7 @@ class MagmaticAlgebras(Category_over_base_ring):
                     sage: P.algebra_generators()
                     Lazy family (Term map from Partition diagrams of order 1 to
                      Partition Algebra of rank 1 with parameter x over Univariate Polynomial Ring in x
-                     over Integer Ring(i))_{i in Partition diagrams of order 1} 
+                     over Integer Ring(i))_{i in Partition diagrams of order 1}
                 """
                 return self.basis()
 
@@ -217,9 +215,9 @@ class MagmaticAlgebras(Category_over_base_ring):
                     B[word: aba] - B[word: abb] + 2*B[word: ca] - 2*B[word: cb]
 
                 """
-                return self.linear_combination( ( self.product_on_basis( mon_left, mon_right ), coeff_left * coeff_right )
-                                                  for ( mon_left, coeff_left ) in six.iteritems(left.monomial_coefficients())
-                                                  for ( mon_right, coeff_right ) in six.iteritems(right.monomial_coefficients()) )
+                return self.linear_combination((self.product_on_basis(mon_left, mon_right), coeff_left * coeff_right )
+                                                for (mon_left, coeff_left) in left.monomial_coefficients().items()
+                                                for (mon_right, coeff_right) in right.monomial_coefficients().items() )
 
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             class ParentMethods:

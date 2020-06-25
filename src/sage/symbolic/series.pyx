@@ -115,15 +115,15 @@ Check that :trac:`22733` is fixed::
     (z)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Ralf Stephan <ralf@ark.in-berlin.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.libs.pynac.pynac cimport *
 from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
@@ -140,20 +140,6 @@ cdef class SymbolicSeries(Expression):
         """
         Expression.__init__(self, SR, 0)
         self._parent = SR
-
-    def is_series(self):
-        """
-        TESTS::
-
-            sage: ex = sin(x).series(x,5)
-            sage: ex.is_series()
-            doctest:...: DeprecationWarning: ex.is_series() is deprecated. Use isinstance(ex, sage.symbolic.series.SymbolicSeries) instead
-            See http://trac.sagemath.org/17659 for details.
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17659, "ex.is_series() is deprecated. Use isinstance(ex, sage.symbolic.series.SymbolicSeries) instead")
-        return True
 
     def is_terminating_series(self):
         """

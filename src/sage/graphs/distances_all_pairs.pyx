@@ -134,6 +134,7 @@ from sage.ext.memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    init_short_digraph,
+                                                   init_reverse,
                                                    free_short_digraph,
                                                    out_degree,
                                                    simple_BFS)
@@ -982,6 +983,120 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
     return LB
 
 
+cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
+                                        short_digraph rev_g,
+                                        uint32_t source):
+    r"""
+    Lower bound on the diameter of digraph using directed version of 2-sweep.
+
+    This method computes a lower bound on the diameter of an unweighted directed
+    graph using directed version of the 2-sweep algorithm [Broder2000]_.
+    In first part, it performs a forward BFS from `source` and selects a vertex
+    `vf` at a maximum distance from `source` and then it calculates backward
+    eccentricity of `vf` using a backward BFS from `vf`. In second part, it
+    performs backward BFS from `source` and selects a vertex `vb` from which
+    `source` is at maximum distance and then it calculates forward eccentricity
+    of `vb` using a forward BFS from `vb`. It then calculates lower bound LB of
+    diameter as the maximum of backward eccentricity of `vf` and forward
+    eccentricity of `vb` and `s` as respective vertex.
+    This method returns (`LB`, `s`, `m`, `d`), where `LB` is best found lower
+    bound on diameter, `s` is vertex whose forward/backward eccentricity is
+    `LB`, `d` is vertex at a distance `LB` from/to `s`, `m` is vertex at
+    distance `LB/2` from/to both `s` and `d`.
+
+    INPUT:
+
+    - ``g`` -- a short_digraph
+
+    - ``rev_g`` -- a copy of `g` with edges reversed.
+
+    - ``source`` -- starting node of the forward and backward BFS
+
+    TESTS:
+
+    Diameter of weakly connected digraph is infinity ::
+
+        sage: from sage.graphs.distances_all_pairs import diameter
+        sage: G = DiGraph([(0,1)])
+        sage: diameter(G, algorithm='2Dsweep')
+        +Infinity
+    """
+    cdef uint32_t LB_1, LB_2, LB, LB_m, m, s, d
+    cdef uint32_t n = g.n
+    cdef uint32_t source_1 = source
+    cdef uint32_t source_2 = source
+    cdef bitset_t seen_1, seen_2
+
+    # Memory allocation
+    cdef MemoryAllocator mem = MemoryAllocator()
+    bitset_init(seen_1, n)
+    bitset_init(seen_2, n)
+    cdef uint32_t * distances_1 = <uint32_t *>mem.malloc(3 * n * sizeof(uint32_t))
+    cdef uint32_t * distances_2 = <uint32_t *>mem.malloc(3 * n * sizeof(uint32_t))
+    if not distances_1 or not distances_2:
+        bitset_free(seen_1)
+        bitset_free(seen_2)
+        raise MemoryError()
+
+    cdef uint32_t * predecessors_1 = distances_1 + n
+    cdef uint32_t * predecessors_2 = distances_2 + n
+    cdef uint32_t * waiting_list_1 = distances_1 + 2 * n
+    cdef uint32_t * waiting_list_2 = distances_2 + 2 * n
+
+    # we perform forward BFS from source and get its forward eccentricity
+    LB_1 = simple_BFS(g, source_1, distances_1, NULL, waiting_list_1, seen_1)
+
+    # if forward eccentricity of source is infinite, then graph is
+    # not strongly connected and its diameter is infinite
+    if LB_1 == UINT32_MAX:
+        bitset_free(seen_1)
+        bitset_free(seen_2)
+        return (UINT32_MAX, 0, 0, 0)
+
+    # we perform backward BFS from source and get its backward eccentricity
+    LB_2 = simple_BFS(rev_g, source_2, distances_2, NULL, waiting_list_2, seen_2)
+
+    # if backward eccentricity of source is infinite, then graph is
+    # not strongly connected and its diameter is infinite
+    if LB_2 == UINT32_MAX:
+        bitset_free(seen_1)
+        bitset_free(seen_2)
+        return (UINT32_MAX, 0, 0, 0)
+
+    # Then we perform backward BFS from the last visited vertex of forward BFS
+    # from source and obtain its backward eccentricity.
+    source_1 = waiting_list_1[n - 1]
+    LB_1 = simple_BFS(rev_g, source_1, distances_1, predecessors_1, waiting_list_1, seen_1)
+
+    # Then we perform forward BFS from the last visited vertex of backward BFS
+    # from source and obtain its forward eccentricity.
+    source_2 = waiting_list_2[n - 1]
+    LB_2 = simple_BFS(g, source_2, distances_2, predecessors_2, waiting_list_2, seen_2)
+
+    # we select best found lower bound as LB, s and d as source and destination
+    # of that BFS call and m as vertex at a distance LB/2 from/to both s and d
+    if LB_1 < LB_2:
+        LB = LB_2
+        s = waiting_list_2[0]
+        d = waiting_list_2[n - 1]
+        LB_m = LB_2 / 2
+        m = d
+        while distances_2[m] > LB_m:
+            m = predecessors_2[m]
+    else:
+        LB = LB_1
+        s = waiting_list_1[0]
+        d = waiting_list_1[n - 1]
+        LB_m = LB_1 / 2
+        m = d
+        while distances_1[m] > LB_m:
+            m = predecessors_1[m]
+
+    bitset_free(seen_1)
+    bitset_free(seen_2)
+
+    return (LB, s, m, d)
+
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
                                             uint32_t source):
     """
@@ -1148,17 +1263,18 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     return LB
 
 
-def diameter(G, algorithm='iFUB', source=None):
+def diameter(G, algorithm=None, source=None):
     r"""
     Return the diameter of `G`.
 
     This algorithm returns Infinity if the (di)graph is not connected. It can
-    also quickly return a lower bound on the diameter using the ``2sweep`` and
-    ``multi-sweep`` schemes.
+    also quickly return a lower bound on the diameter using the ``2sweep``,
+    ``2Dsweep`` and ``multi-sweep`` schemes.
 
     INPUT:
 
-    - ``algorithm`` -- (default: 'iFUB') specifies the algorithm to use among:
+    - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
+      use among:
 
       - ``'standard'`` -- Computes the diameter of the input (di)graph as the
         largest eccentricity of its vertices. This is the classical algorithm
@@ -1171,6 +1287,10 @@ def diameter(G, algorithm='iFUB', source=None):
         largest distance from `v` is returned as a lower bound on the diameter
         of `G`.  The time complexity of this algorithm is linear in the size of
         `G`.
+
+      - ``'2Dsweep'`` -- Computes lower bound on the diameter of an
+        unweighted directed graph using directed version of ``2sweep`` as
+        proposed in [Broder2000]_.
 
       - ``'multi-sweep'`` -- Computes a lower bound on the diameter of an
         unweighted undirected graph using several iterations of the ``2sweep``
@@ -1210,7 +1330,7 @@ def diameter(G, algorithm='iFUB', source=None):
         by the remark above. The worst case time complexity of the iFUB
         algorithm is `O(nm)`, but it can be very fast in practice.
 
-    - ``source`` -- (default: None) vertex from which to start the first BFS.
+    - ``source`` -- (default: ``None``) vertex from which to start the first BFS.
       If ``source==None``, an arbitrary vertex of the graph is chosen. Raise an
       error if the initial vertex is not in `G`.  This parameter is not used
       when ``algorithm=='standard'``.
@@ -1224,7 +1344,9 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: G = Graph({0: [], 1: [], 2: [1]})
         sage: diameter(G, algorithm='iFUB')
         +Infinity
-
+        sage: G = digraphs.Circuit(6)
+        sage: diameter(G, algorithm='2Dsweep')
+        5
 
     Although max( ) is usually defined as -Infinity, since the diameter will
     never be negative, we define it to be zero::
@@ -1255,22 +1377,27 @@ def diameter(G, algorithm='iFUB', source=None):
         sage: diameter(G, algorithm='iFUB')
         0
     """
-    cdef int n = G.order()
+    cdef uint32_t n = G.order()
     if not n:
         return 0
 
-    if algorithm == 'standard' or G.is_directed():
-        return max(G.eccentricity())
-    elif algorithm is None:
-        algorithm = 'iFUB'
-    elif not algorithm in ['2sweep', 'multi-sweep', 'iFUB']:
-        raise ValueError("unknown algorithm for computing the diameter")
+    if G.is_directed():
+        if algorithm is None:
+            algorithm = 'standard'
+        elif not algorithm in ['2Dsweep', 'standard']:
+            raise ValueError("unknown algorithm for computing the diameter of directed graph")
+    else:
+        if algorithm is None:
+            algorithm = 'iFUB'
+        elif not algorithm in ['2sweep', 'multi-sweep', 'iFUB', 'standard']:
+            raise ValueError("unknown algorithm for computing the diameter of undirected graph")
 
+    if algorithm == 'standard':
+       return max(G.eccentricity())
     if source is None:
         source = next(G.vertex_iterator())
     elif not G.has_vertex(source):
         raise ValueError("the specified source is not a vertex of the input Graph")
-
 
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
@@ -1278,13 +1405,14 @@ def diameter(G, algorithm='iFUB', source=None):
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
     init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    cdef short_digraph rev_sd # to store copy of sd with edges reversed
 
     # and we map the source to an int in [0,n-1] 
     cdef uint32_t isource = 0 if source is None else int_to_vertex.index(source)
 
     cdef bitset_t seen
     cdef uint32_t* tab
-    cdef int LB
+    cdef uint32_t LB
 
     if algorithm == '2sweep':
         # We need to allocate arrays and bitset
@@ -1300,6 +1428,11 @@ def diameter(G, algorithm='iFUB', source=None):
         bitset_free(seen)
         sig_free(tab)
 
+    elif algorithm == '2Dsweep':
+        init_reverse(rev_sd, sd)
+        LB = diameter_lower_bound_2Dsweep(sd, rev_sd, isource)[0]
+        free_short_digraph(rev_sd)
+
     elif algorithm == 'multi-sweep':
         LB = diameter_lower_bound_multi_sweep(sd, isource)[0]
 
@@ -1314,8 +1447,6 @@ def diameter(G, algorithm='iFUB', source=None):
         return +Infinity
     else:
         return int(LB)
-
-
 
 ################
 # Wiener index #

@@ -850,26 +850,73 @@ class SympyConverter(Converter):
             Derivative(f_sage(x, y), (x, 2), y)
             sage: df_sympy == f_sympy.diff(x, 2, y, 1)
             True
+
+        Check that :trac:`28964` is fixed::
+
+            sage: f = function('f')
+            sage: _ = var('x,t')
+            sage: diff(f(x, t), x)._sympy_(), diff(f(x, t), t)._sympy_()
+            (Derivative(f(x, t), x), Derivative(f(x, t), t))
+
+        Check differentiating by variables with multiple occurences
+        (:trac:`28964`)::
+
+            sage: f = function('f')
+            sage: _ = var('x1,x2,x3,x,t')
+            sage: f(x, x, t).diff(x)._sympy_()._sage_()
+            D[0](f)(x, x, t) + D[1](f)(x, x, t)
+
+            sage: g = f(x1, x2, x3, t).diff(x1, 2, x2).subs(x1==x, x2==x, x3==x); g
+            D[0, 0, 1](f)(x, x, x, t)
+            sage: g._sympy_()
+            Subs(Derivative(f(_xi_1, _xi_2, x, t), (_xi_1, 2), _xi_2),
+                 (_xi_1, _xi_2), (x, x))
+            sage: assert g._sympy_()._sage_() == g
+
+        Check that the use of dummy variables does not cause a collision::
+
+            sage: f = function('f')
+            sage: _ = var('x1,x2,x,xi_1')
+            sage: g = f(x1, x2, xi_1).diff(x1).subs(x1==x, x2==x); g
+            D[0](f)(x, x, xi_1)
+            sage: assert g._sympy_()._sage_() == g
         """
         import sympy
 
         # retrieve derivated function
         f = operator.function()
-        f_sympy = self.composition(ex, f)
 
         # retrieve order
         order = operator._parameter_set
         # arguments
-        _args = ex.arguments()
+        _args = [a._sympy_() for a in ex.operands()]
 
+        # when differentiating by a variable that occurs multiple times,
+        # substitute it by a dummy variable
+        subs_new = []
+        subs_old = []
         sympy_arg = []
-        for i, a in enumerate(_args):
-            gg = order.count(i)
-            if gg > 0:
+        for idx in order:
+            a = _args[idx]
+            if _args.count(a) > 1:
+                D = sympy.Dummy('xi_%i' % (idx + 1))
+                # to avoid collisions with ordinary symbols when converting
+                # back to Sage, we pick an unused variable name for the dummy
+                while D._sage_() in ex.variables():
+                    D = sympy.Dummy(D.name + '_0')
+                subs_old.append(a)
+                subs_new.append(D)
+                _args[idx] = D
+                sympy_arg.append(D)
+            else:
                 sympy_arg.append(a)
-                sympy_arg.append(gg)
 
-        return f_sympy.diff(*sympy_arg)
+        f_sympy = f._sympy_()(*_args)
+        result = f_sympy.diff(*sympy_arg)
+        if subs_new:
+            return sympy.Subs(result, subs_new, subs_old)
+        else:
+            return result
 
 
 sympy_converter = SympyConverter()

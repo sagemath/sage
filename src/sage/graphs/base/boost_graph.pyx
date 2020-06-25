@@ -977,19 +977,22 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
             raise ValueError("the graph contains a negative cycle")
 
     elif algorithm in ['Dijkstra', 'Dijkstra_Boost']:
-        if g.is_directed():
-            boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
-            vi = v_to_int[start]
-            sig_on()
-            result = g_boost_dir.dijkstra_shortest_paths(vi)
-            sig_off()
-        else:
-            boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
-            vi = v_to_int[start]
-            sig_on()
-            result = g_boost_und.dijkstra_shortest_paths(vi)
-            sig_off()
-        if not result.distances.size():
+        try:
+            if g.is_directed():
+                boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
+                vi = v_to_int[start]
+                sig_on()
+                result = g_boost_dir.dijkstra_shortest_paths(vi)
+                sig_off()
+            else:
+                boost_weighted_graph_from_sage_graph(&g_boost_und, g, v_to_int, weight_function)
+                vi = v_to_int[start]
+                sig_on()
+                result = g_boost_und.dijkstra_shortest_paths(vi)
+                sig_off()
+            if not result.distances.size():
+                raise RuntimeError("Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead")
+        except RuntimeError:
             raise RuntimeError("Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead")
 
     else:

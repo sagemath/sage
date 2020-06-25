@@ -113,7 +113,6 @@ REFERENCES:
 # ****************************************************************************
 # python3
 from __future__ import division, print_function
-from six.moves import range
 
 from copy import copy
 from sage.misc.cachefunc import cached_method

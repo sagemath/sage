@@ -115,9 +115,18 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         sage: R = ShuffleAlgebra(QQ,'xy')
         sage: R.is_commutative()
         True
+
+    Check for a fix when using numbers as generators::
+
+        sage: A = algebras.Shuffle(QQ,[0,1])
+        sage: A_d = A.dual_pbw_basis()
+        sage: W = A.basis().keys()
+        sage: x = A(W([0,1,0]))
+        sage: A_d(x)
+        -2*S[word: 001] + S[word: 010]
     """
     @staticmethod
-    def __classcall_private__(cls, R, names):
+    def __classcall_private__(cls, R, names, prefix=None):
         """
         Normalize input to ensure a unique representation.
 
@@ -129,9 +138,12 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             sage: F1 is F2 and F1 is F3
             True
         """
-        return super(ShuffleAlgebra, cls).__classcall__(cls, R, Alphabet(names))
+        if prefix is None:
+            prefix = 'B'
+        return super(ShuffleAlgebra, cls).__classcall__(cls, R,
+                                                        Alphabet(names), prefix)
 
-    def __init__(self, R, names):
+    def __init__(self, R, names, prefix):
         r"""
         Initialize ``self``.
 
@@ -147,6 +159,11 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             TypeError: argument R must be a ring
+
+            sage: F = ShuffleAlgebra(QQ, 'xyz', prefix='f'); F
+            Shuffle Algebra on 3 generators ['x', 'y', 'z'] over Rational Field
+            sage: F.gens()
+            Family (f[word: x], f[word: y], f[word: z])
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
@@ -154,7 +171,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         self.__ngens = self._alphabet.cardinality()
         cat = GradedHopfAlgebrasWithBasis(R).Commutative().Connected()
         CombinatorialFreeModule.__init__(self, R, Words(names, infinite=False),
-                                         latex_prefix="",
+                                         latex_prefix="", prefix=prefix,
                                          category=cat)
 
     def variable_names(self):
@@ -371,6 +388,12 @@ class ShuffleAlgebra(CombinatorialFreeModule):
             sage: A = ShuffleAlgebra(QQ, ['x1','x2'])
             sage: A.algebra_generators()
             Family (B[word: x1], B[word: x2])
+
+        TESTS::
+
+            sage: A = ShuffleAlgebra(ZZ,[0,1])
+            sage: A.algebra_generators()
+            Family (B[word: 0], B[word: 1])
         """
         Words = self.basis().keys()
         return Family([self.monomial(Words([a])) for a in self._alphabet])
@@ -757,7 +780,7 @@ class DualPBWBasis(CombinatorialFreeModule):
             (S[word: a], S[word: b])
         """
         W = self.basis().keys()
-        return tuple(self.monomial(W(a)) for a in self._alphabet)
+        return tuple(self.monomial(W([a])) for a in self._alphabet)
 
     gens = algebra_generators
 
@@ -933,7 +956,7 @@ class DualPBWBasis(CombinatorialFreeModule):
             return self._alg.monomial(w)
         if w.is_lyndon():
             W = self.basis().keys()
-            letter = W(w[0])
+            letter = W([w[0]])
             expansion = self.expansion_on_basis(W(w[1:]))
             return self._alg.sum_of_terms((letter * i, c)
                                           for i, c in expansion)

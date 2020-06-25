@@ -31,8 +31,6 @@ mutable version see :func:`DisjointSet`.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import, division
-from six.moves import range
-from six import add_metaclass
 
 from sage.sets.set import Set, Set_generic
 
@@ -58,8 +56,8 @@ from sage.probability.probability_distribution import GeneralDiscreteDistributio
 from sage.sets.disjoint_set import DisjointSet
 from sage.combinat.posets.hasse_diagram import HasseDiagram
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class AbstractSetPartition(ClonableArray):
+class AbstractSetPartition(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Methods of set partitions which are independent of the base set
     """
@@ -478,8 +476,8 @@ class AbstractSetPartition(ClonableArray):
         return max(len(block) for block in self)
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class SetPartition(AbstractSetPartition):
+class SetPartition(AbstractSetPartition,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A partition of a set.
 

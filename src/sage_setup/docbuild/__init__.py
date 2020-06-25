@@ -39,16 +39,17 @@ in a subprocess call to sphinx, see :func:`builder_helper`.
 # ****************************************************************************
 
 from __future__ import absolute_import, print_function
-from six.moves import range
 
 import logging
 import optparse
 import os
+import pickle
 import re
 import shutil
 import subprocess
 import sys
 import time
+import types
 import warnings
 
 logger = logging.getLogger(__name__)
@@ -782,10 +783,9 @@ class ReferenceSubBuilder(DocBuilder):
         filename = self.cache_filename()
         if not os.path.exists(filename):
             return {}
-        from six.moves import cPickle
         with open(self.cache_filename(), 'rb') as file:
             try:
-                cache = cPickle.load(file)
+                cache = pickle.load(file)
             except Exception:
                 logger.debug("Cache file '%s' is corrupted; ignoring it..." % filename)
                 cache = {}
@@ -798,9 +798,8 @@ class ReferenceSubBuilder(DocBuilder):
         Pickle the current reference cache for later retrieval.
         """
         cache = self.get_cache()
-        from six.moves import cPickle
         with open(self.cache_filename(), 'wb') as file:
-            cPickle.dump(cache, file)
+            pickle.dump(cache, file)
         logger.debug("Saved the reference cache: %s", self.cache_filename())
 
     def get_sphinx_environment(self):
@@ -845,8 +844,6 @@ class ReferenceSubBuilder(DocBuilder):
             # env.topickle(env_pickle), which first writes a temporary
             # file.  We adapt sphinx.environment's
             # BuildEnvironment.topickle:
-            from six.moves import cPickle
-            import types
 
             # remove unpicklable attributes
             env.set_warnfunc(None)
@@ -858,7 +855,7 @@ class ReferenceSubBuilder(DocBuilder):
                                                                types.FunctionType,
                                                                type)):
                         del env.config[key]
-                cPickle.dump(env, picklefile, cPickle.HIGHEST_PROTOCOL)
+                pickle.dump(env, picklefile, pickle.HIGHEST_PROTOCOL)
 
             logger.debug("Saved Sphinx environment: %s", env_pickle)
 

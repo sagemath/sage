@@ -46,7 +46,6 @@ You may change default plotting options as follows::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six import iteritems
 
 from copy import copy
 from math import pi
@@ -203,12 +202,12 @@ class ToricPlotter(SageObject):
         extra_options = dict()
         self.extra_options = extra_options
         toric_options = options()
-        for option, value in iteritems(all_options):
+        for option, value in all_options.items():
             if option in toric_options:
                 sd[option] = value
             else:
                 extra_options[option] = value
-        for option, value in iteritems(toric_options):
+        for option, value in toric_options.items():
             if option not in sd:
                 sd[option] = value
         if dimension not in [1, 2, 3]:
@@ -607,7 +606,7 @@ class ToricPlotter(SageObject):
             sage: tp = ToricPlotter(dict(), 2, quadrant.rays())
             sage: tp.plot_walls([quadrant])
             Graphics object consisting of 2 graphics primitives
-            
+
         Let's also check that the truncating polyhedron is functioning
         correctly::
 

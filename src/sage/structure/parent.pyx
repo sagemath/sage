@@ -144,8 +144,8 @@ cdef bint is_Integer(x):
 
 def is_Parent(x):
     """
-    Return True if x is a parent object, i.e., derives from
-    sage.structure.parent.Parent and False otherwise.
+    Return ``True`` if x is a parent object, i.e., derives from
+    sage.structure.parent.Parent and ``False`` otherwise.
 
     EXAMPLES::
 
@@ -1346,7 +1346,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             codomain = im_gens.universe()
         if isinstance(im_gens, Sequence_generic):
             im_gens = list(im_gens)
-        # Not all homsets accept catgory/check/base_map as arguments
+        # Not all homsets accept category/check/base_map as arguments
         kwds = {}
         if check is not None:
             kwds['check'] = check
@@ -1555,6 +1555,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             Traceback (most recent call last):
             ...
             AssertionError: coercion from Univariate Polynomial Ring in b over Integer Ring to Univariate Polynomial Ring in a over Integer Ring already registered or discovered
+
+        TESTS:
+
+        We check that :trac:`29517` has been fixed::
+
+            sage: A.<x> = ZZ[]
+            sage: B.<y> = ZZ[]
+            sage: B.has_coerce_map_from(A)
+            False
+            sage: B.register_coercion(A.hom([y]))
+            sage: x + y
+            2*y
         """
         if isinstance(mor, map.Map):
             if mor.codomain() is not self:
@@ -1565,7 +1577,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             raise TypeError("coercions must be parents or maps (got %s)" % type(mor))
         D = mor.domain()
 
-        assert not (self._coercions_used and D in self._coerce_from_hash), "coercion from {} to {} already registered or discovered".format(D, self)
+        assert not (self._coercions_used and D in self._coerce_from_hash and
+                    self._coerce_from_hash.get(D) is not None), "coercion from {} to {} already registered or discovered".format(D, self)
         mor._is_coercion = True
         self._coerce_from_list.append(mor)
         self._registered_domains.append(D)
@@ -1997,7 +2010,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         (in which case it will be wrapped in a Map), or True (in which case
         a generic map will be provided).
         """
-        return None
+        try:
+            # Try possible _coerce_map_from_() methods defined in
+            # ParentMethods classes of categories.
+            return super(Parent, self)._coerce_map_from_(S)
+        except AttributeError:
+            return None
 
     cpdef coerce_map_from(self, S):
         """

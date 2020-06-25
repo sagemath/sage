@@ -55,8 +55,6 @@ from sage.rings.integer import Integer
 import inspect
 from sage.misc.sageinspect import sage_getargspec
 
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-
 
 def _explain_constructor(cl):
     r"""
@@ -222,7 +220,8 @@ class AbstractCode(Parent):
             sage: C
             Dummy code of length 6
 
-        We can list its elements and check if an element is in the code:
+        We can list its elements and check if an element is in the code::
+
             sage: list(C)
             [(0, 0, 0, 0, 0, 0),
             (1, 0, 0, 0, 0, 0),
@@ -949,7 +948,7 @@ class AbstractCode(Parent):
             ValueError: Constructing the Systematic encoder failed, possibly due to missing or incorrect parameters.
             The constructor requires no arguments.
             It takes the optional arguments ['systematic_positions'].
-            See the documentation of sage.coding.linear_code.LinearCodeSystematicEncoder for more details.
+            See the documentation of sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder for more details.
         """
         if not self._default_encoder_name:
             raise NotImplementedError("No encoder implemented for this code.")
@@ -990,7 +989,7 @@ class AbstractCode(Parent):
             sage: dictionary = C.encoders_available(True)
             sage: sorted(dictionary.items())
             [('GeneratorMatrix', <class 'sage.coding.linear_code.LinearCodeGeneratorMatrixEncoder'>),
-             ('Systematic', <class 'sage.coding.linear_code.LinearCodeSystematicEncoder'>)]
+             ('Systematic', <class 'sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder'>)]
         """
         if classes:
             return copy(self._registered_encoders)

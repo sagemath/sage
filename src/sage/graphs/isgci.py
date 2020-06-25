@@ -393,13 +393,14 @@ Methods
 """
 from __future__ import print_function
 
-from six import itervalues
-
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.misc.unknown import Unknown
 from sage.env import GRAPHS_DATA_DIR
-import six
+
+import os
+import zipfile
+from urllib.request import urlopen
 
 #*****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -826,16 +827,11 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._download_db() # Not tested -- requires internet
         """
-        # import compatible with py2 and py3
-        from six.moves.urllib.request import urlopen
-
         from sage.misc.misc import SAGE_TMP
-        import os.path
         u = urlopen('http://www.graphclasses.org/data.zip')
         localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
         localFile.write(u.read())
         localFile.close()
-        import os, zipfile
         z = zipfile.ZipFile(os.path.join(SAGE_TMP, 'isgci.zip'))
 
         # Save a systemwide updated copy whenever possible
@@ -871,7 +867,7 @@ class GraphClasses(UniqueRepresentation):
         DB = _XML_to_dict(root)
 
         classes = {c['id']: c for c in DB['GraphClasses']["GraphClass"]}
-        for c in itervalues(classes):
+        for c in classes.values():
             c["problem"] = {pb.pop("name"): pb for pb in c["problem"]}
 
         inclusions = DB['Inclusions']['incl']
@@ -1005,7 +1001,7 @@ class GraphClasses(UniqueRepresentation):
             MAX[key] = len(max((str(x.get(key, "")) for x in classes_list), key=len))
 
         # At most MAX characters per field
-        for key, length in six.iteritems(MAX):
+        for key, length in MAX.items():
             MAX[key] = min(length, MAX_LEN)
 
         # Head of the table

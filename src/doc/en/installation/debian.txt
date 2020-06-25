@@ -1,9 +1,0 @@
-     $ sudo apt-get install binutils pixz gcc g++ gfortran make m4 perl tar \
-       git patch openssl libssl-dev libz-dev bc libbz2-dev liblzma-dev libgmp-dev \
-       libffi-dev libgf2x-dev libcurl4-openssl-dev libzmq3-dev curl yasm \
-       pkg-config libntl-dev libmpfr-dev libmpc-dev libflint-dev \
-       libpcre3-dev libgd-dev libflint-dev libflint-arb-dev \
-       libsymmetrica2-dev gmp-ecm libecm-dev libisl-dev libgivaro-dev \
-       libpari-dev pari-gp2c libec-dev liblrcalc-dev \
-       libm4ri-dev libm4rie-dev liblfunction-dev lcalc \
-       libopenblas-dev r-base-dev libgsl-dev libcliquer-dev cliquer

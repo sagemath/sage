@@ -337,7 +337,6 @@ from .set_system cimport SetSystem
 from sage.graphs.spanning_tree import kruskal
 from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
-from sage.misc.superseded import deprecation
 
 from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
 from sage.rings.all import ZZ
@@ -5112,7 +5111,7 @@ cdef class Matroid(SageObject):
             return True, None
         return True
 
-    cpdef is_3connected(self, certificate=False, algorithm=None, separation=False):
+    cpdef is_3connected(self, certificate=False, algorithm=None):
         r"""
         Return ``True`` if the matroid is 3-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
@@ -5179,18 +5178,15 @@ cdef class Matroid(SageObject):
             sage: M.connectivity(X)
             1
         """
-        if separation:
-            deprecation(18539, "Use `certificate` in place of `separation`")
-        certificate = certificate or separation
         if algorithm is None:
             if certificate:
                 return self._is_3connected_CE(True)
             else:
                 return self._is_3connected_BC()
         if algorithm == "bridges":
-            return self._is_3connected_BC(separation)
+            return self._is_3connected_BC(certificate)
         if algorithm == "intersection":
-            return self._is_3connected_CE(separation)
+            return self._is_3connected_CE(certificate)
         if algorithm == "shifting":
             return self._is_3connected_shifting(certificate)
         raise ValueError("Not a valid algorithm.")
@@ -6627,7 +6623,7 @@ cdef class Matroid(SageObject):
             sage: M.is_max_weight_independent_generic()
             False
 
-        Here is an example from [GriRei18]_ (Example 7.4.12 in v5)::
+        Here is an example from [GriRei18]_ (Example 7.4.12 in v6)::
 
             sage: A = Matrix(QQ, [[ 1,  1,  0,  0],
             ....:                 [-1,  0,  1,  1],
@@ -6785,7 +6781,7 @@ cdef class Matroid(SageObject):
             sage: M.dual().is_max_weight_coindependent_generic(weights=wt)
             True
 
-        Here is an example from [GriRei18]_ (Example 7.4.12 in v5)::
+        Here is an example from [GriRei18]_ (Example 7.4.12 in v6)::
 
             sage: A = Matrix(QQ, [[ 1,  1,  0,  0],
             ....:                 [-1,  0,  1,  1],

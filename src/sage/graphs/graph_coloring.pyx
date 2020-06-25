@@ -53,7 +53,6 @@ Methods
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from copy import copy
 from sage.combinat.matrices.dlxcpp import DLXCPP
@@ -64,6 +63,7 @@ from libcpp.pair cimport pair
 
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.numerical.mip import MIPSolverException
+
 
 def all_graph_colorings(G, n, count_only=False, hex_colors=False, vertex_color_dict=False):
     r"""
@@ -1675,7 +1675,7 @@ cdef class Test:
 
     def random(self, tests=1000):
         r"""
-        Call ``self.random_all_graph_colorings()``. 
+        Call ``self.random_all_graph_colorings()``.
 
         In the future, if other methods are added, it should call them, too.
 

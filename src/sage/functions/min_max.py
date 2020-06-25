@@ -39,7 +39,7 @@ from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
 
-from six.moves.builtins import max as builtin_max, min as builtin_min
+from builtins import max as builtin_max, min as builtin_min
 
 class MinMax_base(BuiltinFunction):
     def eval_helper(self, this_f, builtin_f, initial_val, args):

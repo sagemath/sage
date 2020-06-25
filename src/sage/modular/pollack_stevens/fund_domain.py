@@ -23,7 +23,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six import iteritems
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.modsym.all import P1List
@@ -1540,7 +1539,7 @@ class ManinRelations(PollackStevensModularDomain):
             4
         """
         ans = []
-        for h, vh in iteritems(self.prep_hecke_on_gen(l, gen, modulus=modulus)):
+        for h, vh in self.prep_hecke_on_gen(l, gen, modulus=modulus).items():
             ans.extend([(h, v) for v in vh])
         return ans
 

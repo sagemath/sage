@@ -54,7 +54,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import division, print_function
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer

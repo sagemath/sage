@@ -181,6 +181,8 @@ AUTHORS:
 #                            2017 Travis Scrimshaw <tscrimsh@umn.edu>
 #                            2018 Vincent Delecroix <20100.delecroix@gmail.com>
 #                            2019 Marc Mezzarobba <marc@mezzarobba.net>
+# ****************************************************************************
+#       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -197,6 +199,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # the import below is just a redirection
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
+assert is_FiniteField  # just to silent pyflakes
 
 # We don't late import this because this means trouble with the Givaro library
 # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
@@ -204,6 +207,7 @@ from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from .finite_field_givaro import FiniteField_givaro
 
 from sage.structure.factory import UniqueFactory
+
 
 class FiniteFieldFactory(UniqueFactory):
     """

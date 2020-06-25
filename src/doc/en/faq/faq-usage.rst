@@ -35,11 +35,6 @@ issue the following command in a terminal, if ``sage`` is in your ``PATH``
 
     $ sage -notebook
 
-You can also run it from the command line of sage::
-
-    sage: notebook() # not tested
-
-
 What are the prerequisites for installing a copy of Sage on my computer?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -52,9 +47,8 @@ from the page https://www.virtualbox.org/wiki/Downloads. After
 installing VirtualBox, you need to download a VirtualBox distribution
 of Sage available at
 http://www.sagemath.org/download-windows.html. Ensure you follow the
-instructions at that page. Now you can start the Sage virtual machine
-using the VirtualBox software, wait for the virtual machine to boot
-up, then type ``notebook`` at the prompt.
+instructions at that page, then start the Sage virtual machine
+using the VirtualBox software.
 
 You can get the complete source for Sage to compile it on your own
 Linux or Mac OS X system. Sage lives in an isolated directory and does

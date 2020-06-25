@@ -21,7 +21,6 @@ The algorithm used in this file comes from
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.combinat.composition import Composition
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

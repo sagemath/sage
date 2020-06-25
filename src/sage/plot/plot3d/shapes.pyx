@@ -106,7 +106,7 @@ class Box(IndexFaceSet):
         sage: from sage.plot.plot3d.shapes import Box
 
     A square black box::
-    
+
         sage: show(Box([1,1,1]), color='black')
 
     .. PLOT::
@@ -124,7 +124,7 @@ class Box(IndexFaceSet):
         sphinx_plot(Box([2,3,4], color="red"))
 
     A stack of boxes::
-    
+
         sage: show(sum([Box([2,3,1], color="red").translate((0,0,6*i)) for i in [0..3]]))
 
     .. PLOT::
@@ -134,7 +134,7 @@ class Box(IndexFaceSet):
         sphinx_plot(P)
 
     A sinusoidal stack of multicolored boxes::
-    
+
         sage: B = sum([Box([2,4,1/4], color=(i/4,i/5,1)).translate((sin(i),0,5-i)) for i in [0..20]])
         sage: show(B, figsize=6)
 
@@ -209,13 +209,13 @@ def ColorCube(size, colors, opacity=1, **kwds):
         sage: c.show()
 
     .. PLOT::
-    
+
         from sage.plot.plot3d.shapes import ColorCube
         c = ColorCube([1,2,3], ['red', 'blue', 'green', 'black', 'white', 'orange'], opacity=0.5)
         sphinx_plot(c)
-    
+
     ::
-    
+
         sage: list(c.texture_set())[0].opacity
         0.5
 
@@ -299,14 +299,14 @@ cdef class Cone(ParametricSurface):
         sage: T = sum(Cone(exp(-n/5), 4/3*exp(-n/5), color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5)) for n in [1..7])
         sage: T += Cone(1/8, 1, color='brown').translate(0, 0, -3)
         sage: T.show(aspect_ratio=1, frame=False)
-        
+
     .. PLOT::
 
         from sage.plot.plot3d.shapes import Cone
         T = sum(Cone(exp(-n/5.0), 4/3*exp(-n/5.0), color=(0, .5, 0)).translate(0, 0, -3*exp(-n/5.0)) for n in range(8))
         T += Cone(1/8, 1, color='brown').translate(0, 0, -3)
         sphinx_plot(T)
-    
+
     """
     def __init__(self, radius, height, closed=True, **kwds):
         """
@@ -819,7 +819,7 @@ cdef class Sphere(ParametricSurface):
 
         sage: S = Sphere(1).scale(1,2,1/2)
         sage: S.show(aspect_ratio=1)
-        
+
     .. PLOT::
 
         from sage.plot.plot3d.shapes import Sphere
@@ -1161,6 +1161,35 @@ class Text(PrimitiveObject):
         return ['select atomno = %s' % atom_no,
                 self.get_texture().jmol_str("atom"),
                 'label "%s"' % self.string] #.replace('\n', '|')]
+
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the text suitable for plotting in three.js.
+
+        EXAMPLES::
+
+            sage: T = text3d("Hi", (1, 2, 3), color='red')
+            sage: T.threejs_repr(T.default_render_params())
+            [('text', {'color': '#ff0000', 'text': 'Hi', 'x': 1.0, 'y': 2.0, 'z': 3.0})]
+
+        TESTS:
+
+        When created directly via the ``Text`` constructor instead of ``text3d``,
+        the text is located at the origin::
+
+            sage: from sage.plot.plot3d.shapes import Text
+            sage: T = Text("Hi")
+            sage: T.threejs_repr(T.default_render_params())
+            [('text', {'color': '#6666ff', 'text': 'Hi', 'x': 0.0, 'y': 0.0, 'z': 0.0})]
+
+        """
+        center = (float(0), float(0), float(0))
+        if render_params.transform is not None:
+            center = render_params.transform.transform_point(center)
+        color = '#' + str(self.texture.hex_rgb())
+        string = str(self.string)
+        text = dict(text=string, x=center[0], y=center[1], z=center[2], color=color)
+        return [('text', text)]
 
     def bounding_box(self):
         """

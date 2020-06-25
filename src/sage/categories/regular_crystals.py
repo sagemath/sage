@@ -162,6 +162,7 @@ class RegularCrystals(Category_singleton):
 
         # TODO: this could be a method in Crystals.Algebras.ElementMethods, so that
         # one could do:
+        #
         #   sage: C = crystals.Tableaux(['A',2], shape=[2,1])
         #   sage: M = C.algebra(QQ)
         #   sage: m = M.an_element()

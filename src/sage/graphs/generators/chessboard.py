@@ -22,7 +22,6 @@ AUTHORS:
 #                         http://www.gnu.org/licenses/
 ################################################################################
 from __future__ import print_function
-from six.moves import range
 
 def ChessboardGraphGenerator(dim_list,
                              rook = True,    rook_radius = None,

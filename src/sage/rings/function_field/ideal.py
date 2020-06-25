@@ -1081,7 +1081,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         """
         Multiply this ideal with the ``other`` ideal.
 
-        Example::
+        EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
@@ -1368,6 +1368,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             Ideal (1) of Maximal order of Function field in y defined by y^2 + 6*x^3 + 6
 
         ::
+
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -2166,7 +2167,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             return self.gens_over_base()
 
     def gens_two(self):
-        """
+        r"""
         Return two generators of this fractional ideal.
 
         If the ideal is principal, one generator *may* be returned.

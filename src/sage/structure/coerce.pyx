@@ -1647,6 +1647,7 @@ cdef class CoercionModel:
             Call morphism:
               From: Multivariate Polynomial Ring in x, y over Integer Ring
               To:   Multivariate Polynomial Ring in x, y over Real Double Field,
+             (map internal to coercion system -- copy before use)
              Polynomial base injection morphism:
               From: Real Double Field
               To:   Multivariate Polynomial Ring in x, y over Real Double Field)

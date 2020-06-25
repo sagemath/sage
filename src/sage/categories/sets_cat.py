@@ -11,7 +11,6 @@ Sets
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.sage_unittest import TestSuite
@@ -1760,10 +1759,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 TESTS::
 
-                    sage: from six import get_method_function as gmf
-                    sage: gmf(C.is_finite) is gmf(sage.categories.sets_cat.Sets.Infinite.ParentMethods.is_finite)  # py2
-                    True
-                    sage: gmf(C.is_finite) is sage.categories.sets_cat.Sets.Infinite.ParentMethods.is_finite  # py3
+                    sage: C.is_finite.__func__ is sage.categories.sets_cat.Sets.Infinite.ParentMethods.is_finite
                     True
                 """
                 return False

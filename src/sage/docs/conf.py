@@ -3,7 +3,6 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, THEBE_DIR, PPLPY_DOCS, MA
 import sage.version
 from sage.misc.sagedoc import extlinks
 import dateutil.parser
-from six import iteritems
 from docutils import nodes
 from docutils.transforms import Transform
 from sphinx.ext.doctest import blankline_re
@@ -33,6 +32,10 @@ extensions = ['inventory_builder',
 # through matplotlib, so that it will be displayed in the HTML doc
 plot_html_show_source_link = False
 plot_pre_code = """
+# Set locale to prevent having commas in decimal numbers
+# in tachyon input (see https://trac.sagemath.org/ticket/28971)
+import locale
+locale.setlocale(locale.LC_NUMERIC, 'C')
 def sphinx_plot(graphics, **kwds):
     import matplotlib.image as mpimg
     import matplotlib.pyplot as plt
@@ -452,6 +455,13 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{23AE}{\ensuremath{\|}} % integral extenison
 
     \DeclareUnicodeCharacter{2571}{/}   % Box drawings light diagonal upper right to lower left
+
+    \DeclareUnicodeCharacter{25CF}{\ensuremath{\bullet}}  % medium black circle
+    \DeclareUnicodeCharacter{26AC}{\ensuremath{\circ}}  % medium small white circle
+    \DeclareUnicodeCharacter{256D}{+}
+    \DeclareUnicodeCharacter{256E}{+}
+    \DeclareUnicodeCharacter{256F}{+}
+    \DeclareUnicodeCharacter{2570}{+}
 \fi
 
 \let\textLaTeX\LaTeX
@@ -552,7 +562,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
         # Check picklability of nested classes.  Adapted from
         # sage.misc.nested_class.modify_for_nested_pickle.
         module = sys.modules[obj.__module__]
-        for (nm, v) in iteritems(obj.__dict__):
+        for (nm, v) in obj.__dict__.items():
             if (isinstance(v, type) and
                 v.__name__ == nm and
                 v.__module__ == module.__name__ and
@@ -616,7 +626,6 @@ def process_dollars(app, what, name, obj, options, docstringlines):
     See sage.misc.sagedoc.process_dollars for more information.
     """
     if len(docstringlines) and name.find("process_dollars") == -1:
-        from six.moves import range
         from sage.misc.sagedoc import process_dollars as sagedoc_dollars
         s = sagedoc_dollars("\n".join(docstringlines))
         lines = s.split("\n")
@@ -665,7 +674,7 @@ def call_intersphinx(app, env, node, contnode):
         sage: for line in open(thematic_index).readlines():  # optional - dochtml
         ....:     if "padics" in line:
         ....:         _ = sys.stdout.write(line)
-        <li><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in Sage Reference Manual: p-Adics v...)"><span>Introduction to the p-adics</span></a></li>
+        <li><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in Sage... Reference Manual: p-Adics v...)"><span>Introduction to the p-adics</span></a></li>
     """
     debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
     builder = app.builder

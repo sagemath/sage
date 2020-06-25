@@ -23,7 +23,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from six import iteritems
 
 # TODO: cythonize this.
 
@@ -221,7 +220,7 @@ def algebraic_topological_model(K, base_ring=None):
             c_bar = c_vec
             bdry_c = diff * c_vec
             # Apply phi to bdry_c and subtract from c_bar.
-            for (idx, coord) in iteritems(bdry_c):
+            for (idx, coord) in bdry_c.items():
                 try:
                     c_bar -= coord * phi_dict[dim-1][idx]
                 except KeyError:
@@ -232,7 +231,7 @@ def algebraic_topological_model(K, base_ring=None):
             # Evaluate pi(bdry(c_bar)).
             pi_bdry_c_bar = zero
 
-            for (idx, coeff) in iteritems(bdry_c_bar):
+            for (idx, coeff) in bdry_c_bar.items():
                 try:
                     pi_bdry_c_bar += coeff * pi_dict[dim-1][idx]
                 except KeyError:
@@ -312,7 +311,7 @@ def algebraic_topological_model(K, base_ring=None):
             # First pi:
             if idx in pi_dict[n]:
                 column = vector(base_ring, M_rows)
-                for (entry, coeff) in iteritems(pi_dict[n][idx]):
+                for (entry, coeff) in pi_dict[n][idx].items():
                     # Translate from cells in n_cells to cells in gens[n].
                     column[gens[n].index(n_cells[entry])] = coeff
             else:
@@ -524,7 +523,7 @@ def algebraic_topological_model_delta_complex(K, base_ring=None):
                 # Take any u in gens so that lambda_i = <u, pi(bdry(c_bar))> != 0.
                 # u_idx will be the index of the corresponding cell.
                 (u_idx, lambda_i) = pi_bdry_c_bar.leading_item()
-                for (u_idx, lambda_i) in iteritems(pi_bdry_c_bar):
+                for (u_idx, lambda_i) in pi_bdry_c_bar.items():
                     if u_idx not in to_be_deleted:
                         break
                 # This element/column needs to be deleted from gens and

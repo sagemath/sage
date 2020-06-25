@@ -13,12 +13,21 @@ if [ -z "$SAGE_ORIG_PATH" ]; then
     SAGE_ORIG_PATH="$PATH"
 fi
 
-PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v python)"
+# In particular, it is invoked by "bootstrap -d" for sage-download-file,
+# i.e., before a configure run, and by "sage-spkg", also for sage-download-file.
+# So it needs to find a python that has the urllib module.
+# For example, on Debian buster, the python3-minimal package does NOT provide it.
+#
+# See https://trac.sagemath.org/ticket/29090
 
-# fallback for systems where only the python3 command is available
-# see https://trac.sagemath.org/ticket/26953
-if [ -z "$PYTHON" ]; then
-    PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v python3)"
-fi
-
-exec "$PYTHON" "$@"
+PYTHONS="python3 python3.8 python3.7 python2.7 python python3.6 python2"
+for PY in $PYTHONS; do
+    PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v $PY)"
+    if [[ -n "$PYTHON" ]]; then
+        if "$PYTHON" -c 'import urllib'; then
+            exec "$PYTHON" "$@"
+        fi
+    fi
+done
+echo >&2 "$0: error: none of $PYTHONS is a suitable Python with urllib"
+exit 1

@@ -27,7 +27,7 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.integer_mod import mod
 from sage.arith.misc import legendre_symbol
-
+from sage.structure.unique_representation import CachedRepresentation
 
 def TorsionQuadraticForm(q):
     r"""
@@ -183,7 +183,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
     q = quadratic_product
 
 
-class TorsionQuadraticModule(FGP_Module_class):
+class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
     r"""
     Finite quotients with a bilinear and a quadratic form.
 
@@ -225,15 +225,20 @@ class TorsionQuadraticModule(FGP_Module_class):
     """
     Element = TorsionQuadraticModuleElement
 
-    def __init__(self, V, W, gens=None, modulus=None, modulus_qf=None, check=True):
+    @staticmethod
+    def __classcall__(cls, V, W, gens=None, modulus=None, modulus_qf=None, check=True):
         r"""
-        Initialize ``self``.
+        Return a :class:``TorsionQuadraticModule``.
+
+        This method does the preprocessing for :meth:``sage.structure.CachedRepresentation``.
 
         TESTS::
 
-            sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
-            sage: T = TorsionQuadraticModule(ZZ^3, 6*ZZ^3)
-            sage: TestSuite(T).run()
+            sage: q = matrix([1/2])
+            sage: D1 = TorsionQuadraticForm(q)
+            sage: D2 = TorsionQuadraticForm(q)
+            sage: D1 is D2
+            True
         """
         if check:
             if V.rank() != W.rank():
@@ -246,36 +251,51 @@ class TorsionQuadraticModule(FGP_Module_class):
             if gens is not None and V.span(gens) + W != V:
                 raise ValueError("provided gens do not generate the quotient")
 
-        FGP_Module_class.__init__(self, V, W, check=check)
-        if gens is not None:
-            self._gens_user = tuple(self(v) for v in gens)
-        else:
-            # this is taken care of in the .gens method
-            # we do not want this at initialization
-            self._gens_user = None
-
         # compute the modulus - this may be expensive
         if modulus is None or check:
             # The inner product of two elements `b(v1+W,v2+W)`
             # is defined `mod (V,W)`
             num = V.basis_matrix() * V.inner_product_matrix() * W.basis_matrix().T
-            self._modulus = gcd(num.list())
+            max_modulus = gcd(num.list())
 
-        if modulus is not None:
-            if check and self._modulus / modulus not in self.base_ring():
-                raise ValueError("the modulus must divide (V, W)")
-            self._modulus = modulus
+        if modulus is None:
+            modulus = max_modulus
+        elif check and max_modulus / modulus not in V.base_ring():
+            raise ValueError("the modulus must divide (V, W)")
 
         if modulus_qf is None or check:
             # The quadratic_product of an element `q(v+W)` is defined
             # `\mod 2(V,W) + ZZ\{ (w,w) | w in w\}`
-            norm = gcd(self.W().gram_matrix().diagonal())
-            self._modulus_qf = gcd(norm, 2 * self._modulus)
+            norm = gcd(W.gram_matrix().diagonal())
+            max_modulus_qf = gcd(norm, 2 * modulus)
 
-        if modulus_qf is not None:
-            if check and self._modulus_qf / modulus_qf not in self.base_ring():
-                raise ValueError("the modulus_qf must divide (V, W)")
-            self._modulus_qf = modulus_qf
+        if modulus_qf is None:
+            modulus_qf = max_modulus_qf
+        elif check and max_modulus_qf / modulus_qf not in V.base_ring():
+            raise ValueError("the modulus_qf must divide (V, W)")
+        return super(TorsionQuadraticModule, cls).__classcall__(cls, V, W, gens, modulus, modulus_qf)
+
+    def __init__(self, V, W, gens, modulus, modulus_qf):
+        r"""
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
+            sage: T = TorsionQuadraticModule(ZZ^3, 6*ZZ^3)
+            sage: TestSuite(T).run()
+        """
+
+        FGP_Module_class.__init__(self, V, W, check=True)
+        if gens is not None:
+            self._gens_user = tuple(self(g) for g in gens)
+        else:
+            # this is taken care of in the .gens method
+            # we do not want this at initialization
+            self._gens_user = None
+        self._modulus = modulus
+        self._modulus_qf = modulus_qf
+
 
     def _repr_(self):
         r"""
@@ -346,12 +366,12 @@ class TorsionQuadraticModule(FGP_Module_class):
         r"""
         Return a list of all submodules of ``self``.
 
-        WARNING:
+        .. WARNING::
 
-        This method creates all submodules in memory. The number of submodules
-        grows rapidly with the number of generators. For example consider a
-        vector space of dimension `n` over a finite field of prime order `p`.
-        The number of subspaces is (very) roughly `p^{(n^2-n)/2}`.
+            This method creates all submodules in memory. The number of submodules
+            grows rapidly with the number of generators. For example consider a
+            vector space of dimension `n` over a finite field of prime order `p`.
+            The number of subspaces is (very) roughly `p^{(n^2-n)/2}`.
 
         EXAMPLES::
 
@@ -794,6 +814,81 @@ class TorsionQuadraticModule(FGP_Module_class):
             return False
         return True
 
+    def orthogonal_group(self, gens=None, check=False):
+        r"""
+        Orthogonal group of the associated torsion quadratic form.
+
+        .. WARNING::
+
+            This is can be smaller than the orthogonal group of the bilinear form.
+
+        INPUT:
+
+        - ``gens`` --  a list of generators, for instance square matrices,
+                       something that acts on ``self``, or an automorphism
+                       of the underlying abelian group
+        - ``check`` -- perform additional checks on the generators
+
+        EXAMPLES:
+
+        You can provide generators to obtain a subgroup of the full orthogonal group::
+
+            sage: D = TorsionQuadraticForm(matrix.identity(2)/2)
+            sage: f = matrix(2,[0,1,1,0])
+            sage: D.orthogonal_group(gens=[f]).order()
+            2
+
+        If no generators are given a slow brute force approach is used to calculate the full orthogonal group::
+
+            sage: D = TorsionQuadraticForm(matrix.identity(3)/2)
+            sage: OD = D.orthogonal_group()
+            sage: OD.order()
+            6
+            sage: fd = D.hom([D.1,D.0,D.2])
+            sage: OD(fd)
+            [0 1 0]
+            [1 0 0]
+            [0 0 1]
+
+        We compute the kernel of the action of the orthogonal group of `L` on the discriminant group.
+
+            sage: L = IntegralLattice('A4')
+            sage: O = L.orthogonal_group()
+            sage: D = L.discriminant_group()
+            sage: Obar = D.orthogonal_group(O.gens())
+            sage: O.order()
+            240
+            sage: Obar.order()
+            2
+            sage: phi = O.hom(Obar.gens())
+            sage: phi.kernel().order()
+            120
+        """
+        from sage.groups.fqf_orthogonal import FqfOrthogonalGroup,_isom_fqf
+        from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
+
+        # slow brute force implementation
+        flag = False
+        if gens is None:
+            try:
+                return self._orthogonal_group
+            except AttributeError:
+                flag = True
+                gens = _isom_fqf(self)
+        else:
+            # see if there is an action
+            try:
+                gens = [matrix(x*g for x in self.smith_form_gens()) for g in gens]
+            except TypeError:
+                pass
+        ambient = AbelianGroupGap(self.invariants()).aut()
+        # the ambient knows what to do with the generators
+        gens = tuple(ambient(g) for g in gens)
+        Oq =  FqfOrthogonalGroup(ambient, gens, self, check=check)
+        if flag:
+            self._orthogonal_group = Oq
+        return Oq
+
     def orthogonal_submodule_to(self, S):
         r"""
         Return the submodule orthogonal to ``S``.
@@ -1112,7 +1207,7 @@ class TorsionQuadraticModule(FGP_Module_class):
             [1/5   0]
             [  0 1/5]
         """
-        gens = [self(v) for v in gens]
+        gens = tuple(self(v) for v in gens)
         V = self.V().submodule([v.lift() for v in gens]) + self._W
         W = self.W()
         return TorsionQuadraticModule(V, W, gens=gens, modulus=self._modulus,

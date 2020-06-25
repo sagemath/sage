@@ -16,9 +16,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
-from sage.misc.six import with_metaclass
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
@@ -124,7 +122,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
                 # the dictionary describing the element
                 # ``e[i]`` * (the element described by the dictionary ``cur``)
                 # (where ``e[i]`` is the ``i``-th standard basis vector).
-                for mr,cr in iteritems(cur):
+                for mr,cr in cur.items():
                     # Commute the factor as necessary until we are in order
                     pos = 0
                     for j in mr:
@@ -160,7 +158,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
                 cur = next
 
             # Add the distributed terms to the total
-            for index,coeff in iteritems(cur):
+            for index,coeff in cur.items():
                 d[index] = d.get(index, zero) + cl * coeff
                 if d[index] == zero:
                     del d[index]
@@ -734,15 +732,13 @@ class CliffordAlgebra(CombinatorialFreeModule):
         if x in self.free_module():
             R = self.base_ring()
             if x.parent().base_ring() is R:
-                return self.element_class(self, {(i,): c for i,c in iteritems(x)})
-            return self.element_class(self, {(i,): R(c) for i,c in iteritems(x) if R(c) != R.zero()})
+                return self.element_class(self, {(i,): c for i,c in x.items()})
+            return self.element_class(self, {(i,): R(c) for i,c in x.items() if R(c) != R.zero()})
 
-        if isinstance(x, CliffordAlgebraElement):
-            if x.parent() is self:
-                return x
-            if self.has_coerce_map_from(x.parent()):
-                R = self.base_ring()
-                return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
+        if (isinstance(x, CliffordAlgebraElement)
+            and self.has_coerce_map_from(x.parent())):
+            R = self.base_ring()
+            return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
 
         return super(CliffordAlgebra, self)._element_constructor_(x)
 
@@ -1255,23 +1251,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 for m,c in (Bi*Bj - Bj*Bi):
                     d[(a, K.index(m)+k*b)] = c
         m = Matrix(R, d, nrows=k, ncols=k*k, sparse=True)
-        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
+        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in x.items()),
                                                   distinct=True)
         return tuple(map( from_vector, m.kernel().basis() ))
-
-        # Dense version
-        # R = self.base_ring()
-        # B = self.basis()
-        # K = list(B.keys())
-        # eqns = [[] for dummy in range(k)]
-        # for a,i in enumerate(K):
-        #     for b,j in enumerate(K):
-        #         v = B[i]*B[j] - B[j]*B[i]
-        #         eqns[a].extend([v[k] for k in K])
-        # m = Matrix(R, eqns)
-        # from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
-        #                                           distinct=True)
-        # return tuple(map( from_vector, m.kernel().basis() ))
 
     # Same as center except for superalgebras
     @cached_method
@@ -1352,23 +1334,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 for m,c in supercommutator:
                     d[(a, K.index(m)+k*b)] = c
         m = Matrix(R, d, nrows=k, ncols=k*k, sparse=True)
-        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
+        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in x.items()),
                                                   distinct=True)
         return tuple(map( from_vector, m.kernel().basis() ))
-
-        # Dense version
-        # R = self.base_ring()
-        # B = self.basis()
-        # K = list(B.keys())
-        # eqns = [[] for dummy in range(k)]
-        # for a,i in enumerate(K):
-        #     for b,j in enumerate(K):
-        #         v = B[i].supercommutator(B[j])   # or better an if-loop as above
-        #         eqns[a].extend([v[k] for k in K])
-        # m = Matrix(R, eqns)
-        # from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
-        #                                           distinct=True)
-        # return tuple(map( from_vector, m.kernel().basis() ))
 
     Element = CliffordAlgebraElement
 
@@ -2254,10 +2222,8 @@ class ExteriorAlgebra(CliffordAlgebra):
 #####################################################################
 ## Differentials
 
-class ExteriorAlgebraDifferential(with_metaclass(
-        InheritComparisonClasscallMetaclass,
-        ModuleMorphismByLinearity, UniqueRepresentation
-    )):
+class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
+        UniqueRepresentation, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Internal class to store the data of a boundary or coboundary of
     an exterior algebra `\Lambda(L)` defined by the structure
@@ -2296,13 +2262,13 @@ class ExteriorAlgebraDifferential(with_metaclass(
         """
         d = {}
 
-        for k,v in iteritems(dict(s_coeff)):
+        for k, v in dict(s_coeff).items():
             if not v: # Strip terms with 0
                 continue
 
             if isinstance(v, dict):
                 R = E.base_ring()
-                v = E._from_dict({(i,): R(c) for i,c in iteritems(v)})
+                v = E._from_dict({(i,): R(c) for i,c in v.items()})
             else:
                 # Make sure v is in ``E``
                 v = E(v)
@@ -2740,7 +2706,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
         self._cos_coeff = {}
         zero = E.zero()
         B = E.basis()
-        for k, v in iteritems(dict(s_coeff)):
+        for k, v in dict(s_coeff).items():
             k = B[k]
             for m,c in v:
                 self._cos_coeff[m] = self._cos_coeff.get(m, zero) + c * k

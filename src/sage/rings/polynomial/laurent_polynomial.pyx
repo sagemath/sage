@@ -16,6 +16,7 @@ from sage.misc.misc import union
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 
 
@@ -315,6 +316,60 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             True
         """
         return LaurentPolynomial_univariate, (self._parent, self.__u, self.__n)
+
+    def _polynomial_(self, R):
+        r"""
+        TESTS::
+
+            sage: Lx = LaurentPolynomialRing(QQ, "x")
+            sage: Px = PolynomialRing(QQ, "x")
+            sage: Pxy = PolynomialRing(QQ, "x,y")
+            sage: Paxb = PolynomialRing(QQ, "a,x,b")
+            sage: Qx = PolynomialRing(ZZ, "x")
+            sage: Rx = PolynomialRing(GF(2), "x")
+            sage: p1 = Lx.gen()
+            sage: p2 = Lx.zero()
+            sage: p3 = Lx.one()
+            sage: p4 = Lx.gen()**3 - 3
+            sage: p5 = Lx.gen()**3 + 2*Lx.gen()**2
+            sage: p6 = Lx.gen() >> 2
+
+            sage: for P,x in [(Px, Px.gen()), (Qx, Qx.gen()), (Rx, Rx.gen()),
+            ....:             (Pxy, Pxy.gen(0)), (Paxb, Paxb.gen(1))]:
+            ....:     assert P(p1) == x and parent(P(p1)) is P
+            ....:     assert P(p2) == P.zero() and parent(P(p2)) is P
+            ....:     assert P(p3) == P.one() and parent(P(p3)) is P
+            ....:     assert P(p4) == x**3 - 3 and parent(P(p4)) is P
+            ....:     assert P(p5) == x**3 + 2*x**2 and parent(P(p5)) is P
+            ....:     try: P(p6)
+            ....:     except ValueError: pass
+            ....:     else: raise RuntimeError
+
+            sage: Pa = ZZ["a"]
+            sage: Px = ZZ["x"]
+            sage: Pax = ZZ["a,x"]
+            sage: Pxa = ZZ["x,a"]
+            sage: Pa_x = ZZ["a"]["x"]
+            sage: Px_a = ZZ["x"]["a"]
+            sage: Lax = LaurentPolynomialRing(Pa, "x")
+            sage: Lxa = LaurentPolynomialRing(Px, "a")
+            sage: for poly in ["2*a*x^2 - 5*x*a + 3", "a*x^2 - 3*a^3*x"]:
+            ....:     assert Pax(Lax(poly)) == Pax(Lxa(poly)) == Pax(poly)
+            ....:     assert Pxa(Lax(poly)) == Pxa(Lxa(poly)) == Pxa(poly)
+            ....:     assert Pa_x(Lax(poly)) == Pa_x(poly)
+            ....:     assert Px_a(Lxa(poly)) == Px_a(poly)
+        """
+        if self.__n < 0:
+            raise ValueError("Laurent polynomial with negative valuation can not be converted to polynomial")
+
+        if is_PolynomialRing(R):
+            return R(self.__u) << self.__n
+        elif self.__n == 0:
+            return R(self.__u)
+        else:
+            u = R(self.__u)
+            x = R(self.__u._parent.gen())
+            return x**self.__n * u
 
     def is_unit(self):
         """
@@ -1990,7 +2045,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef int p
         cdef int n = len(var_name_hash)
         cdef long c_hash
-        for m,c in self._poly.dict().iteritems():
+        for m, c in self._poly.iterator_exp_coeff():
             c_hash = hash(c)
             if c_hash != 0:
                 for p in range(n):
@@ -2026,7 +2081,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: LF.<a,b> = LaurentPolynomialRing(F)
             sage: rho = LF.hom([b,a], base_map=F.frobenius_endomorphism())
             sage: s = t*~a + b +~t*(b**-3)*a**2; rs = rho(s); rs
-            -a + (t + 1)*b^-1 + t*a^-3*b^2
+            a + (t + 1)*b^-1 + t*a^-3*b^2
             sage: s == rho(rs)
             True
         """
@@ -2062,10 +2117,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._mon = ETuple({}, int(self._parent.ngens()))
             return
 
-        cdef dict D = <dict> self._poly._mpoly_dict_recursive(
-                                        <tuple> self._parent.variable_names(),
-                                        self._parent.base_ring()
-                                        )
+        #cdef dict D = <dict> self._poly._mpoly_dict_recursive(
+        #                                <tuple> self._parent.variable_names(),
+        #                                self._parent.base_ring()
+        #                                )
+        cdef dict D = <dict> self._poly.dict()
+
         cdef ETuple e
         if i is None:
             e = None
@@ -2095,8 +2152,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: a.dict()  # indirect doctest
             {(0, 0): 3, (2, -1): 1}
         """
-        cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
-                                                              self._parent.base_ring())
+        #cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
+        #                                                      self._parent.base_ring())
+        cdef dict D = <dict> self._poly.dict()
         cdef dict DD
         if self._mon.is_constant():
             self._prod = PolyDict(D, force_etuples=False)
@@ -2228,12 +2286,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: parent(g.coefficients()[0]) is parent(g).base_ring()
             True
         """
-        cdef dict d = self.dict()
         cdef ETuple e
-        if len(d) == 1:
-            (e, c), = d.items()
+        if self._poly.is_term():
+            (e, c), = self.dict().items()
             e = e.emul(-1)
-            P = self.parent()
+            P = self._parent
             try:
                 c = c.inverse_of_unit()
             except (AttributeError, ZeroDivisionError, ArithmeticError):
@@ -2314,9 +2371,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef ETuple t = ETuple(n)
         if self._prod is None:
             self._compute_polydict()
-        if t not in self._prod.exponents():
+        try:
+            return self._prod[t]
+        except KeyError:
             return self._parent.base_ring().zero()
-        return self._prod[t]
 
     def __iter__(self):
         """
@@ -2330,17 +2388,28 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: sorted(f) # indirect doctest
             [(-7, x^-2*y^3), (-1, x^6), (1, x^-3*y^2), (5, x^-2*y)]
         """
-        if self._prod is None:
-            self._compute_polydict()
-        cdef tuple G = <tuple> self._parent.gens()
-        cdef Py_ssize_t i
-        cdef list exps
-        for c, e in self._prod.list():
-            exps = <list> e
-            prod = self._parent.one()
-            for i in range(len(exps)):
-                prod *= G[i]**exps[i]
-            yield (c, prod)
+        P = self._parent
+        one = P._R.one()
+        if self._mon.is_constant():
+            for exp, coeff in self._poly.iterator_exp_coeff():
+                yield (coeff, P.element_class(P, one, exp))
+        else:
+            for exp, coeff in self._poly.iterator_exp_coeff():
+                yield (coeff, P.element_class(P, one, exp.eadd(self._mon)))
+
+    def iterator_exp_coeff(self):
+        """
+        Iterate over ``self`` as pairs of (ETuple, coefficient).
+
+        EXAMPLES::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f = (y^2 - x^9 - 7*x*y^3 + 5*x*y)*x^-3
+            sage: list(f.iterator_exp_coeff())
+            [((6, 0), -1), ((-2, 3), -7), ((-2, 1), 5), ((-3, 2), 1)]
+        """
+        for exp, coeff in self._poly.iterator_exp_coeff():
+            yield (exp.eadd(self._mon), coeff)
 
     def monomials(self):
         """
@@ -2353,18 +2422,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: sorted(f.monomials())
             [x^-3*y^2, x^-2*y, x^-2*y^3, x^6]
         """
-        cdef list L = []
-        if self._prod is None:
-            self._compute_polydict()
-        cdef tuple gens = self._parent.gens()
-        cdef list exps
-        for c, e in self._prod.list():
-            exps = <list> e
-            prod = self._parent.one()
-            for i in range(len(exps)):
-                prod *= gens[i]**exps[i]
-            L.append(prod)
-        return L
+        return [mon for coeff, mon in self]
 
     def monomial_coefficient(self, mon):
         """
@@ -2393,14 +2451,25 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             -7
             sage: f.monomial_coefficient(x^2)
             0
+
+        TESTS::
+
+            sage: P.<x,y> = LaurentPolynomialRing(QQ)
+            sage: f = y^2 * x^-2
+            sage: f.monomial_coefficient(x + y)
+            Traceback (most recent call last):
+            ...
+            ValueError: input must be a monomial
         """
         if mon.parent() != self._parent:
             raise TypeError("input must have the same parent")
         cdef LaurentPolynomial_mpair m = <LaurentPolynomial_mpair> mon
-        if self._prod is None:
-            self._compute_polydict()
         if m._prod is None:
             m._compute_polydict()
+        if len(m._prod) != 1:
+            raise ValueError("input must be a monomial")
+        if self._prod is None:
+            self._compute_polydict()
         c = self._prod.monomial_coefficient(m._prod.dict())
         return self._parent.base_ring()(c)
 
@@ -2543,6 +2612,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     cpdef dict dict(self):
         """
+        Return ``self`` represented as a ``dict``.
+
         EXAMPLES::
 
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
@@ -2658,8 +2729,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef LaurentPolynomial_mpair right = <LaurentPolynomial_mpair> rhs
         if right.is_zero():
             raise ZeroDivisionError
-        cdef dict d = right.dict()
-        if len(d) == 1:
+        if right._poly.is_term():
             return self * ~right
         else:
             return RingElement._div_(self, rhs)
@@ -2682,9 +2752,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: (38*z^-2909).is_monomial()
             False
         """
-
-        d = self._poly.dict()
-        return len(d) == 1 and 1 in d.values()
+        return self._poly.is_monomial()
 
     cpdef _neg_(self):
         """
@@ -2850,7 +2918,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             (<LaurentPolynomial_mpair> right)._compute_polydict()
 
         try:
-            sortkey = self.parent().term_order().sortkey
+            sortkey = self._parent.term_order().sortkey
         except AttributeError:
             sortkey = None
 
@@ -3278,9 +3346,27 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
             sage: f.factor()
             (x^3*y^-7*z^-2) * (4*x^4*y^7*z + 3*y^8*z^2 + 2*x*y^7 + x^3*z^2)
+
+        TESTS:
+
+        Tests for :trac:`29173`::
+
+            sage: L.<a, b> = LaurentPolynomialRing(ZZ, 'a, b')
+            sage: (a*b + a + b + 1).factor()
+            (b + 1) * (a + 1)
+            sage: ((a^-1)*(a*b + a + b + 1)).factor()
+            (a^-1) * (b + 1) * (a + 1)
+            sage: L(-12).factor()
+            -1 * 2^2 * 3
         """
         pf = self._poly.factor()
-        u = self.parent(pf.unit().dict()) # self.parent won't currently take polynomials
+
+        if self._poly.degree() == 0:
+            # Factorization is broken for polynomials, see
+            # https://trac.sagemath.org/ticket/20214
+            return pf
+
+        u = self.parent(pf.unit())
 
         cdef tuple g = <tuple> self._parent.gens()
         for i in self._mon.nonzero_positions():
@@ -3345,3 +3431,4 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             ans._mon = mon
             ans._poly = root
             return (True, ans)
+

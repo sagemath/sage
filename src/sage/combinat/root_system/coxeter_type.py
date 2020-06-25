@@ -16,7 +16,6 @@ Coxeter Types
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import add_metaclass
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -30,8 +29,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.number_field.number_field import is_QuadraticField
 
 
-@add_metaclass(ClasscallMetaclass)
-class CoxeterType(SageObject):
+class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
     """
     Abstract class for Coxeter types.
     """

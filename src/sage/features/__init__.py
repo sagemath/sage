@@ -55,8 +55,8 @@ import os
 from distutils.errors import CCompilerError
 from distutils.spawn import find_executable
 
-from sage.misc import six
 from sage.env import SAGE_SHARE
+
 
 class TrivialClasscallMetaClass(type):
     """
@@ -73,7 +73,7 @@ class TrivialClasscallMetaClass(type):
 
 _trivial_unique_representation_cache = dict()
 
-class TrivialUniqueRepresentation(six.with_metaclass(TrivialClasscallMetaClass)):
+class TrivialUniqueRepresentation(metaclass=TrivialClasscallMetaClass):
     """
     A trivial version of :class:`UniqueRepresentation` without Cython dependencies.
     """

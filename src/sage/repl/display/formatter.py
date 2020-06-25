@@ -25,11 +25,11 @@ generally, all sage expression as an ASCII art object::
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell('integral(x^2/pi^x, x)')
-       -x / 2    2                      \ 
-    -pi  *\x *log (pi) + 2*x*log(pi) + 2/ 
+       -x / 2    2                      \
+    -pi  *\x *log (pi) + 2*x*log(pi) + 2/
     --------------------------------------
-                     3                   
-                   log (pi)               
+                     3
+                   log (pi)
     sage: shell.run_cell("i = var('i')")
     sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
         10      9      8      7      6      5      4      3      2
@@ -59,6 +59,8 @@ This other facility uses a simple
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from io import StringIO
 
 from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from IPython.utils.py3compat import unicode_to_str
@@ -251,7 +253,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
         super(SagePlainTextFormatter, self).__init__(*args, **kwds)
 
     def __call__(self, obj):
-        """
+        r"""
         Compute the pretty representation of the object.
 
         Adapted from ``IPython.core.formatters.PlainTextPrettyPrint``.
@@ -282,7 +284,6 @@ class SagePlainTextFormatter(PlainTextFormatter):
         if DOCTEST_MODE:
             # Just to show that this is never executed in any other doctests in the Sage library
             print('---- calling ipython formatter ----')
-        from six import StringIO
         stream = StringIO()
         printer = SagePrettyPrinter(
             stream, self.max_width, unicode_to_str(self.newline))

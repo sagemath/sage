@@ -13,8 +13,6 @@ AC_DEFUN([SAGE_CHECK_OSX_SUPPORTED], [
         fi
         XCODE_VERS_MAJOR=`echo $XCODE_VERS | cut '-d.' -f1`
         DARWIN_VERSION=`uname -r | cut '-d.' -f1`
-        echo "***************************************************"
-        echo "***************************************************"
         if test $DARWIN_VERSION -gt 10; then
             echo "You are using OS X Lion (or later)."
             echo "You are strongly advised to install Apple's latest Xcode"
@@ -40,7 +38,7 @@ AC_DEFUN([SAGE_CHECK_OSX_SUPPORTED], [
             elif test $DARWIN_VERSION -lt 9; then
                echo "Probably you need Xcode 2.5"
             fi
-        fi
+        fi >& AS_MESSAGE_FD
 
         #######################################################################
         # (OS X only)

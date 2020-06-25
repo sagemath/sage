@@ -309,6 +309,28 @@ cdef class ParametricSurface(IndexFaceSet):
         self.triangulate(render_params)
         return IndexFaceSet.json_repr(self, render_params)
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return a represention of the surface suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: _ = var('x,y')
+            sage: P = plot3d(x^2-y^2, (x, -2, 2), (y, -2, 2))
+            sage: P.threejs_repr(P.default_render_params())
+            [('surface',
+              {'color': '#6666ff',
+               'faces': [[0, 1, 2, 3],
+                ...
+               'opacity': 1.0,
+               'vertices': [{'x': -2.0, 'y': -2.0, 'z': 0.0},
+                ...
+                {'x': 2.0, 'y': 2.0, 'z': 0.0}]})]
+
+        """
+        self.triangulate(render_params)
+        return IndexFaceSet.threejs_repr(self, render_params)
+
     def is_enclosed(self):
         """
         Return a boolean telling whether or not it is necessary to
@@ -723,7 +745,7 @@ cdef class ParametricSurface(IndexFaceSet):
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
         Needed to support PLOT in doctrings, see :trac:`17498`
-        
+
         EXAMPLES::
 
             sage: S = parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20))
@@ -754,7 +776,7 @@ class MoebiusStrip(ParametricSurface):
 
         sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sage: M = MoebiusStrip(3,3)
-        sage: M.show() 
+        sage: M.show()
     """
 
     def __init__(self, r, width, twists=1, **kwds):

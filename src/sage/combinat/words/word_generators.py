@@ -55,8 +55,6 @@ EXAMPLES::
 # ****************************************************************************
 from __future__ import print_function
 
-from six.moves import range
-
 from itertools import cycle, count
 from random import randint
 from sage.misc.cachefunc import cached_method

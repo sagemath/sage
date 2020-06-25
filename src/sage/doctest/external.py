@@ -27,6 +27,9 @@ AUTHORS:
 
 from multiprocessing import Array
 
+import urllib.error
+from urllib.request import Request, urlopen
+
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
 prefix = 'has_'
@@ -44,8 +47,6 @@ def has_internet():
         sage: has_internet() # random, optional -- internet
         True
     """
-    from six.moves import urllib
-    from six.moves.urllib.request import Request, urlopen
     req = Request("http://www.sagemath.org",headers={"User-Agent":"sage-doctest"})
     try:
         urlopen(req,timeout=1)
@@ -67,10 +68,10 @@ def has_latex():
     from sage.misc.temporary_file import tmp_filename
     try:
         f = tmp_filename(ext='.tex')
-        O = open(f, 'w') 
+        O = open(f, 'w')
         O.write(_latex_file_('2+3'))
-        O.close() 
-        _run_latex_(f) 
+        O.close()
+        _run_latex_(f)
         return True
     except Exception:
         return False
@@ -301,7 +302,7 @@ external_software = external_software()
 def _lookup(software):
     """
     Test if the software is available on the system.
-    
+
     EXAMPLES::
 
         sage: sage.doctest.external._lookup('internet') # random, optional - internet
@@ -353,8 +354,8 @@ class AvailableSoftware(object):
             sage: S.seen() # random
             []
         """
-        # For multiprocessing of doctests, the data self._seen should be 
-        # shared among subprocesses. Thus we use Array class from the 
+        # For multiprocessing of doctests, the data self._seen should be
+        # shared among subprocesses. Thus we use Array class from the
         # multiprocessing module.
         self._seen = Array('i', len(external_software)) # initialized to zeroes
 
@@ -402,7 +403,7 @@ class AvailableSoftware(object):
     def seen(self):
         """
         Return the list of detected external software.
-        
+
         EXAMPLES::
 
             sage: from sage.doctest.external import available_software

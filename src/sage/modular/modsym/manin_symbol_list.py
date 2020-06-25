@@ -33,7 +33,6 @@ different types.  The hierarchy is as follows:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
 
 import sage.modular.modsym.p1list as p1list
 import sage.modular.modsym.g1list as g1list

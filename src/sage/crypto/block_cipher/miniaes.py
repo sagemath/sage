@@ -25,7 +25,6 @@ AUTHORS:
 #
 # http://www.gnu.org/licenses/
 ###########################################################################
-from six.moves import range
 
 from sage.matrix.matrix_dense import Matrix_dense
 from sage.matrix.matrix_space import MatrixSpace

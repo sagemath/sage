@@ -12,13 +12,13 @@ cdef class PolyhedronFaceLattice:
     cdef size_t face_length         # stores length of the faces in terms of uint64_t
     cdef size_t *f_vector           # a copy of the f-vector, is reversed if dual
     cdef size_t *face_counter       # how many faces of each dimension have been initialized
-    cdef size_t *atom_repr          # a place where atom-representaion of face will be stored
-    cdef size_t *coatom_repr        # a place where coatom-representaion of face will be stored
+    cdef size_t *atom_rep           # a place where atom-representation of face will be stored
+    cdef size_t *coatom_rep         # a place where coatom-representation of face will be stored
 
     # some copies from CombinatorialPolyhedron
     cdef tuple _Vrep, _facet_names, _equalities
 
-    # Atoms and coatoms are the Vrepr/facets of the Polyedron.
+    # Atoms and coatoms are the Vrep/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms Vrepresentatives and vice versa.
     cdef ListOfFaces atoms, coatoms
 
@@ -52,8 +52,8 @@ cdef class PolyhedronFaceLattice:
     cdef inline int is_equal(self, int dimension, size_t index,
                              uint64_t *face) except -1
     cdef CombinatorialFace get_face(self, int dimension, size_t index)
-    cdef size_t set_coatom_repr(self, int dimension, size_t index) except -1
-    cdef size_t set_atom_repr(self, int dimension, size_t index) except -1
+    cdef size_t set_coatom_rep(self, int dimension, size_t index) except -1
+    cdef size_t set_atom_rep(self, int dimension, size_t index) except -1
     cdef void incidence_init(self, int dimension_one, int dimension_two)
     cdef inline bint next_incidence(self, size_t *one, size_t *two)
     cdef inline bint next_incidence_loop(self, size_t *one, size_t *two)

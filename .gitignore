@@ -13,8 +13,12 @@
 /config.log
 /config.status
 /configure
+/conftest*
 
 /m4/sage_spkg_configures.m4
+
+# no longer generated, but may still be in user worktrees
+/src/lib/pkgconfig
 
 ###################
 # Temporary Files #
@@ -95,4 +99,11 @@ gitlab-build-docker.log
 /src/build
 /src/Makefile
 /src/bin/sage-env-config
+/build/bin/sage-build-env-config
 
+#######################
+# tox generated files #
+#######################
+
+/.tox
+/prefix

@@ -44,9 +44,8 @@ This file contains the following elements:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer

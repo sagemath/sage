@@ -40,7 +40,6 @@ Characters are themselves group elements, and basic arithmetic on them works::
     sage: chi.multiplicative_order()
     +Infinity
 """
-from six.moves import range
 
 import operator
 from sage.structure.element import MultiplicativeGroupElement, parent

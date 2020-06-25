@@ -61,6 +61,7 @@ def _columnize(element):
     v = vector(element)
     return v.column()
 
+
 class GoppaCode(AbstractLinearCode):
     r"""
     Implementation of Goppa codes.
@@ -73,7 +74,7 @@ class GoppaCode(AbstractLinearCode):
     In binary cases, the minimum distance is `2t + 1`, where `t` is the degree
     of `g`.
 
-    INPUTS:
+    INPUT:
 
     - ``generating_pol`` -- a monic polynomial with coefficients in a finite
       field `\GF{p^m}`, the code is defined over `\GF{p}`, `p` must be a prime number

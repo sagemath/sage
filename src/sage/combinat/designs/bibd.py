@@ -53,8 +53,6 @@ Functions
 from __future__ import division, print_function
 from __future__ import absolute_import
 
-from six.moves import range
-
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from .design_catalog import transversal_design
@@ -232,7 +230,7 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
             return True
         B = BIBD_from_arc_in_desarguesian_projective_plane(v,k)
         return BalancedIncompleteBlockDesign(v, B, copy=False)
-    if BIBD_from_TD(v,k,existence=True):
+    if BIBD_from_TD(v,k,existence=True) is True:
         if existence:
             return True
         return BalancedIncompleteBlockDesign(v, BIBD_from_TD(v,k), copy=False)
@@ -241,7 +239,7 @@ def balanced_incomplete_block_design(v, k, existence=False, use_LJCR=False):
             return True
         from .block_design import projective_plane
         return BalancedIncompleteBlockDesign(v, projective_plane(k-1),copy=False)
-    if difference_family(v,k,existence=True):
+    if difference_family(v,k,existence=True) is True:
         if existence:
             return True
         G,D = difference_family(v,k)
@@ -434,8 +432,8 @@ def BIBD_from_TD(v,k,existence=False):
     """
     # First construction
     if (v%k == 0 and
-        balanced_incomplete_block_design(v//k,k,existence=True) and
-        transversal_design(k,v//k,existence=True)):
+        balanced_incomplete_block_design(v//k,k,existence=True) is True and
+        transversal_design(k,v//k,existence=True) is True):
 
         if existence:
             return True
@@ -467,9 +465,8 @@ def BIBD_from_TD(v,k,existence=False):
 
     # Third construction
     elif ((v-k)%k == 0 and
-        balanced_incomplete_block_design((v-k)//k+k,k,existence=True) and
-        transversal_design(k,(v-k)//k,existence=True)):
-
+        balanced_incomplete_block_design((v-k)//k+k,k,existence=True) is True
+        and transversal_design(k,(v-k)//k,existence=True) is True):
         if existence:
             return True
 

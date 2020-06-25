@@ -638,7 +638,7 @@ class AutomorphismField(TensorField):
         OUTPUT:
 
         - the automorphism resulting from the composition of ``other`` and
-        ``self``
+          ``self``
 
         TESTS::
 

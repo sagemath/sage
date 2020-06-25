@@ -1,12 +1,12 @@
 """
 Branching Rules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import sage.combinat.root_system.weyl_characters
@@ -1750,7 +1750,7 @@ def branching_rule(Rtype, Stype, rule="default"):
     elif rule == "tensor" or rule == "tensor-debug":
         if not Stype.is_compound():
             raise ValueError("Tensor product requires more than one factor")
-        if len(stypes) is not 2:
+        if len(stypes) != 2:
             raise ValueError("Not implemented")
         if Rtype[0] == 'A':
             nr = Rtype[1]+1

@@ -1,4 +1,4 @@
-$(PYTHON) | pip flask speaklater babel
+$(PYTHON) | $(PYTHON_TOOLCHAIN) flask speaklater babel
 
 ----------
 All lines of this file are ignored except the first.

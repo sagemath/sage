@@ -50,7 +50,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cartesian_product_iterator

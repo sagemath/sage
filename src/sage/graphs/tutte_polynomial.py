@@ -32,8 +32,6 @@ Functions
 ---------
 """
 
-from six import itervalues
-
 from contextlib import contextmanager
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -626,7 +624,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
 
     uG = underlying_graph(G)
     em = edge_multiplicities(G)
-    d = list(itervalues(em))
+    d = list(em.values())
 
     def yy(start, end):
         return sum(y**i for i in range(start, end+1))
@@ -671,7 +669,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
                                                       for d_i in d[:-2])
         return result
 
-    # Theorem 3 from Haggard, Pearce, and Royle, adapted to multi-eaars
+    # Theorem 3 from Haggard, Pearce, and Royle, adapted to multi-ears
     ear = Ear.find_ear(uG)
     if ear is not None:
         if (ear.is_cycle and ear.vertices == G.vertices()):

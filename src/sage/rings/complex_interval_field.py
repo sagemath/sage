@@ -37,8 +37,6 @@ heavily modified:
 
 from __future__ import absolute_import
 
-from six import integer_types
-
 from sage.structure.parent import Parent
 from .integer_ring import ZZ
 from .rational_field import QQ
@@ -398,9 +396,9 @@ class ComplexIntervalField_class(Field):
     def __hash__(self):
          """
          Return the hash.
- 
+
          EXAMPLES::
- 
+
              sage: C = ComplexIntervalField(200)
              sage: from sage.rings.complex_interval_field import ComplexIntervalField_class
              sage: D = ComplexIntervalField_class(200)
@@ -519,7 +517,7 @@ class ComplexIntervalField_class(Field):
         # Direct and efficient conversions
         if S is ZZ or S is QQ or S is float:
             return True
-        if any(S is T for T in integer_types):
+        if S is int:
             return True
         if isinstance(S, (ComplexIntervalField_class,
                           RealIntervalField_class)):

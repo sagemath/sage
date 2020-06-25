@@ -54,6 +54,7 @@ Toric geometry
 
    sage/geometry/toric_lattice
    sage/geometry/cone
+   sage/geometry/cone_catalog
    sage/geometry/fan
    sage/geometry/fan_morphism
    sage/geometry/point_collection

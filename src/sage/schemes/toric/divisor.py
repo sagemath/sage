@@ -163,9 +163,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import zip
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.combinat.combination import Combinations
 from sage.geometry.cone import is_Cone
@@ -184,8 +183,6 @@ from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
 from sage.schemes.toric.variety import CohomologyRing, is_ToricVariety
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import is_Vector
-
-import six
 
 
 # forward declaration
@@ -367,6 +364,8 @@ class ToricDivisorGroup(DivisorGroup_generic):
             Traceback (most recent call last):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
+            sage: TDiv(TDiv.gen(0), check=True)
+            V(x)
         """
         if is_ToricDivisor(x):
             if x.parent() is self:
@@ -1486,7 +1485,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         If the divisor is ample and the toric variety smooth or of
         dimension 2, then this is an embedding.
-        
+
         INPUT:
 
         - ``names`` -- string (optional; default ``'z'``). The
@@ -1499,7 +1498,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D.Kodaira_map()
             Scheme morphism:
               From: 1-d CPR-Fano toric variety covered by 2 affine patches
-              To:   Closed subscheme of Projective Space of dimension 2 
+              To:   Closed subscheme of Projective Space of dimension 2
                     over Rational Field defined by:
               -z1^2 + z0*z2
               Defn: Defined on coordinates by sending [u : v] to
@@ -1524,7 +1523,7 @@ class ToricDivisor_generic(Divisor_generic):
               -x1*x5^2 + x2*x3*x6,
               -x1*x5^3 + x2^2*x6^2
               Defn: Defined on coordinates by sending [x : u : y : v : z : w] to
-                    (x*u^2*y^2*v : x^2*u^2*y*w : u*y^2*v^2*z : x*u*y*v*z*w : 
+                    (x*u^2*y^2*v : x^2*u^2*y*w : u*y^2*v^2*z : x*u*y*v*z*w :
                      x^2*u*z*w^2 : y*v^2*z^2*w : x*v*z^2*w^2)
         """
         sections = self.sections_monomials()
@@ -1620,7 +1619,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         HH = cplx.homology(base_ring=QQ, cohomology=True)
         HH_list = [0]*(d+1)
-        for h in six.iteritems(HH):
+        for h in HH.items():
             degree = h[0]+1
             cohomology_dim = h[1].dimension()
             if degree>d or degree<0:

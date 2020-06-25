@@ -176,8 +176,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import, print_function
-import six
-from six import string_types
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from .gap_workspace import gap_workspace_file, prepare_workspace_dir
@@ -624,10 +622,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
                     current_outputs.append(b'@')
                 elif x == 2: #special char
                     c = ord(E.after[1:2]) - ord(b'A') + 1
-                    if six.PY2:
-                        s = chr(c)
-                    else:
-                        s = bytes([c])
+                    s = bytes([c])
                     current_outputs.append(s)
                 elif x == 3: # garbage collection info, ignore
                     pass
@@ -769,7 +764,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             if not len(normal):
                 return ''
 
-            if isinstance(wait_for_prompt, string_types) and normal.ends_with(wait_for_prompt):
+            if isinstance(wait_for_prompt, str) and normal.ends_with(wait_for_prompt):
                 n = len(wait_for_prompt)
             elif normal.endswith(bytes_to_str(self._prompt)):
                 n = len(self._prompt)

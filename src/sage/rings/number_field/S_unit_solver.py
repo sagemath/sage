@@ -71,7 +71,6 @@ from itertools import combinations_with_replacement
 from sage.arith.all import gcd, lcm, CRT
 from copy import copy
 import itertools
-from six.moves import range, zip
 
 
 def column_Log(SUK, iota, U, prec=106):
@@ -830,7 +829,6 @@ def reduction_step_complex_case(place,B0,G,g0,c7):
                         return 0, True
                 else:
                     Bnew = ((R(C * 2).log() - ((l-S).sqrt()-T)).log() / c7).round()
-                    finish = True
                     if mod(y[n], A[n,n]) == 0:
                         return max(Bnew,(y[n]/A[n,n]).abs()), False
                     else:
@@ -1902,14 +1900,6 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
         sage: all(set(actual[p][vec]) == set(expected[p][vec]) for p in [3,7] for vec in expected[p])
         True
     """
-
-    # we define a custom function to flatten tuples for use in a later step.
-    # see the definition of ev_iterator, below.
-
-    def ev_flatten(vec):
-        # turns (a, (b1,...,bn)) to (a, b1, ..., bn)
-        return tuple([vec[0]] + list(vec[1]))
-
     # We initialize some dictionaries.
 
     rho = SUK.gens_values()
@@ -1931,7 +1921,7 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
 
     rfv_to_ev = {}
 
-    # We build a second dictionary of dictiories.
+    # We build a second dictionary of dictionaries.
     # comp_exp_vec[q] is the dictionary mod q which assigns to each exponent vector
     # a list of 'complementary' exponent vectors.
 
@@ -2066,6 +2056,7 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
 
     return comp_exp_vec
 
+
 def compatible_vectors_check(a0, a1, g, l):
     r"""
     Given exponent vectors with respect to two moduli, determines if they are compatible.
@@ -2110,6 +2101,7 @@ def compatible_vectors_check(a0, a1, g, l):
     # exponent vectors must agree exactly in the 0th coordinate.
     return a0[0] == a1[0] and all((x0 - x1) % g == 0 for x0,x1 in zip(itertools.islice(a0, 1, l), itertools.islice(a1, 1, l)))
 
+
 def compatible_vectors(a, m0, m1, g):
     r"""
     Given an exponent vector ``a`` modulo ``m0``, returns an iterator over the exponent vectors for the modulus ``m1``, such that a lift to the lcm modulus exists.
@@ -2153,6 +2145,7 @@ def compatible_vectors(a, m0, m1, g):
     # recall that the 0th entry must be an exact match.
     ranges = [[a[0]]] + [range(a[i]%g, (a[i]%g) + m1, g) for i in range(1, len(a))]
     return itertools.product(*ranges)
+
 
 def compatible_systems(split_prime_list, complement_exp_vec_dict):
     r"""
@@ -2219,6 +2212,7 @@ def compatible_systems(split_prime_list, complement_exp_vec_dict):
                         system_list.append(new_system)
     return system_list
 
+
 def compatible_system_lift(compatible_system, split_primes_list):
     r"""
     Given a compatible system of exponent vectors and complementary exponent vectors, return a lift to the integers.
@@ -2279,6 +2273,7 @@ def compatible_system_lift(compatible_system, split_primes_list):
 
     return [tuple(exponent_vector_lift), tuple(complement_vector_lift)]
 
+
 def solutions_from_systems(SUK, bound, cs_list, split_primes_list):
     r"""
     Lifts compatible systems to the integers and returns the S-unit equation solutions the lifts yield.
@@ -2334,6 +2329,7 @@ def solutions_from_systems(SUK, bound, cs_list, split_primes_list):
 
     return solutions
 
+
 def clean_sfs(sfs_list):
     r"""
     Given a list of S-unit equation solutions, remove trivial redundancies.
@@ -2369,7 +2365,8 @@ def clean_sfs(sfs_list):
             new_sfs.append(entry)
     return new_sfs
 
-def sieve_below_bound(K, S, bound = 10, bump = 10, split_primes_list=[], verbose=False):
+
+def sieve_below_bound(K, S, bound=10, bump=10, split_primes_list=[], verbose=False):
     r"""
     Return all solutions to the S-unit equation ``x + y = 1`` over K with exponents below the given bound.
 
@@ -2427,6 +2424,7 @@ def sieve_below_bound(K, S, bound = 10, bump = 10, split_primes_list=[], verbose
     S_unit_solutions = clean_sfs(sfs_list)
 
     return S_unit_solutions
+
 
 def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=False, proof=None, verbose=False):
     r"""
@@ -2536,6 +2534,7 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
     else:
         return S_unit_solutions
 
+
 def eq_up_to_order(A, B):
     """
     If A and B are lists of four-tuples ``[a0,a1,a2,a3]`` and ``[b0,b1,b2,b3]``,
@@ -2557,6 +2556,7 @@ def eq_up_to_order(A, B):
         sage: eq_up_to_order(L, [(1,2,4,3),(5,6,8,7)])
         False
     """
+    # does not look very optimal
     Adup = set(A + [(a[1],a[0],a[3],a[2]) for a in A])
     Bdup = set(B + [(b[1],b[0],b[3],b[2]) for b in B])
     return Adup == Bdup

@@ -15,7 +15,6 @@ The cdd backend for polyhedral computations
 # ****************************************************************************
 
 from __future__ import print_function, absolute_import
-from six import PY2
 
 from subprocess import Popen, PIPE
 from sage.rings.all import ZZ
@@ -147,13 +146,9 @@ class Polyhedron_cdd(Polyhedron_base):
             print('---- CDD input -----')
             print(cdd_input_string)
 
-        if PY2:
-            enc_kwargs = {}
-        else:
-            enc_kwargs = {'encoding': 'latin-1'}
-
         cdd_proc = Popen([self._cdd_executable, cmdline_arg],
-                         stdin=PIPE, stdout=PIPE, stderr=PIPE, **enc_kwargs)
+                         stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                         encoding='latin-1')
         ans, err = cdd_proc.communicate(input=cdd_input_string)
 
         if verbose:
@@ -213,6 +208,27 @@ class Polyhedron_cdd(Polyhedron_base):
             sage: p = Polyhedron(vertices = [[0,0],[1,0],[0,1],[1,1]], backend='cdd', base_ring=QQ) # indirect doctest
             sage: p.vertices()
             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (0, 1), A vertex at (1, 1))
+
+        Check that :trac:`29176` is fixed::
+
+            sage: e = [[11582947.657000002, 5374.38, 4177.06, 1.0], [11562795.9322, 5373.62, 4168.38, 1.0]]
+            sage: p = Polyhedron(ieqs=e); p
+            A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 1 vertex, 2 rays, 1 line
+            sage: p.incidence_matrix()
+            [1 1]
+            [1 0]
+            [0 1]
+            [1 1]
+
+            sage: P = [[-2687.19, -2088.53], [-2686.81, -2084.19]]
+            sage: V = VoronoiDiagram(P)
+            sage: R = V.regions()
+            sage: V.points()[0], R[V.points()[0]]
+            (P(-2687.19000000000, -2088.53000000000),
+             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
+            sage: V.points()[1], R[V.points()[1]]
+            (P(-2686.81000000000, -2084.19000000000),
+             A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
         """
         cddout = cddout.splitlines()
 
@@ -293,8 +309,11 @@ class Polyhedron_cdd(Polyhedron_base):
                 self.parent()._make_Vertex(self, [self.base_ring().zero()] * self.ambient_dim())
             self._Vrepresentation = tuple(self._Vrepresentation)
 
-        def parse_adjacency(intro, data, N, cdd_indices_to_sage_indices):
-            ret = matrix(ZZ, N, N, 0)
+        def parse_adjacency(intro, data, M, N, cdd_indices_to_sage_indices, cdd_indices_to_sage_indices2=None):
+            # This function is also used to parse the incidence matrix.
+            if cdd_indices_to_sage_indices2 is None:
+                cdd_indices_to_sage_indices2 = cdd_indices_to_sage_indices
+            ret = matrix(ZZ, M, N, 0)
             data.pop(0)
             data.reverse()
             for adjacencies in data:
@@ -311,7 +330,7 @@ class Polyhedron_cdd(Polyhedron_base):
                 v = cdd_indices_to_sage_indices[cdd_vertex]
                 if v is None:
                     continue
-                for w in parse_indices(count, adjacencies[3:], cdd_indices_to_sage_indices):
+                for w in parse_indices(count, adjacencies[3:], cdd_indices_to_sage_indices2):
                     if w is None:
                         continue
                     ret[v, w] = 1
@@ -321,7 +340,7 @@ class Polyhedron_cdd(Polyhedron_base):
             if '_V_adjacency_matrix' in self.__dict__:
                 raise NotImplementedError("can not replace internal representation as this breaks caching")
             N = len(self._Vrepresentation)
-            self._V_adjacency_matrix = parse_adjacency(intro, data, N, self._cdd_V_to_sage_V)
+            self._V_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_V_to_sage_V)
             for i, v in enumerate(self._Vrepresentation):
                 # cdd reports that lines are never adjacent to anything.
                 # we disagree, they are adjacent to everything.
@@ -337,14 +356,24 @@ class Polyhedron_cdd(Polyhedron_base):
             if '_H_adjacency_matrix' in self.__dict__:
                 raise NotImplementedError("can not replace internal representation as this breaks caching")
             N = len(self._Hrepresentation)
-            self._H_adjacency_matrix = parse_adjacency(intro, data, N, self._cdd_H_to_sage_H)
+            self._H_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_H_to_sage_H)
             self._H_adjacency_matrix.set_immutable()
             self.facet_adjacency_matrix.set_cache(self._H_adjacency_matrix)
+
+        def parse_incidence_matrix(intro, data):
+            if 'incidence_matrix' in self.__dict__:
+                raise NotImplementedError("can not replace internal representation as this breaks caching")
+            N = len(self._Hrepresentation)
+            M = len(self._Vrepresentation)
+            inc_mat = parse_adjacency(intro, data, M, N, self._cdd_V_to_sage_V, self._cdd_H_to_sage_H)
+            inc_mat.set_immutable()
+            self.incidence_matrix.set_cache(inc_mat)
 
         Polyhedron_cdd._parse_block(cddout, 'H-representation', parse_H_representation)
         Polyhedron_cdd._parse_block(cddout, 'V-representation', parse_V_representation)
         Polyhedron_cdd._parse_block(cddout, 'Facet adjacency', parse_facet_adjacency)
         Polyhedron_cdd._parse_block(cddout, 'Vertex adjacency', parse_vertex_adjacency)
+        Polyhedron_cdd._parse_block(cddout, 'Vertex incidence', parse_incidence_matrix)
 
 
 class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
@@ -479,3 +508,108 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
+
+    def _init_from_Vrepresentation_and_Hrepresentation(self, Vrep, Hrep, verbose=False):
+        """
+        Construct polyhedron from Vrepresentation and Hrepresentation data.
+
+        See :class:`Polyhedron_base` for a description of ``Vrep`` and ``Hrep``.
+
+        .. NOTE::
+
+            The representation is assumed to be correct.
+
+            As long as cdd can obtain a consistent object with Vrepresentation
+            or Hrepresentation no warning is raised. Consistency is checked by
+            comparing the output length of Vrepresentation and Hrepresentation
+            with the input.
+
+            In comparison, the "normal" initialization from Vrepresentation over RDF
+            expects the output length to be consistent with the computed length
+            when re-feeding cdd the outputed Hrepresentation.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra_RDF_cdd
+            sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_RDF_cdd
+            sage: parent = Polyhedra_RDF_cdd(RDF, 1, 'cdd')
+            sage: Vrep = [[[0.0], [1.0]], [], []]
+            sage: Hrep = [[[0.0, 1.0], [1.0, -1.0]], []]
+            sage: p = Polyhedron_RDF_cdd(parent, Vrep, Hrep,
+            ....:                        Vrep_minimal=True, Hrep_minimal=True)  # indirect doctest
+            sage: p
+            A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
+
+        TESTS:
+
+        Test that :trac:`29568` is fixed::
+
+            sage: P = polytopes.buckyball(exact=False)
+            sage: Q = P + P.center()
+            sage: P.is_combinatorially_isomorphic(Q)
+            True
+            sage: R = 2*P
+            sage: P.is_combinatorially_isomorphic(R)
+            True
+        """
+        def parse_Vrep(intro, data):
+            count = int(data[0][0])
+            if count != len(vertices) + len(rays) + len(lines):
+                # Upstream claims that nothing can be done about these
+                # cases/that they are features not bugs. Imho, cddlib is
+                # not really suitable for automatic parsing of its output,
+                # the implementation backed by doubles has not really been
+                # optimized for numerical stability, and makes some
+                # somewhat random numerical choices. (But I am not an
+                # expert in that field by any means.) See also
+                # https://github.com/cddlib/cddlib/pull/7.
+                from warnings import warn
+                warn("This polyhedron data is numerically complicated; cdd could not convert between the inexact V and H representation without loss of data. The resulting object might show inconsistencies.")
+
+        def parse_Hrep(intro, data):
+            count = int(data[0][0])
+            infinite_count = len([d for d in data[1:] if d[0] == '1' and all(c == '0' for c in d[1:])])
+            if count - infinite_count != len(ieqs) + len(eqns):
+                # Upstream claims that nothing can be done about these
+                # cases/that they are features not bugs. Imho, cddlib is
+                # not really suitable for automatic parsing of its output,
+                # the implementation backed by doubles has not really been
+                # optimized for numerical stability, and makes some
+                # somewhat random numerical choices. (But I am not an
+                # expert in that field by any means.)
+                from warnings import warn
+                warn("This polyhedron data is numerically complicated; cdd could not convert between the inexact V and H representation without loss of data. The resulting object might show inconsistencies.")
+
+        def try_init(rep):
+            if rep == "Vrep":
+                from .cdd_file_format import cdd_Vrepresentation
+                s = cdd_Vrepresentation(self._cdd_type, vertices, rays, lines)
+            else:
+                from .cdd_file_format import cdd_Hrepresentation
+                s = cdd_Hrepresentation(self._cdd_type, ieqs, eqns)
+
+            s = self._run_cdd(s, '--redcheck', verbose=verbose)
+            s = self._run_cdd(s, '--repall', verbose=verbose)
+            Polyhedron_cdd._parse_block(s.splitlines(), 'V-representation', parse_Vrep)
+            Polyhedron_cdd._parse_block(s.splitlines(), 'H-representation', parse_Hrep)
+            self._init_from_cdd_output(s)
+
+        from warnings import catch_warnings, simplefilter
+
+        vertices, rays, lines = (tuple(x) for x in Vrep)
+        ieqs, eqns            = (tuple(x) for x in Hrep)
+
+        # We prefer the shorter representation.
+        # Note that for the empty polyhedron we prefer Hrepresentation.
+        prim = "Hrep" if len(ieqs) <= len(vertices) + len(rays) else "Vrep"
+        sec  = "Vrep" if len(ieqs) <= len(vertices) + len(rays) else "Hrep"
+
+        with catch_warnings():
+            # Raise an error and try the other representation in case of
+            # numerical inconsistency.
+            simplefilter("error")
+            try:
+                try_init(prim)
+            except UserWarning:
+                simplefilter("once")  # Only print the first warning.
+                try_init(sec)

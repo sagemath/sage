@@ -12,10 +12,10 @@ Sage, you get output similar to the following:
 
 .. CODE-BLOCK:: text
 
-    ----------------------------------------------------------------------
-    | SAGE Version 3.1.1, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
 
     sage:
@@ -172,10 +172,10 @@ file).
 .. CODE-BLOCK:: shell-session
 
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
@@ -191,10 +191,10 @@ file).
     sage:
     Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
     Loading log file <setup> one line at a time...
@@ -967,31 +967,10 @@ described below via the server.
 Legacy SageNB Notebook
 ----------------------
 
-The Sage notebook is run by typing
-
-.. skip
-
-::
-
-    sage: notebook()
-
-on the command line of Sage. This starts the Sage notebook and
+The Sage notebook is run by choosing it after starting Sage with ``-n`` option.
+This starts the Sage notebook and
 opens your default web browser to view it. The server's state files
 are stored in ``$HOME/.sage/sage\_notebook.sagenb``.
-
-Other options include:
-
-.. skip
-
-::
-
-    sage: notebook("directory")
-
-which starts a new notebook server using files in the given
-directory ``directory.sagenb``, instead of the default directory
-``$HOME/.sage/sage_notebook``. This can be useful if you want to
-have a collection of worksheets associated with a specific project,
-or run several separate notebook servers at the same time.
 
 When you start the notebook, it first creates the following files
 in ``$HOME/.sage/sage_notebook.sagenb``:

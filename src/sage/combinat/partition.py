@@ -258,7 +258,7 @@ We can compute the Frobenius coordinates and go back and forth::
     sage: Partition(frobenius_coordinates=([6,1],[2,0]))
     [7, 3, 1]
     sage: all(mu == Partition(frobenius_coordinates=mu.frobenius_coordinates())
-    ....:     for n in range(30) for mu in Partitions(n))
+    ....:     for n in range(12) for mu in Partitions(n))
     True
 
 We use the lexicographic ordering::
@@ -282,12 +282,11 @@ We use the lexicographic ordering::
 from __future__ import print_function, absolute_import
 
 from copy import copy
-import six
-from six.moves import range, zip
 
 from sage.libs.all import pari
 from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
 
+from sage.arith.misc import multinomial
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -324,6 +323,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.functions.other import binomial
+
 
 class Partition(CombinatorialElement):
     r"""
@@ -2804,12 +2804,14 @@ class Partition(CombinatorialElement):
 
         g=self.garnir_tableau(cell)   # start with the Garnir tableau and modify
 
-        if e==0: return g             # no more dominant tableau of the same residue
+        if e==0:
+            return g             # no more dominant tableau of the same residue
 
         a=e*int((self[row]-col)/e)    # number of cells in the e-bricks in row `row`
         b=e*int((col+1)/e)            # number of cells in the e-bricks in row `row+1`
 
-        if a==0 or b==0: return g
+        if a==0 or b==0:
+            return g
 
         t=g.to_list()
         m=g[row+1][0]                 # smallest  number in 0-Garnir belt
@@ -3670,8 +3672,8 @@ class Partition(CombinatorialElement):
             sage: Partition([2,2,2]).aut()
             48
         """
-        size = prod(i ** mi * factorial(mi)
-                    for i, mi in six.iteritems(self.to_exp_dict()))
+        size = prod(i**mi * factorial(mi)
+                    for i, mi in self.to_exp_dict().items())
         if t or q:
             size *= prod((ZZ.one() - q ** j) / (ZZ.one() - t ** j)
                          for j in self)
@@ -4349,7 +4351,7 @@ class Partition(CombinatorialElement):
 
             :meth:`core`, :class:`Core`
         """
-        return not k in self.hooks()
+        return k not in self.hooks()
 
     def k_interior(self, k):
         r"""
@@ -5109,7 +5111,7 @@ class Partition(CombinatorialElement):
             # if we know the total length alloted for each of the paths (sizes), and the number
             # of paths for each component. A multinomial picks the ordering of the components where
             # each step is taken.
-                return prod(path_counts) * factorial(sum(sizes)) / prod([factorial(_) for _ in sizes])
+                return prod(path_counts) * multinomial(sizes)
 
             sizes = [larger_quotients[i].size()-smaller_quotients[i].size() for i in range(k)]
             path_counts = [larger_quotients[i].dimension(smaller_quotients[i]) for i in range(k)]
@@ -6228,7 +6230,7 @@ class Partitions_all(Partitions):
             True
         """
         from .partition_tuple import PartitionTuple, PartitionTuples
-        if not quotient in PartitionTuples():
+        if quotient not in PartitionTuples():
             raise ValueError('the quotient %s must be a tuple of partitions'%quotient)
         components = PartitionTuple(quotient).components()
         length = len(components)

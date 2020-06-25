@@ -30,6 +30,7 @@ from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.libs.gmp.mpz cimport *
 
+
 cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_p y
     sig_off()
@@ -37,6 +38,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     y.x = x[0]
     del x
     return y
+
 
 cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_pX y
@@ -46,6 +48,7 @@ cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     del x
     sig_off()
     return y
+
 
 ##############################################################################
 #
@@ -65,6 +68,7 @@ cdef class ntl_ZZ_pX(object):
     Small degree polynomials are multiplied either with classical
     or Karatsuba algorithms.
     """
+
     # See ntl_ZZ_pX.pxd for definition of data members
     def __init__(self, v=None, modulus=None):
         """
@@ -85,8 +89,7 @@ cdef class ntl_ZZ_pX(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a ZZ_pX.")
 
-        #self.c.restore_c()  ## the context was restored in __new__
-
+        # self.c._assert_is_current_modulus()  # the context was restored in __new__
         cdef ntl_ZZ_p cc
         cdef Py_ssize_t i
 
@@ -96,11 +99,13 @@ cdef class ntl_ZZ_pX(object):
             for i, x in enumerate(v):
                 if not isinstance(x, ntl_ZZ_p):
                     cc = ntl_ZZ_p(x, self.c)
+                    self.c.restore_c()
                 else:
                     cc = x
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
-            s = str(v).replace(',', ' ').replace('L', '')
+            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus trac #25790
+            self.c.restore_c()
             ccreadstr(self.x, s)
 
     def __cinit__(self, v=None, modulus=None):

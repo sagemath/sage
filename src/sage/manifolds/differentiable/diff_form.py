@@ -275,7 +275,7 @@ class DiffForm(TensorField):
         TESTS:
 
         Construction via ``parent.element_class``, and not via a direct call
-        to ``DiffForm`, to fit with the category framework::
+        to ``DiffForm``, to fit with the category framework::
 
             sage: M = Manifold(2, 'M')
             sage: U = M.open_subset('U') ; V = M.open_subset('V')

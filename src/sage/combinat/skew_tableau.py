@@ -24,8 +24,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six import add_metaclass
-from six.moves import range, zip
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.parent import Parent
@@ -48,8 +46,8 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.words import Words
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class SkewTableau(ClonableList):
+class SkewTableau(ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A skew tableau.
 

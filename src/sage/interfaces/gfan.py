@@ -41,8 +41,6 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #*****************************************************************************
 from __future__ import print_function
 
-import six
-
 from subprocess import Popen, PIPE
 
 
@@ -63,13 +61,8 @@ class Gfan(object):
             print("gfan command:\n%s" % cmd)
             print("gfan input:\n%s" % I)
 
-        if six.PY2:
-            enc_kwargs = {}
-        else:
-            enc_kwargs = {'encoding': 'latin-1'}
-
         gfan_processes = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                               **enc_kwargs)
+                               encoding='latin-1')
         ans, err = gfan_processes.communicate(input=I)
 
         # sometimes, gfan outputs stuff to stderr even though everything is fine

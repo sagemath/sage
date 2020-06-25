@@ -65,7 +65,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.misc.lazy_attribute import lazy_attribute
@@ -2246,7 +2245,7 @@ def BraidGroup(n=None, names='s'):
             n = None
     # derive n from counting names
     if n is None:
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             n = len(names.split(','))
         else:
             names = list(names)

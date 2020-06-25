@@ -315,7 +315,7 @@ class WeilPolynomials_iter():
         # Asymmetrize initial coefficients
         for i in range(len(coefflist)):
             for j in range(1, (len(coefflist)-i+1)//2):
-                coefflist[i+2*j] -= (d2-i).binomial(j)*coefflist[i]
+                coefflist[i+2*j] -= (d2-i).binomial(j)*(q**j)*coefflist[i]
         for _ in range(d2+1-len(coefflist)):
             coefflist.append(0)
             modlist.append(1)
@@ -431,22 +431,26 @@ class WeilPolynomials():
 
     - ``sign`` -- integer (default `1`), the sign `s` of the functional equation
 
-    - ``lead`` -- integer, list of integers or list of pairs of integers (default `1`),
-        constraints on the leading few coefficients of the generated polynomials.
+    - ``lead`` -- integer, list of integers or pairs of integers (default `1`)
+
+        These are constraints on the leading coefficients of the generated polynomials.
         If pairs `(a, b)` of integers are given, they are treated as a constraint
         of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
         divisibility, and the modulus of the leading coefficient must be 0.
 
-    - ``node_limit`` -- integer (default ``None``), an upper bound on the number of
-        terminal nodes during the search (will raise a ``RuntimeError`` if exceeded)
+    - ``node_limit`` -- integer (default ``None``)
+
+        If set, imposes an upper bound on the number of terminal nodes during the search 
+        (will raise a ``RuntimeError`` if exceeded).
 
     - ``parallel`` -- boolean (default ``False``), whether to use multiple processes
-        in searching for Weil polynomials.  If set, then this file must have been
-        compiled with OpenMP support (see instructions at the top of
-        :mod:`sage.rings.polynomial.weil.weil_polynomials`)
 
-    - ``squarefree`` -- boolean (default ``False``), whether to only include squarefree
-        polynomials in the results
+        If set, will raise an error unless this file was compiled with OpenMP support 
+        (see instructions at the top of :mod:`sage.rings.polynomial.weil.weil_polynomials`).
+
+    - ``squarefree`` -- boolean (default ``False``), 
+
+        If set, only squarefree polynomials will be returned.
 
     - ``polring`` -- optional, a polynomial ring in which to construct the results
 
@@ -524,6 +528,18 @@ class WeilPolynomials():
         True
         True
         True
+
+    Test that :trac:`29475` is resolved::
+
+        sage: P.<x> = QQ[]
+        sage: u = x^6 + x^5 + 6*x^4 - 2*x^3 + 66*x^2 + 121*x + 1331
+        sage: u.is_weil_polynomial()
+        True
+        sage: u in WeilPolynomials(6, 11, 1, [1,1,6])
+        True
+        sage: u in WeilPolynomials(6, 11, 1, [(1,0),(1,11),(6,11)])
+        True
+
     """
     def __init__(self, d, q, sign=1, lead=1, node_limit=None, parallel=False, squarefree=False, polring=None):
         r"""

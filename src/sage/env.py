@@ -5,14 +5,15 @@ AUTHORS:
 
 - \R. Andrew Ohana (2012): Initial version.
 
-Verify that Sage can be started without any ``SAGE_`` environment
-variables::
+Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
+environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
-    sage: import subprocess
-    sage: cmd = "from sage.all import SAGE_ROOT; print(SAGE_ROOT)"
-    sage: res = subprocess.call([sys.executable, "-c", cmd], env=env)  # long time
-    None
+    sage: from subprocess import check_output
+    sage: cmd = "from sage.all import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
+    sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
+    sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
+    True
 """
 
 # ****************************************************************************
@@ -164,6 +165,7 @@ var('SAGE_SHARE',          join(SAGE_LOCAL, 'share'))
 var('SAGE_DOC',            join(SAGE_SHARE, 'doc', 'sage'))
 var('SAGE_SPKG_INST',      join(SAGE_LOCAL, 'var', 'lib', 'sage', 'installed'))
 var('SAGE_LIB',            os.path.dirname(os.path.dirname(sage.__file__)))
+var('SAGE_EXTCODE',        join(SAGE_LIB, 'sage', 'ext_data'))
 
 var('SAGE_ROOT')           # no fallback for SAGE_ROOT
 var('SAGE_SRC',            join(SAGE_ROOT, 'src'), SAGE_LIB)
@@ -175,7 +177,6 @@ var('DOT_SAGE',            join(os.environ.get('HOME'), '.sage'))
 var('SAGE_STARTUP_FILE',   join(DOT_SAGE, 'init.sage'))
 
 # installation directories for various packages
-var('SAGE_EXTCODE',                  join(SAGE_SHARE, 'sage', 'ext'))
 var('CONWAY_POLYNOMIALS_DATA_DIR',   join(SAGE_SHARE, 'conway_polynomials'))
 var('GRAPHS_DATA_DIR',               join(SAGE_SHARE, 'graphs'))
 var('ELLCURVE_DATA_DIR',             join(SAGE_SHARE, 'ellcurves'))
@@ -194,7 +195,8 @@ var('SINGULARPATH',                  join(SAGE_SHARE, 'singular'))
 var('PPLPY_DOCS',                    join(SAGE_SHARE, 'doc', 'pplpy'))
 var('MAXIMA',                        'maxima')
 var('MAXIMA_FAS')
-var('SAGE_NAUTY_BINS_PREFIX', '')
+var('SAGE_NAUTY_BINS_PREFIX',        '')
+var('ARB_LIBRARY',                   'arb')
 
 # misc
 var('SAGE_BANNER', '')
@@ -203,9 +205,9 @@ var('SAGE_IMPORTALL', 'yes')
 
 def _get_shared_lib_filename(libname, *additional_libnames):
     """
-    Return the full path to a shared library file installed in the standard
-    location for the system within the ``LIBDIR`` prefix (or
-    ``$SAGE_LOCAL/lib`` in the case of manual build of Sage).
+    Return the full path to a shared library file installed in
+    ``$SAGE_LOCAL/lib`` or the directories associated with the
+    Python sysconfig.
 
     This can also be passed more than one library name (e.g. for cases where
     some library may have multiple names depending on the platform) in which
@@ -242,11 +244,17 @@ def _get_shared_lib_filename(libname, *additional_libnames):
 
     for libname in (libname,) + additional_libnames:
         if sys.platform == 'cygwin':
-            bindir = sysconfig.get_config_var('BINDIR')
+            # Later down we take the last matching DLL found, so search
+            # SAGE_LOCAL second so that it takes precedence
+            bindirs = [
+                sysconfig.get_config_var('BINDIR'),
+                os.path.join(SAGE_LOCAL, 'bin')
+            ]
             pats = ['cyg{}.dll'.format(libname), 'cyg{}-*.dll'.format(libname)]
             filenames = []
-            for pat in pats:
-                filenames += glob.glob(os.path.join(bindir, pat))
+            for bindir in bindirs:
+                for pat in pats:
+                    filenames += glob.glob(os.path.join(bindir, pat))
 
             # Note: This is not very robust, since if there are multi DLL
             # versions for the same library this just selects one more or less
@@ -260,10 +268,13 @@ def _get_shared_lib_filename(libname, *additional_libnames):
             else:
                 ext = 'so'
 
-            libdirs = [sysconfig.get_config_var('LIBDIR')]
+            libdirs = [
+                os.path.join(SAGE_LOCAL, 'lib'),
+                sysconfig.get_config_var('LIBDIR')
+            ]
             multilib = sysconfig.get_config_var('MULTILIB')
             if multilib:
-                libdirs.insert(0, os.path.join(libdirs[0], multilib))
+                libdirs.insert(1, os.path.join(libdirs[0], multilib))
 
             for libdir in libdirs:
                 basename = 'lib{}.{}'.format(libname, ext)
@@ -331,8 +342,7 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
-        ['.../include',
-        '.../python.../site-packages/sage/ext',
+        ['.../python.../site-packages/sage/ext',
         '.../include/python...',
         '.../python.../numpy/core/include']
 
@@ -353,8 +363,7 @@ def sage_include_directories(use_sources=False):
 
     TOP = SAGE_SRC if use_sources else SAGE_LIB
 
-    return [SAGE_INC,
-            TOP,
+    return [TOP,
             os.path.join(TOP, 'sage', 'ext'),
             distutils.sysconfig.get_python_inc(),
             numpy.get_include()]
@@ -375,22 +384,27 @@ def cython_aliases():
          'FFLASFFPACK_CFLAGS',
          'FFLASFFPACK_INCDIR',
          'FFLASFFPACK_LIBDIR',
+         'FFLASFFPACK_LIBEXTRA',
          'FFLASFFPACK_LIBRARIES',
          'GIVARO_CFLAGS',
          'GIVARO_INCDIR',
          'GIVARO_LIBDIR',
+         'GIVARO_LIBEXTRA',
          'GIVARO_LIBRARIES',
          'GSL_CFLAGS',
          'GSL_INCDIR',
          'GSL_LIBDIR',
+         'GSL_LIBEXTRA',
          'GSL_LIBRARIES',
          'LINBOX_CFLAGS',
          'LINBOX_INCDIR',
          'LINBOX_LIBDIR',
+         'LINBOX_LIBEXTRA',
          'LINBOX_LIBRARIES',
          'SINGULAR_CFLAGS',
          'SINGULAR_INCDIR',
          'SINGULAR_LIBDIR',
+         'SINGULAR_LIBEXTRA',
          'SINGULAR_LIBRARIES']
     """
     import pkgconfig
@@ -405,6 +419,7 @@ def cython_aliases():
         # passed in CFLAGS
         aliases[var + "INCDIR"] = pc['include_dirs']
         aliases[var + "LIBDIR"] = pc['library_dirs']
+        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), pkgconfig.libs(lib).split()))
         aliases[var + "LIBRARIES"] = pc['libraries']
 
     # LinBox needs special care because it actually requires C++11 with
@@ -416,5 +431,5 @@ def cython_aliases():
     # This is not a problem in practice since LinBox depends on
     # fflas-ffpack and fflas-ffpack does add such a C++11 flag.
     aliases["LINBOX_CFLAGS"].append("-std=gnu++11")
-    aliases["ARB_LIBRARY"] = os.environ.get('SAGE_ARB_LIBRARY', 'arb')
+    aliases["ARB_LIBRARY"] = ARB_LIBRARY
     return aliases

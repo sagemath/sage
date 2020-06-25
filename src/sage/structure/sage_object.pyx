@@ -318,10 +318,19 @@ cdef class SageObject:
             1
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
+
+        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: f = prod(F.gen(i) for i in range(5))
+            sage: s, t = ascii_art(f), unicode_art(f)
+            sage: s._breakpoints == t._breakpoints and s._baseline == t._baseline
+            True
         """
         from sage.typeset.unicode_art import UnicodeArt
-        lines = [unicode(z) for z in self._ascii_art_()]
-        return UnicodeArt(lines)
+        s = self._ascii_art_()
+        lines = [unicode(z) for z in s]
+        return UnicodeArt(lines, s._breakpoints, s._baseline)
 
     def __hash__(self):
         r"""

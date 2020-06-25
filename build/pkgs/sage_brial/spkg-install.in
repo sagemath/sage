@@ -1,0 +1,7 @@
+#
+# BRiAl consists of a both C++ library and a SageMath-specific python
+# module. This spkg installs only the python module; the C++ library
+# is installed by the "brial" spkg.
+#
+export PYTHON=sage-python23
+cd src/sage-brial && sdh_pip_install .

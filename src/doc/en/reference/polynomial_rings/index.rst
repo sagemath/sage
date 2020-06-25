@@ -36,8 +36,8 @@ Skew Polynomials
    :maxdepth: 2
 
    sage/rings/polynomial/skew_polynomial_element
-   sage/rings/polynomial/skew_polynomial_ring_constructor
    sage/rings/polynomial/skew_polynomial_ring
+   sage/rings/polynomial/skew_polynomial_finite_order
 
 Rational Functions
 ------------------

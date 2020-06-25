@@ -55,12 +55,6 @@ AUTHORS:
 """
 from __future__ import print_function, absolute_import
 
-import six
-if six.PY2:
-    _long_type = long
-else:
-    _long_type = int
-
 from .rational import Rational
 from .integer import Integer
 
@@ -373,6 +367,14 @@ class RationalField(Singleton, number_field_base.NumberField):
             Native morphism:
               From: Set of Python objects of class 'long'
               To:   Rational Field
+
+        ::
+
+            sage: L = Localization(ZZ, (3,5))
+            sage: 1/45 in L  # indirect doctest
+            True
+            sage: 1/43 in L  # indirect doctest
+            False
         """
         global ZZ
         from . import rational
@@ -381,12 +383,16 @@ class RationalField(Singleton, number_field_base.NumberField):
             ZZ = integer_ring.ZZ
         if S is ZZ:
             return rational.Z_to_Q()
-        elif S is _long_type:
-            return rational.long_to_Q()
         elif S is int:
-            return rational.int_to_Q()
+            return rational.long_to_Q()
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
+        from sage.rings.localization import Localization
+        if isinstance(S, Localization):
+            if S.fraction_field() is self:
+                from sage.structure.coerce_maps import CallableConvertMap
+                return CallableConvertMap(S, self, lambda x: x._value, parent_as_first_arg=False)
+
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """

@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `B_n^{(1)}`.
+Bijection classes for type `B_n^{(1)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `B_n^{(1)}`.

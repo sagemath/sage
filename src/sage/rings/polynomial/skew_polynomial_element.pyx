@@ -77,6 +77,7 @@ from sage.rings.polynomial.polynomial_element cimport _dict_to_list
 from sage.structure.element import coerce_binop
 from sage.misc.superseded import experimental
 
+
 cdef class SkewPolynomial(AlgebraElement):
     r"""
     Abstract base class for skew polynomials.

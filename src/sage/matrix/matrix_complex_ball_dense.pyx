@@ -553,7 +553,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             sage: matrix(CBF, 2, 2, 0) \ vector([-1, 1])
             Traceback (most recent call last):
             ...
-            ValueError: matrix equation has no solutions
+            ValueError: unable to invert this matrix
             sage: b = CBF(0, RBF(0, rad=.1r))
             sage: matrix(CBF, [[1, 1], [0, b]]) \ vector([-1, 1])
             Traceback (most recent call last):

@@ -22,12 +22,9 @@ polymake has been described in [GJ1997]_, [GJ2006]_, [JMP2009]_, [GJRW2010]_,
 #
 #  The full text of the GPL is available at:
 #
-#                  hsttp://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-import six
-from six.moves import range
-from six import reraise as raise_
 
 import os
 import re
@@ -40,6 +37,7 @@ from .interface import (Interface, InterfaceElement, InterfaceFunctionElement)
 from sage.misc.misc import get_verbose
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.structure.richcmp import rich_to_bool
 
 import pexpect
 from random import randrange
@@ -589,7 +587,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             9 36 84 126 126 84 36 9
 
         """
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             value = value.strip().rstrip(';').strip()
         cmd = "@{}{}({});".format(var, self._assign_symbol(), value)
         self.eval(cmd)
@@ -979,7 +977,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
                 out = P.get(name).strip()
         return out
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Comparison of polymake elements.
 
@@ -1011,12 +1009,12 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
         """
         P = self._check_valid()
         if P.eval("print {} {} {};".format(self.name(), P._equality_symbol(), other.name())).strip() == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         if P.eval("print {} {} {};".format(self.name(), P._lessthan_symbol(), other.name())).strip() == P._true_symbol():
-            return -1
+            return rich_to_bool(op, -1)
         if P.eval("print {} {} {};".format(self.name(), P._greaterthan_symbol(), other.name())).strip() == P._true_symbol():
-            return 1
-        return -2  # that's supposed to be an error value.
+            return rich_to_bool(op, 1)
+        return NotImplemented
 
     def __bool__(self):
         """
@@ -2137,7 +2135,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
                         except (TypeError, RuntimeError):
                             pass
                         return self._eval_line(line, allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt, restart_if_needed=False, **kwds)
-                raise_(RuntimeError, "{}\nError evaluating {} in {}".format(msg, line, self), sys.exc_info()[2])
+                raise RuntimeError("{}\nError evaluating {} in {}".format(msg, line, self))
 
             p_warnings = []
             p_errors = []
@@ -2148,7 +2146,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
                 first = True
                 while True:
                     try:
-                        if isinstance(wait_for_prompt, six.string_types):
+                        if isinstance(wait_for_prompt, str):
                             pat = E.expect(wait_for_prompt, **kwds)
                         else:
                             pat = E.expect_list(self._prompt, **kwds)

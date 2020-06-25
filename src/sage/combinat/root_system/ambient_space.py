@@ -15,8 +15,6 @@ from .weight_lattice_realizations import WeightLatticeRealizations
 from sage.rings.all import ZZ, QQ
 from sage.categories.homset import End
 
-import six
-
 
 class AmbientSpace(CombinatorialFreeModule):
     r"""
@@ -384,7 +382,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
-        for t,c in six.iteritems(lambdacheck_mc):
+        for t,c in lambdacheck_mc.items():
             if t not in self_mc:
                 continue
             result += c*self_mc[t]

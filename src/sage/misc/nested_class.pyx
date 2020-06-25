@@ -103,7 +103,6 @@ The name for ``"A1.A2"`` could potentially be set to ``"B1.A2"``. But that will 
 import sys
 cdef dict sys_modules = sys.modules
 
-from six import class_types
 
 __all__ = ['modify_for_nested_pickle', 'nested_pickle',
            'NestedClassMetaclass', 'MainClass'
@@ -214,7 +213,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
                     setattr(module, dotted_name, v)
                     modify_for_nested_pickle(v, name_prefix, module, False)
                     v.__name__ = dotted_name
-            elif isinstance(v, class_types):
+            elif isinstance(v, type):
                 v_name = v.__name__
                 if v_name == name and v.__module__ == mod_name and getattr(module, v_name, None) is not v:
                     # OK, probably this is a nested class.
@@ -224,7 +223,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
                     v.__name__ = dotted_name
     else:
         for (name, v) in cls.__dict__.items():
-            if isinstance(v, class_types):
+            if isinstance(v, type):
                 v_name = v.__name__
                 if v_name == cls_name + name and v.__module__ == mod_name:
                     # OK, probably this is a nested class.

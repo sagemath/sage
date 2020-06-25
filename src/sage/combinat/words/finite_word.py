@@ -216,10 +216,6 @@ Left-special and bispecial factors::
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 
-from builtins import zip
-
-from six import iteritems
-from six.moves import range
 from collections import defaultdict
 from itertools import islice, cycle
 from sage.combinat.words.abstract_word import Word_class
@@ -3551,7 +3547,7 @@ class FiniteWord_class(Word_class):
                     current_exp = QQ((current_pos+1, current_pos+1-m))
                     if current_exp > best_exp:
                         best_exp = current_exp
-                for ((i,j),u) in iteritems(st._transition_function[v]):
+                for ((i,j),u) in st._transition_function[v].items():
                     if j is None:
                         j = self.length()
                     queue.append((u, i, j, l+j-i+1))
@@ -4868,7 +4864,7 @@ class FiniteWord_class(Word_class):
             sage: sorted(Word("abcaccab").evaluation_sparse())
             [('a', 3), ('b', 2), ('c', 3)]
         """
-        return list(iteritems(self.evaluation_dict()))
+        return list(self.evaluation_dict().items())
 
     def evaluation_partition(self):
         r"""

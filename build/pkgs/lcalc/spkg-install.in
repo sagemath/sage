@@ -1,0 +1,18 @@
+cd src/src
+
+if [ "$UNAME" = "Darwin" ]; then
+    export LDFLAGS="$LDFLAGS -Wl,-headerpad_max_install_names"
+fi
+
+# Using pari in a C++17 file with "using namespace std doesn't
+# work due to a conflict between std::rank and pari's rank
+CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++17//g")
+
+export CXXFLAGS
+mkdir -p "$SAGE_DESTDIR_LOCAL"/{bin,include,lib}
+sdh_make_install INSTALL_DIR="$SAGE_DESTDIR_LOCAL"
+
+if [ "$UNAME" = "Darwin" ]; then
+    install_name_tool -id "${SAGE_LOCAL}/lib/libLfunction.dylib" \
+        "${SAGE_DESTDIR_LOCAL}/lib/libLfunction.dylib" || exit $?
+fi

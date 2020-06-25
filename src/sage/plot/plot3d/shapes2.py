@@ -817,6 +817,49 @@ class Point(PrimitiveObject):
         cen = self.loc if transform is None else transform(self.loc)
         return ["draw %s DIAMETER %s {%s %s %s}\n%s" % (name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the point suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: P = point3d((1,2,3), color=(0,1,0), opacity=0.5, size=10)
+            sage: P.threejs_repr(P.default_render_params())
+            [('point',
+              {'color': '#00ff00', 'opacity': 0.5, 'point': (1.0, 2.0, 3.0), 'size': 10.0})]
+
+        TESTS:
+
+        Transformations apply to the point's location::
+
+            sage: P = point3d((1,2,3)).translate(-1, -2, -3)
+            sage: P.threejs_repr(P.default_render_params())
+            [('point',
+              {'color': '#6666ff', 'opacity': 1.0, 'point': (0.0, 0.0, 0.0), 'size': 5.0})]
+
+        """
+        transform = render_params.transform
+        center = tuple(float(coord) for coord in self.loc)
+        if transform is not None:
+            center = transform(center)
+        color = '#' + str(self.texture.hex_rgb())
+        opacity = float(self.texture.opacity)
+        size = float(self.size)
+        point = dict(point=center, size=size, color=color, opacity=opacity)
+        return [('point', point)]
+
+    def stl_binary_repr(self, render_params):
+        """
+        Return an empty list, as this is not useful for STL export.
+
+        EXAMPLES::
+
+            sage: P = point3d((1,2,3)).translate(-1, -2, -3)
+            sage: P.stl_binary_repr(P.default_render_params())
+            []
+        """
+        return []
+
 
 class Line(PrimitiveObject):
     r"""
@@ -1006,7 +1049,7 @@ class Line(PrimitiveObject):
 
         - ``corner_cutoff`` -- (optional, default ``None``) If the
           cosine of the angle between adjacent line segments is smaller than
-          this bound, then there will be a sharp corner in the path. 
+          this bound, then there will be a sharp corner in the path.
           Otherwise, the path is smoothed. If ``None``,
           then the default value 0.5 is used.
 
@@ -1094,6 +1137,109 @@ class Line(PrimitiveObject):
                 count += 1
             return corners
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return representation of the line suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: L = line3d([(1,2,3), (4,5,6)], thickness=10, color=(1,0,0), opacity=0.5)
+            sage: L.threejs_repr(L.default_render_params())
+            [('line',
+              {'color': '#ff0000',
+               'linewidth': 10.0,
+               'opacity': 0.5,
+               'points': [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)]})]
+
+        TESTS:
+
+        Transformations apply to the line's vertices::
+
+            sage: L = line3d([(1,2,3), (4,5,6)]).translate(-1, -2, -3)
+            sage: L.threejs_repr(L.default_render_params())
+            [('line',
+              {'color': '#6666ff',
+               'linewidth': 1.0,
+               'opacity': 1.0,
+               'points': [(0.0, 0.0, 0.0), (3.0, 3.0, 3.0)]})]
+
+        When setting ``arrow_head=True``, the last line segment is replaced by
+        an arrow with a width half the thickness of the line::
+
+            sage: L = line3d([(0,0,0), (1,1,1), (2,2,2)], thickness=4, arrow_head=True)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: L_repr[-1]
+            ('line',
+              {'color': '#6666ff',
+               'linewidth': 4.0,
+               'opacity': 1.0,
+               'points': [(0.0, 0.0, 0.0), (1.0, 1.0, 1.0)]})
+            sage: A = arrow3d((1,1,1), (2,2,2), width=2)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr[:-1]
+            True
+
+        The arrow shares the transformation, color, and opacity of the line::
+
+            sage: L = line3d([(0,0,0), (1,1,1), (2,2,2)], thickness=4,
+            ....:            arrow_head=True, color=(1,0,0), opacity=0.5)
+            sage: L = L.translate(-1, -1, -1)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: L_repr[-1]
+            ('line',
+              {'color': '#ff0000',
+               'linewidth': 4.0,
+               'opacity': 0.5,
+               'points': [(-1.0, -1.0, -1.0), (0.0, 0.0, 0.0)]})
+            sage: A = arrow3d((1,1,1), (2,2,2), width=2, color=(1,0,0), opacity=0.5)
+            sage: A = A.translate(-1, -1, -1)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr[:-1]
+            True
+
+        If there were only two points to begin with, only the arrow head's
+        representation is returned::
+
+            sage: L = line3d([(0,0,0), (1,1,1)], thickness=2, arrow_head=True)
+            sage: L_repr = L.threejs_repr(L.default_render_params())
+            sage: A = arrow3d((0,0,0), (1,1,1), width=1)
+            sage: A_repr = A.threejs_repr(A.default_render_params())
+            sage: A_repr == L_repr
+            True
+
+        """
+        reprs = []
+        points = [tuple(float(coord) for coord in p) for p in self.points]
+        color = '#' + str(self.texture.hex_rgb())
+        opacity = float(self.texture.opacity)
+        thickness = float(self.thickness)
+        if self.arrow_head:
+            width = thickness / 2.0
+            arrow = shapes.arrow3d(start=points[-2], end=points[-1], width=width,
+                                   color=color, opacity=opacity)
+            reprs += arrow.threejs_repr(render_params)
+            points = points[:-1] # The arrow replaces the last line segment.
+        if len(points) > 1:
+            transform = render_params.transform
+            if transform is not None:
+                points = [transform(p) for p in points]
+            line = dict(points=points, color=color, opacity=opacity, linewidth=thickness)
+            reprs.append(('line', line))
+        return reprs
+
+    def stl_binary_repr(self, render_params):
+        """
+        Return an empty list, as this is not useful for STL export.
+
+        EXAMPLES::
+
+            sage: L = line3d([(1,2,3), (4,5,6)]).translate(-1, -2, -3)
+            sage: L.stl_binary_repr(L.default_render_params())
+            []
+        """
+        return []
+
+
 @rename_keyword(alpha='opacity')
 def point3d(v, size=5, **kwds):
     """
@@ -1125,7 +1271,7 @@ def point3d(v, size=5, **kwds):
 
         sage: c = polytopes.hypercube(3)
         sage: v = c.vertices()[0];  v
-        A vertex at (-1, -1, -1)
+        A vertex at (1, -1, -1)
         sage: print(point(v))
         Graphics3d Object
 

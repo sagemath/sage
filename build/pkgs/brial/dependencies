@@ -1,4 +1,4 @@
-boost_cropped m4ri libpng $(PYTHON) | pip pkgconf
+boost_cropped m4ri libpng | pkgconf
 
 ----------
 All lines of this file are ignored except the first.

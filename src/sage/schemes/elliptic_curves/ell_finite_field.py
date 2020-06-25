@@ -25,8 +25,6 @@ AUTHORS:
 
 from __future__ import print_function, absolute_import
 
-from six.moves import range
-
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from .ell_field import EllipticCurve_field
 from .constructor import EllipticCurve

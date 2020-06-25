@@ -70,7 +70,6 @@ specifying the universe of the sequence::
 #*****************************************************************************
 
 from __future__ import print_function
-from six.moves import range
 
 from sage.misc.latex import list_function as list_latex_function
 import sage.structure.sage_object

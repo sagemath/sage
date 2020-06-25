@@ -8,7 +8,6 @@ Coxeter Groups implemented with Coxeter3
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.libs.coxeter3.coxeter import get_CoxGroup, CoxGroupElement
 from sage.misc.cachefunc import cached_method
@@ -673,7 +672,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                     exponent = self.action(exponent)
 
                     monomial = 1
-                    for s, c in iteritems(exponent.monomial_coefficients()):
+                    for s, c in exponent.monomial_coefficients().items():
                         monomial *= Q_gens[basis_to_order[s]]**int(c)
 
                     result += monomial

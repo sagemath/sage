@@ -1,0 +1,78 @@
+diff --git a/configure b/configure
+index 6bc79d9935..f39dcdb95f 100755
+--- a/configure
++++ b/configure
+@@ -20713,7 +20713,7 @@ fi
+ 
+ for NTL_HOME in ${NTL_HOME_PATH}
+  do
+-if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
++## if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 
+ 	if test "x$NTL_HOME" != "x/usr"; then
+ 		NTL_CPPFLAGS="-I${NTL_HOME}/include"
+@@ -20784,9 +20784,9 @@ else
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+-else
+-	ntl_found="no"
+-fi
++## else
++## 	ntl_found="no"
++## fi
+ done
+ 
+ if test "x$ntl_found" = "xyes" ; then
+diff --git a/factory/configure b/factory/configure
+index db6423d..c0a2260 100755
+--- a/factory/configure
++++ b/factory/configure
+@@ -22277,7 +22277,7 @@ fi
+ 
+ for NTL_HOME in ${NTL_HOME_PATH}
+  do
+-if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
++## if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 
+ 	if test "x$NTL_HOME" != "x/usr"; then
+ 		NTL_CPPFLAGS="-I${NTL_HOME}/include"
+@@ -22348,9 +22348,9 @@ else
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+-else
+-	ntl_found="no"
+-fi
++## else
++## 	ntl_found="no"
++## fi
+ done
+ 
+ if test "x$ntl_found" = "xyes" ; then
+diff --git a/libpolys/configure b/libpolys/configure
+index 41b0928..9a4b9f5 100755
+--- a/libpolys/configure
++++ b/libpolys/configure
+@@ -20660,7 +20660,7 @@ fi
+ 
+ for NTL_HOME in ${NTL_HOME_PATH}
+  do
+-if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
++## if test -r "$NTL_HOME/include/NTL/ZZ.h"; then
+ 
+ 	if test "x$NTL_HOME" != "x/usr"; then
+ 		NTL_CPPFLAGS="-I${NTL_HOME}/include"
+@@ -20731,9 +20731,9 @@ else
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+     conftest$ac_exeext conftest.$ac_ext
+-else
+-	ntl_found="no"
+-fi
++## else
++## 	ntl_found="no"
++## fi
+ done
+ 
+ if test "x$ntl_found" = "xyes" ; then

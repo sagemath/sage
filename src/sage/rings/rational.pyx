@@ -1993,7 +1993,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         `t`, where `s` and `t` are the smallest numbers satisfying
         `10^s=10^{s+t} \mod d`. In general if `d=2^a 5^b m` where `m`
         is coprime to 10, then `s=\max(a,b)` and `t` is the order of
-        10 modulo `d`.
+        10 modulo `m`.
 
         EXAMPLES::
 

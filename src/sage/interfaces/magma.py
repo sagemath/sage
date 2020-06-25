@@ -213,7 +213,6 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
-from six import string_types
 
 import re
 import sys
@@ -459,7 +458,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma._post_process_from_file("Hello")
             ''
         """
-        if not isinstance(s, string_types):
+        if not isinstance(s, str):
             raise RuntimeError("Error evaluating object in %s:\n%s" % (self, s))
         # Chop off the annoying "Loading ... " message that Magma
         # always outputs no matter what.
@@ -2766,10 +2765,12 @@ class MagmaGBLogPrettyPrinter:
     A device which filters Magma Groebner basis computation logs.
     """
     cmd_inpt = re.compile("^>>>$")
-    app_inpt = re.compile(r"^Append\(~_sage_, 0\);$")
+    app_inpt = re.compile("^Append\\(~_sage_, 0\\);$")
 
-    deg_curr = re.compile(r"^Basis length\: (\d+), queue length\: (\d+), step degree\: (\d+), num pairs\: (\d+)$")
-    pol_curr = re.compile(r"^Number of pair polynomials\: (\d+), at (\d+) column\(s\), .*")
+    deg_curr = re.compile(
+        "^Basis length\\: (\\d+), queue length\\: (\\d+), step degree\\: (\\d+), num pairs\\: (\\d+)$"
+    )
+    pol_curr = re.compile("^Number of pair polynomials\\: (\\d+), at (\\d+) column\\(s\\), .*")
 
     def __init__(self, verbosity=1, style='magma'):
         """
@@ -2865,6 +2866,13 @@ class MagmaGBLogPrettyPrinter:
             Total Faugere F4 time: ..., real time: ...
         """
         verbosity, style = self.verbosity, self.style
+
+        if isinstance(s, bytes):
+            # sys.stdout.encoding can be None or something else
+            if isinstance(sys.stdout.encoding, str):
+                s = s.decode(sys.stdout.encoding)
+            else:
+                s = s.decode("UTF-8")
 
         if self.storage:
             s = self.storage + s

@@ -9,7 +9,6 @@ AUTHOR:
 - William Stein (2012)
 """
 from __future__ import print_function
-from six.moves import range
 
 from sage.misc.superseded import deprecation
 deprecation(27531, "sage.interacts.debugger is deprecated because it is meant for the deprecated Sage Notebook")

@@ -15,7 +15,7 @@
 #include <flint/flint.h>
 
 /* If flint was already previously included via another header (e.g.
- * arb_wrap.h) then it may be neessary to redefine ulong and slong again */
+ * arb_wrap.h) then it may be necessary to redefine ulong and slong again */
 
 #ifndef ulong
 #define ulong mp_limb_t

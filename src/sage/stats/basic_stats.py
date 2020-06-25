@@ -30,7 +30,7 @@ AUTHOR:
 - Andrew Hou (11/06/2009)
 
 """
-######################################################################
+# ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -38,10 +38,10 @@ AUTHOR:
 #            The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from six import integer_types
 
 from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import NaN
+from sage.functions.other import sqrt
 
 
 def mean(v):
@@ -80,7 +80,7 @@ def mean(v):
     if not v:
         return NaN
     s = sum(v)
-    if isinstance(s, integer_types):
+    if isinstance(s, int):
         # python integers are stupid.
         return s / ZZ(len(v))
     return s / len(v)
@@ -195,8 +195,13 @@ def std(v, bias=False):
         sage: x = finance.TimeSeries([1..100])
         sage: std(x)
         29.011491975882016
-    """
 
+    TESTS::
+
+        sage: data = [random() for i in [1 .. 20]]
+        sage: std(data)  # random
+        0.29487771726609185
+    """
     # NOTE: in R bias = False by default, and in Scipy bias=True by
     # default, and R is more popular.
 
@@ -216,7 +221,7 @@ def std(v, bias=False):
         # standard deviation of empty set defined as NaN
         return NaN
 
-    return variance(v, bias=bias).sqrt()
+    return sqrt(variance(v, bias=bias))
 
 
 def variance(v, bias=False):
@@ -310,12 +315,12 @@ def variance(v, bias=False):
         x += (vi - mu)**2
     if bias:
         # population variance
-        if isinstance(x, integer_types):
+        if isinstance(x, int):
             return x / ZZ(len(v))
         return x / len(v)
     else:
         # sample variance
-        if isinstance(x, integer_types):
+        if isinstance(x, int):
             return x / ZZ(len(v)-1)
         return x / (len(v)-1)
 

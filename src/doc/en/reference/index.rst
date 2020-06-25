@@ -151,6 +151,7 @@ Interfaces
 General Information
 ===================
 
+* :doc:`External Packages <spkg/index>`
 * :doc:`References <references/index>`
 * :doc:`History and License <history_and_license/index>`
 * :ref:`genindex`

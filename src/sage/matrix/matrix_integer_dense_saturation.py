@@ -2,9 +2,9 @@
 Saturation over ZZ
 """
 from __future__ import absolute_import
-from six.moves import range
 
-from sage.rings.all import ZZ, GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.all import binomial, gcd
 from sage.matrix.constructor import identity_matrix, random_matrix
 from sage.misc.misc import verbose

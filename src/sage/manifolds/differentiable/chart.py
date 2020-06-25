@@ -22,20 +22,20 @@ REFERENCES:
 - Chap. 1 of [Lee2013]_
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.manifolds.chart import Chart, RealChart, CoordChange
 from sage.manifolds.differentiable.vectorframe import CoordFrame
+
 
 class DiffChart(Chart):
     r"""
@@ -646,8 +646,8 @@ class DiffChart(Chart):
                 # is not a string
 
             # If the argument of 'var' contains only one word, for
-            # instance:
-            # sage: var('Dt')
+            # instance::
+            # var('Dt')
             # then 'var' does not return a tuple containing one symbolic
             # expression, but the symbolic expression itself.
             # This is taken into account below in order to return a list

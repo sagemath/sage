@@ -33,14 +33,7 @@ instead you see a folder called "sage", proceed as follows.
 
 5) Sage should pop up in a window.
 
-6) For the graphical notebook, type
-     notebook()
-   You might have to open Firefox or Safari (your choice)
-   to the URL
-       http://localhost:8000
-   to use Sage on your computer.
-
-7) Email
+6) Email
       http://groups.google.com/group/sage-support
    with any questions.
 

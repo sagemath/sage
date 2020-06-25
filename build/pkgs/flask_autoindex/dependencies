@@ -1,4 +1,4 @@
-$(PYTHON) | pip flask_silk future
+$(PYTHON) | $(PYTHON_TOOLCHAIN) flask_silk
 
 ----------
 All lines of this file are ignored except the first.

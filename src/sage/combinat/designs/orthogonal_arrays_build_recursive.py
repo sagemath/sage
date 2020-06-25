@@ -31,8 +31,6 @@ Functions
 ---------
 """
 from __future__ import print_function, absolute_import
-from six.moves import range
-from builtins import zip
 
 from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
 

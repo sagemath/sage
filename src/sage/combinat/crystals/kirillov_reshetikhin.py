@@ -21,7 +21,6 @@ Kirillov-Reshetikhin Crystals
 # library is heavily inspired from MuPAD-Combinat.
 # ***************************************************************************
 from __future__ import division, print_function
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute

@@ -38,7 +38,6 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.rings.ring import Algebra
 from sage.tensor.coordinate_patch import CoordinatePatch

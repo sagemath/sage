@@ -37,8 +37,6 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 
-from six.moves import range
-
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.rings.all import ZZ, CC, infinity
@@ -1080,7 +1078,7 @@ class ClusterQuiver(SageObject):
             ['a', 'c', 'e']
         """
         return self._nlist
- 
+
     def frozen_vertices(self):
         """
         Return the list of frozen vertices of ``self``.
@@ -1319,7 +1317,7 @@ class ClusterQuiver(SageObject):
 
         - ``sequence`` -- a vertex of ``self``, an iterator of vertices of ``self``,
           a function which takes in the ClusterQuiver and returns a vertex or an iterator of vertices,
-          or a string of the parameter wanting to be called on ClusterQuiver that will return a vertex or 
+          or a string of the parameter wanting to be called on ClusterQuiver that will return a vertex or
           an iterator of vertices.
         - ``inplace`` -- (default: True) if False, the result is returned, otherwise ``self`` is modified.
 
@@ -1384,7 +1382,7 @@ class ClusterQuiver(SageObject):
             [ 0  0  0  1]
             [ 0  0 -1  0]
             [ 0 -1  1  0]
-            sage: Q2.mutate('a'); Q2.b_matrix() 
+            sage: Q2.mutate('a'); Q2.b_matrix()
             [ 0 -1  0  0]
             [ 1  0  0  0]
             [ 0  0  0  1]

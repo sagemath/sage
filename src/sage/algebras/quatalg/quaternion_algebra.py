@@ -32,8 +32,6 @@ Pickling test::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import zip
-from six import integer_types
 
 from sage.arith.all import (hilbert_conductor_inverse, hilbert_conductor,
         factor, gcd, kronecker_symbol, valuation)
@@ -47,6 +45,7 @@ from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field import is_NumberField
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.parent import Parent
@@ -204,14 +203,14 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
             sage: QuaternionAlgebra.create_key(-1,-1)
             (Rational Field, -1, -1, ('i', 'j', 'k'))
-
         """
         # QuaternionAlgebra(D)
         if arg1 is None and arg2 is None:
             K = QQ
             D = Integer(arg0)
             a, b = hilbert_conductor_inverse(D)
-            a = Rational(a); b = Rational(b)
+            a = Rational(a)
+            b = Rational(b)
 
         elif arg2 is None:
             # If arg0 or arg1 are Python data types, coerce them
@@ -220,7 +219,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
             for a in [arg0,arg1]:
                 if is_RingElement(a):
                     L.append(a)
-                elif isinstance(a, integer_types):
+                elif isinstance(a, int):
                     L.append(Integer(a))
                 elif isinstance(a, float):
                     L.append(RR(a))
@@ -249,7 +248,6 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
         names = normalize_names(3, names)
         return (K, a, b, names)
-
 
     def create_object(self, version, key, **extra_args):
         """
@@ -284,6 +282,7 @@ def is_QuaternionAlgebra(A):
     """
     return isinstance(A, QuaternionAlgebra_abstract)
 
+
 class QuaternionAlgebra_abstract(Algebra):
     def _repr_(self):
         """
@@ -292,7 +291,7 @@ class QuaternionAlgebra_abstract(Algebra):
             sage: sage.algebras.quatalg.quaternion_algebra.QuaternionAlgebra_abstract(QQ)._repr_()
             'Quaternion Algebra with base ring Rational Field'
         """
-        return "Quaternion Algebra with base ring %s"%self.base_ring()
+        return "Quaternion Algebra with base ring %s" % self.base_ring()
 
     def ngens(self):
         """
@@ -1041,9 +1040,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             'QuaternionAlgebra(_sage_[...],(_sage_[...]![-1, 0]),(_sage_[...]![0, 1]))'
         """
         R = magma(self.base_ring())
-        return 'QuaternionAlgebra(%s,%s,%s)'%(R.name(),
-                                              self._a._magma_init_(magma),
-                                              self._b._magma_init_(magma))
+        return 'QuaternionAlgebra(%s,%s,%s)' % (R.name(),
+                                                self._a._magma_init_(magma),
+                                                self._b._magma_init_(magma))
 
     def quaternion_order(self, basis, check=True):
         """
@@ -1885,8 +1884,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.quaternion_algebra()
             Quaternion Algebra (-1, -3) with base ring Rational Field
         """
-        try: return self.__quaternion_algebra
-        except AttributeError: pass
+        try:
+            return self.__quaternion_algebra
+        except AttributeError:
+            pass
         A = self.__basis[0].parent()
         self.__quaternion_algebra = A
         return A
@@ -2252,7 +2253,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def theta_series(self, B, var='q'):
         r"""
-        Return normalized theta series of self, as a power series over
+        Return normalized theta series of ``self``, as a power series over
         `\ZZ` in the variable ``var``, which is 'q' by default.
 
         The normalized theta series is by definition
@@ -2286,11 +2287,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 if var == self.__theta_series.variable():
                     return self.__theta_series.add_bigoh(B)
                 else:
-                    ZZ[[var]](self.__theta_series.list()[:B+1])
+                    p_ring = self._theta_series.parent().change_var(var)
+                    p_ring(self.__theta_series.list()[:B+1])
         except AttributeError:
             pass
         v = self.theta_series_vector(B)
-        theta = ZZ[[var]](v.list()).add_bigoh(B)
+        p_ring = PowerSeriesRing(ZZ, var)
+        theta = p_ring(v.list()).add_bigoh(B)
         self.__theta_series = theta
         return theta
 
@@ -2665,7 +2668,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                 # Here we could replace the ideal by an *equivalent*
                 # ideal that works.  This is always possible.
                 # However, I haven't implemented that algorithm yet.
-                raise NotImplementedError("general algorithm not implemented (%s)"%msg)
+                raise NotImplementedError("general algorithm not implemented (%s)" % msg)
 
         Ai = A.basis_matrix()**(-1)
         AiB = Ai.change_ring(QQ) * IB

@@ -8,8 +8,6 @@ Additive magmas
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import six
-
 from sage.misc.lazy_import import LazyImport
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -781,10 +779,6 @@ class AdditiveMagmas(Category_singleton):
                     sage: bool(S.an_element())
                     True
                  """
-
-            if six.PY2:
-                __nonzero__ = __bool__
-                del __bool__
 
             def _test_nonzero_equal(self, **options):
                 r"""

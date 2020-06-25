@@ -18,8 +18,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
-from six import integer_types
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import Integer, QQ, ZZ
@@ -218,7 +216,7 @@ class ModularFormsRing(SageObject):
             ...
             ValueError: Base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
         """
-        if isinstance(group, integer_types + (Integer,)):
+        if isinstance(group, (int, Integer)):
             group = Gamma0(group)
         elif not is_CongruenceSubgroup(group):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)

@@ -27,10 +27,10 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import absolute_import
 
-from six.moves.builtins import min as python_min
-from six.moves.builtins import max as python_max
-from six.moves.builtins import range, zip
 from sage.rings.infinity import infinity
+
+python_min = min
+python_max = max
 
 def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     r"""

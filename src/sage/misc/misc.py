@@ -38,11 +38,8 @@ Check the fix from :trac:`8323`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
 
 import os
-import stat
 import sys
 import time
 import resource
@@ -779,7 +776,7 @@ def coeff_repr(c, is_latex=False):
             return c._coeff_repr()
         except AttributeError:
             pass
-    if isinstance(c, integer_types + (float,)):
+    if isinstance(c, (int, float)):
         return str(c)
     if is_latex and hasattr(c, '_latex_'):
         s = c._latex_()

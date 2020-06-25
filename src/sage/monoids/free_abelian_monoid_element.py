@@ -33,7 +33,6 @@ The list is a copy, so changing the list does not change the element::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import integer_types
 
 from sage.structure.richcmp import richcmp
 from sage.rings.integer import Integer
@@ -78,7 +77,7 @@ class FreeAbelianMonoidElement(MonoidElement):
         """
         MonoidElement.__init__(self, F)
         n = F.ngens()
-        if isinstance(x, integer_types + (Integer,)) and x == 1:
+        if isinstance(x, (int, Integer)) and x == 1:
             self._element_vector = tuple([0]*n)
         elif isinstance(x, (list, tuple)):
             if len(x) != n:
@@ -174,7 +173,7 @@ class FreeAbelianMonoidElement(MonoidElement):
             sage: x^0
             1
         """
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("argument n (= %s) must be an integer"%(n,))
         if n < 0:
             raise IndexError("argument n (= %s) must be positive"%n)

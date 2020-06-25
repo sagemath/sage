@@ -46,7 +46,6 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six import integer_types
 
 from sage.rings.all import PolynomialRing, Integer, ZZ
 from sage.rings.integer import is_Integer
@@ -122,7 +121,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             sage: D1+D2
             (x^2 + 2*x + 2, y + 2*x + 1)
         """
-        if isinstance(P, integer_types + (Integer,)) and P == 0:
+        if isinstance(P, (Integer, int)) and P == 0:
             R = PolynomialRing(self.value_ring(), 'x')
             return JacobianMorphism_divisor_class_field(self,
                                                         (R.one(), R.zero()))

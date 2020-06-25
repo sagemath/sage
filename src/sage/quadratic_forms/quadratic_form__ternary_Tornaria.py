@@ -11,7 +11,6 @@ Tornaria Methods for Computing with Quadratic Forms
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.rings.integer_ring import ZZ
 from sage.misc.functional import is_odd

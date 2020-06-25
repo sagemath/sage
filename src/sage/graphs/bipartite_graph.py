@@ -38,9 +38,6 @@ TESTS::
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 
-from six import iteritems
-from six.moves import range
-
 from collections import defaultdict
 
 from .generic_graph import GenericGraph
@@ -464,7 +461,7 @@ class BipartiteGraph(Graph):
         if not ans:
             raise ValueError("input graph is not bipartite")
         cols = defaultdict(set)
-        for k, v in iteritems(certif):
+        for k, v in certif.items():
             cols[v].add(k)
         self.left = cols[1]
         self.right = cols[0]
@@ -1548,7 +1545,6 @@ class BipartiteGraph(Graph):
             sage: G = BipartiteGraph(graphs.CubeGraph(3))
             sage: for e in G.edges():
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
-            ....:
             sage: G.allow_multiple_edges(True)
             sage: G.matching(use_edge_labels=True, value_only=True)
             444
@@ -1592,7 +1588,7 @@ class BipartiteGraph(Graph):
                         m = networkx.bipartite.hopcroft_karp_matching(h)
                     else:
                         m = networkx.bipartite.eppstein_matching(h)
-                    d.extend((u, v, g.edge_label(u,v)) for u,v in iteritems(m) if v2int[u] < v2int[v])
+                    d.extend((u, v, g.edge_label(u,v)) for u,v in m.items() if v2int[u] < v2int[v])
 
             if value_only:
                 return Integer(len(d))

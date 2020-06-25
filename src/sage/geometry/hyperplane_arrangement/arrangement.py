@@ -1218,13 +1218,13 @@ class HyperplaneArrangementElement(Element):
     def is_simplicial(self):
         r"""
         Test whether the arrangement is simplicial.
-        
+
         A region is simplicial if the normal vectors of its bounding hyperplanes
         are linearly independent. A hyperplane arrangement is said to be
         simplicial if every region is simplicial.
 
         OUTPUT:
-        
+
         A boolean whether the hyperplane arrangement is simplicial.
 
         EXAMPLES::
@@ -1601,6 +1601,38 @@ class HyperplaneArrangementElement(Element):
             sage: chessboard = H(chessboard)
             sage: len(chessboard.bounded_regions())   # long time, 359 ms on a Core i7
             64
+
+        Example 6 of [KP2020]_::
+
+            sage: from itertools import product
+            sage: def zero_one(d):
+            ....:     for x in product([0,1], repeat=d):
+            ....:         if any(y for y in x):
+            ....:             yield [0] + list(x)
+            ....:
+            sage: K.<x,y> = HyperplaneArrangements(QQ)
+            sage: A = K(*zero_one(2))
+            sage: len(A.regions())
+            6
+            sage: K.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = K(*zero_one(3))
+            sage: len(A.regions())
+            32
+            sage: K.<x,y,z,w> = HyperplaneArrangements(QQ)
+            sage: A = K(*zero_one(4))
+            sage: len(A.regions())
+            370
+            sage: K.<x,y,z,w,r> = HyperplaneArrangements(QQ)
+            sage: A = K(*zero_one(5))
+            sage: len(A.regions())            # not tested (~25s)
+            11292
+
+        TESTS::
+
+            sage: K.<x,y,z,w,r> = HyperplaneArrangements(QQ)
+            sage: A = K()
+            sage: A.regions()
+            (A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex and 5 lines,)
         """
         if self.base_ring().characteristic() != 0:
             raise ValueError('base field must have characteristic zero')
@@ -1609,18 +1641,67 @@ class HyperplaneArrangementElement(Element):
         dim = self.dimension()
         universe = Polyhedron(eqns=[[0] + [0] * dim], base_ring=R)
         regions = [universe]
+        if self.is_linear() and self.n_hyperplanes():
+            # We only take the positive half w.r. to the first hyperplane.
+            # We fix this by appending all negative regions in the end.
+            regions = None
+
         for hyperplane in self:
             ieq = vector(R, hyperplane.dense_coefficient_list())
             pos_half = Polyhedron(ieqs=[ ieq], base_ring=R)
             neg_half = Polyhedron(ieqs=[-ieq], base_ring=R)
+            if not regions:
+                # See comment above.
+                regions = [pos_half]
+                continue
             subdivided = []
             for region in regions:
-                for half_space in pos_half, neg_half:
-                    part = region.intersection(half_space)
-                    if part.dim() == dim:
-                        subdivided.append(part)
+                # For each region we determine, if the hyperplane splits it.
+                splits = False
+
+                # Determine if all vertices lie on one side of the hyperplane.
+                # If so, we determine on which side.
+                valuations = tuple(ieq[0] + ieq[1:]*v[:] for v in region.vertices())
+                direction = 0
+                if any(x > 0 for x in valuations):
+                    direction = 1
+                if any(x < 0 for x in valuations):
+                    if direction:
+                        splits = True
+                    else:
+                        direction = -1
+
+                if not splits:
+                    # All vertices lie in one closed halfspace of the hyperplane.
+                    region_lines = region.lines()
+                    if direction == 0:
+                        # In this case all vertices lie on the hyperplane and we must
+                        # check if rays are contained in one closed halfspace given by the hyperplane.
+                        valuations = tuple(ieq[1:]*ray[:] for ray in region.rays())
+                        if region_lines:
+                            valuations += tuple(ieq[1:]*line[:] for line in region_lines)
+                            valuations += tuple(-ieq[1:]*line[:] for line in region_lines)
+                        if any(x > 0 for x in valuations) and any(x < 0 for x in valuations):
+                            splits = True
+                    else:
+                        # In this case, at least one of the vertices is not on the hyperplane.
+                        # So we check if any ray or line pokes the hyperplane.
+                        if (    any(ieq[1:]*r[:]*direction < 0 for r in region.rays()) or
+                                any(ieq[1:]*l[:]          != 0 for l in region_lines)):
+                            splits = True
+
+                if splits:
+                    subdivided.append(region.intersection(pos_half))
+                    subdivided.append(region.intersection(neg_half))
+                else:
+                    subdivided.append(region)
             regions = subdivided
-        return tuple(regions)
+
+        if self.is_linear() and self.n_hyperplanes():
+            # We have treated so far only the positive half space w.r. to the first hyperplane.
+            return tuple(regions) + tuple(-x for x in regions)
+        else:
+            return tuple(regions)
 
     @cached_method
     def poset_of_regions(self, B=None, numbered_labels=True):

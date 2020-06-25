@@ -1,4 +1,7 @@
-#!/usr/bin/env sage-system-python
+#!/usr/bin/env sage-python
+
+# This script is executed by $SAGE_LOCAL/bin/sage
+# before starting sage.
 
 from __future__ import print_function
 

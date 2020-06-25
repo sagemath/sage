@@ -605,7 +605,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six import string_types
 
 from sage.env import SAGE_LOCAL
 import pexpect
@@ -839,12 +838,12 @@ class Qepcad:
 
         varlist = None
         if vars is not None:
-            if isinstance(vars, string_types):
+            if isinstance(vars, str):
                 varlist = vars.strip('()').split(',')
             else:
                 varlist = [str(v) for v in vars]
 
-        if isinstance(formula, string_types):
+        if isinstance(formula, str):
             if varlist is None:
                 raise ValueError("vars must be specified if formula is a string")
 
@@ -920,7 +919,7 @@ class Qepcad:
             sage: qe.finish() # optional - qepcad
             4 a c - b^2 <= 0
         """
-        if not isinstance(assume, string_types):
+        if not isinstance(assume, str):
             assume = qepcad_formula.formula(assume)
             if len(assume.qvars):
                 raise ValueError("assumptions cannot be quantified")

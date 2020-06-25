@@ -162,7 +162,7 @@ class MultivectorField(TensorField):
         TESTS:
 
         Construction via ``parent.element_class``, and not via a direct call
-        to ``MultivectorField`, to fit with the category framework::
+        to ``MultivectorField``, to fit with the category framework::
 
             sage: M = Manifold(2, 'M')
             sage: U = M.open_subset('U') ; V = M.open_subset('V')
@@ -1049,7 +1049,21 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s[1,2,3] == a[1]*b[2,3] + a[2]*b[3,1] + a[3]*b[1,2]
             True
 
+        Exterior product with a scalar field::
+
+            sage: f = M.scalar_field(x, name='f')
+            sage: s = b.wedge(f); s
+            2-vector field f*b on the 3-dimensional differentiable manifold M
+            sage: s.display()
+            f*b = x*y^2 d/dx/\d/dy + (x^2 + x*z) d/dx/\d/dz + x*z^2 d/dy/\d/dz
+            sage: s == f*b
+            True
+            sage: s == f.wedge(b)
+            True
+
         """
+        if other._tensor_rank == 0:  # wedge product with a scalar field
+            return self * other
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior " +

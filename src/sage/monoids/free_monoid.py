@@ -24,7 +24,6 @@ the optional ``names`` argument to the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six import integer_types
 
 from sage.rings.integer import Integer
 from sage.structure.category_object import normalize_names
@@ -190,7 +189,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             sage: F.<x,y> = FreeMonoid()
             sage: TestSuite(F).run()
         """
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("n (=%s) must be an integer" % n)
         if n < 0:
             raise ValueError("n (=%s) must be nonnegative" % n)
@@ -234,13 +233,18 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             a^2*b^2*c*a*b*a*c
             sage: F(Word([]))
             1
+
+        TESTS::
+
+            sage: F(F(w), check=False)
+            a^2*b^2*c*a*b*a*c
         """
         # There should really be some careful type checking here...
         if isinstance(x, FreeMonoidElement) and x.parent() is self:
             return x
         if isinstance(x, FreeMonoidElement) and x.parent() == self:
             return self.element_class(self, x._element_list, check)
-        if isinstance(x, integer_types + (Integer,)) and x == 1:
+        if isinstance(x, (int, Integer)) and x == 1:
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):
             d = self.gens_dict()

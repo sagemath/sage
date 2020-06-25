@@ -48,9 +48,6 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import division
 
-import six
-from six.moves import range
-
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 from sage.graphs.digraph import DiGraph
@@ -313,6 +310,15 @@ class Link(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid input: data must be either a list or a braid
+
+        Verify that :trac:`29692` is fixed::
+
+            sage: B = BraidGroup(5)
+            sage: L = Link(B([3,4,3,-4]))
+            sage: L
+            Link with 1 component represented by 4 crossings
+            sage: L.braid()
+            s0*s1*s0*s1^-1
         """
         if isinstance(data, list):
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
@@ -341,20 +347,7 @@ class Link(SageObject):
             from sage.groups.braid import Braid, BraidGroup
             if isinstance(data, Braid):
                 # Remove all unused strands
-                support = sorted(set(abs(x) for x in data.Tietze()))
-                i = 0
-                cur = 1
-                while i < len(support):
-                    if support[i] == cur:
-                        cur += 1
-                        i += 1
-                    elif support[i] == cur + 1:
-                        support.insert(i, cur+1)
-                        cur += 2
-                        i += 2
-                    else:
-                        cur = support[i]
-                        i += 1
+                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
                 d = {}
                 for i,s in enumerate(support):
                     d[s] = i+1
@@ -362,7 +355,7 @@ class Link(SageObject):
                 if not support:
                     B = BraidGroup(2)
                 else:
-                    B = BraidGroup(len(support)+1)
+                    B = BraidGroup(len(support))
                 self._braid = B([d[x] for x in data.Tietze()])
                 self._oriented_gauss_code = None
                 self._pd_code = None
@@ -1340,7 +1333,7 @@ class Link(SageObject):
             else:
                 crossing_dic = {}
 
-            pd = list(six.itervalues(crossing_dic))
+            pd = list(crossing_dic.values())
             self._pd_code = pd
             return self._pd_code
 

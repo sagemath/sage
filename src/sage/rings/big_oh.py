@@ -9,7 +9,6 @@ Big O for various types (power series, p-adics, etc.)
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
 from __future__ import absolute_import
-from six import integer_types
 
 import sage.arith.all as arith
 from . import laurent_series_ring_element
@@ -146,7 +145,7 @@ def O(*x, **kwds):
     elif isinstance(x, PuiseuxSeries):
         return x.add_bigoh(x.valuation(), **kwds)
 
-    elif isinstance(x, integer_types + (integer.Integer, rational.Rational)):
+    elif isinstance(x, (int, integer.Integer, rational.Rational)):
         # p-adic number
         if x <= 0:
             raise ArithmeticError("x must be a prime power >= 2")

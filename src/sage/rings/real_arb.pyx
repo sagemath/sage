@@ -222,6 +222,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
+from sage.arith.long cimport is_small_python_int
 
 import operator
 
@@ -1334,7 +1335,7 @@ cdef class RealBall(RingElement):
 
         elif isinstance(mid, RealBall):
             arb_set(self.value, (<RealBall> mid).value) # no rounding!
-        elif isinstance(mid, int):
+        elif is_small_python_int(mid):
             arb_set_si(self.value, PyInt_AS_LONG(mid)) # no rounding!
         elif isinstance(mid, Integer):
             if _do_sig(prec(self)): sig_on()
@@ -2545,7 +2546,7 @@ cdef class RealBall(RingElement):
         try:
             if isinstance(other, RealBall):
                 res = arb_contains(self.value, (<RealBall> other).value)
-            elif isinstance(other, int):
+            elif is_small_python_int(other):
                 res = arb_contains_si(self.value, PyInt_AS_LONG(other))
             elif isinstance(other, Integer):
                 fmpz_init(tmpz)
@@ -2834,7 +2835,7 @@ cdef class RealBall(RingElement):
             return sage.structure.element.bin_op(base, expo, operator.pow)
         cdef RealBall self = base
         cdef RealBall res = self._new()
-        if isinstance(expo, int) and expo > 0:
+        if is_small_python_int(expo) and expo > 0:
             if _do_sig(prec(self)): sig_on()
             arb_pow_ui(res.value, self.value, PyInt_AS_LONG(expo), prec(self))
             if _do_sig(prec(self)): sig_off()
@@ -3002,7 +3003,7 @@ cdef class RealBall(RingElement):
                             .format(type(val).__name__, type(shift).__name__))
         cdef RealBall self = val
         cdef RealBall res = self._new()
-        if isinstance(shift, int):
+        if is_small_python_int(shift):
             arb_mul_2exp_si(res.value, self.value, PyInt_AS_LONG(shift))
         elif isinstance(shift, Integer):
             sig_on()

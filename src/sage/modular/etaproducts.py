@@ -230,7 +230,6 @@ class EtaGroup_class(AbelianGroup):
         pass it to the reduce_basis() function which performs
         LLL-reduction to give a more manageable basis.
         """
-        from six.moves import range
         N = self.level()
         divs = divisors(N)[:-1]
         s = len(divs)
@@ -298,7 +297,6 @@ class EtaGroup_class(AbelianGroup):
             [Eta product of level 4 : (eta_1)^8 (eta_4)^-8,
             Eta product of level 4 : (eta_1)^-8 (eta_2)^24 (eta_4)^-16]
         """
-        from six.moves import range
         N = self.level()
         cusps = AllCusps(N)
         r = matrix(ZZ, [[et.order_at_cusp(c) for c in cusps] for et in long_etas])
@@ -712,7 +710,6 @@ def AllCusps(N):
         ...
         ValueError: N must be positive
     """
-    from six.moves import range
     N = ZZ(N)
     if N <= 0:
         raise ValueError("N must be positive")
@@ -1037,7 +1034,6 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
         sage: _eta_relations_helper(EtaProduct(26, {2:2,13:2,26:-2,1:-2}),EtaProduct(26, {2:4,13:2,26:-4,1:-2}),3,12,['a','b'],False) # not enough terms, will return rubbish
         [1]
     """
-    from six.moves import range
     indices = [(i,j) for j in range(degree) for i in range(degree)]
     inf = CuspFamily(eta1.level(), 1)
 

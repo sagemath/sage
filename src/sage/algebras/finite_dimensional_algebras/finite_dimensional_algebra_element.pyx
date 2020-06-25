@@ -1,8 +1,7 @@
 """
 Elements of Finite Algebras
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
 #  Copyright (C) 2011, 2013 Peter Bruin <peter.bruin@math.uzh.ch>
 #  Copyright (C) 2011 Michiel Kosters <kosters@gmail.com>
@@ -11,10 +10,8 @@ Elements of Finite Algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six.moves import range
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import re
 
 from sage.misc.lazy_attribute import lazy_attribute

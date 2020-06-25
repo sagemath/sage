@@ -45,7 +45,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six import integer_types
 
 from sage.arith.all import factor, is_prime, valuation
 
@@ -315,7 +314,7 @@ def dimension_new_cusp_forms(X, k=2, p=0):
             # Gamma1(N) for N<=2 just returns Gamma0(N), which has no
             # eps parameter. See trac #12640.
             return Gamma1(N).dimension_new_cusp_forms(k, eps=X, p=p)
-    elif isinstance(X, integer_types + (Integer,)):
+    elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_new_cusp_forms(k, p=p)
     else:
         raise TypeError("X (=%s) must be an integer, a Dirichlet character or a congruence subgroup of type Gamma0, Gamma1 or GammaH" % X)
@@ -426,7 +425,7 @@ def dimension_cusp_forms(X, k=2):
             return Gamma1(N).dimension_cusp_forms(k, X)
     elif is_ArithmeticSubgroup(X):
         return X.dimension_cusp_forms(k)
-    elif isinstance(X, (Integer,) + integer_types):
+    elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_cusp_forms(k)
     else:
         raise TypeError("argument 1 must be a Dirichlet character, an integer "
@@ -509,7 +508,7 @@ def dimension_eis(X, k=2):
         return X.dimension_eis(k)
     elif isinstance(X, dirichlet.DirichletCharacter):
         return Gamma1(X.modulus()).dimension_eis(k, X)
-    elif isinstance(X, integer_types + (Integer,)):
+    elif isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_eis(k)
     else:
         raise TypeError("argument in dimension_eis must be an integer, a Dirichlet character, or a finite index subgroup of SL2Z (got %s)" % X)
@@ -551,7 +550,7 @@ def dimension_modular_forms(X, k=2):
         sage: dimension_modular_forms(11,2)
         2
     """
-    if isinstance(X, integer_types + (Integer,)):
+    if isinstance(X, (int, Integer)):
         return Gamma0(X).dimension_modular_forms(k)
     elif is_ArithmeticSubgroup(X):
         return X.dimension_modular_forms(k)
@@ -597,5 +596,5 @@ def sturm_bound(level, weight=2):
         else:
             raise ValueError("no Sturm bound defined for noncongruence "
                              "subgroups")
-    if isinstance(level, integer_types + (Integer,)):
+    if isinstance(level, (int, Integer)):
         return Gamma0(level).sturm_bound(weight)

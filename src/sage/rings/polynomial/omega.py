@@ -53,7 +53,6 @@ Functions
 
 from __future__ import print_function
 from __future__ import absolute_import
-from six import iteritems
 
 import operator
 from sage.misc.cachefunc import cached_function
@@ -322,7 +321,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
         if not D:
             raise ZeroDivisionError('Denominator contains a factor 0.')
         elif len(D) == 1:
-            exponent, coefficient = next(iteritems(D))
+            exponent, coefficient = next(iter(D.items()))
             if exponent == 0:
                 other_factors.append(L0(factor))
             else:
@@ -331,7 +330,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
             if D.get(0, 0) != 1:
                 raise NotImplementedError('Factor {} is not normalized.'.format(factor))
             D.pop(0)
-            exponent, coefficient = next(iteritems(D))
+            exponent, coefficient = next(iter(D.items()))
             decoded_factors.append((-coefficient, exponent))
         else:
             raise NotImplementedError('Cannot handle factor {}.'.format(factor))
@@ -446,7 +445,7 @@ def _Omega_(A, decoded_factors):
         (x + 1) * (-x*y + 1)^-1
     """
     if not decoded_factors:
-        return sum(c for a, c in iteritems(A) if a >= 0), tuple()
+        return sum(c for a, c in A.items() if a >= 0), tuple()
 
     # Below we sort to make the caching more efficient. Doing this here
     # (in contrast to directly in Omega_ge) results in much cleaner
@@ -456,7 +455,7 @@ def _Omega_(A, decoded_factors):
     numerator = 0
     factors_denominator = None
     rules = None
-    for a, c in iteritems(A):
+    for a, c in A.items():
         n, fd = Omega_ge(a, exponents)
         if factors_denominator is None:
             factors_denominator = fd
@@ -603,7 +602,7 @@ def Omega_ge(a, exponents):
             e[p] = e[p] // exponent
             return tuple(e)
         parent = expression.parent()
-        result = parent({subs_e(e): c for e, c in iteritems(expression.dict())})
+        result = parent({subs_e(e): c for e, c in expression.dict().items()})
         return result
 
     def de_power(expression):

@@ -1,14 +1,14 @@
 r"""
 Integer vectors modulo the action of a permutation group
 """
-#*****************************************************************************
+# ****************************************************************************
 #    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #              The full text of the GPL is available at:
-#                    http://www.gnu.org/licenses/
-#*****************************************************************************
+#                    https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -23,6 +23,7 @@ from sage.combinat.backtrack import SearchForest
 from sage.combinat.enumeration_mod_permgroup import is_canonical, orbit, canonical_children, canonical_representative_of_orbit_of
 
 from sage.combinat.integer_vector import IntegerVectors
+
 
 class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     r"""
@@ -963,5 +964,5 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, S
             if self.parent()._sum is not None:
                 assert sum(self) == self.parent()._sum, '%s should be a integer vector of sum %s'%(self, self.parent()._sum)
             if self.parent()._max_part >= 0:
-                assert max(self) <= self.parent()._max_part, 'Entries of %s must be inferiors to %s'%(self, self.parent()._max_part)
+                assert max(self) <= self.parent()._max_part, 'Entries of %s must be inferior to %s'%(self, self.parent()._max_part)
             assert self.parent().is_canonical(self)

@@ -38,7 +38,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from six.moves          import range
 from sage.rings.all     import QQ, Integer
 from sage.misc.all      import verbose, cached_method
 from sage.matrix.all    import Matrix, identity_matrix

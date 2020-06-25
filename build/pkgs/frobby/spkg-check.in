@@ -1,0 +1,6 @@
+GMP_INC_DIR="$SAGE_LOCAL/include"; export GMP_INC_DIR
+ldflags="-L$SAGE_LOCAL/lib/ -lgmpxx -lgmp"; export ldflags
+
+cd src/
+$MAKE test MODE=debug # run tests with assertions turned on
+$MAKE test MODE=release # test the binaries used by Sage

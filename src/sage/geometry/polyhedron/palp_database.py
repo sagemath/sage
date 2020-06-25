@@ -33,8 +33,6 @@ import os
 
 from subprocess import Popen, PIPE
 
-import six
-
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ
 
@@ -136,16 +134,8 @@ class PALPreader(SageObject):
             <subprocess.Popen object at 0x...>
         """
 
-        if six.PY2:
-            encoding_kwargs = {}
-        else:
-            encoding_kwargs = {
-                'encoding': 'utf-8',
-                'errors': 'surrogateescape'
-            }
-
         return Popen(["class.x", "-b2a", "-di", self._data_basename],
-                     stdout=PIPE, **encoding_kwargs)
+                     stdout=PIPE, encoding='utf-8', errors='surrogateescape')
 
     def _read_vertices(self, stdout, rows, cols):
         r"""
@@ -470,15 +460,8 @@ class Reflexive4dHodge(PALPreader):
             sage: polygons._palp_Popen()                # optional - polytopes_db_4d
             <subprocess.Popen object at 0x...>
         """
-        if six.PY2:
-            encoding_kwargs = {}
-        else:
-            encoding_kwargs = {
-                'encoding': 'utf-8',
-                'errors': 'surrogateescape'
-            }
 
         return Popen(['class-4d.x', '-He',
                       'H{}:{}L100000000'.format(self._h21, self._h11),
                       '-di', self._data_basename], stdout=PIPE,
-                      **encoding_kwargs)
+                      encoding='utf-8', errors='surrogateescape')

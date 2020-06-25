@@ -21,7 +21,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-import six
 from sage.structure.sage_object import SageObject
 
 def is_atomic(expr, sep=['+', '-']):
@@ -67,11 +66,11 @@ def is_atomic(expr, sep=['+', '-']):
         True
 
     """
-    if not isinstance(expr, six.string_types):
+    if not isinstance(expr, str):
         raise TypeError("The argument must be a string")
     if not isinstance(sep, list):
         raise TypeError("the argument 'sep' must be a list")
-    elif any(not isinstance(s, six.string_types) for s in sep):
+    elif any(not isinstance(s, str) for s in sep):
         raise TypeError("the argument 'sep' must consist of strings")
     level = 0
     for n, c in enumerate(expr):

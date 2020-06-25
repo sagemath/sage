@@ -268,12 +268,12 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
 
     for coefficient in xrange(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
-   
+
 cpdef _all_periodic_points(self):
     """
     Find all periodic points over a finite field.
 
-    EXAMPELS::
+    EXAMPLES::
 
         sage: from sage.dynamics.arithmetic_dynamics.projective_ds_helper import _all_periodic_points
         sage: P.<x,y> = ProjectiveSpace(GF(7), 1)
@@ -298,4 +298,3 @@ cpdef _all_periodic_points(self):
         if next_element in path:
             periodic_points += path[path.index(next_element):]
     return periodic_points
-

@@ -251,7 +251,6 @@ copy of the integers::
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
-from six.moves import range
 
 import copy
 

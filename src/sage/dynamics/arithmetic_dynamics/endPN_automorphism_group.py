@@ -18,7 +18,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from copy import copy
 from sage.combinat.subset import Subsets

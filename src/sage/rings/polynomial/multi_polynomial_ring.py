@@ -60,7 +60,6 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
@@ -110,7 +109,11 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
     def __init__(self, base_ring, n, names, order):
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         order = TermOrder(order,n)
-        MPolynomialRing_base.__init__(self, base_ring, n, names, order)
+        # MPolynomialRing_base.__init__() normally initialises the base ring,
+        # but it also needs the generators to construct a coercion map from the
+        # base ring, and the base ring must be set to initialise the generators.
+        # We set the base ring manually to break this circular dependency.
+        self._base = base_ring
         # Construct the generators
         v = [0] * n
         one = base_ring(1);
@@ -122,17 +125,8 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             v[i] = 0
         self._gens = tuple(self._gens)
         self._zero_tuple = tuple(v)
+        MPolynomialRing_base.__init__(self, base_ring, n, names, order)
         self._has_singular = can_convert_to_singular(self)
-        # This polynomial ring should belong to Algebras(base_ring).
-        # Algebras(...).parent_class, which was called from MPolynomialRing_base.__init__,
-        # tries to provide a conversion from the base ring, if it does not exist.
-        # This is for algebras that only do the generic stuff in their initialisation.
-        # But here, we want to use PolynomialBaseringInjection. Hence, we need to
-        # wipe the memory and construct the conversion from scratch.
-        if n:
-            from sage.rings.polynomial.polynomial_element import PolynomialBaseringInjection
-            base_inject = PolynomialBaseringInjection(base_ring, self)
-            self.register_coercion(base_inject)
 
     def _monomial_order_function(self):
         return self.__monomial_order_function
@@ -141,9 +135,9 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         return MPolynomial_polydict
 
-    def __eq__(left, right):
+    def __eq__(self, other):
         """
-        Check whether ``left`` is equal to ``right``.
+        Check whether ``self`` is equal to ``other``.
 
         EXAMPLES::
 
@@ -151,12 +145,12 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
             sage: loads(R.dumps()) == R
             True
         """
-        if not is_MPolynomialRing(right):
+        if not is_MPolynomialRing(other):
             return False
-        return ((left.base_ring(), left.ngens(),
-                left.variable_names(), left.term_order()) ==
-                (right.base_ring(), right.ngens(),
-                 right.variable_names(), right.term_order()))
+        return ((self.base_ring(), self.ngens(),
+                self.variable_names(), self.term_order()) ==
+                (other.base_ring(), other.ngens(),
+                 other.variable_names(), other.term_order()))
 
     def __ne__(self , other):
         """
@@ -172,7 +166,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
 
     def __hash__(self):
         """
-        Compute the hash of self.
+        Compute the hash of ``self``.
 
         EXAMPLES::
 
