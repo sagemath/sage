@@ -341,9 +341,9 @@ class PolyhedronFace(SageObject):
             sage: square = polytopes.hypercube(2)
             sage: f = square.faces(1)
             sage: matrix(4,4, lambda i,j: ZZ(f[i] <= f[j]))
-            [1 1 0 0]
-            [0 1 0 0]
             [1 1 1 0]
+            [0 1 0 0]
+            [0 1 1 0]
             [1 1 1 1]
             sage: matrix(4,4, lambda i,j: ZZ(f[i] == f[j])) == 1
             True
@@ -379,16 +379,16 @@ class PolyhedronFace(SageObject):
             sage: square = polytopes.hypercube(2)
             sage: for face in square.face_lattice():
             ....:     print(face.ambient_Hrepresentation())
-            (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0,
-             An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
-            (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
-            (An inequality (1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
-            (An inequality (0, 1) x + 1 >= 0, An inequality (-1, 0) x + 1 >= 0)
+            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0,
+             An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
+            (An inequality (-1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
             (An inequality (-1, 0) x + 1 >= 0, An inequality (0, -1) x + 1 >= 0)
-            (An inequality (1, 0) x + 1 >= 0,)
-            (An inequality (0, 1) x + 1 >= 0,)
+            (An inequality (0, -1) x + 1 >= 0, An inequality (1, 0) x + 1 >= 0)
+            (An inequality (1, 0) x + 1 >= 0, An inequality (0, 1) x + 1 >= 0)
             (An inequality (-1, 0) x + 1 >= 0,)
             (An inequality (0, -1) x + 1 >= 0,)
+            (An inequality (1, 0) x + 1 >= 0,)
+            (An inequality (0, 1) x + 1 >= 0,)
             ()
         """
         if index is None:
@@ -421,16 +421,16 @@ class PolyhedronFace(SageObject):
             sage: for fl in square.face_lattice():
             ....:     print(fl.ambient_Vrepresentation())
             ()
-            (A vertex at (-1, -1),)
-            (A vertex at (-1, 1),)
             (A vertex at (1, -1),)
             (A vertex at (1, 1),)
-            (A vertex at (-1, -1), A vertex at (-1, 1))
-            (A vertex at (-1, -1), A vertex at (1, -1))
+            (A vertex at (-1, 1),)
+            (A vertex at (-1, -1),)
             (A vertex at (1, -1), A vertex at (1, 1))
-            (A vertex at (-1, 1), A vertex at (1, 1))
-            (A vertex at (-1, -1), A vertex at (-1, 1),
-             A vertex at (1, -1), A vertex at (1, 1))
+            (A vertex at (1, 1), A vertex at (-1, 1))
+            (A vertex at (-1, 1), A vertex at (-1, -1))
+            (A vertex at (1, -1), A vertex at (-1, -1))
+            (A vertex at (1, -1), A vertex at (1, 1),
+             A vertex at (-1, 1), A vertex at (-1, -1))
         """
         if index is None:
             return self._ambient_Vrepresentation
@@ -535,12 +535,12 @@ class PolyhedronFace(SageObject):
             sage: P = polytopes.cube()
             sage: F = P.faces(2)
             sage: [f.ambient_V_indices() for f in F]
-            [(0, 1, 4, 5),
-             (0, 2, 4, 6),
-             (0, 1, 2, 3),
+            [(0, 3, 4, 5),
+             (0, 1, 5, 6),
              (4, 5, 6, 7),
-             (2, 3, 6, 7),
-             (1, 3, 5, 7)]
+             (2, 3, 4, 7),
+             (1, 2, 6, 7),
+             (0, 1, 2, 3)]
         """
         return self._ambient_Vrepresentation_indices
 
@@ -676,6 +676,86 @@ class PolyhedronFace(SageObject):
         parent = P.parent()
         Vrep = (self.vertices(), self.rays(), self.lines())
         return P.__class__(parent, Vrep, None)
+
+    @cached_method
+    def normal_cone(self, direction='outer'):
+        """
+        Return the pointed polyhedral cone consisting of normal vectors to
+        hyperplanes supporting ``self``.
+
+        INPUT:
+
+        - ``direction`` -- string (default: ``'outer'``), the direction in
+          which to consider the normals. The other allowed option is
+          ``'inner'``.
+
+        OUTPUT:
+
+        A polyhedron.
+
+        EXAMPLES::
+
+            sage: p = Polyhedron(vertices = [[1,2],[2,1],[-2,2],[-2,-2],[2,-2]])
+            sage: for v in p.face_generator(0):
+            ....:     vect = v.vertices()[0].vector()
+            ....:     nc = v.normal_cone().rays_list()
+            ....:     print("{} has outer normal cone spanned by {}".format(vect,nc))
+            ....:
+            (2, 1) has outer normal cone spanned by [[1, 0], [1, 1]]
+            (1, 2) has outer normal cone spanned by [[0, 1], [1, 1]]
+            (2, -2) has outer normal cone spanned by [[0, -1], [1, 0]]
+            (-2, -2) has outer normal cone spanned by [[-1, 0], [0, -1]]
+            (-2, 2) has outer normal cone spanned by [[-1, 0], [0, 1]]
+
+            sage: for v in p.face_generator(0):
+            ....:     vect = v.vertices()[0].vector()
+            ....:     nc = v.normal_cone(direction='inner').rays_list()
+            ....:     print("{} has inner normal cone spanned by {}".format(vect,nc))
+            ....:
+            (2, 1) has inner normal cone spanned by [[-1, -1], [-1, 0]]
+            (1, 2) has inner normal cone spanned by [[-1, -1], [0, -1]]
+            (2, -2) has inner normal cone spanned by [[-1, 0], [0, 1]]
+            (-2, -2) has inner normal cone spanned by [[0, 1], [1, 0]]
+            (-2, 2) has inner normal cone spanned by [[0, -1], [1, 0]]
+
+        The function works for polytopes that are not full-dimensional::
+
+            sage: p = polytopes.permutahedron(3)
+            sage: f1 = p.faces(0)[0]
+            sage: f2 = p.faces(1)[0]
+            sage: f3 = p.faces(2)[0]
+            sage: f1.normal_cone()
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex, 2 rays, 1 line
+            sage: f2.normal_cone()
+            A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex, 1 ray, 1 line
+            sage: f3.normal_cone()
+            A 1-dimensional polyhedron in ZZ^3 defined as the convex hull of 1 vertex and 1 line
+
+        Normal cones are only defined for non-empty faces::
+
+            sage: f0 = p.faces(-1)[0]
+            sage: f0.normal_cone()
+            Traceback (most recent call last):
+            ...
+            ValueError: the empty face does not have a normal cone
+        """
+        if self.dim() == -1:
+            raise ValueError("the empty face does not have a normal cone")
+        elif direction not in ['outer','inner']:
+            raise ValueError("the direction should be either 'outer' or 'inner'")
+        rays = []
+        lines = []
+        for facet in self.ambient_Hrepresentation():
+            if facet.is_equation():
+                lines += [facet.A()]
+            elif direction == 'outer':
+                rays += [-facet.A()]
+            else:  # 'inner'
+                rays += [facet.A()]
+        parent = self.polyhedron().parent()
+        origin = self.polyhedron().ambient_space().zero()
+        return parent.element_class(parent, [[origin], rays, lines], None)
+
 
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""

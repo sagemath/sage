@@ -62,8 +62,6 @@ with 4 letters divided into 2 blocks::
 # ****************************************************************************
 
 from __future__ import absolute_import, division
-from six.moves import range
-from six import add_metaclass, iteritems
 
 from functools import reduce
 from itertools import chain
@@ -96,8 +94,9 @@ from sage.combinat.shuffle import ShuffleProduct, ShuffleProduct_overlapping
 from sage.combinat.crystals.letters import CrystalOfLetters as Letters
 from sage.combinat.root_system.cartan_type import CartanType
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class OrderedMultisetPartitionIntoSets(ClonableArray):
+
+class OrderedMultisetPartitionIntoSets(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Ordered Multiset Partition into sets
 
@@ -1403,7 +1402,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             # Should be a 'dictionary' of letter-frequencies, but accept a weak composition
             w = constraints["weight"]
             if not isinstance(w, dict):
-                # make sure we didn't receive ``iteritems(some_dict)``
+                # make sure we didn't receive ``some_dict.items()``
                 if len(w) > 0 and isinstance(w[0], (list, tuple)):
                     w = dict(w)
                 else:
@@ -1411,7 +1410,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             if not all((a in ZZ and a > 0) for a in w.values()):
                 raise ValueError("%s must be a dictionary of letter-frequencies or a weak composition"%w)
             else:
-                constraints["weight"] = tuple(iteritems(w))
+                constraints["weight"] = tuple(w.items())
 
         if "alphabet" in constraints:
             A = constraints["alphabet"]
@@ -1454,7 +1453,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                         suff = ""
                         offenses = str(over_determined.pop())
                     raise ValueError("cannot pass multiset as first argument and %s as keyword argument%s" % (offenses, suff))
-                X_items = tuple(iteritems(X))
+                X_items = tuple(X.items())
                 if constraints == {}:
                     return OrderedMultisetPartitionsIntoSets_X(X_items)
                 else:
@@ -1560,7 +1559,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # pop keys with empty values, with the exception of 'size' or 'order'
         self.constraints = {}
-        for (key,val) in iteritems(constraints):
+        for (key,val) in constraints.items():
             if val:
                 self.constraints[key] = val
             elif key in ("size", "order", "length") and val is not None:
@@ -1622,7 +1621,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
                 A = sorted(cdict["alphabet"])
             cdict["alphabet"] = "{" + repr(A)[1:-1] + "}"
         constr = ""
-        ss = ['%s=%s' % item for item in iteritems(cdict)]
+        ss = ['%s=%s' % item for item in cdict.items()]
         ss = sorted(ss)
         if len(ss) > 1:
             constr = " with constraints: " + ", ".join(ss)
@@ -1723,7 +1722,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             False
         """
         X = _concatenate(x)
-        P = OrderedMultisetPartitionsIntoSets_X(tuple(iteritems(_get_weight(X))))
+        P = OrderedMultisetPartitionsIntoSets_X(tuple(_get_weight(X).items()))
         x = P.element_class(P, [frozenset(block) for block in x])
         constr = self.full_constraints
         tsts = []
@@ -1952,8 +1951,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # slice by 'order'
         if "alphabet" in fc:
-            no_alpha = {k: v for (k, v) in iteritems(self.constraints)
-                        if k != "alphabet"}
+            no_alpha = {k: v for (k, v) in self.constraints.items() if k != "alphabet"}
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], size, **no_alpha)
 
         # slice by 'size'

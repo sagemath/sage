@@ -1,4 +1,4 @@
-$(PYTHON) vcversioner functools32 | setuptools pip
+$(PYTHON) vcversioner functools32 | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

@@ -838,8 +838,7 @@ class GroebnerFan(SageObject):
         if not R.is_field():
             raise NotImplementedError("Groebner fan computation only implemented over fields")
         if not (R is QQ or (R.is_finite() and R.is_prime_field() and R.order() <= 32749)):
-            # sage: previous_prime (2^15)
-            # 32749
+            # 32749 is previous_prime(2^15)
             raise NotImplementedError("Groebner fan computation only implemented over Q or GF(p) for p <= 32749.")
         if S.ngens() > 52:
             raise NotImplementedError("Groebner fan computation only implemented for rings in at most 52 variables.")

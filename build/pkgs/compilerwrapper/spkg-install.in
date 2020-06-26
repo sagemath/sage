@@ -1,0 +1,43 @@
+# remove wrapper if it is already installed
+rm -f $SAGE_LOCAL/bin/gcc
+rm -f $SAGE_LOCAL/bin/cc
+rm -f $SAGE_LOCAL/bin/c89
+rm -f $SAGE_LOCAL/bin/c99
+rm -f $SAGE_LOCAL/bin/c++
+rm -f $SAGE_LOCAL/bin/g++
+rm -f $SAGE_LOCAL/bin/ld
+
+CC_FILENAME=`src/scripts/find_executable.sh --CC --exclude="$SAGE_LOCAL/bin"`
+CC_PATH=`dirname "$CC_FILENAME"`
+
+LD_FILENAME=`src/scripts/find_executable.sh --LD --exclude="$SAGE_LOCAL/bin"`
+GFORTRAN_FILENAME=`src/scripts/find_executable.sh --exclude="$SAGE_LOCAL/bin" gfortran`
+
+echo "Setting up the compiler/binutils wrapper"
+echo "Real location of compiler: $CC_PATH"
+echo "Real linker: $LD_FILENAME"
+echo "Real fortran: $GFORTRAN_FILENAME"
+
+cd src
+./configure --prefix="$SAGE_LOCAL" \
+            --with-ccpath="$CC_PATH" \
+            --with-ld="$LD_FILENAME" \
+            --with-gfortran="$GFORTRAN_FILENAME" \
+            --enable-sage
+if [ $? -ne 0 ]; then
+  echo >&2 "Error configuring the compiler wrapper."
+  exit 1
+fi
+
+$MAKE
+if [ $? -ne 0 ]; then
+  echo >&2 "Error building the compiler wrapper."
+  exit 1
+fi
+
+$MAKE install
+if [ $? -ne 0 ]; then
+  echo >&2 "Error installing the gcc wrapper."
+  exit 1
+fi
+

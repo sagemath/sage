@@ -34,7 +34,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six import iteritems
 
 from sage.misc.misc import repr_lincomb
 from sage.monoids.free_monoid_element import FreeMonoidElement
@@ -170,7 +169,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         # I don't start with 0, because I don't want to preclude evaluation with
         # arbitrary objects (e.g. matrices) because of funny coercion.
         result = None
-        for m, c in iteritems(self._monomial_coefficients):
+        for m, c in self._monomial_coefficients.items():
             if result is None:
                 result = c*m(x)
             else:

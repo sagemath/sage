@@ -25,7 +25,6 @@ Class hierarchy:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import, division
-from six.moves import range
 
 import sage.modular.hecke.element as element
 

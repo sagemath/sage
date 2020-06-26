@@ -15,7 +15,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import string_types
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.categories.lie_algebras import LieAlgebras
@@ -177,7 +176,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             True
         """
         if names is not None:
-            if isinstance(names, string_types) and ',' in names:
+            if isinstance(names, str) and ',' in names:
                 names = [u for u in names if u != ',']
             names = Alphabet(names)
 

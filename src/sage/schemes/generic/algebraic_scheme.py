@@ -100,15 +100,18 @@ Let us look at one affine patch, for example the one where `x_0=1` ::
 
 AUTHORS:
 
-- David Kohel (2005): initial version.
-- William Stein (2005): initial version.
-- Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-- Volker Braun (2010-12-24): documentation of schemes and
-  refactoring. Added coordinate neighborhoods and is_smooth()
+- David Kohel, William Stein (2005): initial version
+
+- Andrey Novoseltsev (2010-05-17): subschemes of toric varieties
+
+- Volker Braun (2010-12-24): documentation of schemes and refactoring; added
+  coordinate neighborhoods and is_smooth()
+
 - Ben Hutz (2014): subschemes of Cartesian products of projective space
+
 - Ben Hutz (2017): split subschemes types into respective folders
+
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
@@ -122,18 +125,10 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-#*** A quick overview over the class hierarchy:
-# class AlgebraicScheme(scheme.Scheme)
-#    class AlgebraicScheme_subscheme
-#       class AlgebraicScheme_subscheme_affine
-#       class AlgebraicScheme_subscheme_projective
-#       class AlgebraicScheme_subscheme_toric
-#          class AlgebraicScheme_subscheme_affine_toric
-#    class AlgebraicScheme_quasi
-
+from __future__ import absolute_import
 
 from sage.categories.number_fields import NumberFields
+
 from sage.rings.all import ZZ, QQbar
 from sage.rings.ideal import is_Ideal
 from sage.rings.rational_field import is_RationalField
@@ -142,8 +137,10 @@ from sage.rings.number_field.order import is_NumberFieldOrder
 
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
+
 from sage.structure.all import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
+
 from sage.calculus.functions import jacobian
 
 from sage.arith.all import gcd, lcm
@@ -152,9 +149,6 @@ import sage.schemes.affine
 from . import ambient_space
 from . import scheme
 
-
-
-#*******************************************************************
 def is_AlgebraicScheme(x):
     """
     Test whether ``x`` is an algebraic scheme.
@@ -213,8 +207,19 @@ def is_AlgebraicScheme(x):
     return isinstance(x, AlgebraicScheme)
 
 
+# ****************************************************************************
+# A quick overview over the class hierarchy:
+#
+# class AlgebraicScheme(scheme.Scheme)
+#    class AlgebraicScheme_subscheme
+#       class AlgebraicScheme_subscheme_affine
+#       class AlgebraicScheme_subscheme_projective
+#       class AlgebraicScheme_subscheme_toric
+#          class AlgebraicScheme_subscheme_affine_toric
+#    class AlgebraicScheme_quasi
+# ****************************************************************************
 
-#*******************************************************************
+
 class AlgebraicScheme(scheme.Scheme):
     """
     An algebraic scheme presented as a subscheme in an ambient space.
@@ -223,7 +228,6 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-
     def __init__(self, A):
         """
         TESTS::
@@ -587,8 +591,6 @@ class AlgebraicScheme(scheme.Scheme):
         return self.__A._point(*args, **kwds)
 
 
-
-#*******************************************************************
 class AlgebraicScheme_quasi(AlgebraicScheme):
     """
     The quasi-affine or quasi-projective scheme `X - Y`, where `X` and `Y`
@@ -880,8 +882,6 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         return pts
 
 
-
-#*******************************************************************
 @richcmp_method
 class AlgebraicScheme_subscheme(AlgebraicScheme):
     """
@@ -1624,7 +1624,6 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
         return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
 
-
     __add__ = union
 
     def intersection(self, other):
@@ -1717,9 +1716,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         In the case of numerically approximated points, the points are returned over as
         points of the ambient space.
 
-        For a dimesion greater than 0 scheme, depending on bound size, either the
+        For a dimension greater than 0 scheme, depending on bound size, either the
         points in the ambient space are enumerated or a sieving algorithm lifting points
-        modulo primes is used. See the documention in homset for the details of the
+        modulo primes is used. See the documentation in homset for the details of the
         sieving algorithm.
 
         INPUT:

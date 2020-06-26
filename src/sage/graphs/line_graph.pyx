@@ -127,6 +127,7 @@ Functions
 ---------
 """
 
+
 def is_line_graph(g, certificate=False):
     r"""
     Tests wether the graph is a line graph.

@@ -86,7 +86,6 @@ REFERENCES:
 
 - [CGW2013]_
 """
-from six.moves import range
 
 from sage.functions.log import log
 from sage.functions.other import sqrt, floor, ceil

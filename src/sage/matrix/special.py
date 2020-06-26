@@ -63,15 +63,14 @@ matrices and Latin squares. See:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import, division
-from six.moves import range
-from six import integer_types
 
-import sage.rings.all as rings
 from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
 from sage.modules.free_module_element import vector
 from sage.structure.element import is_Matrix
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.misc.misc_c import running_total
 from copy import copy
 from .constructor import matrix
@@ -801,7 +800,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Size of matrix specified?
     # Formats 2, 4
     nrows = None
-    if isinstance(arg0, integer_types + (rings.Integer,)):
+    if isinstance(arg0, (Integer, int)):
         nrows = arg0
         arg0 = arg1
     # Object holding entries
@@ -826,7 +825,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     # provide a default ring for an empty list
     if not len(entries) and ring is None:
-      ring = rings.ZZ
+       ring = ZZ
 
     # Convert entries to a list v over a common ring
     from sage.modules.free_module_element import prepare
@@ -876,9 +875,9 @@ def identity_matrix(ring, n=0, sparse=False):
         sage: M.is_mutable()
         True
     """
-    if isinstance(ring, integer_types  + (rings.Integer,)):
+    if isinstance(ring, (Integer, int)):
         n = ring
-        ring = rings.ZZ
+        ring = ZZ
     return matrix_space.MatrixSpace(ring, n, n, sparse)(1)
 
 @matrix_method
@@ -902,9 +901,9 @@ def lehmer(ring, n=0):
     """
     from sage.sets.integer_range import IntegerRange
 
-    if isinstance(ring, integer_types + (rings.Integer,)):
+    if isinstance(ring, (Integer, int)):
         n = ring
-        ring = rings.QQ
+        ring = QQ
     return matrix_space.MatrixSpace(ring, n, n).matrix([[min(i, j)/max(i, j) for i in IntegerRange(1, n+1)] for j in IntegerRange(1, n+1)])
 
 @matrix_method
@@ -945,9 +944,9 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
         [0 0 0 0 0]
 
     """
-    if isinstance(ring, integer_types + (rings.Integer,)):
+    if isinstance(ring, (Integer, int)):
         nrows, ncols = (ring, nrows)
-        ring = rings.ZZ
+        ring = ZZ
     return matrix_space.MatrixSpace(ring, nrows, ncols, sparse)(0)
 
 @matrix_method
@@ -1030,9 +1029,9 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
         ...
         ValueError: constructing an all ones matrix requires at least one dimension
     """
-    if isinstance(ring, integer_types + (rings.Integer,)):
+    if isinstance(ring, (Integer, int)):
         nrows, ncols = (ring, nrows)
-        ring = rings.ZZ
+        ring = ZZ
     if nrows is None:
         raise ValueError("constructing an all ones matrix requires at least one dimension")
     if ncols is None:
@@ -1363,11 +1362,11 @@ def elementary_matrix(arg0, arg1=None, **kwds):
             raise TypeError('scale must be an element of some ring, not {0}'.format(scale))
         R = scale.parent()
     else:
-        R = rings.ZZ
+        R = ZZ
     if arg0 is None:
         raise ValueError('size of elementary matrix must be given')
     try:
-        n = rings.Integer(arg0)
+        n = Integer(arg0)
     except TypeError:
         raise TypeError('size of elementary matrix must be an integer, not {0}'.format(arg0))
     if n <= 0:
@@ -1395,14 +1394,14 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
     # analyze parameters to determine matrix type
     try:
-        row1 = rings.Integer(row1)
+        row1 = Integer(row1)
     except TypeError:
         raise TypeError('{0} of elementary matrix must be an integer, not {1}'.format(opstring, row1))
     if row1 < 0 or row1 >= n :
         raise ValueError('{0} of elementary matrix must be positive and smaller than {1}, not {2}'.format(opstring, n, row1))
     if not row2 is None:
         try:
-            row2 = rings.Integer(row2)
+            row2 = Integer(row2)
         except TypeError:
             raise TypeError('{0} of elementary matrix must be an integer, not {1}'.format(opstring, row2))
         if row2 < 0 or row2 >= n :
@@ -1884,9 +1883,9 @@ def block_matrix(*args, **kwds):
 
     if not args:
         if sparse is not None:
-            return matrix_space.MatrixSpace(rings.ZZ, 0, 0, sparse=sparse)([])
+            return matrix_space.MatrixSpace(ZZ, 0, 0, sparse=sparse)([])
         else:
-            return matrix_space.MatrixSpace(rings.ZZ, 0, 0)([])
+            return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
     if len(args) >= 1 and is_Ring(args[0]):
         # A ring is specified

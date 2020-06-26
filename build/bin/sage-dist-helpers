@@ -140,7 +140,7 @@ sdh_check_vars() {
     while [ -n "$1" ]; do
         [ -n "$(eval "echo "\${${1}+isset}"")" ] || sdh_die << _EOF_
 ${1} undefined ... exiting
-Maybe run 'sage --sh'?
+Maybe run 'sage --buildsh'?
 _EOF_
         shift
     done
@@ -183,6 +183,11 @@ sdh_make() {
     ${MAKE:-make} "$@" || sdh_die "Error building $PKG_NAME"
 }
 
+
+sdh_make_check() {
+    echo "Checking $PKG_NAME"
+    ${MAKE:-make} check "$@" || sdh_die "Failures checking $PKG_NAME"
+}
 
 sdh_make_install() {
     echo "Installing $PKG_NAME"

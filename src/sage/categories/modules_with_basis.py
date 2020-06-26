@@ -32,8 +32,6 @@ from sage.categories.poor_man_map import PoorManMap
 from sage.rings.infinity import Infinity
 from sage.structure.element import Element, parent
 
-import six
-
 
 lazy_import('sage.modules.with_basis.morphism',
             ['ModuleMorphismByLinearity',
@@ -1099,12 +1097,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             if hasattr( codomain, 'linear_combination' ):
                 mc = x.monomial_coefficients(copy=False)
-                return codomain.linear_combination( (on_basis(key), coeff)
-                                                    for key, coeff in six.iteritems(mc) )
+                return codomain.linear_combination((on_basis(key), coeff)
+                                                   for key, coeff in mc.items())
             else:
                 return_sum = codomain.zero()
                 mc = x.monomial_coefficients(copy=False)
-                for key, coeff in six.iteritems(mc):
+                for key, coeff in mc.items():
                     return_sum += coeff * on_basis(key)
                 return return_sum
 
@@ -1122,7 +1120,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             mc = x.monomial_coefficients(copy=False)
             return self.linear_combination( (on_basis(key), coeff)
-                                            for key, coeff in six.iteritems(mc) )
+                                            for key, coeff in mc.items())
 
         def dimension(self):
             """
@@ -1223,7 +1221,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             we can find a random element in a trivial module::
 
                 sage: class Foo(CombinatorialFreeModule):
-                ....:     _no_generic_basering_coercion = True
                 ....:     def _element_constructor_(self,x):
                 ....:         if x in self:
                 ....:             return x
@@ -1415,7 +1412,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 4
             """
             zero = self.parent().base_ring().zero()
-            return len([key for key, coeff in six.iteritems(self.monomial_coefficients(copy=False))
+            return len([key for key, coeff in self.monomial_coefficients(copy=False).items()
                         if coeff != zero])
 
         def length(self):
@@ -1464,7 +1461,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 [[1], [1, 1, 1], [2, 1], [4]]
             """
             zero = self.parent().base_ring().zero()
-            return [key for key, coeff in six.iteritems(self.monomial_coefficients(copy=False))
+            return [key for key, coeff in self.monomial_coefficients(copy=False).items()
                     if coeff != zero]
 
         def monomials(self):
@@ -1508,7 +1505,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             P = self.parent()
             zero = P.base_ring().zero()
             return [P.term(key, value)
-                    for key, value in six.iteritems(self.monomial_coefficients(copy=False))
+                    for key, value in self.monomial_coefficients(copy=False).items()
                     if value != zero]
 
         def coefficients(self, sort=True):
@@ -1546,9 +1543,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             mc = self.monomial_coefficients(copy=False)
             if not sort:
-                return [value for key, value in six.iteritems(mc) if value != zero]
+                return [value for key, value in mc.items() if value != zero]
 
-            v = sorted([(key, value) for key, value in six.iteritems(mc)
+            v = sorted([(key, value) for key, value in mc.items()
                         if value != zero])
             return [value for key, value in v]
 

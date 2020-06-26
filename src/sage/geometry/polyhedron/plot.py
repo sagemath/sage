@@ -152,7 +152,7 @@ class ProjectionFuncStereographic():
         sage: cube = polytopes.hypercube(3).vertices()
         sage: proj = ProjectionFuncStereographic([1.2, 3.4, 5.6])
         sage: ppoints = [proj(vector(x)) for x in cube]
-        sage: ppoints[0]
+        sage: ppoints[5]
         (-0.0486511..., 0.0859565...)
     """
     def __init__(self, projection_point):
@@ -500,7 +500,7 @@ class Projection(SageObject):
             sage: p = polytopes.hypercube(3)
             sage: proj = p.projection()
             sage: proj.coord_index_of(vector((1,1,1)))
-            7
+            2
         """
         try:
             return self.coords.index(v)
@@ -518,7 +518,7 @@ class Projection(SageObject):
             sage: p = polytopes.hypercube(3)
             sage: proj = p.projection()
             sage: proj.coord_indices_of([vector((1,1,1)),vector((1,-1,1))])
-            [7, 5]
+            [2, 3]
         """
         return [self.coord_index_of(v) for v in v_list]
 
@@ -928,7 +928,7 @@ class Projection(SageObject):
             sage: cube_proj = cube.projection()
             sage: wire = cube_proj.render_wireframe_3d()
             sage: print(wire.tachyon().split('\n')[77])  # for testing
-            FCylinder base -1.0 1.0 -1.0 apex -1.0 -1.0 -1.0 rad 0.005 texture...
+            FCylinder base 1.0 1.0 -1.0 apex 1.0 1.0 1.0 rad 0.005 texture...
         """
         wireframe = []
         for l in self.lines:
@@ -1509,15 +1509,15 @@ class Projection(SageObject):
             sage: print('\n'.join(ImageAsso.splitlines()[29:41]))
             %% Drawing edges in the back
             %%
-            \draw[edge,back] (-0.50000, -0.50000, -0.50000) -- (-1.00000, 0.00000, 0.00000);
-            \draw[edge,back] (-0.50000, -0.50000, -0.50000) -- (0.00000, -1.00000, 0.00000);
-            \draw[edge,back] (-0.50000, -0.50000, -0.50000) -- (0.00000, 0.00000, -1.00000);
+            \draw[edge,back] (0.00000, 1.00000, -1.00000) -- (0.00000, 0.00000, -1.00000);
+            \draw[edge,back] (1.00000, -1.00000, 0.00000) -- (0.00000, -1.00000, 0.00000);
+            \draw[edge,back] (1.00000, 0.00000, -1.00000) -- (0.00000, 0.00000, -1.00000);
+            \draw[edge,back] (0.00000, 0.00000, -1.00000) -- (-0.50000, -0.50000, -0.50000);
+            \draw[edge,back] (-1.00000, 1.00000, 0.00000) -- (-1.00000, 0.00000, 0.00000);
             \draw[edge,back] (-1.00000, 0.00000, 0.00000) -- (-1.00000, 0.00000, 1.00000);
-            \draw[edge,back] (-1.00000, 0.00000, 0.00000) -- (-1.00000, 1.00000, 0.00000);
-            \draw[edge,back] (0.00000, -1.00000, 0.00000) -- (0.00000, -1.00000, 1.00000);
-            \draw[edge,back] (0.00000, -1.00000, 0.00000) -- (1.00000, -1.00000, 0.00000);
-            \draw[edge,back] (0.00000, 0.00000, -1.00000) -- (0.00000, 1.00000, -1.00000);
-            \draw[edge,back] (0.00000, 0.00000, -1.00000) -- (1.00000, 0.00000, -1.00000);
+            \draw[edge,back] (-1.00000, 0.00000, 0.00000) -- (-0.50000, -0.50000, -0.50000);
+            \draw[edge,back] (0.00000, -1.00000, 1.00000) -- (0.00000, -1.00000, 0.00000);
+            \draw[edge,back] (0.00000, -1.00000, 0.00000) -- (-0.50000, -0.50000, -0.50000);
             %%
         """
         view_vector = vector(RDF, view)

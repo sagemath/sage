@@ -1,4 +1,6 @@
 r"""
+Helper functions for mutation types of quivers
+
 This file contains helper functions for detecting the mutation type of
 a cluster algebra or quiver.
 
@@ -18,10 +20,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 import os
+import pickle
+
 from copy import copy
+
 from sage.misc.all import cached_function
 from sage.misc.flatten import flatten
 from sage.graphs.all import DiGraph
@@ -1267,7 +1271,6 @@ def load_data(n, user=True):
            ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
            ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    from six.moves import cPickle
     from sage.env import DOT_SAGE, SAGE_SHARE
 
     # we check
@@ -1281,7 +1284,7 @@ def load_data(n, user=True):
         filename = os.path.join(path, 'cluster_algebra_quiver', 'mutation_classes_%s.dig6'%n)
         try:
             with open(filename, 'rb') as fobj:
-                data_new = cPickle.load(fobj)
+                data_new = pickle.load(fobj)
         except Exception:
             # File does not exist, corrupt pickle, wrong Python version...
             pass

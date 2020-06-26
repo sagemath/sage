@@ -92,7 +92,6 @@ from .ell_point import EllipticCurvePoint_number_field
 from .constructor import EllipticCurve
 from sage.rings.all import PolynomialRing, ZZ, QQ, RealField, Integer
 from sage.misc.all import cached_method, verbose, prod, union
-from six import reraise as raise_
 
 
 class EllipticCurve_number_field(EllipticCurve_field):
@@ -886,10 +885,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         try:
             a1, a2, a3, a4, a6 = (ZK(a) for a in self.a_invariants())
         except TypeError:
-            import sys
-            raise_(TypeError,
-                   TypeError("_reduce_model() requires an integral model."),
-                   sys.exc_info()[2])
+            raise TypeError("_reduce_model() requires an integral model.")
 
         # N.B. Must define s, r, t in the right order.
         if ZK.absolute_degree() == 1:

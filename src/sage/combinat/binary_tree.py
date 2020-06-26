@@ -25,7 +25,6 @@ AUTHORS:
 # ****************************************************************************
 # python3
 from __future__ import division, absolute_import
-from six import add_metaclass
 
 from sage.structure.list_clone import ClonableArray
 from sage.combinat.abstract_tree import (AbstractClonableTree,
@@ -45,8 +44,8 @@ from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class BinaryTree(AbstractClonableTree, ClonableArray):
+class BinaryTree(AbstractClonableTree, ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     Binary trees.
 

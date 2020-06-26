@@ -35,10 +35,28 @@ PYTHON = python@SAGE_PYTHON_VERSION@
 MP_LIBRARY = @SAGE_MP_LIBRARY@
 BLAS = @SAGE_BLAS@
 
-# Because some .pc files are generated at configure time we can't write their
-# names explicitly the Makefile, so we use the wildcard function here at make
-# runtime
-PCFILES = $(subst $(SAGE_SRC),$(SAGE_LOCAL),$(wildcard $(SAGE_SRC)/lib/pkgconfig/*.pc))
+# pkgconfig files generated/installed at build time
+PCFILES = @SAGE_SYSTEM_FACADE_PC_FILES@
+
+LN = ln
+SED = sed
+
+# We need to be able to override this to support ./sage -i -c PKG
+SAGE_SPKG = sage-spkg
+
+# These are added to SAGE_SPKG in the call
+SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
+
+# Generate/install sage-specific .pc files.
+# see build/pkgs/gsl/spkg-configure.m4
+$(SAGE_PKGCONFIG)/gsl.pc:
+	-rm -f $@
+	@SAGE_GSL_PC_COMMAND@
+
+# see build/pkgs/openblas/spkg-configure.m4
+$(SAGE_PKGCONFIG)/openblas.pc $(SAGE_PKGCONFIG)/blas.pc $(SAGE_PKGCONFIG)/cblas.pc $(SAGE_PKGCONFIG)/lapack.pc:
+	-rm -f $@
+	@SAGE_OPENBLAS_PC_COMMAND@
 
 # Files to track installation of packages
 BUILT_PACKAGES = @SAGE_BUILT_PACKAGES@
@@ -82,8 +100,6 @@ SDIST_PACKAGES = @SAGE_SDIST_PACKAGES@
 
 SCRIPTS = @SAGE_SCRIPTS@
 
-EXTCODE = @SAGE_EXTCODE@
-
 # Packages that use the 'normal' build rules
 NORMAL_PACKAGES = @SAGE_NORMAL_PACKAGES@
 
@@ -124,7 +140,296 @@ $(INST)/.dummy:
 	touch $@
 
 
-@SAGE_MAKE_DEPS@
+###############################################################################
+
+# Silent rules
+# https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html
+ifeq ($(V), 0)
+AM_V_at = @
+else
+AM_V_at =
+endif
+
+# List of targets that can be run using `sage -i` or `sage -f`
+# These should generally have an associated -clean target for `sage -f` to
+# work correctly
+SAGE_I_TARGETS = sagelib doc
+
+STARTED = $(SAGE_LOCAL)/etc/sage-started.txt
+
+
+# Tell make not to look for files with these names:
+.PHONY: all all-sage all-toolchain all-build all-sageruntime \
+	all-start build-start base toolchain toolchain-deps base-toolchain \
+	sagelib \
+	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
+	doc-clean doc-src-clean doc-output-clean \
+	clean sagelib-clean build-clean python3_venv _clean-broken-gcc
+
+ifneq ($(PYTHON_FOR_VENV),)
+# Special rule for making the Python virtualenv from the system Python (Python
+# 3 only).  $(PYTHON) is set in Makefile to python3_venv.
+# Thus $(inst_python3_venv) will be the dependency of every Python package.
+#
+# TODO: If we reconfigure to build our own Python after having used the system
+# Python, files installed to create the virtualenv should be *removed*.  That
+# could either be done here by the makefile, or in an spkg-preinst for python3
+ifeq ($(PYTHON),python3)
+PYTHON = python3_venv
+endif
+inst_python3_venv = $(SAGE_LOCAL)/pyvenv.cfg
+
+$(inst_python3_venv):
+	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv "$(SAGE_LOCAL)"
+endif
+
+# Build everything and start Sage.
+# Note that we put the "doc" target first in the rule below because
+# the doc build takes the most time and should be started as soon as
+# possible.
+all-start: toolchain-deps
+	$(MAKE) doc all-sage
+	$(MAKE) '$(STARTED)'
+
+# Build everything except the documentation
+all-build: toolchain-deps
+	$(MAKE) all-sage
+
+
+# The 2 preliminary build phases: base and toolchain.
+base-toolchain: _clean-broken-gcc base
+	$(MAKE) toolchain
+
+# All targets except for the base packages
+all-sage: \
+		sagelib \
+		$(STANDARD_PACKAGE_INSTS) \
+		$(OPTIONAL_INSTALLED_PACKAGE_INSTS) \
+                $(OPTIONAL_CLEANED_PACKAGES_CLEANS) \
+		$(SCRIPTS)
+
+# Download all packages which should be inside an sdist tarball (the -B
+# option to make forces all targets to be built unconditionally)
+download-for-sdist:
+	env SAGE_INSTALL_FETCH_ONLY=yes $(MAKE) -B SAGERUNTIME= \
+		$(SDIST_PACKAGES)
+
+# TOOLCHAIN consists of dependencies determined by configure.
+# These are built after the "base" target but before anything else.
+toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
+
+# Build all packages that GCC links against serially, otherwise this
+# leads to race conditions where some library which is used by GCC gets
+# reinstalled. Since system GCCs might use Sage's libraries, we do this
+# unconditionally. We still use the dependency checking from $(MAKE),
+# so this will not trigger useless rebuilds.
+# See #14168 and #14232.
+#
+# Note: This list consists of only the *runtime* dependencies of the toolchain.
+TOOLCHAIN_DEPS = zlib $(MP_LIBRARY) mpfr mpc
+TOOLCHAIN_DEP_INSTS = \
+	$(foreach pkgname,$(TOOLCHAIN_DEPS),$(inst_$(pkgname)))
+
+toolchain-deps:
+	for target in $(TOOLCHAIN_DEP_INSTS); do \
+	    $(MAKE) $$target; \
+	done
+
+all-toolchain: base-toolchain
+	$(MAKE) toolchain-deps
+
+# All packages needed as a prerequisite to install other Python packages with
+# pip or which are otherwise used by the Python build tools; these should be
+# given as a prerequisite to any pip-installed packages
+PYTHON_TOOLCHAIN = setuptools pip setuptools_scm future
+
+# Everything needed to start up Sage using "./sage".  Of course, not
+# every part of Sage will work.  It does not include Maxima for example.
+SAGERUNTIME = sagelib $(SCRIPTS) $(inst_ipython) $(inst_pexpect) \
+		$(inst_psutil) $(inst_future)
+
+all-sageruntime: toolchain-deps
+	$(MAKE) $(SAGERUNTIME)
+
+
+# Start Sage at least once to check that it works
+# (i.e. when we just installed Sage for the first time).
+build-start: all-build
+	$(MAKE) '$(STARTED)'
+
+# We make this depend on all standard packages because running
+# sage-starts runs sage-location, which should be run after installing
+# any package.
+$(STARTED): $(STANDARD_PACKAGE_INSTS)
+	$(AM_V_at)"$(SAGE_ROOT)/build/bin/sage-starts"
+
+
+###############################################################################
+# Building the base system
+#
+# This consists of packages which are required for the Sage build system.
+###############################################################################
+base: $(inst_patch) $(inst_pkgconf)
+
+###############################################################################
+# Building normal packages
+###############################################################################
+
+# List all *build-time* dependencies of the Sage library.  These are,
+# on the one hand, programs needed for the build/install process of the
+# Sage library (e.g. CYTHON, JINJA2), and on the other hand all
+# dependencies for Cython files (e.g. PARI, NTL, MP_LIBRARY).
+sagelib-build-deps: \
+		$(SCRIPTS) \
+		$(inst_arb) \
+		$(inst_boost_cropped) \
+		$(inst_$(BLAS)) \
+		$(inst_brial) \
+		$(inst_cliquer) \
+		$(inst_cypari) \
+		$(inst_cysignals) \
+		$(inst_cython) \
+		$(inst_ecl) \
+		$(inst_eclib) \
+		$(inst_ecm) \
+		$(inst_flint) \
+		$(inst_libgd) \
+		$(inst_gap) \
+		$(inst_givaro) \
+		$(inst_glpk) \
+		$(inst_gmpy2) \
+		$(inst_gsl) \
+		$(inst_iml) \
+		$(inst_jinja2) \
+		$(inst_jupyter_core) \
+		$(inst_lcalc) \
+		$(inst_lrcalc) \
+		$(inst_libbraiding) \
+		$(inst_libhomfly) \
+		$(inst_libpng) \
+		$(inst_linbox) \
+		$(inst_m4ri) \
+		$(inst_m4rie) \
+		$(inst_mpc) \
+		$(inst_mpfi) \
+		$(inst_mpfr) \
+		$(inst_$(MP_LIBRARY)) \
+		$(inst_ntl) \
+		$(inst_numpy) \
+		$(inst_pari) \
+		$(inst_pip) \
+		$(inst_pkgconfig) \
+		$(inst_planarity) \
+		$(inst_ppl) \
+		$(inst_pplpy) \
+		$(inst_pycygwin) \
+		$(inst_pynac) \
+		$(inst_$(PYTHON)) \
+		$(inst_ratpoints) \
+		$(inst_readline) \
+		$(inst_rw) \
+		$(inst_sage_brial) \
+		$(inst_sage_conf) \
+		$(inst_singular) \
+		$(inst_symmetrica) \
+		$(inst_zn_poly) \
+		$(PCFILES)
+
+sagelib: sagelib-build-deps
+	$(AM_V_at)if [ -z "$$SAGE_INSTALL_FETCH_ONLY" ]; then \
+		cd $(SAGE_SRC) && source bin/sage-env && source $(SAGE_ROOT)/build/bin/sage-build-env-config && \
+		sage-logger -p 'time $(MAKE) sage' '$(SAGE_LOGS)/sagelib-$(SAGE_VERSION).log'; \
+	fi
+
+
+###############################################################################
+# Building scripts
+###############################################################################
+
+# Don't just use "install" since we don't want to change permissions
+$(SAGE_LOCAL)/bin/%: $(SAGE_SRC)/bin/%
+	$(AM_V_at)cp $< $@
+
+###############################################################################
+# Building the documentation
+###############################################################################
+
+# You can choose to have the built HTML version of the documentation link to
+# the PDF version. To do so, you need to build both the HTML and PDF versions.
+# To have the HTML version link to the PDF version, do
+#
+# $ ./sage --docbuild all html
+# $ ./sage --docbuild all pdf
+#
+# For more information on the docbuild utility, do
+#
+# $ ./sage --docbuild -H
+
+# Building the documentation has many dependencies, because all
+# documented modules are imported and because we use matplotlib to
+# produce plots.
+DOC_DEPENDENCIES = sagelib $(inst_sphinx) \
+	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) $(inst_sympy) \
+	$(inst_matplotlib) $(inst_pillow) $(inst_mathjax) $(inst_mpmath) \
+	$(inst_ipykernel) $(inst_jupyter_client) $(inst_conway_polynomials) \
+	$(inst_tachyon) $(inst_jmol) $(inst_thebe) $(inst_ipywidgets) $(inst_typing)
+
+doc: doc-html
+
+doc-html: $(DOC_DEPENDENCIES)
+	$(AM_V_at)cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+
+# 'doc-html-no-plot': build docs without building the graphics coming
+# from the '.. plot' directive, in case you want to save a few
+# megabytes of disk space. 'doc-clean' is a prerequisite because the
+# presence of graphics is cached in src/doc/output.
+doc-html-no-plot: doc-clean $(DOC_DEPENDENCIES)
+	$(AM_V_at)cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links --no-plot all html $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+
+doc-html-mathjax: $(DOC_DEPENDENCIES)
+	$(AM_V_at)cd ../.. && sage-logger -p './sage --docbuild --no-pdf-links all html -j $(SAGE_DOCBUILD_OPTS)' logs/dochtml.log
+
+# Keep target 'doc-html-jsmath' for backwards compatibility.
+doc-html-jsmath: doc-html-mathjax
+
+doc-pdf: $(DOC_DEPENDENCIES)
+	$(AM_V_at)cd ../.. && sage-logger -p './sage --docbuild all pdf $(SAGE_DOCBUILD_OPTS)' logs/docpdf.log
+
+doc-clean: doc-src-clean doc-output-clean
+
+doc-src-clean:
+	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
+
+doc-output-clean:
+	rm -rf "$(SAGE_SHARE)/doc/sage"
+
+
+###############################################################################
+# Cleaning up
+###############################################################################
+
+clean:
+	@echo "Deleting package build directories..."
+	rm -rf "$(SAGE_LOCAL)/var/tmp/sage/build"
+
+sagelib-clean:
+	cd "$(SAGE_SRC)" && $(MAKE) clean
+
+build-clean: clean doc-clean sagelib-clean
+
+# Special target for cleaning up a broken GCC install detected by configure
+# This should check for the .clean-broken-gcc stamp, and if found clean
+# everything up along with the stamp file itself.  This target is then run
+# as a prerequisite to installing any other packages.
+_clean-broken-gcc:
+	@if [ -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc" ]; then \
+	   rm -f "$(SAGE_LOCAL)/bin/gcc"; \
+	   rm -f "$(SAGE_LOCAL)/gcc-"*; \
+	   rm -f "$(SAGE_LOCAL)/bin/g++"; \
+	   rm -f "$(SAGE_SPKG_INST)/gcc-"*; \
+	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
+	   echo "Cleaned up old broken GCC install"; \
+	fi
 
 
 #==============================================================================
@@ -193,7 +498,7 @@ pkg_deps = \
 #     $(3): package dependencies
 define NORMAL_PACKAGE_templ
 $$(INST)/$(1)-$(2): $(3)
-	+$(AM_V_at)sage-logger -p '$$(SAGE_SPKG) \
+	+$(AM_V_at)sage-logger -p '$$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
 		$(1)-$(2)' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
@@ -203,6 +508,7 @@ $(1)-clean:
 	sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
 		$(1) '$(SAGE_LOCAL)'
 
+.PHONY: $(1) $(1)-clean
 endef
 
 $(foreach pkgname, $(NORMAL_PACKAGES),\
@@ -221,21 +527,22 @@ endif
 # two rules in the form:
 #
 # <pkgname>: <dependencies>
-#     $(AM_V_at)sage-logger -p 'sage --pip install <pkgname>' '$(SAGE_LOGS)/<pkgname>.log'
+#     $(AM_V_at)sage-logger -p 'sage --pip install ...' '$(SAGE_LOGS)/<pkgname>.log'
 #
 # <pkgname>-clean:
-#     -sage --pip uninstall -y <pkgname>
+#     -sage --pip uninstall -y ...
 
 # Positional arguments:
 #     $(1): package name
 #     $(2): package dependencies
 define PIP_PACKAGE_templ
 $(1): $(2)
-	$(AM_V_at)sage-logger -p 'sage --pip install $(1)' '$$(SAGE_LOGS)/$(1).log'
+	$(AM_V_at)sage-logger -p 'sage --pip install -r "$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt"' '$$(SAGE_LOGS)/$(1).log'
 
 $(1)-clean:
-	-sage --pip uninstall -y $(1)
+	-sage --pip uninstall -y -r '$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt'
 
+.PHONY: $(1) $(1)-clean
 endef
 
 $(foreach pkgname,$(PIP_PACKAGES),\
@@ -249,12 +556,14 @@ endif
 
 # ============================= script packages ==============================
 # Generate build rules for 'script' packages; this template is used to generate
-# two rules in the form:
+# three rules in the form:
 #
-# <pkgname>: <dependencies>
+# $(INST)/<pkgname>-<pkgvers>: <dependencies>
 #     $(AM_V_at)cd '$SAGE_ROOT' && \\
 #         source '$SAGE_ROOT/src/bin/sage-env' && \\
 #         sage-logger -p '$SAGE_ROOT/build/pkgs/<pkgname>/spkg-install' '$(SAGE_LOGS)/<pkgname>.log'
+#
+# <pkgname>: $(INST)/<pkgname>-<pkgvers>
 #
 # <pkgname>-clean:
 #     -$(AM_V_at)cd '$SAGE_ROOT' && \\
@@ -263,27 +572,33 @@ endif
 
 # Positional arguments:
 #     $(1): package name
-#     $(2): package dependencies
+#     $(2): package version
+#     $(3): package dependencies
 define SCRIPT_PACKAGE_templ
-$(1): $(2)
+$$(INST)/$(1)-$(2): $(3)
 	$(AM_V_at)cd '$$(SAGE_ROOT)' && \
-		source '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		source '$$(SAGE_ROOT)/src/bin/sage-env' && source '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1).log'
+	touch "$$@"
+
+$(1): $$(INST)/$(1)-$(2)
 
 $(1)-clean:
 	-$(AM_V_at)cd '$$(SAGE_ROOT)' && \
-		source '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		source '$$(SAGE_ROOT)/src/bin/sage-env' && source '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-uninstall'
+	-rm -f "$$(INST)/$(1)-$(2)"
 
+.PHONY: $(1) $(1)-clean
 endef
 
 $(foreach pkgname,$(SCRIPT_PACKAGES),\
-	$(eval $(call SCRIPT_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname)))))
+	$(eval $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname)))))
 
 ifdef DEBUG_RULES
 $(info # Rules for script packages)
 $(foreach pkgname,$(SCRIPT_PACKAGES),\
-	$(info $(call SCRIPT_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname)))))
+	$(info $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname)))))
 endif
 
 

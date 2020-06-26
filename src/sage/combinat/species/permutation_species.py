@@ -16,7 +16,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure

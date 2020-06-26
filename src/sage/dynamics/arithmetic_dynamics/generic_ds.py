@@ -29,7 +29,6 @@ AUTHORS:
 
 from __future__ import absolute_import, print_function
 from sage.categories.homset import End
-from six import add_metaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.schemes.affine.affine_space import is_AffineSpace
@@ -40,8 +39,8 @@ from sage.rings.qqbar import AlgebraicField_common
 from sage.rings.rational_field import QQ
 from copy import copy
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class DynamicalSystem(SchemeMorphism_polynomial):
+class DynamicalSystem(SchemeMorphism_polynomial,
+                      metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Base class for dynamical systems of schemes.
 
@@ -525,7 +524,7 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         CR = space.coordinate_ring()
         if CR.is_field():
             #want the polynomial ring not the fraction field
-            CR = CR.ring() 
+            CR = CR.ring()
         x = CR.gen(0)
         if formal:
             poly = ds.dynatomic_polynomial(n)
@@ -618,9 +617,9 @@ class DynamicalSystem(SchemeMorphism_polynomial):
         except TypeError:
             raise TypeError('`point` must be in {}'.format(ds.domain()))
         if space.is_projective():
-            ds = ds.dehomogenize(1) 
+            ds = ds.dehomogenize(1)
         else:
-            point = (point[0],1) 
+            point = (point[0],1)
         fn = ds.nth_iterate_map(n)
         f, g = fn[0].numerator(), fn[0].denominator()
         CR = space.coordinate_ring()

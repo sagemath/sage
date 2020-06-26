@@ -13,8 +13,6 @@
 
 from __future__ import print_function, absolute_import
 
-import six
-
 from .utils import je, reindent_lines as ri
 
 
@@ -36,7 +34,7 @@ def string_of_addr(a):
         sage: string_of_addr(42r)
         '42'
     """
-    if isinstance(a, six.integer_types):
+    if isinstance(a, int):
         return str(a)
     assert(isinstance(a, MemoryChunk))
     return '*%s++' % a.name

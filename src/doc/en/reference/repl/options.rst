@@ -77,7 +77,10 @@ Command-line options for Sage
 - ``--scons [...]`` -- run Sage's scons
 - ``--singular [...]`` -- run Sage's singular with the given arguments
 - ``--twistd [...]`` -- run Twisted server
-- ``--sh [...]`` -- run a shell with Sage environment variables set
+- ``--sh [...]`` -- run a shell with Sage environment variables
+  as they are set in the runtime of Sage
+- ``--buildsh [...]`` -- run a shell with Sage environment variables
+  as they are set while building Sage and its packages
 - ``--gdb`` -- run Sage under the control of gdb
 - ``--gdb-ipython`` -- run Sage's IPython under the control of gdb
 - ``--cleaner`` -- run the Sage cleaner.  This cleans up after Sage,
@@ -100,8 +103,8 @@ Command-line options for Sage
 
 - ``-f [options] [packages]`` -- shortcut for ``-i -f``: force build of
   the given Sage packages.
-- ``--info [packages]`` -- display the ``SPKG.txt`` file of the given
-  Sage packages.
+- ``--info [packages]`` -- display the ``SPKG.txt`` or ``SPKG.rst`` file of
+  the given Sage packages, and some additional information.
 - ``--standard`` -- list all standard packages that can be installed
 - ``--optional`` -- list all optional packages that can be installed
 - ``--experimental`` -- list all experimental packages that can be installed

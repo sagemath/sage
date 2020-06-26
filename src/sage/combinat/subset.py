@@ -28,8 +28,6 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 
-import six
-from six.moves import range
 import sage.misc.prandom as rnd
 import itertools
 
@@ -880,7 +878,7 @@ def dict_to_list(d):
         ['a', 'b', 'b', 'b']
     """
     l = []
-    for i, j in six.iteritems(d):
+    for i, j in d.items():
         l.extend([i] * j)
     return l
 

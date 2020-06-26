@@ -398,7 +398,7 @@ class TangentTensor(TensorFieldParal):
             sage: V = M.vector_field(0,0,0,1)
             sage: S.set_transverse(rigging=t, normal=V)
             sage: xi = M.vector_field(sqrt(x^2+y^2+z^2), x, y, 0)
-            sage: U = M.vector_field(x, sqrt(x^2+y^2+z^2), 0, 0)
+            sage: U = M.vector_field(0, -y, x, 0)
             sage: Sc = S.screen('Sc', U, xi);
             sage: T1 = M.tensor_field(1,1).along(Phi); T1[0,0] = 1
             sage: V1 = M.vector_field().along(Phi); V1[0] = 1; V1[1]=1
@@ -416,13 +416,13 @@ class TangentTensor(TensorFieldParal):
 
         Of course `T1` and `T2` give the same output on vector fields tangent to S::
 
-            sage: T1(xi.along(Phi)).disp()
+            sage: T1(xi.along(Phi)).display()
             sqrt(u^2 + v^2) d/dt
-            sage: T2(xi.along(Phi)).disp()
+            sage: T2(xi.along(Phi)).display()
             sqrt(u^2 + v^2) d/dt
 
     """
-    def __init__(self, tensor, embedding):
+    def __init__(self, tensor, embedding, screen=None):
         r"""
 
         TESTS::
@@ -438,7 +438,7 @@ class TangentTensor(TensorFieldParal):
             sage: S.set_immersion(Phi, inverse=Phi_inv); S.declare_embedding()
             sage: g = M.metric()
             sage: g[0,0], g[1,1], g[2,2], g[3,3] = -1,1,1,1
-            sage: v = M.vector_field(); v[1] = 1; v[2] = 1
+            sage: v = M.vector_field(); v[1] = 1
             sage: S.set_transverse(rigging=v)
             sage: xi = M.vector_field(); xi[0] = 1; xi[1] = 1
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
@@ -468,6 +468,12 @@ class TangentTensor(TensorFieldParal):
                    latex_name=tensor._latex_name, sym=tensor._sym, antisym=tensor._antisym)
         f = tensor._domain._ambient.default_frame().along(embedding)
         self[f, :] = tensor[f, :]
+        frame = self._domain.adapted_frame(screen)
+        self.display(frame)
+        for i in self._domain._ambient.index_generator(tensor.tensor_rank()):
+            for j in range(len(i)):
+                if i[j]==self._domain._ambient._dim-self._domain._sindex-1:
+                    self[frame, i] = 0
 
     def __call__(self, *args):
         r"""
@@ -485,7 +491,7 @@ class TangentTensor(TensorFieldParal):
             sage: S.set_immersion(Phi, inverse=Phi_inv); S.declare_embedding()
             sage: g = M.metric()
             sage: g[0,0], g[1,1], g[2,2], g[3,3] = -1,1,1,1
-            sage: v = M.vector_field(); v[1] = 1; v[2] = 1
+            sage: v = M.vector_field(); v[1] = 1
             sage: S.set_transverse(rigging=v)
             sage: xi = M.vector_field(); xi[0] = 1; xi[1] = 1
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
@@ -535,7 +541,7 @@ class TangentTensor(TensorFieldParal):
             sage: V = M.vector_field(); V[3] = 1
             sage: S.set_transverse(rigging=t, normal=V)
             sage: xi = M.vector_field(); xi[0] = sqrt(x^2+y^2+z^2); xi[1] = x; xi[2] = y
-            sage: U = M.vector_field(); U[1] = sqrt(x^2+y^2+z^2); U[0] = x
+            sage: U = M.vector_field(); U[1] = -y; U[2] = x
             sage: Sc = S.screen('Sc', U, xi);
             sage: T1 = M.tensor_field(1,1).along(Phi); T1[0,0] = 1
             sage: from sage.manifolds.differentiable.degenerate_submanifold import TangentTensor

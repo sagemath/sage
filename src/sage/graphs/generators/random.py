@@ -14,7 +14,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                         http://www.gnu.org/licenses/
 ###########################################################################
 from __future__ import print_function, division
-from six.moves import range
+
 import sys
 # import from Sage library
 from sage.graphs.graph import Graph

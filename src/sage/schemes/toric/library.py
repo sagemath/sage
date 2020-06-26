@@ -37,7 +37,6 @@ or immediately during assignment like this::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -1478,7 +1477,7 @@ class ToricVarietyFactory(SageObject):
             sage: T3.gens()
             (z0, z1, z2)
             sage: sorted(T3.change_ring(GF(3)).point_set().list())
-            [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2], 
+            [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """
         try:

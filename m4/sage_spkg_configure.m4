@@ -23,17 +23,16 @@
 #
 #   - CHECK - this should implement a test for whether the package is already
 #     available on the system and/or meets any feature tests required for
-#     Sage.  If this test succeeds then the shell variable
-#     sage_spkg_install_<packagename> is set to "yes".  Otherwise it is set to
-#     "no".  In the case of "yes", this implies that Sage may not need to
-#     install the package.
+#     Sage.  If this test fails it sets the shell variable
+#     sage_spkg_install_<packagename> to "yes".  Otherwise it defaults to "no",
+#     i.e., SageMath may not need to install the package.
 #
 #   - REQUIRED-CHECK - this checks whether or not the package is a required
 #     dependency of Sage at all, depending typically on the platform.  Some
 #     packages (e.g. yasm, among others) are only dependencies on certain
 #     platforms, and otherwise do not need to be checked for at all.  If
 #     a REQUIRED-CHECK determines that the package is not required it sets
-#     sage_spkg_install_<packagename>="no".
+#     sage_require_<packagename>="no".
 #
 #   - PRE - always perform these actions even if the SPKG is already installed
 #
@@ -44,12 +43,25 @@
 #
 AC_DEFUN([SAGE_SPKG_CONFIGURE_BASE], [
 AC_DEFUN_ONCE([SAGE_SPKG_CONFIGURE_]m4_toupper($1), [
+dnl The name of this SPKG
 m4_pushdef([SPKG_NAME], [$1])
-m4_pushdef([SPKG_INSTALL_VAR], [sage_spkg_install_]SPKG_NAME)
-m4_pushdef([SPKG_REQUIRE_VAR], [sage_require_]SPKG_NAME)
+dnl Whether SageMath needs to install this package
+m4_pushdef([SPKG_INSTALL], [sage_spkg_install_]SPKG_NAME)
+dnl Whether SageMath requires this package to be present somehow
+m4_pushdef([SPKG_REQUIRE], [sage_require_]SPKG_NAME)
+dnl Whether we want the system to provide this package:
+dnl * "yes", attempt to use the system package
+dnl * "no", do not attempt to use the system package
+dnl * "force", use the system package and fail if it was deemed not suitable
+dnl * other values mean that we do not want to use the system package but
+dnl   indicate why
 m4_pushdef([SPKG_USE_SYSTEM], [sage_use_system_]SPKG_NAME)
 # BEGIN SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
-AC_MSG_NOTICE([=== checking whether to install the $1 SPKG ===])
+
+echo "-----------------------------------------------------------------------------" >& AS_MESSAGE_FD
+echo "Checking whether SageMath should install SPKG $1..." >& AS_MESSAGE_FD
+AS_BOX([Checking whether SageMath should install SPKG $1...]) >& AS_MESSAGE_LOG_FD
+
 AC_ARG_WITH([system-]SPKG_NAME,
        AS_HELP_STRING(--with-system-SPKG_NAME={no|yes (default)|force (exit with an error if no usable version is found)},
            [detect and use an existing system SPKG_NAME]),
@@ -59,42 +71,74 @@ AC_ARG_WITH([system-]SPKG_NAME,
 
 AS_VAR_SET([sage_spkg_name], SPKG_NAME)
 
+dnl The default is not to install a package, unless a check below finds that we should.
+AS_VAR_SET(SPKG_INSTALL, [no])
+
+dnl Run DEPS
 $6
 
+dnl Run PRE
 $4
 
-AS_IF([test -n "`ls "${SAGE_SPKG_INST}/${sage_spkg_name}"-* 2>/dev/null`"],
-SPKG_INSTALL_VAR[=yes;] SPKG_USE_SYSTEM[=no], [
-m4_ifval(
-[$2],
-[AS_VAR_SET_IF(SPKG_INSTALL_VAR, [], SPKG_INSTALL_VAR[=no])],
-[AS_VAR_SET_IF(SPKG_INSTALL_VAR, [], SPKG_INSTALL_VAR[=yes])])
+dnl If a version of this package is already installed in local/ we have no
+dnl choice but to use it and we will actually also update it even if it is not
+dnl required.
+AS_IF([test -n "`ls "${SAGE_SPKG_INST}/${sage_spkg_name}"-* 2>/dev/null`"], [
+    AC_MSG_NOTICE(m4_normalize(SPKG_NAME[ has already been installed by SageMath]))
+    AS_VAR_SET(SPKG_INSTALL, [yes])
+    AS_VAR_SET(SPKG_USE_SYSTEM, [installed])
 ])
 
-m4_ifval([$3], [
-AS_VAR_SET_IF(SPKG_REQUIRE_VAR, [], SPKG_REQUIRE_VAR[=no])
+dnl Perform REQUIRED-CHECK if present.
+AS_VAR_SET_IF(SPKG_REQUIRE, [], [AS_VAR_SET(SPKG_REQUIRE, [yes])])
 $3
-],
-[AS_VAR_SET_IF(SPKG_REQUIRE_VAR, [], SPKG_REQUIRE_VAR[=yes])])
 
-AS_VAR_IF(SPKG_USE_SYSTEM, [no], SPKG_INSTALL_VAR[=yes], [
-    AS_VAR_IF(SPKG_REQUIRE_VAR, [yes], [$2], SPKG_INSTALL_VAR[=no])
-])
-AS_VAR_IF(SPKG_USE_SYSTEM, [force], [
-    AS_VAR_IF(SPKG_INSTALL_VAR, [yes], [
-        AC_MSG_ERROR(m4_normalize([
-            given --with-system-]SPKG_NAME[=force but the package could not
-            be found on the system
-        ]))
+AS_VAR_IF(SPKG_INSTALL, [no], [
+    AS_VAR_IF(SPKG_REQUIRE, [no], [
+        AC_MSG_NOTICE(m4_normalize([SPKG ]SPKG_NAME[ is not required on this system]))
+    ], [
+        dnl If this is a required package and nothing before has found that we
+        dnl should install the SPKG, we run the checks to determine whether we
+        dnl can use a system package.
+        AS_VAR_IF(SPKG_USE_SYSTEM, [no], [
+            dnl We were asked not to use the system package, so no checks are needed
+            AS_VAR_SET(SPKG_INSTALL, [yes])
+        ], [
+            m4_ifval([$2], [
+                dnl If there is a CHECK, run it to determine whether the system package is suitable
+                $2
+                AS_VAR_IF(SPKG_INSTALL, [no], [
+                    dnl Since force did not make a difference, no need to report that force was used
+                    AS_VAR_SET(SPKG_USE_SYSTEM, [yes])
+                    AC_MSG_NOTICE(m4_normalize([will use system package and not install SPKG ]SPKG_NAME))
+                ], [
+                    AS_VAR_IF(SPKG_USE_SYSTEM, [force], [
+                        AC_MSG_ERROR(m4_normalize([given --with-system-]SPKG_NAME[=force but no system package could be used]))
+                    ], [
+                        AC_MSG_NOTICE(m4_normalize([no suitable system package found for SPKG ]SPKG_NAME))
+                    ])
+                ])
+            ], [
+                dnl If there is no CHECK, install the SPKG unless forced not to
+                AS_VAR_IF(SPKG_USE_SYSTEM, [force], [
+                    AC_MSG_NOTICE(m4_normalize([will use system package and not install SPKG ]SPKG_NAME))
+                    AS_VAR_SET(SPKG_INSTALL, [no])
+                ], [
+                    AC_MSG_NOTICE(m4_normalize([no suitable system package found for SPKG ]SPKG_NAME))
+                    AS_VAR_SET(SPKG_INSTALL, [yes])
+                ])
+            ])
+        ])
     ])
 ])
 
+dnl Run POST
 $5
 
 # END SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
 m4_popdef([SPKG_USE_SYSTEM])
-m4_popdef([SPKG_REQUIRE_VAR])
-m4_popdef([SPKG_INSTALL_VAR])
+m4_popdef([SPKG_REQUIRE])
+m4_popdef([SPKG_INSTALL])
 m4_popdef([SPKG_NAME])
 ])
 ])
@@ -115,7 +159,7 @@ AC_DEFUN([SAGE_SPKG_CONFIGURE], [
 AC_DEFUN([SAGE_SPKG_DEPCHECK], [
     m4_foreach_w([DEP], $1, [
        AC_REQUIRE([SAGE_SPKG_CONFIGURE_]m4_toupper(DEP))])
-    AC_MSG_CHECKING([installing any of $1? ])
+    AC_MSG_CHECKING([whether any of $1 is installed as or will be installed as SPKG])
     AS_IF([test x = y m4_foreach_w([DEP], $1, [ -o [x$sage_spkg_install_]DEP = xyes])], [
         AC_MSG_RESULT([yes; install SPKG_NAME as well])
         [sage_spkg_install_]SPKG_NAME=yes], [

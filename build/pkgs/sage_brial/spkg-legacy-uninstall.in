@@ -1,0 +1,2 @@
+echo "Cleaning out old PolyBoRi and BRiAl installations"
+rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/{polybori,brial}

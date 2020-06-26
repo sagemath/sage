@@ -28,7 +28,7 @@ AUTHORS:
 
 -  David Zureick-Brown (2017-09): Added is_weil_polynomial.
 
--  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more 
+-  Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
    cases of proper integral domains (see :trac:`26421`)
 
 TESTS::
@@ -944,7 +944,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         return expr
 
     cpdef _richcmp_(self, other, int op):
-        """
+        r"""
         Compare the two polynomials self and other.
 
         We order polynomials first by degree (but treating 0 as having
@@ -974,7 +974,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: R(0) == R(0)
             True
 
-        TESTS::
+        TESTS:
 
         Test that comparisons are consistent when using interval
         coefficients::
@@ -2989,13 +2989,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
           - ``self`` - Polynomial
           - ``right`` - Polynomial (over same base ring as self)
           - ``K_threshold`` - (optional) Integer. A threshold to fall back to
-          schoolbook algorithm. In the recursion, if one of the polynomials is
-          of degree less that K_threshold then the classic quadratic polynomial
-          is used.
+            schoolbook algorithm. In the recursion, if one of the polynomials
+            is of degree less that K_threshold then the classic quadratic
+            polynomial is used.
 
-        OUTPUT: Polynomial - The product self\*right.
+        OUTPUT:
 
-        ALGORITHM: The basic idea is to use that
+        The product ``self * right``.
+
+        ALGORITHM:
+
+        The basic idea is to use that
 
         .. MATH::
 
@@ -4112,7 +4116,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             1
 
         Factorization also works even if the variable of the finite
-        field is nefariously labeled "x"::
+        field is nefariously labeled `x`::
 
             sage: R.<x> = GF(3^2, 'x')[]
             sage: f = x^10 +7*x -13
@@ -4162,7 +4166,6 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: A.<T> = K[]
             sage: A(x^2 - 1).factor()
             (T - 1) * (T + 1)
-
 
         ::
 
@@ -4277,6 +4280,17 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: p = x^4 + (-5 - 2*t)*x^3 + (-2 + 10*t)*x^2 + (10 + 4*t)*x - 20*t
             sage: p.factor()
             (x - 5) * (x - 2*t) * (x^2 - 2)
+
+        Check that :trac:`29266` is fixed:
+
+            sage: f = t*x + t
+            sage: f.is_irreducible()
+            True
+            sage: f = 2*x + 4
+            sage: f.is_irreducible()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
         # PERFORMANCE NOTE:
         #     In many tests with SMALL degree PARI is substantially
@@ -4393,11 +4407,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     try:
                         F = R.fraction_field()
                         PF = F[self.variable_name()]
-                        pol_frac = PF(self) 
-                        return pol_frac.factor(**kwargs).base_change(self.parent())
-                    except (TypeError, AttributeError):
+                        pol_frac = PF(self)
+                        pol_frac_fact = pol_frac.factor(**kwargs)
+                        if R(pol_frac_fact.unit()).is_unit():
+                            # Note: :meth:`base_change` may convert the unit to a non unit
+                            return pol_frac_fact.base_change(self.parent())
+                    except (TypeError, AttributeError, NotImplementedError):
                         raise NotImplementedError
-                    
+
                 raise NotImplementedError
 
         return self._factor_pari_helper(G, n)
@@ -6389,6 +6406,83 @@ cdef class Polynomial(CommutativeAlgebraElement):
         except (TypeError, ValueError, PariError, NotImplementedError):
             return self.sylvester_matrix(other).det()
 
+    @coerce_binop
+    def subresultants(self, other):
+        r"""
+        Return the nonzero subresultant polynomials of ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- a polynomial
+
+        OUTPUT: a list of polynomials in the same ring as ``self``
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: f = x^8 + x^6 -3*x^4 -3*x^3 +8*x^2 +2*x -5
+            sage: g = 3*x^6 +5*x^4 -4*x^2 -9*x +21
+            sage: f.subresultants(g)
+            [260708,
+             9326*x - 12300,
+             169*x^2 + 325*x - 637,
+             65*x^2 + 125*x - 245,
+             25*x^4 - 5*x^2 + 15,
+             15*x^4 - 3*x^2 + 9]
+
+        ALGORITHM:
+
+        We use the schoolbook algorithm with Lazard's optimization described in [Duc1998]_
+
+        REFERENCES:
+
+        :wikipedia:`Polynomial_greatest_common_divisor#Subresultants`
+
+        """
+        P, Q = self, other
+        if P.degree() < Q.degree():
+            P, Q = Q, P
+        S = []
+        s = Q.leading_coefficient()**(P.degree()-Q.degree())
+        A = Q
+        B = P.pseudo_quo_rem(-Q)[1]
+        ring = self.parent()
+        while True:
+            d = A.degree()
+            e = B.degree()
+            if B.is_zero():
+                return S
+            S = [ring(B)] + S
+            delta = d - e
+            if delta > 1:
+                if len(S) > 1:
+                    n = S[1].degree() - S[0].degree() - 1
+                    if n == 0:
+                        C = S[0]
+                    else:
+                        x = S[0].leading_coefficient()
+                        y = S[1].leading_coefficient()
+                        a = 1 << (int(n).bit_length()-1)
+                        c = x
+                        n = n - a
+                        while a > 1:
+                            a /= 2
+                            c = c**2 / y
+                            if n >= a:
+                                c = c * x / y
+                                n = n - a
+                        C = c * S[0] / y
+                else:
+                    C = B.leading_coefficient()**(delta-1) * B / s**(delta-1)
+                S = [ring(C)] + S
+            else:
+                C = B
+            if e == 0:
+                return S
+            B = A.pseudo_quo_rem(-B)[1] / (s**delta * A.leading_coefficient())
+            A = C
+            s = A.leading_coefficient()
+
     def composed_op(p1, p2, op, algorithm=None, monic=False):
         r"""
         Return the composed sum, difference, product or quotient of this
@@ -6497,13 +6591,6 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
 
         TESTS:
-
-        In Python 2, ``operator.div`` still works::
-
-            sage: from six import PY2
-            sage: div = getattr(operator, "div" if PY2 else "truediv")
-            sage: p1.composed_op(p2, div)
-            x^6 + x^5 + x^4 + x^2 + 1
 
         ::
 
@@ -10003,14 +10090,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
           is only considered when the valuation is zero, i.e. when the
           polynomial has a nonzero constant term.
 
-        .. ALGORITHM::
+        ALGORITHM:
 
-            Let us denote by `a` the polynomial from which we wish to extract
-            a `n`-th root. The algorithm uses the Newton method for the fixed
-            point of `F(x) = x^{-n} - a^{-1}`. The advantage of this approach
-            compared to the more naive `x^n - a` is that it does require only
-            one polynomial inversion instead of one per iteration of the Newton
-            method.
+        Let us denote by `a` the polynomial from which we wish to extract
+        a `n`-th root. The algorithm uses the Newton method for the fixed
+        point of `F(x) = x^{-n} - a^{-1}`. The advantage of this approach
+        compared to the more naive `x^n - a` is that it does require only
+        one polynomial inversion instead of one per iteration of the Newton
+        method.
 
         EXAMPLES::
 

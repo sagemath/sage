@@ -34,6 +34,8 @@ EXECUTABLE = os.path.join(
 
 class SageDownloadFileTestCase(unittest.TestCase):
 
+    maxDiff = None
+
     def test_print_mirror_list_no_network(self):
         """
         Subsequent runs of sage-download-file

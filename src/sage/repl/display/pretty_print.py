@@ -57,7 +57,7 @@ class SagePrettyPrinter(PrettyPrinter):
         EXAMPLES::
 
             sage: from sage.repl.display.pretty_print import SagePrettyPrinter
-            sage: from six import StringIO
+            sage: from io import StringIO
             sage: stream = StringIO()
             sage: spp = SagePrettyPrinter(stream, 78, '\n')
             sage: spp.toplevel()
@@ -72,19 +72,19 @@ class SagePrettyPrinter(PrettyPrinter):
         INPUT:
 
         See IPython documentation.
-    
+
         EXAMPLES::
 
             sage: 123
             123
-        
+
         IPython pretty printers::
 
             sage: set({1, 2, 3})
             {1, 2, 3}
             sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys
             {'aaa': 99, 'xab': 10, 'zzz': 123}
-    
+
         These are overridden in IPython in a way that we feel is somewhat
         confusing, and we prefer to print them like plain Python which is
         more informative. See :trac:`14466` ::
@@ -100,7 +100,7 @@ class SagePrettyPrinter(PrettyPrinter):
             <class '__main__.name'>
             sage: types.BuiltinFunctionType
             <type 'builtin_function_or_method'>
-    
+
             sage: def foo(): pass
             sage: foo
             <function foo at 0x...>
@@ -126,7 +126,7 @@ class SagePrettyPrinter(PrettyPrinter):
         EXAMPLES::
 
             sage: from sage.repl.display.pretty_print import SagePrettyPrinter
-            sage: from six import StringIO
+            sage: from io import StringIO
             sage: stream = StringIO()
             sage: SagePrettyPrinter(stream, 78, '\n').pretty([type, 123, 'foo'])
             sage: stream.getvalue()

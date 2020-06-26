@@ -334,6 +334,7 @@ cdef extern from "singular/Singular/libsingular.h":
         bint *pairtest
         void *R
         int *S_2_R
+        bint noTailReduction
 
     ctypedef struct data_union:
         ring *uring

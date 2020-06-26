@@ -160,7 +160,7 @@ class GolayCode(AbstractLinearCode):
 
         If ``self`` is an extended Golay code, ``self`` is returned.
         Otherwise, it returns the output of
-        :meth:`sage.coding.linear_code.AbstractLinearCode.dual_code`
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dual_code`
 
         EXAMPLES::
 

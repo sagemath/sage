@@ -335,7 +335,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
 
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
-            *, unicode=False, shape=None):
+            *, unicode=False, shape=None, character_art=False):
         r"""
         Return a nice string representation of the matrix.
 
@@ -367,6 +367,11 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
           argument. For Unicode symbols, the default is round brackets
           in accordance with the TeX rendering,
           while the ASCII rendering defaults to square brackets.
+
+        - ``character_art`` -- boolean (default: ``False``); if ``True``, the
+          result will be of type :class:`~sage.typeset.ascii_art.AsciiArt` or
+          :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
+          breaking of wide matrices that exceed the window width
 
         EXAMPLES::
 
@@ -400,12 +405,13 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         # Set the mapping based on keyword arguments
         # We ignore minus_one (it's only there for compatibility with Matrix)
         if (rep_mapping is not None or zero is not None or plus_one is not None
-                or unicode or shape is not None):
+                or unicode or shape is not None or character_art):
             # Shunt mappings off to the generic code since they might not be
             # single characters
             return matrix_dense.Matrix_dense.str(self, rep_mapping=rep_mapping,
                                                  zero=zero, plus_one=plus_one,
-                                                 unicode=unicode, shape=shape)
+                                                 unicode=unicode, shape=shape,
+                                                 character_art=character_art)
 
         if self._nrows == 0 or self._ncols == 0:
             return "[]"
@@ -547,7 +553,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         A = Matrix_mod2_dense.__new__(Matrix_mod2_dense, self._parent, 0, 0, 0, alloc=False)
         if self._nrows == 0 or self._ncols == 0:
             return A
-        A._entries = mzd_add(NULL, self._entries,(<Matrix_mod2_dense>right)._entries)
+        A._entries = mzd_add(A._entries, self._entries,(<Matrix_mod2_dense>right)._entries)
 
         return A
 
@@ -886,7 +892,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         A = Matrix_mod2_dense.__new__(Matrix_mod2_dense, self._parent, 0, 0, 0, alloc = False)
         sig_on()
-        A._entries = mzd_inv_m4ri(NULL, self._entries, 0)
+        A._entries = mzd_inv_m4ri(A._entries, self._entries, 0)
         sig_off()
 
         if A._entries==NULL:

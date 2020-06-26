@@ -18,9 +18,8 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six import iteritems
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -596,7 +595,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
 
             # Rewrite [a, [b, c]] = [b, [a, c]] + [[a, b], c] with a < b < c
             # Compute the left summand
-            for m, inner_coeff in iteritems(self._rewrite_bracket(l, r._right)):
+            for m, inner_coeff in self._rewrite_bracket(l, r._right).items():
                 if r._left == m:
                     continue
                 elif r._left < m:
@@ -604,11 +603,11 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 else: # r._left > m
                     x, y = m, r._left
                     inner_coeff = -inner_coeff
-                for b_elt, coeff in iteritems(self._rewrite_bracket(x, y)):
+                for b_elt, coeff in self._rewrite_bracket(x, y).items():
                     ret[b_elt] = ret.get(b_elt, 0) + coeff * inner_coeff
 
             # Compute the right summand
-            for m, inner_coeff in iteritems(self._rewrite_bracket(l, r._left)):
+            for m, inner_coeff in self._rewrite_bracket(l, r._left).items():
                 if m == r._right:
                     continue
                 elif m < r._right:
@@ -616,7 +615,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 else: # m > r._right
                     x, y = r._right, m
                     inner_coeff = -inner_coeff
-                for b_elt, coeff in iteritems(self._rewrite_bracket(x, y)):
+                for b_elt, coeff in self._rewrite_bracket(x, y).items():
                     ret[b_elt] = ret.get(b_elt, 0) + coeff * inner_coeff
 
             return ret
@@ -703,7 +702,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             # caught us.
             # For a similar reason, we have b >= c.
             # Compute the left summand
-            for m, inner_coeff in iteritems(self._rewrite_bracket(l._right, r)):
+            for m, inner_coeff in self._rewrite_bracket(l._right, r).items():
                 if l._left == m:
                     continue
                 elif l._left < m:
@@ -711,11 +710,11 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 else: # l._left > m
                     x, y = m, l._left
                     inner_coeff = -inner_coeff
-                for b_elt, coeff in iteritems(self._rewrite_bracket(x, y)):
+                for b_elt, coeff in self._rewrite_bracket(x, y).items():
                     ret[b_elt] = ret.get(b_elt, 0) + coeff * inner_coeff
 
             # Compute the right summand
-            for m, inner_coeff in iteritems(self._rewrite_bracket(l._left, r)):
+            for m, inner_coeff in self._rewrite_bracket(l._left, r).items():
                 if m == l._right:
                     continue
                 elif m < l._right:
@@ -723,7 +722,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
                 else: # m > l._right
                     x, y = l._right, m
                     inner_coeff = -inner_coeff
-                for b_elt, coeff in iteritems(self._rewrite_bracket(x, y)):
+                for b_elt, coeff in self._rewrite_bracket(x, y).items():
                     ret[b_elt] = ret.get(b_elt, 0) + coeff * inner_coeff
 
             return ret

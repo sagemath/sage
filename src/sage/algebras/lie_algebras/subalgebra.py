@@ -100,7 +100,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))
         sage: I.basis()
-        Family (X + Y, Z)
+        Family (Z, X + Y)
         sage: I.reduce(el)
         (-x+y)*Y
 
@@ -127,7 +127,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         False
         sage: K = L.ideal(J.basis().list())
         sage: K.basis()
-        Family (W, Z)
+        Family (Z, W)
 
     TESTS:
 
@@ -229,7 +229,10 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         # initialize helper variables for ordering
         if order is None:
-            order = lambda x: x
+            if hasattr(ambient, "_basis_key"):
+                order = ambient._basis_key
+            else:
+                order = lambda x: x
         self._order = order
         self._reversed_indices = sorted(ambient.indices(), key=order,
                                         reverse=True)
@@ -431,13 +434,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I._to_m(el)
             (3, 2, 1)
 
-        Otherwise the components can have a more complicated permutation::
+        This follows the reverse order of the ambient basis order::
 
             sage: L.<x,z,y> = LieAlgebra(QQ, {('x','y'): {'z': 1}})
             sage: I = L.ideal([x, z])
-            sage: el = x + 2*z + 3*y
+            sage: el = x + 2*y + 3*z
             sage: el.to_vector()
-            (1, 2, 3)
+            (1, 3, 2)
             sage: I._to_m(el)
             (2, 3, 1)
         """
@@ -475,7 +478,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: L.<c,a,e,f,b,d> = LieAlgebra(QQ, abelian=True)
             sage: S = L.subalgebra(L.basis().list())
             sage: v = S._to_m(c + 2*a + 3*e + 4*f + 5*b + 6*d); v
-            (4, 3, 6, 1, 5, 2)
+            (6, 5, 4, 3, 2, 1)
             sage: S._from_m(v)
             c + 2*a + 3*e + 4*f + 5*b + 6*d
             sage: all(S._from_m(S._to_m(X)) == X for X in L.some_elements())
@@ -665,9 +668,21 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: sc = {('x','y'): {'z': 1}, ('x','z'): {'w': 1}}
             sage: L.<x,y,z,w> = LieAlgebra(QQ, sc)
             sage: L.ideal([x + y + z + w]).basis()
-            Family (w, x + y, z)
-        """
+            Family (x + y, z, w)
 
+        This also works for Lie algebras whose natural basis elements
+        are not comparable (but have a well-defined basis ordering)::
+
+            sage: sl3 = LieAlgebra(QQ, cartan_type=['A',2])
+            sage: D = sl3.derived_subalgebra()
+            sage: len(D.basis())
+            8
+            sage: e = list(sl3.e())
+            sage: sl3.ideal(e).dimension()
+            8
+            sage: sl3.subalgebra(e).dimension()
+            3
+        """
         L = self.ambient()
         B = [self._to_m(X) for X in L.basis()]
 
@@ -687,7 +702,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         basis = [self.element_class(self, self._from_m(v))
                  for v in sm.echelonized_basis()]
-        sortkey = lambda X: self.lift(X).leading_support(key=self._order)
+        sortkey = lambda X: self._order(self.lift(X).leading_support(key=self._order))
         return Family(sorted(basis, key=sortkey))
 
     @cached_method
@@ -712,9 +727,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: key = lambda s: ['d','c','b','a'].index(s)
             sage: I = L.ideal(a + b, order=key)
             sage: I.basis()
-            Family (a + b, 2*c, 4*d)
+            Family (4*d, 2*c, a + b)
             sage: I.leading_monomials()
-            Family (a, c, d)
+            Family (d, c, a)
         """
         return Family(self.lift(X).leading_monomial(key=self._order)
                       for X in self.basis())

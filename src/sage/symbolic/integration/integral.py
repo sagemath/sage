@@ -56,6 +56,13 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: indefinite_integral(exp(x), 2*x)
             2*e^x
 
+        TESTS:
+
+        Check for :trac:`28913`::
+
+            sage: Ex = (1-2*x^(1/3))^(3/4)/x
+            sage: integrate(Ex, x, algorithm="giac")  # long time
+            4*(-2*x^(1/3) + 1)^(3/4) + 6*arctan((-2*x^(1/3) + 1)^(1/4)) - 3*log((-2*x^(1/3) + 1)^(1/4) + 1) + 3*log(abs((-2*x^(1/3) + 1)^(1/4) - 1))
         """
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of
@@ -179,7 +186,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _eval_(self, f, x, a, b):
         """
-        Return the results of symbolic evaluation of the integral
+        Return the results of symbolic evaluation of the integral.
 
         EXAMPLES::
 
@@ -217,12 +224,13 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _evalf_(self, f, x, a, b, parent=None, algorithm=None):
         """
-        Return a numerical approximation of the integral
+        Return a numerical approximation of the integral.
 
         EXAMPLES::
 
             sage: from sage.symbolic.integration.integral import definite_integral
-            sage: h = definite_integral(sin(x)*log(x)/x^2, x, 1, 2); h
+            sage: f = sin(x)*log(x)/x^2
+            sage: h = definite_integral(f, x, 1, 2, hold=True); h
             integrate(log(x)*sin(x)/x^2, x, 1, 2)
             sage: h.n() # indirect doctest
             0.14839875208053...
@@ -241,7 +249,7 @@ class DefiniteIntegral(BuiltinFunction):
 
     def _tderivative_(self, f, x, a, b, diff_param=None):
         """
-        Return the derivative of symbolic integration
+        Return the derivative of symbolic integration.
 
         EXAMPLES::
 
@@ -260,8 +268,9 @@ class DefiniteIntegral(BuiltinFunction):
             ans = definite_integral(f.diff(diff_param), x, a, b)
         else:
             ans = SR.zero()
-        return (ans + f.subs(x == b) * b.diff(diff_param)
-                    - f.subs(x == a) * a.diff(diff_param))
+        return (ans
+                + f.subs(x == b) * b.diff(diff_param)
+                - f.subs(x == a) * a.diff(diff_param))
 
     def _print_latex_(self, f, x, a, b):
         r"""

@@ -17,7 +17,6 @@ Miscellaneous
 #*****************************************************************************
 from __future__ import print_function
 
-from six.moves import range
 from sage.misc.all import prod
 
 class DoublyLinkedList():

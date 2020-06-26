@@ -1,1 +1,1 @@
-exec sage-python23 spkg-install.py
+exec sage-python23 build/pkgs/texlive/spkg-install.py

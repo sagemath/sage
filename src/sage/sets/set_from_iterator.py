@@ -61,7 +61,6 @@ The module also provides decorator for functions and methods::
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -576,7 +575,6 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
     EXAMPLES::
 
         sage: from sage.sets.set_from_iterator import set_from_function
-        sage: from six.moves import range
         sage: @set_from_function
         ....: def f(n):
         ....:     for i in range(n):

@@ -192,7 +192,6 @@ REFERENCES:
 
 # Use python-3.x versions of print() and range().
 from __future__ import print_function
-from six.moves import range
 
 import collections
 import copy
@@ -355,6 +354,14 @@ def Cone(rays, lattice=None, check=True, normalize=True):
         2
         sage: origin.lattice()
         2-d lattice N
+
+    However, the trivial cone in ``n`` dimensions has a predefined
+    constructor for you to use::
+
+        sage: origin = cones.trivial(2)
+        sage: origin.rays()
+        Empty collection
+        in 2-d lattice N
 
     Of course, you can also provide ``lattice`` in other cases::
 
@@ -1093,7 +1100,7 @@ class IntegralRayCollection(SageObject,
         The codimension of the nonnegative orthant is zero, since the
         span of its generators equals the entire ambient space::
 
-            sage: K = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: K = cones.nonnegative_orthant(3)
             sage: K.codim()
             0
 
@@ -1118,19 +1125,19 @@ class IntegralRayCollection(SageObject,
         And if the cone is trivial in any space, then its codimension is
         equal to the dimension of the ambient space::
 
-            sage: K = Cone([], lattice=ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.lattice_dim()
             0
             sage: K.codim()
             0
 
-            sage: K = Cone([(0,)])
+            sage: K = cones.trivial(1)
             sage: K.lattice_dim()
             1
             sage: K.codim()
             1
 
-            sage: K = Cone([(0,0)])
+            sage: K = cones.trivial(2)
             sage: K.lattice_dim()
             2
             sage: K.codim()
@@ -1192,7 +1199,7 @@ class IntegralRayCollection(SageObject,
 
         The span of the nonnegative orthant is the entire ambient lattice::
 
-            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: K = cones.nonnegative_orthant(3)
             sage: K.span() == K.lattice()
             True
 
@@ -1210,8 +1217,7 @@ class IntegralRayCollection(SageObject,
 
         We can take the span of the trivial cone::
 
-            sage: K = Cone([], ToricLattice(0))
-            sage: K.span()
+            sage: cones.trivial(0).span()
             Sublattice <>
 
         The span of a solid cone is the entire ambient space::
@@ -1472,7 +1478,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: Cone([(0,0)])._PPL_cone()
             A 0-dimensional polyhedron in QQ^2
             defined as the convex hull of 1 point
-            sage: Cone([], lattice=ToricLattice(2))._PPL_cone()
+            sage: cones.trivial(2)._PPL_cone()
             A 0-dimensional polyhedron in QQ^2
             defined as the convex hull of 1 point
         """
@@ -3022,13 +3028,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         We check that :trac:`18613` is fixed::
 
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.is_isomorphic(K)
             True
-            sage: K = Cone([(0,)])
+            sage: K = cones.trivial(1)
             sage: K.is_isomorphic(K)
             True
-            sage: K = Cone([(0,0)])
+            sage: K = cones.trivial(2)
+            sage: K.is_isomorphic(K)
+            True
 
         A random (strictly convex) cone is isomorphic to itself::
 
@@ -3115,7 +3123,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         EXAMPLES::
 
-            sage: c0 = Cone([], lattice=ToricLattice(3))
+            sage: c0 = cones.trivial(3)
             sage: c0.is_trivial()
             True
             sage: c0.nrays()
@@ -3327,7 +3335,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         The quotient of the trivial cone is trivial::
 
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.strict_quotient()
             0-d cone in 0-d lattice N
             sage: K = Cone([(0,0,0,0)])
@@ -3437,10 +3445,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         The solid restriction of the trivial cone lives in a trivial space::
 
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.solid_restriction()
             0-d cone in 0-d lattice N
-            sage: K = Cone([(0,0,0,0)])
+            sage: K = cones.trivial(4)
             sage: K.solid_restriction()
             0-d cone in 0-d lattice N
 
@@ -3543,7 +3551,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         Trivial cone::
 
-            sage: trivial_cone = Cone([], lattice=ToricLattice(3))
+            sage: trivial_cone = cones.trivial(3)
             sage: trivial_cone._split_ambient_lattice()
             sage: trivial_cone._sublattice
             Sublattice <>
@@ -4081,7 +4089,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
             sage: len(Cone(identity_matrix(10).rows()).semigroup_generators())
             10
 
-            sage: trivial_cone = Cone([], lattice=ToricLattice(3))
+            sage: trivial_cone = cones.trivial(3)
             sage: trivial_cone.semigroup_generators()
             Empty collection
             in 3-d lattice N
@@ -4374,7 +4382,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         The nonnegative orthant is always solid::
 
-            sage: quadrant = Cone([(1,0), (0,1)])
+            sage: quadrant = cones.nonnegative_orthant(2)
             sage: quadrant.is_solid()
             True
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
@@ -4422,7 +4430,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         The nonnegative orthant is always proper::
 
-            sage: quadrant = Cone([(1,0), (0,1)])
+            sage: quadrant = cones.nonnegative_orthant(2)
             sage: quadrant.is_proper()
             True
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
@@ -4467,7 +4475,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         Neither is the nonnegative orthant::
 
-            sage: K = Cone([(1,0),(0,1)])
+            sage: K = cones.nonnegative_orthant(2)
             sage: K.is_full_space()
             False
 
@@ -4509,7 +4517,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         The lineality of the nonnegative orthant is zero, since it clearly
         contains no lines::
 
-            sage: K = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: K = cones.nonnegative_orthant(3)
             sage: K.lineality()
             0
 
@@ -4534,7 +4542,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         Per the definition, the lineality of the trivial cone in a trivial
         space is zero::
 
-            sage: K = Cone([], lattice=ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.lineality()
             0
 
@@ -4590,7 +4598,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         Pairs of standard basis elements form a discrete complementarity
         set for the nonnegative orthant::
 
-            sage: K = Cone([(1,0),(0,1)])
+            sage: K = cones.nonnegative_orthant(2)
             sage: K.discrete_complementarity_set()
             ((N(1, 0), M(0, 1)), (N(0, 1), M(1, 0)))
 
@@ -4619,9 +4627,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         Likewise for trivial cones, whose duals are the entire space::
 
-            sage: L = ToricLattice(0)
-            sage: K = Cone([], ToricLattice(0))
-            sage: K.discrete_complementarity_set()
+            sage: cones.trivial(0).discrete_complementarity_set()
             ()
 
         TESTS:
@@ -4683,7 +4689,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         Every transformation is Lyapunov-like on the trivial cone::
 
-            sage: K = Cone([(0,0)])
+            sage: K = cones.trivial(2)
             sage: M = MatrixSpace(K.lattice().base_field(), K.lattice_dim())
             sage: list(M.basis()) == K.lyapunov_like_basis()
             True
@@ -4701,26 +4707,25 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         However, in a trivial space, there are no non-trivial linear maps,
         so there can be no Lyapunov-like basis::
 
-            sage: L = ToricLattice(0)
-            sage: K = Cone([], lattice=L)
+            sage: K = cones.trivial(0)
             sage: K.lyapunov_like_basis()
             []
 
         The Lyapunov-like transformations on the nonnegative orthant are
         diagonal matrices::
 
-            sage: K = Cone([(1,)])
+            sage: K = cones.nonnegative_orthant(1)
             sage: K.lyapunov_like_basis()
             [[1]]
 
-            sage: K = Cone([(1,0),(0,1)])
+            sage: K = cones.nonnegative_orthant(2)
             sage: K.lyapunov_like_basis()
             [
             [1 0]  [0 0]
             [0 0], [0 1]
             ]
 
-            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: K = cones.nonnegative_orthant(3)
             sage: K.lyapunov_like_basis()
             [
             [1 0 0]  [0 0 0]  [0 0 0]
@@ -4850,13 +4855,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         The Lyapunov rank of the nonnegative orthant is the same as the
         dimension of the ambient space [RNPA2011]_::
 
-            sage: positives = Cone([(1,)])
+            sage: positives = cones.nonnegative_orthant(1)
             sage: positives.lyapunov_rank()
             1
-            sage: quadrant = Cone([(1,0), (0,1)])
+            sage: quadrant = cones.nonnegative_orthant(2)
             sage: quadrant.lyapunov_rank()
             2
-            sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
+            sage: octant = cones.nonnegative_orthant(3)
             sage: octant.lyapunov_rank()
             3
 
@@ -5066,7 +5071,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         The trivial element ``()`` is always returned in a trivial space::
 
             sage: set_random_seed()
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.random_element()
             N()
             sage: K.random_element(ring=QQ)
@@ -5075,7 +5080,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         A random element of the trivial cone in a nontrivial space is zero::
 
             sage: set_random_seed()
-            sage: K = Cone([(0,0,0)])
+            sage: K = cones.trivial(3)
             sage: K.random_element()
             N(0, 0, 0)
             sage: K.random_element(ring=QQ)
@@ -5085,7 +5090,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         components nonnegative::
 
             sage: set_random_seed()
-            sage: K = Cone([(1,0,0),(0,1,0),(0,0,1)])
+            sage: K = cones.nonnegative_orthant(3)
             sage: all( x >= 0 for x in K.random_element() )
             True
             sage: all( x >= 0 for x in K.random_element(ring=QQ) )
@@ -5259,17 +5264,17 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
 
         The trivial cone in a trivial space has no positive operators::
 
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.positive_operators_gens()
             []
 
         Every operator is positive on the trivial cone::
 
-            sage: K = Cone([(0,)])
+            sage: K = cones.trivial(1)
             sage: K.positive_operators_gens()
             [[1], [-1]]
 
-            sage: K = Cone([(0,0)])
+            sage: K = cones.trivial(2)
             sage: K.is_trivial()
             True
             sage: K.positive_operators_gens()
@@ -5386,9 +5391,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         expected dimensions [Or2018b]_::
 
             sage: n = ZZ.random_element(5)
-            sage: K = Cone([[0] * n], ToricLattice(n))
-            sage: K.is_trivial()
-            True
+            sage: K = cones.trivial(n)
             sage: L = ToricLattice(n^2)
             sage: pi_gens = K.positive_operators_gens()
             sage: pi_cone = Cone((g.list() for g in pi_gens),
@@ -5434,9 +5437,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         the expected linealities [Or2018b]_::
 
             sage: n = ZZ.random_element(5)
-            sage: K = Cone([[0] * n], ToricLattice(n))
-            sage: K.is_trivial()
-            True
+            sage: K = cones.trivial(n)
             sage: L = ToricLattice(n^2)
             sage: pi_gens = K.positive_operators_gens()
             sage: pi_cone = Cone((g.list() for g in pi_gens),
@@ -5664,7 +5665,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         negations of Z-matrices; that is, matrices whose off-diagonal
         elements are nonnegative::
 
-            sage: K = Cone([(1,0),(0,1)])
+            sage: K = cones.nonnegative_orthant(2)
             sage: K.cross_positive_operators_gens()
             [
             [0 1]  [0 0]  [1 0]  [-1  0]  [0 0]  [ 0  0]
@@ -5680,7 +5681,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         The trivial cone in a trivial space has no cross-positive
         operators::
 
-            sage: K = Cone([], ToricLattice(0))
+            sage: K = cones.trivial(0)
             sage: K.cross_positive_operators_gens()
             []
 
@@ -5779,9 +5780,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection,
         the expected dimensions [Or2018b]_::
 
             sage: n = ZZ.random_element(5)
-            sage: K = Cone([[0] * n], ToricLattice(n))
-            sage: K.is_trivial()
-            True
+            sage: K = cones.trivial(n)
             sage: L = ToricLattice(n^2)
             sage: cp_gens = K.cross_positive_operators_gens()
             sage: cp_cone = Cone((g.list() for g in cp_gens),

@@ -20,7 +20,6 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
-from six.moves import range
 
 from sage.arith.all import euler_phi, lcm, gcd, divisors, get_inverse_mod, get_gcd, factor, xgcd
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -494,16 +493,17 @@ class GammaH_class(CongruenceSubgroup):
         else:
             raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
-    def _coset_reduction_data_first_coord(G):
+    def _coset_reduction_data_first_coord(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G. This
-        function specifically returns data needed for the first part
-        of the reduction step (the first coordinate).
+        representative of an element of SL_2(Z) modulo ``self``.
+
+        This function specifically returns data needed for the first
+        part of the reduction step (the first coordinate).
 
         INPUT:
 
-        G -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N).
+        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -516,12 +516,12 @@ class GammaH_class(CongruenceSubgroup):
         EXAMPLES::
 
             sage: G = Gamma0(12)
-            sage: sage.modular.arithgroup.congroup_gammaH.GammaH_class._coset_reduction_data_first_coord(G)
+            sage: G._coset_reduction_data_first_coord()
             [(0, 12, 0), (1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1), (1, 1, 5), (6, 6, 1),
             (1, 1, 7), (4, 4, 5), (3, 3, 7), (2, 2, 5), (1, 1, 11)]
         """
-        H = [ int(x) for x in G._list_of_elements_in_H() ]
-        N = int(G.level())
+        H = [int(x) for x in self._list_of_elements_in_H()]
+        N = int(self.level())
 
         # Get some useful fast functions for inverse and gcd
         inverse_mod = get_inverse_mod(N)   # optimal inverse function
@@ -572,16 +572,17 @@ class GammaH_class(CongruenceSubgroup):
 
         return reduct_data
 
-    def _coset_reduction_data_second_coord(G):
+    def _coset_reduction_data_second_coord(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G. This
-        function specifically returns data needed for the second part
-        of the reduction step (the second coordinate).
+        representative of an element of SL_2(Z) modulo ``self``.
+
+        This function specifically returns data needed for the second
+        part of the reduction step (the second coordinate).
 
         INPUT:
 
-        self
+        ``self``
 
         OUTPUT:
 
@@ -618,19 +619,20 @@ class GammaH_class(CongruenceSubgroup):
             sage: K == divisors(1200)
             True
         """
-        H = G._list_of_elements_in_H()
-        N = G.level()
+        H = self._list_of_elements_in_H()
+        N = self.level()
         v = { 1: [1] , N: H }
-        for d in [x for x in divisors(N) if x > 1 and x < N ]:
-            N_over_d = N // d
-            v[d] = [x for x in H if x % N_over_d == 1]
+        for d in divisors(N):
+            if 1 < d < N:
+                N_over_d = N // d
+                v[d] = [x for x in H if x % N_over_d == 1]
         return v
 
     @cached_method
     def _coset_reduction_data(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G.
+        representative of an element of SL_2(Z) modulo ``self``.
 
         EXAMPLES::
 
@@ -640,8 +642,7 @@ class GammaH_class(CongruenceSubgroup):
             ([(0, 13, 0), (1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1), (6, 1, 1), (6, 1, 12), (5, 1, 12), (4, 1, 12), (3, 1, 12), (2, 1, 12), (1, 1, 12)], {1: [1], 13: [1, 12]})
         """
         return (self._coset_reduction_data_first_coord(),
-                                       self._coset_reduction_data_second_coord())
-
+                self._coset_reduction_data_second_coord())
 
     def _reduce_coset(self, uu, vv):
         r"""

@@ -70,35 +70,37 @@ class SectionModule(UniqueRepresentation, Parent):
 
     Module of sections on the Möbius bundle::
 
-        sage: M = Manifold(1, 'S^1', structure='top', start_index=1)
+        sage: M = Manifold(1, 'RP^1', structure='top', start_index=1)
         sage: U = M.open_subset('U')  # the complement of one point
-        sage: c_t.<t> =  U.chart('t:(0,2*pi)') # the standard angle coordinate
-        sage: V = M.open_subset('V') # the complement of the point t=pi
-        sage: M.declare_union(U,V)   # S^1 is the union of U and V
-        sage: c_u.<u> = V.chart('u:(0,2*pi)') # the angle t-pi
-        sage: t_to_u = c_t.transition_map(c_u, (t-pi,), intersection_name='W',
-        ....:                     restrictions1 = t!=pi, restrictions2 = u!=pi)
-        sage: u_to_t = t_to_u.inverse()
+        sage: c_u.<u> =  U.chart() # [1:u] in homogeneous coord.
+        sage: V = M.open_subset('V') # the complement of the point u=0
+        sage: M.declare_union(U,V)   # [v:1] in homogeneous coord.
+        sage: c_v.<v> = V.chart()
+        sage: u_to_v = c_u.transition_map(c_v, (1/u),
+        ....:                             intersection_name='W',
+        ....:                             restrictions1 = u!=0,
+        ....:                             restrictions2 = v!=0)
+        sage: v_to_u = u_to_v.inverse()
         sage: W = U.intersection(V)
         sage: E = M.vector_bundle(1, 'E')
         sage: phi_U = E.trivialization('phi_U', latex_name=r'\varphi_U',
         ....:                          domain=U)
         sage: phi_V = E.trivialization('phi_V', latex_name=r'\varphi_V',
         ....:                          domain=V)
-        sage: transf = phi_U.transition_map(phi_V, [[-1]])
+        sage: transf = phi_U.transition_map(phi_V, [[u]])
         sage: C0 = E.section_module(); C0
-        Module C^0(S^1;E) of sections on the 1-dimensional topological manifold
-         S^1 with values in the real vector bundle E of rank 1
+        Module C^0(RP^1;E) of sections on the 1-dimensional topological manifold
+         RP^1 with values in the real vector bundle E of rank 1
 
-    `C^0(S^1;E)` is a module over the algebra `C^0(S^1)`::
+    `C^0(\RR P^1;E)` is a module over the algebra `C^0(\RR P^1)`::
 
         sage: C0.category()
         Category of modules over Algebra of scalar fields on the 1-dimensional
-         topological manifold S^1
+         topological manifold RP^1
         sage: C0.base_ring() is M.scalar_field_algebra()
         True
 
-    However, `C^0(S^1;E)` is not a free module::
+    However, `C^0(\RR P^1;E)` is not a free module::
 
         sage: isinstance(C0, FiniteRankFreeModule)
         False
@@ -118,7 +120,7 @@ class SectionModule(UniqueRepresentation, Parent):
     The zero element of the module::
 
         sage: z = C0.zero() ; z
-        Section zero on the 1-dimensional topological manifold S^1 with values
+        Section zero on the 1-dimensional topological manifold RP^1 with values
          in the real vector bundle E of rank 1
         sage: z.display(phi_U.frame())
         zero = 0
@@ -132,10 +134,10 @@ class SectionModule(UniqueRepresentation, Parent):
         True
         sage: C0_U.coerce_map_from(C0)
         Coercion map:
-          From: Module C^0(S^1;E) of sections on the 1-dimensional topological
-           manifold S^1 with values in the real vector bundle E of rank 1
+          From: Module C^0(RP^1;E) of sections on the 1-dimensional topological
+           manifold RP^1 with values in the real vector bundle E of rank 1
           To:   Free module C^0(U;E) of sections on the Open subset U of the
-           1-dimensional topological manifold S^1 with values in the real vector
+           1-dimensional topological manifold RP^1 with values in the real vector
            bundle E of rank 1
 
     The conversion map is actually the restriction of sections defined

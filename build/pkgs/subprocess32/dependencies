@@ -1,4 +1,4 @@
-$(PYTHON) | pip python3
+$(PYTHON) | $(PYTHON_TOOLCHAIN) python3
 
 ----------
 All lines of this file are ignored except the first.

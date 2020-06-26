@@ -30,6 +30,8 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse9.html.
 # ****************************************************************************
 from __future__ import absolute_import
 
+import builtins
+
 from .stream import Stream, Stream_class
 from .series_order import  bounded_decrement, increment, inf, unk
 from sage.rings.all import Integer
@@ -1743,7 +1745,6 @@ class LazyPowerSeries(AlgebraElement):
             sage: a.restricted(min=2, max=6).coefficients(10)
             [0, 0, 1, 1, 1, 1, 0, 0, 0, 0]
         """
-        from six.moves import builtins
 
         if ((min is None and max is None) or
             (max is None and self.get_aorder() >= min)):

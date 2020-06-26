@@ -65,7 +65,6 @@ from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.crypto.sboxes import PRESENT as PRESENTSBOX
 from sage.modules.vector_mod2_dense import Vector_mod2_dense
-from six import integer_types
 
 
 def _smallscale_present_linearlayer(nsboxes=16):
@@ -420,7 +419,7 @@ class PRESENT(SageObject):
         """
         if isinstance(plaintext, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(plaintext, integer_types + (Integer,)):
+        elif isinstance(plaintext, (Integer, int)):
             inputType = 'integer'
         state = convert_to_vector(plaintext, 64)
         key = convert_to_vector(key, self._keysize)
@@ -476,7 +475,7 @@ class PRESENT(SageObject):
        """
         if isinstance(ciphertext, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(ciphertext, integer_types + (Integer,)):
+        elif isinstance(ciphertext, (Integer, int)):
             inputType = 'integer'
         state = convert_to_vector(ciphertext, 64)
         key = convert_to_vector(key, self._keysize)
@@ -776,7 +775,7 @@ class PRESENT_KS(SageObject):
         """
         if isinstance(K, (list, tuple, Vector_mod2_dense)):
             inputType = 'vector'
-        elif isinstance(K, integer_types + (Integer,)):
+        elif isinstance(K, (Integer, int)):
             inputType = 'integer'
         K = convert_to_vector(K, self._keysize)
         roundKeys = []

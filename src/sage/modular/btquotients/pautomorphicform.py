@@ -41,8 +41,6 @@ This can then be lifted to an overconvergent `p`-adic modular form::
 """
 from __future__ import print_function, division
 
-from six.moves import zip
-
 from sage.modular.btquotients.btquotient import DoubleCosetReduction
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import op_EQ, op_NE

@@ -31,20 +31,21 @@ Check that sphinx is not imported at Sage start-up::
     sage: "sphinx" in sys.modules
     False
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from __future__ import print_function
 from __future__ import absolute_import
-from six import string_types, text_type
 
-import os, re, sys
+import os
+import re
+import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
 from .viewer import browser
@@ -62,6 +63,19 @@ from sage.env import SAGE_DOC, SAGE_SRC
 # the strings raw: r'\\blah'.
 math_substitutes = [
     (r'\\to', '-->'),
+    (r'\\rightarrow', '-->'),
+    (r'\\leftarrow', '<--'),
+    (r'\\leftrightarrow', '<->'),
+    (r'\\longrightarrow', '--->'),
+    (r'\\longleftarrow', '<---'),
+    (r'\\longleftrightarrow', '<-->'),
+    (r'\\Rightarrow', '==>'),
+    (r'\\Leftarrow', '<=='),
+    (r'\\Leftrightarrow', '<=>'),
+    (r'\\Longrightarrow', '===>'),
+    (r'\\Longleftarrow', '<==='),
+    (r'\\Longleftrightarrow', '<==>'),
+    (r'\\colon', ':'),
     (r'\\left', ''),
     (r'\\right', ''),
     (r'\\bigl', ''),
@@ -79,6 +93,7 @@ math_substitutes = [
     (r'\\times', ' x'),
     (r'\\backslash','\\'),
     (r'\\mapsto', ' |--> '),
+    (r'\\longmapsto', ' |---> '),
     (r'\\lvert', '|'),
     (r'\\rvert', '|'),
     (r'\\mid', '|'),
@@ -205,8 +220,8 @@ def detex(s, embedded=False):
         '`a, b, c, \\ldots, z`'
         sage: detex(r'`\left(\lvert x\ast y \rvert\right]`')
         '(| x * y |]\n'
-        sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\to`')
-        '(<=<=leftarrow rightarrow-->\n'
+        sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\unknownmacro\to`')
+        '(<=<=<-- -->\\unknownmacro-->\n'
     """
     s = _rmcmd(s, 'url')
     s = _rmcmd(s, 'code')
@@ -234,7 +249,6 @@ def detex(s, embedded=False):
         # test to make sure the next character is not a letter.
         for a,b in math_substitutes:
             s = re.sub(a+'([^a-zA-Z])', b+'\\1', s)
-        s = s.replace('\\','')        # nuke backslashes
     return s
 
 def skip_TESTS_block(docstring):
@@ -245,7 +259,7 @@ def skip_TESTS_block(docstring):
 
     - ``docstring``, a string
 
-    A "TESTS" block is a block starting with "TEST:" or "TESTS:" (or
+    A "TESTS" block is a block starting "TESTS:" (or
     the same with two colons), on a line on its own, and ending either
     with a line indented less than "TESTS", or with a line with the
     same level of indentation -- not more -- matching one of the
@@ -271,7 +285,7 @@ def skip_TESTS_block(docstring):
 
         sage: from sage.misc.sagedoc import skip_TESTS_block
         sage: start = ' Docstring\n\n'
-        sage: test = ' TEST: \n\n Here is a test::\n     sage: 2+2 \n     5 \n\n'
+        sage: test = ' TESTS: \n\n Here is a test::\n     sage: 2+2 \n     5 \n\n'
         sage: test2 = ' TESTS:: \n\n     sage: 2+2 \n     6 \n\n'
 
     Test lines starting with "REFERENCES:"::
@@ -658,8 +672,17 @@ def format(s, embedded=False):
            Return the n x n identity matrix over the given ring.
         ...
 
+    Check that backslashes are preserved in code blocks (:trac:`29140`)::
+
+        sage: format('::\n'
+        ....:        '\n'
+        ....:        r'    sage: print(r"\\\\.")' '\n'
+        ....:        r'    \\\\.')
+        '   sage: print(r"\\\\\\\\.")\n   \\\\\\\\.\n'
+        sage: format(r'inline code ``\\\\.``')
+        'inline code "\\\\\\\\."\n'
     """
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         raise TypeError("s must be a string")
 
     # Leading empty lines must be removed, since we search for directives
@@ -688,9 +711,11 @@ def format(s, embedded=False):
         i_0 = 0
         while True:
             i = s[i_0:].find("<<<")
-            if i == -1: break
+            if i == -1:
+                break
             j = s[i_0+i+3:].find('>>>')
-            if j == -1: break
+            if j == -1:
+                break
             obj = s[i_0+i+3 : i_0+i+3+j]
             if obj in docs:
                 t = ''
@@ -741,15 +766,17 @@ def format_src(s):
         sage: format_src('<<<Sq>>>')[5:15]
         'Sq(*nums):'
     """
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         raise TypeError("s must be a string")
     docs = set([])
     import sage.all
     while True:
         i = s.find("<<<")
-        if i == -1: break
+        if i == -1:
+            break
         j = s[i+3:].find('>>>')
-        if j == -1: break
+        if j == -1:
+            break
         obj = s[i+3:i+3+j]
         if obj in docs:
             t = ''
@@ -926,7 +953,7 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     else:
         # Pass through the IPython pager in a mime bundle
         from IPython.core.page import page
-        if not isinstance(text_results, text_type):
+        if not isinstance(text_results, str):
             text_results = text_results.decode('utf-8', 'replace')
 
         page({

@@ -28,7 +28,6 @@ Functions, Classes and Methods
 #*****************************************************************************
 
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject

@@ -1,5 +1,5 @@
 r"""
-Transitive ideal closure tool.
+Transitive ideal closure tool
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -13,7 +13,7 @@ Transitive ideal closure tool.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 

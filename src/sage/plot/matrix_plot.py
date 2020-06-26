@@ -18,7 +18,6 @@ Matrix Plots
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six import iteritems
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
@@ -104,19 +103,22 @@ class MatrixPlot(GraphicPrimitive):
 
             sage: m = matrix_plot(matrix([[1,3,5,1],[2,4,5,6],[1,3,5,7]]))[0]
             sage: list(sorted(m.get_minmax_data().items()))
-            [('xmax', 3.5), ('xmin', -0.5), ('ymax', -0.5), ('ymin', 2.5)]
+            [('xmax', 3.5), ('xmin', -0.5), ('ymax', 2.5), ('ymin', -0.5)]
 
+        TESTS:
 
+        We verify that :trac:`27891` is fixed::
+
+            sage: p = matrix_plot(identity_matrix(5)) + point((2, 2), zorder=1)
+            sage: sorted(p.get_minmax_data().items())
+            [('xmax', 4.5), ('xmin', -0.5), ('ymax', 4.5), ('ymin', -0.5)]
         """
         from sage.plot.plot import minmax_data
         limits= minmax_data(self.xrange, self.yrange, dict=True)
-        if self.options()['origin']!='lower':
-            # flip y-axis so that the picture looks correct.
-            limits['ymin'],limits['ymax']=limits['ymax'],limits['ymin']
 
         # center the matrix so that, for example, the square representing the
         # (0,0) entry is centered on the origin.
-        for k, v in iteritems(limits):
+        for k, v in limits.items():
             limits[k] -= 0.5
         return limits
 
@@ -142,7 +144,7 @@ class MatrixPlot(GraphicPrimitive):
                 'norm': "The normalization function",
                 'vmin': "The minimum value",
                 'vmax': "The maximum value",
-                'origin': "If 'lower', draw the matrix with the first row on the bottom of the graph",
+                'flip_y': "If False, draw the matrix with the first row on the bottom of the graph",
                 'subdivisions': "If True, draw subdivisions of the matrix",
                 'subdivision_options': "Options (boundaries and style) of the subdivisions"}
 
@@ -167,7 +169,7 @@ class MatrixPlot(GraphicPrimitive):
         """
         options = self.options()
         cmap = get_cmap(options.pop('cmap',None))
-        origin=options['origin']
+        flip_y = options['flip_y']
 
         norm=options['norm']
 
@@ -206,17 +208,15 @@ class MatrixPlot(GraphicPrimitive):
         if hasattr(self.xy_data_array, 'tocoo'):
             # Sparse matrix -- use spy
             opts=options.copy()
-            for opt in ['vmin', 'vmax', 'norm', 'origin','subdivisions','subdivision_options',
-                        'colorbar','colorbar_options']:
+            for opt in ['vmin', 'vmax', 'norm', 'flip_y', 'subdivisions',
+                        'subdivision_options', 'colorbar', 'colorbar_options']:
                 del opts[opt]
-            if origin=='lower':
-                subplot.spy(self.xy_data_array.tocsr()[::-1], **opts)
-            else:
-                subplot.spy(self.xy_data_array, **opts)
+            subplot.spy(self.xy_data_array, **opts)
         else:
             opts = dict(cmap=cmap, interpolation='nearest', aspect='equal',
                       norm=norm, vmin=options['vmin'], vmax=options['vmax'],
-                      origin=origin,zorder=options.get('zorder',None))
+                      origin=('upper' if flip_y else 'lower'),
+                      zorder=options.get('zorder'))
             image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
@@ -225,9 +225,9 @@ class MatrixPlot(GraphicPrimitive):
                 cax,kwds=colorbar.make_axes_gridspec(subplot,**colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
-        if origin == 'upper':
+        if flip_y:
             subplot.xaxis.tick_top()
-        elif origin == 'lower':
+        else:
             subplot.xaxis.tick_bottom()
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
 
@@ -236,7 +236,7 @@ class MatrixPlot(GraphicPrimitive):
 @suboptions('colorbar', orientation='vertical', format=None)
 @suboptions('subdivision',boundaries=None, style=None)
 @options(aspect_ratio=1, axes=False, cmap='Greys', colorbar=False,
-         frame=True, marker='.', norm=None, origin='upper',
+         frame=True, marker='.', norm=None, flip_y=True,
          subdivisions=False, ticks_integer=True, vmin=None, vmax=None)
 def matrix_plot(mat, **options):
     r"""
@@ -299,9 +299,9 @@ def matrix_plot(mat, **options):
 
     - ``vmax`` - The maximum value (values above this are set to this value)
 
-    - ``origin`` - If 'upper' (default), the first row of the matrix
-      is on the top of the graph.  If 'lower', the first row is on the
-      bottom of the graph.
+    - ``flip_y`` - (default: True) boolean.  If False, the first row of the
+      matrix is on the bottom of the graph.  Otherwise, the first row is on the
+      top of the graph.
 
     - ``subdivisions`` - If True, plot the subdivisions of the matrix as lines.
 
@@ -371,9 +371,9 @@ def matrix_plot(mat, **options):
     Generally matrices are plotted with the (0,0) entry in the upper
     left.  However, sometimes if we are plotting an image, we'd like
     the (0,0) entry to be in the lower left.  We can do that with the
-    ``origin`` argument::
+    ``flip_y`` argument::
 
-        sage: matrix_plot(identity_matrix(100), origin='lower')
+        sage: matrix_plot(identity_matrix(100), flip_y=False)
         Graphics object consisting of 1 graphics primitive
 
     Another random plot, but over `\GF{389}`::
@@ -455,11 +455,11 @@ def matrix_plot(mat, **options):
 
     A plot title can be added to the matrix plot.::
 
-        sage: matrix_plot(identity_matrix(50), origin='lower', title='not identity')
+        sage: matrix_plot(identity_matrix(50), flip_y=False, title='not identity')
         Graphics object consisting of 1 graphics primitive
 
-    The title position is adjusted upwards if the ``origin`` keyword is set
-    to ``"upper"`` (this is the default).::
+    The title position is adjusted upwards if the ``flip_y`` keyword is set
+    to True (this is the default).::
 
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive
@@ -496,7 +496,20 @@ def matrix_plot(mat, **options):
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()
         1
+
+    The origin keyword is deprecated::
+
+        sage: matrix_plot(identity_matrix(100), origin='lower')
+        doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
+        See https://trac.sagemath.org/27891 for details.
+        Graphics object consisting of 1 graphics primitive
     """
+    if 'origin' in options:
+        from sage.misc.superseded import deprecation
+        deprecation(27891, "the option 'origin' is replaced by 'flip_y'")
+        options['flip_y'] = (options['origin'] != 'lower')
+        del options['origin']
+
     import numpy as np
     import scipy.sparse as scipysparse
     from sage.plot.all import Graphics
@@ -542,10 +555,12 @@ def matrix_plot(mat, **options):
         options['subdivision_options']['boundaries']=orig_mat.get_subdivisions()
 
     # Custom position the title. Otherwise it overlaps with tick labels
-    if options['origin'] == 'upper' and 'title_pos' not in options:
+    if options['flip_y'] and 'title_pos' not in options:
         options['title_pos'] = (0.5, 1.05)
 
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
+    # Keep flip_y for _render_on_subplot
+    options['flip_y'] = g._extra_kwds['flip_y']
     g.add_primitive(MatrixPlot(xy_data_array, xrange, yrange, options))
     return g

@@ -39,21 +39,16 @@ REFERENCES:
 Functions
 ---------
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 # python3
 from __future__ import division, print_function, absolute_import
-
-from builtins import zip
-import six
-from six import itervalues
-from six.moves import range
 
 from sage.misc.cachefunc import cached_function
 
@@ -62,6 +57,7 @@ import sage.arith.all as arith
 from sage.misc.unknown import Unknown
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 
 def group_law(G):
     r"""
@@ -219,8 +215,6 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
         sage: _
         False
     """
-    import operator
-
     identity, mul, inv = group_law(G)
 
     Glist = list(G)
@@ -289,9 +283,9 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
                 where[gg].add(i)
                 tmp_counter[gg] += 1
 
-        if sum(itervalues(tmp_counter)) != k * (k - 1):
+        if sum(tmp_counter.values()) != k * (k - 1):
             if verbose:
-                print("repeated element in the {}-th block {}".format(i,d))
+                print("repeated element in the {}-th block {}".format(i, d))
             return False
 
         # Normalized number of occurrences added to counter
@@ -426,7 +420,7 @@ def df_q_6_1(K, existence=False, check=True):
 
         sage: from sage.combinat.designs.difference_family import is_difference_family, df_q_6_1
         sage: prime_powers = [v for v in range(31,500,30) if is_prime_power(v)]
-        sage: parameters = [v for v in prime_powers if df_q_6_1(GF(v,'a'), existence=True)]
+        sage: parameters = [v for v in prime_powers if df_q_6_1(GF(v,'a'), existence=True) is True]
         sage: parameters
         [31, 151, 181, 211, 241, 271, 331, 361, 421]
         sage: for v in parameters:
@@ -507,7 +501,7 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         sage: for k in range(2,50):
         ....:     for l in reversed(divisors(k*(k-1))):
         ....:         v = k*(k-1)//l + 1
-        ....:         if is_prime_power(v) and radical_difference_set(GF(v,'a'),k,l,existence=True):
+        ....:         if is_prime_power(v) and radical_difference_set(GF(v,'a'),k,l,existence=True) is True:
         ....:             _ = radical_difference_set(GF(v,'a'),k,l)
         ....:             print("{:3} {:3} {:3}".format(v,k,l))
           3   2   1
@@ -878,7 +872,7 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
         ....:     for q in range(k*(k-1)+1, 2000, k*(k-1)):
         ....:          if is_prime_power(q):
         ....:              K = GF(q,'a')
-        ....:              if radical_difference_family(K, k, existence=True):
+        ....:              if radical_difference_family(K, k, existence=True) is True:
         ....:                  list_q.append(q)
         ....:                  _ = radical_difference_family(K,k)
         ....:     print(" ".join(str(p) for p in list_q))
@@ -896,7 +890,6 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
     """
     v = K.cardinality()
     x = K.multiplicative_generator()
-    one = K.one()
     e = k*(k-1)
     if (l*(v-1)) % e:
         raise ValueError("k (k-1) = {} should be a multiple of l (v-1) ={}".format(
@@ -1209,11 +1202,11 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
 
         sage: G11,D11 = hadamard_difference_set_product(G1,D1,G1,D1)
         sage: assert is_difference_family(G11, D11, 256, 120, 56)
-        sage: assert designs.difference_family(256, 120, 56, existence=True)
+        sage: assert designs.difference_family(256, 120, 56, existence=True) is True
 
         sage: G12,D12 = hadamard_difference_set_product(G1,D1,G2,D2)
         sage: assert is_difference_family(G12, D12, 576, 276, 132)
-        sage: assert designs.difference_family(576, 276, 132, existence=True)
+        sage: assert designs.difference_family(576, 276, 132, existence=True) is True
     """
     from sage.categories.cartesian_product import cartesian_product
 
@@ -1379,7 +1372,8 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         ....:     constructions = []
         ....:     for k in range(2,10):
         ....:         for l in range(1,10):
-        ....:             if designs.difference_family(v,k,l,existence=True):
+        ....:             ret = designs.difference_family(v,k,l,existence=True)
+        ....:             if ret is True:
         ....:                 constructions.append((k,l))
         ....:                 _ = designs.difference_family(v,k,l)
         ....:     if constructions:
@@ -1490,7 +1484,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         sage: for N in range(2,21):
         ....:     v = 4*N^2; k = 2*N^2-N; l = N^2-N
         ....:     status = designs.difference_family(v,k,l,existence=True)
-        ....:     print("{:2} {}".format(N,designs.difference_family(v,k,l,explain_construction=True) if status else status))
+        ....:     print("{:2} {}".format(N,designs.difference_family(v,k,l,explain_construction=True) if status is True else status))
         2 McFarland 1973 construction
         3 Turyn 1965 construction
         4 McFarland 1973 construction
@@ -1555,7 +1549,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         elif explain_construction:
             return "The database contains a ({},{},{})-difference family".format(v,k,l)
 
-        vv, blocks = next(six.iteritems(DF[v,k,l]))
+        vv, blocks = next(iter(DF[v,k,l].items()))
 
         # Build the group
         from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -1602,7 +1596,6 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         if existence:
             return Unknown
         raise NotImplementedError("No construction available for ({},{},{})-difference family".format(v,k,l))
-    t = l*(v-1) // e  # number of blocks
 
     # trivial construction
     if k == (v-1) and l == (v-2):
@@ -1666,7 +1659,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         else:
             raise EmptySetError("by McFarland 1989 such difference family does not exist")
 
-    elif len(factorization) == 1 and radical_difference_family(K, k, l, existence=True):
+    elif len(factorization) == 1 and radical_difference_family(K, k, l, existence=True) is True:
         if existence:
             return True
         elif explain_construction:
@@ -1675,7 +1668,10 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
             D = radical_difference_family(K,k,l)
             G = K
 
-    elif len(factorization) == 1 and l == 1 and k == 6 and df_q_6_1(K, existence=True):
+    elif (len(factorization) == 1
+        and l == 1
+        and k == 6
+        and df_q_6_1(K, existence=True) is True):
         if existence:
             return True
         elif explain_construction:

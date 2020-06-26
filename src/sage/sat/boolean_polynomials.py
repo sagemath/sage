@@ -25,9 +25,6 @@ from sage.sat.converters import ANF2CNFConverter
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
-import six
-
-
 def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
     """
     Solve system of Boolean polynomials ``F`` by solving the
@@ -243,7 +240,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     if not isinstance(solver, SatSolver):
         solver_kwds = {}
-        for k, v in six.iteritems(kwds):
+        for k, v in kwds.items():
             if k.startswith("s_"):
                 solver_kwds[k[2:]] = v
 
@@ -256,7 +253,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     if not isinstance(converter, ANF2CNFConverter):
         converter_kwds = {}
-        for k, v in six.iteritems(kwds):
+        for k, v in kwds.items():
             if k.startswith("c_"):
                 converter_kwds[k[2:]] = v
 
@@ -362,7 +359,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         from sage.sat.solvers.cryptominisat import CryptoMiniSat as solver
 
     solver_kwds = {}
-    for k, v in six.iteritems(kwds):
+    for k, v in kwds.items():
         if k.startswith("s_"):
             solver_kwds[k[2:]] = v
 
@@ -374,7 +371,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         from sage.sat.converters.polybori import CNFEncoder as converter
 
     converter_kwds = {}
-    for k, v in six.iteritems(kwds):
+    for k, v in kwds.items():
         if k.startswith("c_"):
             converter_kwds[k[2:]] = v
 

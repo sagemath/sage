@@ -40,10 +40,6 @@ Methods
 # **************************************************************************
 from __future__ import print_function
 
-import six
-from six import itervalues
-from six.moves import range
-
 from sage.rings.integer import Integer
 from sage.misc.latex import latex
 from sage.sets.set import Set
@@ -482,8 +478,8 @@ class IncidenceStructure(object):
 
         if A == B:
             if certificate:
-                B_canon_rev = {y:x for x,y in six.iteritems(B_canon)}
-                return {x:B_canon_rev[xint] for x,xint in six.iteritems(A_canon)}
+                B_canon_rev = {y:x for x,y in B_canon.items()}
+                return {x:B_canon_rev[xint] for x,xint in A_canon.items()}
             else:
                 return True
         else:
@@ -890,7 +886,7 @@ class IncidenceStructure(object):
                 for s in combinations(b,size):
                     d[s]+=1
             if self._point_to_index:
-                return {tuple([self._points[x] for x in s]):v for s,v in six.iteritems(d)}
+                return {tuple([self._points[x] for x in s]):v for s,v in d.items()}
             else:
                 return d
 
@@ -1189,6 +1185,40 @@ class IncidenceStructure(object):
             A = self.incidence_matrix()
             return BipartiteGraph(A)
 
+    def is_berge_cyclic(self):
+        r"""
+        Check whether ``self`` is a Berge-Cyclic uniform hypergraph.
+
+        A `k`-uniform Berge cycle (named after Claude Berge) of length `\ell`
+        is a cyclic list of distinct `k`-sets `F_1,\ldots,F_\ell`, `\ell>1`,
+        and distinct vertices `C = \{v_1,\ldots,v_\ell\}` such that for each
+        `1\le i\le \ell`, `F_i` contains `v_i` and `v_{i+1}` (where `v_{l+1} =
+        v_1`).
+
+        A uniform hypergraph is Berge-cyclic if its incidence graph is cyclic.
+        It is called "Berge-acyclic" otherwise.
+
+        For more information, see [Fag1983]_ and :wikipedia:`Hypergraph`.
+
+        EXAMPLES::
+
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3 ,4]]).is_berge_cyclic()
+            True
+            sage: Hypergraph(6, [[1, 2, 3], [3 ,4, 5]]).is_berge_cyclic()
+            False
+
+        TESTS::
+
+            sage: Hypergraph(5, [[1, 2, 3], [2, 3]]).is_berge_cyclic()
+            Traceback (most recent call last):
+            ...
+            TypeError: Berge cycles are defined for uniform hypergraphs only
+        """
+        if not self.is_uniform():
+            raise TypeError("Berge cycles are defined for uniform hypergraphs only")
+
+        return not self.incidence_graph().is_forest()
+
     def complement(self,uniform=False):
         r"""
         Return the complement of the incidence structure.
@@ -1405,7 +1435,7 @@ class IncidenceStructure(object):
         p.solve(log=verbose)
 
         return [[self._points[x] for x in self._blocks[i]]
-                for i, v in six.iteritems(p.get_values(b)) if v]
+                for i, v in p.get_values(b).items() if v]
 
     def is_t_design(self, t=None, v=None, k=None, l=None, return_parameters=False):
         r"""
@@ -1895,7 +1925,7 @@ class IncidenceStructure(object):
             False
         """
         if self._classes is None:
-            degrees = set(itervalues(self.degrees()))
+            degrees = set(self.degrees().values())
             if len(degrees) != 1:
                 self._classes = False
             else:
@@ -1928,7 +1958,7 @@ class IncidenceStructure(object):
                 else:
                     # each class is stored as the list of indices of its blocks
                     self._classes = [[] for _ in range(n_classes)]
-                    for (t, i), v in six.iteritems(p.get_values(b)):
+                    for (t, i), v in p.get_values(b).items():
                         if v:
                             self._classes[t].append(self._blocks[i])
 
@@ -2040,7 +2070,7 @@ class IncidenceStructure(object):
 
         col = [[] for i in range(k)]
 
-        for (x,i),v in six.iteritems(p.get_values(b)):
+        for (x,i),v in p.get_values(b).items():
             if v:
                 col[i].append(self._points[x])
 

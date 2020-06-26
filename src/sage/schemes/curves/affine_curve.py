@@ -117,7 +117,8 @@ from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
-from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
+from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
+                                                  AlgebraicScheme_subscheme_affine_field)
 
 from .curve import Curve_generic
 
@@ -785,7 +786,7 @@ class AffinePlaneCurve(AffineCurve):
         return H([para[1]/para[0], para[2]/para[0]])
 
 
-class AffineCurve_field(AffineCurve):
+class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
     """
     Affine curves over fields.
     """
@@ -1599,6 +1600,63 @@ class AffineCurve_field(AffineCurve):
         t_maps = [tuple(res[i][1]) for i in range(len(res))]
         p_maps = [res[i][2] for i in range(len(res))]
         return tuple([tuple(patches), tuple(t_maps), tuple(p_maps)])
+
+    def tangent_line(self, p):
+        """
+        Return the tangent line at the point ``p``.
+
+        INPUT:
+
+        - ``p`` -- a rational point of the curve
+
+        EXAMPLES::
+
+            sage: A3.<x,y,z> = AffineSpace(3, QQ)
+            sage: C = Curve([x + y + z, x^2 - y^2*z^2 + z^3])
+            sage: p = C(0,0,0)
+            sage: C.tangent_line(p)
+            Traceback (most recent call last):
+            ...
+            ValueError: the curve is not smooth at (0, 0, 0)
+            sage: p = C(1,0,-1)
+            sage: C.tangent_line(p)
+            Affine Curve over Rational Field defined by x + y + z, 2*x + 3*z + 1
+
+        We check that the tangent line at ``p`` is the tangent space at ``p``,
+        translated to ``p``. ::
+
+            sage: Tp = C.tangent_space(p)
+            sage: Tp
+            Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+              x + y + z,
+              2*x + 3*z
+            sage: phi = A3.translation(A3.origin(), p)
+            sage: T = phi * Tp.embedding_morphism()
+            sage: T.image()
+            Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+              -2*y + z + 1,
+              x + y + z
+            sage: _ == C.tangent_line(p)
+            True
+
+        """
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        gens = R.gens()
+
+        Tp = self.tangent_space(p)
+
+        if Tp.dimension() > 1:
+            raise ValueError("the curve is not smooth at {}".format(p))
+
+        from sage.schemes.curves.all import Curve
+
+        # translate to p
+        I = []
+        for poly in Tp.defining_polynomials():
+            I.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+
+        return Curve(I, A)
 
 
 class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):

@@ -12,7 +12,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import integer_types, iteritems
 
 from copy import copy
 from sage.misc.abstract_method import abstract_method
@@ -545,7 +544,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             sage: x^0
             1
         """
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("Argument n (= {}) must be an integer".format(n))
         if n < 0:
             raise ValueError("Argument n (= {}) must be positive".format(n))
@@ -553,7 +552,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             return self
         if n == 0:
             return self.parent().one()
-        return self.__class__(self.parent(), {k:v*n for k,v in iteritems(self._monomial)})
+        return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.items()})
 
     def __floordiv__(self, elt):
         """
@@ -581,7 +580,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             ValueError: invalid cancellation
         """
         d = copy(self._monomial)
-        for k, v in iteritems(elt._monomial):
+        for k, v in elt._monomial.items():
             if k not in d:
                 raise ValueError("invalid cancellation")
             diff = d[k] - v
@@ -961,7 +960,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
                     d[k] = v
             x = d
         if isinstance(x, dict):
-            x = {k: v for k, v in iteritems(x) if v != 0}
+            x = {k: v for k, v in x.items() if v != 0}
         return IndexedMonoid._element_constructor_(self, x)
 
     Element = IndexedFreeAbelianMonoidElement

@@ -75,7 +75,6 @@ Libraries of algorithms
    sage/graphs/matchpoly
    sage/graphs/genus
    sage/graphs/lovasz_theta
-   sage/graphs/linearextensions
    sage/graphs/schnyder
    sage/graphs/planarity
    sage/graphs/traversals

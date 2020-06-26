@@ -1,0 +1,3 @@
+# --force-lib because we dont want sage -t to compile giacpy.pyx
+#             we  only use the test suite to test giacpy.so
+sage -t --verbose --force-lib src/giacpy_sage.pyx

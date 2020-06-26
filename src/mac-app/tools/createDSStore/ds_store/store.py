@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
+from __future__ import unicode_literals, print_function, division
 
-import binascii
 import struct
 import biplist
 import mac_alias

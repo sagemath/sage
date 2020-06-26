@@ -14,6 +14,7 @@ decoders. The following modules provide the base classes defining them.
    :maxdepth: 1
 
    sage/coding/abstract_code
+   sage/coding/linear_code_no_metric
    sage/coding/linear_code
    sage/coding/channel
    sage/coding/encoder

@@ -88,12 +88,18 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
 
     # Figuring out if we are using clang instead of gcc.
+    AC_LANG_PUSH(C)
     AX_COMPILER_VENDOR()
     IS_REALLY_GCC=no
     if test "x$ax_cv_c_compiler_vendor" = xgnu ; then
         IS_REALLY_GCC=yes
     fi
+    AC_LANG_POP()
 
+    # Save the value of CXX without special flags to enable C++11 support
+    AS_VAR_SET([SAGE_CXX_WITHOUT_STD], [$CXX])
+    AC_SUBST(SAGE_CXX_WITHOUT_STD)
+    # Modify CXX to include an option that enables C++11 support if necessary
     AX_CXX_COMPILE_STDCXX_11([], optional)
     if test $HAVE_CXX11 != 1; then
         SAGE_MUST_INSTALL_GCC([your C++ compiler does not support C++11])
@@ -140,6 +146,11 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
                 [[[0-3]].*|4.[[0-7]].*], [
                     # Install our own GCC if the system-provided one is older than gcc-4.8.
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
+                ],
+                [1?.*], [
+                    # Install our own GCC if the system-provided one is newer than 9.x.
+                    # See https://trac.sagemath.org/ticket/29456
+                    SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ])
         fi
 
@@ -196,7 +207,7 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     CRTI=`$CC -print-file-name=crti.o 2>/dev/null || true`
     if test -n "$CRTI" ; then
         SAGE_CRTI_DIR=$(dirname -- "$CRTI")
-        if test "$SAGE_CRTI_DIR" == "." ; then
+        if test "$SAGE_CRTI_DIR" = "." ; then
             SAGE_CRTI_DIR=
         fi
     fi

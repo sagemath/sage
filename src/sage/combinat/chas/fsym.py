@@ -339,7 +339,6 @@ class FSymBases(Category_realization_of_parent):
                 sage: parent(z)
                 Rational Field
             """
-            x = self(x)
             y = self.dual_basis()(y)
             return self.base_ring().sum(coeff * y[t] for (t, coeff) in x)
 

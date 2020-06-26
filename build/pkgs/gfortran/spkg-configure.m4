@@ -6,11 +6,15 @@ SAGE_SPKG_CONFIGURE([gfortran], [
     # This helps verify the compiler works too, so if some idiot sets FC to
     # /usr/bin/ls, we will at least know it's not a working Fortran
     # compiler.
-    AC_FC_FREEFORM([], [
+    AC_FC_FREEFORM([SAGE_HAVE_FC_FREEFORM=yes], [
 	AC_MSG_NOTICE([Your Fortran compiler does not accept free-format source code])
         AC_MSG_NOTICE([which means the compiler is either seriously broken, or])
         AC_MSG_NOTICE([is too old to build Sage.])
-        sage_spkg_install_gfortran=yes])
+        SAGE_HAVE_FC_FREEFORM=no])
+
+    AS_VAR_IF(SAGE_HAVE_FC_FREEFORM, [no], [
+        AS_VAR_SET(sage_spkg_install_gfortran, [yes])
+    ])
 
     # Special case: If we are already installing gcc then don't install
     # gfortran since it's included

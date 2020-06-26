@@ -25,6 +25,7 @@ Comprehensive Module list
     sage/combinat/baxter_permutations
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
+    sage/combinat/blob_algebra
     sage/combinat/cartesian_product
     sage/combinat/catalog_partitions
     sage/combinat/chas/__init__
@@ -119,6 +120,7 @@ Comprehensive Module list
     sage/combinat/enumeration_mod_permgroup
     sage/combinat/expnums
     sage/combinat/family
+    sage/combinat/fast_vector_partitions
     sage/combinat/finite_state_machine
     sage/combinat/finite_state_machine_generators
     sage/combinat/fqsym

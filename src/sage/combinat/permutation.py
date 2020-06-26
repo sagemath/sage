@@ -229,14 +229,9 @@ Classes and methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-
-from builtins import zip
-from six.moves import range
-
-from six import itervalues
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -246,9 +241,9 @@ from sage.categories.finite_weyl_groups import FiniteWeylGroups
 from sage.categories.finite_permutation_groups import FinitePermutationGroups
 from sage.structure.list_clone import ClonableArray
 from sage.structure.global_options import GlobalOptions
-from sage.interfaces.all import gap
+from sage.libs.gap.libgap import libgap
 from sage.rings.all import ZZ, Integer, PolynomialRing
-from sage.arith.all import factorial
+from sage.arith.all import factorial, multinomial
 from sage.matrix.matrix_space import MatrixSpace
 from sage.combinat.tools import transitive_ideal
 from sage.combinat.composition import Composition
@@ -668,11 +663,11 @@ class Permutation(CombinatorialElement):
             redword = self.reduced_word()
             if not redword:
                 return self.parent().options.latex_empty_str
-            return " ".join("%s_{%s}"%(let, i) for i in redword)
+            return " ".join("%s_{%s}" % (let, i) for i in redword)
         if display == "twoline":
-            return "\\begin{pmatrix} %s \\\\ %s \\end{pmatrix}"%(
-                    " & ".join("%s"%i for i in range(1, len(self._list)+1)),
-                    " & ".join("%s"%i for i in self._list))
+            return "\\begin{pmatrix} %s \\\\ %s \\end{pmatrix}" % (
+                    " & ".join("%s" % i for i in range(1, len(self._list)+1)),
+                    " & ".join("%s" % i for i in self._list))
         if display == "list":
             return repr(self._list)
         if display == "cycle":
@@ -1885,7 +1880,7 @@ class Permutation(CombinatorialElement):
             :meth:`ishift`, :meth:`iswitch`
         """
         if i not in range(2, len(self)):
-            raise ValueError("i (= %s) must be between 2 and n-1"%i)
+            raise ValueError("i (= %s) must be between 2 and n-1" % i)
         pos_i   = self.index(i)
         pos_ip1 = self.index(i+1)
         pos_im1 = self.index(i-1)
@@ -5312,7 +5307,7 @@ class Permutations(UniqueRepresentation, Parent):
                     if k is None:
                         return Permutations_mset(n)
                     else:
-                        return Permutations_msetk(n,k)
+                        return Permutations_msetk(n, k)
         elif 'descents' in kwargs:
             #Descent positions specified
             if isinstance(kwargs['descents'], tuple):
@@ -5507,8 +5502,8 @@ class Permutations_nk(Permutations):
             sage: Permutations(3,4).cardinality()
             0
         """
-        if self._k <= self.n and self._k >= 0:
-            return factorial(self.n) // factorial(self.n-self._k)
+        if 0 <= self._k <= self.n:
+            return factorial(self.n) // factorial(self.n - self._k)
         return ZZ.zero()
 
     def random_element(self):
@@ -5519,6 +5514,7 @@ class Permutations_nk(Permutations):
             [1, 2]
         """
         return sample(range(1, self.n+1), self._k)
+
 
 class Permutations_mset(Permutations):
     r"""
@@ -5671,6 +5667,8 @@ class Permutations_mset(Permutations):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations([1,2,2]).cardinality()
@@ -5684,11 +5682,8 @@ class Permutations_mset(Permutations):
         for i in mset_list:
             d[i] = d.get(i, 0) + 1
 
-        c = factorial(len(lmset))
-        for i in itervalues(d):
-            if i != 1:
-                c //= factorial(i)
-        return ZZ(c)
+        return ZZ(multinomial(d.values()))
+
 
 class Permutations_set(Permutations):
     """
@@ -5796,6 +5791,8 @@ class Permutations_set(Permutations):
 
     def cardinality(self):
         """
+        Return the cardinality of the set.
+
         EXAMPLES::
 
             sage: Permutations([1,2,3]).cardinality()
@@ -5860,7 +5857,8 @@ class Permutations_msetk(Permutations_mset):
             sage: [2,1] in p
             True
         """
-        if len(x) != self._k: return False
+        if len(x) != self._k:
+            return False
         s = list(self.mset)
         for i in x:
             if i in s:
@@ -5876,7 +5874,18 @@ class Permutations_msetk(Permutations_mset):
             sage: Permutations([1,2,2],2)
             Permutations of the multi-set [1, 2, 2] of length 2
         """
-        return "Permutations of the multi-set %s of length %s"%(list(self.mset), self._k)
+        return "Permutations of the multi-set %s of length %s" % (list(self.mset), self._k)
+
+    def cardinality(self):
+        """
+        Return the cardinality of the set.
+
+        EXAMPLES::
+
+            sage: Permutations([1,2,2],2).cardinality()
+            3
+        """
+        return ZZ.sum(1 for z in self)
 
     def __iter__(self):
         """
@@ -5888,9 +5897,10 @@ class Permutations_msetk(Permutations_mset):
         mset = self.mset
         lmset = list(mset)
         mset_list = [lmset.index(x) for x in lmset]
-        indices = eval(gap.eval('Arrangements(%s,%s)'%(mset_list, self._k)))
+        indices = libgap.Arrangements(mset_list, self._k).sage()
         for ktuple in indices:
             yield self.element_class(self, [lmset[x] for x in ktuple])
+
 
 class Permutations_setk(Permutations_set):
     """

@@ -34,7 +34,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.rings.integer_ring import ZZ
 import os
@@ -254,7 +253,7 @@ class FourTi2(object):
         if project is None:
             project = self.temp_project()
 
-        for ext, value in iteritems(kwds):
+        for ext, value in kwds.items():
             if value is None:
                 continue
             if ext == "project" or ext == "self":

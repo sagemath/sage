@@ -420,17 +420,17 @@ cdef class GLPKBackend(GenericBackend):
             sage: p.add_constraint(10 * x[0] <= 1)
             sage: p.add_constraint(5 * x[1] <= 1)
             sage: p.set_objective(x[0] + x[1])
-            sage: p.solve()
+            sage: p.solve() # tol 1e-14
             0.3
             sage: p.get_backend().set_verbosity(2)
-            sage: p.solve()
+            sage: p.solve() # tol 1e-14
             *     2:   objval =                    0.3   (0)
             *     2:   objval =                    0.3   (0)
             0.3
             sage: p.get_backend().set_verbosity(3)
-            sage: p.solve()
+            sage: p.solve() # tol 1e-14
             glp_exact: 2 rows, 2 columns, 2 non-zeros
-            GNU MP bignum library is being used
+            ...
             *     2:   objval =                    0.3   (0)
             *     2:   objval =                    0.3   (0)
             OPTIMAL SOLUTION FOUND

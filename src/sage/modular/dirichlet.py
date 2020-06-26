@@ -57,7 +57,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six.moves import range, zip
 
 import sage.categories.all                  as cat
 from sage.misc.all import prod

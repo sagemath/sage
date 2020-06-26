@@ -204,13 +204,13 @@ class FormalSum(ModuleElement):
         # sage.misc.misc.repr_lincomb and use instead:
         # return sage.misc.misc.repr_lincomb([[t,c] for c,t in self], is_latex=True)
 
-    def _richcmp_(left, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare ``left`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- a :class:`FormalSum` with the same parent
+        - ``other`` -- a :class:`FormalSum` with the same parent
 
         - ``op`` -- a comparison operator
 
@@ -228,7 +228,7 @@ class FormalSum(ModuleElement):
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
         """
-        return richcmp(left._data, right._data, op)
+        return richcmp(self._data, other._data, op)
 
     def _neg_(self):
         """

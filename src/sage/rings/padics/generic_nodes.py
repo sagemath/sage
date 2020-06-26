@@ -18,9 +18,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six import iteritems
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.rings.padics.local_generic import LocalGeneric
 from sage.rings.padics.padic_generic import pAdicGeneric
@@ -568,6 +567,11 @@ class pAdicLatticeGeneric(pAdicGeneric):
             1 + O(2^10)
             sage: x - y
             O(2^50)
+
+        TESTS::
+
+            sage: R(x, prec=5)
+            1 + O(2^5)
         """
         # We first try the _copy method which is sharp on precision
         try:
@@ -664,7 +668,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         ans = len(elts)*[None]
         selfprec = self._precision
         # First the elements with precision lattice
-        for (prec, L) in iteritems(elt_by_prec):
+        for (prec, L) in elt_by_prec.items():
             if prec is selfprec:
                 # Here, we use the _copy method in order
                 # to be sharp on precision

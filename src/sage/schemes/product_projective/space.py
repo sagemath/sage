@@ -40,7 +40,6 @@ We can also construct the product by specifying the dimensions and the base ring
 #*****************************************************************************
 
 
-import six
 from sage.misc.cachefunc import cached_method
 from sage.misc.all import prod
 from sage.rings.all import (PolynomialRing, QQ, Integer, CommutativeRing)
@@ -148,7 +147,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             raise ValueError("must be a commutative ring")
         from sage.structure.category_object import normalize_names
         n_vars = sum(d+1 for d in n)
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             names = normalize_names(n_vars, names)
         else:
             name_list = list(names)
@@ -1205,7 +1204,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         m = self.num_components()
         iters = [ self[i].points_of_bounded_height(bound=B, tolerance=tol, precision=prec) for i in range(m) ]
         dim = [self[i].dimension_relative() + 1 for i in range(m)]
-        
+
         dim_prefix = [0, dim[0]] # prefixes dim list
         for i in range(1, len(dim)):
             dim_prefix.append(dim_prefix[i] + dim[i])

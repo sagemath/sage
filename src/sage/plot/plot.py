@@ -573,8 +573,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import iteritems
 
 from functools import reduce
 
@@ -589,7 +587,7 @@ import sage.misc.misc
 from sage.arith.srange import srange
 
 from sage.misc.randstate import current_randstate #for plot adaptive refinement
-from math import sin, cos, pi #for polar_plot
+from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
 
@@ -1947,6 +1945,8 @@ def plot(funcs, *args, **kwds):
     elif 'color' in kwds:
         kwds['rgbcolor'] = kwds.pop('color', (0,0,1)) # take blue as default ``rgbcolor``
     G_kwds = Graphics._extract_kwds_for_show(kwds, ignore=['xmin', 'xmax'])
+    if 'scale' in G_kwds:
+        kwds['scale'] = G_kwds['scale'] # pass scaling information to _plot too
 
     original_opts = kwds.pop('__original_opts', {})
     do_show = kwds.pop('show',False)
@@ -2275,21 +2275,44 @@ def _plot(funcs, xrange, parametric=False,
         initial_points = reduce(lambda a,b: a+b,
                                 [[x - epsilon, x + epsilon]
                                  for x in excluded_points], [])
-        data = generate_plot_points(f, xrange, plot_points,
+    else:
+        initial_points = None
+    
+    # If we are a log scale plot on the x axis, do a change of variables
+    # so we sample the range in log scale
+    is_log_scale = ('scale' in options.keys() and
+                    not parametric and
+                    options['scale'] in ['loglog', 'semilogx'])
+    if is_log_scale:
+        f_exp = lambda x: f(exp(x))
+        log_xrange = (log(xrange[0]), log(xrange[1]))
+        if initial_points is None:
+            log_initial_points = None
+        else:
+            log_initial_points = [log(x) for x in initial_points]
+        data = generate_plot_points(f_exp, log_xrange, plot_points,
                                     adaptive_tolerance, adaptive_recursion,
-                                    randomize, initial_points)
+                                    randomize, log_initial_points)
+        average_distance_between_points = abs(log_xrange[1] - log_xrange[0])/plot_points
     else:
         data = generate_plot_points(f, xrange, plot_points,
                                     adaptive_tolerance, adaptive_recursion,
-                                    randomize)
-
+                                    randomize, initial_points)
+        average_distance_between_points = abs(xrange[1] - xrange[0])/plot_points
 
     for i in range(len(data)-1):
         # If the difference between consecutive x-values is more than
-        # 2 times the difference between two consecutive plot points, then
+        # 2 times the average difference between two consecutive plot points, then
         # add an exclusion point.
-        if abs(data[i+1][0] - data[i][0]) > 2*abs(xmax - xmin)/plot_points:
+        if abs(data[i+1][0] - data[i][0]) > 2*average_distance_between_points:
             excluded_points.append((data[i][0] + data[i+1][0])/2)
+    
+    # If we did a change in variables, undo it now
+    if is_log_scale:
+        for i,(a,fa) in enumerate(data):
+            data[i] = (exp(a), fa)
+        for i,p in enumerate(excluded_points):
+            excluded_points[i] = exp(p)
 
     if parametric:
         # We need the original x-values to be able to exclude points in parametric plots
@@ -2999,9 +3022,9 @@ def list_plot(data, plotjoined=False, **kwargs):
                     "and 'y' against each other, use 'list_plot(list(zip(x,y)))'.")
     if isinstance(data, dict):
         if plotjoined:
-            list_data = sorted(list(iteritems(data)))
+            list_data = sorted(list(data.items()))
         else:
-            list_data = list(iteritems(data))
+            list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
     try:
         from sage.rings.all import RDF
@@ -3122,6 +3145,20 @@ def plot_semilogx(funcs, *args, **kwds):
     .. PLOT::
 
         g = plot_semilogx(exp, (1,10), base=2) # with base 2
+        sphinx_plot(g)
+
+    ::
+
+        sage: s = var('s') # Samples points logarithmically so graph is smooth
+        sage: f = 4000000/(4000000 + 4000*s*i - s*s)
+        sage: plot_semilogx(20*log(abs(f), 10), (s, 1, 1e6))
+        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        s = var('s') # Samples points logarithmically so graph is smooth
+        f = 4000000/(4000000 + 4000*s*i - s*s)
+        g = plot_semilogx(20*log(abs(f), 10), (s, 1, 1e6))
         sphinx_plot(g)
 
     """

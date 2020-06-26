@@ -233,8 +233,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six import iteritems
-from six.moves import range
 
 from sage.interfaces.all import (singular as singular_default,
                                  macaulay2 as macaulay2_default,
@@ -529,7 +527,7 @@ class MPolynomialIdeal_singular_base_repr:
 
         if get_verbose()>=2:
             opt['prot'] = True
-        for name, value in iteritems(kwds):
+        for name, value in kwds.items():
             if value is not None:
                 opt[name] = value
 
@@ -1428,7 +1426,7 @@ class MPolynomialIdeal_singular_repr(
         if get_verbose() >= 2:
             kwds['prot'] = True
 
-        for o, v in iteritems(kwds):
+        for o, v in kwds.items():
             o = _options_py_to_singular.get(o,o)
             if v:
                 if o in ['degBound','multBound']:
@@ -2888,11 +2886,24 @@ class MPolynomialIdeal_singular_repr(
             raise ValueError("'algorithm' must be one of 'sage' or 'singular'")
 
     @require_field
-    def _normal_basis_libsingular(self):
+    def _normal_basis_libsingular(self, degree, weights=None):
         r"""
-        Returns the normal basis for a given groebner basis. It will use
-        the Groebner Basis as computed by
+        Return the normal basis for a given Groebner basis.
+
+        This will use the Groebner basis as computed by
         ``MPolynomialIdeal._groebner_basis_libsingular()``.
+
+        INPUT:
+
+        - ``degree`` -- ``None`` or integer
+
+        - ``weights`` -- tuple of positive integers (default: ``None``); if not
+          ``None``, compute the degree with respect to these weights
+
+        OUTPUT:
+
+        If ``degree`` is an integer, only the monomials of the given degree in
+        the normal basis.
 
         EXAMPLES::
 
@@ -2900,26 +2911,58 @@ class MPolynomialIdeal_singular_repr(
             sage: I = R.ideal(x^2-2*x*z+5, x*y^2+y*z+1, 3*y^2-8*x*z)
             sage: I.normal_basis() #indirect doctest
             [z^2, y*z, x*z, z, x*y, y, x, 1]
+            sage: J = R.ideal(x^2-2*x*z+5)
+            sage: J.normal_basis(3)  # indirect doctest
+            [z^3, y*z^2, x*z^2, y^2*z, x*y*z, y^3, x*y^2]
+            sage: [J._normal_basis_libsingular(d, (2, 2, 3)) for d in (0..8)]
+            [[1], [], [x, y], [z], [x*y, y^2], [x*z, y*z], [x*y^2, y^3, z^2],
+             [x*y*z, y^2*z], [x*y^3, y^4, x*z^2, y*z^2]]
+
+        TESTS:
+
+        Check that zero is not included in trivial results::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: I = R.ideal(x^2-2*x*z+5, x*y^2+y*z+1, 3*y^2-8*x*z)
+            sage: I._normal_basis_libsingular(5)
+            []
         """
         from sage.rings.polynomial.multi_polynomial_ideal_libsingular import kbase_libsingular
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         gb = self._groebner_basis_libsingular()
-
-        return PolynomialSequence(self.ring(), kbase_libsingular(self.ring().ideal(gb)), immutable=True)
+        J = self.ring().ideal(gb)
+        if weights is None:
+            res = kbase_libsingular(J, degree)
+        else:
+            from sage.libs.singular.function_factory import ff
+            res = ff.weightKB(J, -1 if degree is None else degree,
+                              tuple(weights), attributes={J: {'isSB': 1}})
+        if len(res) == 1 and res[0].is_zero():
+            res = []
+        return PolynomialSequence(self.ring(), res, immutable=True)
 
     @require_field
     @handle_AA_and_QQbar
-    def normal_basis(self, algorithm='libsingular', singular=singular_default):
+    def normal_basis(self, degree=None, algorithm='libsingular',
+                     singular=singular_default):
         """
-        Returns a vector space basis (consisting of monomials) of the
-        quotient ring by the ideal, resp. of a free module by the module,
-        in case it is finite dimensional and if the input is a standard
-        basis with respect to the ring ordering.
+        Return a vector space basis of the quotient ring of this ideal.
 
         INPUT:
 
-        ``algorithm`` - defaults to use libsingular, if it is anything
-        else we will use the ``kbase()`` command
+        - ``degree`` -- integer (default: ``None``)
+
+        - ``algorithm`` -- string (default: ``"libsingular"``); if not the
+          default, this will use the ``kbase()`` or ``weightKB()`` command from
+          Singular
+
+        - ``singular`` -- the singular interpreter to use when ``algorithm`` is
+          not ``"libsingular"`` (default: the default instance)
+
+        OUTPUT:
+
+        Monomials in the basis. If ``degree`` is given, only the monomials of
+        the given degree are returned.
 
         EXAMPLES::
 
@@ -2930,23 +2973,79 @@ class MPolynomialIdeal_singular_repr(
             sage: I.normal_basis(algorithm='singular')
             [y*z^2, z^2, y*z, z, x*y, y, x, 1]
 
+        The result can be restricted to monomials of a chosen degree, which is
+        particularly useful when the quotient ring is not finite-dimensional as
+        a vector space.  ::
+
+            sage: J = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5)
+            sage: J.dimension()
+            1
+            sage: [J.normal_basis(d) for d in (0..3)]
+            [[1], [z, y, x], [z^2, y*z, x*z, x*y], [z^3, y*z^2, x*z^2, x*y*z]]
+            sage: [J.normal_basis(d, algorithm='singular') for d in (0..3)]
+            [[1], [z, y, x], [z^2, y*z, x*z, x*y], [z^3, y*z^2, x*z^2, x*y*z]]
+
+        In case of a polynomial ring with a weighted term order, the degree of
+        the monomials is taken with respect to the weights.  ::
+
+            sage: T = TermOrder('wdegrevlex', (1, 2, 3))
+            sage: R.<x,y,z> = PolynomialRing(QQ, order=T)
+            sage: B = R.ideal(x*y^2 + x^5, z*y + x^3*y).normal_basis(9); B
+            [x^2*y^2*z, x^3*z^2, x*y*z^2, z^3]
+            sage: all(f.degree() == 9 for f in B)
+            True
+
         TESTS:
 
         Check that this method works over QQbar (:trac:`25351`)::
 
-            sage: P.<x,y,z> = QQbar[]
+            sage: R.<x,y,z> = QQbar[]
             sage: I = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5, x*z-1)
             sage: I.normal_basis()
             [y*z^2, z^2, y*z, z, x*y, y, x, 1]
+            sage: J = R.ideal(x^2+y^2+z^2-4, x^2+2*y^2-5)
+            sage: [J.normal_basis(d) for d in (0..3)]
+            [[1], [z, y, x], [z^2, y*z, x*z, x*y], [z^3, y*z^2, x*z^2, x*y*z]]
+
+        Check the option ``algorithm="singular"`` with a weighted term order::
+
+            sage: T = TermOrder('wdegrevlex', (1, 2, 3))
+            sage: S.<x,y,z> = PolynomialRing(GF(2), order=T)
+            sage: S.ideal(x^6 + y^3 + z^2).normal_basis(6, algorithm='singular')
+            [x^4*y, x^2*y^2, y^3, x^3*z, x*y*z, z^2]
+
+        Check the deprecation::
+
+            sage: R.<x,y> = PolynomialRing(QQ)
+            sage: _ = R.ideal(x^2+y^2, x*y+2*y).normal_basis('singular')
+            doctest:...: DeprecationWarning: "algorithm" should be used as keyword argument
+            See https://trac.sagemath.org/29543 for details.
         """
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        if isinstance(degree, str):
+            from sage.misc.superseded import deprecation
+            deprecation(29543,
+                        '"algorithm" should be used as keyword argument')
+            algorithm = degree
+            degree = None
+
+        weights = tuple(x.degree() for x in self.ring().gens())
+        if all(w == 1 for w in weights):
+            weights = None
 
         if algorithm == 'libsingular':
-            return self._normal_basis_libsingular()
+            return self._normal_basis_libsingular(degree, weights=weights)
         else:
             gb = self.groebner_basis()
             R = self.ring()
-            return PolynomialSequence(R, [R(f) for f in singular.kbase(R.ideal(gb))], immutable=True)
+            if degree is None:
+                res = singular.kbase(R.ideal(gb))
+            elif weights is None:
+                res = singular.kbase(R.ideal(gb), int(degree))
+            else:
+                res = singular.weightKB(R.ideal(gb), int(degree),
+                                        singular(weights, type='intvec'))
+            return PolynomialSequence(R, [R(f) for f in res], immutable=True)
 
 
 class MPolynomialIdeal_macaulay2_repr:
@@ -3660,7 +3759,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
                 if other_new.groebner_basis.is_in_cache():
                     r = other_new.groebner_basis()
                 elif len(other_new._gb_by_ordering):
-                    o, r = next(iteritems(other_new._gb_by_ordering))
+                    o, r = next(iter(other_new._gb_by_ordering.items()))
                     l = self.change_ring(R.change_ring(order=o)).gens()
                 else: # use easy GB otherwise
                     newR = R.change_ring(order="degrevlex")
@@ -4621,15 +4720,12 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         from sage.misc.misc_c import prod
         from sage.rings.power_series_ring import PowerSeriesRing
 
-        R = PowerSeriesRing(QQ,'z', default_prec=sum(degs))
-        z = R.gen()
-        dreg = 0
+        z = PowerSeriesRing(QQ, 'z', default_prec=sum(degs)).gen()
         s = prod([1-z**d for d in degs]) / (1-z)**n
         for dreg in range(sum(degs)):
             if s[dreg] <= 0:
                 return ZZ(dreg)
-        else:
-            raise ValueError("BUG: Could not compute the degree of semi-regularity")
+        raise ValueError("BUG: Could not compute the degree of semi-regularity")
 
     def plot(self, *args, **kwds):
         """

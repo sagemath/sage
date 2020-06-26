@@ -171,7 +171,7 @@ cdef class Matroid(SageObject):
     cpdef _is_4connected_shifting(self, certificate=*)
     cpdef _shifting_all(self, X, P_rows, P_cols, Q_rows, Q_cols, m)
     cpdef _shifting(self, X, X_1, Y_2, X_2, Y_1, m)
-    cpdef is_3connected(self, certificate=*, algorithm=*, separation=*)
+    cpdef is_3connected(self, certificate=*, algorithm=*)
     cpdef is_4connected(self, certificate=*, algorithm=*)
     cpdef _is_3connected_CE(self, certificate=*)
     cpdef _is_3connected_BC(self, certificate=*)

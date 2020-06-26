@@ -65,9 +65,9 @@ cdef int celement_destruct(ZZ_pEX_c *e, cparent parent):
         sage: P.<x> = PolynomialRing(GF(next_prime(2**60)**3,'a'),implementation='NTL')
         sage: del x
     """
-    if parent != NULL:
-        parent[0].zzpc[0].restore()
-        parent[0].zzpec[0].restore()
+    # do not call restore here
+    # 1) the NTL context might have already been destroyed when exiting Python
+    # 2) you better not make any NTL calls after destruct, no need to set the context
 
 cdef int celement_gen(ZZ_pEX_c *e, long i, cparent parent) except -2:
     """
@@ -133,9 +133,6 @@ cdef inline bint celement_is_zero(ZZ_pEX_c* a, cparent parent) except -2:
         sage: bool(P(0)), P(0).is_zero()
         (False, True)
     """
-#    if parent != NULL:
-#        parent[0].zzpc[0].restore()
-#        parent[0].zzpec[0].restore()
     return ZZ_pEX_IsZero(a[0])
 
 cdef inline bint celement_is_one(ZZ_pEX_c *a, cparent parent) except -2:

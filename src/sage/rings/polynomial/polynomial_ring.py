@@ -141,7 +141,6 @@ Check that :trac:`5562` has been fixed::
 from __future__ import absolute_import, print_function
 
 import sys
-from six.moves import range
 
 from sage.structure.element import Element
 
@@ -231,7 +230,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
     """
     Univariate polynomial ring over a ring.
     """
-    _no_generic_basering_coercion = True
+
     def __init__(self, base_ring, name=None, sparse=False, element_class=None, category=None):
         """
         EXAMPLES::
@@ -301,17 +300,8 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         self.Element = self._polynomial_class
         self.__cyclopoly_cache = {}
         self._has_singular = False
-        # Algebra.__init__ also calls __init_extra__ of Algebras(...).parent_class, which
-        # tries to provide a conversion from the base ring, if it does not exist.
-        # This is for algebras that only do the generic stuff in their initialisation.
-        # But the attribute _no_generic_basering_coercion prevents that from happening,
-        # since we want to use PolynomialBaseringInjection.
         sage.algebras.algebra.Algebra.__init__(self, base_ring, names=name, normalize=True, category=category)
-        self.__generator = self.element_class(self, [0,1], is_gen=True)
-        self._populate_coercion_lists_(
-                #coerce_list = [base_inject],
-                #convert_list = [list, base_inject],
-                convert_method_name = '_polynomial_')
+        self._populate_coercion_lists_(convert_method_name='_polynomial_')
 
     def __reduce__(self):
         from sage.rings.polynomial.polynomial_ring_constructor import unpickle_PolynomialRing
@@ -384,7 +374,6 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
 
         Python 3 range is allowed::
 
-            sage: from six.moves import range
             sage: R = PolynomialRing(ZZ,'x')
             sage: R(range(4))
             3*x^3 + 2*x^2 + x
@@ -659,6 +648,32 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         else:
             raise TypeError("Cannot complete %s with respect to %s" % (self, p))
 
+    def _coerce_map_from_base_ring(self):
+        """
+        Return a coercion map from the base ring of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: R.coerce_map_from(QQ)
+            Polynomial base injection morphism:
+              From: Rational Field
+              To:   Univariate Polynomial Ring in x over Rational Field
+            sage: R.coerce_map_from(ZZ)
+            Composite map:
+              From: Integer Ring
+              To:   Univariate Polynomial Ring in x over Rational Field
+              Defn:   Natural morphism:
+                      From: Integer Ring
+                      To:   Rational Field
+                    then
+                      Polynomial base injection morphism:
+                      From: Rational Field
+                      To:   Univariate Polynomial Ring in x over Rational Field
+            sage: R.coerce_map_from(GF(7))
+        """
+        return PolynomialBaseringInjection(self.base_ring(), self)
+
     def _coerce_map_from_(self, P):
         """
         The rings that canonically coerce to this polynomial ring are:
@@ -682,28 +697,10 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         EXAMPLES::
 
             sage: R = QQ['x']
-            sage: R.has_coerce_map_from(QQ)
-            True
-            sage: R.has_coerce_map_from(ZZ)
-            True
-            sage: R.has_coerce_map_from(GF(7))
-            False
             sage: R.has_coerce_map_from(ZZ['x'])
             True
             sage: R.has_coerce_map_from(ZZ['y'])
             False
-
-            sage: R.coerce_map_from(ZZ)
-            Composite map:
-              From: Integer Ring
-              To:   Univariate Polynomial Ring in x over Rational Field
-              Defn:   Natural morphism:
-                      From: Integer Ring
-                      To:   Rational Field
-                    then
-                      Polynomial base injection morphism:
-                      From: Rational Field
-                      To:   Univariate Polynomial Ring in x over Rational Field
 
         Here we test against the change in the coercions introduced
         in :trac:`9944`::
@@ -755,10 +752,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
             sage: T.has_coerce_map_from(S)
             False
         """
-        # In the first place, handle the base ring
         base_ring = self.base_ring()
-        if P is base_ring:
-            return PolynomialBaseringInjection(base_ring, self)
         # handle constants that canonically coerce into self.base_ring()
         # first, if possible
         try:
@@ -1171,6 +1165,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         else:
             return self(cyclotomic.cyclotomic_coeffs(n), check=True)
 
+    @cached_method
     def gen(self, n=0):
         """
         Return the indeterminate generator of this polynomial ring.
@@ -1193,7 +1188,7 @@ class PolynomialRing_general(sage.algebras.algebra.Algebra):
         """
         if n != 0:
             raise IndexError("generator n not defined")
-        return self.__generator
+        return self.element_class(self, [0,1], is_gen=True)
 
     def gens_dict(self):
         """

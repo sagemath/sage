@@ -80,6 +80,7 @@ cdef class ntl_ZZ_p(object):
     This class takes care of making sure that the C++ library NTL global
     variable is set correctly before performing any arithmetic.
     """
+
     def __init__(self, v=None, modulus=None):
         r"""
         Initializes an NTL integer mod p.
@@ -101,7 +102,7 @@ cdef class ntl_ZZ_p(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a ZZ_p.")
 
-        #self.c.restore_c()  ## The context was restored in __new__
+        # self.c._assert_is_current_modulus()  # The context was restored in __new__
 
         cdef ZZ_c temp, num, den
         cdef long failed
@@ -121,7 +122,9 @@ cdef class ntl_ZZ_p(object):
                 (<Integer>v.denominator())._to_ZZ(&den)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                ccreadstr(self.x, str(v))
+                str_v = str(v)  # can cause modulus to change  trac #25790
+                self.c.restore_c()
+                ccreadstr(self.x, str_v)
 
     def __cinit__(self, v=None, modulus=None):
         #################### WARNING ###################

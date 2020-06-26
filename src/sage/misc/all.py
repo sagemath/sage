@@ -160,7 +160,7 @@ from .explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, un
 
 from .decorators import specialize, sage_wraps, infix_operator
 
-from .unknown import Unknown
+from .unknown import Unknown, UnknownError
 
 lazy_import('sage.misc.inline_fortran', 'fortran')
 

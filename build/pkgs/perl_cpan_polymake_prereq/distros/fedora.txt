@@ -1,0 +1,2 @@
+perl-ExtUtils-Embed perl-File-Slurp perl-JSON perl-MongoDB perl-Term-ReadLine-Gnu
+perl-XML-Writer perl-XML-LibXML perl-XML-LibXSLT

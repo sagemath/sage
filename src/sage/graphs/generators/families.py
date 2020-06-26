@@ -18,8 +18,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, division
-import six
-from six.moves import range
 
 from copy import copy
 from math import sin, cos, pi
@@ -407,7 +405,8 @@ def EgawaGraph(p, s):
             prefix = v[:i]
             suffix = v[i+1:]
             for el in X:
-                if el == v[i]: continue
+                if el == v[i]:
+                    continue
                 u = prefix + (el,) + suffix
                 g.add_edge(v,u)
     return g
@@ -488,7 +487,8 @@ def HammingGraph(n, q, X=None):
             prefix = v[:i]
             suffix = v[i+1:]
             for el in X:
-                if el == v[i]: continue
+                if el == v[i]:
+                    continue
                 u = prefix + (el,) + suffix
                 g.add_edge(v,u)
     return g
@@ -1204,7 +1204,7 @@ def CubeGraph(n):
     for i in range(n):
         ci = float(cos(i*theta))
         si = float(sin(i*theta))
-        for v,e in six.iteritems(d):
+        for v,e in d.items():
             v0 = v+'0'
             v1 = v+'1'
             l0 = [v1]
@@ -1223,7 +1223,7 @@ def CubeGraph(n):
     # construct the graph
     r = Graph(name="%d-Cube"%n)
     r.add_vertices(d.keys())
-    for u,L in six.iteritems(d):
+    for u,L in d.items():
         for v in L:
             r.add_edge(u,v)
     r.set_pos(p)
@@ -1561,7 +1561,8 @@ def FibonacciTree(n):
 
     def fib(level, node, y):
         pos[node] = (node, y)
-        if level < 2: return
+        if level < 2:
+            return
         level -= 1
         y -= s
         diff = F[level]
@@ -1900,7 +1901,8 @@ def MycielskiGraph(k=1, relabel=True):
     g0 = MycielskiGraph(k-1)
     g = MycielskiStep(g0)
     g.name("Mycielski Graph " + str(k))
-    if relabel: g.relabel()
+    if relabel:
+        g.relabel()
 
     return g
 
@@ -2480,7 +2482,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         one = Integer(1)
         if positions:
             radius_multiplier = 1 + csc(pi/pegs)
-            sine = []; cosine = []
+            sine = []
+            cosine = []
             for i in range(pegs):
                 angle = 2*i*pi/float(pegs)
                 sine.append(sin(angle))
@@ -2493,7 +2496,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
                 mapping[i] = tuple(state)
                 state.reverse()
             if positions:
-                locx = 0.0; locy = 0.0
+                locx = 0.0
+                locy = 0.0
                 radius = 1.0
                 parity = -1.0
                 for index in range(disks):
@@ -3589,3 +3593,84 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     if verbose:
         print('finished at %f (+%f)' % ((time() - t), time() - t1))
     return V
+
+def CubeConnectedCycle(d):
+    r"""
+    Return the cube-connected cycle of dimension `d`.
+
+    The cube-connected cycle of order `d` is the `d`-dimensional hypercube
+    with each of its vertices replaced by a cycle of length `d`. This graph has
+    order `d \times 2^d`.
+    The construction is as follows:
+    Construct vertex `(x,y)` for `0 \leq x < 2^d`, `0 \leq y < d`.
+    For each vertex, `(x,y)`, add an edge between it and `(x, (y-1) \mod d))`,
+    `(x,(y+1) \mod d)`, and `(x \oplus 2^y, y)`, where `\oplus` is the bitwise
+    xor operator.
+    
+    For `d=1` and `2`, the cube-connected cycle graph contains self-loops or
+    multiple edges between a pair of vertices, but for all other `d`, it is
+    simple.
+
+    INPUT:
+
+    - ``d`` -- The dimension of the desired hypercube as well as the length
+      of the cycle to be placed at each vertex of the `d`-dimensional
+      hypercube. `d` must be a positive integer.
+
+    EXAMPLES:
+
+    The order of the graph is `d \times 2^d` ::
+
+        sage: d = 3
+        sage: g = graphs.CubeConnectedCycle(d)
+        sage: len(g) == d*2**d
+        True
+
+    The diameter of cube-connected cycles for `d > 3` is
+    `2d + \lfloor \frac{d}{2} \rfloor - 2` ::
+
+        sage: d = 4
+        sage: g = graphs.CubeConnectedCycle(d)
+        sage: g.diameter() == 2*d+d//2-2
+        True
+
+    All vertices have degree `3` when `d > 1` ::
+
+        sage: g = graphs.CubeConnectedCycle(5)
+        sage: all(g.degree(v) == 3 for v in g)
+        True
+
+    TESTS::
+
+        sage: g = graphs.CubeConnectedCycle(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: the dimension d must be greater than 0
+    """
+    if d < 1:
+        raise ValueError('the dimension d must be greater than 0')
+
+    G = Graph(name="Cube-Connected Cycle of dimension {}".format(d))
+
+    if d == 1:
+        G.allow_loops(True)
+        # only d = 1 requires loops
+        G.add_edges([((0,0),(0,1)), ((0,0),(0,0)), ((0,1),(0,1))])
+        return G
+
+    if d == 2:
+        # only d = 2 require multiple edges
+        G.allow_multiple_edges(True)
+        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
+                     ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
+                     ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
+                     ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))])
+        return G
+
+    for x in range(1<<d):
+        G.add_cycle([(x, y) for y in range(d)])
+
+    for x, y in G:
+        G.add_edge((x, y), (x^(1<<y), y))
+
+    return G

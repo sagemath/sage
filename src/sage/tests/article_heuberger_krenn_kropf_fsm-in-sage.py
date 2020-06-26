@@ -304,7 +304,7 @@ Sage example in fsm-in-sage.tex, line 806::
 
 Sage example in fsm-in-sage.tex, line 815::
 
-    sage: from six.moves import zip_longest
+    sage: from itertools import zip_longest
     sage: def final_minus(state1, state2):
     ....:     return [x - y for x, y in
     ....:         zip_longest(state1.final_word_out,

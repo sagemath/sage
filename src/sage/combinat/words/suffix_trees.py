@@ -10,8 +10,6 @@ Suffix Tries and Suffix Trees
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
-from six import iteritems
 from itertools import chain
 
 from sage.structure.sage_object import SageObject
@@ -208,7 +206,7 @@ class SuffixTrie(SageObject):
         if state == 0:
             return Words(self._alphabet)()
         # We first invert the transition function
-        tf_inv = {b: a for a, b in iteritems(self._transition_function)}
+        tf_inv = {b: a for a, b in self._transition_function.items()}
 
         # Starting from the active state,
         # read labels along the unique path to the root.
@@ -451,7 +449,7 @@ class SuffixTrie(SageObject):
             [0 0 0 0 0 0]
         """
         dag = {}
-        for ((u, letter), v) in iteritems(self._transition_function):
+        for ((u, letter), v) in self._transition_function.items():
             dag.setdefault(u, {})[v] = letter
         return DiGraph(dag)
 
@@ -756,7 +754,7 @@ class ImplicitSuffixTree(SageObject):
             return ((0, 0), 0)
         else:
             if state in self._transition_function:
-                for ((k,p),s) in iteritems(self._transition_function[state]):
+                for ((k,p),s) in self._transition_function[state].items():
                     if self._letters[k-1] == letter:
                         return ((k,p), s)
             return None
@@ -840,7 +838,7 @@ class ImplicitSuffixTree(SageObject):
             return DiGraph(d)
         d = self.transition_function_dictionary()
         for u in d:
-            for (v, (i, j)) in iteritems(d[u]):
+            for (v, (i, j)) in d[u].items():
                 if word_labels:
                     d[u][v] = self._word[i:j]
                 elif j is None:
@@ -1124,7 +1122,7 @@ class ImplicitSuffixTree(SageObject):
         queue = [0]
         while queue:
             v = queue.pop()
-            for ((i,j),u) in iteritems(self._transition_function[v]):
+            for ((i,j),u) in self._transition_function[v].items():
                 yield (v,u,(i-1,j))
                 queue.append(u)
 
@@ -1204,7 +1202,7 @@ class ImplicitSuffixTree(SageObject):
                     num_factors += 1
                 if l < n:
                     if self._transition_function[v] != {}:
-                        for ((i,j),u) in iteritems(self._transition_function[v]):
+                        for ((i,j),u) in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
@@ -1260,7 +1258,7 @@ class ImplicitSuffixTree(SageObject):
                 (v,i,j,l) = queue.pop()
                 for k in range(i,j+1):
                     yield w[j-l:k]
-                for ((i,j),u) in iteritems(self._transition_function[v]):
+                for ((i,j),u) in self._transition_function[v].items():
                     if j is None:
                         j = wlen
                     queue.append((u,i,j, l+j-i+1))
@@ -1271,7 +1269,7 @@ class ImplicitSuffixTree(SageObject):
                 if l == n:
                     yield w[j-l:j]
                 if l < n:
-                    for ((i,j),u) in iteritems(self._transition_function[v]):
+                    for ((i,j),u) in self._transition_function[v].items():
                         if j is None:
                             j = wlen
                         if j - i >= n - l:
@@ -1547,8 +1545,8 @@ class ImplicitSuffixTree(SageObject):
         """
         d = {}
         new_node = len(self._transition_function)
-        for (u, dd) in iteritems(self._transition_function):
-            for (sl, v) in iteritems(dd):
+        for (u, dd) in self._transition_function.items():
+            for (sl, v) in dd.items():
                 w = self._word[sl[0]-1:sl[1]]
                 if w.length() == 1:
                     d[u,w] = v

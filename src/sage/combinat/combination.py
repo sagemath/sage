@@ -7,6 +7,8 @@ AUTHORS:
 
 - Vincent Delecroix (2011): cleaning, bug corrections, doctests
 
+- Antoine Genitrini (2020) : new implementation of the lexicographic unranking of combinations
+
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -23,7 +25,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.interfaces.all import gap
 from sage.rings.all import ZZ, Integer
@@ -533,32 +534,14 @@ def rank(comb, n, check=True):
 
     return binomial(n,k)-t-1
 
-def _comb_largest(a,b,x):
-    r"""
-    Returns the largest `w < a` such that `binomial(w,b) <= x`.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.combination import _comb_largest
-        sage: _comb_largest(6,3,10)
-        5
-        sage: _comb_largest(6,3,5)
-        4
-    """
-    w = a - 1
-
-    while binomial(w,b) > x:
-        w -= 1
-
-    return w
 
 def from_rank(r, n, k):
     r"""
-    Returns the combination of rank ``r`` in the subsets of
+    Return the combination of rank ``r`` in the subsets of
     ``range(n)`` of size ``k`` when listed in lexicographic order.
 
-    The algorithm used is based on combinadics and James McCaffrey's
-    MSDN article. See: :wikipedia:`Combinadic`
+    The algorithm used is based on factoradics and presented in [DGH2020].
+    It is there compared to the other from the literature.
 
     EXAMPLES::
 
@@ -579,27 +562,94 @@ def from_rank(r, n, k):
         (1, 2)
         sage: combination.from_rank(0,3,3)
         (0, 1, 2)
+
+    TESTS::
+
+        sage: from sage.combinat.combination import from_rank
+        sage: def _comb_largest(a,b,x):
+        ....:     w = a - 1
+        ....:     while binomial(w,b) > x:
+        ....:         w -= 1
+        ....:     return w
+        sage: def from_rank_comb_largest(r, n, k):
+        ....:     a = n
+        ....:     b = k
+        ....:     x = binomial(n, k) - 1 - r  # x is the 'dual' of m
+        ....:     comb = [None] * k
+        ....:     for i in range(k):
+        ....:         comb[i] = _comb_largest(a, b, x)
+        ....:         x = x - binomial(comb[i], b)
+        ....:         a = comb[i]
+        ....:         b = b - 1
+        ....:     for i in range(k):
+        ....:         comb[i] = (n - 1) - comb[i]
+        ....:     return tuple(comb)
+        sage: all(from_rank(r, n, k) == from_rank_comb_largest(r, n, k)
+        ....:     for n in range(10) for k in range(n+1) for r in range(binomial(n,k)))
+        True
     """
     if k < 0:
         raise ValueError("k must be > 0")
     if k > n:
         raise ValueError("k must be <= n")
+    if n == 0 or k == 0:
+        return ()
+    if n < 0:
+        raise ValueError("n must be >= 0")
+    B = binomial(n, k)
+    if r < 0 or r >= B:
+        raise ValueError("r must satisfy  0 <= r < binomial(n, k)")
+    if k == 1:
+        return (r,)
 
-    a = n
-    b = k
-    x = binomial(n, k) - 1 - r  # x is the 'dual' of m
-    comb = [None] * k
+    n0 = n
+    D = [0] * k
+    inverse = False
+    if k < n0 / 2:
+        inverse = True
+        k = n - k
+        r = B - 1 - r
 
-    for i in range(k):
-        comb[i] = _comb_largest(a, b, x)
-        x = x - binomial(comb[i], b)
-        a = comb[i]
-        b = b - 1
-
-    for i in range(k):
-        comb[i] = (n - 1) - comb[i]
-
-    return tuple(comb)
+    B = (B * k) // n0
+    m = 0
+    i = 0
+    j = 0
+    m2 = 0
+    d = 0
+    while d < k - 1:
+        if B > r:
+            if i < k - 2:
+                if n0 - 1 - m == 0:
+                    B = 1
+                else:
+                    B = (B * (k-1-i)) // (n0 - 1 - m)
+            d += 1
+            if inverse:
+                for e in range(m2, m+i):
+                    D[j] = e
+                    j += 1
+                m2 = m + i + 1
+            else:
+                D[i] = m + i
+            i += 1
+            n0 -= 1
+        else:
+            r -= B
+            if n0 - 1 - m == 0:
+                B = 1
+            else:
+                B = (B * (n0-m-k+i)) // (n0 - 1 - m)
+            m += 1
+    if inverse:
+        for e in range(m2, n0+r+i-B):
+            D[j] = e
+            j += 1
+        for e in range(n0+r+i+1-B, n):
+            D[j] = e
+            j += 1
+    else:
+        D[k-1] = n0 + r + k - 1 - B
+    return tuple(D)
 
 ##########################################################
 # Deprecations
@@ -624,3 +674,4 @@ class ChooseNK(Combinations_setk):
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.choose_nk", "ChooseNK", ChooseNK)
+

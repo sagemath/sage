@@ -62,8 +62,6 @@ Functions and methods
 #                         http://www.gnu.org/licenses/
 ################################################################################
 from __future__ import print_function, division
-from six.moves import range
-from six import PY2
 from sage.cpython.string import bytes_to_str
 from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
@@ -636,11 +634,6 @@ class DiGraphGenerators():
         if '-q' not in options:
             options += ' -q'
 
-        if PY2:
-            enc_kwargs = {}
-        else:
-            enc_kwargs = {'encoding': 'latin-1'}
-
         # Build directg input (graphs6 format)
         input = ''.join(g.graph6_string()+'\n' for g in graphs)
         sub = subprocess.Popen(nautyprefix+'directg {0}'.format(options),
@@ -648,7 +641,7 @@ class DiGraphGenerators():
                                stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE,
                                stderr=subprocess.STDOUT,
-                               **enc_kwargs)
+                               encoding='latin-1')
         out, err = sub.communicate(input=input)
 
         if debug:

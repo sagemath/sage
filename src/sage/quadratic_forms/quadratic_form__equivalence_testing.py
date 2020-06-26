@@ -5,8 +5,7 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import print_function, absolute_import
 
 from sage.arith.all import hilbert_symbol, prime_divisors, is_prime, valuation, GCD, legendre_symbol
 from sage.rings.integer_ring import ZZ
@@ -20,11 +19,13 @@ from .quadratic_form import is_QuadraticForm
 ## (For now, we require both forms to be positive definite.)                  ##
 ################################################################################
 
-def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_precision=None, check_local_equivalence=None):
+def is_globally_equivalent_to(self, other, return_matrix=False):
     """
-    Determines if the current quadratic form is equivalent to the
-    given form over ZZ.  If ``return_matrix`` is True, then we return
-    the transformation matrix `M` so that ``self(M) == other``.
+    Determine if the current quadratic form is equivalent to the
+    given form over ZZ.
+
+    If ``return_matrix`` is True, then we return the transformation
+    matrix `M` so that ``self(M) == other``.
 
     INPUT:
 
@@ -77,16 +78,9 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
         ...
         ValueError: not a definite form in QuadraticForm.is_globally_equivalent_to()
 
-    ALGORITHM: this uses the PARI function ``qfisom()``, implementing
+    ALGORITHM: this uses the PARI function :pari:`qfisom`, implementing
     an algorithm by Plesken and Souvignier.
     """
-    if check_theta_to_precision is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(19111, "The check_theta_to_precision argument is deprecated and ignored")
-    if check_local_equivalence is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(19111, "The check_local_equivalence argument is deprecated and ignored")
-
     ## Check that other is a QuadraticForm
     if not is_QuadraticForm(other):
         raise TypeError("you must compare two quadratic forms, but the argument is not a quadratic form")
@@ -107,7 +101,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
 
 def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
     """
-    Determines if the current quadratic form (defined over ZZ) is
+    Determine if the current quadratic form (defined over ZZ) is
     locally equivalent to the given form over the real numbers and the
     `p`-adic integers for every prime p.
 
@@ -164,8 +158,6 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
 
     ## All tests have passed!
     return True
-
-
 
 
 def has_equivalent_Jordan_decomposition_at_prime(self, other, p):

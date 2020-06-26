@@ -110,6 +110,11 @@ This is required if you authenticate to Trac with your GitHub account, as
 you do not have a Trac password.  Logged in users can find their token
 under `the token tab in preferences on the trac site <https://trac.sagemath.org/prefs/token>`_ .
 
+.. NOTE::
+
+   The username to be entered here is NOT the GitHub username, but rather the trac username which is gh-<GitHub-username>
+   as given on the top right corner of the trac server.
+
 If both a token and a username/password are configured, the token-based
 authentication takes precedence.
 

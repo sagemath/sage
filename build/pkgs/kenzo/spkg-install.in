@@ -1,0 +1,19 @@
+cd src
+
+# create a short lisp file with the instructions to load kenzo from ecl
+# This will compile the lisp files since it is the first time they are loaded
+
+ecl < compile.lisp
+
+# Install Kenzo into ECL's library directory (installation procedure
+# copied from Maxima's spkg-install.in file):
+ECLLIB=`ecl -eval "(princ (SI:GET-LIBRARY-PATHNAME))" -eval "(quit)"`
+echo
+echo "Now installing Kenzo as '$ECLLIB/kenzo.fas'..."
+cp -f kenzo--all-systems.fasb "$ECLLIB/kenzo.fas" \
+    || sdh_die "Failed to install 'kenzo--all-systems.fasb' as '$ECLLIB/kenzo.fas'."
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error installing Kenzo."
+    exit 1
+fi

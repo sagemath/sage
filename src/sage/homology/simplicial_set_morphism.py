@@ -29,7 +29,6 @@ This module implements morphisms and homsets of simplicial sets.
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
-from six.moves import range
 
 import itertools
 

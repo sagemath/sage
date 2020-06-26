@@ -114,6 +114,7 @@ from sage.arith.all import lcm, gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.algebras.all import FiniteDimensionalAlgebra
 
+from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
 
 from sage.structure.parent import Parent
@@ -909,6 +910,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         """
         Return a field isomorphic to the residue field at the prime ideal.
 
+        The residue field is by definition `k[x]/q` where `q` is the irreducible
+        polynomial generating the prime ideal and `k` is the constant base field.
+
         INPUT:
 
         - ``ideal`` -- prime ideal of the order
@@ -919,12 +923,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         - a field isomorphic to the residue field
 
-        - an isomorphism from the finite field to the residue field
+        - a morphism from the field to `k[x]` via the residue field
 
-        - the inverse isomorphism
-
-        The residue field is by definition `k[x]/q` where `q` is the irreducible
-        polynomial generating the prime ideal and `k` is the constant base field.
+        - a morphism from `k[x]` to the field via the residue field
 
         EXAMPLES::
 
@@ -936,10 +937,36 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             Finite Field in z2 of size 2^2
             sage: [to_R(fr_R(e)) == e for e in R]
             [True, True, True, True]
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True, True, True]
             sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
             sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
             True
             sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Finite Field of size 2
+            sage: [to_R(fr_R(e)) == e for e in R]
+            [True, True]
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True]
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
             True
 
             sage: F.<x> = FunctionField(QQ)
@@ -953,23 +980,45 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             True
             sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
             True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(QQ)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Rational Field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
         """
         F = self.function_field()
+        K = F.constant_base_field()
 
         q = ideal.gen().element().numerator()
 
-        if q.degree() == 1:
-            R = F.constant_base_field()
-            _from_R = lambda e: e
-            _to_R = lambda e: e % q
-        elif F.is_global():
+        if F.is_global():
             R, _from_R, _to_R = self._residue_field_global(q, name=name)
-        elif isinstance(F.constant_base_field(), NumberField):
+        elif isinstance(K, NumberField) or K is QQbar:
             if name is None:
                 name = 'a'
-            R = F.constant_base_field().extension(q, names=name)
-            _from_R = lambda e: self._ring(list(R(e)))
-            _to_R = lambda e: (e % q)(R.gen(0))
+            if q.degree() == 1:
+                R = K
+                _from_R = lambda e: e
+                _to_R = lambda e: R(e % q)
+            else:
+                R = K.extension(q, names=name)
+                _from_R = lambda e: self._ring(list(R(e)))
+                _to_R = lambda e: (e % q)(R.gen(0))
         else:
             raise NotImplementedError
 

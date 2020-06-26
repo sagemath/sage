@@ -358,7 +358,6 @@ AUTHORS:
 
 """
 from __future__ import print_function
-from six.moves import range
 
 import operator
 
@@ -478,10 +477,10 @@ def test_relation_maxima(relation):
         sage: test_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
-        
+
     In case an equation is to be solved for non-integers, ''assume()''
     is used::
-    
+
         sage: k = var('k')
         sage: assume(k,'noninteger')
         sage: solve([k^3==1],k)
@@ -908,7 +907,7 @@ def solve(f, *args, **kwds):
         (-z + 1, -z^2 + z - 1)
         sage: solve(abs(x + 3) - 2*abs(x - 3),x,algorithm='sympy',domain='real')
         [x == 1, x == 9]
-        
+
 
     We cannot translate all results from SymPy but we can at least
     print them::

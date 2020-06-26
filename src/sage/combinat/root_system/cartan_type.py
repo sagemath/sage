@@ -477,10 +477,6 @@ this data.
 #*****************************************************************************
 from __future__ import print_function, absolute_import, division
 
-from six.moves import range
-from six.moves.builtins import sorted
-from six import class_types, string_types
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
@@ -554,7 +550,7 @@ class CartanTypeFactory(SageObject):
             sage: CT.cartan_matrix()
             [ 2 -1]
             [-1  2]
-            sage: CT = CartanType(['A2'])   
+            sage: CT = CartanType(['A2'])
             sage: CT.is_irreducible()
             True
             sage: CartanType('A2')
@@ -600,7 +596,7 @@ class CartanTypeFactory(SageObject):
             return t
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
-        if isinstance(t, string_types):
+        if isinstance(t, str):
             if "x" in t:
                 from . import type_reducible
                 return type_reducible.CartanType([CartanType(u) for u in t.split("x")])
@@ -617,7 +613,7 @@ class CartanTypeFactory(SageObject):
                 return CartanType([t[0], eval(t[1:])])
 
         t = list(t)
-        if isinstance(t[0], string_types) and t[1] in [Infinity, ZZ, NN]:
+        if isinstance(t[0], str) and t[1] in [Infinity, ZZ, NN]:
             letter, n = t[0], t[1]
             if letter == 'A':
                 from . import type_A_infinity
@@ -626,7 +622,7 @@ class CartanTypeFactory(SageObject):
                 else:
                     return type_A_infinity.CartanType(ZZ)
 
-        if isinstance(t[0], string_types) and t[1] in ZZ and t[1] >= 0:
+        if isinstance(t[0], str) and t[1] in ZZ and t[1] >= 0:
             letter, n = t[0], t[1]
             if len(t) == 2:
                 if letter == "A":
@@ -726,7 +722,7 @@ class CartanTypeFactory(SageObject):
                         return CartanType(["F", 4, 1]).dual()
             raise ValueError("%s is not a valid Cartan type" % t)
 
-        if isinstance(t[0], string_types) and isinstance(t[1], (list, tuple)):
+        if isinstance(t[0], str) and isinstance(t[1], (list, tuple)):
             letter, n = t[0], t[1]
             if len(t) == 2 and len(n) == 2:
                 from . import type_super_A
@@ -952,10 +948,10 @@ class CartanTypeFactory(SageObject):
                       alias=dict(BC="Stembridge", tilde="Stembridge", twisted="Kac"))
         dual_str = dict(default="*",
                       description='The string used for dual Cartan types when printing',
-                      checker=lambda char: isinstance(char, string_types))
+                      checker=lambda char: isinstance(char, str))
         dual_latex = dict(default="\\vee",
                         description='The latex used for dual CartanTypes when latexing',
-                        checker=lambda char: isinstance(char, string_types))
+                        checker=lambda char: isinstance(char, str))
         mark_special_node = dict(default="none",
                                description="Make the special nodes",
                                values=dict(none="no markup", latex="only in latex",
@@ -963,10 +959,10 @@ class CartanTypeFactory(SageObject):
                                case_sensitive=False)
         special_node_str = dict(default="@",
                               description="The string used to indicate which node is special when printing",
-                              checker=lambda char: isinstance(char, string_types))
+                              checker=lambda char: isinstance(char, str))
         marked_node_str = dict(default="X",
                              description="The string used to indicate a marked node when printing",
-                             checker=lambda char: isinstance(char, string_types))
+                             checker=lambda char: isinstance(char, str))
         latex_relabel = dict(default=True,
                            description="Indicate in the latex output if a Cartan type has been relabelled",
                            checker=lambda x: isinstance(x, bool))
@@ -1036,7 +1032,7 @@ class CartanType_abstract(object):
         .. TODO:: Generalize to :class:`SageObject`?
         """
         from sage.structure.dynamic_class import dynamic_class
-        assert isinstance(classes, (tuple, class_types))
+        assert isinstance(classes, (tuple, type))
         if not isinstance(classes, tuple):
             classes = (classes,)
         bases = (self.__class__,) + classes
@@ -3066,10 +3062,10 @@ class CartanType_simple_finite(object):
 
             sage: pg_CartanType_simple_finite = unpickle_global('sage.combinat.root_system.cartan_type', 'CartanType_simple_finite')
             sage: si1 = unpickle_newobj(pg_CartanType_simple_finite, ())
-            sage: pg_unpickleModule = unpickle_global('twisted.persisted.styles', 'unpickleModule')
+            sage: from sage.misc.fpickle import unpickleModule
             sage: pg_make_integer = unpickle_global('sage.rings.integer', 'make_integer')
             sage: si2 = pg_make_integer('4')
-            sage: unpickle_build(si1, {'tools':pg_unpickleModule('sage.combinat.root_system.type_A'), 't':['A', si2], 'letter':'A', 'n':si2})
+            sage: unpickle_build(si1, {'tools':unpickleModule('sage.combinat.root_system.type_A'), 't':['A', si2], 'letter':'A', 'n':si2})
 
             sage: si1
             ['A', 4]

@@ -16,7 +16,6 @@ if [ $? -ne 0 ]; then
 fi
 
 export SAGE_SHARE="$SAGE_LOCAL/share"
-export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_PKGCONFIG="$SAGE_LOCAL/lib/pkgconfig"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
@@ -59,6 +58,39 @@ env | sort
 printf '\E[m'
 echo "***********************************************"
 
+# look_for_errors: search log files for error messages and print a summary.
+# arguments:
+# - $1: glob pattern for log files to search
+# - $2: N for "tail -N"
+# - $3: regular expression to search for
+# - $4: type of object ("package" or "documentation")
+look_for_errors() {
+    # Sort in chronological order by log file.
+    for f in `ls -tr $1 2>/dev/null`; do
+        # Look for recent error message in log file.
+        # Note that "tail -n 20 ..." doesn't work on Solaris.
+        if tail -$2 $f 2>/dev/null | grep "$3" &>/dev/null; then
+            base_f=`basename $f .log`
+            # stat(1) is not portable between Linux and macOS, so we extract it from ls -lf
+            timestamp=`ls -l $f | awk -F' ' '{print $6, $7, $8}'` 2> /dev/null
+            cat >&2 <<EOF
+
+* $4:         $base_f
+  last build time: $timestamp
+  log file:        $f
+EOF
+            if [ $4 = "package" ]; then
+                build_dir="${SAGE_BUILD_DIR:-$SAGE_LOCAL/var/tmp/sage/build}/$base_f"
+                if [ -d "$build_dir" ]; then
+                    cat >&2 <<EOF
+  build directory: $build_dir
+EOF
+                fi
+            fi
+        fi
+    done
+}
+
 ###############################################################################
 # NOW do the actual build:
 ###############################################################################
@@ -72,44 +104,9 @@ The following package(s) may have failed to build (not necessarily
 during this run of 'make $@'):
 EOF
 
-    # Sort in chronological order by log file.
-    for f in `ls -tr "$SAGE_LOGS"/*.log 2>/dev/null`; do
-        # Look for recent error message in log file.
-        # Note that "tail -n 20 ..." doesn't work on Solaris.
-        if tail -20 "$f" 2>/dev/null | grep "^Error" &>/dev/null; then
-            base_f=`basename $f .log`
-            # stat(1) is not portable between Linux and macOS, so we extract it from ls -lf
-            timestamp=`ls -l $f | awk -F' ' '{print $6, $7, $8}'` 2> /dev/null
-            cat >&2 <<EOF
+    look_for_errors "$SAGE_LOGS/*.log" 20 "^Error" package >&2
+    look_for_errors "$SAGE_LOGS/../doc*.log" 100 "^Error" documentation >&2
 
-* package:         $base_f
-  last build time: $timestamp
-  log file:        $f
-EOF
-            build_dir="${SAGE_BUILD_DIR:-$SAGE_LOCAL/var/tmp/sage/build}/$base_f"
-            if [ -d "$build_dir" ]; then
-                cat >&2 <<EOF
-  build directory: $build_dir
-EOF
-            fi
-        fi
-    done
-
-    for f in `ls -tr "$SAGE_LOGS"/../doc*.log 2>/dev/null`; do
-        # Look for recent error message in log file.
-        # Note that "tail -n 20 ..." doesn't work on Solaris.
-        if tail -100 "$f" 2>/dev/null | grep "^Error" &>/dev/null; then
-            base_f=`basename $f .log`
-            # stat(1) is not portable between Linux and macOS, so we extract it from ls -lf
-            timestamp=`ls -l $f | awk -F' ' '{print $6, $7, $8}'` 2> /dev/null
-            cat >&2 <<EOF
-
-* documentation:   $base_f
-  last build time: $timestamp
-  log file:        $f
-EOF
-        fi
-    done
     cat >&2 <<EOF
 
 It is safe to delete any log files and build directories, but they
@@ -120,6 +117,20 @@ environment variable SAGE_KEEP_BUILT_SPKGS=yes to prevent this.
 
 EOF
     exit 1
+
+elif [ "$SAGE_CHECK" = "warn" ]; then
+    echo "SAGE_CHECK=warn, so scanning the log files. This may take a few seconds."
+    warnings=`look_for_errors "$SAGE_LOGS/*.log" 20 "^Warning: Error testing" package`
+    if [ -n "$warnings" ]; then
+        cat >&2 <<EOF
+***************************************************************
+Warning: the following package(s) may have failed their test suites
+(not necessarily during this run of 'make $@'):
+EOF
+
+        echo $warnings >&2
+    fi
+
 fi
 
 # Build succeeded.

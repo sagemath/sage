@@ -1,0 +1,9 @@
+cd src
+
+gcc -o "$SAGE_LOCAL/lib/libmodulardecomposition.so" dm.c random.c -fPIC --shared &&
+mv dm_english.h "$SAGE_LOCAL/include/modular_decomposition.h"
+
+if [ $? -ne 0 ]; then
+    echo "An error occurred whilst building modular_decomposition"
+    exit 1
+fi

@@ -16,11 +16,14 @@
 include 'misc.pxi'
 include 'decl.pxi'
 
-ZZ_pEContextDict = {}
-
+from sage.ext.cplusplus cimport ccrepr
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
+
+
+ZZ_pEContextDict = {}
+
 
 cdef class ntl_ZZ_pEContext_class(object):
     def __init__(self, ntl_ZZ_pX f):
@@ -151,6 +154,47 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         from .ntl_ZZ_pEX import ntl_ZZ_pEX
         return ntl_ZZ_pEX(v, modulus=self)
+
+    cpdef void _assert_is_current_modulus(self) except *:
+        """
+        Assert that this is currently-set NTL modulus.
+
+        Mostly for debugging purposes. If false, an assertion is raised. This method
+        segfaults if the NTL modulus has never been set before.
+
+        EXAMPLES::
+
+            sage: c1 = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 5))
+            sage: c2 = ntl.ZZ_pEContext(ntl.ZZ_pX([1,2,1], 5))
+            sage: c1.restore()
+            sage: c1._assert_is_current_modulus()
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: [1 2 1] != [1 1 1]
+            sage: c2.restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: [1 1 1] != [1 2 1]
+            sage: c2._assert_is_current_modulus()
+            sage: ntl.ZZ_pContext(3).restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 3
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 3
+        """
+        self.pc._assert_is_current_modulus()
+        if self.f.x == ZZ_pE_current_modulus().val():
+            return
+        raise AssertionError('modulus mismatch: {} != {}'.format(
+            ccrepr(self.f.x),
+            ccrepr(ZZ_pE_current_modulus().val())))
+
 
 def ntl_ZZ_pEContext( ntl_ZZ_pX f):
     """

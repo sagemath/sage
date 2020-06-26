@@ -1869,7 +1869,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (P(-1, -1), P(1, 1), P(0, 1))
             sage: pc.contained_simplex(point_order = [pc[1],pc[3],pc[4],pc[2],pc[0]])
             (P(0, 1), P(1, 1), P(-1, -1)) 
-            sage: # lower-dimensional example:
+
+        Lower-dimensional example::
+
             sage: pc.contained_simplex(point_order = [pc[0],pc[3],pc[4]])
             (P(0, 0), P(1, 1))
             
@@ -1969,7 +1971,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (<1,2,3>, <1,2,4>)
             sage: p0.pushing_triangulation(point_order=[0,1,2,3,4])
             (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>)
-            sage: # the same triangulation with renumbered points 0->4, 1->0, etc.:
+
+        The same triangulation with renumbered points 0->4, 1->0, etc::
+
             sage: p1 = PointConfiguration([(+1,0),(-1,0),(0,+1),(0,-1),(0,0)])
             sage: p1.pushing_triangulation(point_order=[4,0,1,2,3])
             (<0,2,4>, <0,3,4>, <1,2,4>, <1,3,4>)

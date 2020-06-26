@@ -54,6 +54,19 @@ def _sympysage_float(self):
     from sage.rings.real_mpfr import create_RealNumber
     return create_RealNumber(str(self))
 
+def _sympysage_integer(self):
+    """
+    EXAMPLES::
+
+        sage: from sympy.core.numbers import Integer as SympyInt
+        sage: assert SR(2)._sympy_() == SympyInt(int(2))
+        sage: assert SR(2) == SympyInt(int(2))._sage_()
+        sage: type(SympyInt(int(2))._sage_())
+        <class 'sage.rings.integer.Integer'>
+    """
+    from sage.rings.integer import Integer
+    return Integer(self.p)
+
 def _sympysage_rational(self):
     """
     EXAMPLES::
@@ -328,10 +341,30 @@ def _sympysage_derivative(self):
         sage: sympy_diff = Derivative(f(x)._sympy_(), x._sympy_())
         sage: assert diff(f(x),x)._sympy_() == sympy_diff
         sage: assert diff(f(x),x) == sympy_diff._sage_()
+
+    TESTS:
+
+    Check that :trac:`28964` is fixed::
+
+        sage: f = function('f')
+        sage: _ = var('x,t')
+        sage: assert diff(f(x, t), t)._sympy_()._sage_() == diff(f(x, t), t)
+        sage: assert diff(f(x, t), x, 2, t)._sympy_()._sage_() == diff(f(x, t), x, 2, t)
+
+        sage: diff(f(x, t), x).integrate(x)
+        f(x, t)
+        sage: diff(f(x, t), x).integrate(t, algorithm='maxima')
+        integrate(diff(f(x, t), x), t)
+        sage: diff(f(x, t), x).integrate(t, algorithm='sympy')
+        integrate(diff(f(x, t), x), t)
+        sage: integrate(f(x, t), x).diff(t)
+        integrate(diff(f(x, t), t), x)
     """
     from sage.calculus.functional import derivative
+    from sympy.core.containers import Tuple
     f = self.args[0]._sage_()
-    args = [[a._sage_() for a in arg] if isinstance(arg,tuple) else arg._sage_() for arg in self.args[2:]]
+    args = [a._sage_() for arg in self.args[1:]
+            for a in (arg if isinstance(arg, (tuple, Tuple)) else [arg])]
     return derivative(f, *args)
 
 def _sympysage_order(self):
@@ -763,6 +796,7 @@ def sympy_init():
     from sympy.series.order import Order
 
     Float._sage_ = _sympysage_float
+    Integer._sage_ = _sympysage_integer
     Rational._sage_ = _sympysage_rational
     Infinity._sage_ = _sympysage_pinfty
     NegativeInfinity._sage_ = _sympysage_ninfty

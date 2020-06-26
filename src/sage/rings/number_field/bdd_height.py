@@ -28,7 +28,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, division
-from six.moves import range
 
 from copy import copy
 from itertools import product
@@ -346,7 +345,7 @@ def integer_points_in_polytope(matrix, interval_radius):
 
 
 def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
-    r""" 
+    r"""
     Compute all elements in the number field `K` which have relative
     multiplicative height at most ``height_bound``.
 
@@ -532,7 +531,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
             possible_norm_set.add(m * class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_ideal_gens(K, possible_norm_set)
 
-    # Stores it in form of an dictionary and gives lambda(g)_approx for key g 
+    # Stores it in form of an dictionary and gives lambda(g)_approx for key g
     for norm in possible_norm_set:
         gens = bdd_ideals[norm]
         for g in gens:
@@ -618,7 +617,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     U_copy = copy(U)
     inter_bound = b - (5*t)/12
 
-    for u in U:    
+    for u in U:
         u_log = sum([u[j]*vector(fund_unit_log_approx[j]) for j in range(r)])
         unit_log_dict[u] = u_log
         u_height = sum([max(u_log[k], 0) for k in range(r + 1)])

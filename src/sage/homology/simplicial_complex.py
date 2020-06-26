@@ -149,8 +149,6 @@ We can also make mutable copies of an immutable simplicial complex
     True
 """
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
 from operator import index as PyNumber_Index
 
 # possible future directions for SimplicialComplex:
@@ -4286,7 +4284,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: s._is_numeric()
             False
         """
-        return all(isinstance(v, integer_types + (Integer,))
+        return all(isinstance(v, (int, Integer))
                    for v in self.vertices())
 
     # @cached_method    when we switch to immutable SimplicialComplex

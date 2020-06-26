@@ -769,7 +769,7 @@ class FileDocTestSource(DocTestSource):
             ....:         _, ext = os.path.splitext(F)
             ....:         if ext in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst'):
             ....:             filename = os.path.join(path, F)
-            ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True,optional=True))
+            ....:             FDS = FileDocTestSource(filename, DocTestDefaults(long=True, optional=True, force_lib=True))
             ....:             FDS._test_enough_doctests(verbose=False)
             There are 3 unexpected tests being run in sage/doctest/parsing.py
             There are 1 unexpected tests being run in sage/doctest/reporting.py

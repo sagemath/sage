@@ -631,7 +631,9 @@ class ContinuousMap(Morphism):
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological') # Euclidean plane
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates
-            sage: # A pi/3 rotation around the origin defined in Cartesian coordinates:
+
+        A pi/3 rotation around the origin defined in Cartesian coordinates::
+
             sage: rot = M.continuous_map(M, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: p = M.point((1,2), name='p')
@@ -1450,7 +1452,9 @@ class ContinuousMap(Morphism):
             sage: U = M.open_subset('U', coord_def={c_xy: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_cart = c_xy.restrict(U) # Cartesian coordinates on U
             sage: c_spher.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # spherical coordinates on U
-            sage: # Links between spherical coordinates and Cartesian ones:
+
+        Links between spherical coordinates and Cartesian ones::
+
             sage: ch_cart_spher = c_cart.transition_map(c_spher,
             ....:                                       [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
@@ -1872,7 +1876,9 @@ class ContinuousMap(Morphism):
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological')
             sage: c_cart.<x,y> = M.chart()
-            sage: # A pi/3 rotation around the origin:
+
+        A pi/3 rotation around the origin::
+
             sage: rot = M.homeomorphism(M, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                       name='R')
             sage: rot.inverse()

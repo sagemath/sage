@@ -24,7 +24,6 @@ This file contains the following elements:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from operator import mul
 from sage.matrix.constructor import matrix

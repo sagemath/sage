@@ -1,0 +1,7 @@
+cd src
+
+if SAGE_PYTHON3=yes; then
+   python3 setup.py build_tests
+fi
+
+sage-python23 selftest.py

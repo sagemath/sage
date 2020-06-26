@@ -191,7 +191,6 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
 
         sage: def major_index(p):
         ....:     return p.major_index()
-        ....:
         sage: major_index
         <function major_index at ...>
         sage: combinatorial_map(major_index)
@@ -219,7 +218,7 @@ class CombinatorialMap(object):
     """
     def __init__(self, f, order=None, name=None):
         """
-        Constructor for combinatorial maps
+        Constructor for combinatorial maps.
 
         EXAMPLES::
 
@@ -227,7 +226,6 @@ class CombinatorialMap(object):
             sage: def f(x):
             ....:     "doc of f"
             ....:     return x
-            ....:
             sage: x = combinatorial_map(f); x
             Combinatorial map: f
             sage: x.__doc__

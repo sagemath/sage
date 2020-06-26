@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Diagram and Partition Algebras
 
@@ -23,7 +24,6 @@ AUTHORS:
 # ***************************************************************************
 # python3
 from __future__ import division
-from six.moves import range
 
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -246,7 +246,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         ...
         ValueError: {{1, 2}, {3, 4}} does not represent two rows of vertices of order 2
     """
-    def __init__(self, parent, d):
+    def __init__(self, parent, d, check=True):
         r"""
         Initialize ``self``.
 
@@ -257,7 +257,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             sage: pd1 = da.AbstractPartitionDiagram(pd, ((-2,-1),(1,2)) )
         """
         self._base_diagram = tuple(sorted(tuple(sorted(i)) for i in d))
-        super(AbstractPartitionDiagram, self).__init__(parent, self._base_diagram)
+        super(AbstractPartitionDiagram, self).__init__(parent, self._base_diagram, check=check)
 
     def check(self):
         r"""
@@ -402,7 +402,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         """
         return SetPartitions()(self)
 
-    def compose(self, other):
+    def compose(self, other, check=True):
         r"""
         Compose ``self`` with ``other``.
 
@@ -427,7 +427,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
             ({{-2, -1}, {1, 2}}, 1)
         """
         (composite_diagram, loops_removed) = set_partition_composition(self._base_diagram, other._base_diagram)
-        return (self.__class__(self.parent(), composite_diagram), loops_removed)
+        return (self.__class__(self.parent(), composite_diagram, check=check), loops_removed)
 
     def propagating_number(self):
         r"""
@@ -1216,7 +1216,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
         #   treat it like an attribute, so we call the underlying
         #   __func__.
         for i in self._diagram_func.__func__(self.order):
-            yield self.element_class(self, i)
+            yield self.element_class(self, i, check=False)
 
     def __contains__(self, obj):
         r"""
@@ -1998,8 +1998,8 @@ class DiagramAlgebra(CombinatorialFreeModule):
             \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
             \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
             \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
-            \draw (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
-            \draw (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
             \end{tikzpicture}
 
             sage: latex(P.orbit_basis()([[1,2],[-2,-1]])) # indirect doctest
@@ -2009,73 +2009,11 @@ class DiagramAlgebra(CombinatorialFreeModule):
             \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw, fill] {};
             \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw, fill] {};
             \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw, fill] {};
-            \draw (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
-            \draw (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
             \end{tikzpicture}
-
         """
-        # these allow the view command to work (maybe move them
-        # somewhere more appropriate?)
-        from sage.misc.latex import latex
-        latex.add_to_mathjax_avoid_list('tikzpicture')
-        latex.add_package_to_preamble_if_available('tikz')
-        if hasattr(self, '_fill'):
-            filled_str = ", fill"
-        else:
-            filled_str = ""
-
-        def sgn(x):
-            # Define the sign function
-            if x > 0:
-                return 1
-            if x < 0:
-                return -1
-            return 0
-        l1 = []  # list of blocks
-        l2 = []  # list of nodes
-        for i in list(diagram):
-            l1.append(list(i))
-            for j in list(i):
-                l2.append(j)
-        output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
-        for i in l2: #add nodes
-            output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)
-        for i in l1: #add edges
-            if len(i) > 1:
-                l4 = list(i)
-                posList = []
-                negList = []
-                for j in l4:  # sort list so rows are grouped together
-                    if j > 0:
-                        posList.append(j)
-                    elif j < 0:
-                        negList.append(j)
-                posList.sort()
-                negList.sort()
-                l4 = posList + negList
-                l5 = l4[:] #deep copy
-                for j in range(len(l5)):
-                    l5[j-1] = l4[j] #create a permuted list
-                if len(l4) == 2:
-                    l4.pop()
-                    l5.pop() #pops to prevent duplicating edges
-                for j in zip(l4, l5):
-                    xdiff = abs(j[1])-abs(j[0])
-                    y1 = sgn(j[0])
-                    y2 = sgn(j[1])
-                    if y2-y1 == 0 and abs(xdiff) < 5: #if nodes are close to each other on same row
-                        diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
-                        outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
-                        inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
-                    elif y2-y1 != 0 and abs(xdiff) == 1: #if nodes are close enough curviness looks bad.
-                        outVec = (sgn(xdiff)*0.75, -1*y1)
-                        inVec = (-1*sgn(xdiff)*0.75, -1*y2)
-                    else:
-                        outVec = (sgn(xdiff)*1, -1*y1)
-                        inVec = (-1*sgn(xdiff), -1*y2)
-                    output = output + "\\draw (G-{}) .. controls +{} and +{} .. (G-{}); \n".format(j[0], outVec, inVec, j[1])
-        output = output + "\\end{tikzpicture} \n" #end picture
-        return output
+        return diagram_latex(diagram, fill=hasattr(self, '_fill'))
 
     # The following subclass provides a few additional methods for
     # (sub)partition algebra elements.
@@ -2165,7 +2103,7 @@ class DiagramBasis(DiagramAlgebra):
             d1 = self._indices(d1)
         if not self._indices.is_parent_of(d2):
             d2 = self._indices(d2)
-        (composite_diagram, loops_removed) = d1.compose(d2)
+        (composite_diagram, loops_removed) = d1.compose(d2, check=False)
         return self.term(composite_diagram, self._q**loops_removed)
 
 class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
@@ -3088,7 +3026,7 @@ class OrbitBasis(DiagramAlgebra):
                         for sigma in Permutations(Y):
                             yield [x.union(y) for x, y in zip(X, sigma)] + restA + restB
 
-        D, removed = d1.compose(d2)
+        D, removed = d1.compose(d2, check=False)
         only_top = set([frozenset(part) for part in d1
                         if all(i > 0 for i in part)])
         only_bottom = set([frozenset(part) for part in d2
@@ -3544,6 +3482,41 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         set_partition = to_Brauer_partition(set_partition, k=self.order())
         return SubPartitionAlgebra._element_constructor_(self, set_partition)
 
+    def _ascii_art_term(self, diagram):
+        r"""
+        Return an ascii art representation of ``diagram``.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(4, q, R)
+            sage: x = TL.an_element()
+            sage: ascii_art(x)  # indirect doctest
+                            o o o o       o o o o
+               o o o o      | `-` |       | `-` | 
+            2* `-` `-` + 2* `-----`  + 3* `---. | 
+               .-. .-.      .-. .-.       .-. | | 
+               o o o o      o o o o       o o o o
+        """
+        return TL_diagram_ascii_art(diagram, use_unicode=False)
+
+    def _unicode_art_term(self, diagram):
+        r"""
+        Return a unicode art representation of ``diagram``.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(4, q, R)
+            sage: x = TL.an_element()
+            sage: unicode_art(x)  # indirect doctest
+                            ⚬ ⚬ ⚬ ⚬       ⚬ ⚬ ⚬ ⚬
+               ⚬ ⚬ ⚬ ⚬      │ ╰─╯ │       │ ╰─╯ │ 
+            2* ╰─╯ ╰─╯ + 2* ╰─────╯  + 3* ╰───╮ │ 
+               ╭─╮ ╭─╮      ╭─╮ ╭─╮       ╭─╮ │ │ 
+               ⚬ ⚬ ⚬ ⚬      ⚬ ⚬ ⚬ ⚬       ⚬ ⚬ ⚬ ⚬
+        """
+        return TL_diagram_ascii_art(diagram, use_unicode=True)
 
 class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     r"""
@@ -3766,6 +3739,290 @@ class PropagatingIdeal(SubPartitionAlgebra):
             if n <= 0:
                 raise ValueError("can only take positive integer powers")
             return generic_power(self, n)
+
+def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
+    r"""
+    Return ascii art for a Temperley-Lieb diagram ``diagram``.
+
+    INPUT:
+
+    - ``diagram`` -- a list of pairs of matchings of the set
+      `\{-1, \ldots, -n, 1, \ldots, n\}`
+    - ``use_unicode`` -- (default: ``False``): whether or not
+      to use unicode art instead of ascii art
+    - ``blobs`` -- (optional) a list of matchings with blobs on them
+
+    EXAMPLES::
+
+        sage: from sage.combinat.diagram_algebras import TL_diagram_ascii_art
+        sage: TL = [(-15,-12), (-14,-13), (-11,15), (-10,14), (-9,-6),
+        ....:       (-8,-7), (-5,-4), (-3,1), (-2,-1), (2,3), (4,5),
+        ....:       (6,11), (7, 8), (9,10), (12,13)]
+        sage: TL_diagram_ascii_art(TL, use_unicode=False)
+         o o o o o o o o o o o o o o o
+         | `-` `-` | `-` `-` | `-` | | 
+         |         `---------`     | | 
+         |                 .-------` | 
+         `---.             | .-------`
+             |     .-----. | | .-----.
+         .-. | .-. | .-. | | | | .-. | 
+         o o o o o o o o o o o o o o o
+        sage: TL_diagram_ascii_art(TL, use_unicode=True)
+         ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+         │ ╰─╯ ╰─╯ │ ╰─╯ ╰─╯ │ ╰─╯ │ │ 
+         │         ╰─────────╯     │ │ 
+         │                 ╭───────╯ │ 
+         ╰───╮             │ ╭───────╯
+             │     ╭─────╮ │ │ ╭─────╮
+         ╭─╮ │ ╭─╮ │ ╭─╮ │ │ │ │ ╭─╮ │ 
+         ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+
+        sage: TL = [(-20,-9), (-19,-10), (-18,-11), (-17,-16), (-15,-12), (2,3),
+        ....:       (-14,-13), (-8,16), (-7,7), (-6,6), (-5,1), (-4,-3), (-2,-1),
+        ....:       (4,5), (8,15), (9,10), (11,14), (12,13), (17,20), (18,19)]
+        sage: TL_diagram_ascii_art(TL, use_unicode=False, blobs=[(-2,-1), (-5,1)])
+         o o o o o o o o o o o o o o o o o o o o
+         | `-` `-` | | | `-` | `-` | | | | `-` | 
+         |         | | |     `-----` | | `-----`
+         |         | | `-------------` | 
+         `---0---. | | .---------------`
+                 | | | | .---------------------.
+                 | | | | | .-----------------. | 
+                 | | | | | | .-------------. | | 
+                 | | | | | | | .-----.     | | | 
+         .0. .-. | | | | | | | | .-. | .-. | | | 
+         o o o o o o o o o o o o o o o o o o o o
+        sage: TL_diagram_ascii_art(TL, use_unicode=True, blobs=[(-2,-1), (-5,1)])
+         ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+         │ ╰─╯ ╰─╯ │ │ │ ╰─╯ │ ╰─╯ │ │ │ │ ╰─╯ │ 
+         │         │ │ │     ╰─────╯ │ │ ╰─────╯
+         │         │ │ ╰─────────────╯ │ 
+         ╰───●───╮ │ │ ╭───────────────╯
+                 │ │ │ │ ╭─────────────────────╮
+                 │ │ │ │ │ ╭─────────────────╮ │ 
+                 │ │ │ │ │ │ ╭─────────────╮ │ │ 
+                 │ │ │ │ │ │ │ ╭─────╮     │ │ │ 
+         ╭●╮ ╭─╮ │ │ │ │ │ │ │ │ ╭─╮ │ ╭─╮ │ │ │ 
+         ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+    """
+    def insert_pairing(cur, intervals):
+        """
+        Helper function to insert a possibly nested interval
+        and push the others up, assuming inserting points from
+        right-to-left.
+        """
+        for level in intervals:
+            for j, I in enumerate(level):
+                # Singleton intervals are vertical lines,
+                #   so we don't need to worry about them
+                if len(I) > 1 and I[0] < cur[0]:
+                    cur, level[j] = level[j], cur
+                    level.append([cur[0]])
+                    level.append([cur[1]])
+                    break
+            else:
+                level.append(cur)
+                return  # We have stopped
+        else:
+            intervals.append([cur])
+    # Build a set of intervals that defines where to draw the diagram
+    intervals = [[]]
+    propogating = []
+    vertical = []
+    top_intervals = [[]]
+    num_left = 0
+    num_right = 0
+    def key_func(P):
+        if P[1] < 0:  # cap
+            return (0, P[0], P[1])
+        elif P[0] > 0:  # cup
+            return (3, -P[1], -P[0])
+        else:
+            bot, top = -P[0], P[1]
+            if top < bot:  # left moving
+                return (1, top, bot)
+            elif top > bot:  # right moving
+                return (2, -bot, -top)
+            else:  # vertical line
+                return (1, top, bot)
+    diagram = sorted(diagram, key=key_func)
+    # Since diagram is sorted in lex order, we will first do the matchings
+    #   from right-to-left on the bottom, then the propogating lines, and
+    #   then the matchings on the top from right-to-left.
+    # Note that we need the top to go from right-to-left so the
+    #   insert_pairing() function's assumptions are satisfied.
+    for P in diagram:
+        if P[1] < 0:  # Bottom matching
+            insert_pairing([-P[1], -P[0], False, False], intervals)
+        elif P[0] > 0:  # Top matching
+            insert_pairing([P[0], P[1], True, True], top_intervals)
+        else:  # Propogating line
+            if -P[0] == P[1]:
+                vertical.append(P[1])
+            else:
+                if -P[0] < P[1]:
+                    num_right += 1
+                else:
+                    num_left += 1
+                propogating.append(P)
+
+    # Now piece together the intervals together
+    total_prop = max(num_left, num_right)
+    prop_intervals = [[] for _ in range(total_prop)]
+    count_left = 0
+    # Recall that the left-moving propogating lines come before the right-moving
+    for i, P in enumerate(propogating):
+        bot, top = P
+        bot = -bot  # This makes it equal to its x-coordinate
+        for level in intervals:
+            level.append([bot])
+        for level in top_intervals:
+            level.append([top])
+        left_moving = count_left < num_left
+        if not left_moving:
+            i -= num_left
+        else:
+            count_left += 1
+        for j in range(i):
+            prop_intervals[j].append([bot])
+        for j in range(i+1,total_prop):
+            prop_intervals[j].append([top])
+        if not left_moving:
+            top, bot = bot, top
+        prop_intervals[i].append([top, bot, left_moving, not left_moving])
+    intervals += prop_intervals
+    intervals += reversed(top_intervals)
+    for level in intervals:
+        level.extend([i] for i in vertical)
+
+    n = max(max(P) for P in diagram)
+
+    # Finally, convert to a picture
+    if use_unicode:
+        from sage.typeset.unicode_art import UnicodeArt
+        d = ["╭", "╮", "╰", "╯", "─", "│"]
+        #db = ["┏", "┓", "┗", "┛", "━", "┃"]
+        blob = '●'
+        ret = [" ⚬" * n]
+        char_art = UnicodeArt
+    else:
+        from sage.typeset.ascii_art import AsciiArt
+        d = [".", ".", "`", "`", "-", "|"]
+        #db = [".", ".", "`", "`", "=", "|"]
+        blob = '0'
+        ret = [" o" * n]
+        char_art = AsciiArt
+    def signed(val, pos):
+        return val if pos else -val
+    for level in reversed(intervals):
+        cur = ""
+        for I in sorted(level):
+            cur += ' '*(2*I[0]-1 - len(cur))
+            if len(I) == 1:
+                cur += d[5] + ' '
+            else:
+                cur += d[2] if I[2] else d[0]
+                if tuple(sorted([signed(I[0], I[2]), signed(I[1], I[3])])) in blobs:
+                    cur += d[4] * (I[1]-I[0]-1)
+                    cur += blob
+                    cur += d[4] * (I[1]-I[0]-1)
+                else:
+                    cur += d[4] * (2*(I[1]-I[0])-1)
+                cur += d[3] if I[3] else d[1]
+        ret.append(cur)
+    # Note that the top row and bottom row will be the same
+    ret.append(ret[0])
+    return char_art(ret, baseline=len(ret)//2)
+
+def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
+    r"""
+    Return latex code for the diagram ``diagram`` using tikz.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.diagram_algebras import PartitionDiagrams, diagram_latex
+        sage: P = PartitionDiagrams(2)
+        sage: D = P([[1,2],[-2,-1]])
+        sage: print(diagram_latex(D)) # indirect doctest
+        \begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+        \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+        \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+        \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+        \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
+        \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
+        \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+        \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+        \end{tikzpicture}
+    """
+    # these allow the view command to work (maybe move them
+    # somewhere more appropriate?)
+    from sage.misc.latex import latex
+    latex.add_to_mathjax_avoid_list('tikzpicture')
+    latex.add_package_to_preamble_if_available('tikz')
+
+    if fill:
+        filled_str = ", fill"
+    else:
+        filled_str = ""
+
+    if edge_options is None:
+        edge_options = lambda P: ''
+    if edge_additions is None:
+        edge_additions = lambda P: ''
+
+    def sgn(x):
+        # Define the sign function
+        if x > 0:
+            return 1
+        if x < 0:
+            return -1
+        return 0
+    l1 = []  # list of blocks
+    l2 = []  # list of nodes
+    for i in list(diagram):
+        l1.append(list(i))
+        for j in list(i):
+            l2.append(j)
+    output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
+    for i in l2: #add nodes
+        output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)
+    for i in l1: #add edges
+        if len(i) > 1:
+            l4 = list(i)
+            posList = []
+            negList = []
+            for j in l4:  # sort list so rows are grouped together
+                if j > 0:
+                    posList.append(j)
+                elif j < 0:
+                    negList.append(j)
+            posList.sort()
+            negList.sort()
+            l4 = posList + negList
+            l5 = l4[:] #deep copy
+            for j in range(len(l5)):
+                l5[j-1] = l4[j] #create a permuted list
+            if len(l4) == 2:
+                l4.pop()
+                l5.pop() #pops to prevent duplicating edges
+            for j in zip(l4, l5):
+                xdiff = abs(j[1])-abs(j[0])
+                y1 = sgn(j[0])
+                y2 = sgn(j[1])
+                if y2-y1 == 0 and abs(xdiff) < 5: #if nodes are close to each other on same row
+                    diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
+                    outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
+                    inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
+                elif y2-y1 != 0 and abs(xdiff) == 1: #if nodes are close enough curviness looks bad.
+                    outVec = (sgn(xdiff)*0.75, -1*y1)
+                    inVec = (-1*sgn(xdiff)*0.75, -1*y2)
+                else:
+                    outVec = (sgn(xdiff)*1, -1*y1)
+                    inVec = (-1*sgn(xdiff), -1*y2)
+                output = output + "\\draw[{}] (G-{}) .. controls +{} and +{} .. {}(G-{}); \n".format(
+                            edge_options(j), j[0], outVec, inVec, edge_additions(j), j[1])
+    output = output + "\\end{tikzpicture}" #end picture
+    return output
 
 #########################################################################
 # START BORROWED CODE

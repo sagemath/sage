@@ -53,7 +53,7 @@ def nodes(degree,prec):
 
     A list of (node,weight) pairs.
 
-    EXAMPLE:
+    EXAMPLES:
 
     The nodes for the Gauss-Legendre scheme are roots of Legendre polynomials.
     The weights can be computed by a straightforward formula (note that evaluating

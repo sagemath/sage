@@ -70,7 +70,6 @@ character-by-character::
 from __future__ import print_function
 
 import os
-import six
 import time
 from IPython import get_ipython
 
@@ -466,7 +465,7 @@ def detach(filename):
         ...
         ValueError: file '/dev/null/foobar.sage' is not attached, see attached_files()
     """
-    if isinstance(filename, six.string_types):
+    if isinstance(filename, str):
         filelist = [filename]
     else:
         filelist = [str(x) for x in filename]

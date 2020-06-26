@@ -48,12 +48,15 @@ class PackageCreator(object):
             f.write(pkg_type)
             f.write('\n')
             
-    def set_tarball(self, tarball):
+    def set_tarball(self, tarball, upstream_url):
         """
         Write the tarball name pattern to ``checksums.ini``
         """
         with open(os.path.join(self.path, 'checksums.ini'), 'w+') as f:
             f.write('tarball={0}'.format(tarball))
+            f.write('\n')
+            if upstream_url:
+                f.write('upstream_url={0}'.format(upstream_url))
             f.write('\n')
             
         

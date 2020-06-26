@@ -180,8 +180,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
-from six import iteritems, integer_types
 
 from sage.structure.sage_object import SageObject
 from sage.structure.element import Element
@@ -824,7 +822,7 @@ class Factorization(SageObject):
             mul += '\n'
         x = self.__x[0][0]
         try:
-            atomic = (isinstance(x, integer_types) or
+            atomic = (isinstance(x, int) or
                       self.universe()._repr_option('element_is_atomic'))
         except AttributeError:
             atomic = False
@@ -871,7 +869,7 @@ class Factorization(SageObject):
         if len(self) == 0:
             return self.__unit._latex_()
         try:
-            atomic = (isinstance(self.__x[0][0], integer_types) or
+            atomic = (isinstance(self.__x[0][0], int) or
                       self.universe()._repr_option('element_is_atomic'))
         except AttributeError:
             atomic = False
@@ -1084,7 +1082,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).union(set(d2)):
                 s[a] = d1.get(a,0) + d2.get(a,0)
-            return Factorization(list(iteritems(s)), unit=self.unit()*other.unit())
+            return Factorization(list(s.items()), unit=self.unit()*other.unit())
         else:
             return Factorization(list(self) + list(other), unit=self.unit()*other.unit())
 
@@ -1238,7 +1236,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).intersection(set(d2)):
                 s[a] = min(d1[a],d2[a])
-            return Factorization(list(iteritems(s)))
+            return Factorization(list(s.items()))
         else:
             raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
 
@@ -1280,7 +1278,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).union(set(d2)):
                 s[a] = max(d1.get(a,0),d2.get(a,0))
-            return Factorization(list(iteritems(s)))
+            return Factorization(list(s.items()))
         else:
             raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
 

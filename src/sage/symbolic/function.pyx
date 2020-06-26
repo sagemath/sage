@@ -833,12 +833,12 @@ cdef class Function(SageObject):
         This is only called when no such mpmath function exists. It casts its
         arguments to sage reals of the appropriate precision.
 
-        EXAMPLES::
+        EXAMPLES:
 
         At the time of this writing, mpmath had no arcsin, only asin.
         So the following call would actually fall back to the default
         implementation, using sage reals instead of mpmath ones. This
-        might change when aliases for these functions are established.
+        might change when aliases for these functions are established::
 
             sage: import mpmath
             sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))

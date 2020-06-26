@@ -394,7 +394,6 @@ see :trac:`9538`::
     sage: sage.calculus.calculus.maxima('f1')
     f1
 """
-from six import iteritems
 
 import re
 from sage.arith.all import algdep
@@ -1409,15 +1408,15 @@ lim = limit
 ###################################################################
 def laplace(ex, t, s, algorithm='maxima'):
     r"""
-    Return the Laplace transform with respect to the variable `t` and 
+    Return the Laplace transform with respect to the variable `t` and
     transform parameter `s`, if possible.
-    
-    If this function cannot find a solution, a formal function is returned. 
+
+    If this function cannot find a solution, a formal function is returned.
     The function that is returned may be viewed as a function of `s`.
 
     DEFINITION:
 
-    The Laplace transform of a function `f(t)`, defined for all real numbers 
+    The Laplace transform of a function `f(t)`, defined for all real numbers
     `t \geq 0`, is the function `F(s)` defined by
 
     .. MATH::
@@ -1439,9 +1438,9 @@ def laplace(ex, t, s, algorithm='maxima'):
       - ``'sympy'`` - use SymPy
 
       - ``'giac'`` - use Giac
-    
+
     .. NOTE::
-    
+
         The ``'sympy'`` algorithm returns the tuple (`F`, `a`, ``cond``)
         where `F` is the Laplace transform of `f(t)`,
         `Re(s)>a` is the half-plane of convergence, and ``cond`` are
@@ -1528,17 +1527,17 @@ def laplace(ex, t, s, algorithm='maxima'):
 
         sage: laplace(heaviside(t-1), t, s)
         laplace(heaviside(t - 1), t, s)
-    
-    Heaviside step function can be handled with different interfaces. 
+
+    Heaviside step function can be handled with different interfaces.
     Try with giac::
-        
+
         sage: laplace(heaviside(t-1), t, s, algorithm='giac')
         e^(-s)/s
-        
+
     Try with SymPy::
-    
+
         sage: laplace(heaviside(t-1), t, s, algorithm='sympy')
-        (e^(-s)/s, 0, True)         
+        (e^(-s)/s, 0, True)
 
     TESTS:
 
@@ -1548,7 +1547,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         (t, s)
         sage: laplace(5*cos(3*t-2)*heaviside(t-2), t, s, algorithm='giac')
         5*(s*cos(4)*e^(-2*s) - 3*e^(-2*s)*sin(4))/(s^2 + 9)
-        
+
     Check unevaluated expression from Giac (it is locale-dependent, see
     :trac:`22833`)::
 
@@ -1622,15 +1621,15 @@ def laplace(ex, t, s, algorithm='maxima'):
 
 def inverse_laplace(ex, s, t, algorithm='maxima'):
     r"""
-    Return the inverse Laplace transform with respect to the variable `t` and 
+    Return the inverse Laplace transform with respect to the variable `t` and
     transform parameter `s`, if possible.
-    
-    If this function cannot find a solution, a formal function is returned. 
+
+    If this function cannot find a solution, a formal function is returned.
     The function that is returned may be viewed as a function of `t`.
 
-    DEFINITION: 
-    
-    The inverse Laplace transform of a function `F(s)` is the function 
+    DEFINITION:
+
+    The inverse Laplace transform of a function `F(s)` is the function
     `f(t)`, defined by
 
     .. MATH::
@@ -1678,75 +1677,75 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         sage: inverse_laplace(1/(s^3+1), s, t)
         1/3*(sqrt(3)*sin(1/2*sqrt(3)*t) - cos(1/2*sqrt(3)*t))*e^(1/2*t) + 1/3*e^(-t)
 
-    No explicit inverse Laplace transform, so one is returned formally a 
+    No explicit inverse Laplace transform, so one is returned formally a
     function ``ilt``::
 
         sage: inverse_laplace(cos(s), s, t)
         ilt(cos(s), s, t)
-    
+
     Transform an expression involving a time-shift, via SymPy::
 
         sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='sympy')
         -(log(e^(-t)) + 1)*heaviside(t - 1)
 
     The same instance with Giac::
-    
+
         sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='giac')
         (t - 1)*heaviside(t - 1)
-        
+
     Transform a rational expression::
-                    
+
         sage: inverse_laplace((2*s^2*exp(-2*s) - exp(-s))/(s^3+1), s, t, algorithm='giac')
-        -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1)) - cos(1/2*sqrt(3)*(t - 1))*e^(1/2*t - 1/2) + 
+        -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1)) - cos(1/2*sqrt(3)*(t - 1))*e^(1/2*t - 1/2) +
         e^(-t + 1))*heaviside(t - 1) + 2/3*(2*cos(1/2*sqrt(3)*(t - 2))*e^(1/2*t - 1) + e^(-t + 2))*heaviside(t - 2)
-        
+
     Dirac delta function can also be handled::
-    
+
         sage: inverse_laplace(1, s, t, algorithm='giac')
         dirac_delta(t)
-                
+
     TESTS:
 
     Testing unevaluated expression from Maxima::
-    
+
         sage: var('t, s')
         (t, s)
         sage: inverse_laplace(exp(-s)/s, s, t)
         ilt(e^(-s)/s, s, t)
-        
+
     Testing Giac::
 
         sage: inverse_laplace(exp(-s)/s, s, t, algorithm='giac')
         heaviside(t - 1)
-    
+
     Testing SymPy::
-    
+
         sage: inverse_laplace(exp(-s)/s, s, t, algorithm='sympy')
-        heaviside(t - 1)    
-        
+        heaviside(t - 1)
+
     Testing unevaluated expression from Giac::
-    
+
         sage: n = var('n')
         sage: inverse_laplace(1/s^n, s, t, algorithm='giac')
         ilt(1/(s^n), t, s)
 
     Try with Maxima::
-    
+
         sage: inverse_laplace(1/s^n, s, t, algorithm='maxima')
         ilt(1/(s^n), s, t)
-    
+
     Try with SymPy::
-    
+
         sage: inverse_laplace(1/s^n, s, t, algorithm='sympy')
         t^(n - 1)*heaviside(t)/gamma(n)
-    
+
     Testing unevaluated expression from SymPy::
-    
+
         sage: inverse_laplace(cos(s), s, t, algorithm='sympy')
         ilt(cos(s), t, s)
-    
+
     Testing the same with Giac::
-    
+
         sage: inverse_laplace(cos(s), s, t, algorithm='giac')
         ilt(cos(s), t, s)
     """
@@ -1776,7 +1775,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         try:
             result = giac.invlaplace(ex, s, t)
         except TypeError:
-            raise ValueError("Giac cannot make sense of: %s" % ex)    
+            raise ValueError("Giac cannot make sense of: %s" % ex)
         if 'ilaplace' in format(result):
             return dummy_inverse_laplace(ex, t, s)
         else:
@@ -1856,7 +1855,7 @@ def at(ex, *args, **kwds):
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
     kwds = {(k[10:] if k[:10] == "_SAGE_VAR_" else k): v
-            for k, v in iteritems(kwds)}
+            for k, v in kwds.items()}
     if len(args) == 1 and isinstance(args[0], list):
         for c in args[0]:
             kwds[str(c.lhs())] = c.rhs()
@@ -2250,7 +2249,7 @@ def maxima_options(**kwds):
         'an_option=true,another=false,foo=bar'
     """
     return ','.join('%s=%s' % (key, mapped_opts(val))
-                    for key, val in sorted(iteritems(kwds)))
+                    for key, val in sorted(kwds.items()))
 
 
 # Parser for symbolic ring elements

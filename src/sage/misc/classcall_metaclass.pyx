@@ -87,10 +87,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         If a class is put in this metaclass it automatically becomes a
         new-style class::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Foo: pass
+            sage: class Foo(metaclass=ClasscallMetaclass): pass
             sage: x = Foo(); x
             <__main__.Foo object at 0x...>
             sage: issubclass(Foo, object)
@@ -103,10 +101,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         r"""
         TESTS::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class FOO(object): pass
+            sage: class FOO(metaclass=ClasscallMetaclass): pass
             sage: isinstance(FOO, ClasscallMetaclass)  # indirect doctest
             True
         """
@@ -126,10 +122,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
         EXAMPLES::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class FOO(object): pass
+            sage: class FOO(metaclass=ClasscallMetaclass): pass
             sage: FOO()
             <__main__.FOO object at ...>
 
@@ -194,10 +188,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
         EXAMPLES::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Foo(object):
+            sage: class Foo(metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall__(cls):
             ....:         print("calling classcall")
@@ -224,8 +216,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
         We now show the usage of ``__classcall_private__``::
 
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class FooNoInherits(object):
+            sage: class FooNoInherits(object, metaclass=ClasscallMetaclass):
             ....:     __metaclass__ = ClasscallMetaclass
             ....:     @staticmethod
             ....:     def __classcall_private__(cls):
@@ -244,8 +235,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
         We now show the usage of both::
 
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Foo2(object):
+            sage: class Foo2(object, metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls):
             ....:         print("calling private classcall")
@@ -312,16 +302,14 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
         We check for memory leaks::
 
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class NOCALL(object):
+            sage: class NOCALL(object, metaclass=ClasscallMetaclass):
             ....:    pass
             sage: sys.getrefcount(NOCALL())
             1
 
         We check that exceptions are correctly handled::
 
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Exc(object):
+            sage: class Exc(object, metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall__(cls):
             ....:         raise ValueError("Calling classcall")
@@ -367,13 +355,10 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         ``obj.Inner(...)`` is equivalent to ``Outer.Inner(obj, ...)``::
 
             sage: import functools
-            sage: from six import add_metaclass
             sage: from sage.misc.nested_class import NestedClassMetaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(NestedClassMetaclass)
-            ....: class Outer:
-            ....:     @add_metaclass(ClasscallMetaclass)
-            ....:     class Inner(object):
+            sage: class Outer(metaclass=NestedClassMetaclass):
+            ....:     class Inner(metaclass=ClasscallMetaclass):
             ....:         @staticmethod
             ....:         def __classget__(cls, instance, owner):
             ....:             print("calling __classget__(%s, %s, %s)" % (
@@ -439,10 +424,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         We construct a class which implements membership testing, and
         which contains ``1`` and no other x::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Foo(object):
+            sage: class Foo(metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcontains__(cls, x):
             ....:         return x == 1
@@ -454,10 +437,8 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         We now check that for a class without ``__classcontains__``
         method, we emulate the usual error message::
 
-            sage: from six import add_metaclass
             sage: from sage.misc.classcall_metaclass import ClasscallMetaclass
-            sage: @add_metaclass(ClasscallMetaclass)
-            ....: class Bar(object): pass
+            sage: class Bar(metaclass=ClasscallMetaclass): pass
             sage: 1 in Bar
             Traceback (most recent call last):
             ...
@@ -557,7 +538,6 @@ def timeCall(T, int n, *args):
 
     EXAMPLES::
 
-        sage: from six import add_metaclass
         sage: from sage.misc.classcall_metaclass import (
         ....:     ClasscallMetaclass, CRef, C2, C3, C2C, timeCall)
         sage: timeCall(object, 1000)
@@ -576,8 +556,7 @@ def timeCall(T, int n, *args):
     overhead in using :class:`ClasscallMetaclass` if there is no classcall
     defined::
 
-        sage: @add_metaclass(ClasscallMetaclass)
-        ....: class P(object):
+        sage: class P(metaclass=ClasscallMetaclass):
         ....:     def __init__(self, i):
         ....:         self.i = i+i1
 
@@ -596,8 +575,7 @@ def timeCall(T, int n, *args):
 
     Let's now compare when there is a classcall defined::
 
-        sage: @add_metaclass(ClasscallMetaclass)
-        ....: class PC(object):
+        sage: class PC(object, metaclass=ClasscallMetaclass):
         ....:     @staticmethod
         ....:     def __classcall__(cls, i):
         ....:         return i+i1

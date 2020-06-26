@@ -19,8 +19,6 @@ Functions
 
 """
 from __future__ import absolute_import, division
-from six import iteritems 
-from six.moves import range
 from sage.cpython.string import bytes_to_str
 
 
@@ -382,6 +380,27 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         Traceback (most recent call last):
         ...
         ValueError: each column represents an edge: -1 goes to 1
+    
+    Handle incidence matrix containing a column with only zeros (:trac:`29275`)::
+
+        sage: m = Matrix([[0,1],[0,-1],[0,0]])
+        sage: m
+        [ 0  1]
+        [ 0 -1]
+        [ 0  0]
+        sage: G = DiGraph(m,format='incidence_matrix')
+        sage: list(G.edges(labels=False))
+        [(1, 0)]
+
+    Handle incidence matrix [[1],[-1]] (:trac:`29275`)::
+
+        sage: m = Matrix([[1],[-1]])
+        sage: m
+        [ 1]
+        [-1]
+        sage: G = DiGraph(m,format='incidence_matrix')
+        sage: list(G.edges(labels=False))
+        [(1, 0)]
     """
     from sage.structure.element import is_Matrix
     assert is_Matrix(M)
@@ -389,10 +408,12 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
     positions = []
     for c in M.columns():
         NZ = c.nonzero_positions()
+        if not NZ:
+            continue
         if len(NZ) != 2:
             raise ValueError("there must be two nonzero entries (-1 & 1) per column")
-        L = sorted(set(c.list()))
-        if L != [-1, 0, 1]:
+        L = sorted([c[i] for i in NZ])
+        if L != [-1, 1]:
             raise ValueError("each column represents an edge: -1 goes to 1")
         if c[NZ[0]] == -1:
             positions.append(tuple(NZ))
@@ -436,9 +457,9 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         raise ValueError("input dict must be a consistent format")
 
     if not loops:
-        if any(u in neighb for u,neighb in iteritems(M)):
+        if any(u in neighb for u,neighb in M.items()):
             if loops is False:
-                u = next(u for u,neighb in iteritems(M) if u in neighb)
+                u = next(u for u,neighb in M.items() if u in neighb)
                 raise ValueError("the graph was built with loops=False but input M has a loop at {}".format(u))
             loops = True
         if loops is None:
@@ -503,9 +524,9 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
     """
     verts = set().union(D.keys(), *D.values())
     if not loops:
-        if any(u in neighb for u, neighb in iteritems(D)):
+        if any(u in neighb for u, neighb in D.items()):
             if loops is False:
-                u = next(u for u, neighb in iteritems(D) if u in neighb)
+                u = next(u for u, neighb in D.items() if u in neighb)
                 raise ValueError("the graph was built with loops=False but input D has a loop at {}".format(u))
             loops = True
         if loops is None:

@@ -171,7 +171,7 @@ size_t get_next_level(\
     return n_newfaces;
 }
 
-size_t bit_repr_to_coatom_repr(uint64_t *face, uint64_t **coatoms, \
+size_t bit_rep_to_coatom_rep(uint64_t *face, uint64_t **coatoms, \
                                size_t n_coatoms, size_t face_length, \
                                size_t *output){
     /*
@@ -184,7 +184,7 @@ size_t bit_repr_to_coatom_repr(uint64_t *face, uint64_t **coatoms, \
     for (size_t i = 0; i < n_coatoms; i++){
         if (is_subset(face, coatoms[i], face_length)){
             // ``face`` is contain in ``coatoms[i]``,
-            // then ``i`` is an element in the coatom-represention.
+            // then ``i`` is an element in the coatom-representation.
             output[count_length] = i;
             count_length++;
         }

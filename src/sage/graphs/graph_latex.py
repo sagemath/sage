@@ -1071,7 +1071,7 @@ class GraphLatex(SageObject):
         #   shape" to mirror vertex shapes
         # - "line width" works for vertices, should be configurable
         # - allow injection of latex code to style a pre-built style for
-        #   example, \SetUpVertex[style={fill=green}] could overide color
+        #   example, \SetUpVertex[style={fill=green}] could override color
         #   selection in a style like "Art"
         # - "inner sep" is distance from vertex label to edge of vertex this
         #   should be set as small as possible - but bigger than the line width.

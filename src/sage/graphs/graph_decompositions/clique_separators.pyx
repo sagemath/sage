@@ -157,6 +157,7 @@ cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
                 return False
     return True
 
+
 def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=False):
     r"""
     Return the atoms of the decomposition of `G` by clique minimal separators.
@@ -200,7 +201,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     OUTPUT:
 
     - By default, return a tuple `(A, S_c)`, where `A` is the list of atoms of
-      the graph in the order of dicovery, and `S_c` is the list of clique
+      the graph in the order of discovery, and `S_c` is the list of clique
       separators, with possible repetitions, in the order the separator has been
       considered. If furthermore ``separators`` is ``True``, return a tuple `(A,
       S_h, S_c)`, where `S_c` is the list of considered separators of the graph

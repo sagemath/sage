@@ -11,7 +11,6 @@ Monoids
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod

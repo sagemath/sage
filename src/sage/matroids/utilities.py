@@ -24,7 +24,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function
-from six import iteritems
 
 from sage.matrix.constructor import Matrix
 from sage.rings.all import ZZ, QQ, GF
@@ -127,7 +126,7 @@ def setprint_s(X, toplevel=False):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
     elif isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
-                                      for key, val in iteritems(X))) + '}'
+                                      for key, val in X.items())) + '}'
     elif isinstance(X, str):
         if toplevel:
             return X
@@ -558,7 +557,7 @@ def lift_cross_ratios(A, lift_map=None):
         True
 
     """
-    for s, t in iteritems(lift_map):
+    for s, t in lift_map.items():
         source_ring = s.parent()
         target_ring = t.parent()
         break
@@ -629,13 +628,13 @@ def lift_cross_ratios(A, lift_map=None):
         div = True
         for entry2 in entries:
             if div:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
                         monomial[cr] = monomial[cr] + degree
                     else:
                         monomial[cr] = degree
             else:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
                         monomial[cr] = monomial[cr] - degree
                     else:
@@ -647,9 +646,9 @@ def lift_cross_ratios(A, lift_map=None):
 
     # compute each entry of Z as the product of lifted cross ratios
     Z = Matrix(target_ring, A.nrows(), A.ncols())
-    for entry, monomial in iteritems(F):
+    for entry, monomial in F.items():
         Z[entry] = plus_one2
-        for cr, degree in iteritems(monomial):
+        for cr, degree in monomial.items():
             if cr == minus_one1:
                 Z[entry] = Z[entry] * (minus_one2**degree)
             else:

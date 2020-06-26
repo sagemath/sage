@@ -286,6 +286,7 @@ def kruskal_iterator(G, wfunction=None, bint check=False):
                                            weighted=G.weighted(),
                                            weight_function=wfunction)
 
+
 def kruskal_iterator_from_edges(edges, union_find, weighted=False, weight_function=None):
     """
     Return an iterator implementation of Kruskal algorithm on list of edges.
@@ -341,6 +342,7 @@ def kruskal_iterator_from_edges(edges, union_find, weighted=False, weight_functi
              union_find.union(u, v)
              if union_find.number_of_subsets() == 1:
                  return
+
 
 def filter_kruskal(G, threshold=10000, weight_function=None, bint check=False):
     """
@@ -418,6 +420,7 @@ def filter_kruskal(G, threshold=10000, weight_function=None, bint check=False):
     """
     return list(filter_kruskal_iterator(G, threshold=threshold, weight_function=weight_function, check=check))
 
+
 def filter_kruskal_iterator(G, threshold=10000, weight_function=None, bint check=False):
     r"""
     Return an iterator implementation of Filter Kruskal's algorithm.
@@ -436,7 +439,7 @@ def filter_kruskal_iterator(G, threshold=10000, weight_function=None, bint check
     EXAMPLES:
 
     The edges of a minimum spanning tree of ``G``, if one exists, otherwise
-    returns the empty list.
+    returns the empty list. ::
 
         sage: from sage.graphs.spanning_tree import filter_kruskal_iterator
         sage: G = Graph({1:{2:28, 6:10}, 2:{3:16, 7:14}, 3:{4:12}, 4:{5:22, 7:18}, 5:{6:25, 7:24}})
@@ -790,6 +793,7 @@ cpdef boruvka(G, wfunction=None, bint check=False, bint by_weight=True):
         components_dict = {}
 
     return T
+
 
 @cython.binding(True)
 def random_spanning_tree(self, output_as_graph=False):

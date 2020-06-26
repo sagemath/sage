@@ -3,7 +3,6 @@
 The Eisenstein Subspace
 """
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.structure.all import Sequence
 from sage.misc.all import verbose, cached_method

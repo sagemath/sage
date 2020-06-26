@@ -33,8 +33,6 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import print_function
 
-from six.moves import range
-
 import itertools
 import time
 from itertools import islice
@@ -1665,7 +1663,7 @@ class ClusterSeed(SageObject):
             [ 0 -1  0]
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.use_g_vectors(False); S.use_fpolys(False);  S.use_c_vectors(False);  S.use_d_vectors(False); S.track_mutations(False); 
+            sage: S.use_g_vectors(False); S.use_fpolys(False);  S.use_c_vectors(False);  S.use_d_vectors(False); S.track_mutations(False);
             sage: S.c_matrix()
             Traceback (most recent call last):
             ...
@@ -1806,7 +1804,7 @@ class ClusterSeed(SageObject):
 
     def coefficient(self,k):
         r"""
-        Return the *coefficient* of ``self`` at index ``k``, 
+        Return the *coefficient* of ``self`` at index ``k``,
         or vertex ``k`` if ``k`` is not an index.
 
         EXAMPLES::
@@ -3216,7 +3214,7 @@ class ClusterSeed(SageObject):
         """
         if len(cluster) < self._n + self._m:
             raise ValueError('The number of given cluster variables is wrong')
-        if self._use_fpolys:        
+        if self._use_fpolys:
             if any(c not in FractionField(self._R) for c in cluster):
                 raise ValueError('The cluster variables are not all contained in %s'%FractionField(self._R))
             if not force:  # if already have f_polynomials, using set_cluster might yield data inconsistent with them.
@@ -3226,7 +3224,7 @@ class ClusterSeed(SageObject):
                                  for x in cluster][0:self._n]
                 self._is_principal = None
         else:
-             print("Warning: clusters not being tracked so this command is ignored.") 
+             print("Warning: clusters not being tracked so this command is ignored.")
 
     def reset_cluster( self ):
         r"""
@@ -4393,7 +4391,7 @@ class ClusterSeed(SageObject):
 
         OUTPUT:
 
-        An array of elements in the upper cluster algebra. 
+        An array of elements in the upper cluster algebra.
 
         EXAMPLES::
 
@@ -4425,7 +4423,8 @@ class ClusterSeed(SageObject):
         r"""
         Return a list of compatible vectors for each vector in the vector decomposition ``vd``.
 
-        Compatibility is defined as in [LLM]_ with respect to the matrix `B`.
+        Compatibility is defined as in [LLM2014]_ with respect to the
+        matrix `B`.
 
         INPUT:
 
@@ -4435,7 +4434,7 @@ class ClusterSeed(SageObject):
 
         OUTPUT:
 
-        a 2-dimensional array containing all the vectors compatible with each vector in ``vd.`` 
+        a 2-dimensional array containing all the vectors compatible with each vector in ``vd.``
 
         .. NOTE::
 
@@ -4482,7 +4481,7 @@ class ClusterSeed(SageObject):
                     E.append([i, j])
                 elif B[i][j] < 0:
                     E.append([j, i])
-        # Checks for edges to frozen vertices. 
+        # Checks for edges to frozen vertices.
         num_frozens = num_rows - num_cols
         for k in range(num_frozens):
             for j in range(i, num_cols):
@@ -4525,7 +4524,7 @@ class ClusterSeed(SageObject):
 
     def _produce_upper_cluster_algebra_element(self, vd, cList):
         r"""
-        Takes the compatible vectors and uses them to produce a Laurent polynomial in the upper cluster algebra. 
+        Takes the compatible vectors and uses them to produce a Laurent polynomial in the upper cluster algebra.
 
         EXAMPLES::
 
@@ -4554,16 +4553,16 @@ class ClusterSeed(SageObject):
         #Computes the Laurent Polynomial for each vector in the decomposition.
         finalP = []
         #Laurent polynomial for each vector in {0,1}^n
-        for i in range(len(vd)):  
+        for i in range(len(vd)):
             final = 1
             numerator = 0
-            if cList[i] != []: 
+            if cList[i] != []:
             #If the vector in vd is negative then it did not contribute any compatible vectors. It will only contribute a Laurent monomial. This is the case when cList[i]=[]
             #Each compatible sequence gives a term in the numerator of the Laurent polynomial.
-                for s in cList[i]:  
+                for s in cList[i]:
                     term = 1
-                    #Calulates the monomial in the term. 
-                    for j in range(num_rows): 
+                    #Calulates the monomial in the term.
+                    for j in range(num_rows):
                         x = R.gen(j)
                         expn = 0
                         #The exponent is determined by the vectors a,s, and the matrix B.
@@ -4571,19 +4570,19 @@ class ClusterSeed(SageObject):
                             expn += (vd[i][0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
                         term *= x ** expn
                     numerator += term
-            #Gives a numerator for the negative vector, or else the product would be zero.      
+            #Gives a numerator for the negative vector, or else the product would be zero.
             else:
                 numerator = 1
-                
-            #Uses the vectors in vd to calculates the denominator of the Laurent.     
+
+            #Uses the vectors in vd to calculates the denominator of the Laurent.
             denominator = 1
             for l in range(num_cols):
                 denominator = denominator * (R.gen(l))**vd[i][0][l]
-            #Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it. 
+            #Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it.
             final = (numerator/denominator)**vd[i][1]
             finalP.append(final)
         laurentP = 1
-        #The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition. 
+        #The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition.
         for p in finalP:
             laurentP *= p
         return laurentP
@@ -4815,7 +4814,7 @@ def _vector_decomposition(a, length):
     A decomposition of `a` into vectors `b_i \in \{0,1\}^n` such that
     `a= \sum c_i b_i` for `c_i \in \ZZ.`
 
-    Returns an array of tuples `\right[b_i,c_i\left].` 
+    Returns an array of tuples `\right[b_i,c_i\left].`
 
     EXAMPLES::
 
@@ -4847,7 +4846,7 @@ def _vector_decomposition(a, length):
         mini = min(mini, api)
     diff = maxi - mini
 
-    # Creates a copy of a that will be edited when decomposing the vector.  
+    # Creates a copy of a that will be edited when decomposing the vector.
     ap = copy(a_plus)
     if maxi == 0 == mini:
         ap = []
@@ -4877,13 +4876,13 @@ def _vector_decomposition(a, length):
             cols[i].reverse()
     mat = matrix(cols)
 
-    # Adds a zero to the end of every vector for each frozen vertex. 
+    # Adds a zero to the end of every vector for each frozen vertex.
     froz_mat = matrix(length - mat.nrows(), mat.ncols())
     mat = mat.stack(froz_mat)
     mat = mat.transpose()
     vects = mat.rows()
 
-    # Collects identical decomposition vectors and counts their multiplicities. 
+    # Collects identical decomposition vectors and counts their multiplicities.
     while vects:
         vect = vects[0]
         count = vects.count(vect)
@@ -4901,7 +4900,7 @@ def _power_set(n):
 
     - `n` -- an integer.
 
-    OUTPUT: 
+    OUTPUT:
 
     A 2-dimensional array containing all elements of `\{0,1\}^n`.
 
@@ -4980,7 +4979,7 @@ def _multi_concatenate(l1, l2):
         [0, 1, 2, 8],
         [3, 4, 5, 6],
         [3, 4, 5, 7],
-        [3, 4, 5, 8]]   
+        [3, 4, 5, 8]]
     """
     plist = []
     for i in l1:

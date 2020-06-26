@@ -51,7 +51,13 @@ properties to do its job. Not only mapping and reducing but also
 How can I use all that stuff?
 -----------------------------
 
-First, you need the information necessary to describe a
+First, you need to set the environment variable `SAGE_NUM_THREADS` to the
+desired number of parallel threads to be used:
+
+      sage: import os                                 # not tested
+      sage: os.environ["SAGE_NUM_THREADS"] = '8'      # not tested
+
+Second, you need the information necessary to describe a
 :class:`RecursivelyEnumeratedSet of forest
 type<sage.combinat.backtrack.SearchForest>` representing your set `S` (see
 :mod:`sage.sets.recursively_enumerated_set`).  Then, you need to provide a
@@ -532,16 +538,14 @@ Classes and methods
 """
 from __future__ import print_function, absolute_import
 
-import six
-
 from threading import Thread
-from six.moves import queue
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet # _generic
 from sage.misc.lazy_attribute import lazy_attribute
 import collections
 import copy
 import sys
 import random
+import queue
 import ctypes
 
 
@@ -568,18 +572,10 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-if six.PY2:
-    import multiprocessing as mp
-    from multiprocessing.queues import SimpleQueue
-    # Put SimpleQueue in the multiprocessing top-level namespace for
-    # compatibility with Python 3
-    mp.SimpleQueue = SimpleQueue
-    del SimpleQueue
-else:
-    # Set up a multiprocessing context to use for this modules (using the
-    # 'fork' method which is basically same as on Python 2)
-    import multiprocessing as mp
-    mp = mp.get_context('fork')
+# Set up a multiprocessing context to use for this modules (using the
+# 'fork' method which is basically same as on Python 2)
+import multiprocessing as mp
+mp = mp.get_context('fork')
 
 
 def proc_number(max_proc=None):

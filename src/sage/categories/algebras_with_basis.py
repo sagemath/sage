@@ -18,8 +18,6 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from .unital_algebras import UnitalAlgebras
 
-import six
-
 
 class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -155,8 +153,8 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             #Do the case where the user specifies how to multiply basis elements
             if hasattr(self, '_multiply_basis'):
-                for (left_m, left_c) in six.iteritems(left._monomial_coefficients):
-                    for (right_m, right_c) in six.iteritems(right._monomial_coefficients):
+                for (left_m, left_c) in left._monomial_coefficients.items():
+                    for (right_m, right_c) in right._monomial_coefficients.items():
                         res = self._multiply_basis(left_m, right_m)
                         #Handle the case where the user returns a dictionary
                         #where the keys are the monomials and the values are
@@ -189,7 +187,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             BR = self.base_ring()
             zero = BR(0)
             del_list = []
-            for m, c in six.iteritems(z_elt):
+            for m, c in z_elt.items():
                 if c == zero:
                     del_list.append(m)
             for m in del_list:

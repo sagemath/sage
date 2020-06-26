@@ -559,7 +559,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
         sage: ring_ptr  # random output
         The ring pointer 0x7f78a646b8d0
         sage: ring_refcount_dict[ring_ptr]
-        4
+        3
 
         sage: strat = GroebnerStrategy(Ideal([P.gen(0) + P.gen(1)]))
         sage: ring_refcount_dict[ring_ptr]

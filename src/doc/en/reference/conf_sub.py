@@ -16,8 +16,6 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC
 from sage.docs.conf import release, exclude_patterns
 from sage.docs.conf import *
 
-from six.moves import range
-
 ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
@@ -39,14 +37,14 @@ if not title:
 title = title.replace(u'`', u'$')
 
 # General information about the project.
-project = u'Sage Reference Manual: ' + title
+project = u'Sage {} Reference Manual: '.format(release) + title
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = u'Sage Reference Manual v' + release + ': ' + title
+html_title = project
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = title
+html_short_title = project
 
 # HTML theme (e.g., 'default', 'sphinxdoc').  The pages for the
 # reference manual use a custom theme, a slight variant on the 'sage'

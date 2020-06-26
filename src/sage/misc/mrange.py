@@ -64,7 +64,6 @@ def _is_finite(L, fallback=True):
         True
         sage: _is_finite([])
         True
-        sage: from six.moves import range
         sage: _is_finite(range(10^8))
         True
         sage: from itertools import product
@@ -208,8 +207,7 @@ def mrange_iter(iter_list, typ=list):
 
         sage: mrange_iter([range(5),range(3),range(0)])
         []
-        sage: from six.moves import range
-        sage: mrange_iter([range(5),range(3),range(-2)])
+        sage: mrange_iter([range(5), range(3), range(-2)])
         []
 
     This example is not empty, and should not be. See :trac:`6561`.

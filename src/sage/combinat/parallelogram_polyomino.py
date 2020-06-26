@@ -20,8 +20,6 @@ from __future__ import (
     division, absolute_import, print_function, unicode_literals
 )
 
-from six.moves import range
-from six import add_metaclass
 
 from sage.structure.list_clone import ClonableList
 from sage.structure.unique_representation import UniqueRepresentation
@@ -877,8 +875,8 @@ class _drawing_tool:
         )
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class ParallelogramPolyomino(ClonableList):
+class ParallelogramPolyomino(ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Parallelogram Polyominoes.
 

@@ -38,13 +38,9 @@ cpdef inline str bytes_to_str(b, encoding=None, errors=None):
 
     EXAMPLES::
 
-        sage: import six
         sage: from sage.cpython.string import bytes_to_str
         sage: s = bytes_to_str(b'\xcf\x80')
-        sage: if six.PY2:
-        ....:     s == b'\xcf\x80'
-        ....: else:
-        ....:     s == u'π'
+        sage: s == u'π'
         True
         sage: bytes_to_str([])
         Traceback (most recent call last):
@@ -75,12 +71,8 @@ cpdef inline bytes str_to_bytes(s, encoding=None, errors=None):
 
     EXAMPLES::
 
-        sage: import six
         sage: from sage.cpython.string import str_to_bytes
-        sage: if six.PY2:
-        ....:     bs = [str_to_bytes('\xcf\x80'), str_to_bytes(u'π')]
-        ....: else:
-        ....:     bs = [str_to_bytes(u'π')]
+        sage: bs = [str_to_bytes(u'π')]
         sage: all(b == b'\xcf\x80' for b in bs)
         True
         sage: str_to_bytes([])

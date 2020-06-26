@@ -197,7 +197,6 @@ representing a sum of admissible monomials.
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #*****************************************************************************
-from six.moves import range
 
 from sage.misc.cachefunc import cached_function
 

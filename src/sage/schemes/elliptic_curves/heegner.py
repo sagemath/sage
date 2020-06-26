@@ -94,8 +94,6 @@ The above is consistent with the following analytic computation::
 
 from __future__ import print_function, absolute_import, division
 
-from six.moves import range
-
 from sage.misc.all import verbose, prod
 from sage.misc.cachefunc import cached_method
 
@@ -3280,7 +3278,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 389
             sage: numerical_approx(P)
-            (0.675507556926806 + 0.344749649302635*I : -0.377142931401887 + 0.843366227137146*I : 1.00000000000000)
+            (0.675507556926807 + 0.344749649302635*I : -0.377142931401887 + 0.843366227137146*I : 1.00000000000000)
             sage: P.numerical_approx()
             (0.6755075569268... + 0.3447496493026...*I : -0.3771429314018... + 0.8433662271371...*I : 1.00000000000000)
             sage: E.heegner_point(-7, 11).numerical_approx()
@@ -4298,7 +4296,7 @@ class KolyvaginPoint(HeegnerPoint):
 
             sage: E = EllipticCurve('43a'); P = E.heegner_point(-20).kolyvagin_point()
             sage: PP = P.numerical_approx(); PP
-            (...e-16 : -1.00000000000000 : 1.00000000000000)
+            (0.000000000000000 : -1.00000000000000 : 1.00000000000000)
             sage: P._recognize_point_over_QQ(PP, 4)
             (0 : -1 : 1)
         """
@@ -5535,11 +5533,6 @@ class HeegnerQuatAlg(SageObject):
             raise NotImplementedError("class number greater than 1 not implemented")
         i = min(v.nonzero_positions())
         return self.kolyvagin_sigma_operator(D, c, i)
-
-        #w = 0
-        #for i, a in six.iteritems(v.dict()):
-        #    w += a * self.kolyvagin_sigma_operator(D, c, i)
-        # return w
 
     @cached_method
     def kolyvagin_point_on_curve(self, D, c, E, p, bound=10):

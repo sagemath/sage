@@ -183,7 +183,7 @@ AUTHORS:
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 ###############################################################################
 
 
@@ -220,7 +220,6 @@ from sage.structure.element cimport Vector
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate cimport current_randstate
-from sage.misc.superseded import deprecation
 
 
 ############################################################################
@@ -767,18 +766,6 @@ class Gap(Parent):
             5
         """
         return len(get_owned_objects())
-
-    def mem(self):
-        """
-        Return information about GAP memory usage
-
-        This method is deprecated and is a no-op.  Use :meth:`Gap.show` to
-        display memory-usage and bag count statistics from GASMAN.
-        """
-
-        deprecation(22626, 'this functionality is not supported by GAP; use '
-                           'libgap.show() for GAP memory usage statistics')
-        return (0, 0, 0, 0, 0)
 
     def collect(self):
         """

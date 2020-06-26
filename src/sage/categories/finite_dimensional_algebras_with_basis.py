@@ -963,7 +963,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Here are some more counterexamples:
 
             1. Some orthogonal elements summing to `1` but not being
-            idempotent::
+               idempotent::
 
                 sage: class PQAlgebra(CombinatorialFreeModule):
                 ....:     def __init__(self, F, p):
@@ -987,7 +987,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
                 False
 
-            For comparison::
+               For comparison::
 
                 sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()
                 sage: a, b = y, 1-y

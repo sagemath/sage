@@ -1,5 +1,8 @@
+# We don't use the "converseg" program, but we need to ensure that we
+# only detect nauty >= 2.6 because we use the digraph6 format from
+# that version -- and converseg was added in nauty-2.6.
 AC_DEFUN([SAGE_TEST_NAUTY_PROGS], [
-    m4_foreach([nautyprog], [directg, gentourng, geng, genbg], [
+    m4_foreach([nautyprog], [directg, gentourng, geng, genbg, converseg], [
       AC_PATH_PROG([$2]nautyprog, [[$1]nautyprog])
       AS_IF([test x$[$2]nautyprog = x], [sage_spkg_install_nauty=yes])
     ])

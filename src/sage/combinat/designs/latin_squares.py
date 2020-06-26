@@ -123,8 +123,6 @@ Functions
 ---------
 """
 from __future__ import print_function, absolute_import
-from six import iteritems
-from six.moves import zip
 
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
@@ -449,7 +447,7 @@ def latin_square_product(M, N, *others):
          for jj in range(n)}
 
     L = lambda i_j: i_j[0] * n + i_j[1]
-    D = {(L(c[0]), L(c[1])): L(v) for c, v in iteritems(D)}
+    D = {(L(c[0]), L(c[1])): L(v) for c, v in D.items()}
     P = Matrix(D)
 
     if others:

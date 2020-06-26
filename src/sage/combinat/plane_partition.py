@@ -23,8 +23,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import add_metaclass
 
 from sage.structure.list_clone import ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -37,8 +35,8 @@ from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class PlanePartition(ClonableArray):
+class PlanePartition(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A plane partition.
 

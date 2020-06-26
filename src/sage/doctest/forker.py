@@ -49,8 +49,8 @@ import doctest
 import traceback
 import tempfile
 from dis import findlinestarts
+from queue import Empty
 import gc
-import six
 
 import sage.misc.randstate as randstate
 from .util import Timer, RecordingDict, count_noun
@@ -68,24 +68,23 @@ import __future__
 MANDATORY_COMPILE_FLAGS = __future__.print_function.compiler_flag
 
 
-if not six.PY2:
-    # These lists are used on Python 3+ only for backwards compatibility with
-    # Python 2 in traceback parsing
-    # These exceptions in Python 2 have been rolled into OSError on Python 3;
-    # see https://docs.python.org/3/library/exceptions.html#OSError
-    _OSError_ALIASES = [
-        'IOError', 'EnvironmentError', 'socket.error', 'select.error',
-        'mmap.error'
-    ]
-    # This list is sort of the opposite case: these are new built-in exceptions
-    # in Python 3 that are subclasses of OSError; see
-    # https://docs.python.org/3/library/exceptions.html#os-exceptions
-    import builtins
-    _OSError_SUBCLASSES = [
-        exc.__name__ for exc in vars(builtins).values()
-        if isinstance(exc, type) and issubclass(exc, OSError) and
-           exc is not OSError
-    ]
+# These lists are used on Python 3+ only for backwards compatibility with
+# Python 2 in traceback parsing
+# These exceptions in Python 2 have been rolled into OSError on Python 3;
+# see https://docs.python.org/3/library/exceptions.html#OSError
+_OSError_ALIASES = [
+    'IOError', 'EnvironmentError', 'socket.error', 'select.error',
+    'mmap.error'
+]
+# This list is sort of the opposite case: these are new built-in exceptions
+# in Python 3 that are subclasses of OSError; see
+# https://docs.python.org/3/library/exceptions.html#os-exceptions
+import builtins
+_OSError_SUBCLASSES = [
+    exc.__name__ for exc in vars(builtins).values()
+    if isinstance(exc, type) and issubclass(exc, OSError) and
+       exc is not OSError
+]
 
 
 
@@ -698,7 +697,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     self.debugger.set_continue() # ==== Example Finished ====
             got = self._fakeout.getvalue()
 
-            if not isinstance(got, six.text_type):
+            if not isinstance(got, str):
                 # On Python 3 got should already be unicode text, but on Python
                 # 2 it is not.  For comparison's sake we want the unicode text
                 # decoded from UTF-8. If there was some error such that the
@@ -721,7 +720,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             else:
                 exc_msg = traceback.format_exception_only(*exception[:2])[-1]
 
-                if six.PY3 and example.exc_msg is not None:
+                if example.exc_msg is not None:
                     # On Python 3 the exception repr often includes the
                     # exception's full module name (for non-builtin
                     # exceptions), whereas on Python 2 does not, so we
@@ -755,25 +754,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                                     break
 
                 if not quiet:
-                    exc_tb = doctest._exception_traceback(exception)
-                    if not isinstance(exc_tb, six.text_type):
-                        # On Python 2, if the traceback contains non-ASCII
-                        # text we can get a UnicodeDecodeError here if we
-                        # don't explicitly decode it first; first try utf-8
-                        # and then fall back on latin-1.
-                        try:
-                            exc_tb = exc_tb.decode('utf-8')
-                        except UnicodeDecodeError:
-                            exc_tb = exc_tb.decode('latin-1')
-
-                    got += exc_tb
-
-                if not isinstance(exc_msg, six.text_type):
-                    # Same here as above
-                    try:
-                        exc_msg = exc_msg.decode('utf-8')
-                    except UnicodeDecodeError:
-                        exc_msg = exc_msg.decode('latin-1')
+                    got += doctest._exception_traceback(exception)
 
                 # If `example.exc_msg` is None, then we weren't expecting
                 # an exception.
@@ -1991,10 +1972,7 @@ class DocTestDispatcher(SageObject):
             # Hack to ensure multiprocessing leaves these processes
             # alone (in particular, it doesn't wait for them when we
             # exit).
-            if six.PY2:
-                p = multiprocessing.current_process()
-            else:
-                p = multiprocessing.process
+            p = multiprocessing.process
             assert hasattr(p, '_children')
             p._children = set()
 
@@ -2277,7 +2255,6 @@ class DocTestWorker(multiprocessing.Process):
             This method is called from the parent process, not from the
             subprocess.
         """
-        from six.moves.queue import Empty
         try:
             self.result = self.result_queue.get(block=False)
         except Empty:
@@ -2405,10 +2382,7 @@ class DocTestTask(object):
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    if six.PY2:
-        extra_globals = {}
-    else:
-        extra_globals = {'long': int}
+    extra_globals = {'long': int}
     """
     Extra objects to place in the global namespace in which tests are run.
     Normally this should be empty but there are special cases where it may

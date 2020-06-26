@@ -487,7 +487,7 @@ class Documenter(object):
             docstring = getdoc(self.object)
         # make sure we have Unicode docstrings, then sanitize and split
         # into lines
-        if isinstance(docstring, text_type):
+        if isinstance(docstring, str):
             return [prepare_docstring(docstring, ignore)]
         elif isinstance(docstring, str):  # this will not trigger on Py3
             return [prepare_docstring(force_decode(docstring, encoding),
@@ -511,9 +511,9 @@ class Documenter(object):
         # type: () -> unicode
         if self.analyzer:
             # prevent encoding errors when the file name is non-ASCII
-            if not isinstance(self.analyzer.srcname, text_type):
-                filename = text_type(self.analyzer.srcname,
-                                     sys.getfilesystemencoding(), 'replace')
+            if not isinstance(self.analyzer.srcname, str):
+                filename = str(self.analyzer.srcname,
+                               sys.getfilesystemencoding(), 'replace')
             else:
                 filename = self.analyzer.srcname
             return u'%s:docstring of %s' % (filename, self.fullname)
@@ -699,7 +699,7 @@ class Documenter(object):
         # document non-skipped members
         memberdocumenters = []  # type: List[Tuple[Documenter, bool]]
         for (mname, member, isattr) in self.filter_members(members, want_all):
-            classes = [cls for cls in itervalues(self.documenters)
+            classes = [cls for cls in self.documenters.values()
                        if cls.can_document_member(member, mname, isattr, self)]
             if not classes:
                 # don't know how to document this member
@@ -887,7 +887,7 @@ class ModuleDocumenter(Documenter):
                 memberlist = self.object.__all__
                 # Sometimes __all__ is broken...
                 if not isinstance(memberlist, (list, tuple)) or not \
-                   all(isinstance(entry, string_types) for entry in memberlist):
+                   all(isinstance(entry, str) for entry in memberlist):
                     logger.warning(
                         '__all__ should be a list of strings, not %r '
                         '(in module %s) -- ignoring __all__' %
@@ -1112,7 +1112,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
         # type: (Any, unicode, bool, Any) -> bool
-        return isinstance(member, class_types)
+        return isinstance(member, type)
 
     def import_object(self):
         # type: () -> Any
@@ -1282,7 +1282,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
                     docstrings.append(initdocstring)
         doc = []
         for docstring in docstrings:
-            if isinstance(docstring, text_type):
+            if isinstance(docstring, str):
                 doc.append(prepare_docstring(docstring, ignore))
             elif isinstance(docstring, str):  # this will not trigger on Py3
                 doc.append(prepare_docstring(force_decode(docstring, encoding),
@@ -1295,7 +1295,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
             # We cannot rely on __qualname__ yet for Python 2, because of a
             # Cython bug: https://github.com/cython/cython/issues/2772. See
             # trac #27002.
-            classname = None if PY2 else safe_getattr(self.object, '__qualname__', None)
+            classname = safe_getattr(self.object, '__qualname__', None)
             if not classname:
                 classname = safe_getattr(self.object, '__name__', None)
             if classname:
@@ -1340,8 +1340,7 @@ class ExceptionDocumenter(ClassDocumenter):
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):
         # type: (Any, unicode, bool, Any) -> bool
-        return isinstance(member, class_types) and \
-            issubclass(member, BaseException)
+        return isinstance(member, type) and issubclass(member, BaseException)
 
 
 class DataDocumenter(ModuleLevelDocumenter):

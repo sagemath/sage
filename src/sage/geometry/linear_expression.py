@@ -36,7 +36,6 @@ add them and multiply them with scalars::
     sage: m-m
     0*x + 0*y + 0*z + 0
 """
-from six.moves import zip
 
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp

@@ -15,11 +15,10 @@ Bindable classes
 from __future__ import absolute_import, print_function
 
 import functools
-from sage.misc import six
 from sage.misc.nested_class import NestedClassMetaclass
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 
-class BindableClass(six.with_metaclass(ClasscallMetaclass)):
+class BindableClass(metaclass=ClasscallMetaclass):
     """
     Bindable classes
 
@@ -259,7 +258,7 @@ class Inner2(BindableClass):
     """
 
 # We need NestedClassMetaclass to work around a Python pickling bug
-class Outer(six.with_metaclass(NestedClassMetaclass)):
+class Outer(metaclass=NestedClassMetaclass):
     """
     A class with a bindable nested class, for testing purposes
     """

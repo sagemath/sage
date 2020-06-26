@@ -224,4 +224,4 @@ Sage поддерживает разреженную линейную алгеб
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: __classcall__() got an unexpected keyword argument 'Sparse'
+    TypeError: __init__() got an unexpected keyword argument 'Sparse'

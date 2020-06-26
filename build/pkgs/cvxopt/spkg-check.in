@@ -1,0 +1,8 @@
+cd src
+
+if ! command -v nosetests ; then 
+    echo >&2 'Testing cvxopt requires the package nose to be installed'
+    exit 1
+fi
+
+nosetests

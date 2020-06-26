@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `A_{2n}^{(2)}`.
+Bijection classes for type `A_{2n}^{(2)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `A_{2n}^{(2)}`.

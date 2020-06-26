@@ -386,6 +386,7 @@ class GenericSymbolicSubring(SymbolicRing):
             False
 
         ::
+
             sage: from sage.symbolic.subring import SymbolicSubring
             sage: C = SymbolicSubring(no_variables=True)
             sage: C.has_coerce_map_from(ZZ)  # indirect doctest

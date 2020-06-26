@@ -316,7 +316,6 @@ implementing them on your own as a patch for inclusion!
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six.moves import range
 
 import sys
 
@@ -2188,7 +2187,7 @@ class ToricVariety_field(AmbientSpace):
         for details.
 
         EXAMPLES::
-        
+
             sage: dP6 = toric_varieties.dP6()
             sage: dP6.sheaves
             Sheaf constructor on 2-d CPR-Fano toric variety covered by 6 affine patches

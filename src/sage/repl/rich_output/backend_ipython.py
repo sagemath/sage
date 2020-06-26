@@ -31,6 +31,7 @@ class BackendIPython(BackendBase):
         sage: from sage.repl.rich_output.backend_ipython import BackendIPython
         sage: BackendIPython()._repr_()
         Traceback (most recent call last):
+        ...
         NotImplementedError: derived classes must implement this method
     """
 

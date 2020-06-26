@@ -422,7 +422,6 @@ Since ``expand_key_poly`` is not actually a
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import print_function, division
-from six import string_types
 
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import column_matrix
@@ -488,10 +487,10 @@ class RijndaelGF(SageObject):
         if Nk not in range(4, 9):
             msg = "Key length Nk must be in the range 4 - 8, not {0}"
             raise ValueError(msg.format(Nk))
-        if not isinstance(state_chr, string_types):
+        if not isinstance(state_chr, str):
             msg = "state_chr must be a string, not {0}"
             raise TypeError(msg.format(state_chr))
-        if not isinstance(key_chr, string_types):
+        if not isinstance(key_chr, str):
             msg = "key_chr must be a string, not {0}"
             raise TypeError(msg.format(key_chr))
 
@@ -708,7 +707,7 @@ class RijndaelGF(SageObject):
             sage: rgf._hex_to_GF('1a2b0f', matrix=False)
             [x^4 + x^3 + x, x^5 + x^3 + x + 1, x^3 + x^2 + x + 1]
         """
-        if not isinstance(H, string_types) or \
+        if not isinstance(H, str) or \
            any(c not in '0123456789abcdefABCDEF' for c in H):
             raise TypeError("keyword 'H' must be a hex string")
 
@@ -836,7 +835,7 @@ class RijndaelGF(SageObject):
              x^7 + x^6 + x^4 + x^2 + x + 1,
              x^5 + x^4 + x^2 + 1]
         """
-        if not isinstance(B, string_types) or any(c not in '01' for c in B):
+        if not isinstance(B, str) or any(c not in '01' for c in B):
             raise TypeError("keyword 'B' must be a binary string")
 
         def bn_to_gf(b):
@@ -954,13 +953,13 @@ class RijndaelGF(SageObject):
             True
         """
         if format == 'hex':
-            if not isinstance(plain, string_types) or \
+            if not isinstance(plain, str) or \
                any(c not in '0123456789abcdefABCDEF' for c in plain):
                 raise TypeError("'plain' keyword must be a hex string")
             if len(plain) != 8 * self._Nb:
                 msg = "'plain' keyword\'s length must be {0}, not{1}"
                 raise ValueError(msg.format(8 * self._Nb, len(plain)))
-            if not isinstance(key, string_types) or \
+            if not isinstance(key, str) or \
                any(c not in '0123456789abcdefABCDEF' for c in key):
                 raise TypeError("'key' keyword must be a hex string")
             if len(key) != 8 * self._Nk:
@@ -970,13 +969,13 @@ class RijndaelGF(SageObject):
             key_state = self._hex_to_GF(key)
             roundKeys = self.expand_key(key_state)
         elif format == 'binary':
-            if not isinstance(plain, string_types) or \
+            if not isinstance(plain, str) or \
                any(c not in '01' for c in plain):
                 raise TypeError("'plain' keyword must be a binary string")
             if len(plain) != 32 * self._Nb:
                 msg = "'plain' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(plain)))
-            if not isinstance(key, string_types) or \
+            if not isinstance(key, str) or \
                any(c not in '01' for c in key):
                 raise TypeError("'key' keyword must be a binary string")
             if len(key) != 32 * self._Nk:
@@ -1044,13 +1043,13 @@ class RijndaelGF(SageObject):
             True
         """
         if format == 'hex':
-            if not isinstance(ciphertext, string_types) or \
+            if not isinstance(ciphertext, str) or \
                any(c not in '0123456789abcdefABCDEF' for c in ciphertext):
                 raise TypeError("'ciphertext' keyword must be a hex string")
             if len(ciphertext) != 8 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not{1}"
                 raise ValueError(msg.format(8 * self._Nb, len(ciphertext)))
-            if not isinstance(key, string_types) or \
+            if not isinstance(key, str) or \
                any(c not in '0123456789abcdefABCDEF' for c in key):
                 raise TypeError("'key' keyword must be a hex string")
             if len(key) != 8 * self._Nk:
@@ -1060,14 +1059,14 @@ class RijndaelGF(SageObject):
             key_state = self._hex_to_GF(key)
             roundKeys = self.expand_key(key_state)
         elif format == 'binary':
-            if not isinstance(ciphertext, string_types) or \
+            if not isinstance(ciphertext, str) or \
                any(c not in '01' for c in ciphertext):
                 raise TypeError(("'ciphertext' keyword must be a binary "
                                  "string"))
             if len(ciphertext) != 32 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(ciphertext)))
-            if not isinstance(key, string_types) or \
+            if not isinstance(key, str) or \
                any(c not in '01' for c in key):
                 raise TypeError("'key' keyword must be a binary string")
             if len(key) != 32 * self._Nk:
@@ -2249,7 +2248,6 @@ class RijndaelGF(SageObject):
 
                 sage: def my_poly_constr(row, col, algorithm='encrypt'):
                 ....:     return x * rgf._F.one() # example body with no checks
-                ....:
                 sage: rcpc = RijndaelGF.Round_Component_Poly_Constr(
                 ....: my_poly_constr, rgf, "My Poly Constr")
                 sage: rcpc(-1, 2)

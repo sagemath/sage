@@ -8,9 +8,9 @@ is known to be modular.  The space is two-dimensional and contains a
 subspace on which complex conjugation acts as multiplication by `+1`
 and one on which it acts by `-1`.
 
-There are two implementations of modular symbols, one within ``Sage``
-and the other in Cremona's ``eclib`` library. One can choose here
-which one is used.
+There are three implementations of modular symbols, two within 
+``Sage`` and one in Cremona's ``eclib`` library.
+One can choose here which one is used.
 
 Associated to `E` there is a canonical generator in each space. They are maps
 `[.]^+` and `[.]^{-}`, both `\QQ \to\QQ`. They are normalized such that
@@ -218,7 +218,6 @@ class ModularSymbol(SageObject):
         return "Modular symbol with sign %s over %s attached to %s"%(
             self._sign, self._base_ring, self._E)
 
-
 class ModularSymbolECLIB(ModularSymbol):
     def __init__(self, E, sign):
         r"""
@@ -305,7 +304,7 @@ class ModularSymbolECLIB(ModularSymbol):
         self._sign = ZZ(sign)
         self._E = E
         self._scaling = 1 if E.discriminant()>0 else ZZ(1)/2
-        self._use_eclib = True
+        self._implementation="eclib"
         self._base_ring = QQ
         # The ECModularSymbol class must be initialized with sign=0 to compute minus symbols
         self._modsym = ECModularSymbol(E, int(sign==1))
@@ -417,7 +416,7 @@ class ModularSymbolSage(ModularSymbol):
             raise TypeError('sign must -1 or 1')
         self._sign = ZZ(sign)
         self._E = E
-        self._use_eclib = False
+        self._implementation="sage"
         self._normalize = normalize
         self._modsym = E.modular_symbol_space(sign=self._sign)
         self._base_ring = self._modsym.base_ring()

@@ -105,6 +105,8 @@ import random
 
 import sage.groups.old as group
 
+from libc.stdlib cimport qsort
+
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 from cpython.list cimport *
 
@@ -139,7 +141,8 @@ cdef arith_llong arith = arith_llong()
 cdef extern from *:
     long long LLONG_MAX
 
-#import permgroup_named
+cdef int etuple_index_cmp(const void * a, const void * b) nogil:
+    return ((<int *> a)[0] > (<int *> b)[0]) - ((<int *> a)[0] < (<int *> b)[0])
 
 def make_permgroup_element(G, x):
     """
@@ -1131,6 +1134,46 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             y._list[i] = x._list[self.perm[i]]
         y.set_immutable()
         return y
+
+    cpdef ETuple _act_on_etuple_on_position(self, ETuple x):
+        r"""
+        Return the right action of this permutation on the ETuple ``x``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: S = SymmetricGroup(6)
+            sage: e = ETuple([1,2,3,4,5,6])
+            sage: S("(1,4)")._act_on_etuple_on_position(e)
+            (4, 2, 3, 1, 5, 6)
+            sage: S("(1,2,3,4,5,6)")._act_on_etuple_on_position(e)
+            (6, 1, 2, 3, 4, 5)
+
+            sage: e = ETuple([1,2,0,0,0,6])
+            sage: S("(1,4)")._act_on_etuple_on_position(e)
+            (0, 2, 0, 1, 0, 6)
+            sage: S("(1,2,3,4,5,6)")._act_on_etuple_on_position(e)
+            (6, 1, 2, 0, 0, 0)
+
+        It is indeed a right action::
+
+            sage: p, q = S('(1,2,3,4,5,6)'), S('(1,2)(3,4)(5,6)')
+            sage: e = ETuple([10..15])
+            sage: right = lambda x, p: p._act_on_etuple_on_position(x)
+            sage: right(e, p * q) == right(right(e, p), q)
+            True
+        """
+        cdef size_t ind
+        cdef ETuple result = ETuple.__new__(ETuple)
+
+        result._length = x._length
+        result._nonzero = x._nonzero
+        result._data = <int*> sig_malloc(sizeof(int)*result._nonzero*2)
+        for ind in range(x._nonzero):
+            result._data[2*ind] = self.perm[x._data[2*ind]] # index
+            result._data[2*ind + 1] = x._data[2*ind+1] # exponent
+        qsort(result._data, result._nonzero, 2 * sizeof(int), etuple_index_cmp)
+        return result
 
     cpdef _act_on_(self, x, bint self_on_left):
         """

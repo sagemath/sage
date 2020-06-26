@@ -1,8 +1,7 @@
 """
 Histograms
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #    This code is distributed in the hope that it will be useful,
@@ -12,8 +11,8 @@ Histograms
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.plot.plot import minmax_data, Graphics
 from sage.misc.decorators import options
@@ -87,6 +86,7 @@ class Histogram(GraphicPrimitive):
             {'xmax': 4.0, 'xmin': 0, 'ymax': 2, 'ymin': 0}
 
         TESTS::
+
             sage: h = histogram([10,3,5], normed=True)[0]
             doctest:warning...:
             DeprecationWarning: the 'normed' option is deprecated. Use 'density' instead.

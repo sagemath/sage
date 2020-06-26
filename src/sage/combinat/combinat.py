@@ -147,8 +147,6 @@ Functions and classes
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
-from six import iteritems, add_metaclass
 
 from sage.interfaces.all import maxima
 from sage.rings.all import ZZ, QQ, Integer, infinity
@@ -171,8 +169,10 @@ from sage.structure.element import Element
 
 def bell_number(n, algorithm='flint', **options):
     r"""
-    Return the `n`-th Bell number (the number of ways to partition a set
-    of `n` elements into pairwise disjoint nonempty subsets).
+    Return the `n`-th Bell number.
+
+    This is the number of ways to partition a set
+    of `n` elements into pairwise disjoint nonempty subsets.
 
     INPUT:
 
@@ -587,8 +587,12 @@ def eulerian_number(n, k, algorithm='recursive'):
 
         sage: [eulerian_number(6,i,"formula") for i in range(6)]
         [1, 57, 302, 302, 57, 1]
+        sage: [eulerian_number(3,i) for i in range(-1, 4)]
+        [0, 1, 4, 1, 0]
     """
     n = ZZ(n)
+    if k < 0 or k > n - 1:
+        return ZZ.zero()
     if k == 0 or k == n - 1:
         return ZZ.one()
     if algorithm == "recursive":
@@ -707,6 +711,7 @@ def fibonacci(n, algorithm="pari"):
     else:
         raise ValueError("no algorithm {}".format(algorithm))
 
+
 def lucas_number1(n, P, Q):
     r"""
     Return the `n`-th Lucas number "of the first kind" (this is not
@@ -772,6 +777,7 @@ def lucas_number1(n, P, Q):
     Q = QQ(Q)
     from sage.libs.gap.libgap import libgap
     return libgap.Lucas(P, Q, n)[0].sage()
+
 
 def lucas_number2(n, P, Q):
     r"""
@@ -856,9 +862,11 @@ def stirling_number1(n, k):
 def stirling_number2(n, k, algorithm=None):
     r"""
     Return the `n`-th Stirling number `S_2(n,k)` of the second
-    kind (the number of ways to partition a set of `n` elements into `k`
-    pairwise disjoint nonempty subsets). (The `n`-th Bell number is the
-    sum of the `S_2(n,k)`'s, `k=0,...,n`.)
+    kind.
+
+    This is the number of ways to partition a set of `n` elements into `k`
+    pairwise disjoint nonempty subsets. The `n`-th Bell number is the
+    sum of the `S_2(n,k)`'s, `k=0,...,n`.
 
     INPUT:
 
@@ -970,7 +978,8 @@ def stirling_number2(n, k, algorithm=None):
          ...
          ValueError: unknown algorithm: CloudReading
     """
-    n = ZZ(n);  k = ZZ(k)
+    n = ZZ(n)
+    k = ZZ(k)
     if algorithm is None:
         return _stirling_number2(n, k)
     elif algorithm == 'gap':
@@ -1075,7 +1084,7 @@ class CombinatorialObject(SageObject):
 
     def __eq__(self, other):
         """
-        Test equality of self and other.
+        Test equality of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1230,7 +1239,7 @@ class CombinatorialObject(SageObject):
 
     def __hash__(self):
         """
-        Computes the hash of self by computing the hash of the string
+        Compute the hash of ``self`` by computing the hash of the string
         representation of self._list. The hash is cached and stored in
         self._hash.
 
@@ -1357,8 +1366,8 @@ class CombinatorialObject(SageObject):
         return self._list.index(key)
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class CombinatorialElement(CombinatorialObject, Element):
+class CombinatorialElement(CombinatorialObject, Element,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     ``CombinatorialElement`` is both a :class:`CombinatorialObject`
     and an :class:`Element`. So it represents a list which is an
@@ -1445,8 +1454,7 @@ class CombinatorialElement(CombinatorialObject, Element):
         super(CombinatorialObject, self).__init__(parent)
 
 
-@add_metaclass(ClasscallMetaclass)
-class CombinatorialClass(Parent):
+class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
     """
     This class is deprecated, and will disappear as soon as all derived
     classes in Sage's library will have been fixed. Please derive
@@ -1480,7 +1488,7 @@ class CombinatorialClass(Parent):
 
     def is_finite(self):
         """
-        Returns whether self is finite or not.
+        Return whether ``self`` is finite or not.
 
         EXAMPLES::
 
@@ -1493,7 +1501,7 @@ class CombinatorialClass(Parent):
 
     def __getitem__(self, i):
         """
-        Returns the combinatorial object of rank i.
+        Return the combinatorial object of rank i.
 
         EXAMPLES::
 
@@ -1514,7 +1522,7 @@ class CombinatorialClass(Parent):
 
     def __str__(self):
         """
-        Returns a string representation of self.
+        Return a string representation of self.
 
         EXAMPLES::
 
@@ -1537,7 +1545,7 @@ class CombinatorialClass(Parent):
 
     def __contains__(self, x):
         """
-        Tests whether or not the combinatorial class contains the object x.
+        Test whether or not the combinatorial class contains the object x.
         This raises a NotImplementedError as a default since _all_
         subclasses of CombinatorialClass should override this.
 
@@ -1576,7 +1584,7 @@ class CombinatorialClass(Parent):
 
     def __ne__(self, other):
         """
-        Test unequality of self and other.
+        Test unequality of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1629,7 +1637,7 @@ class CombinatorialClass(Parent):
 
     def __call__(self, x):
         """
-        Returns x as an element of the combinatorial class's object class.
+        Return x as an element of the combinatorial class's object class.
 
         EXAMPLES::
 
@@ -1978,8 +1986,8 @@ class CombinatorialClass(Parent):
 
     def filter(self, f, name=None):
         """
-        Returns the combinatorial subclass of f which consists of the
-        elements x of self such that f(x) is True.
+        Return the combinatorial subclass of f which consists of the
+        elements x of ``self`` such that f(x) is ``True``.
 
         EXAMPLES::
 
@@ -1992,8 +2000,8 @@ class CombinatorialClass(Parent):
 
     def union(self, right_cc, name=None):
         """
-        Returns the combinatorial class representing the union of self and
-        right_cc.
+        Return the combinatorial class representing the union of ``self`` and
+        ``right_cc``.
 
         EXAMPLES::
 
@@ -2008,7 +2016,7 @@ class CombinatorialClass(Parent):
 
     def map(self, f, name=None):
         r"""
-        Returns the image `\{f(x) | x \in \text{self}\}` of this combinatorial
+        Return the image `\{f(x) | x \in \text{self}\}` of this combinatorial
         class by `f`, as a combinatorial class.
 
         `f` is supposed to be injective.
@@ -2024,7 +2032,8 @@ class CombinatorialClass(Parent):
             sage: [ r for r in R]
             [[], [2], [1], [1, 2], [2, 1], [2, 1, 2]]
 
-            If the function is not injective, then there may be repeated elements:
+        If the function is not injective, then there may be repeated elements::
+
             sage: P = Partitions(4)
             sage: P.list()
             [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
@@ -2038,6 +2047,7 @@ class CombinatorialClass(Parent):
             True
         """
         return MapCombinatorialClass(self, f, name)
+
 
 class FilteredCombinatorialClass(CombinatorialClass):
     def __init__(self, combinatorial_class, f, name=None):
@@ -2116,6 +2126,7 @@ class FilteredCombinatorialClass(CombinatorialClass):
         for x in self.combinatorial_class:
             if self.f(x):
                 yield x
+
 
 class UnionCombinatorialClass(CombinatorialClass):
     def __init__(self, left_cc, right_cc, name=None):
@@ -2353,7 +2364,7 @@ class MapCombinatorialClass(CombinatorialClass):
 
     def cardinality(self):
         """
-        Returns the cardinality of this combinatorial class
+        Return the cardinality of this combinatorial class
 
         EXAMPLES::
 
@@ -2366,7 +2377,7 @@ class MapCombinatorialClass(CombinatorialClass):
 
     def __iter__(self):
         """
-        Returns an iterator over the elements of this combinatorial class
+        Return an iterator over the elements of this combinatorial class
 
         EXAMPLES::
 
@@ -2379,7 +2390,7 @@ class MapCombinatorialClass(CombinatorialClass):
 
     def an_element(self):
         """
-        Returns an element of this combinatorial class
+        Return an element of this combinatorial class
 
         EXAMPLES::
 
@@ -2403,7 +2414,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
     """
     def cardinality(self):
         """
-        Counts the elements of the combinatorial class.
+        Count the elements of the combinatorial class.
 
         EXAMPLES::
 
@@ -2415,7 +2426,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
 
     def list(self):
         """
-        Returns an error since self is an infinite combinatorial class.
+        Return an error since ``self`` is an infinite combinatorial class.
 
         EXAMPLES::
 
@@ -2429,7 +2440,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
 
     def __iter__(self):
         """
-        Returns an iterator for the infinite combinatorial class self if
+        Return an iterator for the infinite combinatorial class ``self`` if
         possible or raise a NotImplementedError.
 
         EXAMPLES::
@@ -2844,7 +2855,7 @@ def bell_polynomial(n, k):
     for p in Partitions(n, length=k):
         factorial_product = 1
         power_factorial_product = 1
-        for part, count in iteritems(p.to_exp_dict()):
+        for part, count in p.to_exp_dict().items():
             factorial_product *= factorial(count)
             power_factorial_product *= factorial(part)**count
         coefficient = factorial(n) // (factorial_product * power_factorial_product)

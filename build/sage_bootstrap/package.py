@@ -148,6 +148,33 @@ class Package(object):
         return self.tarball_pattern.replace('VERSION', self.version)
 
     @property
+    def tarball_upstream_url_pattern(self):
+        """
+        Return the tarball upstream URL pattern
+
+        OUTPUT:
+
+        String. The tarball upstream URL, but with the placeholder
+        ``VERSION``.
+        """
+        return self.__tarball_upstream_url_pattern
+
+    @property
+    def tarball_upstream_url(self):
+        """
+        Return the tarball upstream URL or ``None`` if none is recorded
+
+        OUTPUT:
+
+        String. The URL.
+        """
+        pattern = self.tarball_upstream_url_pattern
+        if pattern:
+            return pattern.replace('VERSION', self.version)
+        else:
+            return None
+
+    @property
     def tarball_package(self):
         """
         Return the canonical package for the tarball
@@ -217,7 +244,7 @@ class Package(object):
         Load the checksums from the appropriate ``checksums.ini`` file
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
-        assignment = re.compile('(?P<var>[a-zA-Z0-9]*)=(?P<value>.*)')
+        assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
         result = dict()
         with open(checksums_ini, 'rt') as f:
             for line in f.readlines():
@@ -230,6 +257,7 @@ class Package(object):
         self.__sha1 = result.get('sha1', None)
         self.__cksum = result.get('cksum', None)
         self.__tarball_pattern = result['tarball']
+        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
         

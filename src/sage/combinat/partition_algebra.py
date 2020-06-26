@@ -16,7 +16,6 @@ Partition/Diagram Algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
 
 from .combinat import catalan_number
 from .combinatorial_algebra import CombinatorialAlgebra, CombinatorialAlgebraElement

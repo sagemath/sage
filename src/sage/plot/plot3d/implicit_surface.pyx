@@ -1144,6 +1144,30 @@ cdef class ImplicitSurface(IndexFaceSet):
         self.triangulate()
         return IndexFaceSet.json_repr(self, render_params)
 
+    def threejs_repr(self, render_params):
+        r"""
+        Return a represention of the surface suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: from sage.plot.plot3d.implicit_surface import ImplicitSurface
+            sage: _ = var('x,y,z')
+            sage: G = ImplicitSurface(x + y + z, (x,-1, 1), (y,-1, 1), (z,-1, 1))
+            sage: G.threejs_repr(G.default_render_params())
+            [('surface',
+              {'color': '#6666ff',
+               'faces': [[0, 1, 2],
+                ...
+               'opacity': 1.0,
+               'vertices': [{'x': ...,
+                 'y': -0.9743589743589...,
+                 'z': -0.02564102564102...},
+                ...
+                {'x': -1.0, 'y': 0.9487179487179..., 'z': 0.05128205128205...}]})]
+        """
+        self.triangulate()
+        return IndexFaceSet.threejs_repr(self, render_params)
+
     def triangulate(self, force=False):
         """
         The IndexFaceSet will be empty until you call this method,

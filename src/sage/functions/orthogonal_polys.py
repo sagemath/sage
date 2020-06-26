@@ -298,7 +298,6 @@ Willis of the University of Nebraska at Kearney.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 import warnings
 
@@ -531,7 +530,7 @@ class ChebyshevFunction(OrthogonalFunction):
             # Numerical evaluation failed => keep symbolic
             return None
 
-    
+
 class Func_chebyshev_T(ChebyshevFunction):
     """
     Chebyshev polynomials of the first kind.
@@ -2007,7 +2006,7 @@ gegenbauer = Func_ultraspherical()
 class Func_laguerre(OrthogonalFunction):
     """
     REFERENCE:
- 
+
     - [AS1964]_ 22.5.16, page 778 and page 789.
     """
     def __init__(self):

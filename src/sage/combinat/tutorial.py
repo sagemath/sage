@@ -1731,8 +1731,8 @@ The Fibonacci sequence is easily recognized here, hence the name::
 
     sage: oeis(L)                                       # optional -- internet
     0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
-    1: A212804: Expansion of (1-x)/(1-x-x^2).
-    2: A132636: a(n) = Fibonacci(n) mod n^3.
+    1: ...
+    2: ...
 
 This is an immediate consequence of the recurrence relation. One can
 also generate immediately all the Fibonacci words of a given length,

@@ -324,17 +324,17 @@ class ShuffleProduct(SageObject):
             sage: B = BinaryTree
             sage: ascii_art(list(ShuffleProduct([B([]), B([[],[]])],
             ....:   [B([[[],[]],[[],None]])])))
-            [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]  [ o,     __o__  ,
-            [ [     / \      /     \  ]  [    /     \       / \  ]  [       /     \
-            [ [    o   o    o       o ]  [   o       o     o   o ]  [      o       o
-            [ [            / \     /  ]  [  / \     /            ]  [     / \     /
-            [ [           o   o   o   ], [ o   o   o             ], [    o   o   o
+            [ [ o,   o  ,     __o__   ]  [     __o__  , o,   o   ]
+            [ [     / \      /     \  ]  [    /     \       / \  ]
+            [ [    o   o    o       o ]  [   o       o     o   o ]
+            [ [            / \     /  ]  [  / \     /            ]
+            [ [           o   o   o   ], [ o   o   o             ],
             <BLANKLINE>
-               o   ] ]
-              / \  ] ]
-             o   o ] ]
-                   ] ]
-                   ] ]
+             [ o,     __o__  ,   o   ] ]
+             [       /     \    / \  ] ]
+             [      o       o  o   o ] ]
+             [     / \     /         ] ]
+             [    o   o   o          ] ]
         """
 
         ############ Gray code #############

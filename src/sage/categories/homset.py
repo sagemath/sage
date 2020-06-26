@@ -364,7 +364,8 @@ def Hom(X, Y, category=None, check=True):
         ....:             raise TypeError
         sage: from sage.structure.element import Element
         sage: class Foo(Parent):
-        ....:     _no_generic_basering_coercion = True
+        ....:     def _coerce_map_from_base_ring(self):
+        ....:         return self._generic_coerce_map(self.base_ring())
         ....:     class Element(Element):
         ....:         pass
         sage: X = Foo(base=QQ, category=AlgebrasWithHom(QQ))

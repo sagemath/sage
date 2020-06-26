@@ -271,7 +271,11 @@ class Trivialization(UniqueRepresentation, SageObject):
 
     def frame(self):
         r"""
-        Return the standard frame induced by ``self``.
+        Return the standard frame induced by ``self``. If `\psi` is a
+        trivialization then the corresponding frame can be obtained by the maps
+        `p \mapsto \psi^{-1}(p,e_i)`, where `(e_1, \ldots, e_n)` is the standard
+        basis of `K^n`. We briefly denote `(\psi^*e_i)` instead of
+        `\psi^{-1}(\cdot,e_i)`.
 
         .. SEEALSO::
 

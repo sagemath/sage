@@ -14,7 +14,6 @@ component of the newform at `p`.
 
 """
 from __future__ import absolute_import
-from six.moves import range
 
 import operator
 from sage.modular.arithgroup.all import GammaH

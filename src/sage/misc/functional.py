@@ -21,8 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import absolute_import
-from six.moves import range, builtins
-from six import integer_types
+import builtins
 
 from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF, RealDoubleElement
@@ -247,7 +246,7 @@ def denominator(x):
         sage: denominator(r)
         x - 1
     """
-    if isinstance(x, integer_types):
+    if isinstance(x, int):
         return 1
     return x.denominator()
 
@@ -1213,7 +1212,7 @@ def numerator(x):
         sage: numerator(17/11111)
         17
     """
-    if isinstance(x, integer_types):
+    if isinstance(x, int):
         return x
     return x.numerator()
 
@@ -1548,10 +1547,9 @@ def round(x, ndigits=0):
 
     .. NOTE::
 
-        This is currently slower than the builtin round function, since
-        it does more work - i.e., allocating an RDF element and
-        initializing it. To access the builtin version do
-        ``from six.moves import builtins; builtins.round``.
+        This is currently slower than the builtin round function, since it does
+        more work - i.e., allocating an RDF element and initializing it. To
+        access the builtin version do ``import builtins; builtins.round``.
     """
     try:
         if ndigits:

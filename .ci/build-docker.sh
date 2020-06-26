@@ -47,6 +47,9 @@ rsync html_/ html/ -a --copy-links
 
 # Build the release image without build artifacts.
 docker_build --target sagemath --tag "$DOCKER_IMAGE_CLI" .
+# Tag the sagemath:$DOCKER_TAG image that CI has just built as
+# sagemath:$COMMIT_HASH so we can refer to it uniquely later.
+docker tag "$DOCKER_IMAGE_CLI" "$DOCKER_IMAGE_BINDER"
 # Display the layers of this image
 docker history "$DOCKER_IMAGE_CLI"
 # Build the developer image with the build artifacts intact.

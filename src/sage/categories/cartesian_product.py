@@ -11,7 +11,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
@@ -165,8 +164,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
 
         Check that Python3 ``range`` is handled correctly::
 
-            sage: from six.moves import range as py3range
-            sage: C = cartesian_product([py3range(2), py3range(2)])
+            sage: C = cartesian_product([range(2), range(2)])
             sage: list(C)
             [(0, 0), (0, 1), (1, 0), (1, 1)]
             sage: C.category()

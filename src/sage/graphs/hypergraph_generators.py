@@ -251,7 +251,7 @@ class HypergraphGenerators():
             nverts = Integer(n)
         except TypeError:
             raise ValueError("number of vertices should be an integer")
-        vertices = range(nverts)
+        vertices = list(range(nverts))
 
         # Construct the edge set
         if k < 0:
@@ -262,7 +262,7 @@ class HypergraphGenerators():
             raise ValueError("the uniformity should be an integer")
         all_edges = Subsets(vertices, uniformity)
         try:
-            edges = sample(all_edges, m)
+            edges = [all_edges[t] for t in sample(range(len(all_edges)), m)]
         except OverflowError:
             raise OverflowError("binomial({}, {}) too large to be treated".format(n, k))
         except ValueError:

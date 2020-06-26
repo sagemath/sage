@@ -15,7 +15,6 @@ quadratic forms over the rationals.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 ###########################################################################
 ## TO DO: Add routines for hasse invariants at all places, anisotropic

@@ -99,7 +99,7 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.arith.functions import lcm
@@ -141,7 +141,7 @@ cdef class PuiseuxSeries(AlgebraElement):
     - ``f``  -- one of the following types of inputs:
 
       * instance of :class:`PuiseuxSeries`
-      * instance that can be coerced into the Laurent sersies ring of the parent
+      * instance that can be coerced into the Laurent series ring of the parent
 
     - ``e`` -- integer (default: 1) the ramification index
 
@@ -182,7 +182,7 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         # --------------------------------------------------------
         # choose a representative for this Puiseux series having
-        # minimal ramification index. This is neccessary because
+        # minimal ramification index. This is necessary because
         # some methods need it as minimal as possible (for example
         # :meth:`laurent_series' or :meth:`power_series`)
         # --------------------------------------------------------

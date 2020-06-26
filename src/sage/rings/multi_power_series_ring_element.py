@@ -154,7 +154,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import iteritems, integer_types
 
 from sage.structure.richcmp import richcmp
 
@@ -554,7 +553,7 @@ class MPowerSeries(PowerSeries):
         base_map = kwds.get('base_map')
         if base_map is None:
             base_map = lambda t: t
-        for m, c in iteritems(self.dict()):
+        for m, c in self.dict().items():
             y += base_map(c)*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
         if self.prec() == infinity:
             return y
@@ -1086,7 +1085,7 @@ class MPowerSeries(PowerSeries):
             sage: g.polynomial() == f.polynomial() % 2
             True
         """
-        if isinstance(other, integer_types + (Integer,)):
+        if isinstance(other, (int, Integer)):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
@@ -1285,7 +1284,7 @@ class MPowerSeries(PowerSeries):
             -x^3*y^12*z^21 - 1/4*y^3*z^36 + 1/2*x^21*y^15*z^6 + 2/3*y^18*z^24 + O(x, y, z)^45
         """
         cd = self.coefficients()
-        Vs = sum(v * k**n for k, v in iteritems(cd))
+        Vs = sum(v * k**n for k, v in cd.items())
         return Vs.add_bigoh(self.prec()*n)
 
     def prec(self):
@@ -1711,7 +1710,7 @@ class MPowerSeries(PowerSeries):
         xxe = xx.exponents()[0]
         pos = [i for i, c in enumerate(xxe) if c != 0][0]  # get the position of the variable
         res = {mon.eadd(xxe): R(co / (mon[pos]+1))
-               for mon, co in iteritems(self.dict())}
+               for mon, co in self.dict().items()}
         return P( res ).add_bigoh(self.prec()+1)
 
     def ogf(self):

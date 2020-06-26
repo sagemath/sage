@@ -75,23 +75,29 @@ install_config_rpath() {
 bootstrap () {
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
+    for filename in $(find build/pkgs -type f -name type); do
+        pkgtype="$(cat $filename)"
+        pkgname="$(echo $filename | cut -d/ -f3)"
+        case "$pkgtype" in
+            optional|experimental)
+                # Trac #29629: Temporary solution for Sage 9.1: Do not provide
+                # --enable-SPKG options for installing pip packages
+                if [ ! -f "$(dirname $filename)/requirements.txt" ]; then
+                    spkg_configures="$spkg_configures
+SAGE_SPKG_ENABLE([$pkgname], [$pkgtype])"
+                fi
+                ;;
+        esac
+    done
     for filename in $(find build/pkgs -type f -name spkg-configure.m4 | sort); do
         pkgname="$(echo $filename | cut -d/ -f3)"
         echo "m4_sinclude([$filename])" >> m4/sage_spkg_configures.m4
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     done
-    for filename in $(find build/pkgs -type f -name type); do
-        pkgtype="$(cat $filename)"
-        pkgname="$(echo $filename | cut -d/ -f3)"
-        case "$pkgtype" in
-            optional|experimental)
-                spkg_configures="$spkg_configures
-SAGE_SPKG_ENABLE([$pkgname], [$pkgtype])" ;;
-        esac
-    done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 
+    SAGE_ROOT="$SAGE_ROOT" src/doc/bootstrap && \
     install_config_rpath && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto && \
@@ -154,7 +160,7 @@ save () {
     # Create configure tarball
     echo "Creating $NEWCONFBALL..."
     mkdir -p upstream
-    tar zcf "$NEWCONFBALL" configure config/* build/make/Makefile-auto.in
+    tar zcf "$NEWCONFBALL" configure config/* build/make/Makefile-auto.in src/doc/en/installation/*.txt src/doc/en/reference/spkg/*.rst
     
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt

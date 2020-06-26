@@ -602,6 +602,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # (co)weight space, because the alcove walks currently uses
         # rho_classical and, in type BC, the later does not have
         # integral coefficients:
+
         # sage: RootSystem(["BC",2,2]).coweight_lattice().rho_classical()
 
         # On the other hand, at this point we need the expression of

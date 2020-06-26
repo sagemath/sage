@@ -59,11 +59,11 @@ AUTHOR:
 #############################################################################
 
 # Standard python imports
+import builtins
 import os
 import types
 
 # We want the caller's locals, but locals() is emulated in Cython
-from six.moves import builtins
 cdef caller_locals = builtins.locals
 
 # Sage imports

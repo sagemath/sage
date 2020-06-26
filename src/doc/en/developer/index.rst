@@ -126,6 +126,14 @@ Running Sage's tests
 
    doctesting
 
+Testing on multiple platforms
+-----------------------------
+
+.. toctree::
+   :maxdepth: 3
+
+   portability_testing
+
 Contributing to Manuals and Tutorials
 -------------------------------------
 
@@ -151,7 +159,6 @@ Packaging Third-Party Code
    :maxdepth: 3
 
    packaging
-   packaging_old_spkgs
 
 Sage Notebook Developer Guide
 =============================

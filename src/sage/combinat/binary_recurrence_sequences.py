@@ -59,8 +59,6 @@ See [SV2013]_, [BMS2006]_, and [SS1983]_.
 
 from __future__ import division
 
-from six.moves import range
-
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.rings.number_field.number_field import QuadraticField

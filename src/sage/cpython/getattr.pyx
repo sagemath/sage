@@ -411,7 +411,7 @@ cpdef getattr_from_other_class(self, cls, name):
     raise AttributeError(dummy_error_message)
 
 
-def dir_with_other_class(self, cls):
+def dir_with_other_class(self, *cls):
     r"""
     Emulates ``dir(self)``, as if self was also an instance ``cls``,
     right after ``caller_class`` in the method resolution order
@@ -432,6 +432,10 @@ def dir_with_other_class(self, cls):
         sage: from sage.cpython.getattr import dir_with_other_class
         sage: dir_with_other_class(x, B)
         [..., 'a', 'b', 'c', 'd', 'e']
+        sage: class C(object):
+        ....:    f = 6
+        sage: dir_with_other_class(x, B, C)
+        [..., 'a', 'b', 'c', 'd', 'e', 'f']
 
     Check that objects without dicts are well handled::
 
@@ -459,6 +463,7 @@ def dir_with_other_class(self, cls):
     ret.update(dir(self.__class__))
     if hasattr(self, "__dict__"):
         ret.update(list(self.__dict__))
-    if not isinstance(self, cls):
-        ret.update(dir(cls))
+    for c in cls:
+        if not isinstance(self, c):
+            ret.update(dir(c))
     return sorted(ret)

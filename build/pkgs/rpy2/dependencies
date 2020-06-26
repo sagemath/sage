@@ -1,4 +1,4 @@
-$(PYTHON) r six singledispatch | pip
+$(PYTHON) r six singledispatch | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

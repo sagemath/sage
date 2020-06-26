@@ -11,14 +11,14 @@ A (slightly generalized) description of the algorithm can be found in [KS2019]_.
 Terminology in this module:
 
 - Coatoms               -- the faces from which all others are constructed in
-                           the face iterator. This will be facets or Vrepr.
+                           the face iterator. This will be facets or Vrep.
                            In non-dual mode, faces are constructed as
                            intersections of the facets. In dual mode, the are
                            constructed theoretically as joins of vertices.
-                           The coatoms are reprsented as incidences with the
+                           The coatoms are repsented as incidences with the
                            atoms they contain.
-- Atoms                 -- facets or Vrepr depending on application of algorithm.
-                           Atoms are reprsented as incidences of coatoms they
+- Atoms                 -- facets or Vrep depending on application of algorithm.
+                           Atoms are repsented as incidences of coatoms they
                            are contained in.
 
 .. SEEALSO::
@@ -159,9 +159,59 @@ AUTHOR:
 
 from sage.rings.integer     cimport smallInteger
 from cysignals.signals      cimport sig_check, sig_on, sig_off
-from .conversions           cimport bit_repr_to_Vrepr_list
+from .conversions           cimport bit_rep_to_Vrep_list
 from .base                  cimport CombinatorialPolyhedron
-from .bit_vector_operations cimport get_next_level, count_atoms, bit_repr_to_coatom_repr
+
+cdef extern from "bit_vector_operations.cc":
+    cdef size_t get_next_level(
+        uint64_t **faces, const size_t n_faces, uint64_t **nextfaces,
+        uint64_t **nextfaces2, uint64_t **visited_all,
+        size_t n_visited_all, size_t face_length)
+#        Set ``newfaces`` to be the facets of ``faces[n_faces -1]``
+#        that are not contained in a face of ``visited_all``.
+
+#        INPUT:
+
+#        - ``maybe_newfaces`` -- quasi of type ``uint64_t[n_faces -1][face_length]``,
+#          needs to be ``chunksize``-Bit aligned
+#        - ``newfaces`` -- quasi of type ``*uint64_t[n_faces -1]
+#        - ``visited_all`` -- quasi of type ``*uint64_t[n_visited_all]
+#        - ``face_length`` -- length of the faces
+
+#        OUTPUT:
+
+#        - return number of ``newfaces``
+#        - set ``newfaces`` to point to the new faces
+
+#        ALGORITHM:
+
+#        To get all facets of ``faces[n_faces-1]``, we would have to:
+#        - Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
+#        - Add all the intersection of ``visited_all`` with the last face
+#        - Out of both the inclusion-maximal ones are of codimension 1, i.e. facets.
+
+#        As we have visited all faces of ``visited_all``, we alter the algorithm
+#        to not revisit:
+#        Step 1: Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
+#        Step 2: Out of thosse the inclusion-maximal ones are some of the facets.
+#                At least we obtain all of those, that we have not already visited.
+#                Maybe, we get some more.
+#        Step 3: Only keep those that we have not already visited.
+#                We obtain exactly the facets of ``faces[n_faces-1]`` that we have
+#                not visited yet.
+
+    cdef size_t count_atoms(uint64_t *A, size_t face_length)
+#        Return the number of atoms/vertices in A.
+#        This is the number of set bits in A.
+#        ``face_length`` is the length of A in terms of uint64_t.
+
+    cdef size_t bit_rep_to_coatom_rep(
+            uint64_t *face, uint64_t **coatoms, size_t n_coatoms,
+            size_t face_length, size_t *output)
+#        Write the coatom-representation of face in output. Return length.
+#        ``face_length`` is the length of ``face`` and ``coatoms[i]``
+#        in terms of uint64_t.
+#        ``n_coatoms`` length of ``coatoms``.
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -258,13 +308,13 @@ cdef class FaceIterator(SageObject):
          (1,),
          (0,),
          (3, 4),
-         (2, 4),
          (1, 4),
+         (0, 4),
          (1, 3, 4),
-         (1, 2, 4),
+         (0, 1, 4),
+         (2, 3),
          (1, 3),
-         (0, 3),
-         (0, 1, 3),
+         (1, 2, 3),
          (1, 2),
          (0, 2),
          (0, 1, 2),
@@ -294,22 +344,22 @@ cdef class FaceIterator(SageObject):
          (1,),
          (0,),
          (6, 7),
-         (5, 7),
-         (3, 7),
+         (4, 7),
+         (2, 7),
          (4, 5, 6, 7),
-         (2, 3, 6, 7),
-         (1, 3, 5, 7),
-         (4, 6),
-         (2, 6),
-         (0, 2, 4, 6),
+         (1, 2, 6, 7),
+         (2, 3, 4, 7),
+         (5, 6),
+         (1, 6),
+         (0, 1, 5, 6),
          (4, 5),
-         (1, 5),
-         (0, 1, 4, 5),
-         (0, 4),
+         (0, 5),
+         (0, 3, 4, 5),
+         (3, 4),
          (2, 3),
-         (1, 3),
+         (0, 3),
          (0, 1, 2, 3),
-         (0, 2),
+         (1, 2),
          (0, 1)]
 
         sage: it = C.face_iter(dual=False)
@@ -441,17 +491,17 @@ cdef class FaceIterator(SageObject):
 
         if dual:
             self.atoms = C.bitrep_facets()
-            self.coatoms = C.bitrep_Vrepr()
+            self.coatoms = C.bitrep_Vrep()
         else:
             self.coatoms = C.bitrep_facets()
-            self.atoms = C.bitrep_Vrepr()
+            self.atoms = C.bitrep_Vrep()
         self.face_length = self.coatoms.face_length
         self._Vrep = C.Vrep()
         self._facet_names = C.facet_names()
         self._equalities = C.equalities()
 
-        self.atom_repr = <size_t *> self._mem.allocarray(self.coatoms.n_atoms, sizeof(size_t))
-        self.coatom_repr = <size_t *> self._mem.allocarray(self.coatoms.n_faces, sizeof(size_t))
+        self.atom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_atoms, sizeof(size_t))
+        self.coatom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_faces, sizeof(size_t))
 
         if self.dimension == 0 or self.coatoms.n_faces == 0:
             # As we will only yield proper faces,
@@ -798,25 +848,25 @@ cdef class FaceIterator(SageObject):
         # The face was not initialized properly.
         raise LookupError("``FaceIterator`` does not point to a face")
 
-    cdef size_t set_coatom_repr(self) except -1:
+    cdef size_t set_coatom_rep(self) except -1:
         r"""
-        Set ``coatom_repr`` to be the coatom-representation of the current face.
+        Set ``coatom_rep`` to be the coatom-representation of the current face.
         Return its length.
 
-        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_coatom_repr`
+        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_coatom_rep`
         """
         cdef size_t n_coatoms = self.coatoms.n_faces
         cdef uint64_t **coatoms = self.coatoms.data
         cdef size_t face_length = self.face_length
-        return bit_repr_to_coatom_repr(self.face, coatoms, n_coatoms,
-                                       face_length, self.coatom_repr)
+        return bit_rep_to_coatom_rep(self.face, coatoms, n_coatoms,
+                                       face_length, self.coatom_rep)
 
-    cdef size_t set_atom_repr(self) except -1:
+    cdef size_t set_atom_rep(self) except -1:
         r"""
-        Set ``atom_repr`` to be the atom-representation of the current face.
+        Set ``atom_rep`` to be the atom-representation of the current face.
         Return its length.
 
-        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_atom_repr`
+        This is a shortcut of :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace.set_atom_rep`
         """
         cdef size_t face_length = self.face_length
-        return bit_repr_to_Vrepr_list(self.face, self.atom_repr, face_length)
+        return bit_rep_to_Vrep_list(self.face, self.atom_rep, face_length)

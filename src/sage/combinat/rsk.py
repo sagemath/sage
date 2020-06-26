@@ -2009,7 +2009,7 @@ class RuleSuperRSK(RuleRSK):
         two `n`-tuples ``obj1`` `= [a_1, a_2, \ldots, a_n]`
         and ``obj2`` `= [b_1, b_2, \ldots, b_n]` forming a restricted
         super biword (i.e., entries with even and odd parity and no 
-        repeatition of corresponding pairs with mixed parity entries) 
+        repetition of corresponding pairs with mixed parity entries) 
         return the array `[(a_1, b_1), (a_2, b_2), \ldots, (a_n, b_n)]`.
 
         INPUT:
@@ -2053,7 +2053,7 @@ class RuleSuperRSK(RuleRSK):
                     raise ValueError("the two arrays must be the same length")
                 mixed_parity = []
                 # Check it is a restricted superbiword: that is,
-                # the entries can have even or odd parity, but repeatition of 
+                # the entries can have even or odd parity, but repetition of 
                 # the pairs of corresponding entries of obj1
                 # and obj2 with mixed-parity is not allowed
                 for t, b in zip(obj1, obj2):

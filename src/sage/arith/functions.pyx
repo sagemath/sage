@@ -168,7 +168,6 @@ cpdef LCM_list(v):
 
         sage: LCM_list(Sequence(srange(100)))
         0
-        sage: from six.moves import range
         sage: LCM_list(range(100))
         0
 

@@ -54,7 +54,6 @@ EXAMPLES::
 # policies, either expressed or implied, of the FreeBSD Project.
 #*****************************************************************************/
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.functions.log import exp
 from sage.functions.other import ceil

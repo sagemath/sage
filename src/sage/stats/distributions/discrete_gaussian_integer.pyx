@@ -21,7 +21,6 @@ We construct a sampler for the distribution `D_{3,c}` with width `σ=3` and cent
 
 We ask for 100000 samples::
 
-    sage: from six.moves import range
     sage: n=100000; l = [D() for _ in range(n)]
 
 These are sampled with a probability proportional to `\exp(-x^2/18)`. More
@@ -52,7 +51,6 @@ We construct an instance with a larger width::
 
 ask for 100000 samples::
 
-    sage: from six.moves import range
     sage: n=100000; l = [D() for _ in range(n)] # long time
 
 and check if the proportions fit::
@@ -67,7 +65,6 @@ We construct a sampler with `c\%1 != 0`::
     sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
     sage: sigma = 3
     sage: D = DiscreteGaussianDistributionIntegerSampler(sigma=sigma, c=1/2)
-    sage: from six.moves import range
     sage: n=100000; l = [D() for _ in range(n)] # long time
     sage: mean(l).n() # long time
     0.486650000000000
@@ -227,21 +224,18 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=0, tau=2)
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^16)]
             sage: min(l) == 0-2*1.0, max(l) == 0+2*1.0, abs(mean(l)) < 0.01
             (True, True, True)
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=2)
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^18)]
             sage: min(l)==2-2*1.0, max(l)==2+2*1.0, mean(l).n()
             (True, True, 2.45...)
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=6)
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^18)]
             sage: min(l), max(l), abs(mean(l)-2.5) < 0.01
             (-2, 7, True)
@@ -250,21 +244,18 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=0, tau=2, precision="dp")
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^16)]
             sage: min(l) == 0-2*1.0, max(l) == 0+2*1.0, abs(mean(l)) < 0.05
             (True, True, True)
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=2, precision="dp")
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^18)]
             sage: min(l)==2-2*1.0, max(l)==2+2*1.0, mean(l).n()
             (True, True, 2.4...)
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=6, precision="dp")
-            sage: from six.moves import range
             sage: l = [D() for _ in range(2^18)]
             sage: min(l)<=-1, max(l)>=6, abs(mean(l)-2.5) < 0.1
             (True, True, True)

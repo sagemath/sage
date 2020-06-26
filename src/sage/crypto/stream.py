@@ -12,7 +12,6 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .cryptosystem import SymmetricKeyCryptosystem
 from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher

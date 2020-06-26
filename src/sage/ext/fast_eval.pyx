@@ -1399,7 +1399,8 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
         if old:
             return f._fast_float_(*vars)
         else:
-            return fast_callable(f, vars=vars, domain=float, _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality=True, expect_one_var=expect_one_var)
+            return fast_callable(f, vars=vars, domain=float,
+                                 expect_one_var=expect_one_var)
     except AttributeError:
         pass
 

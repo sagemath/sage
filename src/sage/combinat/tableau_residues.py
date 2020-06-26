@@ -119,7 +119,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import, print_function
-from six import add_metaclass
 
 from sage.categories.sets_cat import Sets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -140,8 +139,8 @@ from .tableau_tuple import (StandardTableaux_residue,
 # -------------------------------------------------
 
 # needed for __classcall_private__
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class ResidueSequence(ClonableArray):
+class ResidueSequence(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A residue sequence.
 

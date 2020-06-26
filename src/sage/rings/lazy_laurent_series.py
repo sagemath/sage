@@ -19,7 +19,6 @@ This defines the generating function of Fibonacci sequence::
     ....:         return 1
     ....:     else:
     ....:         return s.coefficient(i - 1) + s.coefficient(i - 2)
-    ....:
     sage: f = L.series(coeff, valuation=0); f
     1 + z + 2*z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + ...
 
@@ -135,7 +134,6 @@ class LazyLaurentSeries(ModuleElement):
         ....:         return 1
         ....:     else:
         ....:         return s.coefficient(i - 1) + s.coefficient(i - 2)
-        ....:
         sage: f = L.series(coeff, valuation=0); f
         1 + z + 2*z^2 + 3*z^3 + 5*z^4 + 8*z^5 + 13*z^6 + ...
         sage: f.coefficient(100)
@@ -364,7 +362,6 @@ class LazyLaurentSeries(ModuleElement):
             ....:         return 1
             ....:     else:
             ....:         return sum(s.coefficient(j)*s.coefficient(i - 1 -j) for j in [0..i-1])
-            ....:
             sage: e = L.series(g, valuation=0)
             sage: e.coefficient(10)
             16796

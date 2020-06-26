@@ -2,7 +2,7 @@
 r"""
 Access functions to online databases for coding theory
 """
-from six.moves import range
+
 from sage.interfaces.all import gap
 from sage.features.gap import GapPackage
 
@@ -155,7 +155,7 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     - Steven Sivek (2005-11-14)
     - David Joyner (2008-03)
     """
-    from six.moves.urllib.request import urlopen
+    from urllib.request import urlopen
     from sage.cpython.string import bytes_to_str
     q = F.order()
     if not q in [2, 3, 4, 5, 7, 8, 9]:

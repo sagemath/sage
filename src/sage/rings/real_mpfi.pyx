@@ -231,7 +231,7 @@ Comparisons with numpy types are right (see :trac:`17758` and :trac:`18076`)::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -239,8 +239,8 @@ Comparisons with numpy types are right (see :trac:`17758` and :trac:`18076`)::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport strlen
 from cpython.mem cimport *
@@ -269,7 +269,7 @@ from sage.categories.morphism cimport Map
 
 cimport sage.rings.real_mpfr as real_mpfr
 
-import math # for log
+import math  # for log
 import sys
 import operator
 
@@ -3724,6 +3724,23 @@ cdef class RealIntervalFieldElement(RingElement):
             False
             sage: RIF(1, 2) != RIF(0, 1)
             False
+
+        Check that ``_richcmp_`` is also working for intervals with different
+        precisions (:trac:`29220`)::
+
+            sage: from sage.structure.richcmp import op_LT, op_GT
+            sage: R1 = RealIntervalField(2)
+            sage: R2 = RealIntervalField(4)
+            sage: r1 = R1(1, 3/2)
+            sage: r2 = R2(7/4, 15/8)
+            sage: r1._richcmp_(r2, op_GT)
+            False
+            sage: r1._richcmp_(r2, op_LT)
+            True
+            sage: r2._richcmp_(r1, op_GT)
+            True
+            sage: r2._richcmp_(r1, op_LT)
+            False
         """
         cdef RealIntervalFieldElement lt, rt
 
@@ -3816,22 +3833,6 @@ cdef class RealIntervalFieldElement(RingElement):
             return 1
         else:
             return 0
-
-    cpdef int _cmp_(self, other) except -2:
-        """
-        Deprecated method (:trac:`22907`)
-
-        EXAMPLES::
-
-            sage: a = RIF(1)
-            sage: a._cmp_(a)
-            doctest:...: DeprecationWarning: for RIF elements, do not use cmp
-            See http://trac.sagemath.org/22907 for details.
-            0
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(22907, 'for RIF elements, do not use cmp')
-        return self.lexico_cmp(other)
 
     def __contains__(self, other):
         """

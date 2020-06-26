@@ -277,10 +277,6 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import division
 
-from builtins import zip
-from six import iteritems
-from six.moves import range
-
 import itertools
 from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
@@ -1056,9 +1052,9 @@ class Polyomino(SageObject):
             raise ValueError("Dimension of input box must match the "
                              "dimension of the polyomino")
         box_min_coords, box_max_coords = box.bounding_box()
-        if mod_box_isometries and len(set(b-a for (a,b) in zip(box_min_coords, 
+        if mod_box_isometries and len(set(b-a for (a,b) in zip(box_min_coords,
                                       box_max_coords))) < box._dimension:
-            raise NotImplementedError("The code below assumes that the" 
+            raise NotImplementedError("The code below assumes that the"
                     " sizes of the box (={}) are all distinct when"
                     " argument `mod_box_isometries` is True.".format(box))
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
@@ -1172,10 +1168,10 @@ class Polyomino(SageObject):
             vertical[(x+1, y)] -= 1
         edges = []
         h = 0.5
-        for (x, y), coeff in iteritems(horizontal):
+        for (x, y), coeff in horizontal.items():
             if coeff:
                 edges.append(((x-h, y-h), (x+h, y-h)))
-        for (x, y), coeff in iteritems(vertical):
+        for (x, y), coeff in vertical.items():
             if coeff:
                 edges.append(((x-h, y-h), (x-h, y+h)))
         return edges

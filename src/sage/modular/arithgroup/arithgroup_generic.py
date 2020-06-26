@@ -13,7 +13,6 @@ Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
 #
 ################################################################################
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.groups.old import Group
 from sage.categories.groups import Groups

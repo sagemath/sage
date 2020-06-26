@@ -9,7 +9,6 @@ to reproduce the problems when debugging.  This module provides a
 decorator to help write random testers that meet these goals.
 """
 from __future__ import print_function, absolute_import
-from six.moves import range
 
 from functools import wraps
 

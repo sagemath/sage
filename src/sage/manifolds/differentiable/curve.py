@@ -363,7 +363,9 @@ class DifferentiableCurve(DiffMap):
             sage: U = M.open_subset('U', coord_def={c_xy: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_cart = c_xy.restrict(U) # Cartesian coordinates on U
             sage: c_spher.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # spherical coordinates on U
-            sage: # Links between spherical coordinates and Cartesian ones:
+
+        Links between spherical coordinates and Cartesian ones::
+
             sage: ch_cart_spher = c_cart.transition_map(c_spher, [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
             Check of the inverse coordinate transformation:
@@ -902,11 +904,9 @@ class DifferentiableCurve(DiffMap):
             True
 
         """
-
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
         from sage.manifolds.utilities import set_axes_labels
-
 
         #
         # The plot

@@ -251,9 +251,8 @@ version.
     [ 1, 2, 3, 5, 6, 5 ]
 
 The ``Apply`` command applies a function to each
-element of a list.
+element of a list::
 
-::
     sage: L = kash([1,2,3,4])                    # optional -- kash
     sage: L.Apply('i -> 3*i')                    # optional -- kash
     [ 3, 6, 9, 12 ]

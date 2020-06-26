@@ -48,7 +48,6 @@ Here is a list of all content related to GRS codes:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.categories.cartesian_product import cartesian_product
 

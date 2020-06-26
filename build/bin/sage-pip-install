@@ -38,11 +38,13 @@ fi
 # Note: We need to take care to specify the full path to Sage's Python here
 # to emphasize that this command hould use it, and not the system Python;
 # see https://trac.sagemath.org/ticket/18438
+# But now we delegate this to sage-python23.
+PYTHON=sage-python23
+
+# The PIP variable is only used to determine the name of the lock file.
 if [ "$SAGE_PYTHON3" = yes ]; then
-    PYTHON="$SAGE_LOCAL/bin/python3"
     PIP=pip3
 else
-    PYTHON="$SAGE_LOCAL/bin/python2"
     PIP=pip2
 fi
 

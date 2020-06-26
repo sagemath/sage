@@ -1,0 +1,31 @@
+From 80a9ffc773542e3329935e5377f6906628be16e6 Mon Sep 17 00:00:00 2001
+From: Yue Ren <yue.ren.kl@gmail.com>
+Date: Thu, 15 Nov 2018 10:48:24 -0500
+Subject: [PATCH] fix: building with NDEBUG=1, trac ticket 840
+
+---
+ Singular/dyn_modules/gfanlib/groebnerCone.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Singular/dyn_modules/gfanlib/groebnerCone.h b/Singular/dyn_modules/gfanlib/groebnerCone.h
+index cb067250a0..8a212a7b7f 100644
+--- a/Singular/dyn_modules/gfanlib/groebnerCone.h
++++ b/Singular/dyn_modules/gfanlib/groebnerCone.h
+@@ -99,12 +99,16 @@ class groebnerCone
+    */
+   groebnerCones tropicalNeighbours() const;
+ 
++  /**
++   * Return 1 if w points is in the dual of the polyhedral cone, 0 otherwise
++   */
++  bool pointsOutwards(const gfan::ZVector w) const;
++
+   /**
+    * Debug tools.
+    */
+   #ifndef NDEBUG
+   bool checkFlipConeInput(const gfan::ZVector interiorPoint, const gfan::ZVector facetNormal) const;
+-  bool pointsOutwards(const gfan::ZVector) const;
+   #endif
+ };
+ 

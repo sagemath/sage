@@ -11,8 +11,6 @@ Decorators
 ==========
 """
 
-from six.moves import map
-
 from sage.misc.decorators import decorator_keywords, sage_wraps
 
 @decorator_keywords

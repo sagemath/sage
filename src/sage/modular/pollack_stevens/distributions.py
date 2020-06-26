@@ -41,7 +41,6 @@ EXAMPLES::
 #*****************************************************************************
 from __future__ import print_function
 from __future__ import absolute_import
-from six.moves import range
 
 from sage.modules.module import Module
 from sage.structure.parent import Parent

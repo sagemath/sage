@@ -324,8 +324,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.categories.fields import Fields
 from sage.categories.manifolds import Manifolds
@@ -2350,7 +2348,6 @@ class TopologicalManifold(ManifoldSubset):
 
             sage: def simpl_trig(a):
             ....:     return a.simplify_trig()
-            ....:
             sage: M.set_simplify_function(simpl_trig)
             sage: s = f + g
             sage: s.expr()
@@ -2373,7 +2370,6 @@ class TopologicalManifold(ManifoldSubset):
 
             sage: def simpl_trig_sympy(a):
             ....:     return a.trigsimp()
-            ....:
             sage: M.set_simplify_function(simpl_trig_sympy, method='sympy')
 
         Then, it becomes active as soon as we change the calculus engine to

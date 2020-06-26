@@ -15,7 +15,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import iteritems
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex, LatexExpr
@@ -23,7 +22,6 @@ from sage.misc.misc_c import prod
 from sage.structure.richcmp import richcmp
 from sage.structure.element import AlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
-from copy import copy
 from sage.categories.rings import Rings
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.sets.family import Family
@@ -157,6 +155,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
         else:
             ret = term
     return ret
+
 
 def repr_factored(w, latex_output=False):
     r"""
@@ -297,6 +296,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
 
         def exp(e):
             return '^{{{}}}'.format(e) if e > 1 else ''
+
         def term(m):
             R = self.parent()._poly_ring
             def half_term(mon, polynomial):
@@ -360,7 +360,8 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             sage: dy - (3*x - z)*dx
             dy + z*dx - 3*x*dx
         """
-        return self.__class__(self.parent(), {m:-c for m, c in iteritems(self.__monomials)})
+        return self.__class__(self.parent(),
+                              {m:-c for m, c in self.__monomials.items()})
 
     def _add_(self, other):
         """
@@ -375,14 +376,6 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         """
         F = self.parent()
         return self.__class__(F, blas.add(self.__monomials, other.__monomials))
-
-        d = copy(self.__monomials)
-        zero = self.parent().base_ring().zero()
-        for m, c in iteritems(other.__monomials):
-            d[m] = d.get(m, zero) + c
-            if d[m] == zero:
-                del d[m]
-        return self.__class__(self.parent(), d)
 
     def _mul_(self, other):
         """
@@ -816,7 +809,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             return self.element_class(self, {i: R(c) for i,c in x if R(c) != zero})
         x = self._poly_ring(x)
         return self.element_class(self, {(tuple(m), t): c
-                                         for m, c in iteritems(x.dict())})
+                                         for m, c in x.dict().items()})
 
     def _coerce_map_from_(self, R):
         """

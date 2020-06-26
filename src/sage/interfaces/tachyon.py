@@ -74,7 +74,7 @@ class TachyonRT(SageObject):
 
     EXAMPLES:
 
-    
+
     .. automethod:: __call__
     """
     def _repr_(self):
@@ -173,7 +173,11 @@ class TachyonRT(SageObject):
             sage: from sage.interfaces.tachyon import TachyonRT
             sage: t = TachyonRT()
             sage: t.usage(use_pager=False)
-            Tachyon Parallel/Multiprocessor Ray Tracer   Version...
+            ...
+              tachyon modelfile [options]...
+            <BLANKLINE>
+            Model file formats supported:
+              filename.dat ...
         """
         with os.popen('tachyon') as f:
             r = f.read()

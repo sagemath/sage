@@ -35,8 +35,6 @@ from sage.misc.cachefunc import cached_method, cached_function
 from sage.combinat.permutation import Permutations
 from sage.sat.converters import ANF2CNFConverter
 
-import six
-
 
 class CNFEncoder(ANF2CNFConverter):
     """
@@ -281,7 +279,7 @@ class CNFEncoder(ANF2CNFConverter):
         # any zero block of f+1
 
         blocks = self.zero_blocks(f + 1)
-        C = [{variable: 1 - value for variable, value in six.iteritems(b)}
+        C = [{variable: 1 - value for variable, value in b.items()}
              for b in blocks]
 
         def to_dimacs_index(v):
@@ -290,7 +288,7 @@ class CNFEncoder(ANF2CNFConverter):
         def clause(c):
             return [to_dimacs_index(variable)
                     if value == 1 else -to_dimacs_index(variable)
-                    for variable, value in six.iteritems(c)]
+                    for variable, value in c.items()]
 
         data = (clause(c) for c in C)
         for d in sorted(data):

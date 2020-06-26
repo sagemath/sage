@@ -8,9 +8,8 @@ from __future__ import absolute_import
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from .congroup_gammaH import GammaH_class
 from .congroup_gamma1 import is_Gamma1

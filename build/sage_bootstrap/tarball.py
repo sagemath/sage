@@ -48,7 +48,7 @@ class Tarball(object):
 
         INPUT:
 
-        - ``name`` - string. The full filename (``foo-1.3.tar.bz2``)
+        - ``tarball_name`` - string. The full filename (``foo-1.3.tar.bz2``)
           of a tarball on the Sage mirror network.
         """
         self.__filename = tarball_name
@@ -132,9 +132,13 @@ class Tarball(object):
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
 
-    def download(self):
+    def download(self, allow_upstream=False):
         """
         Download the tarball to the upstream directory.
+
+        If allow_upstream is False and the package cannot be found
+        on the sage mirrors, fall back to downloading it from
+        the upstream URL if the package has one.
         """
         destination = self.upstream_fqn
         if os.path.isfile(destination):
@@ -159,7 +163,16 @@ class Tarball(object):
             except IOError:
                 log.debug('File not on mirror')
         if not successful_download:
-            raise FileNotMirroredError('tarball does not exist on mirror network')
+            url = self.package.tarball_upstream_url
+            if allow_upstream and url:
+                log.info('Attempting to download from {}'.format(url))
+                try:
+                    Download(url, destination).run()
+                    successful_download = True
+                except IOError:
+                    raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
+            else:
+                raise FileNotMirroredError('tarball does not exist on mirror network')
         if not self.checksum_verifies():
             raise ChecksumError('checksum does not match')
 

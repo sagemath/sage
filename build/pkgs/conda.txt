@@ -2,6 +2,6 @@ compilers
 make
 m4
 perl
-python
+"python<3.8"
 tar
 bc

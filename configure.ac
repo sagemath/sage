@@ -301,6 +301,14 @@ if test -z "$MAKE"; then
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
 
+# Check for system python
+AC_MSG_CHECKING([for Python])
+if SAGE_SYSTEM_PYTHON=$(build/bin/sage-system-python -c "import sys; print(sys.executable)"); then
+    AC_MSG_RESULT([$SAGE_SYSTEM_PYTHON])
+else
+    AC_MSG_ERROR([You do not have a suitable version of Python installed])
+fi
+
 # Check for Latex, the use of which is less important in Sage than
 # it used to be, as it was at one time required to build any documentation
 # but this is no longer so.
@@ -324,6 +332,8 @@ AX_PROG_PERL_VERSION([5.8.0],[],[
 ###############################################################################
 # Check C/C++/Fortran compilers
 ###############################################################################
+
+SAGE_CHECK_CONDA_COMPILERS
 
 AC_PROG_CC()
 AC_PROG_CPP()
@@ -390,22 +400,18 @@ SAGE_CHECK_OSX_SUPPORTED()
 ###############################################################################
 
 # Python version
-AC_MSG_CHECKING([Python version to install])
 AC_ARG_WITH([python],
-[AS_HELP_STRING([--with-python=2],
-    [build and use Python 2])]
 [AS_HELP_STRING([--with-python=3],
     [build and use Python 3 (default)])])
 
 case "$with_python" in
-    2*) SAGE_PYTHON_VERSION=2;;
-    3*) SAGE_PYTHON_VERSION=3;;
+    3)  SAGE_PYTHON_VERSION=3;;
+    3*) AC_MSG_WARN([the only allowed value for --with-python is 3; specific Python 3.x versions cannot be requested using --with-python.  For compatibility reasons, this is only a warning.  Use './configure PYTHON3=/path/to/python3' to use a specific Python 3 binary for the Sage venv.])
+        SAGE_PYTHON_VERSION=3;;
     "") SAGE_PYTHON_VERSION=3;;
     *)
-        AC_MSG_ERROR([allowed values for --with-python are 2 and 3]);;
+        AC_MSG_ERROR([the only allowed value for --with-python is 3.  Support for Python 2 has been removed in Sage 9.2.]);;
 esac
-
-AC_MSG_RESULT([$SAGE_PYTHON_VERSION])
 AC_SUBST(SAGE_PYTHON_VERSION)
 
 # $(TOOLCHAIN) variable containing prerequisites for the build
@@ -414,6 +420,22 @@ if test "$SAGE_INSTALL_CCACHE" = yes ; then
     SAGE_TOOLCHAIN="$SAGE_TOOLCHAIN ccache"
 fi
 AC_SUBST([SAGE_TOOLCHAIN])
+
+AC_ARG_ENABLE([experimental-packages],
+  [AS_HELP_STRING([--enable-experimental-packages],
+    [allow installing experimental packages (default: no = ask for user confirmation for each package)])])
+AC_ARG_ENABLE([download-from-upstream-url],
+  [AS_HELP_STRING([--enable-download-from-upstream-url],
+    [allow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])])
+
+SAGE_SPKG_OPTIONS=""
+AS_IF([test "x$enable_experimental_packages" = "xyes"], [
+  AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -y"])
+])
+AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
+  AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -o"])
+])
+AC_SUBST([SAGE_SPKG_OPTIONS])
 
 SAGE_SPKG_COLLECT()
 
@@ -433,21 +455,9 @@ done
 
 AC_SUBST([SAGE_SCRIPTS])
 
-SAGE_EXTCODE='\
-'
-for file in `find "$SAGE_SRC"/ext -type f`; do
-    SAGE_EXTCODE+="    \$(SAGE_EXTCODE)${file#$SAGE_SRC/ext} \\"$'\n'
-done
-
-AC_SUBST([SAGE_EXTCODE])
-
-SAGE_MAKE_DEPS="$SAGE_ROOT/build/make/deps"
-AC_SUBST_FILE([SAGE_MAKE_DEPS])
-
-
 dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile src/Makefile])
-AC_CONFIG_FILES([src/bin/sage-env-config])
+AC_CONFIG_FILES([src/bin/sage-env-config build/bin/sage-build-env-config])
 
 AC_CONFIG_FILES([build/pkgs/sage_conf/src/sage_conf.py build/pkgs/sage_conf/src/setup.cfg])
 
@@ -457,6 +467,7 @@ AC_CONFIG_COMMANDS(mkdirs,
         for d in "$SAGE_LOGS" "$SAGE_LOCAL" \
             "$SAGE_LOCAL/bin" "$SAGE_LOCAL/etc" \
             "$SAGE_LOCAL/include" "$SAGE_LOCAL/lib" \
+            "$SAGE_LOCAL/lib/pkgconfig" \
             "$SAGE_SHARE" "$SAGE_INST"; do
                 AC_MSG_NOTICE([creating directory $d])
                 mkdir -p "$d" || AC_MSG_ERROR(could not create $d)
@@ -480,5 +491,7 @@ AC_CONFIG_COMMANDS(mkdirs,
     ])
 
 AC_OUTPUT()
+
+SAGE_SYSTEM_PACKAGE_NOTICE()
 
 dnl vim:syntax=m4

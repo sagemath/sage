@@ -1,0 +1,22 @@
+--- a/source/main/BEGINQEPCAD.c.orig	2018-08-29 20:03:05.718540333 -0600
++++ b/source/main/BEGINQEPCAD.c	2018-08-29 20:09:45.542106837 -0600
+@@ -53,7 +53,7 @@ void BEGINQEPCAD(int &argc, char**& argv
+   {
+     int tmp = system("bash -c 'exit $(stty size | cut -d\" \" -f2)'");
+     tmp = WEXITSTATUS(tmp);
+-    if (10 <= tmp <= 512)
++    if (10 <= tmp && tmp <= 512)
+       cols = tmp;
+   }
+ 
+--- a/source/userint/USERINT.c.orig	2018-03-16 14:22:00.000000000 -0600
++++ b/source/userint/USERINT.c	2018-08-29 20:09:45.543106835 -0600
+@@ -492,7 +492,7 @@ void VERTFILL2D(Word D)
+   Word L, S, T, CB;
+ 
+   /* GET 1D CAD STACK */
+-  L = L = LELTI(D,CHILD);
++  L = LELTI(D,CHILD);
+   if (L == NIL)
+   {
+     SWRITE("Must by a 2D CAD!\n");

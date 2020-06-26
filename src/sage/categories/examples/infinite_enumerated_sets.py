@@ -135,12 +135,12 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Integer Ring
             sage: NN(-1)
             Traceback (most recent call last):
+            ...
             ValueError: Value -1 is not a non negative integer.
         """
         if elt in self:
             return self._element_constructor_(elt)
-        else:
-            raise ValueError("Value %s is not a non negative integer."%(elt))
+        raise ValueError("Value %s is not a non negative integer." % (elt))
 
     def an_element(self):
         """

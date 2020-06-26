@@ -399,7 +399,39 @@ def assume(*args):
 
     INPUT:
 
-    -  ``*args`` -- assumptions
+    - ``*args`` -- a variable-length sequence of assumptions, each
+      consisting of:
+
+      - any number of symbolic inequalities, like ``0 < x, x < 1``
+
+      - a subsequence of variable names, followed by some property that
+        should be assumed for those variables; for example, ``x, y, z,
+        'integer'`` would assume that each of ``x``, ``y``, and ``z``
+        are integer variables, and ``x, 'odd'`` would assume that ``x``
+        is odd (as opposed to even).
+
+      The two types can be combined, but a symbolic inequality cannot
+      appear in the middle of a list of variables.
+
+    OUTPUT:
+
+    If everything goes as planned, there is no output.
+
+    If you assume something that isn't one of the two forms above, then
+    an ``AttributeError`` is raised as we try to call its ``assume``
+    method.
+
+    If you make inconsistent assumptions (for example, that ``x`` is
+    both even and odd), then a ``ValueError`` is raised.
+
+    .. WARNING::
+
+        Don't use python's chained comparison notation in assumptions.
+        Python literally translates the expression ``0 < x < 1`` to
+        ``(0 < x) and (x < 1)``, but the value of ``bool(0 < x)`` is
+        ``False`` when ``x`` is a symbolic variable. Therefore, by the
+        definition of Python's logical "and" operator, the entire expression
+        is equal to ``0 < x``.
 
     EXAMPLES:
 
@@ -414,6 +446,8 @@ def assume(*args):
 
     This will be assumed in the current Sage session until forgotten::
 
+        sage: bool(sqrt(x^2) == x)
+        True
         sage: forget()
         sage: bool(sqrt(x^2) == x)
         False
@@ -445,21 +479,32 @@ def assume(*args):
 
     An integer constraint::
 
-        sage: var('n, P, r, r2')
-        (n, P, r, r2)
+        sage: n,P,r,r2 = SR.var('n, P, r, r2')
         sage: assume(n, 'integer')
         sage: c = P*e^(r*n)
         sage: d = P*(1+r2)^n
         sage: solve(c==d,r2)
         [r2 == e^r - 1]
+        sage: forget()
 
     Simplifying certain well-known identities works as well::
 
+        sage: n = SR.var('n')
+        sage: assume(n, 'integer')
         sage: sin(n*pi)
         0
         sage: forget()
         sage: sin(n*pi).simplify()
         sin(pi*n)
+
+    Instead of using chained comparison notation, each relationship
+    should be passed as a separate assumption::
+
+        sage: x = SR.var('x')
+        sage: assume(0 < x, x < 1) # instead of assume(0 < x < 1)
+        sage: assumptions()
+        [0 < x, x < 1]
+        sage: forget()
 
     If you make inconsistent or meaningless assumptions,
     Sage will let you know::
@@ -524,32 +569,62 @@ def assume(*args):
 
     Check that positive integers can be created (:trac:`20132`)
 
-        sage: forget()
         sage: x = SR.var('x', domain='positive')
         sage: assume(x, 'integer')
         sage: x.is_positive() and x.is_integer()
         True
-
         sage: forget()
+
         sage: x = SR.var('x', domain='integer')
         sage: assume(x > 0)
         sage: x.is_positive() and x.is_integer()
         True
-
         sage: forget()
+
         sage: assume(x, "integer")
         sage: assume(x > 0)
         sage: x.is_positive() and x.is_integer()
         True
+        sage: forget()
+
+    Ensure that an ``AttributeError`` is raised if we are given junk::
+
+        sage: assume(3)
+        Traceback (most recent call last):
+        ...
+        AttributeError: 'sage.rings.integer.Integer' object has no
+        attribute 'assume'
+
+    Ensure that we can combine the two types of assumptions, as documented::
+
+        sage: x,y = SR.var('x,y')
+        sage: assume(x > 0, x, y, 'integer')
+        sage: assumptions()
+        [x > 0, x is integer, y is integer]
+        sage: forget()
+        sage: assume(x, y, 'integer', x > 0)
+        sage: assumptions()
+        [x is integer, y is integer, x > 0]
+        sage: forget()
+
+    Test that our WARNING block is accurate::
+
+        sage: x = SR.var('x')
+        sage: bool(0 < x)
+        False
+        sage: 0 < x < 1
+        0 < x
+        sage: assume(0 < x < 1)
+        sage: assumptions()
+        [0 < x]
+        sage: forget()
+
     """
     for x in preprocess_assumptions(args):
         if isinstance(x, (tuple, list)):
             assume(*x)
         else:
-            try:
-                x.assume()
-            except KeyError:
-                raise TypeError("assume not defined for objects of type '%s'"%type(x))
+            x.assume()
 
 
 def forget(*args):
@@ -812,56 +887,56 @@ class assuming:
 
     """
     def __init__(self,*args, **kwds):
-        """
+        r"""
         EXAMPLES::
 
-        sage: forget()
-        sage: foo=assuming(x>0)
-        sage: foo.Ass
-        (x > 0,)
-        sage: bool(x>-1)
-        False
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: foo.Ass
+            (x > 0,)
+            sage: bool(x>-1)
+            False
 
         """
         self.replace=kwds.pop("replace",False)
         self.Ass=args
-        
+
     def __enter__(self):
-        """
+        r"""
         EXAMPLES::
 
-        sage: forget()
-        sage: foo=assuming(x>0)
-        sage: bool(x>-1)
-        False
-        sage: foo.__enter__()
-        sage: bool(x>-1)
-        True
-        sage: foo.__exit__()
-        sage: bool(x>-1)
-        False
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: bool(x>-1)
+            False
+            sage: foo.__enter__()
+            sage: bool(x>-1)
+            True
+            sage: foo.__exit__()
+            sage: bool(x>-1)
+            False
 
         """
         if self.replace:
             self.OldAss=assumptions()
             forget(assumptions())
         assume(self.Ass)
-        
+
     def __exit__(self, *args, **kwds):
-        """
+        r"""
         EXAMPLES::
 
-        sage: forget()
-        sage: foo=assuming(x>0)
-        sage: bool(x>-1)
-        False
-        sage: foo.__enter__()
-        sage: bool(x>-1)
-        True
-        sage: foo.__exit__()
-        sage: bool(x>-1)
-        False
-        sage: forget()
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: bool(x>-1)
+            False
+            sage: foo.__enter__()
+            sage: bool(x>-1)
+            True
+            sage: foo.__exit__()
+            sage: bool(x>-1)
+            False
+            sage: forget()
 
         """
         if self.replace:

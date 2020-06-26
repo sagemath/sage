@@ -273,9 +273,6 @@ Classes and functions
 # ****************************************************************************
 from __future__ import division, print_function, absolute_import
 
-from six.moves import range, builtins
-from six import iteritems
-
 from copy import copy, deepcopy
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -3148,7 +3145,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             # We create the digraphs of all color classes
             linear_extensions = [hasse_diagram.copy() for i in range(k)]
-            for ((u,v),i),x in iteritems(p.get_values(b)):
+            for ((u,v),i),x in p.get_values(b).items():
                 if x == 1:
                     linear_extensions[i].add_edge(u,v)
 
@@ -4132,7 +4129,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         return [self.subposet([self._list[i] for i in x]) for x in sorted(set(frozenset(y) for y in L))]
 
     # Caveat: list is overridden by the method list above!!!
-    def antichains(self, element_constructor=builtins.list):
+    def antichains(self, element_constructor=type([])):
         """
         Return the antichains of the poset.
 
@@ -4338,7 +4335,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             chains.append(chain)
         return chains
 
-    def chains(self, element_constructor=builtins.list, exclude=None):
+    def chains(self, element_constructor=type([]), exclude=None):
         """
         Return the chains of the poset.
 
@@ -5682,7 +5679,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         canonical_label = self._hasse_diagram.canonical_label(certificate=True,
                                                               algorithm=algorithm)[1]
-        canonical_label = {self._elements[v]:i for v,i in iteritems(canonical_label)}
+        canonical_label = {self._elements[v]:i for v,i in canonical_label.items()}
         return self.relabel(canonical_label)
 
     def with_linear_extension(self, linear_extension):
@@ -7308,7 +7305,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             for y in self.upper_covers(x):
                 for c in self.upper_covers(y):
                     d[c] = d.get(c, 0) + 1
-            for c, y in iteritems(d):
+            for c, y in d.items():
                 if y >= 3:
                     if certificate:
                         return (False, (x, c))

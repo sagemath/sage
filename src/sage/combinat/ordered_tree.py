@@ -19,8 +19,6 @@ AUTHORS:
 #python 3 support
 from __future__ import division, absolute_import, print_function, unicode_literals
 
-from six import add_metaclass
-
 import itertools
 
 from sage.structure.list_clone import ClonableArray, ClonableList
@@ -41,8 +39,8 @@ from sage.sets.family import Family
 from sage.rings.infinity import Infinity
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class OrderedTree(AbstractClonableTree, ClonableList):
+class OrderedTree(AbstractClonableTree, ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     The class of (ordered rooted) trees.
 
@@ -356,7 +354,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
         INPUT:
 
-        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the 
+        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
           bijection to use. Possible values are ``'Boussicault-Socci'``,
           ``'via dyck and Delest-Viennot'``.
 
@@ -386,7 +384,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
     def _to_parallelogram_polyomino_Boussicault_Socci(self):
         r"""
-        Return the polyomino parallelogram using the Boussicault-Socci 
+        Return the polyomino parallelogram using the Boussicault-Socci
         bijection.
 
         EXAMPLES::

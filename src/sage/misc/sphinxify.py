@@ -22,9 +22,11 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import absolute_import, print_function
 
+import builtins
 import os
 import re
 import shutil
+import sys
 from tempfile import mkdtemp
 from sphinx.application import Sphinx
 
@@ -105,8 +107,8 @@ todo_include_todos = True""")
 </div>""")
     staticdir = os.path.join(confdir, 'static')
     os.makedirs(staticdir)
-    with open(os.path.join(staticdir, 'empty'), 'w') as filed: pass
-
+    with open(os.path.join(staticdir, 'empty'), 'w') as filed:
+        pass
     with open(os.path.join(srcdir, 'docutils.conf'), 'w') as filed:
         filed.write(r"""
 [parsers]
@@ -114,7 +116,6 @@ smart_quotes = no""")
     doctreedir = os.path.join(srcdir, 'doctrees')
     confoverrides = {'html_context': {}, 'master_doc': 'docstring'}
 
-    import sys
     old_sys_path = list(sys.path)  # Sphinx modifies sys.path
     # Sphinx constructor: Sphinx(srcdir, confdir, outdir, doctreedir,
     # buildername, confoverrides, status, warning, freshenv).
@@ -124,7 +125,6 @@ smart_quotes = no""")
     sys.path = old_sys_path
 
     # We need to remove "_" from __builtin__ that the gettext module installs
-    from six.moves import builtins
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
@@ -158,7 +158,6 @@ smart_quotes = no""")
 
 
 if __name__ == '__main__':
-    import sys
     if len(sys.argv) == 2:
         print(sphinxify(sys.argv[1]))
     else:

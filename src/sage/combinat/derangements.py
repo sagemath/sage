@@ -22,7 +22,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

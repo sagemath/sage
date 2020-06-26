@@ -11,7 +11,6 @@ Numerical computation of newforms
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import integer_types
 
 from sage.arith.all              import prime_range
 from sage.matrix.constructor     import matrix
@@ -101,7 +100,7 @@ class NumericalEigenforms(SageObject):
             sage: numerical_eigenforms(61) # indirect doctest
             Numerical Hecke eigenvalues for Congruence Subgroup Gamma0(61) of weight 2
         """
-        if isinstance(group, integer_types + (Integer,)):
+        if isinstance(group, (int, Integer)):
             group = Gamma0(Integer(group))
         self._group  = group
         self._weight = Integer(weight)

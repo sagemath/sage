@@ -49,9 +49,6 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from six.moves import range
-from six import integer_types
-
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -1509,7 +1506,7 @@ def perms_sym_init(g, sym=None):
 
     if sym is None:
         domain = set().union(*[perm_sym_domain(gg) for gg in g])
-        if all(isinstance(s, (Integer,) + integer_types) and s > 0
+        if all(isinstance(s, (int, Integer)) and s > 0
                for s in domain):
             domain = max(domain)
         else:

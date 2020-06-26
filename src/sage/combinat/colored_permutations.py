@@ -7,7 +7,6 @@ Colored Permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from six.moves import range
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent

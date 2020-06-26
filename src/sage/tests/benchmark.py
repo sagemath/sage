@@ -16,7 +16,6 @@ TESTS::
     sage: import sage.tests.benchmark
 """
 from __future__ import print_function
-from six.moves import range
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
 

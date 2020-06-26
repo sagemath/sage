@@ -15,7 +15,6 @@ Yang-Baxter Graphs
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject

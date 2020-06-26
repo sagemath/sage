@@ -18,11 +18,9 @@
     - the javascript index;
     - the citations.
 """
-import six
-from six.moves import cPickle
-from six import text_type
 
 import os
+import pickle
 import shutil
 import sphinx
 from sphinx.util.console import bold
@@ -87,14 +85,14 @@ def merge_environment(app, env):
             # merge the citations
             newcite = {}
             citations = docenv.domaindata["std"]["citations"]
-            for ind, (path, tag, lineno) in six.iteritems(docenv.domaindata["std"]["citations"]):
+            for ind, (path, tag, lineno) in docenv.domaindata["std"]["citations"].items():
                 # TODO: Warn on conflicts
                 newcite[ind] = (fixpath(path), tag, lineno)
             env.domaindata["std"]["citations"].update(newcite)
             # merge the py:module indexes
             newmodules = {}
             for ind,(modpath,v1,v2,v3) in (
-                six.iteritems(docenv.domaindata['py']['modules'])):
+                docenv.domaindata['py']['modules'].items()):
                 newmodules[ind] = (fixpath(modpath),v1,v2,v3)
             env.domaindata['py']['modules'].update(newmodules)
             logger.info(", %s modules"%(len(newmodules)))
@@ -119,7 +117,7 @@ def get_env(app, curdoc):
         logger.info("")
         logger.warning("Unable to fetch %s " % filename)
         return None
-    docenv = cPickle.load(f)
+    docenv = pickle.load(f)
     f.close()
     return docenv
 
@@ -138,18 +136,18 @@ def merge_js_index(app):
         if index is not None:
             # merge the mappings
             logger.info(" %s js index entries"%(len(index._mapping)))
-            for (ref, locs) in six.iteritems(index._mapping):
+            for (ref, locs) in index._mapping.items():
                 newmapping = set(map(fixpath, locs))
                 if ref in mapping:
                     newmapping = mapping[ref] | newmapping
-                mapping[text_type(ref)] = newmapping
+                mapping[str(ref)] = newmapping
             # merge the titles
             titles = app.builder.indexer._titles
-            for (res, title) in six.iteritems(index._titles):
+            for (res, title) in index._titles.items():
                 titles[fixpath(res)] = title
             # merge the filenames
             filenames = app.builder.indexer._filenames
-            for (res, filename) in six.iteritems(index._filenames):
+            for (res, filename) in index._filenames.items():
                 filenames[fixpath(res)] = fixpath(filename)
             # TODO: merge indexer._objtypes, indexer._objnames as well
 
@@ -237,7 +235,7 @@ def write_citations(app, citations):
     from sage.misc.temporary_file import atomic_write
     outdir = citation_dir(app)
     with atomic_write(os.path.join(outdir, CITE_FILENAME), binary=True) as f:
-        cPickle.dump(citations, f)
+        pickle.dump(citations, f)
     logger.info("Saved pickle file: %s" % CITE_FILENAME)
 
 
@@ -251,10 +249,10 @@ def fetch_citation(app, env):
     if not os.path.isfile(filename):
         return
     with open(filename, 'rb') as f:
-        cache = cPickle.load(f)
+        cache = pickle.load(f)
     logger.info("done (%s citations)."%len(cache))
     cite = env.domaindata["std"]["citations"]
-    for ind, (path, tag, lineno) in six.iteritems(cache):
+    for ind, (path, tag, lineno) in cache.items():
         if ind not in cite: # don't override local citation
             cite[ind] = (os.path.join("..", path), tag, lineno)
 

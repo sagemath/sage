@@ -7,7 +7,6 @@ Examples of finite Weyl groups
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent

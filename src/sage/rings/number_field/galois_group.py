@@ -426,6 +426,36 @@ class GaloisGroup_v2(PermutationGroup_generic):
     # Proper number theory starts here. All the functions below make no sense
     # unless the field is Galois.
 
+    @cached_method
+    def _ramgroups(self, P):
+        """
+        Compute ramification data using PARI.
+
+        INPUT:
+
+        - ``P`` -- a prime ideal
+
+        OUTPUT:
+
+        A PARI vector holding the decomposition group, inertia groups,
+        and higher ramification groups.
+
+        ALGORITHM:
+
+        This uses the PARI function :pari:`idealramgroups`.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^4 - 2*x^2 + 2,'b').galois_closure()
+            sage: P = K.ideal([17, a^2])
+            sage: G = K.galois_group()
+            sage: G._ramgroups(P)
+            [[[Vecsmall([8, 7, 6, 5, 4, 3, 2, 1])], Vecsmall([2])]]
+        """
+        K = self.number_field()
+        P = K.ideal_monoid()(P).pari_prime()
+        return pari(K).idealramgroups(self._pari_data, P)
+
     def decomposition_group(self, P):
         r"""
         Decomposition group of a prime ideal P, i.e. the subgroup of elements
@@ -447,11 +477,11 @@ class GaloisGroup_v2(PermutationGroup_generic):
             sage: G.decomposition_group(P^2)
             Traceback (most recent call last):
             ...
-            ValueError: Fractional ideal (...) is not prime
+            ValueError: Fractional ideal (...) is not a prime ideal
             sage: G.decomposition_group(17)
             Traceback (most recent call last):
             ...
-            ValueError: Fractional ideal (17) is not prime
+            ValueError: Fractional ideal (17) is not a prime ideal
 
         An example with an infinite place::
 
@@ -469,10 +499,7 @@ class GaloisGroup_v2(PermutationGroup_generic):
             else:
                 return self.subgroup([self.identity(), self.complex_conjugation(P)])
         else:
-            P = self.number_field().ideal_monoid()(P)
-            if not P.is_prime():
-                raise ValueError("%s is not prime" % P)
-            return self.subgroup([s for s in self if s(P) == P])
+            return self.ramification_group(P, -1)
 
     def complex_conjugation(self, P=None):
         """
@@ -535,10 +562,13 @@ class GaloisGroup_v2(PermutationGroup_generic):
         """
         if not self.is_galois():
             raise TypeError("Ramification groups only defined for Galois extensions")
-        P = self.number_field().ideal_monoid()(P)
-        if not P.is_prime():
-            raise ValueError("%s is not prime")
-        return self.subgroup([g for g in self if g(P) == P and g.ramification_degree(P) >= v + 1])
+        ramdata = self._ramgroups(P)
+        if v < -1:
+            raise ValueError("v must be at least -1")
+        elif v + 1 >= len(ramdata):
+            return self.subgroup([])
+        else:
+            return self.subgroup(ramdata[v + 1][0])
 
     def inertia_group(self, P):
         """
@@ -576,11 +606,11 @@ class GaloisGroup_v2(PermutationGroup_generic):
         """
         if not self.is_galois():
             raise TypeError("Ramification breaks only defined for Galois extensions")
-        from sage.rings.infinity import infinity
+        ramdata = self._ramgroups(P)
+        n = len(ramdata)
         from sage.sets.set import Set
-        i = [g.ramification_degree(P) - 1 for g in self.decomposition_group(P)]
-        i.remove(infinity)
-        return Set(i)
+        return Set([i - 1 for i in range(n - 1)
+                    if ramdata[i][1] != ramdata[i + 1][1]] + [n - 2])
 
     def artin_symbol(self, P):
         r"""

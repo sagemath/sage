@@ -11,7 +11,7 @@ notebook is decribed in the Notebook manual.
 The %R and %%R interface creating an R line or an R cell in the
 Jupyter notebook are briefly decribed at the end of this page. This
 documentation will be expanded and placed in the Jupyter notebook
-manual when this manual exists.  
+manual when this manual exists.
 
 The following examples try to follow "An Introduction to R" which can
 be found at http://cran.r-project.org/doc/manuals/R-intro.html .
@@ -238,7 +238,7 @@ A few important points must be noted:
 
 - R graphics are (beautifully) displayed in output cells, but are not
   directly importable. You have to save them as .png, .pdf or .svg
-  files and import them in Sage for further use. 
+  files and import them in Sage for further use.
 
 In its current incarnation, this interface is mostly useful to
 statisticians needing Sage for a few symbolic computations but mostly
@@ -265,8 +265,6 @@ AUTHORS:
 #
 ##########################################################################
 from __future__ import print_function, absolute_import
-from six.moves import range
-import six
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -1584,7 +1582,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             [1] 1 3
         """
         P = self._check_valid()
-        if isinstance(n, six.string_types):
+        if isinstance(n, str):
             n = n.replace('self', self._name)
             return P.new('%s[%s]'%(self._name, n))
         elif parent(n) is P:  # the key is RElement itself
@@ -1872,7 +1870,7 @@ class RFunctionElement(InterfaceFunctionElement):
             title
             -----
             <BLANKLINE>
-            Length of an Object 
+            Length of an Object
             <BLANKLINE>
             name
             ----
@@ -1969,7 +1967,7 @@ class RFunction(InterfaceFunction):
             title
             -----
             <BLANKLINE>
-            Length of an Object 
+            Length of an Object
             <BLANKLINE>
             name
             ----

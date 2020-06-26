@@ -18,7 +18,6 @@ class MethodDecorator(SageObject):
             ....:     @MethodDecorator
             ....:     def bar(self, x):
             ....:         return x**2
-            ....:
             sage: J = Foo()
             sage: J.bar
             <sage.misc.method_decorator.MethodDecorator object at ...>

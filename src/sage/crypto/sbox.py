@@ -2,8 +2,6 @@ r"""
 S-Boxes and Their Algebraic Representations
 """
 from __future__ import print_function, division
-from six.moves import range
-from six import integer_types
 
 from sage.combinat.integer_vector import IntegerVectors
 from sage.crypto.boolean_function import BooleanFunction
@@ -356,7 +354,7 @@ class SBox(SageObject):
             sage: S([0,0,0])
             [1, 1]
         """
-        if isinstance(X, integer_types + (Integer,)):
+        if isinstance(X, (Integer, int)):
             return self._S[ZZ(X)]
 
         try:

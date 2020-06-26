@@ -192,7 +192,9 @@ To keep the other components, one must use the method
 
     sage: t = M.tensor_field(1, 1, name='T')  # Let us restart
     sage: t[:] = [[1, -x], [x*y, 2]]  # by first setting the components in the frame c_xy.frame()
-    sage: # We now set the components in the frame e with add_comp:
+
+We now set the components in the frame e with add_comp::
+
     sage: t.add_comp(e)[:] = [[x+y, 0], [y, -3*x]]
 
 The expansion of the tensor field in a given frame is obtained via the method
@@ -411,7 +413,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         sage: for i in M.irange():
         ....:     for j in M.irange():
         ....:         t[i,j] = (i+1)**(j+1)
-        ....:
         sage: [[ t[i,j] for j in M.irange()] for i in M.irange()]
         [[1, 1, 1], [2, 4, 8], [3, 9, 27]]
 
@@ -449,9 +450,13 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         sage: t = M.tensor_field(2, 0, name='T')  # let us restart
         sage: t[0,0] = 2                   # sets the components in the frame e
-        sage: # We now set the components in the frame f with add_comp:
+
+    We now set the components in the frame f with add_comp::
+
         sage: t.add_comp(f)[0,0] = -3
-        sage: # The components w.r.t. frame e have been kept:
+
+    The components w.r.t. frame e have been kept::
+
         sage: t._components  # random (dictionary output)
         {Vector frame (M, (e_0,e_1,e_2)): 2-indices components w.r.t. Vector frame (M, (e_0,e_1,e_2)),
          Vector frame (M, (f_0,f_1,f_2)): 2-indices components w.r.t. Vector frame (M, (f_0,f_1,f_2))}
@@ -531,7 +536,9 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         no symmetry;  no antisymmetry
         sage: s.symmetries()
         no symmetry;  no antisymmetry
-        sage: # let us now make b symmetric:
+
+    Let us now make b symmetric::
+
         sage: b = M.tensor_field(2, 0, sym=(0,1))
         sage: b[0,0], b[1,1], b[2,2], b[0,2] = (4,5,6,7)
         sage: s = a + b

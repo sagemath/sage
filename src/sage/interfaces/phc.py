@@ -21,15 +21,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import os
@@ -47,7 +47,7 @@ from sage.plot.point import point
 
 def get_solution_dicts(output_file_contents, input_ring, get_failures = True):
     """
-    Returns a list of dictionaries of variable:value (key:value)
+    Return a list of dictionaries of variable:value (key:value)
     pairs.  Only used internally; see the solution_dict function in
     the PHC_Object class definition for details.
 
@@ -96,7 +96,7 @@ def get_solution_dicts(output_file_contents, input_ring, get_failures = True):
 
 def get_classified_solution_dicts(output_file_contents, input_ring, get_failures = True):
     """
-    Returns a dictionary of lists of dictionaries of variable:value (key:value)
+    Return a dictionary of lists of dictionaries of variable:value (key:value)
     pairs.  Only used internally; see the classified_solution_dict function in
     the PHC_Object class definition for details.
 
@@ -153,7 +153,7 @@ def get_classified_solution_dicts(output_file_contents, input_ring, get_failures
 
 def get_variable_list(output_file_contents):
     """
-    Returns the variables, as strings, in the order in which PHCpack has processed them.
+    Return the variables, as strings, in the order in which PHCpack has processed them.
 
     EXAMPLES::
 
@@ -257,7 +257,7 @@ class PHC_Object:
 
     def classified_solution_dicts(self):
         """
-        Returns a dictionary of lists of dictionaries of solutions.
+        Return a dictionary of lists of dictionaries of solutions.
         Its not as crazy as it sounds; the keys are the types of solutions as
         classified by phcpack: regular vs. singular, complex vs. real
 
@@ -289,7 +289,7 @@ class PHC_Object:
 
     def solution_dicts(self, get_failures = False):
         """
-        Returns a list of solutions in dictionary form: variable:value.
+        Return a list of solutions in dictionary form: variable:value.
 
         INPUT:
 
@@ -328,7 +328,7 @@ class PHC_Object:
 
     def solutions(self, get_failures = False):
         """
-        Returns a list of solutions in the ComplexField.
+        Return a list of solutions in the ComplexField.
 
         Use the variable_list function to get the order of variables used by
         PHCpack, which is usually different than the term order of the
@@ -367,7 +367,7 @@ class PHC_Object:
 
     def variable_list(self):
         """
-        Returns the variables, as strings, in the order in which
+        Return the variables, as strings, in the order in which
         PHCpack has processed them.
 
         EXAMPLES::
@@ -608,7 +608,7 @@ class PHC:
 
     def _path_track_file(self, start_filename_or_string, polys, input_ring, c_skew = 0.001, verbose = False):
         """
-        Returns the filename which contains path tracking output.
+        Return the filename which contains path tracking output.
 
         EXAMPLES::
 
@@ -882,7 +882,7 @@ class PHC:
 
     def blackbox(self, polys, input_ring, verbose = False):
         """
-        Returns as a string the result of running PHC with the given polynomials
+        Return as a string the result of running PHC with the given polynomials
         under blackbox mode (the '-b' option).
 
         INPUT:
@@ -936,7 +936,7 @@ class PHC:
         if e:
             from sage.misc.sage_ostools import have_program
             if not have_program('phc'):
-                print(os.system('which phc') + '  PHC needs to be installed and in your path')
+                print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
                 raise RuntimeError
             # todo -- why? etc.
             with open(log_filename) as f:
@@ -958,4 +958,3 @@ class PHC:
 
 # The unique phc interface instance.
 phc = PHC()
-

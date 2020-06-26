@@ -63,6 +63,7 @@ class TestOutputPlainText(OutputPlainText):
             sage: from sage.repl.rich_output.backend_test import TestOutputPlainText
             sage: TestOutputPlainText()
             Traceback (most recent call last):
+            ...
             AssertionError: cannot override constructor
         """
         raise AssertionError('cannot override constructor')

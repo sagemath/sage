@@ -223,7 +223,7 @@ class ContourPlot(GraphicPrimitive):
                 cb.add_lines(CS)
 
 
-@suboptions('colorbar', orientation='vertical', format=None, spacing=None)
+@suboptions('colorbar', orientation='vertical', format=None, spacing='uniform')
 @suboptions('label', fontsize=9, colors='blue', inline=None, inline_spacing=3,
             fmt="%1.2f")
 @options(plot_points=100, fill=True, contours=None, linewidths=None,

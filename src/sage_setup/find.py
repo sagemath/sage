@@ -12,13 +12,12 @@ Recursive Directory Contents
 #*****************************************************************************
 
 
+import importlib.machinery
+import importlib.util
+
 import os
-import six
 
 from collections import defaultdict
-
-if not six.PY2:
-    import importlib.util
 
 
 def find_python_sources(src_dir, modules=['sage']):
@@ -221,10 +220,9 @@ def installed_files_by_module(site_packages, modules=('sage',)):
 
         module_files[module].add(filename)
 
-        if not six.PY2:
-            cache_filename = importlib.util.cache_from_source(filename)
-            if os.path.exists(cache_filename):
-                module_files[module].add(cache_filename)
+        cache_filename = importlib.util.cache_from_source(filename)
+        if os.path.exists(cache_filename):
+            module_files[module].add(cache_filename)
 
     cwd = os.getcwd()
     try:
@@ -289,32 +287,15 @@ def get_extensions(type=None):
     return [ext for ext in _get_extensions(type) if ext[0] == '.']
 
 
-if six.PY2:
-    import imp
+def _get_extensions(type):
+    """
+    Python 3.3+ implementation of ``get_extensions()`` using the
+    `importlib.extensions` module.
+    """
 
-    def _get_extensions(type):
-        """
-        Python 2 implementation of ``get_extensions()`` using the `imp` module.
-        """
+    if type:
+        return {'source': importlib.machinery.SOURCE_SUFFIXES,
+                'bytecode': importlib.machinery.BYTECODE_SUFFIXES,
+                'extension': importlib.machinery.EXTENSION_SUFFIXES}[type]
 
-        if type:
-            type = {'source': imp.PY_SOURCE, 'bytecode': imp.PY_COMPILED,
-                    'extension': imp.C_EXTENSION}[type]
-
-        return [s[0] for s in imp.get_suffixes()
-                if type is None or type == s[2]]
-else:
-    import importlib.machinery
-
-    def _get_extensions(type):
-        """
-        Python 3.3+ implementation of ``get_extensions()`` using the
-        `importlib.extensions` module.
-        """
-
-        if type:
-            return {'source': importlib.machinery.SOURCE_SUFFIXES,
-                    'bytecode': importlib.machinery.BYTECODE_SUFFIXES,
-                    'extension': importlib.machinery.EXTENSION_SUFFIXES}[type]
-
-        return importlib.machinery.all_suffixes()
+    return importlib.machinery.all_suffixes()

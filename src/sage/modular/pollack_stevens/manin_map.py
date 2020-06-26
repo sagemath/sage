@@ -43,8 +43,6 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-from six import itervalues, iteritems
-from six.moves import range
 
 from sage.rings.continued_fraction import convergents
 from .sigma0 import Sigma0
@@ -405,7 +403,7 @@ class ManinMap(object):
         D = {}
         sd = self._dict
         rd = right._dict
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if ky in rd:
                 D[ky] = val + rd[ky]
         return self.__class__(self._codomain, self._manin, D, check=False)
@@ -442,7 +440,7 @@ class ManinMap(object):
         D = {}
         sd = self._dict
         rd = right._dict
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if ky in rd:
                 D[ky] = val - rd[ky]
         return self.__class__(self._codomain, self._manin, D, check=False)
@@ -480,7 +478,7 @@ class ManinMap(object):
             return self._right_action(right)
 
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val * right
         return self.__class__(self._codomain, self._manin, D, check=False)
 
@@ -614,7 +612,7 @@ class ManinMap(object):
         sd = self._dict
         if codomain is None:
             codomain = self._codomain
-        for ky, val in iteritems(sd):
+        for ky, val in sd.items():
             if to_moments:
                 D[ky] = codomain([f(val.moment(a))
                                   for a in range(val.precision_absolute())])
@@ -712,7 +710,7 @@ class ManinMap(object):
             (1 + O(11^2), 2 + O(11))
         """
         sd = self._dict
-        for val in itervalues(sd):
+        for val in sd.values():
             val.normalize()
         return self
 
@@ -738,7 +736,7 @@ class ManinMap(object):
             1 + O(11^2)
         """
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val.reduce_precision(M)
         return self.__class__(self._codomain, self._manin, D, check=False)
 
@@ -760,7 +758,7 @@ class ManinMap(object):
             Sym^0 Z_11^2
         """
         D = {}
-        for ky, val in iteritems(self._dict):
+        for ky, val in self._dict.items():
             D[ky] = val.specialize(*args)
         return self.__class__(self._codomain.specialize(*args), self._manin,
                               D, check=False)

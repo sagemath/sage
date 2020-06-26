@@ -74,8 +74,7 @@ cdef class ntl_ZZ_pEX(object):
         if modulus is None and v is None:
             raise ValueError("You must specify a modulus when creating a ZZ_pEX.")
 
-        # self.c.restore_c()  ## Restoring the context is taken care of in __new__
-
+        # self.c._assert_is_current_modulus()  ## Restoring the context is taken care of in __new__
         cdef ntl_ZZ_pE cc
         cdef Py_ssize_t i
 
@@ -86,6 +85,7 @@ cdef class ntl_ZZ_pEX(object):
                 x = v[i]
                 if not isinstance(x, ntl_ZZ_pE):
                     cc = ntl_ZZ_pE(x,self.c)
+                    self.c.restore_c()
                 else:
                     if self.c is not (<ntl_ZZ_pE>x).c:
                         raise ValueError("inconsistent moduli")

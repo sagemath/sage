@@ -139,8 +139,158 @@ Test if :trac:`24883` is fixed::
     sage: b = 1 - exp(I*pi/4)
     sage: a*b
     1/4*((I + 1)*sqrt(2) - 2)*(-(I + 1)*sqrt(2) - 2)
-"""
 
+Many tests about comparison.
+
+Use :func:`sage.symbolic.comparison.mixed_order`` instead of
+the operators <=, <, etc. to compare symbolic expressions when
+you do not want to get a formal inequality::
+
+    sage: from sage.symbolic.comparison import mixed_order
+
+    sage: a = sqrt(3)
+    sage: b = x^2+1
+    sage: mixed_order(a, b)   # indirect doctest
+    -1
+
+    sage: x,y = var('x,y')
+    sage: x < y
+    x < y
+    sage: mixed_order(x, y)
+    1
+
+    sage: mixed_order(SR(0.5), SR(0.7))
+    -1
+    sage: SR(0.5) < SR(0.7)
+    0.500000000000000 < 0.700000000000000
+    sage: mixed_order(SR(0.5), 0.7)
+    -1
+
+    sage: mixed_order(sin(SR(2)), sin(SR(1)))
+    1
+    sage: float(sin(SR(2)))
+    0.9092974268256817
+    sage: float(sin(SR(1)))
+    0.8414709848078965
+
+Check that :trac:`9880` is fixed::
+
+    sage: b = [var('b_%s'%i) for i in range(4)]
+    sage: precomp = (2^b_2 + 2)*(2^b_1 + 2^(-b_1) + 2^b_1*2^b_0 - \
+                2^b_1*2^(-b_0) - 2^(-b_1)*2^b_0 - 2^(-b_1)*2^(-b_0) + \
+                2^b_0 + 2^(-b_0) - 9) + (2^b_1 + 2^(-b_1) + \
+                2^b_1*2^b_0 - 2^b_1*2^(-b_0) - 2^(-b_1)*2^b_0 - \
+                 2^(-b_1)*2^(-b_0) + 2^b_0 + 2^(-b_0) - 9)/2^b_2
+    sage: repl_dict = {b_0: b_0, b_3: b_1, b_2: b_3, b_1: b_2}
+    sage: P = precomp.substitute(repl_dict)
+    sage: P.expand()
+    2^b_0*2^b_2*2^b_3 + 2*2^b_0*2^b_2 + 2^b_0*2^b_3 + 2^b_2*2^b_3 +
+    2*2^b_0 + 2*2^b_2 - 9*2^b_3 + 2^b_0*2^b_2/2^b_3 -
+    2^b_0*2^b_3/2^b_2 - 2^b_2*2^b_3/2^b_0 - 2*2^b_0/2^b_2 -
+    2*2^b_2/2^b_0 + 2^b_0/2^b_3 + 2^b_2/2^b_3 + 2^b_3/2^b_0 +
+    2^b_3/2^b_2 + 2/2^b_0 + 2/2^b_2 - 2^b_0/(2^b_2*2^b_3) -
+    2^b_2/(2^b_0*2^b_3) - 9/2^b_3 - 2^b_3/(2^b_0*2^b_2) -
+    2/(2^b_0*2^b_2) + 1/(2^b_0*2^b_3) + 1/(2^b_2*2^b_3) -
+    1/(2^b_0*2^b_2*2^b_3) - 18
+
+    sage: _0,b_1,b_2=var('b_0,b_1,b_2')
+    sage: f = 1/27*b_2^2/(2^b_2)^2 + 1/27*b_1^2/(2^b_1)^2 + \
+    1/27*b_0^2/(2^b_0)^2 + 1/27*b_2/(2^b_2)^2 - 2/81/(2^b_2)^2 + \
+    1/27*b_1/(2^b_1)^2 + 8/243/(2^b_2)^2 - 1/81*b_0/(2^b_0)^2 - \
+    1/27*b_1^2/((2^b_2)^2*(2^b_1)^2) - \
+    1/27*b_0^2/((2^b_2)^2*(2^b_0)^2) - 20/243/(2^b_1)^2 + 1/9/2^b_0 \
+    + 4/81*b_0/(2^b_0)^2 - 8/243/(2^b_2)^2 - 2/9/(2^b_2*2^b_1) - \
+    2/9/(2^b_2*2^b_0) + 8/243/(2^b_1)^2 - 1/9/2^b_0 + \
+    2/9/(2^b_2*2^b_1) + 2/9/(2^b_2*2^b_0) - \
+    2/27*b_1*b_2/((2^b_2)^2*(2^b_1)^2) - \
+    1/27*b_2^2/((2^b_2)^2*(2^b_1)^2) - \
+    2/27*b_0*b_2/((2^b_2)^2*(2^b_0)^2) - \
+    1/27*b_2^2/((2^b_2)^2*(2^b_0)^2) + 2/81/(2^b_1)^2 - \
+    1/27*b_0^2/((2^b_1)^2*(2^b_0)^2) - \
+    2/27*b_0*b_1/((2^b_1)^2*(2^b_0)^2) - \
+    1/27*b_1^2/((2^b_1)^2*(2^b_0)^2) - 2/81/(2^b_0)^2 + \
+    5/27*b_1/((2^b_2)^2*(2^b_1)^2) + 5/27*b_2/((2^b_2)^2*(2^b_1)^2) \
+    + 5/27*b_0/((2^b_2)^2*(2^b_0)^2) + \
+    5/27*b_2/((2^b_2)^2*(2^b_0)^2) + 5/27*b_0/((2^b_1)^2*(2^b_0)^2) \
+    + 5/27*b_1/((2^b_1)^2*(2^b_0)^2) - 4/81/((2^b_2)^2*(2^b_1)^2) + \
+    1/27*b_0^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    2/27*b_0*b_1/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    2/27*b_0*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    1/27*b_1^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    2/27*b_1*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    1/27*b_2^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
+    4/81/((2^b_2)^2*(2^b_0)^2) - 4/81/((2^b_1)^2*(2^b_0)^2) - \
+    11/27*b_0/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
+    11/27*b_1/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
+    11/27*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
+    64/81/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + 35/81 \
+    sage: f.nops()
+    38
+
+    sage: x,y,z = var('x y z')
+    sage: print((-x+z)*(3*x-3*z))
+    -3*(x - z)^2
+
+    sage: t = var('t')
+    sage: (x-t)^3
+    -(t - x)^3
+    sage: (-t+x)^3
+    -(t - x)^3
+    sage: (-x+t)^3
+    (t - x)^3
+
+This example is from :trac:`10833`::
+
+    sage: R.<x,c> = PolynomialRing(QQ,2)
+    sage: phi(x) = x^2 + c
+    sage: def iterkate(n):
+    ....:     pol = x
+    ....:     for i in range(1,n):
+    ....:         pol = phi(pol)
+    ....:     return pol
+    ....:
+    sage: g = expand(iterkate(7))
+    sage: g.nops()
+    480
+
+Check if :trac:`10849` is fixed::
+
+    sage: t = I.pyobject().parent()(-1/2)
+    sage: t > 0
+    False
+    sage: t = I*x-1/2; t
+    I*x - 1/2
+    sage: t.subs(x=I*x).subs(x=0).is_positive()
+    False
+
+Check if :trac:`16397` is fixed:
+
+    sage: mixed_order(1, sqrt(2))
+    -1
+    sage: mixed_order(SR(1), sqrt(2))
+    -1
+    sage: mixed_order(log(8), 3*log(2))
+    0
+    sage: bool(RLF(1) < RLF(sqrt(2)))
+    True
+    sage: RealSet((0, pi),[pi, pi],(pi,4))
+    (0, 4)
+    sage: RealSet((0, pi),[0, pi],(pi,4))
+    [0, 4)
+    sage: RealSet((0, pi),[0, 3.5],(pi,4))
+    [0, 4)
+
+More sanity tests::
+
+    sage: bool(pi < pi)
+    False
+    sage: bool(e < e)
+    False
+    sage: bool(sqrt(2) < sqrt(2))
+    False
+    sage: bool(pi < SR.zero())
+    False
+"""
 # ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Burcin Erocal <burcin@erocal.org>
@@ -173,7 +323,6 @@ cimport sage.symbolic.comparison
 from sage.rings.rational import Rational
 from sage.misc.derivative import multi_derivative
 from sage.misc.decorators import sage_wraps
-from sage.misc.superseded import deprecation
 from sage.rings.infinity import AnInfinity, infinity, minus_infinity, unsigned_infinity
 from sage.misc.decorators import rename_keyword
 from sage.structure.dynamic_class import dynamic_class
@@ -197,6 +346,7 @@ cpdef bint is_Expression(x):
         True
     """
     return isinstance(x, Expression)
+
 
 cpdef bint is_SymbolicEquation(x):
     """
@@ -291,6 +441,7 @@ def _dict_update_check_duplicate(dict d1, dict d2):
             raise ValueError(msg.format(k, d1[k], d2[k]))
 
     d1.update(d2)
+
 
 def _subs_make_dict(s):
     r"""
@@ -610,7 +761,7 @@ cdef class Expression(CommutativeRingElement):
         return new_Expression_from_GEx(self._parent, self._gobj)
 
     def _repr_(self):
-        """
+        r"""
         Return string representation of this symbolic expression.
 
         EXAMPLES::
@@ -1545,10 +1696,10 @@ cdef class Expression(CommutativeRingElement):
         return algebraic(self, field)
 
     def __hash__(self):
-        """
+        r"""
         Return hash of this expression.
 
-        EXAMPLES::
+        EXAMPLES:
 
         The hash of an object in Python or its coerced version into
         the symbolic ring is usually the same::
@@ -2188,6 +2339,21 @@ cdef class Expression(CommutativeRingElement):
             True
             sage: forget()
 
+        TESTS:
+
+        Check if :trac:`18630` is fixed::
+
+            sage: (log(1/2)).is_negative()
+            True
+            sage: e.is_positive()
+            True
+            sage: (e+1).is_positive()
+            True
+            sage: (2*e).is_positive()
+            True
+            sage: (e^3).is_positive()
+            True
+
         ::
 
             sage: cosh(x).is_positive()
@@ -2216,6 +2382,21 @@ cdef class Expression(CommutativeRingElement):
             False
             sage: sin(2 - I).is_positive()
             False
+
+        ::
+
+            sage: (log(1/3) * log(1/2)).is_positive()
+            True
+            sage: log((2**500+1)/2**500).is_positive()
+            True
+            sage: log(2*500/(2**500-1)).is_negative()
+            True
+            sage: ((-pi^(1/5))^2).is_positive()
+            True
+            sage: (pi^2).is_positive()
+            True
+            sage: ((-pi)^2).is_positive()
+            True
         """
         return self._gobj.info(info_positive)
 
@@ -2380,19 +2561,6 @@ cdef class Expression(CommutativeRingElement):
             False
         """
         return is_a_numeric(self._gobj)
-
-    def is_series(self):
-        """
-        TESTS::
-
-            sage: x.is_series()
-            doctest:...: DeprecationWarning: ex.is_series() is deprecated. Use isinstance(ex, sage.symbolic.series.SymbolicSeries) instead
-            See http://trac.sagemath.org/17659 for details.
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17659, "ex.is_series() is deprecated. Use isinstance(ex, sage.symbolic.series.SymbolicSeries) instead")
-        return False
 
     def is_terminating_series(self):
         """
@@ -3657,186 +3825,6 @@ cdef class Expression(CommutativeRingElement):
         """
         return 1/self
 
-    cpdef int _cmp_(left, right) except -2:
-        """
-        Compare self and right, returning -1, 0, or 1, depending on if
-        self < right, self == right, or self > right, respectively.
-
-        This is deprecated by :trac:`23273`
-
-        Use :func:`sage.symbolic.comparison.mixed_order`` instead of
-        the operators <=, <, etc. to compare symbolic expressions when
-        you do not want to get a formal inequality back.
-
-        INPUT:
-
-        - ``right`` -- A :class:`Expression` instance.
-
-        OUTPUT: -1, 0 or 1
-
-        EXAMPLES:
-
-        Using ``cmp`` to compare symbolic expressions should be avoided::
-
-            sage: SR(0)._cmp_(SR(1))
-            doctest:...: DeprecationWarning: to compare symbolic expressions,
-            use mixed_order(a, b) or bool(a <= b)
-            See http://trac.sagemath.org/23273 for details.
-            -1
-
-        Instead, you can do the following::
-
-            sage: from sage.symbolic.comparison import mixed_order
-
-            sage: a = sqrt(3)
-            sage: b = x^2+1
-            sage: mixed_order(a, b)   # indirect doctest
-            -1
-
-            sage: x,y = var('x,y')
-            sage: x < y
-            x < y
-            sage: mixed_order(x, y)
-            1
-
-            sage: mixed_order(SR(0.5), SR(0.7))
-            -1
-            sage: SR(0.5) < SR(0.7)
-            0.500000000000000 < 0.700000000000000
-            sage: mixed_order(SR(0.5), 0.7)
-            -1
-
-            sage: mixed_order(sin(SR(2)), sin(SR(1)))
-            1
-            sage: float(sin(SR(2)))
-            0.9092974268256817
-            sage: float(sin(SR(1)))
-            0.8414709848078965
-
-        TESTS:
-
-        Check that :trac:`9880` is fixed::
-
-            sage: b = [var('b_%s'%i) for i in range(4)]
-            sage: precomp = (2^b_2 + 2)*(2^b_1 + 2^(-b_1) + 2^b_1*2^b_0 - \
-                        2^b_1*2^(-b_0) - 2^(-b_1)*2^b_0 - 2^(-b_1)*2^(-b_0) + \
-                        2^b_0 + 2^(-b_0) - 9) + (2^b_1 + 2^(-b_1) + \
-                        2^b_1*2^b_0 - 2^b_1*2^(-b_0) - 2^(-b_1)*2^b_0 - \
-                         2^(-b_1)*2^(-b_0) + 2^b_0 + 2^(-b_0) - 9)/2^b_2
-            sage: repl_dict = {b_0: b_0, b_3: b_1, b_2: b_3, b_1: b_2}
-            sage: P = precomp.substitute(repl_dict)
-            sage: P.expand()
-            2^b_0*2^b_2*2^b_3 + 2*2^b_0*2^b_2 + 2^b_0*2^b_3 + 2^b_2*2^b_3 +
-            2*2^b_0 + 2*2^b_2 - 9*2^b_3 + 2^b_0*2^b_2/2^b_3 -
-            2^b_0*2^b_3/2^b_2 - 2^b_2*2^b_3/2^b_0 - 2*2^b_0/2^b_2 -
-            2*2^b_2/2^b_0 + 2^b_0/2^b_3 + 2^b_2/2^b_3 + 2^b_3/2^b_0 +
-            2^b_3/2^b_2 + 2/2^b_0 + 2/2^b_2 - 2^b_0/(2^b_2*2^b_3) -
-            2^b_2/(2^b_0*2^b_3) - 9/2^b_3 - 2^b_3/(2^b_0*2^b_2) -
-            2/(2^b_0*2^b_2) + 1/(2^b_0*2^b_3) + 1/(2^b_2*2^b_3) -
-            1/(2^b_0*2^b_2*2^b_3) - 18
-
-            sage: _0,b_1,b_2=var('b_0,b_1,b_2')
-            sage: f = 1/27*b_2^2/(2^b_2)^2 + 1/27*b_1^2/(2^b_1)^2 + \
-            1/27*b_0^2/(2^b_0)^2 + 1/27*b_2/(2^b_2)^2 - 2/81/(2^b_2)^2 + \
-            1/27*b_1/(2^b_1)^2 + 8/243/(2^b_2)^2 - 1/81*b_0/(2^b_0)^2 - \
-            1/27*b_1^2/((2^b_2)^2*(2^b_1)^2) - \
-            1/27*b_0^2/((2^b_2)^2*(2^b_0)^2) - 20/243/(2^b_1)^2 + 1/9/2^b_0 \
-            + 4/81*b_0/(2^b_0)^2 - 8/243/(2^b_2)^2 - 2/9/(2^b_2*2^b_1) - \
-            2/9/(2^b_2*2^b_0) + 8/243/(2^b_1)^2 - 1/9/2^b_0 + \
-            2/9/(2^b_2*2^b_1) + 2/9/(2^b_2*2^b_0) - \
-            2/27*b_1*b_2/((2^b_2)^2*(2^b_1)^2) - \
-            1/27*b_2^2/((2^b_2)^2*(2^b_1)^2) - \
-            2/27*b_0*b_2/((2^b_2)^2*(2^b_0)^2) - \
-            1/27*b_2^2/((2^b_2)^2*(2^b_0)^2) + 2/81/(2^b_1)^2 - \
-            1/27*b_0^2/((2^b_1)^2*(2^b_0)^2) - \
-            2/27*b_0*b_1/((2^b_1)^2*(2^b_0)^2) - \
-            1/27*b_1^2/((2^b_1)^2*(2^b_0)^2) - 2/81/(2^b_0)^2 + \
-            5/27*b_1/((2^b_2)^2*(2^b_1)^2) + 5/27*b_2/((2^b_2)^2*(2^b_1)^2) \
-            + 5/27*b_0/((2^b_2)^2*(2^b_0)^2) + \
-            5/27*b_2/((2^b_2)^2*(2^b_0)^2) + 5/27*b_0/((2^b_1)^2*(2^b_0)^2) \
-            + 5/27*b_1/((2^b_1)^2*(2^b_0)^2) - 4/81/((2^b_2)^2*(2^b_1)^2) + \
-            1/27*b_0^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            2/27*b_0*b_1/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            2/27*b_0*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            1/27*b_1^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            2/27*b_1*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            1/27*b_2^2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
-            4/81/((2^b_2)^2*(2^b_0)^2) - 4/81/((2^b_1)^2*(2^b_0)^2) - \
-            11/27*b_0/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
-            11/27*b_1/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) - \
-            11/27*b_2/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + \
-            64/81/((2^b_2)^2*(2^b_1)^2*(2^b_0)^2) + 35/81 \
-            sage: f.nops()
-            38
-
-            sage: x,y,z = var('x y z')
-            sage: print((-x+z)*(3*x-3*z))
-            -3*(x - z)^2
-
-            sage: t = var('t')
-            sage: (x-t)^3
-            -(t - x)^3
-            sage: (-t+x)^3
-            -(t - x)^3
-            sage: (-x+t)^3
-            (t - x)^3
-
-        This example is from :trac:`10833`::
-
-            sage: R.<x,c> = PolynomialRing(QQ,2)
-            sage: phi(x) = x^2 + c
-            sage: def iterkate(n):
-            ....:     pol = x
-            ....:     for i in range(1,n):
-            ....:         pol = phi(pol)
-            ....:     return pol
-            ....:
-            sage: g = expand(iterkate(7))
-            sage: g.nops()
-            480
-
-        Check if :trac:`10849` is fixed::
-
-            sage: t = I.pyobject().parent()(-1/2)
-            sage: t > 0
-            False
-            sage: t = I*x-1/2; t
-            I*x - 1/2
-            sage: t.subs(x=I*x).subs(x=0).is_positive()
-            False
-
-        Check if :trac:`16397` is fixed:
-
-            sage: mixed_order(1, sqrt(2))
-            -1
-            sage: mixed_order(SR(1), sqrt(2))
-            -1
-            sage: mixed_order(log(8), 3*log(2))
-            0
-            sage: bool(RLF(1) < RLF(sqrt(2)))
-            True
-            sage: RealSet((0, pi),[pi, pi],(pi,4))
-            (0, 4)
-            sage: RealSet((0, pi),[0, pi],(pi,4))
-            [0, 4)
-            sage: RealSet((0, pi),[0, 3.5],(pi,4))
-            [0, 4)
-
-        More sanity tests::
-
-            sage: bool(pi < pi)
-            False
-            sage: bool(e < e)
-            False
-            sage: bool(sqrt(2) < sqrt(2))
-            False
-            sage: bool(pi < SR.zero())
-            False
-        """
-        deprecation(23273, 'to compare symbolic expressions, '
-                    'use mixed_order(a, b) or bool(a <= b)')
-        return mixed_order(left, right)
-
     cpdef int _cmp_add(Expression left, Expression right) except -2:
         """
         Compare ``left`` and ``right`` in the print order.
@@ -3894,10 +3882,12 @@ cdef class Expression(CommutativeRingElement):
         return print_order_compare_mul(left._gobj, right._gobj)
 
     cpdef _pow_(self, other):
-        """
+        r"""
         Return ``self`` raised to the power ``other``.
 
-        OUTPUT: a symbolic expression
+        OUTPUT:
+
+        A symbolic expression
 
         EXAMPLES::
 

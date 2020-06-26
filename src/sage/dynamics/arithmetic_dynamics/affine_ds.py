@@ -233,6 +233,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             ValueError: Number of polys does not match dimension of Affine Space of dimension 3 over Rational Field
 
         ::
+
             sage: A.<x,y> = AffineSpace(QQ,2)
             sage: f = DynamicalSystem_affine([CC.0*x^2, y^2], domain=A)
             Traceback (most recent call last):

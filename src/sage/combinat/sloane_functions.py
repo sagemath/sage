@@ -124,8 +124,6 @@ AUTHORS:
 
 # just used for handy .load, .save, etc.
 from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
 
 import inspect
 from sage.structure.sage_object import SageObject
@@ -227,7 +225,7 @@ class SloaneSequence(SageObject):
             ...
             ValueError: input n (=0) must be a positive integer
         """
-        if not isinstance(n, integer_types + (Integer_class,)):
+        if not isinstance(n, (int, Integer_class)):
             raise TypeError("input must be an int or Integer")
         m = ZZ(n)
         if m < self.offset:

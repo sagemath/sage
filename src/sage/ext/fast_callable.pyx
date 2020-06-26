@@ -311,7 +311,6 @@ from sage.structure.element cimport parent
 
 
 def fast_callable(x, domain=None, vars=None,
-                  _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality=False,
                   expect_one_var=False):
     r"""
     Given an expression x, compile it into a form that can be quickly
@@ -481,11 +480,7 @@ def fast_callable(x, domain=None, vars=None,
                     if len(vars) == 0:
                         vars = ['EXTRA_VAR0']
                 else:
-                    if _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality:
-                        from sage.misc.superseded import deprecation
-                        deprecation(5413, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
-                    else:
-                        raise ValueError("List of variables must be specified for symbolic expressions")
+                    raise ValueError("List of variables must be specified for symbolic expressions")
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             if is_PolynomialRing(x.parent()) or is_MPolynomialRing(x.parent()):

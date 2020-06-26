@@ -9,8 +9,6 @@ Symmetric Group Algebra
 # ****************************************************************************
 from __future__ import print_function, absolute_import
 import itertools
-import six
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -820,7 +818,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         I = RSm.group()
         pairs = []
         P = Permutations(self.n)
-        for (p, coeff) in six.iteritems(f.monomial_coefficients()):
+        for (p, coeff) in f.monomial_coefficients().items():
             p_ret = P(p).retract_plain(m)
             if p_ret is not None:
                 pairs.append((I(p_ret), coeff))
@@ -886,7 +884,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         I = RSm.group()
         dct = {}
         P = Permutations(self.n)
-        for (p, coeff) in six.iteritems(f.monomial_coefficients()):
+        for (p, coeff) in f.monomial_coefficients().items():
             p_ret = P(p).retract_direct_product(m)
             if p_ret is not None:
                 p_ret = I(p_ret)
@@ -949,7 +947,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         I = RSm.group()
         dct = {}
         P = Permutations(self.n)
-        for (p, coeff) in six.iteritems(f.monomial_coefficients()):
+        for (p, coeff) in f.monomial_coefficients().items():
             p_ret = I(P(p).retract_okounkov_vershik(m))
             if not p_ret in dct:
                 dct[p_ret] = coeff
@@ -1966,7 +1964,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         I = self._indices
         z_elts = {}
         epik = epsilon_ik(it, kt, star=star)
-        for m, c in six.iteritems(epik._monomial_coefficients):
+        for m, c in epik._monomial_coefficients.items():
             z_elts[I(m)] = BR(c)
         z = self._from_dict(z_elts)
 

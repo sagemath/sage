@@ -107,11 +107,10 @@ cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
+from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 
 from sage.misc.misc import verbose, get_verbose
-
-import sage.rings.all as rings
 
 from sage.matrix.matrix2 import Matrix as Matrix2
 from .args cimport SparseEntry, MatrixArgs_init
@@ -272,7 +271,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
 
         Even though sparse and dense matrices are represented
         differently, they still compare as equal if they have the
-        same entries:
+        same entries::
+
             sage: a*b == a._matrix_times_matrix_dense(b)
             True
             sage: d = matrix(GF(43), 3, 8, range(24))
@@ -288,7 +288,6 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [32770 32770 32770]
             sage: M*M.transpose() # previously returned [32738]
             [3]
-
         """
         cdef Matrix_modn_sparse right, ans
         right = _right
@@ -296,24 +295,29 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        cdef list nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
-        for i from 0 <= i < right._nrows:
+        for i in range(right._nrows):
             v = &(right.rows[i])
-            for j from 0 <= j < right.rows[i].num_nonzero:
-                nonzero_positions_in_columns[v.positions[j]].add(i)
+            for j in range(v.num_nonzero):
+                (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
+        # pre-computes the list of nonzero columns of right
+        cdef list right_indices
+        right_indices = [j for j in range(right._ncols)
+                         if nonzero_positions_in_columns[j]]
 
         ans = self.new_matrix(self._nrows, right._ncols)
 
         # Now do the multiplication, getting each row completely before filling it in.
         cdef int x, y, s
+        cdef set c
 
-        for i from 0 <= i < self._nrows:
-            v = &self.rows[i]
-            for j from 0 <= j < right._ncols:
+        for i in range(self._nrows):
+            v = &(self.rows[i])
+            for j in range(right._ncols):
                 s = 0
-                c = nonzero_positions_in_columns[j]
-                for k from 0 <= k < v.num_nonzero:
+                c = <set> nonzero_positions_in_columns[j]
+                for k in range(v.num_nonzero):
                     if v.positions[k] in c:
                         y = get_entry(&right.rows[v.positions[k]], j)
                         x = v.entries[k] * y
@@ -519,7 +523,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         for i from 0 <= i < self._nrows:
             nonzero_entries += self.rows[i].num_nonzero
 
-        return rings.ZZ(nonzero_entries)/rings.ZZ(self._nrows*self._ncols)
+        return ZZ(nonzero_entries) / ZZ(self._nrows*self._ncols)
 
     def transpose(self):
         """
@@ -854,7 +858,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             raise ValueError("no algorithm '%s'"%algorithm)
 
     def _solve_right_nonsingular_square(self, B, algorithm=None, check_rank=False):
-        """
+        r"""
         If self is a matrix `A`, then this function returns a
         vector or matrix `X` such that `A X = B`. If
         `B` is a vector then `X` is a vector and if
@@ -862,7 +866,7 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
 
         .. NOTE::
 
-           In Sage one can also write ``A  B`` for
+           In Sage one can also write ``A \ B`` for
            ``A.solve_right(B)``, i.e., Sage implements the "the
            MATLAB/Octave backslash operator".
 
@@ -914,7 +918,8 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [0 2]
         """
         if check_rank and self.rank() < self.nrows():
-            raise ValueError("not of full rank")
+            from .matrix2 import NotFullRankError
+            raise NotFullRankError
 
         if self.base_ring() != B.base_ring():
             B = B.change_ring(self.base_ring())
@@ -925,7 +930,6 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             return Matrix_sparse.solve_right(self, B)
         else:
             if isinstance(B, sage.structure.element.Matrix):
-                from sage.rings.rational_field import QQ
                 from sage.matrix.special import diagonal_matrix
                 m, d = self._solve_matrix_linbox(B, algorithm)
                 return m  * diagonal_matrix([QQ((1,x)) for x in d])

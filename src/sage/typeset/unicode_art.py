@@ -25,7 +25,6 @@ strict superset of :mod:`~sage.typeset.ascii_art`.
 from sage.typeset.character_art import CharacterArt
 from sage.typeset.character_art_factory import CharacterArtFactory
 import sage.typeset.symbols as symbol
-from six import text_type
 
 
 class UnicodeArt(CharacterArt):
@@ -50,7 +49,7 @@ class UnicodeArt(CharacterArt):
          π⋅x
         ℯ
     """
-    _string_type = text_type
+    _string_type = str
 
     def __unicode__(self):
         r"""
@@ -68,7 +67,7 @@ class UnicodeArt(CharacterArt):
         return repr(self).decode("utf-8")
 
 _unicode_art_factory = CharacterArtFactory(
-    UnicodeArt, text_type, '_unicode_art_',
+    UnicodeArt, str, '_unicode_art_',
     (symbol.unicode_left_parenthesis, symbol.unicode_right_parenthesis),
     (symbol.unicode_left_square_bracket, symbol.unicode_right_square_bracket),
     (symbol.unicode_left_curly_brace, symbol.unicode_right_curly_brace),
@@ -122,11 +121,11 @@ def unicode_art(*obj, **kwds):
         sage: sep_line = unicode_art('\n'.join(u' ⎟ ' for _ in range(5)), baseline=5)
         sage: unicode_art(*AlternatingSignMatrices(3),
         ....:             separator=sep_line, sep_baseline=1)
-                ⎟         ⎟         ⎟            ⎟         ⎟         ⎟ 
+                ⎟         ⎟         ⎟            ⎟         ⎟         ⎟
         ⎛1 0 0⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛1 0 0⎞ ⎟ ⎛ 0  1  0⎞ ⎟ ⎛0 0 1⎞ ⎟ ⎛0 1 0⎞ ⎟ ⎛0 0 1⎞
         ⎜0 1 0⎟ ⎟ ⎜1 0 0⎟ ⎟ ⎜0 0 1⎟ ⎟ ⎜ 1 -1  1⎟ ⎟ ⎜1 0 0⎟ ⎟ ⎜0 0 1⎟ ⎟ ⎜0 1 0⎟
         ⎝0 0 1⎠ ⎟ ⎝0 0 1⎠ ⎟ ⎝0 1 0⎠ ⎟ ⎝ 0  1  0⎠ ⎟ ⎝0 1 0⎠ ⎟ ⎝1 0 0⎠ ⎟ ⎝1 0 0⎠
-                ⎟         ⎟         ⎟            ⎟         ⎟         ⎟ 
+                ⎟         ⎟         ⎟            ⎟         ⎟         ⎟
 
     TESTS::
 
@@ -136,7 +135,7 @@ def unicode_art(*obj, **kwds):
         -⎝2⋅x + ╲╱ 1 - 4⋅x  - 1⎠
         ─────────────────────────
                    _________
-             2⋅x⋅╲╱ 1 - 4⋅x 
+             2⋅x⋅╲╱ 1 - 4⋅x
         sage: unicode_art(list(DyckWords(3)))
         ⎡                                   ╱╲   ⎤
         ⎢            ╱╲    ╱╲      ╱╲╱╲    ╱  ╲  ⎥

@@ -227,6 +227,10 @@ if [ "$UNAME" = "Darwin" ]; then
     export OBJC OBJCXX
 fi
 
+if [ "$SAGE_PYTHON_VERSION" = 3 ]; then
+    export SAGE_PYTHON3=yes
+fi
+
 # Set other Fortran-related compiler variables
 export F77="$FC"
 export F90="$FC"   # Needed for SciPy
@@ -283,7 +287,6 @@ fi
 # depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 export SAGE_ETC="$SAGE_LOCAL/etc"
 export SAGE_SHARE="$SAGE_LOCAL/share"
-export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
 export SAGE_PKGCONFIG="$SAGE_LOCAL/lib/pkgconfig"
 export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
@@ -291,6 +294,12 @@ export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
 export SAGE_SRC="$SAGE_ROOT/src"
 export SAGE_DOC_SRC="$SAGE_SRC/doc"
 export SAGE_DOC="$SAGE_SHARE/doc/sage"
+
+if [ -n "$SAGE_PKG_CONFIG_PATH" ]; then
+    # set up external pkg-config to look into SAGE_LOCAL/lib/pkgconfig/
+    # (Sage's pkgconf spkg takes care of this, if installed)
+    export PKG_CONFIG_PATH="$SAGE_PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+fi
 
 if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
@@ -313,6 +322,8 @@ export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
 
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
+  # Avoid 'MACOSX_DEPLOYMENT_TARGET mismatch: now "10.9" but "10.15" during configure'
+  if [ -z "$PYTHON_FOR_VENV" ]; then
     # set MACOSX_DEPLOYMENT_TARGET -- if set incorrectly, this can
     # cause lots of random "Abort trap" issues on OSX. see trac
     # #7095 for an example.
@@ -325,7 +336,7 @@ if [ "$UNAME" = "Darwin" ]; then
         MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
     fi
     export MACOSX_DEPLOYMENT_TARGET MACOSX_VERSION
-
+  fi
     # Work around problems on recent OS X crashing with an error message
     # "... may have been in progress in another thread when fork() was called"
     # when objective-C functions are called after fork(). See Trac #25921.
@@ -335,13 +346,13 @@ fi
 
 # Compile-time path for libraries.  This is the equivalent of
 # adding the gcc option -L $SAGE_LOCAL/lib.
-[ -z "$LIBRARY_PATH" ] || LIBRARY_PATH="${LIBRARY_PATH}:"
-export LIBRARY_PATH="${LIBRARY_PATH}$SAGE_LOCAL/lib"
+[ -z "$LIBRARY_PATH" ] || LIBRARY_PATH=":${LIBRARY_PATH}"
+export LIBRARY_PATH="$SAGE_LOCAL/lib${LIBRARY_PATH}"
 
 # Compile-time path for include files.  This is the equivalent of
 # adding the gcc option -I $SAGE_LOCAL/include.
-[ -z "$CPATH" ] || CPATH="${CPATH}:"
-export CPATH="${CPATH}$SAGE_LOCAL/include"
+[ -z "$CPATH" ] || CPATH=":${CPATH}"
+export CPATH="$SAGE_LOCAL/include${CPATH}"
 
 SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
 SINGULAR_EXECUTABLE="$SAGE_LOCAL/bin/Singular" && export SINGULAR_EXECUTABLE
@@ -412,6 +423,9 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+if [ "$UNAME" = "Linux" ]; then
+    LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
+fi
 export LDFLAGS
 
 if [ -z "$IPYTHONDIR" ]; then
@@ -542,11 +556,6 @@ fi
 
 if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
-fi
-
-if [ "$UNAME" = "Darwin" ]; then
-    # Trac #21175 - export empty ARCHFLAGS for the benefit of Perl modules
-    ARCHFLAGS="" && export ARCHFLAGS
 fi
 
 if [ "$CP" = "" ]; then

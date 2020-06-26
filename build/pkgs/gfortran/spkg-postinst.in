@@ -1,0 +1,20 @@
+# -*- mode: shell-script -*-
+
+# #27907: Symlink crt1.o and friends where gfortran can find it.
+if [ -n "$SAGE_CRTI_DIR" ]; then
+   INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
+   LIBGCC=$(dirname -- $("$SAGE_LOCAL"/bin/gfortran -print-libgcc-file-name))
+   if [ -z "$LIBGCC" -o ! -d "$LIBGCC" ]; then
+       echo >&2 "Warning: Unable to locate LIBGCC directory, so cannot install crt symlinks"
+       exit
+   fi
+   echo "Installing symlinks to crt files."
+   echo "# Remove symlinks created by spkg-postinst" >> "$INSTALLED_SCRIPTS_DEST"/spkg-postrm
+   for f in "$SAGE_CRTI_DIR"/*crt?.o; do
+       if [ -r $f -a ! -r "$LIBGCC"/$f ]; then
+          ln -s $f "$LIBGCC"/
+          fb=`basename $f`
+          echo "rm -f \"$LIBGCC\"/$fb" >> "$INSTALLED_SCRIPTS_DEST"/spkg-postrm
+       fi
+   done
+fi

@@ -42,7 +42,7 @@ AUTHORS:
   Default to cyclotomic base ring.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 David Joyner<wdjoyner@gmail.com>
 #       Copyright (C) 2012 Volker Braun<vbraun.name@gmail.com>
@@ -51,17 +51,17 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from __future__ import print_function
 
 import operator
 
 from sage.arith.all import LCM
 from sage.misc.all import prod
-from sage.rings.complex_field import is_ComplexField
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
 from functools import reduce
+
 
 def add_strings(x, z=0):
     """

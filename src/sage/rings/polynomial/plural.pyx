@@ -126,13 +126,14 @@ from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_mo
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import is_IntegerRing
 
-from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular
+from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular, new_MP
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 
 from sage.rings.polynomial.polydict import ETuple
 from sage.rings.ring import check_default_category
 from sage.structure.element cimport CommutativeRingElement, Element, ModuleElement, RingElement
 from sage.structure.factory import UniqueFactory
+from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.rings.polynomial.term_order import TermOrder
@@ -1469,10 +1470,9 @@ cdef class NCPolynomial_plural(RingElement):
         """
         return self._hash_c()
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
-        Compare left and right and return -1, 0, and 1 for <,==, and >
-        respectively.
+        Compare left and right.
 
         EXAMPLES::
 
@@ -1515,11 +1515,11 @@ cdef class NCPolynomial_plural(RingElement):
             True
         """
         if left is right:
-            return 0
+            return rich_to_bool(op, 0)
         cdef poly *p = (<NCPolynomial_plural>left)._poly
         cdef poly *q = (<NCPolynomial_plural>right)._poly
         cdef ring *r = (<NCPolynomialRing_plural>left._parent)._ring
-        return singular_polynomial_cmp(p, q, r)
+        return rich_to_bool(op, singular_polynomial_cmp(p, q, r))
 
     cpdef _add_(left, right):
         """
@@ -2860,6 +2860,15 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
         sage: curcnt = ring_refcount_dict[currRing_wrapper()]
         sage: newR = new_CRing(W, H.base_ring())
         sage: ring_refcount_dict[currRing_wrapper()] - curcnt
+        2
+
+    Check that :trac:`29311` is fixed::
+
+        sage: R.<x,y,z> = QQ[]
+        sage: from sage.libs.singular.function_factory import ff
+        sage: W = ff.ring(ff.ringlist(R), ring=R)
+        sage: C = sage.rings.polynomial.plural.new_CRing(W, R.base_ring())
+        sage: C.one()
         1
     """
     assert( rw.is_commutative() )
@@ -2867,6 +2876,9 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     cdef MPolynomialRing_libsingular self = <MPolynomialRing_libsingular>MPolynomialRing_libsingular.__new__(MPolynomialRing_libsingular)
 
     self._ring = rw._ring
+    cdef MPolynomial_libsingular one = new_MP(self, p_ISet(1, self._ring))
+    self._one_element = one
+    self._one_element_poly = one._poly
 
     wrapped_ring = wrap_ring(self._ring)
     sage.libs.singular.ring.ring_refcount_dict[wrapped_ring] += 1

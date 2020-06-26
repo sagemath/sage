@@ -32,9 +32,8 @@ Functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
-from six.moves import range
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import graphs
@@ -1042,7 +1041,6 @@ def R10():
         sage: cct = []
         sage: for i in M.circuits():
         ....:      cct.append(len(i))
-        ....:
         sage: Set(cct)
         {4, 6}
         sage: M.equals(M.dual())

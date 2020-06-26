@@ -21,8 +21,6 @@ import sys
 
 from collections import defaultdict
 
-from six import iteritems, string_types
-
 
 def runsnake(command):
     """
@@ -162,8 +160,8 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
+        load sage.geometry.cone_catalog... succeeded
         load sage.geometry.fan_isomorphism... succeeded
-        load sage.geometry.hyperplane_arrangement.affine_subspace... succeeded
         ...
         load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
@@ -249,7 +247,7 @@ def find_objects_from_name(name, module_name=None):
     """
 
     obj = []
-    for smodule_name, smodule in iteritems(sys.modules):
+    for smodule_name, smodule in sys.modules.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -304,7 +302,7 @@ def find_object_modules(obj):
     # otherwise, we parse all (already loaded) modules and hope to find
     # something
     module_to_obj = {}
-    for module_name, module in iteritems(sys.modules):
+    for module_name, module in sys.modules.items():
         if module_name != '__main__' and hasattr(module, '__dict__'):
             d = module.__dict__
             names = [key for key in d if d[key] is obj]
@@ -315,7 +313,7 @@ def find_object_modules(obj):
     if sageinspect.isclassinstance(obj):
         dec_pattern = re.compile(r"^(\w[\w0-9\_]*)\s*=", re.MULTILINE)
         module_to_obj2 = {}
-        for module_name, obj_names in iteritems(module_to_obj):
+        for module_name, obj_names in module_to_obj.items():
             module_to_obj2[module_name] = []
             src = sageinspect.sage_getsource(sys.modules[module_name])
             m = dec_pattern.search(src)
@@ -522,7 +520,7 @@ def import_statements(*objects, **kwds):
         name = None    # the name of the object
 
         # 1. if obj is a string, we look for an object that has that name
-        if isinstance(obj, string_types):
+        if isinstance(obj, str):
             from sage.all import sage_globals
             G = sage_globals()
             name = obj

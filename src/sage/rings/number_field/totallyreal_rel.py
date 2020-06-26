@@ -958,9 +958,10 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     """
     S = []
     counts = [0, 0, 0, 0]
-    if len(divisors(n)) > 4:
+    div_n = divisors(n)
+    if len(div_n) > 4:
         raise ValueError("Only implemented for n = p*q with p,q prime")
-    for d in divisors(n):
+    for d in div_n:
         if 1 < d < n:
             Sds = enumerate_totallyreal_fields_prim(d, int(math.floor((1.*B)**(1.*d/n))), verbose=verbose)
             for i in range(len(Sds)):
@@ -970,8 +971,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                 F = NumberField(ZZx(Sds[i][1]), 't')
                 T = enumerate_totallyreal_fields_rel(F, n/d, B, verbose=verbose, return_seqs=return_seqs)
                 if return_seqs:
-                    for i in range(4):
-                        counts[i] += T[0][i]
+                    for k in range(4):
+                        counts[k] += T[0][k]
                     S += [[t[0],pari(t[1]).Polrev()] for t in T[1]]
                 else:
                     S += [[t[0],t[1]] for t in T]

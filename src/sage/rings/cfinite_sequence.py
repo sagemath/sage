@@ -86,8 +86,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
-from six import add_metaclass
 
 from sage.categories.fields import Fields
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -162,8 +160,8 @@ def CFiniteSequences(base_ring, names = None, category = None):
     return CFiniteSequences_generic(polynomial_ring, category)
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class CFiniteSequence(FieldElement):
+class CFiniteSequence(FieldElement,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Create a C-finite sequence given its ordinary generating function.
 
@@ -586,7 +584,7 @@ class CFiniteSequence(FieldElement):
             False
         """
         return not self.__eq__(other)
-    
+
     def __getitem__(self, key):
         r"""
         Return a slice of the sequence.

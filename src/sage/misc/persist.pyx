@@ -29,6 +29,7 @@ save member functions and commands.
 
 import io
 import os
+import pickle
 import sys
 
 from textwrap import dedent
@@ -37,8 +38,6 @@ from textwrap import dedent
 # slows down loading any data stored in the other format
 import zlib; comp = zlib
 import bz2; comp_other = bz2
-
-from six.moves import cPickle as pickle
 
 from .misc import SAGE_DB
 from .sage_unittest import TestSuite

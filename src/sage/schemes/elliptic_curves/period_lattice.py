@@ -726,11 +726,14 @@ class PeriodLattice_ell(PeriodLattice):
         # precision used!
         pi = C.pi()
         a, b, c = (C(x) for x in self._abc)
-        if (a+b).abs() < (a-b).abs(): b=-b
-        if (a+c).abs() < (a-c).abs(): c=-c
+        if (a+b).abs() < (a-b).abs():
+            b=-b
+        if (a+c).abs() < (a-c).abs():
+            c=-c
         w1 = pi/a.agm(b)
         w2 = pi*C.gen()/a.agm(c)
-        if (w1/w2).imag()<0: w2=-w2
+        if (w1/w2).imag()<0:
+            w2=-w2
         if normalise:
             w1w2, mat = normalise_periods(w1,w2)
             return w1w2
@@ -899,19 +902,21 @@ class PeriodLattice_ell(PeriodLattice):
         A complex example (taken from J.E.Cremona and E.Whitley,
         *Periods of cusp forms and elliptic curves over imaginary
         quadratic fields*, Mathematics of Computation 62 No. 205
-        (1994), 407-429)::
+        (1994), 407-429).  See :trac:`29645`::
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: L = E.period_lattice(K.embeddings(CC)[0])
             sage: L.omega()
             8.80694160502647
+            sage: L.omega(prec=200)
+            8.8069416050264741493250743632295462227858630765392114070032
         """
         if self.is_real():
             n_components = (self.real_flag+3)//2
             return self.real_period(prec) * n_components
         else:
-            return self.complex_area()
+            return self.complex_area(prec)
 
     @cached_method
     def basis_matrix(self, prec=None, normalised=False):
@@ -1247,7 +1252,8 @@ class PeriodLattice_ell(PeriodLattice):
         # NB We assume here that when the embedding is real then the
         # point is also real!
 
-        if self.real_flag ==  0: return z
+        if self.real_flag ==  0:
+            return z
         if self.real_flag == -1:
             k = (z.imag()/w2.imag()).round()
             z = z-k*w2
@@ -1390,9 +1396,11 @@ class PeriodLattice_ell(PeriodLattice):
 
             a = C((e1-e3).sqrt())
             b = C((e1-e2).sqrt())
-            if (a+b).abs() < (a-b).abs():  b=-b
+            if (a+b).abs() < (a-b).abs():
+                b=-b
             r = C(((xP-e3)/(xP-e2)).sqrt())
-            if r.real()<0: r=-r
+            if r.real()<0:
+                r=-r
             t = -C(wP)/(2*r*(xP-e2))
             # eps controls the end of the loop. Since we aim at a target
             # precision of prec bits, eps = 2^(-prec) is enough.
@@ -1400,10 +1408,13 @@ class PeriodLattice_ell(PeriodLattice):
             while True:
                 s = b*r+a
                 a, b = (a+b)/2, (a*b).sqrt()
-                if (a+b).abs() < (a-b).abs():  b=-b
+                if (a+b).abs() < (a-b).abs():
+                    b=-b
                 r = (a*(r+1)/s).sqrt()
-                if (r.abs()-1).abs() < eps: break
-                if r.real()<0: r=-r
+                if (r.abs()-1).abs() < eps:
+                    break
+                if r.real()<0:
+                    r=-r
                 t *= r
             z = ((a/t).arctan())/a
             z = ComplexField(prec)(z)
@@ -1422,7 +1433,8 @@ class PeriodLattice_ell(PeriodLattice):
         else:                  # real, disconnected case
             a = R(e3-e1).sqrt()
             b = R(e3-e2).sqrt()
-            if (a+b).abs() < (a-b).abs():  b=-b
+            if (a+b).abs() < (a-b).abs():
+                b=-b
             on_egg = (xP<e3)
             if on_egg:
                 r = a/R(e3-xP).sqrt()
@@ -1438,7 +1450,8 @@ class PeriodLattice_ell(PeriodLattice):
             s = b*r+a
             a, b = (a+b)/2, (a*b).sqrt()
             r = (a*(r+1)/s).sqrt()
-            if (r-1).abs() < eps: break
+            if (r-1).abs() < eps:
+                break
             t *= r
         z = ((a/t).arctan())/a
         if on_egg:
@@ -1819,11 +1832,12 @@ class PeriodLattice_ell(PeriodLattice):
             y = y.real()
 
         if to_curve:
-            a1,a2,a3,a4,a6 = [self.embedding(a) for a in self.E.ainvs()]
-            b2 = self.embedding(self.E.b2())
+            K = x.parent()
+            v = refine_embedding(self.embedding, Infinity)
+            a1,a2,a3,a4,a6 = [K(v(a)) for a in self.E.ainvs()]
+            b2 = K(v(self.E.b2()))
             x = x - b2 / 12
             y = (y - (a1 * x + a3)) / 2
-            K = x.parent()
             EK = EllipticCurve(K,[a1,a2,a3,a4,a6])
             return EK.point((x,y,K(1)), check=False)
         else:

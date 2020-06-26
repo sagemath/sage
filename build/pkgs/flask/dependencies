@@ -1,4 +1,4 @@
-$(PYTHON) | pip werkzeug jinja2 itsdangerous
+$(PYTHON) | $(PYTHON_TOOLCHAIN) werkzeug jinja2 itsdangerous
 
 ----------
 All lines of this file are ignored except the first.

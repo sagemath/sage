@@ -23,7 +23,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import string_types, integer_types
 
 import sage.rings.all as rings
 
@@ -415,7 +414,7 @@ class EllipticCurveFactory(UniqueFactory):
                 # x is a cubic, y a rational point
                 x = EllipticCurve_from_cubic(x, y, morphism=False).ainvs()
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
@@ -433,7 +432,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         if R is None:
             R = Sequence(x).universe()
-            if R in (rings.ZZ,) + integer_types:
+            if R in (rings.ZZ, int):
                 R = rings.QQ
 
         return (R, tuple(R(a) for a in x)), kwds

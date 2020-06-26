@@ -118,14 +118,16 @@ class CurveArrow(GraphicPrimitive):
 
     def _render_on_subplot(self, subplot):
         """
-        Render this arrow in a subplot.  This is the key function that
-        defines how this arrow graphics primitive is rendered in
-        matplotlib's library.
+        Render this arrow in a subplot.
 
-        EXAMPLES::
+        This is the key function that defines how this arrow graphics
+        primitive is rendered in matplotlib's library.
+
+        EXAMPLES:
 
         This function implicitly ends up rendering this arrow on a matplotlib
-        subplot:
+        subplot::
+
             sage: arrow(path=[[(0,1), (2,-1), (4,5)]])
             Graphics object consisting of 1 graphics primitive
         """

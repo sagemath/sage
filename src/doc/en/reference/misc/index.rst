@@ -16,14 +16,6 @@ General Infrastructure
 Programming Utilities
 ---------------------
 
-Python 2 and 3 Compatibility
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/misc/six
-
 Special Base Classes, Decorators, etc.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -218,7 +210,6 @@ Interactive Sage Sessions
 .. toctree::
    :maxdepth: 1
 
-   sage/misc/log
    sage/misc/banner
    sage/misc/reset
    sage/misc/viewer

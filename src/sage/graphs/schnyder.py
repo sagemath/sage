@@ -64,12 +64,32 @@ def _triangulate(g, comb_emb):
         sage: new_edges = _triangulate(g, g._embedding)
         sage: [sorted(e) for e in new_edges]
         [[0, 2]]
+
+    TESTS:
+
+    :trac:`29522` is fixed::
+
+        sage: g = Graph(2)
+        sage: _triangulate(g, {})
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: _triangulate() only knows how to handle connected graphs
+        sage: g = Graph([(0, 1)])
+        sage: _triangulate(g, {})
+        Traceback (most recent call last):
+        ...
+        ValueError: a Graph with less than 3 vertices doesn't have any triangulation
+        sage: g = Graph(3)
+        sage: _triangulate(g, {})
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: _triangulate() only knows how to handle connected graphs
     """
     # first make sure that the graph has at least 3 vertices, and that it is connected
-    if g.order() < 3:
-        raise ValueError("A Graph with less than 3 vertices doesn't have any triangulation.")
     if not g.is_connected():
-        raise NotImplementedError("_triangulate() only knows how to handle connected graphs.")
+        raise NotImplementedError("_triangulate() only knows how to handle connected graphs")
+    if g.order() < 3:
+        raise ValueError("a Graph with less than 3 vertices doesn't have any triangulation")
 
     # At this point we know that the graph is connected, has at least 3
     # vertices. This is where the real work starts.

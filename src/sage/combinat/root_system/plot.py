@@ -805,7 +805,6 @@ Enjoy and please post your best pictures on the
 # ****************************************************************************
 from __future__ import print_function
 
-import six
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
@@ -988,13 +987,13 @@ class PlotOptions(object):
         """
         if self.labels:
             if self.dimension <= 2:
-                if not isinstance(label, six.string_types):
+                if not isinstance(label, str):
                     label = "$"+str(latex(label))+"$"
                 from sage.plot.text import text
                 return text(label, position, fontsize=15, rgbcolor=rgbcolor)
             elif self.dimension == 3:
                 # LaTeX labels not yet supported in 3D
-                if isinstance(label, six.string_types):
+                if isinstance(label, str):
                     label = label.replace("{","").replace("}","").replace("$","").replace("_","")
                 else:
                     label = str(label)

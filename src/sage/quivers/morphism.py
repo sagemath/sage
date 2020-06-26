@@ -1255,7 +1255,7 @@ class QuiverRepHom(CallMorphism):
         EXAMPLES::
 
             sage: Q = DiGraph({1:{2:['a','b']}, 2:{3:['c','d']}}).path_semigroup()
-            sage: P = Q.P(RR, 3)
+            sage: P = Q.P(QQ, 3)
             sage: S = P/P.radical()
             sage: proj = S.coerce_map_from(P)
             sage: x = S.an_element()

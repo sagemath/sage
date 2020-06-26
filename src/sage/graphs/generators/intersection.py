@@ -14,12 +14,9 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from __future__ import absolute_import, print_function
-from six.moves import range
-from six import itervalues
 
 # import from Sage library
 from sage.graphs.graph import Graph
@@ -555,7 +552,7 @@ def IntersectionGraph(S):
 
     g = Graph(name="Intersection Graph")
     g.add_vertices(S)
-    for clique in itervalues(ground_set_to_sets):
+    for clique in ground_set_to_sets.values():
         g.add_clique(set(clique))
 
     return g

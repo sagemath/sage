@@ -1432,7 +1432,6 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         sage: f = M.vector_frame('f')
         sage: for i in range(3):
         ....:     v.set_comp(f)[i] = (i+1)**3 * c_xyz[i]
-        ....:
         sage: v.comp(f)[2]
         27*z
         sage: v[f, 2]  # equivalent to above

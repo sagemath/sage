@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+SYSTEM=$1
+if [ -z "$SYSTEM" ]; then
+   echo >&2 "usage: $0 {debian|arch|conda|...} SPKGS..."
+   exit 1
+fi
+shift
+SPKGS="$*"
+#
+if [ -z "$SAGE_ROOT" ]; then
+    SAGE_ROOT=`pwd`
+fi
+STRIP_COMMENTS="sed s/#.*//;"
+for PKG_BASE in $SPKGS; do
+    SYSTEM_PACKAGES_FILE=$SAGE_ROOT/build/pkgs/$PKG_BASE/distros/$SYSTEM.txt
+    if [ -f $SYSTEM_PACKAGES_FILE ]; then
+       echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE)
+    fi
+done

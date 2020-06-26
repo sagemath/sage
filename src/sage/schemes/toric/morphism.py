@@ -360,7 +360,6 @@ fan::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function
-from six import iteritems
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -654,7 +653,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         orbit = self.parent().domain()
         codomain_fan = self.parent().codomain().fan()
         reverse_ray_dict = dict()
-        for n1, n2 in iteritems(self._ray_map):
+        for n1, n2 in self._ray_map.items():
             ray_index = codomain_fan.rays().index(n1)
             if n2.is_zero():
                 assert ray_index in self._defining_cone.ambient_ray_indices()
@@ -1964,7 +1963,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             pass
         multiplicity = None
         image_ray_index = None
-        for ray, index in iteritems(self._ray_index_map):
+        for ray, index in self._ray_index_map.items():
             d = gcd(ray)
             if d * fiber_ray != ray:
                 continue

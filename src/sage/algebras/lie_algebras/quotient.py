@@ -119,9 +119,9 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         Defining Y_1, Y_2, Y_3, Y_4, Y_5
         sage: lcs = Q.lower_central_series()
         sage: [I.basis().list() for I in lcs]
-        [[Y_1, Y_2, Y_3, Y_4, Y_5], [Y_5, Y_4, Y_3], [Y_5, Y_4], [Y_5], []]
+        [[Y_1, Y_2, Y_3, Y_4, Y_5], [Y_3, Y_4, Y_5], [Y_4, Y_5], [Y_5], []]
         sage: Y_2.bracket(Y_3)
-        Y_5
+        -Y_5
 
     Quotients when the base ring is not a field are not implemented::
 
@@ -157,7 +157,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
     are different, see :trac:`26352`::
 
         sage: L.<c,b,a> = LieAlgebra(QQ, abelian=True)
-        sage: I2 = L.ideal([a+b, a+c])
+        sage: I2 = L.ideal([a+b, a+c], order=sorted)
         sage: I2.basis()
         Family (b + a, c + a)
         sage: Q = L.quotient(I2)

@@ -11,7 +11,7 @@ to bit-representations of vertices stored in :class:`ListOfFaces`.
 Moreover, :class:`ListOfFaces` calculates the dimension of a polyhedron, assuming the
 faces are the facets of this polyhedron.
 
-Each face is stored over-aligned according to :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.bit_vector_operations.chunktype`.
+Each face is stored over-aligned according to the ``chunktype``.
 
 .. SEEALSO::
 
@@ -28,35 +28,35 @@ Provide enough space to store `20` faces as incidences to `60` vertices::
 Obtain the facets of a polyhedron::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-    ....:         import incidence_matrix_to_bit_repr_of_facets
+    ....:         import incidence_matrix_to_bit_rep_of_facets
     sage: P = polytopes.cube()
-    sage: face_list = incidence_matrix_to_bit_repr_of_facets(P.incidence_matrix())
-    sage: face_list = incidence_matrix_to_bit_repr_of_facets(P.incidence_matrix())
+    sage: face_list = incidence_matrix_to_bit_rep_of_facets(P.incidence_matrix())
+    sage: face_list = incidence_matrix_to_bit_rep_of_facets(P.incidence_matrix())
     sage: face_list.compute_dimension()
     3
 
 Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-    ....:         import incidence_matrix_to_bit_repr_of_Vrepr
+    ....:         import incidence_matrix_to_bit_rep_of_Vrep
     sage: P = polytopes.associahedron(['A',3])
-    sage: face_list = incidence_matrix_to_bit_repr_of_Vrepr(P.incidence_matrix())
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
     sage: face_list.compute_dimension()
     3
 
 Obtain the facets of a polyhedron as :class:`ListOfFaces` from a facet list::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-    ....:         import facets_tuple_to_bit_repr_of_facets
+    ....:         import facets_tuple_to_bit_rep_of_facets
     sage: facets = ((0,1,2), (0,1,3), (0,2,3), (1,2,3))
-    sage: face_list = facets_tuple_to_bit_repr_of_facets(facets, 4)
+    sage: face_list = facets_tuple_to_bit_rep_of_facets(facets, 4)
 
 Likewise for the Vrepresenatives as facet-incidences::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-    ....:         import facets_tuple_to_bit_repr_of_Vrepr
+    ....:         import facets_tuple_to_bit_rep_of_Vrep
     sage: facets = ((0,1,2), (0,1,3), (0,2,3), (1,2,3))
-    sage: face_list = facets_tuple_to_bit_repr_of_Vrepr(facets, 4)
+    sage: face_list = facets_tuple_to_bit_rep_of_Vrep(facets, 4)
 
 .. SEEALSO::
 
@@ -83,7 +83,53 @@ AUTHOR:
 from sage.structure.element import is_Matrix
 
 from cysignals.signals      cimport sig_on, sig_off
-from .bit_vector_operations cimport chunksize, get_next_level, count_atoms
+from libc.string            cimport memcpy
+
+cdef extern from "bit_vector_operations.cc":
+    # Any Bit-representation is assumed to be `chunksize`-Bit aligned.
+    cdef const size_t chunksize
+
+    cdef size_t get_next_level(
+        uint64_t **faces, const size_t n_faces, uint64_t **nextfaces,
+        uint64_t **nextfaces2, uint64_t **visited_all,
+        size_t n_visited_all, size_t face_length)
+#        Set ``newfaces`` to be the facets of ``faces[n_faces -1]``
+#        that are not contained in a face of ``visited_all``.
+
+#        INPUT:
+
+#        - ``maybe_newfaces`` -- quasi of type ``uint64_t[n_faces -1][face_length]``,
+#          needs to be ``chunksize``-Bit aligned
+#        - ``newfaces`` -- quasi of type ``*uint64_t[n_faces -1]
+#        - ``visited_all`` -- quasi of type ``*uint64_t[n_visited_all]
+#        - ``face_length`` -- length of the faces
+
+#        OUTPUT:
+
+#        - return number of ``newfaces``
+#        - set ``newfaces`` to point to the new faces
+
+#        ALGORITHM:
+
+#        To get all facets of ``faces[n_faces-1]``, we would have to:
+#        - Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
+#        - Add all the intersection of ``visited_all`` with the last face
+#        - Out of both the inclusion-maximal ones are of codimension 1, i.e. facets.
+
+#        As we have visited all faces of ``visited_all``, we alter the algorithm
+#        to not revisit:
+#        Step 1: Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
+#        Step 2: Out of thosse the inclusion-maximal ones are some of the facets.
+#                At least we obtain all of those, that we have not already visited.
+#                Maybe, we get some more.
+#        Step 3: Only keep those that we have not already visited.
+#                We obtain exactly the facets of ``faces[n_faces-1]`` that we have
+#                not visited yet.
+
+    cdef size_t count_atoms(uint64_t *A, size_t face_length)
+#        Return the number of atoms/vertices in A.
+#        This is the number of set bits in A.
+#        ``face_length`` is the length of A in terms of uint64_t.
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -101,10 +147,10 @@ cdef class ListOfFaces:
 
     .. SEEALSO::
 
-        :meth:`incidence_matrix_to_bit_repr_of_facets`,
-        :meth:`incidence_matrix_to_bit_repr_of_Vrepr`,
-        :meth:`facets_tuple_to_bit_repr_of_facets`,
-        :meth:`facets_tuple_to_bit_repr_of_Vrepr`,
+        :meth:`incidence_matrix_to_bit_rep_of_facets`,
+        :meth:`incidence_matrix_to_bit_rep_of_Vrep`,
+        :meth:`facets_tuple_to_bit_rep_of_facets`,
+        :meth:`facets_tuple_to_bit_rep_of_Vrep`,
         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`.
 
@@ -171,6 +217,40 @@ cdef class ListOfFaces:
             self.data[i] = <uint64_t *> \
                 self._mem.aligned_malloc(chunksize//8, self.face_length*8)
 
+    def __copy__(self):
+        r"""
+        Return a copy of self.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
+            ....:     import ListOfFaces
+            sage: facets = ListOfFaces(5, 13)
+            sage: copy(facets).n_atoms
+            13
+            sage: copy(facets).n_faces
+            5
+
+        TESTS::
+
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
+            ....:     import facets_tuple_to_bit_rep_of_facets
+            sage: bi_pyr = ((0,1,4), (1,2,4), (2,3,4), (3,0,4),
+            ....:           (0,1,5), (1,2,5), (2,3,5), (3,0,5))
+            sage: facets = facets_tuple_to_bit_rep_of_facets(bi_pyr, 6)
+            sage: facets.compute_dimension()
+            3
+            sage: copy(facets).compute_dimension()
+            3
+            sage: copy(facets) is facets
+            False
+        """
+        cdef ListOfFaces copy = ListOfFaces(self.n_faces, self.n_atoms)
+        cdef size_t i
+        for i in range(self.n_faces):
+            memcpy(copy.data[i], self.data[i], self.face_length*8)
+        return copy
+
     cpdef int compute_dimension(self) except -2:
         r"""
         Compute the dimension of a polyhedron by its facets.
@@ -179,18 +259,16 @@ cdef class ListOfFaces:
 
         EXAMPLES::
 
-            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
-            ....:     import ListOfFaces
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-            ....:     import facets_tuple_to_bit_repr_of_facets, \
-            ....:            facets_tuple_to_bit_repr_of_Vrepr
+            ....:     import facets_tuple_to_bit_rep_of_facets, \
+            ....:            facets_tuple_to_bit_rep_of_Vrep
             sage: bi_pyr = ((0,1,4), (1,2,4), (2,3,4), (3,0,4),
             ....:           (0,1,5), (1,2,5), (2,3,5), (3,0,5))
-            sage: facets = facets_tuple_to_bit_repr_of_facets(bi_pyr, 6)
-            sage: Vrepr = facets_tuple_to_bit_repr_of_Vrepr(bi_pyr, 6)
+            sage: facets = facets_tuple_to_bit_rep_of_facets(bi_pyr, 6)
+            sage: Vrep = facets_tuple_to_bit_rep_of_Vrep(bi_pyr, 6)
             sage: facets.compute_dimension()
             3
-            sage: Vrepr.compute_dimension()
+            sage: Vrep.compute_dimension()
             3
 
         ALGORITHM:
@@ -216,16 +294,16 @@ cdef class ListOfFaces:
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
             ....:     import ListOfFaces
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
-            ....:     import incidence_matrix_to_bit_repr_of_facets, \
-            ....:            incidence_matrix_to_bit_repr_of_Vrepr
+            ....:     import incidence_matrix_to_bit_rep_of_facets, \
+            ....:            incidence_matrix_to_bit_rep_of_Vrep
             sage: bi_pyr = ((0,1,4), (1,2,4), (2,3,4), (3,0,4),
             ....:           (0,1,5), (1,2,5), (2,3,5), (3,0,5))
             sage: for _ in range(10):
             ....:     points = tuple(tuple(randint(-1000,1000) for _ in range(10))
             ....:                    for _ in range(randint(3,15)))
             ....:     P = Polyhedron(vertices=points)
-            ....:     facets = incidence_matrix_to_bit_repr_of_facets(P.incidence_matrix())
-            ....:     vertices = incidence_matrix_to_bit_repr_of_Vrepr(P.incidence_matrix())
+            ....:     facets = incidence_matrix_to_bit_rep_of_facets(P.incidence_matrix())
+            ....:     vertices = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
             ....:     d1 = P.dimension()
             ....:     if d1 == 0:
             ....:         continue
@@ -269,7 +347,7 @@ cdef class ListOfFaces:
             return count_atoms(faces[0], face_length)
 
         # ``maybe_newfaces`` are all intersection of ``faces[n_faces -1]`` with previous faces.
-        # It needs to be allcoated to store those faces.
+        # It needs to be allocated to store those faces.
         cdef ListOfFaces maybe_newfaces_mem = ListOfFaces(n_faces, face_length*64)
         cdef uint64_t **maybe_newfaces = maybe_newfaces_mem.data
 

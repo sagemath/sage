@@ -63,7 +63,6 @@ In fact it is an order in a number field::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import division
-from six.moves import range
 
 from scipy.spatial import Voronoi
 from sage.arith.misc import GCD, algdep
@@ -1147,13 +1146,13 @@ class RiemannSurface(object):
                 (7, 1), (10, 1), (3, 1)])],
              [(1, [(8, 0), (6, 0), (7, 0), (10, 0), (2, 0), (4, 0),
                 (7, 1), (10, 1), (9, 1), (8, 0)])]]
-                
+
         In order to check that the answer returned above is reasonable, we
         test some basic properties. We express the faces of the downstairs graph
         as ZZ-linear combinations of the edges and check that the projection
         of the homology basis upstairs projects down to independent linear
         combinations of an even number of faces::
-        
+
             sage: dg = S.downstairs_graph()
             sage: edges = dg.edges()
             sage: E = ZZ^len(edges)

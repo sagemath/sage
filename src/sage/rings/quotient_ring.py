@@ -38,7 +38,6 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:     def reduce(self,x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
-    ....:
     sage: F.<x,y,z> = FreeAlgebra(QQ, 3)
     sage: I3 = PowerIdeal(F,3); I3
     Twosided Ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y,
@@ -109,7 +108,6 @@ easily::
 #*****************************************************************************
 
 from __future__ import absolute_import
-from six.moves import range
 
 import sage.misc.latex as latex
 from . import ring, ideal, quotient_ring_element
@@ -988,6 +986,11 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
+
+        TESTS::
+
+            sage: S(x, coerce=False)
+            a
         """
         if isinstance(x, quotient_ring_element.QuotientRingElement):
             if x.parent() is self:
@@ -1298,7 +1301,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
     def _macaulay2_init_(self, macaulay2=None):
-        """
+        r"""
         EXAMPLES:
 
         Quotients of multivariate polynomial rings over `\QQ`, `\ZZ` and

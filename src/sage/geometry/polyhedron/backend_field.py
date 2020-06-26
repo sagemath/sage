@@ -33,7 +33,6 @@ from __future__ import absolute_import
 
 
 from .base import Polyhedron_base
-from sage.structure.element import Element
 
 
 class Polyhedron_field(Polyhedron_base):
@@ -137,14 +136,16 @@ class Polyhedron_field(Polyhedron_base):
         """
         return x > 0
 
-    def __init__(self, parent, Vrep, Hrep, Vrep_minimal=None, Hrep_minimal=None, **kwds):
+    def _init_from_Vrepresentation_and_Hrepresentation(self, Vrep, Hrep):
         """
-        Initializes the polyhedron.
+        Construct polyhedron from V-representation and H-representation data.
 
         See :class:`Polyhedron_base` for a description of ``Vrep`` and ``Hrep``.
 
-        If both ``Vrep`` and ``Hrep`` are provided, then
-        ``Vrep_minimal`` and ``Hrep_minimal`` must be set to ``True``.
+        .. WARNING::
+
+            The representation is assumed to be correct.
+            It is not checked.
 
         EXAMPLES::
 
@@ -154,31 +155,12 @@ class Polyhedron_field(Polyhedron_base):
             sage: Vrep = [[[0], [1]], [], []]
             sage: Hrep = [[[0, 1], [1, -1]], []]
             sage: p = Polyhedron_field(parent, Vrep, Hrep,
-            ....:                      Vrep_minimal=True, Hrep_minimal=True)
+            ....:                      Vrep_minimal=True, Hrep_minimal=True)  # indirect doctest
             sage: p
             A 1-dimensional polyhedron in AA^1 defined as the convex hull of 2 vertices
-
-        TESTS::
-
-            sage: p = Polyhedron()    # indirect doctests
-
-            sage: Vrep = [[[0], [1/2], [1]], [], []]
-            sage: Hrep = [[[0, 1], [1, -1]], []]
-            sage: p = Polyhedron_field(parent, Vrep, Hrep,
-            ....:                      Vrep_minimal=False, Hrep_minimal=True)
-            Traceback (most recent call last):
-            ...
-            ValueError: if both Vrep and Hrep are provided, they must be minimal...
         """
-        if Vrep is not None and Hrep is not None:
-            if not (Vrep_minimal and Hrep_minimal):
-                raise ValueError("if both Vrep and Hrep are provided, they must be minimal"
-                                 " and Vrep_minimal and Hrep_minimal must both be True")
-            Element.__init__(self, parent=parent)
-            self._init_Vrepresentation(*Vrep)
-            self._init_Hrepresentation(*Hrep)
-        else:
-            super(Polyhedron_field, self).__init__(parent, Vrep, Hrep, **kwds)
+        self._init_Vrepresentation(*Vrep)
+        self._init_Hrepresentation(*Hrep)
 
     def _init_from_Vrepresentation(self, vertices, rays, lines,
                                    minimize=True, verbose=False):

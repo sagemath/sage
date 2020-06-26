@@ -196,20 +196,52 @@ cdef class Matrix(Matrix1):
 
     def solve_left(self, B, check=True):
         """
-        If self is a matrix `A`, then this function returns a
+        Try to find a solution `X` to the equation `X A = B`.
+
+        If ``self`` is a matrix `A`, then this function returns a
         vector or matrix `X` such that `X A = B`. If
         `B` is a vector then `X` is a vector and if
         `B` is a matrix, then `X` is a matrix.
 
+        Over inexact rings, the output of this function may not be an
+        exact solution. For example, over the real or complex double
+        field, this method computes a least-squares solution if the
+        system is not square.
+
         INPUT:
 
+        - ``B`` -- a matrix or vector
 
-        -  ``B`` - a matrix
+        - ``check`` -- boolean (default: ``True``); verify the answer
+          if the system is non-square or rank-deficient, and if its
+          entries lie in an exact ring. Meaningless over inexact rings,
+          or when the system is square and of full rank.
 
-        -  ``check`` - bool (default: True) - if False and self
-           is nonsquare, may not raise an error message even if there is no
-           solution. This is faster but more dangerous.
+        OUTPUT:
 
+        If the system is square and has full rank, the unique solution
+        is returned, and no check is done on the answer. Over inexact
+        rings, you should expect this answer to be inexact.
+        Moreover, due to the numerical issues involved, an error
+        may be thrown in this case -- specifically if the system is
+        singular but if SageMath fails to notice that.
+
+        If the system is not square or does not have full rank, then a
+        solution is attempted via other means. For example, over
+        ``RDF`` or ``CDF`` a least-squares solution is returned, as
+        with MATLAB's "backslash" operator. For inexact rings, the
+        ``check`` parameter is ignored because an approximate solution
+        will be returned in any case. Over exact rings, on the other
+        hand, setting the ``check`` parameter results in an additional
+        test to determine whether or not the answer actually solves the
+        system exactly.
+
+        If `B` is a vector, the result is returned as a vector, as well,
+        and as a matrix, otherwise.
+
+        .. SEEALSO::
+
+            :meth:`solve_right`
 
         EXAMPLES::
 
@@ -224,7 +256,62 @@ cdef class Matrix(Matrix1):
             sage: M.solve_left(B)
             Traceback (most recent call last):
             ...
-            ValueError: number of columns of self must equal number of columns of B
+            ValueError: number of columns of self must equal number of columns
+            of right-hand side
+
+        Over the reals::
+
+            sage: A = matrix(RDF, 3,3, [1,2,5,7.6,2.3,1,1,2,-1]); A
+            [ 1.0  2.0  5.0]
+            [ 7.6  2.3  1.0]
+            [ 1.0  2.0 -1.0]
+            sage: b = vector(RDF,[1,2,3])
+            sage: x = A.solve_left(b); x.zero_at(2e-17) # fix noisy zeroes
+            (0.666666666..., 0.0, 0.333333333...)
+            sage: x.parent()
+            Vector space of dimension 3 over Real Double Field
+            sage: x*A  # tol 1e-14
+            (0.9999999999999999, 1.9999999999999998, 3.0)
+
+        Over the complex numbers::
+
+            sage: A = matrix(CDF, [[      0, -1 + 2*I,  1 - 3*I,        I],
+            ....:                  [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
+            ....:                  [  2 + I,    1 - I,       -1,        5],
+            ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
+            sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
+            sage: x = A.solve_left(b); x
+            (-1.55765124... - 0.644483985...*I, 0.183274021... + 0.286476868...*I, 0.270818505... + 0.246619217...*I, -1.69003558... - 0.828113879...*I)
+            sage: x.parent()
+            Vector space of dimension 4 over Complex Double Field
+            sage: abs(x*A - b) < 1e-14
+            True
+
+        If ``b`` is given as a matrix, the result will be a matrix, as well::
+
+            sage: A = matrix(RDF, 3, 3, [2, 5, 0, 7, 7, -2, -4.3, 0, 1])
+            sage: b = matrix(RDF, 2, 3, [2, -4, -5, 1, 1, 0.1])
+            sage: A.solve_left(b) # tol 1e-14
+            [  -6.495454545454545    4.068181818181818   3.1363636363636354]
+            [  0.5277272727272727  -0.2340909090909091 -0.36818181818181817]
+
+        If `A` is a non-square matrix, the result is a least-squares solution.
+        For a tall matrix, this may give a solution with a least-squares error
+        of almost zero::
+
+            sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
+            sage: b = vector(RDF, [5, 6])
+            sage: x = A.solve_left(b)
+            sage: (x * A - b).norm() < 1e-14
+            True
+
+        For a wide matrix `A`, the error is usually not small::
+
+            sage: A = matrix(RDF, 2, 3, [1, 3, 4, 2, 0, -3])
+            sage: b = vector(RDF, [5, 6, 1])
+            sage: x = A.solve_left(b)
+            sage: (x * A - b).norm()  # tol 1e-14
+            0.9723055853282466
 
         TESTS::
 
@@ -247,9 +334,54 @@ cdef class Matrix(Matrix1):
             sage: M.solve_left(B)
             Traceback (most recent call last):
             ...
-            ValueError: number of columns of self must equal number of columns of B
-        """
+            ValueError: number of columns of self must equal number of columns
+            of right-hand side
 
+        A degenerate case::
+
+            sage: A = matrix(RDF, 0, 0, [])
+            sage: A.solve_left(vector(RDF,[]))
+            ()
+
+        Over an inexact ring like ``RDF``, the coefficient matrix of a
+        square system must be nonsingular::
+
+            sage: A = matrix(RDF, 5, range(25))
+            sage: b = vector(RDF, [1,2,3,4,5])
+            sage: A.solve_left(b)
+            Traceback (most recent call last):
+            ...
+            LinAlgError: Matrix is singular.
+
+        The vector of constants needs the correct degree::
+
+            sage: A = matrix(RDF, 5, range(25))
+            sage: b = vector(RDF, [1,2,3,4])
+            sage: A.solve_left(b)
+            Traceback (most recent call last):
+            ...
+            ValueError: number of columns of self must equal degree of
+            right-hand side
+
+        The vector of constants needs to be compatible with
+        the base ring of the coefficient matrix::
+
+            sage: F.<a> = FiniteField(27)
+            sage: b = vector(F, [a,a,a,a,a])
+            sage: A.solve_left(b)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+
+        Check that coercions work correctly (:trac:`17405`)::
+
+            sage: A = matrix(RDF, 2, range(4))
+            sage: b = vector(CDF, [1+I, 2])
+            sage: A.solve_left(b)
+            (0.5 - 1.5*I, 0.5 + 0.5*I)
+            sage: b = vector(QQ[I], [1+I, 2])
+            sage: x = A.solve_left(b)
+        """
         if is_Vector(B):
             try:
                 return self.transpose().solve_right(B, check=check)
@@ -263,32 +395,58 @@ cdef class Matrix(Matrix1):
 
     def solve_right(self, B, check=True):
         r"""
-        If self is a matrix `A`, then this function returns a
+        Try to find a solution `X` to the equation `A X = B`.
+
+        If ``self`` is a matrix `A`, then this function returns a
         vector or matrix `X` such that `A X = B`. If
         `B` is a vector then `X` is a vector and if
         `B` is a matrix, then `X` is a matrix.
 
+        Over inexact rings, the output of this function may not be an
+        exact solution. For example, over the real or complex double
+        field, this method computes a least-squares solution if the
+        system is not square.
+
         .. NOTE::
 
-           In Sage one can also write ``A \backslash  B`` for
-           ``A.solve_right(B)``, i.e., Sage implements the "the
+           In Sage one can also write ``A \ B`` for
+           ``A.solve_right(B)``, that is, Sage implements "the
            MATLAB/Octave backslash operator".
 
         INPUT:
 
+        - ``B`` -- a matrix or vector
 
-        -  ``B`` - a matrix or vector
+        - ``check`` -- boolean (default: ``True``); verify the answer
+          if the system is non-square or rank-deficient, and if its
+          entries lie in an exact ring. Meaningless over inexact rings,
+          or when the system is square and of full rank.
 
-        -  ``check`` - bool (default: True) - if False and self
-           is nonsquare, may not raise an error message even if there is no
-           solution. This is faster but more dangerous.
+        OUTPUT:
 
+        If the system is square and has full rank, the unique solution
+        is returned, and no check is done on the answer. Over inexact
+        rings, you should expect this answer to be inexact.
+        Moreover, due to the numerical issues involved, an error
+        may be thrown in this case -- specifically if the system is
+        singular but if SageMath fails to notice that.
 
-        OUTPUT: a matrix or vector
+        If the system is not square or does not have full rank, then a
+        solution is attempted via other means. For example, over
+        ``RDF`` or ``CDF`` a least-squares solution is returned, as
+        with MATLAB's "backslash" operator. For inexact rings, the
+        ``check`` parameter is ignored because an approximate solution
+        will be returned in any case. Over exact rings, on the other
+        hand, setting the ``check`` parameter results in an additional
+        test to determine whether or not the answer actually solves the
+        system exactly.
+
+        If `B` is a vector, the result is returned as a vector, as well,
+        and as a matrix, otherwise.
 
         .. SEEALSO::
 
-           :meth:`solve_left`
+            :meth:`solve_left`
 
         EXAMPLES::
 
@@ -339,7 +497,8 @@ cdef class Matrix(Matrix1):
             sage: X = A.solve_right(B)
             Traceback (most recent call last):
             ...
-            ValueError: number of rows of self must equal number of rows of B
+            ValueError: number of rows of self must equal number of rows of
+            right-hand side
 
         We solve with A singular::
 
@@ -425,7 +584,8 @@ cdef class Matrix(Matrix1):
             sage: a * x == v
             True
 
-        Solving a system of linear equation symbolically using symbolic matrices::
+        Solving a system of linear equations symbolically using symbolic
+        matrices::
 
             sage: var('a,b,c,d,x,y')
             (a, b, c, d, x, y)
@@ -443,17 +603,207 @@ cdef class Matrix(Matrix1):
             5
             sage: (A*soln).apply_map(lambda x: x.simplify_full())
             (3, 5)
-        """
 
-        if is_Vector(B):
+        Over inexact rings, the output of this function may not be an exact
+        solution. For example, over the real or complex double field,
+        this computes a least-squares solution::
+
+            sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
+            sage: b = vector(RDF, [5, 6, 1])
+            sage: A.solve_right(b)  # tol 1e-14
+            (1.4782608695652177, 0.35177865612648235)
+            sage: ~(A.T * A) * A.T * b  # closed form solution, tol 1e-14
+            (1.4782608695652177, 0.35177865612648235)
+
+        Over the reals::
+
+            sage: A = matrix(RDF, 3,3, [1,2,5,7.6,2.3,1,1,2,-1]); A
+            [ 1.0  2.0  5.0]
+            [ 7.6  2.3  1.0]
+            [ 1.0  2.0 -1.0]
+            sage: b = vector(RDF,[1,2,3])
+            sage: x = A.solve_right(b); x  # tol 1e-14
+            (-0.1136950904392765, 1.3901808785529717, -0.33333333333333337)
+            sage: x.parent()
+            Vector space of dimension 3 over Real Double Field
+            sage: A*x  # tol 1e-14
+            (1.0, 1.9999999999999996, 3.0000000000000004)
+
+        Over the complex numbers::
+
+            sage: A = matrix(CDF, [[      0, -1 + 2*I,  1 - 3*I,        I],
+            ....:                  [2 + 4*I, -2 + 3*I, -1 + 2*I,   -1 - I],
+            ....:                  [  2 + I,    1 - I,       -1,        5],
+            ....:                  [    3*I,   -1 - I,   -1 + I,   -3 + I]])
+            sage: b = vector(CDF, [2 -3*I, 3, -2 + 3*I, 8])
+            sage: x = A.solve_right(b); x
+            (1.96841637... - 1.07606761...*I, -0.614323843... + 1.68416370...*I, 0.0733985765... + 1.73487544...*I, -1.6018683... + 0.524021352...*I)
+            sage: x.parent()
+            Vector space of dimension 4 over Complex Double Field
+            sage: abs(A*x - b) < 1e-14
+            True
+
+        If ``b`` is given as a matrix, the result will be a matrix, as well::
+
+            sage: A = matrix(RDF, 3, 3, [1, 2, 2, 3, 4, 5, 2, 2, 2])
+            sage: b = matrix(RDF, 3, 2, [3, 2, 3, 2, 3, 2])
+            sage: A.solve_right(b) # tol 1e-14
+            [ 0.0  0.0]
+            [ 4.5  3.0]
+            [-3.0 -2.0]
+
+        If `A` is a non-square matrix, the result is a least-squares solution.
+        For a wide matrix, this may give a solution with a least-squares error
+        of almost zero::
+
+            sage: A = matrix(RDF, 2, 3, [1, 3, 4, 2, 0, -3])
+            sage: b = vector(RDF, [5, 6])
+            sage: x = A.solve_right(b)
+            sage: (A * x - b).norm() < 1e-14
+            True
+
+        For a tall matrix `A`, the error is usually not small::
+
+            sage: A = matrix(RDF, 3, 2, [1, 3, 4, 2, 0, -3])
+            sage: b = vector(RDF, [5, 6, 1])
+            sage: x = A.solve_right(b)
+            sage: (A * x - b).norm()  # tol 1e-14
+            3.2692119900020438
+
+        TESTS:
+
+        Check that the arguments are coerced to a suitable parent
+        (:trac:`12406`)::
+
+            sage: A = matrix(QQ, 2, [1, 2, 3, 4])
+            sage: b = vector(RDF, [pi, e])
+            sage: A.solve_right(b)  # tol 1e-15
+            (-3.564903478720541, 3.353248066155167)
+            sage: R.<t> = ZZ[]
+            sage: b = vector(R, [1, t])
+            sage: x = A.solve_right(b); x
+            (t - 2, -1/2*t + 3/2)
+            sage: A * x == b
+            True
+            sage: x.base_ring()
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
+
+        ::
+
+            sage: A = Matrix(Zmod(6), 3, 2, [1,2,3,4,5,6])
+            sage: b = vector(ZZ, [1,1,1])
+            sage: A.solve_right(b).base_ring() is Zmod(6)
+            True
+
+        Check that the coercion mechanism gives consistent results
+        (:trac:`12406`)::
+
+            sage: A = matrix(ZZ, [[1, 2, 3], [2, 0, 2], [3, 2, 5]])
+            sage: b = vector(RDF, [1, 1, 1])
+            sage: A.solve_right(b) == A.change_ring(RDF).solve_right(b)
+            ...
+            True
+
+        A degenerate case::
+
+            sage: A = matrix(RDF, 0, 0, [])
+            sage: A.solve_right(vector(RDF,[]))
+            ()
+
+        Over an inexact ring like ``RDF``, the coefficient matrix of a
+        square system must be nonsingular::
+
+            sage: A = matrix(RDF, 5, range(25))
+            sage: b = vector(RDF, [1,2,3,4,5])
+            sage: A.solve_right(b)
+            Traceback (most recent call last):
+            ...
+            LinAlgError: Matrix is singular.
+
+        The vector of constants needs the correct degree.  ::
+
+            sage: A = matrix(RDF, 5, range(25))
+            sage: b = vector(RDF, [1,2,3,4])
+            sage: A.solve_right(b)
+            Traceback (most recent call last):
+            ...
+            ValueError: number of rows of self must equal degree of
+            right-hand side
+
+        The vector of constants needs to be compatible with
+        the base ring of the coefficient matrix.  ::
+
+            sage: F.<a> = FiniteField(27)
+            sage: b = vector(F, [a,a,a,a,a])
+            sage: A.solve_right(b)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+
+        Check that coercions work correctly (:trac:`17405`)::
+
+            sage: A = matrix(RDF, 2, range(4))
+            sage: b = vector(CDF, [1+I, 2])
+            sage: A.solve_right(b)
+            (-0.5 - 1.5*I, 1.0 + 1.0*I)
+            sage: b = vector(QQ[I], [1+I, 2])
+            sage: x = A.solve_right(b)
+
+        Calling this method with anything but a vector or matrix is
+        deprecated::
+
+            sage: A = matrix(CDF, 5, [1/(i+j+1) for i in range(5) for j in range(5)])
+            sage: x = A.solve_right([1]*5)
+            doctest:...: DeprecationWarning: solve_right should be called with
+            a vector or matrix
+            See http://trac.sagemath.org/17405 for details.
+
+        Over inexact rings, the ``check`` parameter is ignored as the result is
+        only an approximate solution (:trac:`13932`)::
+
+            sage: RF = RealField(52)
+            sage: B = matrix(RF, 2, 2, 1)
+            sage: A = matrix(RF, [[0.24, 1, 0], [1, 0, 0]])
+            sage: 0 < (A * A.solve_right(B) - B).norm() < 1e-14
+            True
+        """
+        try:
+            L = B.base_ring()
+        except AttributeError:
+            from sage.misc.superseded import deprecation
+            deprecation(17405, "solve_right should be called with a vector "
+                               "or matrix")
+            from sage.modules.free_module_element import vector
+            B = vector(B)
+        b_is_vec = is_Vector(B)
+        if b_is_vec:
             if self.nrows() != B.degree():
-                raise ValueError("number of rows of self must equal degree of B")
+                raise ValueError("number of rows of self must equal "
+                                 "degree of right-hand side")
         else:
             if self.nrows() != B.nrows():
-                raise ValueError("number of rows of self must equal number of rows of B")
+                raise ValueError("number of rows of self must equal "
+                                 "number of rows of right-hand side")
 
         K = self.base_ring()
+        L = B.base_ring()
+        # first coerce both elements to parent over same base ring
+        P = K if L is K else coercion_model.common_parent(K, L)
+        if P not in _Fields and P.is_integral_domain():
+            # the non-integral-domain case is handled separatedly below
+            P = P.fraction_field()
+        if L is not P:
+            B = B.change_ring(P)
+        if K is not P:
+            K = P
+            self = self.change_ring(P)
+
+        # If our field is inexact, checking the answer is doomed anyway.
+        check = (check and K.is_exact())
+
         if not K.is_integral_domain():
+            # The non-integral-domain case is handled almost entirely
+            # separately.
             from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
             if is_IntegerModRing(K):
                 from sage.libs.pari import pari
@@ -476,31 +826,18 @@ cdef class Matrix(Matrix1):
                     ret = ret.Vec().sage()
                     return (K ** self.ncols())(ret)
             raise TypeError("base ring must be an integral domain or a ring of integers mod n")
-        if K not in _Fields:
-            K = K.fraction_field()
-            self = self.change_ring(K)
 
-        matrix = True
-        if is_Vector(B):
-            matrix = False
-            C = self.matrix_space(self.nrows(), 1)(B.list())
-        else:
-            C = B
+        C = B.column() if b_is_vec else B
 
         if not self.is_square():
             X = self._solve_right_general(C, check=check)
-            if not matrix:
-                # Convert back to a vector
-                return (X.base_ring() ** X.nrows())(X.list())
-            else:
-                return X
-
-        if self.rank() != self.nrows():
-            X = self._solve_right_general(C, check=check)
         else:
-            X = self._solve_right_nonsingular_square(C, check_rank=False)
+            try:
+                X = self._solve_right_nonsingular_square(C, check_rank=True)
+            except NotFullRankError:
+                X = self._solve_right_general(C, check=check)
 
-        if not matrix:
+        if b_is_vec:
             # Convert back to a vector
             return X.column(0)
         else:
@@ -539,6 +876,10 @@ cdef class Matrix(Matrix1):
             sage: A*X == B
             True
         """
+        # this could probably be optimized so that the rank computation is
+        # avoided
+        if check_rank and self.rank() < self.nrows():
+            raise NotFullRankError
         D = self.augment(B)
         D.echelonize()
         return D.matrix_from_columns(range(self.ncols(),D.ncols()))
@@ -12924,7 +13265,8 @@ cdef class Matrix(Matrix1):
             sage: len(str(a.det()))
             12215
         """
-        from sage.rings.all import RDF, RealField
+        from sage.rings.real_double import RDF
+        from sage.rings.real_mpfr import RealField
         try:
             A = self.change_ring(RDF)
             m1 = A._hadamard_row_bound()
@@ -13234,6 +13576,13 @@ cdef class Matrix(Matrix1):
             0.0
             sage: a.norm(Infinity) == a.norm(1)
             True
+
+        TESTS:
+
+        Check that a sparse zero matrix is handled (:trac:`29214`)::
+
+            sage: matrix(CDF, 2, 2, sparse=True).norm(1)
+            0.0
         """
 
         if self._nrows == 0 or self._ncols == 0:
@@ -13246,7 +13595,7 @@ cdef class Matrix(Matrix1):
             U, S, V = A.SVD()
             return max(S.list()).real().sqrt()
 
-        A = self.apply_map(abs).change_ring(RDF)
+        A = self.apply_map(abs, R=RDF)
 
         # 1-norm: largest column-sum
         if p == 1:
@@ -13331,13 +13680,20 @@ cdef class Matrix(Matrix1):
             [0.750000000000000 0.800000000000000 0.833333333333333]
             [0.857142857142857 0.875000000000000 0.888888888888889]
             [0.900000000000000 0.909090909090909 0.916666666666667]
+
+        We check that :trac:`29700` is fixed::
+
+            sage: M = matrix(3,[1,1,1,1,0,0,0,1,0])
+            sage: A,B = M.diagonalization(QQbar)
+            sage: _ = A.n()
+
         """
         if prec is None:
             prec = digits_to_bits(digits)
 
         try:
             return self.change_ring(sage.rings.real_mpfr.RealField(prec))
-        except TypeError:
+        except (TypeError, ValueError):
             # try to return a complex result
             return self.change_ring(sage.rings.complex_field.ComplexField(prec))
 
@@ -16125,3 +16481,15 @@ def _matrix_power_symbolic(A, n):
         Pinv = ~P
 
     return P * M * Pinv
+
+class NotFullRankError(ValueError):
+    """
+    An error that indicates that a matrix is not of full rank.
+
+    The fact that a square system is rank-deficient sometimes only becomes
+    apparent while attempting to solve it. The methods
+    :meth:`.Matrix.solve_left` and :meth:`.Matrix.solve_right` defer to
+    :meth:`.Matrix._solve_right_nonsingular_square` for square systems, and
+    that method raises this error if the system turns out to be singular.
+    """
+    pass

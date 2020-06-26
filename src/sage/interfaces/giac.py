@@ -231,6 +231,7 @@ from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
 from sage.misc.pager import pager
 from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
 
 
 COMMANDS_CACHE = '%s/giac_commandlist_cache.sobj'%DOT_SAGE
@@ -579,7 +580,6 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         else:
             return float(self('time() - %s'%float(t)))
 
-
     def _eval_line(self, line, allow_use_file=True, wait_for_prompt=True, restart_if_needed=False):
         """
         EXAMPLES::
@@ -587,16 +587,23 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
             sage: giac._eval_line('2+2')
             '4'
 
-            sage: A=matrix([range(280)])
-            sage: GA=giac(A)
+            sage: A = matrix([range(280)])
+            sage: GA = giac(A)
+
+        TESTS::
+
+            sage: h='int(1/x*((-2*x^(1/3)+1)^(1/4))^3,x)'
+            sage: giac(h)
+            12*(...)
         """
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
                     wait_for_prompt=wait_for_prompt)
             if z.lower().find("error") != -1:
                 raise RuntimeError("An error occurred running a Giac command:\nINPUT:\n%s\nOUTPUT:\n%s"%(line, z))
-        return z
-
+        lines = (line for line in z.splitlines()
+                 if not line.startswith('Evaluation time:'))
+        return "\n".join(lines)
 
     def eval(self, code, strip=True, **kwds):
         r"""
@@ -868,7 +875,7 @@ class GiacElement(ExpectElement):
         """
         return hash(giac.eval('string(%s);'%self.name()))
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare equality between self and other, using giac.
 
@@ -909,30 +916,26 @@ class GiacElement(ExpectElement):
         P = self.parent()
         if P.eval("evalb(%s %s %s)"%(self.name(), P._equality_symbol(),
                                  other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         # (to be tested with giac). Maple  does not allow comparing objects of different types and
         # it raises an error in this case.
         # We catch the error, and return True for <
         try:
             if P.eval("evalb(%s %s %s)"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
-                return -1
+                return rich_to_bool(op, -1)
         except RuntimeError as e:
             msg = str(e)
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
-                    return -1
+                    return rich_to_bool(op, -1)
                 else:
-                    return 1
+                    return rich_to_bool(op, 1)
             else:
                 raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
-            return 1
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparable in interfaced system.
-        if (hash(self) < hash(other)):
-            return -1
-        else:
-            return 1
+            return rich_to_bool(op, 1)
+
+        return NotImplemented
 
     def _tab_completion(self):
         """

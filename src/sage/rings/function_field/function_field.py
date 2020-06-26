@@ -3145,6 +3145,47 @@ class FunctionField_global(FunctionField_simple):
         from .maps import FunctionFieldHigherDerivation_global
         return FunctionFieldHigherDerivation_global(self)
 
+    def get_place(self, degree):
+        """
+        Return a place of ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- a positive integer
+
+        OUTPUT: a place of ``degree`` if any exists; otherwise ``None``
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<Y> = PolynomialRing(K)
+            sage: L.<y> = K.extension(Y^4 + Y - x^5)
+            sage: L.get_place(1)
+            Place (x, y)
+            sage: L.get_place(2)
+            Place (x, y^2 + y + 1)
+            sage: L.get_place(3)
+            Place (x^3 + x^2 + 1, y + x^2 + x)
+            sage: L.get_place(4)
+            Place (x + 1, x^5 + 1)
+            sage: L.get_place(5)
+            Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
+            sage: L.get_place(6)
+            Place (x^3 + x^2 + 1, y^2 + y + x^2)
+            sage: L.get_place(7)
+            Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
+            sage: L.get_place(8)
+
+        """
+        for p in self._places_finite(degree):
+            return p
+
+        for p in self._places_infinite(degree):
+            return p
+
+        return None
+
     def places(self, degree=1):
         """
         Return a list of the places with ``degree``.
@@ -3207,7 +3248,7 @@ class FunctionField_global(FunctionField_simple):
         degree = Integer(degree)
 
         for d in degree.divisors():
-            for p in K.places_finite(degree=d):
+            for p in K._places_finite(degree=d):
                 for prime,_,_ in O.decomposition(p.prime_ideal()):
                     place = prime.place()
                     if place.degree() == degree:
@@ -4606,11 +4647,12 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         O = self.maximal_order()
         R = O._ring
-        G = R.polynomials(of_degree=degree)
+        G = R.polynomials(max_degree=degree - 1)
+        lm = R.monomial(degree)
         for g in G:
-            if not (g.is_monic() and g.is_irreducible()):
-                continue
-            yield O.ideal(g).place()
+            h = lm + g
+            if h.is_irreducible():
+                yield O.ideal(h).place()
 
     def place_infinite(self):
         """
@@ -4623,6 +4665,35 @@ class RationalFunctionField_global(RationalFunctionField):
             Place (1/x)
         """
         return self.maximal_order_infinite().prime_ideal().place()
+
+    def get_place(self, degree):
+        """
+        Return a place of ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- a positive integer
+
+        EXAMPLES::
+
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: K.get_place(1)
+            Place (x)
+            sage: K.get_place(2)
+            Place (x^2 + x + 1)
+            sage: K.get_place(3)
+            Place (x^3 + x + 1)
+            sage: K.get_place(4)
+            Place (x^4 + x + 1)
+            sage: K.get_place(5)
+            Place (x^5 + x^2 + 1)
+
+        """
+        for p in self._places_finite(degree):
+            return p
+
+        assert False, "there is a bug around"
 
     @cached_method
     def higher_derivation(self):

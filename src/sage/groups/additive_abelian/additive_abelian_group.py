@@ -136,7 +136,6 @@ def cover_and_relations_from_invariants(invs):
         [0 2 0]
         [0 0 3])
     """
-    from six.moves import range
     n = len(invs)
     A = ZZ**n
     B = A.span([A.gen(i) * invs[i] for i in range(n)])
@@ -166,7 +165,6 @@ class AdditiveAbelianGroupElement(FGP_Element):
             sage: v._hermite_lift()
             (1, 0)
         """
-        from six.moves import range
         y = self.lift()
         H = self.parent().W().basis_matrix()
         pivot_rows = H.pivot_rows()
@@ -466,7 +464,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
             TypeError: Additive Abelian group must be finite
         """
         # GAP does not support infinite permutation groups
-        if not self.is_finite(): 
+        if not self.is_finite():
             raise TypeError('Additive Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)
