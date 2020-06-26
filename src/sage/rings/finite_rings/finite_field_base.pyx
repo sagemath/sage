@@ -554,6 +554,10 @@ cdef class FiniteField(Field):
               To:   Finite Field in z4 of size 2^4
               Defn: z2 |--> z4^2 + z4
             sage: GF(3^2).extension(3, absolute=False)._any_embedding(GF(3^12))
+            Ring morphism:
+              From: Finite Field in z6 of size 3^6 over its base
+              To:   Finite Field in z12 of size 3^12
+              Defn: z6 |--> z12^11 + 2*z12^9 + 2*z12^8 + 2*z12^7 + z12^5 + z12^3 + 2*z12^2 + 1
         """
         if codomain.has_coerce_map_from(self):
             return codomain.coerce_map_from(self)
@@ -924,6 +928,7 @@ cdef class FiniteField(Field):
             sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
             x^2 + 2
             sage: GF(4).extension(2, absolute=False).modulus()
+            x^2 + z2*x + z2
 
         """
         # Normally, this is set by the constructor of the implementation
@@ -1060,7 +1065,7 @@ cdef class FiniteField(Field):
 
     cpdef _coerce_map_from_(self, R):
         r"""
-        Canonical coercion to ``self``.
+        Canonical coercion to this finite field.
 
         TESTS::
 
@@ -1172,16 +1177,16 @@ cdef class FiniteField(Field):
         if self.base() is self:
             # this is not of type FiniteField_prime_modn
             from sage.rings.integer import Integer
-            return AlgebraicExtensionFunctor([self.polynomial()], [None], [None]), self.base_ring()
+            return AlgebraicExtensionFunctor([self.polynomial()], [None], [None], implementations=["GF"], absolute=False), self.base_ring()
         elif hasattr(self, '_prefix'):
             return (AlgebraicExtensionFunctor([self.degree()], [self.variable_name()], [None],
-                                              prefix=self._prefix),
+                                              prefix=self._prefix, implementations=["GF"], absolute=False),
                     self.base_ring())
         else:
-            return (AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None]),
+            return (AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], implementations=["GF"], absolute=False),
                     self.base_ring())
 
-    def extension(self, modulus, name=None, names=None, map=False, absolute=None, **kwds):
+    def extension(self, modulus, name=None, names=None, map=False, absolute=None, implementation=None, **kwds):
         """
         Return an extension of this finite field.
 
@@ -1197,6 +1202,19 @@ cdef class FiniteField(Field):
           return just the extension `E`; if ``True``, return a pair
           `(E, f)`, where `f` is an embedding of ``self`` into `E`.
 
+        - ``absolute`` -- boolean (default: ``None``): if ``True``,
+          return the absolute finite field of this extension.
+          This is currently the default behavior when ``modulus`` is
+          an integer, but we will be changing the default to always be relative
+          after a deprecation period.
+
+        - ``implementation`` -- string, either ``"GF"`` or ``"PQR"``.
+          In the first case we use relative extensions of finite fields,
+          while in the second we use the generic ``PolynomialQuotientRing``.
+          The default is currently ``"PQR"``, but this is only for backward
+          compatibility.  It will be changed to ``"GF"`` eventually in the
+          case that the modulus is irreducible.
+
         - ``**kwds``: further keywords, passed to the finite field
           constructor.
 
@@ -1209,15 +1227,26 @@ cdef class FiniteField(Field):
 
             sage: k = GF(2)
             sage: R.<x> = k[]
-            sage: k.extension(x^1000 + x^5 + x^4 + x^3 + 1, 'a')
+            sage: k.extension(x^1000 + x^5 + x^4 + x^3 + 1, 'a', implementation="GF")
             Finite Field in a of size 2^1000
             sage: k = GF(3^4)
             sage: R.<x> = k[]
             sage: k.extension(3, absolute=True)
             Finite Field in z12 of size 3^12
-            sage: K = k.extension(2, 'a', absolute=True)
+
+        The base ring will have a coercion to the extension if it is constructed
+        as a relative extension or if you don't specify variable names (so that it
+        is part of the same algebraic closure)::
+
+            sage: K = k.extension(2, 'a', absolute=False)
             sage: k.is_subring(K)
             True
+            sage: K = k.extension(2, absolute=True)
+            sage: k.is_subring(K)
+            True
+            sage: K = k.extension(2, 'a', absolute=True)
+            sage: k.is_subring(K)
+            False
 
         An example using the ``map`` argument::
 
@@ -1233,11 +1262,10 @@ cdef class FiniteField(Field):
             sage: f.parent()
             Set of field embeddings from Finite Field of size 5 to Finite Field in b of size 5^2
 
-        Extensions of non-prime finite fields by polynomials are not yet
-        supported: we fall back to generic code::
+        Extensions of non-prime finite fields by polynomials are now supported::
 
-            sage: l.<b> = k.extension(x^5 + x^2 + x - 1); l
-            Univariate Quotient Polynomial Ring in x over Finite Field in z4 of size 3^4 with modulus x^5 + x^2 + x + 2
+            sage: l.<b> = k.extension(x^5 + x^2 + x - 1, implementation="GF"); l
+            Finite Field in b of size 3^20 over its base
 
         A relative extensions::
 
@@ -1259,9 +1287,15 @@ cdef class FiniteField(Field):
         from sage.rings.all import PolynomialRing
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         from sage.rings.integer import Integer
+        from sage.misc.superseded import deprecation
 
         if name is None and names is not None:
             name = names
+        if names is None and name is not None:
+            names = (name,)
+
+        if implementation not in [None, "GF", "PQR"]:
+            raise ValueError("Unrecognized implementation %s" % implementation)
 
         if isinstance(modulus, (list, tuple)):
             modulus = PolynomialRing(self, 'x')(modulus)
@@ -1270,28 +1304,39 @@ cdef class FiniteField(Field):
             relative_degree = Integer(modulus)
             modulus = None
             is_field = True
+            if implementation == "PQR":
+                # We could find a defining polynomial and use it to create a PQR....
+                raise NotImplementedError("PQR implementation incompatible with just specifying extension degree")
+            if absolute is None:
+                if self.base() is not self:
+                    deprecation(28485, "extension() will produce an absolute extension since you did not specify the `absolute` keyword argument. In the future this will default to a relative extension. If you want to keep the current behaviour, use or extension(…, absolute=True), otherwise use extension(…, absolute=False)")
+                # Once the above deprecation warning has been removed, add the following one.
+                # (I know this is silly, but we can't think of a better way to do this)
+                # from sage.misc.superseded import deprecation
+                # if absolute:
+                #     deprecation(28485, "the absolute keyword is deprecated. Use .extension(…).absolute_field() instead.")
+                # else:
+                #     deprecation(28485, "the absolute keyword is deprecated. There is no need to specify it explicitly to create a relative extension.")
+                absolute = True
+            implementation = "GF"
         elif is_Polynomial(modulus):
             relative_degree = modulus.degree()
             modulus = modulus.change_ring(self)
             is_field = modulus.is_irreducible()
+            if implementation is None:
+                implementation = "PQR"
+                if is_field:
+                    deprecation(28485, "extension() will produce a polynomial quotient ring since you did not specify the `implementation` keyword. In the future this will change to producing a relative extension of finite fields. If you want to keep the current behavior, use extension(…, implementation='PQR'), otherwise use extension(…, implementation='GF')")
+            if implementation == "GF":
+                if not is_field:
+                    raise ValueError("GF implementation only available for field extensions")
+                if absolute is None:
+                    absolute = False
+            else:
+                if absolute:
+                    raise NotImplementedError("absolute extensions not available for polynomial quotient rings")
         else:
             raise TypeError("unsupported modulus for finite field extension")
-
-        if absolute is None:
-            absolute = False
-            if is_field and self.base() is not self:
-                from sage.misc.superseded import deprecation
-                deprecation(23316, "extension() will produce an absolute extension since you did not specify the `absolute` keyword argument. In the future this will default to a relative extension. If you want to keep the current behaviour, use extension(…, absolute=True), otherwise use extension(…, absolute=False)")
-                absolute = True
-        else:
-            pass
-            # Once the above deprecation warning has been removed, add the following one.
-            # (I know this is silly, but we can't think of a better way to do this)
-            # from sage.misc.superseded import deprecation
-            # if absolute:
-            #     deprecation(23316, "the absolute keyword is deprecated. Use .extension(…).absolute_field() instead.")
-            # else:
-            #     deprecation(23316, "the absolute keyword is deprecated. There is no need to specify it explicitly to create a relative extension.")
 
         absolute_degree = self.absolute_degree() * relative_degree
 
@@ -1300,11 +1345,10 @@ cdef class FiniteField(Field):
             modulus = PolynomialRing(self, 'x').gen()
 
         # Create the actual (relative) extension ring E
-        if is_field:
+        if implementation == "GF":
             E = GF(self.characteristic() ** absolute_degree, name=name, modulus=modulus, base=None if absolute else self, **kwds)
         else:
             E = Field.extension(self, modulus, name=name, **kwds)
-
         if map:
             self_to_E = E.coerce_map_from(self)
             if self_to_E is None:
@@ -1316,9 +1360,6 @@ cdef class FiniteField(Field):
                 self_to_E = self.hom([self.modulus().change_ring(base_hom).any_root()], base_map=base_hom)
 
         if absolute:
-            if not is_field:
-                raise NotImplementedError("non-field extensions of finite fields not supported yet when absolute=True")
-
             F = E.absolute_field(map=map, names=names)
             if map:
                 F, F_to_E, E_to_F = F

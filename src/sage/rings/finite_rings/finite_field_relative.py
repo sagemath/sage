@@ -10,7 +10,7 @@ EXAMPLES::
 
     sage: k.<a> = GF(4)
     sage: R.<x> = k[]
-    sage: l.<b> = k.extension(x^2 + x + a, absolute=False); l
+    sage: l.<b> = k.extension(x^2 + x + a, implementation="GF"); l
     Finite Field in b of size 2^4 over its base
     sage: l.degree()
     2
@@ -53,7 +53,7 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
         sage: k.<a> = GF(4)
         sage: R.<x> = k[]
-        sage: l.<b> = k.extension(x^2 + x + a, absolute=False); l
+        sage: l.<b> = k.extension(x^2 + x + a, implementation="GF"); l
         Finite Field in b of size 2^4 over its base
 
     Extensions can also be constructed by just specifying degrees::
@@ -85,8 +85,8 @@ class FiniteField_relative(FiniteField, RingExtensionWithGen):
 
             sage: k.<a> = GF(4)
             sage: R.<x> = k[]
-            sage: l.<b> = k.extension(x^2 + x + a, absolute=False)
-        
+            sage: l.<b> = k.extension(x^2 + x + a, implementation="GF")
+
         # TODO: actually do that
 
         """

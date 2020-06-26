@@ -511,7 +511,7 @@ class FiniteFieldFactory(UniqueFactory):
         EXAMPLES::
 
             sage: GF.create_key_and_extra_args(9, 'a')
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
 
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
@@ -525,9 +525,9 @@ class FiniteFieldFactory(UniqueFactory):
         using givaro::
 
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None), {})
             sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)
-            ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None), {})
+            ((16, ('a',), x^4 + x + 1, None, 'ntl', 2, 4, True, None, None, None), {})
             sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')
             True
 
@@ -546,7 +546,7 @@ class FiniteFieldFactory(UniqueFactory):
         but we ignore them as they are not used, see :trac:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)
-            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+            ((9, ('a',), x^2 + 2*x + 2, None, 'givaro', 3, 2, True, None, 'poly', True), {})
         """
         import sage.arith.all
         from sage.structure.proof.all import WithProof, arithmetic
@@ -594,7 +594,12 @@ class FiniteFieldFactory(UniqueFactory):
             # determine generator names and prefix
             if names is None:
                 names = name
-            if names or modulus or base:
+            if absolute_degree == 1 and base is None:
+                # The name does not matter for Fp itself so we explicitly
+                # ignore it to get no distinct copies of Fp.
+                names = ('x',)
+                prefix = prefix or 'z'
+            elif names or modulus or base:
                 # The prefix is used as a flag to signal to the field that it
                 # lives in a compatible tower of finite fields inside Fpbar.
                 # When either of these are specified, we need to signal that
@@ -602,10 +607,6 @@ class FiniteFieldFactory(UniqueFactory):
                 prefix = None
             else:
                 prefix = prefix or 'z'
-            if absolute_degree == 1 and base is None:
-                # The name does not matter for Fp itself so we explicitly
-                # ignore it to get no distinct copies of Fp.
-                names = ('x',)
             if names is None:
                 names = ((prefix or 'z') + str(absolute_degree),)
             if names is not None:
@@ -767,6 +768,7 @@ class FiniteFieldFactory(UniqueFactory):
 
         # TODO: This needs to change. Old pickles should unpickle to unique
         # parents, not to copies.
+        base = None
         if len(key) == 5:
             # for backward compatibility of pickles (see trac 10975).
             order, name, modulus, impl, _ = key
@@ -787,7 +789,6 @@ class FiniteFieldFactory(UniqueFactory):
             elem_cache = kwds.get('elem_cache', (order < 500))
         elif len(key) == 10:
             order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache = key
-            base = None
         else:
             order, name, modulus, base, impl, p, n, proof, prefix, repr, elem_cache = key
 
