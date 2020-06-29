@@ -28,8 +28,7 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 
 from types import GeneratorType
 
-from sage.categories.rings import Rings
-from sage.categories.fields import Fields
+import sage.rings.ring
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
@@ -1863,6 +1862,7 @@ def FieldIdeal(R):
           over Finite Field in alpha of size 2^4
     """
     q = R.base_ring().order()
+
     import sage.rings.infinity
     if q is sage.rings.infinity.infinity:
         raise TypeError("Cannot construct field ideal for R.base_ring().order()==infinity")
