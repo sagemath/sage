@@ -240,7 +240,7 @@ def downward_monotonic(ambient_dim=None, lattice=None):
         1
 
     The dual of the downward-monotonic cone is the Schur cone
-    [GS2010]_ that induces the majorization ordering::
+    [GS2010]_ that induces the majorization preordering::
 
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.downward_monotonic(ambient_dim).dual()
@@ -628,8 +628,8 @@ def schur(ambient_dim=None, lattice=None):
     The Schur cone in ``ambient_dim`` dimensions, or living
     in ``lattice``.
 
-    The Schur cone in `n` dimensions induces the majorization ordering
-    on the ambient space. If `\left\{e_{1}, e_{2}, \ldots,
+    The Schur cone in `n` dimensions induces the majorization
+    preordering on the ambient space. If `\left\{e_{1}, e_{2}, \ldots,
     e_{n}\right\}` is the standard basis for the space, then its
     generators are `\left\{e_{i} - e_{i+1}\ |\ 1 \le i \le
     n-1\right\}`. Its dual is the downward monotonic cone.
@@ -704,21 +704,25 @@ def schur(ambient_dim=None, lattice=None):
         sage: cones.schur(0).is_trivial()
         True
 
-    The Schur cone induces the majorization ordering, as in Iusem
-    and Seeger's [IS2005]_ Example 7.3::
+    The Schur cone induces the majorization preordering, as in Iusem
+    and Seeger's [IS2005]_ Example 7.3 or Niezgoda's [Niez1998]_
+    Example 2.2::
 
+        sage: ambient_dim = ZZ.random_element(10)
+        sage: V = VectorSpace(QQ, ambient_dim)
+        sage: rearrange = lambda z: V(sorted(z.list(),reverse=True))
         sage: def majorized_by(x,y):
+        ....:     x = rearrange(x)
+        ....:     y = rearrange(y)
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
         ....:                 for i in range(x.degree()-1))
         ....:             and sum(x) == sum(y))
-        sage: ambient_dim = ZZ.random_element(10)
-        sage: V = VectorSpace(QQ, ambient_dim)
         sage: S = cones.schur(ambient_dim)
         sage: majorized_by(V.zero(), S.random_element())
         True
         sage: x = V.random_element()
         sage: y = V.random_element()
-        sage: majorized_by(x,y) == ( (y-x) in S )
+        sage: majorized_by(x,y) == ((rearrange(y)-rearrange(x)) in S)
         True
 
     If a ``lattice`` was given, it is actually used::
