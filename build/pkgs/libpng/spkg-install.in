@@ -3,6 +3,6 @@ unset GREP_OPTIONS
 
 cd src
 
-sdh_configure --enable-shared=yes
+sdh_configure --enable-shared --disable-static
 sdh_make
 sdh_make_install
