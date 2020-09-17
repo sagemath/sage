@@ -396,9 +396,11 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: k.<t> = GF(3^7)
-            sage: K.<T>, f = k.extension(3, map=True)
+            sage: K.<T>, f = k.extension(3, absolute=True, map=True)
+            sage: t.minpoly()(f(t))
+            0
             sage: b = f(t^2); b
-            2*T^20 + 2*T^19 + T^18 + T^15 + 2*T^14 + 2*T^13 + 2*T^12 + T^8 + 2*T^6 + T^5 + 2*T^4 + T^3 + 2*T^2 + T
+            T^20 + T^19 + 2*T^17 + 2*T^15 + T^13 + T^10 + T^9 + T^5 + T^2 + 1
             sage: f.inverse_image(b)
             t^2
             sage: f.inverse_image(T)
