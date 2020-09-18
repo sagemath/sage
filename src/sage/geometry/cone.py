@@ -6327,7 +6327,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # cone" and not reference the argument of a function the user
         # has never heard of in some internal module.
         if self.is_trivial() or self.is_full_space():
-            raise ValueError("this cone cannot be trivial or the ambient space")
+            raise ValueError("cone should not be trivial or the ambient space")
 
         if other is None:
             other = self
@@ -6474,7 +6474,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # cone" and not reference the argument of a function the user
         # has never heard of in some internal module.
         if self.is_trivial() or self.is_full_space():
-            raise ValueError("this cone cannot be trivial or the ambient space")
+            raise ValueError("cone should not be trivial or the ambient space")
 
         if other is None:
             other = self
