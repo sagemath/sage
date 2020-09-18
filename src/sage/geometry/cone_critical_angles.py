@@ -196,15 +196,13 @@ def _random_admissible_cone(ambient_dim):
         sage: K = _random_admissible_cone(0)
         Traceback (most recent call last):
         ...
-        ValueError: The ambient dimension must be a positive integer (there
-        are no nontrivial cones in dimension 0).
+        ValueError: there are no nontrivial cones in dimension 0
     """
     if ambient_dim < 1 or not ambient_dim in ZZ:
         # The random_cone() method already crashes if we ask the
         # impossible of it, but having this here emits a more sensible
         # error message.
-        raise ValueError("The ambient dimension must be a positive integer "
-                         "(there are no nontrivial cones in dimension %d)."
+        raise ValueError("there are no nontrivial cones in dimension %d"
                          % ambient_dim)
 
     args = { 'min_ambient_dim': ambient_dim,
