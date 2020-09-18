@@ -406,7 +406,6 @@ def _solve_gevp_naive(GG, HH, M, I, J):
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
         sage: GG = G.transpose()*G
-        sage: G_index_sets = list(gevp_licis(G))
         sage: I = [0]
         sage: J = [1]
         sage: _solve_gevp_naive(GG,GG,GG,I,J)
@@ -496,7 +495,6 @@ def solve_gevp_zero(M, I, J):
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
         sage: GG = G.transpose()*G
-        sage: G_index_sets = list(gevp_licis(G))
         sage: I = [0]
         sage: J = [1]
         sage: solve_gevp_zero(GG,I,J)
