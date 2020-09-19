@@ -274,25 +274,18 @@ def _is_critical(P, Q, theta, u, v):
     # that they're equal(ish).
     u_dot_v = u.inner_product(v)
 
-    # The standard cone containment tests don't work with normalized
-    # vectors in QQbar.
-    u_is_in_P = all( g.inner_product(u) >= 0 for g in P.dual() )
-    v_is_in_Q = all( h.inner_product(v) >= 0 for h in Q.dual() )
-
     if u.norm() != 1 or v.norm() != 1:
         return False
 
-    if not u_is_in_P or not v_is_in_Q:
+    if (u not in P) or (v not in Q):
         return False
 
     # The dual(P) criticality condition
-    y = v - u_dot_v*u
-    if not all( y.inner_product(g) >= 0 for g in P ):
+    if (v - u_dot_v*u) not in P.dual():
         return False
 
     # The dual(Q) criticality condition
-    z = u - u_dot_v*v
-    if not all( z.inner_product(h) >= 0 for h in Q ):
+    if (u - u_dot_v*v) not in Q.dual():
         return False
 
     # Since we're given the theta that supposedly corresponds to (u,v),
