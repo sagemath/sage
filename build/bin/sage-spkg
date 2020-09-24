@@ -302,6 +302,10 @@ export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 # in upstream.
 PKG_VER="${PKG_NAME#${PKG_BASE}}"
 PKG_VER="${PKG_VER#-}"
+if [ -n "$PKG_VER" ]; then
+    echo >&2 "Error: Selecting a different version of a package is no longer supported"
+    exit 1
+fi
 PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
 LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null`
 PKG_VER="$LOCAL_PKG_VER"
@@ -349,25 +353,19 @@ if [ $INFO -ne 0 ]; then
     exec sage-spkg-info $PKG_BASE
 fi
 
-# If we haven't found the package yet, we must download it
-if [ ! -f "$PKG_SRC" ]; then
-    if [ -n "$PKG_NAME_UPSTREAM" ]; then
-        # This is the new-style package way of downloading the tarball
-        if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
-            error_msg "Error downloading $PKG_NAME_UPSTREAM"
-            exit 1
-        fi
-        PKG_SRC="$SAGE_DISTFILES/$PKG_NAME_UPSTREAM"
-    else
-        echo >&2 "Error: Installing old-style SPKGs is no longer supported"
+if [ -n "$PKG_NAME_UPSTREAM" ]; then
+    # Normal package
+    if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
+        error_msg "Error downloading $PKG_NAME_UPSTREAM"
         exit 1
     fi
 fi
+PKG_SRC="$SAGE_DISTFILES/$PKG_NAME_UPSTREAM"
 
 # Do a final check that PKG_SRC is a file with an absolute path
 cd /
-if [ ! -f "$PKG_SRC" ]; then
-    echo >&2 "Error: spkg file '$PKG_SRC' not found."
+if [ ! -d "$PKG_SRC" ]; then
+    echo >&2 "Error: spkg directory '$PKG_SRC' not found."
     echo >&2 "This shouldn't happen, it is a bug in the sage-spkg script."
     exit 1
 fi
