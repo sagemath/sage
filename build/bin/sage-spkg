@@ -297,13 +297,11 @@ export SAGE_SPKG_SCRIPTS="$SAGE_INST_LOCAL/var/lib/sage/scripts"
 export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 
 # PKG_SRC should look like "package-VERSION" or just "package".
-# If VERSION matches the version in build/pkgs or there is no version
-# specified, use the local scripts; otherwise we try to find a package
-# in upstream.
+# VERSION, if provided, must match the version in build/pkgs.
 PKG_VER="${PKG_NAME#${PKG_BASE}}"
 PKG_VER="${PKG_VER#-}"
 PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
-LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null`
+LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null || echo none`
 PKG_VER="$LOCAL_PKG_VER"
 if [ -n "$PKG_VER" -a "$PKG_VER" != "$LOCAL_PKG_VER" ]; then
     echo >&2 "Error: Selecting a different version of a package is no longer supported"
