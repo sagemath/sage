@@ -578,11 +578,14 @@ echo "****************************************************"
 
 ##################################################################
 # Poison the proxy variable to forbid downloads in spkg-install
+# for normal packages
 ##################################################################
-export http_proxy=http://192.0.2.0:5187/
-export https_proxy=$http_proxy
-export ftp_proxy=$http_proxy
-export rsync_proxy=$http_proxy
+if [ -f checksums.ini ]; then
+    export http_proxy=http://192.0.2.0:5187/
+    export https_proxy=$http_proxy
+    export ftp_proxy=$http_proxy
+    export rsync_proxy=$http_proxy
+fi
 
 ##################################################################
 # We need to run sage-rebase.sh for each package installed, but it
