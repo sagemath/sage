@@ -217,7 +217,7 @@ cdef class LazyImport(object):
             return self._object
 
         if startup_guard and not self._at_startup:
-            raise RuntimeError(f"resolving lazy import {self._name} during startup")
+            print(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
             print('Option ``at_startup=True`` for lazy import {0} not needed anymore'.format(self._name))
         try:
