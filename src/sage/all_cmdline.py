@@ -23,8 +23,9 @@ del absolute_import, division, print_function
 
 sage_mode = 'cmdline'
 
-from sage.all import *
-from sage.calculus.predefined import x
+import sage.misc.startup_guard as startup_guard
 
-sage.misc.session.init()
-
+with startup_guard.startup():
+    from sage.all import *
+    from sage.calculus.predefined import x
+    sage.misc.session.init()

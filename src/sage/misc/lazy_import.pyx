@@ -58,6 +58,7 @@ AUTHOR:
 cimport cython
 from cpython.object cimport PyObject_RichCompare
 from cpython.number cimport PyNumber_TrueDivide, PyNumber_Power, PyNumber_Index
+import sage.misc.startup_guard as startup_guard
 
 cdef extern from *:
     int likely(int) nogil  # Defined by Cython
@@ -75,66 +76,6 @@ cdef inline obj(x):
         return (<LazyImport>x).get_object()
     else:
         return x
-
-
-# boolean to determine whether Sage is still starting up
-cdef bint startup_guard = True
-
-
-cpdef finish_startup():
-    """
-    This function must be called exactly once at the end of the Sage
-    import process
-
-    TESTS::
-
-        sage: from sage.misc.lazy_import import finish_startup
-        sage: finish_startup()
-        Traceback (most recent call last):
-        ...
-        AssertionError: finish_startup() must be called exactly once
-    """
-    global startup_guard
-    assert startup_guard, 'finish_startup() must be called exactly once'
-    startup_guard = False
-
-cpdef bint is_during_startup():
-    """
-    Return whether Sage is currently starting up.
-
-    OUTPUT:
-
-    Boolean
-
-    TESTS::
-
-        sage: from sage.misc.lazy_import import is_during_startup
-        sage: is_during_startup()
-        False
-    """
-    global startup_guard
-    return startup_guard
-
-cpdef test_fake_startup():
-    """
-    For testing purposes only.
-
-    Switch the startup lazy import guard back on.
-
-    EXAMPLES::
-
-        sage: sage.misc.lazy_import.test_fake_startup()
-        sage: from sage.misc.lazy_import import lazy_import
-        sage: lazy_import('sage.rings.all', 'ZZ', 'my_ZZ')
-        sage: my_ZZ(123)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: resolving lazy import ZZ during startup
-        sage: sage.misc.lazy_import.finish_startup()
-    """
-    global startup_guard
-    startup_guard = True
-
 
 @cython.final
 cdef class LazyImport(object):
@@ -216,9 +157,9 @@ cdef class LazyImport(object):
         if self._object is not None:
             return self._object
 
-        if startup_guard and not self._at_startup:
-            print(f"Resolving lazy import {self._name} during startup")
-        elif self._at_startup and not startup_guard:
+        if startup_guard.IS_STARTUP and not self._at_startup:
+            raise RuntimeError(f"resolving lazy import {self._name} during startup")
+        elif self._at_startup and not startup_guard.IS_STARTUP:
             print('Option ``at_startup=True`` for lazy import {0} not needed anymore'.format(self._name))
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
