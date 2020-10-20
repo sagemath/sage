@@ -40,28 +40,28 @@ from sage.arith.misc import Sigma
 from sage.functions.other import floor, ceil, binomial, factorial
 
 
-class PlanePartition(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
-    r"""
-    A plane partition.
+#class PlanePartition(ClonableList,
+#        metaclass=InheritComparisonClasscallMetaclass):
+#    r"""
+#    A plane partition.
 
-    A *plane partition* is a stack of cubes in the positive orthant.
+#    A *plane partition* is a stack of cubes in the positive orthant.
 
-    INPUT:
+#    INPUT:
 
-    - ``PP`` -- a list of lists which represents a tableau
+#    - ``PP`` -- a list of lists which represents a tableau
 
-    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
-      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
-      `y`-axis, `z`-axis, respectively; if this is not given, it is
-      determined by the smallest box bounding ``PP``
+#    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
+#      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
+#      `y`-axis, `z`-axis, respectively; if this is not given, it is
+#      determined by the smallest box bounding ``PP``
 
-    OUTPUT:
+#    OUTPUT:
 
-    The plane partition whose tableau representation is ``PP``.
+#    The plane partition whose tableau representation is ``PP``.
+#    """
 
-
-@add_metaclass(InheritComparisonClasscallMetaclass)
+#@add_metaclass(InheritComparisonClasscallMetaclass)
 class PlanePartition(ClonableList):
     @staticmethod
     def __classcall_private__(cls, PP):
