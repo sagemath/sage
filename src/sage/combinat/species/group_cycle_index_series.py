@@ -70,7 +70,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 
 @cached_function
 def GroupCycleIndexSeriesRing(G, R = RationalField()):
-    """
+    r"""
     Return the ring of group cycle index series.
 
     EXAMPLES::
@@ -89,7 +89,7 @@ def GroupCycleIndexSeriesRing(G, R = RationalField()):
 
 class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
     def __init__(self, G, R = RationalField()):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
@@ -109,7 +109,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, CISR, G, element_class = GroupCycleIndexSeries, category = AlgebrasWithBasis(CISR), prefix = 'G')
 
     def product_on_basis(self, left, right):
-        """
+        r"""
         Return the product of two basis elements ``left`` and ``right`` of ``self``.
 
         Multiplication of `\Gamma`-cycle indices is defined componentwise.
@@ -131,11 +131,11 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         """
         if left == right:
             return self.monomial(left)
-        else:
-            return self(0)
+
+        return self(0)
 
     def one(self):
-        """
+        r"""
         Return the multiplicative identity element of this algebra.
 
         EXAMPLES::
@@ -150,7 +150,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         return self.sum(basis[k] for k in basis.keys())
 
     def _an_element_(self):
-        """
+        r"""
         Return a representative element of this algebra.
 
         EXAMPLES::
@@ -164,7 +164,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         return self.monomial(G.one()) + self.monomial(G.an_element())
 
     def _repr_(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
@@ -174,7 +174,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         return "Ring of (%s)-Cycle Index Series over %s" %(self._group, self._coeff_ring)
 
 class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
-    """
+    r"""
 
     EXAMPLES::
 
@@ -186,7 +186,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
     """
 
     def quotient(self):
-        """Return the quotient of this group cycle index.
+        r"""
+        Return the quotient of this group cycle index.
 
         This is defined to be the ordinary cycle index `F / \Gamma` obtained from a
         `\Gamma`-cycle index `F` by:
@@ -220,7 +221,8 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
         return 1/self.parent()._group.cardinality() * sum(self.coefficients())
 
     def composition(self, y, test_constant_term_is_zero = True):
-        """Return the group-cycle-index plethysm of ``self`` with ``y``.
+        r"""
+        Return the group-cycle-index plethysm of ``self`` with ``y``.
 
         Plethysm of group cycle index series is defined by a sort of 'mixing' operation in [Hend]_:
 
@@ -297,9 +299,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
         def term_map( term, g ):
             if test_constant_term_is_zero and term == 0:
                 return cisr.zero()
-            else:
-                res = sum(coeff*monomial_composer(part, g) for part,coeff in term)
-                return res
+
+            res = sum(coeff*monomial_composer(part, g) for part,coeff in term)
+            return res
 
         def component_builder( g ):
             if test_constant_term_is_zero and self[g] == 0:
@@ -317,7 +319,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
     __call__ = composition
 
     def functorial_composition(self, y):
-        """
+        r"""
         Return the functorial composition of ``self`` with ``y``.
 
         Functorial composition of group cycle index series satisfies
@@ -412,7 +414,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
         return result
 
     def derivative(self):
-        """
+        r"""
         Return the cycle-index derivative of ``self``.
 
         Differentiation of group cycle index series is defined termwise:
@@ -433,7 +435,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
         return self.map_coefficients(lambda x: x.derivative())
 
     def restricted(self, min=None, max=None):
-        """
+        r"""
         Return the restriction of ``self`` with coefficients starting at degree
         ``min`` and going up to, but not including, degree ``max``.
         If ``min`` is not specified, it is assumed to be zero. If ``max`` is not
@@ -454,7 +456,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
         return self.map_coefficients(lambda x: x.restricted(min=min, max=max))
 
     def define(self, x):
-        """
+        r"""
         Set ``self`` equal to ``x``, possibly recursively.
 
         EXAMPLES:

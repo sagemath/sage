@@ -71,7 +71,7 @@ def LinearOrderWithReversalGroupCycleIndex():
 
 @cached_function
 def CyclicOrderWithReversalGroupCycleIndex():
-    """
+    r"""
     Returns the $\mathfrak{S}_{2}$-cycle index of the species $C$
     of cyclically-ordered sets with the order-reversing action of
     $\mathfrak{S}_{2}$.
