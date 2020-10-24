@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(CDDLIB)
+$(MP_LIBRARY) cddlib
 
 ----------
 All lines of this file are ignored except the first.

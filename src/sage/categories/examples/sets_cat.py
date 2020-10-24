@@ -13,12 +13,12 @@ from sage.structure.element import Element
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer, IntegerWrapper
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.arith import is_prime
+from sage.arith.all import is_prime
 from sage.structure.unique_representation import UniqueRepresentation
 
 
 class PrimeNumbers(UniqueRepresentation, Parent):
-    """
+    r"""
     An example of parent in the category of sets: the set of prime numbers.
 
     The elements are represented as plain integers in `\ZZ` (facade
@@ -60,10 +60,12 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -73,6 +75,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -235,7 +238,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def next(self, i):
         """
-        Returns the next prime number
+        Return the next prime number.
 
         EXAMPLES::
 
@@ -250,7 +253,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def some_elements(self):
         """
-        Returns some prime numbers
+        Return some prime numbers.
 
         EXAMPLES::
 
@@ -268,7 +271,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     class Element(Element):
         def is_prime(self):
             """
-            Returns if a prime number is prime = True !
+            Return whether ``self`` is a prime number.
 
             EXAMPLES::
 
@@ -281,13 +284,20 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
         def next(self):
             """
-            Returns the next prime number
+            Return the next prime number.
 
             EXAMPLES::
 
                 sage: P = Sets().example("inherits")
-                sage: next(P.an_element())
+                sage: p = P.an_element(); p
+                47
+                sage: p.next()
                 53
+
+            .. NOTE::
+
+                This method is not meant to implement the protocol iterator,
+                and thus not subject to Python 2 vs Python 3 incompatibilities.
             """
             return self.parent().next(self)
 
@@ -343,10 +353,12 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -355,6 +367,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -476,7 +489,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
             sage: P.category()
             Category of sets
             sage: P(13) == 13
-            False
+            True
             sage: ZZ(P(13)) == 13
             True
             sage: P(13) + 1 == 14
@@ -487,8 +500,6 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         from sage.categories.homset import Hom
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
-
-
 
     def _repr_(self):
         """
@@ -549,7 +560,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
 
 #*************************************************************************#
 class PrimeNumbers_Facade(PrimeNumbers_Abstract):
-    """
+    r"""
     An example of parent in the category of sets: the set of prime numbers.
 
     In this alternative implementation, the elements are represented
@@ -587,15 +598,15 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: z.parent()
         Integer Ring
 
-    The disadvantage of this implementation is that the element doesn't know
-    that they are primes so that prime testing is slow::
+    The disadvantage of this implementation is that the elements do not know
+    that they are prime, so that prime testing is slow::
 
         sage: pf = Sets().example("facade").an_element()
         sage: timeit("pf.is_prime()") #    random
         625 loops, best of 3: 4.1 us per loop
 
     compared to the other implementations where prime testing is only done if
-    needed during the construction of the element. Then the elements themselve
+    needed during the construction of the element, and later on the elements
     "know" that they are prime::
 
         sage: pw = Sets().example("wrapper").an_element()
@@ -606,18 +617,18 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         sage: timeit("pw.is_prime()")    # random
         625 loops, best of 3: 854 ns per loop
 
-    And moreover, the next methods for the element does not exists::
+    Note also that the ``next`` method for the elements does not exist::
 
         sage: pf.next()
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'next'
 
-    whereas::
+    unlike in the other implementations::
 
-        sage: next(pw)
+        sage: pw.next()
         53
-        sage: next(pi)
+        sage: pi.next()
         53
 
     TESTS::
@@ -626,10 +637,12 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -639,6 +652,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass

@@ -1,10 +1,13 @@
 """
-Sage wrapper around pexpect's ``spawn`` class
+Sage wrapper around pexpect's ``spawn`` class and
+the ptyprocess's ``PtyProcess`` class.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-02-01): initial version, :trac:`17686`
+- Jeroen Demeyer (2015-02-01): initial version, see :trac:`17686`.
 
+- Jeroen Demeyer (2015-12-04): add support for pexpect 4 + ptyprocess,
+  see :trac:`10295`.
 """
 
 #*****************************************************************************
@@ -18,6 +21,7 @@ AUTHOR:
 #*****************************************************************************
 
 from pexpect import *
+from ptyprocess import PtyProcess
 
 from cpython.ref cimport Py_INCREF
 from libc.signal cimport *
@@ -26,7 +30,8 @@ from posix.unistd cimport getpid, getpgid, close, fork
 
 from time import sleep
 
-from sage.parallel.safefork cimport ContainChildren
+from sage.cpython.string cimport str_to_bytes
+from sage.interfaces.process cimport ContainChildren
 
 
 class SageSpawn(spawn):
@@ -51,9 +56,32 @@ class SageSpawn(spawn):
         self.__name = kwds.pop("name", self.__class__.__name__)
         self.quit_string = kwds.pop("quit_string", None)
 
+        kwds.setdefault("ignore_sighup", True)
+
+        # Use a *serious* read buffer of 4MiB, not the ridiculous 2000 bytes
+        # that pexpect uses by default.
+        kwds.setdefault("maxread", 4194304)
+
         with ContainChildren(silent=True):
             spawn.__init__(self, *args, **kwds)
 
+        self.delaybeforesend = None
+        self.delayafterread = None
+
+    def _spawnpty(self, args, **kwds):
+        """
+        Create an instance of :class:`SagePtyProcess`.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.sagespawn import SageSpawn
+            sage: s = SageSpawn("sleep 1")
+            sage: s.ptyproc
+            SagePtyProcess.spawn(...)
+        """
+        ptyproc = SagePtyProcess.spawn(args, **kwds)
+        ptyproc.quit_string = self.quit_string
+        return ptyproc
 
     def __repr__(self):
         """
@@ -66,7 +94,7 @@ class SageSpawn(spawn):
             sage: s  # indirect doctest
             stupid process with PID ... running .../true
             sage: while s.isalive():  # Wait until the process finishes
-            ....:     sleep(0.1)
+            ....:     sleep(float(0.1))
             sage: s  # indirect doctest
             stupid process finished running .../true
         """
@@ -117,11 +145,12 @@ class SageSpawn(spawn):
             sage: from sage.interfaces.sagespawn import SageSpawn
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_peek("w")
-            sage: E.read()
-            'hello world\r\n'
+            sage: E.read().decode('ascii')
+            u'hello world\r\n'
         """
         ret = self.expect(*args, **kwds)
-        self.buffer = self.before + self.after + self.buffer
+        self._before = self.buffer_type()
+        self._before.write(self.before + self.after + self.buffer)
         return ret
 
     def expect_upto(self, *args, **kwds):
@@ -135,14 +164,17 @@ class SageSpawn(spawn):
             sage: from sage.interfaces.sagespawn import SageSpawn
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_upto("w")
-            sage: E.read()
-            'world\r\n'
+            sage: E.read().decode('ascii')
+            u'world\r\n'
         """
         ret = self.expect(*args, **kwds)
-        self.buffer = self.after + self.buffer
+        self._before = self.buffer_type()
+        self._before.write(self.after + self.buffer)
         return ret
 
-    def close(self):
+
+class SagePtyProcess(PtyProcess):
+    def close(self, force=None):
         """
         Quit the child process: send the quit string, close the
         pseudo-tty and kill the process.
@@ -156,18 +188,21 @@ class SageSpawn(spawn):
             sage: s = SageSpawn("sleep 1000")
             sage: s.close()
             sage: while s.isalive():  # long time (5 seconds)
-            ....:     sleep(0.1)
+            ....:     sleep(float(0.1))
         """
-        cdef int fd = self.child_fd
-        if fd != -1:
+        if not self.closed:
             if self.quit_string is not None:
                 try:
                     # This can fail if the process already exited
-                    self.sendline(self.quit_string)
-                except OSError:
+                    # PtyProcess.write takes bytes; ideally we would use
+                    # an encoding picked specifically for the target process
+                    # but the default (UTF-8) will do now, since I don't
+                    # think we have any non-ASCII quit_strings anyways.
+                    self.write(str_to_bytes(self.quit_string))
+                except (OSError, IOError):
                     pass
-            close(fd)
-            self.child_fd = -1
+            self.fileobj.close()
+            self.fd = -1
             self.closed = 1
             self.terminate_async()
 
@@ -193,12 +228,12 @@ class SageSpawn(spawn):
         Check that the process eventually dies after calling
         ``terminate_async``::
 
-            sage: s.terminate_async(interval=0.2)
+            sage: s.ptyproc.terminate_async(interval=0.2)
             sage: while True:
             ....:     try:
             ....:         os.kill(s.pid, 0)
             ....:     except OSError:
-            ....:         sleep(0.1)
+            ....:         sleep(float(0.1))
             ....:     else:
             ....:         break  # process got killed
         """

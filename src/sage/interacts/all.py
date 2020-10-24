@@ -7,19 +7,19 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.misc.lazy_import import lazy_import
 
-
-import calculus
-import geometry
-import statistics
-import fractals
-import algebra
-from library import demo
+from . import calculus
+from . import geometry
+from . import statistics
+from . import fractals
+from . import algebra
+lazy_import('sage.interacts.library', 'demo')

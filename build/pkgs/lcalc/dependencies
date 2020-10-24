@@ -1,4 +1,4 @@
-$(INST)/$(PARI) $(INST)/$(MPFR)
+pari mpfr
 
 ----------
 All lines of this file are ignored except the first.

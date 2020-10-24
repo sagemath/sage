@@ -14,7 +14,7 @@ suitable for parsing by MathJax.  The LaTeX macros are produced using
 the ``_latex_`` method for each Sage object listed in ``macros``, and
 the MathJax macros are produced from the LaTeX macros.  The list of
 LaTeX macros is used in the file
-``SAGE_DOC/common/conf.py`` to add to the preambles of
+``sage.docs.conf`` to add to the preambles of
 both the LaTeX file used to build the PDF version of the documentation
 and the LaTeX file used to build the HTML version.  The list of
 MathJax macros is used in the file
@@ -40,9 +40,9 @@ defined, and ``["GF", 4]`` would have raised an error, because to
 define the field with four elements in Sage, you also need to specify
 the name of a generator.)
 
-To see evidence of the results of the code here, run ``sage -docbuild
+To see evidence of the results of the code here, run ``sage --docbuild
 tutorial latex`` (for example), and look at the resulting LaTeX file in
-``SAGE_DOC/output/latex/en/tutorial/``.  The preamble should
+``SAGE_DOC/latex/en/tutorial/``.  The preamble should
 contain '\newcommand' lines for each of the entries in ``macros``.
 """
 
@@ -73,10 +73,11 @@ def produce_latex_macro(name, *sample_args):
     If the Sage object is not in the global name space, describe it
     like so::
 
-         sage: produce_latex_macro('sage.rings.finite_rings.constructor.FiniteField', 3)
+         sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)
          '\\newcommand{\\FiniteField}[1]{\\Bold{F}_{#1}}'
     """
-    from sage.misc.latex import LatexCall
+    from sage.misc.latex import LatexCall  # type: ignore
+    # this import is used inside a string below
     names_split = name.rsplit('.', 1)
     if len(names_split) == 1:
         module = 'sage.all'
@@ -91,7 +92,7 @@ def produce_latex_macro(name, *sample_args):
         args += str(x) + ','
     args += ')'
     exec('from ' + module + ' import ' + real_name)
-    if count > 0:
+    if count:
         defn = '[' + str(count) + ']{'
         defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
     else:
@@ -101,6 +102,7 @@ def produce_latex_macro(name, *sample_args):
         count += 1
         defn = defn.replace(str(x), "#" + str(count))
     return newcommand + defn
+
 
 def convert_latex_macro_to_mathjax(macro):
     r"""
@@ -146,10 +148,10 @@ def convert_latex_macro_to_mathjax(macro):
 # form [name, arguments], which will be passed to the function
 # produce_latex_macro: see that for more documentation.
 #
-# To see the results of this, run 'sage -docbuild tutorial latex' (for
+# To see the results of this, run 'sage --docbuild tutorial latex' (for
 # example -- you could replace 'tutorial' with your favorite piece of
 # documentation), and look at the resulting tex file in
-# SAGE_DOC/output/latex/en/tutorial.  The preamble should contain
+# SAGE_DOC/latex/en/tutorial.  The preamble should contain
 # \newcommand's for each of the entries here.
 macros = [["ZZ"],
           ["NN"],
@@ -167,7 +169,6 @@ macros = [["ZZ"],
           ["RDF"],
           ["RIF"],
           ["RLF"],
-          ["CFF"],
           ]
 
 # The following is to allow customization of typesetting of rings:

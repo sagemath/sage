@@ -1,6 +1,9 @@
 # distutils: depends = NTL/ZZ.h
+# distutils: libraries = ntl gmp
+# distutils: language = c++
+
 """
-Conversion between NTL's ``ZZ`` and various other types.
+Conversion between NTL's ``ZZ`` and various other types
 """
 
 #*****************************************************************************
@@ -16,7 +19,7 @@ Conversion between NTL's ``ZZ`` and various other types.
 from sage.libs.gmp.mpz cimport mpz_init, mpz_clear
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 
-cdef extern from "sage/libs/ntl/ntlwrap.cpp":
+cdef extern from "sage/libs/ntl/ntlwrap_impl.h":
     void ZZ_to_mpz(mpz_t output, ZZ_c* x)
     void mpz_to_ZZ(ZZ_c *output, mpz_srcptr x)
 

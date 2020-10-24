@@ -1,7 +1,6 @@
-from dokchitser import Dokchitser
+from sage.misc.lazy_import import lazy_import as _lazy_import_
 
-from lcalc import lcalc
-
-from sympow import sympow
-
-from zero_sums import LFunctionZeroSum
+_lazy_import_("sage.lfunctions.dokchitser", "Dokchitser")
+_lazy_import_("sage.lfunctions.sympow", "sympow")
+_lazy_import_("sage.lfunctions.zero_sums", "LFunctionZeroSum")
+_lazy_import_("sage.lfunctions.lcalc", "lcalc")

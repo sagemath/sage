@@ -16,7 +16,7 @@ Finite Fields
 .. toctree::
    :maxdepth: 2
 
-   sage/rings/finite_rings/constructor
+   sage/rings/finite_rings/finite_field_constructor
    sage/rings/finite_rings/finite_field_base
    sage/rings/finite_rings/element_base
    sage/rings/finite_rings/homset
@@ -39,7 +39,6 @@ Finite Fields Using Pari
 
    sage/rings/finite_rings/finite_field_pari_ffelt
    sage/rings/finite_rings/element_pari_ffelt
-   sage/rings/finite_rings/finite_field_ext_pari
 
 Finite Fields Using Givaro
 --------------------------

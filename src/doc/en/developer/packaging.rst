@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-packaging:
 
 ==========================
@@ -8,7 +10,7 @@ One of the mottoes of the Sage project is to not reinvent the wheel: If
 an algorithm is already implemented in a well-tested library then
 consider incorporating that library into Sage. The current list of
 available packages are the subdirectories of ``SAGE_ROOT/build/pkgs/``.
-The management of packages is done through a bash script located in
+The installation of packages is done through a bash script located in
 ``SAGE_ROOT/build/bin/sage-spkg``. This script is typically invoked by
 giving the command::
 
@@ -16,19 +18,11 @@ giving the command::
 
 options can be:
 
-- f: install a package even if the same version is already installed
-- s: do not delete temporary build directory
-- c: after installing, run the test suite for the spkg. This should
+- -f: install a package even if the same version is already installed
+- -s: do not delete temporary build directory
+- -c: after installing, run the test suite for the spkg. This should
   override the settings of ``SAGE_CHECK`` and ``SAGE_CHECK_PACKAGES``.
-- d: only download the package
-
-Not all packages are built by default, they are divided into standard,
-optional and experimental ones. Standard packages are built by default
-and have stringent quality requirements. Optional packages are subject
-to the same requirements (although these are tested not as much,
-so in practice they might break more often than standard packages).
-For experimental packages, the bar is much lower: even if there are some
-problems, the package can still be accepted.
+- -d: only download the package
 
 The section :ref:`section-directory-structure` describes the structure
 of each individual package in ``SAGE_ROOT/build/pkgs``. In section
@@ -38,98 +32,450 @@ spkg that you or someone else wrote. Finally,
 for inclusion in the Sage source code.
 
 
+.. _section-package-types:
+
+Package types
+=============
+
+Not all packages are built by default, they are divided into standard,
+optional and experimental ones:
+
+- **standard** packages are built by default. For a few packages,
+  ``configure`` checks whether they are available from the system,
+  in which case the build of those packages is skipped.
+  Standard packages have stringent quality requirements:
+  they should work on all supported platforms. In order
+  for a new standard package to be accepted, it should have been
+  optional for a while, see :ref:`section-inclusion-procedure`.
+
+- **optional** packages are subject to the same requirements, they
+  should also work on all supported platforms. If there are
+  :ref:`optional doctests <section-optional-doctest-flag>` in the Sage
+  library, those tests must pass.
+  Note that optional packages are not tested as much as standard
+  packages, so in practice they might break more often than standard
+  packages.
+
+- for **experimental** packages, the bar is much lower: even if there are
+  some problems, the package can still be accepted.
+
+
+.. _section-package-source-types:
+
+Package source types
+--------------------
+
+Orthogonal to the division by package types, a package has exactly one of
+the following source types:
+
+#. A ``normal`` package:
+
+   - comes from the tarball named in the required file ``checksums.ini`` and
+     hosted on the Sage mirrors;
+
+   - its version number is defined by the required file ``package-version.txt``;
+
+   - Sage installs the package using build and install scripts
+     (see :ref:`section-spkg-install`);
+
+   - Sage records the version number of the package installed using a file in
+     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will re-run the installation
+     if ``package-version.txt`` changes.
+
+#. A ``pip`` package:
+
+   - is obtained directly from https://pypi.org/;
+
+   - the version to be installed is determined using the required file
+     ``requirements.txt`` -- in its simplest form, this file just
+     contains the name of the package (more details at
+     https://pip.pypa.io/en/stable/user_guide/#requirements-files);
+
+   - Sage installs the package using the ``pip`` package manager;
+
+   - Sage delegates the recording of installed package version numbers to it;
+
+   - by policy, no ``standard`` package is allowed to be a ``pip`` package.
+
+#. A ``script`` package:
+
+   - is not associated with a tarball;
+
+   - the file ``package-version.txt`` is optional;
+
+   - installing the package runs the build and install scripts
+     (see :ref:`section-spkg-install`);
+
+   - Sage records the version number of the package installed using a file in
+     ``$SAGE_LOCAL/var/lib/sage/installed/`` and will re-run the installation
+     if ``package-version.txt`` changes.
+
+To summarize: the package source type is determined as follows: if
+there is a file ``requirements.txt``, it is a ``pip`` package. If not,
+then if there is a ``checksums.ini`` file, it is ``normal``;
+otherwise, it is a ``script`` package.
+
+
 .. _section-directory-structure:
 
 Directory Structure
 ===================
 
-Third-party packages in Sage consists of two parts:
+Third-party packages in Sage consist of two parts:
 
 #. The tarball as it is distributed by the third party, or as close as
    possible. Valid reasons for modifying the tarball are deleting
-   unnecessary files to keep the download size manageable or
-   regenerating auto-generated files if necessary. But the actual code
-   must be unmodified. See also :ref:`section-spkg-src`.
+   unnecessary files to keep the download size manageable,
+   regenerating auto-generated files or changing the directory structure
+   if necessary. In certain cases, you may need to (additionally) change
+   the filename of the tarball.
+   In any case, the actual code must be unmodified: if you need to
+   change the sources, add a :ref:`patch <section-spkg-patching>`
+   instead. See also :ref:`section-spkg-src` for automating the
+   modifications to the upstream tarball.
 
 #. The build scripts and associated files are in a subdirectory
-   ``SAGE_ROOT/build/pkgs/package``, where you replace ``package``
-   with a lower-case version of the upstream project name.
+   ``SAGE_ROOT/build/pkgs/<package>``, where you replace ``<package>``
+   with a lower-case version of the upstream project name. If the
+   project name contains characters which are not alphanumeric
+   and are not an underscore, those characters should be removed
+   or replaced by an underscore. For example, the project
+   ``FFLAS-FFPACK`` is called ``fflas_ffpack`` in Sage and ``path.py``
+   is renamed ``pathpy`` in Sage.
 
 As an example, let us consider a hypothetical FoO project. They
-(upstream) distribute a tarball ``foo-1.3.tar.gz`` (that will be
+(upstream) distribute a tarball ``FoO-1.3.tar.gz`` (that will be
 automatically placed in ``SAGE_ROOT/upstream`` during the installation
-process). To package it in Sage, we create a subdirectory containing the
-following::
+process). To package it in Sage, we create a subdirectory containing as
+a minimum the following files:
+
+.. CODE-BLOCK:: text
 
     SAGE_ROOT/build/pkgs/foo
+    |-- checksums.ini
+    |-- dependencies
+    |-- package-version.txt
+    |-- spkg-install.in
+    |-- SPKG.rst
+    `-- type
+
+The following are some additional files which can be added:
+
+.. CODE-BLOCK:: text
+
+    SAGE_ROOT/build/pkgs/foo
+    |-- distros
+    |   |-- platform1.txt
+    |   `-- platform2.txt
     |-- patches
     |   |-- bar.patch
     |   `-- baz.patch
-    |-- checksums.ini
-    |-- package-version.txt
-    |-- spkg-check
-    |-- spkg-install
-    |-- spkg-src
-    `-- SPKG.txt
+    |-- spkg-check.in
+    |-- spkg-configure.m4
+    `-- spkg-src
 
-When installing Sage these files are used to patch the tarball and to
-start the build and install process of the package.
+We discuss the individual files in the following sections.
 
-We discuss the individual files in the following.
+
+Package type
+------------
+
+The file ``type`` should contain a single word, which is either
+``standard``, ``optional`` or ``experimental``.
+See :ref:`section-package-types` for the meaning of these types.
 
 
 .. _section-spkg-install:
 
-Install Script
---------------
+Build and install scripts of normal packages
+--------------------------------------------
 
-The ``spkg-install`` file is a shell script installing the package,
-with ``PACKAGE_NAME`` replaced by the the package name. In the best
-case, the upstream project can simply be installed by the usual
-configure / make / make install steps. In that case, the build script
-would simply consist of::
+The ``spkg-build.in`` and ``spkg-install.in`` files are templates for
+``bash`` scripts ``spkg-build`` and ``spkg-install``, which build
+and/or install the package.
 
-    #!/usr/bin/env bash
+The ``*.in`` script templates should *not* be prefixed with a shebang
+line (``#!...``) and should not have the executable bit set in their
+permissions.  These are added automatically when generating the
+scripts, along with some additional boilerplate, when the package is
+installed.
+
+The ``spkg-build.in`` and ``spkg-install.in`` files in the Sage source
+tree need only focus on the specific steps for building and installing
+that package.  If no ``spkg-build.in`` exists, then the
+``spkg-install.in`` is responsible for both steps, though separating
+them is encouraged where possible.
+
+It is also possible to include similar script templatess named
+``spkg-preinst.in`` or ``spkg-postinst.in`` to run additional steps
+before or after the package has been installed into
+``$SAGE_LOCAL``. It is encouraged to put steps which modify already
+installed files in a separate ``spkg-postinst.in`` script template
+rather than combining them with ``spkg-install.in``.  This is because
+since :trac:`24106`, ``spkg-install`` does not necessarily install
+packages directly to ``$SAGE_LOCAL``.  However, by the time
+``spkg-postinst`` is run, the installation to ``$SAGE_LOCAL`` is
+complete.
+
+In the best case, the upstream project can simply be installed by the
+usual configure / make / make install steps. In that case, the
+``spkg-build.in`` script template would simply consist of:
+
+.. CODE-BLOCK:: bash
 
     cd src
+    sdh_configure
+    sdh_make
 
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error configuring PACKAGE_NAME."
-        exit 1
-    fi
+See :ref:`section-sdh-helpers` for more on the helper functions
+``sdh_configure``, ``sdh_make``, etc.
 
-    $MAKE
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error building PACKAGE_NAME."
-        exit 1
-    fi
+The ``spkg-install.in`` script template would consist of:
 
-    $MAKE -j1 install
-    if [ $? -ne 0 ]; then
-        echo >&2 "Error installing PACKAGE_NAME."
-        exit 1
-    fi
+.. CODE-BLOCK:: bash
 
+    cd src
+    sdh_make_install
 
 Note that the top-level directory inside the tarball is renamed to
-``src`` before calling the ``spkg-install`` script, so you can just use
-``cd src`` instead of ``cd foo-1.3``.
+``src`` before calling the ``spkg-build`` and ``spkg-install``
+scripts, so you can just use ``cd src`` instead of ``cd foo-1.3``.
 
 If there is any meaningful documentation included but not installed by
-``make install``, then you can add something like the following to
-install it::
+``sdh_make_install`` (which calls ``make install``), then you can add
+something like the following to install it:
+
+.. CODE-BLOCK:: bash
 
     if [ "$SAGE_SPKG_INSTALL_DOCS" = yes ] ; then
-        $MAKE doc
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error building PACKAGE_NAME docs."
-            exit 1
-        fi
-        mkdir -p "$SAGE_LOCAL/share/doc/PACKAGE_NAME"
-        cp -R doc/* "$SAGE_ROOT/local/share/doc/PACKAGE_NAME"
+        sdh_make doc
+        sdh_install doc/ "$SAGE_SHARE"/doc/PACKAGE_NAME
     fi
 
+.. note::
+
+    Prior to Sage 9.1, the script templates were called ``spkg-build``,
+    ``spkg-install``, etc., without the extension ``.in``.
+
+    Prior to Sage 8.1 the shebang line was included, and the scripts were
+    marked executable.  However, this is no longer the case as of
+    :trac:`23179`.  Now the scripts in the source tree are deliberately
+    written not to be directly executed, and are only made into executable
+    scripts when they are copied to the package's build directory.
+
+    Build/install scripts may still be written in Python, but the Python
+    code should go in a separate file (e.g. ``spkg-install.py``), and can
+    then be executed from the real ``spkg-install.in`` like:
+
+    .. CODE-BLOCK:: text
+
+        exec sage-system-python spkg-install.py
+
+    or
+
+    .. CODE-BLOCK:: text
+
+        exec sage-python23 spkg-install.py
+
+   In more detail: ``sage-system-python`` runs the version of Python
+   pre-installed on the machine. Use this if the package may be
+   installed before Sage has built its own Python. ``sage-python23``
+   runs the version of Python built by Sage, either Python 2 or 3,
+   depending on how the build was configured; you should use this
+   script if you are installing a Python package, to make sure that
+   the libraries are installed in the right place.
+
+   By the way, there is also a script ``sage-python``. This should be
+   used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
+   expect Sage's Python to already be built.
+
+Many packages currently do not separate the build and install steps and only
+provide a ``spkg-install.in`` file that does both.  The separation is useful in
+particular for root-owned install hierarchies, where something like ``sudo``
+must be used to install files.  For this purpose Sage uses an environment
+variable ``$SAGE_SUDO``, the value of which may be provided by the developer
+at build time,  which should to the appropriate system-specific
+``sudo``-like command (if any).  The following rules are then observed:
+
+- If ``spkg-build.in`` exists, the generated script ``spkg-build`` is first
+  called, followed by ``$SAGE_SUDO spkg-install``.
+
+- Otherwise, only ``spkg-install`` is called (without ``$SAGE_SUDO``).  Such
+  packages should prefix all commands in ``spkg-install.in`` that write into
+  the installation hierarchy with ``$SAGE_SUDO``.
+
+Install scripts of script packages
+----------------------------------
+
+A script package has a single install script named ``spkg-install``.
+It needs to be an executable shell script; it is not subject to the templating
+described in the previous section.
+
+Sage runs ``spkg-install`` from the directory ``$SAGE_ROOT/build/pkgs/<package>``
+in the environment obtained by sourcing the files ``src/bin/sage-env`` and
+``build/bin/sage-build-env-config``.
+
+.. _section-sdh-helpers:
+
+Helper functions
+----------------
+
+In the ``spkg-build``, ``spkg-install``, and ``spkg-check`` scripts,
+the following functions are available. They are defined in the file
+``$SAGE_ROOT/build/bin/sage-dist-helpers``, if you want to look at the
+source code.  They should be used to make sure that appropriate
+variables are set and to avoid code duplication. These function names
+begin with ``sdh_``, which stands for "Sage-distribution helper".
+
+- ``sdh_die MESSAGE``: Exit the build script with the error code of
+  the last command if it was non-zero, or with 1 otherwise, and print
+  an error message. This is typically used like:
+
+  .. CODE-BLOCK:: bash
+
+       command || sdh_die "Command failed"
+
+  This function can also (if not given any arguments) read the error message
+  from stdin. In particular this is useful in conjunction with a heredoc to
+  write multi-line error messages:
+
+  .. CODE-BLOCK:: bash
+
+      command || sdh_die << _EOF_
+      Command failed.
+      Reason given.
+      _EOF_
+
+  .. NOTE::
+
+      The other helper functions call ``sdh_die``, so do not use (for
+      example) ``sdh_make || sdh_die``: the part of this after
+      ``||`` will never be reached.
+
+- ``sdh_check_vars [VARIABLE ...]``: Check that one or more variables
+  are defined and non-empty, and exit with an error if any are
+  undefined or empty. Variable names should be given without the '$'
+  to prevent unwanted expansion.
+
+- ``sdh_configure [...]``: Runs ``./configure`` with arguments
+  ``--prefix="$SAGE_LOCAL"``, ``--libdir="$SAGE_LOCAL/lib"``,
+  ``--disable-maintainer-mode``, and
+  ``--disable-dependency-tracking``. Additional arguments to
+  ``./configure`` may be given as arguments.
+
+- ``sdh_make [...]``: Runs ``$MAKE`` with the default target.
+   Additional arguments to ``$MAKE`` may be given as arguments.
+
+- ``sdh_make_install [...]``: Runs ``$MAKE install`` with DESTDIR
+   correctly set to a temporary install directory, for staged
+   installations. Additional arguments to ``$MAKE`` may be given as
+   arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
+   with ``$SAGE_SUDO``, if set.
+
+- ``sdh_pip_install [...]``: The equivalent of running ``pip install``
+   with the given arguments, as well as additional default arguments used for
+   installing packages into Sage with pip. The last argument must be
+   ``.`` to indicate installation from the current directory.
+
+   ``sdh_pip_install`` actually does the installation via ``pip wheel``,
+   creating a wheel file in ``dist/``, followed by
+   ``sdh_store_and_pip_install_wheel`` (see below).
+
+- ``sdh_store_and_pip_install_wheel .``: The current directory,
+   indicated by the required argument ``.``, must have a subdirectory
+   ``dist`` containing a unique wheel file (``*.whl``).
+
+   This command (1) moves this wheel file to the
+   directory ``$SAGE_SPKG_WHEELS`` (``$SAGE_LOCAL/var/lib/sage/wheels``)
+   and then (2) installs the wheel in ``$SAGE_LOCAL``.
+
+   Both of these steps, instead of writing directly into ``$SAGE_LOCAL``,
+   use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
+   use ``$SAGE_SUDO`` (if set).
+
+- ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
+   directories given as ``SRC`` (recursively in the case of
+   directories) into the destination directory ``DEST``, while
+   ensuring that ``DEST`` and all its parent directories exist.
+   ``DEST`` should be a path under ``$SAGE_LOCAL``, generally. For
+   ``DESTDIR`` installs, the ``$SAGE_DESTDIR`` path is automatically
+   prepended to the destination.
+
+   The ``-T`` option treats ``DEST`` as a normal file instead
+   (e.g. for copying a file to a different filename). All directory
+   components are still created in this case.
+
+The following is automatically added to each install script, so you
+should not need to add it yourself.
+
+- ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
+   common variables without which many/most packages won't build
+   correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
+   important to prevent installation to unintended locations.
+
+The following are also available, but rarely used.
+
+- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
+   the given arguments, as well as additional arguments passed to
+   cmake (assuming packages are using the GNUInstallDirs module) so
+   that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
+   correctly.
+
+- ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
+   platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
+   program or another library) for a library starting with ``SONAME``, and
+   if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
+   See :trac:`24885`.
+
+
+.. _spkg-configure.m4:
+
+Allowing for the use of system packages
+---------------------------------------
+
+For a number of Sage packages, an already installed system version can
+be used instead, and Sage's top-level ``./configure`` script
+determines when this is possible. To enable this, a package needs to
+have a script called ``spkg-configure.m4``, which can, for example,
+determines whether the installed software is recent enough (and
+sometimes not too recent) to be usable by Sage. This script is
+processed by the `GNU M4 macro processor
+<https://www.gnu.org/savannah-checkouts/gnu/m4/manual/m4-1.4.18/m4.html>`_.
+
+Also, if the software for a Sage package is provided by a system
+package, the ``./configure`` script can provide that information. To
+do this, there must be a directory ``build/pkgs/PACKAGE/distros``
+containing files with names like ::
+
+    arch.txt
+    conda.txt
+    cygwin.txt
+    debian.txt
+    homebrew.txt
+    ...
+
+corresponding to different packaging systems.
+
+For example, if ``./configure`` detects that the Homebrew packaging
+system is in use, and if the current package can be provided by a
+Homebrew package called "foo", then the file
+``build/pkgs/PACKAGE/distros/homebrew.txt`` should contain the single
+line "foo". If ``foo`` is currently uninstalled, then ``./configure``
+will print a message suggesting that the user should run ``brew install
+foo``. See :ref:`section-equiv-distro-packages` for more on this.
+
+.. IMPORTANT::
+
+    All new standard packages should, when possible, include a
+    ``spkg-configure.m4`` script and a populated ``distros``
+    directory. There are many examples in ``build/pkgs``, including
+    ``build/pkgs/python3`` and ``build/pkgs/suitesparse``, to name a few.
+
+Note that this may not be possible (as of this writing) for some
+packages, for example packages installed via pip for use while running
+Sage, like ``matplotlib`` or ``scipy``. If a package is installed via
+pip for use in a separate process, like ``tox``, then this should be
+possible.
 
 
 
@@ -138,46 +484,57 @@ install it::
 Self-Tests
 ----------
 
-The ``spkg-check`` file is an optional, but highly recommended, script
-to run self-tests of the package. It is run after building and
-installing if the ``SAGE_CHECK`` environment variable is set, see the
-Sage installation guide. Ideally, upstream has some sort of tests suite
-that can be run with the standard ``make check`` target. In that case,
-the ``spkg-check`` script would simply contain::
+The ``spkg-check.in`` file is an optional, but highly recommended,
+script template to run self-tests of the package.  The format for the
+``spkg-check`` is the same as ``spkg-build`` and ``spkg-install``.  It
+is run after building and installing if the ``SAGE_CHECK`` environment
+variable is set, see the Sage installation guide. Ideally, upstream
+has some sort of tests suite that can be run with the standard ``make
+check`` target. In that case, the ``spkg-check.in`` script template
+would simply contain:
 
-    #!/usr/bin/env bash
+.. CODE-BLOCK:: bash
 
     cd src
     $MAKE check
 
 
-.. _section-spkg-versioning:
+.. _section-python:
 
-Package Versioning
-------------------
+Python-based packages
+---------------------
 
-The ``package-version.txt`` file containts just the version. So if
-upstream is ``foo-1.3.tar.gz`` then the package version file would only
-contain ``1.3``.
+The best way to install a Python-based package is to use pip, in which
+case the ``spkg-install.in`` script template might just consist of
 
-If the upstream package is taken from some revision other than a stable
-version, you should use the date at which the revision is made, e.g. the
-Singular package ``20090818`` is made with the revision as of
-2009-08-18.
+.. CODE-BLOCK:: bash
 
-If you made any changes to the upstream tarball (see
-:ref:`section-directory-structure` for allowable changes) then you
-should append a ``.p1`` to the version. If you make further changes,
-increase the patch level as necessary. So the different versions would
-be ``1.3``, ``1.3.p1``, ``1.3.p2``, ...
+    cd src && sdh_pip_install .
+
+Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
+points to the correct ``pip`` for the Python used by Sage, and includes some
+default flags needed for correct installation into Sage.
+
+If pip will not work but a command like ``python setup.py install``
+will, then the ``spkg-install.in`` script template should call
+``sage-python23`` rather than ``python``. This will ensure that the
+correct version of Python is used to build and install the
+package. The same holds for ``spkg-check.in`` script templates; for
+example, the ``scipy`` ``spkg-check.in`` file contains the line
+
+.. CODE-BLOCK:: bash
+
+    exec sage-python23 spkg-check.py
 
 
 .. _section-spkg-SPKG-txt:
 
-The SPKG.txt File
------------------
+The SPKG.rst or SPKG.txt File
+-----------------------------
 
-The ``SPKG.txt`` file should follow this pattern::
+The ``SPKG.txt`` file should follow this pattern:
+
+.. CODE-BLOCK:: text
 
      = PACKAGE_NAME =
 
@@ -188,12 +545,6 @@ The ``SPKG.txt`` file should follow this pattern::
      == License ==
 
      What is the license? If non-standard, is it GPLv3+ compatible?
-
-     == SPKG Maintainers ==
-
-     * Mary Smith
-     * Bill Jones
-     * Leonhard Euler
 
      == Upstream Contact ==
 
@@ -212,9 +563,83 @@ The ``SPKG.txt`` file should follow this pattern::
      script, describe what was changed.
 
 
-with ``PACKAGE_NAME`` replaced by the the package name. Legacy
+with ``PACKAGE_NAME`` replaced by the package name. Legacy
 ``SPKG.txt`` files have an additional changelog section, but this
 information is now kept in the git repository.
+
+It is now also possible to use an ``SPKG.rst`` file instead, with the same
+sections.
+
+.. _section-dependencies:
+
+Package dependencies
+--------------------
+
+Many packages depend on other packages. Consider for example the
+``eclib`` package for elliptic curves. This package uses the libraries
+PARI, NTL and FLINT. So the following is the ``dependencies`` file
+for ``eclib``:
+
+.. CODE-BLOCK:: text
+
+    pari ntl flint
+
+    ----------
+    All lines of this file are ignored except the first.
+    It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.
+
+For Python packages, common dependencies include ``pip``,
+``setuptools``, and ``future``. If your package depends on any of
+these, use ``$(PYTHON_TOOLCHAIN)`` instead. For example, here is the
+``dependencies`` file for ``configparser``:
+
+.. CODE-BLOCK:: text
+
+    $(PYTHON) | $(PYTHON_TOOLCHAIN)
+
+(See below for the meaning of the ``|``.)
+
+If there are no dependencies, you can use
+
+.. CODE-BLOCK:: text
+
+    # no dependencies
+
+    ----------
+    All lines of this file are ignored except the first.
+    It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.
+
+There are actually two kinds of dependencies: there are normal
+dependencies and order-only dependencies, which are weaker. The syntax
+for the ``dependencies`` file is
+
+.. CODE-BLOCK:: text
+
+    normal dependencies | order-only dependencies
+
+If there is no ``|``, then all dependencies are normal.
+
+- If package A has an **order-only dependency** on B, it simply means
+  that B must be built before A can be built. The version of B does not
+  matter, only the fact that B is installed matters.
+  This should be used if the dependency is purely a build-time
+  dependency (for example, a dependency on pip simply because the
+  ``spkg-install`` file uses pip).
+
+- If A has a **normal dependency** on B, it means additionally that A
+  should be rebuilt every time that B gets updated. This is the most
+  common kind of dependency. A normal dependency is what you need for
+  libraries: if we upgrade NTL, we should rebuild everything which
+  uses NTL.
+
+In order to check that the dependencies of your package are likely
+correct, the following command should work without errors::
+
+    [user@localhost]$ make distclean && make base && make PACKAGE_NAME
+
+Finally, note that standard packages should only depend on standard
+packages and optional packages should only depend on standard or
+optional packages.
 
 
 .. _section-spkg-patching:
@@ -222,11 +647,15 @@ information is now kept in the git repository.
 Patching Sources
 ----------------
 
-Actual changes to the source code must be via patches, which should be
-placed in the ``patches`` directory. GNU patch is distributed with
-Sage, so you can rely on it being available. Patches must include
-documentation in their header (before the first diff hunk), so a
-typical patch file should look like this::
+Actual changes to the source code must be via patches, which should be placed
+in the ``patches/`` directory, and must have the ``.patch`` extension. GNU
+patch is distributed with Sage, so you can rely on it being available. Patches
+must include documentation in their header (before the first diff hunk), and
+must have only one "prefix" level in the paths (that is, only one path level
+above the root of the upstream sources being patched).  So a typical patch file
+should look like this:
+
+.. CODE-BLOCK:: diff
 
     Add autodoc_builtin_argspec config option
 
@@ -247,20 +676,133 @@ typical patch file should look like this::
          app.add_config_value('autodoc_docstring_signature', True, True)
          app.add_event('autodoc-process-docstring')
 
-Patches to files in ``src/`` need to be applied in ``spkg-install``,
-that is, if there are any patches then your ``spkg-install`` script
-should contain a section like this::
+Patches directly under the ``patches/`` directly are applied automatically
+before running the ``spkg-install`` script (so long as they have the ``.patch``
+extension).  If you need to apply patches conditionally (such as only on
+a specifically platform), you can place those patches in a subdirectory of
+``patches/`` and apply them manually using the ``sage-apply-patches`` script.
+For example, considering the layout:
 
-    for patch in ../patches/*.patch; do
-        [ -r "$patch" ] || continue  # Skip non-existing or non-readable patches
-        patch -p1 <"$patch"
-        if [ $? -ne 0 ]; then
-            echo >&2 "Error applying '$patch'"
-            exit 1
-        fi
-    done
+.. CODE-BLOCK:: text
 
-which applies the patches to the sources.
+    SAGE_ROOT/build/pkgs/foo
+    |-- patches
+    |   |-- solaris
+    |   |   |-- solaris.patch 
+    |   |-- bar.patch
+    |   `-- baz.patch
+
+The patches ``bar.patch`` and ``baz.patch`` are applied to the unpacked
+upstream sources in ``src/`` before running ``spkg-install``.  To conditionally
+apply the patch for Solaris the ``spkg-install`` should contain a section like
+this:
+
+.. CODE-BLOCK:: bash
+
+    if [ $UNAME == "SunOS" ]; then
+        sage-apply-patches -d solaris
+    fi
+
+where the ``-d`` flag applies all patches in the ``solaris/`` subdirectory of
+the main ``patches/`` directory.
+
+
+.. _section-spkg-patch-or-repackage:
+
+When to patch, when to repackage, when to autoconfiscate
+--------------------------------------------------------
+
+- Use unpatched original upstream tarball when possible.
+
+  Sometimes it may seem as if you need to patch a (hand-written)
+  ``Makefile`` because it "hard-codes" some paths or compiler flags:
+
+  .. CODE-BLOCK:: diff
+
+      --- a/Makefile
+      +++ b/Makefile
+      @@ -77,7 +77,7 @@
+       # This is a Makefile.
+       # Handwritten.
+
+      -DESTDIR = /usr/local
+      +DESTDIR = $(SAGE_ROOT)/local
+       BINDIR   = $(DESTDIR)/bin
+       INCDIR   = $(DESTDIR)/include
+       LIBDIR   = $(DESTDIR)/lib
+
+  Don't use patching for that.  Makefile variables can be overridden
+  from the command-line.  Just use the following in ``spkg-install``:
+
+  .. CODE-BLOCK:: bash
+
+      $(MAKE) DESTDIR="$SAGE_ROOT/local"
+
+- Check if Debian or another distribution already provides patches
+  for upstream.  Use them, don't reinvent the wheel.
+
+- If the upstream Makefile does not build shared libraries,
+  don't bother trying to patch it.
+  
+  Autoconfiscate the package instead and use the standard facilities
+  of Automake and Libtool.  This ensures that the shared library build
+  is portable between Linux and macOS.
+
+- If you have to make changes to ``configure.ac`` or other source
+  files of the autotools build system (or if you are autoconfiscating
+  the package), then you can't use patching; make a :ref:`modified
+  tarball <section-spkg-src>` instead.
+
+- If the patch would be huge, don't use patching.  Make a
+  :ref:`modified tarball <section-spkg-src>` instead.
+
+- Otherwise, :ref:`maintain a set of patches
+  <section-spkg-patch-maintenance>`.
+
+
+.. _section-spkg-patch-maintenance:
+
+How to maintain a set of patches
+--------------------------------
+
+We recommend the following workflow for maintaining a set of patches.
+
+- Fork the package and put it on a public git repository.
+
+  If upstream has a public version control repository, import it from
+  there.  If upstream does not have a public version control
+  repository, import the current sources from the upstream tarball.
+  Let's call the branch ``upstream``.
+
+- Create a branch for the changes necessary for Sage, let's call it
+  ``sage_package_VERSION``, where ``version`` is the upstream version
+  number.
+
+- Make the changes and commit them to the branch.
+
+- Generate the patches against the ``upstream`` branch:
+
+  .. CODE-BLOCK:: bash
+
+      rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
+      mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
+      git format-patch -o SAGE_ROOT/build/pkgs/PACKAGE/patches/ upstream
+  
+- Optionally, create an ``spkg-src`` file in the Sage package's
+  directory that regenerates the patch directory using the above
+  commands.
+
+- When a new upstream version becomes available, merge (or import) it
+  into ``upstream``, then create a new branch and rebase in on top of
+  the updated upstream:
+
+  .. CODE-BLOCK:: bash
+
+      git checkout sage_package_OLDVERSION
+      git checkout -b sage_package_NEWVERSION
+      git rebase upstream
+
+  Then regenerate the patches.
 
 
 .. _section-spkg-src:
@@ -278,26 +820,86 @@ changes. This not only serves as documentation but also makes it easier
 to apply the same modifications to future versions.
 
 
+.. _section-spkg-versioning:
+
+Package Versioning
+------------------
+
+The ``package-version.txt`` file containts just the version. So if
+upstream is ``FoO-1.3.tar.gz`` then the package version file would only
+contain ``1.3``.
+
+If the upstream package is taken from some revision other than a stable
+version or if upstream doesn't have a version number, you should use the
+date at which the revision is made. For example, the
+``database_stein_watkins`` package with version ``20110713`` contains
+the database as of 2011-07-13. Note that the date should refer to the
+*contents* of the tarball, not to the day it was packaged for Sage.
+This particular Sage package for ``database_stein_watkins`` was created
+in 2014, but the data it contains was last updated in 2011.
+
+If you apply any patches, or if you made changes to the upstream tarball
+(see :ref:`section-directory-structure` for allowable changes),
+then you should append a ``.p0`` to the version to indicate that it's
+not a vanilla package.
+
+Additionally, whenever you make changes to a package *without* changing
+the upstream tarball (for example, you add an additional patch or you
+fix something in the ``spkg-install`` file), you should also add or
+increase the patch level. So the different versions would
+be ``1.3``, ``1.3.p0``, ``1.3.p1``, ...
+The change in version number or patch level will trigger
+re-installation of the package, such that the changes are taken into
+account.
+
+
+.. _section-spkg-checksums:
+
 Checksums
 ---------
 
-The ``checksums.ini`` file contains checksums of the upstream tarball.
-It is autogenerated, so you just have to place the upstream tarball in
-the ``SAGE_ROOT/upstream/`` directory and run::
+The ``checksums.ini`` file contains the filename pattern of the
+upstream tarball (without the actual version) and its checksums. So if
+upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
+``$SAGE_ROOT/build/pkgs/foo/checksums.ini`` containing only:
 
-    [user@localhost]$ sage -sh sage-fix-pkg-checksums
+.. CODE-BLOCK:: bash
+
+    tarball=FoO-VERSION.tar.gz
+
+Sage internally replaces the ``VERSION`` substring with the content of
+``package-version.txt``. To recompute the checksums, run::
+
+    [user@localhost]$ sage --package fix-checksum foo
+
+which will modify the ``checksums.ini`` file with the correct
+checksums.
+
+
+Utility script to create package
+================================
+
+Assuming that you have downloaded
+``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
+
+    [user@localhost]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+
+to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
+``checksums.ini``, and ``type`` in one step.
 
 
 .. _section-manual-build:
 
-Manual package build and installation
-=====================================
+Building the package
+====================
 
 At this stage you have a new tarball that is not yet distributed with
-Sage (``foo-1.3.tar.gz`` in the example of section
+Sage (``FoO-1.3.tar.gz`` in the example of section
 :ref:`section-directory-structure`). Now you need to manually place it
-in the ``SAGE_ROOT/upstream/`` directory. Then you can run the
-installation via::
+in the ``SAGE_ROOT/upstream/`` directory and run
+``sage --fix-pkg-checksums`` if you have not done that yet.
+
+Now you can install the package using::
 
     [user@localhost]$ sage -i package_name
 
@@ -338,10 +940,8 @@ requirements are described in the following sections.
 After the ticket was reviewed and included, optional packages stay in
 that status for at least a year, after which they can be proposed to be
 included as standard packages in Sage. For this a trac ticket is opened
-with the ``Component:`` field set to ``packages:standard``. Note that
-the script in ``SAGE_ROOT/build/make/deps`` is called when building Sage so
-please include the build command for your standard package there. Then
-make a proposal in the Google Group ``sage-devel``.
+with the ``Component:`` field set to ``packages:standard``. Then make
+a proposal in the Google Group ``sage-devel``.
 
 Upgrading packages to new upstream versions or with additional patches
 includes opening a ticket in the respective category too, as described
@@ -352,7 +952,7 @@ License Information
 
 If you are patching a standard Sage spkg, then you should make sure that
 the license information for that package is up-to-date, both in its
-``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
+``SPKG.rst`` or ``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
 example, if you are producing an spkg which upgrades the vanilla source
 to a new version, check whether the license changed between versions.
 
@@ -367,18 +967,8 @@ must meet the following requirements:
   Foundation maintains a long list of `licenses and comments about
   them <http://www.gnu.org/licenses/license-list.html>`_.
 
-- **Build Support**. The code must build on all the `fully supported
-  platforms
-  <http://wiki.sagemath.org/SupportedPlatforms#Fully_supported>`_.
-
-  A standard package should also work on all the platforms where Sage
-  is `expected to work
-  <http://wiki.sagemath.org/SupportedPlatforms#Expected_to_work>`_ and
-  on which Sage `almost works
-  <http://wiki.sagemath.org/SupportedPlatforms#Almost_works>`_ but
-  since we don't fully support these platforms and often lack the
-  resources to test on them, you are not expected to confirm your
-  packages works on those platforms.
+- **Build Support**. The code must build on all the fully supported
+  platforms (Linux, macOS, Cygwin); see :ref:`chapter-portability_testing`.
 
 - **Quality**. The code should be "better" than any other available
   code (that passes the two above criteria), and the authors need to

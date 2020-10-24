@@ -1,4 +1,4 @@
-$(INST)/$(PYTHON) $(INST)/$(NUMPY) $(INST)/$(FREETYPE) $(INST)/$(LIBPNG) $(INST)/$(DATEUTIL) $(INST)/$(PYPARSING) $(INST)/$(SETUPTOOLS) $(INST)/$(TORNADO) $(INST)/$(SIX)
+$(PYTHON) numpy freetype pillow dateutil pyparsing tornado six cycler | $(PYTHON_TOOLCHAIN) pytz kiwisolver certifi
 
 ----------
 All lines of this file are ignored except the first.

@@ -18,7 +18,7 @@ def strict_to_odd_part_symmetrica(part):
     cdef INT i
     for i from 0 <= i < len(part)-1:
         if part[i] == part[i+1]:
-            raise ValueError, "the partition part (= %s) must be strict"%str(part)
+            raise ValueError("the partition part (= %s) must be strict" % str(part))
 
     cdef OP cpart, cres
     anfang()
@@ -48,7 +48,7 @@ def odd_to_strict_part_symmetrica(part):
     cdef INT i
     for i from 0 <= i < len(part):
         if part[i] % 2 == 0:
-            raise ValueError, "the partition part (= %s) must be odd"%str(part)
+            raise ValueError("the partition part (= %s) must be odd" % str(part))
 
     cdef OP cpart, cres
     anfang()
@@ -163,10 +163,11 @@ def gupta_tafel_symmetrica(max):
 
 def random_partition_symmetrica(n):
     """
-    returns a random partition p of the entered weight w.
+    Return a random partition p of the entered weight w.
+
     w must be an INTEGER object, p becomes a PARTITION object.
-    Type of partition is VECTOR . Its the algorithm of
-    Nijnhuis Wilf p.76
+    Type of partition is VECTOR . It uses the algorithm of
+    Nijenhuis and Wilf, p.76
     """
 
 

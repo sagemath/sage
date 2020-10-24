@@ -1,3 +1,6 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -13,14 +16,17 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.cplusplus cimport ccrepr, ccreadstr
+
 include 'misc.pxi'
 include 'decl.pxi'
 
-from ntl_ZZ import unpickle_class_args
-from ntl_GF2EContext import ntl_GF2EContext
-from ntl_GF2EContext cimport ntl_GF2EContext_class
-from ntl_GF2E cimport ntl_GF2E
+from cpython.object cimport Py_EQ, Py_NE
+from .ntl_ZZ import unpickle_class_args
+from .ntl_GF2EContext import ntl_GF2EContext
+from .ntl_GF2EContext cimport ntl_GF2EContext_class
+from .ntl_GF2E cimport ntl_GF2E
 
 ##############################################################################
 #
@@ -31,7 +37,7 @@ from ntl_GF2E cimport ntl_GF2E
 #
 ##############################################################################
 
-cdef class ntl_GF2EX:
+cdef class ntl_GF2EX(object):
     r"""
     Minimal wrapper of NTL's GF2EX class.
     """
@@ -39,18 +45,18 @@ cdef class ntl_GF2EX:
         """
         Minimal wrapper of NTL's GF2EX class.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             [[1] [0 1]]
         """
         if modulus is None:
-            raise ValueError, "You must specify a modulus when creating a GF2E."
+            raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        s = str(x)
-        sig_on()
-        GF2EX_from_str(&self.x, s)
-        sig_off()
+        str_x = str(x)  # can cause modulus to change  trac #25790
+        self.c.restore_c()
+        ccreadstr(self.x, str_x)
 
     def __cinit__(self, modulus=None, x=[]):
         #################### WARNING ###################
@@ -71,11 +77,9 @@ cdef class ntl_GF2EX:
         if isinstance(modulus, ntl_GF2EContext_class):
             self.c = <ntl_GF2EContext_class>modulus
             self.c.restore_c()
-            GF2EX_construct(&self.x)
         else:
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
-            GF2EX_construct(&self.x)
 
     cdef ntl_GF2E _new_element(self):
         cdef ntl_GF2E r
@@ -97,11 +101,11 @@ cdef class ntl_GF2EX:
     def __dealloc__(self):
         if <object>self.c is not None:
             self.c.restore_c()
-        GF2EX_destruct(&self.x)
 
     def __reduce__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0 1] [1 0 0 1] [1]]')
             sage: f == loads(dumps(f))
@@ -109,11 +113,12 @@ cdef class ntl_GF2EX:
         """
         return unpickle_class_args, (ntl_GF2EX, (self.c, self.__repr__()))
 
-    def __cmp__(self, other):
+    def __richcmp__(ntl_GF2EX self, other, int op):
         """
         Compare self to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0 1] [1 0 0 1] [1]]')
             sage: g = ntl.GF2EX(ctx, '[[1 0 1] [1 1] [1] [0 0 1]]')
@@ -121,26 +126,38 @@ cdef class ntl_GF2EX:
             True
             sage: f == g
             False
+            sage: f == "??"
+            False
         """
-        ## TODO: this is shady. fix that.
-        if (type(self) != type(other)):
-            return cmp(type(self), type(other))
-        return cmp(self.__repr__(), other.__repr__())
+        self.c.restore_c()
+
+        if op != Py_EQ and op != Py_NE:
+            raise TypeError("elements of GF(2^e)[X] are not ordered")
+
+        cdef ntl_GF2EX b
+        try:
+            b = <ntl_GF2EX?>other
+        except TypeError:
+            return NotImplemented
+
+        return (op == Py_EQ) == (self.x == b.x)
 
     def __repr__(self):
         """
         Return the string representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: ntl.GF2EX(ctx, '[[1 0] [2 1]]').__repr__()
             '[[1] [0 1]]'
         """
-        return GF2EX_to_PyString(&self.x)
+        return ccrepr(self.x)
 
     def __mul__(ntl_GF2EX self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             sage: g = ntl.GF2EX(ctx, '[[1 0 1 1] [0 1 1 0 1] [1 0 1]]')
@@ -159,7 +176,8 @@ cdef class ntl_GF2EX:
 
     def __sub__(ntl_GF2EX self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             sage: g = ntl.GF2EX(ctx, '[[1 0 1 1] [0 1 1 0 1] [1 0 1]]')
@@ -178,7 +196,8 @@ cdef class ntl_GF2EX:
 
     def __add__(ntl_GF2EX self, other):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             sage: g = ntl.GF2EX(ctx, '[[1 0 1 1] [0 1 1 0 1] [1 0 1]]')
@@ -197,7 +216,8 @@ cdef class ntl_GF2EX:
 
     def __neg__(ntl_GF2EX self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             sage: -f ## indirect doctest
@@ -211,7 +231,8 @@ cdef class ntl_GF2EX:
 
     def __pow__(ntl_GF2EX self, long e, ignored):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1,1,0,1]))
             sage: f = ntl.GF2EX(ctx, '[[1 0] [2 1]]')
             sage: f**2 ## indirect doctest

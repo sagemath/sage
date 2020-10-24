@@ -3,6 +3,7 @@ Installing shortcut scripts
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 import os
 
 def install_scripts(directory=None, ignore_existing=False):
@@ -21,10 +22,8 @@ def install_scripts(directory=None, ignore_existing=False):
     - 'R' runs R
     - 'singular' runs Singular
     - 'sqlite3' runs SQLite version 3
-    - 'kash' runs Kash if it is installed (Kash is an optional Sage
-      package)
-    - 'M2' runs Macaulay2 if it is installed (Macaulay2 is an
-      experimental Sage package)
+    - 'kash' runs Kash if it is installed
+    - 'M2' runs Macaulay2 if it is installed
 
     This command:
 
@@ -67,7 +66,7 @@ def install_scripts(directory=None, ignore_existing=False):
 
     - Arthur Gaer: design
 
-    - John Palmieri: revision, 2011-07 (trac ticket #11602)
+    - John Palmieri: revision, 2011-07 (:trac:`11602`)
 
     EXAMPLES::
 
@@ -79,7 +78,7 @@ def install_scripts(directory=None, ignore_existing=False):
         # We do this since the intended user of install_scripts
         # will likely be pretty clueless about how to use Sage or
         # its help system.
-        import sagedoc
+        from . import sagedoc
         print(sagedoc.format(install_scripts.__doc__))
         print("USAGE: install_scripts('directory')")
         return
@@ -105,7 +104,7 @@ def install_scripts(directory=None, ignore_existing=False):
     # cmd is available outside of Sage.
     PATH = os.environ['PATH'].split(os.pathsep)
     PATH = [d for d in PATH if os.path.exists(d)]
-    dir_in_path = any([os.path.samefile(directory, d) for d in PATH])
+    dir_in_path = any(os.path.samefile(directory, d) for d in PATH)
     PATH = os.pathsep.join([d for d in PATH if not
                             os.path.samefile(d, SAGE_BIN)])
     for cmd in ['gap', 'gp', 'hg', 'ipython', 'maxima',

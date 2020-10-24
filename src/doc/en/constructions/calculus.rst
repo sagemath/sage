@@ -3,11 +3,7 @@ Calculus
 ********
 
 Here are some examples of calculus symbolic computations using
-Sage. They use the Maxima interface.
-
-Work is being done to make the commands for the symbolic
-calculations given below more intuitive and natural. At the moment,
-we use the maxima class interface.
+Sage.
 
 
 .. index::
@@ -32,7 +28,7 @@ Differentiation:
 If you type ``view(f.diff(x))`` another window will open up
 displaying the compiled output. In the notebook, you can enter
 
-::
+.. CODE-BLOCK:: ipython
 
     var('x k w')
     f = x^3 * e^(k*x) * sin(w*x)
@@ -42,7 +38,7 @@ displaying the compiled output. In the notebook, you can enter
 into a cell and press ``shift-enter`` for a similar result. You can
 also differentiate and integrate using the commands
 
-::
+.. CODE-BLOCK:: ipython
 
     R = PolynomialRing(QQ,"x")
     x = R.gen()
@@ -81,7 +77,7 @@ You can find critical points of a piecewise defined function:
     sage: f2 = 1-x
     sage: f3 = 2*x
     sage: f4 = 10*x-x^2
-    sage: f = Piecewise([[(0,1),f1],[(1,2),f2],[(2,3),f3],[(3,10),f4]])
+    sage: f = piecewise([((0,1),f1), ((1,2),f2), ((2,3),f3), ((3,10),f4)])
     sage: f.critical_points()
     [5.0]
 
@@ -125,7 +121,7 @@ These are missing symbolic functions, on the other hand::
     w + 17/2*w^2 + 15/4*w^4 + O(w^6)
     sage: ps.exp()
     1 + w + 9*w^2 + 26/3*w^3 + 265/6*w^4 + 413/10*w^5 + O(w^6)
-    sage: (1+ps).log()  
+    sage: (1+ps).log()
     w + 8*w^2 - 49/6*w^3 - 193/8*w^4 + 301/5*w^5 + O(w^6)
     sage: (ps^1000).coefficients()
     [1, 8500, 36088875, 102047312625, 1729600092867375/8]
@@ -177,9 +173,10 @@ where :math:`f(x)=1`, :math:`0<x<1`:
 ::
 
     sage: x = PolynomialRing(QQ, 'x').gen()
-    sage: f = Piecewise([[(0,1),1*x^0]])
+    sage: f = piecewise([((0,1),1*x^0)])
     sage: g = f.convolution(f)
     sage: h = f.convolution(g)
+    sage: set_verbose(-1)
     sage: P = f.plot(); Q = g.plot(rgbcolor=(1,1,0)); R = h.plot(rgbcolor=(0,1,1))
 
 To view this, type ``show(P+Q+R)``.
@@ -212,18 +209,13 @@ where :math:`f` is a piecewise defined function, can
 
     sage: f1(x) = x^2
     sage: f2(x) = 5-x^2
-    sage: f = Piecewise([[(0,1),f1],[(1,2),f2]])
-    sage: f.trapezoid(4)
-    Piecewise defined function with 4 parts, [[(0, 1/2), 1/2*x],
-    [(1/2, 1), 9/2*x - 2], [(1, 3/2), 1/2*x + 2],
-    [(3/2, 2), -7/2*x + 8]]
-    sage: f.riemann_sum_integral_approximation(6,mode="right")
-    19/6
-    sage: f.integral()
-    Piecewise defined function with 2 parts,
-    [[(0, 1), x |--> 1/3*x^3], [(1, 2), x |--> -1/3*x^3 + 5*x - 13/3]]
-    sage: f.integral(definite=True)
-    3
+    sage: f = piecewise([[[0,1], f1], [RealSet.open_closed(1,2), f2]])
+    sage: t = f.trapezoid(2); t
+    piecewise(x|-->1/2*x on (0, 1/2), x|-->3/2*x - 1/2 on (1/2, 1), x|-->7/2*x - 5/2 on (1, 3/2), x|-->-7/2*x + 8 on (3/2, 2); x)
+    sage: t.integral()
+    piecewise(x|-->1/4*x^2 on (0, 1/2), x|-->3/4*x^2 - 1/2*x + 1/8 on (1/2, 1), x|-->7/4*x^2 - 5/2*x + 9/8 on (1, 3/2), x|-->-7/4*x^2 + 8*x - 27/4 on (3/2, 2); x)
+    sage: t.integral(definite=True)
+    9/4
 
 .. index: Laplace transform
 
@@ -242,7 +234,7 @@ computation.
     (x, s)
     sage: f1(x) = 1
     sage: f2(x) = 1-x
-    sage: f = Piecewise([[(0,1),f1],[(1,2),f2]])
+    sage: f = piecewise([((0,1),f1), ((1,2),f2)])
     sage: f.laplace(x, s)
     -e^(-s)/s + (s + 1)*e^(-2*s)/s^2 + 1/s - e^(-s)/s^2
 
@@ -292,7 +284,7 @@ An example, how to solve ODE's symbolically in Sage using the Maxima interface
 
 ::
 
-    sage: y=function('y',x); desolve(diff(y,x,2) + 3*x == y, dvar = y, ics = [1,1,1])
+    sage: y=function('y')(x); desolve(diff(y,x,2) + 3*x == y, dvar = y, ics = [1,1,1])
     3*x - 2*e^(x - 1)
     sage: desolve(diff(y,x,2) + 3*x == y, dvar = y)
     _K2*e^(-x) + _K1*e^x + 3*x
@@ -301,7 +293,7 @@ An example, how to solve ODE's symbolically in Sage using the Maxima interface
     sage: desolve(diff(y,x) + 3*x == y, dvar = y, ics = [1,1]).expand()
     3*x - 5*e^(x - 1) + 3
 
-    sage: f=function('f',x); desolve_laplace(diff(f,x,2) == 2*diff(f,x)-f, dvar = f, ics = [0,1,2])
+    sage: f=function('f')(x); desolve_laplace(diff(f,x,2) == 2*diff(f,x)-f, dvar = f, ics = [0,1,2])
     x*e^x + e^x
 
     sage: desolve_laplace(diff(f,x,2) == 2*diff(f,x)-f, dvar = f)
@@ -317,7 +309,7 @@ If you have ``Octave`` and ``gnuplot`` installed,
     sage: octave.de_system_plot(['x+y','x-y'], [1,-1], [0,2]) # optional - octave
 
 yields the two plots :math:`(t,x(t)), (t,y(t))` on the same graph
-(the :math:`t`-axis is the horizonal axis) of the system of ODEs
+(the :math:`t`-axis is the horizontal axis) of the system of ODEs
 
 .. math::
     x' = x+y, x(0) = 1; y' = x-y, y(0) = -1,
@@ -360,36 +352,47 @@ Finally, can solve linear DEs using power series:
 Fourier series of periodic functions
 ====================================
 
-If :math:`f(x)` is a piecewise-defined polynomial function on
-:math:`-L<x<L` then the Fourier series
+Let :math:`f` be a real-valued periodic function of period `2L`.
+The Fourier series of `f` is
 
-.. math::
-   f(x) \sim \frac{a_0}{2} + \sum_{n=1}^\infty \left[a_n\cos\left(\frac{n\pi x}{L}\right) +
+.. MATH::
+
+   S(x) = \frac{a_0}{2} + \sum_{n=1}^\infty \left[a_n\cos\left(\frac{n\pi x}{L}\right) +
    b_n\sin\left(\frac{n\pi x}{L}\right)\right]
 
+where
 
-converges. In addition to computing the coefficients
-:math:`a_n,b_n`, it will also compute the partial sums (as a
-string), plot the partial sums (as a function of :math:`x` over
-:math:`(-L,L)`, for comparison with the plot of :math:`f(x)`
-itself), compute the value of the FS at a point, and similar
-computations for the cosine series (if :math:`f(x)` is even) and
-the sine series (if :math:`f(x)` is odd). Also, it will plot the
-partial F.S. Cesaro mean sums (a "smoother" partial sum
-illustrating how the Gibbs phenomenon is mollified).
+.. MATH::
 
-::
+    a_n = \frac{1}{L}\int_{-L}^L
+            f(x)\cos\left(\frac{n\pi x}{L}\right) dx,
 
-    sage: f1 = lambda x: -1
-    sage: f2 = lambda x: 2
-    sage: f = Piecewise([[(0,pi/2),f1],[(pi/2,pi),f2]])
-    sage: f.fourier_series_cosine_coefficient(5,pi)
-    -3/5/pi
-    sage: f.fourier_series_sine_coefficient(2,pi)
-    -3/pi
-    sage: f.fourier_series_partial_sum(3,pi)
-    -3*cos(x)/pi - 3*sin(2*x)/pi + sin(x)/pi + 1/4
+and
 
-Type ``show(f.plot_fourier_series_partial_sum(15,pi,-5,5))`` and
-``show(f.plot_fourier_series_partial_sum_cesaro(15,pi,-5,5))``
-(and be patient) to view the partial sums.
+.. MATH::
+
+    b_n = \frac{1}{L}\int_{-L}^L
+            f(x)\sin\left(\frac{n\pi x}{L}\right) dx,
+
+The Fourier coefficients `a_n` and `b_n` are computed by
+declaring `f` as a piecewise-defined function over one period
+and invoking the methods ``fourier_series_cosine_coefficient``
+and ``fourier_series_sine_coefficient``, while the partial sums
+are obtained via ``fourier_series_partial_sum``::
+
+    sage: f = piecewise([((0,pi/2), -1), ((pi/2,pi), 2)])
+    sage: f.fourier_series_cosine_coefficient(0)
+    1
+    sage: f.fourier_series_sine_coefficient(5)
+    -6/5/pi
+    sage: s5 = f.fourier_series_partial_sum(5); s5
+    -6/5*sin(10*x)/pi - 2*sin(6*x)/pi - 6*sin(2*x)/pi + 1/2
+    sage: plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')
+    Graphics object consisting of 2 graphics primitives
+
+.. PLOT::
+
+    f = piecewise([((0,pi/2), -1), ((pi/2,pi), 2)])
+    s5 = f.fourier_series_partial_sum(5)
+    g = plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')
+    sphinx_plot(g)

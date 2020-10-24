@@ -1,6 +1,7 @@
 r"""
 Ambient lattices and ambient spaces
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -9,14 +10,13 @@ Ambient lattices and ambient spaces
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
-from weight_lattice_realizations import WeightLatticeRealizations
+from sage.combinat.free_module import CombinatorialFreeModule
+from .weight_lattice_realizations import WeightLatticeRealizations
 from sage.rings.all import ZZ, QQ
-from sage.misc.cachefunc import ClearCacheOnPickle
-from sage.modules.free_module_element import vector
 from sage.categories.homset import End
 
-class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
+
+class AmbientSpace(CombinatorialFreeModule):
     r"""
     Abstract class for ambient spaces
 
@@ -57,9 +57,21 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
 
         sage: types = CartanType.samples(crystallographic = True)+[CartanType(["A",2],["C",5])]
         sage: for e in [ct.root_system().ambient_space() for ct in types]:
-        ...            TestSuite(e).run()
+        ....:          TestSuite(e).run()
+
+        sage: e1 = RootSystem(['A',3]).ambient_lattice()
+        sage: e2 = RootSystem(['B',3]).ambient_lattice()
+        sage: e1 == e1
+        True
+        sage: e1 == e2
+        False
+
+        sage: e1 = RootSystem(['A',3]).ambient_space(QQ)
+        sage: e2 = RootSystem(['A',3]).ambient_space(RR)
+        sage: e1 == e2
+        False
     """
-    def __init__(self, root_system, base_ring):
+    def __init__(self, root_system, base_ring, index_set=None):
         """
         EXAMPLES::
 
@@ -73,9 +85,10 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
             (1, -1, 0, 0)
         """
         self.root_system = root_system
+        if index_set is None:
+            index_set = tuple(range(0, self.dimension()))
         CombinatorialFreeModule.__init__(self, base_ring,
-                                         range(0,self.dimension()),
-                                         element_class = AmbientSpaceElement,
+                                         index_set,
                                          prefix='e',
                                          category = WeightLatticeRealizations(base_ring))
         coroot_lattice = self.root_system.coroot_lattice()
@@ -89,13 +102,12 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
             self._v0 = self([0,0,0,0,0, 0,1, 1])
             self._v1 = self([0,0,0,0,0,-2,1,-1])
 
-
     def _test_norm_of_simple_roots(self, **options):
         """
-        Tests that the norm of the roots is, up to an overal constant factor,
+        Test that the norm of the roots is, up to an overall constant factor,
         given by the symmetrizer of the Cartan matrix.
 
-        .. seealso:: :class:`TestSuite`
+        .. SEEALSO:: :class:`TestSuite`
 
         EXAMPLES::
 
@@ -107,12 +119,12 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
         D = T.symmetrizer()
         alpha = self.simple_roots()
         for C in T.dynkin_diagram().connected_components():
-            tester.assertEquals(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
+            tester.assertEqual(len( set( alpha[i].scalar(alpha[i]) / D[i] for i in C ) ), 1)
 
     # FIXME: attribute or method?
     def dimension(self):
         """
-        Returns the dimension of this ambient space.
+        Return the dimension of this ambient space.
 
         EXAMPLES::
 
@@ -128,8 +140,8 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
 
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
-        """
-        Returns the smallest ground ring over which the ambient space can be realized.
+        r"""
+        Return the smallest ground ring over which the ambient space can be realized.
 
         This class method will get called with the Cartan type as
         input. This default implementation returns `\QQ`; subclasses
@@ -248,7 +260,7 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
 
     @cached_method
     def fundamental_weight(self, i):
-        """
+        r"""
         Returns the fundamental weight `\Lambda_i` in ``self``
 
         In several of the ambient spaces, it is more convenient to
@@ -273,23 +285,6 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
             (-1/2, 1/2, 1/2, 1/2, 1/2, -5/6, -5/6, 5/6)
         """
         return self.fundamental_weights()[i]
-
-    def __cmp__(self, other):
-        """
-        EXAMPLES::
-
-            sage: e1 = RootSystem(['A',3]).ambient_lattice()
-            sage: e2 = RootSystem(['B',3]).ambient_lattice()
-            sage: e1 == e1
-            True
-            sage: e1 == e2
-            False
-        """
-        if self.__class__ != other.__class__:
-            return cmp(self.__class__, other.__class__)
-        if self.root_system != other.root_system:
-            return cmp(self.root_system, other.root_system)
-        return 0
 
     def from_vector_notation(self, weight, style="lattice"):
         """
@@ -358,7 +353,7 @@ class AmbientSpace(ClearCacheOnPickle, CombinatorialFreeModule):
         """
         return End(self).identity()
 
-class AmbientSpaceElement(CombinatorialFreeModuleElement):
+class AmbientSpaceElement(CombinatorialFreeModule.Element):
     # For backward compatibility
     def _repr_(self):
         """
@@ -387,7 +382,7 @@ class AmbientSpaceElement(CombinatorialFreeModuleElement):
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
-        for t,c in lambdacheck_mc.iteritems():
+        for t,c in lambdacheck_mc.items():
             if t not in self_mc:
                 continue
             result += c*self_mc[t]
@@ -510,3 +505,6 @@ class AmbientSpaceElement(CombinatorialFreeModuleElement):
 
         """
         return self
+
+AmbientSpace.Element = AmbientSpaceElement
+

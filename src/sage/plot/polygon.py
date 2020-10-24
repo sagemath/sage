@@ -17,6 +17,7 @@ Polygons
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from sage.plot.primitive import GraphicPrimitive_xydata
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
@@ -30,11 +31,11 @@ class Polygon(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata - list of `x`-coordinates of points defining Polygon
+    - xdata -- list of `x`-coordinates of points defining Polygon
 
-    - ydata - list of `y`-coordinates of points defining Polygon
+    - ydata -- list of `y`-coordinates of points defining Polygon
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -146,15 +147,15 @@ class Polygon(GraphicPrimitive_xydata):
             sage: P[0]._allowed_options()['alpha']
             'How transparent the figure is.'
         """
-        return {'alpha':'How transparent the figure is.',
+        return {'alpha': 'How transparent the figure is.',
                 'thickness': 'How thick the border line is.',
-                'edgecolor':'The color for the border of filled polygons.',
-                'fill':'Whether or not to fill the polygon.',
-                'legend_label':'The label for this item in the legend.',
-                'legend_color':'The color of the legend text.',
-                'rgbcolor':'The color as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'zorder':'The layer level in which to draw'}
+                'edgecolor': 'The color for the border of filled polygons.',
+                'fill': 'Whether or not to fill the polygon.',
+                'legend_label': 'The label for this item in the legend.',
+                'legend_color': 'The color of the legend text.',
+                'rgbcolor': 'The color as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'zorder': 'The layer level in which to draw'}
 
     def _plot3d_options(self, options=None):
         """
@@ -181,7 +182,6 @@ class Polygon(GraphicPrimitive_xydata):
 
         INPUT:
 
-
         -  ``z`` - optional 3D height above `xy`-plane, or a list of
            heights corresponding to the list of 2D polygon points.
 
@@ -191,6 +191,11 @@ class Polygon(GraphicPrimitive_xydata):
 
             sage: polygon([(cos(t), sin(t)) for t in srange(0, 2*pi, 2*pi/5)]).plot3d()
             Graphics3d Object
+
+        .. PLOT::
+
+            L = polygon([(cos(t), sin(t)) for t in srange(0, 2*pi, 2*pi/5)]).plot3d()
+            sphinx_plot(L)
 
         Showing behavior of the optional parameter z::
 
@@ -222,13 +227,14 @@ class Polygon(GraphicPrimitive_xydata):
         from sage.plot.plot3d.index_face_set import IndexFaceSet
         options = self._plot3d_options()
         options.update(kwds)
-        zdata=[]
+        zdata = []
         if isinstance(z, list):
-            zdata=z
+            zdata = z
         else:
-            zdata=[z]*len(self.xdata)
-        if len(zdata)==len(self.xdata):
-            return IndexFaceSet([[(x, y, z) for x, y, z in zip(self.xdata, self.ydata, zdata)]], **options)
+            zdata = [z]*len(self.xdata)
+        if len(zdata) == len(self.xdata):
+            return IndexFaceSet([list(zip(self.xdata, self.ydata, zdata))],
+                                **options)
         else:
             raise ValueError('Incorrect number of heights given')
 
@@ -240,7 +246,8 @@ class Polygon(GraphicPrimitive_xydata):
         """
         import matplotlib.patches as patches
         options = self.options()
-        p = patches.Polygon([(self.xdata[i],self.ydata[i]) for i in xrange(len(self.xdata))])
+        p = patches.Polygon([(self.xdata[i], self.ydata[i])
+                             for i in range(len(self.xdata))])
         p.set_linewidth(float(options['thickness']))
         a = float(options['alpha'])
         z = int(options.pop('zorder', 1))
@@ -276,6 +283,13 @@ def polygon(points, **options):
 
         sage: polygon([(0,0), (1,1), (0,1)])
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(polygon([(0,0), (1,1), (0,1)]))
+
+    ::
+
         sage: polygon([(0,0,1), (1,1,1), (2,0,1)])
         Graphics3d Object
 
@@ -311,16 +325,29 @@ def polygon2d(points, **options):
         sage: polygon2d([[1,2], [5,6], [5,0]], rgbcolor=(1,0,1))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(polygon2d([[1,2], [5,6], [5,0]], rgbcolor=(1,0,1)))
+
     By default, polygons are filled in, but we can make them
     without a fill as well::
 
         sage: polygon2d([[1,2], [5,6], [5,0]], fill=False)
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(polygon2d([[1,2], [5,6], [5,0]], fill=False))
+
     In either case, the thickness of the border can be controlled::
 
         sage: polygon2d([[1,2], [5,6], [5,0]], fill=False, thickness=4, color='orange')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = polygon2d([[1,2], [5,6], [5,0]], fill=False, thickness=4, color='orange')
+        sphinx_plot(P)
 
     For filled polygons, one can use different colors for the border
     and the interior as follows::
@@ -329,11 +356,23 @@ def polygon2d(points, **options):
         sage: polygon2d(L, color="limegreen", edgecolor="black", axes=False)
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        L = [[0,0]]+[[i*0.01, 1.1+cos(i*0.05)] for i in range(100)]+[[1,0]]
+        P = polygon2d(L, color="limegreen", edgecolor="black", axes=False)
+        sphinx_plot(P)
+
     Some modern art -- a random polygon, with legend::
 
         sage: v = [(randrange(-5,5), randrange(-5,5)) for _ in range(10)]
         sage: polygon2d(v, legend_label='some form')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        v = [(randrange(-5,5), randrange(-5,5)) for _ in range(10)]
+        P = polygon2d(v, legend_label='some form')
+        sphinx_plot(P)
 
     A purple hexagon::
 
@@ -341,17 +380,35 @@ def polygon2d(points, **options):
         sage: polygon2d(L, rgbcolor=(1,0,1))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        L = [[cos(pi*i/3.0),sin(pi*i/3.0)] for i in range(6)]
+        P = polygon2d(L, rgbcolor=(1,0,1))
+        sphinx_plot(P)
+
     A green deltoid::
 
         sage: L = [[-1+cos(pi*i/100)*(1+cos(pi*i/100)),2*sin(pi*i/100)*(1-cos(pi*i/100))] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        L = [[-1+cos(pi*i*0.01)*(1+cos(pi*i*0.01)),2*sin(pi*i*0.01)*(1-cos(pi*i*0.01))] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.125,0.75,0.5))
+        sphinx_plot(P)
+
     A blue hypotrochoid::
 
         sage: L = [[6*cos(pi*i/100)+5*cos((6/2)*pi*i/100),6*sin(pi*i/100)-5*sin((6/2)*pi*i/100)] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(1/8,1/4,1/2))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        L = [[6*cos(pi*i*0.01)+5*cos(3*pi*i*0.01),6*sin(pi*i*0.01)-5*sin(3*pi*i*0.01)] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.125,0.25,0.5))
+        sphinx_plot(P)
 
     Another one::
 
@@ -360,6 +417,13 @@ def polygon2d(points, **options):
         sage: polygon2d(L, rgbcolor=(1/8,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        n = 4.0; h = 5.0; b = 2.0
+        L = [[n*cos(pi*i*0.01)+h*cos((n/b)*pi*i*0.01),n*sin(pi*i*0.01)-h*sin((n/b)*pi*i*0.01)] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.125,0.25,0.75))
+        sphinx_plot(P)
+
     A purple epicycloid::
 
         sage: m = 9; b = 1
@@ -367,17 +431,36 @@ def polygon2d(points, **options):
         sage: polygon2d(L, rgbcolor=(7/8,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        m = 9.0; b = 1
+        L = [[m*cos(pi*i*0.01)+b*cos((m/b)*pi*i*0.01),m*sin(pi*i*0.01)-b*sin((m/b)*pi*i*0.01)] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.875,0.25,0.75))
+        sphinx_plot(P)
+
     A brown astroid::
 
         sage: L = [[cos(pi*i/100)^3,sin(pi*i/100)^3] for i in range(200)]
         sage: polygon2d(L, rgbcolor=(3/4,1/4,1/4))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        L = [[cos(pi*i*0.01)**3,sin(pi*i*0.01)**3] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.75,0.25,0.25))
+        sphinx_plot(P)
+
     And, my favorite, a greenish blob::
 
         sage: L = [[cos(pi*i/100)*(1+cos(pi*i/50)), sin(pi*i/100)*(1+sin(pi*i/50))] for i in range(200)]
-        sage: polygon2d(L, rgbcolor=(1/8, 3/4, 1/2))
+        sage: polygon2d(L, rgbcolor=(1/8,3/4,1/2))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        L = [[cos(pi*i*0.01)*(1+cos(pi*i*0.02)), sin(pi*i*0.01)*(1+sin(pi*i*0.02))] for i in range(200)]
+        P = polygon2d(L, rgbcolor=(0.125,0.75,0.5))
+        sphinx_plot(P)
 
     This one is for my wife::
 
@@ -385,10 +468,22 @@ def polygon2d(points, **options):
         sage: polygon2d(L, rgbcolor=(1,1/4,1/2))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        L = [[sin(pi*i*0.01)+sin(pi*i*0.02),-(1+cos(pi*i*0.01)+cos(pi*i*0.02))] for i in range(-100,100)]
+        P = polygon2d(L, rgbcolor=(1,0.25,0.5))
+        sphinx_plot(P)
+
     One can do the same one with a colored legend label::
 
         sage: polygon2d(L, color='red', legend_label='For you!', legend_color='red')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        L = [[sin(pi*i*0.01)+sin(pi*i*0.02),-(1+cos(pi*i*0.01)+cos(pi*i*0.02))] for i in range(-100,100)]
+        P = polygon2d(L, color='red', legend_label='For you!', legend_color='red')
+        sphinx_plot(P)
 
     Polygons have a default aspect ratio of 1.0::
 

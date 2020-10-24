@@ -1,5 +1,7 @@
 r"""
 Features that are imported by default in the interpreter namespace
 """
-from qsym import QuasiSymmetricFunctions
-from ncsf import NonCommutativeSymmetricFunctions
+from __future__ import absolute_import
+
+from .qsym import QuasiSymmetricFunctions
+from .ncsf import NonCommutativeSymmetricFunctions

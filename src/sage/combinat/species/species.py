@@ -36,6 +36,7 @@ This means that, among the trees on `4` nodes, one has a
 single internal node, three have two internal nodes, and one has
 three internal nodes.
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -50,7 +51,7 @@ three internal nodes.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
+from .generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
 from sage.rings.all import QQ
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -149,14 +150,41 @@ class GenericCombinatorialSpecies(SageObject):
             return False
         return self._unique_info() == x._unique_info()
 
-    def __getstate__(self):
+    def __ne__(self, other):
         """
+        Check whether ``self`` and ``other`` are not equal.
+
+        EXAMPLES::
+
+            sage: X = species.SingletonSpecies()
+            sage: X + X == X + X
+            True
+            sage: X != X
+            False
+            sage: X != species.EmptySetSpecies()
+            True
+            sage: X != X*X
+            True
+
+            sage: X = species.SingletonSpecies()
+            sage: E = species.EmptySetSpecies()
+            sage: L = CombinatorialSpecies()
+            sage: L.define(E+X*L)
+            sage: K = CombinatorialSpecies()
+            sage: K.define(E+X*L)
+            sage: L != K
+            False
+        """
+        return not (self == other)
+    
+    def __getstate__(self):
+        r"""
         This is used during the pickling process and returns a dictionary
         of the data needed to create this object during the unpickling
         process. It returns an (\*args, \*\*kwds) tuple which is to be
         passed into the constructor for the class of this species. Any
-        subclass should define a _state_info list for any arguments which
-        need to be passed in in the constructor.
+        subclass should define a ``_state_info`` list for any arguments which
+        need to be passed in the constructor.
 
         EXAMPLES::
 
@@ -164,10 +192,10 @@ class GenericCombinatorialSpecies(SageObject):
             sage: args, kwds = C.__getstate__()
             sage: args
             {0: 5}
-            sage: list(sorted(kwds.items()))
+            sage: sorted(kwds.items())
             [('max', None), ('min', None), ('weight', 1)]
         """
-        kwds = {'weight':self._weight, 'min':self._min, 'max':self._max}
+        kwds = {'weight': self._weight, 'min': self._min, 'max': self._max}
         try:
             return (dict(enumerate(self._state_info)), kwds)
         except AttributeError:
@@ -232,15 +260,14 @@ class GenericCombinatorialSpecies(SageObject):
         else:
             name = "Combinatorial species"
 
-        optional = False
         options  = []
 
         if self._min is not None:
-            options.append('min=%s'%self._min)
+            options.append('min=%s' % self._min)
         if self._max is not None:
-            options.append('max=%s'%self._max)
+            options.append('max=%s' % self._max)
         if self._weight != 1:
-            options.append('weight=%s'%self._weight)
+            options.append('weight=%s' % self._weight)
 
         if options:
             name += " with " + ", ".join(options)
@@ -259,7 +286,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.structures([1,2]).list()
             [[1, 2], [2, 1], [1, 2], [2, 1]]
         """
-        from sum_species import SumSpecies
+        from .sum_species import SumSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return SumSpecies(self, g)
@@ -276,7 +303,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F = P * P; F
             Product of (Permutation species) and (Permutation species)
         """
-        from product_species import ProductSpecies
+        from .product_species import ProductSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return ProductSpecies(self, g)
@@ -291,7 +318,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: S(S)
             Composition of (Set species) and (Set species)
         """
-        from composition_species import CompositionSpecies
+        from .composition_species import CompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return CompositionSpecies(self, g)
@@ -312,7 +339,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: G.isotype_generating_series().coefficients(5)
             [1, 1, 2, 4, 11]
         """
-        from functorial_composition_species import FunctorialCompositionSpecies
+        from .functorial_composition_species import FunctorialCompositionSpecies
         if not isinstance(g, GenericCombinatorialSpecies):
             raise TypeError("g must be a combinatorial species")
         return FunctorialCompositionSpecies(self, g)
@@ -358,20 +385,6 @@ class GenericCombinatorialSpecies(SageObject):
             NotImplementedError
         """
         return IsotypesWrapper(self, labels, structure_class=structure_class)
-
-    def __cmp__(self, x):
-        """
-        EXAMPLES::
-
-            sage: S = species.SingletonSpecies()
-            sage: E = species.EmptySetSpecies()
-            sage: S == S
-            True
-            sage: S == E
-            False
-        """
-        return cmp(repr(self), repr(x))
-
 
     def _check(self, n=5):
         """
@@ -682,7 +695,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def digraph(self):
         """
-        Returns a directed graph where the vertices are the individual
+        Return a directed graph where the vertices are the individual
         species that make up this one.
 
         EXAMPLES::
@@ -693,20 +706,17 @@ class GenericCombinatorialSpecies(SageObject):
             sage: g = B.digraph(); g
             Multi-digraph on 4 vertices
 
-        ::
-
-            sage: g_c, labels = g.canonical_label(certify=True)
-            sage: g.relabel()
-            sage: g_r = g.canonical_label()
-            sage: g_c == g_r
-            True
-            sage: list(sorted(labels.keys()))
+            sage: sorted(g, key=str)
             [Combinatorial species,
              Product of (Combinatorial species) and (Combinatorial species),
              Singleton species,
-             Sum of (Singleton species) and (Product of (Combinatorial species) and (Combinatorial species))]
-            sage: list(sorted(labels.values()))
-            [0, 1, 2, 3]
+             Sum of (Singleton species) and
+              (Product of (Combinatorial species) and (Combinatorial species))]
+
+            sage: d = {sp: i for i, sp in enumerate(g)}
+            sage: g.relabel(d)
+            sage: g.canonical_label().edges()
+            [(0, 3, None), (2, 0, None), (2, 0, None), (3, 1, None), (3, 2, None)]
         """
         from sage.graphs.digraph import DiGraph
         d = DiGraph(multiedges=True)
@@ -715,7 +725,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _add_to_digraph(self, d):
         """
-        Adds this species as a vertex to the digraph d along with any
+        Add this species as a vertex to the digraph d along with any
         'children' of this species. For example, sum species would add
         itself as a vertex and an edge between itself and each of its
         summands.
@@ -746,7 +756,8 @@ class GenericCombinatorialSpecies(SageObject):
 
     def algebraic_equation_system(self):
         """
-        Returns a system of algebraic equations satisfied by this species.
+        Return a system of algebraic equations satisfied by this species.
+
         The nodes are numbered in the order that they appear as vertices of
         the associated digraph.
 
@@ -758,7 +769,7 @@ class GenericCombinatorialSpecies(SageObject):
 
         ::
 
-            sage: B.digraph().vertices()
+            sage: sorted(B.digraph().vertex_iterator(), key=str)
             [Combinatorial species,
              Product of (Combinatorial species) and (Combinatorial species),
              Singleton species,
@@ -773,18 +784,20 @@ class GenericCombinatorialSpecies(SageObject):
 
         Qz = QQ['z'].fraction_field()
 
-        #Generate the variable names and the corresponding polynomial rings
-        var_names = ["node%s"%i for i in range(d.num_verts())]
+        # Generate the variable names and the corresponding polynomial rings
+        var_names = ["node%s" % i for i in range(d.num_verts())]
         R = Qz[", ".join(var_names)]
         R_gens_dict = R.gens_dict()
 
-        #A dictionary mapping the nodes to variables
-        var_mapping = dict((node, R_gens_dict[name]) for node, name in zip(d.vertices(), var_names))
+        # A dictionary mapping the nodes to variables
+        vertices = sorted(d.vertex_iterator(), key=str)
+        var_mapping = {node: R_gens_dict[name]
+                       for node, name in zip(vertices, var_names)}
         var_mapping['z'] = Qz.gen()
 
         eqns = []
         subs = {}
-        for species in d.vertices():
+        for species in vertices:
             try:
                 eqn = species._equation(var_mapping)
                 if eqn in Qz or eqn in R.gens():
@@ -793,5 +806,4 @@ class GenericCombinatorialSpecies(SageObject):
                     eqns.append(var_mapping[species] - eqn)
             except AttributeError:
                 raise NotImplementedError
-        eqns = [eqn.subs(subs) for eqn in eqns]
-        return eqns
+        return [eq.subs(subs) for eq in eqns]

@@ -7,13 +7,8 @@ TESTS::
     sage: V.<z> = K[]
     sage: x+z
     z + x
-
-    sage: (1/2)^(2^100)
-    Traceback (most recent call last):
-    ...
-    RuntimeError: exponent must be at most 9223372036854775807     # 64-bit
-    RuntimeError: exponent must be at most 2147483647              # 32-bit
 """
+from __future__ import print_function
 
 import sage.misc.prandom as random
 
@@ -92,7 +87,7 @@ def quadratic_number_field():
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.quadratic_number_field()
-        Number Field in a with defining polynomial x^2 - 61099
+        Number Field in a with defining polynomial x^2 - 61099 with a = 247.1821190944038?
     """
     from sage.all import ZZ, QuadraticField
     while True:
@@ -108,7 +103,7 @@ def absolute_number_field(maxdeg=10):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.absolute_number_field()
-        Number Field in a with defining polynomial x^5 + 82*x^4 - 46*x^3 + 39*x^2 - x - 41
+        Number Field in a with defining polynomial x^5 - 15*x^4 + 17*x^3 + 82*x^2 - 46*x + 39
     """
     from sage.all import ZZ, NumberField
     R = ZZ['x']
@@ -127,7 +122,7 @@ def relative_number_field(n=2, maxdeg=2):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.relative_number_field(3)
-        Number Field in aaa with defining polynomial x^2 - 15*x + 17 over its base field
+        Number Field in aaa with defining polynomial x^2 - 79*x - 53 over its base field
     """
     from sage.all import ZZ
     K = absolute_number_field(maxdeg)
@@ -169,9 +164,9 @@ def rings0():
 
         sage: import sage.rings.tests
         sage: type(sage.rings.tests.rings0())
-        <type 'list'>
+        <... 'list'>
     """
-    from sage.all import IntegerRing, RationalField, ZZ, IntegerModRing
+    from sage.all import IntegerRing, RationalField
     v = [(IntegerRing, 'ring of integers'),
          (RationalField, 'field of rational numbers'),
          (integer_mod_ring, 'integers modulo n for n at most 50000'),
@@ -180,10 +175,11 @@ def rings0():
          (small_finite_field, 'finite field with cardinality at most 2^16'),
          (quadratic_number_field, 'a quadratic number field'),
          (absolute_number_field, 'an absolute number field of degree at most 10')
-         #(relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')  # relative numbers are totally broken broken -- 4782
+         #(relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')  # relative numbers are totally broken -- 4782
          ]
 
     return v
+
 
 def rings1():
     """
@@ -203,7 +199,7 @@ def rings1():
 
         sage: import sage.rings.tests
         sage: type(sage.rings.tests.rings0())
-        <type 'list'>
+        <... 'list'>
     """
     v = rings0()
     X = random_rings(level=0)
@@ -223,7 +219,7 @@ def random_rings(level=MAX_LEVEL):
 
         sage: import sage.rings.tests
         sage: type(sage.rings.tests.random_rings())
-        <type 'generator'>
+        <... 'generator'>
     """
     v = rings0()
     if level >= 1:
@@ -269,11 +265,12 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     r = random_rings(level)
     i = 0
     for R in r:
-        print "survived %s tests (memory usage = %s)"%(i, get_memory_usage())
+        print("survived %s tests (memory usage = %s)" %
+              (i, get_memory_usage()))
         i += 1
-        print R
-        print R.random_element()
-        print "----"
+        print(R)
+        print(R.random_element())
+        print("----")
         if i >= trials:
             return
 
@@ -314,12 +311,13 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     """
     i = 0
     for x in random_rings(level):
-        print "survived %s tests (memory usage = %s)"%(i, get_memory_usage())
+        print("survived %s tests (memory usage = %s)" %
+              (i, get_memory_usage()))
         i += 1
-        print x
+        print(x)
         a = x.random_element(); b = x.random_element()
-        print a, b
-        print a*b+a-b+1
+        print(a, b)
+        print(a*b+a-b+1)
         if i >= trials:
             return
 
@@ -337,16 +335,16 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
         test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
-          (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
-          (16*x^2)*(x^2 - 41*x + 1)
-          (-x + 1)*(x^2 + 2*x + 8)
-          (-x^6 - x^4 - 8*x^3 - x^2 - 4*x + 3)*(-x^3 - x^2)
-          (2*x^2 + x + 1)*(x^4 - x^3 + 3*x^2 - x)
-          (-x^3 + x^2 + x + 1)*(4*x^2 + 76*x - 1)
-          (6*x + 1)*(-5*x - 1)
-          (-x^3 + 4*x^2 + x)*(-x^5 + 3*x^4 - 2*x + 5)
-          (-x^5 + 4*x^4 + x^3 + 21*x^2 + x)*(14*x^3)
-          (2*x + 1)*(12*x^3 - 12)
+        (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
+          (16*x^2)*(-41*x + 1)
+          (x^6 + 2*x^5 + 8*x^4 - x^3 + x^2 + x)*(-x^2 - 4*x + 3)
+          (-x^3 - x - 8)*(-1)
+          (x - 1)*(-x^5 + 3*x^4 - x^3 + 2*x + 1)
+          (x^3 + x^2 + x + 1)*(4*x^3 + 76*x^2 - x - 1)
+          (x^6 - 5*x^4 - x^3 + 6*x^2 + 1)*(5*x^2 - x + 4)
+          (3*x - 2)*(x - 1)
+          (21)*(14*x^5 - x^2 + 4*x + 1)
+          (12*x^5 - 12*x^2 + 2*x + 1)*(26*x^4 + x^3 + 1)
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
@@ -372,12 +370,12 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
     threshold = randint(0, min(maxdeg1,maxdeg2))
     R = PolynomialRing(base_ring, 'x')
     if verbose:
-        print "test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold)
+        print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
     for i in range(numtests):
         f = R.random_element(randint(0, maxdeg1), *base_ring_random_elt_args)
         g = R.random_element(randint(0, maxdeg2), *base_ring_random_elt_args)
         if verbose:
-            print "  ({})*({})".format(f, g)
+            print("  ({})*({})".format(f, g))
         if ref_mul(f, g) -  f._mul_karatsuba(g, threshold) != 0:
             raise ValueError("Multiplication failed")
     return

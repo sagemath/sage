@@ -1,6 +1,7 @@
 """
 Plane conics
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #
@@ -20,6 +21,6 @@ Plane conics
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from constructor import Conic
+from .constructor import Conic
 
 

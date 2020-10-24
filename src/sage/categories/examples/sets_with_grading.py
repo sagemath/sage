@@ -1,7 +1,6 @@
 r"""
 Example of a set with grading
 """
-
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_with_grading import SetsWithGrading
@@ -9,15 +8,17 @@ from sage.categories.sets_with_grading import SetsWithGrading
 from sage.rings.integer_ring import IntegerRing
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 
+
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
     Non negative integers graded by themselves.
 
     EXAMPLES::
 
-        sage: E = SetsWithGrading().example()
-        sage: E
+        sage: E = SetsWithGrading().example(); E
         Non negative integers
+        sage: E in Sets().Infinite()
+        True
         sage: E.graded_component(0)
         {0}
         sage: E.graded_component(100)
@@ -29,11 +30,12 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
             sage: TestSuite(SetsWithGrading().example()).run()
         """
-        Parent.__init__(self, category=SetsWithGrading(), facade=IntegerRing())
+        Parent.__init__(self, category=SetsWithGrading().Infinite(),
+                        facade=IntegerRing())
 
     def an_element(self):
         r"""
-        Returns 0.
+        Return 0.
 
         EXAMPLES::
 
@@ -53,7 +55,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def graded_component(self, grade):
         r"""
-        Returns the component with grade ``grade``.
+        Return the component with grade ``grade``.
 
         EXAMPLES::
 
@@ -65,7 +67,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def grading(self, elt):
         r"""
-        Returns the grade of ``elt``.
+        Return the grade of ``elt``.
 
         EXAMPLES::
 
@@ -77,8 +79,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def generating_series(self, var='z'):
         r"""
-        Returns `1 / (1-z)`.
-
+        Return `1 / (1-z)`.
 
         EXAMPLES::
 
@@ -93,6 +94,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         from sage.rings.integer import Integer
         R = PolynomialRing(IntegerRing(), var)
         z = R.gen()
-        return Integer(1) / (Integer(1)-z)
+        return Integer(1) / (Integer(1) - z)
+
 
 Example = NonNegativeIntegers

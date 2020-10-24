@@ -1,0 +1,25 @@
+Use LDFLAGS for tests, too
+
+Upstream PR: https://github.com/wbhart/flint2/pull/209
+
+
+--- a/Makefile.in	2016-01-09 01:44:52.178779543 +0100
++++ b/Makefile.in	2016-01-09 01:44:19.874183406 +0100
+@@ -227,7 +227,7 @@
+ 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) -c $< -o $@;
+ 
+ build/test/%$(EXEEXT): test/%.c $(HEADERS) | build/test
+-	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
++	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $(LDFLAGS) $< -o $@ $(LIBS)
+ 
+ build/test:
+ 	mkdir -p build/test
+@@ -242,7 +242,7 @@
+ 	$(QUIET_CXX) $(CXX) $(CXXFLAGS) $(INCS) -c $< -o $@
+ 
+ build/interfaces/test/t-NTL-interface$(EXEEXT): interfaces/test/t-NTL-interface.cpp build/interfaces/NTL-interface.o
+-	$(QUIET_CXX) $(CXX) $(CXXFLAGS) $(INCS) $< build/interfaces/NTL-interface.o -o $@ $(LIBS)
++	$(QUIET_CXX) $(CXX) $(CXXFLAGS) $(INCS) $(LDFLAGS) $< build/interfaces/NTL-interface.o -o $@ $(LIBS)
+ 
+ print-%:
+ 	@echo '$*=$($*)'

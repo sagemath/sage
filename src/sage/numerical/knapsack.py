@@ -171,10 +171,9 @@ class Superincreasing(SageObject):
             else:
                 raise ValueError("seq must be a super-increasing sequence")
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
         Comparing ``self`` to ``other``.
-
 
         TESTS::
 
@@ -184,7 +183,21 @@ class Superincreasing(SageObject):
             sage: seq == loads(dumps(seq))
             True
         """
-        return cmp(self._seq, other._seq)
+        return self._seq == other._seq
+
+    def __ne__(self, other):
+        r"""
+        Comparing ``self`` to ``other``.
+
+        TESTS::
+
+            sage: from sage.numerical.knapsack import Superincreasing
+            sage: L = [1, 2, 5, 21, 69, 189, 376, 919]
+            sage: seq = Superincreasing(L)
+            sage: seq != seq
+            False
+        """
+        return not self.__eq__(other)
 
     def __repr__(self):
         r"""
@@ -481,7 +494,7 @@ class Superincreasing(SageObject):
 
         ALGORITHMS:
 
-        The algorithm used is adapted from page 355 of [HPS08]_.
+        The algorithm used is adapted from page 355 of [HPS2008]_.
 
 
         EXAMPLES:
@@ -518,12 +531,6 @@ class Superincreasing(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: Element e (= -10) of seq must be a non-negative integer.
-
-
-        REFERENCES:
-
-        .. [HPS08] J. Hoffstein, J. Pipher, and J.H. Silverman. *An
-          Introduction to Mathematical Cryptography*. Springer, 2008.
         """
         # input error handling
         if not self.is_superincreasing():

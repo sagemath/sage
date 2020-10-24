@@ -1,0 +1,25 @@
+cd src
+
+case $(uname) in
+    Darwin)
+        # #21175/#29408: Set the ARCHFLAGS environment variable. This
+        # is to make sure that the output of perl -MExtUtils::Embed
+        # -e ldopts and perl -MExtUtils::Embed -e ccflags (picked up
+        # from system perl) do not contain -arch flags incompatible
+        # with our gcc.
+        export ARCHFLAGS=""
+        # Perl does some weird things with -Wl,-rpath commands.
+        # Add a workaround to those
+        if [[ "$($CC --version)" == *clang* ]]; then
+            export LDFLAGS=$(echo $LDFLAGS | sed "s/-Wl,-rpath,/-Xlinker -rpath -Xlinker /g")
+        fi
+        ;;
+esac
+
+# In the configure phase, the package fails to use rpath for a test
+# program that it compiles, causing a build failure on Linux as
+# reported in #22505 (libreadline.so not found).  We work around it by
+# using LD_LIBRARY_PATH.
+export LD_LIBRARY_PATH="$SAGE_LOCAL/lib":"$LD_LIBRARY_PATH"
+perl Makefile.PL --prefix="$SAGE_LOCAL" INSTALL_BASE="$SAGE_LOCAL"
+$MAKE install

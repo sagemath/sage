@@ -88,6 +88,7 @@ class OutputVideoBase(OutputBase):
           which is presented to the user if the video is not supported.
 
         EXAMPLES::
+
             sage: from sage.repl.rich_output.output_catalog import OutputVideoOgg
             sage: print(OutputVideoOgg.example().html_fragment
             ....:       ('foo', 'class="bar"').replace('><','>\n<'))

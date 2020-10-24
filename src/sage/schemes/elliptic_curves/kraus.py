@@ -21,12 +21,12 @@ than the minimal valuation at that prime; we provide a function to
 return such a model.
 
 The implementation of this functionality is based on work of Kraus
-[Kraus] which gives a local condition for when a pair of number field
+[Kra1989]_ which gives a local condition for when a pair of number field
 elements \(c_4\), \(c_6\) belong to a Weierstrass model which is
 integral at a prime \(P\), together with a global version. Only primes
 dividing 2 or 3 are hard to deal with. In order to compute the
 corresponding integral model one then needs to combine together the
-local transformations implicit in [Kraus] into a single global one.
+local transformations implicit in [Kra1989]_ into a single global one.
 
 Various utility functions relating to the testing and use of Kraus's
 conditions are included here.
@@ -34,12 +34,6 @@ conditions are included here.
 AUTHORS:
 
 - John Cremona (2015)
-
-REFERENCES:
-
-- [Kraus] Kraus, Alain, Quelques remarques a propos des invariants
-  \(c_4\), \(c_6\) et \(\Delta\) d'une courbe elliptique, Acta
-  Arith. 54 (1989), 75-80.
 """
 
 ##############################################################################
@@ -55,14 +49,14 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
 
-from sage.all import prod
-from sage.rings.all import RealField, RR
 from sage.schemes.elliptic_curves.all import EllipticCurve
 
-def c4c6_nonsingular(c4,c6):
+
+def c4c6_nonsingular(c4, c6):
     r"""
     Check if c4, c6 are integral with valid associated discriminant.
 
@@ -88,7 +82,7 @@ def c4c6_nonsingular(c4,c6):
         False
         sage: c4c6_nonsingular(4,8)
         False
-        sage: all([c4c6_nonsingular(*E.c_invariants()) for E in cremona_curves([    11..100])])
+        sage: all(c4c6_nonsingular(*E.c_invariants()) for E in cremona_curves([    11..100]))
         True
 
     Over number fields::
@@ -105,7 +99,8 @@ def c4c6_nonsingular(c4,c6):
     D = (c4**3-c6**2)/1728
     return not D.is_zero() and D.is_integral()
 
-def c4c6_model(c4,c6, assume_nonsingular=False):
+
+def c4c6_model(c4, c6, assume_nonsingular=False):
     r"""
     Return the elliptic curve [0,0,0,-c4/48,-c6/864] with given c-invariants.
 
@@ -141,7 +136,8 @@ def c4c6_model(c4,c6, assume_nonsingular=False):
 
 # Arithmetic utility functions
 
-def make_integral(a,P,e):
+
+def make_integral(a, P, e):
     r"""
     Returns b in O_K with P^e|(a-b), given a in O_{K,P}.
 
@@ -160,7 +156,7 @@ def make_integral(a,P,e):
 
     ALGORITHM:
 
-    Totally naive, we simply test reisdues modulo `P^e` until one
+    Totally naive, we simply test residues modulo `P^e` until one
     works.  We will only use this when P is a prime dividing 2 and e
     is the ramification degree, so the number of residues to check is
     at worst `2^d` where `d` is the degree of the field.
@@ -187,9 +183,10 @@ def make_integral(a,P,e):
     for b in (P**e).residues():
         if (a-b).valuation(P) >= e:
             return b
-    raise ArithmeticError("Cannot lift %s to O_K mod (%s)^%s" % (a,P,e))
+    raise ArithmeticError("Cannot lift %s to O_K mod (%s)^%s" % (a, P, e))
 
-def sqrt_mod_4(x,P):
+
+def sqrt_mod_4(x, P):
     r"""
     Returns a local square root mod 4, if it exists.
 
@@ -220,7 +217,6 @@ def sqrt_mod_4(x,P):
         sage: ((1+a)^2 - (-1+2*a)).mod(P**e)
         0
     """
-    K = x.parent()
     e = P.ramification_index()
     P2 = P**e
     for r in P2.residues():
@@ -230,7 +226,8 @@ def sqrt_mod_4(x,P):
 
 # Kraus test and check for primes dividing 3:
 
-def test_b2_local(c4,c6,P,b2,debug=False):
+
+def test_b2_local(c4, c6, P, b2, debug=False):
     r"""
     Test if b2 gives a valid model at a prime dividing 3.
 
@@ -292,7 +289,8 @@ def test_b2_local(c4,c6,P,b2,debug=False):
         return False
     return E
 
-def test_b2_global(c4,c6,b2,debug=False):
+
+def test_b2_global(c4, c6, b2, debug=False):
     r"""
     Test if b2 gives a valid model at all primes dividing 3.
 
@@ -329,13 +327,15 @@ def test_b2_global(c4,c6,b2,debug=False):
         if debug:
             print("test_b2_global: wrong c-invariants")
         return False
-    if not all([E.is_local_integral_model(P) for P in c4.parent().primes_above(3)]):
+    if not all(E.is_local_integral_model(P)
+               for P in c4.parent().primes_above(3)):
         if debug:
             print("test_b2_global: not integral at all primes dividing 3")
         return False
     return E
 
-def check_Kraus_local_3(c4,c6,P, assume_nonsingular=False, debug=False):
+
+def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
     r"""
     Test if c4,c6 satisfy Kraus's conditions at a prime P dividing 3.
 
@@ -350,7 +350,7 @@ def check_Kraus_local_3(c4,c6,P, assume_nonsingular=False, debug=False):
 
     OUTPUT:
 
-    Either (False, 0) if Kraus's condictions fail, or (True, b2) if
+    Either (False, 0) if Kraus's conditions fail, or (True, b2) if
     they pass, in which case the elliptic curve which is the
     (b2/12,0,0)-transform of [0,0,0,-c4/48,-c6/864] is integral at P.
 
@@ -404,7 +404,8 @@ def check_Kraus_local_3(c4,c6,P, assume_nonsingular=False, debug=False):
 
 # Kraus test and check for primes dividing 2:
 
-def test_a1a3_local(c4,c6,P,a1,a3):
+
+def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
     r"""
     Test if a1,a3 are valid at a prime P dividing 2.
 
@@ -421,7 +422,7 @@ def test_a1a3_local(c4,c6,P,a1,a3):
     The elliptic curve which is the (a1^2/12,a1/2,a3/2)-transform of
     [0,0,0,-c4/48,-c6/864] if this is integral at P, else False.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_local
         sage: K.<a> = NumberField(x^2-10)
@@ -430,20 +431,23 @@ def test_a1a3_local(c4,c6,P,a1,a3):
         sage: P = K.primes_above(2)[0]
         sage: test_a1a3_local(c4,c6,P,a,0)
         Elliptic Curve defined by y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9) over Number Field in a with defining polynomial x^2 - 10
-        sage: test_a1a3_local(c4,c6,P,a,a)
+        sage: test_a1a3_local(c4,c6,P,a,a,debug=True)
         test_a1a3_local: not integral at Fractional ideal (2, a)
         False
     """
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
     if not (c4,c6) == E.c_invariants():
-        print("test_a1a3_local: wrong c-invariants at P=%s" % P)
+        if debug:
+            print("test_a1a3_local: wrong c-invariants at P=%s" % P)
         return False
     if not E.is_local_integral_model(P):
-        print("test_a1a3_local: not integral at %s" % P)
+        if debug:
+            print("test_a1a3_local: not integral at %s" % P)
         return False
     return E
 
-def test_a1a3_global(c4,c6,a1,a3):
+
+def test_a1a3_global(c4, c6, a1, a3, debug=False):
     r"""
     Test if a1,a3 are valid at all primes P dividing 2.
 
@@ -459,28 +463,31 @@ def test_a1a3_global(c4,c6,a1,a3):
     [0,0,0,-c4/48,-c6/864] if this is integral at all primes P
     dividing 2, else False.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_global
         sage: K.<a> = NumberField(x^2-10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
-        sage: test_a1a3_global(c4,c6,a,a)
-        not integral at all primes above 2
+        sage: test_a1a3_global(c4,c6,a,a,debug=False)
         False
         sage: test_a1a3_global(c4,c6,a,0)
         Elliptic Curve defined by y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9) over Number Field in a with defining polynomial x^2 - 10
     """
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
-    if not (c4,c6) == E.c_invariants():
-        print "wrong c-invariants"
+    if not (c4, c6) == E.c_invariants():
+        if debug:
+            print("wrong c-invariants")
         return False
-    if not all([E.is_local_integral_model(P) for P in c4.parent().primes_above(2)]):
-        print "not integral at all primes above 2"
+    if not all(E.is_local_integral_model(P)
+               for P in c4.parent().primes_above(2)):
+        if debug:
+            print("not integral at all primes above 2")
         return False
     return E
 
-def test_rst_global(c4,c6,r,s,t):
+
+def test_rst_global(c4, c6, r, s, t, debug=False):
     r"""
     Test if the (r,s,t)-transform of the standard c4,c6-model is integral.
 
@@ -504,46 +511,68 @@ def test_rst_global(c4,c6,r,s,t):
         sage: c6 = -55799680*a + 262126328
         sage: test_rst_global(c4,c6,1/3*a - 133/6, 3/2*a, -89/2*a + 5)
         Elliptic Curve defined by y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813) over Number Field in a with defining polynomial x^2 - 10
-        sage: test_rst_global(c4,c6,a, 3, -89*a)
-        test_rst_global: not integral at some prime
-        (6, 3*a - 9, -178*a, 5386/3*a - 96089/12, 6107999/108*a - 39958231/108)
+        sage: test_rst_global(c4,c6,a, 3, -89*a, debug=False)
         False
     """
     E = c4c6_model(c4,c6).rst_transform(r,s,t)
     if not (c4,c6) == E.c_invariants():
-        print("test_rst_global: wrong c-invariants")
+        if debug:
+            print("test_rst_global: wrong c-invariants")
         return False
     if not E.is_global_integral_model():
-        print("test_rst_global: not integral at some prime")
-        print(E.ainvs())
+        if debug:
+            print("test_rst_global: not integral at some prime")
+            print(E.ainvs())
+            K = E.base_field()
+            for P in K.primes_above(2)+K.primes_above(3):
+                if not E.is_local_integral_model(P):
+                    print(" -- not integral at P=%s" %P)
         return False
     return E
 
-def check_Kraus_local_2(c4,c6,P, assume_nonsingular=False):
+# When a1 is None this function finds a pair a1, a3 such that there is
+# a model with these invariants and a2=0 with the given c4, c6,
+# integral at P.  The value of a1 is unique modulo 2 (i.e. mod P^e
+# where e is the ramification degree of 2); the value of a3 is unique
+# mod 2 once a1 is fixed, but not otherwise: when a1 is replaced by
+# a1+2s we must replace a3 by a3 + a1*s*(a1+s).
+
+# Because of the latter point, and to fix the bug at #19665, we allow
+# the user to specify a1, in which case a3 is computed from it.  This
+# is important in the global application where we need to put together
+# the transforms for all the primes above 2: we must first get the
+# local a1's, then CRT these to get a global a1, then go back to get
+# the local a3's and finally CRT these.
+
+
+def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
     r"""
     Test if c4,c6 satisfy Kraus's conditions at a prime P dividing 2.
 
     INPUT:
 
-    - ``c4``, ``c6`` -- elements of a number field
+    - ``c4``, ``c6`` -- integral elements of a number field
 
-    - ``P`` - a prime ideal of the number field which divides 2
+    - ``P`` -- a prime ideal of the number field which divides 2
+
+    - ``a1`` -- an integral elements of a number field, or None (default)
 
     - ``assume_nonsingular`` (boolean, default False) -- if True,
       check for integrality and nosingularity.
 
     OUTPUT:
 
-    Either (False, 0, 0) if Kraus's condictions fail, or (True, a1,
+    Either (False, 0, 0) if Kraus's conditions fail, or (True, a1,
     a3) if they pass, in which case the elliptic curve which is the
     (a1**2/12,a1/2,a3/2)-transform of [0,0,0,-c4/48,-c6/864] is
-    integral at P.
+    integral at P.  If a1 is provided and valid then the output will
+    be (True, a1, a3) for suitable a3.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.kraus import check_Kraus_local_2
         sage: K.<a> = NumberField(x^2-10)
-        sage: c4 = -60544*a + 385796
+        sage: c4 = -60544*a + 385796 #  EllipticCurve([a,a,0,1263*a-8032,62956*a-305877])
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
         sage: check_Kraus_local_2(c4,c6,P)
@@ -555,40 +584,60 @@ def check_Kraus_local_2(c4,c6,P, assume_nonsingular=False):
     e = P.ramification_index()
     P2 = P**e
     c4val = c4.valuation(P)
+
     if c4val==0:
-        flag, t = sqrt_mod_4(-c6,P)
-        if not flag:
-            return False,0,0
-        # In the next 2 lines we are dividing by units at P,
-        # but the results may not be globally integral
-        a1 = make_integral(c4/t,P,e)
-        a3 = make_integral((c6+a1**6)/(4*a1**3),P,e)
-        assert test_a1a3_local(c4,c6,P,a1,a3)
-        return True, a1,a3
+        if a1 is None:
+            flag, t = sqrt_mod_4(-c6,P)
+            if not flag:
+                return False,0,0
+            # In the assignment to a1, a3 we divide by units at P,
+            # (note that c6+a1**6 = 0 mod P**e so dividing by 4 is OK)
+            # but the results, which are well-defined modulo P^e, may
+            # not be globally integral
+            a1 = make_integral(c4/t,P,e)
+        a13 = a1**3
+        a3 = make_integral((c6+a13**2)/(4*a13),P,2*e)
+        if test_a1a3_local(c4,c6,P,a1,a3):
+            return True, a1,a3
+        else:
+            raise RuntimeError("check_Kraus_local_2 fails")
+
     if c4val >= 4*e:
+        if a1 is None:
+            a1 = c4.parent().zero() # 0
         flag, a3 = sqrt_mod_4(c6/8,P)
-        if not flag:
-            return False,0,0
-        a1 = 0
-        assert test_a1a3_local(c4,c6,P,a1,a3)
-        return True, a1,a3
-    # general case, val(c4) strictly between 0 and 4e
-    for a1 in P2.residues():
-        Px = -a1**6+3*a1**2*c4+2*c6
-        if Px.valuation(P)>=4*e:
-            Px16 = Px/16
-            flag, a3 = sqrt_mod_4(Px16,P)
-            if flag and (4*a1*a1*Px-(a1**4-c4)**2).valuation(P)>=8*e:
-                assert test_a1a3_local(c4,c6,P,a1,a3)
+        if flag:
+            if test_a1a3_local(c4,c6,P,a1,a3):
                 return True, a1,a3
+            else:
+                raise RuntimeError("check_Kraus_local_2 fails")
+        else:
+            return False,0,0
+
+    # val(c4) strictly between 0 and 4e; a1 unique mod 2, with 3 conditions to be satisfied:
+
+    P2res = [a1] if a1 else P2.residues()
+    for a1 in P2res:
+        Px = -a1**6+3*a1**2*c4+2*c6
+        if Px.valuation(P) >= 4*e :                                  # (i)
+            flag, a3 = sqrt_mod_4(Px/16,P)                           # (ii)
+            if flag:
+                a1sq = a1*a1
+                if (4*a1sq*Px-(a1sq**2-c4)**2).valuation(P) >= 8*e : # (iii)
+                    if test_a1a3_local(c4,c6,P,a1,a3):
+                        return True, a1,a3
+                    else:
+                        raise RuntimeError("check_Kraus_local_2 fails")
+    # end of loop, but no a1 found
     return False,0,0
 
 # Wrapper function for local Kraus check, outsources the real work to
 # other functions for primes dividing 2 or 3:
 
-def check_Kraus_local(c4,c6,P, assume_nonsingular=False):
+
+def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
     r"""
-    Check Kraus's condictions locally at a prime P.
+    Check Kraus's conditions locally at a prime P.
 
     INPUT:
 
@@ -641,7 +690,7 @@ def check_Kraus_local(c4,c6,P, assume_nonsingular=False):
             return False, None
     K = c4.parent()
     if K(2).valuation(P) >0:
-        flag, a1, a3 = check_Kraus_local_2(c4,c6,P,True)
+        flag, a1, a3 = check_Kraus_local_2(c4,c6,P,None,True)
         if flag:
             E = test_a1a3_local(c4,c6,P,a1,a3)
             if E:
@@ -656,7 +705,8 @@ def check_Kraus_local(c4,c6,P, assume_nonsingular=False):
         return (False, None)
     return (True, c4c6_model(c4,c6))
 
-def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
+
+def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     r"""
     Test if c4,c6 satisfy Kraus's conditions at all primes.
 
@@ -669,7 +719,7 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
 
     OUTPUT:
 
-    Either False if Kraus's condictions fail, or, if they pass, an
+    Either False if Kraus's conditions fail, or, if they pass, an
     elliptic curve E which is integral and has c-invariants c4,c6.
 
     EXAMPLES::
@@ -683,9 +733,10 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
         Using b2=a + 1 gives a model integral at 3:
         (0, 1/4*a + 1/4, 0, 10091/8*a - 128595/16, 4097171/64*a - 19392359/64)
         Local Kraus conditions for (c4,c6)=(-60544*a + 385796,-55799680*a + 262126328) pass at all primes dividing 2
-        Using (a1,a3)=(a,0) gives a model integral at 2:
-        (a, 0, 0, 3784/3*a - 24106/3, 1772120/27*a - 2790758/9)
-        Using (r,s,t)=[1/3*a - 133/6, 3/2*a, -89/2*a + 5] should give a global integral model...
+        Using (a1,a3)=(3*a,0) gives a model integral at 2:
+        (3*a, 0, 0, 3784/3*a - 23606/3, 1999160/27*a - 9807634/27)
+        (a1, b2, a3) = (3*a, a + 1, 0)
+        Using (r, s, t)=(1/3*a - 133/6, 3/2*a, -89/2*a + 5) should give a global integral model...
         ...and it does!
         Elliptic Curve defined by y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813) over Number Field in a with defining polynomial x^2 - 10
 
@@ -694,6 +745,20 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
         sage: c4, c6 = E.c_invariants()
         sage: check_Kraus_global(c4,c6)
         Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336) over Number Field in a with defining polynomial x^2 - 15
+
+    TESTS (see :trac:`17295`)::
+
+        sage: K.<a> =NumberField(x^3 - 7*x - 5)
+        sage: E = EllipticCurve([a, 0, 1, 2*a^2 + 5*a + 3, -a^2 - 3*a - 2])
+        sage: assert E.conductor().norm() ==8
+        sage: G = K.galois_group(names='b')
+        sage: def conj_curve(E,sigma): return EllipticCurve([sigma(a) for a in E.ainvs()])
+        sage: EL = conj_curve(E,G[0])
+        sage: L = EL.base_field()
+        sage: assert L.class_number()== 2
+        sage: EL.isogeny_class() # long time (~10s)
+        Isogeny class of Elliptic Curve defined by y^2 + (-1/90*b^4+7/18*b^2-1/2*b-98/45)*x*y + y = x^3 + (1/45*b^5-1/18*b^4-7/9*b^3+41/18*b^2+167/90*b-29/9)*x + (-1/90*b^5+1/30*b^4+7/18*b^3-4/3*b^2-61/90*b+11/5) over Number Field in b with defining polynomial x^6 - 42*x^4 + 441*x^2 - 697
+
     """
     if not assume_nonsingular:
         if not c4c6_nonsingular(c4,c6):
@@ -704,7 +769,7 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
     three = K.ideal(3)
     Plist3 = K.primes_above(3)
     dat = [check_Kraus_local_3(c4,c6,P,True) for P in Plist3]
-    if not all([d[0] for d in dat]):
+    if not all(d[0] for d in dat):
         if debug:
             print("Local Kraus condition for (c4,c6)=(%s,%s) fails at some prime dividing 3" % (c4,c6))
         return False
@@ -716,7 +781,7 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
 
     b2list = [d[1] for d in dat]
     P3list = [P**three.valuation(P) for P in Plist3]
-    b2 = K.solve_CRT(b2list,P3list).mod(three)
+    b2 = K.solve_CRT(b2list,P3list, check=True).mod(three)
 
     # test that this b2 value works at all P|3:
     if debug:
@@ -726,28 +791,37 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
         else:
             raise RuntimeError("Error in check_Kraus_global at some prime dividing 3")
 
-    # Check all primes dividing 2; for each get the value of a1,a3
+    # Check all primes dividing 2; for each get the value of a1, then
+    # CRT these to get a single a1 (mod 2) and use these to obtain
+    # local a3; finally CRT these
     two = K.ideal(2)
     Plist2 = K.primes_above(2)
-    dat = [check_Kraus_local_2(c4,c6,P,True) for P in Plist2]
-    if not all([d[0] for d in dat]):
+    dat = [check_Kraus_local_2(c4, c6, P, None, True) for P in Plist2]
+    if not all(d[0] for d in dat):
         if debug:
-            print("Local Kraus condition for (c4,c6)=(%s,%s) fails at some prime dividing 2" % (c4,c6))
+            print("Local Kraus condition for (c4,c6)=(%s,%s) fails at some prime dividing 2" % (c4, c6))
         return False
     if debug:
         print("Local Kraus conditions for (c4,c6)=(%s,%s) pass at all primes dividing 2" % (c4,c6))
 
-    # OK at all primes dividing 2; now use CRT to combine the a1,a3
-    # values to get residue classes for a1, a3 mod 2:
+    # OK at all primes dividing 2; now use CRT to combine the a1
+    # values to get the residue classes of a1 mod 2:
+    P2list = [P**(two.valuation(P)) for P in Plist2]
     a1list = [d[1] for d in dat]
+    a1 = K.solve_CRT(a1list,P2list, check=True)
+    # See comment below: this is needed for when we combine with the primes above 3.
+    if not a1 in three: # three.divides(a1) causes a segfault
+        a1 = 3*a1
+
+    # Using this a1, recompute the local a3's:
+    dat = [check_Kraus_local_2(c4,c6,P,a1,True) for P in Plist2]
+    # Use CRT to combine these:
     a3list = [d[2] for d in dat]
-    P2list = [P**two.valuation(P) for P in Plist2]
-    a1 = K.solve_CRT(a1list,P2list)
-    a3 = K.solve_CRT(a3list,P2list)
+    a3 = K.solve_CRT(a3list,P2list, check=True)
 
     # test that these a1,a3 values work at all P|2:
     if debug:
-        E = test_a1a3_global(c4,c6,a1,a3)
+        E = test_a1a3_global(c4,c6,a1,a3,debug)
         if E:
             print("Using (a1,a3)=(%s,%s) gives a model integral at 2:\n%s" % (a1,a3,E.ainvs()))
         else:
@@ -761,20 +835,25 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
     # (r,s,t) = (a1^2/12,a1/2,a3/2)*(r2,0,0) with 2-integral r2, and
     # (r,s,t) = (b2/12,0,0,0)*(r3,s3,t3) with 3-integral r3,s3,t3.
 
-    # A solution is r2=(b2-a1^2)/3, r3=(b2-a1^2)/4, s3=a1/2,
-    # t3=(a1*r2+a3)/2, provided that a1 =0 (mod 3), to make t3
-    # 3-integral.  Since a1 was only determined mod 2 this can be
-    # fixed first.
+    # A solution (assuming that a1,a3,b2 are globally integral) is
+    # r2=(b2-a1^2)/3, r3=(b2-a1^2)/4, s3=a1/2, t3=(a1*r2+a3)/2,
+    # provided that a1 =0 (mod 3), to make t3 3-integral.  Since a1
+    # was only determined mod 2 this can be fixed first, simply by
+    # multiplying a1 by 3 if necessary.  We did this above.
 
-    a1 = K.solve_CRT([0,a1],[K.ideal(three),K.ideal(two)])
-    r = b2/3 - a1**2/4
+    if debug:
+        print("(a1, b2, a3) = (%s, %s, %s)" % (a1,b2,a3))
+    assert a1.is_integral()
+    assert a3.is_integral()
+    assert b2.is_integral()
     s = a1/2
+    r = b2/3 - s**2
     t = s*(b2-a1**2)/3 + a3/2
     if debug:
-        print("Using (r,s,t)=%s should give a global integral model..." % [r,s,t])
+        print("Using (r, s, t)=(%s, %s, %s) should give a global integral model..." % (r,s,t))
 
     # Final computation of the curve E:
-    E = test_rst_global(c4,c6,r,s,t)
+    E = test_rst_global(c4,c6,r,s,t,debug)
     if not E:
         if debug:
             print("Error in check_Kraus_global with combining mod-2 and mod-3 transforms")
@@ -790,6 +869,7 @@ def check_Kraus_global(c4,c6, assume_nonsingular=False, debug=False):
         print("...and it does!")
     return E
 
+
 def semi_global_minimal_model(E, debug=False):
     r"""
     Return a global minimal model for this elliptic curve if it
@@ -799,7 +879,7 @@ def semi_global_minimal_model(E, debug=False):
 
     - ``E`` -- an elliptic curve over a number field
 
-    - ``debug`` (boolean, default False) -- if True, prints some
+    - ``debug`` (boolean, default ``False``) -- if ``True``, prints some
       messages about the progress of the computation.
 
     OUTPUT:
@@ -815,10 +895,10 @@ def semi_global_minimal_model(E, debug=False):
 
     .. note::
 
-       This function is normally not called directly by users, who
-       will use the elliptic curve method :meth:`global_minimal_model`
-       instead; that method also applied various reductions after
-       minimising the model.
+        This function is normally not called directly by users, who
+        will use the elliptic curve method :meth:`global_minimal_model`
+        instead; that method also applied various reductions after
+        minimising the model.
 
     EXAMPLES::
 
@@ -829,9 +909,28 @@ def semi_global_minimal_model(E, debug=False):
         sage: from sage.schemes.elliptic_curves.kraus import semi_global_minimal_model
         sage: Emin, P = semi_global_minimal_model(E)
         sage: Emin
-        Elliptic Curve defined by y^2 + 3*x*y + (2*a-9)*y = x^3 + (a-10)*x^2 + (-152*a-418)*x + (1909*a+5930) over Number Field in a with defining polynomial x^2 - 10
+        Elliptic Curve defined by y^2 + 3*x*y + (2*a-11)*y = x^3 + (a-10)*x^2 + (-152*a-415)*x + (1911*a+5920) over Number Field in a with defining polynomial x^2 - 10
         sage: E.minimal_discriminant_ideal()*P**12 == K.ideal(Emin.discriminant())
         True
+
+    TESTS:
+
+    Consider (see :trac:`20737`) a curve with no global minimal model
+    whose non-minimality class has order 3 in the class group, which
+    has order 3315. The smallest prime in that ideal class has norm
+    23567::
+
+        sage: K.<a> = NumberField(x^2-x+31821453)
+        sage: ainvs = (0, 0, 0, -382586771000351226384*a - 2498023791133552294513515, 358777608829102441023422458989744*a + 1110881475104109582383304709231832166)
+        sage: E = EllipticCurve(ainvs)
+        sage: from sage.schemes.elliptic_curves.kraus import semi_global_minimal_model
+        sage: Emin, p = semi_global_minimal_model(E) # long time (25s)
+        sage: p                                      # long time
+        Fractional ideal (23567, a + 2270)
+        sage: p.norm()                               # long time
+        23567
+        sage: Emin.discriminant().norm().factor()    # long time
+        23567^12
     """
     c = E.global_minimality_class()
     I = c.ideal()
@@ -840,15 +939,22 @@ def semi_global_minimal_model(E, debug=False):
         P = E.base_field().ideal(1)
     else:
         if debug:
-            print("No global minimal model, obstruction class = %s of order %s" % (c,c.order()))
-        P = c.representative_prime()
+            print("No global minimal model, obstruction class = %s of order %s" % (c, c.order()))
+        bound = E.base_field().minkowski_bound().round() * 5
+        have_prime = False
+        while not have_prime:
+            try:
+                P = c.representative_prime(norm_bound=bound)
+                have_prime = True
+            except RuntimeError:
+                bound *= 2
         if debug:
-            print("Using a prime in that class: %s" % P)
-        I = I/P
+            print("Using prime {} of norm {} in that class".format(P, P.norm()))
+        I = I / P
     u = I.gens_reduced()[0]
-    rc4 = c4/u**4
-    rc6 = c6/u**6
-    Emin = check_Kraus_global(rc4,rc6,assume_nonsingular=True,debug=debug)
+    rc4 = c4 / u**4
+    rc6 = c6 / u**6
+    Emin = check_Kraus_global(rc4, rc6, assume_nonsingular=True, debug=debug)
     if Emin:
         return Emin, P
     raise RuntimeError("failed to compute global minimal model")

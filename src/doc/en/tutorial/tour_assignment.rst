@@ -59,7 +59,7 @@ just a few examples:
 
 As the last example shows, some mathematical expressions return
 'exact' values, rather than numerical approximations. To get a
-numerical approximation, use either the function ``n`` or the method
+numerical approximation, use either the function ``N`` or the method
 ``n`` (and both of these have a longer name, ``numerical_approx``, and
 the function ``N`` is the same as ``n``)). These take optional
 arguments ``prec``, which is the requested number of bits of
@@ -95,24 +95,8 @@ hold values of any Python type within a given scope:
     <type 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # now a is a string
     sage: type(a)
-    <type 'str'>
+    <... 'str'>
 
 The C programming language, which is statically typed, is much
 different; a variable declared to hold an int can only hold an int
 in its scope.
-
-A potential source of confusion in Python is that an integer
-literal that begins with a zero is treated as an octal number,
-i.e., a number in base 8.
-
-::
-
-    sage: 011
-    9
-    sage: 8 + 1
-    9
-    sage: n = 011
-    sage: n.str(8)   # string representation of n in base 8
-    '11'
-
-This is consistent with the C programming language.

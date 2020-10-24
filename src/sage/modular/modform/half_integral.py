@@ -7,13 +7,14 @@ AUTHORS:
 
 - William Stein (2007-08)
 """
+from __future__ import absolute_import
 
 from sage.matrix.all import MatrixSpace
 from sage.modular.dirichlet import DirichletGroup
 
-import constructor
+from . import constructor
 
-from theta import theta2_qexp, theta_qexp
+from .theta import theta2_qexp, theta_qexp
 from copy import copy
 
 def half_integral_weight_modform_basis(chi, k, prec):
@@ -24,14 +25,11 @@ def half_integral_weight_modform_basis(chi, k, prec):
 
     INPUT:
 
+    - ``chi`` -- a Dirichlet character with modulus divisible by 16
 
-    -  ``chi`` - a Dirichlet character with modulus
-       divisible by 16
+    - ``k`` -- an odd integer > 1
 
-    -  ``k`` - an odd integer = 1
-
-    -  ``prec`` - a positive integer
-
+    - ``prec`` -- a positive integer
 
     OUTPUT: a list of power series
 
@@ -89,7 +87,7 @@ def half_integral_weight_modform_basis(chi, k, prec):
          q^4 - 2*q^5 - 2*q^6 + 4*q^7 + 4*q^9 + O(q^10),
          q^5 - 2*q^7 - 2*q^9 + O(q^10)]
 
-    This example once raised an error (see trac #5792).
+    This example once raised an error (see :trac:`5792`).
 
     ::
 
@@ -113,15 +111,14 @@ def half_integral_weight_modform_basis(chi, k, prec):
     isomorphic to `S_{k/2}(\chi)` via the map
     `(a,b) \mapsto a/\Theta_3`.
     """
-
     if chi.modulus() % 16:
         raise ValueError("the character must have modulus divisible by 16")
 
-    if not k%2:
-        raise ValueError("k (=%s) must be odd"%k)
+    if not k % 2:
+        raise ValueError("k (=%s) must be odd" % k)
 
     if k < 3:
-        raise ValueError("k (=%s) must be at least 3"%k)
+        raise ValueError("k (=%s) must be at least 3" % k)
 
     chi = chi.minimize_base_ring()
     psi = chi.parent()(DirichletGroup(4, chi.base_ring()).gen())

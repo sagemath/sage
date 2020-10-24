@@ -1,5 +1,5 @@
 r"""
-Examples of algebras with basis
+Examples of Hopf algebras with basis
 """
 #*****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -16,7 +16,7 @@ from sage.categories.all import tensor
 
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
-    An of a Hopf algebra with basis: the group algebra of a group
+    An example of a Hopf algebra with basis: the group algebra of a group
 
     This class illustrates a minimal implementation of a Hopf algebra with basis.
     """
@@ -90,7 +90,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: A = HopfAlgebrasWithBasis(QQ).example(); A
             An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
             sage: A.algebra_generators()
-            Finite family {(1,3): B[(1,3)], (1,2,3): B[(1,2,3)]}
+            Finite family {(1,2,3): B[(1,2,3)], (1,3): B[(1,3)]}
         """
         return Family(self._group.gens(), self.monomial)
 

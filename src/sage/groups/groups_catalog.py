@@ -16,6 +16,7 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
   - :class:`groups.permutation.KleinFour <sage.groups.perm_gps.permgroup_named.KleinFourGroup>`
   - :class:`groups.permutation.Quaternion <sage.groups.perm_gps.permgroup_named.QuaternionGroup>`
   - :class:`groups.permutation.Cyclic <sage.groups.perm_gps.permgroup_named.CyclicPermutationGroup>`
+  - :class:`groups.permutation.ComplexReflection <sage.groups.perm_gps.permgroup_named.ComplexReflectionGroup>`
   - :class:`groups.permutation.Dihedral <sage.groups.perm_gps.permgroup_named.DihedralGroup>`
   - :class:`groups.permutation.DiCyclic <sage.groups.perm_gps.permgroup_named.DiCyclicGroup>`
   - :class:`groups.permutation.Mathieu <sage.groups.perm_gps.permgroup_named.MathieuGroup>`
@@ -55,16 +56,26 @@ Let ``<tab>`` indicate pressing the tab key.  So begin by typing
   - :func:`groups.affine.Affine <sage.groups.affine_gps.affine_group.AffineGroup>`
   - :func:`groups.affine.Euclidean <sage.groups.affine_gps.euclidean_group.EuclideanGroup>`
 
+- Lie Groups  (``groups.lie.<tab>``)
+
+  - :class:`groups.lie.Nilpotent <sage.groups.lie_gps.nilpotent_lie_group.NilpotentLieGroup>`
+
 - Miscellaneous Groups (``groups.misc.<tab>``)
 
-  - :func:`groups.misc.AdditiveAbelian <sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup>`
-  - :class:`groups.misc.AdditiveCyclic <sage.rings.finite_rings.integer_mod_ring.IntegerModFactory>`
-  - :func:`groups.misc.Braid <sage.groups.braid.BraidGroup>`
-  - :func:`groups.misc.CoxeterGroup <sage.combinat.root_system.coxeter_group.CoxeterGroup>`
-  - :func:`groups.misc.Free <sage.groups.free_group.FreeGroup>`
-  - :class:`groups.misc.RightAngledArtin <sage.groups.raag.RightAngledArtinGroup>`
-  - :func:`groups.misc.SemimonomialTransformation <sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup>`
-  - :func:`groups.misc.WeylGroup <sage.combinat.root_system.weyl_group.WeylGroup>`
+  - Coxeter, reflection and related groups
+
+    - :func:`groups.misc.Braid <sage.groups.braid.BraidGroup>`
+    - :func:`groups.misc.CoxeterGroup <sage.combinat.root_system.coxeter_group.CoxeterGroup>`
+    - :func:`groups.misc.ReflectionGroup <sage.combinat.root_system.reflection_group_real.ReflectionGroup>`
+    - :class:`groups.misc.RightAngledArtin <sage.groups.raag.RightAngledArtinGroup>`
+    - :func:`groups.misc.WeylGroup <sage.combinat.root_system.weyl_group.WeylGroup>`
+
+  - other miscellaneous groups
+
+    - :func:`groups.misc.AdditiveAbelian <sage.groups.additive_abelian.additive_abelian_group.AdditiveAbelianGroup>`
+    - :class:`groups.misc.AdditiveCyclic <sage.rings.finite_rings.integer_mod_ring.IntegerModFactory>`
+    - :func:`groups.misc.Free <sage.groups.free_group.FreeGroup>`
+    - :func:`groups.misc.SemimonomialTransformation <sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup>`
 
 """
 
@@ -91,4 +102,6 @@ from sage.groups.matrix_gps import catalog as matrix
 from sage.groups.perm_gps import permutation_groups_catalog as permutation
 from sage.groups.misc_gps import misc_groups_catalog as misc
 from sage.groups.affine_gps import catalog as affine
+from sage.groups.lie_gps import catalog as lie
 from sage.groups import finitely_presented_catalog as presentation
+

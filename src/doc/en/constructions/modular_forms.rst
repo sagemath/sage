@@ -93,7 +93,7 @@ of Full Modular Symbols for :math:`\Gamma_0(1)` of weight
     Modular Symbols space of dimension 4 for Gamma_1(6) of weight 3 with sign 0
     and over Rational Field
     sage: M.basis()
-    ([X,(0,5)], [X,(3,2)], [X,(4,5)], [X,(5,4)])
+    ([X,(0,5)], [X,(3,5)], [X,(4,5)], [X,(5,5)])
     sage: M._compute_hecke_matrix_prime(2).charpoly()
     x^4 - 17*x^2 + 16
     sage: M.integral_structure()

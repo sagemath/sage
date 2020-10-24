@@ -11,7 +11,7 @@ in a permutation than construct the next object directly
 from the next permutation in a list. The backtracking
 algorithm in sage/graphs/genus.pyx is an example of this.
 
-The lowest level is implemented as a struct with auxilliary
+The lowest level is implemented as a struct with auxiliary
 methods.  This is because Cython does not allow pointers to
 class instances, so a list of these objects is inherently
 slower than a list of structs.  The author prefers ugly code
@@ -22,16 +22,25 @@ speed, we provide a class that wraps our struct.
 
 
 """
-
-#  Free for any use.
-#  Unfit for any purpose.
+#*****************************************************************************
+#       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
+#       Copyright (C) 2017 Travis Scrimshaw <tscrim@ucdavis.edu>
+#       Copyright (C) 2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
-#  Copyright 2010, Tom Boothby
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-from cpython.list cimport *
+cimport cython
 
-##########################################################
+from cpython.object cimport PyObject
+
+from cysignals.memory cimport check_allocarray, sig_free
+
+
+#########################################################
 #
 # The next two functions, reset_swap and next_swap do the
 # real work.  They've been implemented separately because
@@ -58,7 +67,7 @@ cdef void reset_swap(int n, int *c, int *o):
 
 cdef int next_swap(int n, int *c, int *o):
     """
-    Here's the traslation of Algorithm P.  We've modified
+    Here's the translation of Algorithm P.  We've modified
     it to
 
        a) work on zero-indexed lists
@@ -108,9 +117,9 @@ cdef int next_swap(int n, int *c, int *o):
     c[j] = q
     return j - offset + s
 
+
 def permutation_iterator_transposition_list(int n):
     """
-
     Returns a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
@@ -136,51 +145,149 @@ def permutation_iterator_transposition_list(int n):
         sage: Q = [1,2,3,4]
         sage: L = [copy(Q)]
         sage: for t in permutation_iterator_transposition_list(3):
-        ...      Q[t], Q[t+1] = Q[t+1], Q[t]
-        ...      L.append(copy(Q))
-        sage: print L
+        ....:     Q[t], Q[t+1] = Q[t+1], Q[t]
+        ....:     L.append(copy(Q))
+        sage: print(L)
         [[1, 2, 3, 4], [1, 3, 2, 4], [3, 1, 2, 4], [3, 2, 1, 4], [2, 3, 1, 4], [2, 1, 3, 4]]
-
     """
-
-    cdef int *c
-    cdef int *o
-    cdef int N, m
-    cdef list T
-
     if n <= 1:
         return []
     if n > 12:
         raise ValueError("Cowardly refusing to enumerate the permutations "
                          "on more than 12 letters.")
+    # Compute N = n! - 1
+    cdef Py_ssize_t N = n
+    cdef Py_ssize_t i
+    for i in range(2, n):
+        N *= i
+    N -= 1
 
-    m = n-1
-    N = n
-    while m > 1:
-        N *= m
-        m -= 1
-
-    c = <int *>sage_malloc(2*n*sizeof(int))
-    if c is NULL:
-        raise MemoryError("Failed to allocate memory in "
-                          "permutation_iterator_transposition_list")
-    o = c + n
-
+    cdef int* c = <int *>check_allocarray(n, 2 * sizeof(int))
+    cdef int* o = c + n
     try:
-        T = PyList_New(N-1)
-    except Exception:
-        sage_free(c)
-        raise MemoryError("Failed to allocate memory in "
-                          "permutation_iterator_transposition_list")
-
-    reset_swap(n,c,o)
-    for m in range(N-1):
-        PyList_SET_ITEM(T, m, next_swap(n,c,o))
-    sage_free(c)
-
-    return T
+        reset_swap(n, c, o)
+        return [next_swap(n, c, o) for i in range(N)]
+    finally:
+        sig_free(c)
 
 
+#####################################################################
+## iterator-type method for getting the next permutation
+
+@cython.wraparound(False)
+@cython.boundscheck(False)
+cpdef bint next_perm(array l):
+    """
+    Obtain the next permutation under lex order of ``l``
+    by mutating ``l``.
+
+    Algorithm based on:
+    http://marknelson.us/2002/03/01/next-permutation/
+
+    INPUT:
+
+    - ``l`` -- array of unsigned int (i.e., type ``'I'``)
+
+    .. WARNING::
+
+        This method mutates the array ``l``.
+
+    OUTPUT:
+
+    boolean; whether another permutation was obtained
+
+    EXAMPLES::
+
+        sage: from sage.combinat.permutation_cython import next_perm
+        sage: from array import array
+        sage: L = array('I', [1, 1, 2, 3])
+        sage: while next_perm(L):
+        ....:     print(L)
+        array('I', [1L, 1L, 3L, 2L])
+        array('I', [1L, 2L, 1L, 3L])
+        array('I', [1L, 2L, 3L, 1L])
+        array('I', [1L, 3L, 1L, 2L])
+        array('I', [1L, 3L, 2L, 1L])
+        array('I', [2L, 1L, 1L, 3L])
+        array('I', [2L, 1L, 3L, 1L])
+        array('I', [2L, 3L, 1L, 1L])
+        array('I', [3L, 1L, 1L, 2L])
+        array('I', [3L, 1L, 2L, 1L])
+        array('I', [3L, 2L, 1L, 1L])
+    """
+    cdef Py_ssize_t n = len(l)
+
+    if n <= 1:
+        return False
+
+    cdef Py_ssize_t one = n - 2
+    cdef Py_ssize_t two = n - 1
+    cdef Py_ssize_t j   = n - 1
+    cdef unsigned int t
+
+    # Starting from the end, find the first o such that
+    #   l[o] < l[o+1]
+    while two > 0 and l.data.as_uints[one] >= l.data.as_uints[two]:
+        one -= 1
+        two -= 1
+
+    if two == 0:
+        return False
+
+    #starting from the end, find the first j such that
+    #l[j] > l[one]
+    while l.data.as_uints[j] <= l.data.as_uints[one]:
+        j -= 1
+
+    #Swap positions one and j
+    t = l.data.as_uints[one]
+    l.data.as_uints[one] = l.data.as_uints[j]
+    l.data.as_uints[j] = t
+
+    #Reverse the list between two and last
+    #mset_list = mset_list[:two] + [x for x in reversed(mset_list[two:])]
+    n -= 1 # In the loop, we only need n-1, so just do it once here
+    cdef Py_ssize_t i
+    for i in xrange((n+1 - two) // 2 - 1, -1, -1):
+        t = l.data.as_uints[i + two]
+        l.data.as_uints[i + two] = l.data.as_uints[n - i]
+        l.data.as_uints[n - i] = t
+
+    return True
+
+
+@cython.boundscheck(False)
+cpdef map_to_list(array l, tuple values, int n):
+    """
+    Build a list by mapping the array ``l`` using ``values``.
+
+    .. WARNING::
+
+        There is no check of the input data at any point. Using wrong
+        types or values with wrong length is likely to result in a Sage
+        crash.
+
+    INPUT:
+
+    - ``l`` -- array of unsigned int (i.e., type ``'I'``)
+    - ``values`` -- tuple; the values of the permutation
+    - ``n`` -- int; the length of the array ``l``
+
+    OUTPUT:
+
+    A list representing the permutation.
+
+    EXAMPLES::
+
+        sage: from array import array
+        sage: from sage.combinat.permutation_cython import map_to_list
+        sage: l = array('I', [0, 1, 0, 3, 3, 0, 1])
+        sage: map_to_list(l, ('a', 'b', 'c', 'd'), 7)
+        ['a', 'b', 'a', 'd', 'd', 'a', 'b']
+    """
+    cdef int i
+    cdef unsigned int* ind = l.data.as_uints
+    return [values[ind[i]] for i in range(n)]
 
 
 #####################################################################

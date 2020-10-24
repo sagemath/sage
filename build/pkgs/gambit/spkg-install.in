@@ -1,0 +1,19 @@
+cd src
+
+sdh_configure --disable-gui
+sdh_make
+sdh_make_install
+
+
+cd src/python
+
+# Remove outdated source file (https://github.com/gambitproject/gambit/pull/232)
+rm gambit/lib/libgambit.cpp
+
+# pip doesn't work (https://github.com/gambitproject/gambit/issues/207)
+sage-python23 setup.py --no-user-cfg bdist_wheel
+if [ $? -ne 0 ]; then
+    echo "Error installing Python API"
+    exit 1
+fi
+sdh_store_and_pip_install_wheel .

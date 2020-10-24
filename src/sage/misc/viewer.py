@@ -58,8 +58,8 @@ def default_viewer(viewer=None):
     if isinstance(viewer, str):
         viewer = viewer.lower()
 
-    if 'SAGE_BROWSER' in os.environ:
-        BROWSER = os.environ['SAGE_BROWSER']
+    if 'BROWSER' in os.environ:
+        BROWSER = os.environ['BROWSER']
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
@@ -76,15 +76,13 @@ def default_viewer(viewer=None):
 
     elif os.uname()[0][:6] == 'CYGWIN':
         # Windows is also easy, since it has a system for
-        # determining what opens things.
-        # Bobby Moreti provided the following.
-        if not 'BROWSER' in os.environ:
-            systemroot = os.environ['SYSTEMROOT'].replace(':','/').replace('\\','')
-            systemroot = '/cygdrive/' + systemroot
-            BROWSER = '%s/system32/rundll32.exe url.dll,FileProtocolHandler'%\
-                      systemroot
-        else:
-            BROWSER = os.environ['BROWSER']
+        # determining what opens things.  However, on Cygwin we
+        # should access this through the 'cygstart' program rather
+        # than trying to run rundll32 directly, which on newer Windows versions
+        # has security implications
+        # Indeed, on Sage for Windows, BROWSER is set by default to cygstart,
+        # so we just canonize that here
+        BROWSER = os.environ.get('BROWSER', 'cygstart')
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
@@ -161,7 +159,7 @@ class Viewer(SageObject):
         Change the default viewer. Return the current setting if the
         argument ``app`` is ``None``.
 
-        INPUTS:
+        INPUT:
 
         - ``app`` -- ``None`` or a string, the program to use
         - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
@@ -197,7 +195,7 @@ class Viewer(SageObject):
         Change the default browser. Return the current setting if arg
         is ``None``, which is the default.
 
-        INPUTS:
+        INPUT:
 
         - ``app`` -- ``None`` or a string, the program to use
 
@@ -217,7 +215,7 @@ class Viewer(SageObject):
         Change the default dvi viewer. Return the current setting if arg
         is ``None``, which is the default.
 
-        INPUTS:
+        INPUT:
 
         - ``app`` -- ``None`` or a string, the program to use
 
@@ -237,7 +235,7 @@ class Viewer(SageObject):
         Change the default pdf viewer. Return the current setting if arg
         is ``None``, which is the default.
 
-        INPUTS:
+        INPUT:
 
         - ``app`` -- ``None`` or a string, the program to use
 
@@ -257,7 +255,7 @@ class Viewer(SageObject):
         Change the default png viewer. Return the current setting if arg
         is ``None``, which is the default.
 
-        INPUTS:
+        INPUT:
 
         - ``app`` -- ``None`` or a string, the program to use
 
@@ -276,7 +274,7 @@ class Viewer(SageObject):
         """
         Return the current setting for a viewer program.
 
-        INPUTS:
+        INPUT:
 
         - ``x`` -- string
 

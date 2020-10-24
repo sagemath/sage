@@ -16,7 +16,14 @@ TESTS::
     sage: test_random_simplicial_complex(level=2, trials=20)  # optional - CHomP
     sage: test_random_simplicial_complex(level=5/2, trials=10)  # long time # optional - CHomP
 """
+from __future__ import print_function
+
 from sage.misc.random_testing import random_testing
+from sage.misc.prandom import randint
+from sage.matrix.constructor import random_matrix
+from sage.homology.chain_complex import ChainComplex
+from sage.rings.integer_ring import ZZ
+from sage.homology.examples import RandomComplex
 
 def random_chain_complex(level=1):
     """
@@ -38,10 +45,6 @@ def random_chain_complex(level=1):
         sage: C.degree_of_differential() # random: either 1 or -1
         1
     """
-    from sage.misc.prandom import randint
-    from sage.matrix.constructor import random_matrix
-    from sage.homology.chain_complex import ChainComplex
-    from sage.rings.integer_ring import ZZ
     bound = 50*level
     nrows = randint(0, bound)
     ncols = randint(0, bound)
@@ -77,9 +80,9 @@ def test_random_chain_complex(level=1, trials=1, verbose=False):
             chomp = C.homology(d, verbose=verbose)
             no_chomp = C.homology(d, algorithm='no_chomp', verbose=verbose)
             if chomp != no_chomp:
-                print "Homology in dimension %s according to CHomP: %s" % (d, chomp)
-                print "Homology in dimension %s according to Sage: %s" % (d, no_chomp)
-                print "Chain complex: %s" % C.differential()
+                print("Homology in dimension %s according to CHomP: %s" % (d, chomp))
+                print("Homology in dimension %s according to Sage: %s" % (d, no_chomp))
+                print("Chain complex: %s" % C.differential())
                 raise ValueError
 
 def random_simplicial_complex(level=1, p=0.5):
@@ -102,11 +105,9 @@ def random_simplicial_complex(level=1, p=0.5):
         sage: X.dimension() < 11
         True
     """
-    from sage.misc.prandom import randint
-    from sage.homology.examples import simplicial_complexes
     n = randint(2, 4*level)
     dim = randint(1, n)
-    return simplicial_complexes.RandomComplex(n, dim, p)
+    return RandomComplex(n, dim, p)
 
 @random_testing
 def test_random_simplicial_complex(level=1, trials=1, verbose=False):
@@ -135,8 +136,8 @@ def test_random_simplicial_complex(level=1, trials=1, verbose=False):
         chomp = X.homology(verbose=verbose)
         no_chomp = X.homology(algorithm='no_chomp', verbose=verbose)
         if chomp != no_chomp:
-            print "Homology according to CHomP: %s" % chomp
-            print "Homology according to Sage: %s" % no_chomp
-            print "Simplicial complex: %s" % X
-            print "Its chain complex: %s" % X.chain_complex()
+            print("Homology according to CHomP: %s" % chomp)
+            print("Homology according to Sage: %s" % no_chomp)
+            print("Simplicial complex: %s" % X)
+            print("Its chain complex: %s" % X.chain_complex())
             raise ValueError

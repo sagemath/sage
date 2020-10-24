@@ -7,11 +7,11 @@
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
-include 'sage/groups/perm_gps/partn_ref/data_structures_pxd.pxi'
-
+from sage.groups.perm_gps.partn_ref.data_structures cimport OrbitPartition, PartitionStack
 from sage.libs.gap.element cimport GapElement, GapElement_Permutation
+from sage.structure.parent cimport Parent
 
-cdef extern from "sage/groups/perm_gps/partn_ref2/refinement_generic.h":
+cdef extern from "refinement_generic.h":
     cdef long *global_refine_vals_array
     cdef int my_comp_func(void *a, void *b)
     cdef int BACKTRACK_WITHLATEX_DEBUG
@@ -36,6 +36,7 @@ cdef class LabelledBranching:
     cdef int *father
     cdef int *act_perm
     cpdef GapElement group, ClosureGroup
+    cdef Parent sym_gp
     cdef bint has_empty_intersection(self, PartitionStack * part)
     cpdef add_gen(self, GapElement_Permutation gen)
 

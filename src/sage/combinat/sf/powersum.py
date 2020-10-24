@@ -1,6 +1,7 @@
 """
 Power sum symmetric functions
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -17,8 +18,12 @@ Power sum symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-import sfa, multiplicative, classical
+from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
+from sage.arith.all import divisors
+from sage.rings.all import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.misc.all import prod
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -163,6 +168,55 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         return self.sum_of_terms([(p, coeff) for p, coeff
                                   in s_partition if len(p) == degree],
                                  distinct=True)
+
+    def eval_at_permutation_roots_on_generators(self, k, rho):
+        r"""
+        Evaluate `p_k` at eigenvalues of permutation matrix.
+
+        This function evaluates a symmetric function ``p([k])``
+        at the eigenvalues of a permutation matrix with cycle
+        structure ``\rho``.
+
+        This function evaluates a `p_k` at the roots of unity
+
+        .. MATH::
+
+            \Xi_{\rho_1},\Xi_{\rho_2},\ldots,\Xi_{\rho_\ell}
+
+        where
+
+        .. MATH::
+
+            \Xi_{m} = 1,\zeta_m,\zeta_m^2,\ldots,\zeta_m^{m-1}
+
+        and `\zeta_m` is an `m` root of unity.
+        This is characterized by `p_k[ A , B ] = p_k[A] + p_k[B]` and
+        `p_k[ \Xi_m ] = 0` unless `m` divides `k` and `p_{rm}[\Xi_m]=m`.
+
+        INPUT:
+
+        - ``k`` -- a non-negative integer
+        - ``rho`` -- a partition or a list of non-negative integers
+
+        OUTPUT:
+
+        - an element of the base ring
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: p.eval_at_permutation_roots_on_generators(3, [6])
+            0
+            sage: p.eval_at_permutation_roots_on_generators(3, [3])
+            3
+            sage: p.eval_at_permutation_roots_on_generators(3, [1])
+            1
+            sage: p.eval_at_permutation_roots_on_generators(3, [3,3])
+            6
+            sage: p.eval_at_permutation_roots_on_generators(3, [1,1,1,1,1])
+            5
+        """
+        return self.base_ring().sum(d*list(rho).count(d) for d in divisors(k))
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):
@@ -600,6 +654,287 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             condition = lambda part: False
             return self._expand(condition, n, alphabet)
 
+        def eval_at_permutation_roots(self, rho):
+            r"""
+            Evaluate at eigenvalues of a permutation matrix.
+
+            Evaluate an element of the power sum basis at the eigenvalues
+            of a permutation matrix with cycle structure `\rho`.
+
+            This function evaluates an element at the roots of unity
+
+            .. MATH::
+
+                \Xi_{\rho_1},\Xi_{\rho_2},\ldots,\Xi_{\rho_\ell}
+
+            where
+
+            .. MATH::
+
+                \Xi_{m} = 1,\zeta_m,\zeta_m^2,\ldots,\zeta_m^{m-1}
+
+            and `\zeta_m` is an `m` root of unity.
+            These roots of unity represent the eigenvalues of permutation
+            matrix with cycle structure `\rho`.
+
+            INPUT:
+
+            - ``rho`` -- a partition or a list of non-negative integers
+
+            OUTPUT:
+
+            - an element of the base ring
+
+            EXAMPLES::
+
+                sage: p = SymmetricFunctions(QQ).p()
+                sage: p([3,3]).eval_at_permutation_roots([6])
+                0
+                sage: p([3,3]).eval_at_permutation_roots([3])
+                9
+                sage: p([3,3]).eval_at_permutation_roots([1])
+                1
+                sage: p([3,3]).eval_at_permutation_roots([3,3])
+                36
+                sage: p([3,3]).eval_at_permutation_roots([1,1,1,1,1])
+                25
+                sage: (p[1]+p[2]+p[3]).eval_at_permutation_roots([3,2])
+                5
+            """
+            p = self.parent()
+            R = self.base_ring()
+            on_basis = lambda lam: R.prod(
+                p.eval_at_permutation_roots_on_generators(k, rho) for k in lam)
+            return p._apply_module_morphism(self, on_basis, R)
+
+        def principal_specialization(self, n=infinity, q=None):
+            r"""
+            Return the principal specialization of a symmetric function.
+
+            The *principal specialization* of order `n` at `q`
+            is the ring homomorphism `ps_{n,q}` from the ring of
+            symmetric functions to another commutative ring `R`
+            given by `x_i \mapsto q^{i-1}` for `i \in \{1,\dots,n\}`
+            and `x_i \mapsto 0` for `i > n`.
+            Here, `q` is a given element of `R`, and we assume that
+            the variables of our symmetric functions are
+            `x_1, x_2, x_3, \ldots`.
+            (To be more precise, `ps_{n,q}` is a `K`-algebra
+            homomorphism, where `K` is the base ring.)
+            See Section 7.8 of [EnumComb2]_.
+
+            The *stable principal specialization* at `q` is the ring
+            homomorphism `ps_q` from the ring of symmetric functions
+            to another commutative ring `R` given by
+            `x_i \mapsto q^{i-1}` for all `i`.
+            This is well-defined only if the resulting infinite sums
+            converge; thus, in particular, setting `q = 1` in the
+            stable principal specialization is an invalid operation.
+
+            INPUT:
+
+            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+              ``infinity``, specifying whether to compute the principal
+              specialization of order ``n`` or the stable principal
+              specialization.
+
+            - ``q`` (default: ``None``) -- the value to use for `q`; the
+              default is to create a ring of polynomials in ``q``
+              (or a field of rational functions in ``q``) over the
+              given coefficient ring.
+
+            We use the formulas from Proposition 7.8.3 of [EnumComb2]_:
+
+            .. MATH::
+
+                ps_{n,q}(p_\lambda) = \prod_i (1-q^{n\lambda_i}) / (1-q^{\lambda_i}),
+
+                ps_{n,1}(p_\lambda) = n^{\ell(\lambda)},
+
+                ps_q(p_\lambda) = 1 / \prod_i (1-q^{\lambda_i}),
+
+            where `\ell(\lambda)` denotes the length of `\lambda`,
+            and where the products range from `i=1` to `i=\ell(\lambda)`.
+
+            EXAMPLES::
+
+                sage: p = SymmetricFunctions(QQ).p()
+                sage: x = p[8,7,3,1]
+                sage: x.principal_specialization(3, q=var("q"))
+                (q^24 - 1)*(q^21 - 1)*(q^9 - 1)/((q^8 - 1)*(q^7 - 1)*(q - 1))
+
+                sage: x = 5*p[1,1,1] + 3*p[2,1] + 1
+                sage: x.principal_specialization(3, q=var("q"))
+                5*(q^3 - 1)^3/(q - 1)^3 + 3*(q^6 - 1)*(q^3 - 1)/((q^2 - 1)*(q - 1)) + 1
+
+            By default, we return a rational function in `q`::
+
+                sage: x.principal_specialization(3)
+                8*q^6 + 18*q^5 + 36*q^4 + 38*q^3 + 36*q^2 + 18*q + 9
+
+            If ``n`` is not given we return the stable principal specialization::
+
+                sage: x.principal_specialization(q=var("q"))
+                3/((q^2 - 1)*(q - 1)) - 5/(q - 1)^3 + 1
+
+            TESTS::
+
+                sage: p.zero().principal_specialization(3)
+                0
+
+            """
+            def get_variable(ring, name):
+                try:
+                    ring(name)
+                except TypeError:
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    return PolynomialRing(ring, name).gen()
+                else:
+                    raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
+
+            if q is None:
+                q = get_variable(self.base_ring(), 'q')
+
+            if q == 1:
+                if n == infinity:
+                    raise ValueError("the stable principal specialization at q=1 is not defined")
+                f = lambda partition: n**len(partition)
+            elif n == infinity:
+                f = lambda partition: prod(1/(1-q**part) for part in partition)
+            else:
+                from sage.rings.integer_ring import ZZ
+                ZZq = PolynomialRing(ZZ, "q")
+                q_lim = ZZq.gen()
+                def f(partition):
+                    denom = prod((1-q**part) for part in partition)
+                    try:
+                        ~denom
+                        rational = prod((1-q**(n*part)) for part in partition)/denom
+                        return q.parent()(rational)
+                    except (ZeroDivisionError, NotImplementedError, TypeError):
+                        # If denom is not invertible, we need to do the
+                        # computation with universal coefficients instead:
+                        quotient = ZZq(prod((1-q_lim**(n*part))/(1-q_lim**part) for part in partition))
+                        return quotient.subs({q_lim: q})
+
+            return self.parent()._apply_module_morphism(self, f, q.parent())
+
+        def exponential_specialization(self, t=None, q=1):
+            r"""
+            Return the exponential specialization of a
+            symmetric function (when `q = 1`), or the
+            `q`-exponential specialization (when `q \neq 1`).
+
+            The *exponential specialization* `ex` at `t` is a
+            `K`-algebra homomorphism from the `K`-algebra of
+            symmetric functions to another `K`-algebra `R`.
+            It is defined whenever the base ring `K` is a
+            `\QQ`-algebra and `t` is an element of `R`.
+            The easiest way to define it is by specifying its
+            values on the powersum symmetric functions to be
+            `p_1 = t` and `p_n = 0` for `n > 1`.
+            Equivalently, on the homogeneous functions it is
+            given by `ex(h_n) = t^n / n!`; see Proposition 7.8.4 of
+            [EnumComb2]_.
+
+            By analogy, the `q`-exponential specialization is a
+            `K`-algebra homomorphism from the `K`-algebra of
+            symmetric functions to another `K`-algebra `R` that
+            depends on two elements `t` and `q` of `R` for which
+            the elements `1 - q^i` for all positive integers `i`
+            are invertible.
+            It can be defined by specifying its values on the
+            complete homogeneous symmetric functions to be
+
+            .. MATH::
+
+                ex_q(h_n) = t^n / [n]_q!,
+
+            where `[n]_q!` is the `q`-factorial.  Equivalently, for
+            `q \neq 1` and a homogeneous symmetric function `f` of
+            degree `n`, we have
+
+            .. MATH::
+
+                ex_q(f) = (1-q)^n t^n ps_q(f),
+
+            where `ps_q(f)` is the stable principal specialization of `f`
+            (see :meth:`principal_specialization`).
+            (See (7.29) in [EnumComb2]_.)
+
+            The limit of `ex_q` as `q \to 1` is `ex`.
+
+            INPUT:
+
+            - ``t`` (default: ``None``) -- the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``.
+
+            - ``q`` (default: `1`) -- the value to use for `q`.  If
+              ``q`` is ``None``, then a ring (or fraction field) of
+              polynomials in ``q`` is created.
+
+            EXAMPLES::
+
+                sage: p = SymmetricFunctions(QQ).p()
+                sage: x = p[8,7,3,1]
+                sage: x.exponential_specialization()
+                0
+                sage: x = p[3] + 5*p[1,1] + 2*p[1] + 1
+                sage: x.exponential_specialization(t=var("t"))
+                5*t^2 + 2*t + 1
+
+            We also support the `q`-exponential_specialization::
+
+                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))
+                (q - 1)^2*t^3/(q^2 + q + 1)
+
+            TESTS::
+
+                sage: p.zero().exponential_specialization()
+                0
+
+            """
+            def get_variable(ring, name):
+                try:
+                    ring(name)
+                except TypeError:
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    return PolynomialRing(ring, name).gen()
+                else:
+                    raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
+
+            if q == 1:
+                if t is None:
+                    t = get_variable(self.base_ring(), 't')
+
+                def f(partition):
+                    n = 0
+                    for part in partition:
+                        if part != 1:
+                            return 0
+                        n += 1
+                    return t**n
+
+                return self.parent()._apply_module_morphism(self, f, t.parent())
+
+            if q is None and t is None:
+                q = get_variable(self.base_ring(), 'q')
+                t = get_variable(q.parent(), 't')
+            elif q is None:
+                q = get_variable(t.parent(), 'q')
+            elif t is None:
+                t = get_variable(q.parent(), 't')
+
+            def f(partition):
+                n = 0
+                m = 1
+                for part in partition:
+                    n += part
+                    m *= 1-q**part
+                return (1-q)**n * t**n / m
+
+            return self.parent()._apply_module_morphism(self, f, t.parent())
+
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.powersum', 'SymmetricFunctionAlgebraElement_power',  SymmetricFunctionAlgebra_power.Element)

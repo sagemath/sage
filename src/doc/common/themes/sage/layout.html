@@ -2,12 +2,12 @@
 
 {% block rootrellink %}
   {% if docstitle.startswith('Sage Documentation') %}
-    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
   {% else %}
     {% if pathto(master_doc).endswith('.html') %}
-      <a href="{{ '../' + pathto(master_doc) }}"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+      <a href="{{ '../' + pathto(master_doc) }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
     {% else %}
-      <a href="{{ '../' + pathto(master_doc, 1) + '.html' }}"><img src="{{ pathto('_static/sagelogo.png', 1) }}" style="vertical-align: middle" title="Sage Logo"></a>
+      <a href="{{ '../' + pathto(master_doc, 1) + '.html' }}"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" height="28" style="vertical-align: middle" title="Sage Logo"></a>
     {% endif %}
   {% endif %}
   {{ super() }}
@@ -15,6 +15,8 @@
 
 {% block extrahead %}
     <link rel="icon" href="{{ pathto('_static/sageicon.png', 1) }}" type="image/x-icon" />
+    <script src="{{ pathto('_static/thebe.js', 1) }}" type="text/javascript"></script>
+    <script src="{{ pathto('_static/thebe-sage.js', 1) }}" type="text/javascript"></script>
 {% endblock %}
 
 {%- block footer %}
@@ -26,20 +28,16 @@
  * sage.misc.html.math_parse() eats jQuery's dollar-sign shortcut. */
 var jq = jQuery;
 jq(document).ready(function () {
-    var bar, bod, bg, fg, key, tog, wid_old, wid_new, resize, get_state, set_state;
+    var bar, bod, bg, fg, key, tog, wid_old, wid_new, get_state, set_state;
     bod = jq('div.bodywrapper');
     bar = jq('div.sphinxsidebar');
     tog = jq('<div class="sphinxsidebartoggle"></div>');
 
-    /* Delayed resize helper.  Not perfect but good enough. */
-    resize = function () {
-        setTimeout(function () {
-            tog.height(bod.height());
-        }, 100);
-    };
-    jq(window).resize(function () {
-        resize();
+    /* The sidebar toggle adapts its height to the bodywrapper height. */
+    const resizeObserver = new ResizeObserver(entries => {
+        tog.height(bod.height());
     });
+    resizeObserver.observe(bod[0]);
 
     /* Setup and add the toggle. See Sphinx v0.5.1 default.css. */
     fg = jq('div.sphinxsidebar p a').css('color') || 'rgb(152, 219, 204)';
@@ -56,7 +54,6 @@ jq(document).ready(function () {
         .css('width', wid_new);
     bod.css('position', 'relative');
     bod.prepend(tog);
-    resize();
 
     /* Cookie helpers. */
     key = 'sphinxsidebar=';
@@ -97,7 +94,6 @@ jq(document).ready(function () {
             bod.css('margin-left', wid_new);
             bod.addClass('wide');
         }
-        resize();
     });
 
     /* Hide the normally visible sidebar? */

@@ -1,20 +1,17 @@
+# -*- coding: utf-8 -*-
 r"""
 Incidence Algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.algebras import Algebras
@@ -42,7 +39,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
     This has a natural basis given by indicator functions for the
     interval `[a, b]`, i.e. `X_{a,b}(x,y) = \delta_{ax} \delta_{by}`.
     The incidence algebra is a unital algebra with the identity given
-    by the Kronecker delta `\delta(x, y) = \delta_{xy}`. The Mobius
+    by the Kronecker delta `\delta(x, y) = \delta_{xy}`. The Möbius
     function of `P` is another element of `I_p` whose inverse is the
     `\zeta` function of the poset (so `\zeta(x, y) = 1` for
     every interval `[x, y]`).
@@ -69,7 +66,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         if P in FiniteEnumeratedSets():
             cat = cat.FiniteDimensional()
         self._poset = P
-        CombinatorialFreeModule.__init__(self, R, map(tuple, P.intervals()),
+        CombinatorialFreeModule.__init__(self, R, map(tuple, P.relations()),
                                          prefix=prefix, category=cat)
 
     def _repr_term(self, A):
@@ -159,12 +156,14 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
             sage: P = posets.BooleanLattice(1)
             sage: I = P.incidence_algebra(QQ)
-            sage: I.some_elements()
+            sage: Ielts = I.some_elements(); Ielts # random
             [2*I[0, 0] + 2*I[0, 1] + 3*I[1, 1],
              I[0, 0] - I[0, 1] + I[1, 1],
              I[0, 0] + I[0, 1] + I[1, 1]]
+            sage: [a in I for a in Ielts]
+            [True, True, True]
         """
-        return [self.an_element(), self.mobius(), self.zeta()]
+        return [self.an_element(), self.moebius(), self.zeta()]
 
     def product_on_basis(self, A, B):
         r"""
@@ -185,7 +184,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
     @cached_method
     def one(self):
-        """
+        r"""
         Return the element `1` in ``self`` (which is the Kronecker
         delta `\delta(x, y)`).
 
@@ -220,25 +219,25 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
             sage: P = posets.BooleanLattice(4)
             sage: I = P.incidence_algebra(QQ)
-            sage: I.zeta() * I.mobius() == I.one()
+            sage: I.zeta() * I.moebius() == I.one()
             True
         """
         return self.sum(self.basis())
 
     @cached_method
-    def mobius(self):
+    def moebius(self):
         """
-        Return the Mobius function of ``self``.
+        Return the Möbius function of ``self``.
 
         EXAMPLES::
 
             sage: P = posets.BooleanLattice(2)
             sage: I = P.incidence_algebra(QQ)
-            sage: I.mobius()
+            sage: I.moebius()
             I[0, 0] - I[0, 1] - I[0, 2] + I[0, 3] + I[1, 1]
              - I[1, 3] + I[2, 2] - I[2, 3] + I[3, 3]
         """
-        mu = self._poset.mobius_function
+        mu = self._poset.moebius_function
         R = self.base_ring()
         return self.sum_of_terms((A, R(mu(*A))) for A in self.basis().keys())
 
@@ -305,7 +304,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(4)
                 sage: I = P.incidence_algebra(QQ)
-                sage: mu = I.mobius()
+                sage: mu = I.moebius()
                 sage: mu(0, 12)
                 1
                 sage: mu(0, 7)
@@ -333,7 +332,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(2)
                 sage: I = P.incidence_algebra(QQ)
-                sage: I.mobius().to_matrix()
+                sage: I.moebius().to_matrix()
                 [ 1 -1 -1  1]
                 [ 0  1  0 -1]
                 [ 0  0  1 -1]
@@ -350,7 +349,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(4)
                 sage: I = P.incidence_algebra(QQ)
-                sage: mu = I.mobius()
+                sage: mu = I.moebius()
                 sage: (mu*mu).to_matrix() == mu.to_matrix() * mu.to_matrix()
                 True
             """
@@ -371,7 +370,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(2)
                 sage: I = P.incidence_algebra(QQ)
-                sage: mu = I.mobius()
+                sage: mu = I.moebius()
                 sage: mu.is_unit()
                 True
                 sage: zeta = I.zeta()
@@ -380,14 +379,14 @@ class IncidenceAlgebra(CombinatorialFreeModule):
                 sage: x = mu - I.zeta() + I[2,2]
                 sage: x.is_unit()
                 False
-                sage: y = I.mobius() + I.zeta()
+                sage: y = I.moebius() + I.zeta()
                 sage: y.is_unit()
                 True
 
             This depends on the base ring::
 
                 sage: I = P.incidence_algebra(ZZ)
-                sage: y = I.mobius() + I.zeta()
+                sage: y = I.moebius() + I.zeta()
                 sage: y.is_unit()
                 False
             """
@@ -401,7 +400,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(2)
                 sage: I = P.incidence_algebra(QQ)
-                sage: mu = I.mobius()
+                sage: mu = I.moebius()
                 sage: ~mu
                 I[0, 0] + I[0, 1] + I[0, 2] + I[0, 3] + I[1, 1]
                  + I[1, 3] + I[2, 2] + I[2, 3] + I[3, 3]
@@ -415,7 +414,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(4)
                 sage: I = P.incidence_algebra(QQ)
-                sage: mu = I.mobius()
+                sage: mu = I.moebius()
                 sage: ~mu == I.zeta()
                 True
                 sage: ~I.one() == I.one()
@@ -427,7 +426,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
             inv = ~M
             L = self.parent()._linear_extension
             return self.parent().sum_of_terms(((L[i], L[j]), inv[i, j])
-                       for i, j in inv.nonzero_positions(copy=False))
+                                for i, j in inv.nonzero_positions(copy=False))
 
 
 class ReducedIncidenceAlgebra(CombinatorialFreeModule):
@@ -436,7 +435,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
 
     The reduced incidence algebra `R_P` is a subalgebra of the
     incidence algebra `I_P` where `\alpha(x, y) = \alpha(x', y')` when
-    `[x, y]` is isomorphic to `[x', y']` as posets. Thus the delta, Mobius,
+    `[x, y]` is isomorphic to `[x', y']` as posets. Thus the delta, Möbius,
     and zeta functions are all elements of `R_P`.
     """
     def __init__(self, I, prefix='R'):
@@ -513,7 +512,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
              R[(0, 0)] - R[(0, 1)] + R[(0, 3)] - R[(0, 7)] + R[(0, 15)],
              R[(0, 0)] + R[(0, 1)] + R[(0, 3)] + R[(0, 7)] + R[(0, 15)]]
         """
-        return [self.an_element(), self.mobius(), self.zeta()]
+        return [self.an_element(), self.moebius(), self.zeta()]
 
     @cached_method
     def one_basis(self):
@@ -568,18 +567,18 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
         return self.sum(self.basis())
 
     @cached_method
-    def mobius(self):
+    def moebius(self):
         """
-        Return the Mobius function of ``self``.
+        Return the Möbius function of ``self``.
 
         EXAMPLES::
 
             sage: P = posets.BooleanLattice(4)
             sage: R = P.incidence_algebra(QQ).reduced_subalgebra()
-            sage: R.mobius()
+            sage: R.moebius()
             R[(0, 0)] - R[(0, 1)] + R[(0, 3)] - R[(0, 7)] + R[(0, 15)]
         """
-        mu = self._ambient._poset.mobius_function
+        mu = self._ambient._poset.moebius_function
         R = self.base_ring()
         return self.sum_of_terms((A, R(mu(*A))) for A in self.basis().keys())
 
@@ -643,6 +642,18 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             R[(0, 0)]
             sage: R[3, 11]
             R[(0, 1)]
+
+        TESTS:
+
+            sage: R[2, 5]
+            Traceback (most recent call last):
+            ...
+            ValueError: not an interval
+
+            sage: R[-1]
+            Traceback (most recent call last):
+            ...
+            ValueError: not an element of the poset
         """
         if not isinstance(A, (list, tuple)):
             if A not in self._ambient._poset.list():
@@ -672,7 +683,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             True
             sage: R._retract(I.delta()) == R.delta()
             True
-            sage: R._retract(I.mobius()) == R.mobius()
+            sage: R._retract(I.moebius()) == R.moebius()
             True
         """
         return self.sum_of_terms((k, x[k]) for k in self.basis().keys())
@@ -710,9 +721,9 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
                 sage: x = R.an_element()
                 sage: x * R.zeta()
                 2*R[(0, 0)] + 4*R[(0, 1)] + 9*R[(0, 3)] + 17*R[(0, 7)] + 28*R[(0, 15)]
-                sage: x * R.mobius()
+                sage: x * R.moebius()
                 2*R[(0, 0)] + R[(0, 3)] - 5*R[(0, 7)] + 12*R[(0, 15)]
-                sage: x * R.mobius() * R.zeta() == x
+                sage: x * R.moebius() * R.zeta() == x
                 True
             """
             P = self.parent()
@@ -727,7 +738,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
 
                 sage: P = posets.BooleanLattice(2)
                 sage: R = P.incidence_algebra(QQ).reduced_subalgebra()
-                sage: mu = R.mobius()
+                sage: mu = R.moebius()
                 sage: mu.to_matrix()
                 [ 1 -1 -1  1]
                 [ 0  1  0 -1]
@@ -764,7 +775,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
                  + 3/2*R[(0, 7)] - 33/4*R[(0, 15)]
             """
             P = self.parent()
-            return P._retract(P.lift(self).__invert__())
+            return P._retract(~P.lift(self))
 
         def lift(self):
             """

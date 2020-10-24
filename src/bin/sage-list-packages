@@ -1,114 +1,106 @@
-#!/usr/bin/env python
-# script to list the Sage packages
-#  called with one argument which meight be either "installed" or "standard" or
-#  "optional" or "experimental".
+#!/usr/bin/env sage-python
+r"""
+Script to list the Sage packages
 
-from __future__ import print_function
+This is script can be called with one argument which might be either
+"all", "standard", "optional", or "experimental". It is mostly a
+script interface to sage_setup.packages.list_packages.
+"""
 
-import os, sys, argparse, re
-from string import join
+from __future__ import absolute_import, print_function
+
+import os
+import argparse
 
 if "SAGE_ROOT" not in os.environ:
     raise RuntimeError("The environment variable SAGE_ROOT must be set.")
 SAGE_ROOT = os.environ["SAGE_ROOT"]
 
+from sage.misc.package import list_packages
 
 # Input parsing #
 #################
 
 parser = argparse.ArgumentParser(description="List Sage's packages")
-parser.add_argument('category', choices=['standard', 'optional',
+parser.add_argument('category', choices=['all', 'standard', 'optional',
                                          'experimental', 'installed'],
                     metavar="category",
-                    help="The type of packages. Can be 'standard', "
-                    "'optional', 'experimental', or 'installed'.")
+                    help="The type of packages. Can be 'all', 'standard', "
+                    "'optional', or 'experimental'.")
+parser.add_argument('--installed-only', dest='installed_only',
+                    default=False, action='store_true',
+                    help='only display installed packages')
+parser.add_argument('--not-installed-only', dest='not_installed_only',
+                    default=False, action='store_true',
+                    help='only display non installed packages')
 parser.add_argument('--dump', dest='dump', default=False, action='store_true',
-                    help='Output computer-friendly format')
+                    help='computer-friendly format')
 parser.add_argument('--no-version', dest='version', default=True,
                     action='store_false',
-                    help='Do not display version numbers')
-parser.add_argument('--local', dest='remote', default=True,
-                    action='store_false',
-                    help='Only read local data')
+                    help='no version number')
+parser.add_argument('--local', dest='local', default=False,
+                    action='store_true',
+                    help='only read local data')
 
 args = vars(parser.parse_args())
 
 # Get the data #
 ################
 
-def pkgname_split(name):
-    r"""
-    Split a pkgname to 'name,version'
-    """
-    return (name.split('-',1) + [''])[:2]
-
-# Installed packages
-SAGE_SPKG_INST=os.path.join(os.environ["SAGE_ROOT"], 'local', 'var',
-                            'lib', 'sage', 'installed')
-installed = dict(pkgname_split(pkgname)
-                 for pkgname in os.listdir(SAGE_SPKG_INST))
-
-# new-style packages
-SAGE_PKGS = os.path.join(SAGE_ROOT, "build", "pkgs")
-local = {}
-for p in os.listdir(SAGE_PKGS):
-    if not os.path.isdir(os.path.join(SAGE_PKGS, p)):
-        continue
-    with open(os.path.join(SAGE_PKGS, p, "package-version.txt")) as f:
-        version = f.read().strip()
-    with open(os.path.join(SAGE_PKGS, p, "type")) as f:
-        if f.read().strip() == args['category']:
-            local[p] = version
-
-# remote packages
-remote = {}
-if args['remote'] and args['category']!='installed':
-    # Get mirror URL
-    MIRROR_URL = os.popen("sage-download-file --print-fastest-mirror").read().strip()
-
-    # Load the list of packages
-    import urllib
-    f = urllib.urlopen(MIRROR_URL+"/spkg/"+args['category']+"/list")
-    packages_list_remote = f.read()
-    f.close()
-
-    if '<' in packages_list_remote:
-        print(packages_list_remote)
-        raise RuntimeError("There was an error while downloading the list of packages")
-
-    remote = dict(pkgname_split(p) for p in packages_list_remote.split('\n'))
-
-# OUTPUT #
-##########
-
-# installed
 if args['category'] == 'installed':
-    if args['version']:
-        if args['dump']:
-            for p in sorted(installed):
-                print(p+" "+installed[p])
-        else:
-            print("{:.<40} {}\n".format("[package] ", "[version]"))
-            for p in sorted(installed):
-                print("{:.<40} {}".format(p, installed[p]))
-    else:
-        for p in sorted(installed):
-            print(p)
+    WARN   = "*" * 60 + "\n"
+    WARN += 'The "installed" category is deprecated. Use\n'
+    WARN += '"list-packages all --installed-only" instead\n'
+    WARN += "*" * 60
 
-# Any other categories
+    args['category'] = 'all'
+    args['installed_only'] = True
 else:
-    if args['version']:
-        # Display the columns' name
-        if not args['dump']:
-            print("{:.<40} {} ({})\n".format("[package] ", "[latest version]",
-                                             "[installed version]"))
-        for p in sorted(set(local).union(remote)):
-            line = [p, local.get(p, remote.get(p, 'not_found')),
-                    installed.get(p, 'not_installed')]
-            if args['dump']:
-                print(join(line, ' '))
-            else:
-                print("{:.<40} {} ({})".format(*line))
+    WARN = None
+
+if args['installed_only'] and args['not_installed_only']:
+    raise ValueError("only one of --installed-only or --not-installed-only can be specified")
+
+# set the output format
+if args['version']:
+    if args['category'] == 'installed':
+        format_string = "{installed_version}"
     else:
-        for p in sorted(set(local).union(remote)):
-            print(p)
+        format_string = "{remote_version} ({installed_version})"
+else:
+    args['dump'] = True
+    format_string = ''
+
+if args['dump']:
+    format_string = "{name} " + format_string
+else:
+    format_string = "{name:.<40}" + format_string
+    print(format_string.format(name="[package]", installed_version="[version]",
+                               remote_version="[latest version]"))
+    print()
+
+# make the list of packages
+if args['category'] == 'all':
+    L = list(list_packages(local=True, ignore_URLError=True).values())
+elif args['category'] == 'optional':
+    L = list(list_packages('optional', local=args['local'], ignore_URLError=True).values())
+else:
+    L = list(list_packages(args['category'], local=args['local'], ignore_URLError=True).values())
+
+# possible filter by installed/not installed
+if WARN:
+    print(WARN)
+if args['installed_only']:
+    L = [pkg for pkg in L if pkg['installed']]
+elif args['not_installed_only']:
+    L = [pkg for pkg in L if not pkg['installed']]
+
+L.sort(key=lambda pkg: pkg['name'])
+
+# print (while getting rid of None in versions)
+for pkg in L:
+    pkg['installed_version'] = pkg['installed_version'] or 'not_installed'
+    pkg['remote_version'] = pkg['remote_version'] or '?'
+    print(format_string.format(**pkg))
+if WARN:
+    print(WARN)

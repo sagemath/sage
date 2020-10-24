@@ -1,5 +1,0 @@
-$(INST)/$(ZLIB) $(INST)/$(READLINE) $(INST)/$(SQLITE) $(INST)/$(LIBPNG) | $(INST)/$(BZIP2)
-
-----------
-All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

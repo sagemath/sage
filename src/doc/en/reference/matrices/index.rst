@@ -47,23 +47,16 @@ objects like operation tables (e.g. the multiplication table of a group).
 
 
    sage/matrix/matrix_space
-
    sage/matrix/constructor
+   sage/matrix/special
+   sage/matrix/args
 
    sage/matrix/docs
-
-   sage/matrix/matrix_misc
-
-   sage/matrix/matrix
-
    sage/matrix/matrix0
-
    sage/matrix/matrix1
-
    sage/matrix/matrix2
 
    sage/matrix/strassen
-
    sage/matrix/berlekamp_massey
 
    sage/matrix/matrix_dense
@@ -72,40 +65,36 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/matrix_generic_dense
    sage/matrix/matrix_generic_sparse
 
-   sage/matrix/matrix_modn_sparse
-
-   sage/matrix/matrix_symbolic_dense
-
    sage/matrix/matrix_integer_dense
-
+   sage/matrix/matrix_integer_sparse
+   sage/matrix/matrix_integer_dense_hnf
+   sage/matrix/matrix_integer_dense_saturation
    sage/matrix/matrix_rational_dense
-
+   sage/matrix/matrix_rational_sparse
    sage/matrix/matrix_double_dense
-
    sage/matrix/matrix_real_double_dense
-
+   sage/matrix/matrix_mod2_dense
+   sage/matrix/matrix_gf2e_dense
+   sage/matrix/matrix_modn_dense_double
+   sage/matrix/matrix_modn_dense_float
+   sage/matrix/matrix_modn_sparse
+   sage/matrix/matrix_symbolic_dense
    sage/matrix/matrix_complex_double_dense
-
+   sage/matrix/matrix_complex_ball_dense
+   sage/matrix/matrix_polynomial_dense
    sage/matrix/matrix_mpolynomial_dense
+   sage/matrix/matrix_cyclo_dense
 
    sage/matrix/operation_table
 
    sage/matrix/action
    sage/matrix/change_ring
    sage/matrix/echelon_matrix
-   sage/matrix/matrix_cyclo_dense
-   sage/matrix/matrix_integer_2x2
-   sage/matrix/matrix_integer_dense_hnf
-   sage/matrix/matrix_integer_dense_saturation
-   sage/matrix/matrix_integer_sparse
-   sage/matrix/matrix_mod2_dense
-   sage/matrix/matrix_mod2e_dense
-   sage/matrix/matrix_modn_dense_double
-   sage/matrix/matrix_modn_dense_float
-   sage/matrix/matrix_rational_sparse
+   sage/matrix/matrix_misc
    sage/matrix/matrix_window
    sage/matrix/misc
    sage/matrix/symplectic_basis
+   sage/matrix/compute_J_ideal
 
    sage/matrix/benchmark
 

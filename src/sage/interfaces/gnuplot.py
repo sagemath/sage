@@ -16,6 +16,7 @@ Interface to the Gnuplot interpreter
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import os
 import time
@@ -46,7 +47,13 @@ class Gnuplot(SageObject):
         self(line)
         return ''
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: gnuplot               # indirect doctests
+            Interface to Gnuplot
+        """
         return "Interface to Gnuplot"
 
     def plot(self, cmd, file=None, verbose=True, reset=True):
@@ -88,9 +95,9 @@ class Gnuplot(SageObject):
                     file += '.eps'
                 self('set terminal postscript eps enhanced')
             #self("set output '%s'"%file)
-            tmp = 'gnuplot_tmp%s'%file[-4:]
-            self("set output '%s'"%tmp)
-            print "Saving plot to %s"%file
+            tmp = 'gnuplot_tmp%s' % file[-4:]
+            self("set output '%s'" % tmp)
+            print("Saving plot to %s" % file)
             self(cmd)
             time.sleep(0.1)
             os.system('mv %s %s 2>/dev/null'%(tmp, file))
@@ -132,11 +139,10 @@ class Gnuplot(SageObject):
                           range1='[u=-pi:pi]',
                           range2='[v=-0.2:0.2]', samples=50, title=None,
                           interact=True):
-        """
+        r"""
         Draw a parametric 3d surface and rotate it interactively.
 
         INPUT:
-
 
         -  ``f`` - (string) a function of two variables, e.g.,
            'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
@@ -152,7 +158,6 @@ class Gnuplot(SageObject):
 
         -  ``title`` - (string) title of the graph.
 
-
         EXAMPLES::
 
             sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot  (not tested, since something pops up).
@@ -167,18 +172,18 @@ class Gnuplot(SageObject):
         set title "%s"
         set pm3d; set palette; set parametric
         splot %s %s %s
-        """%(samples, title, range1, range2, f)
+        """ % (samples, title, range1, range2, f)
         cmd = cmd.replace('^','**')
         if interact:
             self.interact(cmd)
         else:
             self(cmd)
 
-
     def interact(self, cmd):
         from sage.misc.all import SAGE_TMP
         file = os.path.join(SAGE_TMP, 'gnuplot')
-        open(file, 'w').write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
+        with open(file, 'w') as f:
+            f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
         os.system('sage-native-execute gnuplot -persist %s'%file)
 
     def console(self):
@@ -189,6 +194,9 @@ gnuplot = Gnuplot()
 
 
 def gnuplot_console():
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%gnuplot magics instead.')
     os.system('sage-native-execute gnuplot')
 
 

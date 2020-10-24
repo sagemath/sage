@@ -1,6 +1,7 @@
 """
 Permutation species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,12 +16,12 @@ Permutation species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from structure import GenericSpeciesStructure
-from generating_series import _integers_from
+
+from .species import GenericCombinatorialSpecies
+from .structure import GenericSpeciesStructure
+from .generating_series import _integers_from
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.all import ZZ
-from sage.misc.cachefunc import cached_function
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.species.misc import accept_size
 
@@ -50,12 +51,11 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
 
             sage: p = PermutationGroupElement((2,3,4))
             sage: P = species.PermutationSpecies()
-            sage: a = P.structures(["a", "b", "c", "d"]).random_element(); a
+            sage: a = P.structures(["a", "b", "c", "d"])[2]; a
             ['a', 'c', 'b', 'd']
             sage: a.permutation_group_element()
             (2,3)
         """
-        from sage.groups.all import PermutationGroupElement
         return Permutation(self._list).to_permutation_group_element()
 
     def transport(self, perm):
@@ -67,7 +67,7 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
 
             sage: p = PermutationGroupElement((2,3,4))
             sage: P = species.PermutationSpecies()
-            sage: a = P.structures(["a", "b", "c", "d"]).random_element(); a
+            sage: a = P.structures(["a", "b", "c", "d"])[2]; a
             ['a', 'c', 'b', 'd']
             sage: a.transport(p)
             ['a', 'd', 'c', 'b']
@@ -83,9 +83,10 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
 
         EXAMPLES::
 
+            sage: set_random_seed(0)
             sage: p = PermutationGroupElement((2,3,4))
             sage: P = species.PermutationSpecies()
-            sage: a = P.structures(["a", "b", "c", "d"]).random_element(); a
+            sage: a = P.structures(["a", "b", "c", "d"])[2]; a
             ['a', 'c', 'b', 'd']
             sage: a.automorphism_group()
             Permutation Group with generators [(2,3), (1,4)]
@@ -179,7 +180,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: P._canonical_rep_from_partition(P._default_structure_class, ["a","b","c"], [2,1])
             ['b', 'a', 'c']
         """
-        indices = range(1, len(labels)+1)
+        indices = list(range(1, len(labels) + 1))
         breaks = [sum(p[:i]) for i in range(len(p)+1)]
         cycles = tuple(tuple(indices[breaks[i]:breaks[i+1]]) for i in range(len(p)))
         perm = list(Permutation(cycles))
@@ -213,7 +214,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: g.coefficients(10)
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
-        from sage.combinat.partitions import number_of_partitions
+        from sage.combinat.partition import number_of_partitions
         for n in _integers_from(0):
             yield base_ring(number_of_partitions(n))
 
@@ -222,7 +223,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         r"""
         The cycle index series for the species of permutations is given by
 
-        .. math::
+        .. MATH::
 
              \prod{n=1}^\infty \frac{1}{1-x_n}.
 

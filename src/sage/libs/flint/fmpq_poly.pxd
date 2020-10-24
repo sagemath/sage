@@ -1,3 +1,6 @@
+# distutils: libraries = flint
+# distutils: depends = flint/fmpq_poly.h
+
 #*****************************************************************************
 #          Copyright (C) 2010 Sebastian Pancratz <sfp@pancratz.org>
 #
@@ -12,7 +15,8 @@ from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.libs.flint.types cimport *
 from sage.libs.flint.fmpz_vec cimport _fmpz_vec_max_limbs
 
-cdef extern from "flint/fmpq_poly.h":
+# flint/fmpq_poly.h
+cdef extern from "flint_wrap.h":
     # Memory management
     void fmpq_poly_init(fmpq_poly_t)
 
@@ -159,7 +163,6 @@ cdef extern from "flint/fmpq_poly.h":
     void fmpq_poly_rescale(fmpq_poly_t, const fmpq_poly_t, const fmpq_t)
 
     # Revert
-    void fmpq_poly_reverse(fmpq_poly_t, fmpq_poly_t, unsigned long)
     void fmpq_poly_revert_series(fmpq_poly_t, fmpq_poly_t, unsigned long)
 
     # Gaussian content

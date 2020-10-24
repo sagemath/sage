@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-git-background:
 
 ===================
@@ -20,7 +22,9 @@ Configuration Tips
 ==================
 
 Your personal git configurations are saved in the ``~/.gitconfig``
-file in your home directory. Here is an example::
+file in your home directory. Here is an example:
+
+.. CODE-BLOCK:: text
 
     [user]
         name = Your Name
@@ -54,7 +58,9 @@ formatted output of the diff) to ``git wdiff``. You can do this with::
     [user@localhost ~] git config --global alias.wdiff "diff --color-words"
 
 The above commands will create an ``alias`` section in your ``.gitconfig``
-file with contents like this::
+file with contents like this:
+
+.. CODE-BLOCK:: text
 
     [alias]
         ci = commit -a
@@ -77,7 +83,9 @@ or set the `EDITOR` environment variable.
 Merging
 -------
 
-To enforce summaries when doing merges (``~/.gitconfig`` file again)::
+To enforce summaries when doing merges (``~/.gitconfig`` file again):
+
+.. CODE-BLOCK:: text
 
     [merge]
         log = true
@@ -93,7 +101,9 @@ Fancy Log Output
 ----------------
 
 Here is an alias to get a fancy log output; it should go in the
-``alias`` section of your ``.gitconfig`` file::
+``alias`` section of your ``.gitconfig`` file:
+
+.. CODE-BLOCK:: text
 
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)[%an]%Creset' --abbrev-commit --date=relative
 
@@ -106,7 +116,7 @@ Using this ``lg`` alias gives you the changelog with a colored ascii graph::
     | * 4aff2a8 - fixed bug 35, and added a test in test_bugfixes (2 weeks ago) [Hugo]
     |/
     * a7ff2e5 - Added notes on discussion/proposal made during Data Array Summit. (2 weeks ago) [Corran Webster]
-    * 68f6752 - Initial implimentation of AxisIndexer - uses 'index_by' which needs to be changed to a call on an Axes object - this is all very sketchy right now. (2 weeks ago) [Corr
+    * 68f6752 - Initial implementation of AxisIndexer - uses 'index_by' which needs to be changed to a call on an Axes object - this is all very sketchy right now. (2 weeks ago) [Corr
     *   376adbd - Merge pull request #46 from terhorst/master (2 weeks ago) [Jonathan Terhorst]
     |\
     | * b605216 - updated joshu example to current api (3 weeks ago) [Jonathan Terhorst]

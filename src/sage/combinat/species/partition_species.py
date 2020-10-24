@@ -1,6 +1,7 @@
 """
 Partition Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -16,14 +17,11 @@ Partition Species
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from species import GenericCombinatorialSpecies
-from generating_series import _integers_from, factorial_stream
-from subset_species import SubsetSpeciesStructure
-from set_species import SetSpecies
-from structure import GenericSpeciesStructure
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
-from sage.misc.cachefunc import cached_function
+from .species import GenericCombinatorialSpecies
+from .generating_series import _integers_from, factorial_stream
+from .subset_species import SubsetSpeciesStructure
+from .set_species import SetSpecies
+from .structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from functools import reduce
 
@@ -48,7 +46,7 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.PartitionSpecies()
-            sage: a = S.structures(["a","b","c"]).random_element(); a
+            sage: a = S.structures(["a","b","c"])[0]; a
             {{'a', 'b', 'c'}}
         """
         s = GenericSpeciesStructure.__repr__(self)
@@ -111,6 +109,17 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
     def change_labels(self, labels):
         """
+        Return a relabelled structure.
+
+        INPUT:
+
+        - ``labels``, a list of labels.
+
+        OUTPUT:
+
+        A structure with the i-th label of self replaced with the i-th
+        label of the list.
+
         EXAMPLES::
 
             sage: p = PermutationGroupElement((2,3))
@@ -220,8 +229,8 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             sage: P._canonical_rep_from_partition(P._default_structure_class,[1,2,3],[2,1])
             {{1, 2}, {3}}
         """
-        breaks = [sum(p[:i]) for i in range(len(p)+1)]
-        return structure_class(self, labels, [range(breaks[i]+1, breaks[i+1]+1) for i in range(len(p))])
+        breaks = [sum(p[:i]) for i in range(len(p) + 1)]
+        return structure_class(self, labels, [list(range(breaks[i]+1, breaks[i+1]+1)) for i in range(len(p))])
 
     def _gs_iterator(self, base_ring):
         r"""
@@ -248,7 +257,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             sage: g.coefficients(10)
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
-        from sage.combinat.partitions import number_of_partitions
+        from sage.combinat.partition import number_of_partitions
         for n in _integers_from(0):
             yield self._weight*base_ring(number_of_partitions(n))
 
@@ -256,7 +265,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         r"""
         The cycle index series for the species of partitions is given by
 
-        .. math::
+        .. MATH::
 
              exp \sum_{n \ge 1} \frac{1}{n} \left( exp \left( \sum_{k \ge 1} \frac{x_{kn}}{k} \right) -1 \right).
 

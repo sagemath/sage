@@ -87,17 +87,6 @@ For example,
     sage: octave("gammainc(1.5,1)")   # optional - octave
     0.77687
 
-The Octave interface reads in even very long input (using files) in
-a robust manner::
-
-    sage: t = '"%s"'%10^10000   # ten thousand character string.
-    sage: a = octave.eval(t + ';')    # optional - octave, < 1/100th of a second
-    sage: a = octave(t)               # optional - octave
-
-Note that actually reading a back out takes forever. This *must*
-be fixed ASAP - see
-http://trac.sagemath.org/sage_trac/ticket/940/.
-
 Tutorial
 --------
 
@@ -137,7 +126,7 @@ EXAMPLES::
     75
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -149,11 +138,16 @@ EXAMPLES::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 import os
-from expect import Expect, ExpectElement
+from .expect import Expect, ExpectElement
+import pexpect
+from sage.misc.verbose import verbose
+from sage.docs.instancedoc import instancedoc
+from sage.cpython.string import bytes_to_str
 
 
 class Octave(Expect):
@@ -170,20 +164,35 @@ class Octave(Expect):
         'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
         sage: octave.eval("c")                                 # optional - octave; random output
         'c =\n\n 1\n 7.21645e-16\n -7.21645e-16\n\n'
+
+    TESTS:
+
+    We check that the interface can handle large inputs (see :trac:`940`)::
+
+        sage: t = '"{}"'.format(10^10000)
+        sage: a = octave(t)                     # optional - octave
+        sage: str(a) == ' {}'.format(10^10000)  # optional - octave
+        True
     """
 
-    def __init__(self, maxread=100, script_subdirectory=None, logfile=None, server=None, server_tmpdir=None,
-                 seed=None):
+    def __init__(self, maxread=None, script_subdirectory=None, logfile=None,
+            server=None, server_tmpdir=None, seed=None, command=None):
         """
         EXAMPLES::
 
             sage: octave == loads(dumps(octave))
             True
         """
+        if command is None:
+            command = os.getenv('SAGE_OCTAVE_COMMAND') or 'octave-cli'
+        if server is None:
+            server = os.getenv('SAGE_OCTAVE_SERVER') or None
         Expect.__init__(self,
                         name = 'octave',
-                        prompt = '>',
-                        command = "sage-native-execute octave --no-line-editing --silent",
+                        # We want the prompt sequence to be unique to avoid confusion with syntax error messages containing >>>
+                        prompt = r'octave\:\d+> ',
+                        # We don't want any pagination of output
+                        command = command + " --no-line-editing --silent --eval 'PS2(PS1());more off' --persist",
                         maxread = maxread,
                         server = server,
                         server_tmpdir = server_tmpdir,
@@ -196,7 +205,7 @@ class Octave(Expect):
 
     def set_seed(self, seed=None):
         """
-        Sets the seed for the random number generator
+        Set the seed for the random number generator
         for this octave interpreter.
 
         EXAMPLES::
@@ -230,7 +239,7 @@ class Octave(Expect):
             sage: octave._read_in_file_command(filename)
             'source("...");'
         """
-        return 'source("%s");'%filename
+        return 'source("%s");' % filename
 
     def _quit_string(self):
         """
@@ -243,11 +252,11 @@ class Octave(Expect):
 
     def _install_hints(self):
         """
-        Returns hints on how to install Octave.
+        Return hints on how to install Octave.
 
         EXAMPLES::
 
-            sage: print octave._install_hints()
+            sage: print(octave._install_hints())
             You must get ...
         """
         return """
@@ -255,22 +264,69 @@ class Octave(Expect):
         from Sage.   You can read all about Octave at
                 http://www.gnu.org/software/octave/
 
-        LINUX / WINDOWS (colinux):
-           Do apt-get install octave as root on your machine
-           (or, in Windows, in the colinux console).
+        LINUX:
+           Do apt-get install octave as root on your machine (Ubuntu/Debian).
+           Other Linux systems have octave too.
 
         OS X:
-           * This website has links to binaries for OS X PowerPC
-             and OS X Intel builds of the latest version of Octave:
-                     http://hpc.sourceforge.net/
-             Once you get the tarball from there, go to the / directory
-             and type
-                     tar zxvf octave-intel-bin.tar.gz
-             to extract it to usr/local/...   Make sure /usr/local/bin
-             is in your PATH.  Then type "octave" and verify that
-             octave starts up.
+           * This website has details on OS X builds of Octave:
+                    http://wiki.octave.org/Octave_for_MacOS_X
            * Darwin ports and fink have Octave as well.
         """
+
+    def _eval_line(self, line, reformat=True, allow_use_file=False,
+                   wait_for_prompt=True, restart_if_needed=False):
+        """
+        EXAMPLES::
+
+            sage: print(octave._eval_line('2+2'))  #optional - octave
+              ans =  4
+        """
+        from pexpect.exceptions import EOF
+        if not wait_for_prompt:
+            return Expect._eval_line(self, line)
+        if line == '':
+            return ''
+        if self._expect is None:
+            self._start()
+        if allow_use_file and len(line)>3000:
+            return self._eval_line_using_file(line)
+        try:
+            E = self._expect
+            # debug
+            # self._synchronize(cmd='1+%s\n')
+            verbose("in = '%s'"%line,level=3)
+            E.sendline(line)
+            E.expect(self._prompt)
+            out = bytes_to_str(E.before)
+            # debug
+            verbose("out = '%s'"%out,level=3)
+        except EOF:
+            if self._quit_string() in line:
+                return ''
+        except KeyboardInterrupt:
+            self._keyboard_interrupt()
+        try:
+            if reformat:
+                if 'syntax error' in out:
+                    raise SyntaxError(out)
+            out = "\n".join(out.splitlines()[1:])
+            return out
+        except NameError:
+            return ''
+
+    def _keyboard_interrupt(self):
+        print("CntrlC: Interrupting %s..."%self)
+        if self._restart_on_ctrlc:
+            try:
+                self._expect.close(force=1)
+            except pexpect.ExceptionPexpect as msg:
+                raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
+            self._start()
+            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)"%self)
+        else:
+            self._expect.send('\003') # control-c
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
 
     def quit(self, verbose=False):
         """
@@ -286,12 +342,12 @@ class Octave(Expect):
         # to signals.
         if not self._expect is None:
             if verbose:
-                print "Exiting spawned %s process."%self
+                print("Exiting spawned %s process." % self)
         return
 
     def _start(self):
         """
-        Starts the Octave process.
+        Start the Octave process.
 
         EXAMPLES::
 
@@ -308,9 +364,38 @@ class Octave(Expect):
         # set random seed
         self.set_seed(self._seed)
 
+    def _equality_symbol(self):
+        """
+        EXAMPLES::
+
+            sage: octave('0 == 1')  # optional - octave
+             0
+            sage: octave('1 == 1')  # optional - octave
+             1
+        """
+        return '=='
+
+    def _true_symbol(self):
+        """
+        EXAMPLES::
+
+            sage: octave('1 == 1')  # optional - octave
+             1
+        """
+        return '1'
+
+    def _false_symbol(self):
+        """
+        EXAMPLES::
+
+            sage: octave('0 == 1')  # optional - octave
+             0
+        """
+        return '0'
+
     def set(self, var, value):
         """
-        Set the variable var to the given value.
+        Set the variable ``var`` to the given ``value``.
 
         EXAMPLES::
 
@@ -318,14 +403,14 @@ class Octave(Expect):
             sage: octave.get('x') # optional - octave
             ' 2'
         """
-        cmd = '%s=%s;'%(var,value)
+        cmd = '%s=%s;' % (var, value)
         out = self.eval(cmd)
-        if out.find("error") != -1:
+        if out.find("error") != -1 or out.find("Error") != -1:
             raise TypeError("Error executing code in Octave\nCODE:\n\t%s\nOctave ERROR:\n\t%s"%(cmd, out))
 
     def get(self, var):
         """
-        Get the value of the variable var.
+        Get the value of the variable ``var``.
 
         EXAMPLES::
 
@@ -344,11 +429,11 @@ class Octave(Expect):
         EXAMPLES::
 
             sage: octave.set('x', '2') # optional - octave
-            sage: octave.clear('x') # optional - octave
-            sage: octave.get('x') # optional - octave
-            "error: `x' undefined near line ... column 1"
+            sage: octave.clear('x')    # optional - octave
+            sage: octave.get('x')      # optional - octave
+            "error: 'x' undefined near line ... column 1"
         """
-        self.eval('clear %s'%var)
+        self.eval('clear %s' % var)
 
     def console(self):
         """
@@ -374,31 +459,33 @@ class Octave(Expect):
         octave_console()
 
     def version(self):
-        """
+        r"""
         Return the version of Octave.
 
         OUTPUT: string
 
         EXAMPLES::
 
-            sage: octave.version()   # optional - octave; random output depending on version
-            '2.1.73'
+            sage: v = octave.version()   # optional - octave
+            sage: v                      # optional - octave; random
+            '2.13.7'
+
+            sage: import re
+            sage: assert re.match(r"\d+\.\d+\.\d+", v)  is not None # optional - octave
         """
-        return octave_version()
+        return str(self("version")).strip()
 
     def solve_linear_system(self, A, b):
-        """
+        r"""
         Use octave to compute a solution x to A\*x = b, as a list.
 
         INPUT:
 
+        - ``A`` -- mxn matrix A with entries in `\QQ` or `\RR`
 
-        -  ``A`` - mxn matrix A with entries in QQ or RR
+        - ``b`` -- m-vector b entries in `\QQ` or `\RR` (resp)
 
-        -  ``b`` - m-vector b entries in QQ or RR (resp)
-
-
-        OUTPUT: An list x (if it exists) which solves M\*x = b
+        OUTPUT: A list x (if it exists) which solves M\*x = b
 
         EXAMPLES::
 
@@ -431,7 +518,6 @@ class Octave(Expect):
         sol  = soln[3:]
         return eval(sol)
 
-
     def sage2octave_matrix_string(self, A):
         """
         Return an octave matrix from a Sage matrix.
@@ -455,7 +541,7 @@ class Octave(Expect):
 
     def de_system_plot(self, f, ics, trange):
         r"""
-        Plots (using octave's interface to gnuplot) the solution to a
+        Plot (using octave's interface to gnuplot) the solution to a
         `2\times 2` system of differential equations.
 
         INPUT:
@@ -481,7 +567,7 @@ class Octave(Expect):
         same graph (the `t`-axis is the horizontal axis) of the
         system of ODEs
 
-        .. math::
+        .. MATH::
 
                        x' = x+y, x(0) = 1;\qquad y' = x-y, y(0) = -1,                     \quad\text{for}\quad 0 < t < 2.
         """
@@ -507,12 +593,94 @@ class Octave(Expect):
         return OctaveElement
 
 
+octave_functions = set()
+
+def to_complex(octave_string, R):
+    r"""
+    Helper function to convert octave complex number
+
+    TESTS::
+
+        sage: from sage.interfaces.octave import to_complex
+        sage: to_complex('(0,1)', CDF)
+        1.0*I
+        sage: to_complex('(1.3231,-0.2)', CDF)
+        1.3231 - 0.2*I
+    """
+    real, imag = octave_string.strip('() ').split(',')
+    return R(float(real), float(imag))
+
+
+@instancedoc
 class OctaveElement(ExpectElement):
-    def _matrix_(self, R):
+    def _get_sage_ring(self):
+        r"""
+        TESTS::
+
+            sage: octave('1')._get_sage_ring()  # optional - octave
+            Real Double Field
+            sage: octave('I')._get_sage_ring()  # optional - octave
+            Complex Double Field
+            sage: octave('[]')._get_sage_ring() # optional - octave
+            Real Double Field
+        """
+        if self.isinteger():
+            import sage.rings.integer_ring
+            return sage.rings.integer_ring.ZZ
+        elif self.isreal():
+            import sage.rings.real_double
+            return sage.rings.real_double.RDF
+        elif self.iscomplex():
+            import sage.rings.complex_double
+            return sage.rings.complex_double.CDF
+        else:
+            raise TypeError("no Sage ring associated to this element.")
+
+    def __bool__(self):
+        r"""
+        Test whether this element is nonzero.
+
+        EXAMPLES::
+
+            sage: bool(octave('0'))                 # optional - octave
+            False
+            sage: bool(octave('[]'))                # optional - octave
+            False
+            sage: bool(octave('[0,0]'))             # optional - octave
+            False
+            sage: bool(octave('[0,0,0;0,0,0]'))     # optional - octave
+            False
+
+            sage: bool(octave('0.1'))               # optional - octave
+            True
+            sage: bool(octave('[0,1,0]'))           # optional - octave
+            True
+            sage: bool(octave('[0,0,-0.1;0,0,0]'))  # optional - octave
+            True
+        """
+        return str(self) != ' [](0x0)' and any(x != '0' for x in str(self).split())
+
+    __nonzero__ = __bool__
+
+    def _matrix_(self, R=None):
         r"""
         Return Sage matrix from this octave element.
 
         EXAMPLES::
+
+            sage: A = octave('[1,2;3,4.5]')     # optional - octave
+            sage: matrix(A)                     # optional - octave
+            [1.0 2.0]
+            [3.0 4.5]
+            sage: _.base_ring()                 # optional - octave
+            Real Double Field
+
+            sage: A = octave('[I,1;-1,0]')      # optional - octave
+            sage: matrix(A)                     # optional - octave
+            [1.0*I   1.0]
+            [ -1.0   0.0]
+            sage: _.base_ring()                 # optional - octave
+            Complex Double Field
 
             sage: A = octave('[1,2;3,4]')       # optional - octave
             sage: matrix(ZZ, A)                 # optional - octave
@@ -523,17 +691,119 @@ class OctaveElement(ExpectElement):
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
-        from sage.matrix.all import MatrixSpace
-        s = str(self).strip()
-        v = s.split('\n ')
-        nrows = len(v)
-        if nrows == 0:
-            return MatrixSpace(R,0,0)(0)
-        ncols = len(v[0].split())
-        M = MatrixSpace(R, nrows, ncols)
-        v = sum([[x for x in w.split()] for w in v], [])
-        return M(v)
+        if not self.ismatrix():
+            raise TypeError('not an octave matrix')
+        if R is None:
+            R = self._get_sage_ring()
 
+        s = str(self).strip('\n ')
+        w = [u.strip().split(' ') for u in s.split('\n')]
+        nrows = len(w)
+        ncols = len(w[0])
+
+        if self.iscomplex():
+            w = [[to_complex(x,R) for x in row] for row in w]
+
+        from sage.matrix.all import MatrixSpace
+        return MatrixSpace(R, nrows, ncols)(w)
+
+    def _vector_(self, R=None):
+        r"""
+        Return Sage vector from this octave element.
+
+        EXAMPLES::
+
+            sage: A = octave('[1,2,3,4]')       # optional - octave
+            sage: vector(ZZ, A)                 # optional - octave
+            (1, 2, 3, 4)
+            sage: A = octave('[1,2.3,4.5]')     # optional - octave
+            sage: vector(A)                     # optional - octave
+            (1.0, 2.3, 4.5)
+            sage: A = octave('[1,I]')           # optional - octave
+            sage: vector(A)                     # optional - octave
+            (1.0, 1.0*I)
+        """
+        from sage.modules.free_module import FreeModule
+        if not self.isvector():
+            raise TypeError('not an octave vector')
+        if R is None:
+            R = self._get_sage_ring()
+
+        s = str(self).strip('\n ')
+        w = s.strip().split(' ')
+        nrows = len(w)
+
+        if self.iscomplex():
+            w = [to_complex(x, R) for x in w]
+
+        return FreeModule(R, nrows)(w)
+
+    def _scalar_(self):
+        """
+        Return Sage scalar from this octave element.
+
+        EXAMPLES::
+
+            sage: A = octave('2833')      # optional - octave
+            sage: As = A.sage(); As       # optional - octave
+            2833.0
+            sage: As.parent()             # optional - octave
+            Real Double Field
+
+            sage: B = sqrt(A)             # optional - octave
+            sage: Bs = B.sage(); Bs       # optional - octave
+            53.2259
+            sage: Bs.parent()             # optional - octave
+            Real Double Field
+
+            sage: C = sqrt(-A)            # optional - octave
+            sage: Cs = C.sage(); Cs       # optional - octave
+            53.2259*I
+            sage: Cs.parent()             # optional - octave
+            Complex Double Field
+        """
+        if not self.isscalar():
+            raise TypeError("not an octave scalar")
+
+        R = self._get_sage_ring()
+        if self.iscomplex():
+            return to_complex(str(self), R)
+        else:
+            return R(str(self))
+
+    def _sage_(self):
+        """
+        Try to parse the octave object and return a sage object.
+
+        EXAMPLES::
+
+            sage: A = octave('2833')           # optional - octave
+            sage: A.sage()                     # optional - octave
+            2833.0
+            sage: B = sqrt(A)                  # optional - octave
+            sage: B.sage()                     # optional - octave
+            53.2259
+            sage: C = sqrt(-A)                 # optional - octave
+            sage: C.sage()                     # optional - octave
+            53.2259*I
+            sage: A = octave('[1,2,3,4]')      # optional - octave
+            sage: A.sage()                     # optional - octave
+            (1.0, 2.0, 3.0, 4.0)
+            sage: A = octave('[1,2.3,4.5]')    # optional - octave
+            sage: A.sage()                     # optional - octave
+            (1.0, 2.3, 4.5)
+            sage: A = octave('[1,2.3+I,4.5]')  # optional - octave
+            sage: A.sage()                     # optional - octave
+            (1.0, 2.3 + 1.0*I, 4.5)
+        """
+        if self.isscalar():
+            return self._scalar_()
+        elif self.isvector():
+            return self._vector_()
+        elif self.ismatrix():
+            return self._matrix_()
+        else:
+            raise NotImplementedError('octave type is not recognized')
 
 # An instance
 octave = Octave()
@@ -570,16 +840,7 @@ def octave_console():
     octave, like Sage, remembers its history from one session to
     another.
     """
-    os.system('octave')
-
-
-def octave_version():
-    """
-    Return the version of Octave installed.
-
-    EXAMPLES::
-
-        sage: octave_version()    # optional - octave; and output is random
-        '2.9.12'
-    """
-    return str(octave('version')).strip()
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%octave magics instead.')
+    os.system('octave-cli')

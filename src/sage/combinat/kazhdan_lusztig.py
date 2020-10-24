@@ -8,24 +8,28 @@ AUTHORS:
 - Alan J.X. Guo (2014-03-18): ``R_tilde()`` method.
 
 """
+
 #*****************************************************************************
-#       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>,
+#       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from __future__ import absolute_import, print_function, division
+
 from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_generic
+from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
+
 
 class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
-    """
+    r"""
     A Kazhdan-Lusztig polynomial.
 
     INPUT:
@@ -41,18 +45,6 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
     The parent of ``q`` may be a :class:`PolynomialRing` or a
     :class:`LaurentPolynomialRing`.
 
-    REFERENCES:
-
-    .. [KL79] D. Kazhdan and G. Lusztig. *Representations of Coxeter
-       groups and Hecke algebras*. Invent. Math. **53** (1979).
-       no. 2, 165--184. :doi:`10.1007/BF01390031` :mathscinet:`MR0560412`
-
-    .. [Dy93] M. J. Dyer. *Hecke algebras and shellings of Bruhat
-       intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
-
-    .. [BB05] A. Bjorner, F. Brenti. *Combinatorics of Coxeter
-       groups*. New York: Springer, 2005.
-
     EXAMPLES::
 
         sage: W = WeylGroup("B3",prefix="s")
@@ -66,7 +58,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
         sage: W = CoxeterGroup(['B', 3], implementation='coxeter3') # optional - coxeter3
         sage: W.kazhdan_lusztig_polynomial([2], [3,2,3,1,2])        # optional - coxeter3
-        1 + q
+        q + 1
     """
     def __init__(self, W, q, trace=False):
         """
@@ -86,7 +78,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         self._base_ring = q.parent()
         if is_Polynomial(q):
             self._base_ring_type = "polynomial"
-        elif isinstance(q, LaurentPolynomial_generic):
+        elif isinstance(q, LaurentPolynomial):
             self._base_ring_type = "laurent"
         else:
             self._base_ring_type = "unknown"
@@ -126,12 +118,12 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if (s*x).length() < x.length():
             ret = self.R(s*x,s*y)
             if self._trace:
-                print "  R(%s,%s)=%s"%(x, y, ret)
+                print("  R(%s,%s)=%s" % (x, y, ret))
             return ret
         else:
             ret = (self._q-1)*self.R(s*x,y)+self._q*self.R(s*x,s*y)
             if self._trace:
-                print "  R(%s,%s)=%s"%(x, y, ret)
+                print("  R(%s,%s)=%s" % (x, y, ret))
             return ret
 
     @cached_method
@@ -140,7 +132,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         Return the Kazhdan-Lusztig `\tilde{R}` polynomial.
 
         Information about the `\tilde{R}` polynomials can be found in
-        [Dy93]_ and [BB05]_.
+        [Dy1993]_ and [BB2005]_.
 
         INPUT:
 
@@ -167,12 +159,12 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if (x * s).length() < x.length():
             ret = self.R_tilde(x * s, y * s)
             if self._trace:
-                print " R_tilde(%s,%s)=%s" % (x, y, ret)
+                print(" R_tilde(%s,%s)=%s" % (x, y, ret))
             return ret
         else:
             ret = self.R_tilde(x * s, y * s) + self._q * self.R_tilde(x, y * s)
             if self._trace:
-                print " R_tilde(%s,%s)=%s" % (x, y, ret)
+                print(" R_tilde(%s,%s)=%s" % (x, y, ret))
             return ret
 
     @cached_method
@@ -214,10 +206,10 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
                 return self._base_ring.one()
             else:
                 return self._base_ring.zero()
-        p = sum(-self.R(x,t)*self.P(t,y) for t in self._coxeter_group.bruhat_interval(x,y) if t != x)
-        tr = floor((y.length()-x.length()+1)/2)
+        p = sum(-self.R(x, t) * self.P(t, y)
+                for t in self._coxeter_group.bruhat_interval(x, y) if t != x)
+        tr = (y.length() - x.length() + 1) // 2
         ret = p.truncate(tr)
         if self._trace:
-            print "    P({},{})={}".format(x, y, ret)
+            print("    P({},{})={}".format(x, y, ret))
         return ret
-

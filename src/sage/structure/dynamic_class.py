@@ -47,7 +47,7 @@ by inheritance::
     class MyPermutation(UniqueRepresentation, PermutationCycleType):
          ...
 
-Finaly, we may want to endow the permutations in `S` with further
+Finally, we may want to endow the permutations in `S` with further
 operations coming from the (algebraic) structure of `S`:
 
 - group operations
@@ -91,7 +91,7 @@ tedious. Furthermore, this would require a cumbersome mechanism to
 lookup the appropriate class depending on the desired combination.
 
 Instead, one may use the ability of Python to create new classes
-dynamicaly::
+dynamically::
 
     type("class name", tuple of base classes, dictionary of methods)
 
@@ -119,9 +119,12 @@ an inheritance can be partially emulated using :meth:`__getattr__`. See
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import copyreg
+
 from sage.misc.cachefunc import weak_cached_function
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonMetaclass, InheritComparisonClasscallMetaclass
+
 
 def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
                   prepend_cls_bases=True, cache=True):
@@ -164,22 +167,20 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: from sage.misc.cachefunc import cached_function
         sage: from sage.structure.dynamic_class import dynamic_class
         sage: class Foo(object):
-        ...       "The Foo class"
-        ...       def __init__(self, x):
-        ...           self._x = x
-        ...       @cached_method
-        ...       def f(self):
-        ...           return self._x^2
-        ...       def g(self):
-        ...           return self._x^2
-        ...       @lazy_attribute
-        ...       def x(self):
-        ...           return self._x
-        ...
+        ....:     "The Foo class"
+        ....:     def __init__(self, x):
+        ....:         self._x = x
+        ....:     @cached_method
+        ....:     def f(self):
+        ....:         return self._x^2
+        ....:     def g(self):
+        ....:         return self._x^2
+        ....:     @lazy_attribute
+        ....:     def x(self):
+        ....:         return self._x
         sage: class Bar:
-        ...       def bar(self):
-        ...           return self._x^2
-        ...
+        ....:     def bar(self):
+        ....:         return self._x^2
 
     We now create a class FooBar which is a copy of Foo, except that it
     also inherits from Bar::
@@ -201,12 +202,25 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
         sage: Foo.__bases__
         (<type 'object'>,)
-        sage: FooBar.__bases__
+        sage: FooBar.__bases__  # py2
         (<type 'object'>, <class __main__.Bar at ...>)
+        sage: FooBar.__bases__  # py3
+        (<class '__main__.Bar'>,)
         sage: Foo.mro()
         [<class '__main__.Foo'>, <type 'object'>]
-        sage: FooBar.mro()
+        sage: FooBar.mro()  # py2
         [<class '__main__.FooBar'>, <type 'object'>, <class __main__.Bar at ...>]
+        sage: FooBar.mro()  # py3
+        [<class '__main__.FooBar'>, <class '__main__.Bar'>, <class 'object'>]
+
+    If all the base classes have a zero ``__dictoffset__``, the dynamic
+    class also has a zero ``__dictoffset__``. This means that the
+    instances of the class don't have a ``__dict__``
+    (see :trac:`23435`)::
+
+        sage: dyn = dynamic_class("dyn", (Integer,))
+        sage: dyn.__dictoffset__
+        0
 
     .. RUBRIC:: Pickling
 
@@ -214,15 +228,16 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     unpickling, the class will be reconstructed by recalling
     dynamic_class with the same arguments::
 
-        sage: type(FooBar).__reduce__(FooBar)
+        sage: type(FooBar).__reduce__(FooBar)  # py2
         (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
+        sage: type(FooBar).__reduce__(FooBar)  # py3
+        (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
 
     Technically, this is achieved by using a metaclass, since the
     Python pickling protocol for classes is to pickle by name::
 
         sage: type(FooBar)
         <class 'sage.structure.dynamic_class.DynamicMetaclass'>
-
 
     The following (meaningless) example illustrates how to customize
     the result of the reduction::
@@ -290,10 +305,12 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: x.__dict__      # Breaks without the __dict__ deletion in dynamic_class_internal
         {'_x': 3}
 
-        sage: type(FooBar).__reduce__(FooBar)
+        sage: type(FooBar).__reduce__(FooBar)  # py2
         (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
-        sage: import cPickle
-        sage: cPickle.loads(cPickle.dumps(FooBar)) == FooBar
+        sage: type(FooBar).__reduce__(FooBar)  # py3
+        (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
+        sage: import pickle
+        sage: pickle.loads(pickle.dumps(FooBar)) == FooBar
         True
 
     We check that instrospection works reasonably::
@@ -307,10 +324,13 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: FooUnique = dynamic_class("Foo", (Bar, UniqueRepresentation))
         sage: loads(dumps(FooUnique)) is FooUnique
         True
-
     """
     bases = tuple(bases)
     #assert(len(bases) > 0 )
+    try:
+        name = str(name)
+    except UnicodeEncodeError:
+        pass
     assert(isinstance(name, str))
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
@@ -370,16 +390,41 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         sage: sage_getsourcelines(Foo3().bla)
         (['    def bla():...'], ...)
 
+    We check that :trac:`21895` has been resolved::
+
+        sage: C1 = sage.structure.dynamic_class.dynamic_class_internal("C1", (Morphism, UniqueRepresentation))
+        sage: type(C1)
+        <class 'sage.structure.dynamic_class.DynamicInheritComparisonClasscallMetaclass'>
+        sage: C2 = sage.structure.dynamic_class.dynamic_class_internal("C2", (UniqueRepresentation, Morphism))
+        sage: type(C2)
+        <class 'sage.structure.dynamic_class.DynamicInheritComparisonClasscallMetaclass'>
+
+    We check that :trac:`28392` has been resolved::
+
+        sage: class A:
+        ....:     pass
+        sage: Foo1 = sage.structure.dynamic_class.dynamic_class("Foo", (), A)
+        sage: "__weakref__" in Foo1.__dict__
+        False
+        sage: "__dict__" in Foo1.__dict__
+        False
     """
     if reduction is None:
         reduction = (dynamic_class, (name, bases, cls, reduction, doccls))
     if cls is not None:
         methods = dict(cls.__dict__)
         # Anything else that should not be kept?
-        if "__dict__" in methods:
-            methods.__delitem__("__dict__")
+        for key in ["__dict__", "__weakref__"]:
+            if key in methods:
+                del methods[key]
         if prepend_cls_bases:
-            bases = cls.__bases__ + bases
+            cls_bases = cls.__bases__
+            all_bases = set()
+            for base in bases:
+                if isinstance(base, type):
+                    all_bases.update(base.mro())
+            cls_bases = tuple(b for b in cls_bases if b not in all_bases)
+            bases = cls_bases + bases
     else:
         methods = {}
     if doccls is None:
@@ -389,14 +434,18 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
             assert bases != ()
             doccls = bases[0]
     methods['_reduction'] = reduction
-    if "_sage_src_lines_" not in methods:
-        from sage.misc.sageinspect import sage_getsourcelines
-        @staticmethod
-        def _sage_src_lines():
-            return sage_getsourcelines(doccls)
-        methods['_sage_src_lines_'] = _sage_src_lines
+    # HACK: _doccls is a 1-element tuple to avoid __classget__
+    # or trouble with binding behaviour...
+    methods['_doccls'] = (doccls,)
     methods['__doc__'] = doccls.__doc__
     methods['__module__'] = doccls.__module__
+
+    # If none of the bases have a __dict__, the new class shouldn't
+    # have one either.
+    # NOTE: we need the isinstance(b, type) check to exclude old-style
+    # classes.
+    if all(isinstance(b, type) and not b.__dictoffset__ for b in bases):
+        methods['__slots__'] = ()
 
     metaclass = DynamicMetaclass
     # The metaclass of a class must derive from the metaclasses of its
@@ -404,18 +453,52 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
     # classes is a known Sage metaclass.  This approach won't scale
     # well if we start using metaclasses seriously in Sage.
     for base in bases:
-        if isinstance(base, InheritComparisonClasscallMetaclass):
-            metaclass = DynamicInheritComparisonClasscallMetaclass
-        elif isinstance(base, ClasscallMetaclass):
-            metaclass = DynamicClasscallMetaclass
-        elif isinstance(base, InheritComparisonMetaclass):
-            metaclass = DynamicInheritComparisonMetaclass
+        if isinstance(base, ClasscallMetaclass):
+            if not issubclass(metaclass, ClasscallMetaclass):
+                if metaclass is DynamicMetaclass:
+                    metaclass = DynamicClasscallMetaclass
+                elif metaclass is DynamicInheritComparisonMetaclass:
+                    metaclass = DynamicInheritComparisonClasscallMetaclass
+                else:
+                    raise NotImplementedError("No subclass of %r known that inherits from ClasscallMetaclass"%(metaclass,))
+        if isinstance(base, InheritComparisonMetaclass):
+            if not issubclass(metaclass, InheritComparisonMetaclass):
+                if metaclass is DynamicMetaclass:
+                    metaclass = DynamicInheritComparisonMetaclass
+                elif metaclass is DynamicClasscallMetaclass:
+                    metaclass = DynamicInheritComparisonClasscallMetaclass
+                else:
+                    raise NotImplementedError("No subclass of %r known that inherits from InheritComparisonMetaclass"%(metaclass,))
     return metaclass(name, bases, methods)
+
 
 class DynamicMetaclass(type):
     """
     A metaclass implementing an appropriate reduce-by-construction method
     """
+    def _sage_src_lines_(self):
+        r"""
+        Get the source lines of the dynamic class. This defers to the
+        source lines of the ``_doccls`` attribute, which is set when
+        the dynamic class is constructed.
+
+        EXAMPLES::
+
+            sage: from sage.misc.sageinspect import sage_getsourcelines
+            sage: from sage.structure.dynamic_class import dynamic_class
+            sage: C = dynamic_class("SomeClass", [object], doccls=Integer)
+            sage: sage_getsourcelines(C)[0][0]
+            'cdef class Integer(sage.structure.element.EuclideanDomainElement):\n'
+        """
+        try:
+            # HACK: _doccls is a 1-element tuple to avoid __classget__
+            # or trouble with binding behaviour...
+            doccls = self._doccls[0]
+        except AttributeError:
+            raise NotImplementedError("no _doccls found")
+        from sage.misc.sageinspect import sage_getsourcelines
+        return sage_getsourcelines(doccls)
+
     def __reduce__(self):
         """
         See :func:`sage.structure.dynamic_class.dynamic_class` for
@@ -426,9 +509,12 @@ class DynamicMetaclass(type):
             sage: class Foo: pass
             sage: class DocClass: pass
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass)
-            sage: type(C).__reduce__(C)
+            sage: type(C).__reduce__(C)  # py2
             (<function dynamic_class at ...>,
              ('bla', (<type 'object'>,), <class __main__.Foo at ...>, None, <class __main__.DocClass at ...>))
+            sage: type(C).__reduce__(C)  # py3
+            (<function dynamic_class at ...>,
+             ('bla', (<type 'object'>,), <class '__main__.Foo'>, None, <class '__main__.DocClass'>))
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass, reduction = "blah")
             sage: type(C).__reduce__(C)
             'blah'
@@ -445,12 +531,11 @@ class DynamicInheritComparisonClasscallMetaclass(DynamicMetaclass, InheritCompar
     pass
 
 # This registers the appropriate reduction methods (see Trac #5985)
-import copy_reg
 for M in [DynamicMetaclass,
           DynamicClasscallMetaclass,
           DynamicInheritComparisonMetaclass,
           DynamicInheritComparisonClasscallMetaclass]:
-    copy_reg.pickle(M, M.__reduce__)
+    copyreg.pickle(M, M.__reduce__)
 
 
 class TestClass:

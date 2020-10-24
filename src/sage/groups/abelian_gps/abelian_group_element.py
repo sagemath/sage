@@ -41,14 +41,11 @@ Recall an example from abelian groups::
 #  Copyright (C) 2012 Volker Braun  <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 
-
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
-from sage.rings.arith import LCM, GCD
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
+
 
 def is_AbelianGroupElement(x):
     """
@@ -93,7 +90,6 @@ class AbelianGroupElement(AbelianGroupElementBase):
         sage: a*b in F
         True
     """
-
     def as_permutation(self):
         r"""
         Return the element of the permutation group G (isomorphic to the
@@ -113,7 +109,6 @@ class AbelianGroupElement(AbelianGroupElementBase):
             sage: ap in Gp
             True
         """
-        from sage.groups.perm_gps.permgroup import PermutationGroup
         from sage.interfaces.all import gap
         G = self.parent()
         invs = list(G.gens_orders())
@@ -150,7 +145,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
            Don't use E (or other GAP-reserved letters) as a generator
            name.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AbelianGroup(2,[2,3], names="xy")
             sage: x,y = G.gens()
@@ -163,5 +158,5 @@ class AbelianGroupElement(AbelianGroupElementBase):
             sage: prod([x^i for x,i in v]) == y*x
             True
         """
-        from sage.groups.abelian_gps.abelian_group import AbelianGroup, word_problem
-        return word_problem(words,self)
+        from sage.groups.abelian_gps.abelian_group import word_problem
+        return word_problem(words, self)

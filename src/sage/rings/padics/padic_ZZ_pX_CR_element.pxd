@@ -1,8 +1,7 @@
-include "sage/libs/ntl/decl.pxi"
-
 from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.rings.padics.padic_ZZ_pX_element cimport pAdicZZpXElement
 from sage.structure.element cimport RingElement, ModuleElement
+from sage.libs.ntl.types cimport ZZ_pX_c, ZZX_c
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 
 cdef class pAdicZZpXCRElement(pAdicZZpXElement):
@@ -10,7 +9,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     cdef long ordp
     cdef long relprec
     # relprec = 0 if self.unit is not constructed.  This includes _exact_zeros and _inexact_zeros
-    # relprec > 0 if self.unit is constucted and self is normalized
+    # relprec > 0 if self.unit is constructed and self is normalized
     # relprec < 0 if self.unit is constructed but self is not normalized.  The actual relprec is -self.relprec
 
     cdef int _set(self, ZZ_pX_c* unit, long ordp, long relprec) except -1

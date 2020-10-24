@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-"""
+r"""
 The ``pretty_print`` command.
 
 Works similar to the ``print`` function, except that it always tries
@@ -20,20 +20,14 @@ graphics instead::
     sage: pretty_print(plot(sin))
 """
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
-import types
-import collections
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.sage_object import SageObject
 from sage.repl.rich_output import get_display_manager
 
@@ -41,7 +35,7 @@ from sage.repl.rich_output import get_display_manager
 class SequencePrettyPrinter(SageObject):
 
     def __init__(self, *args, **kwds):
-        """
+        r"""
         Pretty Printer for Muliple Arguments.
 
         INPUT/OUTPUT:
@@ -67,7 +61,7 @@ class SequencePrettyPrinter(SageObject):
         Return whether the pretty print items are homogeneous
 
         INPUT:
-        
+
         - ``common_type`` -- a type.
 
         OUTPUT:
@@ -85,7 +79,7 @@ class SequencePrettyPrinter(SageObject):
             False
         """
         return all(isinstance(arg, common_type) for arg in self.args)
-        
+
     def _concatenate_graphs(self):
         """
         Plot multiple graphs into a single plot
@@ -99,9 +93,9 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()
             sage: type(plt)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: plt
-            Graphics Array of size 2 x 4
+            Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
         return graphs_list.to_graphics_array(self.args, **self.kwds)
@@ -119,13 +113,13 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()
             sage: type(ga)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: ga.nrows(), ga.ncols()
             (2, 4)
         """
         from sage.plot.plot import graphics_array
         return graphics_array(self.args, ncols=4, **self.kwds)
-    
+
     def pretty_print(self):
         """
         Actually do the pretty print.
@@ -164,10 +158,10 @@ class SequencePrettyPrinter(SageObject):
 def pretty_print(*args, **kwds):
     r"""
     Pretty print the arguments in an intelligent way.
-    
+
     For a single positional argument, this function chooses the
     highest-quality output supported by the user interface.
-    
+
     For certain homogeneous multiple positional arguments a suitable
     combined graphical output is generated. In particular, graphs and
     plots are treated special.
@@ -210,30 +204,14 @@ def pretty_print(*args, **kwds):
         sage: pretty_print(LatexExpr(r"\frac{x^2 + 1}{x - 2}"))
         <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{x^2 + 1}{x - 2}</script></html>
 
-    Iterators and generators are unwrapped::
-
-        sage: iterator = iter(range(3));  iterator
-        <listiterator object at 0x...>
-        sage: pretty_print(iterator)
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}0 1 2</script></html>
-
     TESTS::
 
         sage: plt = plot(sin)
         sage: pretty_print(plt)             # graphics output
-        sage: pretty_print(ZZ, 123, plt)    # latex output
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z} 123 \verb|Graphics|\phantom{\verb!x!}\verb|object|\phantom{\verb!x!}\verb|consisting|\phantom{\verb!x!}\verb|of|\phantom{\verb!x!}\verb|1|\phantom{\verb!x!}\verb|graphics|\phantom{\verb!x!}\verb|primitive|</script></html>
+        sage: pretty_print(ZZ, 123, plt)    # optional - latex
+        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z} 123 %% Creator: Matplotlib, PGF backend...</script></html>
         sage: pretty_print(plt, plt)        # graphics output
     """
-    if len(args) == 1 and isinstance(args[0], (types.GeneratorType, collections.Iterator)):
-        args = tuple(args[0])
-
-    # Support deprecation :trac:`18292`
-    if len(args) == 1:
-        import sage.misc.html
-        if sage.misc.html.WarnIfNotPrinted.skip_pretty_print(args[0]):
-            return
-
     dm = get_display_manager()
     old_preferences_text = dm.preferences.text
     try:
@@ -247,10 +225,10 @@ def pretty_print(*args, **kwds):
             SequencePrettyPrinter(*args, **kwds).pretty_print()
     finally:
         dm.preferences.text = old_preferences_text
-    
+
 
 def show(*args, **kwds):
-    """
+    r"""
     Alias for ``pretty_print``
 
     This function is an alias for :meth:`pretty_print`.

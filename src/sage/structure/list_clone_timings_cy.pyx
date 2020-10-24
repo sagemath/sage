@@ -8,8 +8,6 @@ Cython Functions for Timing Clone Protocol
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-import sage
 from sage.structure.list_clone cimport ClonableArray
 
 
@@ -20,6 +18,7 @@ cpdef ClonableArray cy_add1_internal(ClonableArray bla):
     """
     TESTS::
 
+        sage: from sage.structure.list_clone_timings_cy import *
         sage: from sage.structure.list_clone_timings import *
         sage: cy_add1_internal(IncreasingArrays()([1,4,5]))
         [2, 5, 6]
@@ -34,11 +33,13 @@ cpdef ClonableArray cy_add1_internal(ClonableArray bla):
     blo.check()
     return blo
 
+
 cpdef ClonableArray cy_add1_immutable(ClonableArray bla):
     """
     TESTS::
 
         sage: from sage.structure.list_clone_timings import *
+        sage: from sage.structure.list_clone_timings_cy import *
         sage: cy_add1_immutable(IncreasingArrays()([1,4,5]))
         [2, 5, 6]
     """
@@ -53,6 +54,7 @@ cpdef ClonableArray cy_add1_mutable(ClonableArray bla):
     TESTS::
 
         sage: from sage.structure.list_clone_timings import *
+        sage: from sage.structure.list_clone_timings_cy import *
         sage: cy_add1_mutable(IncreasingArrays()([1,4,5]))
         [2, 5, 6]
     """
@@ -65,11 +67,13 @@ cpdef ClonableArray cy_add1_mutable(ClonableArray bla):
     blo.check()
     return blo
 
+
 cpdef ClonableArray cy_add1_with(ClonableArray bla):
     """
     TESTS::
 
         sage: from sage.structure.list_clone_timings import *
+        sage: from sage.structure.list_clone_timings_cy import *
         sage: cy_add1_with(IncreasingArrays()([1,4,5]))
         [2, 5, 6]
     """

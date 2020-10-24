@@ -1,0 +1,13 @@
+*** a/src/main.cpp	Sat Sep  7 14:09:12 2013
+--- b/src/main.cpp	Sat Sep  7 14:09:44 2013
+***************
+*** 24,29 ****
+--- 24,31 ----
+  
+  #include <ctime>
+  #include <cstdlib>
++ #include <unistd.h> /* needed for getpid */
++
+
+  /** This function runs the Frobby console interface. the ::main
+      function calls this function after having set up DEBUG-specific

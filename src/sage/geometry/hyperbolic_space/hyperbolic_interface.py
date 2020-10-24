@@ -22,7 +22,7 @@ model), and HM (hyperboloid model).
     in the hyperboloid model.  Performing mapping this point to the upper
     half plane and performing computations there may return with vector
     whose components are unsimplified strings have several ``sqrt(2)``'s.
-    Presently, this drawback is outweighed by the rapidity with which new
+    Presently, this drawback is outweighted by the rapidity with which new
     models can be implemented.
 
 AUTHORS:
@@ -40,8 +40,7 @@ EXAMPLES::
     sage: HyperbolicPlane().PD().get_point(1/2 + I/2)
     Point in PD 1/2*I + 1/2
 """
-
-#***********************************************************************
+# **********************************************************************
 #
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
@@ -50,11 +49,12 @@ EXAMPLES::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
+from __future__ import division
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.misc.abstract_method import abstract_method
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.geometry.hyperbolic_space.hyperbolic_model import (
@@ -78,7 +78,7 @@ def HyperbolicSpace(n):
 
 
 class HyperbolicPlane(Parent, UniqueRepresentation):
-    """
+    r"""
     The hyperbolic plane `\mathbb{H}^2`.
 
     Here are the models currently implemented:
@@ -97,7 +97,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
             sage: H = HyperbolicPlane()
             sage: TestSuite(H).run()
         """
-        Parent.__init__(self, category=Sets().WithRealizations())
+        Parent.__init__(self, category=Sets().Metric().WithRealizations())
         self.a_realization() # We create a realization so at least one is known
 
     def _repr_(self):
@@ -119,7 +119,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
 
             sage: H = HyperbolicPlane()
             sage: H.a_realization()
-            Hyperbolic plane in the Upper Half Plane Model model
+            Hyperbolic plane in the Upper Half Plane Model
         """
         return self.UHP()
 
@@ -181,9 +181,10 @@ class HyperbolicModels(Category_realization_of_parent):
             sage: H = HyperbolicPlane()
             sage: models = HyperbolicModels(H)
             sage: models.super_categories()
-            [Category of sets, Category of realizations of Hyperbolic plane]
+            [Category of metric spaces,
+             Category of realizations of Hyperbolic plane]
         """
-        return [Sets(), Realizations(self.base())]
+        return [Sets().Metric(), Realizations(self.base())]
 
     class ParentMethods:
         def _an_element_(self):
@@ -202,33 +203,5 @@ class HyperbolicModels(Category_realization_of_parent):
                 sage: H.HM().an_element()
                 Point in HM (0, 0, 1)
             """
-            return self(self.realization_of().PD().get_point(0))
-
-        # TODO: Move to a category of metric spaces once created
-        @abstract_method
-        def dist(self, a, b):
-            """
-            Return the distance between ``a`` and ``b``.
-
-            EXAMPLES::
-
-                sage: PD = HyperbolicPlane().PD()
-                sage: PD.dist(PD.get_point(0), PD.get_point(I/2))
-                arccosh(5/3)
-            """
-
-    class ElementMethods:
-        # TODO: Move to a category of metric spaces once created
-        def dist(self, other):
-            """
-            Return the distance between ``self`` and ``other``.
-
-            EXAMPLES::
-
-                sage: UHP = HyperbolicPlane().UHP()
-                sage: p1 = UHP.get_point(5 + 7*I)
-                sage: p2 = UHP.get_point(1 + I)
-                sage: p1.dist(p2)
-                arccosh(33/7)
-            """
-            return self.parent().dist(self, other)
+            from sage.rings.integer_ring import ZZ
+            return self(self.realization_of().PD().get_point(ZZ.zero()))

@@ -1,7 +1,7 @@
 Let ATLAS use Cygwin thread functions on Cygwin64.
-diff -druN ATLAS.orig/src/threads/ATL_thread_start.c ATLAS.new/src/threads/ATL_thread_start.c
---- ATLAS.orig/src/threads/ATL_thread_start.c	2014-07-10 09:22:06.000000000 -0700
-+++ ATLAS.new/src/threads/ATL_thread_start.c	2014-11-18 07:17:39.207997205 -0800
+diff -druN ATLAS.orig/ATLAS/src/threads/ATL_thread_start.c ATLAS.new/ATLAS/src/threads/ATL_thread_start.c
+--- ATLAS.orig/ATLAS/src/threads/ATL_thread_start.c	2014-07-10 09:22:06.000000000 -0700
++++ ATLAS.new/ATLAS/src/threads/ATL_thread_start.c	2014-11-18 07:17:39.207997205 -0800
 @@ -14,14 +14,14 @@
   */
  {

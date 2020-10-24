@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-numerical-analysis:
+
 Sage Quickstart for Numerical Analysis
 ======================================
 
@@ -32,19 +34,16 @@ Basic Analysis
     sage: ring=RealField(3)
 
 To print the actual number (without rounding off the last few imprecise
-digits to only display correct digits), call the ``.str()`` method with
-the option ``truncate=False``.
+digits to only display correct digits), call the ``.str()`` method::
 
-::
-
-    sage: print ring('1').nextabove()
+    sage: print(ring('1').nextabove())
     1.2
 
 ::
 
-    sage: print ring('1').nextabove().str(truncate=False)
+    sage: print(ring('1').nextabove().str())
     1.2
-    sage: print ring('1').nextbelow().str(truncate=False)
+    sage: print(ring('1').nextbelow().str())
     0.88
 
 Let's change our precision.
@@ -52,9 +51,9 @@ Let's change our precision.
 ::
 
     sage: ring=RealField(20)
-    sage: print ring('1').nextabove().str(truncate=False)
+    sage: print(ring('1').nextabove().str())
     1.0000019
-    sage: print ring('1').nextbelow().str(truncate=False)
+    sage: print(ring('1').nextbelow().str())
     0.99999905
 
 You can also specify the rounding mode.
@@ -66,17 +65,17 @@ You can also specify the rounding mode.
 
 ::
 
-    sage: ring(1/9).str(truncate=False)
+    sage: ring(1/9).str()
     '0.11111116'
 
 ::
 
-    sage: ringup(1/9).str(truncate=False)
+    sage: ringup(1/9).str()
     '0.13'
 
 ::
 
-    sage: ringdown(1/9).str(truncate=False)
+    sage: ringdown(1/9).str()
     '0.10'
 
 ::
@@ -257,7 +256,7 @@ above.
 The question mark notation means that the number is contained in the
 interval found by incrementing and decrementing the last digit of the
 number.  See the `documentation for real interval fields
-<http://www.sagemath.org/doc/reference/sage/rings/real_mpfi.html>`_ for
+<http://doc.sagemath.org/html/en/reference/sage/rings/real_mpfi.html>`_ for
 details.  In the above case, Sage is saying that 1/9 is somewhere
 between 0.111 and 0.113.  Below, we see that ``1/a`` is somewhere
 between 8.9 and 9.1.
@@ -272,7 +271,7 @@ print out the interval.
 
 ::
 
-    sage: print (1/a).str(style='brackets')
+    sage: print((1/a).str(style='brackets'))
     [8.9843 .. 9.0157]
 
 Included Software
@@ -282,7 +281,7 @@ Scipy (included in Sage) has a lot of numerical algorithms.  See `the
 Scipy docs <http://docs.scipy.org/doc/scipy/reference/>`_.
 
 Mpmath is also included in Sage, and contains a huge amount of numerical
-stuff.  See `the mpmath codebase <http://code.google.com/p/mpmath/>`_.
+stuff.  See `the mpmath codebase <https://github.com/fredrik-johansson/mpmath/>`_.
 
 The `Decimal python module
 <http://docs.python.org/library/decimal.html>`_ has also been useful for

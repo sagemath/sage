@@ -1,21 +1,24 @@
 r"""
-Enumerated Sets
+Enumerated sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category_singleton import Category_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.sets_cat import Sets
 from sage.categories.sets_cat import EmptySetError
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.rings.integer", "Integer")
 
-class EnumeratedSets(Category_singleton):
+
+class EnumeratedSets(CategoryWithAxiom):
     """
     The category of enumerated sets
 
@@ -23,7 +26,7 @@ class EnumeratedSets(Category_singleton):
     together with a canonical enumeration of its elements;
     conceptually, this is very similar to an immutable list. The main
     difference lies in the names and the return type of the methods,
-    and of course the fact that the list of element is not supposed to
+    and of course the fact that the list of elements is not supposed to
     be expanded in memory. Whenever possible one should use one of the
     two sub-categories :class:`FiniteEnumeratedSets` or
     :class:`InfiniteEnumeratedSets`.
@@ -39,7 +42,7 @@ class EnumeratedSets(Category_singleton):
        - ``S.cardinality()``: the number of elements of the set. This
          is the equivalent for ``len`` on a list except that the
          return value is specified to be a Sage :class:`Integer` or
-         ``infinity``, instead of a Python ``int``;
+         ``infinity``, instead of a Python ``int``.
 
        - ``iter(S)``: an iterator for the elements of the set;
 
@@ -48,15 +51,15 @@ class EnumeratedSets(Category_singleton):
          predictably too large to be expanded in memory.
 
        - ``S.unrank(n)``: the  ``n-th`` element of the set when ``n`` is a sage
-         ``Integer``. This is the equivanlent for ``l[n]`` on a list.
+         ``Integer``. This is the equivalent for ``l[n]`` on a list.
 
        - ``S.rank(e)``: the position of the element ``e`` in the set;
          This is equivalent to ``l.index(e)`` for a list except that
          the return value is specified to be a Sage :class:`Integer`,
-         instead of a Python ``int``;
+         instead of a Python ``int``.
 
        - ``S.first()``: the first object of the set; it is equivalent to
-         ``S.unrank(0)``;
+         ``S.unrank(0)``.
 
        - ``S.next(e)``: the object of the set which follows ``e``; It is
          equivalent to ``S.unrank(S.rank(e)+1)``.
@@ -135,9 +138,14 @@ class EnumeratedSets(Category_singleton):
             {1, 2, 3}
             sage: S.category()
             Category of facade finite enumerated sets
+
+        Also Python3 range are now accepted::
+
+            sage: S = EnumeratedSets()(range(4)); S
+            {0, 1, 2, 3}
         """
         import sage.sets.set
-        if isinstance(X, (tuple, list, set, sage.sets.set.Set_object_enumerated)):
+        if isinstance(X, (tuple, list, set, range, sage.sets.set.Set_object_enumerated)):
             return sage.sets.all.FiniteEnumeratedSet(X)
         raise NotImplementedError
 
@@ -148,12 +156,12 @@ class EnumeratedSets(Category_singleton):
             An iterator for the enumerated set.
 
             ``iter(self)`` allows the combinatorial class to be treated as an
-            iterable. This if the default implementation from the category
-            ``EnumeratedSets()`` it just goes through the iterator of the set
+            iterable. This is the default implementation from the category
+            ``EnumeratedSets()``; it just goes through the iterator of the set
             to count the number of objects.
 
             By decreasing order of priority, the second column of the
-            following array shows which methods is used to define
+            following array shows which method is used to define
             ``__iter__``, when the methods of the first column are overloaded:
 
             +------------------------+---------------------------------+
@@ -166,58 +174,57 @@ class EnumeratedSets(Category_singleton):
             | ``list`                | ``_iterator_from_next``         |
             +------------------------+---------------------------------+
 
-            If non of these are provided raise a ``NotImplementedError``
+            It is also possible to override ``__iter__`` method itself. Then
+            the methods of the first column are defined using  ``__iter__``
+
+            If none of these are provided, raise a ``NotImplementedError``.
 
             EXAMPLES::
 
             We start with an example where nothing is implemented::
 
                 sage: class broken(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...
+                ....:     def __init__(self):
+                ....:         Parent.__init__(self, category = EnumeratedSets())
                 sage: it = iter(broken()); [next(it), next(it), next(it)]
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: iterator called but not implemented
 
-            Here is what happends when ``first`` and ``next`` are implemeted::
+            Here is what happens when ``first`` and ``next`` are implemented::
 
                 sage: class set_first_next(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...    def first(self):
-                ...        return 0
-                ...    def next(self, elt):
-                ...        return elt+1
-                ...
+                ....:     def __init__(self):
+                ....:         Parent.__init__(self, category = EnumeratedSets())
+                ....:     def first(self):
+                ....:         return 0
+                ....:     def next(self, elt):
+                ....:         return elt+1
                 sage: it = iter(set_first_next()); [next(it), next(it), next(it)]
                 [0, 1, 2]
 
             Let us try with ``unrank``::
 
                 sage: class set_unrank(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...    def unrank(self, i):
-                ...        return i + 5
-                ...
+                ....:     def __init__(self):
+                ....:         Parent.__init__(self, category = EnumeratedSets())
+                ....:     def unrank(self, i):
+                ....:         return i + 5
                 sage: it = iter(set_unrank()); [next(it), next(it), next(it)]
                 [5, 6, 7]
 
             Let us finally try with ``list``::
 
                 sage: class set_list(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...    def list(self):
-                ...        return [5, 6, 7]
-                ...
+                ....:     def __init__(self):
+                ....:         Parent.__init__(self, category = EnumeratedSets())
+                ....:     def list(self):
+                ....:         return [5, 6, 7]
                 sage: it = iter(set_list()); [next(it), next(it), next(it)]
                 [5, 6, 7]
 
             """
-            #Check to see if .first() and .next() are overridden in the subclass
+            # Check if .first() and .next(x) are overridden in the subclass
             if ( self.first != self._first_from_iterator and
                  self.next  != self._next_from_iterator ):
                 return self._iterator_from_next()
@@ -255,23 +262,329 @@ class EnumeratedSets(Category_singleton):
             else:
                 return False
 
-        def list(self):
-            """
-            Return an error since the cardinality of self is not known.
+        def iterator_range(self, start=None, stop=None, step=None):
+            r"""
+            Iterate over the range of elements of ``self`` starting
+            at ``start``, ending at ``stop``, and stepping by ``step``.
+
+            .. SEEALSO::
+
+                ``unrank()``, ``unrank_range()``
 
             EXAMPLES::
 
-                sage: class broken(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...
-                sage: broken().list()
+                sage: P = Partitions()
+                sage: list(P.iterator_range(stop=5))
+                [[], [1], [2], [1, 1], [3]]
+                sage: list(P.iterator_range(0, 5))
+                [[], [1], [2], [1, 1], [3]]
+                sage: list(P.iterator_range(3, 5))
+                [[1, 1], [3]]
+                sage: list(P.iterator_range(3, 10))
+                [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
+                sage: list(P.iterator_range(3, 10, 2))
+                [[1, 1], [2, 1], [4], [2, 2]]
+                sage: it = P.iterator_range(3)
+                sage: [next(it) for x in range(10)]
+                [[1, 1],
+                 [3], [2, 1], [1, 1, 1],
+                 [4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1],
+                 [5]]
+                sage: it = P.iterator_range(3, step=2)
+                sage: [next(it) for x in range(5)]
+                [[1, 1],
+                 [2, 1],
+                 [4], [2, 2], [1, 1, 1, 1]]
+                sage: next(P.iterator_range(stop=-3))
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: unknown cardinality
+                NotImplementedError: cannot list an infinite set
+                sage: next(P.iterator_range(start=-3))
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
             """
-            raise NotImplementedError("unknown cardinality")
+            if stop is None:
+                if start is None:
+                    if step is None:
+                        for x in self:
+                            yield x
+                        return
+                    start = 0
+                elif start < 0:
+                    for x in self.list()[start::step]:
+                        yield x
+                    return
+                if step is None:
+                    step = 1
+                while True:
+                    try:
+                        yield self.unrank(start)
+                    except ValueError:
+                        return
+                    start += step
+
+            elif stop < 0:
+                for x in self.list()[start:stop:step]:
+                    yield x
+                return
+
+            if start is None:
+                if step is None:
+                    it = self.__iter__()
+                    for j in range(stop):
+                        yield next(it)
+                    return
+                start = 0
+            elif start < 0:
+                for x in self.list()[start:stop:step]:
+                    yield x
+                return
+            if step is None:
+                step = 1
+            for j in range(start, stop, step):
+                yield self.unrank(j)
+
+        def unrank_range(self, start=None, stop=None, step=None):
+            """
+            Return the range of elements of ``self`` starting at ``start``,
+            ending at ``stop``, and stepping by ``step``.
+
+            .. SEEALSO::
+
+                ``unrank()``, ``iterator_range()``
+
+            EXAMPLES::
+
+                sage: P = Partitions()
+                sage: P.unrank_range(stop=5)
+                [[], [1], [2], [1, 1], [3]]
+                sage: P.unrank_range(0, 5)
+                [[], [1], [2], [1, 1], [3]]
+                sage: P.unrank_range(3, 5)
+                [[1, 1], [3]]
+                sage: P.unrank_range(3, 10)
+                [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
+                sage: P.unrank_range(3, 10, 2)
+                [[1, 1], [2, 1], [4], [2, 2]]
+                sage: P.unrank_range(3)
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+                sage: P.unrank_range(stop=-3)
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+                sage: P.unrank_range(start=-3)
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+            """
+            if stop is None:
+                return self.list()[start::step]
+
+            if stop < 0:
+                return self.list()[start:stop:step]
+
+            if start is not None and start < 0:
+                return self.list()[start:stop:step]
+
+            return list(self.iterator_range(start, stop, step))
+
+        def __getitem__(self, i):
+            r"""
+            Return the item indexed by ``i``.
+
+            .. WARNING::
+
+                This method is only meant as a convenience shorthand for
+                ``self.unrank(i)`` and
+                ``self.unrank_range(start, stop, step)`` respectively, for
+                casual use (e.g. in interactive sessions). Subclasses are
+                hereby explicitly permitted to overload ``__getitem__``
+                with a different semantic, typically for enumerated sets
+                that are naturally indexed by some `I` not of the
+                form `\{0, 1, \ldots\}`. In particular, generic code
+                *should not* use this shorthand.
+
+            EXAMPLES::
+
+                sage: P = Partitions()
+                sage: P[:5]
+                [[], [1], [2], [1, 1], [3]]
+                sage: P[0:5]
+                [[], [1], [2], [1, 1], [3]]
+                sage: P[3:5]
+                [[1, 1], [3]]
+                sage: P[3:10]
+                [[1, 1], [3], [2, 1], [1, 1, 1], [4], [3, 1], [2, 2]]
+                sage: P[3:10:2]
+                [[1, 1], [2, 1], [4], [2, 2]]
+                sage: P[3:]
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+                sage: P[3]
+                [1, 1]
+                sage: P[-1]
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: cannot list an infinite set
+
+            ::
+
+                sage: C = FiniteEnumeratedSets().example()
+                sage: C.list()
+                [1, 2, 3]
+                sage: C[1]
+                2
+                sage: C[:]
+                [1, 2, 3]
+                sage: C[1:]
+                [2, 3]
+                sage: C[0:1:2]
+                [1]
+
+                sage: F = FiniteEnumeratedSet([1,2,3])
+                sage: F[1:]
+                [2, 3]
+                sage: F[:2]
+                [1, 2]
+                sage: F[:2:2]
+                [1]
+                sage: F[1::2]
+                [2]
+            """
+            if isinstance(i, slice):
+                return self.unrank_range(i.start, i.stop, i.step)
+            if i < 0:
+                return self.list()[i]
+            return self.unrank(i)
+
+        def __len__(self):
+            """
+            Return the number of elements of ``self``.
+
+            EXAMPLES::
+
+                sage: len(GF(5))
+                5
+                sage: len(MatrixSpace(GF(2), 3, 3))
+                512
+            """
+            from sage.rings.infinity import Infinity
+            try:
+                c = self.cardinality()
+                if c is Infinity:
+                    raise NotImplementedError('infinite set')
+                return int(c)
+            except AttributeError:
+                return len(self.list())
+
+        def list(self):
+            r"""
+            Return a list of the elements of ``self``.
+
+            The elements of set ``x`` are created and cached on the fist call
+            of ``x.list()``. Then each call of ``x.list()`` returns a new list
+            from the cached result. Thus in looping, it may be better to do
+            ``for e in x:``, not ``for e in x.list():``.
+
+            If ``x`` is not known to be finite, then an exception is raised.
+
+            EXAMPLES::
+
+                sage: (GF(3)^2).list()
+                [(0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (2, 2)]
+                sage: R = Integers(11)
+                sage: R.list()
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                sage: l = R.list(); l
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                sage: l.remove(0); l
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                sage: R.list()
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+            """
+            try: # shortcut
+                if self._list is not None:
+                    return list(self._list)
+            except AttributeError:
+                pass
+
+            from sage.rings.infinity import Infinity
+            try:
+                if self.cardinality() is Infinity:
+                    raise NotImplementedError('cannot list an infinite set')
+                else: # finite cardinality
+                    return self._list_from_iterator()
+            except AttributeError:
+                raise NotImplementedError('unknown cardinality')
         _list_default  = list # needed by the check system.
+
+        def _list_from_iterator(self):
+            r"""
+            Return a list of the elements of ``self`` after cached.
+
+            TESTS:
+
+            Trying to list an infinite vector space raises an error
+            instead of running forever (see :trac:`10470`)::
+
+                sage: (QQ^2).list()  # indirect test
+                Traceback (most recent call last):
+                ...
+                AttributeError: 'FreeModule_ambient_field_with_category' object has no attribute 'list'
+
+            Here we test that for an object that does not know whether it
+            is finite or not.  Calling ``x.list()`` simply tries to create
+            the list (but here it fails, since the object is not
+            iterable). This was fixed :trac:`11350` ::
+
+                sage: R.<t,p> = QQ[]
+                sage: Q = R.quotient(t^2-t+1)
+                sage: Q.is_finite()
+                Traceback (most recent call last):
+                ...
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'is_finite'
+                sage: Q.list()   # indirect test
+                Traceback (most recent call last):
+                ...
+                AttributeError: 'QuotientRing_generic_with_category' object has no attribute 'list'
+
+            Here is another example. We artificially create a version of
+            the ring of integers that does not know whether it is finite
+            or not::
+
+                sage: from sage.rings.integer_ring import IntegerRing_class
+                sage: class MyIntegers_class(IntegerRing_class):
+                ....:      def is_finite(self):
+                ....:          raise NotImplementedError
+                sage: MyIntegers = MyIntegers_class()
+                sage: MyIntegers.is_finite()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+
+            Asking for ``list(MyIntegers)`` will also raise an exception::
+
+                sage: list(MyIntegers)  # indirect test
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+            """
+            try:
+                if self._list is not None:
+                    return list(self._list)
+            except AttributeError:
+                pass
+            result = list(self.__iter__())
+            try:
+                self._list = result
+            except AttributeError:
+                pass
+            return list(result)
 
         def _first_from_iterator(self):
             """
@@ -319,12 +632,11 @@ class EnumeratedSets(Category_singleton):
             return next(it)
         next = _next_from_iterator
 
-
         def _unrank_from_iterator(self, r):
             """
             The ``r``-th element of ``self``
 
-            ``self.unrank(r)`` returns the ``r``-th element of self, where
+            ``self.unrank(r)`` returns the ``r``-th element of ``self``, where
             ``r`` is an integer between ``0`` and ``n-1`` where ``n`` is the
             cardinality of ``self``.
 
@@ -381,7 +693,6 @@ class EnumeratedSets(Category_singleton):
                     return counter
                 counter += 1
             return None
-
         rank = _rank_from_iterator
 
         def _iterator_from_list(self):
@@ -427,7 +738,7 @@ class EnumeratedSets(Category_singleton):
                 except (TypeError, ValueError ):
                     break
 
-                if f is None or f is False :
+                if f is None or f is False:
                     break
                 else:
                     yield f
@@ -497,9 +808,9 @@ class EnumeratedSets(Category_singleton):
             TESTS::
 
                 sage: super(Parent, C)._an_element_
-                Cached version of <function _an_element_from_iterator at ...>
+                Cached version of <function ..._an_element_from_iterator at ...>
             """
-            it = self.__iter__()
+            it = iter(self)
             try:
                 return next(it)
             except StopIteration:
@@ -548,9 +859,8 @@ class EnumeratedSets(Category_singleton):
             EXAMPLES::
 
                 sage: class broken(UniqueRepresentation, Parent):
-                ...    def __init__(self):
-                ...        Parent.__init__(self, category = EnumeratedSets())
-                ...
+                ....:  def __init__(self):
+                ....:      Parent.__init__(self, category = EnumeratedSets())
                 sage: broken().random_element()
                 Traceback (most recent call last):
                 ...
@@ -567,25 +877,25 @@ class EnumeratedSets(Category_singleton):
 
             EXAMPLES::
 
-                sage: R = SymmetricGroup(3).map(attrcall('reduced_word')); R
-                Image of Symmetric group of order 3! as a permutation group by *.reduced_word()
+                sage: R = Compositions(4).map(attrcall('partial_sums')); R
+                Image of Compositions of 4 by *.partial_sums()
                 sage: R.cardinality()
-                6
+                8
                 sage: R.list()
-                [[], [1], [2, 1], [1, 2], [2], [1, 2, 1]]
+                [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
                 sage: [ r for r in R]
-                [[], [1], [2, 1], [1, 2], [2], [1, 2, 1]]
+                [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
 
             .. warning::
 
                 If the function is not injective, then there may be
                 repeated elements::
 
-                    sage: P = SymmetricGroup(3)
+                    sage: P = Compositions(4)
                     sage: P.list()
-                    [(), (1,2), (1,2,3), (1,3,2), (2,3), (1,3)]
-                    sage: P.map(attrcall('length')).list()
-                    [0, 1, 2, 2, 1, 3]
+                    [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
+                    sage: P.map(attrcall('major_index')).list()
+                    [6, 3, 4, 1, 5, 2, 3, 0]
 
             .. warning::
 
@@ -617,21 +927,22 @@ class EnumeratedSets(Category_singleton):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class CCls(Example):
-                ...       def __contains__(self, obj):
-                ...           if obj == 3:
-                ...               return False
-                ...           else:
-                ...               return obj in C
+                ....:     def __contains__(self, obj):
+                ....:         if obj == 3:
+                ....:             return False
+                ....:         else:
+                ....:             return obj in C
                 sage: CC = CCls()
                 sage: CC._test_enumerated_set_contains()
                 Traceback (most recent call last):
                 ...
-                AssertionError: False is not true
+                AssertionError: 3 not found in An example
+                of a finite enumerated set: {1,2,3}
             """
             tester = self._tester(**options)
             i = 0
             for w in self:
-                tester.assertTrue(w in self)
+                tester.assertIn(w, self)
                 i += 1
                 if i > tester._max_runs:
                     return
@@ -657,8 +968,8 @@ class EnumeratedSets(Category_singleton):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class CCls(Example):
-                ...       def list(self):
-                ...           return [1,2,3,4]
+                ....:     def list(self):
+                ....:         return [1,2,3,4]
                 sage: CC = CCls()
                 sage: CC._test_enumerated_set_iter_list()
                 Traceback (most recent call last):
@@ -670,8 +981,8 @@ class EnumeratedSets(Category_singleton):
             test::
 
                 sage: class CCls(Example):
-                ...       def list(self):
-                ...           return [1,2,3]
+                ....:     def list(self):
+                ....:         return [1,2,3]
                 sage: CC = CCls()
                 sage: CC._test_enumerated_set_iter_list(verbose=True,max_runs=2)
                 Enumerated set too big; skipping test; increase tester._max_runs
@@ -702,10 +1013,11 @@ class EnumeratedSets(Category_singleton):
             EXAMPLES::
 
                 sage: F = FiniteSemigroups().example(('a','b','c'))
-                sage: L = list(F); L
-                ['a', 'c', 'ac', 'b', 'ba', 'bc', 'cb', 'ca', 'bca', 'ab', 'bac', 'cab', 'acb', 'cba', 'abc']
+                sage: L = list(F)
                 sage: L[7].rank()
                 7
+                sage: all(x.rank() == i for i,x in enumerate(L))
+                True
             """
             return self.parent().rank(self)
 
@@ -715,98 +1027,6 @@ class EnumeratedSets(Category_singleton):
     class CartesianProducts(CartesianProductsCategory):
 
         class ParentMethods:
-            def __iter__(self):
-                r"""
-                Return a lexicographic iterator for the elements of this cartesian product.
-
-                EXAMPLES::
-
-                    sage: A = FiniteEnumeratedSets()(["a", "b"])
-                    sage: B = FiniteEnumeratedSets().example(); B
-                    An example of a finite enumerated set: {1,2,3}
-                    sage: C = cartesian_product([A, B, A]); C
-                    The cartesian product of ({'a', 'b'}, An example of a finite enumerated set: {1,2,3}, {'a', 'b'})
-                    sage: C in FiniteEnumeratedSets()
-                    True
-                    sage: list(C)
-                    [('a', 1, 'a'), ('a', 1, 'b'), ('a', 2, 'a'), ('a', 2, 'b'), ('a', 3, 'a'), ('a', 3, 'b'),
-                     ('b', 1, 'a'), ('b', 1, 'b'), ('b', 2, 'a'), ('b', 2, 'b'), ('b', 3, 'a'), ('b', 3, 'b')]
-                    sage: C.__iter__.__module__
-                    'sage.categories.enumerated_sets'
-
-                    sage: F22 = GF(2).cartesian_product(GF(2))
-                    sage: list(F22)
-                    [(0, 0), (0, 1), (1, 0), (1, 1)]
-
-                    sage: C = cartesian_product([Permutations(10)]*4)
-                    sage: it = iter(C)
-                    sage: next(it)
-                    ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-                    sage: next(it)
-                    ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                     [1, 2, 3, 4, 5, 6, 7, 8, 10, 9])
-
-                .. WARNING::
-
-                    The elements are returned in lexicographic order,
-                    which gives a valid enumeration only if all
-                    factors, but possibly the first one, are
-                    finite. So the following one is fine::
-
-                        sage: it = iter(cartesian_product([ZZ, GF(2)]))
-                        sage: [next(it) for _ in range(10)]
-                        [(0, 0), (0, 1), (1, 0), (1, 1),
-                         (-1, 0), (-1, 1), (2, 0), (2, 1),
-                         (-2, 0), (-2, 1)]
-
-                    But this one is not::
-
-                        sage: it = iter(cartesian_product([GF(2), ZZ]))
-                        sage: [next(it) for _ in range(10)]
-                        doctest:...: UserWarning: Sage is not able to determine
-                        whether the factors of this cartesian product are
-                        finite. The lexicographic ordering might not go through
-                        all elements.
-                        [(0, 0), (0, 1), (0, -1), (0, 2), (0, -2),
-                         (0, 3), (0, -3), (0, 4), (0, -4), (0, 5)]
-
-                .. NOTE::
-
-                    Here it would be faster to use :func:`itertools.product` for sets
-                    of small size. But the latter expands all factor in memory!
-                    So we can not reasonably use it in general.
-
-                ALGORITHM:
-
-                Recipe 19.9 in the Python Cookbook by Alex Martelli
-                and David Ascher.
-                """
-                if any(f not in Sets().Finite() for f in self.cartesian_factors()[1:]):
-                    from warnings import warn
-                    warn("Sage is not able to determine whether the factors of "
-                         "this cartesian product are finite. The lexicographic "
-                         "ordering might not go through all elements.")
-
-                # visualize an odometer, with "wheels" displaying "digits"...:
-                factors = list(self.cartesian_factors())
-                wheels = map(iter, factors)
-                digits = [next(it) for it in wheels]
-                while True:
-                    yield self._cartesian_product_of_elements(digits)
-                    for i in range(len(digits)-1, -1, -1):
-                        try:
-                            digits[i] = next(wheels[i])
-                            break
-                        except StopIteration:
-                            wheels[i] = iter(factors[i])
-                            digits[i] = next(wheels[i])
-                    else:
-                        break
 
             def first(self):
                 r"""

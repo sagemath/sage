@@ -20,7 +20,7 @@ NTL_CLIENT;
 namespace bernmm {
 
 
-long PowerMod(long a, long ee, long n, double ninv)
+long PowerMod(long a, long ee, long n, mulmod_t ninv)
 {
    long x, y;
 
@@ -89,13 +89,13 @@ PrimeTable::PrimeTable(long bound)
 }
 
 
-long order(long x, long p, double pinv, const Factorisation& F)
+long order(long x, long p, mulmod_t pinv, const Factorisation& F)
 {
    // in the loop below, m is always some multiple of the order of x
    long m = p - 1;
 
    // try to remove factors from m until we can't remove any more
-   for (int i = 0; i < F.factors.size(); i++)
+   for (size_t i = 0; i < F.factors.size(); i++)
    {
       long q = F.factors[i];
 
@@ -113,7 +113,7 @@ long order(long x, long p, double pinv, const Factorisation& F)
 
 
 
-long primitive_root(long p, double pinv, const Factorisation& F)
+long primitive_root(long p, mulmod_t pinv, const Factorisation& F)
 {
    if (p == 2)
       return 1;

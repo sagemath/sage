@@ -7,6 +7,7 @@ TESTS::
     sage: loads(dumps(m)) == m
     True
 """
+from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -20,12 +21,15 @@ import sage.rings.all as rings
 
 import sage.modular.arithgroup.all as arithgroup
 
-import ambient
-import cuspidal_submodule
-import eisenstein_submodule
+from . import ambient
+from . import cuspidal_submodule
+from . import eisenstein_submodule
+
+from sage.misc.cachefunc import cached_method
+
 
 class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
-    """
+    r"""
     A space of modular forms for `\Gamma_0(N)` over `\QQ`.
     """
     def __init__(self, level, weight):
@@ -45,6 +49,7 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
     ####################################################################
     # Computation of Special Submodules
     ####################################################################
+    @cached_method
     def cuspidal_submodule(self):
         r"""
         Return the cuspidal submodule of this space of modular forms for
@@ -58,15 +63,12 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
             sage: type(s)
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_g0_Q_with_category'>
         """
-        try:
-            return self.__cuspidal_submodule
-        except AttributeError:
-            if self.level() == 1:
-                self.__cuspidal_submodule = cuspidal_submodule.CuspidalSubmodule_level1_Q(self)
-            else:
-                self.__cuspidal_submodule = cuspidal_submodule.CuspidalSubmodule_g0_Q(self)
-        return self.__cuspidal_submodule
+        if self.level() == 1:
+            return cuspidal_submodule.CuspidalSubmodule_level1_Q(self)
+        else:
+            return cuspidal_submodule.CuspidalSubmodule_g0_Q(self)
 
+    @cached_method
     def eisenstein_submodule(self):
         r"""
         Return the Eisenstein submodule of this space of modular forms for
@@ -78,19 +80,15 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
             sage: m.eisenstein_submodule()
             Eisenstein subspace of dimension 2 of Modular Forms space of dimension 163 for Congruence Subgroup Gamma0(389) of weight 6 over Rational Field
         """
-        try:
-            return self.__eisenstein_submodule
-        except AttributeError:
-            self.__eisenstein_submodule = eisenstein_submodule.EisensteinSubmodule_g0_Q(self)
-        return self.__eisenstein_submodule
+        return eisenstein_submodule.EisensteinSubmodule_g0_Q(self)
 
     def _compute_atkin_lehner_matrix(self, d):
         r"""
-        Compute the matrix of the Atkin-Lehner involution W_d acting on self,
+        Compute the matrix of the Atkin-Lehner operator W_d acting on self,
         where d is a divisor of the level.  This is only implemented in the
         (trivial) level 1 case.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: ModularForms(1, 30).atkin_lehner_operator()
             Hecke module morphism Atkin-Lehner operator W_1 defined by the matrix

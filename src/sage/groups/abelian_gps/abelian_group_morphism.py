@@ -1,34 +1,34 @@
 """
 Homomorphisms of abelian groups
 
-TODO:
+.. TODO::
 
-- there must be a homspace first
+    - there must be a homspace first
 
-- there should be hom and Hom methods in abelian group
+    - there should be hom and Hom methods in abelian group
 
 AUTHORS:
 
 - David Joyner (2006-03-03): initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #   Copyright (C) 2006 David Joyner and William Stein <wstein@gmail.com>
 #
 #   Distributed under the terms of the GNU General Public License (GPL)
 #
-#                    http://www.gnu.org/licenses/
-#*****************************************************************************
+#                    https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
 
-from sage.groups.perm_gps.permgroup import *
-from sage.interfaces.gap import *
-from sage.categories.morphism import *
-from sage.categories.homset import *
+from sage.interfaces.gap import gap
+from sage.categories.morphism import Morphism
 
 from sage.misc.all import prod
 
+
 def is_AbelianGroupMorphism(f):
-    return isinstance(f, AbelianGroupMorphism);
+    return isinstance(f, AbelianGroupMorphism)
+
 
 class AbelianGroupMap(Morphism):
     """
@@ -43,17 +43,6 @@ class AbelianGroupMap(Morphism):
     def _repr_type(self):
         return "AbelianGroup"
 
-class AbelianGroupMorphism_id(AbelianGroupMap):
-    """
-    Return the identity homomorphism from X to itself.
-
-    EXAMPLES:
-    """
-    def __init__(self, X):
-        AbelianGroupMorphism.__init__(self, X.Hom(X))
-
-    def _repr_defn(self):
-        return "Identity map of "+str(X)
 
 class AbelianGroupMorphism(Morphism):
     """
@@ -71,10 +60,16 @@ class AbelianGroupMorphism(Morphism):
         Multiplicative Abelian group isomorphic to C2 x C3
         sage: x,y = H.gens()
 
-    ::
-
         sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism
         sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])
+
+    TESTS::
+
+        sage: G.<x,y> = AbelianGroup(2,[2,3])
+        sage: H.<a,b,c> = AbelianGroup(3,[2,3,4])
+        sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
+        sage: Hom(G,H) == phi.parent()
+        True
 
     AUTHORS:
 
@@ -99,11 +94,11 @@ class AbelianGroupMorphism(Morphism):
 #    raise TypeError, "Sorry, the list %s must generate G."%genss
 #TypeError: Sorry, the list [a*b, c^2] must generate G.
 
-    def __init__(self, G, H, genss, imgss ):
+    def __init__(self, G, H, genss, imgss):
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(G, H))
         if len(genss) != len(imgss):
-            raise TypeError("Sorry, the lengths of %s, %s must be equal."%(genss,imgss))
+            raise TypeError("Sorry, the lengths of %s, %s must be equal." % (genss, imgss))
         self._domain = G
         self._codomain = H
         if not(G.is_abelian()):
@@ -112,15 +107,14 @@ class AbelianGroupMorphism(Morphism):
             raise TypeError("Sorry, the groups must be abelian groups.")
         G_domain = G.subgroup(genss)
         if G_domain.order() != G.order():
-            raise TypeError("Sorry, the list %s must generate G."%genss)
+            raise TypeError("Sorry, the list %s must generate G." % genss)
         # self.domain_invs = G.gens_orders()
         # self.codomaininvs = H.gens_orders()
         self.domaingens = genss
         self.codomaingens = imgss
-        #print genss, imgss
         for i in range(len(self.domaingens)):
             if (self.domaingens[i]).order() != (self.codomaingens[i]).order():
-                raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss))
+                raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal." % (genss, imgss))
 
     def _gap_init_(self):
         """
@@ -140,29 +134,25 @@ class AbelianGroupMorphism(Morphism):
         """
         G  = (self.domain())._gap_init_()
         H  = (self.codomain())._gap_init_()
-        # print G,H
-        s3 = 'G:=%s; H:=%s'%(G,H)
-        #print s3,"\n"
+        s3 = 'G:=%s; H:=%s' % (G, H)
         gap.eval(s3)
-        gensG = self.domain().variable_names()                    ## the Sage group generators
+        gensG = self.domain().variable_names()  # the Sage group generators
         gensH = self.codomain().variable_names()
-        #print gensG, gensH
-        s1 = "gensG := GeneratorsOfGroup(G)"          ## the GAP group generators
+        s1 = "gensG := GeneratorsOfGroup(G)"    # the GAP group generators
         gap.eval(s1)
         s2 = "gensH := GeneratorsOfGroup(H)"
         gap.eval(s2)
-        for i in range(len(gensG)):                      ## making the Sage group gens
-           cmd = ("%s := gensG["+str(i+1)+"]")%gensG[i]  ## correspond to the Sage group gens
-           #print i,"  \n",cmd
+        for i in range(len(gensG)):             # making the Sage group gens
+           # correspond to the Sage group gens
+           cmd = "%s := gensG[%d]" % (gensG[i], i + 1)
            gap.eval(cmd)
         for i in range(len(gensH)):
-           cmd = ("%s := gensH["+str(i+1)+"]")%gensH[i]
-           #print i,"  \n",cmd
+           cmd = "%s := gensH[%d]" % (gensH[i], i + 1)
            gap.eval(cmd)
-        args = str(self.domaingens)+","+ str(self.codomaingens)
-        #print args,"\n"
-        gap.eval("phi := GroupHomomorphismByImages(G,H,"+args+")")
-        self.gap_hom_string = "phi := GroupHomomorphismByImages(G,H,"+args+")"
+        args = str(self.domaingens) + "," + str(self.codomaingens)
+        cmd = "phi := GroupHomomorphismByImages(G,H,%s)" % args
+        gap.eval(cmd)
+        self.gap_hom_string = cmd
         return self.gap_hom_string
 
     def _repr_type(self):
@@ -172,8 +162,9 @@ class AbelianGroupMorphism(Morphism):
         """
         Only works for finite groups.
 
-        TODO: not done yet; returns a gap object but should return a Sage
-        group.
+        .. TODO::
+
+            not done yet; returns a gap object but should return a Sage group.
 
         EXAMPLES::
 
@@ -186,35 +177,43 @@ class AbelianGroupMorphism(Morphism):
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
             sage: phi.kernel()
             'Group([  ])'
+
+            sage: H = AbelianGroup(3,[2,2,2],names="abc")
+            sage: a,b,c = H.gens()
+            sage: G = AbelianGroup(2,[2,2],names="x")
+            sage: x,y = G.gens()
+            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,a])
+            sage: phi.kernel()
+            'Group([ f1*f2 ])'
         """
         cmd = self._gap_init_()
         gap.eval(cmd)
         return gap.eval("Kernel(phi)")
 
-    def image(self, J):
+    def image(self, S):
         """
-        Only works for finite groups.
+        Return the image of the subgroup ``S`` by the morphism.
 
-        J must be a subgroup of G. Computes the subgroup of H which is the
-        image of J.
+        This only works for finite groups.
+
+        INPUT:
+
+        - ``S`` -- a subgroup of the domain group ``G``
 
         EXAMPLES::
 
             sage: G = AbelianGroup(2,[2,3],names="xy")
             sage: x,y = G.gens()
+            sage: subG = G.subgroup([x])
             sage: H = AbelianGroup(3,[2,3,4],names="abc")
             sage: a,b,c = H.gens()
             sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
+            sage: phi.image(subG)
+            Multiplicative Abelian subgroup isomorphic to C2 generated by {a}
         """
-        G = self.domain()
-        gensJ = J.gens()
-        for g in gensJ:
-            print g
-            print self(g),"\n"
-        L = [self(g) for g in gensJ]
-        return G.subgroup(L)
+        return self.codomain().subgroup([self(g) for g in S.gens()])
 
-    def _call_( self, g ):
+    def _call_(self, g):
         """
         Some python code for wrapping GAP's Images function but only for
         permutation groups. Returns an error if g is not in G.
@@ -231,16 +230,7 @@ class AbelianGroupMorphism(Morphism):
             sage: phi(y^2)
             b^2
         """
-        G = g.parent()
-        w = g.word_problem(self.domaingens)
-        n = len(w)
-        #print w,g.word_problem(self.domaingens)
         # g.word_problem is faster in general than word_problem(g)
         gens = self.codomaingens
-        h = prod([gens[(self.domaingens).index(w[i][0])]**(w[i][1]) for i in range(n)])
-        return h
-
-
-
-
-
+        return prod(gens[(self.domaingens).index(wi[0])]**wi[1]
+                    for wi in g.word_problem(self.domaingens))

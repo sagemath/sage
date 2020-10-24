@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION="2.1.0"
+VERSION="2.1.1"
 
 if [ $# -ne 0 ]; then
     UPSTREAM_SOURCE_DIRECTORY=$1
@@ -22,11 +22,13 @@ else
     tar xJf "$UPSTREAM_SOURCE_DIRECTORY/libgd-$VERSION.tar.xz"
 fi
 
-# Autoreconf it so that it correctly build on Cygwin64
+# Autoreconf it so that it builds correctly on Cygwin64 and ppc64le
 cd libgd-$VERSION
+rm -f aclocal.m4 Makefile.in configure
 autoreconf -fiv
 rm -rf autom4te.cache src/config.hin~
 cd $SPKG_ROOT
+mv "libgd-$VERSION" src
 
 # Recompress directory
-tar cjf libgd-$VERSION.tar.bz2 libgd-$VERSION
+tar cjf libgd-`sed s/[.]p.*// package-version.txt`.tar.bz2 src

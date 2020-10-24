@@ -1,0 +1,8 @@
+# The packages only make sense as a set.
+# packages from community/
+pari
+# extra packages needed so that pari is picked from the system
+pari-galdata
+pari-seadata    # pari's spkg-configure is not satisfied with pari-seadata-small
+pari-elldata
+pari-galpol

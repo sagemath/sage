@@ -1,0 +1,4 @@
+## this is the actual package, but pari's spkg-configure is not satisfied with pari-seadata-small,
+## so we have to install the big package pari-seadata anyway.
+# pari-seadata-small
+pari-seadata

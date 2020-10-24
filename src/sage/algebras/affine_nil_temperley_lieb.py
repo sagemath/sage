@@ -1,12 +1,12 @@
 """
 Affine nilTemperley Lieb Algebra of type A
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.categories.all import AlgebrasWithBasis
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
@@ -15,13 +15,10 @@ from sage.rings.all import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 
+
 class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
     r"""
-    Constructs the affine nilTemperley Lieb algebra of type `A_{n-1}^{(1)}` as used in [P2005].
-
-    REFERENCES:
-
-        .. [P2005] A. Postnikov, Affine approach to quantum Schubert calculus, Duke Math. J. 128 (2005) 473-509
+    Construct the affine nilTemperley Lieb algebra of type `A_{n-1}^{(1)}` as used in [Pos2005]_.
 
     INPUT:
 
@@ -41,7 +38,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         sage: a[0]*a[3]*a[0]
         0
         sage: A.an_element()
-        2*a0 + 3*a0*a1 + 1 + a0*a1*a2*a3
+        2*a0 + 1 + 3*a1 + a0*a1*a2*a3
     """
 
     def __init__(self, n, R = ZZ, prefix = 'a'):
@@ -98,7 +95,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the unit of the underlying Weyl group, which index
+        Return the unit of the underlying Weyl group, which index
         the one of this algebra, as per
         :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
@@ -147,8 +144,8 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
     @cached_method
     def algebra_generators(self):
-        """
-        Returns the generators `a_i` for `i=0,1,2,\ldots,n-1`.
+        r"""
+        Return the generators `a_i` for `i=0,1,2,\ldots,n-1`.
 
         EXAMPLES::
 
@@ -175,7 +172,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
     def product_on_basis(self, w, w1):
         """
-        Returns `a_w a_{w1}`, where `w` and `w1` are in the Weyl group
+        Return `a_w a_{w1}`, where `w` and `w1` are in the Weyl group
         assuming that `w` does not contain any braid relations.
 
         EXAMPLES::

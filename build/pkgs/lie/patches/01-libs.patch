@@ -1,0 +1,16 @@
+Fix linking of Lie.exe
+
+This patch adds a missing library and corrects handling of LDFLAGS
+
+diff -ur a/Makefile b/Makefile
+--- a/Makefile	2000-04-07 00:46:28.000000000 -0700
++++ b/Makefile	2007-05-20 23:10:43.000000000 -0700
+@@ -88,7 +88,7 @@
+ 	$(CC) -ansi -c -o gapdate.o date.c
+ 
+ Lie.exe: date.o
+-	$(CC) -o Lie.exe $(objects) date.o static/*.o box/*.o -lreadline
++	$(CC) -o Lie.exe $(objects) date.o static/*.o box/*.o $(LDFLAGS) -lreadline -lncurses
+ 	chmod g+w Lie.exe
+ Liegap.exe: gapdate.o
+ 	$(CC) -o Liegap.exe $(GAP_objects) gapdate.o static/*.o box/*.o

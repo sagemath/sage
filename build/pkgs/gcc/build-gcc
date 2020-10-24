@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# Wrapper script for building GCC used for both the gcc and gfortran SPKGs
+# Usage:
+#
+#     build-gcc [CONFIGURE_FLAGS ...]
+#
+# Where all positional arguments are passed as additional arguments to GCC's
+# configure script.
+set -e
+
+# Build in a separate directory, not in src/ (a.k.a. a VPATH build).
+# This is the recommended way to build GCC.
+mkdir -p gcc-build
+cd gcc-build
+
+GCC_CONFIGURE="$@ $GCC_CONFIGURE"
+
+# On OSX:
+if [ "$UNAME" = "Darwin" ]; then
+    # /usr/include is the latest victim in Apple's quest to get rid of standard locations
+    SDK_PATH=$(xcrun --show-sdk-path)
+    GCC_CONFIGURE="--with-sysroot=$SDK_PATH $GCC_CONFIGURE" 
+    echo "Building with XCode SDK at $SDK_PATH."
+
+    # isl/cloog libraries are almost certainly from Homebrew and won't work
+    GCC_CONFIGURE="--without-isl --without-cloog $GCC_CONFIGURE"
+
+    # Use 'bootstrap-debug' build configuration to force stripping of object
+    # files prior to comparison during bootstrap (broken by Xcode 6.3).
+    # See #18156
+    GCC_CONFIGURE="--with-build-config=bootstrap-debug $GCC_CONFIGURE"
+fi
+
+# Let Gfortran build on Raspberry Pi using hard floats.
+if [ `uname -m` = "armv6l" ]; then
+    GCC_CONFIGURE="--with-arch=armv6 --with-fpu=vfp --with-float=hard $GCC_CONFIGURE"
+fi
+
+# Let Gfortran build on more recent ARM boards using hard floats.
+if [ `uname -m` = "armv7l" ]; then
+    GCC_CONFIGURE="--with-arch=armv7-a --with-fpu=vfpv3-d16 --with-float=hard $GCC_CONFIGURE"
+fi
+
+if [ "$SAGE_CHECK" = yes ]; then
+    # Enable internal checks in GCC.  These checks do not affect the
+    # binaries produced by GCC, but they do increase the compile time
+    # of everything compiled with GCC.
+    GCC_CONFIGURE="$GCC_CONFIGURE --enable-checking=yes"
+fi
+
+# Use the assembler/linker specified by $AS/$LD if they differ from the
+# default.
+if [ -n "$AS" -a "$AS" != "as" ]; then
+    CONFIGURE_AS="--with-as=$AS"
+fi
+if [ -n "$LD" -a "$LD" != "ld" ]; then
+    CONFIGURE_LD="--with-ld=$LD"
+fi
+
+# Use SAGE_CXX_WITHOUT_STD instead of CXX.
+# This fixes #29162 (gfortran 9.2.0 compile error on debian-jessie with gcc 4.9.2)
+../src/configure \
+    --prefix="$SAGE_LOCAL" \
+    --with-local-prefix="$SAGE_LOCAL" \
+    $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_MPC \
+    --with-system-zlib \
+    --without-isl \
+    --disable-multilib \
+    --disable-nls \
+    --disable-libitm \
+    $GCC_CONFIGURE "$CONFIGURE_AS" "$CONFIGURE_LD" CXX="$SAGE_CXX_WITHOUT_STD"
+
+sdh_make BOOT_LDFLAGS="-Wl,-rpath,$SAGE_LOCAL/lib"

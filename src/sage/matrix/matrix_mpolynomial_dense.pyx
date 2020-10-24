@@ -19,9 +19,6 @@ AUTHOR:
 #*****************************************************************************
 
 
-include "sage/ext/python.pxi"
-include "sage/ext/interrupt.pxi"
-
 from sage.rings.polynomial.multi_polynomial_libsingular cimport new_MP
 
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
@@ -230,7 +227,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         elif algorithm == 'row_reduction':
             self._echelonize_row_reduction()
         else:
-            raise ValueError("Unknown algorithm '%s'"%algorithm)
+            raise ValueError("Unknown algorithm '%s'" % algorithm)
 
     def _echelonize_gauss_bareiss(self):
         """
@@ -241,14 +238,11 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         The performed column swaps can be accessed via
         :meth:`swapped_columns`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<x,y> = QQ[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [-6/5*x*y - y^2 -6*y^2 - 1/4*y]
-            [  -1/3*x*y - 3        x*y - x]
-
+            sage: C = matrix(R, [[-6/5*x*y - y^2, -6*y^2 - 1/4*y],
+            ....:                [  -1/3*x*y - 3, x*y - x]])
             sage: E = C.echelon_form('bareiss')     # indirect doctest
             sage: E
             [ -1/3*x*y - 3                                                          x*y - x]
@@ -286,7 +280,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                 for c in xrange(self.ncols()):
                     self.set_unsafe(r, c, R._zero_element)
 
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             l = [ZZ(e-1) for e in l]
 
             self.cache('in_echelon_form_bareiss',True)
@@ -355,15 +349,15 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         A more interesting example::
 
             sage: P.<x0,x1,y0,y1> = PolynomialRing(GF(2), 4)
-            sage: l = [1, 1, 1, 1,     1, \
-                       0, 1, 0, 1,    x0, \
-                       0, 0, 1, 1,    x1, \
-                       1, 1, 0, 0,    y0, \
-                       0, 1, 0, 1,    y1, \
-                       0, 1, 0, 0, x0*y0, \
-                       0, 1, 0, 1, x0*y1, \
-                       0, 0, 0, 0, x1*y0, \
-                       0, 0, 0, 1, x1*y1]
+            sage: l = [1, 1, 1, 1,     1,
+            ....:      0, 1, 0, 1,    x0,
+            ....:      0, 0, 1, 1,    x1,
+            ....:      1, 1, 0, 0,    y0,
+            ....:      0, 1, 0, 1,    y1,
+            ....:      0, 1, 0, 0, x0*y0,
+            ....:      0, 1, 0, 1, x0*y1,
+            ....:      0, 0, 0, 0, x1*y0,
+            ....:      0, 0, 0, 1, x1*y1]
             sage: A = Matrix(P, 9, 5, l)
             sage: B = A.__copy__()
             sage: B.echelonize('row_reduction'); B
@@ -387,7 +381,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         ALGORITHM:
 
         Gaussian elimination with division limited to constant
-        entries. Based on SINGULAR's rowred commamnd.
+        entries. Based on SINGULAR's rowred command.
         """
         from sage.matrix.constructor import matrix
 
@@ -484,10 +478,8 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         We check if two implementations agree on the result::
 
             sage: R.<x,y> = QQ[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [-6/5*x*y - y^2 -6*y^2 - 1/4*y]
-            [  -1/3*x*y - 3        x*y - x]
+            sage: C = matrix(R, [[-6/5*x*y - y^2, -6*y^2 - 1/4*y],
+            ....:                [  -1/3*x*y - 3, x*y - x]])
             sage: C.determinant()
             -6/5*x^2*y^2 - 3*x*y^3 + 6/5*x^2*y + 11/12*x*y^2 - 18*y^2 - 3/4*y
 
@@ -497,12 +489,10 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         Finally, we check whether the Singular interface is working::
 
             sage: R.<x,y> = RR[]
-            sage: C = random_matrix(R, 2, 2, terms=2)
-            sage: C
-            [0.368965517352886*y^2 + 0.425700773972636*x  -0.800362171389760*y^2 - 0.807635502485287]
-            [  0.706173539423122*y^2 - 0.915986060298440     0.897165181570476*y + 0.107903328188376]
+            sage: C = matrix(R, [[0.368965517352886*y^2 + 0.425700773972636*x, -0.800362171389760*y^2 - 0.807635502485287],
+            ....:                [0.706173539423122*y^2 - 0.915986060298440, 0.897165181570476*y + 0.107903328188376]])
             sage: C.determinant()
-            0.565194587390682*y^4 + 0.331023015369146*y^3 + 0.381923912175852*x*y - 0.122977163520282*y^2 + 0.0459345303240150*x - 0.739782862078649
+            0.565194587390682*y^4 + 0.33102301536914...*y^3 + 0.381923912175852*x*y - 0.122977163520282*y^2 + 0.0459345303240150*x - 0.739782862078649
 
         ALGORITHM: Calls Singular, libSingular or native implementation.
 
@@ -518,6 +508,16 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             x^4 - 4*y*x^3
             sage: m.det()
             0
+
+        Check :trac:`23535` is fixed::
+
+            sage: x = polygen(QQ)
+            sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])
+            sage: R.<s,t> = K[]
+            sage: m = matrix(R, 4, [y^i for i in range(4) for y in [a,b,s,t]])
+            sage: m.det()
+            (a - b)*s^3*t^2 + (-a + b)*s^2*t^3 + 3*s^3*t + (-3)*s*t^3 + (-5*a + 2*b)*s^3 + (2*a - 5*b)*s^2*t +
+            (-2*a + 5*b)*s*t^2 + (5*a - 2*b)*t^3 + 3*b*a*s^2 + (-3*b*a)*t^2 + (10*a - 10*b)*s + (-10*a + 10*b)*t
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
@@ -538,7 +538,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             D = self.fetch('charpoly')
             if not D is None:
                 c = D[0]
-                if self._nrows % 2 != 0:
+                if self._nrows % 2:
                     c = -c
                 d = self._coerce_element(c)
         else:

@@ -9,7 +9,7 @@
 # are *DIFFERENT* than the bindings for Gamma0, etc. that
 # get imported in all.py.
 #
-# See trac #5059.
+# See trac #5059
 #
 ###########################################################
 

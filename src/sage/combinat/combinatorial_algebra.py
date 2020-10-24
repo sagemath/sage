@@ -15,17 +15,15 @@ symmetric functions.
 ::
 
     sage: class PowerSums(CombinatorialAlgebra):
-    ...     def __init__(self, R):
-    ...         self._one = Partition([])
-    ...         self._name = 'Power-sum symmetric functions'
-    ...         CombinatorialAlgebra.__init__(self, R, Partitions())
-    ...         self.print_options(prefix='p')
-    ...
-    ...     def _multiply_basis(self, a, b):
-    ...         l = list(a)+list(b)
-    ...         l.sort(reverse=True)
-    ...         return Partition(l)
-    ...
+    ....:   def __init__(self, R):
+    ....:       self._one = Partition([])
+    ....:       self._name = 'Power-sum symmetric functions'
+    ....:       CombinatorialAlgebra.__init__(self, R, Partitions())
+    ....:       self.print_options(prefix='p')
+    ....:   def _multiply_basis(self, a, b):
+    ....:       l = list(a)+list(b)
+    ....:       l.sort(reverse=True)
+    ....:       return Partition(l)
 
 ::
 
@@ -62,10 +60,11 @@ algebra.
 #*****************************************************************************
 
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.misc.cachefunc import cached_method
 from sage.categories.all import AlgebrasWithBasis
 from sage.structure.element import Element
+
 
 # TODO: migrate this completely to the combinatorial free module + categories framework
 
@@ -103,7 +102,6 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
         """
         return self.parent().product(self, y)
 
-
     def __invert__(self):
         """
         EXAMPLES::
@@ -123,22 +121,19 @@ class CombinatorialAlgebraElementOld(CombinatorialFreeModule.Element):
         else:
             raise ValueError("cannot invert self (= %s)"%self)
 
-
-
-
-
     def __repr__(self):
         """
         EXAMPLES::
 
             sage: s = sage.combinat.combinatorial_algebra.TestAlgebra(QQ)
             sage: a = 2 + s([3,2,1])
-            sage: print a.__repr__()
+            sage: print(a.__repr__())
             2*s[] + s[3, 2, 1]
         """
         v = sorted(self._monomial_coefficients.items())
         prefix = self.parent().prefix()
-        retur = repr_lincomb( [(prefix + repr(m), c) for m,c in v ], strip_one = True)
+        return repr_lincomb( [(prefix + repr(m), c) for m,c in v ], strip_one = True)
+
 
 class CombinatorialAlgebra(CombinatorialFreeModule):
     """
@@ -271,9 +266,10 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
         return self._coerce_try(x, [self.base_ring()])
 
     def product(self, left, right):
-        """
-        Returns left\*right where left and right are elements of self.
-        product() uses either _multiply or _multiply basis to carry out
+        r"""
+        Return left\*right where left and right are elements of ``self``.
+
+        ``product()`` uses either ``_multiply`` or ``_multiply_basis`` to carry out
         the actual multiplication.
 
         EXAMPLES::
@@ -301,8 +297,8 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
 
         #Do the case where the user specifies how to multiply basis elements
         if hasattr(self, '_multiply_basis'):
-            for (left_m, left_c) in left._monomial_coefficients.iteritems():
-                for (right_m, right_c) in right._monomial_coefficients.iteritems():
+            for (left_m, left_c) in left._monomial_coefficients.items():
+                for (right_m, right_c) in right._monomial_coefficients.items():
                     res = self._multiply_basis(left_m, right_m)
                     coeffprod = left_c * right_c
                     #Handle the case where the user returns a dictionary
@@ -315,7 +311,7 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
                         else:
                             z_elt[res] = z_elt.get(res, ABRzero) + coeffprod
                             continue
-                    for m, c in res.iteritems():
+                    for m, c in res.items():
                         z_elt[m] = z_elt.get(m, ABRzero) + coeffprod * c
 
         #We assume that the user handles the multiplication correctly on
@@ -334,7 +330,7 @@ class CombinatorialAlgebra(CombinatorialFreeModule):
         BR = self.base_ring()
         zero = BR(0)
         del_list = []
-        for m, c in z_elt.iteritems():
+        for m, c in z_elt.items():
             if c == zero:
                 del_list.append(m)
         for m in del_list:

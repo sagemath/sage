@@ -10,13 +10,13 @@ l'utiliser, vous aurez besoin de l'ajouter à votre installation TeX.
 Cette opération se résume à copier un fichier ; voyez la section
 :ref:`installation` du présent tutoriel ainsi que "Make SageTeX known to
 TeX" dans le guide d'installation de Sage (`Sage installation guide
-<http://sagemath.org/doc/installation/>`_, `ce lien
+<http://doc.sagemath.org/html/en/installation/>`_, `ce lien
 <../../en/installation/index.html>`_ devrait conduire à une copie
 locale) pour plus de détails.
 
 Voici un bref exemple d'utilisation de SageTeX. La documentation
 complète se trouve dans
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``, où ``SAGE_ROOT``
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``, où ``SAGE_ROOT``
 désigne le répertoire racine de votre installation Sage. Elle est
 accompagnée d'un fichier exemple et de scripts Python potentiellement
 utiles.
@@ -114,4 +114,4 @@ compilation précédente.)
 SageTeX offre bien d'autres possibilités. Puisque Sage
 comme LaTeX sont des outils complexes et puissants, le mieux est sans
 doute de consulter la documentation complète de SageTeX, qui se trouve
-dans ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``.
+dans ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``.

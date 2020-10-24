@@ -7,8 +7,11 @@ cdef class pAdicPrinter_class(SageObject):
     cdef int mode
     cdef bint pos
     cdef object ram_name
+    cdef object latex_ram_name
     cdef object unram_name
+    cdef object latex_unram_name
     cdef object var_name
+    cdef object latex_var_name
     cdef object sep
     cdef object alphabet
     cdef PowComputer_class prime_pow
@@ -17,6 +20,7 @@ cdef class pAdicPrinter_class(SageObject):
     cdef long max_ram_terms
     cdef long max_unram_terms
     cdef long max_terse_terms
+    cdef object show_prec
 
     cdef base_p_list(self, value, bint pos)
     cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, pname)

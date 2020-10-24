@@ -1,0 +1,8 @@
+cd src
+
+sdh_configure
+
+# * Use $SAGE_LOCAL/include instead of hardcoded /usr/local/include
+# * Disable -m64 from CFLAGS and FFLAGS (which may be set even on 32-bit
+#   systems)
+sdh_make_install AM_CPPFLAGS="-I '$SAGE_LOCAL/include'" AM_CFLAGS="" AM_FFLAGS=""

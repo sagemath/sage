@@ -1,6 +1,7 @@
 """
 Empty Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Florent Hivert <Florent.Hivert@univ-rouen,fr>,
 #
@@ -15,9 +16,8 @@ Empty Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from sage.misc.cachefunc import cached_function
-from series_order import inf
+from .species import GenericCombinatorialSpecies
+from .series_order import inf
 from sage.structure.unique_representation import UniqueRepresentation
 
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
@@ -51,13 +51,13 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         sage: X == S    # TODO: Not Implemented
         True
         sage: (X.generating_series().coefficients(4) ==
-        ...    S.generating_series().coefficients(4))
+        ....:  S.generating_series().coefficients(4))
         True
         sage: (X.isotype_generating_series().coefficients(4) ==
-        ...    S.isotype_generating_series().coefficients(4))
+        ....:  S.isotype_generating_series().coefficients(4))
         True
         sage: (X.cycle_index_series().coefficients(4) ==
-        ...    S.cycle_index_series().coefficients(4))
+        ....:  S.cycle_index_series().coefficients(4))
         True
 
     The following tests that it is the zero element with respect to
@@ -129,7 +129,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _structures(self, structure_class, labels):
         """
-        Thanks to the couting optimisation, this is never called... Otherwise
+        Thanks to the counting optimisation, this is never called... Otherwise
         this should return an empty iterator.
 
         EXAMPLES::

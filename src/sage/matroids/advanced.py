@@ -20,6 +20,7 @@ This adds the following to the main namespace:
         - :class:`BinaryMatroid <sage.matroids.linear_matroid.BinaryMatroid>`
         - :class:`TernaryMatroid <sage.matroids.linear_matroid.TernaryMatroid>`
         - :class:`QuaternaryMatroid <sage.matroids.linear_matroid.QuaternaryMatroid>`
+        - :class:`GraphicMatroid <sage.matroids.linear_matroid.GraphicMatroid>`
 
     Note that you can construct all of these through the
     :func:`Matroid() <sage.matroids.constructor.Matroid>` function, which is
@@ -41,19 +42,22 @@ This adds the following to the main namespace:
         - :func:`get_nonisomorphic_matroids() <sage.matroids.utilities.get_nonisomorphic_matroids>`
         - :func:`lift_cross_ratios() <sage.matroids.linear_matroid.lift_cross_ratios>`
         - :func:`lift_map() <sage.matroids.linear_matroid.lift_map>`
-        
+
 AUTHORS:
 
 - Stefan van Zwam (2013-04-01): initial version
 """
+from __future__ import absolute_import
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
-from minor_matroid import MinorMatroid
-from dual_matroid import DualMatroid
-from rank_matroid import RankMatroid
-from circuit_closures_matroid import CircuitClosuresMatroid
-from basis_matroid import BasisMatroid
-from linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
-import lean_matrix
-from extension import LinearSubclasses, MatroidExtensions
+from .minor_matroid import MinorMatroid
+from .dual_matroid import DualMatroid
+from .rank_matroid import RankMatroid
+from .circuit_closures_matroid import CircuitClosuresMatroid
+from .basis_matroid import BasisMatroid
+from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
+from . import lean_matrix
+from .extension import LinearSubclasses, MatroidExtensions
+from .union_matroid import MatroidUnion, MatroidSum, PartitionMatroid
+from .graphic_matroid import GraphicMatroid

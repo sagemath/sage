@@ -5,22 +5,22 @@ AUTHORS:
 
 - Jan Poeschko (2012-07-02): initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
 
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.rings.rational_field import QQ
 
 from math import sqrt, floor, ceil
+
 
 def plane_inequality(v):
     """
@@ -40,6 +40,7 @@ def plane_inequality(v):
     if c < 0:
         c, v = -c, -v
     return [c] + list(v)
+
 
 def jacobi(M):
     r"""
@@ -67,6 +68,10 @@ def jacobi(M):
     recursion.) This matrix `Q` is defined for all `M` in a
     certain Zariski-dense open subset of the set of all
     `n \times n`-matrices.
+
+    .. NOTE::
+
+        This should be a method of matrices.
 
     EXAMPLES::
 
@@ -102,10 +107,9 @@ def jacobi(M):
         sage: testall(M)
         True
     """
-    dim = M.dimensions()
-    if dim[0] != dim[1]:
+    if not M.is_square():
         raise ValueError("the matrix must be square")
-    dim = dim[0]
+    dim = M.nrows()
     q = [list(row) for row in M]
     for i in range(dim - 1):
         for j in range(i + 1, dim):
@@ -118,6 +122,7 @@ def jacobi(M):
         for j in range(i):
             q[i][j] = 0
     return matrix(q)
+
 
 def diamond_cut(V, GM, C, verbose=False):
     r"""
@@ -136,7 +141,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
     OUTPUT:
 
-    A :class:``Polyhedron`` instance.
+    A :class:`Polyhedron` instance.
 
     EXAMPLES::
 
@@ -147,9 +152,6 @@ def diamond_cut(V, GM, C, verbose=False):
         sage: V.vertices()
         (A vertex at (2), A vertex at (0))
     """
-    # coerce to floats
-    GM = GM.N()
-    C = float(C)
     if verbose:
         print("Cut\n{}\nwith radius {}".format(GM, C))
 
@@ -163,13 +165,14 @@ def diamond_cut(V, GM, C, verbose=False):
     L = [0] * dim
 
     # calculate the Gram matrix
-    q = matrix([[sum(GM[i][k] * GM[j][k] for k in range(dim)) for j in range(dim)] for i in range(dim)])
+    q = matrix([[sum(GM[i][k] * GM[j][k] for k in range(dim))
+                 for j in range(dim)] for i in range(dim)])
     if verbose:
-        print( "q:\n{}".format(q.N()) )
+        print("q:\n{}".format(q.n()))
     # apply Cholesky/Jacobi decomposition
     q = jacobi(q)
     if verbose:
-        print( "q:\n{}".format(q.N()) )
+        print("q:\n{}".format(q.n()))
 
     i = dim - 1
     T[i] = C
@@ -215,11 +218,8 @@ def diamond_cut(V, GM, C, verbose=False):
             for hv in [hv, -hv]:
                 cut_count += 1
                 if verbose:
-                    print "\n%d) Cut using normal vector %s" % (cut_count, hv)
-                hv = [QQ(round(elmt, 6)) for elmt in hv]
+                    print("\n%d) Cut using normal vector %s" % (cut_count, hv))
                 inequalities.append(plane_inequality(hv))
-                #cut = Polyhedron(ieqs=[plane_inequality(hv)])
-                #V = V.intersection(cut)
 
     if verbose:
         print("Final cut")
@@ -230,6 +230,7 @@ def diamond_cut(V, GM, C, verbose=False):
         print("End")
 
     return V
+
 
 def calculate_voronoi_cell(basis, radius=None, verbose=False):
     """
@@ -245,7 +246,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     OUTPUT:
 
-    A :class:``Polyhedron`` instance.
+    A :class:`Polyhedron` instance.
 
     EXAMPLES::
 
@@ -254,7 +255,6 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: V.volume()
         1
     """
-
     dim = basis.dimensions()
     artificial_length = None
     if dim[0] < dim[1]:
@@ -285,9 +285,9 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     if artificial_length is not None:
         # remove inequalities introduced by artificial basis points
         H = V.Hrepresentation()
-        H = [v for v in H if all(not V._is_zero(v.A() * w / 2 - v.b() and
-             not V._is_zero(v.A() * (-w) / 2 - v.b())) for w in additional_vectors)]
+        H = [v for v in H if all(not V._is_zero(v.A() * w / 2 - v.b()) and
+                                 not V._is_zero(v.A() * (-w) / 2 - v.b())
+                                 for w in additional_vectors)]
         V = Polyhedron(ieqs=H)
 
     return V
-

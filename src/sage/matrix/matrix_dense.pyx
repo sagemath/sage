@@ -8,11 +8,13 @@ TESTS::
     sage: TestSuite(m).run()
 """
 
-cimport matrix
+cimport sage.matrix.matrix as matrix
 
-from   sage.structure.element    cimport Element
+from sage.structure.element cimport Element, RingElement
+from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 import sage.matrix.matrix_space
 import sage.structure.sequence
+
 
 cdef class Matrix_dense(matrix.Matrix):
     cdef bint is_sparse_c(self):
@@ -31,56 +33,8 @@ cdef class Matrix_dense(matrix.Matrix):
             A.subdivide(*self.subdivisions())
         return A
 
-    def __hash__(self):
-        """
-        Return the hash of this matrix.
-
-        Equal matrices should have equal hashes, even if one is sparse and
-        the other is dense.
-
-        EXAMPLES::
-
-            sage: m = matrix(2, range(24), sparse=True)
-            sage: m.set_immutable()
-            sage: hash(m)
-            976
-
-        ::
-
-            sage: d = m.dense_matrix()
-            sage: d.set_immutable()
-            sage: hash(d)
-            976
-
-        ::
-
-            sage: hash(m) == hash(d)
-            True
-        """
-        return self._hash()
-
-    cdef long _hash(self) except -1:
-        x = self.fetch('hash')
-        if not x is None: return x
-
-        if not self._is_immutable:
-            raise TypeError, "mutable matrices are unhashable"
-
-        v = self._list()
-        cdef Py_ssize_t i
-        cdef long h = 0
-
-        for i from 0 <= i < len(v):
-            h = h ^ (i * hash(v[i]))
-
-        if h == -1:
-            h = -2
-
-        self.cache('hash', h)
-        return h
-
     cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
-        self[i][j] = value
+        self.set_unsafe(i, j, value)
 
     def _pickle(self):
         version = -1
@@ -98,9 +52,9 @@ cdef class Matrix_dense(matrix.Matrix):
                     self.set_unsafe(i, j, data[k])
                     k = k + 1
         else:
-            raise RuntimeError, "unknown matrix version (=%s)"%version
+            raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef int _cmp_(self, Element right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -108,22 +62,38 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: m = matrix([[x,x+1],[1,x]])
             sage: n = matrix([[x+1,x],[1,x]])
             sage: o = matrix([[x,x],[1,x]])
-            sage: m.__cmp__(n)
-            -1
-            sage: m.__cmp__(m)
-            0
-            sage: n.__cmp__(m)
-            1
-            sage: m.__cmp__(o)
-            1
+            sage: m < n
+            True
+            sage: m == m
+            True
+            sage: n > m
+            True
+            sage: m <= o
+            False
+
+        TESTS:
+
+        Check :trac:`27629`::
+
+            sage: var('x')
+            x
+            sage: assume(x, 'real')
+            sage: M = matrix([[0, -x], [x, 0]])
+            sage: M.transpose() == M
+            False
         """
+        other = <Matrix_dense>right
         cdef Py_ssize_t i, j
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                res = cmp( self[i,j], right[i,j] )
-                if res != 0:
-                    return res
-        return 0
+        # Parents are equal, so dimensions of self and other are equal
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                lij = self.get_unsafe(i, j)
+                rij = other.get_unsafe(i, j)
+                r = richcmp_item(lij, rij, op)
+                if r is not NotImplemented:
+                    return bool(r)
+        # Matrices are equal
+        return rich_to_bool(op, 0)
 
     def transpose(self):
         """
@@ -137,10 +107,10 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: M = MatrixSpace(QQ,  2)
             sage: A = M([1,2,3,4])
             sage: B = A.transpose()
-            sage: print B
+            sage: print(B)
             [1 3]
             [2 4]
-            sage: print A
+            sage: print(A)
             [1 2]
             [3 4]
 
@@ -221,6 +191,33 @@ cdef class Matrix_dense(matrix.Matrix):
                              [nr - t for t in reversed(row_divs)])
         return atrans
 
+    def _reverse_unsafe(self):
+        r"""
+        TESTS::
+
+            sage: m = matrix(QQ, 2, 3, range(6))
+            sage: m._reverse_unsafe()
+            sage: m
+            [5 4 3]
+            [2 1 0]
+        """
+        cdef Py_ssize_t i, j
+        cdef Py_ssize_t nrows = self._nrows
+        cdef Py_ssize_t ncols = self._ncols
+        for i in range(nrows // 2):
+            for j in range(ncols):
+                e1 = self.get_unsafe(i, j)
+                e2 = self.get_unsafe(nrows - i - 1, ncols - j - 1)
+                self.set_unsafe(i, j, e2)
+                self.set_unsafe(nrows - i - 1, ncols - j - 1, e1)
+        if nrows % 2 == 1:
+            i = nrows // 2
+            for j in range(ncols // 2):
+                e1 = self.get_unsafe(i, j)
+                e2 = self.get_unsafe(nrows - i - 1, ncols - j - 1)
+                self.set_unsafe(i, j, e2)
+                self.set_unsafe(nrows - i - 1, ncols - j - 1, e1)
+
     def _elementwise_product(self, right):
         r"""
         Returns the elementwise product of two dense
@@ -234,12 +231,12 @@ cdef class Matrix_dense(matrix.Matrix):
         raised.
 
         This routine is meant to be called from the
-        meth:`~sage.matrix.matrix2.Matrix.elementwise_product`
+        :meth:`~sage.matrix.matrix2.Matrix.elementwise_product`
         method, which will ensure that this routine receives
         proper input.  More thorough documentation is provided
         there.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = matrix(ZZ, 2, range(6), sparse=False)
             sage: B = matrix(ZZ, 2, [1,0,2,0,3,0], sparse=False)
@@ -268,7 +265,7 @@ cdef class Matrix_dense(matrix.Matrix):
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`derivative`
 
@@ -279,9 +276,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [    0     1]
             [  2*x 3*x^2]
         """
-        # We would just use apply_map, except that Cython doesn't
-        # allow lambda functions
-
+        # We could just use apply_map
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
         v = [z.derivative(var) for z in self.list()]
@@ -295,3 +290,45 @@ cdef class Matrix_dense(matrix.Matrix):
             image.subdivide(*self.subdivisions())
         return image
 
+    def _multiply_classical(left, matrix.Matrix right):
+        """
+        Multiply the matrices left and right using the classical `O(n^3)`
+        algorithm.
+
+        This method will almost always be overridden either by the
+        implementation in :class:`~sage.matrix.Matrix_generic_dense`) or by
+        more specialized versions, but having it here makes it possible to
+        implement specialized dense matrix types with their own data structure
+        without necessarily implementing ``_multiply_classical``, as described
+        in :mod:`sage.matrix.docs`.
+
+        TESTS::
+
+            sage: from sage.matrix.matrix_dense import Matrix_dense
+            sage: mats = [
+            ....:     matrix(2, 2, [1, 2, 3, 4]),
+            ....:     matrix(2, 1, [1, 2]),
+            ....:     matrix(3, 2, [1, 2, 3, 4, 5, 6]),
+            ....:     matrix(ZZ, 0, 2),
+            ....:     matrix(ZZ, 2, 0)
+            ....: ]
+            sage: all(Matrix_dense._multiply_classical(a, b) == a*b
+            ....:     for a in mats for b in mats if a.ncols() == b.nrows())
+            True
+            sage: Matrix_dense._multiply_classical(matrix(2, 1), matrix(2, 0))
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: number of columns of left must equal number of rows of right
+        """
+        cdef Py_ssize_t i, j, k
+        if left._ncols != right._nrows:
+            raise ArithmeticError("number of columns of left must equal number of rows of right")
+        zero = left.base_ring().zero()
+        cdef matrix.Matrix res = left.new_matrix(nrows=left._nrows, ncols=right._ncols)
+        for i in range(left._nrows):
+            for j in range(right._ncols):
+                dotp = zero
+                for k in range(left._ncols):
+                    dotp += left.get_unsafe(i, k) * right.get_unsafe(k, j)
+                res.set_unsafe(i, j, dotp)
+        return res

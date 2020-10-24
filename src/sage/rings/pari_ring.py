@@ -6,10 +6,8 @@ AUTHORS:
 - William Stein (2004): Initial version.
 - Simon King (2011-08-24): Use UniqueRepresentation, element_class and
   proper initialisation of elements.
-
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,23 +15,22 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import operator
-
+# ****************************************************************************
 import sage.libs.pari.all as pari
 import sage.rings.ring as ring
-import ring_element
-
+from sage.structure.element import RingElement
+from sage.structure.richcmp import richcmp
 from sage.misc.fast_methods import Singleton
 
-class Pari(ring_element.RingElement):
+
+class Pari(RingElement):
     """
     Element of Pari pseudo-ring.
     """
     def __init__(self, x, parent=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: R = PariRing()
             sage: f = R('x^3 + 1/2')
             sage: f
@@ -45,7 +42,7 @@ class Pari(ring_element.RingElement):
         """
         if parent is None:
             parent = _inst
-        ring_element.RingElement.__init__(self, parent)
+        RingElement.__init__(self, parent)
         self.__x = pari.pari(x)
 
     def __repr__(self):
@@ -141,17 +138,21 @@ class Pari(ring_element.RingElement):
         """
         return self.__class__(~self.__x, parent=_inst)
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
             sage: R = PariRing()
             sage: a = R(3)
             sage: b = R(11)
-            sage: cmp(a,b)
-            -1
+            sage: a < b
+            True
+            sage: a == b
+            False
+            sage: a > b
+            False
         """
-        return cmp(self.__x, other.__x)
+        return richcmp(self.__x, other.__x, op)
 
     def __int__(self):
         return int(self.__x)
@@ -159,7 +160,8 @@ class Pari(ring_element.RingElement):
 
 class PariRing(Singleton, ring.Ring):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: R = PariRing(); R
         Pseudoring of all PARI objects.
         sage: loads(R.dumps()) is R
@@ -169,6 +171,7 @@ class PariRing(Singleton, ring.Ring):
 
     def __init__(self):
         ring.Ring.__init__(self, self)
+
     def __repr__(self):
         return 'Pseudoring of all PARI objects.'
 
@@ -177,20 +180,19 @@ class PariRing(Singleton, ring.Ring):
             return x
         return self.element_class(x, parent=self)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         return False
 
     def characteristic(self):
         raise RuntimeError("Not defined.")
-        #return 0
 
     def random_element(self, x=None, y=None, distribution=None):
         """
         Return a random integer in Pari.
 
-        NOTE:
+        .. NOTE::
 
-        The given arguments are passed to ``ZZ.random_element(...)``.
+            The given arguments are passed to ``ZZ.random_element(...)``.
 
         INPUT:
 
@@ -202,7 +204,7 @@ class PariRing(Singleton, ring.Ring):
         - `distribution` -- optional string, so that ``ZZ`` can make sense
           of it as a probability distribution.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = PariRing()
             sage: R.random_element()
@@ -214,13 +216,13 @@ class PariRing(Singleton, ring.Ring):
 
         """
         from sage.all import ZZ
-        return self(ZZ.random_element(x,y,distribution))
+        return self(ZZ.random_element(x, y, distribution))
 
     def zeta(self):
         """
         Return -1.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R = PariRing()
             sage: R.zeta()
@@ -229,4 +231,3 @@ class PariRing(Singleton, ring.Ring):
         return self(-1)
 
 _inst = PariRing()
-

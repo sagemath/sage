@@ -2,15 +2,18 @@ r"""
 Graph plotting in Javascript with d3.js
 
 This module implements everything that can be used to draw graphs with `d3.js
-<http://d3js.org/>`_ in Sage.
+<https://d3js.org/>`_ in Sage.
 
 On Python's side, this is mainly done by wrapping a graph's edges and vertices
 in a structure that can then be used in the javascript code. This javascript
 code is then inserted into a .html file to be opened by a browser.
 
+In the browser, the displayed page contains at the bottom right a menu
+that allows to save the picture under the svg file format.
+
 What Sage feeds javascript with is a "graph" object with the following content:
 
-- ``vertices`` -- each vertex is a dictionay defining :
+- ``vertices`` -- each vertex is a dictionary defining :
 
     - ``name``  -- The vertex's label
 
@@ -36,8 +39,8 @@ The ID of a vertex is its index in the vertex list.
       center of the edge. It defines the curve of the edge, which can be useful
       for multigraphs.
 
-- ``pos`` -- a list whose `i` th element is a dictionary defining the position of
-  the `i` th vertex.
+- ``pos`` -- a list whose `i` th element is a dictionary defining the position
+  of the `i` th vertex
 
 It also contains the definition of some numerical/boolean variables whose
 definition can be found in the documentation of
@@ -48,11 +51,9 @@ definition can be found in the documentation of
 .. WARNING::
 
     Since the d3js package is not standard yet, the javascript is fetched from
-    d3js.org website by the browser. If you want to avoid that (e.g.  to
-    protect your privacy or by lack of internet connection), you can install
-    the d3js package for offline use with the Sage command
-    ``install_package('d3js')`` or by running ``sage -i d3js`` from the command
-    line.
+    d3js.org website by the browser. If you want to avoid that (e.g.  to protect
+    your privacy or by lack of internet connection), you can install the d3js
+    package for offline use by running ``sage -i d3js`` from the command line.
 
 .. TODO::
 
@@ -64,7 +65,7 @@ Authors:
 
 - Nathann Cohen, Brice Onfroy -- July 2013 --
   Initial version of the Sage code,
-  Javascript code, using examples from `d3.js <http://d3js.org/>`_.
+  Javascript code, using examples from `d3.js <https://d3js.org/>`_.
 
 - Thierry Monteil (June 2014): allow offline use of d3.js provided by d3js spkg.
 
@@ -90,6 +91,7 @@ def gen_html_code(G,
                   vertex_labels=True,
                   edge_labels=False,
                   vertex_partition=[],
+                  vertex_colors=None,
                   edge_partition=[],
                   force_spring_layout=False,
                   charge=-120,
@@ -99,84 +101,87 @@ def gen_html_code(G,
                   vertex_size=7,
                   edge_thickness=4):
     r"""
-    Creates a .html file showing the graph using `d3.js <http://d3js.org/>`_.
+    Create a .html file showing the graph using `d3.js <https://d3js.org/>`_.
 
-    This function returns the name of the .html file. If you want to
-    visualize the actual graph use
-    :meth:`~sage.graphs.generic_graph.GenericGraph.show`.
+    This function returns the name of the .html file. If you want to visualize
+    the actual graph use :meth:`~sage.graphs.generic_graph.GenericGraph.show`.
 
     INPUT:
 
     - ``G`` -- the graph
 
-    - ``vertex_labels`` (boolean) -- Whether to display vertex labels (set to
-      ``False`` by default).
+    - ``vertex_labels`` -- boolean (default: ``False``); whether to display
+      vertex labels
 
-    - ``edge_labels`` (boolean) -- Whether to display edge labels (set to
-      ``False`` by default).
+    - ``edge_labels`` -- boolean (default: ``False``); whether to display edge
+      labels
 
-    - ``vertex_partition`` -- a list of lists representing a partition of the
-      vertex set. Vertices are then colored in the graph according to the
-      partition. Set to ``[]`` by default.
+    - ``vertex_partition`` -- list (default: ``[]``); a list of lists
+      representing a partition of the vertex set. Vertices are then colored in
+      the graph according to the partition
 
-    - ``edge_partition`` -- same as ``vertex_partition``, with edges
-      instead. Set to ``[]`` by default.
+    - ``vertex_colors`` -- dict (default: ``None``); a dictionary representing a
+      partition of the vertex set. Keys are colors (ignored) and values are
+      lists of vertices. Vertices are then colored in the graph according to the
+      partition
 
-    - ``force_spring_layout`` -- whether to take sage's position into account if
-      there is one (see :meth:`~sage.graphs.generic_graph.GenericGraph.` and
-      :meth:`~sage.graphs.generic_graph.GenericGraph.`), or to compute a spring
-      layout. Set to ``False`` by default.
+    - ``edge_partition`` -- list (default: ``[]``); same as
+      ``vertex_partition``, with edges instead
 
-    - ``vertex_size`` -- The size of a vertex' circle. Set to `7` by default.
+    - ``force_spring_layout`` -- boolean (default: ``False``); whether to take
+      previously computed position of nodes into account if there is one, or to
+      compute a spring layout
 
-    - ``edge_thickness`` -- Thickness of an edge. Set to ``4`` by default.
+    - ``vertex_size`` -- integer (default: ``7``); the size of a vertex' circle
 
-    - ``charge`` -- the vertices' charge. Defines how they repulse each
-      other. See `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
-      information. Set to ``-120`` by default.
+    - ``edge_thickness`` -- integer (default: ``4``); thickness of an edge
 
-    - ``link_distance`` -- See
+    - ``charge`` -- integer (default: ``-120``); the vertices' charge. Defines
+      how they repulse each other. See
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
-      information. Set to ``30`` by default.
+      information
 
-    - ``link_strength`` -- See
+    - ``link_distance`` -- integer (default: ``30``); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
-      information. Set to ``2`` by default.
+      information
 
-    - ``gravity`` -- See
+    - ``link_strength`` -- integer (default: ``2``); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
-      information. Set to ``0.04`` by default.
+      information
+
+    - ``gravity`` -- float (default: ``0.04``); see
+      `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
+      information
 
     .. WARNING::
 
         Since the d3js package is not standard yet, the javascript is fetched
         from d3js.org website by the browser. If you want to avoid that (e.g.
         to protect your privacy or by lack of internet connection), you can
-        install the d3js package for offline use with the Sage command
-        ``install_package('d3js')`` or by running ``sage -i d3js`` from the
-        command line.
+        install the d3js package for offline use by running ``sage -i d3js``
+        from the command line.
 
     EXAMPLES::
 
         sage: graphs.RandomTree(50).show(method="js") # optional -- internet
 
         sage: g = graphs.PetersenGraph()
-        sage: g.show(method = "js", vertex_partition=g.coloring()) # optional -- internet
+        sage: g.show(method="js", vertex_partition=g.coloring()) # optional -- internet
 
         sage: graphs.DodecahedralGraph().show(method="js", force_spring_layout=True) # optional -- internet
 
         sage: graphs.DodecahedralGraph().show(method="js") # optional -- internet
 
-        sage: g = digraphs.DeBruijn(2,2)
+        sage: g = digraphs.DeBruijn(2, 2)
         sage: g.allow_multiple_edges(True)
-        sage: g.add_edge("10","10","a")
-        sage: g.add_edge("10","10","b")
-        sage: g.add_edge("10","10","c")
-        sage: g.add_edge("10","10","d")
-        sage: g.add_edge("01","11","1")
+        sage: g.add_edge("10", "10", "a")
+        sage: g.add_edge("10", "10", "b")
+        sage: g.add_edge("10", "10", "c")
+        sage: g.add_edge("10", "10", "d")
+        sage: g.add_edge("01", "11", "1")
         sage: g.show(method="js", vertex_labels=True,edge_labels=True,
-        ....:        link_distance=200,gravity=.05,charge=-500,
-        ....:        edge_partition=[[("11","12","2"),("21","21","a")]],
+        ....:        link_distance=200, gravity=.05, charge=-500,
+        ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
         ....:        edge_thickness=4) # optional -- internet
 
     TESTS::
@@ -186,24 +191,39 @@ def gen_html_code(G,
 
     :trac:`17370`::
 
-        sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4,5))
+        sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4, 5))
+
+    In the generated html code, the source (resp. target) of a link is the index
+    of the node in the list defining the names of the nodes. We check that the
+    order is correct (:trac:`27460`)::
+
+        sage: filename = gen_html_code(DiGraph({1: [10]}))
+        sage: with open(filename, 'r') as f:
+        ....:     data = f.read()
+        sage: nodes = data.partition('"nodes":')[2]; nodes
+        ...[{..."name": "10"...}, {..."name": "1"...}]...
+        sage: links = data.partition('"links":')[2]
+        sage: '"source": 1' in links and '"target": 0' in links
+        True
     """
     directed = G.is_directed()
     multiple_edges = G.has_multiple_edges()
 
     # Associated an integer to each vertex
-    v_to_id = {v: i for i, v in enumerate(G.vertices())}
+    v_to_id = {v: i for i, v in enumerate(G)}
 
     # Vertex colors
-    color = {i: len(vertex_partition) for i in range(G.order())}
+    if vertex_colors is not None:
+        vertex_partition = list(vertex_colors.values())
+    len_vertex_partition = len(vertex_partition)
+    color = {i: len_vertex_partition for i in range(G.order())}
     for i, l in enumerate(vertex_partition):
         for v in l:
             color[v_to_id[v]] = i
 
     # Vertex list
-    nodes = []
-    for v in G.vertices():
-        nodes.append({"name": str(v), "group": str(color[v_to_id[v]])})
+    # Data for vertex v must be at position v_to_id[v] in list nodes
+    nodes = [{"name": str(v), "group": str(color[v_to_id[v]])} for v in G]
 
     # Edge colors.
     edge_color_default = "#aaa"
@@ -220,7 +240,7 @@ def gen_html_code(G,
     edges = []
     seen = {}  # How many times has this edge been seen ?
 
-    for u, v, l in G.edges():
+    for u, v, l in G.edge_iterator():
 
         # Edge color
         color = edge_color.get((u, v, l), edge_color_default)
@@ -230,29 +250,30 @@ def gen_html_code(G,
 
         # Loop ?
         if u == v:
-            seen[u, v] = seen.get((u, v), 0)+1
-            curve = seen[u, v]*10+10
+            seen[u, v] = seen.get((u, v), 0) + 1
+            curve = seen[u, v] * 10 + 10
 
         # For directed graphs, one also has to take into accounts
         # edges in the opposite direction
         elif directed:
             if G.has_edge(v, u):
-                seen[u, v] = seen.get((u, v), 0)+1
-                curve = seen[u, v]*15
+                seen[u, v] = seen.get((u, v), 0) + 1
+                curve = seen[u, v] * 15
             else:
                 if multiple_edges and len(G.edge_label(u, v)) != 1:
                     # Multiple edges. The first one has curve 15, then
                     # -15, then 30, then -30, ...
                     seen[u, v] = seen.get((u, v), 0) + 1
-                    curve = (1 if seen[u, v] % 2 else -1)*(seen[u, v]//2)*15
+                    curve = (1 if seen[u, v] % 2 else -1) * (seen[u, v] // 2) * 15
 
         elif not directed and multiple_edges:
             # Same formula as above for multiple edges
             if len(G.edge_label(u, v)) != 1:
                 seen[u, v] = seen.get((u, v), 0) + 1
-                curve = (1 if seen[u, v] % 2 else -1)*(seen[u, v]//2)*15
+                curve = (1 if seen[u, v] % 2 else -1) * (seen[u, v] // 2) * 15
 
         # Adding the edge to the list
+        # The source (resp. target) is the index of u (resp. v) in list nodes
         edges.append({"source": v_to_id[u],
                       "target": v_to_id[v],
                       "strength": 0,
@@ -271,7 +292,7 @@ def gen_html_code(G,
         link_strength = 0
         gravity = 0
 
-        for v in G.vertices():
+        for v in G:
             x, y = Gpos[v]
             pos.append([float(x), float(-y)])
 
@@ -292,7 +313,7 @@ def gen_html_code(G,
                                    "edge_thickness": int(edge_thickness)})
 
     from sage.env import SAGE_EXTCODE, SAGE_SHARE
-    js_code_file = open(SAGE_EXTCODE+"/graphs/graph_plot_js.html", 'r')
+    js_code_file = open(SAGE_EXTCODE + "/graphs/graph_plot_js.html", 'r')
     js_code = js_code_file.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
     js_code_file.close()
 
@@ -307,8 +328,7 @@ def gen_html_code(G,
 
     # Writes the temporary .html file
     filename = tmp_filename(ext='.html')
-    f = open(filename, 'w')
-    f.write(js_code)
-    f.close()
+    with open(filename, 'w') as f:
+        f.write(js_code)
 
     return filename

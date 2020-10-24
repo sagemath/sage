@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Crystals of Generalized Young Walls
 
@@ -10,20 +11,13 @@ AUTHORS:
 - Travis Scrimshaw: Initial version
 
 Generalized Young walls are certain generalizations of Young tableaux
-introduced in [KS10]_ and designed to be a realization of the crystals
+introduced in [KS2010]_ and designed to be a realization of the crystals
 `\mathcal{B}(\infty)` and `\mathcal{B}(\lambda)` in type `A_n^{(1)}`.
 
 REFERENCES:
 
-.. [KS10] J.-A. Kim and D.-U. Shin.
-   Generalized Young walls and crystal bases for quantum affine algebra
-   of type `A`.
-   Proc. Amer. Math. Soc. 138(11), pp. 3877--3889, 2010.
-
-.. [KLRS] S.-J. Kang, K.-H. Lee, H. Ryu, and B. Salisbury.
-   A combinatorial description of the affine Gindikin-Karpelevich formula of
-   type `A_n^{(1)}`.
-   :arXiv:`1203.1640`.
+- [KLRS2016]_
+- [KS2010]_
 """
 
 #******************************************************************************
@@ -36,6 +30,7 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 import re
 from copy import deepcopy
@@ -65,7 +60,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         0|1|
            |
     """
-    def __init__(self,parent,data):
+    def __init__(self, parent, data):
         r"""
         EXAMPLES::
 
@@ -74,14 +69,14 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: TestSuite(mg).run()
         """
         i = len(data)-1
-        while i >= 0 and len(data[i]) == 0:
+        while i >= 0 and not data[i]:
             data.pop()
             i -= 1
         self.rows = len(data)
-        if data == []:
+        if not data:
             self.cols = 0
         else:
-            self.cols = max([len(r) for r in data])
+            self.cols = max(len(r) for r in data)
         self.data = data
         CombinatorialElement.__init__(self, parent, data)
 
@@ -93,9 +88,105 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: y
             [[0], [1, 0, 3, 2], [2, 1], [3, 2, 1, 0, 3, 2], [0], [], [2]]
         """
-        return self.data.__repr__()
+        return repr(self.data)
 
-    def __eq__(self,other):
+    def _repr_diagram(self):
+        r"""
+        Return a string representation of the diagram of ``self``.
+
+        EXAMPLES::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: print(y._repr_diagram())
+                    1|
+                     |
+                     |
+                2|0|1|
+                    0|
+                     |
+            0|1|2|0|1|
+                1|2|0|
+        """
+        if not self.data:
+            return '0'
+        ret = ""
+        for row in reversed(self.data):
+            wall = ''
+            for elem in reversed(row):
+                wall += str(elem)
+                wall += '|'
+            if row == []:
+                wall += '|'
+            ret += wall.rjust(2*self.cols+1) + "\n"
+        return ret
+
+    def _ascii_art_(self):
+        r"""
+        Return an ascii art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: ascii_art(y)
+                    1|
+                     |
+                     |
+                2|0|1|
+                    0|
+                     |
+            0|1|2|0|1|
+                1|2|0|
+        """
+        from sage.typeset.ascii_art import AsciiArt
+        return AsciiArt(self._repr_diagram().splitlines())
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation of ``self``.
+
+        TESTS::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: unicode_art(y)
+                            ┌───┐
+                            │ 1 │
+                            └───┘
+                                │
+                                ┤
+                                │
+                    ┌───┬───┬───┐
+                    │ 1 │ 0 │ 2 │
+                    └───┴───┼───┤
+                            │ 0 │
+                            └───┘
+                                │
+            ┌───┬───┬───┬───┬───┐
+            │ 1 │ 0 │ 2 │ 1 │ 0 │
+            └───┴───┼───┼───┼───┤
+                    │ 0 │ 2 │ 1 │
+                    └───┴───┴───┘
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        if not self.data:
+            return UnicodeArt(["0"])
+
+        from sage.combinat.output import ascii_art_table
+        import unicodedata
+        v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
+        vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
+        table = [[None]*(self.cols-len(row)) + row for row in reversed(self)]
+        ret = []
+        for i,row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
+            if row[-1] == " ":
+                if i % 2 == 0:
+                    ret.append(row[:-1] + vl)
+                else:
+                    ret.append(row[:-1] + v)
+            else:
+                ret.append(row)
+        return UnicodeArt(ret)
+
+    def __eq__(self, other):
         r"""
         EXAMPLES::
 
@@ -111,6 +202,17 @@ class GeneralizedYoungWall(CombinatorialElement):
         if isinstance(other, GeneralizedYoungWall):
             return self.data == other.data
         return self.data == other
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: GYW = crystals.infinity.GeneralizedYoungWalls(2)
+            sage: h = hash(GYW)
+        """
+        return hash(tuple(tuple(u) for u in self.data))
 
     def raw_signature(self, i):
         r"""
@@ -209,7 +311,7 @@ class GeneralizedYoungWall(CombinatorialElement):
 
     def pp(self):
         r"""
-        Return an ASCII drawing of ``self``.
+        Pretty print ``self``.
 
         EXAMPLES::
 
@@ -224,16 +326,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             0|1|2|0|1|
                 1|2|0|
         """
-        for row in reversed(self.data):
-            wall = ''
-            for elem in reversed(row):
-                wall += str(elem)
-                wall += '|'
-            if row == []:
-                wall += '|'
-            print(wall.rjust(2*self.cols+1))
-        if self.data==[]:
-            print '0'
+        print(self._repr_diagram())
 
     def content(self):
         r"""
@@ -255,7 +348,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         r"""
         Return the value of `\mathscr{N}` on ``self``.
 
-        In [KLRS]_, the statistic `\mathscr{N}` was defined on elements in
+        In [KLRS2016]_, the statistic `\mathscr{N}` was defined on elements in
         `\mathcal{Y}(\infty)` which counts how many parts are in the
         corresponding Kostant partition.  Specifically, the computation of
         `\mathscr{N}(Y)` is done using the following algorithm:
@@ -271,8 +364,8 @@ class GeneralizedYoungWall(CombinatorialElement):
           is a proper wall.  (Note that the resulting wall may no longer be
           reduced.) Repeat the search and replace process for all other rows of
           the above form for each `k' < k`.  Then `\mathscr{N}(Y)` is the number
-          of distinct rows, not counting multipicity, in the wall resulting from
-          this process.
+          of distinct rows, not counting multiplicity, in the wall resulting
+          from this process.
 
         EXAMPLES::
 
@@ -340,7 +433,7 @@ class GeneralizedYoungWall(CombinatorialElement):
     def e(self,i):
         r"""
         Return the application of the Kashiwara raising operator
-        `\widetilde{e}_i` on ``self``.
+        `e_i` on ``self``.
 
         This will remove the `i`-colored box corresponding to the
         rightmost `+` in ``self.signature(i)``.
@@ -374,7 +467,7 @@ class GeneralizedYoungWall(CombinatorialElement):
     def f(self,i):
         r"""
         Return the application of the Kashiwara lowering operator
-        `\widetilde{f}_i` on ``self``.
+        `f_i` on ``self``.
 
         This will add an `i`-colored colored box to the site corresponding
         to the leftmost plus in ``self.signature(i)``.
@@ -421,7 +514,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
     def _latex_(self):
@@ -440,7 +533,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join( str(i) for i in r ) + "}" for r in self.data ) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
     def weight(self, root_lattice=False):
@@ -449,8 +542,8 @@ class GeneralizedYoungWall(CombinatorialElement):
 
         INPUT:
 
-        - `root_lattice` -- boolean determining whether weight should appear in
-          root lattice or not in extended affine weight lattice.
+        - ``root_lattice`` -- boolean determining whether weight should appear
+          in root lattice or not in extended affine weight lattice.
 
         EXAMPLES::
 
@@ -487,7 +580,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             0
         """
         if i not in self.index_set():
-            raise ValueError("i must in in the index set")
+            raise ValueError("i must be in the index set")
         eps = 0
         while True:
             self = self.e(i)
@@ -592,7 +685,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         is in the highest weight crystal cut out by the given highest weight
         ``La``.
 
-        By Theorem 4.1 of [KS10]_, a generalized Young wall `Y` represents a
+        By Theorem 4.1 of [KS2010]_, a generalized Young wall `Y` represents a
         vertex in the highest weight crystal `Y(\lambda)`, with
         `\lambda = \Lambda_{i_1} + \Lambda_{i_2} + \cdots + \Lambda_{i_\ell}`
         a dominant integral weight of level `\ell > 0`, if it satisfies the
@@ -644,7 +737,7 @@ class GeneralizedYoungWall(CombinatorialElement):
 class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
     r"""
     The crystal `\mathcal{Y}(\infty)` of generalized Young walls of
-    type `A_n^{(1)}` as defined in [KS10]_.
+    type `A_n^{(1)}` as defined in [KS2010]_.
 
     A generalized Young wall is a collection of boxes stacked on a fixed board,
     such that color of the box at the site located in the `j`-th row from the
@@ -667,7 +760,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
 
     .. MATH::
 
-        \widetilde{e}_i,\ \widetilde{f}_i \colon \mathcal{Y}(\infty)
+        e_i,\ f_i \colon \mathcal{Y}(\infty)
         \longrightarrow \mathcal{Y}(\infty) \sqcup \{0\}, \qquad
         \varepsilon_i,\ \varphi_i \colon \mathcal{Y}(\infty)
         \longrightarrow \ZZ, \qquad
@@ -689,7 +782,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
 
     See :meth:`GeneralizedYoungWall.e()`, :meth:`GeneralizedYoungWall.f()`,
     and :meth:`GeneralizedYoungWall.signature()` for more about
-    `\widetilde{e}_i`, `\widetilde{f}_i`, and `i`-signatures.
+    `e_i`, `f_i`, and `i`-signatures.
 
 
     INPUT:
@@ -723,7 +816,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
 
         sage: S = Yinf.subcrystal(max_depth=3)
         sage: G = Yinf.digraph(subset=S) # long time
-        sage: view(G, tightpage=True) # not tested
+        sage: view(G) # not tested
     """
 
     @staticmethod
@@ -786,18 +879,6 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
         """
         return "Crystal of generalized Young walls of type {}".format(self._cartan_type)
 
-    def weight_lattice_realization(self):
-        r"""
-        Return the extended affine weight lattice of ``self``.
-
-        EXAMPLES::
-
-            sage: Y = crystals.infinity.GeneralizedYoungWalls(3)
-            sage: Y.weight_lattice_realization()
-            Extended weight lattice of the Root system of type ['A', 3, 1]
-        """
-        return RootSystem(self._cartan_type).weight_lattice(extended=True)
-
 
 ########################
 ## Highest weight GYW ##
@@ -810,7 +891,7 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
 
     def e(self,i):
         r"""
-        Compute the action of `\widetilde{e}_i` restricted to the highest weight crystal.
+        Compute the action of `e_i` restricted to the highest weight crystal.
 
         EXAMPLES::
 
@@ -830,7 +911,7 @@ class CrystalOfGeneralizedYoungWallsElement(GeneralizedYoungWall):
 
     def f(self,i):
         r"""
-        Compute the action of `\widetilde{f}_i` restricted to the highest weight crystal.
+        Compute the action of `f_i` restricted to the highest weight crystal.
 
         EXAMPLES::
 
@@ -885,7 +966,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
     The crystal `\mathcal{Y}(\lambda)` of generalized Young walls of the given
     type with highest weight `\lambda`.
 
-    These were characterized in Theorem 4.1 of [KS10]_.
+    These were characterized in Theorem 4.1 of [KS2010]_.
     See :meth:`GeneralizedYoungWall.in_highest_weight_crystal()`.
 
     INPUT:
@@ -933,7 +1014,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
         sage: S = YLa.subcrystal(max_depth=4)
         sage: G = YLa.digraph(subset=S)
-        sage: view(G, tightpage=True) # not tested
+        sage: view(G) # not tested
     """
     @staticmethod
     def __classcall_private__(cls, n, La):

@@ -40,8 +40,7 @@ relevant functionality::
 
 REFERENCES:
 
-..  [WpJacobianVariety]
-    http://en.wikipedia.org/wiki/Jacobian_variety
+- :wikipedia:`Jacobian_variety`
 """
 
 ##############################################################################
@@ -54,10 +53,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.rings.all import QQ
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-
-
 
 
 def Jacobian(X, **kwds):
@@ -98,9 +94,9 @@ def Jacobian(X, **kwds):
           u^3 + v^3 + w^3
           To:   Elliptic Curve defined by y^2 = x^3 - 27/4 over Rational Field
           Defn: Defined on coordinates by sending (u : v : w) to
-                (u*v^7*w + u*v^4*w^4 + u*v*w^7 :
-                 v^9 + 3/2*v^6*w^3 - 3/2*v^3*w^6 - w^9 :
-                 -v^6*w^3 - v^3*w^6)
+                (-u^4*v^4*w - u^4*v*w^4 - u*v^4*w^4 :
+                1/2*u^6*v^3 - 1/2*u^3*v^6 - 1/2*u^6*w^3 + 1/2*v^6*w^3 + 1/2*u^3*w^6 - 1/2*v^3*w^6 :
+                u^3*v^3*w^3)
     """
     try:
         return X.jacobian(**kwds)
@@ -111,7 +107,7 @@ def Jacobian(X, **kwds):
     from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
     if is_MPolynomial(X):
         if morphism:
-            from sage.schemes.plane_curves.constructor import Curve
+            from sage.schemes.curves.constructor import Curve
             return Jacobian_of_equation(X, curve=Curve(X), **kwds)
         else:
             return Jacobian_of_equation(X, **kwds)
@@ -192,12 +188,13 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
 
         sage: h = Jacobian(f, curve=Curve(f));  h
         Scheme morphism:
-          From: Projective Curve over Rational Field defined by a^3 + b^3 + 60*c^3
+          From: Projective Plane Curve over Rational Field defined by a^3 + b^3 + 60*c^3
           To:   Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
           Defn: Defined on coordinates by sending (a : b : c) to
-                (216000*a*b^7*c + 12960000*a*b^4*c^4 + 777600000*a*b*c^7 :
-                 216000*b^9 + 19440000*b^6*c^3 - 1166400000*b^3*c^6 - 46656000000*c^9 :
-                 -216000*b^6*c^3 - 12960000*b^3*c^6)
+                (-216000*a^4*b^4*c - 12960000*a^4*b*c^4 - 12960000*a*b^4*c^4 :
+                108000*a^6*b^3 - 108000*a^3*b^6 - 6480000*a^6*c^3 + 6480000*b^6*c^3 + 388800000*a^3*c^6 - 388800000*b^3*c^6 :
+                216000*a^3*b^3*c^3)
+
         sage: h([1,-1,0])
         (0 : 1 : 0)
 
@@ -206,7 +203,11 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
 
         sage: E = h.codomain()
         sage: E.defining_polynomial()(h.defining_polynomials()).factor()
-        (-10077696000000000) * c^3 * b^3 * (a^3 + b^3 + 60*c^3) * (b^6 + 60*b^3*c^3 + 3600*c^6)^3
+        (2519424000000000) * c^3 * b^3 * a^3 * (a^3 + b^3 + 60*c^3) *
+        (a^9*b^6 + a^6*b^9 - 120*a^9*b^3*c^3 + 900*a^6*b^6*c^3 - 120*a^3*b^9*c^3 +
+        3600*a^9*c^6 + 54000*a^6*b^3*c^6 + 54000*a^3*b^6*c^6 + 3600*b^9*c^6 +
+        216000*a^6*c^9 - 432000*a^3*b^3*c^9 + 216000*b^6*c^9)
+
 
     By specifying the variables, we can also construct an elliptic
     curve over a polynomial ring::
@@ -236,4 +237,3 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
     X, Y, Z = WeierstrassForm(polynomial, variables=variables, transformation=True)
     from sage.schemes.elliptic_curves.weierstrass_transform import WeierstrassTransformation
     return WeierstrassTransformation(curve, E, [X*Z, Y, Z**3], 1)
-

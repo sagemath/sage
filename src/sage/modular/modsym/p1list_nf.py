@@ -58,7 +58,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [1, -4*a^2 + 9*a - 21, a + 2, a^2 - 3*a + 3]
+    [-3*a^2 + a + 12, 25*a^2 - 50*a + 100, a + 2, a^2 - 3*a + 3]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -82,7 +82,7 @@ Lift an MSymbol from P1NFList to a matrix in `SL(2, R)`
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
 from sage.misc.search import search
@@ -110,6 +110,7 @@ def P1NFList_clear_level_cache():
     _level_cache = {}
 
 
+@richcmp_method
 class MSymbol(SageObject):
     """
     The constructor for an M-symbol over a number field.
@@ -233,9 +234,9 @@ class MSymbol(SageObject):
             sage: latex(alpha) # indirect doctest
             \(3: 5 a^{2} - 1\)
         """
-        return "\\(%s: %s\)"%(self.c._latex_(), self.d._latex_())
+        return r"\(%s: %s\)" % (self.c._latex_(), self.d._latex_())
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison function for objects of the class MSymbol.
 
@@ -255,8 +256,8 @@ class MSymbol(SageObject):
         """
         if not isinstance(other, MSymbol):
             raise ValueError("You can only compare with another M-symbol")
-        return cmp([self.__c.list(), self.__d.list()],
-                            [other.__c.list(), other.__d.list()])
+        return richcmp([self.__c.list(), self.__d.list()],
+                       [other.__c.list(), other.__d.list()], op)
 
     def N(self):
         """
@@ -294,7 +295,7 @@ class MSymbol(SageObject):
         INPUT:
 
         - ``n`` -- integer (0 or 1, since the list defined by an M-symbol has
-        length 2)
+          length 2)
 
         EXAMPLES::
 
@@ -361,8 +362,8 @@ class MSymbol(SageObject):
         return lift_to_sl2_Ok(self.__N, self.__c, self.__d)
 
     def normalize(self, with_scalar=False):
-        """
-        Returns a normalized MSymbol (a canonical representative of an element
+        r"""
+        Return a normalized MSymbol (a canonical representative of an element
         of `\mathbb{P}^1(R/N)` ) equivalent to ``self``.
 
         INPUT:
@@ -456,8 +457,11 @@ class MSymbol(SageObject):
 #**************************************************************************
 #*       P1NFList class                                                   *
 #**************************************************************************
+
+
+@richcmp_method
 class P1NFList(SageObject):
-    """
+    r"""
     The class for `\mathbb{P}^1(R/N)`, the projective line modulo `N`, where
     `R` is the ring of integers of a number field `K` and `N` is an integral ideal.
 
@@ -499,7 +503,7 @@ class P1NFList(SageObject):
         self.__list = p1NFlist(N)
         self.__list.sort()
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison function for objects of the class P1NFList.
 
@@ -521,7 +525,7 @@ class P1NFList(SageObject):
         """
         if not isinstance(other, P1NFList):
             raise ValueError("You can only compare with another P1NFList")
-        return cmp(self.__N, other.__N)
+        return richcmp(self.__N, other.__N, op)
 
     def __getitem__(self, n):
         """
@@ -580,13 +584,13 @@ class P1NFList(SageObject):
             sage: type(P)
             <class 'sage.modular.modsym.p1list_nf.P1NFList'>
             sage: type(P.list())
-            <type 'list'>
+            <... 'list'>
         """
         return self.__list
 
     def normalize(self, c, d=None, with_scalar=False):
-        """
-        Returns a normalised element of `\mathbb{P}^1(R/N)`.
+        r"""
+        Return a normalised element of `\mathbb{P}^1(R/N)`.
 
         INPUT:
 
@@ -654,8 +658,8 @@ class P1NFList(SageObject):
         return self.__N
 
     def index(self, c, d=None, with_scalar=False):
-        """
-        Returns the index of the class of the pair `(c, d)` in the fixed list
+        r"""
+        Return the index of the class of the pair `(c, d)` in the fixed list
         of representatives of `\mathbb{P}^1(R/N)`.
 
         INPUT:
@@ -737,8 +741,8 @@ class P1NFList(SageObject):
         return False
 
     def index_of_normalized_pair(self, c, d=None):
-        """
-        Returns the index of the class `(c, d)` in the fixed list of
+        r"""
+        Return the index of the class `(c, d)` in the fixed list of
         representatives of `\mathbb(P)^1(R/N)`.
 
         INPUT:
@@ -801,13 +805,13 @@ class P1NFList(SageObject):
             sage: P[5]
             M-symbol (1/2*a + 1/2: -a) of level Fractional ideal (3)
             sage: P.lift_to_sl2_Ok(5)
-            [1, -2, 1/2*a + 1/2, -a]
+            [-a, 2*a - 2, 1/2*a + 1/2, -a]
 
         ::
 
             sage: Ok = k.ring_of_integers()
             sage: L = [Matrix(Ok, 2, P.lift_to_sl2_Ok(i)) for i in range(len(P))]
-            sage: all([det(L[i]) == 1 for i in range(len(L))])
+            sage: all(det(L[i]) == 1 for i in range(len(L)))
             True
         """
         return self[i].lift_to_sl2_Ok()
@@ -915,8 +919,8 @@ class P1NFList(SageObject):
         return j
 
     def apply_J_epsilon(self, i, e1, e2=1):
-        """
-        Applies the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the i-th
+        r"""
+        Apply the matrix `J_{\epsilon}` = [e1, 0, 0, e2] to the i-th
         M-Symbol of the list.
 
         e1, e2 are units of the underlying number field.
@@ -992,7 +996,7 @@ def p1NFlist(N):
     #N.residues() = iterator through the residues mod N
     L = L+[MSymbol(N, k(1), r, check=False) for r in N.residues()]
 
-    from sage.rings.arith import divisors
+    from sage.arith.all import divisors
     for D in divisors(N):
         if not D.is_trivial() and D!=N:
             #we find Dp ideal coprime to N, in inverse class to D
@@ -1039,7 +1043,7 @@ def lift_to_sl2_Ok(N, c, d):
 
         sage: from sage.modular.modsym.p1list_nf import lift_to_sl2_Ok
         sage: k.<a> = NumberField(x^2 + 23)
-        sage: Ok = k.ring_of_integers(k)
+        sage: Ok = k.ring_of_integers()
         sage: N = k.ideal(3)
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 1, a))
         sage: det(M)
@@ -1057,7 +1061,7 @@ def lift_to_sl2_Ok(N, c, d):
     ::
 
         sage: k.<a> = NumberField(x^3 + 11)
-        sage: Ok = k.ring_of_integers(k)
+        sage: Ok = k.ring_of_integers()
         sage: N = k.ideal(3, a - 1)
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 2*a, 0))
         sage: det(M)
@@ -1073,7 +1077,7 @@ def lift_to_sl2_Ok(N, c, d):
     ::
 
         sage: k.<a> = NumberField(x^4 - x^3 -21*x^2 + 17*x + 133)
-        sage: Ok = k.ring_of_integers(k)
+        sage: Ok = k.ring_of_integers()
         sage: N = k.ideal(7, a)
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 0, a^2 - 1))
         sage: det(M)
@@ -1167,8 +1171,9 @@ def make_coprime(N, c, d):
         d1 = d + m
         return c, d1
 
+
 def psi(N):
-    """
+    r"""
     The index `[\Gamma : \Gamma_0(N)]`, where `\Gamma = GL(2, R)` for `R` the
     corresponding ring of integers, and `\Gamma_0(N)` standard congruence
     subgroup.

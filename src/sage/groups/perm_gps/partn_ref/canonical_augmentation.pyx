@@ -81,7 +81,7 @@ D. ``generate_children``:
     The ``next`` function must check ``mem_err[0]`` before proceeding. If it is
     nonzero then the function should deallocate the iterator right away and
     return NULL to end the iteration. This ensures that the canonical
-    augmenatation software will finish iterating over the objects found before
+    augmentation software will finish iterating over the objects found before
     finishing, and the ``mem_err`` attribute of the ``canonical_generator_data``
     will reflect this.
 
@@ -134,10 +134,10 @@ I. ``canonical_parent``:
 
     Apply the ``permutation`` to the ``child``, determine an arbitrary but fixed
     parent, apply the inverse of ``permutation`` to that parent, and return the
-    resulting object. Must also set the integer ``degree`` points to to the
+    resulting object. Must also set the integer ``degree`` points to the
     degree of the returned object.
 
-NOTE:
+.. NOTE::
 
     It is a good idea to try to implement an augmentation scheme where the
     degree of objects on each level of the augmentation tree is constant. The
@@ -146,24 +146,31 @@ NOTE:
     iterate over augmentations in such a way that all children of the same degree
     are given in the same segment of iteration.
 
-DOCTEST:
+EXAMPLES::
+
     sage: import sage.groups.perm_gps.partn_ref.canonical_augmentation
 
 REFERENCE:
 
-    [1] McKay, Brendan D. Isomorph-free exhaustive generation. J Algorithms,
-        Vol. 26 (1998), pp. 306-324.
+- [1] McKay, Brendan D. Isomorph-free exhaustive generation. J Algorithms,
+  Vol. 26 (1998), pp. 306-324.
 
 """
 
 #*****************************************************************************
-#      Copyright (C) 2010 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2010 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
+from cysignals.memory cimport sig_malloc, sig_free
+
+from .data_structures cimport*
+
 
 cdef void *canonical_generator_next(void *can_gen_data, int *degree, bint *mem_err):
     r"""
@@ -281,20 +288,20 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree):
     r"""
     Allocate the data part of the canonical generation iterator struct.
     """
-    cdef canonical_generator_data *cgd = <canonical_generator_data *> sage_malloc(sizeof(canonical_generator_data))
+    cdef canonical_generator_data *cgd = <canonical_generator_data *> sig_malloc(sizeof(canonical_generator_data))
     cdef PartitionStack *part
     if cgd is NULL:
-        sage_free(cgd)
+        sig_free(cgd)
         return NULL
-    cgd.object_stack     = <void **>               sage_malloc(max_depth * sizeof(void *))
-    cgd.degree_stack     = <int *>                 sage_malloc(max_depth * sizeof(int))
-    cgd.iterator_stack   = <iterator *>            sage_malloc(max_depth * sizeof(iterator))
-    cgd.aut_gp_stack     = <aut_gp_and_can_lab **> sage_malloc(max_depth * sizeof(aut_gp_and_can_lab *))
-    cgd.agcl_work_spaces = <agcl_work_space **>    sage_malloc(max_depth * sizeof(agcl_work_space *))
-    cgd.dc_work_spaces   = <dc_work_space **>      sage_malloc(max_depth * sizeof(dc_work_space *))
-    cgd.ps_stack         = <PartitionStack **>     sage_malloc(max_depth * sizeof(PartitionStack *))
-    cgd.aug_stack        = <void **>               sage_malloc(max_depth * sizeof(void *))
-    cgd.parent_stack     = <void **>               sage_malloc(max_depth * sizeof(void *))
+    cgd.object_stack     = <void **>               sig_malloc(max_depth * sizeof(void *))
+    cgd.degree_stack     = <int *>                 sig_malloc(max_depth * sizeof(int))
+    cgd.iterator_stack   = <iterator *>            sig_malloc(max_depth * sizeof(iterator))
+    cgd.aut_gp_stack     = <aut_gp_and_can_lab **> sig_malloc(max_depth * sizeof(aut_gp_and_can_lab *))
+    cgd.agcl_work_spaces = <agcl_work_space **>    sig_malloc(max_depth * sizeof(agcl_work_space *))
+    cgd.dc_work_spaces   = <dc_work_space **>      sig_malloc(max_depth * sizeof(dc_work_space *))
+    cgd.ps_stack         = <PartitionStack **>     sig_malloc(max_depth * sizeof(PartitionStack *))
+    cgd.aug_stack        = <void **>               sig_malloc(max_depth * sizeof(void *))
+    cgd.parent_stack     = <void **>               sig_malloc(max_depth * sizeof(void *))
     part = PS_new(degree, 1)
     cdef agcl_work_space *agclws    = allocate_agcl_work_space(degree)
     cdef aut_gp_and_can_lab *output = allocate_agcl_output(degree)
@@ -303,16 +310,16 @@ cdef canonical_generator_data *allocate_cgd(int max_depth, int degree):
        cgd.agcl_work_spaces is NULL or cgd.dc_work_spaces is NULL or \
        cgd.ps_stack         is NULL or cgd.aug_stack      is NULL or \
        cgd.parent_stack     is NULL or agclws is NULL or output is NULL:
-        sage_free(cgd.object_stack)
-        sage_free(cgd.degree_stack)
-        sage_free(cgd.iterator_stack)
-        sage_free(cgd.aut_gp_stack)
-        sage_free(cgd.agcl_work_spaces)
-        sage_free(cgd.dc_work_spaces)
-        sage_free(cgd.ps_stack)
-        sage_free(cgd.aug_stack)
-        sage_free(cgd.parent_stack)
-        sage_free(cgd)
+        sig_free(cgd.object_stack)
+        sig_free(cgd.degree_stack)
+        sig_free(cgd.iterator_stack)
+        sig_free(cgd.aut_gp_stack)
+        sig_free(cgd.agcl_work_spaces)
+        sig_free(cgd.dc_work_spaces)
+        sig_free(cgd.ps_stack)
+        sig_free(cgd.aug_stack)
+        sig_free(cgd.parent_stack)
+        sig_free(cgd)
         PS_dealloc(part)
         deallocate_agcl_work_space(agclws)
         deallocate_agcl_output(output)
@@ -362,16 +369,16 @@ cdef void deallocate_cgd(canonical_generator_data *cgd):
             cgd.free_aug(cgd.aug_stack[i])
         if cgd.iterator_stack[i].data is not NULL:
             cgd.free_iter_data(cgd.iterator_stack[i].data)
-    sage_free(cgd.object_stack)
-    sage_free(cgd.degree_stack)
-    sage_free(cgd.iterator_stack)
-    sage_free(cgd.aut_gp_stack)
-    sage_free(cgd.agcl_work_spaces)
-    sage_free(cgd.dc_work_spaces)
-    sage_free(cgd.ps_stack)
-    sage_free(cgd.aug_stack)
-    sage_free(cgd.parent_stack)
-    sage_free(cgd)
+    sig_free(cgd.object_stack)
+    sig_free(cgd.degree_stack)
+    sig_free(cgd.iterator_stack)
+    sig_free(cgd.aut_gp_stack)
+    sig_free(cgd.agcl_work_spaces)
+    sig_free(cgd.dc_work_spaces)
+    sig_free(cgd.ps_stack)
+    sig_free(cgd.aug_stack)
+    sig_free(cgd.parent_stack)
+    sig_free(cgd)
 
 cdef iterator *setup_canonical_generator(int degree,
     bint (*all_children_are_equivalent)(PartitionStack *PS, void *S),
@@ -476,10 +483,10 @@ cdef iterator *setup_canonical_generator(int degree,
     cdef iterator *canonical_generator
     cdef canonical_generator_data *cgd
     if cangen_prealloc is NULL:
-        canonical_generator = <iterator *> sage_malloc(sizeof(iterator))
+        canonical_generator = <iterator *> sig_malloc(sizeof(iterator))
         cgd = allocate_cgd(max_depth, degree)
         if canonical_generator is NULL or cgd is NULL:
-            sage_free(canonical_generator)
+            sig_free(canonical_generator)
             deallocate_cgd(cgd)
             raise MemoryError
         cgd.dealloc = 1

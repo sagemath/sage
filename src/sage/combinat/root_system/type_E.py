@@ -1,22 +1,25 @@
+# -*- coding: utf-8 -*-
 """
 Root system data for type E
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2009 Justin Walker
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-import ambient_space
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+
+from . import ambient_space
 from sage.rings.all import ZZ
 from sage.combinat.family import Family
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     The lattice behind E6, E7, or E8.  The computations are based on Bourbaki,
-    Groupes et Algebres de Lie, Ch. 4,5,6 (planche V-VII).
+    Groupes et Algèbres de Lie, Ch. 4,5,6 (planche V-VII).
     """
     def __init__(self, root_system, baseRing):
         """
@@ -91,7 +94,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         EXAMPLES::
 
             sage: e = RootSystem(['E',6]).ambient_space()
-            sage: [ e.root(i, j, p3=1) for i in xrange(e.n) for j in xrange(i+1, e.n) ]
+            sage: [ e.root(i, j, p3=1) for i in range(e.n) for j in range(i+1, e.n) ]
             [(1, 1, 0, 0, 0, 0, 0, 0),
              (1, 0, 1, 0, 0, 0, 0, 0),
              (1, 0, 0, 1, 0, 0, 0, 0),
@@ -154,7 +157,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     def negative_roots(self):
         """
-        The negative negative roots.
+        The negative roots.
 
         EXAMPLES::
 
@@ -377,19 +380,19 @@ class AmbientSpace(ambient_space.AmbientSpace):
         # Note that
         if not hasattr(self, 'PosRoots'):
             if self.rank == 6:
-                self.PosRoots = ( [ self.root(i,j) for i in xrange(self.rank-1) for j in xrange(i+1,self.rank-1) ] +
-                                  [ self.root(i,j,p1=1) for i in xrange(self.rank-1) for j in xrange(i+1,self.rank-1) ] +
+                self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
+                                  [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ v*(self.root(7)-self.root(6)-self.root(5)+self.root(0,1,2,3,4,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5))
                                     for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] if (p1+p2+p3+p4+p5)%2 == 0 ])
             elif self.rank == 7:
-                self.PosRoots = ( [ self.root(i,j) for i in xrange(self.rank-1) for j in xrange(i+1,self.rank-1) ] +
-                                  [ self.root(i,j,p1=1) for i in xrange(self.rank-1) for j in xrange(i+1,self.rank-1) ] +
+                self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
+                                  [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(6,7,p1=1) ] +
                                   [ v*(self.root(7)-self.root(6)+self.root(0,1,2,3,4,5,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6))
                                     for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] if (p1+p2+p3+p4+p5+p6)%2 == 1 ])
             elif self.rank == 8:
-                self.PosRoots = ( [ self.root(i,j) for i in xrange(self.rank) for j in xrange(i+1,self.rank) ] +
-                                  [ self.root(i,j,p1=1) for i in xrange(self.rank) for j in xrange(i+1,self.rank) ] +
+                self.PosRoots = ( [ self.root(i,j) for i in range(self.rank) for j in range(i+1,self.rank) ] +
+                                  [ self.root(i,j,p1=1) for i in range(self.rank) for j in range(i+1,self.rank) ] +
                                   [ v*(self.root(7)+self.root(0,1,2,3,4,5,6,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6,p7=p7))
                                     for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] for p7 in [0,1] if (p1+p2+p3+p4+p5+p6+p7)%2 == 0 ])
 
@@ -433,7 +436,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
 
 
-from cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_simply_laced
+from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_simply_laced
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -562,7 +565,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
 
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
         g.add_edge(1,3)
         g.add_edge(2,4)
@@ -576,7 +579,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
         EXAMPLES::
 
-            sage: print CartanType(['E',7])._latex_dynkin_diagram()
+            sage: print(CartanType(['E',7])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (10 cm,0);
             \draw (4 cm, 0 cm) -- +(0,2 cm);
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
@@ -604,19 +607,19 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
         EXAMPLES::
 
-            sage: print CartanType(['E',6]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['E',6]).ascii_art(label = lambda x: x+2))
                     O 4
                     |
                     |
             O---O---O---O---O
             3   5   6   7   8
-            sage: print CartanType(['E',7]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['E',7]).ascii_art(label = lambda x: x+2))
                     O 4
                     |
                     |
             O---O---O---O---O---O
             3   5   6   7   8   9
-            sage: print CartanType(['E',8]).ascii_art(label = lambda x: x+1)
+            sage: print(CartanType(['E',8]).ascii_art(label = lambda x: x+1))
                     O 3
                     |
                     |
@@ -630,5 +633,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         return ret + '---'.join(node(i) for i in labels) + '\n' + "".join("{!s:4}".format(i) for i in labels)
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)

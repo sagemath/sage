@@ -5,14 +5,11 @@ Power Series Methods
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
 
-from power_series_ring_element cimport PowerSeries
+from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
-from infinity import infinity, is_Infinite
-import arith
-from sage.libs.all import PariError
-from power_series_ring_element import is_PowerSeries
-import rational_field
-from sage.misc.superseded import deprecated_function_alias
+from .infinity import infinity, is_Infinite
+from sage.libs.all import pari_gen, PariError
+
 
 cdef class PowerSeries_poly(PowerSeries):
 
@@ -34,6 +31,16 @@ cdef class PowerSeries_poly(PowerSeries):
             1/27 + 1/27*t^3 + O(t^5)
             sage: a*b
             1 + O(t^5)
+
+        Check that :trac:`22216` is fixed::
+
+            sage: R.<T> = PowerSeriesRing(QQ)
+            sage: R(pari('1 + O(T)'))
+            1 + O(T)
+            sage: R(pari('1/T + O(T)'))
+            Traceback (most recent call last):
+            ...
+            ValueError: series has negative valuation
         """
         R = parent._poly_ring()
         if isinstance(f, Element):
@@ -41,14 +48,20 @@ cdef class PowerSeries_poly(PowerSeries):
                 pass
             elif (<Element>f)._parent == R.base_ring():
                 f = R([f])
-            elif isinstance(f, PowerSeries_poly):
-                prec = (<PowerSeries_poly>f)._prec
-                f = R((<PowerSeries_poly>f).__f)
+            elif isinstance(f, PowerSeries):  # not only PowerSeries_poly
+                prec = (<PowerSeries>f)._prec
+                f = R(f.polynomial())
             else:
                 if f:
                     f = R(f, check=check)
                 else:
                     f = R(None)
+        elif isinstance(f, pari_gen) and f.type() == 't_SER':
+            if f._valp() < 0:
+                raise ValueError('series has negative valuation')
+            if prec is infinity:
+                prec = f.length() + f._valp()
+            f = R(f.truncate())
         else:
             if f:
                 f = R(f, check=check)
@@ -62,17 +75,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __hash__(self):
         """
-        Return a hash of self.
+        Return a hash of ``self``.
 
         EXAMPLES::
 
             sage: R.<t> = ZZ[[]]
-            sage: t.__hash__()
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
-            sage: hash(t)
-            760233507         # 32-bit
-            14848694839950883 # 64-bit
+            sage: hash(t) == hash(R.gen())
+            True
+            sage: hash(t) != hash(R.one())
+            True
         """
         return hash(self.__f)
 
@@ -89,29 +100,11 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return self.__class__, (self._parent, self.__f, self._prec, self.__is_gen)
 
-    def __richcmp__(left, right, int op):
-       """
-       Used for comparing power series.
-
-       EXAMPLES::
-
-           sage: R.<t> = ZZ[[]]
-           sage: f = 1 + t + t^7 - 5*t^10
-           sage: g = 1 + t + t^7 - 5*t^10 + O(t^15)
-           sage: f == f
-           True
-           sage: f < g
-           False
-           sage: f == g
-           True
-       """
-       return (<Element>left)._richcmp(right, op)
-
     def polynomial(self):
         """
-        Return the underlying polynomial of self.
+        Return the underlying polynomial of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: R.<t> = GF(7)[[]]
             sage: f = 3 - t^3 + O(t^5)
@@ -122,7 +115,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def valuation(self):
         """
-        Return the valuation of self.
+        Return the valuation of ``self``.
 
         EXAMPLES::
 
@@ -143,10 +136,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def degree(self):
         """
-        Return the degree of the underlying polynomial of self. That
-        is, if self is of the form f(x) + O(x^n), we return the degree
-        of f(x). Note that if f(x) is 0, we return -1, just as with
-        polynomials.
+        Return the degree of the underlying polynomial of ``self``.
+
+        That is, if ``self`` is of the form `f(x) + O(x^n)`, we return
+        the degree of `f(x)`. Note that if `f(x)` is `0`, we return `-1`,
+        just as with polynomials.
 
         EXAMPLES::
 
@@ -162,16 +156,16 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __nonzero__(self):
         """
-        Return True if self is nonzero, and False otherwise.
+        Return ``True`` if ``self`` is nonzero, and ``False`` otherwise.
 
         EXAMPLES::
 
             sage: R.<t> = GF(11)[[]]
-            sage: (1 + t + O(t^18)).__nonzero__()
+            sage: bool(1 + t + O(t^18))
             True
-            sage: R(0).__nonzero__()
+            sage: bool(R(0))
             False
-            sage: O(t^18).__nonzero__()
+            sage: bool(O(t^18))
             False
         """
         return not not self.__f
@@ -185,14 +179,14 @@ cdef class PowerSeries_poly(PowerSeries):
         -  ``x``:
 
            - a tuple of elements the first of which can be meaningfully
-             substituted in self, with the remainder used for substitution
-             in the coefficients of self.
+             substituted in ``self``, with the remainder used for substitution
+             in the coefficients of ``self``.
 
            - a dictionary for kwds:value pairs. If the variable name of
              self is a keyword it is substituted for.  Other keywords
              are used for substitution in the coefficients of self.
 
-        OUTPUT: the value of self after substitution.
+        OUTPUT: the value of ``self`` after substitution.
 
         EXAMPLES::
 
@@ -294,15 +288,15 @@ cdef class PowerSeries_poly(PowerSeries):
         if len(kwds) >= 1:
             name = P.variable_name()
             if name in kwds: # a keyword specifies the power series generator
-                if len(x) > 0:
-                    raise ValueError, "must not specify %s keyword and positional argument" % name
+                if x:
+                    raise ValueError("must not specify %s keyword and positional argument" % name)
                 a = self(kwds[name])
                 del kwds[name]
                 try:
                     return a(**kwds)
                 except TypeError:
                     return a
-            elif len(x) > 0:       # both keywords and positional arguments
+            elif x:       # both keywords and positional arguments
                 a = self(*x)
                 try:
                     return a(**kwds)
@@ -341,7 +335,7 @@ cdef class PowerSeries_poly(PowerSeries):
             return self[0]
 
         if t <= 0:
-            raise ValueError, "Can only substitute elements of positive valuation"
+            raise ValueError("Can only substitute elements of positive valuation")
 
         if not Q.has_coerce_map_from(P.base_ring()):
             from sage.structure.element import canonical_coercion
@@ -349,7 +343,7 @@ cdef class PowerSeries_poly(PowerSeries):
                 R = canonical_coercion(P.base_ring()(0), Q.base_ring()(0))[0].parent()
                 self = self.change_ring(R)
             except TypeError:
-                raise ValueError, "Cannot substitute this value"
+                raise ValueError("Cannot substitute this value")
 
         r = (self - self[0]).valuation()
         if r == s:                 # self is constant + O(x^s)
@@ -410,14 +404,14 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __getitem__(self, n):
         """
-        Return the nth coefficient of self.
+        Return the ``n``-th coefficient of ``self``.
 
-        If n is a slice object, this will return a power series of the
-        same precision, whose coefficients are the same as self for
+        If ``n`` is a slice object, this will return a power series of the
+        same precision, whose coefficients are the same as ``self`` for
         those indices in the slice, and 0 otherwise.
 
-        Returns 0 for negative coefficients. Raises an IndexError if
-        try to access beyond known coefficients.
+        This returns 0 for negative coefficients and raises an
+        ``IndexError`` if trying to access beyond known coefficients.
 
         EXAMPLES::
 
@@ -434,63 +428,28 @@ cdef class PowerSeries_poly(PowerSeries):
             ...
             IndexError: coefficient not known
             sage: f[1:4]
+            doctest:...: DeprecationWarning: polynomial slicing with a start index is deprecated, use list() and slice the resulting list instead
+            See http://trac.sagemath.org/18940 for details.
             -17/5*t^3 + O(t^5)
 
             sage: R.<t> = ZZ[[]]
             sage: f = (2-t)^5; f
             32 - 80*t + 80*t^2 - 40*t^3 + 10*t^4 - t^5
-            sage: f[2:4]
-            80*t^2 - 40*t^3
-            sage: f[5:9]
-            -t^5
-            sage: f[2:7:2]
-            80*t^2 + 10*t^4
-            sage: f[10:20]
-            0
-            sage: f[10:]
-            0
             sage: f[:4]
             32 - 80*t + 80*t^2 - 40*t^3
-
             sage: f = 1 + t^3 - 4*t^4 + O(t^7) ; f
             1 + t^3 - 4*t^4 + O(t^7)
-            sage: f[2:4]
-            t^3 + O(t^7)
-            sage: f[4:9]
-            -4*t^4 + O(t^7)
-            sage: f[2:7:2]
-            -4*t^4 + O(t^7)
-            sage: f[10:20]
-            O(t^7)
-            sage: f[10:]
-            O(t^7)
             sage: f[:4]
             1 + t^3 + O(t^7)
         """
         if isinstance(n, slice):
-            # get values from slice object
-            start = n.start if n.start is not None else 0
-            stop = self.prec() if n.stop is None else n.stop
-            if stop is infinity: stop = self.degree()+1
-            step = 1 if n.step is None else n.step
-
-            # find corresponding polynomial
-            poly = self.__f[start:stop]
-            if step is not None:
-                coeffs = poly.padded_list(stop)
-                for i in range(start, stop):
-                    if (i-start) % step:
-                        coeffs[i] = 0
-                poly = self.__f.parent()(coeffs)
-
-            # return the power series
-            return PowerSeries_poly(self._parent, poly,
+            return PowerSeries_poly(self._parent, self.polynomial()[n],
                                     prec=self._prec, check=False)
         elif n < 0:
-            return self.base_ring()(0)
+            return self.base_ring().zero()
         elif n > self.__f.degree():
             if self._prec > n:
-                return self.base_ring()(0)
+                return self.base_ring().zero()
             else:
                 raise IndexError("coefficient not known")
         return self.__f[n]
@@ -503,8 +462,8 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: R.<t> = QQ[[]]
             sage: f = t + 17/5*t^3 + 2*t^4 + O(t^5)
-            sage: for a in f: print a,
-            0 1 0 17/5 2
+            sage: [a for a in f]
+            [0, 1, 0, 17/5, 2]
         """
         return iter(self.__f)
 
@@ -522,7 +481,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef ModuleElement _add_(self, ModuleElement right_m):
+    cpdef _add_(self, right_m):
         """
         EXAMPLES::
 
@@ -553,7 +512,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f + right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef ModuleElement _sub_(self, ModuleElement right_m):
+    cpdef _sub_(self, right_m):
         """
         Return the difference of two power series.
 
@@ -568,7 +527,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f - right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef RingElement _mul_(self, RingElement right_r):
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
 
@@ -584,9 +543,9 @@ cdef class PowerSeries_poly(PowerSeries):
                                 prec = prec,
                                 check = True)  # check, since truncation may be needed
 
-    cpdef ModuleElement _rmul_(self, RingElement c):
+    cpdef _rmul_(self, Element c):
         """
-        Multiply self on the right by a scalar.
+        Multiply ``self`` on the right by a scalar.
 
         EXAMPLES::
 
@@ -597,9 +556,9 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, self.__f * c, self._prec, check=False)
 
-    cpdef ModuleElement _lmul_(self, RingElement c):
+    cpdef _lmul_(self, Element c):
         """
-        Multiply self on the left by a scalar.
+        Multiply ``self`` on the left by a scalar.
 
         EXAMPLES::
 
@@ -610,37 +569,9 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return PowerSeries_poly(self._parent, c * self.__f, self._prec, check=False)
 
-    def __floordiv__(self, denom):
-        """
-        EXAMPLES::
-
-            sage: R.<t> = ZZ[[]] ; f = t**10-1 ; g = 1+t+t^7 ; h = f.add_bigoh(20)
-            sage: f // g
-            -1 + t - t^2 + t^3 - t^4 + t^5 - t^6 + 2*t^7 - 3*t^8 + 4*t^9 - 4*t^10 + 5*t^11 - 6*t^12 + 7*t^13 - 9*t^14 + 12*t^15 - 16*t^16 + 20*t^17 - 25*t^18 + 31*t^19 + O(t^20)
-            sage: (f // g) * g
-            -1 + t^10 + O(t^20)
-            sage: g // h
-            -1 - t - t^7 - t^10 - t^11 - t^17 + O(t^20)
-            sage: (g // h) * h
-            1 + t + t^7 + O(t^20)
-            sage: h // g
-            -1 + t - t^2 + t^3 - t^4 + t^5 - t^6 + 2*t^7 - 3*t^8 + 4*t^9 - 4*t^10 + 5*t^11 - 6*t^12 + 7*t^13 - 9*t^14 + 12*t^15 - 16*t^16 + 20*t^17 - 25*t^18 + 31*t^19 + O(t^20)
-            sage: (h // g) * g
-            -1 + t^10 + O(t^20)
-        """
-        try:
-            return PowerSeries.__div__(self, denom)
-        except (PariError, ZeroDivisionError) as e: # PariError to general?
-            if is_PowerSeries(denom) and denom.degree() == 0 and denom[0] in self._parent.base_ring():
-                denom = denom[0]
-            elif not denom in self._parent.base_ring():
-                raise ZeroDivisionError, e
-            return PowerSeries_poly(self._parent,
-                                             self.__f // denom, self._prec)
-
     def __lshift__(PowerSeries_poly self, n):
         """
-        Shift self to the left by n, i.e. multiply by x^n.
+        Shift ``self`` to the left by ``n``, i.e. multiply by `x^n`.
 
         EXAMPLES::
 
@@ -656,7 +587,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def __rshift__(PowerSeries_poly self, n):
         """
-        Shift self to the right by n, i.e. multiply by x^-n and
+        Shift ``self`` to the right by ``n``, i.e. multiply by `x^{-n}` and
         remove any terms of negative exponent.
 
         EXAMPLES::
@@ -672,6 +603,102 @@ cdef class PowerSeries_poly(PowerSeries):
             return PowerSeries_poly(self._parent, self.__f >> n, max(0,self._prec - n))
         else:
             return self
+
+    def __invert__(self):
+        """
+        Return the inverse of the power series (i.e., a series `Y` such
+        that `XY = 1`).
+
+        The first nonzero coefficient must be a unit in
+        the coefficient ring. If the valuation of the series is positive,
+        this function will return a :doc:`laurent_series_ring_element`.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[[]]
+            sage: 1/(1+q + O(q**2))
+            1 - q + O(q^2)
+            sage: 1/(1+q)
+            1 - q + q^2 - q^3 + q^4 - q^5 + q^6 - q^7 + q^8 - q^9 + q^10 - q^11 + q^12 - q^13 + q^14 - q^15 + q^16 - q^17 + q^18 - q^19 + O(q^20)
+            sage: prec = R.default_prec(); prec
+            20
+            sage: R.set_default_prec(5)
+            sage: 1/(1+q)
+            1 - q + q^2 - q^3 + q^4 + O(q^5)
+
+        ::
+
+            sage: 1/(q + q^2)
+            q^-1 - 1 + q - q^2 + q^3 + O(q^4)
+            sage: g = 1/(q + q^2 + O(q^5))
+            sage: g; g.parent()
+            q^-1 - 1 + q - q^2 + O(q^3)
+            Laurent Series Ring in q over Rational Field
+
+        ::
+
+            sage: 1/g
+            q + q^2 + O(q^5)
+            sage: (1/g).parent()
+            Laurent Series Ring in q over Rational Field
+
+        ::
+
+            sage: 1/(2 + q)
+            1/2 - 1/4*q + 1/8*q^2 - 1/16*q^3 + 1/32*q^4 + O(q^5)
+
+        ::
+
+            sage: R.<q> = QQ[['q']]
+            sage: R.set_default_prec(5)
+            sage: f = 1 + q + q^2 + O(q^50)
+            sage: f/10
+            1/10 + 1/10*q + 1/10*q^2 + O(q^50)
+            sage: f/(10+q)
+            1/10 + 9/100*q + 91/1000*q^2 - 91/10000*q^3 + 91/100000*q^4 + O(q^5)
+
+        ::
+
+            sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
+            sage: u = 17 + 3*t^2 + 19*t^10 + O(t^12)
+            sage: v = ~u; v
+            1/17 - 3/289*t^2 + 9/4913*t^4 - 27/83521*t^6 + 81/1419857*t^8 - 1587142/24137569*t^10 + O(t^12)
+            sage: u*v
+            1 + O(t^12)
+
+        We try a non-zero, non-unit leading coefficient::
+
+            sage: R.<t> = PowerSeriesRing(ZZ)
+            sage: ~R(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: constant term is not a unit
+            sage: ~R(-1)
+            -1
+        """
+        if self.is_one():
+            return self
+        prec = self.prec()
+        if prec is infinity:
+            if self.degree() > 0:
+                prec = self._parent.default_prec()
+            else:
+                # constant series
+                a = self[0]
+                if not a.is_unit():
+                    raise ValueError("constant term is not a unit")
+                try:
+                    a = a.inverse_unit()
+                except (AttributeError, NotImplementedError):
+                    a = self._parent.base_ring()(~a)
+                return self._parent(a, prec=infinity)
+
+        if self.valuation() > 0:
+            u = ~self.valuation_zero_part()    # inverse of unit part
+            R = self._parent.laurent_series_ring()
+            return R(u, -self.valuation())
+
+        return self._parent(self.truncate().inverse_series_trunc(prec), prec=prec)
 
     def truncate(self, prec=infinity):
         """
@@ -693,9 +720,9 @@ cdef class PowerSeries_poly(PowerSeries):
 
     cdef _inplace_truncate(self, long prec):
         """
-        Truncate self to precision ``prec`` in place.
+        Truncate ``self`` to precision ``prec`` in place.
 
-        NOTE::
+        .. NOTE::
 
             This is very unsafe, since power series are supposed to
             be immutable in Sage. Use at your own risk!
@@ -722,9 +749,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def list(self):
         """
-        Return the list of known coefficients for self. This is just
-        the list of coefficients of the underlying polynomial, so in
-        particular, need not have length equal to self.prec().
+        Return the list of known coefficients for ``self``.
+
+        This is just the list of coefficients of the underlying
+        polynomial, so in particular, need not have length equal to
+        ``self.prec()``.
 
         EXAMPLES::
 
@@ -737,9 +766,11 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def dict(self):
         """
-        Return a dictionary of coefficients for self. This is simply a
-        dict for the underlying polynomial, so need not have keys
-        corresponding to every number smaller than self.prec().
+        Return a dictionary of coefficients for ``self``.
+
+        This is simply a dict for the underlying polynomial, so need
+        not have keys corresponding to every number smaller than
+        ``self.prec()``.
 
         EXAMPLES::
 
@@ -753,17 +784,17 @@ cdef class PowerSeries_poly(PowerSeries):
     def _derivative(self, var=None):
         """
         Return the derivative of this power series with respect
-        to the variable var.
+        to the variable ``var``.
 
-        If var is None or is the generator of this ring, we take the derivative
-        with respect to the generator.
+        If ``var`` is ``None`` or is the generator of this ring, we
+        take the derivative with respect to the generator.
 
-        Otherwise, we call _derivative(var) on each coefficient of
+        Otherwise, we call ``_derivative(var)`` on each coefficient of
         the series.
 
-        SEE ALSO::
+        .. SEEALSO::
 
-            self.derivative()
+            ``self.derivative()``
 
         EXAMPLES::
 
@@ -784,11 +815,24 @@ cdef class PowerSeries_poly(PowerSeries):
             4*x^3*y^3 + O(y^4)
             sage: f._derivative(x)
             3*x^2*y^4 + O(y^5)
+
+        TESTS::
+
+            sage: R.<t> = PowerSeriesRing(QQ, sparse=True)
+            sage: x = var('x')
+            sage: t.derivative(x)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to x
         """
-        if var is not None and var is not self._parent.gen():
-            # call _derivative() recursively on coefficients
-            return PowerSeries_poly(self._parent, self.__f._derivative(var),
+        if var is not None and var != self._parent.gen():
+            try:
+                # call _derivative() recursively on coefficients
+                return PowerSeries_poly(self._parent, self.__f._derivative(var),
                                     self.prec(), check=False)
+            except AttributeError:
+                raise ValueError('cannot differentiate with respect to {}'.format(var))
+
 
         # compute formal derivative with respect to generator
         return PowerSeries_poly(self._parent, self.__f._derivative(),
@@ -796,7 +840,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
     def integral(self,var=None):
         """
-        The integral of this power series
+        Return the integral of this power series.
 
         By default, the integration variable is the variable of the
         power series.
@@ -840,6 +884,7 @@ cdef class PowerSeries_poly(PowerSeries):
     def reverse(self, precision=None):
         """
         Return the reverse of f, i.e., the series g such that g(f(x)) = x.
+
         Given an optional argument ``precision``, return the reverse with given
         precision (note that the reverse can have precision at most
         ``f.prec()``).  If ``f`` has infinite precision, and the argument
@@ -893,6 +938,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: A.<t> = PowerSeriesRing(ZZ)
             sage: B.<s> = A[[]]
             sage: f = (1 - 3*t + 4*t^3 + O(t^4))*s + (2 + t + t^2 + O(t^3))*s^2 + O(s^3)
+            sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(1)
             sage: g = f.reverse(); g
             verbose 1 (<module>) passing to pari failed; trying Lagrange inversion
@@ -951,7 +997,6 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: (x - x^2).reverse(precision=3)
             x + x^2 + O(x^3)
 
-
         TESTS::
 
             sage: R.<x> = PowerSeriesRing(QQ)
@@ -960,9 +1005,6 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: Series must have valuation one for reversion.
-
-
-
         """
         if self.valuation() != 1:
             raise ValueError("Series must have valuation one for reversion.")
@@ -990,16 +1032,15 @@ cdef class PowerSeries_poly(PowerSeries):
 
         # first, try reversion with pari; this is faster than Lagrange inversion
         try:
-            f2 = f._pari_()
+            f2 = f.__pari__()
             g = f2.serreverse()
             return PowerSeries_poly(f.parent(), g.Vec(-out_prec), out_prec)
         except (TypeError,ValueError,AttributeError,PariError):
             # if pari fails, continue with Lagrange inversion
-            from sage.misc.all import verbose
+            from sage.misc.verbose import verbose
             verbose("passing to pari failed; trying Lagrange inversion")
 
-
-        if f.parent().characteristic() > 0:
+        if f.parent().characteristic():
             # over a ring of positive characteristic, attempt lifting to
             # characteristic zero ring
             verbose("parent ring has positive characteristic; attempting lift to characteristic zero")
@@ -1022,11 +1063,9 @@ cdef class PowerSeries_poly(PowerSeries):
         g = g.add_bigoh(out_prec)
         return PowerSeries_poly(out_parent, g, out_prec, check=False)
 
-    reversion = deprecated_function_alias(17724, reverse)
-
     def pade(self, m, n):
         r"""
-        Returns the Padé approximant of ``self`` of index `(m, n)`.
+        Return the Padé approximant of ``self`` of index `(m, n)`.
 
         The Padé approximant of index `(m, n)` of a formal power
         series `f` is the quotient `Q/P` of two polynomials `Q` and `P`
@@ -1086,7 +1125,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: R.<z> = RR[[]]
             sage: f = exp(2*z)
             sage: f.pade(3, 3) # abs tol 1e-10
-            (-1.0*z^3 - 6.0*z^2 - 15.0*z - 15.0)/(z^3 - 6.0*z^2 + 15.0*z - 15.0)
+            (-z^3 - 6.0*z^2 - 15.0*z - 15.0)/(z^3 - 6.0*z^2 + 15.0*z - 15.0)
 
         When precision is too low::
 
@@ -1095,29 +1134,21 @@ cdef class PowerSeries_poly(PowerSeries):
             Traceback (most recent call last):
             ...
             ValueError: the precision of the series is not large enough
+
+        Check that :trac:`21212` is fixed::
+
+            sage: QQx.<x> = QQ[[]]
+            sage: (1+x+O(x^100)).pade(2,2)
+            x + 1
+
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.matrix.constructor import Matrix
         if self.precision_absolute() < n + m + 2:
             raise ValueError("the precision of the series is not large enough")
         polyring = self.parent()._poly_ring()
         z = polyring.gen()
-        c = self.list()
-        mat = Matrix(polyring, n + 1, n + 1)
-        for i in range(1, n + 1):
-            for j in range(n + 1):
-                mat[i, j] = c[m + i - j]
-        for j in range(n + 1):
-            mat[0, j] = z ** j
-        resu_v = mat.determinant().truncate(n + 1)
-        lead_v = resu_v.leading_coefficient()
-        resu_v = resu_v / lead_v
-        for j in range(n + 1):
-            mat[0, j] = z ** j * (self.truncate(max(m - j + 1, 0)))
-        resu_u = mat.determinant().truncate(m + 1)
-        lead_u = resu_u.leading_coefficient()
-        resu_u = resu_u / lead_u
-        return lead_u / lead_v * resu_u / resu_v
+        c = self.polynomial();
+        u, v = c.rational_reconstruct(z**(n + m + 1), m, n);
+        return u/v
 
     def _symbolic_(self, ring):
         """
@@ -1140,24 +1171,26 @@ cdef class PowerSeries_poly(PowerSeries):
             1 + 2*x + 3*x^2 + 4*x^3 + 5*x^4
             sage: _.is_terminating_series()
             True
+
+        TESTS:
+
+        Check that :trac:`18094` is fixed::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: SR(R(0).add_bigoh(20))
+            Order(x^20)
         """
         from sage.symbolic.ring import SR
         from sage.rings.infinity import PlusInfinity
         poly = self.polynomial()
         pex = SR(poly)
-        var = pex.variables()[0]
-        if not isinstance(self.prec(), PlusInfinity):
-            # GiNaC does not allow manual addition of bigoh,
-            # so we use a trick.
-            pex += var**(self.prec()+1)
-            return pex.series(var, self.prec())
-        else:
-            return pex.series(var, max(poly.exponents())+1)
+        var = SR.var(self.variable())
+        return pex.series(var, self.prec())
 
 
-def make_powerseries_poly_v0(parent,  f, prec, is_gen):
+def make_powerseries_poly_v0(parent, f, prec, is_gen):
     """
-    Return the power series specified by f, prec, and is_gen.
+    Return the power series specified by ``f``, ``prec``, and ``is_gen``.
 
     This function exists for the purposes of pickling. Do not delete
     this function -- if you change the internal representation,

@@ -1,7 +1,7 @@
 from sage.data_structures.bitset cimport bitset_t
-from matroid cimport Matroid
-from basis_exchange_matroid cimport BasisExchangeMatroid
-from set_system cimport SetSystem
+from .matroid cimport Matroid
+from .basis_exchange_matroid cimport BasisExchangeMatroid
+from .set_system cimport SetSystem
 
 cdef class BasisMatroid(BasisExchangeMatroid):
     cdef bitset_t _bb
@@ -38,7 +38,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef _is_relaxation(self, M, morphism)
     cpdef _is_isomorphism(self, M, morphism)
     cpdef _isomorphism(self, other)
-    cpdef _is_isomorphic(self, other)
+    cpdef _is_isomorphic(self, other, certificate=*)
 
 
 cdef  binom_init(long n, long k)

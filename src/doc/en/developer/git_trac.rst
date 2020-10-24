@@ -1,5 +1,6 @@
-.. _chapter-git_trac:
+.. highlight:: shell-session
 
+.. _chapter-git_trac:
 
 =======================================
 Collaborative Development with Git-Trac
@@ -8,9 +9,9 @@ Collaborative Development with Git-Trac
 Sometimes you will only want to work on local changes to Sage, for
 your own private needs.  However, typically it is beneficial to
 share code and ideas with others; the manner in which the
-`Sage project <http://sagemath.org>`_ does this (as well as fixing
+`Sage project <https://www.sagemath.org>`_ does this (as well as fixing
 bugs and upgrading components) is in a very collaborative and
-public setting on `the Sage Trac server <http://trac.sagemath.org>`_
+public setting on `the Sage Trac server <https://trac.sagemath.org>`_
 (the Sage bug and enhancement tracker).
 
 One can use ``git`` :ref:`the hard way <chapter-manual-git>` for this,
@@ -58,7 +59,8 @@ do this by symlinking::
     [user@localhost git-trac-command]$ ln -s `pwd`/git-trac ~/bin/
 
 See the `git-trac README <https://github.com/sagemath/git-trac-command>`_ for
-more details.
+more details. At this point you leave ``git-trac-command`` subdirectory, and only go 
+there whenever you need to update the ``git-trac`` command.
 
 
 
@@ -67,12 +69,12 @@ more details.
 Git and Trac Configuration
 ==========================
 
-.. note::
+.. NOTE::
 
-    * `trac <http://trac.sagemath.org>`_ uses username/password for
+    * `trac <https://trac.sagemath.org>`_ uses username/password for
       authentication.
 
-    * Our `git repository server <http://git.sagemath.org>`_ uses SSH
+    * Our `git repository server <https://git.sagemath.org>`_ uses SSH
       public key authentication for write access.
 
 You need to set up both authentication mechanisms to be able to upload
@@ -82,8 +84,8 @@ to the Sage directory and tell ``git trac`` about your trac account::
 
     [user@localhost sage]$ git trac config --user USERNAME --pass 'PASSWORD'
     Trac xmlrpc URL:
-        http://trac.sagemath.org/xmlrpc (anonymous)
-        http://trac.sagemath.org/login/xmlrpc (authenticated)
+        https://trac.sagemath.org/xmlrpc (anonymous)
+        https://trac.sagemath.org/login/xmlrpc (authenticated)
         realm sage.math.washington.edu
     Username: USERNAME
     Password: PASSWORD
@@ -99,12 +101,36 @@ make sure that it is not readable by other users on your system. For
 example, by running ``chmod 0600 .git/config`` if your home directory
 is not already private.
 
+Instead of a username and password you may also configure authentication via
+a generated token by passing ``--token=<token>`` instead of ``--pass``::
+
+    [user@localhost sage]$ git trac config --user=<username> --token=<token>
+
+This is required if you authenticate to Trac with your GitHub account, as
+you do not have a Trac password.  Logged in users can find their token
+under `the token tab in preferences on the trac site <https://trac.sagemath.org/prefs/token>`_ .
+
+.. NOTE::
+
+   The username to be entered here is NOT the GitHub username, but rather the trac username which is gh-<GitHub-username>
+   as given on the top right corner of the trac server.
+
+If both a token and a username/password are configured, the token-based
+authentication takes precedence.
+
+If you do not want to store your trac username/password/token on disk you
+can temporarily override it with the environment variables
+``TRAC_USERNAME``,  ``TRAC_PASSWORD``, and ``TRAC_TOKEN`` respectively.
+These take precedence over any other configuration.
+
 If there is no SSH key listed then you haven't uploaded your SSH
 public key to the trac server. You should do that now following the
 instructions to :ref:`section-trac-ssh-key`, if you want to upload
-any changes.
+any changes. You may have to add your private key to your authentication agent::
 
-.. note::
+    [user@localhost sage]$ ssh-add
+
+.. NOTE::
 
    The ``git trac config`` command will automatically add a ``trac``
    remote git repository to your list of remotes if necessary.
@@ -144,7 +170,7 @@ want to add it to Sage. You would first open a ticket for that::
     [user@localhost sage]$ git trac create 'Last Twin Prime'
     Remote branch: u/user/last_twin_prime
     Newly-created ticket number: 12345
-    Ticket URL: http://trac.sagemath.org/12345
+    Ticket URL: https://trac.sagemath.org/12345
     Local branch: t/12345/last_twin_prime
 
 This will create a new trac ticket titled "Last Twin Prime" with a
@@ -155,7 +181,7 @@ explicitly. See ``git trac create -h`` for details. This new branch is
 automatically checked out for you with the *local branch* name
 ``t/12345/last_twin_prime``.
 
-.. note::
+.. NOTE::
 
     Only some trac fields are filled in automatically. See
     :ref:`section-trac-fields` for what trac fields are available and
@@ -169,7 +195,7 @@ Check out an Existing Ticket
 ----------------------------
 
 Alternatively, you can use the `web interface to the Sage trac
-development server <http://trac.sagemath.org>`_ to open a new ticket.
+development server <https://trac.sagemath.org>`_ to open a new ticket.
 Just log in and click on "Create Ticket".
 
 Or maybe somebody else already opened a ticket. Then, to get a suitable
@@ -245,7 +271,7 @@ done by::
     Changing the trac "Branch:" field...
 
 This uploads your changes to a remote branch on the `Sage git server
-<http://git.sagemath.org/sage.git>`_. The ``git trac`` command uses
+<https://git.sagemath.org/sage.git>`_. The ``git trac`` command uses
 the following logic to find out the remote branch name:
 
 * By default, the remote branch name will be whatever is already on
@@ -291,7 +317,9 @@ reviewed by somebody else before they can be included in the next
 version of Sage. To mark your ticket as ready for review, you should
 set it to ``needs_review`` on the trac server. Also, add yourself as
 the (or one of the) author(s) for that ticket by inserting the
-following as the first line::
+following as the first line:
+
+.. CODE-BLOCK:: text
 
     Authors: Your Real Name
 
@@ -339,7 +367,7 @@ for merging is easy::
 This creates a new "merge" commit, joining your current branch and
 ``other_branch``.
 
-.. warning::
+.. WARNING::
 
     You should avoid merging branches both ways. Once A merged B and B
     merged A, there is no way to distinguish commits that were
@@ -354,12 +382,13 @@ This creates a new "merge" commit, joining your current branch and
     * Or you definitely need a feature that has been developed as part
       of another branch.
 
-A special case of merging is merging in the ``master`` branch. This
+A special case of merging is merging in the ``develop`` branch. This
 brings your local branch up to date with the newest Sage version. The
 above warning against unnecessary merges still applies, though. Try to
 do all of your development with the Sage version that you originally
-started with. The only reason for merging in the master branch is if
-you need a new feature or if your branch conflicts.
+started with. The only reason for merging in the ``develop`` branch is if
+you need a new feature or if your branch conflicts. See
+:ref:`section-git-update-latest` for details.
 
 
 .. _section-git_trac-collaborate:
@@ -419,7 +448,9 @@ Conflict Resolution
 Merge conflicts happen if there are overlapping edits, and they are an
 unavoidable consequence of distributed development. Fortunately,
 resolving them is common and easy with git. As a hypothetical example,
-consider the following code snippet::
+consider the following code snippet:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -429,7 +460,9 @@ consider the following code snippet::
 
 This is clearly wrong; Two developers, namely Alice and Bob, decide to
 fix it. First, in a cabin in the woods far away from any internet
-connection, Alice corrects the seed values::
+connection, Alice corrects the seed values:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
        """
@@ -447,7 +480,9 @@ and turns those changes into a new commit::
 However, not having an internet connection, she cannot immediately
 send her changes to the trac server. Meanwhile, Bob changes the
 multiplication to an addition since that is the correct recursion
-formula::
+formula:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -471,9 +506,11 @@ own local branch::
     CONFLICT (content): Merge conflict in fibonacci.py
     Automatic merge failed; fix conflicts and then commit the result.
 
+The file now looks like this:
+
 .. skip    # doctester confuses >>> with input marker
 
-The file now looks like this::
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -482,7 +519,7 @@ The file now looks like this::
     <<<<<<< HEAD
         if i > 1:
             return fibonacci(i-1) * fibonacci(i-2)
-        return i
+        return [0, 1][i]
     =======
         return fibonacci(i-1) + fibonacci(i-2)
     >>>>>>> 41675dfaedbfb89dcff0a47e520be4aa2b6c5d1b
@@ -494,7 +531,9 @@ number after the second conflict marker is the SHA1 hash of the most
 recent common parent of both.
 
 It is now Alice's job to resolve the conflict by reconciling their
-changes, for example by editing the file. Her result is::
+changes, for example by editing the file. Her result is:
+
+.. CODE-BLOCK:: python
 
     def fibonacci(i):
         """
@@ -529,12 +568,11 @@ end: git downloads both Alice's conflicting commit and her resolution.
 Reviewing
 =========
 
-This section gives an example how to review using the ``sage`` command. For an
-explanation of what should be checked by the reviewer, see
+For an explanation of what should be checked by the reviewer, see
 :ref:`chapter-review`.
 
 If you go to the `web interface to the Sage trac development server
-<http://trac.sagemath.org>`_ then you can click on the "Branch:" field and see
+<https://trac.sagemath.org>`_ then you can click on the "Branch:" field and see
 the code that is added by combining all commits of the ticket. This is what
 needs to be reviewed.
 
@@ -549,3 +587,22 @@ to use the web interface:
   shows you what is being added, analogous to clicking on the
   "Branch:" field.
 
+To review tickets with minimal recompiling, start by building the "develop"
+branch, that is, the latest beta. Just checking out an older ticket would most
+likely reset the Sage tree to an older version, so you would have to compile
+older versions of packages to make it work. Instead, you can create an anonymous
+("detached HEAD") merge of the ticket and the develop branch using ::
+
+    $ git trac try 12345
+
+This will only touch files that are really modified by the ticket. In particular,
+if only Python files are changed by the ticket (which is true for most tickets)
+then you just have to run ``sage -b`` to rebuild the Sage library. If files other
+than Python have been changed, you must run ``make``. When you are finished
+reviewing, just check out a named branch, for example ::
+
+    $ git checkout develop
+
+If you want to edit the ticket branch (that is, add additional commits) you cannot
+use ``git trac try``. You must :ref:`section-git_trac-checkout` to get the actual ticket
+branch as a starting point.

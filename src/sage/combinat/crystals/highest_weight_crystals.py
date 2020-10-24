@@ -63,7 +63,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
         <sage.combinat.crystals.alcove_path.CrystalOfAlcovePaths>`
       * ``'GeneralizedYoungWalls'`` - :class:`generalized Young walls
         <sage.combinat.crystals.generalized_young_walls.CrystalOfGeneralizedYoungWalls>`
-      * ``'RiggedConfigurations'`` - :class:`rigged configuraitons
+      * ``'RiggedConfigurations'`` - :class:`rigged configurations
         <sage.combinat.rigged_configurations.rc_crystal.CrystalOfRiggedConfigurations>`
 
     EXAMPLES::
@@ -152,6 +152,11 @@ def HighestWeightCrystal(dominant_weight, model=None):
         Highest weight crystal of alcove paths of type ['F', 4] and weight Lambda[1] + Lambda[4]
         sage: crystals.HighestWeight(wt, model='RiggedConfigurations')
         Crystal of rigged configurations of type ['F', 4] and weight Lambda[1] + Lambda[4]
+        sage: La = RootSystem(['A',3,1]).weight_lattice().fundamental_weights()
+        sage: wt = La[0] + La[2]
+        sage: crystals.HighestWeight(wt, model='GeneralizedYoungWalls')
+        Highest weight crystal of generalized Young walls of
+         Cartan type ['A', 3, 1] and highest weight Lambda[0] + Lambda[2]
     """
     cartan_type = dominant_weight.parent().cartan_type()
     if model is None:
@@ -206,9 +211,9 @@ def HighestWeightCrystal(dominant_weight, model=None):
         if cartan_type.type() != 'A':
             raise NotImplementedError("only for affine type A")
         # Make sure it's in the weight lattice
-        P = dominant_weight.parent().root_system.weight_space()
+        P = dominant_weight.parent().root_system.weight_lattice(extended=True)
         wt = P.sum_of_terms((i, c) for i,c in dominant_weight)
-        return CrystalOfGeneralizedYoungWalls(cartan_type.rank(), wt)
+        return CrystalOfGeneralizedYoungWalls(cartan_type.rank()-1, wt)
 
     if model == 'RiggedConfigurations':
         # Make sure it's in the weight lattice
@@ -256,7 +261,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         EXAMPLES::
 
             sage: C = CartanType(['E',6])
-            sage: La =C.root_system().weight_lattice().fundamental_weights()
+            sage: La = C.root_system().weight_lattice().fundamental_weights()
             sage: crystals.HighestWeight(2*La[2])
             Finite dimensional highest weight crystal of type ['E', 6] and highest weight 2*Lambda[2]
         """

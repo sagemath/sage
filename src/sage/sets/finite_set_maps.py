@@ -16,7 +16,9 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
+import itertools
 
 from sage.structure.parent import Parent
 from sage.rings.integer import Integer
@@ -25,7 +27,6 @@ from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.monoids import Monoids
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.combinat.cartesian_product import CartesianProduct
 from sage.sets.integer_range import IntegerRange
 from sage.sets.finite_set_map_cy import (
     FiniteSetMap_MN, FiniteSetMap_Set,
@@ -34,8 +35,9 @@ from sage.misc.cachefunc import cached_method
 
 # TODO: finite set maps should be morphisms in the category of finite sets
 
+
 class FiniteSetMaps(UniqueRepresentation, Parent):
-    """
+    r"""
     Maps between finite sets
 
     Constructs the set of all maps between two sets. The sets can be
@@ -47,9 +49,9 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
        :class:`~sage.sets.finite_enumerated_set.FiniteEnumeratedSet`
        is constructed from the iterable.
 
-    3. an integer ``n`` designing the set `\{1, 2, \dots, n\}`. In this case
-       an object of the class :class:`~sage.sets.integer_range.IntegerRange`
-       is constructed.
+    3. an integer ``n`` designing the set `\{0, 1, \dots, n-1\}`. In this case
+       an object of the class :class:`~sage.sets.integer_range.IntegerRange` is
+       constructed.
 
     INPUT:
 
@@ -83,7 +85,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         {'a', 'b'}
         sage: M.codomain()
         {3, 4, 5}
-        sage: for f in M: print f
+        sage: for f in M: print(f)
         map: a -> 3, b -> 3
         map: a -> 3, b -> 4
         map: a -> 3, b -> 5
@@ -117,7 +119,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
     This makes `M` into a monoid::
 
         sage: M.category()
-        Join of Category of finite monoids and Category of finite enumerated sets
+        Category of finite enumerated monoids
         sage: M.one()
         map: 1 -> 1, 2 -> 2, 3 -> 3
 
@@ -203,8 +205,9 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         """
         return self.codomain().cardinality()**self.domain().cardinality()
 
+
 class FiniteSetMaps_MN(FiniteSetMaps):
-    """
+    r"""
     The set of all maps from `\{1, 2, \dots, m\}` to `\{1, 2, \dots, n\}`.
 
     Users should use the factory class :class:`FiniteSetMaps` to
@@ -338,7 +341,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
             sage: FiniteSetMaps(1,1).list()
             [[0]]
         """
-        for v in CartesianProduct(*([range(self._n)]*self._m)):
+        for v in itertools.product(range(self._n), repeat=self._m):
             yield self._from_list_(v)
 
     def _from_list_(self, v):
@@ -390,7 +393,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
             Maps from {'a', 'b'} to {3, 4, 5}
             sage: M.cardinality()
             9
-            sage: for f in M: print f
+            sage: for f in M: print(f)
             map: a -> 3, b -> 3
             map: a -> 3, b -> 4
             map: a -> 3, b -> 5
@@ -477,7 +480,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
 
 
 class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
-    """
+    r"""
     The sets of all maps from `\{1, 2, \dots, n\}` to itself
 
     Users should use the factory class :class:`FiniteSetMaps` to
@@ -498,7 +501,7 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
 
             sage: M = FiniteSetMaps(3)
             sage: M.category()
-            Join of Category of finite monoids and Category of finite enumerated sets
+            Category of finite enumerated monoids
             sage: M.__class__
             <class 'sage.sets.finite_set_maps.FiniteSetEndoMaps_N_with_category'>
             sage: TestSuite(M).run()
@@ -562,7 +565,7 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
 
             sage: M = FiniteSetMaps(["a", "b", "c"])
             sage: M.category()
-            Join of Category of finite monoids and Category of finite enumerated sets
+            Category of finite enumerated monoids
             sage: M.__class__
             <class 'sage.sets.finite_set_maps.FiniteSetEndoMaps_Set_with_category'>
             sage: TestSuite(M).run()

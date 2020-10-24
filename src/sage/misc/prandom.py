@@ -25,10 +25,10 @@ to run these examples inside a module.) ::
     sage: from sage.misc.prandom import randrange
     sage: from sage.misc.randstate import current_randstate
     sage: def test1():
-    ...      return sum([randrange(100) for i in range(100)])
+    ....:    return sum([randrange(100) for i in range(100)])
     sage: def test2():
-    ...      randrange = current_randstate().python_random().randrange
-    ...      return sum([randrange(100) for i in range(100)])
+    ....:    randrange = current_randstate().python_random().randrange
+    ....:    return sum([randrange(100) for i in range(100)])
 
 Test2 will be slightly faster than test1, but they give the same answer::
 
@@ -68,7 +68,7 @@ def _pyrand():
 
         sage: from sage.misc.prandom import _pyrand
         sage: _pyrand()
-        <random.Random object at 0x...>
+        <...random.Random object at 0x...>
         sage: _pyrand().getrandbits(10)
         114L
     """
@@ -152,9 +152,9 @@ def shuffle(x, random=None):
 
 def sample(population, k):
     r"""
-    Chooses k unique random elements from a population sequence.
+    Choose k unique random elements from a population sequence.
 
-    Returns a new list containing elements from the population while
+    Return a new list containing elements from the population while
     leaving the original population unchanged.  The resulting list is
     in selection order so that all sub-slices will also be valid random
     samples.  This allows raffle winners (the sample) to be partitioned
@@ -164,15 +164,16 @@ def sample(population, k):
     population contains repeats, then each occurrence is a possible
     selection in the sample.
 
-    To choose a sample in a range of integers, use xrange as an argument.
-    This is especially fast and space efficient for sampling from a
-    large population:   sample(xrange(10000000), 60)
+    To choose a sample in a range of integers, use xrange as an
+    argument (in Python 2) or range (in Python 3).  This is especially
+    fast and space efficient for sampling from a large population:
+    sample(range(10000000), 60)
 
     EXAMPLES::
 
         sage: sample(["Here", "I", "come", "to", "save", "the", "day"], 3)
         ['Here', 'to', 'day']
-        sage: sample(xrange(2^30), 7)
+        sage: sample(range(2^30), 7)
         [357009070, 558990255, 196187132, 752551188, 85926697, 954621491, 624802848]
     """
     return _pyrand().sample(population, k)

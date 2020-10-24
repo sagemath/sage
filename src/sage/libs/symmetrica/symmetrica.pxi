@@ -53,7 +53,7 @@ cdef extern from 'symmetrica/macro.h':
         HOMSYM = 13
         SCHUBERT = 14
         INTEGERVECTOR = 15
-        INEGER_VECTOR = 15
+        INTEGER_VECTOR = 15
         INT_VECTOR = 15
         INTVECTOR = 15
         KOSTKA = 16
@@ -401,7 +401,7 @@ cdef void late_import():
            SymmetricFunctions, \
            sqrt, \
            builtinlist, \
-           MPolynomialRing_generic, is_MPolynomial,\
+           MPolynomialRing_base, is_MPolynomial,\
            SchubertPolynomialRing, SchubertPolynomial_class,\
            two, fifteen, thirty, zero, sage_maxint
 
@@ -448,11 +448,11 @@ cdef void late_import():
     import sage.combinat.sf.sf
     SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
 
-    import __builtin__
-    builtinlist = __builtin__.list
+    import builtins
+    builtinlist = builtins.list
 
     import sage.rings.polynomial.multi_polynomial_ring
-    MPolynomialRing_generic = sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_generic
+    MPolynomialRing_base = sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_base
     import sage.rings.polynomial.multi_polynomial_element
     is_MPolynomial = sage.rings.polynomial.multi_polynomial_element.is_MPolynomial
 
@@ -470,7 +470,6 @@ cdef void late_import():
 cdef object _py(OP a):
     cdef OBJECTKIND objk
     objk = s_o_k(a)
-    #print objk
     if objk == INTEGER:
         return _py_int(a)
     elif objk == LONGINT:
@@ -511,7 +510,7 @@ cdef object _py(OP a):
         return _py_schubert(a)
     else:
         #println(a)
-        raise NotImplementedError, str(objk)
+        raise NotImplementedError(str(objk))
 
 cdef int _op(object a, OP result) except -1:
     late_import()
@@ -522,7 +521,7 @@ cdef int _op(object a, OP result) except -1:
     elif isinstance(a, Rational):
         _op_fraction(a, result)
     else:
-        raise TypeError, "cannot convert a (= %s) to OP"%a
+        raise TypeError("cannot convert a (= %s) to OP" % a)
 
 def test_integer(object x):
     """
@@ -546,7 +545,7 @@ def test_integer(object x):
         -1267650600228229401496703205376
         sage: for i in range(100):
         ....:     if test_integer(2^i) != 2^i:
-        ....:         print "Failure at", i
+        ....:         print("Failure at {}".format(i))
     """
     cdef OP a = callocobject()
     _op_integer(x, a)
@@ -838,12 +837,12 @@ cdef object _op_polynom(object d, OP res):
 
     poly_ring = d.parent()
 
-    if not isinstance(poly_ring, MPolynomialRing_generic):
-        raise TypeError, "you must pass a multivariate polynomial"
+    if not isinstance(poly_ring, MPolynomialRing_base):
+        raise TypeError("you must pass a multivariate polynomial")
     base_ring = poly_ring.base_ring()
 
     if not ( base_ring == ZZ or base_ring == QQ):
-        raise TypeError, "the base ring must be either ZZ or QQ"
+        raise TypeError("the base ring must be either ZZ or QQ")
 
     cdef OP c = callocobject(), v = callocobject()
     cdef OP pointer = res
@@ -877,7 +876,7 @@ cdef object _py_schur(OP a):
         return SymmetricFunctions(ZZ).s()(0)
 
     #Figure out the parent ring of a coefficient
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
 
     s = SymmetricFunctions(R).s()
     z = s(0)
@@ -893,7 +892,7 @@ cdef object _py_monomial(OP a): #Monomial symmetric functions
     if len(z_elt) == 0:
         return SymmetricFunctions(ZZ).m()(0)
 
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
 
     m = SymmetricFunctions(R).m()
     z = m(0)
@@ -913,7 +912,7 @@ cdef object _py_powsym(OP a):  #Power-sum symmetric functions
     if len(z_elt) == 0:
         return SymmetricFunctions(ZZ).p()(0)
 
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
 
     p = SymmetricFunctions(R).p()
     z = p(0)
@@ -934,7 +933,7 @@ cdef object _py_elmsym(OP a): #Elementary symmetric functions
     if len(z_elt) == 0:
         return SymmetricFunctions(ZZ).e()(0)
 
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
 
     e = SymmetricFunctions(R).e()
     z = e(0)
@@ -955,7 +954,7 @@ cdef object _py_homsym(OP a): #Homogenous symmetric functions
     if len(z_elt) == 0:
         return SymmetricFunctions(ZZ).h()(0)
 
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
 
     h = SymmetricFunctions(R).h()
     z = h(0)
@@ -990,7 +989,7 @@ cdef void* _op_schur_general_sf(object f, OP res):
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
-        raise ValueError, "the base ring must be either ZZ or QQ"
+        raise ValueError("the base ring must be either ZZ or QQ")
 
     _op_schur_general_dict( f.monomial_coefficients(), res)
 
@@ -1002,23 +1001,23 @@ cdef void* _op_schur_general_dict(object d, OP res):
     cdef INT n, i
 
 
-    keys = d.keys()
+    keys = builtinlist(d)
     n = len(keys)
 
     if n == 0:
-        raise ValueError, "the dictionary must be nonempty"
+        raise ValueError("the dictionary must be nonempty")
 
-    b_skn_s( callocobject(), callocobject(), NULL, res)
-    _op_partition( keys[0], s_s_s(res))
-    _op( d[keys[0]], s_s_k(res))
+    b_skn_s(callocobject(), callocobject(), NULL, res)
+    _op_partition(keys[0], s_s_s(res))
+    _op(d[keys[0]], s_s_k(res))
 
 
     for i from 0 < i < n:
         next = callocobject()
 
-        b_skn_s( callocobject(), callocobject(), NULL, next)
-        _op_partition( keys[i], s_s_s(next))
-        _op( d[keys[i]], s_s_k(next))
+        b_skn_s(callocobject(), callocobject(), NULL, next)
+        _op_partition(keys[i], s_s_s(next))
+        _op(d[keys[i]], s_s_k(next))
 
         insert(next, res, NULL, NULL)
 
@@ -1043,7 +1042,7 @@ cdef void* _op_schubert_sp(object f, OP res):
     late_import()
     base_ring = f.parent().base_ring()
     if not ( base_ring is QQ or base_ring is ZZ ):
-        raise ValueError, "the base ring must be either ZZ or QQ"
+        raise ValueError("the base ring must be either ZZ or QQ")
 
     _op_schubert_dict( f.monomial_coefficients(), res)
 
@@ -1054,46 +1053,48 @@ cdef void* _op_schubert_dict(object d, OP res):
     cdef OP pointer = res
     cdef INT n, i
 
-    keys = d.keys()
+    keys = builtinlist(d)
     n = len(keys)
 
     if n == 0:
-        raise ValueError, "the dictionary must be nonempty"
+        raise ValueError("the dictionary must be nonempty")
 
-    b_skn_sch( callocobject(), callocobject(), NULL, res)
-    _op_permutation( keys[0], s_sch_s(res))
-    _op( d[keys[0]], s_sch_k(res))
+    b_skn_sch(callocobject(), callocobject(), NULL, res)
+    _op_permutation(keys[0], s_sch_s(res))
+    _op(d[keys[0]], s_sch_k(res))
 
 
     for i from 0 < i < n:
         next = callocobject()
 
-        b_skn_sch( callocobject(), callocobject(), NULL, next)
-        _op_permutation( keys[i], s_sch_s(next))
-        _op( d[keys[i]], s_sch_k(next))
+        b_skn_sch(callocobject(), callocobject(), NULL, next)
+        _op_permutation(keys[i], s_sch_s(next))
+        _op(d[keys[i]], s_sch_k(next))
 
         insert(next, res, NULL, NULL)
 
 cdef object _py_schubert(OP a):
     late_import()
     cdef OP pointer = a
-    z_elt = {}
+    cdef dict z_elt = {}
 
-    if a == NULL:
-        return SchubertPolynomialRing(ZZ)(0)
+    # SCHUBERT is (like) a list, so we also need to make sure it is not empty
+    if a == NULL or empty_listp(a):
+        return SchubertPolynomialRing(ZZ).zero()
 
     while pointer != NULL:
-        z_elt[ _py(s_s_s(pointer)).remove_extra_fixed_points() ] = _py(s_sch_k(pointer))
+        z_elt[_py(s_s_s(pointer)).remove_extra_fixed_points() ] = _py(s_sch_k(pointer))
         pointer = s_sch_n(pointer)
 
-    if len(z_elt) == 0:
-        return SchubertPolynomialRing(ZZ)(0)
+    if not z_elt:
+        return SchubertPolynomialRing(ZZ).zero()
 
-    R = z_elt[ z_elt.keys()[0] ].parent()
+    R = z_elt[next(iter(z_elt))].parent()
     X = SchubertPolynomialRing(R)
-    z = X(0)
-    z._monomial_coefficients = z_elt
-    return z
+    # If the element constructor ends up copying the input dict in the future,
+    #   then this will not be as fast as creating a copy of the zero element
+    #   and explicitly setting the _monomial_coefficients.
+    return X.element_class(X, z_elt)
 
 
 ##########

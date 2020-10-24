@@ -1,0 +1,17 @@
+diff --git a/setup.py b/setup.py
+index d312416..4fa14c4 100644
+--- a/setup.py
++++ b/setup.py
+@@ -58,9 +58,9 @@ if sys.platform.startswith("darwin"):
+     SUITESPARSE_LIB_DIR = '/usr/local/lib'
+     SUITESPARSE_INC_DIR = '/usr/local/include'
+ else:
+-    if glob("/usr/lib/x86_64-linux-gnu/libsuitesparse*"):
+-        # Ubuntu/Debian
+-        SUITESPARSE_LIB_DIR = "/usr/lib/x86_64-linux-gnu"
++    SUITESPARSE_LIB_SUFF = glob("/usr/lib/*/libsuitesparse*")
++    if SUITESPARSE_LIB_SUFF: # Ubuntu/Debian
++        SUITESPARSE_LIB_DIR = "/usr/lib/"+SUITESPARSE_LIB_SUFF[0].split('/')[3]
+         SUITESPARSE_INC_DIR = "/usr/include/suitesparse"
+     elif glob("/usr/lib64/libsuitesparse*"):
+         # CentOS/Fedora/RedHat

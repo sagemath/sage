@@ -31,7 +31,9 @@ linear in ``capacity``.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "bitset.pxi"
+from .bitset_base cimport *
+from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
+
 
 cdef class FrozenBitset:
     r"""
@@ -47,7 +49,7 @@ cdef class FrozenBitset:
 
     The interface in this class mirrors the interface in the ``frozenset``
     data type of Python. See the Python documentation on `set types
-    <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+    <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
     for more details on Python's ``set`` and ``frozenset`` classes.
 
     .. warning::
@@ -92,11 +94,11 @@ cdef class FrozenBitset:
     `\{0, 1, 2, \dots, k\}` and the membership in ``FB`` of each `i` is
     determined by the binary value `b_i`.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`Bitset`
 
-        - Python's `set types <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+        - Python's `set types <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
 
     EXAMPLES:
 
@@ -144,9 +146,9 @@ cdef class FrozenBitset:
 
         sage: def bitcmp(a, b, c):  # custom function for comparing bitsets
         ....:     print(a == b == c)
-        ....:     print(a <= b, b <= c, a <= c)
-        ....:     print(a >= b, b >= c, a >= c)
-        ....:     print(a != b, b != c, a != c)
+        ....:     print((a <= b, b <= c, a <= c))
+        ....:     print((a >= b, b >= c, a >= c))
+        ....:     print((a != b, b != c, a != c))
         sage: a = Bitset("1010110"); b = FrozenBitset(a); c = FrozenBitset(b)
         sage: a; b; c
         1010110
@@ -213,8 +215,11 @@ cdef class FrozenBitset:
     Recover the primes from the bitset::
 
         sage: for b in F:
-        ....:     print b,
-        2 3 5 7 11 13 17 19 23 29
+        ....:     print(b)
+        2
+        3
+        ...
+        29
         sage: list(F)
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
@@ -273,7 +278,7 @@ cdef class FrozenBitset:
         sage: FrozenBitset("110110", capacity=-2)
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to mp_bitcnt_t
+        OverflowError: can...t convert negative value to mp_bitcnt_t
     """
     def __cinit__(self, iter=None, capacity=None):
         """
@@ -379,12 +384,12 @@ cdef class FrozenBitset:
                 raise ValueError("Bitsets must not be empty")
             if capacity is None:
                 bitset_realloc(self._bitset, len(iter))
-            elif self._bitset.size != len(iter):
+            elif self._bitset.size != <mp_bitcnt_t>len(iter):
                 raise ValueError("bitset capacity does not match passed string")
             bitset_from_str(self._bitset, iter)
         else:  # an iterable
             iter = list(iter)
-            if len(iter) > 0:
+            if iter:
                 need_capacity = max(iter) + 1
             else:
                 need_capacity = 0
@@ -409,16 +414,16 @@ cdef class FrozenBitset:
 
     def __getstate__(self):
         """
-        Return the current state of the object as a string.
+        Return the current state of the object as a bytes string.
 
         EXAMPLES::
 
-            sage: FrozenBitset('1101').__getstate__()
-            '1101'
-            sage: FrozenBitset('110'*32).__getstate__()
-            '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
+            sage: FrozenBitset('1101').__getstate__() == b'1101'
+            True
+            sage: FrozenBitset('110'*32).__getstate__() == (b'110' * 32)
+            True
         """
-        return str(self)
+        return bytes(self)
 
     def __setstate__(self, state):
         """
@@ -427,15 +432,15 @@ cdef class FrozenBitset:
         EXAMPLES::
 
             sage: a = FrozenBitset()
-            sage: a.__setstate__('1101')
+            sage: a.__setstate__(b'1101')
             sage: a
             1101
-            sage: a.__setstate__('110'*32)
+            sage: a.__setstate__(b'110'*32)
             sage: a
             110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110
         """
         bitset_realloc(self._bitset, len(state))
-        bitset_from_str(self._bitset, state)
+        bitset_from_char(self._bitset, state)
 
     def __iter__(self):
         """
@@ -491,7 +496,7 @@ cdef class FrozenBitset:
             98
         """
         cdef FrozenBitset temp
-        if self._bitset.size >= capacity:
+        if self._bitset.size >= <mp_bitcnt_t>capacity:
             return self
         else:
             temp = self._new(self._bitset.size)
@@ -653,17 +658,17 @@ cdef class FrozenBitset:
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cpdef bint issubset(self, FrozenBitset other) except -1:
@@ -839,6 +844,21 @@ cdef class FrozenBitset:
         """
         return bitset_string(self._bitset)
 
+    def __bytes__(self):
+        """
+        Return a bytes object representing the bitset as a binary vector.
+
+        EXAMPLES::
+
+            sage: a = FrozenBitset('10110')
+            sage: bytes(a) == b'10110'
+            True
+            sage: bytes(FrozenBitset('110' * 32)) == b'110' * 32
+            True
+        """
+        return bitset_bytes(self._bitset)
+
+
     def __repr__(self):
         """
         Return a string representing the bitset as a binary vector.
@@ -851,7 +871,7 @@ cdef class FrozenBitset:
             sage: repr(FrozenBitset('110' * 32))
             '110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110'
         """
-        return self.__str__()
+        return str(self)
 
     cpdef _union(self, FrozenBitset other):
         """
@@ -1253,10 +1273,10 @@ cdef class Bitset(FrozenBitset):
         for a Python set type, the Python ``set`` data type may be
         faster.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :class:`FrozenBitset`
-        - Python's `set types <http://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
+        - Python's `set types <https://docs.python.org/library/stdtypes.html#set-types-set-frozenset>`_
 
     EXAMPLES::
 
@@ -1296,7 +1316,7 @@ cdef class Bitset(FrozenBitset):
         """
         Raise an error, since mutable ``Bitset``s are not hashable.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: hash(Bitset('110'))
             Traceback (most recent call last):
@@ -1395,17 +1415,17 @@ cdef class Bitset(FrozenBitset):
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
-        if op == 2:  # ==
+        if op == Py_EQ:
             return bitset_eq(left._bitset, right._bitset)
-        elif op == 3:  # !=
+        elif op == Py_NE:
             return not bitset_eq(left._bitset, right._bitset)
-        elif op == 0:  # <
+        elif op == Py_LT:
             return bitset_issubset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 1:  # <=
+        elif op == Py_LE:
             return bitset_issubset(left._bitset, right._bitset)
-        elif op == 4:  # >
+        elif op == Py_GT:
             return bitset_issuperset(left._bitset, right._bitset) and not bitset_eq(left._bitset, right._bitset)
-        elif op == 5:  # >=
+        elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
     cdef FrozenBitset _new(self, long int capacity):
@@ -2111,79 +2131,79 @@ def test_bitset(py_a, py_b, long n):
     if a.size != b.size:
         raise ValueError("inputs must have same size")
 
-    print "a", bitset_string(a)
-    print "list a", bitset_list(a)
-    print "a.size", a.size
-    print "len(a)", bitset_len(a)
-    print "a.limbs", a.limbs
-    print "b", bitset_string(b)
-    print "a.in(n)  ", bitset_in(a, n)
-    print "a.not_in(n)  ", bitset_not_in(a, n)
+    print("a", bitset_string(a))
+    print("list a", bitset_list(a))
+    print("a.size", a.size)
+    print("len(a)", bitset_len(a))
+    print("a.limbs", a.limbs)
+    print("b", bitset_string(b))
+    print("a.in(n)  ", bitset_in(a, n))
+    print("a.not_in(n)  ", bitset_not_in(a, n))
     bitset_add(a, n)
-    print "a.add(n)    ", bitset_string(a)
+    print("a.add(n)    ", bitset_string(a))
     bitset_from_str(a, py_a)
     bitset_discard(a, n)
-    print "a.discard(n)  ", bitset_string(a)
+    print("a.discard(n)  ", bitset_string(a))
     bitset_from_str(a, py_a)
     bitset_set_to(a, n, bit)
-    print "a.set_to(n) ", bitset_string(a)
+    print("a.set_to(n) ", bitset_string(a))
     bitset_from_str(a, py_a)
     bitset_flip(a, n)
-    print "a.flip(n)   ", bitset_string(a)
+    print("a.flip(n)   ", bitset_string(a))
     bitset_set_first_n(a, n)
-    print "a.set_first_n(n)   ", bitset_string(a)
-    print "a.first_in_complement()   ", bitset_first_in_complement(a)
+    print("a.set_first_n(n)   ", bitset_string(a))
+    print("a.first_in_complement()   ", bitset_first_in_complement(a))
 
     bitset_from_str(a, py_a)
     bitset_from_str(b, py_b)
-    print "a.isempty() ", bitset_isempty(a)
-    print "a.eq(b)     ", bitset_eq(a, b)
-    print "a.cmp(b)    ", bitset_cmp(a, b)
-    print "a.lex_cmp(b)", bitset_lex_cmp(a, b)
-    print "a.issubset(b)", bitset_issubset(a, b)
-    print "a.issuperset(b)", bitset_issuperset(a, b)
+    print("a.isempty() ", bitset_isempty(a))
+    print("a.eq(b)     ", bitset_eq(a, b))
+    print("a.cmp(b)    ", bitset_cmp(a, b))
+    print("a.lex_cmp(b)", bitset_lex_cmp(a, b))
+    print("a.issubset(b)", bitset_issubset(a, b))
+    print("a.issuperset(b)", bitset_issuperset(a, b))
 
     bitset_from_str(a, py_a)
     bitset_from_str(b, py_b)
 
     bitset_init(r, a.size)
     bitset_copy(r, a)
-    print "a.copy()    ", bitset_string(r)
+    print("a.copy()    ", bitset_string(r))
     bitset_clear(r)
-    print "r.clear()    ", bitset_string(r)
+    print("r.clear()    ", bitset_string(r))
     bitset_complement(r, a)
-    print "complement a       ", bitset_string(r)
+    print("complement a       ", bitset_string(r))
     bitset_intersection(r, a, b)
-    print "a intersect b     ", bitset_string(r)
+    print("a intersect b     ", bitset_string(r))
     bitset_union(r, a, b)
-    print "a union b      ", bitset_string(r)
+    print("a union b      ", bitset_string(r))
     bitset_difference(r, a, b)
-    print "a minus b     ", bitset_string(r)
+    print("a minus b     ", bitset_string(r))
     bitset_symmetric_difference(r, a, b)
-    print "a symmetric_difference b     ", bitset_string(r)
+    print("a symmetric_difference b     ", bitset_string(r))
 
     bitset_rshift(r, a, n)
-    print "a.rshift(n) ", bitset_string(r)
+    print("a.rshift(n) ", bitset_string(r))
 
     bitset_lshift(r, a, n)
-    print "a.lshift(n) ", bitset_string(r)
+    print("a.lshift(n) ", bitset_string(r))
 
-    print "a.first()          ", bitset_first(a)
-    print "a.next(n)          ", bitset_next(a, n)
-    print "a.first_diff(b)    ", bitset_first_diff(a, b)
-    print "a.next_diff(b, n)  ", bitset_next_diff(a, b, n)
+    print("a.first()          ", bitset_first(a))
+    print("a.next(n)          ", bitset_next(a, n))
+    print("a.first_diff(b)    ", bitset_first_diff(a, b))
+    print("a.next_diff(b, n)  ", bitset_next_diff(a, b, n))
 
-    print "a.hamming_weight() ", bitset_hamming_weight(a)
+    print("a.hamming_weight() ", bitset_hamming_weight(a))
 
     morphism = {}
     for i in xrange(a.size):
         morphism[i] = a.size - i - 1
     bitset_map(r, a, morphism)
-    print "a.map(m) ", bitset_string(r)
+    print("a.map(m) ", bitset_string(r))
 
     data = bitset_pickle(a)
     bitset_unpickle(r, data)
-    print "a == loads(dumps(a)) ", bitset_eq(r, a)
+    print("a == loads(dumps(a)) ", bitset_eq(r, a))
 
     cdef bitset_t s
     bitset_init(s, a.size)
@@ -2192,58 +2212,58 @@ def test_bitset(py_a, py_b, long n):
         bitset_rshift(r, b, 3)
         bitset_rshift(r, r, 77)
         bitset_rshift(s, b, 80)
-        print "rshifts add ", bitset_eq(s, r)
+        print("rshifts add ", bitset_eq(s, r))
 
         bitset_lshift(r, b, 69)
         bitset_lshift(r, r, 6)
         bitset_lshift(s, b, 75)
-        print "lshifts add ", bitset_eq(s, r)
+        print("lshifts add ", bitset_eq(s, r))
 
         bitset_intersection(r, a, b)
         bitset_intersection(s, b, a)
-        print "intersection commutes", bitset_eq(s, r)
+        print("intersection commutes", bitset_eq(s, r))
 
         bitset_union(r, a, b)
         bitset_union(s, b, a)
-        print "union commutes ", bitset_eq(s, r)
+        print("union commutes ", bitset_eq(s, r))
 
         bitset_complement(r, b)
         bitset_complement(s, r)
-        print "not not = id", bitset_eq(s, b)
+        print("not not = id", bitset_eq(s, b))
 
         bitset_copy(r, b)
         bitset_flip(r, n)
-        print "flipped bit ", bitset_first_diff(b, r)
+        print("flipped bit ", bitset_first_diff(b, r))
 
         bitset_clear(r)
         bitset_add(r, n)
-        print "add bit     ", bitset_first(r)
+        print("add bit     ", bitset_first(r))
 
         bitset_clear(r)
         bitset_complement(r, r)
         bitset_discard(r, n)
         bitset_complement(r, r)
-        print "discard bit   ", bitset_first(r)
+        print("discard bit   ", bitset_first(r))
 
         bitset_clear(r)
         bitset_add(r, 10)
         bitset_lshift(r, r, 68)
         bitset_flip(r, 78)
-        print "lshift add unset ok", bitset_isempty(r)
+        print("lshift add unset ok", bitset_isempty(r))
 
         bitset_clear(r)
         bitset_add(r, 19)
         bitset_rshift(r, r, 8)
         bitset_discard(r, 11)
-        print "rshift set unset ok", bitset_isempty(r)
+        print("rshift set unset ok", bitset_isempty(r))
 
-    print "reallocating a     ", bitset_string(a)
+    print("reallocating a     ", bitset_string(a))
     bitset_realloc(a, n)
-    print "to size %d         " % n, bitset_string(a)
+    print("to size %d         " % n, bitset_string(a))
     bitset_realloc(a, 2 * n)
-    print "to size %d         " % (2 * n), bitset_string(a)
+    print("to size %d         " % (2 * n), bitset_string(a))
     bitset_realloc(a, b.size)
-    print "to original size   ", bitset_string(a)
+    print("to original size   ", bitset_string(a))
 
     bitset_free(a)
     bitset_free(b)
@@ -2267,7 +2287,7 @@ def test_bitset_set_first_n(py_a, long n):
 
     bitset_from_str(a, py_a)
     bitset_set_first_n(a, n)
-    print "a.set_first_n(n)   ", bitset_string(a)
+    print("a.set_first_n(n)   ", bitset_string(a))
     bitset_free(a)
 
 
@@ -2292,13 +2312,13 @@ def test_bitset_remove(py_a, long n):
     cdef bitset_t a
     bitset_from_str(a, py_a)
 
-    print "a", bitset_string(a)
-    print "a.size", a.size
-    print "a.limbs", a.limbs
-    print "n", n
+    print("a", bitset_string(a))
+    print("a.size", a.size)
+    print("a.limbs", a.limbs)
+    print("n", n)
 
     bitset_remove(a, n)
-    print "a.remove(n)  ", bitset_string(a)
+    print("a.remove(n)  ", bitset_string(a))
 
     bitset_free(a)
 
@@ -2321,8 +2341,8 @@ def test_bitset_pop(py_a):
     cdef bitset_t a
     bitset_from_str(a, py_a)
     i = bitset_pop(a)
-    print "a.pop()  ", i
-    print "new set: ", bitset_string(a)
+    print("a.pop()  ", i)
+    print("new set: ", bitset_string(a))
     bitset_free(a)
 
 

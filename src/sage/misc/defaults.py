@@ -25,19 +25,65 @@ var_name = 'x'
 
 
 def variable_names(n, name=None):
+    r"""
+    Converts a root string into a tuple of variable names by adding
+    numbers in sequence.
+
+    INPUT:
+
+    - ``n`` a non-negative Integer; the number of variable names to
+       output
+    - ``names`` a string (default: ``None``); the root of the variable
+      name.
+
+    EXAMPLES::
+
+        sage: from sage.misc.defaults import variable_names
+        sage: variable_names(0)
+        ()
+        sage: variable_names(1)
+        ('x',)
+        sage: variable_names(1,'alpha')
+        ('alpha',)
+        sage: variable_names(2,'alpha')
+        ('alpha0', 'alpha1')
+    """
     if name is None:
         name = var_name
     n = int(n)
     if n == 1:
-        return [name]
+        return (name,)
     return tuple(['%s%s'%(name,i) for i in range(n)])
 
 def latex_variable_names(n, name=None):
+    r"""
+    Converts a root string into a tuple of variable names by adding
+    numbers in sequence.
+
+    INPUT:
+
+    - ``n`` a non-negative Integer; the number of variable names to
+      output
+    - ``names`` a string (default: ``None``); the root of the variable
+      name.
+
+    EXAMPLES::
+
+        sage: from sage.misc.defaults import latex_variable_names
+        sage: latex_variable_names(0)
+        ()
+        sage: latex_variable_names(1,'a')
+        ('a',)
+        sage: latex_variable_names(3,beta)
+        ('beta_{0}', 'beta_{1}', 'beta_{2}')
+        sage: latex_variable_names(3,r'\beta')
+        ('\\beta_{0}', '\\beta_{1}', '\\beta_{2}')
+    """
     if name is None:
         name = var_name
     n = int(n)
     if n == 1:
-        return [name]
+        return (name,)
     v = tuple(['%s_{%s}'%(name,i) for i in range(n)])
     return v
 

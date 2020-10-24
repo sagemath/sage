@@ -7,12 +7,12 @@
 "установить" его в локальную систему TeX (под "установкой" подразумевается
 копирование одного файла). См. :ref:`installation`, а также раздел "Make
 SageTeX known to TeX" `Руководства по установке Sage
-<http://sagemath.org/doc/installation/index.html>`_ (`данная ссылка
-<../installation/index.html>`_ ведет к локальному размещению копии руководства
+<http://doc.sagemath.org/html/en/installation/index.html>`_ (`данная ссылка
+<../../en/installation/index.html>`_ ведет к локальному размещению копии руководства
 по установке).
 
 В этом уроке показан небольшой пример использования SageTeX. Полная документация
-находится в ``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``, где
+находится в ``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``, где
 ``SAGE_ROOT`` - это директория, в которой установлен Sage. Эта папка содержит
 документацию, файл с примером и полезные скрипты Python.
 
@@ -89,4 +89,4 @@ SageTeX known to TeX" `Руководства по установке Sage
 
 SageTeX предлагает много возможностей, и так как Sage и LaTeX являются
 мощными инструментами, то стоит изучить
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``.
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``.

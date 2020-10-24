@@ -44,14 +44,17 @@ ACKNOWLEDGEMENT (from sympow readme):
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function, absolute_import
 
 import os
 
 from sage.structure.sage_object import SageObject
-from sage.misc.all import pager, verbose
+from sage.misc.all import pager
+from sage.misc.verbose import verbose
 import sage.rings.all
+
 
 class Sympow(SageObject):
     r"""
@@ -67,7 +70,7 @@ class Sympow(SageObject):
     """
     def _repr_(self):
         """
-        Returns a string describing this calculator module
+        Return a string describing this calculator module
         """
         return "Watkins Symmetric Power L-function Calculator"
 
@@ -75,8 +78,9 @@ class Sympow(SageObject):
         """
         Used to call sympow with given args
         """
-        cmd = 'sympow %s'%args
-        v = os.popen(cmd).read().strip()
+        cmd = 'sympow %s' % args
+        with os.popen(cmd) as f:
+            v = f.read().strip()
         verbose(v, level=2)
         return v
 
@@ -147,11 +151,10 @@ class Sympow(SageObject):
         v = self('-sp %sp%s %s'%(n, prec, self._curve_str(E)))
         i = v.rfind(': ')
         if i == -1:
-            print self._fix_err(v)
+            print(self._fix_err(v))
             raise RuntimeError("failed to compute symmetric power")
         x = v[i+2:]
         return x
-
 
     def Lderivs(self, E, n, prec, d):
         r"""
@@ -183,7 +186,7 @@ class Sympow(SageObject):
 
         EXAMPLES::
 
-            sage: print sympow.Lderivs(EllipticCurve('11a'), 1, 16, 2)  # not tested
+            sage: print(sympow.Lderivs(EllipticCurve('11a'), 1, 16, 2))  # not tested
             ...
              1n0: 2.538418608559107E-01
              1w0: 2.538418608559108E-01
@@ -234,7 +237,7 @@ class Sympow(SageObject):
         s = 'Modular Degree is '
         i = v.find(s)
         if i == -1:
-            print self._fix_err(v)
+            print(self._fix_err(v))
             raise RuntimeError("failed to compute modular degree")
         return sage.rings.all.Integer(v[i+len(s):])
 
@@ -292,7 +295,7 @@ class Sympow(SageObject):
         s = 'Analytic Rank is '
         i = v.rfind(s)
         if i == -1:
-            print self._fix_err(v)
+            print(self._fix_err(v))
             raise RuntimeError("failed to compute analytic rank")
         j = v.rfind(':')
         r = sage.rings.all.Integer(v[i+len(s):j])
@@ -305,7 +308,7 @@ class Sympow(SageObject):
         Pre-compute data files needed for computation of n-th symmetric
         powers.
         """
-        print self('-new_data %s'%n)
+        print(self('-new_data %s' % n))
 
     def help(self):
         h = """

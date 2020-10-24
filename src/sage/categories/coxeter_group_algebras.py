@@ -33,35 +33,37 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: KW = W.algebra(K)
                 sage: w = W.an_element()
                 sage: KW.demazure_lusztig_operator_on_basis(w, 0, q1, q2)
-                (-q2)*B[323123] + (q1+q2)*B[123]
+                (-q2)*323123 + (q1+q2)*123
                 sage: KW.demazure_lusztig_operator_on_basis(w, 1, q1, q2)
-                q1*B[1231]
+                q1*1231
                 sage: KW.demazure_lusztig_operator_on_basis(w, 2, q1, q2)
-                q1*B[1232]
+                q1*1232
                 sage: KW.demazure_lusztig_operator_on_basis(w, 3, q1, q2)
-                (q1+q2)*B[123] + (-q2)*B[12]
+                (q1+q2)*123 + (-q2)*12
 
-            At `q_1=1` and `q_2=0` we recover the action of the isobaric divided differences `\pi_i`::
+            At `q_1=1` and `q_2=0` we recover the action of the
+            isobaric divided differences `\pi_i`::
 
                 sage: KW.demazure_lusztig_operator_on_basis(w, 0, 1, 0)
-                B[123]
+                123
                 sage: KW.demazure_lusztig_operator_on_basis(w, 1, 1, 0)
-                B[1231]
+                1231
                 sage: KW.demazure_lusztig_operator_on_basis(w, 2, 1, 0)
-                B[1232]
+                1232
                 sage: KW.demazure_lusztig_operator_on_basis(w, 3, 1, 0)
-                B[123]
+                123
 
-            At `q_1=1` and `q_2=-1` we recover the action of the simple reflection `s_i`::
+            At `q_1=1` and `q_2=-1` we recover the action of the
+            simple reflection `s_i`::
 
                 sage: KW.demazure_lusztig_operator_on_basis(w, 0, 1, -1)
-                B[323123]
+                323123
                 sage: KW.demazure_lusztig_operator_on_basis(w, 1, 1, -1)
-                B[1231]
+                1231
                 sage: KW.demazure_lusztig_operator_on_basis(w, 2, 1, -1)
-                B[1232]
+                1232
                 sage: KW.demazure_lusztig_operator_on_basis(w, 3, 1, -1)
-                B[12]
+                12
             """
             return (q1+q2) * self.monomial(w.apply_simple_projection(i,side=side)) - self.term(w.apply_simple_reflection(i, side=side), q2)
 
@@ -72,19 +74,20 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             INPUT:
 
             - ``q1,q2`` -- two elements of the ground ring `K`
-            - ``side`` -- "left" or "right" (default: "right"): which side to act upon
+            - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
+              which side to act upon
             - ``affine`` -- a boolean (default: ``True``)
 
             The Demazure-Lusztig operator `T_i` is the linear map
-            `R\rightarrow R` obtained by interpolating between the
+            `R \to R` obtained by interpolating between the
             simple projection `\pi_i` (see
             :meth:`CoxeterGroups.ElementMethods.simple_projection`)
             and the simple reflection `s_i` so that `T_i` has
-            eigenvalues `q_1` and `q_2`.
+            eigenvalues `q_1` and `q_2`:
 
             .. MATH::
 
-                (q_1+q_2) \pi_i -q_2 s_i
+                (q_1 + q_2) \pi_i - q_2 s_i.
 
             The Demazure-Lusztig operators give the usual
             representation of the operators `T_i` of the `q_1,q_2`
@@ -104,15 +107,15 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 sage: KW = W.algebra(K)
                 sage: T = KW.demazure_lusztig_operators(q1, q2, affine=True)
                 sage: x = KW.monomial(W.an_element()); x
-                B[123]
+                123
                 sage: T[0](x)
-                (-q2)*B[323123] + (q1+q2)*B[123]
+                (-q2)*323123 + (q1+q2)*123
                 sage: T[1](x)
-                q1*B[1231]
+                q1*1231
                 sage: T[2](x)
-                q1*B[1232]
+                q1*1232
                 sage: T[3](x)
-                (q1+q2)*B[123] + (-q2)*B[12]
+                (q1+q2)*123 + (-q2)*12
 
                 sage: T._test_relations()
 
@@ -168,13 +171,14 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
                 Weyl Group of type ['B', 2] (as a matrix group acting on the ambient space)
                 sage: w = W.an_element()
                 sage: E[w]
-                (q2/(-q1+q2))*B[2121] + ((-q2)/(-q1+q2))*B[121] - B[212] + B[12]
+                (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12
             """
             W = self.basis().keys()
             if not W.cartan_type().is_finite():
-                raise ValueError("The Demazure-Lusztig eigenvectors are only defined for finite Coxeter groups")
+                raise ValueError("the Demazure-Lusztig eigenvectors are only defined for finite Coxeter groups")
             result = self.demazure_lusztig_operators(q1, q2, affine=True).Y_eigenvectors()
             w0 = W.long_element()
             result.affine_lift = w0._mul_
             result.affine_retract = w0._mul_
             return result
+

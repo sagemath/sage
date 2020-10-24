@@ -1,4 +1,0 @@
-#!/bin/sh
-
-mkdir -p "$SAGE_SHARE"/graphs
-cp src/* "$SAGE_SHARE"/graphs/

@@ -1,4 +1,4 @@
-$(INST)/$(M4RI) $(INST)/$(GIVARO) $(INST)/$(NTL)
+m4ri
 
 ----------
 All lines of this file are ignored except the first.

@@ -1,3 +1,7 @@
+# distutils: language = c++
+# distutils: libraries = CBLAS_LIBRARIES
+# distutils: library_dirs = CBLAS_LIBDIR
+# distutils: include_dirs = CBLAS_INCDIR
 """
 Dense matrices over `\ZZ/n\ZZ` for `n < 2^{11}` using LinBox's ``Modular<float>``
 
@@ -6,27 +10,32 @@ AUTHORS:
 - Martin Albrecht
 """
 ###############################################################################
-#   SAGE: Open Source Mathematical Software
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2011 Martin Albrecht <martinralbrecht@googlemail.com>
-#  Distributed under the terms of the GNU General Public License (GPL),
-#  version 2 or any later version.  The full text of the GPL is available at:
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
 
 from sage.rings.finite_rings.stdint cimport *
-from sage.libs.linbox.echelonform cimport BlasMatrixFloat as BlasMatrix
-from sage.libs.linbox.modular cimport ModFloatField as ModField, ModFloatFieldElement as ModFieldElement
-from sage.libs.linbox.echelonform cimport EchelonFormDomainFloat as EchelonFormDomain
 
-from sage.libs.linbox.fflas cimport ModFloat_fgemm as Mod_fgemm, ModFloat_fgemv as Mod_fgemv, \
-        ModFloatDet as ModDet, \
-        ModFloatRank as ModRank, ModFloat_echelon as Mod_echelon, \
-        ModFloat_applyp as Mod_applyp, \
-        ModFloat_MinPoly as Mod_MinPoly, \
-        ModFloat_CharPoly as Mod_CharPoly
+from sage.libs.linbox.givaro cimport \
+    Modular_float as ModField, \
+    Poly1Dom, Dense
+
+from sage.libs.linbox.linbox cimport \
+    DenseMatrix_Modular_float as DenseMatrix, \
+    reducedRowEchelonize
+
+from sage.libs.linbox.fflas cimport \
+    fgemm, pfgemm, fgemv, Det, pDet, Rank, pRank, ReducedRowEchelonForm, pReducedRowEchelonForm, applyP, \
+    MinPoly, CharPoly, MinPoly, \
+    ModFloatDensePolynomial as ModDensePoly
+
+ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
 
 # LinBox supports up to 2^11 using float but that's double dog slow,
 # so we pick a smaller value for crossover

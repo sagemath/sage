@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Isometries
 
@@ -32,14 +33,14 @@ UHP for convenience::
     [1 0]
 """
 
-#***********************************************************************
+# **********************************************************************
 #       Copyright (C) 2013 Greg Laun <glaun@math.umd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 
 from copy import copy
 from sage.categories.homset import Hom
@@ -55,6 +56,7 @@ from sage.functions.all import arccosh, sign
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 from sage.geometry.hyperbolic_space.hyperbolic_geodesic import HyperbolicGeodesic
+
 
 class HyperbolicIsometry(Morphism):
     r"""
@@ -162,7 +164,7 @@ class HyperbolicIsometry(Morphism):
             \end{array}\right)
         """
         if self.domain().is_isometry_group_projective():
-            return "\pm " + latex(self._matrix)
+            return r"\pm " + latex(self._matrix)
         else:
             return latex(self._matrix)
 
@@ -214,7 +216,8 @@ class HyperbolicIsometry(Morphism):
         """
         if self.domain().is_isometry_group_projective():
             # Special care must be taken for projective groups
-            m = matrix(self._matrix.nrows(), map(abs, self._matrix.list()))
+            m = matrix(self._matrix.nrows(),
+                       [abs(x) for x in  self._matrix.list()])
             m.set_immutable()
         else:
             m = self._matrix
@@ -357,16 +360,16 @@ class HyperbolicIsometry(Morphism):
         EXAMPLES::
 
             sage: HyperbolicPlane().UHP().get_isometry(identity_matrix(2)).model()
-            Hyperbolic plane in the Upper Half Plane Model model
+            Hyperbolic plane in the Upper Half Plane Model
 
             sage: HyperbolicPlane().PD().get_isometry(identity_matrix(2)).model()
-            Hyperbolic plane in the Poincare Disk Model model
+            Hyperbolic plane in the Poincare Disk Model
 
             sage: HyperbolicPlane().KM().get_isometry(identity_matrix(3)).model()
-            Hyperbolic plane in the Klein Disk Model model
+            Hyperbolic plane in the Klein Disk Model
 
             sage: HyperbolicPlane().HM().get_isometry(identity_matrix(3)).model()
-            Hyperbolic plane in the Hyperboloid Model model
+            Hyperbolic plane in the Hyperboloid Model
         """
         return self.domain()
 
@@ -442,7 +445,7 @@ class HyperbolicIsometry(Morphism):
 
     def preserves_orientation(self):
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -535,12 +538,12 @@ class HyperbolicIsometry(Morphism):
 
     def fixed_point_set(self):
         r"""
-        Return the a list containing the fixed point set of orientation-
-        preserving isometries.
+        Return a list containing the fixed point set of
+        orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -653,11 +656,11 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             sage: bool(UHP.dist(I2(p), p) < 10**-9)
             True
         """
-        return self.codomain().get_point(mobius_transform(self._matrix, p.coordinates()))
+        return self.codomain().get_point(moebius_transform(self._matrix, p.coordinates()))
 
     def preserves_orientation(self): #UHP
         r"""
-        Return ``True`` if ``self`` is orientation preserving and ``False``
+        Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
 
         EXAMPLES::
@@ -745,18 +748,18 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         d = sqrt(self._matrix.det()**2)
         tau = sqrt((self._matrix / sqrt(d)).trace()**2)
-        if self.classification() in ['hyperbolic', 'oriention-reversing hyperbolic']:
-            return 2 * arccosh(tau/2)
+        if self.classification() in ['hyperbolic', 'orientation-reversing hyperbolic']:
+            return 2 * arccosh(tau / 2)
         raise TypeError("translation length is only defined for hyperbolic transformations")
 
-    def fixed_point_set(self): #UHP
+    def fixed_point_set(self):  # UHP
         r"""
-        Return the a list or geodesic containing the fixed point set of
+        Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
         OUTPUT:
 
-        - a list of hyperbolic points or a hyperbolic geodesic
+        list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -910,7 +913,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             sage: bool(PD.dist(I2(q), q) < 10**-9)
             True
         """
-        _image = mobius_transform(self._matrix, p.coordinates())
+        _image = moebius_transform(self._matrix, p.coordinates())
         return self.codomain().get_point(_image)
 
     def __mul__(self, other): #PD
@@ -1018,10 +1021,11 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
 #####################################################################
 ## Helper functions
 
-def mobius_transform(A, z):
+
+def moebius_transform(A, z):
     r"""
     Given a matrix ``A`` in `GL(2, \CC)` and a point ``z`` in the complex
-    plane return the mobius transformation action of ``A`` on ``z``.
+    plane return the Möbius transformation action of ``A`` on ``z``.
 
     INPUT:
 
@@ -1034,49 +1038,50 @@ def mobius_transform(A, z):
 
     EXAMPLES::
 
-        sage: from sage.geometry.hyperbolic_space.hyperbolic_model import mobius_transform
-        sage: mobius_transform(matrix(2,[1,2,3,4]),2 + I)
+        sage: from sage.geometry.hyperbolic_space.hyperbolic_model import moebius_transform
+        sage: moebius_transform(matrix(2,[1,2,3,4]),2 + I)
         2/109*I + 43/109
         sage: y = var('y')
-        sage: mobius_transform(matrix(2,[1,0,0,1]),x + I*y)
+        sage: moebius_transform(matrix(2,[1,0,0,1]),x + I*y)
         x + I*y
 
     The matrix must be square and `2 \times 2`::
 
-        sage: mobius_transform(matrix([[3,1,2],[1,2,5]]),I)
+        sage: moebius_transform(matrix([[3,1,2],[1,2,5]]),I)
         Traceback (most recent call last):
         ...
         TypeError: A must be an invertible 2x2 matrix over the complex numbers or a symbolic ring
 
-        sage: mobius_transform(identity_matrix(3),I)
+        sage: moebius_transform(identity_matrix(3),I)
         Traceback (most recent call last):
         ...
         TypeError: A must be an invertible 2x2 matrix over the complex numbers or a symbolic ring
 
     The matrix can be symbolic or can be a matrix over the real
-    or complex numbers, but must be invertible::
+    or complex numbers, but must be provably invertible::
 
-        sage: (a,b,c,d) = var('a,b,c,d');
-        sage: mobius_transform(matrix(2,[a,b,c,d]),I)
+        sage: a,b,c,d = var('a,b,c,d')
+        sage: moebius_transform(matrix(2,[a,b,c,d]),I)
         (I*a + b)/(I*c + d)
-
-        sage: mobius_transform(matrix(2,[0,0,0,0]),I)
+        sage: moebius_transform(matrix(2,[1,b,c,b*c+1]),I)
+        (b + I)/(b*c + I*c + 1)
+        sage: moebius_transform(matrix(2,[0,0,0,0]),I)
         Traceback (most recent call last):
         ...
         TypeError: A must be an invertible 2x2 matrix over the complex numbers or a symbolic ring
     """
-    if A.ncols() == 2 and A.nrows() == 2 and A.det() != 0:
-        (a, b, c, d) = A.list()
+    if A.ncols() == 2 == A.nrows() and A.det() != 0:
+        a, b, c, d = A.list()
         if z == infinity:
             if c == 0:
                 return infinity
-            return a/c
-        if a*d - b*c < 0:
-            w = z.conjugate() # Reverses orientation
+            return a / c
+        if a * d - b * c < 0:
+            w = z.conjugate()  # Reverses orientation
         else:
             w = z
-        if c*z + d == 0:
+        if c * z + d == 0:
             return infinity
-        return (a*w + b) / (c*w + d)
+        return (a * w + b) / (c * w + d)
     raise TypeError("A must be an invertible 2x2 matrix over the"
                     " complex numbers or a symbolic ring")

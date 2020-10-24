@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# creates the tarball in the current dir, to be moved to ../../../upstream
+
+#PATCHLEVEL=".p0"
+PATCHLEVEL=
+
+rm -rf autocliquer/
+git clone https://github.com/dimpase/autocliquer.git
+cd autocliquer/
+
+VERSION=`autoconf --trace='AC_INIT:$2'`
+autoreconf -fi
+automake --add-missing --copy
+./configure
+
+rm -f cliquer-$VERSION.tar.gz
+make dist
+mv cliquer-$VERSION.tar.gz ../
+cd ..
+rm -rf autocliquer/
+
+

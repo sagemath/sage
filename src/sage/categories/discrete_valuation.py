@@ -11,7 +11,7 @@ Discrete Valuation Rings (DVR) and Fields (DVF)
 
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_singleton import Category_singleton
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.fields import Fields
 
 class DiscreteValuationRings(Category_singleton):
@@ -29,9 +29,9 @@ class DiscreteValuationRings(Category_singleton):
         EXAMPLES::
 
             sage: DiscreteValuationRings().super_categories()
-            [Category of principal ideal domains]
+            [Category of euclidean domains]
         """
-        return [PrincipalIdealDomains()]
+        return [EuclideanDomains()]
 
     class ParentMethods:
         @abstract_method
@@ -76,6 +76,51 @@ class DiscreteValuationRings(Category_singleton):
                 sage: x.valuation()
                 2
             """
+
+        def euclidean_degree(self):
+            """
+            Return the Euclidean degree of this element.
+
+            TESTS::
+
+                sage: R.<q> = GF(5)[[]]
+                sage: (q^3).euclidean_degree()
+                3
+                sage: R(0).euclidean_degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: Euclidean degree of the zero element not defined
+
+            """
+            if not self:
+                raise ValueError("Euclidean degree of the zero element not defined")
+            return self.valuation()
+
+        def quo_rem(self, other):
+            """
+            Return the quotient and remainder for Euclidean division
+            of ``self`` by ``other``.
+
+            TESTS::
+
+                sage: R.<q> = GF(5)[[]]
+                sage: (q^2 + q).quo_rem(q)
+                (1 + q, 0)
+                sage: (q + 1).quo_rem(q^2)
+                (0, 1 + q)
+                sage: q.quo_rem(0)
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError: Euclidean division by the zero element not defined
+
+            """
+            if not other:
+                raise ZeroDivisionError("Euclidean division by the zero element not defined")
+            P = self.parent()
+            if self.valuation() >= other.valuation():
+                return P(self / other), P.zero()
+            else:
+                return P.zero(), self
 
         def is_unit(self):
             """

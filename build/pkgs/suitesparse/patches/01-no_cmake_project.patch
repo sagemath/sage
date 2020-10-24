@@ -1,0 +1,68 @@
+diff --git a/Makefile b/Makefile
+index 74941a6..70e7b68 100644
+--- a/Makefile
++++ b/Makefile
+@@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_config.mk
+ # Compile the default rules for each package
+ go: metis
+ 	( cd SuiteSparse_config && $(MAKE) )
+-	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+ 	( cd AMD && $(MAKE) )
+ 	( cd BTF && $(MAKE) )
+ 	( cd CAMD && $(MAKE) )
+@@ -30,7 +29,6 @@ ifneq ($(GPU_CONFIG),)
+ 	( cd GPUQREngine && $(MAKE) )
+ endif
+ 	( cd SPQR && $(MAKE) )
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+ #	( cd PIRO_BAND && $(MAKE) )
+ #	( cd SKYLINE_SVD && $(MAKE) )
+ 
+@@ -38,7 +36,6 @@ endif
+ # (note that CSparse is not installed; CXSparse is installed instead)
+ install: metisinstall
+ 	( cd SuiteSparse_config && $(MAKE) install )
+-	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
+ 	( cd AMD && $(MAKE) install )
+ 	( cd BTF && $(MAKE) install )
+ 	( cd CAMD && $(MAKE) install )
+@@ -55,7 +52,6 @@ ifneq (,$(GPU_CONFIG))
+ 	( cd GPUQREngine && $(MAKE) install )
+ endif
+ 	( cd SPQR && $(MAKE) install )
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
+ #	( cd PIRO_BAND && $(MAKE) install )
+ #	( cd SKYLINE_SVD && $(MAKE) install )
+ 	$(CP) README.txt $(INSTALL_DOC)/SuiteSparse_README.txt
+@@ -116,7 +112,6 @@ endif
+ # the static library
+ library: metis
+ 	( cd SuiteSparse_config && $(MAKE) )
+-	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
+ 	( cd AMD && $(MAKE) library )
+ 	( cd BTF && $(MAKE) library )
+ 	( cd CAMD && $(MAKE) library )
+@@ -134,7 +129,6 @@ ifneq (,$(GPU_CONFIG))
+ 	( cd GPUQREngine && $(MAKE) library )
+ endif
+ 	( cd SPQR && $(MAKE) library )
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
+ #	( cd PIRO_BAND && $(MAKE) library )
+ #	( cd SKYLINE_SVD && $(MAKE) library )
+ 
+@@ -143,7 +137,6 @@ endif
+ # both the dynamic and static libraries.
+ static: metis
+ 	( cd SuiteSparse_config && $(MAKE) static )
+-	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' static )
+ 	( cd AMD && $(MAKE) static )
+ 	( cd BTF && $(MAKE) static )
+ 	( cd CAMD && $(MAKE) static )
+@@ -161,7 +154,6 @@ ifneq (,$(GPU_CONFIG))
+ 	( cd GPUQREngine && $(MAKE) static )
+ endif
+ 	( cd SPQR && $(MAKE) static )
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' static )
+ #	( cd PIRO_BAND && $(MAKE) static )
+ #	( cd SKYLINE_SVD && $(MAKE) static )
+ 

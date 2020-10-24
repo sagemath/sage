@@ -1,5 +1,10 @@
+# distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES
+# distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR
+# distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR
+# distutils: extra_compile_args = M4RI_CFLAGS
+
 """
-Vectors with elements in GF(2).
+Vectors with elements in GF(2)
 
 AUTHOR:
 
@@ -24,31 +29,30 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-include 'sage/ext/interrupt.pxi'
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
-cimport free_module_element
-from free_module_element import vector
+from sage.structure.richcmp cimport rich_to_bool
+cimport sage.modules.free_module_element as free_module_element
+from .free_module_element import vector
 
 from sage.libs.m4ri cimport *
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS([0,0,1])
@@ -63,7 +67,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     cdef bint is_dense_c(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS([0,0,1]).is_dense()
@@ -73,7 +77,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     cdef bint is_sparse_c(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS([0,0,1]).is_sparse()
@@ -83,7 +87,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     def __copy__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10^4)
             sage: v = VS.random_element()
@@ -102,7 +106,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     cdef _init(self, Py_ssize_t degree, parent):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS([0,0,1])
@@ -119,7 +123,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS((0,0,1/3))
@@ -134,7 +138,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     def __init__(self, parent, x, coerce=True, copy=True):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),3)
             sage: VS((0,0,1/3))
@@ -150,7 +154,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check that ticket #8601 is fixed::
+        Check that ticket :trac:`8601` is fixed::
 
             sage: VS = VectorSpace(GF(2), 3)
             sage: VS((-1,-2,-3))
@@ -160,43 +164,72 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             (1, 1)
             sage: V([1,-3])
             (1, 1)
+
+        Check integer overflow prior to :trac:`21746`::
+
+            sage: VS = VectorSpace(GF(2),1)
+            sage: VS([2**64])
+            (0)
+            sage: VS([3**100/5**100])
+            (1)
+
+        Check division error over rationals::
+
+            sage: V = VectorSpace(GF(2), 2)
+            sage: V([1/3, 3/4])
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: inverse does not exist
+
+        Check zero initialization::
+
+            sage: for _ in range(1,100):
+            ....:     assert VectorSpace(GF(2), randint(1,5000))(0).is_zero()
+            sage: (GF(2)**5)(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: can...t initialize vector from nonzero non-list
+            sage: (GF(2)**0).zero_vector()
+            ()
         """
         cdef Py_ssize_t i
-        cdef int xi
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
-            for i from 0 <= i < self._degree:
-                if isinstance(x[i], IntegerMod_int) or isinstance(x[i], int) or isinstance(x[i], Integer):
-                    xi = x[i]
+            for i in range(len(x)):
+                xi = x[i]
+                if isinstance(xi, (IntegerMod_int, int, long, Integer)):
                     # the if/else statement is because in some compilers, (-1)%2 is -1
-                    mzd_write_bit(self._entries, 0, i, 0 if xi%2==0 else 1)
+                    mzd_write_bit(self._entries, 0, i, 1 if xi%2 else 0)
+                elif isinstance(xi, Rational):
+                    if not (xi.denominator() % 2):
+                        raise ZeroDivisionError("inverse does not exist")
+                    mzd_write_bit(self._entries, 0, i, 1 if (xi.numerator() % 2) else 0)
                 else:
-                    mzd_write_bit(self._entries, 0, i, x[i]%2)
-            return
-        if x != 0:
+                    mzd_write_bit(self._entries, 0, i, xi%2)
+        elif x != 0:
             raise TypeError("can't initialize vector from nonzero non-list")
-        else:
-            for i from 0 <= i < self._degree:
-                mzd_set_ui(self._entries, 0)
+        elif self._degree:
+            mzd_set_ui(self._entries, 0)
 
     def __dealloc__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
-        sage: VS = VectorSpace(GF(2),10^3)
-        sage: import gc
-        sage: for i in range(10):
-        ...      v = VS.random_element()
-        ...      del v
-        ...      _ = gc.collect()
+            sage: VS = VectorSpace(GF(2),10^3)
+            sage: import gc
+            sage: for i in range(10):
+            ....:     v = VS.random_element()
+            ....:     del v
+            ....:     _ = gc.collect()
         """
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
+
             sage: v = vector(GF(2), [0,0,0,0])
             sage: v == 0
             True
@@ -213,9 +246,11 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: w == w
             True
         """
+        cdef int c
         if left._degree == 0:
-            return 0
-        return mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+            return rich_to_bool(op, 0)
+        c = mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+        return rich_to_bool(op, c)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -255,7 +290,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
     def __reduce__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10^4)
             sage: e = VS.random_element()
@@ -264,9 +299,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         return unpickle_v0, (self._parent, self.list(), self._degree, self._is_mutable)
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS([0,0,1,1,0,0,1,1,0,0])
@@ -279,9 +314,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_add(z._entries, self._entries, (<Vector_mod2_dense>right)._entries)
         return z
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS([0,0,1,1,0,0,1,1,0,0])
@@ -310,9 +345,10 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return res
 
 
-    cpdef Element _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right):
         """
         EXAMPLES::
+
            sage: VS = VectorSpace(GF(2),3)
            sage: v = VS([1,1,1]); w = VS([0,0,0])
            sage: v * w, w * v #indirect doctest
@@ -356,9 +392,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         return n
 
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS.random_element(); e
@@ -376,9 +412,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             z._entries.rows[0][i] = (self._entries.rows[0][i] & r._entries.rows[0][i])
         return z
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _lmul_(self, Element left):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS.random_element(); e
@@ -389,6 +425,18 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
             sage: 2 * e #indirect doctest
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+        ::
+
+            sage: VS = VectorSpace(GF(2),10)
+            sage: e = VS.random_element(); e
+            (1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
+            sage: e * 0 #indirect doctest
+            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            sage: e * 1
+            (1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
+            sage: e * 2
+            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         """
         cdef IntegerMod_int a
 
@@ -397,26 +445,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         else:
             return self._new_c()
 
-
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _neg_(self):
         """
-        EXAMPLE::
-
-            sage: VS = VectorSpace(GF(2),10)
-            sage: e = VS.random_element(); e
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
-            sage: e * 0 #indirect doctest
-            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-            sage: e * 1
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1)
-            sage: e * 2
-            (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        """
-        return self._rmul_(right)
-
-    cpdef ModuleElement _neg_(self):
-        """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS.random_element()
@@ -424,25 +455,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             True
         """
         return self.__copy__()
-
-    def n(self, *args, **kwargs):
-        """
-        Returns a numerical approximation of ``self`` by calling the
-        :meth:`n()` method on all of its entries.
-
-        EXAMPLES::
-
-            sage: v = vector(GF(2), [1,2,3])
-            sage: v.n()
-            (1.00000000000000, 0.000000000000000, 1.00000000000000)
-            sage: _.parent()
-            Vector space of dimension 3 over Real Field with 53 bits of precision
-            sage: v.n(prec=75)
-            (1.000000000000000000000, 0.0000000000000000000000, 1.000000000000000000000)
-            sage: _.parent()
-            Vector space of dimension 3 over Real Field with 75 bits of precision
-        """
-        return vector( [e.n(*args, **kwargs) for e in self] )
 
     def list(self, copy=True):
         """
@@ -452,7 +464,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         - ``copy`` - always ``True``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: VS = VectorSpace(GF(2),10)
             sage: e = VS.random_element(); e
@@ -473,7 +485,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
 def unpickle_v0(parent, entries, degree, is_mutable):
     """
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modules.vector_mod2_dense import unpickle_v0
         sage: VS = VectorSpace(GF(2),10)

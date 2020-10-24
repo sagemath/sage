@@ -60,6 +60,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
+
 class ConjugacyClass(Parent):
     r"""
     Generic conjugacy classes for elements in a group.
@@ -78,6 +79,7 @@ class ConjugacyClass(Parent):
     def __init__(self, group, element):
         r"""
         Generic conjugacy classes for elements in a group.
+
         This is the default fall-back implementation to be used whenever
         GAP cannot handle the group.
 
@@ -111,13 +113,13 @@ class ConjugacyClass(Parent):
             sage: C
             Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
             permutation group
-
         """
-        return "Conjugacy class of %s in %s"%(self._representative,self._parent)
+        return "Conjugacy class of %s in %s" % (self._representative,
+                                                self._parent)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
-        Comparison of conjugacy classes is done by comparing the
+        Equality of conjugacy classes is tested by comparing the
         underlying sets.
 
         EXAMPLES::
@@ -133,14 +135,34 @@ class ConjugacyClass(Parent):
             sage: C == D
             True
         """
-        c = cmp(type(self),type(other))
-        if c:
-             return c
-        return cmp(self.set(), other.set())
+        if not isinstance(other, ConjugacyClass):
+            return False
+        return self.set() == other.set()
+
+    def __ne__(self, other):
+        """
+        Negation of equality.
+
+        EXAMPLES::
+
+            sage: F = GF(5)
+            sage: gens = [matrix(F,2, [1,2,-1,1]), matrix(F,2, [1,1,0,1])]
+            sage: H = MatrixGroup(gens)
+            sage: h = H(matrix(F,2, [1,2,-1,1]))
+            sage: h2 = H(matrix(F,2, [1,1,0,1]))
+            sage: g = h2 * h * h2^(-1)
+            sage: C = ConjugacyClass(H, h)
+            sage: D = ConjugacyClass(H, g)
+            sage: C != D
+            False
+            sage: C != ConjugacyClass(H, H(identity_matrix(F, 2)))
+            True
+        """
+        return not (self == other)
 
     def __contains__(self, element):
         r"""
-        Checks if ``element`` belongs to the conjugacy class ``self``.
+        Check if ``element`` belongs to the conjugacy class ``self``.
 
         EXAMPLES::
 
@@ -180,7 +202,7 @@ class ConjugacyClass(Parent):
             sage: a = G(a)
             sage: C = ConjugacyClass(G, a)
             sage: it = iter(C)
-            sage: [next(it) for _ in range(5)]
+            sage: [next(it) for _ in range(5)] # random (nothing guarantees enumeration order)
             [
             [1 1]  [ 2  1]  [ 0  1]  [ 3  1]  [ 3  4]
             [0 1], [-1  0], [-1  2], [-4 -1], [-1 -1]
@@ -201,7 +223,7 @@ class ConjugacyClass(Parent):
         g = self._representative
         gens = self._parent.monoid_generators()
         R = RecursivelyEnumeratedSet([g],
-                                     lambda y: [c*y*c**-1 for c in gens],
+                                     lambda y: [c * y * c**-1 for c in gens],
                                      structure=None)
         return R.breadth_first_search_iterator()
 
@@ -285,7 +307,7 @@ class ConjugacyClass(Parent):
 
     def is_real(self):
         """
-        Checks if ``self`` is real (closed for inverses).
+        Check if ``self`` is real (closed for inverses).
 
         EXAMPLES::
 
@@ -294,13 +316,12 @@ class ConjugacyClass(Parent):
             sage: c = ConjugacyClass(G,g)
             sage: c.is_real()
             True
-
         """
         return self._representative**(-1) in self
 
     def is_rational(self):
         """
-        Checks if ``self`` is rational (closed for powers).
+        Check if ``self`` is rational (closed for powers).
 
         EXAMPLES::
 
@@ -311,7 +332,7 @@ class ConjugacyClass(Parent):
             False
         """
         g = self._representative
-        return all(g**k in self.set() for k in range(1,g.order()))
+        return all(g**k in self.set() for k in range(2, g.order()))
 
     def representative(self):
         """
@@ -329,9 +350,11 @@ class ConjugacyClass(Parent):
 
     an_element = representative
 
+
 class ConjugacyClassGAP(ConjugacyClass):
     r"""
     Class for a conjugacy class for groups defined over GAP.
+
     Intended for wrapping GAP methods on conjugacy classes.
 
     INPUT:
@@ -348,7 +371,6 @@ class ConjugacyClassGAP(ConjugacyClass):
         Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
         permutation group
     """
-
     def __init__(self, group, element):
         r"""
         Constructor for the class.
@@ -376,16 +398,16 @@ class ConjugacyClassGAP(ConjugacyClass):
             )
         """
         try:
-            # GAP interface
-            self._gap_group = group._gap_()
-            self._gap_representative = element._gap_()
+            # LibGAP
+            self._gap_group = group.gap()
+            self._gap_representative = element.gap()
         except (AttributeError, TypeError):
+            # GAP interface
             try:
-                # LibGAP
-                self._gap_group = group.gap()
-                self._gap_representative = element.gap()
+                self._gap_group = group._gap_()
+                self._gap_representative = element._gap_()
             except (AttributeError, TypeError):
-                raise TypeError("The group %s cannot be defined as a GAP group"%group)
+                raise TypeError("The group %s cannot be defined as a GAP group" % group)
 
         self._gap_conjugacy_class = self._gap_group.ConjugacyClass(self._gap_representative)
         ConjugacyClass.__init__(self, group, element)
@@ -400,7 +422,7 @@ class ConjugacyClassGAP(ConjugacyClass):
             sage: g = G((1,2,3))
             sage: C = ConjugacyClassGAP(G,g)
             sage: C._gap_()
-            ConjugacyClass( SymmetricGroup( [ 1 .. 3 ] ), (1,2,3) )
+            (1,2,3)^G
         """
         return self._gap_conjugacy_class
 
@@ -501,5 +523,4 @@ class ConjugacyClassGAP(ConjugacyClass):
             cc = self._gap_conjugacy_class.AsList().sage()
             return Set([self._parent(x) for x in cc])
         except NotImplementedError:    # If GAP doesn't work, fall back to naive method
-            return ConjugacyClass.set.f(self) # Need the f because the base-class mehod is also cached
-
+            return ConjugacyClass.set.f(self)  # Need the f because the base-class method is also cached

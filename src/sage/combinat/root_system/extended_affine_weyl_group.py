@@ -45,7 +45,6 @@ from sage.combinat.root_system.root_system import RootSystem
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
-from sage.rings.infinity import Infinity
 
 
 def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
@@ -97,7 +96,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     .. [Bour] Bourbaki, *Lie Groups and Lie Algebras* IV.2
 
-    .. [Kac]_
+    - [Ka1990]_
 
     .. RUBRIC:: Notation
 
@@ -195,7 +194,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
     call `F` the *fundamental group*.
 
     In the future we may want to build an element of the group from an appropriate linear map f
-    on some of the root lattice realizations for this cartan type: W.from_endomorphism(f).
+    on some of the root lattice realizations for this Cartan type: W.from_endomorphism(f).
 
     EXAMPLES::
 
@@ -304,8 +303,9 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
         sage: PW0(w)
         t[Lambdacheck[1] - 2*Lambdacheck[2]] * s1
 
-    Note that for untwisted affine type the dual form of the classical Weyl group
-    is isomorphic to the usual one, but acts on a different lattice and is therefore different to sage::
+    Note that for untwisted affine type, the dual form of the classical
+    Weyl group is isomorphic to the usual one, but acts on a different
+    lattice and is therefore different to sage::
 
         sage: W0v = E.dual_classical_weyl(); W0v
         Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
@@ -314,10 +314,14 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
         s1*s2
         sage: y = PW0(v); y
         s1*s2
-        sage: x == y
-        False
         sage: x.parent() == y.parent()
         False
+
+    However, because there is a coercion from ``PvW0`` to ``PW0``,
+    the elements ``x`` and ``y`` compare as equal::
+
+        sage: x == y
+        True
 
     An element can be created directly from a reduced word::
 
@@ -341,7 +345,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
         - Implement a "slow" action of `E` on any affine root or weight lattice realization.
         - Implement the level `m` actions of `E` and `W` on the lattices of finite type.
-        - Implement the relevant methods from the usual affine weyl group
+        - Implement the relevant methods from the usual affine Weyl group
         - Implementation by matrices: style "M".
         - Use case: implement the Hecke algebra on top of this
 
@@ -450,7 +454,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             self._n = self._cartan_type.n + 1
         else:
             self._general_linear = False
-        for option in print_options.keys():
+        for option in print_options:
             if option == 'translation':
                 self._prefixt = print_options['translation']
             elif option == 'fundamental':
@@ -1810,7 +1814,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 OUTPUT:
 
-                - A 3-tuple (`g`,``rw``,``signs``).
+                - A 3-tuple (`g`, ``rw``, ``signs``).
 
                 ALGORITHM:
 
@@ -2103,7 +2107,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: x = ExtendedAffineWeylGroup(['A',2,1]).W0P().simple_reflection(0); x;
+                sage: x = ExtendedAffineWeylGroup(['A',2,1]).W0P().simple_reflection(0); x
                 s1*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[2]]
                 sage: x.to_classical_weyl()
                 s1*s2*s1

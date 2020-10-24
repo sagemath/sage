@@ -9,12 +9,12 @@ com o Sage em um documento LaTeX. Esse pacote já vem com o Sage. Para
 usá-lo, você precisa "instalá-lo" em seu sistema LaTeX local; aqui
 instalar significa copiar um simples arquivo. Veja :ref:`installation`
 neste tutorial e a seção "Make SageTeX known to TeX" do `Guia de
-instalação do Sage <http://sagemath.org/doc/installation/index.html>`_
+instalação do Sage <http://doc.sagemath.org/html/en/installation/index.html>`_
 (em inglês).
 
 Aqui vai um breve exemplo de como usar o SageTeX. A documentação
 completa pode ser encontrada em
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``, onde
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``, onde
 ``SAGE_ROOT`` é o diretório onde se encontra a sua instalação. Esse
 diretório contém a documentação, um arquivo de exemplo, e alguns
 scripts em Python possivelmente úteis.
@@ -107,4 +107,4 @@ os comandos em Sage em seu documento.
 Há muito mais sobre o SageTeX, e como tanto o Sage como o LaTeX são
 ferramentas complexas e poderosas, é uma boa idéia ler a documentação
 para o SageTeX que se encontra em
-``SAGE_ROOT/local/share/texmf/tex/generic/sagetex``.
+``SAGE_ROOT/local/share/texmf/tex/latex/sagetex``.

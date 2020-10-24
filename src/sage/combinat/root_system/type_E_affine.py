@@ -9,8 +9,10 @@ Root system data for (untwisted) type E affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
-from cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
+from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply_laced
 class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
     def __init__(self, n):
         """
@@ -115,7 +117,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
              (6, 5, 1), (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 0, 1), (8, 7, 1)]
 
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         n = self.n
         g = DynkinDiagram_class(self)
         g.add_edge(1,3)
@@ -138,7 +140,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: print CartanType(['E',7,1])._latex_dynkin_diagram()
+            sage: print(CartanType(['E',7,1])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (12 cm,0);
             \draw (6 cm, 0 cm) -- +(0,2 cm);
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
@@ -187,7 +189,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
         EXAMPLES::
 
-            sage: print CartanType(['E',6,1]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['E',6,1]).ascii_art(label = lambda x: x+2))
                     O 2
                     |
                     |
@@ -196,13 +198,13 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
                     |
             O---O---O---O---O
             3   5   6   7   8
-            sage: print CartanType(['E',7,1]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['E',7,1]).ascii_art(label = lambda x: x+2))
                         O 4
                         |
                         |
             O---O---O---O---O---O---O
             2   3   5   6   7   8   9
-            sage: print CartanType(['E',8,1]).ascii_art(label = lambda x: x-3)
+            sage: print(CartanType(['E',8,1]).ascii_art(label = lambda x: x-3))
                     O -1
                     |
                     |

@@ -16,5 +16,5 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from library import unit_circle
-from library import trigonometric_properties_triangle, special_points
+from .library import unit_circle
+from .library import trigonometric_properties_triangle, special_points

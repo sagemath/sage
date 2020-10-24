@@ -13,11 +13,12 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
 from sage.categories.additive_semigroups import AdditiveSemigroups
 from sage.categories.homsets import HomsetsCategory
 
+
 class AdditiveMonoids(CategoryWithAxiom_singleton):
     """
     The category of additive monoids.
 
-    An *additive monoid* is a unital class:`additive semigroup
+    An *additive monoid* is a unital :class:`additive semigroup
     <sage.categories.additive_semigroups.AdditiveSemigroups>`, that
     is a set endowed with a binary operation `+` which is associative
     and admits a zero (see :wikipedia:`Monoid`).
@@ -61,7 +62,7 @@ class AdditiveMonoids(CategoryWithAxiom_singleton):
                 sage: S = CommutativeAdditiveMonoids().example()
                 sage: (a,b,c,d) = S.additive_semigroup_generators()
                 sage: S.sum((a,b,a,c,a,b))
-                3*a + c + 2*b
+                3*a + 2*b + c
                 sage: S.sum(())
                 0
                 sage: S.sum(()).parent() == S

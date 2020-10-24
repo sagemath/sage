@@ -10,7 +10,7 @@ Point counting on curves
 How do you count points on an elliptic curve over a finite field in
 Sage?
 
-Over prime finite fields, includes both the the baby step giant step
+Over prime finite fields, includes both the baby step giant step
 method and the SEA (Schoof-Elkies-Atkin) algorithm (implemented in PARI
 by Christophe Doche and Sylvain Duquesne). An example taken form the
 Reference manual:
@@ -32,7 +32,7 @@ algorithm. Here is an example of the syntax:
 
     sage: x,y,z = PolynomialRing(GF(5), 3, 'xyz').gens()
     sage: C = Curve(y^2*z^7 - x^9 - x*z^8); C
-    Projective Curve over Finite Field of size 5 defined by -x^9 + y^2*z^7 - x*z^8
+    Projective Plane Curve over Finite Field of size 5 defined by -x^9 + y^2*z^7 - x*z^8
     sage: C.rational_points()
     [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1), (3 : 1 : 1), (3 : 4 : 1)]
     sage: C.rational_points(algorithm="bn")
@@ -49,7 +49,7 @@ Klein's quartic over :math:`GF(8)`.
     sage: x, y, z = PolynomialRing(GF(8,'a'), 3, 'xyz').gens()
     sage: f = x^3*y+y^3*z+x*z^3
     sage: C = Curve(f); C
-    Projective Curve over Finite Field in a of size 2^3 defined by x^3*y + y^3*z + x*z^3
+    Projective Plane Curve over Finite Field in a of size 2^3 defined by x^3*y + y^3*z + x*z^3
     sage: C.rational_points()
     [(0 : 0 : 1),
      (0 : 1 : 0),
@@ -142,7 +142,7 @@ Other methods
        sage: I = singular.ideal('[x^4+x, y^4+y]')
        sage: L = singular.closed_points(I)
        sage: # Here you have all the points :
-       sage: print L
+       sage: print(L)
        [1]:
           _[1]=y+1  # 32-bit
           _[2]=x+1  # 32-bit
@@ -161,10 +161,10 @@ Other methods
        ...
        sage: f = singular.poly('x3y+y3+x')
        ...
-       sage: klein1 = f.Adj_div(); print klein1
+       sage: klein1 = f.Adj_div(); print(klein1)
        [1]:
           [1]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
@@ -172,7 +172,7 @@ Other methods
        ...
        sage: # define a curve X = {f = 0} over GF(2)
        sage: klein2 = singular.NSplaces(3,klein1)
-       sage: print singular.eval('extcurve(3,%s)'%klein2.name())
+       sage: print(singular.eval('extcurve(3,%s)'%klein2.name()))
        Total number of rational places : NrRatPl = 23
        ...
        sage: klein3 = singular.extcurve(3, klein2)
@@ -184,16 +184,16 @@ Other methods
 
    ::
 
-       sage: print klein1
+       sage: print(klein1)
        [1]:
           [1]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
           [2]:
-             //   characteristic : 2
+             //   coefficients: ZZ/2
        //   number of vars : 3
        //        block   1 : ordering lp
        //                  : names    x y z
@@ -210,14 +210,14 @@ Other methods
        [5]:
           [1]:
              [1]:
-                //   characteristic : 2
+                //   coefficients: ZZ/2
        //   number of vars : 3
        //        block   1 : ordering ls
        //                  : names    x y t
        //        block   2 : ordering C
              [2]:
                 1,1
-       sage: print klein1[3]
+       sage: print(klein1[3])
        [1]:
           1,1
        [2]:
@@ -229,7 +229,7 @@ Other methods
 
    ::
 
-       sage: print klein2[3]
+       sage: print(klein2[3])
        [1]:
           1,1
        [2]:
@@ -255,7 +255,7 @@ Other methods
 
    ::
 
-       sage: print klein3[3]
+       sage: print(klein3[3])
        [1]:
           1,1
        [2]:
@@ -325,7 +325,7 @@ Singular itself to help an understanding of how the wrapper works.
        sage: X = Curve(f); pts = X.rational_points()
        sage: D = X.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])
        sage: X.riemann_roch_basis(D)
-       [(-2*x + y)/(x + y), (-x + z)/(x + y)]
+       [(-x - 2*y)/(-2*x - 2*y), (-x + z)/(x + y)]
 
 -  Using Singular's ``BrillNoether`` command (for details see the section
    Brill-Noether in the Singular online documentation
@@ -336,7 +336,7 @@ Singular itself to help an understanding of how the wrapper works.
 
        sage: singular.LIB('brnoeth.lib')
        sage: _ = singular.ring(5,'(x,y)','lp')
-       sage: print singular.eval("list X = Adj_div(-x5+y2+x);")
+       sage: print(singular.eval("list X = Adj_div(-x5+y2+x);"))
        Computing affine singular points ...
        Computing all points at infinity ...
        Computing affine singular places ...
@@ -345,9 +345,9 @@ Singular itself to help an understanding of how the wrapper works.
        Adjunction divisor computed successfully
        <BLANKLINE>
        The genus of the curve is 2
-       sage: print singular.eval("X = NSplaces(1,X);")
+       sage: print(singular.eval("X = NSplaces(1,X);"))
        Computing non-singular affine places of degree 1 ...
-       sage: print singular("X[3];")
+       sage: print(singular("X[3];"))
        [1]:
           1,1
        [2]:
@@ -384,7 +384,7 @@ Singular itself to help an understanding of how the wrapper works.
        ''
        sage: singular.eval("setring R;")
        ''
-       sage: print singular.eval("list LG = BrillNoether(G,X);")
+       sage: print(singular.eval("list LG = BrillNoether(G,X);"))
        Forms of degree 6 :
        28
        <BLANKLINE>
@@ -418,7 +418,7 @@ command.
     sage: singular.LIB('brnoeth.lib')
     sage: singular.eval("ring s = 2,(x,y),lp;")
     ''
-    sage: print singular.eval("list HC = Adj_div(x3+y2+y);")
+    sage: print(singular.eval("list HC = Adj_div(x3+y2+y);"))
     Computing affine singular points ...
     Computing all points at infinity ...
     Computing affine singular places ...
@@ -427,10 +427,10 @@ command.
     Adjunction divisor computed successfully
     <BLANKLINE>
     The genus of the curve is 1
-    sage: print singular.eval("list HC1 = NSplaces(1..2,HC);")
+    sage: print(singular.eval("list HC1 = NSplaces(1..2,HC);"))
     Computing non-singular affine places of degree 1 ...
     Computing non-singular affine places of degree 2 ...
-    sage: print singular.eval("HC = extcurve(2,HC1);")
+    sage: print(singular.eval("HC = extcurve(2,HC1);"))
     Total number of rational places : NrRatPl = 9
 
 We set the following to ``junk`` to discard the output::
@@ -451,7 +451,7 @@ Next, we compute the Riemann-Roch space.
 
 ::
 
-    sage: print singular.eval("BrillNoether(G,HC);")
+    sage: print(singular.eval("BrillNoether(G,HC);"))
     Forms of degree 3 :
     10
     <BLANKLINE>
@@ -474,7 +474,7 @@ Next, we compute the Riemann-Roch space.
        _[2]=x2z
 
 That was the basis of the Riemann-Roch space, where each pair of
-fuctions represents the quotient (first function divided by second
+functions represents the quotient (first function divided by second
 function). Each of these basis elements get evaluated at certain
 points to construct the generator matrix of the code. We next
 construct the points.
@@ -487,7 +487,7 @@ construct the points.
     '// ** redefining R **'
     sage: singular.eval("setring R;")
     ''
-    sage: print singular.eval("POINTS;")
+    sage: print(singular.eval("POINTS;"))
     [1]:
        [1]:
           0
@@ -534,14 +534,14 @@ a subset of these points (all but the first):
     sage: singular.eval("intvec D = 2..9;")
     ''
     sage: # let us construct the corresponding evaluation AG code :
-    sage: print singular.eval("matrix C = AGcode_L(G,D,HC);")
+    sage: print(singular.eval("matrix C = AGcode_L(G,D,HC);"))
     Forms of degree 3 :
     10
     <BLANKLINE>
     Vector basis successfully computed
     <BLANKLINE>
     sage: # here is a linear code of type [8,5,> = 3] over F_4
-    sage: print singular.eval("print(C);")
+    sage: print(singular.eval("print(C);"))
     0,0,(a+1),(a),  1,  1,    (a),  (a+1),
     1,0,(a),  (a+1),(a),(a+1),(a),  (a+1),
     1,1,1,    1,    1,  1,    1,    1,

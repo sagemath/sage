@@ -3,8 +3,8 @@ Dense matrices over the Complex Double Field using NumPy
 
 EXAMPLES::
 
-    sage: b=Mat(CDF,2,3).basis()
-    sage: b[0]
+    sage: b = Mat(CDF,2,3).basis()
+    sage: b[0,0]
     [1.0 0.0 0.0]
     [0.0 0.0 0.0]
 
@@ -37,15 +37,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-import matrix_double_dense
-
 from sage.rings.complex_double import CDF
 
 cimport numpy as cnumpy
 
 numpy=None
 
-cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
+cdef class Matrix_complex_double_dense(Matrix_double_dense):
     """
     Class that implements matrices over the real double field. These
     are supposed to be fast matrix operations using C doubles. Most
@@ -62,39 +60,28 @@ cdef class Matrix_complex_double_dense(matrix_double_dense.Matrix_double_dense):
         [  0.3333333333333333 + 0.3333333333333333*I 0.16666666666666669 - 0.16666666666666666*I]
         [-0.16666666666666666 - 0.3333333333333333*I 0.08333333333333331 + 0.08333333333333333*I]
 
-    To compute eigenvalues the use the functions ``left_eigenvectors`` or
-    ``right_eigenvectors``::
+    To compute eigenvalues, use the methods
+    :meth:`~.Matrix_double_dense.left_eigenvectors` or
+    :meth:`~.Matrix_double_dense.right_eigenvectors`::
 
         sage: p,e = m.right_eigenvectors()
 
-    the result of eigen is a pair (p,e), where p is a list of
-    eigenvalues and the e is a matrix whose columns are the
+    The result is a pair ``(p,e)``, where ``p`` is a diagonal matrix of
+    eigenvalues and ``e`` is a matrix whose columns are the
     eigenvectors.
 
-    To solve a linear system Ax = b where A = [[1,2] and b = [5,6]
-    [3,4]]
-
-    ::
+    To solve a linear system `Ax = b` where ``A = [[1,2*I],[3+I,4]]`` and
+    ``b = [5,6]``::
 
         sage: b = vector(CDF,[5,6])
         sage: m.solve_right(b)  # abs tol 1e-14
         (2.6666666666666665 + 0.6666666666666669*I, -0.3333333333333333 - 1.1666666666666667*I)
 
-    See the commands qr, lu, and svd for QR, LU, and singular value
-    decomposition.
+    See the methods :meth:`~.Matrix_double_dense.QR`,
+    :meth:`~.Matrix_double_dense.LU`, and :meth:`.SVD` for QR, LU, and singular
+    value decomposition.
     """
-
-
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __dealloc__
-    #   * __init__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * __hash__       -- always simple
-    ########################################################################
-    def __cinit__(self, parent, entries, copy, coerce):
+    def __cinit__(self):
         global numpy
         if numpy is None:
             import numpy

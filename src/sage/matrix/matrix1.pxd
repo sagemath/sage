@@ -1,4 +1,4 @@
-cimport matrix0
+from .matrix0 cimport Matrix as Matrix0
 
-cdef class Matrix(matrix0.Matrix):
+cdef class Matrix(Matrix0):
     cdef _stack_impl(self, bottom)

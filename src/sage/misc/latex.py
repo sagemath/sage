@@ -10,15 +10,26 @@ AUTHORS:
 - William Stein: original implementation
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
+
+import os
+import random
+import re
+import shutil
+import subprocess
+
+from sage.misc import sage_eval
+from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.sage_ostools import have_program
+from sage.misc.temporary_file import tmp_dir
 
 EMBEDDED_MODE = False
 
@@ -52,17 +63,6 @@ r'''\textwidth=1.1\textwidth
 \textheight=2\textheight
 ''')
 
-import sys
-import shutil, re
-import os.path
-import random
-import subprocess
-import types
-
-from sage.misc.temporary_file import tmp_dir
-import sage_eval
-from sage.misc.sage_ostools import have_program
-from sage.misc.cachefunc import cached_function, cached_method
 
 @cached_function
 def have_latex():
@@ -219,9 +219,9 @@ def bool_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import bool_function
-        sage: print bool_function(2==3)
+        sage: print(bool_function(2==3))
         \mathrm{False}
-        sage: print bool_function(3==(2+1))
+        sage: print(bool_function(3==(2+1)))
         \mathrm{True}
     """
     return r"\mathrm{%s}" % bool(x)
@@ -256,8 +256,9 @@ def builtin_constant_function(x):
         sage: sage.misc.latex.EMBEDDED_MODE = False
     """
     if EMBEDDED_MODE:
-        return "{\\rm %s}"%x
-    return "\mbox{\\rm %s}"%x
+        return "{\\rm %s}" % x
+    return "\\mbox{\\rm %s}" % x
+
 
 def None_function(x):
     r"""
@@ -270,7 +271,7 @@ def None_function(x):
     EXAMPLES::
 
         sage: from sage.misc.latex import None_function
-        sage: print None_function(None)
+        sage: print(None_function(None))
         \mathrm{None}
     """
     assert x is None
@@ -327,7 +328,7 @@ def str_function(x):
         return x
     # Deal with special characters
     char_wrapper = r"{\char`\%s}"
-    x = "".join(char_wrapper % c if c in "#$%&\^_{}~" else c for c in x)
+    x = "".join(char_wrapper % c if c in r"#$%&\^_{}~" else c for c in x)
     # Avoid grouping spaces into one
     x = x.replace(" ", "{ }")
     # And dashes too, since it causes issues for the command line...
@@ -353,7 +354,7 @@ def dict_function(x):
 
         sage: from sage.misc.latex import dict_function
         sage: x,y,z = var('x,y,z')
-        sage: print dict_function({x/2: y^2})
+        sage: print(dict_function({x/2: y^2}))
         \left\{\frac{1}{2} \, x : y^{2}\right\}
         sage: d = {(1,2,x^2): [sin(z^2), y/2]}
         sage: latex(d)
@@ -362,7 +363,7 @@ def dict_function(x):
     """
     return "".join([r"\left\{",
                     ", ".join(r"%s : %s" % (latex(key), latex(value))
-                              for key, value in x.iteritems()),
+                              for key, value in x.items()),
                     r"\right\}"])
 
 # One can add to the latex_table in order to install latexing
@@ -397,18 +398,18 @@ def float_function(x):
     return latex(RDF(x))
 
 
-latex_table = {types.NoneType: None_function,
-               bool: bool_function,
-               dict: dict_function,
-               float: float_function,
-               int: str,
-               list: list_function,
-               long: str,
-               str: str_function,
-               tuple: tuple_function,
-               type(None):builtin_constant_function,
-               type(NotImplemented):builtin_constant_function,
-               type(Ellipsis):builtin_constant_function}
+latex_table = {
+    type(None): None_function,
+    bool: bool_function,
+    dict: dict_function,
+    float: float_function,
+    int: str,
+    list: list_function,
+    str: str_function,
+    tuple: tuple_function,
+    type(NotImplemented): builtin_constant_function,
+    type(Ellipsis): builtin_constant_function
+}
 
 
 class LatexExpr(str):
@@ -555,7 +556,7 @@ def has_latex_attr(x):
         sage: T._latex_()
         Traceback (most recent call last):
         ...
-        TypeError: descriptor '_latex_' of 'sage.matrix.matrix0.Matrix' object needs an argument
+        TypeError: ..._latex_... needs an argument
         sage: has_latex_attr(T)
         False
     """
@@ -609,8 +610,7 @@ def latex_extra_preamble():
     EXAMPLES::
 
         sage: from sage.misc.latex import latex_extra_preamble
-        sage: print latex_extra_preamble()
-        ...
+        sage: print(latex_extra_preamble())
         <BLANKLINE>
         \newcommand{\ZZ}{\Bold{Z}}
         \newcommand{\NN}{\Bold{N}}
@@ -619,8 +619,8 @@ def latex_extra_preamble():
         \newcommand{\QQ}{\Bold{Q}}
         \newcommand{\QQbar}{\overline{\QQ}}
         \newcommand{\GF}[1]{\Bold{F}_{#1}}
-        \newcommand{\Zp}[1]{\ZZ_{#1}}
-        \newcommand{\Qp}[1]{\QQ_{#1}}
+        \newcommand{\Zp}[1]{\Bold{Z}_{#1}}
+        \newcommand{\Qp}[1]{\Bold{Q}_{#1}}
         \newcommand{\Zmod}[1]{\ZZ/#1\ZZ}
         \newcommand{\CDF}{\Bold{C}}
         \newcommand{\CIF}{\Bold{C}}
@@ -628,7 +628,6 @@ def latex_extra_preamble():
         \newcommand{\RDF}{\Bold{R}}
         \newcommand{\RIF}{\Bold{I} \Bold{R}}
         \newcommand{\RLF}{\Bold{R}}
-        \newcommand{\CFF}{\Bold{CFF}}
         \newcommand{\Bold}[1]{\mathbf{#1}}
         <BLANKLINE>
     """
@@ -688,8 +687,8 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
         sage: from sage.misc.latex import _run_latex_, _latex_file_
         sage: file = os.path.join(SAGE_TMP, "temp.tex")
-        sage: O = open(file, 'w')
-        sage: O.write(_latex_file_([ZZ['x'], RR])); O.close()
+        sage: with open(file, 'w') as O:
+        ....:     _ = O.write(_latex_file_([ZZ['x'], RR]))
         sage: _run_latex_(file) # random - depends on whether latex is installed
         'dvi'
     """
@@ -857,14 +856,16 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     if not e:
         print("An error occurred.")
         try:
-            print(open(base + '/' + filename + '.log').read())
+            with open(base + '/' + filename + '.log') as f:
+                print(f.read())
         except IOError:
             pass
         return "Error latexing slide."
     return return_suffix
 
+
 class LatexCall:
-    """
+    r"""
     Typeset Sage objects via a ``__call__`` method to this class,
     typically by calling those objects' ``_latex_`` methods.  The
     class :class:`Latex` inherits from this. This class is used in
@@ -908,7 +909,7 @@ class LatexCall:
             3
             sage: latex(1==0)
             \mathrm{False}
-            sage: print latex([x,2])
+            sage: print(latex([x,2]))
             \left[x, 2\right]
 
         Check that :trac:`11775` is fixed::
@@ -1008,7 +1009,7 @@ class Latex(LatexCall):
         EXAMPLES::
 
             sage: s = 2
-            sage: sage.misc.latex.Latex()._latex_preparse('\sage{s}', locals())
+            sage: sage.misc.latex.Latex()._latex_preparse(r'\sage{s}', locals())
             '2'
         """
         i0 = -1
@@ -1027,13 +1028,13 @@ class Latex(LatexCall):
                 k = str(latex(sage_eval.sage_eval(var, locals)))
             except Exception as msg:
                 print(msg)
-                k = '\\mbox{\\rm [%s undefined]}'%var
+                k = '\\mbox{\\rm [%s undefined]}' % var
             s = s[:i] + k + t[j+1:]
 
     def eval(self, x, globals, strip=False, filename=None, debug=None,
              density=None, pdflatex=None, engine=None, locals={}):
         r"""
-        Compiles the formatted tex given by ``x`` as a png and writes the
+        Compile the formatted tex given by ``x`` as a png and writes the
         output file to the directory given by ``filename``.
 
         INPUT:
@@ -1064,7 +1065,7 @@ class Latex(LatexCall):
 
            When using latex (the default), you must have 'dvipng' (or
            'dvips' and 'convert') installed on your operating system,
-           or this command won't work.  When using pdflatex or xelatex, you
+           or this command will not work.  When using pdflatex or xelatex, you
            must have 'convert' installed.
 
         OUTPUT:
@@ -1074,13 +1075,10 @@ class Latex(LatexCall):
 
         EXAMPLES::
 
-            # This would generate a file named "test.png"
-            sage: latex.eval("\\ZZ[x]", locals(), filename="test") # not tested
+            sage: fn = tmp_filename()
+            sage: latex.eval("$\\ZZ[x]$", locals(), filename=fn) # not tested
             ''
-            # This would generate a file named "/path/to/test.png"
-            sage: latex.eval("\\ZZ[x]", locals(), filename="/path/to/test") # not tested
-            ''
-            sage: latex.eval("\ThisIsAnInvalidCommand", {}) # optional -- ImageMagick
+            sage: latex.eval(r"\ThisIsAnInvalidCommand", {}) # optional -- ImageMagick
             An error occurred...
             No pages of output...
         """
@@ -1089,7 +1087,7 @@ class Latex(LatexCall):
         if density is None:
             density = self.__density
         if filename is None:
-            filename = 'sage%s'%random.randint(1,100) # to defeat browser caches
+            filename = 'sage%s' % random.randint(1, 100) # to defeat browser caches
         else:
             filename = os.path.splitext(filename)[0]  # get rid of extension
         base = tmp_dir()
@@ -1109,8 +1107,7 @@ class Latex(LatexCall):
             O.write(MACROS)
             O.write('\\begin{document}\n')
 
-        from sagenb.misc.misc import encoded_str
-        O.write(encoded_str(x))
+        O.write(x)
         if self.__slide:
             O.write('\n\n\\end{document}')
         else:
@@ -1160,7 +1157,7 @@ class Latex(LatexCall):
         """
         if t is None:
             return _Latex_prefs._option["blackboard_bold"]
-        from latex_macros import sage_configurable_latex_macros
+        from .latex_macros import sage_configurable_latex_macros
         global sage_configurable_latex_macros
         old = _Latex_prefs._option["blackboard_bold"]
         _Latex_prefs._option["blackboard_bold"] = bool(t)
@@ -1738,9 +1735,9 @@ def _latex_file_(objects, title='SAGE', debug=False, \
     This makes sure that latex is called only once on an object::
 
         sage: class blah():
-        ...       def _latex_(x):
-        ...           print "coucou"
-        ...           return "x"
+        ....:     def _latex_(x):
+        ....:         print("coucou")
+        ....:         return "x"
         sage: latex(blah())
         coucou
         x
@@ -1759,16 +1756,23 @@ def _latex_file_(objects, title='SAGE', debug=False, \
     else:
         size=''
 
-    s = '%s\n\\begin{document}\n\\begin{center}{\\Large\\bf %s}\\end{center}\n%s'%(
-        extra_preamble, title, size)
+    formatted_title = "\n\\begin{center}{\\Large\\bf %s}\\end{center}\n"%str(title) if title else ""
+    s = '%s\n\\begin{document}%s%s'%(extra_preamble, formatted_title, size)
 
-    #s += "(If something is missing it may be on the next page or there may be errors in the latex.  Use view with {\\tt debug=True}.)\\vfill"
-    s += '\\vspace{40mm}'
+    if title:
+        s += '\\vspace{40mm}'
     if process:
         for i in range(len(objects)):
             x = objects[i]
             L = latex(x)
-            if not '\\begin{verbatim}' in L:
+            if '\\begin{pgfpicture}' in L:
+                # Resize the pgf figure to the text width if larger.
+                s += r'\begingroup\makeatletter\@ifundefined{pgffigure}{\newsavebox{\pgffigure}}{}\makeatother\endgroup'
+                s += r'\begin{lrbox}{\pgffigure}' + '\n'
+                s += '%s'%L
+                s += r'\end{lrbox}'
+                s += r'\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{\usebox{\pgffigure}}' + '\n'
+            elif '\\begin{verbatim}' not in L:
                 s += '%s%s%s'%(math_left, L, math_right)
             else:
                 s += '%s'%L
@@ -1889,14 +1893,14 @@ class MathJax:
 
         OUTPUT:
 
-        A :calss:`MathJaxExpr`
+        A :class:`MathJaxExpr`
 
         EXAMPLES::
 
             sage: from sage.misc.latex import MathJax
             sage: MathJax()(3)
             <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
-            sage: str(MathJax().eval(ZZ[x], mode='display')) == str(MathJax()(ZZ[x]))
+            sage: str(MathJax().eval(ZZ['x'], mode='display')) == str(MathJax()(ZZ['x']))
             True
         """
         return self.eval(x, combine_all=combine_all)
@@ -1936,8 +1940,10 @@ class MathJax:
             <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
             sage: MathJax().eval(3, mode='inline')
             <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
-            sage: MathJax().eval(type(3), mode='inline')
+            sage: MathJax().eval(type(3), mode='inline')  # py2
             <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<type|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
+            sage: MathJax().eval(type(3), mode='inline')  # py3
+            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<class|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
         """
         # Get a regular LaTeX representation of x
         x = latex(x, combine_all=combine_all)
@@ -1959,7 +1965,7 @@ class MathJax:
             # part should end in "}}", so omit the last two characters
             # from y
             y = part[:closing-1]
-            for delimiter in """|"'`#%&,.:;?!@_~^+-/\=<>()[]{}0123456789E""":
+            for delimiter in r"""|"'`#%&,.:;?!@_~^+-/\=<>()[]{}0123456789E""":
                 if delimiter not in y:
                     break
             if delimiter == "E":
@@ -2004,7 +2010,7 @@ class MathJax:
         return MathJaxExpr(html.format(latex_string))
 
 def view(objects, title='Sage', debug=False, sep='', tiny=False,
-        pdflatex=None, engine=None, viewer = None, tightpage = None,
+        pdflatex=None, engine=None, viewer=None, tightpage=True, margin=None,
         mode='inline', combine_all=False, **kwds):
     r"""nodetex
     Compute a latex representation of each object in objects, compile,
@@ -2046,8 +2052,12 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     -  ``viewer`` -- string or ``None`` (default: ``None``): specify a viewer
        to use; currently the only options are ``None`` and ``'pdf'``.
 
-    -  ``tightpage`` -- bool (default: ``False``): use the LaTeX package
+    -  ``tightpage`` -- bool (default: ``True``): use the LaTeX package
        'preview' with the 'tightpage' option.
+
+    -  ``margin`` -- float or ``None`` (default: ``None``): adds a margin
+       of ``margin`` mm; has no affect if the option ``tightpage`` is
+       ``False``.
 
     - ``mode`` -- string (default: ``'inline'``): ``'display'`` for
       displaymath or ``'inline'`` for inline math
@@ -2091,9 +2101,9 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     viewer, even in notebook mode. This also sets the latex engine to be
     ``pdflatex`` if the current engine is latex.
 
-    Setting the option ``tightpage`` to ``True`` tells LaTeX to use
-    the package 'preview' with the 'tightpage' option. Then, each
-    object is typeset in its own page, and that page is cropped to
+    Setting the option ``tightpage`` to ``True`` (this is the default setting)
+    tells LaTeX to use  the package 'preview' with the 'tightpage' option.
+    Then, each object is typeset in its own page, and that page is cropped to
     exactly the size of the object. This is typically useful for very
     large pictures (like graphs) generated with tikz. This only works
     when using a separate viewer. Note that the object are currently
@@ -2106,6 +2116,9 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
     to the LaTeX preamble, and replaces the ``\\[`` and ``\\]`` around
     each object by ``\\begin{page}$`` and ``$\\end{page}``.
+    Setting ``tightpage`` to ``False`` turns off this behavior and provides
+    the latex output as a full page. If ``tightpage`` is set to ``True``,
+    the ``Title`` is ignored.
 
     If in notebook mode with ``viewer`` equal to ``None``, this
     usually uses MathJax -- see the next paragraph for the exception --
@@ -2135,9 +2148,30 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         sage: g = sage.misc.latex.latex_examples.graph()
         sage: latex.add_to_preamble(r"\usepackage{tkz-graph}")
         sage: file = os.path.join(SAGE_TMP, "temp.tex")
-        sage: O = open(file, 'w'); O.write(_latex_file_(g)); O.close()
+        sage: with open(file, 'w') as O:
+        ....:     _ = O.write(_latex_file_(g))
         sage: _run_latex_(file, engine="pdflatex") # optional - latex
         'pdf'
+
+        sage: view(4, margin=5, debug=True)     # not tested
+        \documentclass{article}
+        ...
+        \usepackage[tightpage,active]{preview}
+        \PreviewEnvironment{page}
+        \setlength\PreviewBorder{5.000000mm}
+        \begin{document}\begin{page}$4$\end{page}
+        \end{document}
+        ...
+
+        sage: view(4, debug=True)               # not tested
+        \documentclass{article}
+        ...
+        \usepackage[tightpage,active]{preview}
+        \PreviewEnvironment{page}
+        \begin{document}\begin{page}$4$\end{page}
+        \end{document}
+        ...
+
 
         sage: latex.extra_preamble('') # reset the preamble
 
@@ -2152,11 +2186,21 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         ValueError: Unsupported LaTeX engine.
 
     """
-    if tightpage == True:
-        latex_options = {'extra_preamble':'\\usepackage[tightpage,active]{preview}\\PreviewEnvironment{page}',
-                         'math_left':'\\begin{page}$', 'math_right':'$\\end{page}'}
+
+    if tightpage:
+        if margin is None:
+            margin_str = ""
+        else:
+            margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
+        latex_options = {'extra_preamble':
+                         '\\usepackage[tightpage,active]{preview}\n' +
+                         '\\PreviewEnvironment{page}%s' % margin_str,
+                         'math_left': '\\begin{page}$',
+                         'math_right': '$\\end{page}'}
+        title = None
     else:
         latex_options = {}
+
     s = _latex_file_(objects, title=title, sep=sep, tiny=tiny, debug=debug, **latex_options)
     if engine is None:
         engine = _Latex_prefs._option["engine"]
@@ -2174,8 +2218,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
             print(MathJax().eval(objects, mode=mode, combine_all=combine_all))
         else:
             base_dir = os.path.abspath("")
-            from sage.misc.temporary_file import graphics_filename
-            png_file = graphics_filename()
+            from sage.misc.temporary_file import tmp_filename
+            png_file = tmp_filename(ext='.png')
             png_link = "cell://" + png_file
             png(objects, os.path.join(base_dir, png_file),
                 debug=debug, engine=engine)
@@ -2184,7 +2228,8 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     # command line or notebook with viewer
     tmp = tmp_dir('sage_viewer')
     tex_file = os.path.join(tmp, "sage.tex")
-    open(tex_file,'w').write(s)
+    with open(tex_file, 'w') as file:
+        file.write(s)
     suffix = _run_latex_(tex_file, debug=debug, engine=engine, png=False)
     if suffix == "pdf":
         from sage.misc.viewer import pdf_viewer
@@ -2256,7 +2301,8 @@ def png(x, filename, density=150, debug=False,
     tex_file = os.path.join(tmp, "sage.tex")
     png_file = os.path.join(tmp, "sage.png")
     # write latex string to file
-    open(tex_file,'w').write(s)
+    with open(tex_file, 'w') as file:
+        file.write(s)
     # run latex on the file, producing png output to png_file
     e = _run_latex_(tex_file, density=density, debug=debug,
                     png=True, engine=engine)
@@ -2293,11 +2339,11 @@ def coeff_repr(c):
         return c._latex_coeff_repr()
     except AttributeError:
         pass
-    if isinstance(c, (int, long, float)):
+    if isinstance(c, (int, float)):
         return str(c)
     s = latex(c)
     if s.find("+") != -1 or s.find("-") != -1:
-        return "(%s)"%s
+        return "(%s)" % s
     return s
 
 def repr_lincomb(symbols, coeffs):
@@ -2329,6 +2375,26 @@ def repr_lincomb(symbols, coeffs):
 
         sage: repr_lincomb([1,5,-3],[2,8/9,7])
         '2\\cdot 1 + \\frac{8}{9}\\cdot 5 + 7\\cdot -3'
+
+    Verify that :trac:`17299` (latex representation of modular symbols)
+    is fixed::
+
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]
+        sage: from sage.misc.latex import repr_lincomb
+        sage: latex(x.modular_symbol_rep())
+        \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
+
+    Verify that it works when the symbols are numbers::
+
+        sage: x = FormalSum([(1,2),(3,4)])
+        sage: latex(x)
+        2 + 3\cdot 4
+
+    Verify that it works when ``bv in CC`` raises an error::
+
+        sage: x = FormalSum([(1,'x'),(2,'y')])
+        sage: latex(x)
+        \text{\texttt{x}} + 2\text{\texttt{y}}
     """
     s = ""
     first = True
@@ -2344,21 +2410,25 @@ def repr_lincomb(symbols, coeffs):
                 if first:
                     s += b
                 else:
-                    s += " + %s"%b
+                    s += " + %s" % b
             else:
                 coeff = coeff_repr(c)
+                if coeff == "-1":
+                    coeff = "-"
                 if first:
                     coeff = str(coeff)
                 else:
-                    coeff = " + %s"%coeff
+                    coeff = " + %s" % coeff
                 # this is a hack: i want to say that if the symbol
                 # happens to be a number, then we should put a
                 # multiplication sign in
                 try:
                     if bv in CC:
-                        s += "%s\cdot %s"%(coeff, b)
+                        s += r"%s\cdot %s" % (coeff, b)
+                    else:
+                        s += "%s%s" % (coeff, b)
                 except Exception:
-                    s += "%s%s"%(coeff, b)
+                    s += "%s%s" % (coeff, b)
             first = False
         i += 1
     if first:
@@ -2369,11 +2439,12 @@ def repr_lincomb(symbols, coeffs):
 
 def pretty_print_default(enable=True):
     r"""
-    Enable or disable default pretty printing. Pretty printing means
-    rendering things so that MathJax or some other latex-aware front end
-    can render real math.
+    Enable or disable default pretty printing.
 
-    This function is pretty useless without the notebook, it shoudn't
+    Pretty printing means rendering things so that MathJax or some
+    other latex-aware front end can render real math.
+
+    This function is pretty useless without the notebook, it should not
     be in the global namespace.
 
     INPUT:
@@ -2538,18 +2609,23 @@ def latex_variable_name(x, is_fname=False):
 
     TESTS::
 
-        sage: latex_variable_name('_C')  # :trac:`16007`
+        sage: latex_variable_name('_C')  # trac #16007
         'C'
         sage: latex_variable_name('_K1')
         'K_{1}'
+
+        sage: latex_variable_name('5')
+        '5'
     """
+    # if x is an integer (it might be the case for padics), we return x
+    if re.match(r'\d+$', x):
+        return x
     underscore = x.find("_")
     if underscore == -1:
-        import re
         # * The "\d|[.,]" means "decimal digit" or period or comma
         # * The "+" means "1 or more"
         # * The "$" means "at the end of the line"
-        m = re.search('(\d|[.,])+$',x)
+        m = re.search(r'(\d|[.,])+$', x)
         if m is None:
             prefix = x
             suffix = None
@@ -2564,14 +2640,15 @@ def latex_variable_name(x, is_fname=False):
             for sym in symtable.values():
                 if sym[0] == '_' and sym[1:] == suffix:
                     return latex_variable_name(suffix)
-    if suffix and len(suffix) > 0:
+    if suffix and len(suffix):
         # handle the suffix specially because it very well might be numeric
         # I use strip to avoid using regex's -- It makes it a bit faster (and the code is more comprehensible to non-regex'ed people)
-        if suffix.strip("1234567890")!="":
+        if suffix.strip("1234567890") != "":
             suffix = latex_variable_name(suffix, is_fname) # recurse to deal with recursive subscripts
-        return '%s_{%s}'%(latex_varify(prefix, is_fname), suffix)
+        return '%s_{%s}' % (latex_varify(prefix, is_fname), suffix)
     else:
         return latex_varify(prefix, is_fname)
+
 
 class LatexExamples():
     r"""
@@ -2609,18 +2686,6 @@ class LatexExamples():
             LaTeX example for testing display of graphs...
         """
 
-        def __init__(self):
-            """
-            See the string representation for complete documentation.
-
-            EXAMPLES::
-
-                sage: from sage.misc.latex import latex_examples
-                sage: type(latex_examples.graph())
-                <class 'sage.misc.latex.graph'>
-            """
-            pass
-
         def _repr_(self):
             """
             String representation
@@ -2643,7 +2708,8 @@ a picture of a graph.  In the notebook, it still won't work.  Finally,
 run 'latex.add_to_mathjax_avoid_list("tikzpicture")' and try again
 from the notebook -- you should get a nice picture.
 
-(LaTeX code taken from http://altermundus.com/pages/tkz/)
+(LaTeX code taken from the documentation of the LaTeX package tkz-graph
+https://www.ctan.org/pkg/tkz-graph)
 """
 
         def _latex_(self):
@@ -2690,17 +2756,6 @@ from the notebook -- you should get a nice picture.
             sage: PS
             LaTeX example for testing display of pstricks...
         """
-        def __init__(self):
-            """
-            See the string representation for complete documentation.
-
-            EXAMPLES::
-
-                sage: from sage.misc.latex import latex_examples
-                sage: type(latex_examples.pstricks())
-                <class 'sage.misc.latex.pstricks'>
-            """
-            pass
 
         def _repr_(self):
             """
@@ -2761,23 +2816,12 @@ should get a nice picture."""
             sage: K
             LaTeX example for testing display of a knot...
         """
-        def __init__(self):
-            """
-            See the string representation for complete documentation.
-
-            EXAMPLES::
-
-                sage: from sage.misc.latex import latex_examples
-                sage: type(latex_examples.knot())
-                <class 'sage.misc.latex.knot'>
-            """
-            pass
 
         def _repr_(self):
             """
             String representation
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: from sage.misc.latex import latex_examples
                 sage: len(latex_examples.knot()._repr_()) > 300
@@ -2824,23 +2868,12 @@ should get a nice picture.
             sage: CD
             LaTeX example for testing display of a commutative diagram...
         """
-        def __init__(self):
-            """
-            See the string representation for complete documentation.
-
-            EXAMPLES::
-
-                sage: from sage.misc.latex import latex_examples
-                sage: type(latex_examples.diagram())
-                <class 'sage.misc.latex.diagram'>
-            """
-            pass
 
         def _repr_(self):
             """
             String representation
 
-            EXAMPLES:
+            EXAMPLES::
 
                 sage: from sage.misc.latex import latex_examples
                 sage: len(latex_examples.diagram()._repr_()) > 300

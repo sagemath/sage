@@ -24,6 +24,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
+from __future__ import division
+
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
 from sage.combinat.root_system.cartan_type import CartanType
@@ -147,7 +149,7 @@ class VirtualCrystal(Subcrystal):
 
     REFERENCES:
 
-    - [FOS09]_
+    - [FOS2009]_
     - [OSS03]_
     - [OSS2003]_
     """
@@ -168,6 +170,16 @@ class VirtualCrystal(Subcrystal):
             sage: V2 = psi2.image()
             sage: V1 is V2
             True
+
+        TESTS:
+
+        Check that :trac:`19481` is fixed::
+
+            sage: from sage.combinat.crystals.virtual_crystal import VirtualCrystal
+            sage: A = crystals.Tableaux(['A',3], shape=[2,1,1])
+            sage: V = VirtualCrystal(A, {1:(1,3), 2:(2,)}, {1:1, 2:2}, cartan_type=['C',2])
+            sage: V.category()
+            Category of finite crystals
         """
         if cartan_type is None:
             cartan_type = ambient.cartan_type()
@@ -181,6 +193,8 @@ class VirtualCrystal(Subcrystal):
         scaling_factors = Family(scaling_factors)
 
         category = Crystals().or_subcategory(category)
+        if ambient in FiniteCrystals() or isinstance(contained, frozenset):
+            category = category.Finite()
 
         return super(Subcrystal, cls).__classcall__(cls, ambient, virtualization, scaling_factors,
                                                     contained, tuple(generators), cartan_type,
@@ -250,7 +264,7 @@ class VirtualCrystal(Subcrystal):
         return True
 
     def virtualization(self):
-        """
+        r"""
         Return the virtualization sets `\sigma_i`.
 
         EXAMPLES::
@@ -265,7 +279,7 @@ class VirtualCrystal(Subcrystal):
         return self._virtualization
 
     def scaling_factors(self):
-        """
+        r"""
         Return the scaling factors `\gamma_i`.
 
         EXAMPLES::
@@ -352,7 +366,7 @@ class VirtualCrystal(Subcrystal):
                 1
             """
             P = self.parent()
-            return self.value.epsilon(P._virtualization[i][0]) / P._scaling_factors[i]
+            return self.value.epsilon(P._virtualization[i][0]) // P._scaling_factors[i]
 
         def phi(self, i):
             r"""
@@ -371,7 +385,7 @@ class VirtualCrystal(Subcrystal):
                 0
             """
             P = self.parent()
-            return self.value.phi(P._virtualization[i][0]) / P._scaling_factors[i]
+            return self.value.phi(P._virtualization[i][0]) // P._scaling_factors[i]
 
         def weight(self):
             """
@@ -398,7 +412,7 @@ class VirtualCrystal(Subcrystal):
             La = WLR.fundamental_weights()
             v = P._virtualization
             sf = P._scaling_factors
-            return WLR.sum(wt.scalar(ac[v[i][0]]) / sf[i] * La[i]
+            return WLR.sum(wt.scalar(ac[v[i][0]]) // sf[i] * La[i]
                            for i in self.index_set())
 
 # TODO: implement a devirtualization map

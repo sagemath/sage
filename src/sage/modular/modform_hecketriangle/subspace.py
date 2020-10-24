@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -16,17 +17,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.all import ZZ
 
 from sage.modules.module import Module
-from sage.categories.all import Modules
-from sage.modules.free_module_element import vector
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 
-from hecke_triangle_groups import HeckeTriangleGroup
-from abstract_space import FormsSpace_abstract
+from .abstract_space import FormsSpace_abstract
 
 
 def canonical_parameters(ambient_space, basis, check=True):
@@ -174,7 +172,9 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: subspace.analytic_type()
             modular
             sage: subspace.category()
-            Category of vector spaces over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of modules over Integer Ring
+            sage: subspace in subspace.category()
+            True
             sage: subspace.module()
             Vector space of degree 4 and dimension 2 over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
             Basis matrix:
@@ -209,7 +209,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         """
 
         FormsSpace_abstract.__init__(self, group=ambient_space.group(), base_ring=ambient_space.base_ring(), k=ambient_space.weight(), ep=ambient_space.ep(), n=ambient_space.hecke_n())
-        Module.__init__(self, base=self.coeff_ring())
+        Module.__init__(self, base=ambient_space.base_ring())
 
         self._ambient_space = ambient_space
         self._basis = [v for v in basis]
@@ -246,8 +246,12 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
             sage: from sage.modular.modform_hecketriangle.space import ModularForms
             sage: MF = ModularForms(n=6, k=20, ep=1)
             sage: subspace = MF.subspace([MF.Delta()*MF.E4()^2, MF.gen(0)])
+            sage: subspace.change_ring(QQ)
+            Subspace of dimension 2 of ModularForms(n=6, k=20, ep=1) over Rational Field
             sage: subspace.change_ring(CC)
-            Subspace of dimension 2 of ModularForms(n=6, k=20, ep=1) over Complex Field with 53 bits of precision
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
 
         return self.__class__.__base__(self._ambient_space.change_ring(new_base_ring), self._basis, check=False)

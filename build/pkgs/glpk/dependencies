@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(ZLIB)
+$(MP_LIBRARY) zlib
 
 ----------
 All lines of this file are ignored except the first.

@@ -13,11 +13,10 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 
-from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.matrix.all import MatrixSpace
 from sage.modules.all import FreeModule
@@ -57,7 +56,7 @@ class AffineGroup(UniqueRepresentation, Group):
         x \mapsto A x + b.
 
     We can also represent affine transformations as linear transformations by
-    considering `\dim(V) + 1` dimensonal space. We take the affine
+    considering `\dim(V) + 1` dimensional space. We take the affine
     transformation `(A, b)` to
 
     .. MATH::
@@ -93,7 +92,7 @@ class AffineGroup(UniqueRepresentation, Group):
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      * ``var`` -- (Defalut: ``'a'``) Keyword argument to specify the finite
+      * ``var`` -- (default: ``'a'``) Keyword argument to specify the finite
         field generator name in the case where ``ring`` is a prime power.
 
     EXAMPLES::
@@ -173,7 +172,7 @@ class AffineGroup(UniqueRepresentation, Group):
             degree, ring = args
             from sage.rings.integer import is_Integer
             if is_Integer(ring):
-                from sage.rings.finite_rings.constructor import FiniteField
+                from sage.rings.finite_rings.finite_field_constructor import FiniteField
                 var = kwds.get('var', 'a')
                 ring = FiniteField(ring, var)
         return super(AffineGroup, cls).__classcall__(cls, degree, ring)
@@ -216,7 +215,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         This is called from the group element constructor and can be
         overridden for subgroups of the affine group. It is guaranteed
-        that ``A``, ``b`` are in the correct matrix/vetor space.
+        that ``A``, ``b`` are in the correct matrix/vector space.
 
         INPUT:
 
@@ -351,7 +350,7 @@ class AffineGroup(UniqueRepresentation, Group):
         return MatrixSpace(self.base_ring(), dp, dp)
 
     def linear(self, A):
-        """
+        r"""
         Construct the general linear transformation by ``A``.
 
         INPUT:
@@ -374,7 +373,7 @@ class AffineGroup(UniqueRepresentation, Group):
         return self.element_class(self, A, self.vector_space().zero(), check=True, convert=False)
 
     def translation(self, b):
-        """
+        r"""
         Construct the translation by ``b``.
 
         INPUT:
@@ -428,10 +427,9 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         v = self.vector_space()(v)
         try:
-            two_norm2inv = self.base_ring()(2) / sum([ vi**2 for vi in v ])
+            two_norm2inv = self.base_ring()(2) / sum([vi**2 for vi in v])
         except ZeroDivisionError:
             raise ValueError('v has norm zero')
-        from sage.matrix.constructor import identity_matrix
         A = self.matrix_space().one() - v.column() * (v.row() * two_norm2inv)
         return self.element_class(self, A, self.vector_space().zero(), check=True, convert=False)
 

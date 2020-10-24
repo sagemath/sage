@@ -18,19 +18,19 @@ EXAMPLES::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009,2011 R. Andrew Ohana <andrew.ohana@gmail.com>
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include 'sage/ext/stdsage.pxi'
-include 'sage/ext/interrupt.pxi'
-from sage.libs.pari.paridecl cimport *
+from cypari2.paridecl cimport *
+from cysignals.signals cimport *
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
 from libc.stdint cimport int_fast8_t, uint_fast16_t, uint8_t, uint32_t, uint64_t
 from sage.rings.integer cimport Integer
@@ -41,7 +41,7 @@ from sage.libs.gmp.mpz cimport *
 
 cdef uint64_t arg_to_uint64(x, str s1, str s2) except -1:
     if not isinstance(x, Integer):
-        from other import floor
+        from .other import floor
         x = Integer(floor(x))
     if mpz_sgn((<Integer>x).value) <= 0:
         return 0ull
@@ -99,7 +99,9 @@ cdef class PrimePi(BuiltinFunction):
             sage: prime_pi(sqrt(2357))
             15
             sage: prime_pi(mod(30957, 9750979))
-            3337
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce arguments: positive characteristic not allowed in symbolic computations
 
         We test non-trivial ``prime_bound`` values::
 
@@ -108,7 +110,7 @@ cdef class PrimePi(BuiltinFunction):
             sage: prime_pi(500509, 50051)
             41581
 
-        The following test is to verify that ticket #4670 has been essentially
+        The following test is to verify that :trac:`4670` has been essentially
         resolved::
 
             sage: prime_pi(10^10)
@@ -122,19 +124,15 @@ cdef class PrimePi(BuiltinFunction):
         NOTES:
 
         Uses a recursive implementation, using the optimizations described in
-        [RAO2011]_.
-
-        REFERENCES:
-
-        .. [RAO2011] R.A. Ohana. On Prime Counting in Abelian Number Fields.
-           http://wstein.org/home/ohanar/papers/abelian_prime_counting/main.pdf.
+        [Oha2011]_.
 
         AUTHOR:
 
         - \R. Andrew Ohana (2011)
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
-                conversions={'mathematica':'PrimePi', 'pari':'primepi'})
+                conversions={'mathematica':'PrimePi', 'pari':'primepi',
+                    'sympy':'primepi'})
 
     cdef uint32_t *__primes
     cdef uint32_t __numPrimes, __maxSieve, __primeBound
@@ -144,13 +142,13 @@ cdef class PrimePi(BuiltinFunction):
 
     def __dealloc__(self):
         if self.__smallPi != NULL:
-            sage_free(self.__smallPi)
-            sage_free(self.__tabS)
+            sig_free(self.__smallPi)
+            sig_free(self.__tabS)
 
     cdef void _init_tables(self):
         pari.init_primes(0xffffu)
         self.__pariPrimePtr = diffptr
-        self.__smallPi = <uint_fast16_t *>sage_malloc(
+        self.__smallPi = <uint_fast16_t *>sig_malloc(
                 0x10000u * sizeof(uint_fast16_t))
         cdef uint32_t p=0u, i=0u, k=0u
         while i < 0xfff1u: # 0xfff1 is the last prime up to 0xffff
@@ -163,7 +161,7 @@ cdef class PrimePi(BuiltinFunction):
             self.__smallPi[i] = k
             i += 1u
 
-        self.__tabS = <int_fast8_t *>sage_malloc(2310*sizeof(int_fast8_t))
+        self.__tabS = <int_fast8_t *>sig_malloc(2310*sizeof(int_fast8_t))
         for i in range(2310u):
             self.__tabS[i] = ((i+1u)/2u - (i+3u)/6u - (i+5u)/10u + (i+15u)/30u
                     - (i+7u)/14u + (i+21u)/42u + (i+35u)/70u - (i+105u)/210u
@@ -276,7 +274,7 @@ cdef class PrimePi(BuiltinFunction):
     cdef uint32_t _cached_count(self, uint32_t p):
         r"""
         For p < 65536, returns the value stored in ``self.__smallPi[p]``. For
-        p <= ``self.__maxSieve``, uses a binary seach on ``self.__primes`` to
+        p <= ``self.__maxSieve``, uses a binary search on ``self.__primes`` to
         compute pi(p).
         """
         # inspired by Yann Laigle-Chapuy's suggestion
@@ -305,7 +303,7 @@ cdef class PrimePi(BuiltinFunction):
 
     cdef void _clean_cache(self):
         if self.__numPrimes:
-            sage_free(self.__primes)
+            sig_free(self.__primes)
             self.__numPrimes = 0u
             self.__maxSieve = 0u
 
@@ -319,10 +317,10 @@ cdef class PrimePi(BuiltinFunction):
         self.__pariPrimePtr = diffptr
         newNumPrimes = self._pi(b, 0ull)
         if self.__numPrimes:
-            prime = <uint32_t *>sage_realloc(self.__primes,
+            prime = <uint32_t *>sig_realloc(self.__primes,
                     newNumPrimes * sizeof(uint32_t))
         else:
-            prime = <uint32_t *>sage_malloc(newNumPrimes*sizeof(uint32_t))
+            prime = <uint32_t *>sig_malloc(newNumPrimes*sizeof(uint32_t))
         if not sig_on_no_except():
             self.__numPrimes = newNumPrimes
             self._clean_cache()
@@ -509,7 +507,7 @@ cpdef Integer legendre_phi(x, a):
     NOTES:
 
     Uses a recursive implementation, using the optimizations described in
-    [RAO2011]_.
+    [Oha2011]_.
 
     AUTHOR:
 
@@ -543,7 +541,7 @@ cpdef Integer legendre_phi(x, a):
     # Deal with the general case
     if (<PrimePi>prime_pi).__smallPi == NULL:
         (<PrimePi>prime_pi)._init_tables()
-    cdef uint32_t z = pari.nth_prime(a)
+    cdef uint32_t z = pari.prime(a)
     if z >= y: return Integer(1)
     (<PrimePi>prime_pi)._init_primes(z)
     if not sig_on_no_except():

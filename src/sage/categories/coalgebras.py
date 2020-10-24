@@ -1,23 +1,28 @@
 r"""
 Coalgebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from __future__ import absolute_import
 
-from category_types import Category_over_base_ring
+from .category_types import Category_over_base_ring
 from sage.categories.all import Modules
-from sage.categories.tensor import TensorProductsCategory, tensor
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
+from sage.categories.filtered_modules import FilteredModulesCategory
+from sage.categories.super_modules import SuperModulesCategory
 from sage.categories.realizations import RealizationsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+
 
 class Coalgebras(Category_over_base_ring):
     """
@@ -44,29 +49,17 @@ class Coalgebras(Category_over_base_ring):
         return [Modules(self.base_ring())]
 
     WithBasis = LazyImport('sage.categories.coalgebras_with_basis',  'CoalgebrasWithBasis')
+    Graded = LazyImport('sage.categories.graded_coalgebras', 'GradedCoalgebras')
 
     class ParentMethods:
         #def __init_add__(self): # The analogue of initDomainAdd
         #    # Will declare the coproduct of self to the coercion mechanism when it exists
         #    pass
 
-        @cached_method
-        def tensor_square(self):
-            """
-            Returns the tensor square of ``self``
-
-            EXAMPLES::
-
-                sage: A = HopfAlgebrasWithBasis(QQ).example()
-                sage: A.tensor_square()
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field # An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-            """
-            return tensor([self, self])
-
         @abstract_method
         def counit(self, x):
             """
-            Returns the counit of x.
+            Return the counit of ``x``.
 
             Eventually, there will be a default implementation,
             delegating to the overloading mechanism and forcing the
@@ -75,7 +68,8 @@ class Coalgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis:
+                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, A.counit(a)
                 (B[(1,2,3)], 1)
@@ -90,7 +84,7 @@ class Coalgebras(Category_over_base_ring):
         @abstract_method
         def coproduct(self, x):
             """
-            Returns the coproduct of x.
+            Return the coproduct of ``x``.
 
             Eventually, there will be a default implementation,
             delegating to the overloading mechanism and forcing the
@@ -99,7 +93,8 @@ class Coalgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis:
+                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, A.coproduct(a)
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
@@ -111,12 +106,13 @@ class Coalgebras(Category_over_base_ring):
     class ElementMethods:
         def coproduct(self):
             """
-            Returns the coproduct of ``self``
+            Return the coproduct of ``self``.
 
             EXAMPLES::
 
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis:
+                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.coproduct()
                 (B[(1,2,3)], B[(1,2,3)] # B[(1,2,3)])
@@ -127,12 +123,13 @@ class Coalgebras(Category_over_base_ring):
 
         def counit(self):
             """
-            Returns the counit of ``self``
+            Return the counit of ``self``.
 
             EXAMPLES::
 
                 sage: A = HopfAlgebrasWithBasis(QQ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
+                An example of Hopf algebra with basis:
+                 the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
                 sage: [a,b] = A.algebra_generators()
                 sage: a, a.counit()
                 (B[(1,2,3)], 1)
@@ -141,8 +138,44 @@ class Coalgebras(Category_over_base_ring):
             """
             return self.parent().counit(self)
 
-    class TensorProducts(TensorProductsCategory):
+    class SubcategoryMethods:
+        @cached_method
+        def Cocommutative(self):
+            r"""
+            Return the full subcategory of the cocommutative objects
+            of ``self``.
 
+            A coalgebra `C` is said to be *cocommutative* if
+
+            .. MATH::
+
+                \Delta(c) = \sum_{(c)} c_{(1)} \otimes c_{(2)}
+                = \sum_{(c)} c_{(2)} \otimes c_{(1)}
+
+            in Sweedler's notation for all `c \in C`.
+
+            EXAMPLES::
+
+                sage: C1 = Coalgebras(ZZ).Cocommutative().WithBasis(); C1
+                Category of cocommutative coalgebras with basis over Integer Ring
+                sage: C2 = Coalgebras(ZZ).WithBasis().Cocommutative()
+                sage: C1 is C2
+                True
+                sage: BialgebrasWithBasis(QQ).Cocommutative()
+                Category of cocommutative bialgebras with basis over Rational Field
+
+            TESTS::
+
+                sage: TestSuite(Coalgebras(ZZ).Cocommutative()).run()
+            """
+            return self._with_axiom("Cocommutative")
+
+    class Cocommutative(CategoryWithAxiom_over_base_ring):
+        """
+        Category of cocommutative coalgebras.
+        """
+
+    class TensorProducts(TensorProductsCategory):
         @cached_method
         def extra_super_categories(self):
             """
@@ -182,7 +215,8 @@ class Coalgebras(Category_over_base_ring):
                 sage: C.dual()
                 Category of duals of coalgebras over Rational Field
                 sage: C.dual().super_categories() # indirect doctest
-                [Category of algebras over Rational Field, Category of duals of vector spaces over Rational Field]
+                [Category of algebras over Rational Field,
+                 Category of duals of vector spaces over Rational Field]
 
             .. WARNING::
 
@@ -192,13 +226,70 @@ class Coalgebras(Category_over_base_ring):
             from sage.categories.algebras import Algebras
             return [Algebras(self.base_category().base_ring())]
 
+    class Super(SuperModulesCategory):
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Coalgebras(ZZ).Super().extra_super_categories()
+                [Category of graded coalgebras over Integer Ring]
+                sage: Coalgebras(ZZ).Super().super_categories()
+                [Category of graded coalgebras over Integer Ring,
+                 Category of super modules over Integer Ring]
+
+            Compare this with the situation for bialgebras::
+
+                sage: Bialgebras(ZZ).Super().extra_super_categories()
+                []
+                sage: Bialgebras(ZZ).Super().super_categories()
+                [Category of super algebras over Integer Ring,
+                 Category of super coalgebras over Integer Ring]
+
+            The category of bialgebras does not occur in these results,
+            since super bialgebras are not bialgebras.
+            """
+            return [self.base_category().Graded()]
+
+        class SubcategoryMethods:
+            @cached_method
+            def Supercocommutative(self):
+                r"""
+                Return the full subcategory of the supercocommutative
+                objects of ``self``.
+
+                EXAMPLES::
+
+                    sage: Coalgebras(ZZ).WithBasis().Super().Supercocommutative()
+                    Category of supercocommutative super coalgebras with basis over Integer Ring
+                    sage: BialgebrasWithBasis(QQ).Super().Supercocommutative()
+                    Join of Category of super algebras with basis over Rational Field
+                     and Category of super bialgebras over Rational Field
+                     and Category of super coalgebras with basis over Rational Field
+                     and Category of supercocommutative super coalgebras over Rational Field
+
+                TESTS::
+
+                    sage: TestSuite(HopfAlgebras(ZZ).Super().Supercocommutative()).run()
+                """
+                return self._with_axiom("Supercocommutative")
+
+        class Supercocommutative(CategoryWithAxiom_over_base_ring):
+            """
+            Category of supercocommutative coalgebras.
+            """
+
+    class Filtered(FilteredModulesCategory):
+        """
+        Category of filtered coalgebras.
+        """
+
     class WithRealizations(WithRealizationsCategory):
 
         class ParentMethods:
 
             def coproduct(self, x):
                 r"""
-                Returns the coproduct of ``x``.
+                Return the coproduct of ``x``.
 
                 EXAMPLES::
 
@@ -213,7 +304,7 @@ class Coalgebras(Category_over_base_ring):
 
             def counit(self, x):
                 r"""
-                Returns the counit of ``x``.
+                Return the counit of ``x``.
 
                 EXAMPLES::
 
@@ -245,7 +336,8 @@ class Coalgebras(Category_over_base_ring):
 
             def coproduct_by_coercion(self, x):
                 r"""
-                Returns the coproduct by coercion if coproduct_by_basis is not implemented.
+                Return the coproduct by coercion if ``coproduct_by_basis``
+                is not implemented.
 
                 EXAMPLES::
 
@@ -274,7 +366,28 @@ class Coalgebras(Category_over_base_ring):
                     sage: R[1].coproduct()
                     R[] # R[1] + R[1] # R[]
                 """
-                from sage.categories.tensor import tensor
                 R = self.realization_of().a_realization()
-                return self.tensor_square().sum(coeff * tensor([self(R[I]), self(R[J])])
-                                                for ((I, J), coeff) in R(x).coproduct())
+                return self.tensor_square()(R(x).coproduct())
+
+            def counit_by_coercion(self, x):
+                r"""
+                Return the counit of ``x`` if ``counit_by_basis`` is
+                not implemented.
+
+                EXAMPLES::
+
+                    sage: sp = SymmetricFunctions(QQ).sp()
+                    sage: sp.an_element()
+                    2*sp[] + 2*sp[1] + 3*sp[2]
+                    sage: sp.counit(sp.an_element())
+                    2
+
+                    sage: o = SymmetricFunctions(QQ).o()
+                    sage: o.an_element()
+                    2*o[] + 2*o[1] + 3*o[2]
+                    sage: o.counit(o.an_element())
+                    -1
+                """
+                R = self.realization_of().a_realization()
+                return R(x).counit()
+

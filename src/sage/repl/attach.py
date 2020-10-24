@@ -6,14 +6,14 @@ TESTS::
     sage: attach('http://wstein.org/loadtest.py')
     Traceback (most recent call last):
     ...
-    NotImplementedError: you can't attach a URL
+    NotImplementedError: you cannot attach a URL
 
 Check that no file clutter is produced::
 
     sage: dir = tmp_dir()
     sage: src = os.path.join(dir, 'foobar.sage')
     sage: with open(src, 'w') as f:
-    ....:     f.write('print "<output from attached file>"\n')
+    ....:     _ = f.write('print("<output from attached file>")\n')
     sage: attach(src)
     <output from attached file>
     sage: os.listdir(dir)
@@ -27,19 +27,19 @@ character-by-character::
 
     sage: import traceback
     sage: with open(src, 'w') as f:
-    ....:     f.write('# first line\n')
-    ....:     f.write('# second line\n')
-    ....:     f.write('raise ValueError("third")   # this should appear in the source snippet\n')
-    ....:     f.write('# fourth line\n')
+    ....:     _ = f.write('# first line\n')
+    ....:     _ = f.write('# second line\n')
+    ....:     _ = f.write('raise ValueError("third")   # this should appear in the source snippet\n')
+    ....:     _ = f.write('# fourth line\n')
 
     sage: load_attach_mode(attach_debug=False)
     sage: try:
     ....:     attach(src)
     ....: except Exception:
-    ....:     traceback.print_exc()
+    ....:     traceback.print_exc(file=sys.stdout)
     Traceback (most recent call last):
     ...
-        exec(preparse_file(open(fpath).read()) + "\n", globals)
+        exec(preparse_file(f.read()) + "\n", globals)
       File "<string>", line 3, in <module>
     ValueError: third
     sage: detach(src)
@@ -48,7 +48,7 @@ character-by-character::
     sage: try:
     ....:     attach(src)
     ....: except Exception:
-    ....:     traceback.print_exc()
+    ....:     traceback.print_exc(file=sys.stdout)
     Traceback (most recent call last):
     ...
         exec(code, globals)
@@ -58,20 +58,23 @@ character-by-character::
     sage: detach(src)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
 
 import os
-import six
 import time
+from IPython import get_ipython
+
 from sage.repl.load import load, load_wrap
+import sage.repl.inputhook
 import sage.env
 
 # The attached files as a dict of {filename:mtime}
@@ -163,7 +166,14 @@ def load_attach_path(path=None, replace=False):
         ['.']
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print 37 * 3")
+        sage: with open(fullpath, 'w') as f:
+        ....:     _ = f.write("print(37 * 3)")
+
+    We put SAGE_TMP on the attach path for testing (otherwise this will
+    load ``test.py`` from the current working directory if that happens
+    to exist)::
+
+        sage: load_attach_path(SAGE_TMP, replace=True)
         sage: attach('test.py')
         Traceback (most recent call last):
         ...
@@ -176,6 +186,7 @@ def load_attach_path(path=None, replace=False):
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path() == ['.']
         True
+        sage: load_attach_path(SAGE_TMP, replace=True)
         sage: load('test.py')
         Traceback (most recent call last):
         ...
@@ -201,7 +212,7 @@ def load_attach_path(path=None, replace=False):
     if path is None:
         return search_paths
     else:
-        if isinstance(path, six.string_types):
+        if not isinstance(path, list):
             path = [path]
         if replace:
             search_paths = path
@@ -238,13 +249,14 @@ def reset_load_attach_path():
         sage: reset_load_attach_path(); load_attach_path()
         ['.']
         sage: os.environ['SAGE_LOAD_ATTACH_PATH'] = '/veni/vidi:vici:'
-        sage: import imp
-        sage: imp.reload(sage.repl.attach)    # Simulate startup
+        sage: from imp import reload        # py2
+        sage: from importlib import reload  # py3
+        sage: reload(sage.repl.attach)    # Simulate startup
         <module 'sage.repl.attach' from '...'>
         sage: load_attach_path()
         ['.', '/veni/vidi', 'vici']
         sage: del os.environ['SAGE_LOAD_ATTACH_PATH']
-        sage: imp.reload(sage.repl.preparse)    # Simulate startup
+        sage: reload(sage.repl.preparse)    # Simulate startup
         <module 'sage.repl.preparse' from '...'>
         sage: reset_load_attach_path(); load_attach_path()
         ['.']
@@ -263,6 +275,13 @@ def attach(*files):
     """
     Attach a file or files to a running instance of Sage and also load
     that file.
+
+    .. NOTE::
+
+        Attaching files uses the Python inputhook, which will conflict
+        with other inputhook users. This generally includes GUI main loop
+        integrations, for example tkinter. So you can only use tkinter or
+        attach, but not both at the same time.
 
     INPUT:
 
@@ -304,9 +323,9 @@ def attach(*files):
 
         sage: sage.repl.attach.reset()
         sage: t1 = tmp_filename(ext='.py')
-        sage: open(t1,'w').write("print 'hello world'")
+        sage: with open(t1,'w') as f: _ = f.write("print('hello world')")
         sage: t2 = tmp_filename(ext='.py')
-        sage: open(t2,'w').write("print 'hi there xxx'")
+        sage: with open(t2,'w') as f: _ = f.write("print('hi there xxx')")
         sage: attach(t1, t2)
         hello world
         hi there xxx
@@ -362,6 +381,7 @@ def add_attached_file(filename):
         sage: af.attached_files()
         []
     """
+    sage.repl.inputhook.install()
     fpath = os.path.abspath(filename)
     attached[fpath] = os.path.getmtime(fpath)
 
@@ -379,7 +399,7 @@ def attached_files():
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files()
@@ -388,7 +408,7 @@ def attached_files():
         True
     """
     global attached
-    return list(sorted(attached.keys()))
+    return sorted(attached)
 
 
 def detach(filename):
@@ -405,7 +425,7 @@ def detach(filename):
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files() == [t]
@@ -419,8 +439,8 @@ def detach(filename):
         ['.']
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
-        sage: open(fullpath, 'w').write("print 37 * 3")
-        sage: load_attach_path(t_dir)
+        sage: with open(fullpath, 'w') as f: _ = f.write("print(37 * 3)")
+        sage: load_attach_path(t_dir, replace=True)
         sage: attach('test.py')
         111
         sage: attached_files() == [os.path.normpath(fullpath)]
@@ -431,7 +451,7 @@ def detach(filename):
         sage: attach('test.py')
         111
         sage: fullpath = os.path.join(t_dir, 'test2.py')
-        sage: open(fullpath, 'w').write("print 3")
+        sage: with open(fullpath, 'w') as f: _ = f.write("print(3)")
         sage: attach('test2.py')
         3
         sage: detach(attached_files())
@@ -445,7 +465,7 @@ def detach(filename):
         ...
         ValueError: file '/dev/null/foobar.sage' is not attached, see attached_files()
     """
-    if isinstance(filename, six.string_types):
+    if isinstance(filename, str):
         filelist = [filename]
     else:
         filelist = [str(x) for x in filename]
@@ -464,6 +484,8 @@ def detach(filename):
             attached.pop(fpath)
         else:
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
+    if not attached:
+        sage.repl.inputhook.uninstall()
 
 def reset():
     """
@@ -473,7 +495,7 @@ def reset():
 
         sage: sage.repl.attach.reset()
         sage: t = tmp_filename(ext='.py')
-        sage: open(t,'w').write("print 'hello world'")
+        sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
         sage: attached_files() == [t]
@@ -506,13 +528,13 @@ def modified_file_iterator():
         sage: list(modified_file_iterator())
         []
         sage: sleep(1)   # filesystem mtime granularity
-        sage: open(t, 'w').write('1')
+        sage: with open(t, 'w') as f: _ = f.write('1')
         sage: list(modified_file_iterator())
         [('/.../tmp_....py', time.struct_time(...))]
     """
     global attached
-    modified = dict()
-    for filename in attached.keys():
+    modified = {}
+    for filename in list(attached):
         old_tm = attached[filename]
         if not os.path.exists(filename):
             print('### detaching file {0} because it does not exist (deleted?) ###'.format(filename))
@@ -526,7 +548,7 @@ def modified_file_iterator():
         return
     time.sleep(0.1)  # sleep 100ms to give the editor time to finish saving
 
-    for filename in modified.keys():
+    for filename in list(modified):
         old_tm = modified[filename]
         new_tm = os.path.getmtime(filename)
         if new_tm == old_tm:
@@ -547,12 +569,12 @@ def reload_attached_files_if_modified():
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
         sage: tmp = tmp_filename(ext='.py')
-        sage: open(tmp, 'w').write('a = 2\n')
+        sage: with open(tmp, 'w') as f: _ = f.write('a = 2\n')
         sage: shell.run_cell('attach({0})'.format(repr(tmp)))
         sage: shell.run_cell('a')
         2
         sage: sleep(1)   # filesystem mtime granularity
-        sage: open(tmp, 'w').write('a = 3\n')
+        sage: with open(tmp, 'w') as f: _ = f.write('a = 3\n')
 
     Note that the doctests are never really at the command prompt
     where the automatic reload is triggered. So we have to do it
@@ -569,11 +591,15 @@ def reload_attached_files_if_modified():
         []
         sage: shell.quit()
     """
+    ip = get_ipython()
     for filename, mtime in modified_file_iterator():
         basename = os.path.basename(filename)
         timestr = time.strftime('%T', mtime)
-        from sage.libs.readline import interleaved_output
-        with interleaved_output():
-            print('### reloading attached file {0} modified at {1} ###'.format(basename, timestr))
+        notice = '### reloading attached file {0} modified at {1} ###'.format(basename, timestr)
+        if ip:
+            print(notice)
             code = load_wrap(filename, attach=True)
-            get_ipython().run_cell(code)
+            ip.run_cell(code)
+        else:
+            print(notice)
+            load(filename, globals(), attach=True)

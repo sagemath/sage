@@ -124,7 +124,8 @@ just returns a list, which can be coerced into `\hbox{Lie}(U)^*`.
 ::
 
     sage: b = branching_rule("A3","C2","symmetric")
-    sage: for r in RootSystem("A3").ambient_space().simple_roots(): print r, b(r)
+    sage: for r in RootSystem("A3").ambient_space().simple_roots():
+    ....:     print("{} {}".format(r, b(r)))
     (1, -1, 0, 0) [1, -1]
     (0, 1, -1, 0) [0, 2]
     (0, 0, 1, -1) [1, -1]
@@ -640,12 +641,14 @@ Symmetric powers
 ----------------
 
 The `k`-th symmetric and exterior power homomorphisms map
-`GL(n) \to GL \left({n+k-1 \choose k} \right)` and
-`GL \left({n \choose k} \right)`. The corresponding branching rules
+`GL(n) \to GL \left(\binom{n+k-1}{k} \right)` and
+`GL \left(\binom{n}{k} \right)`. The corresponding branching rules
 are not implemented but a special case is. The `k`-th symmetric power
 homomorphism `SL(2) \to GL(k+1)` has its image inside of `SO(2r+1)` if
 `k = 2r` and inside of `Sp(2r)` if `k = 2r-1`. Hence there are
-branching rules::
+branching rules:
+
+.. CODE-BLOCK:: text
 
     ['B',r] => A1
     ['C',r] => A1
@@ -714,8 +717,7 @@ by other methods::
     sage: ad.frobenius_schur_indicator()
     1
     sage: for r in D7.fundamental_weights():  # long time (1.29s)
-    ....:    print D7(r).branch(G2, rule=branching_rule_from_plethysm(ad, "D7"))
-    ....:
+    ....:    print(D7(r).branch(G2, rule=branching_rule_from_plethysm(ad, "D7")))
     G2(0,1)
     G2(0,1) + G2(3,0)
     G2(0,0) + G2(2,0) + G2(3,0) + G2(0,2) + G2(4,0)
@@ -915,12 +917,16 @@ linear functionals ``u1`` and ``u2`` on ``U``. On the other hand
 `Lie(T) = \mathbf{R}^4`. A convenient way to see the restriction is to
 think of it as the adjoint of the map ``[u1,u2] -> [u1,u2,-u2,-u1]``,
 that is, ``[x0,x1,x2,x3] -> [x0-x3,x1-x2]``. Hence we may encode the
-rule::
+rule:
+
+.. CODE-BLOCK:: python
 
     def brule(x):
         return [x[0]-x[3], x[1]-x[2]]
 
-or simply::
+or simply:
+
+.. CODE-BLOCK:: python
 
     brule = lambda x: [x[0]-x[3], x[1]-x[2]]
 

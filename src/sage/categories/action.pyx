@@ -1,5 +1,5 @@
 r"""
-Group, ring, etc. actions on objects.
+Group, ring, etc. actions on objects
 
 The terminology and notation used is suggestive of groups acting on sets,
 but this framework can be used for modules, algebras, etc.
@@ -36,7 +36,7 @@ A group action $G \times S \rightarrow S$ is a functor from $G$ to Sets.
         sage: gc.collect()
         0
         sage: A
-        Left action by <__main__.P instance at ...> on <__main__.P instance at ...>
+        Left action by <__main__.P ... at ...> on <__main__.P ... at ...>
 
 AUTHOR:
 
@@ -44,26 +44,24 @@ AUTHOR:
 """
 
 #*****************************************************************************
-#  Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
+#       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty
-#    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-#
-#  See the GNU General Public License for more details; the full text
-#  is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from functor cimport Functor
-from morphism cimport Morphism
-from map cimport Map
+from cpython.tuple cimport PyTuple_GET_ITEM
+
+from .functor cimport Functor
+from .morphism cimport Morphism
+from .map cimport Map
+from sage.structure.element cimport parent
 from sage.structure.parent cimport Parent
 
-import homset
+from . import homset
 import sage.structure.element
 from weakref import ref
 from sage.misc.constant_function import ConstantFunction
@@ -73,13 +71,28 @@ cdef inline category(x):
     try:
         return x.category()
     except AttributeError:
-        import sage.categories.all
-        return sage.categories.all.Objects()
+        from sage.categories.objects import Objects
+        return Objects()
+
 
 cdef class Action(Functor):
+    """
+    The action of ``G`` on ``S``.
 
-    def __init__(self, G, S, bint is_left = 1, op=None):
-        from groupoid import Groupoid
+    INPUT:
+
+    - ``G`` -- a parent or Python type
+
+    - ``S`` -- a parent or Python type
+
+    - ``is_left`` -- (boolean, default: ``True``) whether elements of
+      ``G`` are on the left
+
+    - ``op`` -- (default: ``None``) operation. This is not used by
+      :class:`Action` itself, but other classes may use it
+    """
+    def __init__(self, G, S, is_left=True, op=None):
+        from .groupoid import Groupoid
         Functor.__init__(self, Groupoid(G), category(S))
         self.G = G
         self.US = ref(S)
@@ -90,32 +103,116 @@ cdef class Action(Functor):
         return self(x)
 
     def __call__(self, *args):
-        if len(args) == 1:
-            g = args[0]
+        """
+        Let this action act.
+
+        For a left action, ``action(a, b)`` lets ``a`` act on ``b``.
+        For a right action, ``action(a, b)`` lets ``b`` act on ``a``.
+
+        If needed, ``a`` and ``b`` are converted to the correct parent.
+
+        .. SEEALSO::
+
+            :meth:`act` which lets you pass the acting and acted-on
+            elements directly.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ []
+            sage: from sage.structure.coerce_actions import IntegerMulAction
+            sage: A = IntegerMulAction(ZZ, R, True)   # Left action
+            sage: A(5, x)
+            5*x
+            sage: A(int(5), x)
+            5*x
+            sage: A(x, 5)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+            sage: A = IntegerMulAction(ZZ, R, False)  # Right action
+            sage: A(x, 5)
+            5*x
+            sage: A(x, int(5))
+            5*x
+            sage: A(5, x)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        if len(args) == 2:
+            # Normal case, called with (g, x) or (x, g) as arguments
+            #
+            # For a left action:  g = args[0] and x = args[1]
+            # For a right action: g = args[1] and x = args[0]
+            g = <object>PyTuple_GET_ITEM(args, 1 - self._is_left)
+            x = <object>PyTuple_GET_ITEM(args, self._is_left)
+            return self._act_convert(g, x)
+        elif len(args) == 1:
+            g = <object>PyTuple_GET_ITEM(args, 0)
             if g in self.G:
                 return ActionEndomorphism(self, self.G(g))
             elif g == self.G:
                 return self.underlying_set()
             else:
-                raise TypeError, "%s not an element of %s"%(g, self.G)
-        elif len(args) == 2:
-            if self._is_left:
-                return self._call_(self.G(args[0]), self.underlying_set()(args[1]))
-            else:
-                return self._call_(self.underlying_set()(args[0]), self.G(args[1]))
-
-    cpdef _call_(self, a, b):
-        raise NotImplementedError, "Action not implemented."
-
-    def act(self, g, a):
-        """
-        This is a consistent interface for acting on a by g,
-        regardless of whether it's a left or right action.
-        """
-        if self._is_left:
-            return self._call_(g, a)
+                raise TypeError("%s not an element of %s" % (g, self.G))
         else:
-            return self._call_(a, g)
+            raise TypeError("actions should be called with 1 or 2 arguments")
+
+    cdef _act_convert(self, g, x):
+        """
+        Let ``g`` act on ``x`` under this action, converting ``g``
+        and ``x`` to the correct parents first.
+        """
+        U = self.underlying_set()
+        if parent(g) is not self.G:
+            g = self.G(g)
+        if parent(x) is not U:
+            x = U(x)
+        return self._act_(g, x)
+
+    cpdef _act_(self, g, x):
+        """
+        Let ``g`` act on ``x`` under this action.
+
+        Regardless of whether this is a left or right action, the acting
+        element comes first.
+
+        INPUT:
+
+        - ``g`` -- an object with parent ``self.G``.
+
+        - ``x`` -- an object with parent ``self.US()``.
+
+        .. WARNING::
+
+            This is meant to be a fast internal function, so the
+            conditions on the input are not checked!
+        """
+        raise NotImplementedError(f"action for {type(self)} not implemented")
+
+    def act(self, g, x):
+        """
+        This is a consistent interface for acting on ``x`` by ``g``,
+        regardless of whether it's a left or right action.
+
+        If needed, ``g`` and ``x`` are converted to the correct parent.
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ []
+            sage: from sage.structure.coerce_actions import IntegerMulAction
+            sage: A = IntegerMulAction(ZZ, R, True)   # Left action
+            sage: A.act(5, x)
+            5*x
+            sage: A.act(int(5), x)
+            5*x
+            sage: A = IntegerMulAction(ZZ, R, False)  # Right action
+            sage: A.act(5, x)
+            5*x
+            sage: A.act(int(5), x)
+            5*x
+        """
+        return self._act_convert(g, x)
 
     def __invert__(self):
         return InverseAction(self)
@@ -173,7 +270,7 @@ cdef class Action(Functor):
             sage: q = P()
             sage: A = Action(p,q)
             sage: A
-            Left action by <__main__.P instance at ...> on <__main__.P instance at ...>
+            Left action by <__main__.P ... at ...> on <__main__.P ... at ...>
             sage: del q
             sage: import gc
             sage: _ = gc.collect()
@@ -182,7 +279,7 @@ cdef class Action(Functor):
         """
         S = self.US()
         if S is None:
-            raise RuntimeError, "This action acted on a set that became garbage collected"
+            raise RuntimeError("This action acted on a set that became garbage collected")
         return S
 
     def codomain(self):
@@ -211,10 +308,37 @@ cdef class InverseAction(Action):
     """
     An action that acts as the inverse of the given action.
 
-    TESTS:
+    EXAMPLES::
 
-    This illustrates a shortcoming in the current coercion model.
-    See the comments in _call_ below::
+        sage: V = QQ^3
+        sage: v = V((1, 2, 3))
+        sage: cm = get_coercion_model()
+
+        sage: a = cm.get_action(V, QQ, operator.mul)
+        sage: a
+        Right scalar multiplication by Rational Field on Vector space of dimension 3 over Rational Field
+        sage: ~a
+        Right inverse action by Rational Field on Vector space of dimension 3 over Rational Field
+        sage: (~a)(v, 1/3)
+        (3, 6, 9)
+
+        sage: b = cm.get_action(QQ, V, operator.mul)
+        sage: b
+        Left scalar multiplication by Rational Field on Vector space of dimension 3 over Rational Field
+        sage: ~b
+        Left inverse action by Rational Field on Vector space of dimension 3 over Rational Field
+        sage: (~b)(1/3, v)
+        (3, 6, 9)
+
+        sage: c = cm.get_action(ZZ, list, operator.mul)
+        sage: c
+        Left action by Integer Ring on <... 'list'>
+        sage: ~c
+        Traceback (most recent call last):
+        ...
+        TypeError: no inverse defined for Left action by Integer Ring on <... 'list'>
+
+    TESTS:
 
         sage: x = polygen(QQ,'x')
         sage: a = 2*x^2+2; a
@@ -230,29 +354,19 @@ cdef class InverseAction(Action):
         try:
             from sage.groups.group import is_Group
             # We must be in the case that parent(~a) == parent(a)
-            # so we can invert in call_c code below.
+            # so we can invert in _call_ code below.
             if (is_Group(G) and G.is_multiplicative()) or G.is_field():
                 Action.__init__(self, G, action.underlying_set(), action._is_left)
                 self._action = action
                 return
-            else:
-                K = G._pseudo_fraction_field()
-                Action.__init__(self, K, action.underlying_set(), action._is_left)
-                self._action = action
-                return
         except (AttributeError, NotImplementedError):
             pass
-        raise TypeError, "No inverse defined for %r." % action
+        raise TypeError(f"no inverse defined for {action!r}")
 
-    cpdef _call_(self, a, b):
-        if self._action._is_left:
-            if self.S_precomposition is not None:
-                b = self.S_precomposition(b)
-            return self._action._call_(~a, b)
-        else:
-            if self.S_precomposition is not None:
-                a = self.S_precomposition(a)
-            return self._action._call_(a, ~b)
+    cpdef _act_(self, g, x):
+        if self.S_precomposition is not None:
+            x = self.S_precomposition(x)
+        return self._action._act_(~g, x)
 
     def codomain(self):
         return self._action.codomain()
@@ -262,6 +376,7 @@ cdef class InverseAction(Action):
 
     def _repr_name_(self):
         return "inverse action"
+
 
 cdef class PrecomposedAction(Action):
     """
@@ -282,11 +397,9 @@ cdef class PrecomposedAction(Action):
         sage: v = E.manin_symbol_rep()
         sage: c,x = v[0]
         sage: y = x.modular_symbol_rep()
-        sage: A = y.parent().get_action(QQ, self_on_left=False, op=operator.mul)
-        sage: A
-        Left scalar multiplication by Rational Field on Abelian Group of all
-        Formal Finite Sums over Rational Field
-        with precomposition on right by Conversion map:
+        sage: coercion_model.get_action(QQ, parent(y), op=operator.mul)
+        Left scalar multiplication by Rational Field on Abelian Group of all Formal Finite Sums over Rational Field
+        with precomposition on right by Coercion map:
           From: Abelian Group of all Formal Finite Sums over Integer Ring
           To:   Abelian Group of all Formal Finite Sums over Rational Field
     """
@@ -310,26 +423,50 @@ cdef class PrecomposedAction(Action):
         else:
             Action.__init__(self, right, US, 0)
         self._action = action
-        self.left_precomposition = left_precomposition
-        self.right_precomposition = right_precomposition
+        if self._is_left:
+            self.G_precomposition = left_precomposition
+            self.S_precomposition = right_precomposition
+        else:
+            self.G_precomposition = right_precomposition
+            self.S_precomposition = left_precomposition
 
-    cpdef _call_(self, a, b):
-        if self.left_precomposition is not None:
-            a = self.left_precomposition._call_(a)
-        if self.right_precomposition is not None:
-            b = self.right_precomposition._call_(b)
-        return self._action._call_(a, b)
+    cpdef _act_(self, g, x):
+        if self.G_precomposition is not None:
+            g = self.G_precomposition._call_(g)
+        if self.S_precomposition is not None:
+            x = self.S_precomposition._call_(x)
+        return self._action._act_(g, x)
 
     def domain(self):
-        if self._is_left and self.right_precomposition is not None:
-            return self.right_precomposition.domain()
-        elif not self._is_left and self.left_precomposition is not None:
-            return self.left_precomposition.domain()
+        if self.S_precomposition is not None:
+            return self.S_precomposition.domain()
         else:
             return self._action.domain()
 
     def codomain(self):
         return self._action.codomain()
+
+    @property
+    def left_precomposition(self):
+        """
+        The left map to precompose with, or ``None`` if there is no
+        left precomposition map.
+        """
+        if self._is_left:
+            return self.G_precomposition
+        else:
+            return self.S_precomposition
+
+    @property
+    def right_precomposition(self):
+        """
+        The right map to precompose with, or ``None`` if there is no
+        right precomposition map.
+        """
+        if self._is_left:
+            return self.S_precomposition
+        else:
+            return self.G_precomposition
 
     def __invert__(self):
         return PrecomposedAction(~self._action, self.left_precomposition, self.right_precomposition)
@@ -364,7 +501,7 @@ cdef class ActionEndomorphism(Morphism):
         self._action = action
         self._g = g
 
-    cdef dict _extra_slots(self, dict _slots):
+    cdef dict _extra_slots(self):
         """
         Helper for pickling and copying.
 
@@ -381,9 +518,10 @@ cdef class ActionEndomorphism(Morphism):
             sage: psi(x) == phi(x)
             True
         """
-        _slots['_action'] = self._action
-        _slots['_g'] = self._g
-        return Morphism._extra_slots(self, _slots)
+        slots = Morphism._extra_slots(self)
+        slots['_action'] = self._action
+        slots['_g'] = self._g
+        return slots
 
     cdef _update_slots(self, dict _slots):
         """
@@ -407,10 +545,7 @@ cdef class ActionEndomorphism(Morphism):
         Morphism._update_slots(self, _slots)
 
     cpdef Element _call_(self, x):
-        if self._action._is_left:
-            return self._action._call_(self._g, x)
-        else:
-            return self._action._call_(x, self._g)
+        return self._action._act_(self._g, x)
 
     def _repr_(self):
         return "Action of %s on %s under %s."%(self._g,
@@ -430,9 +565,7 @@ cdef class ActionEndomorphism(Morphism):
 
     def __invert__(self):
             inv_g = ~self._g
-            if sage.structure.element.parent(inv_g) is sage.structure.element.parent(self._g):
+            if parent(inv_g) is parent(self._g):
                 return ActionEndomorphism(self._action, inv_g)
             else:
                 return (~self._action)(self._g)
-
-

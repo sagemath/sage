@@ -1,0 +1,31 @@
+--- a/src/HashMap.h 2011-09-23 16:09:12.000000000 -0400
++++ b/src/HashMap.h 2015-06-06 12:56:15.000000000 -0400
+@@ -35,10 +35,16 @@
+ class FrobbyHash {};
+ 
+ // *********************************************************
+-#ifdef __GNUC__ // Only GCC defines this macro
++#if defined(__GNUC__) || defined(__clang__)
++#if 0
+ #include "hash_map/hash_map"
+ #include <string>
++#endif
++#include <unordered_map>
++template<class Key, class Value>
++  class HashMap : public std::unordered_map<Key, Value, FrobbyHash<Key>> { };
+ 
++#if 0
+ template<>
+ class FrobbyHash<string> : public __gnu_cxx::hash<string> {
+ };
+@@ -47,9 +53,8 @@
+ class HashMap : public __gnu_cxx::hash_map<Key, Value,
+   FrobbyHash<Key> > {
+ };
+-
++#endif
+ #else
+-
+ // *********************************************************
+ #ifdef _MSC_VER // Only Microsoft C++ defines this macro
+ #include <hash_map>

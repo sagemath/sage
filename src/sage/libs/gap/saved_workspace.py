@@ -8,15 +8,18 @@ workspaces.
 
 import os
 import glob
+from sage.env import GAP_ROOT_DIR
+from sage.interfaces.gap_workspace import gap_workspace_file
 
 
 def timestamp():
     """
-    Return a time stamp for libgap
+    Return a time stamp for (lib)gap
 
     OUTPUT:
 
-    Float. Unix timestamp of the most recently changed LibGAP file.
+    Float. Unix timestamp of the most recently changed GAP/LibGAP file(s). In particular, the
+    timestamp increases whenever a gap package is added.
 
     EXAMPLES::
 
@@ -24,19 +27,26 @@ def timestamp():
         sage: timestamp()   # random output
         1406642467.25684
         sage: type(timestamp())
-        <type 'float'>
+        <... 'float'>
     """
     libgap_dir = os.path.dirname(__file__)
-    files = glob.glob(os.path.join(libgap_dir, '*'))
+    libgap_files = glob.glob(os.path.join(libgap_dir, '*'))
+    gap_packages = glob.glob(os.path.join(GAP_ROOT_DIR, 'pkg', '*'))
+    files = libgap_files + gap_packages
     if len(files) == 0:
         print('Unable to find LibGAP files.')
         return float('inf')
     return max(map(os.path.getmtime, files))
 
 
-def workspace():
+def workspace(name='workspace'):
     """
     Return the filename of the gap workspace and whether it is up to date.
+
+    INPUT:
+
+    - ``name`` -- string. A name that will become part of the
+      workspace filename.
 
     OUTPUT:
 
@@ -55,14 +65,10 @@ def workspace():
         sage: isinstance(up_to_date, bool)
         True
     """
-    import os
-    import glob
-    from sage.env import SAGE_LOCAL, DOT_SAGE
-    workspace = os.path.join(DOT_SAGE, 'gap', 'libgap-workspace-{0}'
-                        .format(abs(hash(SAGE_LOCAL))))
+    workspace = gap_workspace_file("libgap", name)
     try:
         workspace_mtime = os.path.getmtime(workspace)
     except OSError:
         # workspace does not exist
         return (workspace, False)
-    return (workspace, workspace_mtime > timestamp())
+    return (workspace, workspace_mtime >= timestamp())

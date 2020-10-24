@@ -1,7 +1,8 @@
 r"""
 Dense real double vectors using a NumPy backend.
 
-EXAMPLES:
+EXAMPLES::
+
     sage: v = vector(RDF,[1, pi, sqrt(2)])
     sage: v
     (1.0, 3.141592653589793, 1.414213562373095)
@@ -35,14 +36,15 @@ from sage.rings.real_double import RDF
 cimport numpy
 
 
-cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
+cdef class Vector_real_double_dense(Vector_double_dense):
     """
     Vectors over the Real Double Field.  These are supposed to be fast
     vector operations using C doubles. Most operations are implemented
     using numpy which will call the underlying BLAS, if needed, on the
     system.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: v = vector(RDF, [1,2,3,4]); v
         (1.0, 2.0, 3.0, 4.0)
         sage: v*v
@@ -66,7 +68,8 @@ cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
         left tail of the distribution. (Paragraph from the scipy.stats
         docstring.)
 
-        EXAMPLE:
+        EXAMPLES::
+
             sage: v = vector(RDF, range(9))
             sage: v.stats_skew()
             0.0
@@ -79,7 +82,8 @@ cdef class Vector_real_double_dense(vector_double_dense.Vector_double_dense):
         """
         Pickling
 
-        EXAMPLE:
+        EXAMPLES::
+
             sage: a = vector(RDF, range(9))
             sage: loads(dumps(a)) == a
             True
@@ -92,7 +96,8 @@ def unpickle_v0(parent, entries, degree):
     """
     Create a real double vector containing the entries.
 
-    EXAMPLE:
+    EXAMPLES::
+
         sage: v = vector(RDF, [1,2,3])
         sage: w = sage.modules.vector_real_double_dense.unpickle_v0(v.parent(), list(v), v.degree())
         sage: v == w
@@ -105,7 +110,8 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
     Create a real double vector with the given parent, entries,
     degree, and mutability.
 
-    EXAMPLE:
+    EXAMPLES::
+
         sage: v = vector(RDF, [1,2,3])
         sage: w = sage.modules.vector_real_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_mutable())
         sage: v == w

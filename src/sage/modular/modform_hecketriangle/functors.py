@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -25,9 +26,9 @@ from sage.structure.parent                       import Parent
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.rings                       import Rings
 
-from constructor                                 import FormsSpace, FormsRing
-from abstract_space                              import FormsSpace_abstract
-from subspace                                    import SubSpaceForms
+from .constructor                                 import FormsSpace, FormsRing
+from .abstract_space                              import FormsSpace_abstract
+from .subspace                                    import SubSpaceForms
 
 
 def _get_base_ring(ring, var_name="d"):
@@ -45,7 +46,7 @@ def _get_base_ring(ring, var_name="d"):
 
     Otherwise return ``ring``.
 
-    The base ring is used in the construction of the correponding
+    The base ring is used in the construction of the corresponding
     ``FormsRing`` or ``FormsSpace``. In particular in the construction
     of holomorphic forms of degree (0, 1). For (binary)
     operations a general ring element is considered (coerced to)
@@ -92,11 +93,40 @@ def _get_base_ring(ring, var_name="d"):
     return base_ring
 
 
+def _common_subgroup(group1, group2):
+    r"""
+    Return a common (Hecke triangle) subgroup of both given groups
+    ``group1`` and ``group2`` if it exists. Otherwise return ``None``.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform_hecketriangle.functors import _common_subgroup
+        sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
+        sage: _common_subgroup(HeckeTriangleGroup(n=3), HeckeTriangleGroup(n=infinity))
+        Hecke triangle group for n = +Infinity
+        sage: _common_subgroup(HeckeTriangleGroup(n=infinity), HeckeTriangleGroup(n=3))
+        Hecke triangle group for n = +Infinity
+        sage: _common_subgroup(HeckeTriangleGroup(n=4), HeckeTriangleGroup(n=infinity)) is None
+        True
+        sage: _common_subgroup(HeckeTriangleGroup(n=4), HeckeTriangleGroup(n=4))
+        Hecke triangle group for n = 4
+    """
+
+    if group1 == group2:
+        return group1
+    elif (group1.n() == 3) and (group2.n() == infinity):
+        return group2
+    elif (group1.n() == infinity) and (group2.n() == 3):
+        return group1
+    else:
+        return None
+
+
 def ConstantFormsSpaceFunctor(group):
     r"""
     Construction functor for the space of constant forms.
 
-    When determening a common parent between a ring
+    When determining a common parent between a ring
     and a forms ring or space this functor is first
     applied to the ring.
 
@@ -108,8 +138,7 @@ def ConstantFormsSpaceFunctor(group):
         sage: ConstantFormsSpaceFunctor(4)
         ModularFormsFunctor(n=4, k=0, ep=1)
     """
-
-    return FormsSpaceFunctor("holo", group, QQ(0), ZZ(1))
+    return FormsSpaceFunctor("holo", group, QQ.zero(), ZZ.one())
 
 
 class FormsSubSpaceFunctor(ConstructionFunctor):
@@ -185,10 +214,10 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
             sage: F(BaseFacade(ZZ))
             Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Integer Ring
-            sage: F(BaseFacade(CC))
-            Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Complex Field with 53 bits of precision
-            sage: F(CC)
-            ModularFormsRing(n=4) over Complex Field with 53 bits of precision
+            sage: F(BaseFacade(QQ))
+            Subspace of dimension 1 of CuspForms(n=4, k=12, ep=1) over Integer Ring
+            sage: F(QQ)
+            ModularFormsRing(n=4) over Integer Ring
 
             sage: ambient_space_functor = FormsSpaceFunctor("holo", group=4, k=0, ep=1)
             sage: F = FormsSubSpaceFunctor(ambient_space_functor, [1])
@@ -196,8 +225,6 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
             FormsSubSpaceFunctor with 1 generator for the ModularFormsFunctor(n=4, k=0, ep=1)
             sage: F(BaseFacade(ZZ))
             Subspace of dimension 1 of ModularForms(n=4, k=0, ep=1) over Integer Ring
-            sage: F(CC)
-            Subspace of dimension 1 of ModularForms(n=4, k=0, ep=1) over Complex Field with 53 bits of precision
         """
 
         ambient_space = self._ambient_space_functor(R)
@@ -318,7 +345,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
     between a forms space and a ring which is not a ``BaseFacade``).
     """
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
 
     rank = 10
@@ -354,7 +381,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
         """
 
         Functor.__init__(self, Rings(), CommutativeAdditiveGroups())
-        from space import canonical_parameters
+        from .space import canonical_parameters
         (self._group, R, self._k, self._ep, n) = canonical_parameters(group, ZZ, k, ep)
 
         self._analytic_type = self.AT(analytic_type)
@@ -458,19 +485,21 @@ class FormsSpaceFunctor(ConstructionFunctor):
             other = other._ambient_space_functor
 
         if isinstance(other, FormsSpaceFunctor):
-            if not (self._group == other._group):
+            group = _common_subgroup(self._group, other._group)
+            if group is None:
                 return None
             analytic_type = self._analytic_type + other._analytic_type
             if (self._k == other._k) and (self._ep == other._ep):
-                return FormsSpaceFunctor(analytic_type, self._group, self._k, self._ep)
+                return FormsSpaceFunctor(analytic_type, group, self._k, self._ep)
             else:
-                return FormsRingFunctor(analytic_type, self._group, True)
+                return FormsRingFunctor(analytic_type, group, True)
         elif isinstance(other, FormsRingFunctor):
-            if not (self._group == other._group):
+            group = _common_subgroup(self._group, other._group)
+            if group is None:
                 return None
             red_hom = other._red_hom
             analytic_type = self._analytic_type + other._analytic_type
-            return FormsRingFunctor(analytic_type, self._group, red_hom)
+            return FormsRingFunctor(analytic_type, group, red_hom)
 
     def __eq__(self, other):
         r"""
@@ -507,7 +536,7 @@ class FormsRingFunctor(ConstructionFunctor):
     between a forms ring and a ring which is not a ``BaseFacade``).
     """
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
 
     rank = 10
@@ -543,7 +572,7 @@ class FormsRingFunctor(ConstructionFunctor):
         """
 
         Functor.__init__(self, Rings(), Rings())
-        from graded_ring import canonical_parameters
+        from .graded_ring import canonical_parameters
         (self._group, R, red_hom, n) = canonical_parameters(group, ZZ, red_hom)
         self._red_hom = bool(red_hom)
         self._analytic_type = self.AT(analytic_type)
@@ -647,17 +676,19 @@ class FormsRingFunctor(ConstructionFunctor):
             other = other._ambient_space_functor
 
         if isinstance(other, FormsSpaceFunctor):
-            if not (self._group == other._group):
+            group = _common_subgroup(self._group, other._group)
+            if group is None:
                 return None
             red_hom = self._red_hom
             analytic_type = self._analytic_type + other._analytic_type
-            return FormsRingFunctor(analytic_type, self._group, red_hom)
+            return FormsRingFunctor(analytic_type, group, red_hom)
         elif isinstance(other, FormsRingFunctor):
-            if not (self._group == other._group):
+            group = _common_subgroup(self._group, other._group)
+            if group is None:
                 return None
             red_hom = self._red_hom & other._red_hom
             analytic_type = self._analytic_type + other._analytic_type
-            return FormsRingFunctor(analytic_type, self._group, red_hom)
+            return FormsRingFunctor(analytic_type, group, red_hom)
 
     def __eq__(self, other):
         r"""

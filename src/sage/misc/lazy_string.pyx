@@ -104,7 +104,7 @@ def lazy_string(f, *args, **kwargs):
 
         sage: class C:
         ....:     def __repr__(self):
-        ....:         print "determining string representation"
+        ....:         print("determining string representation")
         ....:         return "a test"
         sage: c = C()
         sage: s = lazy_string("this is %s", c)
@@ -114,7 +114,7 @@ def lazy_string(f, *args, **kwargs):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)
+        sage: unicode(s)  # py2
         determining string representation
         u'this is a test'
 
@@ -177,7 +177,7 @@ cdef class _LazyString(object):
 
         sage: class C:
         ....:     def __repr__(self):
-        ....:         print "determining string representation"
+        ....:         print("determining string representation")
         ....:         return "a test"
         sage: c = C()
         sage: s = _LazyString("this is %s", (c,), {})
@@ -187,7 +187,7 @@ cdef class _LazyString(object):
         sage: s == 'this is a test'
         determining string representation
         True
-        sage: unicode(s)
+        sage: unicode(s)  # py2
         determining string representation
         u'this is a test'
 
@@ -218,31 +218,31 @@ cdef class _LazyString(object):
         self.args = <tuple?>args
         self.kwargs = <dict?>kwargs
 
-    cdef value(self):
+    cdef val(self):
         cdef f = self.func
         if isinstance(f, basestring):
             return f % self.args
         return PyObject_Call(f, self.args, self.kwargs)
 
-    property value:
-        def __get__(self):
-            """
-            Return the value of this lazy string, as an ordinary string.
+    @property
+    def value(self):
+        """
+        Return the value of this lazy string, as an ordinary string.
 
-            EXAMPLES::
+        EXAMPLES::
 
-                sage: from sage.misc.lazy_string import lazy_string
-                sage: f = lambda: "laziness"
-                sage: lazy_string(f).value
-                'laziness'
+            sage: from sage.misc.lazy_string import lazy_string
+            sage: f = lambda: "laziness"
+            sage: lazy_string(f).value
+            'laziness'
 
-            ::
+        ::
 
-                sage: from sage.misc.lazy_string import lazy_string
-                sage: lazy_string("%s", "laziness").value
-                'laziness'
-            """
-            return self.value()
+            sage: from sage.misc.lazy_string import lazy_string
+            sage: lazy_string("%s", "laziness").value
+            'laziness'
+        """
+        return self.val()
 
     def __contains__(self, key):
         """
@@ -256,7 +256,7 @@ cdef class _LazyString(object):
             sage: 'ni' in s
             False
         """
-        return key in self.value()
+        return key in self.val()
 
     def __nonzero__(self):
         """
@@ -270,7 +270,7 @@ cdef class _LazyString(object):
             sage: bool(lazy_string(f))
             False
         """
-        return bool(self.value())
+        return bool(self.val())
 
     def __dir__(self):
         """
@@ -297,7 +297,7 @@ cdef class _LazyString(object):
             sage: "".join(list(s)) # indirect doctest
             'laziness'
         """
-        return iter(self.value())
+        return iter(self.val())
 
     def __len__(self):
         """
@@ -309,7 +309,7 @@ cdef class _LazyString(object):
             sage: len(s)
             8
         """
-        return len(self.value())
+        return len(self.val())
 
     def __str__(self):
         """
@@ -321,7 +321,24 @@ cdef class _LazyString(object):
             sage: str(s) # indirect doctest
             'laziness'
         """
-        return str(self.value())
+        return str(self.val())
+
+    def __fspath__(self):
+        """
+        Return the file system representation of ``self``, assuming that
+        ``self`` is a path.
+
+        This is for Python 3 compatibility: see :trac:`24046`, and also
+        :pep:`519` and
+        https://docs.python.org/3/library/os.html#os.fspath
+
+        Test :trac:`24046`::
+
+            sage: from sage.misc.misc import SAGE_TMP
+            sage: tmp = os.path.join(SAGE_TMP, 'hello')
+            sage: _ = os.path.exists(tmp)
+        """
+        return str(self)
 
     def __unicode__(self):
         """
@@ -330,10 +347,10 @@ cdef class _LazyString(object):
             sage: from sage.misc.lazy_string import lazy_string
             sage: f = lambda: "laziness"
             sage: s = lazy_string(f)
-            sage: unicode(s) # indirect doctest
+            sage: unicode(s)  # indirect doctest py2 only
             u'laziness'
         """
-        return unicode(self.value())
+        return unicode(self.val())
 
     def __add__(self, other):
         """
@@ -346,9 +363,9 @@ cdef class _LazyString(object):
             'laziness supreme'
         """
         if isinstance(self, _LazyString):
-            return (<_LazyString>self).value() + other
+            return (<_LazyString>self).val() + other
         else:
-            return self + (<_LazyString>other).value()
+            return self + (<_LazyString>other).val()
 
     def __mod__(self, other):
         """
@@ -366,9 +383,9 @@ cdef class _LazyString(object):
             'laziness'
         """
         if isinstance(self, _LazyString):
-            return (<_LazyString>self).value() % other
+            return (<_LazyString>self).val() % other
         else:
-            return self % (<_LazyString>other).value()
+            return self % (<_LazyString>other).val()
 
     def __mul__(self, other):
         """
@@ -383,11 +400,11 @@ cdef class _LazyString(object):
             'lazinesslaziness'
         """
         if isinstance(self, _LazyString):
-            return (<_LazyString>self).value() * other
+            return (<_LazyString>self).val() * other
         else:
-            return self * (<_LazyString>other).value()
+            return self * (<_LazyString>other).val()
 
-    def __richcmp__(self, other, int op):
+    def __richcmp__(_LazyString self, other, int op):
         """
         EXAMPLES::
 
@@ -431,8 +448,7 @@ cdef class _LazyString(object):
             sage: s >= s
             True
         """
-        self = (<_LazyString?>self).value()
-        return PyObject_RichCompare(self, other, op)
+        return PyObject_RichCompare(self.val(), other, op)
 
     def __getattr__(self, name):
         """
@@ -450,7 +466,7 @@ cdef class _LazyString(object):
         """
         if name == '__members__':
             return self.__dir__()
-        return getattr(self.value(), name)
+        return getattr(self.val(), name)
 
     def __reduce__(self):
         """
@@ -482,7 +498,7 @@ cdef class _LazyString(object):
             sage: s[4]
             'n'
         """
-        return self.value()[key]
+        return self.val()[key]
 
     def __copy__(self):
         """
@@ -507,7 +523,7 @@ cdef class _LazyString(object):
             l'laziness'
         """
         try:
-            return 'l' + repr(self.value())
+            return 'l' + repr(self.val())
         except Exception:
             return '<%s broken>' % self.__class__.__name__
 
@@ -528,18 +544,18 @@ cdef class _LazyString(object):
         EXAMPLES::
 
             sage: from sage.misc.lazy_string import lazy_string
-            sage: f = lambda op,A,B:"unsupported operand parent(s) for '%s': '%s' and '%s'"%(op,A,B)
+            sage: f = lambda op,A,B:"unsupported operand parent(s) for %s: '%s' and '%s'"%(op,A,B)
             sage: R = GF(5)
             sage: S = GF(3)
             sage: D = lazy_string(f, '+', R, S)
             sage: D
-            l"unsupported operand parent(s) for '+': 'Finite Field of size 5' and 'Finite Field of size 3'"
+            l"unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Finite Field of size 3'"
             sage: D.update_lazy_string(('+', S, R), {})
 
         Apparently, the lazy string got changed in-place::
 
             sage: D
-            l"unsupported operand parent(s) for '+': 'Finite Field of size 3' and 'Finite Field of size 5'"
+            l"unsupported operand parent(s) for +: 'Finite Field of size 3' and 'Finite Field of size 5'"
 
         TESTS::
 

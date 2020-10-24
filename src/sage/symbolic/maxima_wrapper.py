@@ -10,11 +10,14 @@
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.maxima import MaximaFunctionElement
+from sage.docs.instancedoc import instancedoc
 
+
+@instancedoc
 class MaximaFunctionElementWrapper(MaximaFunctionElement):
     def __call__(self, *args, **kwds):
         """
-        Returns a Sage expression instead of a Maxima pexpect interface element.
+        Return a Sage expression instead of a Maxima pexpect interface element.
 
         EXAMPLES::
 
@@ -22,8 +25,8 @@ class MaximaFunctionElementWrapper(MaximaFunctionElement):
             cos(x)^2 + sin(x)^2
             sage: res = t.maxima_methods().trigsimp(); res
             1
-            sage: type(res)
-            <type 'sage.symbolic.expression.Expression'>
+            sage: parent(res)
+            Symbolic Ring
         """
         return super(MaximaFunctionElementWrapper, self).__call__(*args,
                 **kwds).sage()
@@ -54,9 +57,9 @@ class MaximaWrapper(SageObject):
 
         Test tab completions::
 
-            sage: import sagenb.misc.support as s
+            sage: import sage.interfaces.tab_completion as s
             sage: u = t.maxima_methods()
-            sage: s.completions('u.elliptic_',globals(),system='python')
+            sage: s.completions('u.elliptic_',globals())
             ['u.elliptic_e', 'u.elliptic_ec', 'u.elliptic_eu', 'u.elliptic_f', 'u.elliptic_kc', 'u.elliptic_pi']
         """
         self._exp = exp
@@ -74,8 +77,8 @@ class MaximaWrapper(SageObject):
             sage: t = sin(x)^2 + cos(x)^2; t
             cos(x)^2 + sin(x)^2
             sage: u = t.maxima_methods()
-            sage: import sagenb.misc.support as s
-            sage: s.completions('u.airy_',globals(),system='python')
+            sage: import sage.interfaces.tab_completion as s
+            sage: s.completions('u.airy_',globals())
             ['u.airy_ai', 'u.airy_bi', 'u.airy_dai', 'u.airy_dbi']
             sage: type(u.airy_ai)
             <class 'sage.symbolic.maxima_wrapper.MaximaFunctionElementWrapper'>
@@ -84,8 +87,10 @@ class MaximaWrapper(SageObject):
         """
         if self._maxima_exp is None:
             self._maxima_exp = self._exp._maxima_()
-        if s == 'trait_names' or s[:1] == '_':
+        if s[0] == '_':
             return getattr(self._maxima_exp, s)
+        if s == 'trait_names':  # SageNB backward compatibility
+            return self._maxima_()._tab_completion
         else:
             # add a wrapper function which converts the result back to
             # a Sage expression

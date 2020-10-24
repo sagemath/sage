@@ -24,14 +24,14 @@ EXAMPLES::
     The Sage display manager using the doctest backend
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 
 import warnings
@@ -57,6 +57,7 @@ class DisplayException(Exception):
     """
     pass
 
+
 class OutputTypeException(DisplayException):
     """
     Wrong Output container.
@@ -77,6 +78,7 @@ class OutputTypeException(DisplayException):
         OutputTypeException: foo
     """
     pass
+
 
 class RichReprWarning(UserWarning):
     """
@@ -107,7 +109,7 @@ class restricted_output(object):
 
         In the context, the output is restricted to the output
         container types listed in ``output_classes``. Additionally,
-        display preferences are changed not not show graphics.
+        display preferences are changed not to show graphics.
 
         INPUT:
 
@@ -343,6 +345,26 @@ class DisplayManager(SageObject):
         """
         return self._preferences
 
+    def is_in_terminal(self):
+        """
+        Test whether the UI is meant to run in a terminal
+
+        When this method returns ``True``, you can assume that it is
+        possible to use ``raw_input`` or launch external programs that
+        take over the input.
+
+        Otherwise, you should assume that the backend runs remotely or
+        in a pty controlled by another program. Then you should not
+        launch external programs with a (text or graphical) UI.
+
+        This is used to enable/disable interpreter consoles.
+
+        OUTPUT:
+
+        Boolean.
+        """
+        return self._backend.is_in_terminal()
+
     def check_backend_class(self, backend_class):
         """
         Check that the current backend is an instance of
@@ -451,7 +473,7 @@ class DisplayManager(SageObject):
         return output
 
     def _preferred_text_formatter(self, obj, plain_text=None, **kwds):
-        """
+        r"""
         Return the preferred textual representation
 
         INPUT:
@@ -467,6 +489,7 @@ class DisplayManager(SageObject):
         One of
         :class:`~sage.repl.rich_output.output_basic.OutputPlainText`,
         :class:`~sage.repl.rich_output.output_basic.OutputAsciiArt`,
+        :class:`~sage.repl.rich_output.output_basic.OutputUnicodeArt`,
         or
         :class:`~sage.repl.rich_output.output_basic.OutputLatex`
         containing the preferred textual representation of ``obj``
@@ -520,7 +543,7 @@ class DisplayManager(SageObject):
             if type(plain_text) is not OutputPlainText:
                 raise OutputTypeException('backend returned wrong output type, require PlainText')
             return plain_text
-        out =  self._backend.plain_text_formatter(obj, **kwds)
+        out = self._backend.plain_text_formatter(obj, **kwds)
         if type(out) is not OutputPlainText:
             raise OutputTypeException('backend returned wrong output type, require PlainText')
         return out
@@ -542,7 +565,7 @@ class DisplayManager(SageObject):
         OUTPUT:
 
         Whatever ``_rich_repr_`` returned. If it raises an exception,
-        then a :class:`DisplayFormatterWarning`` is displayed and
+        then a :class:`DisplayFormatterWarning` is displayed and
         ``None`` is returned.
 
         EXAMPLES::
@@ -554,7 +577,7 @@ class DisplayManager(SageObject):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: dm._call_rich_repr(Foo(), {})
-            doctest:...: RichReprWarning: Exception in _rich_repr_ while displaying object: reason
+            doctest:...: ...RichReprWarning: Exception in _rich_repr_ while displaying object: reason
         """
         if rich_repr_kwds:
             # do not ignore errors from invalid options
@@ -670,7 +693,7 @@ class DisplayManager(SageObject):
             sage: out = dm.graphics_from_save(plt.save, dict(), '.png', dm.types.OutputImagePng)
             sage: out
             OutputImagePng container
-            sage: out.png.get().startswith('\x89PNG')
+            sage: out.png.get().startswith(b'\x89PNG')
             True
             sage: out.png.filename()   # random
             '/home/user/.sage/temp/localhost.localdomain/23903/tmp_pu5woK.png'
@@ -693,6 +716,52 @@ class DisplayManager(SageObject):
         buf = OutputBuffer.from_file(filename)
         return output_container(buf)
 
+    def threejs_scripts(self, online):
+        """
+        Return Three.js script tags for the current backend.
+
+        INPUT:
+
+        - ``online`` -- Boolean determining script usage context
+
+        OUTPUT:
+
+        String containing script tags
+
+        .. NOTE::
+
+            This base method handles ``online=True`` case only, serving CDN
+            script tags. Location of scripts for offline usage is
+            backend-specific.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: get_display_manager().threejs_scripts(online=True)
+            '...<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@...'
+            sage: get_display_manager().threejs_scripts(online=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: current backend does not support
+            offline threejs graphics
+        """
+        if online:
+            import sage.env
+            import re
+            import os
+            with open(os.path.join(sage.env.THREEJS_DIR, 'build', 'three.min.js')) as f:
+                text = f.read().replace('\n','')
+            version = re.search(r'REVISION="(\d+)"', text).group(1)
+            return """
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/examples/js/controls/OrbitControls.js"></script>
+            """.format(version)
+        try:
+            return self._backend.threejs_offline_scripts()
+        except AttributeError:
+            raise ValueError(
+                'current backend does not support offline threejs graphics')
+
     def supported_output(self):
         """
         Return the output container classes that can be used.
@@ -711,7 +780,7 @@ class DisplayManager(SageObject):
             sage: dm.types.OutputPlainText in dm.supported_output()
             True
             sage: type(dm.supported_output())
-            <type 'frozenset'>
+            <... 'frozenset'>
         """
         return self._supported_output
 
@@ -770,8 +839,6 @@ class DisplayManager(SageObject):
         """
         plain_text, rich_output = self._rich_output_formatter(obj, rich_repr_kwds)
         self._backend.display_immediately(plain_text, rich_output)
-
-
 
 
 get_display_manager = DisplayManager.get_instance

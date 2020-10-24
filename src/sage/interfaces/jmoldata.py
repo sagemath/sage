@@ -18,14 +18,18 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
-from sage.env import SAGE_LOCAL
+from sage.env import JMOL_DIR
 from sage.misc.temporary_file import tmp_filename
+from sage.cpython.string import bytes_to_str
 
-import subprocess
 import os
+import re
+import subprocess
+import sys
 
 class JmolData(SageObject):
     r"""
@@ -56,16 +60,15 @@ class JmolData(SageObject):
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
             sage: type(JData.is_jvm_available())
-            <type 'bool'>
+            <... 'bool'>
         """
         try:
-            version = subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT)
+            version = bytes_to_str(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT))
         except (subprocess.CalledProcessError, OSError):
             return False
 
-        import re
-        java_version = re.search("version.*[1][.][78]", version)
-        return java_version is not None
+        java_version_number = int(re.sub(r'.*version "(0\.|1\.)?(\d*)[\s\S]*', r'\2', version, flags=re.S))
+        return java_version_number >= 7
 
     def export_image(self,
         targetfile,
@@ -121,7 +124,7 @@ class JmolData(SageObject):
             sage: script = "load =1lcd;display DNA;moveto 0.0 { -473 -713 -518 59.94} 100.0 0.0 0.0 {21.17 26.72 27.295} 27.544636 {0.0 0.0 0.0} -25.287832 64.8414 0.0;"
             sage: testfile = tmp_filename(ext="DNA.png")
             sage: JData.export_image(targetfile=testfile,datafile=script,image_type="PNG")  # optional -- java internet
-            sage: print os.path.exists(testfile)  # optional -- java internet
+            sage: print(os.path.exists(testfile)) # optional -- java internet
             True
 
         Use Jmol to save an image of a 3-D object created in Sage.
@@ -130,41 +133,39 @@ class JmolData(SageObject):
 
             sage: from sage.interfaces.jmoldata import JmolData
             sage: JData = JmolData()
-            sage: D=dodecahedron()
+            sage: D = dodecahedron()
             sage: from sage.misc.misc import SAGE_TMP
-            sage: archive_name=os.path.join(SAGE_TMP, "archive.jmol.zip")
+            sage: archive_name = os.path.join(SAGE_TMP, "archive.jmol.zip")
             sage: D.export_jmol(archive_name)  #not scaled properly...need some more steps.
             sage: archive_native = archive_name
             sage: import sys
             sage: if sys.platform == 'cygwin':
-            ....:     from subprocess import check_output, STDOUT
-            ....:     archive_native = check_output(['cygpath', '-w', archive_native],
-            ....:                                   stderr=STDOUT).rstrip()
+            ....:     import cygwin
+            ....:     archive_native = cygwin.cygpath(archive_native, 'w')
             sage: script = 'set defaultdirectory "{0}"\n script SCRIPT\n'.format(archive_native)
             sage: testfile = os.path.join(SAGE_TMP, "testimage.png")
             sage: JData.export_image(targetfile=testfile, datafile=script, image_type="PNG") # optional -- java
-            sage: print os.path.exists(testfile) # optional -- java
+            sage: print(os.path.exists(testfile)) # optional -- java
             True
         """
         # Set up paths, file names and scripts
-        jmolpath = os.path.join(SAGE_LOCAL, "share", "jmol", "JmolData.jar")
+        jmolpath = os.path.join(JMOL_DIR, "JmolData.jar")
         target_native = targetfile
-        import sys
+
         if sys.platform == 'cygwin':
-            jmolpath      = subprocess.check_output(['cygpath', '-w', jmolpath],
-                                                    stderr=subprocess.STDOUT).rstrip()
-            target_native = subprocess.check_output(['cygpath', '-w', target_native],
-                                                    stderr=subprocess.STDOUT).rstrip()
-            if (datafile_cmd != 'script'):
-                datafile  = subprocess.check_output(['cygpath', '-w', datafile],
-                                                    stderr=subprocess.STDOUT).rstrip()
+            import cygwin
+            jmolpath = cygwin.cygpath(jmolpath, 'w')
+            target_native = cygwin.cygpath(target_native, 'w')
+            if datafile_cmd != 'script':
+                datafile = cygwin.cygpath(datafile, 'w')
+
         launchscript = ""
         if (datafile_cmd!='script'):
             launchscript = "load "
         launchscript = launchscript + datafile
-        imagescript = "write " + image_type + " " + target_native + "\n"
 
-        sizeStr = "%sx%s" %(figsize*100,figsize*100)
+        imagescript = 'write {} {!r}\n'.format(image_type, target_native)
+        size_arg = "%sx%s" %(figsize*100,figsize*100)
         # Scratch file for Jmol errors
         scratchout = tmp_filename(ext=".txt")
         with open(scratchout, 'w') as jout:
@@ -173,7 +174,7 @@ class JmolData(SageObject):
             env['LC_ALL'] = 'C'
             env['LANG'] = 'C'
             subprocess.call(["java", "-Xmx512m", "-Djava.awt.headless=true",
-                "-jar", jmolpath, "-iox", "-g", sizeStr,
+                "-jar", jmolpath, "-iox", "-g", size_arg,
                 "-J", launchscript, "-j", imagescript],
                 stdout=jout, stderr=jout, env=env)
         if not os.path.isfile(targetfile):

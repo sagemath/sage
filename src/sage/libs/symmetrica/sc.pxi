@@ -50,7 +50,8 @@ def charvalue_symmetrica(irred, cls, table=None):
     of that character on that class or permutation. Note that the
     table may be NULL, in which case the value is computed, or it may be
     taken from a precalculated charactertable.
-    FIXME: add table paramter
+
+    FIXME: add table parameter
 
     EXAMPLES::
 
@@ -74,7 +75,7 @@ def charvalue_symmetrica(irred, cls, table=None):
     cclass = callocobject()
     cresult = callocobject()
 
-    if table == None:
+    if table is None:
         ctable = NULL
     else:
         ctable = callocobject()
@@ -119,8 +120,7 @@ def kranztafel_symmetrica(a, b):
        [-1 -1  1  1  1]
        sage: b
        [2, 2, 1, 2, 1]
-       sage: for m in c: print m
-       ...
+       sage: for m in c: print(m)
        [0 0]
        [0 1]
        [0 0]

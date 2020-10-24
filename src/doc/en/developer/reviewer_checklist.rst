@@ -66,8 +66,14 @@ The following should generally be checked while reading and testing the code:
   claims to speed up some computation, does the ticket contain code examples to
   illustrate the claim? The ticket should explain how the speedup is achieved.
 
-- **Manuals**: Does the reference manual build without errors (check both html
-  and pdf)? See :ref:`chapter-sage_manuals` to learn how to build the manuals.
+- **Build the manuals**: Does the reference manual build without
+  errors (check both html and pdf)? See :ref:`chapter-sage_manuals` to
+  learn how to build the manuals.
+
+- **Look at the manuals**: Does the reference manual look okay? The
+  changes may have typos that allow the documentation to build without
+  apparent errors but that may cause badly formatted output or broken
+  hyperlinks.
 
 - **Run the tests**: Do all doctests pass without errors? Unrelated components
   of Sage may be affected by the change. Check all tests in the whole library,
@@ -103,12 +109,12 @@ example by the author of the original patch.
 
 For more advice on reviewing, see [WSblog]_.
 
-.. note::
+.. NOTE::
 
     "The perfect is the enemy of the good"
 
     The point of the review is to ensure that the Sage code guidelines
-    are followed and that the the implementation is mathematically
+    are followed and that the implementation is mathematically
     correct. Please refrain from additional feature requests or
     open-ended discussion about alternative implementations. If you
     want the patch written differently, your suggestion should be a

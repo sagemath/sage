@@ -1,0 +1,58 @@
+See https://github.com/nthiery/rst-to-ipynb/pull/4
+
+commit 08fbca3f57607f49bd40e9254106aecc1ac0dbe7
+Author: Jeroen Demeyer <jdemeyer@cage.ugent.be>
+Date:   Mon Oct 9 12:38:19 2017 +0200
+
+    Check pandoc dependency
+
+diff --git a/setup.py b/setup.py
+index e2e2ed3..5afaa33 100644
+--- a/setup.py
++++ b/setup.py
+@@ -4,17 +4,35 @@ reST to Jupyter notebook converter
+ """
+ 
+ # Always prefer setuptools over distutils
+-from setuptools import setup, find_packages
++from setuptools import setup
++from setuptools.command.install import install
++from distutils.errors import DistutilsExecError
+ # To use a consistent encoding
+ from codecs import open
+-from os import path
++import os
+ 
+-here = path.abspath(path.dirname(__file__))
++
++here = os.path.dirname(__file__)
+ 
+ # Get the long description from the README file
+-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
++with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+     long_description = f.read()
+ 
++
++class check_install(install):
++    "Check that pandoc is installed on the system"
++    def run(self):
++        import subprocess
++        try:
++            # Hide stdout but allow stderr
++            subprocess.check_call(["pandoc", "-v"], stdout=open(os.devnull))
++        except subprocess.CalledProcessError:
++            raise DistutilsExecError("rst2ipynb requires the Haskell program 'pandoc'. It seems to be installed, but it did not work properly.")
++        except OSError:
++            raise DistutilsExecError("rst2ipynb requires the Haskell program 'pandoc'. You need to install it on your system.")
++        install.run(self)
++
++
+ setup(
+     name='rst2ipynb',
+     version='0.2.2',
+@@ -35,4 +53,5 @@ setup(
+     install_requires=['notedown', 'pandocfilters'],
+     #setup_requires=['pytest-runner'],
+     #tests_require=['pytest'],
++    cmdclass=dict(install=check_install)
+ )

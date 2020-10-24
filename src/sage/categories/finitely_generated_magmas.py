@@ -45,7 +45,7 @@ class FinitelyGeneratedMagmas(CategoryWithAxiom):
             OUTPUT: a finite family
 
             This method should be implemented by all
-            :class:`finitely generated magmas <FinitelyGeneratedMagmas>`_.
+            :class:`finitely generated magmas <FinitelyGeneratedMagmas>`.
 
             EXAMPLES::
 

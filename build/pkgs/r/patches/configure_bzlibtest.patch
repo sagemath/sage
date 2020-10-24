@@ -1,0 +1,13 @@
+diff --git a/configure b/configure
+index 976de50..14b6b4c 100755
+--- a/configure
++++ b/configure
+@@ -42239,6 +42239,8 @@ else
+ 
+ #ifdef HAVE_BZLIB_H
+ #include <bzlib.h>
++#include <string.h>
++#include <stdlib.h>
+ #endif
+ int main() {
+     char *ver = BZ2_bzlibVersion();

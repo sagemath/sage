@@ -94,7 +94,7 @@ instead of SymPy.
     [    2*y x*y + 1]
     sage: R.<x,y> = QQ[]
     sage: A = matrix([[1,x], [y,1]])
-    sage: print A^10
+    sage: A^10
     [x^5*y^5 + 45*x^4*y^4 + 210*x^3*y^3 + 210*x^2*y^2 + 45*x*y + 1     10*x^5*y^4 + 120*x^4*y^3 + 252*x^3*y^2 + 120*x^2*y + 10*x]
     [    10*x^4*y^5 + 120*x^3*y^4 + 252*x^2*y^3 + 120*x*y^2 + 10*y x^5*y^5 + 45*x^4*y^4 + 210*x^3*y^3 + 210*x^2*y^2 + 45*x*y + 1]
     sage: var('x y')
@@ -107,13 +107,13 @@ And here are some actual tests of sympy::
 
 ::
 
-    sage: e = sympify(1)/cos(x)**3; e
+    sage: e = (1/cos(x)^3)._sympy_(); e
     cos(x)**(-3)
-    sage: f = e.series(x, 0, 10); f
+    sage: f = e.series(x, 0, int(10)); f
     1 + 3*x**2/2 + 11*x**4/8 + 241*x**6/240 + 8651*x**8/13440 + O(x**10)
 
-And the pretty-printer.  Since unicode characters aren't working on
-some archictures, we disable it::
+And the pretty-printer.  Since unicode characters are not working on
+some architectures, we disable it::
 
     sage: from sympy.printing import pprint_use_unicode
     sage: prev_use = pprint_use_unicode(False)
@@ -138,12 +138,12 @@ And the functionality to convert from sympy format to Sage format::
     sage: e._sage_().taylor(x._sage_(), 0, 8)
     8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + 1
     sage: f._sage_()
-    8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + 1
+    8651/13440*x^8 + 241/240*x^6 + 11/8*x^4 + 3/2*x^2 + Order(x^10) + 1
 
 Mixing SymPy with Sage::
 
     sage: import sympy
-    sage: sympy.sympify(var("y"))+sympy.Symbol("x")
+    sage: var("x")._sympy_() + var("y")._sympy_()
     x + y
     sage: o = var("omega")
     sage: s = sympy.Symbol("x")

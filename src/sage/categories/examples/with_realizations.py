@@ -50,6 +50,9 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
     .. SEEALSO::
 
        - :func:`Sets().WithRealizations <sage.categories.with_realizations.WithRealizations>`
+       - the `Implementing Algebraic Structures
+         <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_
+         thematic tutorial.
 
     EXAMPLES::
 
@@ -70,10 +73,9 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
     One can quickly define all the bases using the following shortcut::
 
         sage: A.inject_shorthands()
-        Injecting F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
-        ...
-        Injecting In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
-        ...
+        Defining F as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
+        Defining In as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the In basis
+        Defining Out as shorthand for The subset algebra of {1, 2, 3} over Rational Field in the Out basis
 
     Accessing the basis elements is done with :meth:`basis()` method::
 
@@ -167,26 +169,27 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         assert(R in Rings())
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
         self._S = S
-        Parent.__init__(self, category = Algebras(R).WithRealizations())
+        Parent.__init__(self, category = Algebras(R).Commutative().WithRealizations())
 
         # Initializes the bases and change of bases of ``self``
 
-        category   = self.Bases()
         F   = self.F()
         In  = self.In()
         Out = self.Out()
 
+        category = self.Bases()
+        key = lambda x: self.indices_key(x)
         In_to_F = In.module_morphism(F.sum_of_monomials * Subsets,
-                                     codomain = F, category = category,
-                                     triangular = 'upper', unitriangular = True,
-                                     cmp = self.indices_cmp)
+                                     codomain=F, category=category,
+                                     triangular='upper', unitriangular=True,
+                                     key=key)
         In_to_F   .register_as_coercion()
         (~In_to_F).register_as_coercion()
 
         F_to_Out = F.module_morphism(Out.sum_of_monomials * self.supsets,
-                                     codomain = Out, category = category,
-                                     triangular = 'lower', unitriangular = True,
-                                     cmp = self.indices_cmp)
+                                     codomain=Out, category=category,
+                                     triangular='lower', unitriangular=True,
+                                     key=key)
         F_to_Out   .register_as_coercion()
         (~F_to_Out).register_as_coercion()
 
@@ -229,26 +232,23 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         """
         return Subsets(self._S)
 
-    def indices_cmp(self, x, y):
+    def indices_key(self, x):
         r"""
-        A comparison function on sets which gives a linear extension
+        A key function on a set which gives a linear extension
         of the inclusion order.
 
         INPUT:
 
-        - ``x``, ``y`` -- sets
+        - ``x`` -- set
 
         EXAMPLES::
 
             sage: A = Sets().WithRealizations().example(); A
             The subset algebra of {1, 2, 3} over Rational Field
-            sage: sorted(A.indices(), A.indices_cmp)
+            sage: sorted(A.indices(), key=A.indices_key)
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
         """
-        s = cmp(len(x), len(y))
-        if s != 0:
-            return s
-        return cmp(list(x), list(y))
+        return (len(x), list(x))
 
     def supsets(self, set):
         r"""
@@ -291,12 +291,16 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                 sage: C = A.Bases(); C
                 Category of bases of The subset algebra of {1, 2, 3} over Rational Field
                 sage: C.super_categories()
-                [Join of Category of algebras over Rational Field and Category of realizations of unital magmas,
-                 Category of realizations of The subset algebra of {1, 2, 3} over Rational Field,
-                 Category of algebras with basis over Rational Field]
+                [Category of realizations of The subset algebra of {1, 2, 3} over Rational Field,
+                 Join of Category of algebras with basis over Rational Field and
+                         Category of commutative algebras over Rational Field and
+                         Category of realizations of unital magmas]
             """
-            R = self.base().base_ring()
-            return [Algebras(R).Realizations(), self.base().Realizations(), AlgebrasWithBasis(R)]
+            A = self.base()
+            category = Algebras(A.base_ring()).Commutative()
+            return [A.Realizations(),
+                    category.Realizations().WithBasis()]
+
 
         class ParentMethods:
 
@@ -401,7 +405,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self,
                 A.base_ring(), A.indices(),
-                category=A.Bases(), prefix='F', monomial_cmp=A.indices_cmp)
+                category=A.Bases(), prefix='F', sorting_key=A.indices_key)
 
         def product_on_basis(self, left, right):
             r"""
@@ -489,7 +493,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self,
                 A.base_ring(), A.indices(),
-                category=A.Bases(), prefix='In', monomial_cmp=A.indices_cmp)
+                category=A.Bases(), prefix='In', sorting_key=A.indices_key)
 
     class Out(CombinatorialFreeModule, BindableClass):
         r"""
@@ -532,4 +536,4 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self,
                 A.base_ring(), A.indices(),
-                category=A.Bases(), prefix='Out', monomial_cmp=A.indices_cmp)
+                category=A.Bases(), prefix='Out', sorting_key=A.indices_key)

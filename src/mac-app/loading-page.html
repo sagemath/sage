@@ -85,9 +85,9 @@ var randomcontentdisplay={
         var randomcontentsearch=new RegExp(this.masterclass, "i") //check for CSS class="randomcontent groupX" (x=integer)
 		for (var i=0; i<alldivs.length; i++){
 			if (randomcontentsearch.test(alldivs[i].className)){
-				if (typeof this.divholders[RegExp.$1]=="undefined") //if array to hold this group of divs doesn't exist yet
-					this.divholders[RegExp.$1]=new Array() //create array first
-					this.divholders[RegExp.$1].push(alldivs[i]) //add this div to the array
+				if (typeof this.divholders[RegExp.$1]=="undefined") //if array to hold this group of divs does not exist yet
+		                        this.divholders[RegExp.$1]=new Array() //create array first
+				this.divholders[RegExp.$1].push(alldivs[i]) //add this div to the array
                     alldivs[i].style.display="none" //hide everything in case it's the second time this is called
 			}
 		}
@@ -95,14 +95,14 @@ var randomcontentdisplay={
 	},
 
 	showone:function(){
-		for (group in this.divholders){ //loop thru each array within object
+		for (var group in this.divholders){ //loop thru each array within object
 			var chosenOne=Math.floor(Math.random()*this.divholders[group].length) //randomly pick one entry from array
 			this.divholders[group][chosenOne].style.display="block" //display content corresponding to the chosen entry
 		}
 	},
 
 	showall:function(){
-		for (group in this.divholders){ //loop thru each array within object
+		for (var group in this.divholders){ //loop thru each array within object
 			for (var i=0; i<this.divholders[group].length; i++) {
                 this.divholders[group][i].style.display="block" //display content corresponding to the chosen entry
             }
@@ -116,19 +116,18 @@ var randomcontentdisplay={
 </head>
 <body>
 
-  <h1>The Sage server is currently starting.  Please wait...</h1>
+  <h1>The SageNB server or Jupyter is currently starting.  Please wait...</h1>
 
-  <p>A page will be opened automatically.</p>
-
-  <p>In the mean time terminal sessions work normally.</p>
+  <p>A page will be opened automatically.  In the mean time terminal sessions work normally.</p>
 
   <p>You may safely close this window at any time, or navigate to somewhere else.</p>
 
-  <p> If the server is already running, feel free to <a href="http://localhost:8080/">access the notebook interface</a> at any time.</p>
+  <p> If the server is already running, feel free to access the <a href="http://localhost:8080/">SageNB interface</a> or <a href="http://localhost:8080/">Jupyter</a> at any time.  You can change your preferred notebook interface in Preferences.</p>
 
   <h3>If you think you have waited long enough...</h2>
 
-  <p>Try <code>View Log</code> under the <code>Server</code> menu (or at the root of the menubar item's menu) which may give you some clues as to why it has not started.</p>
+  <p>Try <code>View Log</code> under the <code>Server</code> menu (or at the root of the menubar item's menu) which may give you some clues as to why it has not started.  It should show the URL (including token) for accessing the Jupyter interface in case it does not open automatically.</p>
+
   <p>If the problem persists <a href="mailto:sage-support@googlegroups.com">email for support</a>,  ask a question on the <a href="http://ask.sagemath.org/questions/">question and answer site</a>
   or try one of the other many <a href="http://sagemath.org/help.html">avenues of support</a>.</p>
 
@@ -190,9 +189,9 @@ var randomcontentdisplay={
       in <code>$HOME/.sage/ipython/ipythonrc</code>.</p>
 
   <p class="randomcontent">Sage can be integrated with LaTeX
-    using <a href="http://www.sagemath.org/doc/tutorial/sagetex.html">SageTeX</a>.</p>
+    using <a href="http://doc.sagemath.org/html/en/tutorial/sagetex.html">SageTeX</a>.</p>
 
-  <p class="randomcontent">If you find that LaTeX doesn't work, try
+  <p class="randomcontent">If you find that LaTeX does not work, try
     adding <code>os.environ["PATH"]+=":/usr/texbin:/usr/local/bin"</code> to <code>$HOME/.sage/init.sage</code></p>
 
   <p class="randomcontent">You can use Sage
@@ -202,7 +201,7 @@ var randomcontentdisplay={
       calculation</a>.</p>
 
   <p class="randomcontent">Sage can be used
-    to <a href="http://www.sagemath.org/doc/reference/sage/groups/perm_gps/cubegroup.html#sage.groups.perm_gps.cubegroup.CubeGroup.solve">solve
+    to <a href="https://doc.sagemath.org/html/en/reference/sage/groups/perm_gps/cubegroup.html#sage.groups.perm_gps.cubegroup.CubeGroup.solve">solve
     a Rubik's cube.</a></p>
 
   <p class="randomcontent">You can start an interactive GAP session in the middle of a sage session
@@ -210,14 +209,14 @@ var randomcontentdisplay={
     for <kbd>gp_console</kbd>, <kbd>singular_console</kbd>, <kbd>maxima_console</kbd>, <kbd>r_console</kbd>, and so
     forth.</p>
 
-  <p class="randomcontent">Reading the <a href="http://www.sagemath.org/doc/tutorial/">Sage Tutorial</a> is an
+  <p class="randomcontent">Reading the <a href="https://doc.sagemath.org/html/en/tutorial/">Sage Tutorial</a> is an
     enjoyable way to spend an evening.</p>
 
   <p class="randomcontent">The Sage interactive shell is based on <a href="http://ipython.org/">IPython</a> so it
     can be customized in the same way.  In particular see the directory <code>$HOME/.sage/ipython/</code>.</p>
 
   <p class="randomcontent">You can add your own tips about Sage to
-    the <a href="http://wiki.sagemath.org/Tips">wiki</a>.</p>
+    the <a href="https://wiki.sagemath.org/Tips">wiki</a>.</p>
 
   <p class="randomcontent">Sometimes the best way to find a bug is to explain it to a rubber duck in enough
     detail for the duck to understand.</p>

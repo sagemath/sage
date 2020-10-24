@@ -95,7 +95,7 @@ You can also work with matrices in LiE. ::
          ,[-1, 9, 8,0]
          ,[ 3,-5,-2,9]
          ]
-    sage: print lie.eval('*'+m._name) # optional - lie
+    sage: print(lie.eval('*'+m._name))  # optional - lie
          [[1,12,-1, 3]
          ,[0, 4, 9,-5]
          ,[3,-4, 8,-2]
@@ -189,7 +189,7 @@ do not show up when using tab-completion. ::
 LiE's help can be accessed through lie.help('functionname') where
 functionname is the function you want to receive help for. ::
 
-   sage: print lie.help('diagram') # optional - lie
+   sage: print(lie.help('diagram'))  # optional - lie
    diagram(g).   Prints the Dynkin diagram of g, also indicating
       the type of each simple component printed, and labeling the nodes as
       done by Bourbaki (for the second and further simple components the
@@ -218,7 +218,7 @@ Vectors::
     sage: b = a.sage(); b # optional - lie
     [1, 2, 3]
     sage: type(b) # optional - lie
-    <type 'list'>
+    <... 'list'>
 
 Matrices::
 
@@ -243,7 +243,7 @@ Text::
     sage: b = a.sage(); b # optional - lie
     'text'
     sage: type(b) # optional - lie
-    <type 'str'>
+    <... 'str'>
 
 
 LiE can be programmed using the Sage interface as well. Section 5.1.5
@@ -252,13 +252,13 @@ which evaluates a polynomial at a point.  Below is a (roughly) direct
 translation of that program into Python / Sage. ::
 
     sage: def eval_pol(p, pt): # optional - lie
-    ...       s = 0
-    ...       for i in range(1,p.length().sage()+1):
-    ...           m = 1
-    ...           for j in range(1,pt.size().sage()+1):
-    ...               m *= pt[j]^p.expon(i)[j]
-    ...           s += p.coef(i)*m
-    ...       return s
+    ....:     s = 0
+    ....:     for i in range(1,p.length().sage()+1):
+    ....:         m = 1
+    ....:         for j in range(1,pt.size().sage()+1):
+    ....:             m *= pt[j]^p.expon(i)[j]
+    ....:         s += p.coef(i)*m
+    ....:     return s
     sage: a = lie('X[1,2]') # optional - lie
     sage: b1 = lie('[1,2]') # optional - lie
     sage: b2 = lie('[2,3]') # optional - lie
@@ -285,16 +285,22 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
+from __future__ import print_function, absolute_import
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, AsciiArtString
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from sage.interfaces.interface import AsciiArtString
 from sage.misc.all import prod
 from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
+import os
 
 
-COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj'%DOT_SAGE
-HELP_CACHE = '%s/lie_helpdict_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
+HELP_CACHE = '%s/lie_helpdict_cache.sobj' % DOT_SAGE
 
-class LiE(Expect):
+
+class LiE(ExtraTabCompletion, Expect):
     r"""
     Interface to the LiE interpreter.
 
@@ -306,7 +312,7 @@ class LiE(Expect):
 
     """
     def __init__(self,
-                 maxread=100000, script_subdirectory=None,
+                 maxread=None, script_subdirectory=None,
                  logfile=None,
                  server=None):
         """
@@ -328,7 +334,6 @@ class LiE(Expect):
                         # This is the command that starts up your program
                         command = "bash "+ SAGE_LOCAL + "/bin/lie",
 
-                        maxread = maxread,
                         server=server,
                         script_subdirectory = script_subdirectory,
 
@@ -349,8 +354,8 @@ class LiE(Expect):
 
         self._seq = 0
 
-        self._trait_names_dict = None
-        self._trait_names_list = None
+        self._tab_completion_dict = None
+        self._tab_completion_list = None
         self._help_dict = None
 
     def _read_info_files(self, use_disk_cache=True):
@@ -359,14 +364,19 @@ class LiE(Expect):
 
             sage: from sage.interfaces.lie import LiE
             sage: lie = LiE()
-            sage: lie._trait_names_list is None
+            sage: lie._tab_completion_list is None
             True
             sage: lie._read_info_files(use_disk_cache=False) #optional - lie
-            sage: lie._trait_names_list # optional - lie
-            ['history',
-             'version',
+            sage: lie._tab_completion_list # optional - lie
+            ['Adams',
              ...
-             'sort']
+             'history',
+             ...
+             'sort',
+             ...
+             'version',
+             'void',
+             'write']
         """
         import sage.misc.persist
         if use_disk_cache:
@@ -376,8 +386,8 @@ class LiE(Expect):
                 v = []
                 for key in trait_dict:
                     v += trait_dict[key]
-                self._trait_names_list = v
-                self._trait_names_dict = trait_dict
+                self._tab_completion_list = sorted(v)
+                self._tab_completion_dict = trait_dict
                 self._help_dict = help_dict
                 return
             except IOError:
@@ -431,7 +441,7 @@ class LiE(Expect):
                 help_text = ""
                 prev_command = line[1:i]
 
-                #Add the commad
+                #Add the command
                 if t in commands:
                     commands[t].append(line[1:i])
                 else:
@@ -450,8 +460,8 @@ class LiE(Expect):
             l += commands[key]
 
         #Save the data
-        self._trait_names_dict = commands
-        self._trait_names_list = l
+        self._tab_completion_dict = commands
+        self._tab_completion_list = sorted(l)
         self._help_dict = help
 
         #Write them to file
@@ -508,23 +518,27 @@ class LiE(Expect):
         raise NotImplementedError
 
 
-    def trait_names(self, type=None, verbose=False, use_disk_cache=True):
+    def _tab_completion(self, type=None, verbose=False, use_disk_cache=True):
         """
         EXAMPLES::
 
-            sage: lie.trait_names() # optional - lie
-            ['Cartan_type',
+            sage: lie._tab_completion() # optional - lie
+            ['Adams',
+             ...
+             'Cartan_type',
+             ...
              'cent_roots',
              ...
-             'n_comp']
-
+             'n_comp',
+             ...
+             'write']
         """
-        if self._trait_names_dict is None:
+        if self._tab_completion_dict is None:
             self._read_info_files()
         if type:
-            return self._trait_names_dict[type]
+            return sorted(self._tab_completion_dict[type])
         else:
-            return self._trait_names_list
+            return self._tab_completion_list
 
     def _an_element_impl(self):
         """
@@ -541,7 +555,7 @@ class LiE(Expect):
 
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
-            sage: f.write('x = 2\n')
+            sage: _ = f.write('x = 2\n')
             sage: f.close()
             sage: lie.read(filename)  # optional - lie
             sage: lie.get('x')        # optional - lie
@@ -675,9 +689,9 @@ class LiE(Expect):
             sage: lie.get('x')       # optional - lie
             '2'
         """
-        cmd = '%s=%s'%(var,value)
+        cmd = '%s=%s' % (var,value)
         out = self.eval(cmd)
-        i = min( out.find('not defined'), out.find('\(in'), out.find('Argument types') )
+        i = min( out.find('not defined'), out.find(r'\(in'), out.find('Argument types') )
         if i != -1:
             raise RuntimeError(out)
 
@@ -692,7 +706,7 @@ class LiE(Expect):
             '2'
 
         """
-        s = self.eval('%s'%var)
+        s = self.eval('%s' % var)
         return s
 
     def get_using_file(self, var):
@@ -734,22 +748,28 @@ class LiE(Expect):
         """
         return LiEFunctionElement
 
-class LiEElement(ExpectElement):
-    def trait_names(self):
+    
+@instancedoc
+class LiEElement(ExtraTabCompletion, ExpectElement):
+    def _tab_completion(self):
         """
         Returns the possible tab completions for self.
 
         EXAMPLES::
 
             sage: a4 = lie('A4')   # optional - lie
-            sage: a4.trait_names() # optional - lie
-            ['center',
+            sage: a4._tab_completion() # optional - lie
+            ['Cartan',
+             ...
+             'center',
+             'det_Cartan',
              'diagram',
              ...
-             'n_comp']
-
+             'n_comp',
+             ...
+             'res_mat']
         """
-        return self.parent().trait_names(type=self.type())
+        return self.parent()._tab_completion(type=self.type())
 
     def type(self):
         """
@@ -849,27 +869,29 @@ class LiEElement(ExpectElement):
             return ExpectElement._sage_(self)
 
 
+@instancedoc
 class LiEFunctionElement(FunctionElement):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
             sage: a4 = lie('A4')  # optional - lie
-            sage: a4.diagram._sage_doc_() # optional - lie
+            sage: a4.diagram.__doc__  # optional - lie
             'diagram(g)...'
         """
         M = self._obj.parent()
         return M.help(self._name)
 
 
+@instancedoc
 class LiEFunction(ExpectFunction):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         Returns the help for self.
 
         EXAMPLES::
 
-            sage: lie.diagram._sage_doc_() # optional - lie
+            sage: lie.diagram.__doc__  # optional - lie
             'diagram(g)...'
         """
         M = self._parent
@@ -903,7 +925,7 @@ def reduce_load_lie():
     """
     return lie
 
-import os
+
 def lie_console():
     """
     Spawn a new LiE command-line session.
@@ -918,6 +940,9 @@ def lie_console():
         ...
 
     """
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%lie magics instead.')
     os.system('bash `which lie`')
 
 
@@ -929,7 +954,7 @@ def lie_version():
         sage: lie_version() # optional - lie
         '2.1'
     """
-    f = open(SAGE_LOCAL + 'lib/LiE/INFO.0')
+    f = open(os.path.join(SAGE_LOCAL, 'lib', 'LiE', 'INFO.0'))
     lines = f.readlines()
     f.close()
     i = lines.index('@version()\n')

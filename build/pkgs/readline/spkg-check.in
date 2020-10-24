@@ -1,0 +1,8 @@
+echo "Unfortunately, there is no way to check the readline package"
+echo "as there are no self-tests. However, we will run 'make check'"
+echo "in case a target is added at a later date"
+
+# TODO: May have to setup CFLAGS, etc. here to make this work correctly.
+
+cd src
+$MAKE check

@@ -1,14 +1,8 @@
-include "sage/libs/ntl/decl.pxi"
-
 from sage.libs.gmp.types cimport mpz_t
+from sage.libs.arb.types cimport arb_t
 from sage.rings.integer cimport Integer
-from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, FieldElement, RingElement, ModuleElement
-from sage.structure.parent_base cimport ParentWithBase
-from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
+from .number_field_element cimport NumberFieldElement, NumberFieldElement_absolute
 
-from number_field_element cimport NumberFieldElement, NumberFieldElement_absolute
 
 cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     # (a + b sqrt(D)) / denom
@@ -18,8 +12,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     cpdef NumberFieldElement galois_conjugate(self)
     cdef bint is_sqrt_disc(self)
 
-    cdef int _randomize(self, num_bound, den_bound, distribution) except -1
+    cpdef list _coefficients(self)
 
+    cdef int _randomize(self, num_bound, den_bound, distribution) except -1
+    cdef int arb_set_real(self, arb_t x, long prec) except -1
+    cdef void arb_set_imag(self, arb_t x, long prec)
 
 cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
     pass

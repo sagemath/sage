@@ -14,8 +14,9 @@ EXAMPLES::
     sage: from sage.repl.image import Image
     sage: img = Image('RGB', (256, 256), 'white')
     sage: pixels = img.pixels()
-    sage: for x, y in CartesianProduct(range(img.width()), range(img.height())):
-    ....:     pixels[x, y] = (x, y, 100)
+    sage: for x in range(img.width()):
+    ....:     for y in range(img.height()):
+    ....:         pixels[x, y] = (x, y, 100)
     sage: img
     256x256px 24-bit RGB image
     sage: type(img)
@@ -31,6 +32,7 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import io
 
 import PIL.Image
 from sage.structure.sage_object import SageObject
@@ -38,7 +40,7 @@ from sage.structure.sage_object import SageObject
 
 class Image(SageObject):
 
-    def __init__(self, mode, size, color=0):
+    def __init__(self, mode, size, color='white'):
         """
         Creates a new image with the given mode and size.
 
@@ -75,13 +77,12 @@ class Image(SageObject):
 
         - ``size`` -- 2-tuple, containing (width, height) in pixels.
 
-        - ``color`` -- string or numeric. What colour to use for the
-          image. Default is black.  If given, this should be a single
-          integer or floating point value for single-band modes, and a
-          tuple for multi-band modes (one value per band).  When
-          creating RGB images, you can also use colour strings as
-          supported by the ImageColor module.  If the colour is None,
-          the image is not initialised.
+        - ``color`` -- string or tuple of numeric. What colour to use
+          for the image. Default is black.  If given, this should be a
+          a tuple with one value per band. When creating RGB images,
+          you can also use colour strings as supported by the
+          ImageColor module.  If the colour is None, the image is not
+          initialised.
 
         OUTPUT:
         
@@ -90,7 +91,7 @@ class Image(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.image import Image
-            sage: Image('P', (16, 16), 13)
+            sage: Image('P', (16, 16), (13,))
             16x16px 8-bit Color image
         """
         self._pil = PIL.Image.new(mode, size, color)
@@ -232,10 +233,11 @@ class Image(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.image import Image
-            sage: img = Image('P', (12, 34), 13)
+            sage: img = Image('P', (12, 34), (13,))
             sage: filename = tmp_filename(ext='.png')
             sage: img.save(filename)
-            sage: open(filename).read().startswith('\x89PNG')
+            sage: with open(filename, 'rb') as f:
+            ....:     f.read(4) == b'\x89PNG'
             True
         """
         self.pil.save(filename)
@@ -292,11 +294,10 @@ class Image(SageObject):
             ('JPEG', types.OutputImageJpg),
             ('GIF',  types.OutputImageGif),
         )
-        import StringIO
         from sage.repl.rich_output.buffer import OutputBuffer
         for format, output_container in preferred:
             if output_container in display_manager.supported_output():
-                stream = StringIO.StringIO()
+                stream = io.BytesIO()
                 try:
                     self.pil.save(stream, format=format)
                 except IOError:

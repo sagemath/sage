@@ -13,7 +13,9 @@ List comprehensions
 ===================
 
 *List comprehensions* are a very handy way to construct lists in
-Python. You can use either of the following idioms::
+Python. You can use either of the following idioms:
+
+.. CODE-BLOCK:: python
 
       [ <expr> for <name> in <iterable> ]
       [ <expr> for <name> in <iterable> if <condition> ]
@@ -118,9 +120,11 @@ idioms give the same results; however, the second idiom is much more
 memory efficient (for large examples) as it does not expand any list
 in memory::
 
-    sage: sum( [ binomial(8, i) for i in range(9) ] )
+    sage: sum([binomial(8, i) for i in range(9)])
     256
-    sage: sum( binomial(8, i) for i in xrange(9) )
+    sage: sum(binomial(8, i) for i in xrange(9))  # py2
+    256
+    sage: sum(binomial(8, i) for i in range(9))  # py3
     256
 
 .. TOPIC:: Exercises
@@ -129,7 +133,7 @@ in memory::
 
             sage: # edit here
 
-    #.  Compute the sum of the gcd's of all co-prime numbers `i, j` for `i<j<10`::
+    #.  Compute the sum of the products of all pairs of co-prime numbers `i, j` for `i<j<10`::
 
             sage: # edit here
 
@@ -224,17 +228,22 @@ Here is the analogue of list slicing::
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
     sage: import itertools
-    sage: list(itertools.islice(Permutations(3), 1, 4))
+    sage: list(itertools.islice(Permutations(3), 1r, 4r))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
-The functions :func:`map` and :func:`filter` also have an analogue::
+Note that all calls to ``islice`` must have arguments of type ``int`` and
+not Sage integers.
 
-    sage: list(itertools.imap(lambda z: z.cycle_type(), Permutations(3)))
+The behaviour of the functions :func:`map` and :func:`filter` has
+changed between Python 2 and Python 3. In Python 3, they return an
+iterator. If you want to return a list like in Python 2 you need to explicitly
+wrap them in :func:`list`::
+
+    sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
-    sage: list(itertools.ifilter(lambda z: z.has_pattern([1,2]), Permutations(3)))
+    sage: list(filter(lambda z: z.has_pattern([1,2]), Permutations(3)))
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
-
 
 .. TOPIC:: Exercises
 
@@ -328,7 +337,7 @@ one may iterate through their elements::
     sage: all( p in P for p in P )
     True
 
-    sage: for p in GL(2, 2): print p; print
+    sage: for p in GL(2, 2): print(p); print("")
     [1 0]
     [0 1]
     <BLANKLINE>
@@ -348,7 +357,7 @@ one may iterate through their elements::
     [1 1]
     <BLANKLINE>
 
-    sage: for p in Partitions(3): print p
+    sage: for p in Partitions(3): print(p)
     [3]
     [2, 1]
     [1, 1, 1]
@@ -358,13 +367,13 @@ one may iterate through their elements::
 
 Beware of infinite loops::
 
-    sage: for p in Partitions(): print p           # not tested
+    sage: for p in Partitions(): print(p)          # not tested
 
 .. skip
 
 ::
 
-    sage: for p in Primes(): print p               # not tested
+    sage: for p in Primes(): print(p)              # not tested
 
 Infinite loops can nevertheless be very useful::
 

@@ -1,5 +1,5 @@
 r"""
-Huffman Encoding
+Huffman encoding
 
 This module implements functionalities relating to Huffman encoding and
 decoding.
@@ -7,7 +7,6 @@ decoding.
 AUTHOR:
 
 - Nathann Cohen (2010-05): initial version.
-
 
 Classes and functions
 =====================
@@ -26,10 +25,12 @@ Classes and functions
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# http://www.gnu.org/licenses/
+# https://www.gnu.org/licenses/
 ###########################################################################
+from __future__ import print_function
 
-import six
+from collections import defaultdict
+
 from sage.structure.sage_object import SageObject
 
 ###########################################################################
@@ -59,8 +60,7 @@ def frequency_table(string):
         sage: str = "Stop counting my characters!"
         sage: T = sorted(frequency_table(str).items())
         sage: for symbol, code in T:
-        ...       print symbol, code
-        ...
+        ....:     print("{} {}".format(symbol, code))
           3
         ! 1
         S 1
@@ -83,12 +83,13 @@ def frequency_table(string):
     The frequency of an empty string::
 
         sage: frequency_table("")
-        {}
+        defaultdict(<... 'int'>, {})
     """
-    d = {}
+    d = defaultdict(int)
     for s in string:
-        d[s] = d.get(s, 0) + 1
+        d[s] += 1
     return d
+
 
 class Huffman(SageObject):
     r"""
@@ -127,43 +128,47 @@ class Huffman(SageObject):
        table to the constructor of this class. The table ``source`` can be a
        table of frequencies or a table of weights.
 
-    Examples::
+    In either case, the alphabet must consist of at least two symbols.
+
+    EXAMPLES::
 
         sage: from sage.coding.source_coding.huffman import Huffman, frequency_table
         sage: h1 = Huffman("There once was a french fry")
-        sage: for letter, code in h1.encoding_table().iteritems():
-        ...       print "'"+ letter + "' : " + code
-        'a' : 0111
+        sage: for letter, code in sorted(h1.encoding_table().items()):
+        ....:     print("'{}' : {}".format(letter, code))
         ' ' : 00
+        'T' : 11100
+        'a' : 0111
         'c' : 1010
         'e' : 100
         'f' : 1011
         'h' : 1100
-        'o' : 11100
         'n' : 1101
-        's' : 11101
+        'o' : 11101
         'r' : 010
-        'T' : 11110
+        's' : 11110
         'w' : 11111
         'y' : 0110
 
     We can obtain the same result by "training" the Huffman code with the
     following table of frequency::
 
-        sage: ft = frequency_table("There once was a french fry"); ft
-        {' ': 5,
-         'T': 1,
-         'a': 2,
-         'c': 2,
-         'e': 4,
-         'f': 2,
-         'h': 2,
-         'n': 2,
-         'o': 1,
-         'r': 3,
-         's': 1,
-         'w': 1,
-         'y': 1}
+        sage: ft = frequency_table("There once was a french fry")
+        sage: sorted(ft.items())
+        [(' ', 5),
+         ('T', 1),
+         ('a', 2),
+         ('c', 2),
+         ('e', 4),
+         ('f', 2),
+         ('h', 2),
+         ('n', 2),
+         ('o', 1),
+         ('r', 3),
+         ('s', 1),
+         ('w', 1),
+         ('y', 1)]
+
         sage: h2 = Huffman(ft)
 
     Once ``h1`` has been trained, and hence possesses an encoding table,
@@ -171,7 +176,7 @@ class Huffman(SageObject):
     (possibly the same) using this code::
 
         sage: encoded = h1.encode("There once was a french fry"); encoded
-        '11110110010001010000111001101101010000111110111111010001110010110101001101101011000010110100110'
+        '11100110010001010000111011101101010000111110111111100001110010110101001101101011000010110100110'
 
     We can decode the above encoded string in the following way::
 
@@ -184,7 +189,7 @@ class Huffman(SageObject):
 
         sage: h3 = Huffman("There once were two french fries")
         sage: h3.decode(encoded)
-        ' wehnefetrhft ne ewrowrirTc'
+        ' eierhffcoeft TfewrnwrTrsc'
 
     This does not look like our original string.
 
@@ -197,18 +202,16 @@ class Huffman(SageObject):
         sage: L = ["deaf", "bead", "fab", "bee"]
         sage: E = []
         sage: for e in L:
-        ...       E.append(H.encode(e))
-        ...       print E[-1]
-        ...
+        ....:     E.append(H.encode(e))
+        ....:     print(E[-1])
         111110101100
         10111010111
         11000101
         10111011101
         sage: D = []
         sage: for e in E:
-        ...       D.append(H.decode(e))
-        ...       print D[-1]
-        ...
+        ....:     D.append(H.decode(e))
+        ....:     print(D[-1])
         deaf
         bead
         fab
@@ -246,7 +249,7 @@ class Huffman(SageObject):
         # index of each alphabetic symbol
         self._index = None
 
-        if isinstance(source, six.string_types):
+        if isinstance(source, str):
             self._build_code(frequency_table(source))
         elif isinstance(source, dict):
             self._build_code(source)
@@ -303,33 +306,70 @@ class Huffman(SageObject):
           are not necessarily integers, but can be real numbers. In general,
           we refer to ``dic`` as a weight table.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.coding.source_coding.huffman import Huffman, frequency_table
             sage: str = "Sage is my most favorite general purpose computer algebra system"
             sage: h = Huffman(str)
-            sage: d = {}
             sage: h._build_code(frequency_table(str))
+
+        TESTS:
+
+        Trying to build a Huffman code for fewer than two symbols fails.  We
+        could support these corner cases of course, but instead we just don't
+        allow it::
+
+            sage: Huffman('')
+            Traceback (most recent call last):
+            ...
+            ValueError: The alphabet for Huffman must contain at least two
+            symbols.
+            sage: Huffman(' ')
+            Traceback (most recent call last):
+            ...
+            ValueError: The alphabet for Huffman must contain at least two
+            symbols.
         """
-        from heapq import heappush, heappop
-        heap = []
-        # Each alphabetic symbol is now represented by an element with
-        # weight w and index i.
-        for i, (s, w) in enumerate(dic.items()):
-            heappush(heap, (w, i))
-        for i in range(1, len(dic)):
-            weight_a, node_a = heappop(heap)
-            weight_b, node_b = heappop(heap)
-            heappush(heap, (weight_a + weight_b, [node_a, node_b]))
+
+        if len(dic) < 2:
+            # Most of the rest of this class assumes there are at least two
+            # symbols in the alphabet; we could explicitly handle the corner
+            # cases of 0 or 1 characters, but they are also pretty useless so
+            # enforce 2 or more characters
+            raise ValueError(
+                "The alphabet for {} must contain at least two symbols.".format(
+                    self.__class__.__name__))
+
+        symbols = sorted(dic.items(), key=lambda x: (x[1], x[0]))
+
+        # Each alphabetic symbol is now represented by an element with weight w
+        # and index i.
+        q0 = [(weight, idx) for idx, (sym, weight) in enumerate(symbols)]
+        q1 = []
+
+        queues = [q0, q1]
+        tot_weight = sum(s[1] for s in symbols)  # Just used as a sentinel below
+
+        def pop():
+            # pop the lowest weight node from the heads of the two queues (as
+            # long as at least one of them has one node)
+            q = min(queues, key=lambda q: (q and q[0][0] or tot_weight))
+            return q.pop(0)
+
+        while len(q0) + len(q1) > 1:
+            weight_a, node_a = pop()
+            weight_b, node_b = pop()
+            q1.append((weight_a + weight_b, (node_a, node_b)))
+
         # dictionary of symbol to Huffman encoding
         d = {}
-        self._tree = heap[0][1]
+        self._tree = q1[0][1]
         # Build the binary tree of a Huffman code, where the root of the tree
         # is associated with the empty string.
         self._build_code_from_tree(self._tree, d, prefix="")
-        self._index = dict((i, s) for i, (s, w) in enumerate(dic.items()))
+        self._index = dict((i, s) for i, (s, w) in enumerate(symbols))
         self._character_to_code = dict(
-            (s, d[i]) for i, (s, w) in enumerate(dic.items()))
+            (s, d[i]) for i, (s, w) in enumerate(symbols))
 
     def encode(self, string):
         r"""
@@ -351,7 +391,7 @@ class Huffman(SageObject):
             sage: str = "Sage is my most favorite general purpose computer algebra system"
             sage: h = Huffman(str)
             sage: encoded = h.encode(str); encoded
-            '00000110100010101011000011101010011100101010011011011100111101110010110100001011011111000001110101010001010110011010111111011001110100101000111110010011011100101011100000110001100101000101110101111101110110011000101011000111111101101111010010111001110100011'
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
             sage: h.decode(encoded)
             'Sage is my most favorite general purpose computer algebra system'
         """
@@ -378,7 +418,7 @@ class Huffman(SageObject):
             sage: str = "Sage is my most favorite general purpose computer algebra system"
             sage: h = Huffman(str)
             sage: encoded = h.encode(str); encoded
-            '00000110100010101011000011101010011100101010011011011100111101110010110100001011011111000001110101010001010110011010111111011001110100101000111110010011011100101011100000110001100101000101110101111101110110011000101011000111111101101111010010111001110100011'
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
             sage: h.decode(encoded)
             'Sage is my most favorite general purpose computer algebra system'
 
@@ -406,7 +446,7 @@ class Huffman(SageObject):
                 tree = tree[1]
             else:
                 raise ValueError("Input must be a binary string.")
-            if not isinstance(tree, list):
+            if not isinstance(tree, tuple):
                 chars.append(index[tree])
                 tree = self._tree
         return "".join(chars)
@@ -430,28 +470,27 @@ class Huffman(SageObject):
             sage: h = Huffman(str)
             sage: T = sorted(h.encoding_table().items())
             sage: for symbol, code in T:
-            ...       print symbol, code
-            ...
+            ....:     print("{} {}".format(symbol, code))
               101
-            S 00000
+            S 110000
             a 1101
             b 110001
-            c 110000
+            c 110010
             e 010
-            f 110010
+            f 110011
             g 0001
             i 10000
-            l 10011
+            l 10001
             m 0011
-            n 110011
+            n 00000
             o 0110
             p 0010
-            r 1111
-            s 1110
+            r 1110
+            s 1111
             t 0111
-            u 10001
+            u 10010
             v 00001
-            y 10010
+            y 10011
         """
         return self._character_to_code.copy()
 
@@ -506,8 +545,8 @@ class Huffman(SageObject):
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: H = Huffman("Sage")
             sage: T = H.tree()
-            sage: T.edges(labels=None)
-            [('0', 'S: 01'), ('0', 'a: 00'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
+            sage: T.edges(labels=None)  # indirect doctest
+            [('0', 'S: 00'), ('0', 'a: 01'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
         """
         if parent == "":
             u = "root"

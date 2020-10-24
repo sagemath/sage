@@ -5,3 +5,4 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
     cdef object perm, alpha
 
     cdef _new_c(self)
+    cpdef _mul_(self, other)

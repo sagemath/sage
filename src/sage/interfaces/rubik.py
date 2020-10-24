@@ -8,15 +8,14 @@ See http://www.math.ucf.edu/~reid/Rubik/optimal_solver.html
 The second is by Eric Dietz, and uses a standard (?) algorithm to
 solve the cube one level at a time. It is extremely fast, but often
 returns a far from optimal solution.
-See http://wrongway.org/?rubiksource
+See https://web.archive.org/web/20121212175710/http://www.wrongway.org/?rubiksource
 
 The third is by Dik Winter and implements Kociemba's algorithm which
 finds reasonable solutions relatively quickly, and if it is kept running
 will eventually find the optimal solution.
 
-
-
 AUTHOR:
+
    -- Optimal was written by Michael Reid <reid@math.ucf.edu> (2004)
    -- Cubex was written by Eric Dietz <root@wrongway.org> (2003)
    -- Kociemba was written by Dik T. Winter <dik.winter@cwi.nl> (1993)
@@ -30,13 +29,15 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
+from __future__ import print_function, absolute_import
 
 import pexpect
 import time
-import cleaner
+from . import cleaner
 
+from sage.cpython.string import bytes_to_str
 from sage.groups.perm_gps.cubegroup import index2singmaster
 
 
@@ -59,12 +60,15 @@ optimal_solver_tokens = ["UF", "UR", "UB", "UL", \
 # The input format.
 optimal_solver_format = "UF UR UB UL DF DR DB DL FR FL BR BL UFR URB UBL ULF DRF DFL DLB DBR"
 
+
 class SingNot:
     """
     This class is to resolve difference between various Singmaster notation.
+
     Case is ignored, and the second and third letters may be swapped.
 
-    EXAMPLE:
+    EXAMPLES::
+
         sage: from sage.interfaces.rubik import SingNot
         sage: SingNot("acb") == SingNot("ACB")
         True
@@ -73,16 +77,20 @@ class SingNot:
     """
     def __init__(self, s):
         self.rep = s
-        self.canonical = (s[0] + "".join(sorted(list(s[1:])))).lower()
+        self.canonical = (s[0] + "".join(sorted(s[1:]))).lower()
+
     def __eq__(self, other):
         return isinstance(other, SingNot) and other.canonical == self.canonical
+
     def __repr__(self):
         return self.rep
+
     def __hash__(self):
         return hash(self.canonical)
 
 # This is our list
 singmaster_list = [''] + [SingNot(index2singmaster(i+1)) for i in range(48)]; singmaster_list
+
 
 class OptimalSolver:
     """
@@ -94,9 +102,9 @@ class OptimalSolver:
         self.verbose = verbose
         self.start()
         if wait:
-            print "Initializing tables..."
+            print("Initializing tables...")
             self.ready()
-            print "Done."
+            print("Done.")
 
     def start(self):
         child = pexpect.spawn(self.__cmd)
@@ -124,29 +132,30 @@ class OptimalSolver:
         """
         The initial startup and precomputation are substantial...
 
-        TODO: Let it keep searching once it found a solution?
+        .. TODO:: Let it keep searching once it found a solution?
 
-        EXAMPLES:
-            sage: from sage.interfaces.rubik import *
-            sage: solver = DikSolver()
-            sage: solver = OptimalSolver()  # long time (28s on sage.math, 2012)
+        EXAMPLES::
+
+            sage: from sage.interfaces.rubik import *    # optional - rubiks
+            sage: solver = DikSolver()                   # optional - rubiks
+            sage: solver = OptimalSolver()  # optional - rubiks # long time (28s on sage.math, 2012)
             Initializing tables...
             Done.
-            sage: C = RubiksCube("R U")
-            sage: solver.solve(C.facets())
+            sage: C = RubiksCube("R U")                  # optional - rubiks
+            sage: solver.solve(C.facets())               # optional - rubiks
             'R  U'
-            sage: C = RubiksCube("R U F L B D")
-            sage: solver.solve(C.facets())
+            sage: C = RubiksCube("R U F L B D")          # optional - rubiks
+            sage: solver.solve(C.facets())               # optional - rubiks
             'R  U  F  L  B  D'
-            sage: C = RubiksCube("R2 D2")
-            sage: solver.solve(C.facets())
+            sage: C = RubiksCube("R2 D2")                # optional - rubiks
+            sage: solver.solve(C.facets())               # optional - rubiks
             'R2 D2'
         """
         self.ready()
         self.child.sendline(self.format_cube(facets))
         self.child.expect(r"([LRUDBF'2 ]+)\s+\((\d+)q\*?, (\d+)f\*?\)")
         self.child.sendline(chr(3)) # send ctrl-c
-        return self.child.match.groups()[0].strip()
+        return bytes_to_str(self.child.match.groups()[0]).strip()
 
     def format_cube(self, facets):
         L = []
@@ -156,7 +165,6 @@ class OptimalSolver:
             facet = singmaster_list[ix]
             L.append(optimal_solver_list[optimal_solver_list.index(facet)])
         return " ".join([str(f) for f in L])
-
 
 
 move_map = {
@@ -174,6 +182,7 @@ move_map = {
     "DL":"D"
 }
 
+
 class CubexSolver:
 
     __cmd = "cubex"
@@ -183,39 +192,40 @@ class CubexSolver:
 
     def solve(self, facets):
         """
-        EXAMPLES:
-            sage: from sage.interfaces.rubik import *
-            sage: C = RubiksCube("R U")
-            sage: CubexSolver().solve(C.facets())
+        EXAMPLES::
+
+            sage: from sage.interfaces.rubik import *      # optional - rubiks
+            sage: C = RubiksCube("R U")                    # optional - rubiks
+            sage: CubexSolver().solve(C.facets())          # optional - rubiks
             'R U'
-            sage: C = RubiksCube("R U F L B D")
-            sage: sol = CubexSolver().solve(C.facets()); sol
+            sage: C = RubiksCube("R U F L B D")            # optional - rubiks
+            sage: sol = CubexSolver().solve(C.facets()); sol  # optional - rubiks
             "U' L' L' U L U' L U D L L D' L' D L' D' L D L' U' L D' L' U L' B' U' L' U B L D L D' U' L' U L B L B' L' U L U' L' F' L' F L' F L F' L' D' L' D D L D' B L B' L B' L B F' L F F B' L F' B D' D' L D B' B' L' D' B U' U' L' B' D' F' F' L D F'"
-            sage: RubiksCube(sol) == C
+            sage: RubiksCube(sol) == C                     # optional - rubiks
             True
-            sage: C = RubiksCube("R2 F'")
-            sage: CubexSolver().solve(C.facets())
+            sage: C = RubiksCube("R2 F'")                  # optional - rubiks
+            sage: CubexSolver().solve(C.facets())          # optional - rubiks
             "R' R' F'"
-            sage: C = RubiksCube().scramble()
-            sage: sol = CubexSolver().solve(C.facets())
-            sage: C == RubiksCube(sol)
+            sage: C = RubiksCube().scramble()              # optional - rubiks
+            sage: sol = CubexSolver().solve(C.facets())    # optional - rubiks
+            sage: C == RubiksCube(sol)                     # optional - rubiks
             True
         """
         s = self.format_cube(facets)
         child = pexpect.spawn(self.__cmd+" "+s)
-        ix = child.expect(['210.*?:', '^5\d+(.*)'])
+        ix = child.expect(['210.*?:', r'^5\d+(.*)'])
         if ix == 0:
             child.expect(['211', pexpect.EOF])
-            moves = child.before.strip().replace(',','').split(' ')
-            return " ".join([move_map[m] for m in reversed(moves)])
+            moves = bytes_to_str(child.before).strip().replace(',', '').split(' ')
+            return " ".join(move_map[m] for m in reversed(moves))
         else:
             s = child.after
-            while child.expect(['^5\d+', pexpect.EOF]) == 0:
+            while child.expect([r'^5\d+', pexpect.EOF]) == 0:
                 s += child.after
-            raise ValueError(s)
+            raise ValueError(bytes_to_str(s))
 
     def format_cube(self, facets):
-        colors = sum([[i]*8 for i in range(1,7)], [])
+        colors = sum([[i]*8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = facets[i]-1
@@ -224,8 +234,6 @@ class CubexSolver:
         for i in range(6):
             facet_colors[i*9+4] = i+1
         return "".join(str(c) for c in facet_colors)
-
-
 
 
 class DikSolver:
@@ -237,20 +245,21 @@ class DikSolver:
 
     def solve(self, facets, timeout=10, extra_time=2):
         """
-        EXAMPLES:
-            sage: from sage.interfaces.rubik import *
-            sage: C = RubiksCube().move("R U")
-            sage: DikSolver().solve(C.facets())
+        EXAMPLES::
+
+            sage: from sage.interfaces.rubik import *   # optional - rubiks
+            sage: C = RubiksCube().move("R U")          # optional - rubiks
+            sage: DikSolver().solve(C.facets())         # optional - rubiks
             'R U'
-            sage: C = RubiksCube().move("R U F L B D")
-            sage: DikSolver().solve(C.facets())
+            sage: C = RubiksCube().move("R U F L B D")  # optional - rubiks
+            sage: DikSolver().solve(C.facets())         # optional - rubiks
             'R U F L B D'
-            sage: C = RubiksCube().move("R2 F'")
-            sage: DikSolver().solve(C.facets())
+            sage: C = RubiksCube().move("R2 F'")        # optional - rubiks
+            sage: DikSolver().solve(C.facets())         # optional - rubiks
             "R2 F'"
         """
         cube_str = self.format_cube(facets)
-        child = pexpect.spawn(self.__cmd+" -p")
+        child = pexpect.spawn(self.__cmd + " -p")
         child.expect('Initialization done!')
         child.sendline(cube_str)
 
@@ -277,11 +286,12 @@ class DikSolver:
                     extra_time = 0
             # format the string into our notation
             child.close(True)
+            sol = bytes_to_str(sol)
             return ' '.join([self.rot_map[m[0]]+str(4-int(m[1])) for m in reversed(sol.split(' '))]).replace('1', '').replace('3',"'")
         elif ix == 1:
             # invalid format
             child.close(True)
-            raise ValueError(child.before)
+            raise ValueError(bytes_to_str(child.before))
         else:
             child.close(True)
             raise RuntimeError("timeout")
@@ -326,4 +336,3 @@ class DikSolver:
 #                      49,     51,
 #                      52, 53, 54,
 #    ]
-

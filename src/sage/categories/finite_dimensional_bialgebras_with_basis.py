@@ -18,8 +18,7 @@ def FiniteDimensionalBialgebrasWithBasis(base_ring):
         sage: C = FiniteDimensionalBialgebrasWithBasis(QQ); C
         Category of finite dimensional bialgebras with basis over Rational Field
         sage: sorted(C.super_categories(), key=str)
-        [Category of bialgebras over Rational Field,
-         Category of coalgebras with basis over Rational Field,
+        [Category of bialgebras with basis over Rational Field,
          Category of finite dimensional algebras with basis over Rational Field]
         sage: C is Bialgebras(QQ).WithBasis().FiniteDimensional()
         True

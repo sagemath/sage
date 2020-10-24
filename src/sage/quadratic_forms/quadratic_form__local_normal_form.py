@@ -21,7 +21,7 @@ import copy
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import IntegerRing, ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.arith import GCD, valuation, is_prime
+from sage.arith.all import GCD, valuation, is_prime
 
 
 def find_entry_with_minimal_scale_at_prime(self, p):
@@ -78,26 +78,27 @@ def find_entry_with_minimal_scale_at_prime(self, p):
     return ij_index
 
 
-
-
 def local_normal_form(self, p):
-    """
-    Returns the a locally integrally equivalent quadratic form over
-    the p-adic integers Z_p which gives the Jordan decomposition.  The
-    Jordan components are written as sums of blocks of size <= 2 and
-    are arranged by increasing scale, and then by increasing norm.
-    (This is equivalent to saying that we put the 1x1 blocks before
-    the 2x2 blocks in each Jordan component.)
+    r"""
+    Return a locally integrally equivalent quadratic form over
+    the `p`-adic integers `\ZZ_p` which gives the Jordan decomposition.
+
+    The Jordan components are written as sums of blocks of size <= 2
+    and are arranged by increasing scale, and then by increasing norm.
+    This is equivalent to saying that we put the 1x1 blocks before
+    the 2x2 blocks in each Jordan component.
 
     INPUT:
 
-        `p` -- a positive prime number.
+    - `p` -- a positive prime number.
 
     OUTPUT:
 
-        a quadratic form over ZZ
+    a quadratic form over `\ZZ`
 
-    WARNING:  Currently this only works for quadratic forms defined over ZZ.
+    .. WARNING::
+
+        Currently this only works for quadratic forms defined over `\ZZ`.
 
     EXAMPLES::
 
@@ -118,7 +119,6 @@ def local_normal_form(self, p):
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 0 ]
         [ * 6 ]
-
     """
     ## Sanity Checks
     if (self.base_ring() != IntegerRing()):
@@ -170,22 +170,21 @@ def local_normal_form(self, p):
                 block_size = 2
 
         ## DIAGNOSTIC
-        #print "\n Finished Step 2 \n";
-        #print "\n Q is: \n" + str(Q)  + "\n";
-        #print "  p is: " + str(p)
-        #print "  min_val is: " + str( min_val)
-        #print "  block_size is: " + str(block_size)
-        #print "\n Starting Step 3 \n"
+        #print("\n Finished Step 2 \n")
+        #print("\n Q is: \n" + str(Q)  + "\n")
+        #print("  p is: " + str(p))
+        #print("  min_val is: " + str( min_val))
+        #print("  block_size is: " + str(block_size))
+        #print("\n Starting Step 3 \n")
 
         ## Step 3: Clear out the remaining entries
         ##  ---------------------------------------
         min_scale = p ** min_val                             ## This is the minimal valuation of the Hessian matrix entries.
 
         ##DIAGNOSTIC
-        #print "Starting Step 3:"
-        #print "----------------"
-        #print "  min_scale is: " + str(min_scale)
-
+        #print("Starting Step 3:")
+        #print("----------------")
+        #print("  min_scale is: " + str(min_scale))
 
         ## Perform cancellation over Z by ensuring divisibility
         if (block_size == 1):
@@ -194,7 +193,7 @@ def local_normal_form(self, p):
                 b = Q[0, j]
                 g = GCD(a, b)
 
-                ## DIAGNSOTIC
+                ## DIAGNOSTIC
                 #print "Cancelling from a 1x1 block:"
                 #print "----------------------------"
                 #print "  Cancelling entry with index (" + str(upper_left) + ", " + str(j) + ")"
@@ -273,19 +272,19 @@ def local_normal_form(self, p):
     return Q_Jordan
 
 
-
-
 def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
-    """
-    Returns a list of pairs `(s_i, L_i)` where `L_i` is a maximal
+    r"""
+    Return a list of pairs `(s_i, L_i)` where `L_i` is a maximal
     `p^{s_i}`-unimodular Jordan component which is further decomposed into
-    block diagonals of block size `\le 2`. For each `L_i` the 2x2 blocks are
-    listed after the 1x1 blocks (which follows from the convention of the
+    block diagonals of block size `\le 2`.
+
+    For each `L_i` the 2x2 blocks are listed after the 1x1 blocks
+    (which follows from the convention of the
     :meth:`local_normal_form` method).
 
-    ..note ::
+    .. NOTE::
 
-        The decomposition of each `L_i` into smaller block is not unique!
+        The decomposition of each `L_i` into smaller blocks is not unique!
 
     The ``safe_flag`` argument allows us to select whether we want a copy of
     the output, or the original output.  By default ``safe_flag = True``, so we

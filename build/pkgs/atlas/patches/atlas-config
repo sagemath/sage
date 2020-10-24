@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-system-python
 
 import sys, errno, os, platform, time, glob, subprocess, signal, argparse
 
@@ -22,7 +22,7 @@ def pid_exists(pid):
         return False
     try:
         os.kill(pid, 0)
-    except OSError, e:
+    except OSError as e:
         return e.errno == errno.EPERM
     else:
         return True
@@ -39,11 +39,11 @@ def unthrottle_posix(pid):
             f.write('performance')
 
     def signal_handler(signum, frame):
-        print 'Signal hanadler called with signal', signum
+        print('Signal handler called with signal', signum)
         for cpu, governor in zip(cpus, scaling_governor):
             with open(cpu, 'w') as f:
                 f.write(governor)
-        print 'Reverted throttling to the previous behaviour.'
+        print('Reverted throttling to the previous behaviour.')
         sys.exit(0)
 
     signal.signal(signal.SIGPIPE, signal_handler)
@@ -63,7 +63,8 @@ def unthrottle(pid):
     if os.name == 'posix':
         unthrottle_posix(pid)
     else:
-        print 'I don\'t know how to unthrottle your system ('+platform.system()+')'
+        print('I don\'t know how to unthrottle your system (' +
+              platform.system() + ')')
         sys.exit(3)
 
 
@@ -81,7 +82,8 @@ def is_throttled():
     if os.name == 'posix':
         return is_throttled_posix()
     else:
-        print 'I don\'t know how to unthrottle your system ('+platform.system()+')'
+        print('I don\'t know how to unthrottle your system (' +
+              platform.system() + ')')
         sys.exit(3)
 
 
@@ -89,10 +91,10 @@ def check_root():
     if os.name == 'posix':
         if os.getuid() == 0:
             return
-        print '\nError: You need to be root to (un)throttle the CPU.\n'
+        print('\nError: You need to be root to (un)throttle the CPU.\n')
         sys.exit(1)
     else:
-        print 'I don\'t know how to probe administrator rights on your system ('+platform.system()+')'
+        print('I don\'t know how to probe administrator rights on your system ('+platform.system()+')')
         sys.exit(3)
 
 
@@ -100,10 +102,10 @@ def check_nonroot():
     if os.name == 'posix':
         if os.getuid() > 0:
             return
-        print '\nError: You are crazy to run this as root, exiting.\n'
+        print('\nError: You are crazy to run this as root, exiting.\n')
         sys.exit(2)
     else:
-        print 'I don\'t know how to probe administrator rights on your system ('+platform.system()+')'
+        print('I don\'t know how to probe administrator rights on your system ('+platform.system()+')')
         sys.exit(3)
 
 
@@ -123,14 +125,14 @@ atexit.register(wait_for_command)
 def unthrottle_self():
     if os.name == 'posix':
         global command
-        print 'Running sudo atlas-config --unthrottle to turn CPU throttling off.'
+        print('Running sudo atlas-config --unthrottle to turn CPU throttling off.')
         command = subprocess.Popen(['sudo', os.path.abspath( __file__ ),
                                     '--unthrottle', str(os.getpid())])
     else:
-        print 'I don\'t know how to unthrottle your system ('+platform.system()+')'
+        print('I don\'t know how to unthrottle your system ('+platform.system()+')')
         sys.exit(2)
 
-    print 'Waiting for CPU throttling to be turned off...'
+    print('Waiting for CPU throttling to be turned off...')
     while is_throttled():
         time.sleep(1)
 
@@ -147,35 +149,28 @@ if __name__ == '__main__':
     unthrottle_self()
     print
     if os.environ.get('SAGE_FAT_BINARY', 'no') == 'yes':
-        print 'Building ATLAS with SAGE_FAT_BINARY (generic archdefs).'
-    elif os.environ.has_key('SAGE_ATLAS_ARCH'):
-        print 'Building ATLAS with SAGE_ATLAS_ARCH =', os.environ['SAGE_ATLAS_ARCH']
+        print('Building ATLAS with SAGE_FAT_BINARY (generic archdefs).')
+    elif 'SAGE_ATLAS_ARCH' in os.environ:
+        print('Building ATLAS with SAGE_ATLAS_ARCH =', os.environ['SAGE_ATLAS_ARCH'])
     else:
-        print 'Building ATLAS without specifying architecture.'
-    print 'This may take many hours during which you should leave the computer otherwise'
-    print 'idle to obtain accurate timings.'
+        print('Building ATLAS without specifying architecture.')
+    print('This may take many hours during which you should leave the computer otherwise')
+    print('idle to obtain accurate timings.')
     if args.archdef:
         os.environ['SAGE_ATLAS_SAVE_ARCHDEF'] = os.getcwd()
-        print 'The resulting <archdef>.tar.bz2 will be saved in '+os.getcwd()
-    print
-    print 'You have 5 seconds to interrupt...'
+        print('The resulting <archdef>.tar.bz2 will be saved in ' + os.getcwd())
+    print()
+    print('You have 5 seconds to interrupt...')
     time.sleep(1)
-    print 'You have 4 seconds to interrupt...'
+    print('You have 4 seconds to interrupt...')
     time.sleep(1)
-    print 'You have 3 seconds to interrupt...'
+    print('You have 3 seconds to interrupt...')
     time.sleep(1)
-    print 'You have 2 seconds to interrupt...'
+    print('You have 2 seconds to interrupt...')
     time.sleep(1)
-    print 'You have 1 second to interrupt...'
+    print('You have 1 second to interrupt...')
     time.sleep(1)
 
     sys.stdout.flush()
     sys.stderr.flush()
     os.system('sage -f atlas')
-
-
-
-
-
-
-

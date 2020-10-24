@@ -15,10 +15,10 @@ obtém o seguinte:
 
 ::
 
-    ----------------------------------------------------------------------
-    | SAGE Version 3.1.1, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
     sage:
 
 Para sair do Sage pressione Ctrl-D ou digite ``quit`` ou ``exit``.
@@ -173,10 +173,10 @@ arquivo log).
 ::
 
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
     
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
@@ -192,10 +192,10 @@ arquivo log).
     sage:
     Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
     
     sage: load "setup"
     Loading log file <setup> one line at a time...
@@ -936,87 +936,3 @@ variável ``b`` não foi redefinida.
     sage: a
     389
 
-
-
-.. _section-notebook:
-
-A Interface do Notebook
-=======================
-
-O Sage Notebook é iniciado digitando
-
-.. skip
-
-::
-
-    sage: notebook()
-
-na linha de comando do Sage. Isso inicia o Notebook e abre o seu
-navegador padrão para visualizá-lo. Os arquivos de estado do servidor
-são armazenados em ``$HOME/.sage/sage\_notebook``.
-
-Outras opções incluem:
-
-.. skip
-
-::
-
-    sage: notebook("directory")
-
-a qual inicia um novo servidor para o Notebook usando arquivos em um
-dado diretório, em vez do diretório padrão
-``$HOME/.sage/sage_notebook``. Isso pode ser útil se você quiser ter
-uma coleção de folhas de trabalho (worksheets) associadas com um
-projeto específico, ou executar vários Notebooks separadamente ao
-mesmo tempo.
-
-Quando você inicia o Notebook, ele primeiro cria os seguintes arquivos
-em ``$HOME/.sage/sage_notebook``:
-
-::
-
-    nb.sobj       (the notebook SAGE object file)
-    objects/      (a directory containing SAGE objects)
-    worksheets/   (a directory containing SAGE worksheets).
-
-Após criar os arquivos acima, o Notebook inicia o servidor web.
-
-Um "Notebook" é uma coleção de contas de usuário, cada qual pode ter
-várias folhas de trabalho (worksheets). Quando você cria uma nova
-folha de trabalho, os dados dela são armazenados no diretórios
-``worksheets/username/number``. Em cada diretório desse há um arquivo
-texto ``worksheet.txt`` - se algum problema ocorrer com as suas
-folhas de trabalho, ou com o Sage, esse arquivo texto contém toda
-informação necessária para reconstruir a folha de trabalho.
-
-A partir do Sage, digite ``notebook?`` para mais informações sobre
-como iniciar um servidor.
-
-O seguinte diagrama ilustra a arquitetura do Notebook Sage:
-
-::
-
-    ----------------------
-    |                    |
-    |                    |
-    |   firefox/safari   |
-    |                    |
-    |     javascript     |
-    |      program       |
-    |                    |
-    |                    |
-    ----------------------
-          |      ^
-          | AJAX |
-          V      |
-    ----------------------
-    |                    |
-    |       sage         |                SAGE process 1
-    |       web          | ------------>  SAGE process 2    (Python processes)
-    |      server        |   pexpect      SAGE process 3
-    |                    |                    .
-    |                    |                    .
-    ----------------------                    .
-
-Para ajuda sobre as teclas de atalho disponíveis no Notebook, clique
-no link ``Help``.

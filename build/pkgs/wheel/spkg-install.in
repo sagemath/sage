@@ -1,0 +1,9 @@
+cd src
+
+versions=3
+
+for vers in $versions; do
+    python${vers} setup.py --no-user-cfg install \
+            --single-version-externally-managed --root="$SAGE_DESTDIR" || \
+        sdh_die "Error building / installing wheel for Python ${vers}"
+done

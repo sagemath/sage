@@ -1,21 +1,21 @@
-include "sage/libs/ntl/decl.pxi"
-
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pX_decl cimport ZZ_pX_Multiplier_c
+from sage.libs.ntl.types cimport *
+from sage.libs.gmp.types cimport mpz_t
 
 cdef class PowComputer_ext(PowComputer_class):
     cdef ZZ_c* small_powers
     cdef ZZ_c top_power
     cdef ZZ_c temp_z
+    cdef long _initialized
+    cdef mpz_t temp_m2
 
     # the following are for unpickling
     cdef object _poly
     cdef object _shift_seed
     cdef object _ext_type
-    cdef object _prec_type
 
-    cdef ZZ_c* pow_ZZ_tmp(self, long n)
+    cdef ZZ_c* pow_ZZ_tmp(self, long n) except NULL
     cdef ZZ_c* pow_ZZ_top(self)
 
     cdef void cleanup_ext(self)
@@ -36,11 +36,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
     cdef int teichmuller_set_c (self, ZZ_pX_c* x, ZZ_pX_c* a, long absprec) except -1
 
 cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
-    #cdef ZZ_pX_c poly
     cdef ntl_ZZ_pContext_class c
     cdef ZZ_pX_Modulus_c mod
-
-    cdef void cleanup_ZZ_pX_FM(self)
 
 cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
     cdef int low_length

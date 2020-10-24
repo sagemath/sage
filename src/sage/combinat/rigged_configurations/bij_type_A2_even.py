@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `A_{2n}^{(2)}`.
+Bijection classes for type `A_{2n}^{(2)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `A_{2n}^{(2)}`.
@@ -134,9 +134,10 @@ class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
             sage: RC = RiggedConfigurations(['A', 4, 2], [[2,1]])
             sage: from sage.combinat.rigged_configurations.bij_type_A2_even import RCToKRTBijectionTypeA2Even
             sage: bijection = RCToKRTBijectionTypeA2Even(RC(partition_list=[[2],[2,2]]))
-            sage: bijection.next_state(1)
+            sage: bijection.next_state(2)
             -1
         """
+        height -= 1 # indexing
         n = self.n
         ell = [None] * (2*n)
         case_S = [False] * n

@@ -1,5 +1,7 @@
 """
 Restricted growth arrays
+
+These combinatorial objects are in bijection with set partitions.
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,10 +17,14 @@ Restricted growth arrays
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.combinat.combinat import CombinatorialClass, bell_number
+from sage.combinat.combinat import bell_number
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 import copy
 
-class RestrictedGrowthArrays(CombinatorialClass):
+
+class RestrictedGrowthArrays(UniqueRepresentation, Parent):
     def __init__(self, n):
         """
         EXAMPLES::
@@ -27,9 +33,12 @@ class RestrictedGrowthArrays(CombinatorialClass):
             sage: R = RestrictedGrowthArrays(3)
             sage: R == loads(dumps(R))
             True
+            sage: TestSuite(R).run(skip=['_test_an_element',
+            ....:   '_test_enumerated_set_contains', '_test_some_elements'])
         """
         self._n = n
-        self._name = "Restricted growth arrays of size %s"%n
+        self._name = "Restricted growth arrays of size %s" % n
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __iter__(self):
         """
@@ -41,21 +50,21 @@ class RestrictedGrowthArrays(CombinatorialClass):
             [[1, 0, 0], [2, 0, 1], [2, 1, 0], [2, 1, 1], [3, 1, 2]]
         """
         n = self._n
-        a = [1]+[0]*(n-1)
-        m = [0]+[1]*(n-1)
+        a = [1] + [0] * (n - 1)
+        m = [0] + [1] * (n - 1)
         while True:
             yield copy.copy(a)
-            #Seach for maximum i with a[i] != m[i]
+            # Search for maximum i with a[i] != m[i]
             i = n - 1
             while a[i] == m[i] and i >= 0:
                 i -= 1
             if i == 0:
                 break
-            #Update arrays a and m
+            # Update arrays a and m
             a[i] += 1
-            a[0] = a[i]+1 if a[i] == m[i] else m[i]
+            a[0] = a[i] + 1 if a[i] == m[i] else m[i]
             mi = a[0]
-            for j in range(i+1,n):
+            for j in range(i + 1, n):
                 a[j] = 0
                 m[j] = mi
 

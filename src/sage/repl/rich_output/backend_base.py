@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 r"""
-Base class for Backends
+Base Class for Backends
 
 The display backends are the commandline, the SageNB notebook, the
-ipython notebook, the Emacs sage mode, the Sage doctester, .... All of
+IPython notebook, the Emacs sage mode, the Sage doctester, .... All of
 these have different capabilities for what they can display.
 
 To implement a new display backend, you need to subclass
-:class:`BackendBase`. All backend-specific handlig of rich output
+:class:`BackendBase`. All backend-specific handling of rich output
 should be in :meth:`~BackendBase.displayhook` and
 :meth:`~BackendBase.display_immediately`. See :class:`BackendSimple`
 for an absolutely minimal example of a functioning backend.
@@ -33,7 +33,7 @@ EXAMPLES::
 
     sage: from sage.repl.rich_output.backend_base import BackendSimple
     sage: backend = BackendSimple()
-    sage: plain_text = backend.plain_text_formatter(range(10));  plain_text
+    sage: plain_text = backend.plain_text_formatter(list(range(10)));  plain_text
     OutputPlainText container
     sage: backend.displayhook(plain_text, plain_text)
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -47,7 +47,10 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
+import builtins
+from io import StringIO
 from sage.structure.sage_object import SageObject
 
 
@@ -172,7 +175,7 @@ class BackendBase(SageObject):
         internally by the display manager.
 
         You may return backend-specific subclasses of existing output
-        containers. This allows you to attach backend-specifc
+        containers. This allows you to attach backend-specific
         functionality to the output container.
 
         EXAMPLES::
@@ -185,6 +188,27 @@ class BackendBase(SageObject):
             NotImplementedError: derived classes must implement this method
         """
         raise NotImplementedError('derived classes must implement this method')
+
+    def is_in_terminal(self):
+        """
+        Test whether the UI is meant to run in a terminal
+
+        See
+        :meth:`sage.repl.rich_output.display_manager.DisplayManager.is_in_terminal`
+        for details.
+
+        OUTPUT:
+
+        Defaults to ``False``.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.backend_base import BackendBase
+            sage: backend = BackendBase()
+            sage: backend.is_in_terminal()
+            False
+        """
+        return False
 
     def max_width(self):
         """
@@ -243,8 +267,7 @@ class BackendBase(SageObject):
             sage: backend._apply_pretty_printer(SagePrettyPrinter, 1/2)
             '1/2'
         """
-        import StringIO
-        stream = StringIO.StringIO()
+        stream = StringIO()
         printer = pretty_printer_class(
             stream, self.max_width(), self.newline())
         printer.pretty(obj)
@@ -282,19 +305,19 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.plain_text_formatter(range(30))
+            sage: out = backend.plain_text_formatter(list(range(30)))
             sage: out
             OutputPlainText container
             sage: out.text
             buffer containing 139 bytes
-            sage: out.text.get()
+            sage: out.text.get_str()
             '[0,\n 1,\n 2,\n 3,\n 4,\n 5,\n 6,\n 7,\n 8,\n 9,\n
             10,\n 11,\n 12,\n 13,\n 14,\n 15,\n 16,\n 17,\n 18,\n
             19,\n 20,\n 21,\n 22,\n 23,\n 24,\n 25,\n 26,\n 27,\n
             28,\n 29]'
 
-            sage: out = backend.plain_text_formatter(range(20), concatenate=True)
-            sage: out.text.get()
+            sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
+            sage: out.text.get_str()
             '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19'
        """
         from sage.repl.display.pretty_print import SagePrettyPrinter
@@ -332,18 +355,18 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.ascii_art_formatter(range(30))
+            sage: out = backend.ascii_art_formatter(list(range(30)))
             sage: out
             OutputAsciiArt container
             sage: out.ascii_art
             buffer containing 114 bytes
-            sage: print(out.ascii_art.get())
+            sage: print(out.ascii_art.get_str())
             [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
             <BLANKLINE>
              22, 23, 24, 25, 26, 27, 28, 29 ]
-            sage: backend.ascii_art_formatter([1,2,3], concatenate=False).ascii_art.get()
+            sage: backend.ascii_art_formatter([1,2,3], concatenate=False).ascii_art.get_str()
             '[ 1, 2, 3 ]'
-            sage: backend.ascii_art_formatter([1,2,3], concatenate=True ).ascii_art.get()
+            sage: backend.ascii_art_formatter([1,2,3], concatenate=True).ascii_art.get_str()
             '1 2 3'
         """
         from sage.typeset.ascii_art import ascii_art, empty_ascii_art
@@ -380,19 +403,19 @@ class BackendBase(SageObject):
 
             sage: from sage.repl.rich_output.backend_base import BackendBase
             sage: backend = BackendBase()
-            sage: out = backend.unicode_art_formatter(range(30))
+            sage: out = backend.unicode_art_formatter(list(range(30)))
             sage: out
             OutputUnicodeArt container
             sage: out.unicode_art
             buffer containing 114 bytes
-            sage: print(out.unicode_art.get())
+            sage: print(out.unicode_art.get_str())
             [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
             <BLANKLINE>
             22, 23, 24, 25, 26, 27, 28, 29 ]
 
-            sage: backend.unicode_art_formatter([1,2,3], concatenate=False).unicode_art.get()
+            sage: backend.unicode_art_formatter([1,2,3], concatenate=False).unicode_art.get_str()
             '[ 1, 2, 3 ]'
-            sage: backend.unicode_art_formatter([1,2,3], concatenate=True ).unicode_art.get()
+            sage: backend.unicode_art_formatter([1,2,3], concatenate=True).unicode_art.get_str()
             '1 2 3'
         """
         from sage.typeset.unicode_art import unicode_art, empty_unicode_art
@@ -434,23 +457,23 @@ class BackendBase(SageObject):
             OutputLatex container
             sage: out.latex
             buffer containing 45 bytes
-            sage: out.latex.get()
+            sage: out.latex.get_str()
             '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}'
             sage: out.mathjax()
             '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}</script></html>'
 
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=False)
-            sage: out.latex.get()
+            sage: out.latex.get_str()
             '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]'
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=True)
-            sage: out.latex.get()
+            sage: out.latex.get_str()
             '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2} x \\frac{3}{4} \\Bold{Z}'
 
         TESTS::
 
-            sage: backend.latex_formatter([], concatenate=False).latex.get()
+            sage: backend.latex_formatter([], concatenate=False).latex.get_str()
             '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\right]'
-            sage: backend.latex_formatter([], concatenate=True).latex.get()
+            sage: backend.latex_formatter([], concatenate=True).latex.get_str()
             '\\newcommand{\\Bold}[1]{\\mathbf{#1}}'
         """
         concatenate = kwds.get('concatenate', False)
@@ -488,8 +511,7 @@ class BackendBase(SageObject):
             sage: _     # indirect doctest
             'foo'
         """
-        import __builtin__
-        __builtin__._ = obj
+        builtins._ = obj
 
     def displayhook(self, plain_text, rich_output):
         """
@@ -644,5 +666,4 @@ class BackendSimple(BackendBase):
             sage: backend.display_immediately(plain_text, plain_text)
             Example plain text output
         """
-        print(rich_output.text.get())
-
+        print(rich_output.text.get_str())

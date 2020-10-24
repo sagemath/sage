@@ -9,7 +9,10 @@ Root system data for type B
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-import ambient_space
+from __future__ import print_function
+from __future__ import absolute_import
+
+from . import ambient_space
 
 class  AmbientSpace(ambient_space.AmbientSpace):
     def dimension(self):
@@ -125,7 +128,7 @@ class  AmbientSpace(ambient_space.AmbientSpace):
         else:
             return self.sum(self.monomial(j) for j in range(i))
 
-from cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
+from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self, n):
         """
@@ -211,7 +214,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: CartanType(["C", 3]).dual()
             ['B', 3]
         """
-        import cartan_type
+        from . import cartan_type
         return cartan_type.CartanType(["C", self.n])
 
     def dynkin_diagram(self):
@@ -236,7 +239,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
              sage: sorted(b.edges())
              []
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         n = self.n
         g = DynkinDiagram_class(self)
         for i in range(1, n):
@@ -251,13 +254,13 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: print CartanType(['B',1]).ascii_art()
+            sage: print(CartanType(['B',1]).ascii_art())
             O
             1
-            sage: print CartanType(['B',2]).ascii_art()
+            sage: print(CartanType(['B',2]).ascii_art())
             O=>=O
             1   2
-            sage: print CartanType(['B',5]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['B',5]).ascii_art(label = lambda x: x+2))
             O---O---O---O=>=O
             3   4   5   6   7
         """
@@ -277,7 +280,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: print CartanType(['B',4])._latex_dynkin_diagram()
+            sage: print(CartanType(['B',4])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (4 cm,0);
             \draw (4 cm, 0.1 cm) -- +(2 cm,0);
             \draw (4 cm, -0.1 cm) -- +(2 cm,0);
@@ -291,7 +294,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         When ``dual=True``, the Dynkin diagram for the dual Cartan
         type `C_n` is returned::
 
-            sage: print CartanType(['B',4])._latex_dynkin_diagram(dual=True)
+            sage: print(CartanType(['B',4])._latex_dynkin_diagram(dual=True))
             \draw (0 cm,0) -- (4 cm,0);
             \draw (4 cm, 0.1 cm) -- +(2 cm,0);
             \draw (4 cm, -0.1 cm) -- +(2 cm,0);
@@ -338,6 +341,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             [[i] for i in range(1, n)] + [[n, n+1]])
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_B', 'ambient_space',  AmbientSpace)
 

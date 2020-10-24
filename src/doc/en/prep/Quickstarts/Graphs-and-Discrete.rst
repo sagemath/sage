@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-graphs-and-discrete:
+
 Sage Quickstart for Graph Theory and Discrete Mathematics
 =========================================================
 
@@ -120,9 +122,9 @@ cube.
 ::
 
     sage: Aut=C.automorphism_group()
-    sage: print "Order of automorphism group: ", Aut.order()
+    sage: print("Order of automorphism group: {}".format(Aut.order()))
     Order of automorphism group:  48
-    sage: print "Group: \n", Aut # random
+    sage: print("Group: \n{}".format(Aut)) # random
     Group:
     Permutation Group with generators [('010','100')('011','101'), ('001','010')('101','110'), ('000','001')('010','011')('100','101')('110','111')]
 
@@ -168,8 +170,8 @@ permutations.
 
 ::
 
-    sage: for pair in Combinations(pets, 2):
-    ....:     print "The " + pair[0] + " chases the " + pair[1] + "."
+    sage: for a, b in Combinations(pets, 2):
+    ....:     print("The {} chases the {}.".format(a, b))
     The dog chases the cat.
     The dog chases the snake.
     The dog chases the spider.
@@ -180,7 +182,7 @@ permutations.
 ::
 
     sage: for pair in Permutations(pets, 2):
-    ....:     print pair
+    ....:     print(pair)
     ['dog', 'cat']
     ['dog', 'snake']
     ['dog', 'spider']
@@ -267,26 +269,26 @@ for cryptography.
     sage: # Convert English to binary
     sage: #
     sage: P = bin.encoding("Encrypt this using S-DES!")
-    sage: print "Binary plaintext: ", P, "\n"
+    sage: print("Binary plaintext:  {}\n".format(P))
     sage: #
     sage: # Choose a random key
     sage: #
     sage: K = sdes.list_to_string(sdes.random_key())
-    sage: print "Random key: ", K, "\n"
+    sage: print("Random key:  {}\n".format(K))
     sage: #
     sage: # Encrypt with Simplified DES
     sage: #
     sage: C = sdes(P, K, algorithm="encrypt")
-    sage: print "Encrypted: ", C, "\n"
+    sage: print("Encrypted:  {}\n".format(C))
     sage: #
     sage: # Decrypt for the round-trip
     sage: #
     sage: plaintxt = sdes(C, K, algorithm="decrypt")
-    sage: print "Decrypted: ", plaintxt, "\n"
+    sage: print("Decrypted:  {}\n".format(plaintxt))
     sage: #
     sage: # Verify easily
     sage: #
-    sage: print "Verify encryption/decryption: ", P == plaintxt
+    sage: print("Verify encryption/decryption: {}".format(P == plaintxt))
     Binary plaintext:  01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011101010111001101101001011011100110011100100000010100110010110101000100010001010101001100100001
 
     Random key:  0100000011
@@ -318,12 +320,16 @@ Start with a generator matrix over :math:`\ZZ/2\ZZ`.
 
     sage: D = C.dual_code()
     sage: D
-    Linear code of length 7, dimension 3 over Finite Field of size 2
+    [7, 3] linear code over GF(2)
 
 ::
 
     sage: D.basis()
-    [(1, 0, 1, 0, 1, 0, 1), (0, 1, 1, 0, 0, 1, 1), (0, 0, 0, 1, 1, 1, 1)]
+    [
+    (1, 0, 1, 0, 1, 0, 1),
+    (0, 1, 1, 0, 0, 1, 1),
+    (0, 0, 0, 1, 1, 1, 1)
+    ]
 
 ::
 

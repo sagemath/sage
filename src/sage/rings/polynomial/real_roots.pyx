@@ -32,7 +32,7 @@ algorithm in that paper:
 
 The best description of the algorithms used (other than this source
 code itself) is in the slides for my Sage Days 4 talk, currently available
-from http://www.sagemath.org:9001/days4schedule .
+from https://wiki.sagemath.org/days4schedule .
 """
 
 ################################################################################
@@ -132,11 +132,11 @@ from http://www.sagemath.org:9001/days4schedule .
 # Pari's floating-point algorithms?)
 
 from copy import copy
-from random import Random
 import time
 
 from sage.rings.all import ZZ, QQ, RR, AA, RealField, RealIntervalField, RIF, RDF, infinity
-from sage.rings.arith import binomial, factorial
+from sage.arith.all import binomial, factorial
+from sage.misc.randstate import randstate
 from sage.modules.all import vector, FreeModule
 from sage.matrix.all import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -151,11 +151,10 @@ from sage.rings.real_mpfr cimport RealNumber
 
 cimport numpy
 
-# TODO: Just for the fabs function below
-from math import fabs
+from libc.math cimport fabs, sqrt, ldexp, frexp
 
-include "sage/ext/cdefs.pxi"
-
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
 from sage.libs.mpfr cimport *
 
 cdef class interval_bernstein_polynomial:
@@ -168,7 +167,7 @@ cdef class interval_bernstein_polynomial:
     The Bernstein basis of degree n over the region [a .. b] is the
     set of polynomials
 
-    .. math::
+    .. MATH::
 
       \binom{n}{k} (x-a)^k (b-x)^{n-k} / (b-a)^n
 
@@ -349,9 +348,9 @@ cdef class interval_bernstein_polynomial:
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, _ = bp.try_split(mk_context(), None)
             sage: bp1
-            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.1 .. 0.01] over [0 .. 1/2]>
+            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.10000000000000023 .. 0.010000000000000226] over [0 .. 1/2]>
             sage: bp2
-            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.1 .. 0.01] over [1/2 .. 1]>
+            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.10000000000000023 .. 0.010000000000000226] over [1/2 .. 1]>
         """
         (p1, p2, ok) = self.de_casteljau(ctx, QQ_1_2)
         ctx.dc_log_append(("half" + self._type_code(), self.scale_log2, self.bitsize, ok, logging_note))
@@ -387,9 +386,9 @@ cdef class interval_bernstein_polynomial:
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, _ = bp.try_rand_split(mk_context(), None)
             sage: bp1  # rel tol
-            <IBP: (0.5, 0.2984375, -0.2642578125, -0.5511661529541015, -0.3145806974172592) + [-0.1 .. 0.01] over [0 .. 43/64]>
+            <IBP: (0.5, 0.2984375, -0.2642578125, -0.5511661529541015, -0.3145806974172592) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 43/64]>
             sage: bp2  # rel tol
-            <IBP: (-0.3145806974172592, -0.19903896331787108, 0.04135986328125002, 0.43546875, 0.99) + [-0.1 .. 0.01] over [43/64 .. 1]>
+            <IBP: (-0.3145806974172592, -0.19903896331787108, 0.04135986328125002, 0.43546875, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [43/64 .. 1]>
         """
 
         # We want a split point which is a dyadic rational (denominator
@@ -443,13 +442,13 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.real_roots import *
-        sage: bp = mk_ibpi([1, 2, 3], error=5); print bp
+        sage: bp = mk_ibpi([1, 2, 3], error=5); print(bp)
         degree 2 IBP with 2-bit coefficients
         sage: bp
         <IBP: (1, 2, 3) + [0 .. 5)>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1, error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print bp
+        sage: bp = mk_ibpi([-3, -1, 1, -1, -3, -1], lower=1, upper=5/4, usign=1, error=2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with 2-bit coefficients
         sage: bp
         <IBP: ((-3, -1, 1, -1, -3, -1) + [0 .. 2)) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
@@ -477,7 +476,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bp = interval_bernstein_polynomial_integer(vector(ZZ, [50, -30, -10]), -3/7, 4/7, 0, -1, 17, 3, 2, RIF(10^-30))
-            sage: print bp
+            sage: print(bp)
             degree 2 IBP with 6-bit coefficients
             sage: bp
             <IBP: ((50, -30, -10) + [0 .. 17)) * 2^3 over [-3/7 .. 4/7]; usign -1; level 2; slope_err 1.0000000000000000?e-30>
@@ -543,7 +542,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bp = mk_ibpi([-11, 22, -33], upper=1/9, error=20, lsign=1)
-            sage: print bp
+            sage: print(bp)
             degree 2 IBP with 6-bit coefficients
             sage: str(bp)
             'degree 2 IBP with 6-bit coefficients'
@@ -565,9 +564,9 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         EXAMPLES::
 
             sage: from sage.rings.polynomial.real_roots import *
-            sage: print mk_ibpi([2^12345])
+            sage: print(mk_ibpi([2^12345]))
             degree 0 IBP with 12346-bit coefficients
-            sage: print mk_ibpi([2^12345 - 1])
+            sage: print(mk_ibpi([2^12345 - 1]))
             degree 0 IBP with 12345-bit coefficients
         """
         self.bitsize = max_bitsize_intvec(self.coeffs)
@@ -755,10 +754,10 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bp = mk_ibpi([50, 20, -90, -70, 200], error=5)
-            sage: print bp.as_float()
+            sage: print(bp.as_float())
             degree 4 IBP with floating-point coefficients
             sage: bp.as_float()
-            <IBP: ((0.1953125, 0.078125, -0.3515625, -0.2734375, 0.78125) + [-1.12757025938e-16 .. 0.01953125]) * 2^8>
+            <IBP: ((0.1953125, 0.078125, -0.3515625, -0.2734375, 0.78125) + [-1.1275702593849246e-16 .. 0.01953125000000017]) * 2^8>
         """
         (fcoeffs, neg_err, pos_err, scale_log2_delta) = intvec_to_doublevec(self.coeffs, self.error)
         cdef interval_bernstein_polynomial_float fbp = interval_bernstein_polynomial_float(fcoeffs, self.lower, self.upper, self.lsign, self.usign, neg_err, pos_err, self.scale_log2 + scale_log2_delta, self.level, self.slope_err)
@@ -974,7 +973,7 @@ def mk_ibpi(coeffs, lower=0, upper=1, lsign=0, usign=0, error=1, scale_log2=0,
     EXAMPLES::
 
         sage: from sage.rings.polynomial.real_roots import *
-        sage: print mk_ibpi([50, 20, -90, -70, 200], error=5)
+        sage: print(mk_ibpi([50, 20, -90, -70, 200], error=5))
         degree 4 IBP with 8-bit coefficients
     """
     return interval_bernstein_polynomial_integer(vector(ZZ, coeffs), QQ(lower), QQ(upper), lsign, usign, error, scale_log2, level, slope_err)
@@ -1259,13 +1258,13 @@ def intvec_to_doublevec(Vector_integer_dense b, long err):
     B = [b1, ..., bn], lower and upper error bounds F1 and F2, and
     a scaling factor d, such that
 
-    .. math::
+    .. MATH::
 
        (bk + F1) * 2^d \le ak
 
     and
 
-    .. math::
+    .. MATH::
 
         ak + E \le (bk + F2) * 2^d
 
@@ -1340,13 +1339,13 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.real_roots import *
-        sage: bp = mk_ibpf([0.1, 0.2, 0.3], pos_err=0.5); print bp
+        sage: bp = mk_ibpf([0.1, 0.2, 0.3], pos_err=0.5); print(bp)
         degree 2 IBP with floating-point coefficients
         sage: bp
         <IBP: (0.1, 0.2, 0.3) + [0.0 .. 0.5]>
         sage: bp.variations()
         (0, 0)
-        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1], lower=1, upper=5/4, usign=1, pos_err=0.2, scale_log2=-3, level=2, slope_err=RIF(pi)); print bp
+        sage: bp = mk_ibpf([-0.3, -0.1, 0.1, -0.1, -0.3, -0.1], lower=1, upper=5/4, usign=1, pos_err=0.2, scale_log2=-3, level=2, slope_err=RIF(pi)); print(bp)
         degree 5 IBP with floating-point coefficients
         sage: bp
         <IBP: ((-0.3, -0.1, 0.1, -0.1, -0.3, -0.1) + [0.0 .. 0.2]) * 2^-3 over [1 .. 5/4]; usign 1; level 2; slope_err 3.141592653589794?>
@@ -1383,7 +1382,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bp = interval_bernstein_polynomial_float(vector(RDF, [0.50, -0.30, -0.10]), -3/7, 4/7, 0, -1, -0.02, 0.17, 3, 2, RIF(10^-30))
-            sage: print bp
+            sage: print(bp)
             degree 2 IBP with floating-point coefficients
             sage: bp
             <IBP: ((0.5, -0.3, -0.1) + [-0.02 .. 0.17]) * 2^3 over [-3/7 .. 4/7]; usign -1; level 2; slope_err 1.0000000000000000?e-30>
@@ -1429,7 +1428,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
             sage: repr(bp)
             '<IBP: (-0.11, 0.22, -0.33) + [-0.3 .. 0.1] over [0 .. 1/9]>'
         """
-        base = "%s + [%s .. %s]" % (self.coeffs, self.neg_err, self.pos_err)
+        base = "%s + [%r .. %r]" % (self.coeffs, self.neg_err, self.pos_err)
         if self.scale_log2 != 0:
             base = "(%s) * 2^%d" % (base, self.scale_log2)
         s = "<IBP: %s" % base
@@ -1454,7 +1453,7 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bp = mk_ibpf([-0.11, 0.22, -0.33], upper=1/9, neg_err=-0.1, pos_err=0.2, lsign=1)
-            sage: print bp
+            sage: print(bp)
             degree 2 IBP with floating-point coefficients
             sage: str(bp)
             'degree 2 IBP with floating-point coefficients'
@@ -1568,19 +1567,19 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
             sage: bp = mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], neg_err=-0.1, pos_err=0.01)
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 1/2)
             sage: bp1
-            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.1 .. 0.01] over [0 .. 1/2]>
+            <IBP: (0.5, 0.35, 0.0, -0.2875, -0.369375) + [-0.10000000000000023 .. 0.010000000000000226] over [0 .. 1/2]>
             sage: bp2
-            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.1 .. 0.01] over [1/2 .. 1]>
+            <IBP: (-0.369375, -0.45125, -0.3275, 0.14500000000000002, 0.99) + [-0.10000000000000023 .. 0.010000000000000226] over [1/2 .. 1]>
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 2/3)
             sage: bp1 # rel tol 2e-16
-            <IBP: (0.5, 0.30000000000000004, -0.2555555555555555, -0.5444444444444444, -0.32172839506172846) + [-0.1 .. 0.01] over [0 .. 2/3]>
+            <IBP: (0.5, 0.30000000000000004, -0.2555555555555555, -0.5444444444444444, -0.32172839506172846) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 2/3]>
             sage: bp2  # rel tol 3e-15
-            <IBP: (-0.32172839506172846, -0.21037037037037046, 0.028888888888888797, 0.4266666666666666, 0.99) + [-0.1 .. 0.01] over [2/3 .. 1]>
+            <IBP: (-0.32172839506172846, -0.21037037037037046, 0.028888888888888797, 0.4266666666666666, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [2/3 .. 1]>
             sage: bp1, bp2, ok = bp.de_casteljau(ctx, 7/39)
             sage: bp1  # rel tol
-            <IBP: (0.5, 0.4461538461538461, 0.36653517422748183, 0.27328680523946786, 0.1765692706232836) + [-0.1 .. 0.01] over [0 .. 7/39]>
+            <IBP: (0.5, 0.4461538461538461, 0.36653517422748183, 0.27328680523946786, 0.1765692706232836) + [-0.10000000000000069 .. 0.010000000000000677] over [0 .. 7/39]>
             sage: bp2  # rel tol
-            <IBP: (0.1765692706232836, -0.26556803047927313, -0.7802038132807364, -0.3966666666666666, 0.99) + [-0.1 .. 0.01] over [7/39 .. 1]>
+            <IBP: (0.1765692706232836, -0.26556803047927313, -0.7802038132807364, -0.3966666666666666, 0.99) + [-0.10000000000000069 .. 0.010000000000000677] over [7/39 .. 1]>
         """
         (c1_, c2_, err_inc) = de_casteljau_doublevec(self.coeffs, mid)
         cdef Vector_real_double_dense c1 = c1_
@@ -1680,7 +1679,7 @@ def mk_ibpf(coeffs, lower=0, upper=1, lsign=0, usign=0, neg_err=0, pos_err=0,
     EXAMPLES::
 
         sage: from sage.rings.polynomial.real_roots import *
-        sage: print mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], pos_err=0.1, neg_err=-0.01)
+        sage: print(mk_ibpf([0.5, 0.2, -0.9, -0.7, 0.99], pos_err=0.1, neg_err=-0.01))
         degree 4 IBP with floating-point coefficients
     """
     return interval_bernstein_polynomial_float(vector(RDF, coeffs), QQ(lower), QQ(upper), lsign, usign, neg_err, pos_err, scale_log2, level, slope_err)
@@ -2183,7 +2182,7 @@ def cl_maximum_root_first_lambda(cl):
 
     TESTS::
 
-        sage: bnd = cl_maximum_root_first_lambda(map(RIF, [0, 0, 0, 14, 1]))
+        sage: bnd = cl_maximum_root_first_lambda(list(map(RIF, [0, 0, 0, 14, 1])))
         sage: bnd, bnd.parent()
         (0.000000000000000,
         Real Field with 53 bits of precision and rounding RNDU)
@@ -2217,8 +2216,8 @@ def cl_maximum_root_first_lambda(cl):
             pending_pos_exp = j
             posCounter = posCounter+1
 
-    if len(neg) == 0:
-        return RIF._upper_field().zero()
+    if not neg:
+        return RIF.upper_field().zero()
 
     max_ub_log = RIF('-infinity')
     for j in xrange(len(neg)):
@@ -2347,7 +2346,7 @@ def root_bounds(p):
     if n == 0:
         # not RIF.zero().endpoints() because of MPFI's convention that the
         # upper bound is -0.
-        return RIF._lower_field().zero(), RIF._upper_field().zero()
+        return RIF.lower_field().zero(), RIF.upper_field().zero()
 
     ub = cl_maximum_root(cl)
 
@@ -2580,7 +2579,7 @@ class bernstein_polynomial_factory_intlist(bernstein_polynomial_factory):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bpf = bernstein_polynomial_factory_intlist([10, -20, 30, -40])
-            sage: print bpf.bernstein_polynomial(0)
+            sage: print(bpf.bernstein_polynomial(0))
             degree 3 IBP with 6-bit coefficients
             sage: bpf.bernstein_polynomial(20)
             <IBP: ((0, -1, 0, -1) + [0 .. 1)) * 2^20; lsign 1>
@@ -2665,7 +2664,7 @@ class bernstein_polynomial_factory_ratlist(bernstein_polynomial_factory):
 
             sage: from sage.rings.polynomial.real_roots import *
             sage: bpf = bernstein_polynomial_factory_ratlist([1/3, -22/7, 193/71, -140/99])
-            sage: print bpf.bernstein_polynomial(0)
+            sage: print(bpf.bernstein_polynomial(0))
             degree 3 IBP with 3-bit coefficients
             sage: bpf.bernstein_polynomial(20)
             <IBP: ((0, -1, 0, -1) + [0 .. 1)) * 2^20; lsign 1>
@@ -2764,7 +2763,7 @@ class bernstein_polynomial_factory_ar(bernstein_polynomial_factory):
             sage: x = polygen(AA)
             sage: p = (x - 1) * (x - sqrt(AA(2))) * (x - 2)
             sage: bpf = bernstein_polynomial_factory_ar(p, False)
-            sage: print bpf.bernstein_polynomial(0)
+            sage: print(bpf.bernstein_polynomial(0))
             degree 3 IBP with 2-bit coefficients
             sage: bpf.bernstein_polynomial(-20)
             <IBP: ((-2965821, 2181961, -1542880, 1048576) + [0 .. 1)) * 2^-20>
@@ -3952,7 +3951,14 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
         sage: real_roots(p, retval='interval')
         [(1.000000000000000?, 1), (1.414213562373095?, 2), (2.000000000000000?, 3)]
 
-    Check that #10803 is fixed ::
+    TESTS:
+
+    Check that :trac:`20269` is fixed::
+
+        sage: real_roots(polygen(AA))[0][0][0].parent()
+        Rational Field
+
+    Check that :trac:`10803` is fixed::
 
         sage: f = 2503841067*x^13 - 15465014877*x^12 + 37514382885*x^11 - 44333754994*x^10 + 24138665092*x^9 - 2059014842*x^8 - 3197810701*x^7 + 803983752*x^6 + 123767204*x^5 - 26596986*x^4 - 2327140*x^3 + 75923*x^2 + 7174*x + 102
         sage: len(real_roots(f,seed=1))
@@ -3969,15 +3975,15 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
         elif base is AA:
             ar_input = True
         else:
-            raise ValueError, "Don't know how to isolate roots for " + str(p.parent())
+            raise ValueError("Don't know how to isolate roots for " + str(p.parent()))
 
     if ar_input and bounds is not None:
-        raise NotImplementedError, "Cannot set your own bounds with algebraic real input"
+        raise NotImplementedError("Cannot set your own bounds with algebraic real input")
 
     if ar_input: strategy = 'warp'
 
     if bounds is not None and strategy=='warp':
-        raise NotImplementedError, "Cannot set your own bounds with strategy=warp"
+        raise NotImplementedError("Cannot set your own bounds with strategy=warp")
 
     if seed is None: seed = 1
 
@@ -4000,7 +4006,7 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
         if strategy=='warp':
             if factor.constant_coefficient() == 0:
                 x = factor.parent().gen()
-                extra_roots.append(((0, 0), x, exp, None, None))
+                extra_roots.append(((QQ.zero(), QQ.zero()), x, exp, None, None))
                 factor = factor // x
             if ar_input:
                 oc = ocean(ctx, bernstein_polynomial_factory_ar(factor, False), warp_map(False))
@@ -4147,7 +4153,7 @@ def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=Fals
     if retval=='algebraic_real':
         return [(AA.polynomial_root(r[1], r[0]), r[2]) for r in intv_roots]
 
-    raise ValueError, "Illegal retval parameter " + retval
+    raise ValueError("Illegal retval parameter " + retval)
 
 
 def scale_intvec_var(Vector_integer_dense c, k):
@@ -4266,8 +4272,7 @@ cdef class context:
         Initialize a context class.
         """
         self.seed = seed # saved to make context printable
-        self.random = Random()
-        self.random.seed(seed)
+        self.random = randstate().python_random(seed=seed)
         self.do_logging = do_logging
         self.wordsize = wordsize
         self.dc_log = []
@@ -4357,7 +4362,7 @@ def to_bernstein(p, low=0, high=1, degree=None):
     if degree is None:
         degree = p.degree()
     elif degree < p.degree():
-        raise ValueError, 'Bernstein degree must be at least polynomial degree'
+        raise ValueError('Bernstein degree must be at least polynomial degree')
     vs = ZZ ** (degree + 1)
     c = vs(0)
     for i in range(0, p.degree() + 1):

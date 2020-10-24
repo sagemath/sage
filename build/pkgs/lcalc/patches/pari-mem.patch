@@ -1,0 +1,24 @@
+Use a much smaller PARI stack size for starting up
+
+Actually 1MB is sufficient, so there is plenty of margin
+with the 16MB in this patch
+
+See https://trac.sagemath.org/ticket/24516
+
+diff -ru lcalc-1.23/src/Lcommandline.cc lcalc-1.23-patched//src/Lcommandline.cc
+--- lcalc-1.23/src/Lcommandline.cc	2012-08-08 23:21:56.000000000 +0200
++++ lcalc-1.23-patched//src/Lcommandline.cc	2018-01-30 11:23:06.975418539 +0100
+@@ -412,12 +412,7 @@
+ 
+             t2=.5; //t2=.5 because of the GAMMA(s+1/2)
+ 
+-            pari_init(1000000000,2);
+-            //pari_init_opts(400000000,2,INIT_DFTm); // the last option is to prevent
+-            //pari from giving its interrupt signal when its elliptic curve a_p
+-            //algorithm is called and interrupted with ctrl-c. Requires a more current
+-            //version of pari, so use pari_init above until I have a configure set up
+-            //that detects which pari, if any, is installed.
++            pari_init_opts(16000000, 2, INIT_DFTm);
+ 
+             coeff = new Double[3];
+             //compute the conductor which is copied to coeff[1]

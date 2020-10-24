@@ -85,7 +85,7 @@ Voici une petite expérience concernant la conjecture de Syracuse :
     sage: for i in range(1000):
     ....:     n = 3*odd_part(n) + 1
     ....:     if odd_part(n)==1:
-    ....:         print i
+    ....:         print(i)
     ....:         break
     38
 

@@ -10,19 +10,24 @@ AUTHORS:
 
 - David Krumm (2013): initial version
 
+- TJ Combs (2018): added Doyle-Krumm algorithm - 4
+
+- Raghukul Raman (2018): added Doyle-Krumm algorithm - 4
+
 REFERENCES:
 
-..  [Doyle-Krumm] John R. Doyle and David Krumm, Computing algebraic numbers
-    of bounded height, :arxiv:`1111.4963` (2013).
+- [DK2013]
+
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 John Doyle and David Krumm
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, division
 
 from copy import copy
 from itertools import product
@@ -31,10 +36,9 @@ from sage.rings.number_field.unit_group import UnitGroup
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import column_matrix
 from sage.rings.rational_field import QQ
-from sage.functions.other import ceil
+from sage.rings.all import RR, Infinity
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.structure.proof.all import number_field
-from sage.libs.pari.all import pari
+
 
 def bdd_norm_pr_gens_iq(K, norm_list):
     r"""
@@ -51,8 +55,9 @@ def bdd_norm_pr_gens_iq(K, norm_list):
 
     INPUT:
 
-    - `K` - an imaginary quadratic number field
-    - ``norm_list`` - a list of positive integers
+    - `K` -- an imaginary quadratic number field
+
+    - ``norm_list`` -- a list of positive integers
 
     OUTPUT:
 
@@ -70,7 +75,7 @@ def bdd_norm_pr_gens_iq(K, norm_list):
         sage: bdd_pr_ideals[4]
         [2]
         sage: bdd_pr_ideals[5]
-        [g + 2, g - 2]
+        [-g - 2, -g + 2]
         sage: bdd_pr_ideals[7]
         []
 
@@ -93,12 +98,8 @@ def bdd_norm_pr_gens_iq(K, norm_list):
         Traceback (most recent call last):
         ...
         KeyError: 100
-
     """
-    gens = dict()
-    for n in norm_list:
-        gens[n] = K.elements_of_norm(n)
-    return gens
+    return {n: K.elements_of_norm(n) for n in norm_list}
 
 
 def bdd_height_iq(K, height_bound):
@@ -113,12 +114,13 @@ def bdd_height_iq(K, height_bound):
 
     ALGORITHM:
 
-    This is an implementation of Algorithm 5 in [Doyle-Krumm].
+    This is an implementation of Algorithm 5 in [DK2013]_.
 
     INPUT:
 
-    - `K` - an imaginary quadratic number field
-    - ``height_bound`` - a real number
+    - `K` -- an imaginary quadratic number field
+
+    - ``height_bound`` -- a real number
 
     OUTPUT:
 
@@ -129,8 +131,7 @@ def bdd_height_iq(K, height_bound):
         sage: from sage.rings.number_field.bdd_height import bdd_height_iq
         sage: K.<a> = NumberField(x^2 + 191)
         sage: for t in bdd_height_iq(K,8):
-        ....:     print exp(2*t.global_height())
-        ....:
+        ....:     print(exp(2*t.global_height()))
         1.00000000000000
         1.00000000000000
         1.00000000000000
@@ -168,7 +169,6 @@ def bdd_height_iq(K, height_bound):
         sage: K.<a> = NumberField(x^2 + 5)
         sage: list(bdd_height_iq(K,0.9))
         []
-
     """
     if height_bound < 1:
         return
@@ -188,34 +188,35 @@ def bdd_height_iq(K, height_bound):
 
     # Find principal ideals of bounded norm
     possible_norm_set = set([])
-    for n in xrange(class_number):
-        for m in xrange(1, height_bound + 1):
+    for n in range(class_number):
+        for m in range(1, int(height_bound + 1)):
             possible_norm_set.add(m*class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_gens_iq(K, possible_norm_set)
 
     # Distribute the principal ideals
     generator_lists = []
-    for n in xrange(class_number):
+    for n in range(class_number):
         this_ideal = class_group_reps[n]
         this_ideal_norm = class_group_rep_norms[n]
         gens = []
-        for i in xrange(1, height_bound + 1):
+        for i in range(1, int(height_bound + 1)):
             for g in bdd_ideals[i*this_ideal_norm]:
                 if g in this_ideal:
                     gens.append(g)
         generator_lists.append(gens)
 
     # Build all the output numbers
-    for n in xrange(class_number):
+    for n in range(class_number):
         gens = generator_lists[n]
         s = len(gens)
-        for i in xrange(s):
-            for j in xrange(i + 1, s):
+        for i in range(s):
+            for j in range(i + 1, s):
                 if K.ideal(gens[i], gens[j]) == class_group_reps[n]:
                     new_number = gens[i]/gens[j]
                     for zeta in roots_of_unity:
-                        yield zeta*new_number
-                        yield zeta/new_number
+                        yield zeta * new_number
+                        yield zeta / new_number
+
 
 def bdd_norm_pr_ideal_gens(K, norm_list):
     r"""
@@ -224,8 +225,9 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
 
     INPUT:
 
-    - `K` - a number field
-    - ``norm_list`` - a list of positive integers
+    - `K` -- a number field
+
+    - ``norm_list`` -- a list of positive integers
 
     OUTPUT:
 
@@ -258,10 +260,9 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         [157*g^4 - 139*g^3 - 369*g^2 + 848*g + 158, g^4 + g^3 - g - 7]
 
     """
-
     negative_norm_units = K.elements_of_norm(-1)
-    gens = dict()
-    if len(negative_norm_units) == 0:
+    gens = {}
+    if not negative_norm_units:
         for n in norm_list:
             if not n:
                 gens[n] = [K.zero()]
@@ -271,6 +272,7 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         for n in norm_list:
             gens[n] = K.elements_of_norm(n)
     return gens
+
 
 def integer_points_in_polytope(matrix, interval_radius):
     r"""
@@ -284,8 +286,9 @@ def integer_points_in_polytope(matrix, interval_radius):
 
     INPUT:
 
-    - ``matrix`` - a square matrix of real numbers
-    - ``interval_radius`` - a real number
+    - ``matrix`` -- a square matrix of real numbers
+
+    - ``interval_radius`` -- a real number
 
     OUTPUT:
 
@@ -325,69 +328,55 @@ def integer_points_in_polytope(matrix, interval_radius):
         sage: m = matrix([[1,2,3,7],[4,5,6,2],[7,8,9,3],[0,3,4,5]])
         sage: integer_points_in_polytope(m,0)
         [(0, 0, 0, 0)]
-
     """
-
-    T = matrix; d = interval_radius; r = T.nrows()
+    T = matrix
+    d = interval_radius
+    r = T.nrows()
 
     # Find the vertices of the given box
     box_vertices = [vector(x) for x in product([-d, d], repeat=r)]
 
     # Transform the vertices
     T_trans = T.transpose()
-    transformed_vertices = [v*T_trans for v in box_vertices]
+    transformed_vertices = [v * T_trans for v in box_vertices]
 
     # Create polyhedron from transformed vertices and find integer points inside
     return list(Polyhedron(transformed_vertices, base_ring=QQ).integral_points())
 
 
-def bdd_height(K, height_bound, precision=53, LLL=False):
+def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
     r"""
-    Computes all elements in the number number field `K` which have relative
+    Compute all elements in the number field `K` which have relative
     multiplicative height at most ``height_bound``.
 
-    The algorithm requires arithmetic with floating point numbers;
-    ``precision`` gives the user the option to set the precision for such
-    computations.
-
-    It might be helpful to work with an LLL-reduced system of fundamental
-    units, so the user has the option to perform an LLL reduction for the
-    fundamental units by setting ``LLL`` to True.
-
-    Certain computations may be faster assuming GRH, which may be done
-    globally by using the number_field(True/False) switch.
-
-    The function will only be called for number fields `K` with positive unit
+    The function can only be called for number fields `K` with positive unit
     rank. An error will occur if `K` is `QQ` or an imaginary quadratic field.
+
+    This algorithm computes 2 lists: L containing elements x in `K` such that
+    H_k(x) <= B, and a list L' containing elements x in `K` that, due to
+    floating point issues,
+    may be slightly larger then the bound. This can be controlled
+    by lowering the tolerance.
+
+    In current implementation both lists (L,L') are merged and returned in
+    form of iterator.
 
     ALGORITHM:
 
-    This is an implementation of the main algorithm (Algorithm 3) in
-    [Doyle-Krumm].
+    This is an implementation of the revised algorithm (Algorithm 4) in
+    [DK2013]_.
 
     INPUT:
 
-    - ``height_bound`` - real number
-    - ``precision`` - (default: 53) positive integer
-    - ``LLL`` - (default: False) boolean value
+    - ``height_bound`` -- real number
+
+    - ``tolerance`` -- (default: 0.01) a rational number in (0,1]
+
+    - ``precision`` -- (default: 53) positive integer
 
     OUTPUT:
 
     - an iterator of number field elements
-
-    .. WARNING::
-
-        In the current implementation, the output of the algorithm cannot be
-        guaranteed to be correct due to the necessity of floating point
-        computations. In some cases, the default 53-bit precision is
-        considerably lower than would be required for the algorithm to
-        generate correct output.
-
-    .. TODO::
-
-        Should implement a version of the algorithm that guarantees correct
-        output. See Algorithm 4 in [Doyle-Krumm] for details of an
-        implementation that takes precision issues into account.
 
     EXAMPLES:
 
@@ -415,227 +404,274 @@ def bdd_height(K, height_bound, precision=53, LLL=False):
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
-        sage: K.<g> = NumberField(x^3 - 197*x + 39)
-        sage: len(list(bdd_height(K, 200))) # long time (5 s)
-        451
-
-    ::
-
-        sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = NumberField(x^6 + 2)
-        sage: len(list(bdd_height(K,60,precision=100))) # long time (5 s)
+        sage: len(list(bdd_height(K,60))) # long time (5 s)
         1899
 
     ::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<g> = NumberField(x^4 - x^3 - 3*x^2 + x + 1)
-        sage: len(list(bdd_height(K,10,LLL=true)))
+        sage: len(list(bdd_height(K,10)))
         99
 
-    """
+    TESTS:
 
+    Check that :trac:`22771` is fixed::
+
+        sage: from sage.rings.number_field.bdd_height import bdd_height
+        sage: K.<v> = NumberField(x^3 + x + 1)
+        sage: len(list(bdd_height(K,3)))
+        23
+    """
+    # global values, used in internal function
     B = height_bound
-    r1, r2 = K.signature(); r = r1 + r2 -1
+    theta = tolerance
     if B < 1:
         return
-    yield K(0)
-    roots_of_unity = K.roots_of_unity()
-    if B == 1:
-        for zeta in roots_of_unity:
-            yield zeta
-        return
-    RF = RealField(precision)
     embeddings = K.places(prec=precision)
-    logB = RF(B).log()
+    O_K = K.ring_of_integers()
+    r1, r2 = K.signature()
+    r = r1 + r2 - 1
+    RF = RealField(precision)
+    lambda_gens_approx = {}
+    class_group_rep_norm_log_approx = []
+    unit_log_dict = {}
+
+    def rational_in(x, y):
+        r"""
+        Compute a rational number q, such that x<q<y using Archimedes' axiom
+        """
+        z = y - x
+        if z == 0:
+            n = 1
+        else:
+            n = RR(1/z).ceil() + 1
+        if RR(n*y).ceil() is n*y:  # WHAT !?
+            m = n*y - 1
+        else:
+            m = RR(n*y).floor()
+        return m / n
+
+    def delta_approximation(x, delta):
+        r"""
+        Compute a rational number in range (x-delta, x+delta)
+        """
+        return rational_in(x - delta, x + delta)
+
+    def vector_delta_approximation(v, delta):
+        r"""
+        Compute a rational vector w=(w1, ..., wn)
+        such that |vi-wi|<delta for all i in [1, n]
+        """
+        return [delta_approximation(vi, delta) for vi in v]
 
     def log_map(number):
         r"""
-        Computes the image of an element of `K` under the logarithmic map.
+        Compute the image of an element of `K` under the logarithmic map.
         """
         x = number
         x_logs = []
-        for i in xrange(r1):
-            sigma = embeddings[i]
-            x_logs.append(abs(sigma(x)).log())
-        for i in xrange(r1, r + 1):
-            tau = embeddings[i]
-            x_logs.append(2*abs(tau(x)).log())
+        for i in range(r1):
+            sigma = embeddings[i]  # real embeddings
+            x_logs.append(sigma(x).abs().log())
+        for i in range(r1, r + 1):
+            tau = embeddings[i]  # Complex embeddings
+            x_logs.append(2 * tau(x).abs().log())
         return vector(x_logs)
 
-    def log_height_for_generators(n, i, j):
+    def log_height_for_generators_approx(alpha, beta, Lambda):
         r"""
-        Computes the logarithmic height of elements of the form `g_i/g_j`.
+        Compute the rational approximation of logarithmic height function.
+        Return a lambda approximation h_K(alpha/beta)
         """
-        gen_logs = generator_logs[n]
-        Log_gi = gen_logs[i]; Log_gj = gen_logs[j]
-        arch_sum = sum([max(Log_gi[k], Log_gj[k]) for k in range(r + 1)])
-        return (arch_sum - class_group_rep_norm_logs[n])
+        delta = Lambda / (r + 2)
+        norm_log = delta_approximation(RR(O_K.ideal(alpha, beta).norm()).log(), delta)
+        log_ga = vector_delta_approximation(log_map(alpha), delta)
+        log_gb = vector_delta_approximation(log_map(beta), delta)
+        arch_sum = sum([max(log_ga[k], log_gb[k]) for k in range(r + 1)])
+        return (arch_sum - norm_log)
 
     def packet_height(n, pair, u):
         r"""
-        Computes the height of the element of `K` encoded by a given packet.
+        Compute the height of the element of `K` encoded by a given packet.
         """
-        gen_logs = generator_logs[n]
-        i = pair[0] ; j = pair[1]
-        Log_gi = gen_logs[i]; Log_gj = gen_logs[j]
-        Log_u_gi = Log_gi + unit_log_dictionary[u]
+        gens = generator_lists[n]
+        i = pair[0]
+        j = pair[1]
+        Log_gi = lambda_gens_approx[gens[i]]
+        Log_gj = lambda_gens_approx[gens[j]]
+        Log_u_gi = vector(Log_gi) + unit_log_dict[u]
         arch_sum = sum([max(Log_u_gi[k], Log_gj[k]) for k in range(r + 1)])
-        return (arch_sum - class_group_rep_norm_logs[n])
+        return (arch_sum - class_group_rep_norm_log_approx[n])
+
+    # Step 1
+    # Computes ideal class representative and their rational approx norm
+    t = theta / (3*B)
+    delta_1 = t / (6*r+12)
 
     class_group_reps = []
     class_group_rep_norms = []
-    class_group_rep_norm_logs = []
+
     for c in K.class_group():
         a = c.ideal()
         a_norm = a.norm()
+        log_norm = RF(a_norm).log()
+        log_norm_approx = delta_approximation(log_norm, delta_1)
         class_group_reps.append(a)
         class_group_rep_norms.append(a_norm)
-        class_group_rep_norm_logs.append(RF(a_norm).log())
+        class_group_rep_norm_log_approx.append(log_norm_approx)
     class_number = len(class_group_reps)
 
-    # Get fundamental units and their images under the log map
-    fund_units = UnitGroup(K).fundamental_units()
-    fund_unit_logs = [log_map(fund_units[i]) for i in range(r)]
-    unit_prec_test = fund_unit_logs
-    try:
-        [l.change_ring(QQ) for l in unit_prec_test]
-    except ValueError:
-        raise ValueError('Precision too low.') # QQ(log(0)) may occur if precision too low
-
-    # If LLL is set to True, find an LLL-reduced system of fundamental units
-    if LLL:
-        cut_fund_unit_logs = column_matrix(fund_unit_logs).delete_rows([r])
-        lll_fund_units = []
-        for c in pari(cut_fund_unit_logs).qflll().python().columns():
-            new_unit = 1
-            for i in xrange(r):
-                new_unit *= fund_units[i]**c[i]
-            lll_fund_units.append(new_unit)
-        fund_units = lll_fund_units
-        fund_unit_logs = [log_map(_) for _ in fund_units]
-        unit_prec_test = fund_unit_logs
-        try:
-            [l.change_ring(QQ) for l in unit_prec_test]
-        except ValueError:
-            raise ValueError('Precision too low.') # QQ(log(0)) may occur if precision too low
-
+    # Step 2
     # Find generators for principal ideals of bounded norm
     possible_norm_set = set([])
-    for n in xrange(class_number):
-        for m in xrange(1, B + 1):
-            possible_norm_set.add(m*class_group_rep_norms[n])
+    for n in range(class_number):
+        for m in range(1, (B + 1).ceil()):
+            possible_norm_set.add(m * class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_ideal_gens(K, possible_norm_set)
 
-    # Distribute the principal ideal generators
+    # Stores it in form of an dictionary and gives lambda(g)_approx for key g
+    for norm in possible_norm_set:
+        gens = bdd_ideals[norm]
+        for g in gens:
+            lambda_g_approx = vector_delta_approximation(log_map(g), delta_1)
+            lambda_gens_approx[g] = lambda_g_approx
+
+    # Step 3
+    # Find a list of all generators corresponding to each ideal a_l
     generator_lists = []
-    generator_logs = []
-    for n in xrange(class_number):
-        this_ideal = class_group_reps[n]
-        this_ideal_norm = class_group_rep_norms[n]
+    for l in range(class_number):
+        this_ideal = class_group_reps[l]
+        this_ideal_norm = class_group_rep_norms[l]
         gens = []
-        gen_logs = []
-        for i in xrange(1, B + 1):
-            for g in bdd_ideals[i*this_ideal_norm]:
+        for i in range(1, (B + 1).ceil()):
+            for g in bdd_ideals[i * this_ideal_norm]:
                 if g in this_ideal:
                     gens.append(g)
-                    gen_logs.append(log_map(g))
         generator_lists.append(gens)
-        generator_logs.append(gen_logs)
 
-    # Compute the lists of relevant pairs and corresponding heights
-    gen_height_dictionary = dict()
+    # Step 4
+    # Finds all relevant pair and their height
+    gen_height_approx_dictionary = {}
     relevant_pair_lists = []
-    for n in xrange(class_number):
+
+    for n in range(class_number):
         relevant_pairs = []
         gens = generator_lists[n]
-        s = len(gens)
-        for i in xrange(s):
-            for j in xrange(i + 1, s):
+        l = len(gens)
+        for i in range(l):
+            for j in range(i+1, l):
                 if K.ideal(gens[i], gens[j]) == class_group_reps[n]:
                     relevant_pairs.append([i, j])
-                    gen_height_dictionary[(n, i, j)] = log_height_for_generators(n, i, j)
+                    gen_height_approx_dictionary[(n, i, j)] = log_height_for_generators_approx(gens[i], gens[j], t/6)
         relevant_pair_lists.append(relevant_pairs)
 
-    # Find the bound for units to be computed
-    gen_height_list = [gen_height_dictionary[x] for x in gen_height_dictionary.keys()]
-    if len(gen_height_list) == 0:
-        d = logB
-    else:
-        d = logB + max(gen_height_list)
+    # Step 5
+    b = rational_in(t/12 + RR(B).log(), t/4 + RR(B).log())
+    maximum = 0
+    for n in range(class_number):
+        for p in relevant_pair_lists[n]:
+            maximum = max(maximum, gen_height_approx_dictionary[(n, p[0], p[1])])
+    d_tilde = b + t/6 + maximum
 
-    # Create the matrix whose columns are the logs of the fundamental units
+    # Step 6
+    # computes fundamental units and their value under log map
+    fund_units = UnitGroup(K).fundamental_units()
+    fund_unit_logs = [log_map(fund_units[i]) for i in range(r)]
     S = column_matrix(fund_unit_logs).delete_rows([r])
-    try:
-        T = S.inverse()
-    except ZeroDivisionError:
-        raise ValueError('Precision too low.')
+    S_inverse = S.inverse()
+    S_norm = S.norm(Infinity)
+    S_inverse_norm = S_inverse.norm(Infinity)
 
-    # Find all integer lattice points in the unit polytope
-    U = integer_points_in_polytope(T, ceil(d))
+    upper_bound = (r**2) * max(S_norm, S_inverse_norm)
+    m = RR(upper_bound).ceil() + 1
 
-    U0 = []; L0 = []
+    # Step 7
+    # Variables needed for rational approximation
+    lambda_tilde = (t/12) / (d_tilde*r*(1+m))
+    delta_tilde = min(lambda_tilde/((r**2)*((m**2)+m*lambda_tilde)), 1/(r**2))
+    M = d_tilde * (upper_bound+lambda_tilde*RR(r).sqrt())
+    M = RR(M).ceil()
+    d_tilde = RR(d_tilde)
+    delta_2 = min(delta_tilde, (t/6)/(r*(r+1)*M))
 
-    # Compute unit heights
-    unit_height_dictionary = dict()
-    unit_log_dictionary = dict()
-    Ucopy = copy(U)
+    # Step 8, 9
+    # Computes relevant points in polytope
+    fund_unit_log_approx = [vector_delta_approximation(fund_unit_logs[i], delta_2) for i in range(r)]
+    S_tilde = column_matrix(fund_unit_log_approx).delete_rows([r])
+    S_tilde_inverse = S_tilde.inverse()
+    U = integer_points_in_polytope(S_tilde_inverse, d_tilde)
+
+    # Step 10
+    # tilde suffixed list are used for computing second list (L_primed)
+    yield K(0)
+    U0 = []
+    U0_tilde = []
+    L0 = []
+    L0_tilde = []
+
+    # Step 11
+    # Computes unit height
+    unit_height_dict = {}
+    U_copy = copy(U)
+    inter_bound = b - (5*t)/12
 
     for u in U:
-        u_log = sum([u[j]*fund_unit_logs[j] for j in range(r)])
-        unit_log_dictionary[u] = u_log
+        u_log = sum([u[j]*vector(fund_unit_log_approx[j]) for j in range(r)])
+        unit_log_dict[u] = u_log
         u_height = sum([max(u_log[k], 0) for k in range(r + 1)])
-        unit_height_dictionary[u] = u_height
-        if u_height <= logB:
-            U0.append(u)
-        if u_height > d:
-            Ucopy.remove(u)
-    U = Ucopy
+        unit_height_dict[u] = u_height
+        if u_height < inter_bound:
+                U0.append(u)
+        if inter_bound <= u_height and u_height < b - (t/12):
+            U0_tilde.append(u)
+        if u_height > t/12 + d_tilde:
+            U_copy.remove(u)
+    U = U_copy
 
-    # Sort U by height
-    U = sorted(U, key=lambda u: unit_height_dictionary[u])
-    U_length = len(U)
+    relevant_tuples = set(U0 + U0_tilde)
 
-    all_unit_tuples  = set(copy(U0))
-
-    # Check candidate heights
-    for n in xrange(class_number):
-        relevant_pairs = relevant_pair_lists[n]
-        for pair in relevant_pairs:
-            i = pair[0] ; j = pair[1]
-            gen_height = gen_height_dictionary[(n, i, j)]
-            u_height_bound = logB + gen_height
-            for k in xrange(U_length):
-                u = U[k]
-                u_height = unit_height_dictionary[u]
-                if u_height <= u_height_bound:
+    # Step 12
+    # check for relevant packets
+    for n in range(class_number):
+        for pair in relevant_pair_lists[n]:
+            i = pair[0]
+            j = pair[1]
+            u_height_bound = b + gen_height_approx_dictionary[(n, i, j)] + t/4
+            for u in U:
+                if unit_height_dict[u] < u_height_bound:
                     candidate_height = packet_height(n, pair, u)
-                    if candidate_height <= logB:
+                    if candidate_height <= b - 7*t/12:
                         L0.append([n, pair, u])
-                        all_unit_tuples.add(u)
-                else:
-                    break
+                        relevant_tuples.add(u)
+                    elif candidate_height < b + t/4:
+                        L0_tilde.append([n, pair, u])
+                        relevant_tuples.add(u)
 
-    # Use previous data to build all necessary units
-    units_dictionary = dict()
-    for u in all_unit_tuples:
-        unit = K(1)
-        for j in xrange(r):
-            unit *= (fund_units[j])**(u[j])
-        units_dictionary[u] = unit
+    # Step 13
+    # forms a dictionary of all_unit_tuples and their value
+    tuple_to_unit_dict = {}
+    for u in relevant_tuples:
+        unit = K.one()
+        for k in range(r):
+            unit *= fund_units[k]**u[k]
+        tuple_to_unit_dict[u] = unit
 
-    # Build all the output numbers
-    for u in U0:
-        unit = units_dictionary[u]
+    # Step 14
+    # Build all output numbers
+    roots_of_unity = K.roots_of_unity()
+    for u in U0 + U0_tilde:
         for zeta in roots_of_unity:
-            yield zeta*unit
-    for packet in L0:
-        n = packet[0] ; pair = packet[1] ; u = packet[2]
-        i = pair[0] ; j = pair[1]
-        relevant_pairs = relevant_pair_lists[n]
-        gens = generator_lists[n]
-        unit = units_dictionary[u]
-        c = unit*gens[i]/gens[j]
+            yield zeta * tuple_to_unit_dict[u]
+
+    # Step 15
+    for p in L0 + L0_tilde:
+        gens = generator_lists[p[0]]
+        i = p[1][0]
+        j = p[1][1]
+        u = p[2]
+        c_p = tuple_to_unit_dict[u] * (gens[i] / gens[j])
         for zeta in roots_of_unity:
-            yield zeta*c
-            yield zeta/c
+            yield zeta * c_p
+            yield zeta / c_p

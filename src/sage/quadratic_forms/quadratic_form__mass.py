@@ -46,7 +46,7 @@ def shimura_mass__maximal(self,):
 
         a rational number
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.shimura_mass__maximal()
@@ -71,7 +71,7 @@ def GHY_mass__maximal(self):
 
         a rational number
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.GHY_mass__maximal()

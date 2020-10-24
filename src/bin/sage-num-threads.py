@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-system-python
 #
 # Determine the number of threads to be used by Sage.
 #
@@ -19,6 +19,7 @@ import os
 import multiprocessing
 import re
 import math
+
 
 def number_of_cores():
     """
@@ -43,7 +44,8 @@ def number_of_cores():
 
     try:  # Solaris fix
         from subprocess import Popen, PIPE
-        p = Popen(['sysctl','-n','hw.ncpu'], stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+        p = Popen(['sysctl', '-n', 'hw.ncpu'],
+                  stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
         n = int(p.stdout.read().strip())
         if n > 0:
             return n
@@ -51,6 +53,7 @@ def number_of_cores():
         pass
 
     return 1
+
 
 def parse_jobs_from_MAKE(MAKE, unlimited=999999):
     """
@@ -74,7 +77,7 @@ def parse_jobs_from_MAKE(MAKE, unlimited=999999):
     # First, find value of -j
     # Since this is doing a greedy match on the left and non-greedy on the right,
     # we find the last -j or --jobs
-    (j,num) = re.subn(r'^(.* )?(-j *|--jobs(=(?=[0-9])| +))([0-9]*)( .*?)?$', r'\4', MAKE, count=1)
+    (j, num) = re.subn(r'^(.* )?(-j *|--jobs(=(?=[0-9])| +))([0-9]*)( .*?)?$', r'\4', MAKE, count=1)
     if num < 1:
         # No replacement done, i.e. no -j option found
         raise KeyError("No number of jobs specified")
@@ -88,11 +91,11 @@ def parse_jobs_from_MAKE(MAKE, unlimited=999999):
 
     # Next, find the value of -l
     # If it is specified, use this as an upper bound on j
-    (l,num) = re.subn(r'^(.* )?(-l *|--(load-average|max-load)(=(?=[0-9])| +))([0-9.]*)( .*?)?$', r'\5', MAKE, count=1)
+    (l, num) = re.subn(r'^(.* )?(-l *|--(load-average|max-load)(=(?=[0-9])| +))([0-9.]*)( .*?)?$', r'\5', MAKE, count=1)
     if num < 1:
         # No replacement done, i.e. no -l option found
         pass
-    elif l == "":
+    elif not l:
         # No load limit specified
         pass
     else:
@@ -100,9 +103,10 @@ def parse_jobs_from_MAKE(MAKE, unlimited=999999):
         # A load limit will never prevent starting at least one job
         if l <= 1:
             l = 1
-        j = min(j,l)
+        j = min(j, l)
 
     return j
+
 
 def num_threads():
     """
@@ -129,7 +133,7 @@ def num_threads():
 
     try:
         # Prepend hyphen to MAKEFLAGS if it does not start with one
-        MAKEFLAGS=os.environ["MAKEFLAGS"]
+        MAKEFLAGS = os.environ["MAKEFLAGS"]
         if MAKEFLAGS[0] != '-':
             MAKEFLAGS = '-' + MAKEFLAGS
         # In MAKEFLAGS, "-j" does not mean unlimited.  It probably
@@ -178,5 +182,6 @@ def num_threads():
         pass
 
     return (num_threads, num_threads_parallel, num_cores)
+
 
 print(*num_threads())

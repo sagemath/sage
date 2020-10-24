@@ -1,7 +1,6 @@
 r"""
 Hom spaces between Hecke modules
 """
-
 #*****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -16,10 +15,14 @@ Hom spaces between Hecke modules
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-import sage.categories.homset
-import morphism
-import module
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.categories.homset import HomsetWithBase
+from .morphism import HeckeModuleMorphism_matrix
+from .module import is_HeckeModule
+
 
 def is_HeckeModuleHomspace(x):
     r"""
@@ -35,17 +38,18 @@ def is_HeckeModuleHomspace(x):
     """
     return isinstance(x, HeckeModuleHomspace)
 
-class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
+
+class HeckeModuleHomspace(HomsetWithBase):
     r"""
     A space of homomorphisms between two objects in the category of Hecke
     modules over a given base ring.
     """
-    def __init__(self, X, Y, category = None):
+    def __init__(self, X, Y, category=None):
         r"""
         Create the space of homomorphisms between X and Y, which must have the
         same base ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = ModularForms(Gamma0(7), 4)
             sage: M.Hom(M)
@@ -56,14 +60,20 @@ class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
             TypeError: X and Y must have the same base ring
             sage: M.Hom(M) == loads(dumps(M.Hom(M)))
             True
+
+        TESTS::
+
+            sage: M = ModularForms(Gamma0(7), 4)
+            sage: H = M.Hom(M)
+            sage: TestSuite(H).run(skip='_test_elements')
         """
-        if not module.is_HeckeModule(X) or not module.is_HeckeModule(Y):
+        if not is_HeckeModule(X) or not is_HeckeModule(Y):
             raise TypeError("X and Y must be Hecke modules")
         if X.base_ring() != Y.base_ring():
             raise TypeError("X and Y must have the same base ring")
         if category is None:
             category = X.category()
-        sage.categories.homset.HomsetWithBase.__init__(self, X, Y, category = category)
+        HomsetWithBase.__init__(self, X, Y, category=category)
 
     def __call__(self, A, name=''):
         r"""
@@ -107,6 +117,30 @@ class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
             [6 7 8]
             Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+
+        TESTS:
+
+        Make sure that the element is created correctly when the codomain is
+        not the full module (related to :trac:`21497`)::
+
+            sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
+            sage: S = M.cuspidal_subspace()
+            sage: H = S.Hom(S)
+            sage: H(S.gens())
+            Hecke module morphism defined by the matrix
+            [1 0 0 0 0 0]
+            [0 1 0 0 0 0]
+            [0 0 1 0 0 0]
+            [0 0 0 1 0 0]
+            [0 0 0 0 1 0]
+            [0 0 0 0 0 1]
+            Domain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
+            Codomain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
+
+            sage: H.zero() in H
+            True
+            sage: H.one() in H
+            True
         """
         try:
             if A.parent() == self:
@@ -120,7 +154,40 @@ class HeckeModuleHomspace(sage.categories.homset.HomsetWithBase):
                 raise TypeError("unable to coerce A to self")
         except AttributeError:
             pass
-        if isinstance(A, (list, tuple)):
-            from sage.matrix.constructor import matrix
-            A = matrix([f.element() for f in A])
-        return morphism.HeckeModuleMorphism_matrix(self, A, name)
+        if A in self.base_ring():
+            dim_dom = self.domain().rank()
+            dim_codom = self.codomain().rank()
+            MS = MatrixSpace(self.base_ring(), dim_dom, dim_codom)
+            if self.domain() == self.codomain():
+                A = A * MS.identity_matrix()
+            elif A == 0:
+                A = MS.zero()
+            else:
+                raise ValueError('scalars do not coerce to this homspace')
+        elif isinstance(A, (list, tuple)):
+            A = matrix([self.codomain().coordinate_vector(f) for f in A])
+        return HeckeModuleMorphism_matrix(self, A, name)
+
+    def _an_element_(self):
+        """
+        Return an element.
+
+        If the domain is equal to the codomain, this returns the
+        action of the Hecke operator of index 2. Otherwise, this returns zero.
+
+        EXAMPLES::
+
+            sage: M = ModularSymbols(Gamma0(2), weight=12, sign=1)
+            sage: S = M.cuspidal_subspace()
+            sage: S.Hom(S).an_element()
+            Hecke module morphism defined by the matrix
+            [      260 -2108/135]
+            [     4860      -284]
+            Domain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
+            Codomain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
+        """
+        if self.domain() != self.codomain():
+            return self.zero()
+        else:
+            A = self.domain().hecke_operator(2).matrix()
+            return HeckeModuleMorphism_matrix(self, A)

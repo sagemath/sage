@@ -1,6 +1,10 @@
+# distutils: libraries = flint
+# distutils: depends = flint/fmpz_mat.h
+
 from sage.libs.flint.types cimport fmpz_t, fmpz_poly_t, fmpz_mat_t
 
-cdef extern from "flint/fmpz_mat.h":
+# flint/fmpz_mat.h
+cdef extern from "flint_wrap.h":
     void fmpz_mat_init(fmpz_mat_t mat, unsigned long rows, unsigned long cols)
     void fmpz_mat_init_set(fmpz_mat_t mat, const fmpz_mat_t src)
     void fmpz_mat_set(fmpz_mat_t result, fmpz_mat_t mat)
@@ -19,7 +23,8 @@ cdef extern from "flint/fmpz_mat.h":
     void fmpz_mat_add(fmpz_mat_t C, const fmpz_mat_t A, const fmpz_mat_t B)
     void fmpz_mat_sub(fmpz_mat_t C, const fmpz_mat_t A, const fmpz_mat_t B)
     void fmpz_mat_pow(fmpz_mat_t C, const fmpz_mat_t A, unsigned long n)
-    int fmpz_mat_is_zero(const fmpz_mat_t mat)
+    bint fmpz_mat_is_zero(const fmpz_mat_t mat)
+    bint fmpz_mat_is_one(const fmpz_mat_t mat)
     void fmpz_mat_charpoly(fmpz_poly_t cp, const fmpz_mat_t mat)
     void fmpz_mat_det(fmpz_t det, const fmpz_mat_t A)
     int fmpz_mat_inv(fmpz_mat_t Ainv, fmpz_t den, const fmpz_mat_t A)

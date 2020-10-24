@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Interface with Cliquer (clique-related problems)
 
@@ -9,88 +10,82 @@ AUTHORS:
 
 - Nathann Cohen (2009-08-14): Initial version
 
-- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (#11252)
+- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:trac:`11252`)
 
-- Nico Van Cleemput (2013-05-27): Handle the empty graph (#14525)
+- Nico Van Cleemput (2013-05-27): Handle the empty graph (:trac:`14525`)
 
 REFERENCE:
 
-.. [NisOst2003] Sampo Niskanen and Patric R. J. Ostergard,
-  "Cliquer User's  Guide, Version 1.0,"
-  Communications Laboratory, Helsinki University of Technology,
-  Espoo, Finland, Tech. Rep. T48, 2003.
+[NO2003]_
 
 Methods
 -------
 """
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Nathann Cohen <nathann.cohen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-
-include "sage/ext/interrupt.pxi"
-include 'sage/ext/stdsage.pxi'
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 
 cdef extern from "sage/graphs/cliquer/cl.c":
-     cdef int sage_clique_max(graph_t *g, int ** list)
-     cdef int sage_all_clique_max(graph_t *g, int ** list)
+     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
+     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
      cdef int sage_clique_number(graph_t *g)
+     cdef int sage_find_all_clique(graph_t *g,int ** list_of_vertices, int min_size, int max_size)
 
 
 def max_clique(graph):
     """
     Returns the vertex set of a maximum complete subgraph.
 
-    Currently only implemented for undirected graphs. Use
-    to_undirected to convert a digraph to an undirected graph.
+    .. NOTE::
+
+        Currently only implemented for undirected graphs. Use
+        :meth:`~sage.graphs.digraph.DiGraph.to_undirected` to convert a digraph
+        to an undirected graph.
 
     EXAMPLES::
 
-          sage: C=graphs.PetersenGraph()
+          sage: C = graphs.PetersenGraph()
+          sage: from sage.graphs.cliquer import max_clique
           sage: max_clique(C)
           [7, 9]
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.clique_maximum()
         []
     """
-    if graph.order() == 0:
+    if not graph.order():
         return []
 
-    graph,d = graph.relabel(inplace=False, return_map=True)
-    d_inv = {}
-    for v in d:
-        d_inv[d[v]] = v
+    cdef int i
+    cdef list int_to_vertex = list(graph)
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
-    cdef graph_t *g
-    g=graph_new(graph.order())
-    for e in graph.edge_iterator():
-        (u,v,w)=e
-        GRAPH_ADD_EDGE(g,u,v)
+    cdef graph_t* g = graph_new(graph.order())
+    for u,v in graph.edge_iterator(labels=None):
+        GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
-    cdef int* list
+    cdef int* list_of_vertices
     cdef int size
     sig_on()
-    size = sage_clique_max(g, &list)
+    size = sage_clique_max(g, &list_of_vertices)
     sig_off()
-    b = []
-    cdef int i
-    for i in range(size):
-        b.append(list[i])
+    cdef list b = [int_to_vertex[list_of_vertices[i]] for i in range(size)]
 
-    sage_free(list)
+    sig_free(list_of_vertices)
     graph_free(g)
-    return list_composition(b,d_inv)
+    return b
 
 
 # computes all the maximum clique of a graph and return its list
@@ -105,12 +100,13 @@ def all_max_clique(graph):
 
     .. NOTE::
 
-       Currently only implemented for undirected graphs. Use to_undirected
-       to convert a digraph to an undirected graph.
+        Currently only implemented for undirected graphs. Use
+        :meth:`~sage.graphs.digraph.DiGraph.to_undirected` to convert a digraph
+        to an undirected graph.
 
     ALGORITHM:
 
-    This function is based on Cliquer [NisOst2003]_.
+    This function is based on Cliquer [NO2003]_.
 
     EXAMPLES::
 
@@ -122,7 +118,7 @@ def all_max_clique(graph):
         sage: G.show(figsize=[2,2])
         sage: G.cliques_maximum()
         [[0, 1, 2], [0, 1, 3]]
-        sage: C=graphs.PetersenGraph()
+        sage: C = graphs.PetersenGraph()
         sage: C.cliques_maximum()
         [[0, 1], [0, 4], [0, 5], [1, 2], [1, 6], [2, 3], [2, 7], [3, 4],
          [3, 8], [4, 9], [5, 7], [5, 8], [6, 8], [6, 9], [7, 9]]
@@ -130,84 +126,201 @@ def all_max_clique(graph):
         sage: C.cliques_maximum()
         [[1, 2, 3, 4]]
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.cliques_maximum()
         [[]]
     """
-    if graph.order() == 0:
+    if not graph.order():
         return [[]]
 
-    graph,d = graph.relabel(inplace=False, return_map=True)
-    d_inv = {}
-    for v in d:
-        d_inv[d[v]] = v
+    cdef int i
+    cdef list int_to_vertex = list(graph)
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
-    cdef graph_t *g
-    g=graph_new(graph.order())
+    cdef graph_t* g = graph_new(graph.order())
+    for u,v in graph.edge_iterator(labels=None):
+        GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
-    for e in graph.edge_iterator():
-        (u,v,w)=e
-        GRAPH_ADD_EDGE(g,u,v)
-
-    cdef int* list
+    cdef int* list_of_vertices
     cdef int size
     sig_on()
-    size = sage_all_clique_max(g, &list)
+    size = sage_all_clique_max(g, &list_of_vertices)
     sig_off()
-    b = []
-    c=[]
-    cdef int i
+    cdef list b = []
+    cdef list c = []
     for i in range(size):
-        if(list[i]!=-1):
-            c.append(list[i])
+        if list_of_vertices[i] != -1:
+            c.append(int_to_vertex[list_of_vertices[i]])
         else:
-            b.append(list_composition(c,d_inv))
-            c=[]
+            b.append(c)
+            c = []
 
-    sage_free(list)
+    sig_free(list_of_vertices)
     graph_free(g)
 
     return sorted(b)
+
+
+def all_cliques(graph, min_size=0, max_size=0):
+    r"""
+    Iterator over the cliques in ``graph``.
+
+    A clique is an induced complete subgraph. This method is an iterator over
+    all the cliques with size in between ``min_size`` and ``max_size``. By
+    default, this method returns only maximum cliques. Each yielded clique is
+    represented by a list of vertices.
+
+    .. NOTE::
+
+        Currently only implemented for undirected graphs. Use
+        :meth:`~sage.graphs.digraph.DiGraph.to_undirected` to convert a digraph
+        to an undirected graph.
+
+    INPUT:
+
+    - ``min_size`` -- integer (default: 0); minimum size of reported cliques.
+      When set to 0 (default), this method searches for maximum cliques. In such
+      case, parameter ``max_size`` must also be set to 0.
+
+    - ``max_size`` -- integer (default: 0); maximum size of reported cliques.
+      When set to 0 (default), the maximum size of the cliques is unbounded.
+      When ``min_size`` is set to 0, this parameter must be set to 0.
+
+    ALGORITHM:
+
+    This function is based on Cliquer [NO2003]_.
+
+    EXAMPLES::
+
+        sage: G = graphs.CompleteGraph(5)
+        sage: list(sage.graphs.cliquer.all_cliques(G))
+        [[0, 1, 2, 3, 4]]
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        [[3, 4],
+         [2, 3],
+         [2, 3, 4],
+         [2, 4],
+         [1, 2],
+         [1, 2, 3],
+         [1, 2, 4],
+         [1, 3],
+         [1, 3, 4],
+         [1, 4],
+         [0, 1],
+         [0, 1, 2],
+         [0, 1, 3],
+         [0, 1, 4],
+         [0, 2],
+         [0, 2, 3],
+         [0, 2, 4],
+         [0, 3],
+         [0, 3, 4],
+         [0, 4]]
+        sage: G.delete_edge([1,3])
+        sage: list(sage.graphs.cliquer.all_cliques(G))
+        [[0, 2, 3, 4], [0, 1, 2, 4]]
+
+    TESTS::
+
+        sage: G = graphs.CompleteGraph(3)
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        [[1, 2], [0, 1], [0, 1, 2], [0, 2]]
+
+        sage: G = graphs.EmptyGraph()
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        []
+
+        sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 2))
+        [[0, 1]]
+
+        sage: list(sage.graphs.cliquer.all_cliques(G, 0, 2))
+        Traceback (most recent call last):
+        ...
+        ValueError: max_size > 0 is incompatible with min_size == 0
+
+    .. TODO::
+
+        Use the re-entrant functionality of Cliquer [NO2003]_ to avoid storing
+        all cliques.
+    """
+    if not min_size and max_size > 0:
+        raise ValueError("max_size > 0 is incompatible with min_size == 0")
+    if not graph:
+        return
+
+    cdef int i
+    cdef list int_to_vertex = list(graph)
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
+
+    cdef graph_t* g = graph_new(graph.order())
+    for u,v in graph.edge_iterator(labels=None):
+        GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
+
+    cdef int* list_of_vertices
+    cdef int size = 0
+    cdef list c
+    try:
+        try:
+            sig_on()
+            size = sage_find_all_clique(g, &list_of_vertices, min_size, max_size)
+            sig_off()
+        finally:
+            graph_free(g)
+        c = []
+        for i in range(size):
+            if list_of_vertices[i] != -1:
+                c.append(int_to_vertex[list_of_vertices[i]])
+            else:
+                yield c
+                c = []
+    finally:
+        if list_of_vertices:
+            # We free ``list_of_vertices``,
+            # but only if previous computations weren't interrupted before
+            # allocating memory for ``list_of_vertices``.
+            sig_free(list_of_vertices)
 
 
 #computes the clique number of a graph
 
 def clique_number(graph):
     """
-    Returns the size of the largest clique of the graph (clique
-    number).
+    Returns the size of the largest clique of the graph (clique number).
 
-    Currently only implemented for undirected graphs. Use
-    to_undirected to convert a digraph to an undirected graph.
+    .. NOTE::
+
+        Currently only implemented for undirected graphs. Use
+        :meth:`~sage.graphs.digraph.DiGraph.to_undirected` to convert a digraph
+        to an undirected graph.
 
     EXAMPLES::
 
         sage: C = Graph('DJ{')
-        sage: clique_number(C)
+        sage: C.clique_number()
         4
         sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
         sage: G.show(figsize=[2,2])
-        sage: clique_number(G)
+        sage: G.clique_number()
         3
 
-    TEST::
+    TESTS::
 
         sage: g = Graph()
         sage: g.clique_number()
         0
     """
-    if graph.order() == 0:
+    if not graph.order():
         return 0
 
-    graph=graph.relabel(inplace=False)
-    cdef graph_t *g
-    g=graph_new(graph.order())
+    cdef int i
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(graph)}
 
-    for e in graph.edge_iterator():
-        (u,v,w)=e
-        GRAPH_ADD_EDGE(g,u,v)
+    cdef graph_t* g = graph_new(graph.order())
+    for u,v in graph.edge_iterator(labels=None):
+        GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
 
     cdef int c
     sig_on()
@@ -215,22 +328,3 @@ def clique_number(graph):
     graph_free(g)
     sig_off()
     return c
-
-
-def list_composition(a,b):
-    """
-    Composes a list ``a`` with a map ``b``.
-
-    EXAMPLES::
-
-        sage: from sage.graphs.cliquer import list_composition
-        sage: list_composition([1,3,'a'], {'a':'b', 1:2, 2:3, 3:4})
-        [2, 4, 'b']
-
-    """
-    value=[]
-    for i in a:
-        value.append(b[i])
-    return value
-
-

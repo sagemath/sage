@@ -62,7 +62,7 @@ Beispiel) gefolgt von einem Fragezeichen eingegeben wird:
             0.69314718055994530941723212145817656807   # 64-bit
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring:
 
@@ -212,7 +212,7 @@ iterieren. Zum Beispiel ist nächste Zeile unterhalb gleichwertig zu
 ::
 
     sage: for i in range(3):
-    ....:     print i
+    ....:     print(i)
     0
     1
     2
@@ -222,7 +222,7 @@ Die nächste Zeile unterhalb ist gleichwertig zu ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ....:     print i
+    ....:     print(i)
     2
     3
     4
@@ -234,7 +234,7 @@ gleichwertig zu
 ::
 
     sage: for i in range(1,6,2):
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -248,7 +248,7 @@ Quadrat- und Kubikzahlen.
 ::
 
     sage: for i in range(5):
-    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print('%6s %6s %6s' % (i, i^2, i^3))
          0      0      0
          1      1      1
          2      4      8
@@ -258,11 +258,13 @@ Quadrat- und Kubikzahlen.
 Die elementarste Datenstruktur in Sage ist die Liste. Sie ist -- wie
 der Name schon sagt -- nichts anderes als eine Liste beliebiger
 Objekte. Zum Beispiel erzeugt der ``range`` Befehl, den wir schon
-verwendet haben, eine Liste:
+verwendet haben, eine Liste (python 2):
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Hier ist eine etwas kompliziertere Liste:

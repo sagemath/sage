@@ -1,6 +1,6 @@
 # distutils: libraries = gmp
 
-from types cimport *
+from .types cimport *
 
 cdef extern from "gmp.h":
 
@@ -39,6 +39,7 @@ cdef extern from "gmp.h":
     int mpq_cmp (mpq_t op1, mpq_t op2)
     int mpq_cmp_ui (mpq_t op1, unsigned long int num2, unsigned long int den2)
     int mpq_cmp_si (mpq_t op1, long int num2, unsigned long int den2)
+    int mpq_cmp_z (const mpq_t op1, const mpz_t op2)
     int mpq_sgn (mpq_t op)
     int mpq_equal (mpq_t op1, mpq_t op2)
 

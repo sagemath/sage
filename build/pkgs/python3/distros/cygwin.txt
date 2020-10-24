@@ -1,0 +1,2 @@
+# as of #27824, we use python3 for venv as well
+python38-devel

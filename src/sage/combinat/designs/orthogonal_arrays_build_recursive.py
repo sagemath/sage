@@ -1,11 +1,11 @@
 r"""
 Orthogonal arrays (build recursive constructions)
 
-This module implements several constructions of :mod:`Orthogonal Arrays
-<sage.combinat.designs.orthogonal_arrays>`. As their input can be complex, they
-all have a counterpart in the
-:mod:`~sage.combinat.designs.orthogonal_arrays_find_recursive` module that
-automatically computes it.
+This module implements several constructions of
+:mod:`Orthogonal Arrays<sage.combinat.designs.orthogonal_arrays>`.
+As their input can be complex, they all have a counterpart in the
+:mod:`~sage.combinat.designs.orthogonal_arrays_find_recursive` module
+that automatically computes it.
 
 All these constructions are automatically queried when the
 :func:`~sage.combinat.designs.orthogonal_arrays.orthogonal_array` function is
@@ -30,8 +30,9 @@ called.
 Functions
 ---------
 """
+from __future__ import print_function, absolute_import
 
-from orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
+from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
 
 def construction_3_3(k,n,m,i,explain_construction=False):
     r"""
@@ -47,7 +48,7 @@ def construction_3_3(k,n,m,i,explain_construction=False):
 
     INPUT:
 
-    - ``k,n,m,i`` (integers) such that the following designs are available :
+    - ``k,n,m,i`` (integers) such that the following designs are available:
       `OA(k,n)`, `OA(k,m)`, `OA(k,m+1)`, `OA(k,r)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
@@ -66,14 +67,14 @@ def construction_3_3(k,n,m,i,explain_construction=False):
         sage: is_orthogonal_array(construction_3_3(*find_construction_3_3(k,n)[1]),k,n,2)
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(9,91)
+        sage: print(designs.orthogonal_arrays.explain_construction(9,91))
         Construction 3.3 with n=11,m=8,i=3 from:
            Julian R. Abel, Nicholas Cavenagh
            Concerning eight mutually orthogonal latin squares,
            Vol. 15, n.3, pp. 255-261,
            Journal of Combinatorial Designs, 2007
     """
-    from orthogonal_arrays import wilson_construction, OA_relabel, incomplete_orthogonal_array
+    from .orthogonal_arrays import wilson_construction, OA_relabel, incomplete_orthogonal_array
     if explain_construction:
         return (("Construction 3.3 with n={},m={},i={} from:\n"
                  "  Julian R. Abel, Nicholas Cavenagh\n"+
@@ -89,7 +90,7 @@ def construction_3_3(k,n,m,i,explain_construction=False):
     OA = [B[:k]+[0 if x == 0 else None for x in B[k:]] for B in OA]
 
     OA = wilson_construction(OA,k,n,m,[1]*i,check=False)[:-i]
-    matrix = [range(m)+range(n*m,n*m+i)]*k
+    matrix = [list(range(m)) + list(range(n*m, n*m+i))] * k
     OA.extend(OA_relabel(orthogonal_array(k,m+i),k,m+i,matrix=matrix))
     assert is_orthogonal_array(OA,k,n*m+i)
     return OA
@@ -117,7 +118,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
     - ``k,n,m,r,s`` (integers) -- we assume that `s<n` and `1\leq r,s`
 
       The following designs must be available: `OA(k,n)`, `OA(k,m)`,
-      `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionnally, it requires either a
+      `OA(k,m+1)`, `OA(k,m+2)`, `OA(k,s)`. Additionally, it requires either a
       `OA(k,m+r)` or a `OA(k,m+r+1)`.
 
     - ``explain_construction`` (boolean) -- return a string describing
@@ -136,7 +137,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
         sage: is_orthogonal_array(construction_3_4(*find_construction_3_4(k,n)[1]),k,n,2)
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(8,164)
+        sage: print(designs.orthogonal_arrays.explain_construction(8,164))
         Construction 3.4 with n=23,m=7,r=2,s=1 from:
            Julian R. Abel, Nicholas Cavenagh
            Concerning eight mutually orthogonal latin squares,
@@ -150,12 +151,12 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
                  "  Vol. 15, n.3, pp. 255-261,\n"+
                  "  Journal of Combinatorial Designs, 2007").format(n,m,r,s)
 
-    from orthogonal_arrays import wilson_construction, OA_relabel
+    from .orthogonal_arrays import wilson_construction, OA_relabel
     assert s<n
     master_design = orthogonal_array(k+r+1,n)
 
     # Defines the first k+r columns of the matrix of labels
-    matrix = [range(n)]*k + [[None]*n]*(r) + [[None]*n]
+    matrix = [list(range(n))] * k + [[None]*n]*(r) + [[None]*n]
     B0 = master_design[0]
     for i in range(k,k+r):
         matrix[i][B0[i]] = 0
@@ -211,7 +212,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
         sage: is_orthogonal_array(construction_3_5(*find_construction_3_5(k,n)[1]),k,n,2)
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(8,90)
+        sage: print(designs.orthogonal_arrays.explain_construction(8,90))
         Construction 3.5 with n=11,m=6,r=8,s=8,t=8 from:
            Julian R. Abel, Nicholas Cavenagh
            Concerning eight mutually orthogonal latin squares,
@@ -219,7 +220,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
            Journal of Combinatorial Designs, 2007
 
     """
-    from orthogonal_arrays import wilson_construction, OA_relabel
+    from .orthogonal_arrays import wilson_construction, OA_relabel
     assert r <= s
     q = n
     assert (q-r-1)*(q-s) >= (q-s-1)*(q-r)
@@ -266,7 +267,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     for i,x in enumerate(group_k_3):
         r3[x] = i
 
-    OA = OA_relabel(master_design, k+3,q, matrix=[range(q)]*k+[r1,r2,r3])
+    OA = OA_relabel(master_design, k+3,q, matrix=[list(range(q))]*k+[r1,r2,r3])
     OA = wilson_construction(OA,k,q,m,[r,s,t], check=False)
     return OA
 
@@ -303,7 +304,7 @@ def construction_3_6(k,n,m,i,explain_construction=False):
         sage: is_orthogonal_array(construction_3_6(*find_construction_3_6(k,n)[1]),k,n,2)
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,756)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,756))
         Construction 3.6 with n=16,m=47,i=4 from:
            Julian R. Abel, Nicholas Cavenagh
            Concerning eight mutually orthogonal latin squares,
@@ -317,7 +318,7 @@ def construction_3_6(k,n,m,i,explain_construction=False):
                  "  Vol. 15, n.3, pp. 255-261,\n"+
                  "  Journal of Combinatorial Designs, 2007").format(n,m,i))
 
-    from orthogonal_arrays import wilson_construction
+    from .orthogonal_arrays import wilson_construction
     OA = OA_and_oval(n)
     OA = [B[:k+i] for B in OA]
     OA = [B[:k] + [x if x==0 else None for x in B[k:]] for B in OA]
@@ -353,9 +354,9 @@ def OA_and_oval(q):
         sage: _ = OA_and_oval
 
     """
-    from sage.rings.arith import is_prime_power
+    from sage.arith.all import is_prime_power
     from sage.combinat.designs.block_design import projective_plane
-    from orthogonal_arrays import OA_relabel
+    from .orthogonal_arrays import OA_relabel
 
     assert is_prime_power(q)
     B = projective_plane(q, check=False)
@@ -380,11 +381,11 @@ def OA_and_oval(q):
     # We build the TD by relabelling the point set, and removing those which
     # contain x.
     r = {}
-    B = list(B)
-    # (this is to make sure that the first set containing x in B is the one
-    # which contains no other oval point)
 
-    B.sort(key=lambda b:int(any([xx in oval for xx in b])))
+    # Make sure that the first set containing x in B is the one
+    # which contains no other oval point
+    B = sorted(B, key=lambda b: any(xx in oval for xx in b))
+
     BB = []
     for b in B:
         if x in b:
@@ -485,7 +486,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_q_x
         sage: _ = construction_q_x(9,16,6)
 
-        sage: print designs.orthogonal_arrays.explain_construction(9,158)
+        sage: print(designs.orthogonal_arrays.explain_construction(9,158))
         (q-x)-construction with q=16,x=6 from:
            Malcolm Greig,
            Designs from projective planes and PBD bases,
@@ -527,7 +528,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     # delete points.
     #
     # TD.extend([range(i*q,(i+1)*q) for i in range(x)])
-    TD.extend([range(i*q,(i+1)*q)+[p2] for i in range(x,q)])
+    TD.extend([list(range(i*q,(i+1)*q))+[p2] for i in range(x,q)])
 
     points_to_delete = set([i*q+j for i in range(x) for j in range(1,q)]+[i*q for i in range(x,q)])
     points_to_keep = set(range(q**2+2))-points_to_delete
@@ -537,7 +538,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     PBD = [[relabel[xx] for xx in B if not xx in points_to_delete] for B in TD]
 
     # Taking the unique block of size x+2
-    assert map(len,PBD).count(x+2)==1
+    assert list(map(len,PBD)).count(x+2)==1
     for B in PBD:
         if len(B) == x+2:
             break
@@ -640,7 +641,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
         sage: is_orthogonal_array(OA,6,23*7+5+7+8,2)
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,408)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,408))
         Lemma 4.1 with n=13,m=28 from:
            Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas,
            Thwarts in transversal designs,
@@ -658,7 +659,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
         ....:     OA = thwart_lemma_3_5(k,n,m,a,b,c,d,complement=True)      # not tested -- too long
         ....:     assert is_orthogonal_array(OA,k,n*m+a+b+c+d,verbose=True) # not tested -- too long
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,1046)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,1046))
         Lemma 3.5 with n=13,m=79,a=9,b=1,c=0,d=9 from:
            Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas,
            Thwarts in transversal designs,
@@ -670,8 +671,8 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
       Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas.
       Designs, Codes and Cryptography 5, no. 3 (1995): 189-197.
     """
-    from sage.rings.arith import is_prime_power
-    from sage.rings.finite_rings.constructor import FiniteField as GF
+    from sage.arith.all import is_prime_power
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
     if complement:
         a,b,c = n-a,n-b,n-c
@@ -686,12 +687,12 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     assert a<=n and b<=n and c<=n and d<=n, "a,b,c,d (={},{},{},{}) must be <=n(={})".format(a,b,c,d,n)
     assert a+b+c<=n+1, "{}={}+{}+{}=a+b+c>n+1={}+1 violates the assumptions".format(a+b+c,a,b,c,n)
     assert k+3+bool(d) <= n+1, "There exists no OA({},{}).".format(k+3+bool(d),n)
-    G = GF(n,prefix='x',conway=True)
+    G = GF(n,prefix='x')
     G_set = sorted(G) # sorted by lexicographic order, G[1] = 1
     assert G_set[0] == G.zero() and G_set[1] == G.one(), "problem with the ordering of {}".format(G)
     G_to_int = {v:i for i,v in enumerate(G_set)}
 
-    # Builds an OA(n+1,n) whose last n-1 colums are
+    # Builds an OA(n+1,n) whose last n-1 columns are
     #
     # \forall x \in G and x!=0, C_x(i,j) = i+x*j
     #
@@ -700,22 +701,22 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     # Adding the first two trivial columns
     OA.insert(0,[j for i in range(n) for j in range(n)])
     OA.insert(0,[i for i in range(n) for j in range(n)])
-    OA=sorted(zip(*OA))
+    OA = sorted(zip(*OA))
 
     # Moves the first three columns to the end
     OA = [list(B[3:]+B[:3]) for B in OA]
 
     # Set of values in the axb square
-    third_complement= set([B[-1] for B in OA if B[-3] < a and B[-2] < b])
+    third_complement = set(B[-1] for B in OA if B[-3] < a and B[-2] < b)
 
-    assert n-len(third_complement) >= c
+    assert n - len(third_complement) >= c
 
     # The keepers
-    first_set  = range(a)
-    second_set = range(b)
+    first_set  = list(range(a))
+    second_set = list(range(b))
     third_set  = [x for x in range(n) if x not in third_complement][:c]
 
-    last_sets  = [first_set,second_set,third_set]
+    last_sets  = [first_set, second_set, third_set]
 
     if complement:
         last_sets = [set(range(n)).difference(s) for s in last_sets]
@@ -768,9 +769,9 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
         - :func:`~sage.combinat.designs.orthogonal_arrays_find_recursive.find_thwart_lemma_4_1`
 
-    EXAMPLE::
+    EXAMPLES::
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,408)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,408))
         Lemma 4.1 with n=13,m=28 from:
            Charles J.Colbourn, Jeffrey H. Dinitz, Mieczyslaw Wojtas,
            Thwarts in transversal designs,
@@ -784,9 +785,9 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
       Canad. Math. Bull vol7 num.4 (1964)
     """
     from sage.combinat.designs.designs_pyx import is_orthogonal_array
-    from sage.rings.finite_rings.constructor import FiniteField
-    from sage.rings.arith import is_prime_power
-    from block_design import DesarguesianProjectivePlaneDesign
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    from sage.arith.all import is_prime_power
+    from .block_design import DesarguesianProjectivePlaneDesign
     from itertools import chain
 
     if explain_construction:
@@ -800,13 +801,14 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
     q = n
     K = FiniteField(q, 'x')
-    relabel = {x:i for i,x in enumerate(K)}
-    PG = DesarguesianProjectivePlaneDesign(q,check=False).blocks(copy=False)
+    relabel = {x: i for i, x in enumerate(K)}
+    PG = DesarguesianProjectivePlaneDesign(q, check=False,
+                                           point_coordinates=False).blocks()
 
     if q % 3 == 0:
         t = K.one()
-    elif q%3 == 1:
-        t = K.multiplicative_generator()**((q-1)//3)
+    elif q % 3 == 1:
+        t = K.multiplicative_generator()**((q - 1)//3)
     else:
         raise ValueError("q(={}) must be congruent to 0 or 1 mod 3".format(q))
 
@@ -899,7 +901,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         - The product of the blocks of a `n_1`-parallel class of `OA(k,n_2)`
           with an `OA(k,n_1)` can be done in such a way that it yields `n_1n_2`
           parallel classes of `OA(k,n_1n_2)`. Those classes cover exactly the
-          pairs that woud have been covered with the usual product.
+          pairs that would have been covered with the usual product.
 
           This can be achieved by simple cyclic permutations. Let us build the
           product of the `n_1`-parallel class `\mathcal P\subseteq OA(k,n_2)`
@@ -944,7 +946,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         - :func:`~sage.combinat.designs.orthogonal_arrays_find_recursive.find_three_factor_product`
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import three_factor_product
@@ -965,17 +967,17 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         sage: is_orthogonal_array(OA,10,8*9*9)   # long time
         True
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,648)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,648))
         Three-factor product with n=8.9.9 from:
            Peter J. Dukes, Alan C.H. Ling,
            A three-factor product construction for mutually orthogonal latin squares,
-           http://arxiv.org/abs/1401.1466
+           https://arxiv.org/abs/1401.1466
 
     REFERENCE:
 
     .. [DukesLing14] A three-factor product construction for mutually orthogonal latin squares,
       Peter J. Dukes, Alan C.H. Ling,
-      http://arxiv.org/abs/1401.1466
+      :arxiv:`1401.1466`
 
     .. [Rees00] Truncated Transversal Designs: A New Lower Bound on the Number of Idempotent MOLS of Side,
       Rolf S. Rees,
@@ -985,14 +987,13 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
       Rolf S. Rees,
       Journal of Combinatorial Designs 1.1 (1993): 15-26.
     """
-    from itertools import izip
-    assert n1<=n2 and n2<=n3
+    assert n1 <= n2 and n2 <= n3
 
     if explain_construction:
         return ("Three-factor product with n={}.{}.{} from:\n"+
                 "   Peter J. Dukes, Alan C.H. Ling,\n"+
                 "   A three-factor product construction for mutually orthogonal latin squares,\n"+
-                "   http://arxiv.org/abs/1401.1466").format(n1,n2,n3)
+                "   https://arxiv.org/abs/1401.1466").format(n1, n2, n3)
 
     def assert_c_partition(classs,k,n,c):
         r"""
@@ -1052,7 +1053,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
                 assert max(shift) < g1
 
                 for B1 in OA1:
-                    copy_of_OA1.append([x2*g1+(x1+sh)%g1 for sh,x1,x2 in izip(shift,B1,B2)])
+                    copy_of_OA1.append([x2*g1+(x1+sh)%g1 for sh,x1,x2 in zip(shift,B1,B2)])
 
                 copies_of_OA1.append(copy_of_OA1)
 
@@ -1060,7 +1061,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
                 for i,x2 in enumerate(B2):
                     count[i][x2] += 1
 
-            new_parallel_classes.extend([list(_) for _ in izip(*copies_of_OA1)])
+            new_parallel_classes.extend([list(_) for _ in zip(*copies_of_OA1)])
 
         # New g1-parallel classes, each one built from the product of a parallel
         # class with a OA1
@@ -1070,7 +1071,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
             disjoint_copies_of_OA1 = []
             for B2 in classs2:
                 for B1 in OA1:
-                    disjoint_copies_of_OA1.append([x2*g1+x1 for x1,x2 in izip(B1,B2)])
+                    disjoint_copies_of_OA1.append([x2*g1+x1 for x1,x2 in zip(B1,B2)])
             new_g1_parallel_classes.append(disjoint_copies_of_OA1)
 
         # Check our stuff before we return it
@@ -1078,7 +1079,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
             profile = [i for i in range(g2*g1) for _ in range(g1)]
             for classs in new_g1_parallel_classes:
                 assert_c_partition(classs,k,g2*g1,g1)
-            profile = range(g2*g1)
+            profile = list(range(g2*g1))
             for classs in new_parallel_classes:
                 assert_c_partition(classs,k,g2*g1,1)
 
@@ -1144,6 +1145,7 @@ def _reorder_matrix(matrix):
 
     The input must be a `N \times k` matrix with entries in `\{0,\ldots,N-1\}`
     such that:
+
     - the symbols on each row are distinct (and hence can be identified with
       subsets of `\{0,\ldots,N-1\}`),
     - each symbol appear exactly `k` times.
@@ -1160,7 +1162,7 @@ def _reorder_matrix(matrix):
         sage: all(set(M2[i][0] for i in range(N)) == set(range(N)) for i in range(k))
         True
 
-        sage: M =[range(10)]*10
+        sage: M = [list(range(10))] * 10
         sage: N = k = 10
         sage: M2 = _reorder_matrix(M)
         sage: all(set(M2[i][0] for i in range(N)) == set(range(N)) for i in range(k))
@@ -1184,7 +1186,7 @@ def _reorder_matrix(matrix):
         matrix.append(col)
         g.delete_edges(matching)
 
-    return zip(*matrix)
+    return list(zip(*matrix))
 
 def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construction=False):
     r"""
@@ -1366,7 +1368,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         sage: k,q,t=5,4,8; _=brouwer_separable_design(k,t,q,q**2,verbose=True,check=True)
         Case vi) with k=5,q=4,t=8,x=16,e3=0,e4=1
 
-        sage: print designs.orthogonal_arrays.explain_construction(10,189)
+        sage: print(designs.orthogonal_arrays.explain_construction(10,189))
         Brouwer's separable design construction with t=9,q=4,x=0 from:
            Andries E. Brouwer,
            A series of separable designs with application to pairwise orthogonal Latin squares
@@ -1374,9 +1376,9 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
            European Journal of Combinatorics, 1980
     """
     from sage.combinat.designs.orthogonal_arrays import OA_from_PBD
-    from difference_family import difference_family
-    from orthogonal_arrays import incomplete_orthogonal_array
-    from sage.rings.arith import is_prime_power
+    from .difference_family import difference_family
+    from .orthogonal_arrays import incomplete_orthogonal_array
+    from sage.arith.all import is_prime_power
 
     if explain_construction:
         return ("Brouwer's separable design construction with t={},q={},x={} from:\n"+
@@ -1465,7 +1467,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     if x == 0:
 
         if verbose:
-            print "Case i) with k={},q={},t={},x={}".format(k,q,t,x)
+            print("Case i) with k={},q={},t={},x={}".format(k, q, t, x))
 
         # 1) We build a resolvable OA(k-1,t)-t.OA(k-1,1).
         #    With it, from every parallel class with blocks of size t we build a
@@ -1521,7 +1523,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
           orthogonal_array( k+1,t+q+1,existence=True)):
 
         if verbose:
-            print "Case ii) with k={},q={},t={},x={},e3={}".format(k,q,t,x,e3)
+            print("Case ii) with k={},q={},t={},x={},e3={}".format(k,q,t,x,e3))
 
         # The sets of size t:
         #
@@ -1561,7 +1563,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
           orthogonal_array(k+e2, t+1 ,existence=True) and # d2-e2
           orthogonal_array(k+1 , t+q ,existence=True)):   # d3-e1
         if verbose:
-            print "Case iii) with k={},q={},t={},x={},e2={}".format(k,q,t,x,e2)
+            print("Case iii) with k={},q={},t={},x={},e2={}".format(k,q,t,x,e2))
 
         OA = []
 
@@ -1579,8 +1581,8 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
 
         else:
             assert e2 == 1, "equivalent to x!=1"
-            # Extending the x partitions into bocks of size t with each of the
-            # new x points.
+            # Extending the x partitions into blocks of size t with
+            # each of the new x points.
 
             for i,partition in enumerate(partition_of_blocks_of_size_t):
                 for B in partition:
@@ -1601,7 +1603,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
           orthogonal_array(k+ 1,t+q+1,existence=True)):   # d4-1
 
         if verbose:
-            print "Case iv) with k={},q={},t={},x={},e4={}".format(k,q,t,x,e4)
+            print("Case iv) with k={},q={},t={},x={},e4={}".format(k,q,t,x,e4))
 
         # Sets of size t:
         #
@@ -1645,7 +1647,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
           orthogonal_array(k+e2,t+1,existence=True) and # d2-e2
           orthogonal_array(k+1,t+q,existence=True)):   # d3-1
         if verbose:
-            print "Case v) with k={},q={},t={},x={},e1={},e2={}".format(k,q,t,x,e1,e2)
+            print("Case v) with k={},q={},t={},x={},e1={},e2={}".format(k,q,t,x,e1,e2))
 
         OA = []
 
@@ -1694,7 +1696,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
           orthogonal_array(k+e4,t+1 ,existence=True) and # d2-e4
           orthogonal_array(k+1,t+q+1,existence=True)):    # d4-1
         if verbose:
-            print "Case vi) with k={},q={},t={},x={},e3={},e4={}".format(k,q,t,x,e3,e4)
+            print("Case vi) with k={},q={},t={},x={},e3={},e4={}".format(k,q,t,x,e3,e4))
 
         OA = []
 

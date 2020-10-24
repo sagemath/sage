@@ -15,25 +15,29 @@ AUTHOR:
    - William Stein, 2010-03
 """
 
-#############################################################################
+#*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL), v2+.
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#############################################################################
+#*****************************************************************************
 
 # Global parameter that sets the maximum number of entries of an IntList to print.
 max_print = 10
 
-
-# Imports
+cimport cython
 from libc.string cimport memcpy
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.rings.integer import Integer
 from sage.finance.time_series cimport TimeSeries
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"
-from cpython.slice cimport PySlice_Check
-from cpython.string cimport *
+from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
+from sage.structure.richcmp cimport rich_to_bool
+
 
 cdef class IntList:
     """
@@ -57,10 +61,10 @@ cdef class IntList:
 
         INPUT:
 
-            - values -- int, long, Integer, list of integers, or a TimeSeries
+        - values -- int, long, Integer, list of integers, or a TimeSeries
 
         If the input is a time series or list of floats, then the
-        integer parts of the intries are taken (not the floor).
+        integer parts of the entries are taken (not the floor).
 
         EXAMPLES::
 
@@ -100,7 +104,7 @@ cdef class IntList:
         else:
             self._length = len(values)
 
-        self._values = <int*> sage_malloc(sizeof(int)*self._length)
+        self._values = <int*> sig_malloc(sizeof(int)*self._length)
         if self._values == NULL:
             raise MemoryError
         cdef Py_ssize_t i
@@ -114,12 +118,13 @@ cdef class IntList:
             for i in range(self._length):
                 self._values[i] = values[i]
 
-    def __cmp__(self, _other):
+    def __richcmp__(IntList self, other, int op):
         """
         Compare self and other.  This has the same semantics
         as list comparison.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: v = stats.IntList([1,2,3]); w = stats.IntList([1,2])
             sage: v < w
             False
@@ -130,26 +135,26 @@ cdef class IntList:
             sage: w == w
             True
         """
-        cdef IntList other
+        cdef IntList _other
         cdef Py_ssize_t c, i
-        cdef int d
-        if not isinstance(_other, IntList):
-            _other = IntList(_other)
-        other = _other
-        for i in range(min(self._length, other._length)):
-            d = self._values[i] - other._values[i]
-            if d: return -1 if d < 0 else 1
-        c = self._length - other._length
-        if c < 0: return -1
-        elif c > 0: return 1
-        return 0
+        if not isinstance(other, IntList):
+            _other = IntList(other)
+        else:
+            _other = <IntList>other
+        for i in range(min(self._length, _other._length)):
+            d = self._values[i] - _other._values[i]
+            if d:
+                return rich_to_bool(op, -1 if d < 0 else 1)
+        c = self._length - _other._length
+        if c:
+            return rich_to_bool(op, -1 if c < 0 else 1)
+        return rich_to_bool(op, 0)
 
     def  __dealloc__(self):
         """
         Deallocate memory used by the IntList, if it was allocated.
         """
-        if self._values:
-            sage_free(self._values)
+        sig_free(self._values)
 
     def __repr__(self):
         """
@@ -195,13 +200,13 @@ cdef class IntList:
             sage: a[5:-2]
             [5, 6, 7]
             sage: type(a[5:-2])
-            <type 'sage.stats.intlist.IntList'>
+            <... 'sage.stats.intlist.IntList'>
             sage: type(a[5])
-            <type 'int'>
+            <... 'int'>
         """
         cdef Py_ssize_t start, stop, step, j
         cdef IntList t
-        if PySlice_Check(i):
+        if isinstance(i, slice):
             start = 0 if (i.start is None) else i.start
             stop = self._length if (i.stop is None) else i.stop
             step = 1 if (i.step is None) else i.step
@@ -235,9 +240,9 @@ cdef class IntList:
             if j < 0:
                 j += self._length
                 if j < 0:
-                    raise IndexError, "IntList index out of range"
+                    raise IndexError("IntList index out of range")
             elif j >= self._length:
-                raise IndexError, "IntList index out of range"
+                raise IndexError("IntList index out of range")
             return self._values[j]
 
     def __setitem__(self, Py_ssize_t i, int x):
@@ -268,9 +273,9 @@ cdef class IntList:
         if i < 0:
             i += self._length
             if i < 0:
-                raise IndexError, "index out of range"
+                raise IndexError("index out of range")
         elif i >= self._length:
-            raise IndexError, "index out of range"
+            raise IndexError("index out of range")
         self._values[i] = x
 
     def __reduce__(self):
@@ -283,10 +288,9 @@ cdef class IntList:
             sage: loads(dumps(a)) == a
             True
 
-
             sage: v = stats.IntList([1,-3])
             sage: v.__reduce__()
-            (<built-in function unpickle_intlist_v1>, ('...', 2))
+            (<cyfunction unpickle_intlist_v1 at ...>, (..., 2))
             sage: loads(dumps(v)) == v
             True
 
@@ -296,9 +300,8 @@ cdef class IntList:
             sage: v = stats.IntList([1..10^5])
             sage: loads(dumps(v, compress=False),compress=False) == v
             True
-
         """
-        buf = PyString_FromStringAndSize(<char*>self._values, self._length*sizeof(int)/sizeof(char))
+        buf = PyBytes_FromStringAndSize(<char*>self._values, self._length*sizeof(int)/sizeof(char))
         return unpickle_intlist_v1, (buf, self._length)
 
     def list(self):
@@ -314,7 +317,7 @@ cdef class IntList:
             sage: list(a) == a.list()
             True
             sage: type(a.list()[0])
-            <type 'int'>
+            <... 'int'>
         """
         cdef Py_ssize_t i
         return [self._values[i] for i in range(self._length)]
@@ -376,9 +379,10 @@ cdef class IntList:
         Return the number of entries in this time series.
 
         OUTPUT:
-            Python integer
 
-        EXAMPLES:
+        Python integer
+
+        EXAMPLES::
 
             sage: len(stats.IntList([1..15]))
             15
@@ -399,9 +403,9 @@ cdef class IntList:
             [-2, 3, 5, 1, 1, 17]
         """
         if not isinstance(right, IntList):
-            raise TypeError, "right operand must be an int list"
+            raise TypeError("right operand must be an int list")
         if not isinstance(left, IntList):
-            raise TypeError, "left operand must be an int list"
+            raise TypeError("left operand must be an int list")
         cdef IntList R = right
         cdef IntList L = left
         cdef IntList t = new_int_list(L._length + R._length)
@@ -434,7 +438,7 @@ cdef class IntList:
             (-4, 1)
         """
         if self._length == 0:
-            raise ValueError, "min() arg is an empty sequence"
+            raise ValueError("min() arg is an empty sequence")
         cdef Py_ssize_t i, j
         cdef int s = self._values[0]
         j = 0
@@ -471,7 +475,7 @@ cdef class IntList:
             (3, 2)
         """
         if self._length == 0:
-            raise ValueError, "max() arg is an empty sequence"
+            raise ValueError("max() arg is an empty sequence")
         cdef Py_ssize_t i, j = 0
         cdef int s = self._values[0]
         for i in range(1,self._length):
@@ -493,13 +497,13 @@ cdef class IntList:
             sage: T = stats.IntList([-2,3,5]).time_series(); T
             [-2.0000, 3.0000, 5.0000]
             sage: type(T)
-            <type 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.finance.time_series.TimeSeries'>
         """
         cdef TimeSeries T = TimeSeries.__new__(TimeSeries)
         # We just reach into the data structure underlying T, since we
         # want this function to be *very* fast.
         T._length = self._length
-        T._values = <double*> sage_malloc(sizeof(double)*self._length)
+        T._values = <double*> sig_malloc(sizeof(double)*self._length)
         cdef Py_ssize_t i
         for i in range(self._length):
             T._values[i] = self._values[i]
@@ -548,33 +552,35 @@ cdef IntList new_int_list(Py_ssize_t length):
         - an IntList.
     """
     if length < 0:
-        raise ValueError, "length must be nonnegative"
+        raise ValueError("length must be nonnegative")
     cdef IntList t = IntList.__new__(IntList)
     t._length = length
-    t._values = <int*> sage_malloc(sizeof(int)*length)
+    t._values = <int*> sig_malloc(sizeof(int)*length)
     return t
 
 
-def unpickle_intlist_v1(v, Py_ssize_t n):
+@cython.binding(True)
+def unpickle_intlist_v1(bytes v, Py_ssize_t n):
     """
     Version 1 unpickle method.
 
     INPUT:
-        v -- a raw char buffer
+
+    - ``v`` -- a raw char buffer
 
     EXAMPLES::
 
         sage: v = stats.IntList([1,2,3])
         sage: s = v.__reduce__()[1][0]
-        sage: type(s)
-        <type 'str'>
+        sage: type(s) == type(b'')
+        True
         sage: sage.stats.intlist.unpickle_intlist_v1(s, 3)
         [1, 2, 3]
         sage: sage.stats.intlist.unpickle_intlist_v1(s+s,6)
         [1, 2, 3, 1, 2, 3]
-        sage: sage.stats.intlist.unpickle_intlist_v1('',0)
+        sage: sage.stats.intlist.unpickle_intlist_v1(b'',0)
         []
     """
     cdef IntList t = new_int_list(n)
-    memcpy(t._values, PyString_AsString(v), n*sizeof(int))
+    memcpy(t._values, PyBytes_AsString(v), n*sizeof(int))
     return t

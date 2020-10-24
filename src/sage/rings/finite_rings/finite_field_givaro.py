@@ -2,19 +2,10 @@
 Givaro Finite Field
 
 Finite fields that are implemented using Zech logs and the
-cardinality must be less than `2^{16}`. By default, conway polynomials are
+cardinality must be less than `2^{16}`. By default, Conway polynomials are
 used as minimal polynomial.
-
-TESTS:
-
-Test backwards compatibility::
-
-    sage: from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-    sage: FiniteField_givaro(9, 'a')
-    doctest:...: DeprecationWarning: constructing a FiniteField_givaro without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead
-    See http://trac.sagemath.org/16930 for details.
-    Finite Field in a of size 3^2
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010-2012 David Roe
@@ -29,17 +20,16 @@ Test backwards compatibility::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.finite_rings.finite_field_base import FiniteField, is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.element_givaro import Cache_givaro
-from sage.rings.integer_ring import ZZ
-from sage.databases.conway import ConwayPolynomials
 from sage.libs.pari.all import pari
+
 
 class FiniteField_givaro(FiniteField):
     """
     Finite field implemented using Zech logs and the cardinality must be
-    less than `2^{16}`. By default, conway polynomials are used as minimal
+    less than `2^{16}`. By default, Conway polynomials are used as minimal
     polynomials.
 
     INPUT:
@@ -73,7 +63,7 @@ class FiniteField_givaro(FiniteField):
 
     EXAMPLES:
 
-    By default conway polynomials are used for extension fields::
+    By default, Conway polynomials are used for extension fields::
 
         sage: k.<a> = GF(2**8)
         sage: -a ^ k.degree()
@@ -129,8 +119,6 @@ class FiniteField_givaro(FiniteField):
             True
             sage: TestSuite(GF(2^3, 'a')).run()
         """
-        self._kwargs = {}
-
         if repr not in ['int', 'log', 'poly']:
             raise ValueError("Unknown representation %s"%repr)
 
@@ -146,21 +134,12 @@ class FiniteField_givaro(FiniteField):
         if q >= 1<<16:
             raise ValueError("q must be < 2^16")
 
-        from constructor import GF
+        from .finite_field_constructor import GF
         FiniteField.__init__(self, GF(p), name, normalize=False)
-
-        self._kwargs['repr'] = repr
-        self._kwargs['cache'] = cache
 
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         if not is_Polynomial(modulus):
-            from sage.misc.superseded import deprecation
-            deprecation(16930, "constructing a FiniteField_givaro without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead")
-            R = GF(p)['x']
-            if modulus is None or isinstance(modulus, str):
-                modulus = R.irreducible_element(k, algorithm=modulus)
-            else:
-                modulus = R(modulus)
+            raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_givaro(self, p, k, modulus, repr, cache)
         self._modulus = modulus
@@ -243,7 +222,7 @@ class FiniteField_givaro(FiniteField):
 
             sage: P.<x> = PowerSeriesRing(GF(3^3, 'a'))
             sage: P.random_element(5)
-            2*a + 2 + (a^2 + a + 2)*x + (2*a + 1)*x^2 + (2*a^2 + a)*x^3 + 2*a^2*x^4 + O(x^5)
+            a^2 + (2*a^2 + a)*x + x^2 + (2*a^2 + 2*a + 2)*x^3 + (a^2 + 2*a + 2)*x^4 + O(x^5)
         """
         return self._cache.random_element()
 
@@ -269,12 +248,13 @@ class FiniteField_givaro(FiniteField):
             sage: k(2) # indirect doctest
             0
 
-            Floats coerce in:
+        Floats are converted like integers::
+
             sage: k(float(2.0))
             0
 
         Rational are interpreted as ``self(numerator)/self(denominator)``.
-        Both may not be greater than :meth:characteristic()`.
+        Both may not be greater than :meth:`characteristic`.
         ::
 
             sage: k = GF(3**8, 'a')
@@ -285,7 +265,7 @@ class FiniteField_givaro(FiniteField):
         'little endian'::
 
             sage: k = GF(2**8, 'a')
-            sage: e = k.vector_space().gen(1); e
+            sage: e = k.vector_space(map=False).gen(1); e
             (0, 1, 0, 0, 0, 0, 0, 0)
             sage: k(e)
             a
@@ -334,18 +314,22 @@ class FiniteField_givaro(FiniteField):
             sage: k(R(1/5))
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: division by zero in finite field.
+            ZeroDivisionError: division by zero in finite field
 
         PARI elements are interpreted as finite field elements; this PARI
         flexibility is (absurdly!) liberal::
 
-            sage: k = GF(2**8, 'a')
+            sage: k.<a> = GF(2^8)
             sage: k(pari('Mod(1,2)'))
             1
             sage: k(pari('Mod(2,3)'))
-            0
+            a
             sage: k(pari('Mod(1,3)*a^20'))
             a^7 + a^5 + a^4 + a^2
+            sage: k(pari('O(x)'))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert PARI t_SER to Finite Field in a of size 2^8
 
         We can coerce from PARI finite field implementations::
 
@@ -378,8 +362,8 @@ class FiniteField_givaro(FiniteField):
             sage: k(48771/1225)
             28
 
-            sage: F9 = FiniteField(9, impl='givaro', conway=True, prefix='a')
-            sage: F81 = FiniteField(81, impl='givaro', conway=True, prefix='a')
+            sage: F9 = FiniteField(9, impl='givaro', prefix='a')
+            sage: F81 = FiniteField(81, impl='givaro', prefix='a')
             sage: F81(F9.gen())
             2*a4^3 + 2*a4^2 + 1
         """
@@ -441,7 +425,7 @@ class FiniteField_givaro(FiniteField):
         try:
             return self._prime_subfield
         except AttributeError:
-            from constructor import GF
+            from .finite_field_constructor import GF
             self._prime_subfield = GF(self.characteristic())
             return self._prime_subfield
 
@@ -534,7 +518,7 @@ class FiniteField_givaro(FiniteField):
             sage: list(GF(2**2, 'a'))
             [0, a, a + 1, 1]
         """
-        from element_givaro import FiniteField_givaro_iterator
+        from .element_givaro import FiniteField_givaro_iterator
         return FiniteField_givaro_iterator(self._cache)
 
     def a_times_b_plus_c(self, a, b, c):

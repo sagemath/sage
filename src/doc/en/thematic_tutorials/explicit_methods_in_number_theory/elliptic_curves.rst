@@ -6,9 +6,10 @@ Cremona's Databases
 
 Cremona's databases of elliptic curves are part of Sage. The curves up
 to conductor 10,000 come standard with Sage, and an there is an optional
-download to gain access to his complete tables. From within sage run::
+download to gain access to his complete tables. From a shell, you
+should run ::
 
-    sage: install_package('database_cremona_ellcurve')  # not tested
+    sage -i database_cremona_ellcurve
 
 to automatically download and install the extended table.
 

@@ -1,0 +1,7 @@
+appnope
+=======
+
+Description
+-----------
+
+Disable App Nap on OS X 10.9

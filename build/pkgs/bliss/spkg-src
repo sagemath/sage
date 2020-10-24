@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# creates the tarball in the current dir, to be moved to ../../../upstream
+#
+# adapted from cliquer/spkg-src
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+rm -rf bliss/
+git clone -b sage_package https://github.com/mkoeppe/bliss.git  || die "Failed to git clone"
+cd bliss/
+
+VERSION=`autoconf --trace='AC_INIT:$2'`
+libtoolize || die "Failed to autoreconf"
+autoreconf -fi || die "Failed to autoreconf"
+automake --add-missing --copy || die "automake failed"
+./configure || die "configure failed"
+
+rm -f bliss-$VERSION.tar.gz
+make dist || die "make dist failed"
+mv bliss-$VERSION.tar.gz ../
+cd ..
+rm -rf bliss/
+
+

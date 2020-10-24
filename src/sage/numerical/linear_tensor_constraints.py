@@ -19,7 +19,6 @@ become symbolic inequalities::
     [0 0 0] <= [0   x_0 + x_1 0  ]
     [0 0 0]    [x_0 0         x_1]
 """
-
 #*****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
@@ -28,6 +27,8 @@ become symbolic inequalities::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+# python3
+from __future__ import division
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -94,7 +95,7 @@ def LinearTensorConstraintsParent(linear_functions_parent):
         sage: from sage.numerical.linear_functions import LinearFunctionsParent
         sage: from sage.numerical.linear_tensor import LinearTensorParent
         sage: from sage.numerical.linear_tensor_constraints import \
-        ...       LinearTensorConstraintsParent, LinearTensorConstraintsParent
+        ....:     LinearTensorConstraintsParent, LinearTensorConstraintsParent
         sage: LF = LinearFunctionsParent(QQ)
         sage: LT = LinearTensorParent(QQ^2, LF)
         sage: LinearTensorConstraintsParent(LT)
@@ -140,7 +141,7 @@ class LinearTensorConstraint(Element):
       constraint is an equality.  If ``False``, it is a ``<=``
       inequality.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: mip.<b> = MixedIntegerLinearProgram()
         sage: (b[2]+2*b[3]) * vector([1,2]) <= b[8] * vector([2,3]) - 5
@@ -155,7 +156,7 @@ class LinearTensorConstraint(Element):
 
         See :class:`LinearTensorConstraint`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: mip.<b> = MixedIntegerLinearProgram()
             sage: b[2] * vector([1,2]) + 2*b[3] <= 0
@@ -256,9 +257,10 @@ class LinearTensorConstraint(Element):
             [0 0]    [3*x_0 4*x_0]
         """
         from sage.typeset.ascii_art import AsciiArt
+
         def matrix_art(m):
             lines = str(m).splitlines()
-            return AsciiArt(lines, baseline=len(lines)/2)
+            return AsciiArt(lines, baseline=len(lines) // 2)
         comparator = AsciiArt([' == ' if self.is_equation() else ' <= '])
         return matrix_art(self.lhs()) + comparator + matrix_art(self.rhs())
 
@@ -270,7 +272,7 @@ class LinearTensorConstraint(Element):
 
         String.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: mip.<b> = MixedIntegerLinearProgram()
             sage: b[3] * vector([1,2]) <= (b[8] + 9) * vector([2,3])

@@ -5,19 +5,19 @@ Sage implements asymptotically fast echelon form and matrix
 multiplication algorithms.
 """
 
-################################################################################
+#*****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL).
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-################################################################################
+#*****************************************************************************
 
+from .matrix_window cimport MatrixWindow
 
-from matrix_window cimport MatrixWindow
-
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off
 
 
 def strassen_window_multiply(C, A,B, cutoff):
@@ -44,7 +44,7 @@ def strassen_window_multiply(C, A,B, cutoff):
     AUTHORS:
 
     - David Harvey
-    - Simon King (2011-07): Improve memory efficiency; trac ticket #11610
+    - Simon King (2011-07): Improve memory efficiency; :trac:`11610`
     """
     strassen_window_multiply_c(C, A, B, cutoff)
 
@@ -262,7 +262,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
 
     OUTPUT: The list of pivot columns
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: A = matrix(QQ, 7, [5, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 3, 1, 0, -1, 0, 0, -1, 0, 1, 2, -1, 1, 0, -1, 0, 1, 3, -1, 1, 0, 0, -2, 0, 2, 0, 1, 0, 0, -1, 0, 1, 0, 1])
         sage: B = A.__copy__(); B._echelon_strassen(1); B
@@ -307,7 +307,7 @@ def strassen_echelon(MatrixWindow A, cutoff):
     - Robert Bradshaw
     """
     if cutoff < 1:
-        raise ValueError, "cutoff must be at least 1"
+        raise ValueError("cutoff must be at least 1")
     sig_on()
     strassen_echelon_c(A, cutoff, A._matrix._strassen_default_cutoff(A._matrix))
     sig_off()
@@ -560,7 +560,7 @@ class int_range:
             self._intervals = [(int(indices), int(range))]
         else:
             self._intervals = []
-            if len(indices) == 0:
+            if not indices:
                 return
             indices.sort()
             start = None
@@ -603,7 +603,7 @@ class int_range:
             sage: I.intervals()
             [(4, 3), (20, 4)]
             sage: type(I.intervals())
-            <type 'list'>
+            <... 'list'>
         """
         return self._intervals
 
@@ -662,7 +662,7 @@ class int_range:
             ...
             StopIteration
         """
-        return self._intervals.__iter__()
+        return iter(self._intervals)
 
     def __len__(self):
         r"""
@@ -793,7 +793,8 @@ def test(n, m, R, c=2):
     EXAMPLES::
 
         sage: from sage.matrix.strassen import test
-        sage: for n in range(5): print n, test(2*n,n,Frac(QQ['x']),2)
+        sage: for n in range(5):
+        ....:     print("{} {}".format(n, test(2*n,n,Frac(QQ['x']),2)))
         0 True
         1 True
         2 True

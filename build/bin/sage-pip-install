@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# This command is specifically for pip-installing a previously
+# built wheel.
+
+# Default arguments for all packages installed with `pip install`
+# --ignore-installed : Force pip to re-install package even if it thinks it's
+#                      already installed (for which it sometimes gets false
+#                      positives for partially-installed packages).
+# --verbose          : Display the output when running setup.py.
+# --no-deps          : Don't install runtime dependencies from PyPI.
+# --no-index         : Don't look at the package index.
+#                      This also disables pip's version self-check.
+# --isolated         : Don't read configuration files such as
+#                      ~/.pydistutils.cfg
+pip_install_flags="--ignore-installed --verbose --no-deps --no-index --isolated"
+
+# Note: We need to take care to specify the full path to Sage's Python here
+# to emphasize that this command should use it, and not the system Python;
+# see https://trac.sagemath.org/ticket/18438
+# But now we delegate this to sage-python23.
+PYTHON=sage-python23
+
+# The PIP variable is only used to determine the name of the lock file.
+PIP=pip3
+
+# We should avoid running pip while installing a package because that
+# is prone to race conditions. Therefore, we use a lockfile while
+# running pip. This is implemented in the Python script sage-flock
+LOCK="$SAGE_LOCAL/var/lock/$PIP.lock"
+
+# Finally actually do the installation (the "SHARED" tells pip2/3-lock
+# to apply a shared lock)
+sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags "$@"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: installing with $PIP failed"
+    exit 3
+fi

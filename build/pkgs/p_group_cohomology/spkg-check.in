@@ -1,0 +1,9 @@
+cd src
+
+# testing modular_resolution-1.1
+cd `ls -d modular_resolution*`
+$MAKE check || sdh_die "Error testing modular_resolution-1.1"
+cd ..
+
+# testing pGroupCohomology
+sage -tp 0 --long --force_lib --warn-long 80 --timeout=0 `ls -d pGroupCohomology*`/pGroupCohomology/ || sdh_die "Error testing pGroupCohomology"

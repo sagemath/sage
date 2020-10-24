@@ -1,5 +1,7 @@
 .. nodoctest
 
+.. highlight:: shell-session
+
 .. _chapter-doctesting:
 
 =======================
@@ -20,7 +22,9 @@ level Sage directory is::
 See the section :ref:`chapter-testing` for information on Sage's
 automated testing process. The general syntax for doctesting is as
 follows. To doctest a module in the library of a version of Sage, use
-this syntax::
+this syntax:
+
+.. CODE-BLOCK:: text
 
     /path/to/sage-x.y.z/sage -t [--long] /path/to/sage-x.y.z/path/to/module.py[x]
 
@@ -101,6 +105,12 @@ In all of the above terminal sessions, we used a local installation of
 Sage to test its own modules. Even if we have a system-wide Sage
 installation, using that version to doctest the modules of a local
 installation is a recipe for confusion.
+
+If your system Python has the ``tox`` package, you can also run the Sage
+doctester as follows::
+
+   [jdemeyer@sage sage-6.0]$ cd src
+   [jdemeyer@sage src]$ tox -- sage/games/sudoku.py
 
 
 Troubleshooting
@@ -246,7 +256,7 @@ that shown above to achieve this::
         [320 tests, 9.1 s]
     sage -t src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t src/sage/crypto/mq/sbox.py
+    sage -t src/sage/crypto/sbox.py
         [124 tests, 0.8 s]
     sage -t src/sage/crypto/mq/sr.py
         [435 tests, 5.5 s]
@@ -307,7 +317,7 @@ argument ``--long``::
         [320 tests, 7.5 s]
     sage -t --long src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t --long src/sage/crypto/mq/sbox.py
+    sage -t --long src/sage/crypto/sbox.py
         [124 tests, 0.7 s]
     sage -t --long src/sage/crypto/mq/sr.py
         [437 tests, 82.4 s]
@@ -332,7 +342,9 @@ argument, the module ``sage/crypto/mq/sr.py`` took about five
 seconds. With this optional argument, it required 82 seconds to run
 through all tests in that module. Here is a snippet of a function in
 the module ``sage/crypto/mq/sr.py`` with a doctest that has been flagged
-as taking a long time::
+as taking a long time:
+
+.. CODE-BLOCK:: python
 
     def test_consistency(max_n=2, **kwargs):
         r"""
@@ -370,7 +382,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [429 tests, 1.1 s]
     sage -t src/sage/crypto/mq/sr.py
         [432 tests, 5.7 s]
-    sage -t src/sage/crypto/mq/sbox.py
+    sage -t src/sage/crypto/sbox.py
         [123 tests, 0.8 s]
     sage -t src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
@@ -426,7 +438,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [252 tests, 3.7 s]
     sage -t --long src/sage/crypto/block_cipher/miniaes.py
         [429 tests, 1.0 s]
-    sage -t --long src/sage/crypto/mq/sbox.py
+    sage -t --long src/sage/crypto/sbox.py
         [123 tests, 0.8 s]
     sage -t --long src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
@@ -507,7 +519,9 @@ In any case, this will test the Sage library with multiple threads::
     [jdemeyer@sage sage-6.0]$ make ptestlong
 
 Any of the following commands would also doctest the Sage library or
-one of its clones::
+one of its clones:
+
+.. CODE-BLOCK:: text
 
     make test
     make check
@@ -546,6 +560,14 @@ The differences are:
 * ``make ptestlong`` --- Similar to the command ``make ptest``, but
   using the optional argument ``--long`` for doctesting.
 
+The underlying command for running these tests is ``sage -t --all``. For
+example, ``make ptestlong`` executes the command
+``sage -t -p --all --long --logfile=logs/ptestlong.log``. So if you want
+to add extra flags when you run these tests, for example ``--verbose``,
+you can execute
+``sage -t -p --all --long --verbose --logfile=path/to/logfile``.
+Some of the extra testing options are discussed here; run
+``sage -t -h`` for a complete list.
 
 Beyond the Sage Library
 =======================
@@ -646,32 +668,37 @@ Doctesting from Within Sage
 
 You can run doctests from within Sage, which can be useful since you
 don't have to wait for Sage to start.  Use the ``run_doctests``
-function in the global namespace, passing it either a string or a module::
+function in the global namespace, passing it either a string or a module:
 
-    sage: run_doctests(sage.coding.sd_codes)
-    Doctesting /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
-    Running doctests with ID 2012-07-07-04-32-36-81f3853b.
+.. CODE-BLOCK:: ipycon
+
+    sage: run_doctests(sage.combinat.affine_permutation)
+    Running doctests with ID 2018-02-07-13-23-13-89fe17b1.
+    Git branch: develop
+    Using --optional=dochtml,sage
     Doctesting 1 file.
-    sage -t /Users/roed/sage/sage-5.3/src/sage/coding/sd_codes.py
-        [18 tests, 0.3 s]
-    ------------------------------------------------------------------------
+    sage -t /opt/sage/sage_stable/src/sage/combinat/affine_permutation.py
+        [338 tests, 4.32 s]
+    ----------------------------------------------------------------------
     All tests passed!
-    ------------------------------------------------------------------------
-    Total time for all tests: 0.4 seconds
-        cpu time: 0.2 seconds
-        cumulative wall time: 0.3 seconds
+    ----------------------------------------------------------------------
+    Total time for all tests: 4.4 seconds
+        cpu time: 3.6 seconds
+        cumulative wall time: 4.3 seconds
 
 .. _section-options:
 
 Optional Arguments
 ==================
 
-Run Long Tests
---------------
+Run Long Doctests
+-----------------
 
 Ideally, doctests should not take any noticeable amount of time. If
 you really need longer-running doctests (anything beyond about one
-second) then you should mark them as::
+second) then you should mark them as:
+
+.. CODE-BLOCK:: text
 
     sage: my_long_test()  # long time
 
@@ -776,11 +803,36 @@ You can also pass in an explicit amount of time::
 Finally, you can disable any warnings about long tests with
 ``--warn-long 0``.
 
+Doctests may start from a random seed::
+
+    [kliem@sage sage-9.2]$ sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    Running doctests with ID 2020-06-23-23-24-28-14a52269.
+    ...
+    Doctesting 1 file.
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    **********************************************************************
+    File "src/sage/doctest/tests/random_seed.rst", line 3, in sage.doctest.tests.random_seed
+    Failed example:
+        randint(5, 10)
+    Expected:
+        9
+    Got:
+        8
+    **********************************************************************
+    1 item had failures:
+       1 of   2 in sage.doctest.tests.random_seed
+        [1 test, 1 failure, 0.00 s]
+    ----------------------------------------------------------------------
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst  # 1 doctest failed
+    ----------------------------------------------------------------------
+    Total time for all tests: 0.0 seconds
+        cpu time: 0.0 seconds
+        cumulative wall time: 0.0 seconds
 
 .. _section-optional-doctest-flag:
 
-Run Optional Tests
-------------------
+Run Optional Doctests
+---------------------
 
 You can run tests that require optional packages by using the
 ``--optional`` flag.  Obviously, you need to have installed the
@@ -790,7 +842,7 @@ optional packages.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sage src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a368a200.
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -804,7 +856,7 @@ By default, Sage only runs doctests that are not marked with the ``optional`` ta
 
 If you want to also run tests that require magma, you can do the following::
 
-    [roed@sage sage-6.0]$ sage -t --optional=sage,magma src/sage/rings/real_mpfr.pyx
+    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage,magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a00a7319
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -816,7 +868,7 @@ If you want to also run tests that require magma, you can do the following::
         cpu time: 4.0 seconds
         cumulative wall time: 8.4 seconds
 
-In order to just run the tests that are marked as requiring magma, omit ``sage``::
+In order to just run the tests that are marked as requiring magma, omit ``sage`` and ``dochtml``::
 
     [roed@sage sage-6.0]$ sage -t --optional=magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-33-a2bc1fdf
@@ -829,6 +881,25 @@ In order to just run the tests that are marked as requiring magma, omit ``sage``
     Total time for all tests: 3.2 seconds
         cpu time: 0.1 seconds
         cumulative wall time: 2.0 seconds
+
+If you want Sage to detect external software or other capabilities
+(such as magma, latex, internet) automatically and run all of the
+relevant tests, then add ``external``::
+
+    $ sage -t --optional=external src/sage/rings/real_mpfr.pyx
+    Running doctests with ID 2016-03-16-14-10-21-af2ebb67.
+    Using --optional=external
+    External software to be detected: cplex,gurobi,internet,latex,macaulay2,magma,maple,mathematica,matlab,octave,scilab
+    Doctesting 1 file.
+    sage -t --warn-long 28.0 src/sage/rings/real_mpfr.pyx
+        [5 tests, 0.04 s]
+    ----------------------------------------------------------------------
+    All tests passed!
+    ----------------------------------------------------------------------
+    Total time for all tests: 0.5 seconds
+        cpu time: 0.0 seconds
+        cumulative wall time: 0.0 seconds
+    External software detected for doctesting: magma
 
 To run all tests, regardless of whether they are marked optional, pass ``all`` as the ``optional`` tag::
 
@@ -844,8 +915,8 @@ To run all tests, regardless of whether they are marked optional, pass ``all`` a
         cpu time: 4.7 seconds
         cumulative wall time: 11.2 seconds
 
-Running Tests in Parallel
--------------------------
+Running Doctests in Parallel
+----------------------------
 
 If you're testing many files, you can get big speedups by using more
 than one thread.  To run doctests in parallel use the ``--nthreads``
@@ -895,8 +966,6 @@ as well as testing the Sage notebook::
     sage -t /Users/roed/sage/sage-5.3/src/sage/plot/plot.py
         [304 tests, 69.0 s]
     ...
-
-If you want to just run the notebook tests, use the ``--sagenb`` flag instead.
 
 
 Debugging Tools
@@ -972,7 +1041,7 @@ appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
     [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
-    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
+    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional dochtml,sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1193,11 +1262,11 @@ Note that even with this option, the tests within a given doctest block are stil
 Testing external files
 ^^^^^^^^^^^^^^^^^^^^^^
 
-When testing a file that's not part of the Sage library, the testing
+When testing a file which is not part of a package (which is not in a
+directory containing an ``__init__.py`` file), the testing
 code loads the globals from that file into the namespace before
-running tests.  To model the behavior used on the Sage library instead
-(where imports must be explicitly specified), use the ``--force-lib``
-flag.
+running tests.  To disable this behaviour (and require imports to be
+explicitly specified), use the ``--force-lib`` option.
 
 Auxilliary files
 ^^^^^^^^^^^^^^^^

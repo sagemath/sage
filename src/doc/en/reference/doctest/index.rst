@@ -9,6 +9,7 @@ Sage's Doctesting Framework
    sage/doctest/forker
    sage/doctest/parsing
    sage/doctest/reporting
+   sage/doctest/external
    sage/doctest/test
    sage/doctest/util
    sage/doctest/fixtures

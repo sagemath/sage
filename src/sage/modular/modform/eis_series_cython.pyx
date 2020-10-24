@@ -1,13 +1,14 @@
 """
 Eisenstein Series (optimized compiled functions)
 """
-include 'sage/ext/stdsage.pxi'
-include 'sage/ext/interrupt.pxi'
+
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 
 from sage.rings.rational_field import QQ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer cimport Integer
-from sage.rings.arith import primes, bernoulli
+from sage.arith.all import primes, bernoulli
 from sage.rings.fast_arith cimport prime_range
 
 from cpython.list cimport PyList_GET_ITEM
@@ -60,8 +61,8 @@ cpdef Ek_ZZ(int k, int prec=10):
 
     # allocate the list for the result
     cdef list val = []
-    for i from 0 <= i < prec:
-        pp = <Integer>(PY_NEW(Integer))
+    for i in range(prec):
+        pp = Integer.__new__(Integer)
         mpz_set_si(pp.value, 1)
         val.append(pp)
 
@@ -71,7 +72,7 @@ cpdef Ek_ZZ(int k, int prec=10):
     max_power_sum = prec
     while max_power_sum:
         max_power_sum >>= 1
-        pp = <Integer>(PY_NEW(Integer))
+        pp = Integer.__new__(Integer)
         mpz_set_si(pp.value, 1)
         power_sum_ls.append(pp)
 
@@ -158,21 +159,18 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
         sage: eisenstein_series_poly(12, prec=5)
         5  691 65520 134250480 11606736960 274945048560
     """
-    cdef mpz_t *val = <mpz_t *>sage_malloc(prec * sizeof(mpz_t))
+    cdef mpz_t *val = <mpz_t *>check_allocarray(prec, sizeof(mpz_t))
     cdef mpz_t one, mult, term, last, term_m1, last_m1
-    cdef unsigned long int expt
-    cdef long ind, ppow, int_p
+    cdef long ind
     cdef int i
     cdef Fmpz_poly res = Fmpz_poly.__new__(Fmpz_poly)
 
     if k%2 or k < 2:
-        raise ValueError, "k (=%s) must be an even positive integer"%k
+        raise ValueError("k (=%s) must be an even positive integer" % k)
     if prec < 0:
-        raise ValueError, "prec (=%s) must be an even nonnegative integer"%prec
+        raise ValueError("prec (=%s) must be an even nonnegative integer" % prec)
     if (prec == 0):
         return Fmpz_poly.__new__(Fmpz_poly)
-
-    sig_on()
 
     mpz_init(one)
     mpz_init(term)
@@ -181,33 +179,33 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     mpz_init(term_m1)
     mpz_init(last_m1)
 
-    for i from 0 <= i < prec :
-        mpz_init(val[i])
-        mpz_set_si(val[i], 1)
+    for i in range(prec):
+        mpz_init_set_si(val[i], 1)
 
     mpz_set_si(one, 1)
 
-    expt = <unsigned long int>(k - 1)
-    a0 = - bernoulli(k) / (2*k)
+    cdef unsigned long expt = k - 1
+    a0 = -bernoulli(k) / (2*k)
 
-    for p in primes(1,prec) :
-        int_p = int(p)
-        ppow = <long int>int_p
+    cdef long p, ppow
+    for p in primes(1, prec) :
+        ppow = p
 
-        mpz_set_si(mult, int_p)
+        mpz_set_si(mult, p)
         mpz_pow_ui(mult, mult, expt)
         mpz_mul(term, mult, mult)
         mpz_set(last, mult)
 
-        while (ppow < prec):
+        while ppow < prec:
+            sig_check()
             ind = ppow
             mpz_sub(term_m1, term, one)
             mpz_sub(last_m1, last, one)
-            while (ind < prec):
+            while ind < prec:
                 mpz_mul(val[ind], val[ind], term_m1)
                 mpz_fdiv_q(val[ind], val[ind], last_m1)
                 ind += ppow
-            ppow *= int_p
+            ppow *= p
             mpz_set(last, term)
             mpz_mul(term, term, mult)
 
@@ -225,8 +223,6 @@ cpdef eisenstein_series_poly(int k, int prec = 10) :
     fmpz_poly_scalar_mul_mpz(res.poly, res.poly, (<Integer>(a0.denominator())).value)
     fmpz_poly_set_coeff_mpz(res.poly, 0, (<Integer>(a0.numerator())).value)
 
-    sage_free(val)
-
-    sig_off()
+    sig_free(val)
 
     return res

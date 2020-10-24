@@ -31,6 +31,7 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10,pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
+from __future__ import absolute_import
 #*******************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
@@ -40,13 +41,13 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
-from sage.misc.all import latex
-from sage.misc.misc import repr_lincomb
+from sage.misc.latex import latex
+from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.all import ZZ
 from sage.structure.formal_sum import FormalSum
 
-from morphism import is_SchemeMorphism
+from .morphism import is_SchemeMorphism
 from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.projective.projective_space import is_ProjectiveSpace
 
@@ -230,7 +231,7 @@ class Divisor_generic(FormalSum):
             sage: D = C.divisor(pts[0])*3 - C.divisor(pts[1]); D
             3*(x, y) - (x - 2, y - 2)
             sage: D.scheme()
-            Affine Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
+            Affine Plane Curve over Finite Field of size 5 defined by -x^9 + y^2 - x
         """
         return self.parent().scheme()
 
@@ -294,12 +295,12 @@ class Divisor_curve(Divisor_generic):
             sage: Divisor_curve([(1,P)], parent=DivisorGroup(E))
             (x, y)
         """
-        from sage.schemes.generic.divisor_group import DivisorGroup_generic, DivisorGroup_curve
+        from sage.schemes.generic.divisor_group import DivisorGroup_curve
         if not isinstance(v, (list, tuple)):
             v = [(1,v)]
 
         if parent is None:
-            if len(v) > 0:
+            if v:
                 t = v[0]
                 if isinstance(t, tuple) and len(t) == 2:
                     try:
@@ -311,12 +312,12 @@ class Divisor_curve(Divisor_generic):
                         C = t.scheme()
                     except TypeError:
                         raise TypeError("Argument v (= %s) must consist of multiplicities and points on a scheme.")
-                parent = DivisorGroup(C)
+                parent = DivisorGroup_curve(C)
             else:
                 raise TypeError("Argument v (= %s) must consist of multiplicities and points on a scheme.")
         else:
             if not isinstance(parent, DivisorGroup_curve):
-                raise TypeError("parent (of type %s) must be a DivisorGroup_curve"%type(parent))
+                raise TypeError("parent (of type %s) must be a DivisorGroup_curve" % type(parent))
             C = parent.scheme()
 
         if len(v) < 1:

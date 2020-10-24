@@ -1,0 +1,37 @@
+/*** EXAMPLE: Dirichlet L-function of a quadratic character modulo odd P ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk          ***/
+/***                                                                     ***/
+/*** type \rex-chqua or read("ex-chqua") at pari prompt to run this      ***/
+
+read("computel");                 \\ read the ComputeL package
+                                  \\ and set the default values
+default(realprecision,28);        \\ set working precision; used throughout
+
+P = 37;                     \\ May change this to any other odd prime
+                            \\ Chi = Legendre character modulo this P
+
+                            \\ initialize L-function parameters
+conductor = P;              \\ exponential factor
+gammaV    = [P%4==3];       \\ [0] if P=1 mod 4 (even), [1] if 3 mod 4 (odd)
+weight    = 1;              \\ L(s)=sgn*L(weight-s)
+sgn       = 1;              \\ sign in the functional equation
+
+a(n) = if(n%P,(-1)^((P-1)/znorder(Mod(n,P))),0);
+  \\ coefficients: 1 for n square mod P, -1 for non-square, 0 for n=0 mod P
+
+initLdata("a(k)");              \\ initialize L-function parameters
+
+zinit     = zetakinit(nfinit(quadpoly(quaddisc(if(P%4==3,-P,P)))));
+LPari(x)  = zetak(zinit,x)/zeta(x);
+  \\ alternatively the same L-function is the Dedekind zeta function of
+  \\ the maximal order of Q(sqrt(P)) (p=1 mod 4) or Q(sqrt(-P)) (p=3 mod 4)
+  \\ divided by the Riemann zeta function
+
+print("EXAMPLE: L(s)=L(Chi(P),s), Chi(P)=(Legendre) quadratic character modulo P");
+print("         with ",default(realprecision)," digits precision");
+print("         take P=",P);
+print("Verifying functional equation. Error: ",errprint(checkfeq()));
+print("L(Chi(P),2) = ",L(2));
+print("  (pari)    = ",LPari(2));
+print("L(Chi(P),I) = ",L(I));
+print("  (pari)    = ",LPari(I));

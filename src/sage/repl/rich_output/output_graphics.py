@@ -17,7 +17,9 @@ and raster graphics.
 
 
 import os
+import base64
 
+from sage.cpython.string import bytes_to_str
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
 
@@ -61,7 +63,7 @@ class OutputImagePng(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImagePng`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImagePng
@@ -69,14 +71,14 @@ class OutputImagePng(OutputBase):
             OutputImagePng container
             sage: OutputImagePng.example().png
             buffer containing 608 bytes
-            sage: OutputImagePng.example().png.get().startswith('\x89PNG')
+            sage: OutputImagePng.example().png.get().startswith(b'\x89PNG')
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.png')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
-        
+
 
 class OutputImageGif(OutputBase):
 
@@ -92,7 +94,7 @@ class OutputImageGif(OutputBase):
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           GIF image data.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageGif
@@ -112,7 +114,7 @@ class OutputImageGif(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImageGif`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageGif
@@ -120,13 +122,32 @@ class OutputImageGif(OutputBase):
             OutputImageGif container
             sage: OutputImageGif.example().gif
             buffer containing 408 bytes
-            sage: OutputImageGif.example().gif.get().startswith('GIF89a')
+            sage: OutputImageGif.example().gif.get().startswith(b'GIF89a')
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.gif')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
+
+    def html_fragment(self):
+        """
+        Return a self-contained HTML fragment displaying the image
+
+        This is a workaround for the Jupyter notebook which doesn't support GIF directly.
+
+        OUTPUT:
+
+        String. HTML fragment for displaying the GIF image.
+
+        EXAMPLES::
+
+            sage: from sage.repl.rich_output.output_catalog import OutputImageGif
+            sage: OutputImageGif.example().html_fragment()
+            '<img src="data:image/gif;base64,R0lGODl...zd3t/g4eLj5OVDQQA7"/>'
+        """
+        b64 = bytes_to_str(base64.b64encode(self.gif.get()), 'ascii')
+        return '<img src="data:image/gif;base64,{0}"/>'.format(b64)
 
 
 class OutputImageJpg(OutputBase):
@@ -137,13 +158,13 @@ class OutputImageJpg(OutputBase):
 
         INPUT:
 
-        - ``jpeg`` --
+        - ``jpg`` --
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
           a string (bytes) can be passed directly which will then be
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           JPEG image data.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageJpg
@@ -163,7 +184,7 @@ class OutputImageJpg(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImageJpg`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageJpg
@@ -171,15 +192,15 @@ class OutputImageJpg(OutputBase):
             OutputImageJpg container
             sage: OutputImageJpg.example().jpg
             buffer containing 978 bytes
-            sage: OutputImageJpg.example().jpg.get().startswith('\xff\xd8\xff\xe0\x00\x10JFIF')
+            sage: OutputImageJpg.example().jpg.get().startswith(b'\xff\xd8\xff\xe0\x00\x10JFIF')
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.jpg')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
 
-        
+
 class OutputImageSvg(OutputBase):
 
     def __init__(self, svg):
@@ -188,13 +209,13 @@ class OutputImageSvg(OutputBase):
 
         INPUT:
 
-        - ``SVG`` --
+        - ``svg`` --
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
           a string (bytes) can be passed directly which will then be
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           SVG image data.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageSvg
@@ -214,7 +235,7 @@ class OutputImageSvg(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImageSvg`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageSvg
@@ -222,12 +243,12 @@ class OutputImageSvg(OutputBase):
             OutputImageSvg container
             sage: OutputImageSvg.example().svg
             buffer containing 1422 bytes
-            sage: '</svg>' in OutputImageSvg.example().svg.get()
+            sage: b'</svg>' in OutputImageSvg.example().svg.get()
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.svg')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
 
 
@@ -245,7 +266,7 @@ class OutputImagePdf(OutputBase):
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           PDF data.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImagePdf
@@ -265,7 +286,7 @@ class OutputImagePdf(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImagePdf`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImagePdf
@@ -273,12 +294,12 @@ class OutputImagePdf(OutputBase):
             OutputImagePdf container
             sage: OutputImagePdf.example().pdf
             buffer containing 4285 bytes
-            sage: OutputImagePdf.example().pdf.get().startswith('%PDF-1.4')
+            sage: OutputImagePdf.example().pdf.get().startswith(b'%PDF-1.4')
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.pdf')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
 
 
@@ -296,7 +317,7 @@ class OutputImageDvi(OutputBase):
           converted into an
           :class:`~sage.repl.rich_output.buffer.OutputBuffer`. The
           DVI data.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageDvi
@@ -316,7 +337,7 @@ class OutputImageDvi(OutputBase):
         OUTPUT:
 
         An instance of :class:`OutputImageDvi`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputImageDvi
@@ -324,11 +345,11 @@ class OutputImageDvi(OutputBase):
             OutputImageDvi container
             sage: OutputImageDvi.example().dvi
             buffer containing 212 bytes
-            sage: 'TeX output' in OutputImageDvi.example().dvi.get()
+            sage: b'TeX output' in OutputImageDvi.example().dvi.get()
             True
         """
         from sage.env import SAGE_EXTCODE
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.dvi')
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             return cls(f.read())
 

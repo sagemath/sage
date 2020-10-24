@@ -1,0 +1,19 @@
+#sage_conf
+#sage_setup
+six             # use of six should be removed from sage_setup
+Cython==0.29.17
+pkgconfig
+cysignals
+gmpy2==2.1.0b5
+
+numpy          # already needed by sage.env
+jinja2         # sage_setup.autogen.interpreters
+
+cypari2        # but building bdist_wheel of cypari2 fails with recent pip... https://github.com/sagemath/cypari2/issues/93
+
+########## Runtime
+
+psutil
+pexpect
+pplpy
+ipython<=5.8

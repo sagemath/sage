@@ -1,5 +1,4 @@
-include "sage/libs/ntl/decl.pxi"    # to get ZZX_c etc
-
+from sage.libs.ntl.types cimport ZZX_c
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 cdef class Polynomial_integer_dense_ntl(Polynomial):

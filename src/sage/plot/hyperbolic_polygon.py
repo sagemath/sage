@@ -8,7 +8,8 @@ AUTHORS:
 """
 #*****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>,
-#                     2014 Vincent Delecroix <20100.delecroix@gmail.com>
+#                     2014 Vincent Delecroix <20100.delecroix@gmail.com>,
+#                     2015 Stefan Kraemer <skraemer@th.physik.uni-bonn.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -19,16 +20,18 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.plot.bezier_path import BezierPath
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 from sage.rings.all import CC
 
 
 class HyperbolicPolygon(BezierPath):
     """
-    Primitive class for hyberbolic polygon type.
+    Primitive class for hyperbolic polygon type.
 
     See ``hyperbolic_polygon?`` for information about plotting a hyperbolic
     polygon in the complex plane.
@@ -45,7 +48,7 @@ class HyperbolicPolygon(BezierPath):
     :func:`hyperbolic_triangle`::
 
          sage: from sage.plot.hyperbolic_polygon import HyperbolicPolygon
-         sage: print HyperbolicPolygon([0, 1/2, I], {})
+         sage: print(HyperbolicPolygon([0, 1/2, I], {}))
          Hyperbolic polygon (0.000000000000000, 0.500000000000000, 1.00000000000000*I)
     """
     def __init__(self, pts, options):
@@ -55,7 +58,7 @@ class HyperbolicPolygon(BezierPath):
         EXAMPLES::
 
             sage: from sage.plot.hyperbolic_polygon import HyperbolicPolygon
-            sage: print HyperbolicPolygon([0, 1/2, I], {})
+            sage: print(HyperbolicPolygon([0, 1/2, I], {}))
             Hyperbolic polygon (0.000000000000000, 0.500000000000000, 1.00000000000000*I)
         """
         pts = [CC(_) for _ in pts]
@@ -85,20 +88,21 @@ class HyperbolicPolygon(BezierPath):
         the hyperbolic arc between the complex numbers z0 and z3 in the
         hyperbolic plane.
         """
-        if (z0-z3).real() == 0:
+        z0, z3 = (CC(z0), CC(z3))
+        p = (abs(z0)*abs(z0)-abs(z3)*abs(z3))/(z0-z3).real()/2
+        r = abs(z0-p)
+
+        if abs(z3-z0)/r < 0.1:
             self.path.append([(z0.real(), z0.imag()), (z3.real(), z3.imag())])
             return
-        z0, z3 = (CC(z0), CC(z3))
+
         if z0.imag() == 0 and z3.imag() == 0:
             p = (z0.real()+z3.real())/2
-            r = abs(z0-p)
             zm = CC(p, r)
             self._hyperbolic_arc(z0, zm, first)
             self._hyperbolic_arc(zm, z3)
             return
         else:
-            p = (abs(z0)*abs(z0)-abs(z3)*abs(z3))/(z0-z3).real()/2
-            r = abs(z0-p)
             zm = ((z0+z3)/2-p)/abs((z0+z3)/2-p)*r+p
             t = (8*zm-4*(z0+z3)).imag()/3/(z3-z0).real()
             z1 = z0 + t*CC(z0.imag(), (p-z0.real()))
@@ -149,10 +153,21 @@ def hyperbolic_polygon(pts, **options):
         sage: hyperbolic_polygon([-1,3*I,2+2*I,1+I])
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        P = hyperbolic_polygon([-1,3*I,2+2*I,1+I])
+        sphinx_plot(P)
+
     With more options::
 
         sage: hyperbolic_polygon([-1,3*I,2+2*I,1+I], fill=True, color='red')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = hyperbolic_polygon([-1,3*I,2+2*I,1+I], fill=True, color='red')
+        sphinx_plot(P)
+
     """
     from sage.plot.all import Graphics
     g = Graphics()
@@ -163,7 +178,7 @@ def hyperbolic_polygon(pts, **options):
 
 
 def hyperbolic_triangle(a, b, c, **options):
-    """
+    r"""
     Return a hyperbolic triangle in the hyperbolic plane with vertices ``(a,b,c)``.
 
     Type ``?hyperbolic_polygon`` to see all options.
@@ -194,9 +209,20 @@ def hyperbolic_triangle(a, b, c, **options):
          sage: hyperbolic_triangle(0, -1/2+I*sqrt(3)/2, 1/2+I*sqrt(3)/2)
          Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        P = hyperbolic_triangle(0, 0.5*(-1+I*sqrt(3)), 0.5*(1+I*sqrt(3)))
+        sphinx_plot(P)
+
     A hyperbolic triangle with coordinates `0, 1` and `2+i` and a dashed line::
 
          sage: hyperbolic_triangle(0, 1, 2+i, fill=true, rgbcolor='red', linestyle='--')
          Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = hyperbolic_triangle(0, 1, 2+i, fill=true, rgbcolor='red', linestyle='--')
+        sphinx_plot(P)
+
     """
     return hyperbolic_polygon((a, b, c), **options)

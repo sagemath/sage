@@ -7,18 +7,16 @@ Root lattices and root spaces
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function, absolute_import
 
-from sage.misc.cachefunc import ClearCacheOnPickle, cached_method, cached_in_parent_method
+from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.rings.all import ZZ
-from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModuleElement
-from root_lattice_realizations import RootLatticeRealizations
-from sage.misc.cachefunc import cached_in_parent_method
+from sage.combinat.free_module import CombinatorialFreeModule
+from .root_lattice_realizations import RootLatticeRealizations
 import functools
 
-# TODO: inheriting from ClearCacheOnPickle is a technical detail unrelated to root spaces
-# could we abstract this somewhere higher?
 
-class RootSpace(ClearCacheOnPickle, CombinatorialFreeModule):
+class RootSpace(CombinatorialFreeModule):
     r"""
     The root space of a root system over a given base ring
 
@@ -33,7 +31,7 @@ class RootSpace(ClearCacheOnPickle, CombinatorialFreeModule):
 
     This class is also used for coroot spaces (or lattices).
 
-    .. seealso::
+    .. SEEALSO::
 
         - :meth:`RootSystem`
         - :meth:`RootSystem.root_lattice` and :meth:`RootSystem.root_space`
@@ -44,8 +42,8 @@ class RootSpace(ClearCacheOnPickle, CombinatorialFreeModule):
     TESTS::
 
         sage: for ct in CartanType.samples(crystallographic=True)+[CartanType(["A",2],["C",5,1])]:
-        ...       TestSuite(ct.root_system().root_lattice()).run()
-        ...       TestSuite(ct.root_system().root_space()).run()
+        ....:     TestSuite(ct.root_system().root_lattice()).run()
+        ....:     TestSuite(ct.root_system().root_space()).run()
         sage: r = RootSystem(['A',4]).root_lattice()
         sage: r.simple_root(1)
         alpha[1]
@@ -233,7 +231,7 @@ class RootSpace(ClearCacheOnPickle, CombinatorialFreeModule):
             return basis[i]
         return self.module_morphism(on_basis = functools.partial(basis_value, basis) , codomain=L)
 
-class RootSpaceElement(CombinatorialFreeModuleElement):
+class RootSpaceElement(CombinatorialFreeModule.Element):
     def scalar(self, lambdacheck):
         """
         The scalar product between the root lattice and
@@ -253,8 +251,8 @@ class RootSpaceElement(CombinatorialFreeModuleElement):
         the Cartan matrix::
 
             sage: matrix([ [ alpha[i].scalar(alphacheck[j])
-            ...              for i in L.index_set() ]
-            ...            for j in L.index_set() ])
+            ....:            for i in L.index_set() ]
+            ....:          for j in L.index_set() ])
             [ 2 -1  0  0]
             [-1  2 -1  0]
             [ 0 -1  2 -1]
@@ -348,14 +346,13 @@ class RootSpaceElement(CombinatorialFreeModuleElement):
 
             sage: Q = RootSystem(['C',2]).root_lattice()
             sage: positive_roots = Q.positive_roots()
-            sage: for x in positive_roots:
-            ....:     print x, x.quantum_root()
+            sage: for x in sorted(positive_roots):
+            ....:     print("{} {}".format(x, x.quantum_root()))
             alpha[1] True
-            alpha[2] True
-            2*alpha[1] + alpha[2] True
             alpha[1] + alpha[2] False
+            2*alpha[1] + alpha[2] True
+            alpha[2] True
         """
-
         return len(self.associated_reflection()) == -1 + (self.parent().nonparabolic_positive_root_sum(())).scalar(self.associated_coroot())
 
     def max_coroot_le(self):

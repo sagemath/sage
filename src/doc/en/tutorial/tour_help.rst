@@ -62,7 +62,7 @@ question mark:
             0.69314718055994530941723212145817656807   # 64-bit
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring:
 
@@ -212,7 +212,7 @@ Java:
 ::
 
     sage: for i in range(3):
-    ....:     print i
+    ....:     print(i)
     0
     1
     2
@@ -222,7 +222,7 @@ The first line below is like ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ....:     print i
+    ....:     print(i)
     2
     3
     4
@@ -233,7 +233,7 @@ The third argument controls the step, so the following is like
 ::
 
     sage: for i in range(1,6,2):
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -246,7 +246,7 @@ and make a table of squares and cubes.
 ::
 
     sage: for i in range(5):
-    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print('%6s %6s %6s' % (i, i^2, i^3))
          0      0      0
          1      1      1
          2      4      8
@@ -255,11 +255,13 @@ and make a table of squares and cubes.
 
 The most basic data structure in Sage is the list, which is -- as
 the name suggests -- just a list of arbitrary objects. For example,
-the ``range`` command that we used creates a list:
+the ``range`` command that we used creates a list (in python 2):
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Here is a more complicated list:

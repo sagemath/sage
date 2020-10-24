@@ -19,11 +19,11 @@ See https://github.com/phetsims/molecule-polarity/issues/6 for a
 discussion of loading JSMol.
 """
 
+import io
 import os
 import zipfile
-from StringIO import StringIO
 
-from sage.env import SAGE_LOCAL
+from sage.cpython.string import bytes_to_str
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 
@@ -47,6 +47,7 @@ INNER_HTML_TEMPLATE = \
 </head>
 <body>
   <script type="text/javascript">
+    delete Jmol._tracker; // Prevent JSmol from phoning home.
     var script = {script};
     var Info = {{
       width: '{width}',
@@ -121,7 +122,7 @@ class JSMolHtml(SageObject):
         if not isinstance(jmol, OutputSceneJmol):
             jmol = jmol._rich_repr_jmol()
         self._jmol = jmol
-        self._zip = zipfile.ZipFile(StringIO(self._jmol.scene_zip.get()))
+        self._zip = zipfile.ZipFile(io.BytesIO(self._jmol.scene_zip.get()))
         if path_to_jsmol is None:
             self._path = os.path.join('/', 'nbextensions', 'jsmol')
         else:
@@ -152,18 +153,20 @@ class JSMolHtml(SageObject):
         script = []
         with self._zip.open('SCRIPT') as SCRIPT:
             for line in SCRIPT:
-                if line.startswith('pmesh'):
-                    command, obj, meshfile = line.split(' ', 3)
-                    assert command == 'pmesh'
-                    assert meshfile.startswith('"') and meshfile.endswith('"\n')
-                    meshfile = meshfile[1:-2]    # strip quotes
-                    script += [
-                        'pmesh {0} inline "'.format(obj),
-                        self._zip.open(meshfile).read(),
-                        '"\n'
-                    ]
-                else:
-                    script += [line]
+                if line.startswith(b'pmesh'):
+                    command, obj, meshfile = line.split(b' ', 3)
+                    assert command == b'pmesh'
+                    if meshfile not in [b'dots\n', b'mesh\n']:
+                        assert (meshfile.startswith(b'"') and
+                                meshfile.endswith(b'"\n'))
+                        meshfile = bytes_to_str(meshfile[1:-2])  # strip quotes
+                        script += [
+                            'pmesh {0} inline "'.format(bytes_to_str(obj)),
+                            bytes_to_str(self._zip.open(meshfile).read()),
+                            '"\n'
+                        ]
+                        continue
+                script += [bytes_to_str(line)]
         return ''.join(script)
 
     def js_script(self):
@@ -299,4 +302,3 @@ class JSMolHtml(SageObject):
             escaped_inner_html=escaped_inner_html,
         )
         return outer
-        

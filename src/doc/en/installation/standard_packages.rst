@@ -6,6 +6,10 @@ see a partial list below. These programs are all released under a
 license compatible with the GNU General Public License (GPL), version 3.
 See the COPYING.txt file in the Sage root directory for more details.
 
+See `Listing Sage Packages <../reference/misc/sage/misc/package.html>`_
+for information about installing packages and for an up-to-date list
+of the standard, optional and experimental packages.
+
 Here is a list of some of the software included with Sage:
 
 * atlas: The ATLAS (Automatically Tuned Linear Algebra Software) project
@@ -53,7 +57,7 @@ Here is a list of some of the software included with Sage:
 
 * lcalc: Rubinstein's L-functions calculator
 
-* libfplll: contains different implementations of the floating-point LLL
+* fplll: contains different implementations of the floating-point LLL
   reduction algorithm, offering different speed/guarantees ratios
 
 * linbox: C++ template library for exact, high-performance linear
@@ -125,3 +129,8 @@ Here is a list of some of the software included with Sage:
 * zlib: zlib compression library
 
 * zn_poly: C library for polynomial arithmetic in `\ZZ/n\ZZ[x]`
+
+.. TODO::
+
+    Automatically generate this list!
+

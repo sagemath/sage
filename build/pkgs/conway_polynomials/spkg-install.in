@@ -1,0 +1,1 @@
+exec sage-python23 spkg-install.py

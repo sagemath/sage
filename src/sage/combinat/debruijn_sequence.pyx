@@ -15,12 +15,12 @@ They can be obtained as a subsequence of the *cyclic* De Bruijn sequence of
 parameters `k=2` and `n=3`::
 
     sage: seq = DeBruijnSequences(2,3).an_element()
-    sage: print Word(seq).string_rep()
+    sage: print(Word(seq).string_rep())
     00010111
     sage: shift = lambda i: [(i+j)%2**3 for j in range(3)]
     sage: for i in range(2**3):
-    ...      print (Word(map(lambda (j,b): b if j in shift(i) else '*',
-    ...                                       enumerate(seq))).string_rep())
+    ....:    w = Word([b if j in shift(i) else '*' for j, b in enumerate(seq)])
+    ....:    print(w.string_rep())
     000*****
     *001****
     **010***
@@ -35,19 +35,18 @@ This sequence is of length `k^n`, which is best possible as it is the number of
 of parameters `k` and `n` as a cyclic sequence of length `k^n` in which all
 substring of length `n` are different.
 
-See also the `Wikipedia article on De Bruijn sequences
-<http://en.wikipedia.org/wiki/De_Bruijn_sequence>`_.
+See also :wikipedia:`De_Bruijn_sequence`.
 
 TESTS:
 
 Checking the sequences generated are indeed valid::
 
     sage: for n in range(1, 7):
-    ...      for k in range(1, 7):
-    ...         D = DeBruijnSequences(k, n)
-    ...         if not D.an_element() in D:
-    ...             print "Something's dead wrong (n=%s, k=%s)!" %(n,k)
-    ...             break
+    ....:    for k in range(1, 7):
+    ....:       D = DeBruijnSequences(k, n)
+    ....:       if not D.an_element() in D:
+    ....:           print("Something's dead wrong (n=%s, k=%s)!" %(n,k))
+    ....:           break
 
 AUTHOR:
 
@@ -65,7 +64,7 @@ AUTHOR:
 #                         http://www.gnu.org/licenses/
 #*******************************************************************************
 
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 def debruijn_sequence(int k, int n):
     """
@@ -121,7 +120,7 @@ def is_debruijn_sequence(seq, k, n):
 
     - ``n,k`` -- Integers.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.debruijn_sequence import is_debruijn_sequence
         sage: s = DeBruijnSequences(2, 3).an_element()
@@ -213,7 +212,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
     Obtaining a De Bruijn sequence::
 
         sage: seq = DeBruijnSequences(2, 3).an_element()
-        sage: print seq
+        sage: seq
         [0, 0, 0, 1, 0, 1, 1, 1]
 
     Testing whether it is indeed one::
@@ -226,7 +225,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         sage: DeBruijnSequences(2, 3).cardinality()
         2
 
-    .. note::
+    .. NOTE::
 
        This function only generates one De Bruijn sequence (the smallest
        lexicographically). Support for generating all possible ones may be
@@ -296,7 +295,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         """
         Provides a string representation of the object's parameter.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: repr(DeBruijnSequences(4, 50))
             'De Bruijn sequences with arity 4 and substring length 50'
@@ -315,7 +314,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         Frank Ruskey. This program is based on a Ruby implementation by Jonas
         Elfström, which is based on the C program by Joe Sadawa.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: DeBruijnSequences(2, 3).an_element()
             [0, 0, 0, 1, 0, 1, 1, 1]
@@ -331,7 +330,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
         - ``seq`` -- A sequence of integers.
 
-        EXAMPLE:
+        EXAMPLES::
 
            sage: Sequences =  DeBruijnSequences(2, 3)
            sage: Sequences.an_element() in Sequences
@@ -344,19 +343,14 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         Returns the number of distinct De Bruijn sequences for the object's
         parameters.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: DeBruijnSequences(2, 5).cardinality()
             2048
 
         ALGORITHM:
 
-        The formula for cardinality is `k!^{k^{n-1}}/k^n` [1]_.
-
-        REFERENCES:
-
-        .. [1] Rosenfeld, Vladimir Raphael, 2002: Enumerating De Bruijn
-          Sequences. *Communications in Math. and in Computer Chem.*
+        The formula for cardinality is `k!^{k^{n-1}}/k^n` [Ros2002]_.
         """
         k = ZZ(self.k)
         n = ZZ(self.n)

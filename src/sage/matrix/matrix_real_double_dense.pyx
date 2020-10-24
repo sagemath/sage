@@ -3,8 +3,8 @@ Dense matrices over the Real Double Field using NumPy
 
 EXAMPLES::
 
-    sage: b=Mat(RDF,2,3).basis()
-    sage: b[0]
+    sage: b = Mat(RDF,2,3).basis()
+    sage: b[0,0]
     [1.0 0.0 0.0]
     [0.0 0.0 0.0]
 
@@ -38,6 +38,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+
 from sage.rings.real_double import RDF
 
 cimport numpy as cnumpy
@@ -45,7 +46,7 @@ cimport numpy as cnumpy
 numpy=None
 scipy=None
 
-cdef class Matrix_real_double_dense(matrix_double_dense.Matrix_double_dense):
+cdef class Matrix_real_double_dense(Matrix_double_dense):
     """
     Class that implements matrices over the real double field. These
     are supposed to be fast matrix operations using C doubles. Most
@@ -62,41 +63,30 @@ cdef class Matrix_real_double_dense(matrix_double_dense.Matrix_double_dense):
         [-1.9999999999999996  0.9999999999999998]
         [ 1.4999999999999998 -0.4999999999999999]
 
-    To compute eigenvalues the use the functions left_eigenvectors or
-    right_eigenvectors
+    To compute eigenvalues, use the method
+    :meth:`~.Matrix_double_dense.left_eigenvectors` or
+    :meth:`~.Matrix_double_dense.right_eigenvectors`.
 
     ::
 
         sage: p,e = m.right_eigenvectors()
 
-    the result of eigen is a pair (p,e), where p is a list of
-    eigenvalues and the e is a matrix whose columns are the
+    The result is a pair ``(p,e)``, where ``p`` is a diagonal matrix of
+    eigenvalues and ``e`` is a matrix whose columns are the
     eigenvectors.
 
-    To solve a linear system Ax = b where A = [[1,2],[3,4]] and
-    b = [5,6].
-
-    ::
+    To solve a linear system `Ax = b` where ``A = [[1,2],[3,4]]`` and
+    `b = [5,6]`::
 
         sage: b = vector(RDF,[5,6])
         sage: m.solve_right(b)  # rel tol 1e-15
         (-3.9999999999999987, 4.499999999999999)
 
-    See the commands qr, lu, and svd for QR, LU, and singular value
-    decomposition.
+    See the methods :meth:`~.Matrix_double_dense.QR`,
+    :meth:`~.Matrix_double_dense.LU`, and :meth:`.SVD` for QR, LU, and singular
+    value decomposition.
     """
-
-
-    ########################################################################
-    # LEVEL 1 functionality
-    #   * __cinit__
-    #   * __dealloc__
-    #   * __init__
-    #   * set_unsafe
-    #   * get_unsafe
-    #   * __hash__       -- always simple
-    ########################################################################
-    def __cinit__(self, parent, entries, copy, coerce):
+    def __cinit__(self):
         global numpy
         if numpy is None:
             import numpy

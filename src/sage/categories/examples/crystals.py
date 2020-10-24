@@ -50,6 +50,19 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         sage: b.f(1).e(1) == b
         True
 
+    Only the following basic operations are implemented:
+
+    - :meth:`~sage.categories.crystals.Crystals.cartan_type` or an attribute _cartan_type
+    - an attribute module_generators
+    - :meth:`.Element.e`
+    - :meth:`.Element.f`
+
+    All the other usual crystal operations are inherited from the
+    categories; for example::
+
+        sage: C.cardinality()
+        4
+
     TESTS::
 
         sage: C = Crystals().example()
@@ -57,10 +70,12 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           running ._test_stembridge_local_axioms() . . . pass
@@ -74,22 +89,11 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
         running ._test_fast_iter() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
-
-    Only the following basic operations are implemented:
-     - :meth:`~sage.categories.crystals.Crystals.cartan_type` or an attribute _cartan_type
-     - an attribute module_generators
-     - :meth:`.Element.e`
-     - :meth:`.Element.f`
-
-    All the other usual crystal operations are inherited from the
-    categories; for example::
-
-        sage: C.cardinality()
-        4
     """
 
     def __init__(self, n = 3):
@@ -114,7 +118,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         """
         return "Highest weight crystal of type A_%s of highest weight omega_1"%(self.n)
 
-    # temporary woraround while an_element is overriden by Parent
+    # temporary workaround while an_element is overriden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     class Element(ElementWrapper):

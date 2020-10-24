@@ -15,8 +15,8 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
 
 
-def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False):
-    """
+def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
+    r"""
     Numerically find a root of ``f`` on the closed interval `[a,b]`
     (or `[b,a]`) if possible, where ``f`` is a function in the one variable.
     Note: this function only works in fixed (machine) precision, it is not
@@ -31,7 +31,10 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
     - ``xtol``, ``rtol`` -- the routine converges when a root is known
       to lie within ``xtol`` of the value return. Should be `\geq 0`.
       The routine modifies this to take into account the relative precision
-      of doubles.
+      of doubles. By default, rtol is ``4*numpy.finfo(float).eps``, the
+      minimum allowed value for ``scipy.optimize.brentq``, which is what
+      this method uses underneath. This value is equal to ``2.0**-50`` for
+      IEEE-754 double precision floats as used by Python.
 
     - ``maxiter`` -- integer; if convergence is not achieved in
       ``maxiter`` iterations, an error is raised. Must be `\geq 0`.
@@ -48,8 +51,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
         sage: f = (x+17)*(x-3)*(x-1/8)^3
         sage: find_root(f, 0,4)
         2.999999999999995
-        sage: find_root(f, 0,1)  # note -- precision of answer isn't very good on some machines.
-        0.124999...
+        sage: find_root(f, 0,1)  # abs tol 1e-6 (note -- precision of answer isn't very good on some machines)
+        0.124999
         sage: find_root(f, -20,-10)
         -17.0
 
@@ -58,7 +61,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
     defined below is positive for all `x \geq 2.01`::
 
         sage: def f(x):
-        ...       return sqrt(x) * log(x) - abs(Li(x) - prime_pi(x))
+        ....:     return sqrt(x) * log(x) - abs(Li(x) - prime_pi(x))
 
     We find where `f` equals, i.e., what value that is slightly smaller
     than `2.01` that could have been used in the formulation of the Riemann
@@ -71,6 +74,32 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
 
         sage: plot(f,2,2.01)
         Graphics object consisting of 1 graphics primitive
+
+    The following example was added due to :trac:`4942` and demonstrates that
+    the function need not be defined at the endpoints::
+
+        sage: find_root(x^2*log(x,2)-1,0, 2)  # abs tol 1e-6
+        1.41421356237
+
+    The following is an example, again from :trac:`4942` where Brent's method
+    fails. Currently no other method is implemented, but at least we
+    acknowledge the fact that the algorithm fails::
+
+        sage: find_root(1/(x-1)+1,0, 2)
+        0.0
+        sage: find_root(1/(x-1)+1,0.00001, 2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Brent's method failed to find a zero for f on the interval
+
+    An example of a function which evaluates to NaN on the entire interval::
+
+        sage: f(x) = 0.0 / max(0, x)
+        sage: find_root(f, -1, 0)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: f appears to have no zero on the interval
+
     """
     try:
         return f.find_root(a=a,b=b,xtol=xtol,rtol=rtol,maxiter=maxiter,full_output=full_output)
@@ -81,6 +110,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
         a, b = b, a
     left = f(a)
     right = f(b)
+
     if left > 0 and right > 0:
         # Refine further -- try to find a point where this
         # function is negative in the interval
@@ -108,9 +138,35 @@ def find_root(f, a, b, xtol=10e-13, rtol=4.5e-16, maxiter=100, full_output=False
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 
+    # Fixing :trac:`4942` - if the answer on any of the endpoints is NaN,
+    # we restrict to looking between minimum and maximum values in the segment
+    # Note - this could be used in all cases, but it requires some more
+    # computation
+
+    if (left != left) or (right != right):
+        minval, s_1 = find_local_minimum(f, a, b)
+        maxval, s_2 = find_local_maximum(f, a, b)
+        if ((minval > 0) or (maxval < 0) or
+           (minval != minval) or (maxval != maxval)):
+            raise RuntimeError("f appears to have no zero on the interval")
+        a = min(s_1, s_2)
+        b = max(s_1, s_2)
+
     import scipy.optimize
-    return scipy.optimize.brentq(f, a, b,
+    brentqRes = scipy.optimize.brentq(f, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
+    # A check following :trac:`4942`, to ensure we actually found a root
+    # Maybe should use a different tolerance here?
+    # The idea is to take roughly the derivative and multiply by estimated
+    # value of the root
+    root = 0
+    if full_output:
+        root = brentqRes[0]
+    else:
+        root = brentqRes
+    if abs(f(root)) > max(abs(root * rtol * (right - left) / (b - a)), 1e-6):
+        raise NotImplementedError("Brent's method failed to find a zero for f on the interval")
+    return brentqRes
 
 def find_local_maximum(f, a, b, tol=1.48e-08, maxfun=500):
     """
@@ -204,9 +260,9 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     actually test)::
 
         sage: plot(f, (x,-2.5, -1)).ymin()
-        -2.1827...
+        -2.182...
         sage: plot(f, (x,-2.5, 2)).ymin()
-        -2.1827...
+        -2.182...
 
     ALGORITHM:
 
@@ -223,16 +279,18 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
         return f.find_local_minimum(a=a, b=b, tol=tol, maxfun=maxfun)
     except AttributeError:
         pass
-    a = float(a); b = float(b)
+    a = float(a)
+    b = float(b)
     import scipy.optimize
     xmin, fval, iter, funcalls = scipy.optimize.fminbound(f, a, b, full_output=1, xtol=tol, maxfun=maxfun)
     return fval, xmin
 
-def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
+
+def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
+             verbose=False, **args):
     r"""
     This function is an interface to a variety of algorithms for computing
     the minimum of a function of several variables.
-
 
     INPUT:
 
@@ -257,57 +315,76 @@ def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
       ``'default'`` (for Python functions, the simplex method is the default)
       (for symbolic functions bfgs is the default):
 
-       - ``'simplex'``
+       - ``'simplex'`` -- using the downhill simplex algorithm
 
-       - ``'powell'``
+       - ``'powell'`` -- use the modified Powell algorithm
 
-       - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires
-         ``gradient``
+       - ``'bfgs'`` -- (Broyden-Fletcher-Goldfarb-Shanno) requires gradient
 
        - ``'cg'`` -- (conjugate-gradient) requires gradient
 
        - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
+    - ``verbose`` -- (optional, default: False) print convergence message
 
-    EXAMPLES::
+    .. NOTE::
 
-        sage: vars=var('x y z')
-        sage: f=100*(y-x^2)^2+(1-x)^2+100*(z-y^2)^2+(1-y)^2
-        sage: minimize(f,[.1,.3,.4],disp=0)
-        (1.00..., 1.00..., 1.00...)
+        For additional information on the algorithms implemented in this function,
+        consult SciPy's `documentation on optimization and root
+        finding <https://docs.scipy.org/doc/scipy/reference/optimize.html>`_
 
-        sage: minimize(f,[.1,.3,.4],algorithm="ncg",disp=0)
+    EXAMPLES:
+
+    Minimize a fourth order polynomial in three variables (see the
+    :wikipedia:`Rosenbrock_function`)::
+
+        sage: vars = var('x y z')
+        sage: f = 100*(y-x^2)^2+(1-x)^2+100*(z-y^2)^2+(1-y)^2
+        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6
+        (1.0, 1.0, 1.0)
+
+    Try the newton-conjugate gradient method; the gradient and hessian are
+    computed automatically::
+
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg") # abs tol 1e-6
+        (1.0, 1.0, 1.0)
+
+    We get additional convergence information with the `verbose` option::
+
+        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)
+        Optimization terminated successfully.
+        ...
         (0.9999999..., 0.999999..., 0.999999...)
 
     Same example with just Python functions::
 
         sage: def rosen(x): # The Rosenbrock function
-        ...      return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
-        sage: minimize(rosen,[.1,.3,.4],disp=0)
-        (1.00..., 1.00..., 1.00...)
+        ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
+        sage: minimize(rosen, [.1,.3,.4]) # abs tol 3e-5
+        (1.0, 1.0, 1.0)
 
     Same example with a pure Python function and a Python function to
     compute the gradient::
 
         sage: def rosen(x): # The Rosenbrock function
-        ...      return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
+        ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
         sage: from numpy import zeros
         sage: def rosen_der(x):
-        ...      xm = x[1r:-1r]
-        ...      xm_m1 = x[:-2r]
-        ...      xm_p1 = x[2r:]
-        ...      der = zeros(x.shape,dtype=float)
-        ...      der[1r:-1r] = 200r*(xm-xm_m1**2r) - 400r*(xm_p1 - xm**2r)*xm - 2r*(1r-xm)
-        ...      der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
-        ...      der[-1] = 200r*(x[-1r]-x[-2r]**2r)
-        ...      return der
-        sage: minimize(rosen,[.1,.3,.4],gradient=rosen_der,algorithm="bfgs",disp=0)
-        (1.00...,  1.00..., 1.00...)
+        ....:    xm = x[1r:-1r]
+        ....:    xm_m1 = x[:-2r]
+        ....:    xm_p1 = x[2r:]
+        ....:    der = zeros(x.shape, dtype=float)
+        ....:    der[1r:-1r] = 200r*(xm-xm_m1**2r) - 400r*(xm_p1 - xm**2r)*xm - 2r*(1r-xm)
+        ....:    der[0] = -400r*x[0r]*(x[1r]-x[0r]**2r) - 2r*(1r-x[0])
+        ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
+        ....:    return der
+        sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der, algorithm="bfgs") # abs tol 1e-6
+        (1.0, 1.0, 1.0)
     """
     from sage.symbolic.expression import Expression
     from sage.ext.fast_eval import fast_callable
-    import scipy
+    import numpy
     from scipy import optimize
     if isinstance(func, Expression):
         var_list=func.variables()
@@ -315,33 +392,34 @@ def minimize(func,x0,gradient=None,hessian=None,algorithm="default",**args):
         fast_f=fast_callable(func, vars=var_names, domain=float)
         f=lambda p: fast_f(*p)
         gradient_list=func.gradient()
-        fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in xrange(len(gradient_list))]
-        gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
+        gradient=lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f=func
 
     if algorithm=="default":
         if gradient is None:
-            min = optimize.fmin(f, [float(_) for _ in x0], **args)
+            min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         else:
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, **args)
+            min= optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
     else:
         if algorithm=="simplex":
-            min= optimize.fmin(f, [float(_) for _ in x0], **args)
+            min= optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         elif algorithm=="bfgs":
-            min= optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, **args)
+            min= optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
         elif algorithm=="cg":
-            min= optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, **args)
+            min= optimize.fmin_cg(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
         elif algorithm=="powell":
-            min= optimize.fmin_powell(f, [float(_) for _ in x0], **args)
+            min= optimize.fmin_powell(f, [float(_) for _ in x0], disp=verbose, **args)
         elif algorithm=="ncg":
             if isinstance(func, Expression):
                 hess=func.hessian()
                 hess_fast= [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
                 hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
-                hessian_p=lambda p,v: scipy.dot(scipy.array(hessian(p)),v)
-                min= optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, fhess=hessian, fhess_p=hessian_p, **args)
-    return vector(RDF,min)
+                hessian_p=lambda p,v: scipy.dot(numpy.array(hessian(p)),v)
+                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, \
+                      fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
+    return vector(RDF, min)
 
 def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
     r"""
@@ -369,7 +447,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
       - ``'default'``  -- default choices
 
       - ``'l-bfgs-b'`` -- only effective if you specify bound constraints.
-        See [ZBN97]_.
+        See [ZBN1997]_.
 
     - ``gradient`` -- Optional gradient function. This will be computed
       automatically for symbolic functions. This is only used when the
@@ -399,12 +477,12 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: minimize_constrained(f, [(None,None),(4,10)],[5,5])
         (4.8..., 4.8...)
 
-    Check, if L-BFGS-B finds the same minimum::
+    Check if L-BFGS-B finds the same minimum::
 
         sage: minimize_constrained(f, [(None,None),(4,10)],[5,5], algorithm='l-bfgs-b')
         (4.7..., 4.9...)
 
-    Rosenbrock function, [http://en.wikipedia.org/wiki/Rosenbrock_function]::
+    Rosenbrock function (see the :wikipedia:`Rosenbrock_function`)::
 
         sage: from scipy.optimize import rosen, rosen_der
         sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],gradient=rosen_der,algorithm='l-bfgs-b')
@@ -412,53 +490,62 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: minimize_constrained(rosen, [(-50,-10),(5,10)],[1,1],algorithm='l-bfgs-b')
         (-10.0, 10.0)
 
+    TESTS:
 
-    REFERENCES:
+    Check if :trac:`6592` is fixed::
 
-    .. [ZBN97] C. Zhu, R. H. Byrd and J. Nocedal. L-BFGS-B: Algorithm 778:
-      L-BFGS-B, FORTRAN routines for large scale bound constrained
-      optimization. ACM Transactions on Mathematical Software, Vol 23, Num. 4,
-      pp.550--560, 1997.
+        sage: x, y = var('x y')
+        sage: f = (100 - x) + (1000 - y)
+        sage: c = x + y - 479 # > 0
+        sage: minimize_constrained(f, [c], [100, 300])
+        (805.985..., 1005.985...)
+        sage: minimize_constrained(f, c, [100, 300])
+        (805.985..., 1005.985...)
     """
     from sage.symbolic.expression import Expression
-    import scipy
+    import numpy
     from scipy import optimize
-    function_type=type(lambda x,y: x+y)
+    function_type = type(lambda x,y: x+y)
 
     if isinstance(func, Expression):
-        var_list=func.variables()
+        var_list = func.variables()
         var_names = [str(_) for _ in var_list]
-        fast_f=func._fast_float_(*var_names)
-        f=lambda p: fast_f(*p)
-        gradient_list=func.gradient()
-        fast_gradient_functions=[gradient_list[i]._fast_float_(*var_names)  for i in xrange(len(gradient_list))]
-        gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        fast_f = func._fast_float_(*var_names)
+        f = lambda p: fast_f(*p)
+        gradient_list = func.gradient()
+        fast_gradient_functions = [gi._fast_float_(*var_names) for gi in gradient_list]
+        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        if isinstance(cons, Expression):
+            fast_cons = cons._fast_float_(*var_names)
+            cons = lambda p: numpy.array([fast_cons(*p)])
+        elif isinstance(cons, list) and isinstance(cons[0], Expression):
+            fast_cons = [ci._fast_float_(*var_names) for ci in cons]
+            cons = lambda p: numpy.array([a(*p) for a in fast_cons])
     else:
-        f=func
+        f = func
 
     if isinstance(cons,list):
-        if isinstance(cons[0],tuple) or isinstance(cons[0],list) or cons[0] is None:
+        if isinstance(cons[0], tuple) or isinstance(cons[0], list) or cons[0] is None:
             if gradient is not None:
-                if algorithm=='l-bfgs-b':
-                    min= optimize.fmin_l_bfgs_b(f,x0,gradient,bounds=cons, iprint=-1, **args)[0]
+                if algorithm == 'l-bfgs-b':
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, iprint=-1, **args)[0]
                 else:
-                    min= optimize.fmin_tnc(f,x0,gradient,bounds=cons,messages=0,**args)[0]
+                    min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
             else:
-                if algorithm=='l-bfgs-b':
-                    min= optimize.fmin_l_bfgs_b(f,x0,approx_grad=True,bounds=cons,iprint=-1, **args)[0]
+                if algorithm == 'l-bfgs-b':
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, iprint=-1, **args)[0]
                 else:
-                    min= optimize.fmin_tnc(f,x0,approx_grad=True,bounds=cons,messages=0,**args)[0]
+                    min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
+        elif isinstance(cons[0], function_type) or isinstance(cons[0], Expression):
+            min = optimize.fmin_cobyla(f, x0, cons, **args)
+    elif isinstance(cons, function_type) or isinstance(cons, Expression):
+        min = optimize.fmin_cobyla(f, x0, cons, **args)
+    return vector(RDF, min)
 
-        elif isinstance(cons[0],function_type):
-            min= optimize.fmin_cobyla(f,x0,cons,iprint=0,**args)
-    elif isinstance(cons, function_type):
-        min= optimize.fmin_cobyla(f,x0,cons,iprint=0,**args)
-    return vector(RDF,min)
 
-
-def linear_program(c,G,h,A=None,b=None,solver=None):
-    """
-    Solves the dual linear programs:
+def linear_program(c, G, h, A=None, b=None, solver=None):
+    r"""
+    Solve the dual linear programs:
 
     - Minimize  `c'x` subject to `Gx + s = h`, `Ax = b`, and `s \geq 0` where
       `'` denotes transpose.
@@ -509,6 +596,15 @@ def linear_program(c,G,h,A=None,b=None,solver=None):
         sage: sol=linear_program(c,G,h)
         sage: sol['x']
         (0.999..., 1.000...)
+
+    Here we solve the same problem with 'glpk' interface to 'cvxopt'::
+
+        sage: sol=linear_program(c,G,h,solver='glpk')
+        GLPK Simplex Optimizer...
+        ...
+        OPTIMAL LP SOLUTION FOUND
+        sage: sol['x']
+        (1.0, 1.0)
 
     Next, we maximize `x+y-50` subject to `50x + 24y \leq 2400`,
     `30x + 33y \leq 2100`, `x \geq 45`, and `y \geq 5`::
@@ -591,9 +687,10 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     EXAMPLES:
 
-    First we create some data points of a sine function with some random
+    First we create some data points of a sine function with some "random"
     perturbations::
 
+        sage: set_random_seed(0)
         sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1)) for i in xsrange(0, 4*pi, 0.2)]
         sage: var('a, b, c, x')
         (a, b, c, x)
@@ -616,7 +713,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     We search for a formula for the `n`-th prime number::
 
-        sage: dataprime = [(i, nth_prime(i)) for i in xrange(1, 5000, 100)]
+        sage: dataprime = [(i, nth_prime(i)) for i in range(1, 5000, 100)]
         sage: find_fit(dataprime, a * x * log(b * x), parameters = [a, b], variables = [x])
         [a == 1.11..., b == 1.24...]
 
@@ -679,14 +776,14 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     def function(x_data, params):
         result = numpy.zeros(len(x_data))
-        for row in xrange(len(x_data)):
+        for row in range(len(x_data)):
             fparams = numpy.hstack((x_data[row], params)).tolist()
             result[row] = func(*fparams)
         return result
 
     def error_function(params, x_data, y_data):
         result = numpy.zeros(len(x_data))
-        for row in xrange(len(x_data)):
+        for row in range(len(x_data)):
             fparams = x_data[row].tolist() + params.tolist()
             result[row] = func(*fparams)
         return result - y_data
@@ -710,44 +807,56 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     return [item[0] == item[1] for item in zip(parameters, estimated_params)]
 
-def binpacking(items,maximum=1,k=None):
+def binpacking(items, maximum=1, k=None, solver=None, verbose=0):
     r"""
-    Solves the bin packing problem.
+    Solve the bin packing problem.
 
     The Bin Packing problem is the following :
 
-    Given a list of items of weights `p_i` and a real value `K`, what is
-    the least number of bins such that all the items can be put in the
-    bins, while keeping sure that each bin contains a weight of at most `K` ?
+    Given a list of items of weights `p_i` and a real value `k`, what is the
+    least number of bins such that all the items can be packed in the bins,
+    while ensuring that the sum of the weights of the items packed in each bin
+    is at most `k` ?
 
-    For more informations : http://en.wikipedia.org/wiki/Bin_packing_problem
+    For more informations, see :wikipedia:`Bin_packing_problem`.
 
-    Two version of this problem are solved by this algorithm :
-         * Is it possible to put the given items in `L` bins ?
-         * What is the assignment of items using the
-           least number of bins with the given list of items ?
+    Two versions of this problem are solved by this algorithm :
+
+    - Is it possible to put the given items in `k` bins ?
+    - What is the assignment of items using the least number of bins with
+      the given list of items ?
 
     INPUT:
 
-    - ``items`` -- A list of real values (the items' weight)
+    - ``items`` -- list or dict; either a list of real values (the items'
+      weight), or a dictionary associating to each item its weight.
 
-    - ``maximum``   -- The maximal size of a bin
+    - ``maximum`` -- (default: 1); the maximal size of a bin
 
-    - ``k``     -- Number of bins
+    - ``k`` -- integer (default: ``None``); Number of bins
 
-      - When set to an integer value, the function returns a partition
-        of the items into `k` bins if possible, and raises an
-        exception otherwise.
+      - When set to an integer value, the function returns a partition of the
+        items into `k` bins if possible, and raises an exception otherwise.
 
       - When set to ``None``, the function returns a partition of the items
-        using the least number possible of bins.
+        using the least possible number of bins.
+
+    - ``solver`` -- (default: ``None``); Specify a Linear Program (LP) solver to
+      be used. If set to ``None``, the default one is used. For more information
+      on LP solvers and which default solver is used, see the method
+      :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
+      :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     OUTPUT:
 
-    A list of lists, each member corresponding to a box and containing
-    the list of the weights inside it. If there is no solution, an
-    exception is raised (this can only happen when ``k`` is specified
-    or if ``maximum`` is less that the size of one item).
+    A list of lists, each member corresponding to a bin and containing either
+    the list of the weights inside it when ``items`` is a list of items' weight,
+    or the list of items inside it when ``items`` is a dictionary. If there is
+    no solution, an exception is raised (this can only happen when ``k`` is
+    specified or if ``maximum`` is less than the weight of one item).
 
     EXAMPLES:
 
@@ -762,13 +871,18 @@ def binpacking(items,maximum=1,k=None):
 
     Checking the bins are of correct size ::
 
-        sage: all([ sum(b)<= 1 for b in bins ])
+        sage: all(sum(b) <= 1 for b in bins)
         True
 
     Checking every item is in a bin ::
 
         sage: b1, b2, b3 = bins
-        sage: all([ (v in b1 or v in b2 or v in b3) for v in values ])
+        sage: all((v in b1 or v in b2 or v in b3) for v in values)
+        True
+
+    And only in one bin ::
+
+        sage: sum(len(b) for b in bins) == len(values)
         True
 
     One way to use only three boxes (which is best possible) is to put
@@ -781,53 +895,70 @@ def binpacking(items,maximum=1,k=None):
         sage: binpacking([0.2,0.3,0.8,0.9], k=2)
         Traceback (most recent call last):
         ...
-        ValueError: This problem has no solution !
-    """
+        ValueError: this problem has no solution !
 
-    if max(items) > maximum:
-        raise ValueError("This problem has no solution !")
+    We can also provide a dictionary keyed by items and associating to each item
+    its weight. Then, the bins contain the name of the items inside it ::
+
+        sage: values = {'a':1/5, 'b':1/3, 'c':2/3, 'd':3/4, 'e':5/7}
+        sage: bins = binpacking(values)
+        sage: set(flatten(bins)) == set(values.keys())
+        True
+
+    TESTS:
+
+    Wrong type for parameter items::
+
+        sage: binpacking(set())
+        Traceback (most recent call last):
+        ...
+        TypeError: parameter items must be a list or a dictionary.
+    """
+    if isinstance(items, list):
+        weight = {i:w for i,w in enumerate(items)}
+    elif isinstance(items, dict):
+        weight = items
+    else:
+        raise TypeError("parameter items must be a list or a dictionary.")
+
+    if max(weight.values()) > maximum:
+        raise ValueError("this problem has no solution !")
 
     if k is None:
         from sage.functions.other import ceil
-        k=ceil(sum(items)/maximum)
+        k = ceil(sum(weight.values())/maximum)
         while True:
             from sage.numerical.mip import MIPSolverException
             try:
-                return binpacking(items,k=k,maximum=maximum)
+                return binpacking(items, k=k, maximum=maximum, solver=solver, verbose=verbose)
             except MIPSolverException:
                 k = k + 1
 
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-    p=MixedIntegerLinearProgram()
+    p = MixedIntegerLinearProgram(solver=solver)
 
-    # Boolean variable indicating whether
-    # the i th element belongs to box b
-    box=p.new_variable(binary = True)
+    # Boolean variable indicating whether the ith element belongs to box b
+    box = p.new_variable(binary=True)
 
-    # Each bin contains at most max
+    # Capacity constraint of each bin
     for b in range(k):
-        p.add_constraint(p.sum([items[i]*box[i,b] for i in range(len(items))]) <= maximum)
+        p.add_constraint(p.sum(weight[i]*box[i,b] for i in weight) <= maximum)
 
     # Each item is assigned exactly one bin
-    for i in range(len(items)):
-        p.add_constraint(p.sum([box[i,b] for b in range(k)]) == 1)
-
-    p.set_objective(None)
+    for i in weight:
+        p.add_constraint(p.sum(box[i,b] for b in range(k)) == 1)
 
     try:
-        p.solve()
+        p.solve(log=verbose)
     except MIPSolverException:
-        raise ValueError("This problem has no solution !")
+        raise ValueError("this problem has no solution !")
 
-    box=p.get_values(box)
+    box = p.get_values(box)
 
-    boxes=[[] for i in range(k)]
+    boxes = [[] for i in range(k)]
 
-    for (i,b),value in box.iteritems():
-        if value == 1:
-            boxes[b].append(items[i])
+    for i,b in box:
+        if box[i,b] == 1:
+            boxes[b].append(weight[i] if isinstance(items, list) else i)
 
     return boxes
-
-
-

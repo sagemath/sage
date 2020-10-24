@@ -12,6 +12,7 @@ cdef class Function(SageObject):
     cdef _register_function(self)
 
 cdef class BuiltinFunction(Function):
+    cdef object _preserved_arg
     cdef _is_registered(self)
 
 cdef class GinacFunction(BuiltinFunction):

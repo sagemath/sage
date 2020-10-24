@@ -572,7 +572,7 @@ Tupel besteht, welches das Interval des Definitionsbereichs angibt, also z.B. ``
 `[-\infty, 0]` und einer für das Interval geltende Funktionsgleichung. Als letztes Argument muss angegeben werden,
 welche Variable durch die Funktion gebunden werden soll::
 
-    sage: f = Piecewise([[(-oo,0), -x^2],[(0,oo), x^2]], x)
+    sage: f = piecewise([[(-oo,0), -x^2],[(0,oo), x^2]], var=x)
     sage: f(3)
     9
     sage: f(-3)
@@ -592,7 +592,7 @@ einer rationalen Funktion zu finden. Diese Zerlegung kann auch mit Sage gemacht 
 
 betrachten, kann diese als Summe von zwei Brüchen geschrieben werden:
 
-.. math:: f(x) = \frac{1}{x^2 - 1} = \frac{\frac{1}{2}}{x^2-1} - \frac{\frac{1}{2}}{x^2+1}
+.. math:: f(x) = \frac{1}{x^2 - 1} = \frac{\frac{1}{2}}{x-1} - \frac{\frac{1}{2}}{x+1}
 
 Diese Zerlegung findet ``partial_fraction()`` in Sage für uns::
 
@@ -716,7 +716,7 @@ die ähnliche Funktion ``canonicalize_radical``::
 Diese Gesetze können auch umgekehrt verwendet werden, wie in diesem Beispiel::
 
     sage: (5*log(2) + 5*log(5)).simplify_log()
-    log(100000)
+    5*log(10)
 
 Es geben weitere mögliche Vereinfachungen, die wir hier nicht weiter erwähnen.
 
@@ -916,7 +916,7 @@ Die Addition von Vektoren könnte also zum Beispiel wie folgt veranschaulicht we
     sage: v1 = arrow((0,0), (3,4))
     sage: v2 = arrow((3,4), (6,1))
     sage: sum_v1_v2 = arrow((0,0), (6,1), color='red')
-    sage: plot(v1 + v2 + sum_v1_v2)
+    sage: v1 + v2 + sum_v1_v2
     Graphics object consisting of 3 graphics primitives
 
 Falls die Vektorpfeile zu dick oder zu dünn sind, kann mit der ``width`` Option die Strichbreite angepasst werden.
@@ -926,8 +926,8 @@ in der Grafik erwünscht sind::
     sage: v1 = arrow((0,0), (3,4), width=5)
     sage: v2 = arrow((3,4), (6,1), width=5)
     sage: sum_v1_v2 = arrow((0,0), (6,1), color='red', width=6)
-    sage: plot(v1 + v2 + sum_v1_v2, gridlines=true)
-    Graphics object consisting of 3 graphics primitives
+    sage: G = v1 + v2 + sum_v1_v2
+    sage: G.show(gridlines=true)
 
 Analysis
 ========
@@ -1242,8 +1242,8 @@ Seite der deutschen Version von Sage findet sich hier:
 .. rubric:: Footnotes
 
 .. [#keywords] http://docs.python.org/2/reference/lexical_analysis.html#keywords
-.. [#tutorial] http://www.sagemath.org/de/html/tutorial/
-.. [#units] http://www.sagemath.org/doc/reference/calculus/sage/symbolic/units.html
-.. [#2dgraphics] http://www.sagemath.org/doc/reference/plotting/index.html
-.. [#scatterplot] http://www.sagemath.org/doc/reference/plotting/sage/plot/scatter_plot.html
+.. [#tutorial] http://doc.sagemath.org/html/de/tutorial/
+.. [#units] http://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/units.html
+.. [#2dgraphics] http://doc.sagemath.org/html/en/reference/plotting/index.html
+.. [#scatterplot] http://doc.sagemath.org/html/en/reference/plotting/sage/plot/scatter_plot.html
 .. [#listcomp] http://docs.python.org/2/tutorial/datastructures.html#list-comprehensions

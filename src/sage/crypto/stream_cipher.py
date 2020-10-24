@@ -1,6 +1,7 @@
 """
 Stream Ciphers
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
@@ -9,8 +10,8 @@ Stream Ciphers
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from lfsr import lfsr_sequence
-from cipher import SymmetricKeyCipher
+from .lfsr import lfsr_sequence
+from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 
 class LFSRCipher(SymmetricKeyCipher):
@@ -75,7 +76,7 @@ class LFSRCipher(SymmetricKeyCipher):
         -  ``mode`` - ignored (default: 'ECB')
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: k = GF(2)
             sage: P.<x> = PolynomialRing( k )
@@ -120,7 +121,7 @@ class LFSRCipher(SymmetricKeyCipher):
         """
         The connection polynomial defining the LFSR of the cipher.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: k = GF(2)
             sage: P.<x> = PolynomialRing( k )
@@ -135,7 +136,7 @@ class LFSRCipher(SymmetricKeyCipher):
         """
         The initial state of the LFSR cipher.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: k = GF(2)
             sage: P.<x> = PolynomialRing( k )
@@ -185,7 +186,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         The LFSR cipher generating the output key stream.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FF = FiniteField(2)
             sage: P.<x> = PolynomialRing(FF)
@@ -205,7 +206,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         The LFSR cipher generating the decimating key stream.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: FF = FiniteField(2)
             sage: P.<x> = PolynomialRing(FF)

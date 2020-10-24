@@ -1,16 +1,18 @@
 r"""
 Hexads in S(5,6,12)
 
-This module completes a 5-element subset of a 12-set X
-into a hexad in a Steiner system S(5,6,12) using Curtis and
-Conway's "kitten method".  The labeling is either the
+This module completes a 5-element subset of a 12-set `X`
+into a hexad in a Steiner system `S(5, 6, 12)` using Curtis
+and Conway's "kitten method".  The labeling is either the
 "modulo 11" labeling or the "shuffle" labeling.
 
 The  main functions implemented in this file are
-blackjack_move and find_hexad. Enter "blackjack_move?"
+:meth:`Minimog.blackjack_move` and :meth:`Minimog.find_hexad`.
+
+Enter ``blackjack_move?``
 for help to play blackjack (i.e., the rules of the game), or
-"find_hexad?" for help finding hexads of S(5,6,12) in the
-shuffle labeling.
+``find_hexad?`` for help finding hexads of `S(5, 6, 12)` in
+the shuffle labeling.
 
 This picture is the kitten in the "shuffle" labeling::
 
@@ -40,9 +42,10 @@ The corresponding MINIMOG is::
              |  4  |  1  |  8  | 11  |
              +-----+-----+-----+-----+
 
-which is specified by the global variable "minimog_shuffle".
-See the docstrings for find_hexad and blackjack_move for
-further details and examples.
+which is specified by the global variable ``minimog_shuffle``.
+
+See the docstrings for :meth:`Minimog.find_hexad` and
+:meth:`Minimog.blackjack_move` for further details and examples.
 
 AUTHOR:
 
@@ -50,18 +53,13 @@ David Joyner (2006-05)
 
 REFERENCES:
 
-.. [Cur84] R. Curtis, The Steiner system `S(5,6,12)`, the Mathieu
-   group `M_{12}`, and the kitten, in *Computational group theory*,
-   ed. M. Atkinson, Academic Press, 1984.
+- [Cu1984]_
 
-.. [Con84] J. Conway, Hexacode and tetracode - MINIMOG and MOG,
-   in *Computational group theory*, ed. M. Atkinson, Academic Press, 1984.
+- [Co1984]_
 
-.. [ConSlo86] J. Conway and N. Sloane, *Lexicographic codes: error-correcting
-   codes from game theory*, IEEE Trans. Infor. Theory 32 (1986) 337-348.
+- [CS1986]_
 
-.. [KahRyb01] J. Kahane and A. Ryba, The hexad game, *Electronic Journal of
-   Combinatorics*, 8 (2001) http://www.combinatorics.org/Volume_8/Abstracts/v8i2r11.html
+- [KR2001]_
 
 Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 """
@@ -73,22 +71,19 @@ Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
-from sage.rings.infinity import Infinity
+from sage.rings.infinity import infinity
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.rational_field import RationalField
-QQ = RationalField()
-infinity = Infinity
-from sage.rings.finite_rings.constructor import FiniteField
-GF = FiniteField
+from sage.matrix.constructor import matrix
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.calculus.calculus import SR
-#SR = SymbolicRing()
 
 
 def view_list(L):
     """
-    This provides a printout of the lines, crosses and squares of the MINIMOG,
-    as in Curtis' paper.
+    This provides a printout of the lines, crosses and squares
+    of the MINIMOG, as in Curtis' paper [Cu1984]_.
 
     EXAMPLES::
 
@@ -110,18 +105,13 @@ def view_list(L):
         [1 1 0]
         [1 1 0]
     """
-    MS = MatrixSpace(QQ,3,3)
-    box = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)]
-    A = MS([[0 for i in range(3)] for i in range(3)])
-    for x in box:
-        if x in L:
-            A[x] = 1
-    return A
+    return matrix(GF(2), 3, 3, lambda x, y: 1 if (x,y) in L else 0)
+
 
 
 def picture_set(A, L):
     """
-    This is needed in the find_hexad function below.
+    This is needed in the :meth:`Minimog.find_hexad` function below.
 
     EXAMPLES::
 
@@ -135,10 +125,10 @@ def picture_set(A, L):
     return set([A[x] for x in L])
 
 
-class Minimog():
-    """
-    This implements the Conway/Curtis minimog idea for describing the Steiner
-    triple system S(5,6,12).
+class Minimog(object):
+    r"""
+    This implements the Conway/Curtis minimog idea for describing
+    the Steiner triple system `S(5, 6, 12)`.
 
     EXAMPLES::
 
@@ -150,7 +140,6 @@ class Minimog():
         [        0         3 +Infinity         2]
         [        5         9         8        10]
         [        4         1         6         7]
-
     """
     def __init__(self, type="shuffle"):
         self.type = type
@@ -162,7 +151,7 @@ class Minimog():
         elif type == "modulo11":
             self.minimog = minimog_modulo11
         else:
-            raise ValueError("That Minimog type is not implemented.")
+            raise ValueError("that Minimog type is not implemented")
         # This initializes the variables in the game.
         MS34 = MatrixSpace(SR,3,4)
         A = self.minimog
@@ -174,7 +163,7 @@ class Minimog():
         self.picture21 = MS33([[A[(2,2)],A[(1,3)],A[(0,1)]],[A[(0,3)],A[(2,3)],A[(2,0)]],[A[(1,0)],A[(1,1)],A[(1,2)]]])
         #######     self.picture21 is the "picture at 0"
 
-        self.line = [set([]) for i in range(12)]
+        self.line = list(range(12))
         self.line[0] = set([(0,0),(0,1),(0,2)])
         self.line[1] = set([(1,0),(1,1),(1,2)])
         self.line[2] = set([(2,0),(2,1),(2,2)])
@@ -188,7 +177,7 @@ class Minimog():
         self.line[10] = set([(0,0),(1,2),(2,1)])
         self.line[11] = set([(1,0),(0,1),(2,2)])
 
-        self.cross = [set([]) for i in range(18)]
+        self.cross = list(range(18))
         self.cross[0] = set([(0,0),(0,1),(0,2),(1,0),(2,0)])
         self.cross[1] = set([(0,0),(0,1),(0,2),(1,2),(2,2)])
         self.cross[2] = set([(0,0),(1,0),(2,0),(2,1),(2,2)])
@@ -212,38 +201,46 @@ class Minimog():
         for i in range(18):
             self.square[i] = self.box - self.cross[i]
 
-        MS34_GF3 = MatrixSpace(GF(3),3,4)
-        self.col1 = MS34_GF3([[1,0,0,0],[1,0,0,0],[1,0,0,0]])
-        self.col2 = MS34_GF3([[0,1,0,0],[0,1,0,0],[0,1,0,0]])
-        self.col3 = MS34_GF3([[0,0,1,0],[0,0,1,0],[0,0,1,0]])
-        self.col4 = MS34_GF3([[0,0,0,1],[0,0,0,1],[0,0,0,1]])
+        MS34_GF3 = MatrixSpace(GF(2), 3, 4)
+        cols = {}
+        cols[1] = MS34_GF3([[1,0,0,0],[1,0,0,0],[1,0,0,0]])
+        cols[2] = MS34_GF3([[0,1,0,0],[0,1,0,0],[0,1,0,0]])
+        cols[3] = MS34_GF3([[0,0,1,0],[0,0,1,0],[0,0,1,0]])
+        cols[4] = MS34_GF3([[0,0,0,1],[0,0,0,1],[0,0,0,1]])
+        self.col = cols
 
-        self.tet1 = MS34_GF3([[1,1,1,1],[0,0,0,0],[0,0,0,0]])
-        self.tet2 = MS34_GF3([[1,0,0,0],[0,1,1,1],[0,0,0,0]])
-        self.tet3 = MS34_GF3([[1,0,0,0],[0,0,0,0],[0,1,1,1]])
-        self.tet4 = MS34_GF3([[0,1,0,0],[1,0,1,0],[0,0,0,1]])
-        self.tet5 = MS34_GF3([[0,0,0,1],[1,1,0,0],[0,0,1,0]])
-        self.tet6 = MS34_GF3([[0,0,1,0],[1,0,0,1],[0,1,0,0]])
-        self.tet7 = MS34_GF3([[0,1,0,0],[0,0,0,1],[1,0,1,0]])
-        self.tet8 = MS34_GF3([[0,0,1,0],[0,1,0,0],[1,0,0,1]])
-        self.tet9 = MS34_GF3([[0,0,0,1],[0,0,1,0],[1,1,0,0]])
-        self.col = [self.col1, self.col2, self.col3, self.col4]
-        self.tet = [self.tet1, self.tet2, self.tet3, self.tet4,
-                    self.tet5, self.tet6, self.tet7, self.tet8, self.tet9]
-        # return picture00,picture02,picture21,line,cross,square,col,tet
+        tets = {}
+        tets[1] = MS34_GF3([[1,1,1,1],[0,0,0,0],[0,0,0,0]])
+        tets[2] = MS34_GF3([[1,0,0,0],[0,1,1,1],[0,0,0,0]])
+        tets[3] = MS34_GF3([[1,0,0,0],[0,0,0,0],[0,1,1,1]])
+        tets[4] = MS34_GF3([[0,1,0,0],[1,0,1,0],[0,0,0,1]])
+        tets[5] = MS34_GF3([[0,0,0,1],[1,1,0,0],[0,0,1,0]])
+        tets[6] = MS34_GF3([[0,0,1,0],[1,0,0,1],[0,1,0,0]])
+        tets[7] = MS34_GF3([[0,1,0,0],[0,0,0,1],[1,0,1,0]])
+        tets[8] = MS34_GF3([[0,0,1,0],[0,1,0,0],[1,0,0,1]])
+        tets[9] = MS34_GF3([[0,0,0,1],[0,0,1,0],[1,1,0,0]])
+        self.tet = tets
 
     def __repr__(self):
-        return "Minimog of type %s" % self.type
-
-    def __str__(self):
         """
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
             sage: M = Minimog(type="modulo11")
-            sage: print M
+            sage: M
+            Minimog of type modulo11
+        """
+        return "Minimog of type %s" % self.type
+
+    def __str__(self):
+        """
+        EXAMPLES::
+
+            sage: M = Minimog(type="modulo11")
+            sage: print(M)
             Minimog of type modulo11 associated to
-             [        0         3 +Infinity         2]
+            [        0         3 +Infinity         2]
             [        5         9         8        10]
             [        4         1         6         7]
 
@@ -252,7 +249,7 @@ class Minimog():
                                                           self.minimog)
 
     def _latex_(self):
-        """
+        r"""
         Prints latex code.
 
         EXAMPLES::
@@ -303,33 +300,35 @@ class Minimog():
 
         """
         MINIMOG = self.minimog
-        Kitten1 = [' ',' ',' ',' ',' ',' ',' ',' ',' ',str(MINIMOG[0][2]),' ',' ',' ',' ',' ']
-        Kitten2 = [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-        Kitten3 = [' ',' ',' ',' ',' ',' ',' ',' ',' ',str(MINIMOG[2][2]),' ',' ',' ',' ',' ']
-        Kitten4 = [' ',' ',' ',' ',' ',' ',' ',str(MINIMOG[0][3]),' ',' ',str(MINIMOG[1][3]),' ',' ',' ',' ']
-        Kitten5 = [' ',' ',' ',' ',' ',' ',str(MINIMOG[1][0]),' ',' ',str(MINIMOG[2][3]),' ',' ',str(MINIMOG[0][1]),' ',' ',' ']
-        Kitten6 = [' ',' ',' ',' ',' ',str(MINIMOG[2][2]),' ',' ',str(MINIMOG[1][1]),' ',' ',str(MINIMOG[2][0]),' ',' ',str(MINIMOG[2][2]),' ',' ']
-        Kitten7 = [' ',' ',' ',str(MINIMOG[0][3]),' ',' ',str(MINIMOG[1][3]),' ',' ',str(MINIMOG[1][2]),' ',' ',str(MINIMOG[0][3]),' ',' ',str(MINIMOG[1][3]),' ']
-        Kitten8 = [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-        Kitten9 = [str(MINIMOG[0][0]),' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',str(MINIMOG[2][1])]
-        Kitten = [Kitten1, Kitten2, Kitten3, Kitten4, Kitten5, Kitten6, Kitten7, Kitten8, Kitten9]
-        kitten = "\n".join("".join(u) for u in Kitten)
-        print kitten
+        kitten = '         {}'.format(MINIMOG[0][2])
+        kitten += '\n           '
+        kitten += '\n         {}'.format(MINIMOG[2][2])
+        kitten += '\n       {}  {}'.format(MINIMOG[0][3], MINIMOG[1][3])
+        kitten += '\n      {}  {}  {}'.format(MINIMOG[1][0], MINIMOG[2][3], MINIMOG[0][1])
+        kitten += '\n     {0}  {1}  {2}  {0}'.format(MINIMOG[2][2], MINIMOG[1][1], MINIMOG[2][0])
+        kitten += '\n   {0}  {1}  {2}  {0}  {1}'.format(MINIMOG[0][3], MINIMOG[1][3], MINIMOG[1][2])
+        kitten += '\n           \n'
+        kitten += '{}                   {}'.format(MINIMOG[0][0], MINIMOG[2][1])
+        print(kitten)
 
     def find_hexad0(self, pts):
         """
+        Find a hexad of type 0.
+
         INPUT:
 
-        - pts -- a set of 2 distinct elements of MINIMOG, but not including the
-          "points at infinity"
+        - ``pts`` -- a set of 2 distinct elements of MINIMOG, but not
+          including the "points at infinity"
 
         OUTPUT:
 
-        - hexad containing pts and of type 0 (the 3 points "at infinity" union a line)
+        hexad containing ``pts`` and of type 0 (the 3 points "at
+        infinity" union a line)
 
-        NOTE:
+        .. NOTE::
 
-        3 points "at infinity" = {MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}
+            The 3 points "at infinity" are
+            ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``.
 
         EXAMPLES::
 
@@ -359,16 +358,21 @@ class Minimog():
 
     def find_hexad1(self, pts):
         """
+        Find a hexad of type 1.
+
         INPUT:
 
-        pts -- a set pts of 5 distinct elements of MINIMOG
+        - ``pts`` -- a set of 5 distinct elements of MINIMOG
 
         OUTPUT:
 
-        hexad containing pts and of type 1 (union of 2 parallel lines -- *no*
-        points "at infinity")
+        hexad containing ``pts`` and of type 1 (union of 2 parallel
+        lines -- *no* points "at infinity")
 
-        NOTE: 3 points "at infinity" = {MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}
+        .. NOTE::
+
+            The 3 points "at infinity" are
+            ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``.
 
         EXAMPLES::
 
@@ -399,12 +403,14 @@ class Minimog():
         return [],[]
 
     def find_hexad2(self, pts, x0):
-        """
+        r"""
+        Find a hexad of type 2.
+
         INPUT:
 
-        - pts -- a list S of 4 elements of MINIMOG, not including any "points
-          at infinity"
-        - x0  -- in {MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}
+        - ``pts`` -- a list S of 4 elements of MINIMOG, not including
+          any "points at infinity"
+        - ``x0`` -- in ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``
 
         OUTPUT:
 
@@ -418,11 +424,11 @@ class Minimog():
             ([], [])
 
         The above output indicates that there is no hexad of type 2
-        containing {2,3,4,5}. However, there is one containing {2,3,4,8}::
+        containing `\{2,3,4,5\}`. However, there is one containing
+        `\{2,3,4,8\}`::
 
             sage: M.find_hexad2([2,3,4,8],0)
             ([0, 2, 3, 4, 8, 9], ['cross 12', 'picture 0'])
-
         """
         MINIMOG = self.minimog
         L = set(pts)
@@ -444,11 +450,14 @@ class Minimog():
 
     def find_hexad3(self, pts, x0, x1):
         r"""
+        Find a hexad of type 3.
+
         INPUT:
 
-        - pts -- a list of 3 elements of MINIMOG, not including any "points at
-          infinity"
-        - x0,x1  -- in {MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}
+        - ``pts`` -- a list of 3 elements of MINIMOG, not including any
+          "points at infinity"
+        - ``x0``, ``x1``  -- in ``{MINIMOG[0][2], MINIMOG[2][1],
+          MINIMOG[0][0]}``
 
         OUTPUT:
 
@@ -483,26 +492,35 @@ class Minimog():
 
     def find_hexad(self, pts):
         r"""
+        Find a hexad of some type.
+
         INPUT:
 
-        pts -- a list S of 5 elements of MINIMOG
+        - ``pts`` -- a list S of 5 elements of MINIMOG
 
         OUTPUT:
 
         hexad containing `S \cup \{x0\}` of some type
 
-        NOTE: 3 "points at infinity" = {MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}
+        .. NOTE::
 
-        Theorem (Curtis, Conway): Each hexads is of exactly one of the following types:
+            The 3 "points at infinity" are
+            ``{MINIMOG[0][2], MINIMOG[2][1], MINIMOG[0][0]}``.
+
+        Theorem ([Cu1984]_,  [Co1984]_): Each hexads is of exactly one
+        of the following types:
 
         0. {3 "points at infinity"} union {any line},
-        1. the union of any two (distinct) parallel lines in the same picture,
-        2. one "point at infinity" union a cross in the corresponding picture,
-        3. two "points at infinity" union a square in the picture corresponding
-           to the omitted point at infinity.
+        1. the union of any two (distinct) parallel lines in the same
+           picture,
+        2. one "point at infinity" union a cross in the corresponding
+           picture, or
+        3. two "points at infinity" union a square in the picture
+           corresponding to the omitted point at infinity.
 
-        More precisely, there are 132 such hexads (12 of type 0, 12 of type 1, 54 of type 2,
-        and 54 of type 3). They form a Steiner system of type `(5,6,12)`.
+        More precisely, there are 132 such hexads (12 of type 0,
+        12 of type 1, 54 of type 2, and 54 of type 3).
+        They form a Steiner system of type `(5,6,12)`.
 
         EXAMPLES::
 
@@ -524,19 +542,21 @@ class Minimog():
 
         David Joyner (2006-05)
 
-        REFERENCES: [Cur84]_,  [Con84]_
+        REFERENCES: [Cu1984]_,  [Co1984]_
         """
         MINIMOG = self.minimog
         L = set(pts)
         LL = L.copy()
+        pts_at_infty = set([MINIMOG[0][2],MINIMOG[2][1],MINIMOG[0][0]])
         # recall & means intersection
-        L2 = LL & set([MINIMOG[0][2],MINIMOG[2][1],MINIMOG[0][0]])
+        L2 = LL & pts_at_infty
         if len(L2) == 3:  # must be type 0 (line + pts at infty)
-            H, WHAT = self.find_hexad0(LL - set([MINIMOG[0][2],MINIMOG[2][1],MINIMOG[0][0]]))
+            H, WHAT = self.find_hexad0(LL - pts_at_infty)
             return H, WHAT
         if len(L2) == 2:  # type 0 or 3
             if (MINIMOG[0][2] in LL and MINIMOG[2][1] in LL):
-                H, WHAT = self.find_hexad3(LL - set([MINIMOG[0][2],MINIMOG[2][1]]),MINIMOG[0][2],MINIMOG[2][1])
+                H, WHAT = self.find_hexad3(LL - set([MINIMOG[0][2],MINIMOG[2][1]]),
+                                           MINIMOG[0][2], MINIMOG[2][1])
                 if H != []:   # must be type 3
                     return list(H), WHAT
                 if H == []:   # could be type 0
@@ -544,7 +564,8 @@ class Minimog():
                     if H != []:   # must be type 0
                         return list(H), WHAT
             if (MINIMOG[2][1] in LL and MINIMOG[0][0] in LL):
-                H, WHAT = self.find_hexad3(LL - set([MINIMOG[2][1],MINIMOG[0][0]]),MINIMOG[2][1],MINIMOG[0][0])
+                H, WHAT = self.find_hexad3(LL - set([MINIMOG[2][1],MINIMOG[0][0]]),
+                                           MINIMOG[2][1], MINIMOG[0][0])
                 if H != []:   # must be type 3
                     return list(H), WHAT
                 if H == []:   # could be type 0
@@ -552,7 +573,8 @@ class Minimog():
                     if H != []:   # must be type 0
                         return list(H), WHAT
             if (MINIMOG[0][2] in LL and MINIMOG[0][0] in LL):
-                H, WHAT = self.find_hexad3(LL - set([MINIMOG[0][2],MINIMOG[0][0]]),MINIMOG[0][2],MINIMOG[0][0])
+                H, WHAT = self.find_hexad3(LL - set([MINIMOG[0][2],MINIMOG[0][0]]),
+                                           MINIMOG[0][2], MINIMOG[0][0])
                 if H != []:   # must be type 3
                     return list(H), WHAT
                 if H == []:   # could be type 0
@@ -560,7 +582,7 @@ class Minimog():
                     if H != []:   # must be type 0
                         return list(H), WHAT
         if len(L2) == 1:
-            H, WHAT = self.find_hexad2(LL - L2,list(L2)[0])
+            H, WHAT = self.find_hexad2(LL - L2, list(L2)[0])
             if H == []:   # not a cross in picture at infinity
                 if list(L2)[0] == MINIMOG[2][1]:
                     L1 = LL - L2
@@ -591,9 +613,9 @@ class Minimog():
                         return list(H), WHAT
             return list(H), WHAT
             # a cross in a pic at infty
-        if len(L2) == 0:  # L is either a union of 2 lines or a cross
+        if not L2:  # L is either a union of 2 lines or a cross
             for i in LL:
-                for j in [MINIMOG[0][2],MINIMOG[2][1],MINIMOG[0][0]]:
+                for j in pts_at_infty:
                     H, WHAT = self.find_hexad2(LL - set([i]),j)
                     if (H != [] and i in H):
                         return list(H), WHAT  # L is in a cross
@@ -601,32 +623,43 @@ class Minimog():
             return H, WHAT
 
     def blackjack_move(self, L0):
-        """
-        L is a list of cards of length 6, taken from {0,1,...,11}.
+        r"""
+        Perform a blackjack move.
 
-        MATHEMATICAL BLACKJACK
+        INPUT:
 
-        Mathematical blackjack is played with 12 cards, labeled `0,...,11`
-        (for example:  king,  ace, `2`, `3`, ..., `10`,  jack, where the  king is
-        `0` and the  jack is `11`). Divide the 12 cards into two piles of `6` (to be
-        fair, this should be done randomly). Each of the `6` cards of one of these
-        piles are to be placed face up on the table. The remaining cards are in a
-        stack which is shared and visible to both players. If the sum of the cards
-        face up on the table is less than 21 then no legal move is possible so you must
-        shuffle the cards and deal a new game. (Conway calls such a game `*={0|0}`,
-        where `0={|}`; in this game the first player automatically wins.)
+        - ``L0`` -- a list of cards of length 6, taken
+          from `\{0, 1, ..., 11\}`
+
+        .. RUBRIC:: MATHEMATICAL BLACKJACK
+
+        Mathematical blackjack is played with 12 cards, labeled `0, ..., 11`
+        (for example:  king,  ace, `2`, `3`, ..., `10`, jack, where the
+        king is `0` and the  jack is `11`). Divide the 12 cards into two
+        piles of `6` (to be fair, this should be done randomly). Each of
+        the `6` cards of one of these piles are to be placed face up on
+        the table. The remaining cards are in a stack which is shared
+        and visible to both players. If the sum of the cards face up on
+        the table is less than 21 then no legal move is possible so you
+        must shuffle the cards and deal a new game. (Conway calls such
+        a game `*={0|0}`, where `0={|}`; in this game the first player
+        automatically wins.)
 
         * Players alternate moves.
-        * A move consists of exchanging a card on the table with a lower card from the other pile.
-        * The player whose move makes the sum of the cards on the table under 21 loses.
+        * A move consists of exchanging a card on the table with a
+          lower card from the other pile.
+        * The player whose move makes the sum of the cards on the table
+          under 21 loses.
 
-        The winning strategy (given below) for this game is due to Conway and Ryba.
-        There is a Steiner system `S(5,6,12)` of hexads in the set `\{0,1,...,11\}`.
-        This Steiner system is associated to the MINIMOG of in the "shuffle numbering"
-        rather than the "modulo `11` labeling".
+        The winning strategy (given below) for this game is due to
+        Conway and Ryba. There is a Steiner system `S(5,6,12)` of hexads
+        in the set `\{0, 1, ..., 11\}`. This Steiner system is associated
+        to the MINIMOG of in the "shuffle numbering" rather than the
+        "modulo `11` labeling".
 
-        Proposition (Ryba, Conway)   For this Steiner system, the winning strategy is to choose a
-        move which is a hexad from this system.
+        **Proposition** ([KR2001]_) For this Steiner system, the
+        winning strategy is to choose a move which is a hexad from
+        this system.
 
         EXAMPLES::
 
@@ -663,7 +696,7 @@ class Minimog():
 
         David Joyner (2006-05)
 
-        REFERENCES: [ConSlo86]_, [KahRyb01]_
+        REFERENCES: [CS1986]_, [KR2001]_
         """
         total = sum(L0)
         if total < 22:
@@ -672,11 +705,11 @@ class Minimog():
         for x in L:
             h, WHAT = self.find_hexad(L - set([x]))
             if list(L0) == list(h):
-                print "      This is a hexad. \n      There is no winning move, so make a random legal move."
+                print("      This is a hexad. \n      There is no winning move, so make a random legal move.")
                 return L0
             y = list(set(h) - (L - set([x])))[0]
-            #print x,y,h
             if y < x:
                 return str(x) + ' --> ' + str(y) + ". The total went from " + str(total) + " to " + str(total - x + y) + "."
-        print "This is a hexad. \n There is no winning move, so make a random legal move."
+        print("This is a hexad. \n There is no winning move, so make a random legal move.")
         return L0
+

@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser
-from l_series_gross_zagier_coeffs import gross_zagier_L_series
+from .l_series_gross_zagier_coeffs import gross_zagier_L_series
 from sage.modular.dirichlet import kronecker_character
 
 
@@ -15,7 +16,7 @@ class GrossZagierLseries(SageObject):
         `\QQ` and `A` is an ideal class in an imaginary quadratic number field.
 
         For the exact definition, in the more general setting of modular forms
-        instead of elliptic curves, see section IV of [GrossZagier]_.
+        instead of elliptic curves, see section IV of [GZ1986]_.
 
         INPUT:
 
@@ -56,7 +57,7 @@ class GrossZagierLseries(SageObject):
         self._dokchister = Dokchitser(N ** 2 * D ** 2,
                                       [0, 0, 1, 1],
                                       weight=2, eps=epsilon, prec=prec)
-        self._nterms = nterms = Integer(self._dokchister.gp()('cflength()'))
+        self._nterms = nterms = Integer(self._dokchister.num_coeffs())
         if nterms > 1e6:
             # just takes way to long
             raise ValueError("Too many terms: {}".format(nterms))

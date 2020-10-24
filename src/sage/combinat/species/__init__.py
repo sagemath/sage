@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Combinatorial Species
 =====================
 
@@ -57,5 +57,3 @@ Group cycle index series
 - :ref:`sage.combinat.species.group_cycle_index_series_library`
 
 """
-
-import all

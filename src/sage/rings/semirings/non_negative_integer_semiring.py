@@ -33,7 +33,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         True
 
         sage: NN.category()
-        Join of Category of semirings and Category of commutative monoids and Category of infinite enumerated sets and Category of facade sets
+        Category of facade infinite enumerated commutative semirings
 
     Here is a piece of the Cayley graph for the multiplicative structure::
 
@@ -67,7 +67,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             sage: NN = NonNegativeIntegerSemiring(); NN
             Non negative integer semiring
             sage: NN.category()
-            Join of Category of semirings and Category of commutative monoids and Category of infinite enumerated sets and Category of facade sets
+            Category of facade infinite enumerated commutative semirings
             sage: TestSuite(NN).run()
         """
         NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(), InfiniteEnumeratedSets()) )

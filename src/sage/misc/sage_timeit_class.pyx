@@ -1,12 +1,12 @@
+# This is here in Cython so we can access the interpreter globals
+# cython: old_style_globals=True
 """
 The ``timeit`` command
 
 This uses the function :func:`~sage.misc.sage_timeit.sage_timeit`.
 """
 
-# This is here in Cython so we can get the interpreter globals
-
-import sage_timeit
+from . import sage_timeit
 
 
 class SageTimeit:
@@ -14,9 +14,9 @@ class SageTimeit:
     Time execution of a command or block of commands.
 
     Displays the best WALL TIME for execution of the given code. This
-    is based on the Python timeit module, which avoids a number of
+    is based on the Python ``timeit`` module, which avoids a number of
     common traps for measuring execution times.  It is also based on
-    IPython's %timeit command.
+    IPython's ``%timeit`` command.
 
     TYPICAL INPUT FORMAT::
 
@@ -43,11 +43,11 @@ class SageTimeit:
         sage: timeit("a = 2\nb=131\nfactor(a^b-1)", number=25)
         25 loops, best of 3: ... per loop
 
-    .. seealso:: :func:`runsnake`
+    .. SEEALSO:: :func:`runsnake`
     """
     def eval(self, code, globs=None, locals=None, **kwds):
         r"""
-        This eval function is called when doing \%timit in the notebook.
+        This eval function is called when doing \%timeit in the notebook.
 
         INPUT:
 
@@ -71,16 +71,16 @@ class SageTimeit:
 
         We emphasize that timeit times WALL TIME. This is good in the
         context of Sage where commands often call out to other
-        subprocesses that don't appear in CPU time. ::
+        subprocesses that do not appear in CPU time. ::
 
-            sage: timeit('sleep(0.5)', number=3)  # long time (5s on sage.math, 2012)
+            sage: timeit('sleep(float(0.5))', number=3)  # long time (5s on sage.math, 2012)
             3 loops, best of 3: ... ms per loop
         """
         if globs is None:
             globs = globals()
         return sage_timeit.sage_timeit(code, globs, **kwds)
 
-    def __call__(self, code, globals=None, preparse=None, **kwds):
+    def __call__(self, code, globals=None, **kwds):
         """
         INPUT:
 
@@ -103,18 +103,17 @@ class SageTimeit:
 
         OUTPUT:
 
-        This method prints the timing information and does not return
-        anything, except if the option ``seconds=True`` was passed, in
-        which case the wall time in seconds is returned.
+        Return the timing information, either as
+        :class:`~sage.misc.sage_timeit.SageTimeitResult`
+        or as a floating-point number containing the number of seconds
+        (if ``seconds=True`` was passed).
 
         EXAMPLES::
 
             sage: timeit('2^10000', preparse=False, number=100)
             100 loops, best of 3: ... per loop
         """
-        if 'seconds' in kwds:
-            return self.eval(code, globals, preparse=preparse, **kwds)
-        print(self.eval(code, globals, preparse=preparse, **kwds))
+        return self.eval(code, globals, **kwds)
 
 
 timeit = SageTimeit()

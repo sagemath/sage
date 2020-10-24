@@ -1,4 +1,4 @@
-from matroid cimport Matroid
+from .matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):
     cdef list matroids

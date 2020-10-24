@@ -1,0 +1,5 @@
+cd src/build/
+
+# Do the tests with the installed version of SCIP.
+# (The uninstalled ones do not work because we did not adjust their library dependencies.)
+$MAKE test  | tee testsuite.log

@@ -1,11 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 # -*- coding: utf-8 -*-
 """
 Sage IPython startup script.
 """
 
-# Install extra readline commands before IPython initialization
-from sage.repl.readline_extra_commands import *
+# Display startup banner. Do this before anything else to give the user
+# early feedback that Sage is starting.
+from sage.misc.banner import banner
+banner()
 
 from sage.repl.interpreter import SageTerminalApp
 

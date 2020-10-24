@@ -12,6 +12,8 @@ This file collects tests requiring Cython.
 #*****************************************************************************
 
 from sage.misc.fast_methods cimport FastHashable_class
+
+
 cdef class ClassWithLargeHash(FastHashable_class):
     """
     This class tests against a bug with :class:`FastHashable_class`

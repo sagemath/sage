@@ -164,7 +164,7 @@ TESTS::
     sage: M(9) = x                                          # optional - scilab
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call (..., line 1)
+    SyntaxError: can...t assign to function call (..., line 1)
 
 AUTHORS:
 
@@ -186,10 +186,13 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
 
-from expect import Expect, ExpectElement
+from .expect import Expect, ExpectElement
+from sage.docs.instancedoc import instancedoc
 
 
 class Scilab(Expect):
@@ -201,12 +204,12 @@ class Scilab(Expect):
         sage: a = scilab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - scilab
         sage: b = scilab('[ 1; 3; 13]')                         # optional - scilab
         sage: c = a * b                                         # optional - scilab
-        sage: print c                                           # optional - scilab
+        sage: print(c)                                          # optional - scilab
           30.
           122.
           505.
     """
-    def __init__(self, maxread=100, script_subdirectory=None,
+    def __init__(self, maxread=None, script_subdirectory=None,
                  logfile=None, server=None,server_tmpdir=None,
                  seed=None):
         """
@@ -222,7 +225,6 @@ class Scilab(Expect):
                         name = 'scilab',
                         prompt = '-->',
                         command = "scilab -nw",
-                        maxread = maxread,
                         server = server,
                         server_tmpdir = server_tmpdir,
                         script_subdirectory = script_subdirectory,
@@ -234,7 +236,8 @@ class Scilab(Expect):
 
     def set_seed(self, seed=None):
         """
-        Sets the seed for gp interpeter.
+        Set the seed for gp interpreter.
+
         The seed should be an integer.
 
         EXAMPLES::
@@ -279,7 +282,7 @@ class Scilab(Expect):
 
         EXAMPLES::
 
-            sage: print scilab._install_hints()               # optional - scilab
+            sage: print(scilab._install_hints())       # optional - scilab
             You must ...
         """
         return """
@@ -424,6 +427,7 @@ class Scilab(Expect):
         return ScilabElement
 
 
+@instancedoc
 class ScilabElement(ExpectElement):
     def __getitem__(self, n):
         """

@@ -10,18 +10,19 @@ Parallel Iterator built using Python's multiprocessing module
 #
 #                  http://www.gnu.org/licenses/
 ################################################################################
+from __future__ import absolute_import
 
 from multiprocessing import Pool
 from functools import partial
 from sage.misc.fpickle import pickle_function, call_pickled_function
-import ncpus
+from . import ncpus
 
 def pyprocessing(processes=0):
     """
     Return a parallel iterator using a given number of processes
     implemented using pyprocessing.
 
-    INPUTS:
+    INPUT:
 
     - ``processes`` -- integer (default: 0); if 0, set to the number
       of processors on the computer.
@@ -36,11 +37,13 @@ def pyprocessing(processes=0):
         sage: p_iter = pyprocessing(4)
         sage: P = parallel(p_iter=p_iter)
         sage: def f(x): return x+x
-        sage: v = list(P(f)(range(10))); v.sort(); v
+        sage: v = list(P(f)(list(range(10)))); v.sort(); v
         [(((0,), {}), 0), (((1,), {}), 2), (((2,), {}), 4), (((3,), {}), 6), (((4,), {}), 8), (((5,), {}), 10), (((6,), {}), 12), (((7,), {}), 14), (((8,), {}), 16), (((9,), {}), 18)]
     """
-    if processes == 0: processes = ncpus.ncpus()
+    if processes == 0:
+        processes = ncpus.ncpus()
     return partial(parallel_iter, processes)
+
 
 def parallel_iter(processes, f, inputs):
     """
@@ -64,15 +67,14 @@ def parallel_iter(processes, f, inputs):
         sage: v.sort(); v
         [(((2,), {}), 4), (((3,), {}), 6)]
     """
-    from twisted.internet import reactor   # do not delete this (!)  -- see trac 8785
-
-    if processes == 0: processes = ncpus.ncpus()
+    if processes == 0:
+        processes = ncpus.ncpus()
     p = Pool(processes)
     fp = pickle_function(f)
 
-    result = p.imap_unordered(call_pickled_function, [ (fp, t) for t in inputs ])
+    result = p.imap_unordered(call_pickled_function,
+                              [(fp, t) for t in inputs])
     for res in result:
         yield res
     p.close()
     p.join()
-

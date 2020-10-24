@@ -1,11 +1,5 @@
-# The actual algorithm is implemented in the C++ file partitions_c.cc
-# which requires the gmp and mpfr libraries.
-#
-# distutils: sources = sage/combinat/partitions_c.cc
-# distutils: libraries = gmp mpfr
-# distutils: language = c++
 """
-Number of partitions of an integer
+Iterators over the partitions of an integer
 
 AUTHOR:
 
@@ -25,109 +19,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-import sys
-
-from sage.libs.gmp.types cimport mpz_t
-
-cdef extern from "partitions_c.h":
-    int part(mpz_t answer, unsigned int n)
-    int test(bint longtest, bint forever)
-
-include "sage/ext/interrupt.pxi"
-
-from sage.rings.integer cimport Integer
-
-def number_of_partitions(n):
-    """
-    Returns the number of partitions of the integer `n`.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.partitions import number_of_partitions
-        sage: number_of_partitions(3)
-        3
-        sage: number_of_partitions(10)
-        42
-        sage: number_of_partitions(40)
-        37338
-        sage: number_of_partitions(100)
-        190569292
-        sage: number_of_partitions(100000)
-        27493510569775696512677516320986352688173429315980054758203125984302147328114964173055050741660736621590157844774296248940493063070200461792764493033510116079342457190155718943509725312466108452006369558934464248716828789832182345009262853831404597021307130674510624419227311238999702284408609370935531629697851569569892196108480158600569421098519
-
-    TESTS::
-
-        sage: n = 500 + randint(0,500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1500 + randint(0,1500)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 1000000 + randint(0,1000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0
-        True
-        sage: n = 100000000 + randint(0,100000000)
-        sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0  # long time (4s on sage.math, 2011)
-        True
-
-    Another consistency test for `n` up to 500::
-
-        sage: len([n for n in [1..500] if number_of_partitions(n) != Partitions(n).cardinality(algorithm='pari')])
-        0
-
-    """
-    n = Integer(n)
-    if n < 0:
-        raise ValueError("n (=%s) must be a nonnegative integer"%n)
-    elif n <= 1:
-        return Integer(1)  # part hangs on n=1 as input.
-    if n >= Integer('4294967296'):
-        raise ValueError("input must be a nonnegative integer less than 4294967296.")
-    cdef unsigned int nn = n
-
-    cdef Integer ans = Integer(0)
-
-    sig_on()
-    part(ans.value, nn)
-    sig_off()
-
-    return ans
-
-def run_tests(bint longtest=False, bint forever=False):
-    """
-    Test Bober's algorithm.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.partitions import run_tests
-        sage: run_tests(False, False)
-        Computing p(1)... OK.
-        ...
-        Done.
-    """
-    sig_on()
-    error = test(longtest, forever)
-    sig_off()
-    print "Done."
-    if error:
-        return error
-
 def ZS1_iterator(int n):
     """
     A fast iterator for the partitions of ``n`` (in the decreasing
@@ -140,7 +31,7 @@ def ZS1_iterator(int n):
     REFERENCES:
 
     .. [ZS98] Antoine Zoghbi, Ivan Stojmenovic,
-       *Fast Algorithms for Generating Integer Partitons*,
+       *Fast Algorithms for Generating Integer Partitions*,
        Intern. J. Computer Math., Vol. 70., pp. 319--332.
        http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.1287
 
@@ -151,7 +42,7 @@ def ZS1_iterator(int n):
         sage: next(it)
         [4]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
     """
     # Easy cases.
     if n < 0:
@@ -191,7 +82,7 @@ def ZS1_iterator(int n):
                 if t > 1:
                     h += 1
                     x[h] = t
-        #yield [x[i] for i in xrange(m+1)]
+        #yield [x[i] for i in range(m+1)]
         yield x[:m+1]
     #free(x)
 
@@ -211,7 +102,7 @@ def ZS1_iterator_nk(int n, int k):
         sage: next(it)
         [4]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
     """
     # Easy cases.
     if n <= 0:

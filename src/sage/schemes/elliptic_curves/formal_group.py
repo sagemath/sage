@@ -25,7 +25,7 @@ class EllipticCurveFormalGroup(SageObject):
     """
     def __init__(self, E):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = EllipticCurve('11a')
             sage: F = E.formal_group(); F
@@ -35,9 +35,9 @@ class EllipticCurveFormalGroup(SageObject):
         """
         self.__E = E
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare self and other.
+        Check whether ``self`` is equal to ``other``.
 
         TESTS::
 
@@ -47,24 +47,41 @@ class EllipticCurveFormalGroup(SageObject):
             sage: F1 == F2
             True
         """
-        c = cmp(type(self), type(other))
-        if c: return c
-        return cmp(self.__E, other.__E)
+        if not isinstance(other, EllipticCurveFormalGroup):
+            return False
+
+        return self.__E == other.__E
+
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('35a')
+            sage: F1 = E.formal_group()
+            sage: F2 = E.formal_group()
+            sage: F1 != F2
+            False
+        """
+        return not (self == other)
 
     def _repr_(self):
         """
-        EXAMPLE::
+        Return a string representation.
+
+        EXAMPLES::
 
             sage: E = EllipticCurve('43a')
             sage: F = E.formal_group()
             sage: F._repr_()
             'Formal Group associated to the Elliptic Curve defined by y^2 + y = x^3 + x^2 over Rational Field'
         """
-        return "Formal Group associated to the %s"%self.__E
+        return "Formal Group associated to the %s" % self.__E
 
     def curve(self):
         r"""
-        The elliptic curve this formal group is associated to.
+        Return the elliptic curve this formal group is associated to.
 
         EXAMPLES::
 
@@ -77,7 +94,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def w(self, prec=20):
         r"""
-        The formal group power series w.
+        Return the formal group power series `w`.
 
         INPUT:
 
@@ -87,17 +104,16 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a power series with given precision
 
-        DETAILS: Return the formal power series
+        Return the formal power series
 
-        .. math::
+        .. MATH::
 
-                                w(t) = t^3 + a_1 t^4 + (a_2 + a_1^2) t^5 + \cdots
+                w(t) = t^3 + a_1 t^4 + (a_2 + a_1^2) t^5 + \cdots
 
 
         to precision `O(t^{prec})` of Proposition IV.1.1 of
-        [Silverman AEC1]. This is the formal expansion of
-        `w = -1/y` about the formal parameter `t = -x/y` at
-        `\\infty`.
+        [Sil2009]_. This is the formal expansion of
+        `w = -1/y` about the formal parameter `t = -x/y` at `\infty`.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -229,14 +245,14 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a Laurent series with given precision
 
-        DETAILS: Return the formal series
+        Return the formal series
 
-        .. math::
+        .. MATH::
 
-                                x(t) = t^{-2} - a_1 t^{-1} - a_2 - a_3 t - \cdots
+                x(t) = t^{-2} - a_1 t^{-1} - a_2 - a_3 t - \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [Silverman AEC1].
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         .. warning::
 
@@ -267,14 +283,14 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a Laurent series with given precision
 
-        DETAILS: Return the formal series
+        Return the formal series
 
-        .. math::
+        .. MATH::
 
-                                y(t) = - t^{-3} + a_1 t^{-2} + a_2 t + a_3 + \cdots
+                y(t) = - t^{-3} + a_1 t^{-2} + a_2 t + a_3 + \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [Silverman AEC1].
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -306,7 +322,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def differential(self, prec=20):
         r"""
-        Returns the power series `f(t) = 1 + \cdots` such that
+        Return the power series `f(t) = 1 + \cdots` such that
         `f(t) dt` is the usual invariant differential
         `dx/(2y + a_1 x + a_3)`.
 
@@ -319,14 +335,14 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a power series with given precision
 
-        DETAILS: Return the formal series
+        Return the formal series
 
-        .. math::
+        .. MATH::
 
-                                f(t) = 1 + a_1 t + ({a_1}^2 + a_2) t^2 + \cdots
+                f(t) = 1 + a_1 t + ({a_1}^2 + a_2) t^2 + \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [Silverman AEC1].
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -366,7 +382,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def log(self, prec=20):
         r"""
-        Returns the power series `f(t) = t + \cdots` which is an
+        Return the power series `f(t) = t + \cdots` which is an
         isomorphism to the additive formal group.
 
         Generally this only makes sense in characteristic zero, although
@@ -394,7 +410,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def inverse(self, prec=20):
         r"""
-        The formal group inverse law i(t), which satisfies F(t, i(t)) = 0.
+        Return the formal group inverse law i(t), which satisfies F(t, i(t)) = 0.
 
         INPUT:
 
@@ -404,14 +420,14 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a power series with given precision
 
-        DETAILS: Return the formal power series
+        Return the formal power series
 
-        .. math::
+        .. MATH::
 
-                                i(t) = - t + a_1 t^2 + \cdots
+                i(t) = - t + a_1 t^2 + \cdots
 
 
-        to precision `O(t^{prec})` of page 114 of [Silverman AEC1].
+        to precision `O(t^{prec})` of page 114 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -450,7 +466,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def group_law(self, prec=10):
         r"""
-        The formal group law.
+        Return the formal group law.
 
         INPUT:
 
@@ -461,14 +477,14 @@ class EllipticCurveFormalGroup(SageObject):
         OUTPUT: a power series with given precision in R[['t1','t2']], where
         the curve is defined over R.
 
-        DETAILS: Return the formal power series
+        Return the formal power series
 
-        .. math::
+        .. MATH::
 
            F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
 
 
-        to precision `O(t1,t2)^{prec}` of page 115 of [Silverman AEC1].
+        to precision `O(t1,t2)^{prec}` of page 115 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if possible.
 
@@ -566,8 +582,8 @@ class EllipticCurveFormalGroup(SageObject):
         return F
 
     def mult_by_n(self, n, prec=10):
-        """
-        The formal 'multiplication by n' endomorphism `[n]`.
+        r"""
+        Return the formal 'multiplication by n' endomorphism `[n]`.
 
         INPUT:
 
@@ -577,15 +593,14 @@ class EllipticCurveFormalGroup(SageObject):
 
         OUTPUT: a power series with given precision
 
-        DETAILS: Return the formal power series
+        Return the formal power series
 
-        .. math::
+        .. MATH::
 
                                 [n](t) = n t + \cdots
 
 
-        to precision `O(t^{prec})` of Proposition 2.3 of [Silverman
-        AEC1].
+        to precision `O(t^{prec})` of Proposition 2.3 of [Sil2009]_.
 
         .. warning::
 
@@ -650,8 +665,6 @@ class EllipticCurveFormalGroup(SageObject):
             sage: E = EllipticCurve(QQ, [1,2,3,4,6])
             sage: E.formal().mult_by_n(2,prec=5)
             2*t - t^2 - 4*t^3 - 19*t^4 + O(t^5)
-
-
         """
         if self.curve().base_ring().is_field() and self.curve().base_ring().characteristic() == 0 and n != 0:
             # The following algorithm only works over a field of
@@ -720,7 +733,7 @@ class EllipticCurveFormalGroup(SageObject):
 
     def sigma(self, prec=10):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: E = EllipticCurve('14a')
             sage: F = E.formal_group()

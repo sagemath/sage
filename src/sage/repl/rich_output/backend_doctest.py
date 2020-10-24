@@ -23,11 +23,12 @@ EXAMPLES::
 #*****************************************************************************
 
 import sys
+
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
 
 
-    
+
 class BackendDoctest(BackendBase):
 
     def _repr_(self):
@@ -53,7 +54,7 @@ class BackendDoctest(BackendBase):
 
         Matches the IPython command line display preferences to keep
         the differences between that and the doctests to a minimum.
-        
+
         OUTPUT:
 
         Instance of
@@ -74,7 +75,7 @@ class BackendDoctest(BackendBase):
 
     def install(self, **kwds):
         """
-        Switch to the the doctest backend
+        Switch to the doctest backend.
 
         This method is being called from within
         :meth:`~sage.repl.rich_output.display_manager.DisplayManager.switch_backend`. You
@@ -94,7 +95,7 @@ class BackendDoctest(BackendBase):
         """
         self._old_displayhook = sys.displayhook
         sys.displayhook = self.get_display_manager().displayhook
-    
+
     def uninstall(self):
         """
         Switch away from the doctest backend
@@ -115,7 +116,7 @@ class BackendDoctest(BackendBase):
     def supported_output(self):
         """
         Return the supported output types
-        
+
         OUTPUT:
 
         Set of subclasses of
@@ -134,7 +135,7 @@ class BackendDoctest(BackendBase):
         """
         return set([
             OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
-            OutputImagePng, OutputImageGif, OutputImageJpg, 
+            OutputImagePng, OutputImageGif, OutputImageJpg,
             OutputImageSvg, OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneCanvas3d, OutputSceneWavefront,
             OutputVideoOgg, OutputVideoWebM, OutputVideoMp4,
@@ -216,7 +217,7 @@ class BackendDoctest(BackendBase):
     def validate(self, rich_output):
         """
         Perform checks on ``rich_output``
-        
+
         INPUT:
 
         - ``rich_output`` -- instance of a subclass of
@@ -267,53 +268,53 @@ class BackendDoctest(BackendBase):
         elif isinstance(rich_output, OutputLatex):
             assert rich_output.mathjax().startswith('<html>')
         elif isinstance(rich_output, OutputImagePng):
-            assert rich_output.png.get().startswith('\x89PNG')
+            assert rich_output.png.get().startswith(b'\x89PNG')
         elif isinstance(rich_output, OutputImageGif):
-            assert rich_output.gif.get().startswith('GIF89a')
+            assert rich_output.gif.get().startswith(b'GIF89a')
         elif isinstance(rich_output, OutputImageJpg):
-            assert rich_output.jpg.get().startswith('\xff\xd8\xff\xe0\x00\x10JFIF')
+            assert rich_output.jpg.get().startswith(b'\xff\xd8\xff\xe0\x00\x10JFIF')
         elif isinstance(rich_output, OutputImageSvg):
-            assert '</svg>' in rich_output.svg.get()
+            assert b'</svg>' in rich_output.svg.get()
         elif isinstance(rich_output, OutputImagePdf):
-            assert rich_output.pdf.get().startswith('%PDF-')
+            assert rich_output.pdf.get().startswith(b'%PDF-')
         elif isinstance(rich_output, OutputImageDvi):
-            assert 'TeX output' in rich_output.dvi.get()
+            assert b'TeX output' in rich_output.dvi.get()
         elif isinstance(rich_output, OutputSceneJmol):
-            assert rich_output.preview_png.get().startswith('\x89PNG')
-            assert rich_output.scene_zip.get().startswith('PK')  # zip archive
+            assert rich_output.preview_png.get().startswith(b'\x89PNG')
+            assert rich_output.scene_zip.get().startswith(b'PK')  # zip archive
         elif isinstance(rich_output, OutputSceneWavefront):
-            assert rich_output.obj.get().startswith('mtllib ')
-            assert rich_output.mtl.get().startswith('newmtl ')
+            assert rich_output.obj.get().startswith(b'mtllib ')
+            assert rich_output.mtl.get().startswith(b'newmtl ')
         elif isinstance(rich_output, OutputSceneCanvas3d):
-            assert rich_output.canvas3d.get().startswith('[{vertices:')
+            assert rich_output.canvas3d.get().startswith(b'[{"vertices":')
         elif isinstance(rich_output, OutputVideoOgg):
-            assert rich_output.video.get().startswith('OggS')
+            assert rich_output.video.get().startswith(b'OggS')
         elif isinstance(rich_output, OutputVideoWebM):
             data = rich_output.video.get()
-            assert data.startswith('\x1a\x45\xdf\xa3')
-            assert '\x42\x82\x84webm' in data
+            assert data.startswith(b'\x1a\x45\xdf\xa3')
+            assert b'\x42\x82\x84webm' in data
         elif isinstance(rich_output, OutputVideoMp4):
             data = rich_output.video.get()
-            assert data[4:8] == 'ftyp'
-            assert data.startswith('\0\0\0')
+            assert data[4:8] == b'ftyp'
+            assert data.startswith(b'\0\0\0')
             # See http://www.ftyps.com/
-            ftyps = [data[i:i+4] for i in range(8, ord(data[3]), 4)]
+            ftyps = [data[i:i+4] for i in range(8, data[3], 4)]
             del ftyps[1] # version number, not an ftyp
-            expected = ['avc1', 'iso2', 'mp41', 'mp42']
+            expected = [b'avc1', b'iso2', b'mp41', b'mp42']
             assert any(i in ftyps for i in expected)
         elif isinstance(rich_output, OutputVideoFlash):
-            assert rich_output.video.get().startswith('FLV\x01')
+            assert rich_output.video.get().startswith(b'FLV\x01')
         elif isinstance(rich_output, OutputVideoMatroska):
             data = rich_output.video.get()
-            assert data.startswith('\x1a\x45\xdf\xa3')
-            assert '\x42\x82\x88matroska' in data
+            assert data.startswith(b'\x1a\x45\xdf\xa3')
+            assert b'\x42\x82\x88matroska' in data
         elif isinstance(rich_output, OutputVideoAvi):
             data = rich_output.video.get()
-            assert data[:4] == 'RIFF' and data[8:12] == 'AVI '
+            assert data[:4] == b'RIFF' and data[8:12] == b'AVI '
         elif isinstance(rich_output, OutputVideoWmv):
-            assert rich_output.video.get().startswith('\x30\x26\xb2\x75')
+            assert rich_output.video.get().startswith(b'\x30\x26\xb2\x75')
         elif isinstance(rich_output, OutputVideoQuicktime):
             data = rich_output.video.get()
-            assert data[4:12] == 'ftypqt  ' or data[4:8] == 'moov'
+            assert data[4:12] == b'ftypqt  ' or data[4:8] == b'moov'
         else:
             raise TypeError('rich_output type not supported')

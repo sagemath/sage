@@ -1,0 +1,5 @@
+$(PYTHON) | $(PYTHON_TOOLCHAIN) mistune jinja2 pygments traitlets jupyter_core nbformat entrypoints bleach pandocfilters testpath defusedxml
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

@@ -6,10 +6,9 @@ is built on top of Python most of this is valid for Python in
 general. The exception is that these notes assume you are using Sage's
 interface to f2py which makes it more convenient to work with f2py
 interactively. You should look at the f2py website for information on
-using the command line f2py tool. The ctypes and weave example will
-work in any recent Python install (weave is not part of Python so you
-will have to install it separately). If you are using Sage then weave,
-ctypes, and f2py are all there already.
+using the command line f2py tool. The ctypes example will work in any 
+recent Python install. If you are using Sage, then ctypes and f2py are 
+all there already.
 
 Firstly why would we want to write compiled code? Obviously, because
 its fast, far faster than interpreted Python code.  Sage has very
@@ -44,7 +43,6 @@ feel like.
 
    f2py
    f2py_examples
-   weave
    ctypes
    ctypes_examples
    comparison_to_cython

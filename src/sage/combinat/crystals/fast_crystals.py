@@ -1,7 +1,7 @@
 r"""
 Fast Rank Two Crystals
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
 #                          Ben Brubaker   <brubaker at math.mit.edu>
@@ -17,14 +17,15 @@ Fast Rank Two Crystals
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.structure.element import Element, parent
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.structure.richcmp import richcmp
 
 
 class FastCrystal(UniqueRepresentation, Parent):
@@ -43,7 +44,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     - ``shape`` -- A shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
       are either integers or (in type `B_2`) half integers such that
       ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
-      ``l1`` and ``l2` are integers, this will produce the a crystal
+      ``l1`` and ``l2` are integers, this will produce a crystal
       isomorphic to the one obtained by
       ``crystals.Tableaux(type, shape=[l1,l2])``. Furthermore
       ``crystals.FastRankTwo(['B', 2], l1+1/2, l2+1/2)`` produces a crystal
@@ -90,7 +91,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall__(cls, cartan_type, shape, format = "string"):
         """
-        Normalizes the input arguments to ensure unique representation
+        Normalize the input arguments to ensure unique representation
 
         EXAMPLES::
 
@@ -244,12 +245,13 @@ class FastCrystal(UniqueRepresentation, Parent):
             sage: C(x) is x
             True
         """
-        if parent(value) is self: return value
+        if parent(value) is self:
+            return value
         return self.element_class(self, value, self.format)
 
     def list(self):
         """
-        Returns a list of the elements of self.
+        Return a list of the elements of self.
 
         EXAMPLES::
 
@@ -268,7 +270,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def digraph(self):
         """
-        Returns the digraph associated to self.
+        Return the digraph associated to self.
 
         EXAMPLES::
 
@@ -280,7 +282,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def cmp_elements(self, x,y):
         r"""
-        Returns True if and only if there is a path from x to y in the
+        Return True if and only if there is a path from x to y in the
         crystal graph.
 
         Because the crystal graph is classical, it is a directed acyclic
@@ -325,7 +327,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def weight(self):
             """
-            Returns the weight of self.
+            Return the weight of self.
 
             EXAMPLES::
 
@@ -364,7 +366,17 @@ class FastCrystal(UniqueRepresentation, Parent):
             else:
                 raise NotImplementedError
 
-        def __eq__(self, other):
+        def __hash__(self):
+            r"""
+            TESTS::
+
+                sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
+                sage: hash(C(0))
+                0
+            """
+            return hash(self.value)
+
+        def _richcmp_(self, other, op):
             """
             EXAMPLES::
 
@@ -376,14 +388,6 @@ class FastCrystal(UniqueRepresentation, Parent):
                 False
                 sage: C(0) == D(0)
                 False
-            """
-            return self.__class__ is other.__class__ and \
-                   self.parent() == other.parent() and \
-                   self.value == other.value
-
-        def __ne__(self, other):
-            """
-            EXAMPLES::
 
                 sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: D = crystals.FastRankTwo(['B',2],shape=[2,1])
@@ -393,13 +397,6 @@ class FastCrystal(UniqueRepresentation, Parent):
                 True
                 sage: C(0) != D(0)
                 True
-            """
-            return not self == other
-
-
-        def __cmp__(self, other):
-            """
-            EXAMPLES::
 
                 sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
                 sage: C(1) < C(2)
@@ -411,15 +408,11 @@ class FastCrystal(UniqueRepresentation, Parent):
                 sage: C(1) <= C(1)
                 True
             """
-            if type(self) is not type(other):
-                return cmp(type(self), type(other))
-            if self.parent() != other.parent():
-                return cmp(self.parent(), other.parent())
-            return self.parent().cmp_elements(self, other)
+            return richcmp(self.value, other.value, op)
 
         def e(self, i):
             """
-            Returns the action of `e_i` on self.
+            Return the action of `e_i` on self.
 
             EXAMPLES::
 
@@ -436,10 +429,9 @@ class FastCrystal(UniqueRepresentation, Parent):
                 r = self.parent()._rootoperators[self.value][2]
             return self.parent()(r) if r is not None else None
 
-
         def f(self, i):
             """
-            Returns the action of `f_i` on self.
+            Return the action of `f_i` on self.
 
             EXAMPLES::
 
@@ -455,6 +447,3 @@ class FastCrystal(UniqueRepresentation, Parent):
             else:
                 r = self.parent()._rootoperators[self.value][3]
             return self.parent()(r) if r is not None else None
-
-
-#FastCrystal.Element = FastCrystalElement

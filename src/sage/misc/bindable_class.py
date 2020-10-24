@@ -1,18 +1,24 @@
 """
 Bindable classes
 """
+
 #*****************************************************************************
 #       Copyright (C) 2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from __future__ import absolute_import, print_function
 
 import functools
 from sage.misc.nested_class import NestedClassMetaclass
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 
-class BindableClass(object):
+class BindableClass(metaclass=ClasscallMetaclass):
     """
     Bindable classes
 
@@ -28,19 +34,19 @@ class BindableClass(object):
 
         sage: from sage.misc.nested_class import NestedClassMetaclass
         sage: class Outer:
-        ...       __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
-        ...
-        ...       class Inner:
-        ...           def __init__(self, *args):
-        ...               print args
-        ...
-        ...       def f(self, *args):
-        ...           print self, args
-        ...
-        ...       @staticmethod
-        ...       def f_static(*args):
-        ...           print args
-        ...
+        ....:     __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
+        ....:
+        ....:     class Inner:
+        ....:         def __init__(self, *args):
+        ....:             print(args)
+        ....:
+        ....:     def f(self, *args):
+        ....:         print("{} {}".format(self, args))
+        ....:
+        ....:     @staticmethod
+        ....:     def f_static(*args):
+        ....:         print(args)
+
         sage: outer = Outer()
 
     By default, when ``Inner`` is a class nested in ``Outer``,
@@ -79,12 +85,12 @@ class BindableClass(object):
 
         sage: from sage.misc.bindable_class import BindableClass
         sage: class Outer:
-        ...       __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
-        ...
-        ...       class Inner(BindableClass):
-        ...           " some documentation "
-        ...           def __init__(self, outer, *args):
-        ...               print outer, args
+        ....:     __metaclass__ = NestedClassMetaclass # just a workaround for Python misnaming nested classes
+        ....:
+        ....:     class Inner(BindableClass):
+        ....:         " some documentation "
+        ....:         def __init__(self, outer, *args):
+        ....:             print("{} {}".format(outer, args))
 
     Calling ``Outer.Inner`` returns the (unbound) class as usual::
 
@@ -109,8 +115,8 @@ class BindableClass(object):
 
             sage: type(outer.Inner).mro()
             [<class 'sage.misc.bindable_class.BoundClass'>,
-             <type 'functools.partial'>,
-             <type 'object'>]
+             <... 'functools.partial'>,
+             <... 'object'>]
 
         Still, documentation works as usual::
 
@@ -124,8 +130,6 @@ class BindableClass(object):
         sage: outer = Outer()
         sage: TestSuite(outer.Inner).run(skip=["_test_pickling"])
     """
-    __metaclass__ = ClasscallMetaclass
-
     @staticmethod
     def __classget__(cls, instance, owner):
         """
@@ -188,7 +192,7 @@ class BoundClass(functools.partial):
 
         Until a better approach is found, we reset the documentation
         of ``BoundClass`` below, and make an exception for
-        :meth:`__init__`` to the strict rule that every method should
+        :meth:`__init__` to the strict rule that every method should
         be doctested::
 
             sage: c.__class__.__doc__
@@ -210,7 +214,7 @@ class BoundClass(functools.partial):
         sage: class mypartial(functools.partial):
         ....:     def __init__(self, f, i, j):
         ....:         functools.partial.__init__(self, f, i, j)
-        sage: g = mypartial(f, 2, 3)
+        sage: g = mypartial(f, 2, 3)  # py2; on Python 3 this is an error
         Traceback (most recent call last):
         ...
         DeprecationWarning: object.__init__() takes no parameters
@@ -253,12 +257,11 @@ class Inner2(BindableClass):
     Some documentation for Inner2
     """
 
-class Outer:
+# We need NestedClassMetaclass to work around a Python pickling bug
+class Outer(metaclass=NestedClassMetaclass):
     """
     A class with a bindable nested class, for testing purposes
     """
-    __metaclass__ = NestedClassMetaclass # workaround for python pickling bug
-
     class Inner(BindableClass):
         """
         Some documentation for Outer.Inner

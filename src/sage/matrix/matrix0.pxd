@@ -2,36 +2,41 @@
 Generic matrices
 """
 
-###############################################################################
-#   SAGE: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 cimport sage.structure.element
 cimport sage.structure.mutability
 
 cdef class Matrix(sage.structure.element.Matrix):
     # Properties of any matrix  (plus _parent, inherited from base class)
-    cdef public object _cache
     cdef public object _subdivisions
     cdef public object _base_ring
     cdef bint _is_immutable
+
+    cpdef _add_(self, other)
+    cpdef _sub_(self, other)
 
     cdef bint _will_use_strassen(self, Matrix right) except -2
     cdef bint _will_use_strassen_echelon(self) except -2
     cdef int _strassen_default_cutoff(self, Matrix right) except -2
     cdef int _strassen_default_echelon_cutoff(self) except -2
 
-    cdef long _hash(self) except -1
-
-    # Pivots.
-    cdef _set_pivots(self, X)
+    # Implementation of hash function
+    cdef long _hash_(self) except -1
+    cdef void get_hash_constants(self, long C[5])
 
     # Cache
-    cdef clear_cache(self)
+    cdef public object _cache
+    cdef long hash  # cached hash value
+    cdef void clear_cache(self)
     cdef fetch(self, key)
     cdef cache(self, key, x)
 
@@ -44,6 +49,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
     cdef _coerce_element(self, x)
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j)
 
     # Row and column operations
     cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2)
@@ -57,7 +63,5 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col)
     cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row)
 
-
-
-
-
+    # Helper function for inverse of sparse matrices
+    cdef build_inverse_from_augmented_sparse(self, A)

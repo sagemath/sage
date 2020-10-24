@@ -20,7 +20,7 @@ the :meth:`descendant <TwoGraph.descendant>` of `T` w.r.t. `v`.
 in the same number alpha of triples of `T`.
 
 This module implements a direct construction of a two-graph from a list of
-triples, constrution of descendant graphs, regularity checking, and other
+triples, construction of descendant graphs, regularity checking, and other
 things such as constructing the complement two-graph, cf. [BH12]_.
 
 AUTHORS:
@@ -30,7 +30,7 @@ AUTHORS:
 Index
 -----
 
-This module's methods are the following :
+This module's methods are the following:
 
 .. csv-table::
     :class: contentstable
@@ -41,7 +41,7 @@ This module's methods are the following :
     :meth:`~TwoGraph.complement` | returns the complement of ``self``
     :meth:`~TwoGraph.descendant` | returns the descendant graph at `w`
 
-This module's functions are the following :
+This module's functions are the following:
 
 .. csv-table::
     :class: contentstable
@@ -55,6 +55,8 @@ This module's functions are the following :
 Methods
 ---------
 """
+from __future__ import absolute_import
+
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 from itertools import combinations
 
@@ -91,12 +93,11 @@ class TwoGraph(IncidenceStructure):
                                     incidence_matrix=incidence_matrix,
                                     name=name, check=False, copy=copy)
         if check:  # it is a very slow, O(|points|^4), test...
-           from sage.combinat.designs.twographs import is_twograph
            assert is_twograph(self), "the structure is not a 2-graph!"
 
     def is_regular_twograph(self, alpha=False):
         r"""
-        Tests if the :class:`TwoGraph` is regular, i.e. is a 2-design.
+        Test if the :class:`TwoGraph` is regular, i.e. is a 2-design.
 
         Namely, each pair of elements of :meth:`ground_set` is contained in
         exactly ``alpha`` triples.
@@ -139,19 +140,19 @@ class TwoGraph(IncidenceStructure):
 
         EXAMPLES::
 
-            sage: p=graphs.PetersenGraph().twograph().descendant(0)
+            sage: p = graphs.PetersenGraph().twograph().descendant(0)
             sage: p.is_strongly_regular(parameters=True)
             (9, 4, 1, 2)
         """
         from sage.graphs.graph import Graph
-        return Graph(map(lambda y: filter(lambda z: z != v, y),
-                            filter(lambda x: v in x, self.blocks())))
+        return Graph([[z for z in x if z != v]
+                      for x in self.blocks() if v in x])
 
     def complement(self):
         """
         The two-graph which is the complement of ``self``
 
-        That is, the two-graph constisting exactly of triples not in ``self``.
+        That is, the two-graph consisting exactly of triples not in ``self``.
         Note that this is different from :meth:`complement
         <sage.combinat.designs.incidence_structures.IncidenceStructure.complement>`
         of the :class:`parent class
@@ -159,7 +160,7 @@ class TwoGraph(IncidenceStructure):
 
         EXAMPLES::
 
-            sage: p=graphs.CompleteGraph(8).line_graph().twograph()
+            sage: p = graphs.CompleteGraph(8).line_graph().twograph()
             sage: pc = p.complement(); pc
             Incidence structure with 28 points and 1260 blocks
 
@@ -179,7 +180,7 @@ def taylor_twograph(q):
     singular w.r.t. the non-degenerate Hermitean form `S` preserved by `U_3(q)` as its ground set;
     the triples are `\{x,y,z\}` satisfying the condition that `S(x,y)S(y,z)S(z,x)` is square
     (respectively non-square) if `q \cong 1 \mod 4` (respectively if `q \cong 3 \mod 4`).
-    See §7E of [BvL84]_.
+    See §7E of [BL1984]_.
 
     There is also a `2-(q^3+1,q+1,1)`-design on these `q^3+1` points, known as the unital of
     order `q`, also invariant under `U_3(q)`.
@@ -194,7 +195,7 @@ def taylor_twograph(q):
         sage: T=taylor_twograph(3); T
         Incidence structure with 28 points and 1260 blocks
     """
-    from sage.graphs.generators.families import TaylorTwographSRG
+    from sage.graphs.generators.classical_geometries import TaylorTwographSRG
     return TaylorTwographSRG(q).twograph()
 
 def is_twograph(T):
@@ -241,10 +242,11 @@ def is_twograph(T):
         for x in B:
             v_to_blocks[x].add(B)
 
-    has_triple = lambda (x,y,z) : bool(v_to_blocks[x]&v_to_blocks[y]&v_to_blocks[z])
+    def has_triple(x_y_z):
+        x, y, z = x_y_z
+        return bool(v_to_blocks[x] & v_to_blocks[y] & v_to_blocks[z])
 
     # Check that every quadruple contains an even number of triples
-    from __builtin__ import sum
     for quad in combinations(range(T.num_points()),4):
         if sum(map(has_triple,combinations(quad,3))) % 2 == 1:
             return False

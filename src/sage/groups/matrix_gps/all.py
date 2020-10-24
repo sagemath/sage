@@ -10,7 +10,4 @@ lazy_import('sage.groups.matrix_gps.orthogonal', 'SO')
 lazy_import('sage.groups.matrix_gps.finitely_generated', 'MatrixGroup')
 lazy_import('sage.groups.matrix_gps.finitely_generated', 'QuaternionMatrixGroupGF3')
 
-#from matrix_group_element import is_MatrixGroupElement
-#from matrix_group import MatrixGroup, is_MatrixGroup
-
 import sage.groups.matrix_gps.pickling_overrides

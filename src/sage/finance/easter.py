@@ -8,7 +8,6 @@ __author__ = "Gustavo Niemeyer <gustavo@niemeyer.net>"
 __license__ = "PSF License"
 
 import datetime
-from sage.misc.decorators import rename_keyword
 
 __all__ = ["easter", "EASTER_JULIAN", "EASTER_ORTHODOX", "EASTER_WESTERN"]
 
@@ -16,7 +15,7 @@ EASTER_JULIAN   = 1
 EASTER_ORTHODOX = 2
 EASTER_WESTERN  = 3
 
-@rename_keyword(deprecation=6094, method="algorithm")
+
 def easter(year, algorithm=EASTER_WESTERN):
     """
     This function was ported from the work done by GM Arts,
@@ -49,25 +48,26 @@ def easter(year, algorithm=EASTER_WESTERN):
 
     and
 
-    http://www.tondering.dk/claus/calendar.html
+    https://www.tondering.dk/claus/calendar.html
 
-    EXAMPLES:
-    sage: import sage.finance.easter
-    sage: sage.finance.easter.easter(2009, 1)
-    datetime.date(2009, 4, 6)
-    sage: sage.finance.easter.easter(2009, 2)
-    datetime.date(2009, 4, 19)
-    sage: sage.finance.easter.easter(2009, 3)
-    datetime.date(2009, 4, 12)
-    sage: sage.finance.easter.easter(2010, 1)
-    datetime.date(2010, 3, 22)
-    sage: sage.finance.easter.easter(2010, 2)
-    datetime.date(2010, 4, 4)
-    sage: sage.finance.easter.easter(2010, 3)
-    datetime.date(2010, 4, 4)
+    EXAMPLES::
 
+        sage: import sage.finance.easter
+        sage: sage.finance.easter.easter(2009, 1)
+        datetime.date(2009, 4, 6)
+        sage: sage.finance.easter.easter(2009, 2)
+        datetime.date(2009, 4, 19)
+        sage: sage.finance.easter.easter(2009, 3)
+        datetime.date(2009, 4, 12)
+        sage: sage.finance.easter.easter(2010, 1)
+        datetime.date(2010, 3, 22)
+        sage: sage.finance.easter.easter(2010, 2)
+        datetime.date(2010, 4, 4)
+        sage: sage.finance.easter.easter(2010, 3)
+        datetime.date(2010, 4, 4)
 
     AUTHORS:
+
      - Gustavo Niemeyer (author of function)
      - Phaedon Sinis (adapted code for sage)
     """
@@ -111,5 +111,4 @@ def easter(year, algorithm=EASTER_WESTERN):
     p = i-j+e
     d = 1+(p+27+(p+6)//40)%31
     m = 3+(p+26)//30
-    return datetime.date(y,m,d)
-
+    return datetime.date(y, m, d)

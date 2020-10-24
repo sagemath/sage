@@ -14,7 +14,7 @@ NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE INFORM
 IN THIS CASE REGARDING THE CHANGES!
 """
 
-"""
+r"""
 
 Sage example in fsm-in-sage.tex, line 376::
 
@@ -304,12 +304,12 @@ Sage example in fsm-in-sage.tex, line 806::
 
 Sage example in fsm-in-sage.tex, line 815::
 
-    sage: from itertools import izip_longest
+    sage: from itertools import zip_longest
     sage: def final_minus(state1, state2):
     ....:     return [x - y for x, y in
-    ....:         izip_longest(state1.final_word_out,
-    ....:                      state2.final_word_out,
-    ....:                      fillvalue=0)]
+    ....:         zip_longest(state1.final_word_out,
+    ....:                     state2.final_word_out,
+    ....:                     fillvalue=0)]
 
 
 Sage example in fsm-in-sage.tex, line 829::

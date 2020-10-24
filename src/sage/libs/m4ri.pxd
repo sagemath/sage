@@ -1,3 +1,4 @@
+# distutils: extra_compile_args = -std=c99
 
 cdef extern from "m4ri/m4ri.h":
     ctypedef int rci_t

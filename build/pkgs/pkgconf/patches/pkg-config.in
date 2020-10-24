@@ -15,4 +15,4 @@ dnl Launch system pkg-config or our own pkgconf
 define(NEWLINE,`
 ')
 define(PKG_CONFIG_COMMAND, translit(esyscmd(`command -v pkg-config'), NEWLINE))
-exec ifelse(sysval, `0', PKG_CONFIG_COMMAND, `"$SAGE_LOCAL/bin/pkgconf"') "$@"
+exec ifelse(sysval, `0', PKG_CONFIG_COMMAND, `"$SAGE_LOCAL/bin/pkgconf" --keep-system-libs --keep-system-cflags') "$@"

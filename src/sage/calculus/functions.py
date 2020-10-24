@@ -1,18 +1,20 @@
 r"""
-Calculus functions.
+Calculus functions
 """
+from __future__ import absolute_import
 from sage.matrix.all import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.structure.element import is_Vector
 from sage.symbolic.ring import is_SymbolicVariable
-from functional import diff
+from .functional import diff
 
 
 def wronskian(*args):
     """
-    Returns the Wronskian of the provided functions, differentiating with
-    respect to the given variable. If no variable is provided,
-    diff(f) is called for each function f.
+    Return the Wronskian of the provided functions, differentiating with
+    respect to the given variable.
+
+    If no variable is provided, diff(f) is called for each function f.
 
     wronskian(f1,...,fn, x) returns the Wronskian of f1,...,fn, with
     derivatives taken with respect to x.
@@ -66,9 +68,9 @@ def wronskian(*args):
         sage: wronskian(1, e^(-x), e^(2*x))
         -6*e^x
 
-    NOTES:
+    REFERENCES:
 
-    - http://en.wikipedia.org/wiki/Wronskian
+    - :wikipedia:`Wronskian`
     - http://planetmath.org/encyclopedia/WronskianDeterminant.html
 
     AUTHORS:

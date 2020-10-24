@@ -17,15 +17,18 @@ likely to use.
 
     sage: X = SupersingularModule(389); X
     Module of supersingular points on X_0(1)/F_389 over Integer Ring
-    sage: t2 = X.T(2).matrix(); t2[0]
-    (1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-    sage: factor(charpoly(t2))
+    sage: t2_mestre = X.T(2).matrix()
+    sage: p_mestre = t2_mestre.charpoly()
+    sage: factor(p_mestre)
     (x - 3) * (x + 2) * (x^2 - 2) * (x^3 - 4*x - 2) * ...
-    sage: t2 = ModularSymbols(389,sign=1).hecke_matrix(2); t2[0]
-    (3, 0, -1, 0, 0, -1, 1, 0, 0, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0, 1, -1, 1, -1, 1, 0, 0, 0, 0, 0, 0, 1, -1, -1)        # 32-bit
-    (3, 0, -1, 0, 0, -1, 1, 0, 0, 0, 1, -1, 0, 0, 1, 1, 0, 1, -1, 1, -1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, -1, -1)        # 64-bit
-    sage: factor(charpoly(t2))
+
+    sage: t2 = ModularSymbols(389,sign=1).hecke_matrix(2)
+    sage: p = t2.charpoly()
+    sage: factor(p)
     (x - 3) * (x + 2) * (x^2 - 2) * (x^3 - 4*x - 2) * ...
+
+    sage: p_mestre == p
+    True
 
 The method of graphs is also used in computer science to construct
 expander graphs with good properties. And it is important in my
@@ -33,3 +36,10 @@ algorithm for computing Tamagawa numbers of purely toric modular
 abelian varieties. This algorithm is not implemented in Sage yet,
 since it is only interesting in the case of non-prime level, as it
 turns out.
+
+REFERENCE:
+
+- Jean-François Mestre, *La méthode des graphes. Exemples et
+  applications*, Proceedings of the international conference on class
+  numbers and fundamental units of algebraic number fields (Katata,
+  1986), 217-242

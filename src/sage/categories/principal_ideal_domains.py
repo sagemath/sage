@@ -28,7 +28,7 @@ class PrincipalIdealDomains(Category_singleton):
       sage: PrincipalIdealDomains().super_categories()
       [Category of unique factorization domains]
 
-    See also: http://en.wikipedia.org/wiki/Principal_ideal_domain
+    See also :wikipedia:`Principal_ideal_domain`
 
     TESTS::
 

@@ -23,7 +23,7 @@ EXAMPLES:
 
 We create the `2\times 3` matrix
 
-.. math::
+.. MATH::
 
         \left(\begin{matrix} 1&2&3\\4&5&6 \end{matrix}\right)
 
@@ -347,6 +347,7 @@ Class Diagram (an x means that class is currently supported)::
           Matrix_CC_dense
     x     Matrix_real_double_dense
     x     Matrix_complex_double_dense
+    x     Matrix_complex_ball_dense
 
 The corresponding files in the sage/matrix library code directory
 are named
@@ -364,10 +365,10 @@ are named
     For each base field it is *absolutely* essential to completely
     implement the following functionality for that base ring:
 
-       * __cinit__     -- should use sage_malloc from ext/stdsage.pxi (only
-                          needed if allocate memory)
+       * __cinit__     -- should use check_allocarray from cysignals.memory
+                          (only needed if allocate memory)
        * __init__      -- this signature: 'def __init__(self, parent, entries, copy, coerce)'
-       * __dealloc__   -- use sage_free (only needed if allocate memory)
+       * __dealloc__   -- use sig_free (only needed if allocate memory)
        * set_unsafe(self, size_t i, size_t j, x) -- doesn't do bounds or any other checks; assumes x is in self._base_ring
        * get_unsafe(self, size_t i, size_t j) -- doesn't do checks
        * __richcmp__    -- always the same (I don't know why its needed -- bug in PYREX).
@@ -393,7 +394,7 @@ are named
        * cdef _add_ -- add two matrices with identical parents
        * _matrix_times_matrix_c_impl -- multiply two matrices with compatible dimensions and
                                         identical base rings (both sparse or both dense)
-       * cpdef _cmp_ -- compare two matrices with identical parents
+       * cpdef _richcmp_ -- compare two matrices with identical parents
        * cdef _lmul_c_impl -- multiply this matrix on the right by a scalar, i.e., self * scalar
        * cdef _rmul_c_impl -- multiply this matrix on the left by a scalar, i.e., scalar * self
        * __copy__

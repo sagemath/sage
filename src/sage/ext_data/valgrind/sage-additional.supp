@@ -1,0 +1,417 @@
+# This suppression file is meant to be used in addition to sage.supp
+#
+# Use as valgrind --suppressions=sage.supp --suppressions=sage-additional.supp
+
+# Suppressions below were added so that `sage --valgrind` gives no leaks.
+# This is _not_ to say that these leaks are benign or that they should be
+# added to the final suppressions file.  Someone who knows a little bit
+# more about particular portions of sage should probably look at them.
+
+#{{{ static initialization (dlopen)
+
+{
+   Singular Static init 1
+   Memcheck:Leak
+   fun:malloc
+   fun:omAllocFromSystem
+   fun:omAllocLarge
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader15runInitializersERKNS_11LinkContextE
+   fun:dlopen
+   fun:dlopen
+   fun:_PyImport_GetDynLoadFunc
+}
+
+{
+   Singular Static init 2
+   Memcheck:Leak
+   fun:_Znam
+   ...
+   fun:_Z6initPTv
+   fun:_Z17initCanonicalFormv
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader15runInitializersERKNS_11LinkContextE
+   fun:dlopen
+   fun:dlopen
+   fun:_PyImport_GetDynLoadFunc
+}
+
+{
+   GiNaC static init 1
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC2EPKcRKSaIcE
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__I__ZN5GiNaC*E
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader15runInitializersERKNS_11LinkContextE
+   fun:dlopen
+   fun:dlopen
+   fun:_PyImport_GetDynLoadFunc
+}
+
+{
+   GiNaC static init 2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs4_Rep8_M_cloneERKSaIcEm
+   fun:_ZNSs7reserveEm
+   fun:_ZNSs6appendEPKcm
+   fun:_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_ERKS6_PKS3_
+   fun:_ZN5GiNaC16function_options8set_nameERKSsS2_
+   fun:_ZN5GiNaC16function_optionsC1ERKSsj
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__I__ZN5GiNaC*E
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader15runInitializersERKNS_11LinkContextE
+   fun:dlopen
+   fun:dlopen
+   fun:_PyImport_GetDynLoadFunc
+}
+
+{
+   GiNaC static init 3
+   Memcheck:Leak
+   fun:malloc
+   fun:__pyx_f_4sage_5rings_7integer_fast_tp_new
+   fun:type_call
+   fun:PyObject_Call
+   fun:PyObject_CallFunction
+   fun:_Z7IntegerRKl
+   fun:_Z8RationalRKlS0_
+   fun:_ZNK5GiNaC8Number_TdvES0_
+   ...
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__I__ZN5GiNaC*E
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader23recursiveInitializationERKNS_11LinkContextEj
+   fun:_ZN11ImageLoader15runInitializersERKNS_11LinkContextE
+   fun:dlopen
+   fun:dlopen
+   fun:_PyImport_GetDynLoadFunc
+}
+
+#}}}
+#{{{ GiNaC/Pynac/
+
+{
+   Pynac Constant Construction 1
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC2EPKcRKSaIcE
+   fun:_Z19GConstant_construct*PvPcS0_j
+   fun:_ZL64__pyx_pf_4sage_8symbolic_11constants_c_13PynacConstant___cinit__P7_objectS0_S0_
+   fun:_ZL56__pyx_tp_new_4sage_8symbolic_11constants_c_PynacConstantP11_typeobjectP7_objectS2_
+   fun:type_call
+   fun:PyObject_Call
+}
+
+{
+   symbolic ring symbol -- sage/sage/symbolic/ring.pyx
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC2EPKcRKSaIcE
+   fun:_ZL51__pyx_f_4sage_8symbolic_4ring_12SymbolicRing_symbolP44__pyx_obj_4sage_8symbolic_4ring_SymbolicRingiP58__pyx_opt_args_4sage_8symbolic_4ring_12SymbolicRing_symbol
+   fun:_ZL54__pyx_pf_4sage_8symbolic_4ring_12SymbolicRing_16symbolP7_objectS0_S0_
+   fun:PyObject_Call
+}
+
+{
+   symbolic Function or GinacFunction
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC2EPKcRKSaIcE
+   fun:_ZL6*__pyx_f_4sage_8symbolic_8function_*Function__register_functionP4*__pyx_obj_4sage_8symbolic_8function_*Function
+   # fun:_ZL68__pyx_f_4sage_8symbolic_8function_13GinacFunction__register_functionP49__pyx_obj_4sage_8symbolic_8function_GinacFunction
+   fun:_ZL53__pyx_pf_4sage_8symbolic_8function_8Function___init__P7_objectS0_S0_
+   fun:wrap_init
+   fun:PyObject_Call
+}
+
+{
+   GiNaC symbol
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC2EPKcRKSaIcE
+   fun:_ZN5GiNaC6symbol15autoname_prefixEv
+   fun:_ZN5GiNaC6symbolC1Ev
+   fun:_ZL51__pyx_f_4sage_8symbolic_4ring_12SymbolicRing_symbolP44__pyx_obj_4sage_8symbolic_4ring_SymbolicRingiP58__pyx_opt_args_4sage_8symbolic_4ring_12SymbolicRing_symbol
+   fun:_ZL54__pyx_pf_4sage_8symbolic_4ring_12SymbolicRing_16symbolP7_objectS0_S0_
+   fun:PyObject_Call
+}
+
+{
+   GiNaC register_function
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs4_Rep8_M_cloneERKSaIcEm
+   fun:_ZNSs7reserveEm
+   fun:_ZNSs6appendEPKcm
+   fun:_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_ERKS6_PKS3_
+   fun:_ZN5GiNaC16function_options8set_nameERKSsS2_
+   fun:_ZN5GiNaC16function_optionsC1ERKSsj
+   fun:_ZL62__pyx_f_4sage_8symbolic_8function_8Function__register_functionP44__pyx_obj_4sage_8symbolic_8function_Function
+   fun:_ZL53__pyx_pf_4sage_8symbolic_8function_8Function___init__P7_objectS0_S0_
+   fun:wrap_init
+   fun:PyObject_Call
+}
+
+{
+   GiNaC find_function
+   Memcheck:Leak
+   fun:malloc
+   fun:__cxa_get_globals
+   fun:__cxa_allocate_exception
+   fun:_ZN5GiNaC8function13find_functionERKSsj
+   fun:_ZL66__pyx_f_4sage_8symbolic_8function_15BuiltinFunction__is_registeredP51__pyx_obj_4sage_8symbolic_8function_BuiltinFunction
+   fun:_ZL53__pyx_pf_4sage_8symbolic_8function_8Function___init__P7_objectS0_S0_
+   fun:wrap_init
+   fun:PyObject_Call
+}
+
+#}}}
+#{{{ NTL
+
+{
+   NTL SetLength
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3NTL6vec_ZZ9SetLengthEl
+   fun:_ZN3NTL8SetCoeffERNS_3ZZXElRKNS_2ZZE
+   fun:_ZL52__pyx_pf_4sage_4libs_3ntl_7ntl_ZZX_7ntl_ZZX___init__P7_objectS0_S0_
+   fun:type_call
+   fun:PyObject_Call
+}
+
+{
+   NTL SetLength 2
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN3NTL6vec_ZZ9SetLengthEl
+   fun:_ZN3NTL8SetCoeffERNS_3ZZXElRKNS_2ZZE
+   fun:_ZL90__pyx_pf_4sage_5rings_12number_field_20number_field_element_18NumberFieldElement_1__init__P7_objectS0_S0_
+   fun:wrap_init
+   fun:PyObject_Call
+}
+
+{
+   NTL SetLength 1
+   Memcheck:Leak
+   fun:malloc
+   fun:_ntl_gsetlength
+   fun:_ntl_gcopy
+   fun:_ZN3NTL8SetCoeffERNS_3ZZXElRKNS_2ZZE
+   fun:_ZL52__pyx_pf_4sage_4libs_3ntl_7ntl_ZZX_7ntl_ZZX___init__P7_objectS0_S0_
+   fun:type_call
+   fun:PyObject_Call
+}
+
+{
+   NTL SetCoeff
+   Memcheck:Leak
+   fun:malloc
+   fun:_ntl_gsetlength
+   fun:_ntl_gcopy
+   fun:_ZN3NTL8SetCoeffERNS_3ZZXElRKNS_2ZZE
+   fun:_ZL90__pyx_pf_4sage_5rings_12number_field_20number_field_element_18NumberFieldElement_1__init__P7_objectS0_S0_
+   fun:wrap_init
+   fun:PyObject_Call
+}
+
+{
+   NTL convertZZ2CF
+   Memcheck:Leak
+   fun:malloc
+   fun:omAllocFromSystem
+   fun:omAllocLarge
+   fun:_Z12convertZZ2CFN3NTL2ZZE
+   fun:_Z16convertNTLZZX2CFN3NTL3ZZXE8Variable
+   fun:_ZL15gcd_univar_ntl0RK13CanonicalFormS1_
+   fun:_ZL10gcd_poly_0RK13CanonicalFormS1_
+   fun:_Z8gcd_polyRK13CanonicalFormS1_
+   fun:_Z3gcdRK13CanonicalFormS1_
+   fun:_ZL10cf_contentRK13CanonicalFormS1_
+   fun:_Z8gcd_polyRK13CanonicalFormS1_
+   fun:_Z3gcdRK13CanonicalFormS1_
+   fun:_Z14singclap_gcd_rP8spolyrecS0_P9sip_sring
+   fun:_Z12singclap_gcdP8spolyrecS0_
+   fun:_ZL97__pyx_pf_4sage_5rings_10polynomial_28multi_polynomial_libsingular_23MPolynomial_libsingular_49gcdP7_objectS0_S0_
+   fun:PyObject_Call
+}
+
+#}}}
+#{{{ Pari/Singular
+
+{
+   Pari strdup
+   Memcheck:Leak
+   fun:malloc
+   fun:pari_strdup
+   obj:*
+   fun:thue
+   obj:*
+}
+
+{
+   Singular initsingular
+   Memcheck:Leak
+   fun:malloc
+   fun:omAllocFromSystem
+   fun:omAlloc0Large
+   fun:_Z13iiInitCmdNamev
+   fun:_Z16iiInitArithmeticv
+   fun:_Z6siInitPc
+   fun:_ZL56__pyx_f_4sage_4libs_8singular_8singular_init_libsingularv
+   fun:initsingular
+   fun:_PyImport_LoadDynamicModule
+}
+
+#}}}
+#{{{ Python/Cython?
+# Email cython list with these
+
+{
+   <insert title here>
+   Memcheck:Cond
+   fun:pclose
+   fun:close_the_file
+   fun:file_dealloc
+   fun:meth_dealloc
+   fun:PyEval_EvalFrameEx
+}
+
+{
+   <insert title here>
+   Memcheck:Param
+   wait4(pid)
+   fun:wait4
+   fun:close_the_file
+   fun:file_dealloc
+   fun:meth_dealloc
+   fun:PyEval_EvalFrameEx
+}
+
+{
+   <insert title here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_PyObject_GC_Resize
+   fun:Py*_New
+}
+
+{
+   <insert title here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyString_FromStringAndSize
+   fun:PyEval_EvalFrameEx
+}
+
+{
+   http://projects.scipy.org/numpy/ticket/195
+   Memcheck:Leak
+   fun:malloc
+   fun:PyString_FromStringAndSize
+   fun:r_object
+   ...
+   fun:PyMarshal_ReadLastObjectFromFile
+}
+
+{
+   <insert title here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyObject_GC_Malloc
+   fun:_PyObject_GC_NewVar
+   fun:Py*_New
+}
+
+{
+   <insert title here>
+   Memcheck:Leak
+   fun:realloc
+   fun:_PyString_Resize
+   fun:PyString_FromFormatV
+   fun:PyString_FromFormat
+   fun:ufunc_get_doc
+   fun:PyObject_GenericGetAttr
+   fun:PyObject_GetAttrString
+   fun:arr_add_docstring
+   fun:PyEval_EvalFrameEx
+}
+
+#}}}
+#{{{ MPIR
+
+{
+   mpfr_init2
+   Memcheck:Leak
+   fun:malloc
+   fun:sig_malloc
+   fun:sage_mpir_malloc
+   fun:mpfr_init2
+}
+
+{
+   mpir_realloc
+   Memcheck:Leak
+   fun:realloc
+   fun:sig_realloc
+   fun:sage_mpir_realloc
+   fun:__gmpz_realloc
+   fun:__gmpz_add_ui
+   fun:__pyx_f_4sage_5rings_7integer_7Integer__add_long
+   fun:__pyx_pf_4sage_9structure_7element_11RingElement_1__add__
+   fun:binary_op1
+   fun:PyNumber_Add
+   fun:__pyx_pf_4sage_5rings_10polynomial_18polynomial_element_10Polynomial_34_repr
+   fun:PyObject_Call
+   fun:__pyx_pf_4sage_5rings_10polynomial_18polynomial_element_10Polynomial_35_repr_
+   fun:PyObject_Call
+   fun:__pyx_pf_4sage_9structure_11sage_object_10SageObject_2__repr__
+   fun:_PyObject_Str
+   fun:PyString_Format
+   fun:binary_op1
+   fun:PyNumber_Remainder
+   fun:PyEval_EvalFrameEx
+   fun:PyEval_EvalCodeEx
+   fun:function_call
+   fun:PyObject_Call
+   fun:instancemethod_call
+   fun:PyObject_Call
+}
+
+#}}}
+
+{
+   Parent
+   Memcheck:Leak
+   fun:malloc
+   fun:__pyx_f_4sage_5rings_7integer_fast_tp_new
+   fun:__pyx_f_4sage_5rings_7integer_8int_to_Z__call_
+   fun:__pyx_pf_4sage_9structure_6parent_6Parent_13__call__
+   fun:PyObject_Call
+}

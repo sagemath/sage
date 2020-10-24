@@ -15,7 +15,7 @@ Basic enumerated sets
 - :class:`~sage.combinat.subset.Subsets`, :class:`~sage.combinat.combination.Combinations`
 - :class:`~sage.combinat.permutation.Arrangements`, :class:`~sage.combinat.tuple.Tuples`
 - :class:`~sage.sets.finite_enumerated_set.FiniteEnumeratedSet`
-- :class:`~DisjointUnionEnumeratedSets`, :class:`~CartesianProduct`
+- :class:`~DisjointUnionEnumeratedSets`
 
 Integer lists
 -------------
@@ -25,6 +25,7 @@ Integer lists
 - :ref:`sage.combinat.composition`
 - :class:`~sage.combinat.composition_signed.SignedCompositions`
 - :class:`IntegerListsLex`
+- :ref:`sage.combinat.superpartition`
 
 - :class:`~sage.combinat.integer_vector.IntegerVectors`
 - :func:`~sage.combinat.integer_vector_weighted.WeightedIntegerVectors`
@@ -41,7 +42,7 @@ Words
 - :class:`Words`
 - :ref:`sage.combinat.subword`
 - :ref:`sage.combinat.necklace`
-- :ref:`sage.combinat.lyndon_word`
+- :ref:`sage.combinat.words.lyndon_word`
 - :ref:`sage.combinat.dyck_word`
 - :ref:`sage.combinat.debruijn_sequence`
 - :ref:`sage.combinat.shuffle`
@@ -68,6 +69,11 @@ Partitions, tableaux, ...
 
 See: :ref:`sage.combinat.catalog_partitions`
 
+Polyominoes
+-----------
+
+See: :ref:`sage.combinat.parallelogram_polyomino`
+
 Integer matrices, ...
 ---------------------
 
@@ -93,6 +99,9 @@ Subsets and set partitions
 - :ref:`sage.combinat.subsets_hereditary`
 - :ref:`sage.combinat.set_partition_ordered`
 - :ref:`sage.combinat.set_partition`
+- :ref:`sage.combinat.diagram_algebras`
+- :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionsIntoSets`,
+  :class:`~sage.combinat.multiset_partition_into_sets_ordered.OrderedMultisetPartitionIntoSets`
 
 Trees
 -----
@@ -119,20 +128,17 @@ Backtracking solvers and generic enumerated sets
 
 - :func:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet`
 - :class:`~sage.combinat.backtrack.GenericBacktracker`
+- :mod:`sage.parallel.map_reduce`
 - :ref:`sage.combinat.tiling`
 - :ref:`sage.combinat.dlx`
 - :ref:`sage.combinat.matrices.dlxcpp`
 - :ref:`sage.combinat.species`
-- :class:`~sage.combinat.integer_list.IntegerListsLex`
+- :class:`~sage.combinat.integer_lists.IntegerListsLex`
 - :class:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup`
 
 Low level enumerated sets
 -------------------------
 
-- :ref:`sage.combinat.permutation_nk`
-- :ref:`sage.combinat.split_nk`
-- :ref:`sage.combinat.choose_nk`
-- :ref:`sage.combinat.multichoose_nk`
 - :ref:`sage.combinat.gray_codes`
 
 Misc enumerated sets

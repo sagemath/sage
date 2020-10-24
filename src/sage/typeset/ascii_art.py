@@ -202,10 +202,14 @@ def ascii_art(*obj, **kwds):
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.
 
-    - ``sep`` -- optional ``'sep=...'`` keyword argument. Anything
-      that can be converted to ascii art (default: empty ascii
+    - ``sep`` -- optional ``'sep=...'`` keyword argument (or ``'separator'``).
+      Anything that can be converted to ascii art (default: empty ascii
       art). The separator in-between a list of objects. Only used if
       more than one object given.
+
+    - ``baseline`` -- (default: 0) the baseline for the object
+
+    - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
     OUTPUT:
 
@@ -224,21 +228,49 @@ def ascii_art(*obj, **kwds):
            |
           /
 
+    We can specify a separator object::
+
         sage: ident = lambda n: identity_matrix(ZZ, n)
         sage: ascii_art(ident(1), ident(2), ident(3), sep=' : ')
                       [1 0 0]
               [1 0]   [0 1 0]
         [1] : [0 1] : [0 0 1]
 
+    We can specify the baseline::
+
+        sage: ascii_art(ident(2), baseline=-1) + ascii_art(ident(3))
+        [1 0][1 0 0]
+        [0 1][0 1 0]
+             [0 0 1]
+
+    We can determine the baseline of the separator::
+
+        sage: ascii_art(ident(1), ident(2), ident(3), sep=' -- ', sep_baseline=-1)
+                        [1 0 0]
+            -- [1 0] -- [0 1 0]
+        [1]    [0 1]    [0 0 1]
+
+    If specified, the ``sep_baseline`` overrides the baseline of
+    an ascii art separator::
+
+        sage: sep_line = ascii_art('\n'.join(' | ' for _ in range(6)), baseline=6)
+        sage: ascii_art(*Partitions(6), separator=sep_line, sep_baseline=0)
+               |       |      |      |     |     |     |    |    |    | *
+               |       |      |      |     |     |     |    |    | ** | *
+               |       |      |      |     |     | *** |    | ** | *  | *
+               |       |      | **** |     | *** | *   | ** | ** | *  | *
+               | ***** | **** | *    | *** | **  | *   | ** | *  | *  | *
+        ****** | *     | **   | *    | *** | *   | *   | ** | *  | *  | *
+
     TESTS::
 
         sage: n = var('n')
         sage: ascii_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))
-         /        __________    \
-        -\2*x + \/ -4*x + 1  - 1/
-        --------------------------
-                   __________
-             2*x*\/ -4*x + 1
+         /        _________    \
+        -\2*x + \/ 1 - 4*x  - 1/
+        -------------------------
+                   _________
+             2*x*\/ 1 - 4*x
         sage: ascii_art(list(DyckWords(3)))
         [                                   /\   ]
         [            /\    /\      /\/\    /  \  ]
@@ -246,15 +278,16 @@ def ascii_art(*obj, **kwds):
         sage: ascii_art(1)
         1
     """
-    separator = kwds.pop('sep', empty_ascii_art)
+    separator, baseline, sep_baseline = _ascii_art_factory.parse_keywords(kwds)
     if kwds:
-        raise ValueError('unknown keyword arguments: {0}'.format(kwds.keys()))
+        raise ValueError('unknown keyword arguments: {0}'.format(list(kwds)))
     if len(obj) == 1:
-        return _ascii_art_factory.build(obj[0])
+        return _ascii_art_factory.build(obj[0], baseline=baseline)
     if not isinstance(separator, AsciiArt):
-        separator = _ascii_art_factory.build(separator)
-    obj = map(_ascii_art_factory.build, obj)
-    return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art)
-
-
-
+        separator = _ascii_art_factory.build(separator, baseline=sep_baseline)
+    elif sep_baseline is not None:
+        from copy import copy
+        separator = copy(separator)
+        separator._baseline = sep_baseline
+    return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art,
+                                          baseline=baseline)

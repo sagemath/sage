@@ -1,6 +1,7 @@
 r"""
 Graph editor
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #      Copyright (C) 2009   Radoslav Kirov
 #
@@ -17,11 +18,10 @@ Graph editor
 #*****************************************************************************
 import sys
 
-from graph_generators import graphs
+from .graph_generators import graphs
 from sage.misc.html import html
 
-import sagenb.notebook.interact
-from sagenb.misc.support import EMBEDDED_MODE
+from sage.server.support import EMBEDDED_MODE
 
 
 def graph_to_js(g):
@@ -43,16 +43,16 @@ def graph_to_js(g):
         sage: from sage.graphs.graph_editor import graph_to_js
         sage: G = graphs.CompleteGraph(4)
         sage: graph_to_js(G)
-        'num_vertices=4;edges=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];pos=[[0.5,0.0],[0.0,0.4999999999999999],[0.4999999999999999,1.0],[1.0,0.5000000000000001]];'
+        'num_vertices=4;edges=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];pos=[[0.5,0.0],[0.0,0.5],[0.5,1.0],[1.0,0.5]];'
         sage: graph_to_js(graphs.StarGraph(2))
-        'num_vertices=3;edges=[[0,1],[0,2]];pos=[[0.75,0.5],[1.0,0.0],[0.0,1.0]];'
+        'num_vertices=3;edges=[[0,1],[0,2]];pos=[[0.0,0.5],[0.0,0.0],[0.0,1.0]];'
     """
     string = ''
-    vertex_list = g.get_vertices().keys()
+    vertex_list = list(g.get_vertices())
     string += 'num_vertices=' + str(len(vertex_list)) + ';'
     string += 'edges=['
     for i, e in enumerate(g.edges()):
-        if(i != 0):
+        if i:
             string += ','
         string += '[' + str(vertex_list.index(e[0])) + ',' + str(vertex_list.index(e[1])) + ']'
     string += '];'
@@ -67,7 +67,7 @@ def graph_to_js(g):
     if max_y == 0:
         max_y = 1
     for i, v in enumerate(vertex_list):
-        if(i != 0):
+        if i:
             string += ','
         new_pos = [float(pos[v][0] - min_x) / (max_x - min_x),
                    1.0 - float(pos[v][1] - min_y) / (max_y - min_y)]
@@ -75,6 +75,7 @@ def graph_to_js(g):
     string += '];'
     string = string.replace(' ', '')
     return string
+
 
 def graph_editor(graph=None, graph_name=None,
                  replace_input=True, **layout_options):
@@ -104,6 +105,7 @@ def graph_editor(graph=None, graph_name=None,
         sage: h = graphs.StarGraph(6)
         sage: graph_editor(h, replace_input=False)  # not tested
     """
+    import sagenb.notebook.interact
     if graph is None:
         graph = graphs.CompleteGraph(2)
 

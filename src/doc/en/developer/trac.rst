@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-sage-trac:
 
 ====================
@@ -5,7 +7,7 @@ The Sage Trac Server
 ====================
 
 All changes to Sage source code have to go through the `Sage Trac
-development server <http://trac.sagemath.org>`_. The purpose
+development server <https://trac.sagemath.org>`_. The purpose
 of the Sage trac server is to
 
 1. Provide a place for discussion on issues and store a permanent
@@ -15,7 +17,7 @@ of the Sage trac server is to
 
 3. Link these two together.
 
-There is also a `wiki <http://trac.sagemath.org/wiki>`_ for more general
+There is also a `wiki <https://trac.sagemath.org/wiki>`_ for more general
 organizational web pages, like Sage development workshops.
 
 Thus if you find a bug in Sage, if you have new code to submit, want
@@ -23,16 +25,24 @@ to review new code already written but not yet included in Sage, or if
 you have corrections for the documentation, you should post on the
 trac server. Items on the server are called *tickets*, and anyone may
 search or browse the tickets. For a list of recent changes, just visit
-the `Sage trac timeline <http://trac.sagemath.org/timeline>`_.
+the `Sage trac timeline <https://trac.sagemath.org/timeline>`_.
 
 .. _section-trac-account:
 
 Obtaining an Account
 ====================
 
-You need a trac account if you want to *change* anything on the Sage trac
-server, even if you just want to comment on a ticket. To obtain one, send an
-email to ``sage-trac-account@googlegroups.com`` containing:
+**New:** Previously, it was necessary to manually request a Trac account in
+order to post anything to Sage's Trac.  Now, if you have a GitHub account, you
+may log in using it to create and comment on tickets, and edit wiki pages on
+Sage's Trac.
+
+A manual account request is currently only necessary if you prefer not to
+use GitHub or if you want to log into the old `Sage Wiki
+<https://wiki.sagemath.org>`_.  This may change as well in the future.
+
+To obtain a non-GitHub account, send an email to
+``sage-trac-account@googlegroups.com`` containing:
 
 * your full name,
 * preferred username,
@@ -40,9 +50,9 @@ email to ``sage-trac-account@googlegroups.com`` containing:
 * and reason for needing a trac account
 
 Your trac account also grants you access to the `sage wiki
-<wiki.sagemath.org>`_. Make sure you understand the review process, and the
-procedures for opening and closing tickets before making changes. The remainder
-of this chapter contains various guidelines on using the trac server.
+<https://wiki.sagemath.org>`_. Make sure you understand the review process, and
+the procedures for opening and closing tickets before making changes. The
+remainder of this chapter contains various guidelines on using the trac server.
 
 Trac authentication through SSH
 ===============================
@@ -51,7 +61,7 @@ There are two avenues to prove to the trac server that you are who you
 claim to be. First, to change the ticket web pages you need to log in
 to trac using a username/password. Second, there is public key
 cryptography used by git when copying new source files to the
-repository. This section will show you how to setup both.
+repository. This section will show you how to set up both.
 
 Generating and Uploading your SSH Keys
 --------------------------------------
@@ -59,25 +69,11 @@ Generating and Uploading your SSH Keys
 The git installation on the development server uses SSH keys to decide if and
 where you are allowed to upload code. No SSH key is required to report a bug or
 comment on a ticket, but as soon as you want to contribute code yourself you
-need to provide trac with the public half of your own personal key. In recent
-versions of Sage, you can use Sage to generate an upload an SSH key
-
-.. skip   # do not doctest
-
-::
-
-    sage: dev.upload_ssh_key()
-    The trac git server requires your SSH public key to be able to identify you.
-    Upload "/home/vbraun/.ssh/id_dsa.pub" to trac? [Yes/no] y
-    Trac username: user
-    Trac password:
-    Your key has been uploaded.
-
-You can also manually generate an SSH key and upload it to trac. This is
-described in the following two sections.
+need to provide trac with the public half of your own personal key.
+Details are described in the following two sections.
 
 
-Manually Generating your SSH Keys
+Generating your SSH Keys
 ---------------------------------
 
 If you don't have a private key yet, you can
@@ -129,13 +125,13 @@ ssh into that machine you don't have to provide your password.
 
 .. _section-trac-ssh-key:
 
-Manually Linking your Public Key to your Trac Account
+Linking your Public Key to your Trac Account
 -----------------------------------------------------
 
 The Sage trac server needs to know one of your public keys. You can
 upload it in the preferences, that is
 
-1. Go to http://trac.sagemath.org
+1. Go to https://trac.sagemath.org
 
 2. Log in with your trac username/password
 
@@ -178,14 +174,14 @@ If you think you have found a bug in Sage, here is the procedure:
 - Search through our Google groups for postings related to your possible bug (it
   may have been fixed/reported already):
 
-  * ``sage-devel``: `<http://groups.google.com/group/sage-devel>`_
-  * ``sage-support``: `<http://groups.google.com/group/sage-support>`_
+  * ``sage-devel``: `<https://groups.google.com/group/sage-devel>`_
+  * ``sage-support``: `<https://groups.google.com/group/sage-support>`_
 
   Similarly, you can search :ref:`chapter-sage-trac` to see if anyone else has
   opened a ticket about your bug.
 
 - If you do not find anything, and you are not sure that you have found a bug,
-  ask about it on `sage-devel <http://groups.google.com/group/sage-devel>`_. A
+  ask about it on `sage-devel <https://groups.google.com/group/sage-devel>`_. A
   bug report should contain:
 
   - An explicit and **reproducible example** illustrating your bug (and/or the
@@ -354,7 +350,9 @@ This second ticket does not fix the problem but adds a warning that will be
 printed whenever anyone uses the relevant code. This, until the problem is
 finally fixed.
 
-To produce the warning message, use code like the following::
+To produce the warning message, use code like the following:
+
+.. CODE-BLOCK:: python
 
     from sage.misc.stopgap import stopgap
     stopgap("This code contains bugs and may be mathematically unreliable.",
@@ -365,7 +363,7 @@ trac ticket, enter the ticket number for the stopgap ticket in the "Stopgaps"
 field (see :ref:`section-trac-fields`). Stopgap tickets should be marked as
 blockers.
 
-.. note::
+.. NOTE::
 
     If mathematically valid code causes Sage to raise an error or
     crash, for example, there is no need for a stopgap.  Rather,
@@ -383,7 +381,7 @@ new branch on the trac ticket. The following are some other relevant
 issues:
 
 * The Patch buildbot wil automatically test your ticket. See `the
-  patchbot wiki <http://wiki.sagemath.org/buildbot>`_ for more
+  patchbot wiki <https://wiki.sagemath.org/buildbot>`_ for more
   information about its features and limitations. Make sure that you
   look at the log, especially if the patch buildbot did not give you
   the green blob.

@@ -12,10 +12,13 @@ AUTHORS:
 - Ben Salisbury, Travis Scrimshaw (2013): Refactored tensor products to handle
   non-regular crystals and created new subclass to take advantage of
   the regularity
+- Travis Scrimshaw (2020): Added queer crystal
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Anne Schilling <anne at math.ucdavis.edu>
 #                          Nicolas Thiery <nthiery at users.sf.net>
+#                     2020 Travis Scrimshaw <tcscrims at gmail.com>
+#                          Ben Salisbury <salis1bt at cmich.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -28,24 +31,26 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
 
 import operator
-from sage.misc.latex import latex
-from sage.misc.cachefunc import cached_method, cached_in_parent_method
+from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
-from sage.structure.element import parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.global_options import GlobalOptions
 from sage.categories.category import Category
+from sage.categories.cartesian_product import cartesian_product
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.sets_cat import Sets
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.cartesian_product import CartesianProduct
-from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.root_system.cartan_type import CartanType, SuperCartanType_standard
 from sage.combinat.partition import Partition
-from sage.combinat.tableau import Tableau
-from letters import CrystalOfLetters
-from spins import CrystalOfSpins, CrystalOfSpinsMinus, CrystalOfSpinsPlus
+from .letters import CrystalOfLetters
+from .spins import CrystalOfSpins, CrystalOfSpinsMinus, CrystalOfSpinsPlus
+from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrystalsElement,
+        TensorProductOfRegularCrystalsElement, CrystalOfTableauxElement,
+        TensorProductOfSuperCrystalsElement, TensorProductOfQueerSuperCrystalsElement)
 from sage.misc.flatten import flatten
 from sage.structure.element import get_coercion_model
 
@@ -74,226 +79,6 @@ def trunc(i):
 # Support classes
 ##############################################################################
 
-from sage.structure.unique_representation import UniqueRepresentation
-
-class TestParent(UniqueRepresentation, Parent):
-    """
-    A parent for tests.
-    """
-    def _repr_(self):
-        """
-        EXAMPLES::
-
-        sage: from sage.combinat.crystals.tensor_product import TestParent
-        sage: TestParent()
-        A parent for tests
-        """
-        return "A parent for tests"
-
-class ImmutableListWithParent(CombinatorialElement):
-    r"""
-    A class for lists having a parent
-
-    Specification: any subclass ``C`` should implement ``__init__`` which
-    accepts the following form ``C(parent, list = list)``
-
-    EXAMPLES:
-
-    We create an immutable list whose parent is the class list::
-
-        sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-        sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-        sage: l._list
-        [1, 2, 3]
-        sage: l.parent()
-        A parent for tests
-        sage: l.sibling([2,1]) == ImmutableListWithParent(TestParent(), [2,1])
-        True
-        sage: l.reversed()
-        [3, 2, 1]
-        sage: l.set_index(1,4)
-        [1, 4, 3]
-
-    TESTS::
-
-        sage: TestSuite(l).run(skip = "_test_category")
-    """
-    def _repr_(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: l._repr_()
-            '[1, 2, 3]'
-        """
-        return repr(self._list)
-
-    def __eq__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l == l
-            True
-            sage: l == m
-            False
-            sage: m == n
-            False
-        """
-        return self.__class__ is other.__class__ and \
-               self.parent() == other.parent() and \
-               self._list == other._list
-
-    def __ne__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l != l
-            False
-            sage: l != m
-            True
-            sage: m != n
-            True
-        """
-        return not self.__eq__(other)
-
-    def __lt__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l < l
-            False
-            sage: l < m
-            False
-            sage: m < n
-            True
-        """
-        if parent(self) is not parent(other):
-            return NotImplemented
-        return self._list.__lt__(other._list)
-
-    def __le__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l <= l
-            True
-            sage: l <= m
-            True
-            sage: m <= n
-            True
-        """
-        if self == other:
-            return True
-        return self.__lt__(other)
-
-    def __gt__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l > l
-            False
-            sage: l > m
-            False
-            sage: m > n
-            False
-        """
-        if parent(self) is not parent(other):
-            return NotImplemented
-        return other.__lt__(self)
-
-    def __ge__(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = ImmutableListWithParent(ZZ, [1,2,3])
-            sage: n = ImmutableListWithParent(ZZ, [2,3,4])
-            sage: l >= l
-            True
-            sage: l >= m
-            True
-            sage: m >= n
-            False
-        """
-        if self == other:
-            return True
-        return self.__gt__(other)
-
-    def sibling(self, l):
-        """
-        Returns an :class:`ImmutableListWithParent` object whose list is
-        ``l`` and whose parent is the same as the parent of ``self``.
-
-        Note that the implementation of this function makes an assumption
-        about the constructor for subclasses.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: m = l.sibling([2,3,4]); m
-            [2, 3, 4]
-            sage: m.parent()
-            A parent for tests
-        """
-        return self.__class__(self.parent(), list=l)
-
-    def reversed(self):
-        """
-        Returns the sibling of ``self`` which is obtained by reversing the
-        elements of`` self``.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: l.reversed()
-            [3, 2, 1]
-        """
-        return self.sibling([ i for i in reversed(self._list)])
-
-    def set_index(self, k, value):
-        """
-        Returns the sibling of ``self`` obtained by setting the
-        `k^{th}` entry of self to value.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.crystals.tensor_product import ImmutableListWithParent, TestParent
-            sage: l = ImmutableListWithParent(TestParent(), [1,2,3])
-            sage: l.set_index(0,2)
-            [2, 2, 3]
-            sage: l.set_index(1,4)
-            [1, 4, 3]
-            sage: _.parent()
-            A parent for tests
-        """
-        l = [i for i in self._list]
-        l[k] = value
-        return self.sibling(l)
-
 class CrystalOfWords(UniqueRepresentation, Parent):
     """
     Auxiliary class to provide a call method to create tensor product elements.
@@ -319,103 +104,8 @@ class CrystalOfWords(UniqueRepresentation, Parent):
         """
         return self.element_class(self, list(crystalElements))
 
-    def one_dimensional_configuration_sum(self, q=None, group_components=True):
-        r"""
-        Computes the one-dimensional configuration sum.
-
-        INPUT:
-
-        - ``q`` -- (default: ``None``) a variable or ``None``; if ``None``,
-          a variable `q` is set in the code
-        - ``group_components`` -- (default: ``True``) boolean; if ``True``,
-          then the terms are grouped by classical component
-
-        The one-dimensional configuration sum is the sum of the weights of all
-        elements in the crystal weighted by the energy function.
-
-        EXAMPLES::
-
-            sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K)
-            sage: T.one_dimensional_configuration_sum()
-            B[-2*Lambda[1] + 2*Lambda[2]] + (q+1)*B[-Lambda[1]] + (q+1)*B[Lambda[1] - Lambda[2]]
-            + B[2*Lambda[1]] + B[-2*Lambda[2]] + (q+1)*B[Lambda[2]]
-            sage: R.<t> = ZZ[]
-            sage: T.one_dimensional_configuration_sum(t, False)
-            B[-2*Lambda[1] + 2*Lambda[2]] + (t+1)*B[-Lambda[1]] + (t+1)*B[Lambda[1] - Lambda[2]]
-            + B[2*Lambda[1]] + B[-2*Lambda[2]] + (t+1)*B[Lambda[2]]
-
-            sage: R = RootSystem(['A',2,1])
-            sage: La = R.weight_space().basis()
-            sage: LS = crystals.ProjectedLevelZeroLSPaths(2*La[1])
-            sage: LS.one_dimensional_configuration_sum() == T.one_dimensional_configuration_sum() # long time
-            True
-
-        TESTS::
-
-            sage: K1 = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: K2 = crystals.KirillovReshetikhin(['A',2,1],2,1)
-            sage: T = crystals.TensorProduct(K1,K2)
-            sage: T.one_dimensional_configuration_sum() == T.one_dimensional_configuration_sum(group_components=False)
-            True
-        """
-        if q is None:
-            from sage.rings.all import QQ
-            q = QQ['q'].gens()[0]
-        P0 = self.weight_lattice_realization().classical()
-        B = P0.algebra(q.parent())
-        if group_components:
-            G = self.digraph(index_set = self.cartan_type().classical().index_set())
-            C = G.connected_components()
-            return sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c) for c in C)
-        return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
-
-TensorProductOfCrystalsOptions=GlobalOptions(name='tensor_product_of_crystals',
-    doc=r"""
-    Sets the global options for tensor products of crystals. The default is to
-    use the anti-Kashiwara convention.
-
-    There are two conventions for how `e_i` and `f_i` act on tensor products,
-    and the difference between the two is the order of the tensor factors
-    are reversed. This affects both the input and output. See the example
-    below.
-    """,
-    end_doc=r"""
-
-    .. NOTE::
-
-        Changing the ``convention`` also changes how the input is handled.
-
-    .. WARNING::
-
-        Internally, the crystals are always stored using the anti-Kashiwara
-        convention.
-
-    If no parameters are set, then the function returns a copy of the
-    options dictionary.
-
-    EXAMPLES::
-
-        sage: C = crystals.Letters(['A',2])
-        sage: T = crystals.TensorProduct(C,C)
-        sage: elt = T(C(1), C(2)); elt
-        [1, 2]
-        sage: crystals.TensorProduct.global_options['convention'] = "Kashiwara"
-        sage: elt
-        [2, 1]
-        sage: T(C(1), C(2)) == elt
-        False
-        sage: T(C(2), C(1)) == elt
-        True
-        sage: crystals.TensorProduct.global_options.reset()
-    """,
-    convention=dict(default="antiKashiwara",
-                    description='Sets the convention used for displaying/inputting tensor product of crystals',
-                    values=dict(antiKashiwara='use the anti-Kashiwara convention',
-                                Kashiwara='use the Kashiwara convention'),
-                    alias=dict(anti="antiKashiwara", opposite="antiKashiwara"),
-                    case_sensitive=False)
-)
+    class Element(TensorProductOfCrystalsElement):
+        pass
 
 class TensorProductOfCrystals(CrystalOfWords):
     r"""
@@ -440,10 +130,9 @@ class TensorProductOfCrystals(CrystalOfWords):
 
     .. MATH::
 
-        e_i(b \otimes b^{\prime}) = \begin{cases}
-        e_i(b) \otimes b^{\prime} & \text{if } \varepsilon_i(b) >
-        \varphi_i(b^{\prime}) \\
-        b \otimes e_i(b^{\prime}) & \text{otherwise.}
+        e_i(b \otimes b') = \begin{cases}
+        e_i(b) \otimes b' & \text{if } \varepsilon_i(b) >
+        \varphi_i(b') \\ b \otimes e_i(b') & \text{otherwise.}
         \end{cases}
 
     We also define:
@@ -451,11 +140,12 @@ class TensorProductOfCrystals(CrystalOfWords):
     .. MATH::
 
         \begin{aligned}
-        \varphi_i(b \otimes b^{\prime}) & = \max\left( \varphi_i(b),
-        \varphi_i(b) + \varphi_i(b^{\prime}) - \varepsilon_i(b) \right)
-        \\ \varepsilon_i(b \otimes b^{\prime}) & = \max\left(
-        \varepsilon_i(b^{\prime}), \varepsilon_i(b^{\prime}) +
-        \varepsilon_i(b) - \varphi_i(b^{\prime}) \right).
+        \varphi_i(b \otimes b') & = \max\left( \varphi_i(b),
+        \varphi_i(b') + \langle \alpha_i^{\vee}, \mathrm{wt}(b) \rangle
+        \right),
+        \\ \varepsilon_i(b \otimes b') & = \max\left( \varepsilon_i(b'),
+        \varepsilon_i(b) - \langle \alpha_i^{\vee}, \mathrm{wt}(b') \rangle
+        \right).
         \end{aligned}
 
     .. NOTE::
@@ -557,7 +247,8 @@ class TensorProductOfCrystals(CrystalOfWords):
     It has `8` elements::
 
         sage: T.list()
-        [[2, 1, 1], [2, 1, 2], [2, 1, 3], [3, 1, 3], [3, 2, 3], [3, 1, 1], [3, 1, 2], [3, 2, 2]]
+        [[2, 1, 1], [2, 1, 2], [2, 1, 3], [3, 1, 3],
+         [3, 2, 3], [3, 1, 1], [3, 1, 2], [3, 2, 2]]
 
     One can also check the Cartan type of the crystal::
 
@@ -575,7 +266,7 @@ class TensorProductOfCrystals(CrystalOfWords):
         24
         sage: TestSuite(T).run()
         sage: T.module_generators
-        [[[[1], [2]], [[1]]], [[[2], [3]], [[1]]]]
+        ([[[1], [2]], [[1]]], [[[2], [3]], [[1]]])
         sage: [x.weight() for x in T.module_generators]
         [(2, 1, 0, 0), (1, 1, 1, 0)]
 
@@ -642,10 +333,10 @@ class TensorProductOfCrystals(CrystalOfWords):
         sage: T = crystals.TensorProduct(C,C)
         sage: elt = T(C(1), C(2)); elt
         [1, 2]
-        sage: crystals.TensorProduct.global_options['convention'] = "Kashiwara"
+        sage: crystals.TensorProduct.options.convention = "Kashiwara"
         sage: elt
         [2, 1]
-        sage: crystals.TensorProduct.global_options.reset()
+        sage: crystals.TensorProduct.options._reset()
     """
     @staticmethod
     def __classcall_private__(cls, *crystals, **options):
@@ -715,7 +406,54 @@ class TensorProductOfCrystals(CrystalOfWords):
             return FullTensorProductOfRegularCrystals(tp, cartan_type=cartan_type)
         return FullTensorProductOfCrystals(tp, cartan_type=cartan_type)
 
-    global_options = TensorProductOfCrystalsOptions
+    # add options to class
+    class options(GlobalOptions):
+        r"""
+        Sets the global options for tensor products of crystals. The default is to
+        use the anti-Kashiwara convention.
+
+        There are two conventions for how `e_i` and `f_i` act on tensor products,
+        and the difference between the two is the order of the tensor factors
+        are reversed. This affects both the input and output. See the example
+        below.
+
+        @OPTIONS@
+
+        .. NOTE::
+
+            Changing the ``convention`` also changes how the input is handled.
+
+        .. WARNING::
+
+            Internally, the crystals are always stored using the anti-Kashiwara
+            convention.
+
+        If no parameters are set, then the function returns a copy of the
+        options dictionary.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(['A',2])
+            sage: T = crystals.TensorProduct(C,C)
+            sage: elt = T(C(1), C(2)); elt
+            [1, 2]
+            sage: crystals.TensorProduct.options.convention = "Kashiwara"
+            sage: elt
+            [2, 1]
+            sage: T(C(1), C(2)) == elt
+            False
+            sage: T(C(2), C(1)) == elt
+            True
+            sage: crystals.TensorProduct.options._reset()
+        """
+        NAME = 'TensorProductOfCrystals'
+        module = 'sage.combinat.crystals'
+        convention = dict(default="antiKashiwara",
+                        description='Sets the convention used for displaying/inputting tensor product of crystals',
+                        values=dict(antiKashiwara='use the anti-Kashiwara convention',
+                                    Kashiwara='use the Kashiwara convention'),
+                            alias=dict(anti="antiKashiwara", opposite="antiKashiwara"),
+                            case_sensitive=False)
 
     def _element_constructor_(self, *crystalElements):
         """
@@ -731,7 +469,7 @@ class TensorProductOfCrystals(CrystalOfWords):
             sage: T(C(2), C(1), C(1))
             [2, 1, 1]
         """
-        if self.global_options['convention'] == "Kashiwara":
+        if self.options.convention == "Kashiwara":
             crystalElements = reversed(crystalElements)
         return self.element_class(self, list(crystalElements))
 
@@ -758,7 +496,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         Parent.__init__(self, category = category)
         self.crystals = crystals
         self._cartan_type = cartan_type
-        self.module_generators = [ self(*x) for x in generators ]
+        self.module_generators = tuple([self(*x) for x in generators])
 
     def _repr_(self):
         """
@@ -770,7 +508,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
             sage: crystals.TensorProduct(C,C,generators=[[C(2),C(1)]])
             The tensor product of the crystals [The crystal of letters for type ['A', 2], The crystal of letters for type ['A', 2]]
         """
-        if self.global_options['convention'] == "Kashiwara":
+        if self.options.convention == "Kashiwara":
             st = repr(list(reversed(self.crystals)))
         else:
             st = repr(list(self.crystals))
@@ -808,7 +546,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
                 raise ValueError("you need to specify the Cartan type if the tensor product list is empty")
             else:
                 self._cartan_type = crystals[0].cartan_type()
-        self.cartesian_product = CartesianProduct(*self.crystals)
+        self.cartesian_product = cartesian_product(self.crystals)
         self.module_generators = self
 
     def _repr_(self):
@@ -821,7 +559,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
             sage: crystals.TensorProduct(C,C)
             Full tensor product of the crystals [The crystal of letters for type ['A', 2], The crystal of letters for type ['A', 2]]
         """
-        if self.global_options['convention'] == "Kashiwara":
+        if self.options.convention == "Kashiwara":
             st = repr(list(reversed(self.crystals)))
         else:
             st = repr(list(self.crystals))
@@ -882,707 +620,78 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         return cm.common_parent(*[crystal.weight_lattice_realization()
                                   for crystal in self.crystals])
 
-class TensorProductOfCrystalsElement(ImmutableListWithParent):
-    r"""
-    A class for elements of tensor products of crystals.
-    """
-    def _repr_(self):
-        """
-        Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',3])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(2))
-            [1, 2]
-        """
-        if self.parent().global_options['convention'] == "Kashiwara":
-            return repr(list(reversed(self._list)))
-        return repr(self._list)
-
-    def _latex_(self):
-        r"""
-        Return latex code for ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(["A",2])
-            sage: D = crystals.Tableaux(["A",2], shape=[2])
-            sage: E = crystals.TensorProduct(C,D)
-            sage: latex(E.module_generators[0])
-            1 \otimes {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
-            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
-            \lr{1}&\lr{1}\\\cline{1-2}
-            \end{array}$}
-            }
-        """
-        return ' \otimes '.join(latex(c) for c in self)
-
-    def _ascii_art_(self):
-        """
-        Return an ASCII art representation of ``self``.
-
-        EXAMPLES::
-
-            sage: KT = crystals.TensorProductOfKirillovReshetikhinTableaux(['D',4,1],[[3,3],[2,1],[1,2]])
-            sage: ascii_art(KT.module_generators[0])
-              1  1  1
-              2  2  2 #   1 #   1  1
-              3  3  3     2
-             -4 -4 -4
-        """
-        from sage.typeset.ascii_art import ascii_art, AsciiArt
-        s = ascii_art(self[0])
-        s._baseline = s._h // 2
-        ret = s
-        for tableau in self[1:]:
-            s = ascii_art(tableau)
-            s._baseline = s._h // 2
-            ret += AsciiArt([" # "]) + s
-        return ret
-
-    def __lt__(self, other):
-        """
-        Non elements of the crystal are incomparable with elements of the crystal
-        (or should it return NotImplemented?).
-
-        Comparison of two elements of this crystal:
-
-        - different length: incomparable
-        - otherwise lexicographicaly, considering ``self[i]`` and ``other[i]``
-          as incomparable if ``self[i] < other[i]`` returns NotImplemented
-        """
-        if parent(self) is not parent(other):
-            return False
-        if len(self) != len(other):
-            return False
-        for i in range(len(self)):
-            if (self[i] < other[i]) == True:
-                return True
-            if (other[i] < self[i]) == True:
-                return False
-        return False
-
-    def _repr_diagram(self):
-        r"""
-        Return a string representation of ``self`` as a diagram.
-
-        EXAMPLES::
-
-            sage: C = crystals.Tableaux(['A',3], shape=[3,1])
-            sage: D = crystals.Tableaux(['A',3], shape=[1])
-            sage: E = crystals.Tableaux(['A',3], shape=[2,2,2])
-            sage: T = crystals.TensorProduct(C,D,E)
-            sage: print T.module_generators[0]._repr_diagram()
-              1  1  1 (X)   1 (X)   1  1
-              2                     2  2
-                                    3  3
-        """
-        pplist = []
-        max_widths = []
-        num_cols = len(self)
-        for c in self:
-            try:
-                pplist.append(c._repr_diagram().split('\n'))
-            except AttributeError:
-                pplist.append(c._repr_().split('\n'))
-            max_widths.append(max(map(len, pplist[-1])))
-        num_rows = max(map(len, pplist))
-        ret = ""
-        for i in range(num_rows):
-            if i > 0:
-                ret += '\n'
-            for j in range(num_cols):
-                if j > 0:
-                    if i == 0:
-                        ret += ' (X) '
-                    else:
-                        ret += '     '
-                if i < len(pplist[j]):
-                    ret += pplist[j][i]
-                    ret += ' '*(max_widths[j] - len(pplist[j][i]))
-                else:
-                    ret += ' '*max_widths[j]
-        return ret
-
-    def pp(self):
-        """
-        Pretty print ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Tableaux(['A',3], shape=[3,1])
-            sage: D = crystals.Tableaux(['A',3], shape=[1])
-            sage: E = crystals.Tableaux(['A',3], shape=[2,2,2])
-            sage: T = crystals.TensorProduct(C,D,E)
-            sage: T.module_generators[0].pp()
-              1  1  1 (X)   1 (X)   1  1
-              2                     2  2
-                                    3  3
-        """
-        print(self._repr_diagram())
-
-    def weight(self):
-        r"""
-        Return the weight of ``self``.
-
-        EXAMPLES::
-
-            sage: B = crystals.infinity.Tableaux("A3")
-            sage: T = crystals.TensorProduct(B,B)
-            sage: b1 = B.highest_weight_vector().f_string([2,1,3])
-            sage: b2 = B.highest_weight_vector().f(1)
-            sage: t = T(b2, b1)
-            sage: t
-            [[[1, 1, 1, 2], [2, 2], [3]], [[1, 1, 1, 1, 2], [2, 2, 4], [3]]]
-            sage: t.weight()
-            (-2, 1, 0, 1)
-        """
-        return sum(self[i].weight() for i in range(len(self)))
-
-    def epsilon(self, i):
-        r"""
-        Return `\varepsilon_i` of ``self``.
-
-        INPUT:
-
-        - ``i`` -- An element of the index set
-
-        EXAMPLES::
-
-            sage: B = crystals.infinity.Tableaux("G2")
-            sage: T = crystals.TensorProduct(B,B)
-            sage: b1 = B.highest_weight_vector().f(2)
-            sage: b2 = B.highest_weight_vector().f_string([2,2,1])
-            sage: t = T(b2, b1)
-            sage: [t.epsilon(i) for i in B.index_set()]
-            [0, 3]
-        """
-        return max(self._sig(i, k) for k in range(1, len(self)+1))
-
-    def phi(self, i):
-        r"""
-        Return `\varphi_i` of ``self``.
-
-        INPUT:
-
-        - ``i`` -- An element of the index set
-
-        EXAMPLES::
-
-            sage: La = RootSystem(['A',2,1]).weight_lattice(extended=True).fundamental_weights()
-            sage: B = crystals.GeneralizedYoungWalls(2,La[0]+La[1])
-            sage: T = crystals.TensorProduct(B,B)
-            sage: b1 = B.highest_weight_vector().f_string([1,0])
-            sage: b2 = B.highest_weight_vector().f_string([0,1])
-            sage: t = T(b2, b1)
-            sage: [t.phi(i) for i in B.index_set()]
-            [1, 1, 4]
-
-        TESTS:
-
-        Check that :trac:`15462` is fixed::
-
-            sage: B = crystals.Tableaux(['A',2], shape=[2,1])
-            sage: La = RootSystem(['A',2]).ambient_space().fundamental_weights()
-            sage: T = crystals.TensorProduct(crystals.elementary.T(['A',2], La[1]+La[2]), B)
-            sage: t = T.an_element()
-            sage: t.phi(1)
-            2
-            sage: t.phi(2)
-            2
-        """
-        P = self[-1].parent().weight_lattice_realization()
-        h = P.simple_coroots()
-        omega = P(self.weight()).scalar(h[i])
-        return max([omega + self._sig(i, k) for k in range(1, len(self)+1)])
-
-    @cached_in_parent_method
-    def _sig(self,i,k):
-        r"""
-        Return `a_i(k)` of ``self``.
-
-        The value `a_i(k)` of a crystal `b = b_N \otimes \cdots \otimes b_1`
-        is defined as:
-
-        .. MATH::
-
-            a_i(k) = \varepsilon_i(b_k) - \sum_{j=1}^{k-1} \langle h_i,
-            \mathrm{wt}(b_j) \rangle
-
-        where `\mathrm{wt}` is the :meth:`weight` of `b_j`.
-
-        INPUT:
-
-        - ``i`` -- An element of the index set
-
-        - ``k`` -- The (1-based) index of the tensor factor of ``self``
-
-        EXAMPLES::
-
-            sage: B = crystals.infinity.GeneralizedYoungWalls(3)
-            sage: T = crystals.TensorProduct(B,B)
-            sage: b1 = B.highest_weight_vector().f_string([0,3,1])
-            sage: b2 = B.highest_weight_vector().f_string([3,2,1,0,2,3])
-            sage: t = T(b1, b2)
-            sage: [[t._sig(i,k) for k in range(1,len(t)+1)] for i in B.index_set()]
-            [[0, -1], [0, 0], [0, 1], [1, 2]]
-
-        TESTS:
-
-        Check that :trac:`18469` is fixed::
-
-            sage: E1 = crystals.elementary.B(['A',2], 1)
-            sage: E2 = crystals.elementary.B(['A',2], 2)
-            sage: T = crystals.TensorProduct(E1, E2)
-            sage: x = T(E1.module_generators[0], E2.module_generators[0]); x
-            [0, 0]
-            sage: [[x._sig(i,k) for k in range(1,3)] for i in T.index_set()]
-            [[-inf, 0], [0, -inf]]
-            sage: x.f(1)
-            [-1, 0]
-            sage: x.e(1)
-            [1, 0]
-        """
-        if k == 1:
-            return self[-1].epsilon(i)
-        ep = self[-k].epsilon(i)
-        if ep == float("-inf"):
-            return ep
-
-        P = self[-1].parent().weight_lattice_realization()
-        h = P.simple_coroots()
-        wt = sum(P(self[-j].weight()) for j in range(1, k))
-        return ep - P(wt).scalar(h[i])
-
-    def e(self,i):
-        r"""
-        Return the action of `e_i` on ``self``.
-
-        INPUT:
-
-        - ``i`` -- An element of the index set
-
-        EXAMPLES::
-
-            sage: B = crystals.infinity.Tableaux("D4")
-            sage: T = crystals.TensorProduct(B,B)
-            sage: b1 = B.highest_weight_vector().f_string([1,4,3])
-            sage: b2 = B.highest_weight_vector().f_string([2,2,3,1,4])
-            sage: t = T(b2, b1)
-            sage: t.e(1)
-            [[[1, 1, 1, 1, 1], [2, 2, 3, -3], [3]], [[1, 1, 1, 1, 2], [2, 2, 2], [3, -3]]]
-            sage: t.e(2)
-            sage: t.e(3)
-            [[[1, 1, 1, 1, 1, 2], [2, 2, 3, -4], [3]], [[1, 1, 1, 1, 2], [2, 2, 2], [3, -3]]]
-            sage: t.e(4)
-            [[[1, 1, 1, 1, 1, 2], [2, 2, 3, 4], [3]], [[1, 1, 1, 1, 2], [2, 2, 2], [3, -3]]]
-        """
-        N = len(self) + 1
-        for k in range(1, N):
-            if all(self._sig(i,k) > self._sig(i,j) for j in range(1, k)) and \
-                    all(self._sig(i,k) >= self._sig(i,j) for j in range(k+1, N)):
-                crystal = self[-k].e(i)
-                if crystal is None:
-                    return None
-                return self.set_index(-k, crystal)
-        return None
-
-    def f(self,i):
-        r"""
-        Return the action of `f_i` on ``self``.
-
-        INPUT:
-
-        - ``i`` -- An element of the index set
-
-        EXAMPLES::
-
-            sage: La = RootSystem(['A',3,1]).weight_lattice(extended=True).fundamental_weights()
-            sage: B = crystals.GeneralizedYoungWalls(3,La[0])
-            sage: T = crystals.TensorProduct(B,B,B)
-            sage: b1 = B.highest_weight_vector().f_string([0,3])
-            sage: b2 = B.highest_weight_vector().f_string([0])
-            sage: b3 = B.highest_weight_vector()
-            sage: t = T(b3, b2, b1)
-            sage: t.f(0)
-            [[[0]], [[0]], [[0, 3]]]
-            sage: t.f(1)
-            [[], [[0]], [[0, 3], [1]]]
-            sage: t.f(2)
-            [[], [[0]], [[0, 3, 2]]]
-            sage: t.f(3)
-            [[], [[0, 3]], [[0, 3]]]
-        """
-        N = len(self) + 1
-        for k in range(1, N):
-            if all(self._sig(i,k) >= self._sig(i,j) for j in range(1, k)) and \
-                    all(self._sig(i,k) > self._sig(i,j) for j in range(k+1, N)):
-                crystal = self[-k].f(i)
-                if crystal is None:
-                    return None
-                return self.set_index(-k, crystal)
-        return None
-
-class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement):
-    """
-    Element class for a tensor product of regular crystals.
-
-    TESTS::
-
-        sage: C = crystals.Letters(['A',2])
-        sage: T = crystals.TensorProduct(C, C)
-        sage: elt = T(C(1), C(2))
-        sage: from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
-        sage: isinstance(elt, TensorProductOfRegularCrystalsElement)
-        True
-    """
-    def e(self, i):
-        """
-        Return the action of `e_i` on ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(2)).e(1) == T(C(1),C(1))
-            True
-            sage: T(C(2),C(1)).e(1) is None
-            True
-            sage: T(C(2),C(2)).e(1) == T(C(1),C(2))
-            True
-        """
-        if i not in self.index_set():
-            raise ValueError("i must be in the index set")
-        position = self.positions_of_unmatched_plus(i)
-        if position == []:
-            return None
-        k = position[0]
-        return self.set_index(k, self[k].e(i))
-
-    def weight(self):
-        """
-        Return the weight of ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',3])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(2)).weight()
-            (1, 1, 0, 0)
-            sage: T = crystals.Tableaux(['D',4],shape=[])
-            sage: T.list()[0].weight()
-            (0, 0, 0, 0)
-        """
-        return sum((self[j].weight() for j in range(len(self))), self.parent().weight_lattice_realization().zero())
-
-    def f(self, i):
-        """
-        Return the action of `f_i` on ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(1)).f(1)
-            [1, 2]
-            sage: T(C(1),C(2)).f(1)
-            [2, 2]
-            sage: T(C(2),C(1)).f(1) is None
-            True
-        """
-        if i not in self.index_set():
-            raise ValueError("i must be in the index set")
-        position = self.positions_of_unmatched_minus(i)
-        if position == []:
-            return None
-        k = position[len(position)-1]
-        return self.set_index(k, self[k].f(i))
-
-    def phi(self, i):
-        r"""
-        Return `\varphi_i` of ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(1)).phi(1)
-            2
-            sage: T(C(1),C(2)).phi(1)
-            1
-            sage: T(C(2),C(1)).phi(1)
-            0
-        """
-        self = self.reversed()
-        height = 0
-        for j in range(len(self)):
-            plus = self[j].epsilon(i)
-            minus = self[j].phi(i)
-            if height-plus < 0:
-                height = minus
-            else:
-                height = height - plus + minus
-        return height
-
-    def epsilon(self, i):
-        r"""
-        Return `\varepsilon_i` of ``self``.
-
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(1),C(1)).epsilon(1)
-            0
-            sage: T(C(1),C(2)).epsilon(1)
-            1
-            sage: T(C(2),C(1)).epsilon(1)
-            0
-        """
-        height = 0
-        for j in range(len(self)):
-            minus = self[j].phi(i)
-            plus = self[j].epsilon(i)
-            if height-minus < 0:
-                height = plus
-            else:
-                height = height - minus + plus
-        return height
-
-    def positions_of_unmatched_minus(self, i, dual=False, reverse=False):
-        """
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(2),C(1)).positions_of_unmatched_minus(1)
-            []
-            sage: T(C(1),C(2)).positions_of_unmatched_minus(1)
-            [0]
-        """
-        unmatched_plus = []
-        height = 0
-        if reverse == True:
-            self = self.reversed()
-        if dual == False:
-            for j in range(len(self)):
-                minus = self[j].phi(i)
-                plus = self[j].epsilon(i)
-                if height-minus < 0:
-                    unmatched_plus.append(j)
-                    height = plus
-                else:
-                    height = height - minus + plus
-        else:
-            for j in range(len(self)):
-                plus = self[j].epsilon(i)
-                minus = self[j].phi(i)
-                if height-plus < 0:
-                    unmatched_plus.append(j)
-                    height = minus
-                else:
-                    height = height - plus + minus
-        return unmatched_plus
-
-    def positions_of_unmatched_plus(self, i):
-        """
-        EXAMPLES::
-
-            sage: C = crystals.Letters(['A',5])
-            sage: T = crystals.TensorProduct(C,C)
-            sage: T(C(2),C(1)).positions_of_unmatched_plus(1)
-            []
-            sage: T(C(1),C(2)).positions_of_unmatched_plus(1)
-            [1]
-        """
-        l = self.positions_of_unmatched_minus(i, dual=True, reverse=True)
-        l.reverse()
-        return [len(self)-1-l[j] for j in range(len(l))]
-
-    def energy_function(self):
-        r"""
-        Return the energy function of ``self``.
-
-        The energy is only defined when ``self`` is an element of a tensor
-        product of affine Kirillov-Reshetikhin crystals. In this
-        implementation, it is assumed that ``self`` is an element of a
-        tensor product of perfect crystals of the same level, see
-        Theorem 7.5 in [SchillingTingley2011]_.
-
-        INPUT:
-
-        - ``self`` -- an element of a tensor product of perfect
-          Kirillov-Reshetkhin crystals of the same level
-
-        OUTPUT: an integer
-
-        REFERENCES:
-
-        .. [SchillingTingley2011] A. Schilling, P. Tingley.
-           Demazure crystals, Kirillov-Reshetikhin crystals, and the energy
-           function. Electronic Journal of Combinatorics. **19(2)**. 2012.
-           :arXiv:`1104.2359`
-
-        EXAMPLES::
-
-            sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K,K)
-            sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2])]
-            sage: for b in hw:
-            ....:    print b, b.energy_function()
-            [[[1]], [[1]], [[1]]] 0
-            [[[1]], [[2]], [[1]]] 2
-            [[[2]], [[1]], [[1]]] 1
-            [[[3]], [[2]], [[1]]] 3
-
-            sage: K = crystals.KirillovReshetikhin(['C',2,1],1,2)
-            sage: T = crystals.TensorProduct(K,K)
-            sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2])]
-            sage: for b in hw:  # long time (5s on sage.math, 2011)
-            ....:     print b, b.energy_function()
-            [[], []] 4
-            [[], [[1, 1]]] 1
-            [[[1, 1]], []] 3
-            [[[1, 1]], [[1, 1]]] 0
-            [[[1, 2]], [[1, 1]]] 1
-            [[[2, 2]], [[1, 1]]] 2
-            [[[-1, -1]], [[1, 1]]] 2
-            [[[1, -1]], [[1, 1]]] 2
-            [[[2, -1]], [[1, 1]]] 2
-
-            sage: K = crystals.KirillovReshetikhin(['C',2,1],1,1)
-            sage: T = crystals.TensorProduct(K)
-            sage: t = T.module_generators[0]
-            sage: t.energy_function()
-            Traceback (most recent call last):
-            ...
-            ValueError: All crystals in the tensor product need to be perfect of the same level
-        """
-        C = self.parent().crystals[0]
-        ell = ceil(C.s()/C.cartan_type().c()[C.r()])
-        if any(ell != K.s()/K.cartan_type().c()[K.r()] for K in self.parent().crystals):
-            raise ValueError("All crystals in the tensor product need to be perfect of the same level")
-        t = self.parent()(*[K.module_generator() for K in self.parent().crystals])
-        d = t.affine_grading()
-        return d - self.affine_grading()
-
-    def affine_grading(self):
-        r"""
-        Returns the affine grading of `self`.
-
-        The affine grading is only defined when ``self`` is an element of a
-        tensor product of affine Kirillov-Reshetikhin crystals. It is
-        calculated by finding a path from ``self`` to a ground state path
-        using the helper method :meth:`e_string_to_ground_state` and counting
-        the number of affine Kashiwara operators `e_0` applied on the way.
-
-        INPUT:
-
-        - ``self`` -- an element of a tensor product of Kirillov-Reshetikhin
-          crystals
-
-        OUTPUT: an integer
-
-        EXAMPLES::
-
-            sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K)
-            sage: t = T.module_generators[0]
-            sage: t.affine_grading()
-            1
-
-            sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K,K)
-            sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2])]
-            sage: for b in hw:
-            ....:     print b, b.affine_grading()
-            [[[1]], [[1]], [[1]]] 3
-            [[[1]], [[2]], [[1]]] 1
-            [[[2]], [[1]], [[1]]] 2
-            [[[3]], [[2]], [[1]]] 0
-
-            sage: K = crystals.KirillovReshetikhin(['C',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K,K)
-            sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2])]
-            sage: for b in hw:
-            ....:     print b, b.affine_grading()
-            [[[1]], [[1]], [[1]]] 2
-            [[[1]], [[2]], [[1]]] 1
-            [[[1]], [[-1]], [[1]]] 0
-            [[[2]], [[1]], [[1]]] 1
-            [[[-2]], [[2]], [[1]]] 0
-            [[[-1]], [[1]], [[1]]] 1
-        """
-        return self.e_string_to_ground_state().count(0)
-
-    @cached_method
-    def e_string_to_ground_state(self):
-        r"""
-        Returns a string of integers in the index set `(i_1,\ldots,i_k)` such
-        that `e_{i_k} \cdots e_{i_1}` of ``self`` is the ground state.
-
-        This method is only defined when ``self`` is an element of a tensor
-        product of affine Kirillov-Reshetikhin crystals. It calculates a path
-        from ``self`` to a ground state path using Demazure arrows as defined
-        in Lemma 7.3 in [SchillingTingley2011]_.
-
-        INPUT:
-
-        - ``self`` -- an element of a tensor product of Kirillov-Reshetikhin
-          crystals
-
-        OUTPUT: a tuple of integers `(i_1,\ldots,i_k)`
-
-        EXAMPLES::
-
-            sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K)
-            sage: t = T.module_generators[0]
-            sage: t.e_string_to_ground_state()
-            (0, 2)
-
-            sage: K = crystals.KirillovReshetikhin(['C',2,1],1,1)
-            sage: T = crystals.TensorProduct(K,K)
-            sage: t = T.module_generators[0]; t
-            [[[1]], [[1]]]
-            sage: t.e_string_to_ground_state()
-            (0,)
-            sage: x=t.e(0)
-            sage: x.e_string_to_ground_state()
-            ()
-            sage: y=t.f_string([1,2,1,1,0]); y
-            [[[2]], [[1]]]
-            sage: y.e_string_to_ground_state()
-            ()
-        """
-        from sage.combinat.rigged_configurations.kr_tableaux import KirillovReshetikhinTableaux
-        if self.parent().crystals[0].__module__ != 'sage.combinat.crystals.kirillov_reshetikhin' and \
-                not isinstance(self.parent().crystals[0], KirillovReshetikhinTableaux):
-            raise ValueError("All crystals in the tensor product need to be Kirillov-Reshetikhin crystals")
-        I = self.cartan_type().classical().index_set()
-        ell = max(ceil(K.s()/K.cartan_type().c()[K.r()]) for K in self.parent().crystals)
-        for i in I:
-            if self.epsilon(i) > 0:
-                return (i,) + (self.e(i)).e_string_to_ground_state()
-        if self.epsilon(0) > ell:
-            return (0,) + (self.e(0)).e_string_to_ground_state()
-        return ()
-
-CrystalOfWords.Element = TensorProductOfCrystalsElement
-
 class FullTensorProductOfRegularCrystals(FullTensorProductOfCrystals):
     """
     Full tensor product of regular crystals.
     """
-    Element = TensorProductOfRegularCrystalsElement
+    class Element(TensorProductOfRegularCrystalsElement):
+        pass
 
 class TensorProductOfRegularCrystalsWithGenerators(TensorProductOfCrystalsWithGenerators):
     """
     Tensor product of regular crystals with a generating set.
     """
-    Element = TensorProductOfRegularCrystalsElement
+    class Element(TensorProductOfRegularCrystalsElement):
+        pass
+
+class FullTensorProductOfSuperCrystals(FullTensorProductOfCrystals):
+    r"""
+    Tensor product of super crystals.
+
+    EXAMPLES::
+
+        sage: L = crystals.Letters(['A', [1,1]])
+        sage: T = tensor([L,L,L])
+        sage: T.cardinality()
+        64
+    """
+    class Element(TensorProductOfSuperCrystalsElement):
+        pass
+
+class QueerSuperCrystalsMixin(object):
+    """
+    Mixin class with methods for a finite queer supercrystal.
+    """
+    @cached_method
+    def index_set(self):
+        """
+        Return the enlarged index set.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q',3])
+            sage: T = tensor([Q,Q])
+            sage: T.index_set()
+            (-4, -3, -2, -1, 1, 2)
+        """
+        n = self.cartan_type().n
+        return tuple(range(-2*n, 0)) + tuple(range(1, n+1))
+
+    @cached_method
+    def _long_element(self):
+        r"""
+        Return the long element in `S_n`.
+
+        This method is used in the construction of the crystal operators
+        `e_i` and `f_i`.
+
+        EXAMPLES::
+
+            sage: Q = crystals.Letters(['Q', 4])
+            sage: T = tensor([Q,Q,Q,Q])
+            sage: T._long_element()
+            (3, 2, 1, 3, 2, 3)
+        """
+        from sage.combinat.permutation import Permutations
+        n = self.cartan_type().n
+        return tuple(Permutations(n+1).long_element().reduced_word())
+
+class FullTensorProductOfQueerSuperCrystals(FullTensorProductOfCrystals, QueerSuperCrystalsMixin):
+    r"""
+    Tensor product of queer super crystals.
+    """
+    class Element(TensorProductOfQueerSuperCrystalsElement):
+        pass
 
 #########################################################
 ## Crystal of tableaux
@@ -1613,7 +722,7 @@ class CrystalOfTableaux(CrystalOfWords):
     have this property.
 
     Crystals of tableaux are constructed using an embedding into
-    tensor products following Kashiwara and Nakashima [KN94]_. Sage's tensor
+    tensor products following Kashiwara and Nakashima [KN1994]_. Sage's tensor
     product rule for crystals differs from that of Kashiwara and Nakashima
     by reversing the order of the tensor factors. Sage produces the same
     crystals of tableaux as Kashiwara and Nakashima. With Sage's convention,
@@ -1649,7 +758,7 @@ class CrystalOfTableaux(CrystalOfWords):
         sage: T = crystals.Tableaux(['A',2], shape = [3,2])
         sage: T.module_generators[0]
         [[1, 1, 1], [2, 2]]
-        sage: T.module_generators[0]._list
+        sage: list(T.module_generators[0])
         [2, 1, 2, 1, 1]
 
     To create a tableau, one can use::
@@ -1686,7 +795,7 @@ class CrystalOfTableaux(CrystalOfWords):
         sage: T.cardinality()
         48
         sage: T.module_generators
-        [[+++, [[1]]]]
+        ([+++, [[1]]],)
         sage: TestSuite(T).run()
 
         sage: T = crystals.Tableaux(['D',3],shape=[3/2,1/2,-1/2]); T
@@ -1694,8 +803,22 @@ class CrystalOfTableaux(CrystalOfWords):
         sage: T.cardinality()
         20
         sage: T.module_generators
-        [[++-, [[1]]]]
+        ([++-, [[1]]],)
         sage: TestSuite(T).run()
+
+    We can also construct the tableaux for `\mathfrak{gl}(m|n)` as
+    given by [BKK2000]_::
+
+        sage: T = crystals.Tableaux(['A', [1,2]], shape=[4,2,1,1,1])
+        sage: T.cardinality()
+        1392
+
+    We can also construct the tableaux for `\mathfrak{q}(n)` as
+    given by [GJK+2014]_::
+
+        sage: T = crystals.Tableaux(['Q', 3], shape=[3,1])
+        sage: T.cardinality()
+        24
 
     TESTS:
 
@@ -1725,18 +848,18 @@ class CrystalOfTableaux(CrystalOfWords):
 
         sage: T = crystals.Tableaux(['A',3], shape = [2,2])
         sage: C = T.letters
-        sage: Tab(rows    = [[1,2],[3,4]])._list == [C(3),C(1),C(4),C(2)]
+        sage: list(Tab(rows    = [[1,2],[3,4]])) == [C(3),C(1),C(4),C(2)]
         True
-        sage: Tab(columns = [[3,1],[4,2]])._list == [C(3),C(1),C(4),C(2)]
+        sage: list(Tab(columns = [[3,1],[4,2]])) == [C(3),C(1),C(4),C(2)]
         True
 
     For compatibility with
     :func:`~sage.combinat.crystals.tensor_product.TensorProductOfCrystals` we
     need to accept as input the internal list or sequence of elements::
 
-        sage: Tab(list    = [3,1,4,2])._list     == [C(3),C(1),C(4),C(2)]
+        sage: list(Tab(list    = [3,1,4,2]))     == [C(3),C(1),C(4),C(2)]
         True
-        sage: Tab(3,1,4,2)._list                 == [C(3),C(1),C(4),C(2)]
+        sage: list(Tab(3,1,4,2))                 == [C(3),C(1),C(4),C(2)]
         True
 
     The next example checks whether a given tableau is in fact a valid
@@ -1764,8 +887,25 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T3 = crystals.Tableaux(['A',3],             shapes = ([2,2],))
             sage: T2 is T1, T3 is T1
             (True, True)
+
+            sage: T1 = crystals.Tableaux(['A', [1,1]], shape=[3,1,1,1])
+            sage: T1
+            Crystal of BKK tableaux of shape [3, 1, 1, 1] of gl(2|2)
+            sage: T2 = crystals.Tableaux(['A', [1,1]], [3,1,1,1])
+            sage: T1 is T2
+            True
         """
         cartan_type = CartanType(cartan_type)
+        if cartan_type.letter == 'A' and isinstance(cartan_type, SuperCartanType_standard):
+            if shape is None:
+                shape = shapes
+            from sage.combinat.crystals.bkk_crystals import CrystalOfBKKTableaux
+            return CrystalOfBKKTableaux(cartan_type, shape=shape)
+        if cartan_type.letter == 'Q':
+            if any(shape[i] == shape[i+1] for i in range(len(shape)-1)):
+                raise ValueError("not a strict partition")
+            shape = Partition(shape)
+            return CrystalOfQueerTableaux(cartan_type, shape=shape)
         n = cartan_type.rank()
         # standardize shape/shapes input into a tuple of tuples
         assert operator.xor(shape is not None, shapes is not None)
@@ -1794,13 +934,13 @@ class CrystalOfTableaux(CrystalOfWords):
             elif all(shape[-1]<0 for shape in spin_shapes):
                 S = CrystalOfSpinsMinus(cartan_type)
             else:
-                raise ValueError("In type D spins should all be positive or negative")
+                raise ValueError("in type D spins should all be positive or negative")
         else:
             if any( i < 0 for shape in spin_shapes for i in shape):
                 raise ValueError("shapes should all be partitions")
             S = CrystalOfSpins(cartan_type)
-        B = CrystalOfTableaux(cartan_type, shapes = shapes)
-        T = TensorProductOfCrystals(S,B, generators=[[S.module_generators[0],x] for x in B.module_generators])
+        B = CrystalOfTableaux(cartan_type, shapes=shapes)
+        T = TensorProductOfCrystals(S, B, generators=[[S.module_generators[0],x] for x in B.module_generators])
         T.rename("The crystal of tableaux of type %s and shape(s) %s"%(cartan_type, list(list(shape) for shape in spin_shapes)))
         T.shapes = spin_shapes
         return T
@@ -1808,15 +948,15 @@ class CrystalOfTableaux(CrystalOfWords):
 
     def __init__(self, cartan_type, shapes):
         """
-        Construct the crystal of all tableaux of the given shapes
+        Construct the crystal of all tableaux of the given shapes.
 
         INPUT:
 
-        - ``cartan_type`` - (data coercible into) a Cartan type
-        - ``shapes``      - a list (or iterable) of shapes
-        - ``shape` `      - a shape
+        - ``cartan_type`` -- (data coercible into) a Cartan type
+        - ``shapes``      -- a list (or iterable) of shapes
+        - ``shape``       -- a shape
 
-        shapes themselves are lists (or iterable) of integers
+        Shapes themselves are lists (or iterable) of integers.
 
         EXAMPLES::
 
@@ -1848,7 +988,7 @@ class CrystalOfTableaux(CrystalOfWords):
         crystal of given shape. The module generator is the unique tableau with equal
         shape and content.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = crystals.Tableaux(['D',3], shape = [1,1])
             sage: T.module_generator([1,1])
@@ -1868,12 +1008,12 @@ class CrystalOfTableaux(CrystalOfWords):
         type = self.cartan_type()
         if type[0] == 'D' and len(shape) == type[1] and shape[type[1]-1] < 0:
             invert = True
-            shape = shape[:-1]+(-shape[type[1]-1],)
+            shape = shape[:-1] + (-shape[type[1]-1],)
         else:
             invert = False
         p = Partition(shape).conjugate()
         # The column canonical tableau, read by columns
-        module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(len(p))])
+        module_generator = flatten([[val-i for i in range(val)] for val in p])
         if invert:
             module_generator = [(-x if x == type[1] else x) for x in module_generator]
         return self(list=[self.letters(x) for x in module_generator])
@@ -1893,264 +1033,117 @@ class CrystalOfTableaux(CrystalOfWords):
         """
         return self.element_class(self, *args, **options)
 
+    class Element(CrystalOfTableauxElement):
+        pass
 
+class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
+    """
+    A queer crystal of the semistandard decomposition tableaux of a given shape.
 
-class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
+    INPUT:
+
+    - ``cartan_type`` -- a Cartan type
+    - ``shape``       -- a shape
     """
-    Element in a crystal of tableaux.
-    """
-    def __init__(self, parent, *args, **options):
+    def __init__(self, cartan_type, shape):
         """
-        There are several ways to input tableaux, by rows,
-        by columns, as the list of column elements, or as a sequence of numbers
-        in column reading.
+        Initialize ``self``.
 
         EXAMPLES::
 
-            sage: T = crystals.Tableaux(['A',3], shape = [2,2])
-            sage: t = T(rows=[[1,2],[3,4]])
-            sage: t
-            [[1, 2], [3, 4]]
-            sage: TestSuite(t).run()
-
-            sage: t = T(columns=[[3,1],[4,2]])
-            sage: t
-            [[1, 2], [3, 4]]
-            sage: TestSuite(t).run()
-
-            sage: t = T(list=[3,1,4,2])
-            sage: t
-            [[1, 2], [3, 4]]
-
-            sage: t = T(3,1,4,2)
-            sage: t
-            [[1, 2], [3, 4]]
-
-        Currently inputting the empty tableau as an empty sequence is
-        broken due to a bug in the generic __call__ method (see :trac:`8648`).
-
-        EXAMPLES::
-
-            sage: T = crystals.Tableaux(['A',3], shape=[])
-            sage: t = T()
-            sage: t._list
-            [0]
-
-        TESTS:
-
-        Integer types that are not a Sage ``Integer`` (such as a Python ``int``
-        and typically arise from compiled code) were not converted into a
-        letter. This caused certain functions to fail. This is fixed in
-        :trac:`13204`::
-
-            sage: T = crystals.Tableaux(['A',3], shape = [2,2])
-            sage: t = T(list=[int(3),1,4,2])
-            sage: type(t[0])
-            <type 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
-            sage: t = T(list=[3,int(1),4,2])
-            sage: type(t[1])
-            <type 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
-            sage: C = crystals.KirillovReshetikhin(['A',int(3),1], 1,1)
-            sage: C[0].e(0)
-            [[4]]
+            sage: T = crystals.Tableaux(['Q',3], shape=[4,2])
+            sage: TestSuite(T).run()
+            sage: T = crystals.Tableaux(['Q',4], shape=[4,1])
+            sage: TestSuite(T).run()  # long time
         """
-        if len(args) == 1:
-            if isinstance(args[0], Tableau):
-                options['rows'] = args[0]
-        if 'list' in options:
-            the_list = options['list']
-        elif 'rows' in options:
-            rows = options['rows']
-#            the_list=Tableau(rows).to_word_by_column()
-            rows = Tableau(rows).conjugate()
-            the_list = []
-            for col in rows:
-                the_list += reversed(col)
-        elif 'columns' in options:
-            columns = options['columns']
-            the_list = []
-            for col in columns:
-                the_list += col
-        else:
-            the_list = [i for i in args]
-        TensorProductOfRegularCrystalsElement.__init__(self, parent, [parent.letters(_) for _ in the_list])
+        from sage.categories.regular_supercrystals import RegularSuperCrystals
+        from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+        Parent.__init__(self, category=(RegularSuperCrystals(), FiniteEnumeratedSets()))
+        self.shape = shape
+        self._cartan_type = cartan_type
+        self.letters = CrystalOfLetters(cartan_type)
+        n = cartan_type.rank() + 1
+        data = sum(([self.letters(n-i)] * row_len for i,row_len in enumerate(shape)), [])
+        mg = self.element_class(self, list=data)
+        self.module_generators = (mg,)
 
     def _repr_(self):
         """
-        EXAMPLES::
-
-            sage: T = crystals.Tableaux(['A',3], shape = [2,2])
-            sage: t = T(rows=[[1,2],[3,4]])
-            sage: t._repr_()
-            '[[1, 2], [3, 4]]'
-        """
-        return repr(self.to_tableau())
-
-    def _repr_diagram(self):
-        """
-        Return a string representation of ``self`` as a diagram.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
-            sage: C = crystals.Tableaux(['A', 4], shape=[4,2,1])
-            sage: elt = C(rows=[[1,1,1,2], [2,3], [4]])
-            sage: print elt._repr_diagram()
-              1  1  1  2
-              2  3
-              4
+            sage: crystals.Tableaux(['Q',3], shape=[4,2])
+            The crystal of tableaux of type ['Q', 3] and shape [4, 2]
         """
-        return self.to_tableau()._repr_diagram()
+        return "The crystal of tableaux of type {} and shape {}".format(self._cartan_type, self.shape)
 
-    def pp(self):
-        """
-        EXAMPLES::
+    class Element(TensorProductOfQueerSuperCrystalsElement):
+        def _repr_(self):
+            """
+            Return a string representation of ``self``.
 
-            sage: T = crystals.Tableaux(['A',3], shape = [2,2])
-            sage: t = T(rows=[[1,2],[3,4]])
-            sage: t.pp()
-            1  2
-            3  4
-        """
-        return self.to_tableau().pp()
+            EXAMPLES::
 
-    def _ascii_art_(self):
-        """
-        Return an ascii art version of ``self``.
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: B.an_element()
+                [[3, 3, 3], [2, 2], [1]]
+            """
+            return repr([list(reversed(row)) for row in self.rows()])
 
-        EXAMPLES:
+        def _ascii_art_(self):
+            r"""
+            Return an ASCII art representation of ``self``.
 
-        We check that :trac:`16486` is fixed::
+            EXAMPLES::
 
-            sage: T = crystals.Tableaux(['B',6], shape=[1]*5)
-            sage: ascii_art(T.module_generators[0])
-              1
-              2
-              3
-              4
-              5
-            sage: T = crystals.Tableaux(['D',4], shape=[2,1])
-            sage: t = T.module_generators[0].f_string([1,2,3,4,2,2,3,4])
-            sage: ascii_art(t)
-              1 -2
-             -3
-        """
-        return self.to_tableau()._ascii_art_()
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: t._ascii_art_()
+                  3  3  3
+                     2  2
+                        1
+            """
+            from sage.typeset.ascii_art import AsciiArt
+            ret = [" "*(3*i) + "".join("%3s" % str(x) for x in reversed(row))
+                   for i, row in enumerate(self.rows())]
+            return AsciiArt(ret)
 
-    def _latex_(self):
-        r"""
-        EXAMPLES::
+        def _latex_(self):
+            r"""
+            Return latex code for ``self``.
 
-            sage: T = crystals.Tableaux(['A',3], shape = [4,2])
-            sage: t = T(rows=[[1,1,2,3],[2,3]])
-            sage: latex(t) # indirect doctest
-            {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
-            \raisebox{-.6ex}{$\begin{array}[b]{*{4}c}\cline{1-4}
-            \lr{1}&\lr{1}&\lr{2}&\lr{3}\\\cline{1-4}
-            \lr{2}&\lr{3}\\\cline{1-2}
-            \end{array}$}
-            }
-        """
-        from sage.combinat.output import tex_from_array
-        # Modified version of to_tableau() to have the entrys be letters
-        #   rather than their values
-        if self._list == []:
-            return "{\\emptyset}"
+            EXAMPLES::
 
-        tab = [ [self[0]] ]
-        for i in range(1,len(self)):
-            if self[i-1] < self[i] or (self[i-1].value != 0 and self[i-1] == self[i]):
-                tab.append([self[i]])
-            else:
-                l = len(tab)-1
-                tab[l].append(self[i])
-        for x in tab:
-            x.reverse()
-        T = Tableau(tab).conjugate()
-        return tex_from_array([[letter._latex_() for letter in row] for row in T])
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: latex(t)
+                {\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+                \raisebox{-.6ex}{$\begin{array}[b]{*{3}c}\cline{1-3}
+                \lr{3}&\lr{3}&\lr{3}\\\cline{1-3}
+                &\lr{2}&\lr{2}\\\cline{2-3}
+                &&\lr{1}\\\cline{3-3}
+                \end{array}$}
+                }
+            """
+            from sage.combinat.output import tex_from_array
+            return tex_from_array([[None]*i + list(reversed(row))
+                                  for i, row in enumerate(self.rows())])
 
-    @cached_method
-    def to_tableau(self):
-        """
-        Returns the Tableau object corresponding to self.
+        def rows(self):
+            """
+            Return the list of rows of ``self``.
 
-        EXAMPLES::
+            EXAMPLES::
 
-            sage: T = crystals.Tableaux(['A',3], shape = [2,2])
-            sage: t = T(rows=[[1,2],[3,4]]).to_tableau(); t
-            [[1, 2], [3, 4]]
-            sage: type(t)
-            <class 'sage.combinat.tableau.Tableaux_all_with_category.element_class'>
-            sage: type(t[0][0])
-            <type 'int'>
-            sage: T = crystals.Tableaux(['D',3], shape = [1,1])
-            sage: t=T(rows=[[-3],[3]]).to_tableau(); t
-            [[-3], [3]]
-            sage: t=T(rows=[[3],[-3]]).to_tableau(); t
-            [[3], [-3]]
-            sage: T = crystals.Tableaux(['B',2], shape = [1,1])
-            sage: t = T(rows=[[0],[0]]).to_tableau(); t
-            [[0], [0]]
-        """
-        if self._list == []:
-            return Tableau([])
-        tab = [ [self[0].value] ]
-        for i in range(1,len(self)):
-            if self[i-1] < self[i] or (self[i-1].value != 0 and self[i-1] == self[i]):
-                tab.append([self[i].value])
-            else:
-                l = len(tab)-1
-                tab[l].append(self[i].value)
-        for x in tab:
-            x.reverse()
-        return Tableau(tab).conjugate()
-
-    def promotion(self):
-        """
-        Promotion for type A crystals of tableaux of rectangular shape
-
-        Returns the result of applying promotion on this tableau.
-
-        This method only makes sense in type A with rectangular shapes.
-
-        EXAMPLES::
-
-            sage: C = crystals.Tableaux(["A",3], shape = [3,3,3])
-            sage: t = C(Tableau([[1,1,1],[2,2,3],[3,4,4]]))
-            sage: t
-            [[1, 1, 1], [2, 2, 3], [3, 4, 4]]
-            sage: t.promotion()
-            [[1, 1, 2], [2, 2, 3], [3, 4, 4]]
-            sage: t.promotion().parent()
-            The crystal of tableaux of type ['A', 3] and shape(s) [[3, 3, 3]]
-        """
-        crystal = self.parent()
-        cartan_type = crystal.cartan_type()
-        assert cartan_type.type() == 'A'
-        return crystal(self.to_tableau().promotion(cartan_type.rank()))
-
-    def promotion_inverse(self):
-        """
-        Inverse promotion for type A crystals of tableaux of rectangular shape
-
-        Returns the result of applying inverse promotion on this tableau.
-
-        This method only makes sense in type A with rectangular shapes.
-
-        EXAMPLES::
-
-            sage: C = crystals.Tableaux(["A",3], shape = [3,3,3])
-            sage: t = C(Tableau([[1,1,1],[2,2,3],[3,4,4]]))
-            sage: t
-            [[1, 1, 1], [2, 2, 3], [3, 4, 4]]
-            sage: t.promotion_inverse()
-            [[1, 1, 2], [2, 3, 3], [4, 4, 4]]
-            sage: t.promotion_inverse().parent()
-            The crystal of tableaux of type ['A', 3] and shape(s) [[3, 3, 3]]
-        """
-        crystal = self.parent()
-        cartan_type = crystal.cartan_type()
-        assert cartan_type.type() == 'A'
-        return crystal(self.to_tableau().promotion_inverse(cartan_type.rank()))
-
-CrystalOfTableaux.Element = CrystalOfTableauxElement
-
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: t.rows()
+                [[3, 3, 3], [2, 2], [1]]
+            """
+            ret = []
+            pos = 0
+            for l in self.parent().shape:
+                ret.append(self[pos:pos+l])
+                pos += l
+            return ret

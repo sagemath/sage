@@ -1,0 +1,5 @@
+cd src
+
+sdh_make plantri
+
+sdh_install plantri $SAGE_LOCAL/bin/

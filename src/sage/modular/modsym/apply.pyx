@@ -1,3 +1,9 @@
+# distutils: extra_compile_args = -D_XPG6
+
+"""
+Monomial expansion of `(aX + bY)^i (cX + dY)^{j-i}`
+"""
+
 ##########################################################################
 #
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
@@ -10,6 +16,7 @@
 
 from sage.ext.stdsage cimport PY_NEW
 
+from sage.libs.flint.fmpz_poly cimport *
 from sage.rings.integer cimport Integer
 
 cdef class Apply:
@@ -35,8 +42,8 @@ cdef class Apply:
 
     cdef int apply_to_monomial_flint(self, fmpz_poly_t ans, int i, int j,
                                      int a, int b, int c, int d) except -1:
-        if i < 0 or j-i < 0:
-            raise ValueError, "i (=%s) and j-i (=%s) must both be nonnegative."%(i,j-i)
+        if i < 0 or j - i < 0:
+            raise ValueError("i (=%s) and j-i (=%s) must both be nonnegative."%(i,j-i))
 
         # f = b+a*x, g = d+c*x
         fmpz_poly_set_coeff_si(self.f, 0, b)
@@ -46,7 +53,7 @@ cdef class Apply:
 
         # h = (f**i)*(g**(j-i))
         fmpz_poly_pow(self.ff, self.f, i)
-        fmpz_poly_pow(self.gg, self.g, j-i)
+        fmpz_poly_pow(self.gg, self.g, j - i)
         fmpz_poly_mul(ans, self.ff, self.gg)
 
         return 0
@@ -56,9 +63,9 @@ cdef Apply A = Apply()
 
 def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     r"""
-    Returns a list of the coefficients of
+    Return a list of the coefficients of
 
-    .. math::
+    .. MATH::
 
         (aX + bY)^i (cX + dY)^{j-i},
 
@@ -68,13 +75,15 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     modular symbols.
 
     INPUT:
-        i, j, a, b, c, d -- all ints
+
+    - i, j, a, b, c, d -- all ints
 
     OUTPUT:
-        list of ints, which are the coefficients
-        of `Y^j, Y^{j-1}X, \ldots, X^j`, respectively.
 
-    EXAMPLE:
+    list of ints, which are the coefficients
+    of `Y^j, Y^{j-1}X, \ldots, X^j`, respectively.
+
+    EXAMPLES:
 
     We compute that `(X+Y)^2(X-Y) = X^3 + X^2Y - XY^2 - Y^3`::
 
@@ -89,7 +98,7 @@ def apply_to_monomial(int i, int j, int a, int b, int c, int d):
     cdef fmpz_poly_t pr
     fmpz_poly_init(pr)
 
-    A.apply_to_monomial_flint(pr, i,j,a,b,c,d)
+    A.apply_to_monomial_flint(pr, i, j, a, b, c, d)
 
     cdef Integer res
     v = []

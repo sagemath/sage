@@ -19,7 +19,7 @@ time, using the command
 This database covers a wide range of conductors, but unlike the
 :mod:`Cremona database <sage.databases.cremona>`, this database need not list
 all curves of a given conductor. It lists the curves whose coefficients are not
-"too large" (see [SteinWatkins]_).
+"too large" (see [SW2002]_).
 
 
 -  The command ``SteinWatkinsAllData(n)`` returns an iterator over the curves
@@ -115,11 +115,7 @@ prime conductor::
 
 REFERENCE:
 
-.. [SteinWatkins] William Stein and Mark Watkins, *A database of elliptic
-   curves---first report*. In *Algorithmic number theory (ANTS V), Sydney,
-   2002*, Lecture Notes in Computer Science 2369, Springer, 2002, p267--275.
-   http://modular.math.washington.edu/papers/stein-watkins/
-
+- [SW2002]_
 """
 
 #*****************************************************************************
@@ -137,8 +133,10 @@ REFERENCE:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
-import bz2, os
+import bz2
+import os
 
 from sage.env import SAGE_SHARE
 
@@ -187,7 +185,7 @@ class SteinWatkinsAllData:
         name = str(num)
         name = '0'*(3-len(name)) + name
         self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'a.%s.bz2'%name)
-        self._iter = self.__iter__()
+        self._iter = iter(self)
 
     def __repr__(self):
         """
@@ -206,7 +204,7 @@ class SteinWatkinsAllData:
             sage: d = SteinWatkinsAllData(0)
             sage: d = d[10:20]                         # optional - database_stein_watkins; long time
             sage: for C in d:                          # optional - database_stein_watkins; long time
-            ....:     print C
+            ....:     print(C)
             Stein-Watkins isogeny class of conductor 11
             Stein-Watkins isogeny class of conductor 14
             Stein-Watkins isogeny class of conductor 15
@@ -215,7 +213,7 @@ class SteinWatkinsAllData:
             Stein-Watkins isogeny class of conductor 20
         """
         try:
-            file = bz2.BZ2File(self._file, 'r')
+            file = bz2.open(self._file, 'rt', encoding="utf-8")
         except IOError:
             raise IOError("The Stein-Watkins data file %s must be installed."%self._file)
         C = None
@@ -239,8 +237,10 @@ class SteinWatkinsAllData:
                 C.curves.append([eval(w[0]), w[1], w[2], w[3]])
         yield C
 
-    def next(self):
+    def __next__(self):
         return next(self._iter)
+
+    next = __next__
 
     def __getitem__(self, N):
         """
@@ -278,7 +278,7 @@ class SteinWatkinsAllData:
         Iterate through the curve classes, but grouped into lists by
         level.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: d = SteinWatkinsAllData(1)
             sage: E = d.iter_levels()
@@ -290,18 +290,18 @@ class SteinWatkinsAllData:
             sage: next(E)                             # optional - database_stein_watkins
             [Stein-Watkins isogeny class of conductor 100007]
         """
-        iter = self.__iter__()
+        it = iter(self)
         C = []
         N = 0
         while True:
             try:
-                E = next(iter)
+                E = next(it)
             except StopIteration:
-                if C != []:
+                if C:
                     yield C
-                raise StopIteration
+                return
             if E.conductor != N:
-                if C != []:
+                if C:
                     yield C
                 C = [E]
                 N = E.conductor
@@ -319,7 +319,7 @@ class SteinWatkinsPrimeData(SteinWatkinsAllData):
         name = str(num)
         name = '0'*(2-len(name)) + name
         self._file = os.path.join(SAGE_SHARE,'stein_watkins', 'p.%s.bz2'%name)
-        self._iter = self.__iter__()
+        self._iter = iter(self)
 
     def __repr__(self):
         """
@@ -349,7 +349,7 @@ def ecdb_num_curves(max_level=200000):
     i = 0
     N = 1
     d = SteinWatkinsAllData(i)
-    v = [int(0) for _ in xrange(max_level+1)]
+    v = [int(0) for _ in range(max_level + 1)]
     while True:
         try:
             C = next(d)

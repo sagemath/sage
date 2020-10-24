@@ -1,8 +1,8 @@
 r"""
 Analytic types of modular forms.
 
-Propoerties of modular forms and their generalizations are assembled
-into one partially ordered set.  See :class:``AnalyticType`` for a
+Properties of modular forms and their generalizations are assembled
+into one partially ordered set.  See :class:`AnalyticType` for a
 list of handled properties.
 
 AUTHORS:
@@ -17,7 +17,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.sets.set import Set
@@ -47,22 +47,22 @@ class AnalyticTypeElement(LatticePosetElement):
         True
         sage: el.parent() == AT
         True
-        sage: el.element
-        {cusp, quasi}
+        sage: sorted(el.element,key=str)
+        [cusp, quasi]
         sage: from sage.sets.set import Set_object_enumerated
         sage: isinstance(el.element, Set_object_enumerated)
         True
-        sage: el.element[0]
+        sage: first = sorted(el.element,key=str)[0]; first
         cusp
-        sage: el.element[0].parent() == AT.base_poset()
+        sage: first.parent() == AT.base_poset()
         True
 
         sage: el2 = AT("holo")
         sage: sum = el + el2
         sage: sum
         quasi modular
-        sage: sum.element
-        {holo, cusp, quasi}
+        sage: sorted(sum.element,key=str)
+        [cusp, holo, quasi]
         sage: el * el2
         cuspidal
     """
@@ -211,8 +211,8 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``reduce_type``  -- An analytic type or something which is
-                              convertable to an analytic type.
+        - ``reduce_type``  -- an analytic type or something which is
+          convertible to an analytic type
 
         OUTPUT:
 
@@ -241,8 +241,8 @@ class AnalyticTypeElement(LatticePosetElement):
 
         INPUT:
 
-        - ``extend_type``  -- An analytic type or something which is
-                              convertable to an analytic type.
+        - ``extend_type``  -- an analytic type or something which is
+          convertible to an analytic type
 
         OUTPUT:
 
@@ -273,9 +273,8 @@ class AnalyticTypeElement(LatticePosetElement):
 
             sage: from sage.modular.modform_hecketriangle.analytic_type import AnalyticType
             sage: el = AnalyticType()(["quasi", "weak"])
-            sage: prop_list =[prop for prop in el]
-            sage: prop_list
-            ['holo', 'cusp', 'quasi', 'weak']
+            sage: sorted(el)
+            ['cusp', 'holo', 'quasi', 'weak']
             sage: "mero" in el
             False
             sage: "cusp" in el
@@ -406,33 +405,34 @@ class AnalyticType(FiniteLatticePoset):
             True
             sage: AT.is_distributive()
             True
-            sage: AT.list()
-            [zero,
-             cuspidal,
-             zero,
-             modular,
-             weakly holomorphic modular,
-             meromorphic modular,
-             quasi cuspidal,
-             quasi modular,
-             quasi weakly holomorphic modular,
-             quasi meromorphic modular]
+            sage: sorted(AT, key=str)
+            [cuspidal,
+            meromorphic modular,
+            modular,
+            quasi cuspidal,
+            quasi meromorphic modular,
+            quasi modular,
+            quasi weakly holomorphic modular,
+            weakly holomorphic modular,
+            zero,
+            zero]
             sage: len(AT.relations())
             45
-            sage: AT.cover_relations()
-            [[zero, cuspidal],
-             [zero, zero],
-             [cuspidal, modular],
+            sage: sortkey = lambda xy: (str(xy[0]), str(xy[1]))
+            sage: sorted(AT.cover_relations(), key=sortkey)
+            [[cuspidal, modular],
              [cuspidal, quasi cuspidal],
-             [zero, quasi cuspidal],
-             [modular, weakly holomorphic modular],
-             [modular, quasi modular],
-             [weakly holomorphic modular, meromorphic modular],
-             [weakly holomorphic modular, quasi weakly holomorphic modular],
              [meromorphic modular, quasi meromorphic modular],
+             [modular, quasi modular],
+             [modular, weakly holomorphic modular],
              [quasi cuspidal, quasi modular],
              [quasi modular, quasi weakly holomorphic modular],
-             [quasi weakly holomorphic modular, quasi meromorphic modular]]
+             [quasi weakly holomorphic modular, quasi meromorphic modular],
+             [weakly holomorphic modular, meromorphic modular],
+             [weakly holomorphic modular, quasi weakly holomorphic modular],
+             [zero, cuspidal],
+             [zero, quasi cuspidal],
+             [zero, zero]]
             sage: AT.has_top()
             True
             sage: AT.has_bottom()
@@ -528,8 +528,8 @@ class AnalyticType(FiniteLatticePoset):
             True
             sage: isinstance(el, AnalyticTypeElement)
             True
-            sage: el.element
-            {holo, cusp, quasi}
+            sage: sorted(el.element,key=str)
+            [cusp, holo, quasi]
         """
 
         if isinstance(element, str):

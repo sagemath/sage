@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Interface to Frobby for fast computations on monomial ideals.
 
@@ -15,14 +16,18 @@ AUTHORS:
 - Bjarke Hammersholt Roune (2008-04-25): Wrote the Frobby C++
   program and the initial version of the Python interface.
 
-NOTES:
+.. NOTE::
 
-The official source for Frobby is <http://www.broune.com/frobby>,
-which also has documentation and papers describing the algorithms used.
+    The official source for Frobby is <https://www.broune.com/frobby>,
+    which also has documentation and papers describing the algorithms used.
 """
+from __future__ import print_function
 
 from subprocess import Popen, PIPE
 from sage.misc.misc_c import prod
+
+from sage.cpython.string import bytes_to_str, str_to_bytes
+
 
 class Frobby:
     def __call__(self, action, input=None, options=[], verbose=False):
@@ -48,7 +53,7 @@ class Frobby:
         We compute the lcm of an ideal provided in Monos format. ::
 
             sage: frobby("analyze", input="vars x,y,z;[x^2,x*y];", # optional - frobby
-            ...       options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
+            ....:     options=["lcm", "iformat monos", "oformat 4ti2"]) # optional - frobby
             ' 2 1 0\n\n2 generators\n3 variables\n'
 
 
@@ -69,17 +74,23 @@ class Frobby:
             command += ('-' + option.strip()).split()
 
         if verbose:
-            print "Frobby action: ", action
-            print "Frobby options: ", repr(options)
-            print "Frobby command: ", repr(command)
-            print "Frobby input:\n", input
+            print("Frobby action: ", action)
+            print("Frobby options: ", repr(options))
+            print("Frobby command: ", repr(command))
+            print("Frobby input:\n", input)
 
         process = Popen(command, stdin = PIPE, stdout = PIPE, stderr = PIPE)
-        output, err = process.communicate(input = input)
+        if input:
+            frinput = str_to_bytes(input)
+        else:
+            frinput = None
+        output, err = process.communicate(input = frinput)
+        output = bytes_to_str(output)
+        err = bytes_to_str(err)
 
         if verbose:
-            print "Frobby output:\n", output
-            print "Frobby error:\n", err
+            print("Frobby output:\n", output)
+            print("Frobby error:\n", err)
         if process.poll() != 0:
             raise RuntimeError("Frobby reported an error:\n" + err)
 
@@ -129,10 +140,10 @@ class Frobby:
 
     def hilbert(self, monomial_ideal):
         r"""
-        Computes the multigraded Hilbert-Poincare series of the input
+        Computes the multigraded Hilbert-Poincaré series of the input
         ideal. Use the -univariate option to get the univariate series.
 
-        The Hilbert-Poincare series of a monomial ideal is the sum of all
+        The Hilbert-Poincaré series of a monomial ideal is the sum of all
         monomials not in the ideal. This sum can be written as a (finite)
         rational function with $(x_1-1)(x_2-1)...(x_n-1)$ in the denominator,
         assuming the variables of the ring are $x_1,x2,...,x_n$. This action
@@ -260,14 +271,14 @@ class Frobby:
         We now try the special case of the zero ideal in different rings.
 
         We should also try PolynomialRing(QQ, names=[]), but it has a bug
-        which makes that impossible (see trac ticket 3028). ::
+        which makes that impossible (see :trac:`3028`). ::
 
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings:  # optional - frobby
-            ...       id0 = ring.ideal(0) # optional - frobby
-            ...       decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
-            ...       allOK = allOK and decom0 == [id0] # optional - frobby
+            ....:     id0 = ring.ideal(0) # optional - frobby
+            ....:     decom0 = frobby.irreducible_decomposition(id0) # optional - frobby
+            ....:     allOK = allOK and decom0 == [id0] # optional - frobby
             sage: allOK # optional - frobby
             True
 
@@ -277,9 +288,9 @@ class Frobby:
             sage: rings = [ZZ['x'], CC['x,y']] # optional - frobby
             sage: allOK = True # optional - frobby
             sage: for ring in rings: # optional - frobby
-            ...       id1 = ring.ideal(1) # optional - frobby
-            ...       decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
-            ...       allOK = allOK and decom1 == [id1] # optional - frobby
+            ....:     id1 = ring.ideal(1) # optional - frobby
+            ....:     decom1 = frobby.irreducible_decomposition(id1) # optional - frobby
+            ....:     allOK = allOK and decom1 == [id1] # optional - frobby
             sage: allOK # optional - frobby
             True
         """
@@ -313,12 +324,12 @@ class Frobby:
             Ideal (x*y^2*z^3, x^4*y^5*z^6) of Multivariate Polynomial Ring in x, y, z over Rational Field]
 
         """
-        lines=string.split('\n')
-        if lines[-1]=='':
+        lines = string.split('\n')
+        if lines[-1] == '':
             lines.pop(-1)
-        matrices=[]
-        while len(lines)>0:
-            if lines[0].split()[1]=='ring':
+        matrices = []
+        while lines:
+            if lines[0].split()[1] == 'ring':
                 lines.pop(0)
                 lines.pop(0)
                 matrices.append('1 '+str(ring.ngens())+'\n'+'0 '*ring.ngens()+'\n')

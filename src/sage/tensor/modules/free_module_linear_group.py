@@ -1,7 +1,7 @@
 r"""
 General linear group of a free module
 
-The set `\mathrm{GL}(M)` of automorphisms (i.e. invertible endomorphims) of a
+The set `\mathrm{GL}(M)` of automorphisms (i.e. invertible endomorphisms) of a
 free module of finite rank `M` is a group under composition of automorphisms,
 named the *general linear group* of `M`. In other words, `\mathrm{GL}(M)` is
 the group of units (i.e. invertible elements) of `\mathrm{End}(M)`, the
@@ -13,11 +13,11 @@ The group `\mathrm{GL}(M)` is implemented via the class
 AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
+- Michael Jung (2019): improve treatment of the identity element
 
 REFERENCES:
 
-- Chap. 15 of R. Godement: *Algebra*, Hermann (Paris) / Houghton Mifflin
-  (Boston) (1968)
+- Chap. 15 of R. Godement : *Algebra* [God1968]_
 
 """
 #******************************************************************************
@@ -29,6 +29,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.groups import Groups
@@ -42,7 +43,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     Given a free module of finite rank `M` over a commutative ring `R`, the
     *general linear group* of `M` is the group `\mathrm{GL}(M)` of
-    automorphisms (i.e. invertible endomorphims) of `M`. It is the group of
+    automorphisms (i.e. invertible endomorphisms) of `M`. It is the group of
     units (i.e. invertible elements) of `\mathrm{End}(M)`, the endomorphism
     ring of `M`.
 
@@ -114,14 +115,14 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         sage: a(v).display()
         e_0 - e_1 + e_2
 
-    An automorphism can also be viewed as a tensor of type (1,1) on `M`::
+    An automorphism can also be viewed as a tensor of type `(1,1)` on `M`::
 
         sage: a.tensor_type()
         (1, 1)
         sage: a.display(e)
         e_0*e^0 - e_1*e^1 + e_2*e^2
         sage: type(a)
-        <class 'sage.tensor.modules.free_module_automorphism.FreeModuleLinearGroup_with_category.element_class'>
+        <class 'sage.tensor.modules.free_module_linear_group.FreeModuleLinearGroup_with_category.element_class'>
 
     As for any group, the identity element is obtained by the method
     :meth:`one`::
@@ -210,19 +211,19 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
          Integer Ring is not invertible
 
     Similarly, there is a coercion `\mathrm{GL}(M)\rightarrow T^{(1,1)}(M)`
-    (module of type-(1,1) tensors)::
+    (module of type-`(1,1)` tensors)::
 
         sage: M.tensor_module(1,1).has_coerce_map_from(GL)
         True
 
     (see :class:`~sage.tensor.modules.tensor_free_module.TensorFreeModule` for
-    details), but not in the reverse direction, since not every type-(1,1)
+    details), but not in the reverse direction, since not every type-`(1,1)`
     tensor can be considered as an automorphism::
 
         sage: GL.has_coerce_map_from(M.tensor_module(1,1))
         False
 
-    Invertible type-(1,1) tensors can be converted to automorphisms::
+    Invertible type-`(1,1)` tensors can be converted to automorphisms::
 
         sage: t = M.tensor((1,1), name='t')
         sage: t[e,:] = [[-1,0,0], [0,1,2], [0,1,3]]
@@ -284,7 +285,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                             fmodule))
         Parent.__init__(self, category=Groups())
         self._fmodule = fmodule
-        self._one = None # to be set by self.one()
 
     #### Parent methods ####
 
@@ -350,7 +350,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             sage: a.matrix(e) == phi.matrix(e)
             True
 
-        Construction from an invertible tensor of type (1,1)::
+        Construction from an invertible tensor of type `(1,1)`::
 
             sage: t = M.tensor((1,1), name='t')
             sage: t[e,:] = [[1,1], [2,3]]
@@ -371,7 +371,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             if tens.tensor_type() == (1,1):
                 resu = self.element_class(self._fmodule, name=tens._name,
                                           latex_name=tens._latex_name)
-                for basis, comp in tens._components.iteritems():
+                for basis, comp in tens._components.items():
                     resu._components[basis] = comp.copy()
                 # Check whether the tensor is invertible:
                 try:
@@ -388,7 +388,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             if endo.is_endomorphism() and self._fmodule is endo.domain():
                 resu = self.element_class(self._fmodule, name=endo._name,
                                           latex_name=endo._latex_name)
-                for basis, mat in endo._matrices.iteritems():
+                for basis, mat in endo._matrices.items():
                     resu.add_comp(basis[0])[:] = mat
                 # Check whether the endomorphism is invertible:
                 try:
@@ -430,19 +430,21 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self._fmodule)
-        if self._fmodule._def_basis is not None:
-            comp = resu.set_comp()
-            for i in self._fmodule.irange():
-                if i%2 == 0:
-                    comp[[i,i]] = self._fmodule._ring.one()
-                else:
-                    comp[[i,i]] = -(self._fmodule._ring.one())
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        comp = resu.set_comp()
+        for i in self._fmodule.irange():
+            if i%2 == 0:
+                comp[[i,i]] = self._fmodule._ring.one()
+            else:
+                comp[[i,i]] = -(self._fmodule._ring.one())
         return resu
 
     #### End of parent methods ####
 
     #### Monoid methods ####
 
+    @cached_method
     def one(self):
         r"""
         Return the group identity element of ``self``.
@@ -505,12 +507,17 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             [0 1]
 
         """
-        if self._one is None:
-            self._one = self.element_class(self._fmodule, is_identity=True)
-            # Initialization of the components (Kronecker delta) in some basis:
-            if self._fmodule.bases():
-                self._one.components(self._fmodule.bases()[0])
-        return self._one
+        resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
+        # Initialization of the components (Kronecker delta) in some basis:
+        from .comp import KroneckerDelta
+        fmodule = self._fmodule
+        for basis in fmodule.bases():
+            resu._components[basis] = KroneckerDelta(fmodule._ring, basis,
+                                    start_index=fmodule._sindex,
+                                    output_formatter=fmodule._output_formatter)
+        resu._is_identity = True
+        resu.set_immutable()
+        return resu
 
     #### End of monoid methods ####
 
@@ -518,7 +525,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 2, name='M')
             sage: GL = M.general_linear_group()
@@ -532,7 +539,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 2, name='M')
             sage: GL = M.general_linear_group()
@@ -553,7 +560,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         - instance of :class:`FiniteRankFreeModule` representing the free
           module of which ``self`` is the general linear group
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 2, name='M')
             sage: GL = M.general_linear_group()

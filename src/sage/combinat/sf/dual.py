@@ -1,6 +1,7 @@
 """
 Generic dual bases symmetric functions
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -20,8 +21,8 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.matrix.all import matrix
 import sage.combinat.partition
-from sage.combinat.dict_addition import dict_linear_combination
-import classical
+import sage.data_structures.blas_dict as blas
+from . import classical
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
@@ -262,7 +263,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         """
         Representation of ``self``.
 
-        OUPUT
+        OUTPUT:
 
         - a string description of ``self``
 
@@ -332,7 +333,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         from sage.rings.rational_field import RationalField
         if (not base_ring.has_coerce_map_from(RationalField())) and self._scalar == sage.combinat.sf.sfa.zee:
             # This is the case when (due to the base ring not being a
-            # \mathbb{Q}-algebra) we cannot use the power-sum basis,
+            # \QQ-algebra) we cannot use the power-sum basis,
             # but (due to zee being the standard zee function) we can
             # use the Schur basis.
 
@@ -608,7 +609,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
                 # Create the monomial coefficient dictionary from the
                 # the monomial coefficient dictionary of dual
-                dictionary = dict_linear_combination( (to_self_cache[d_part], d_mcs[d_part]) for d_part in d_mcs)
+                dictionary = blas.linear_combination( (to_self_cache[d_part], d_mcs[d_part]) for d_part in d_mcs)
 
             # Initialize self
             self._dual = dual
@@ -669,7 +670,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution()` is a synonym for the :meth`omega()`
+            :meth:`omega_involution` is a synonym for the :meth:`omega`
             method.
 
             OUTPUT:
@@ -734,7 +735,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                 sage: h = m.dual_basis(scalar=zee)
                 sage: a = h([2,1])
                 sage: a.scalar_hl(a)
-                (t + 2)/(-t^4 + 2*t^3 - 2*t + 1)
+                (-t - 2)/(t^4 - 2*t^3 + 2*t - 1)
             """
             return self._dual.scalar_hl(x)
 
@@ -893,6 +894,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             return self._dual.expand(n, alphabet)
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
 

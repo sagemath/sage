@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-quickstart-differential-equations:
+
 Sage Quickstart for Differential Equations
 ==========================================
 
@@ -21,7 +23,7 @@ Basic Symbolic Techniques
 
 ::
 
-    sage: y = function('y',x)
+    sage: y = function('y')(x)
     sage: de = diff(y,x) + y -2
     sage: h = desolve(de, y)
 
@@ -102,7 +104,7 @@ gives the last list in the example.
 
 ::
 
-    sage: f=function('f',x)
+    sage: f=function('f')(x)
     sage: desolve_laplace(diff(f,x,2) == 2*diff(f,x)-f, dvar = f, ics = [0,1,2])
     x*e^x + e^x
 
@@ -124,7 +126,7 @@ conditions.
 
 ::
 
-    sage: y = function('y',x)
+    sage: y = function('y')(x)
     sage: de = diff(y,x) + y -2
     sage: h = desolve_rk4(de, y, step=.05, ics=[0,3])
 

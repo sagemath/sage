@@ -13,24 +13,15 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
-
-from sage.categories.groups import Groups
-from sage.groups.group import Group
-from sage.matrix.all import MatrixSpace
-from sage.modules.all import FreeModule
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
-
-from sage.groups.affine_gps.group_element import AffineGroupElement
 from sage.groups.affine_gps.affine_group import AffineGroup
 
 
 class EuclideanGroup(AffineGroup):
     r"""
-    A Euclidean group.
+    an Euclidean group.
 
     The Euclidean group `E(A)` (or general affine group) of an affine
     space `A` is the group of all invertible affine transformations from
@@ -92,7 +83,7 @@ class EuclideanGroup(AffineGroup):
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      * ``var`` -- (Defalut: ``'a'``) Keyword argument to specify the finite
+      * ``var`` -- (default: ``'a'``) Keyword argument to specify the finite
         field generator name in the case where ``ring`` is a prime power.
 
     EXAMPLES::
@@ -167,7 +158,7 @@ class EuclideanGroup(AffineGroup):
 
         This is called from the group element constructor and can be
         overridden for subgroups of the affine group. It is guaranteed
-        that ``A``, ``b`` are in the correct matrix/vetor space.
+        that ``A``, ``b`` are in the correct matrix/vector space.
 
         INPUT:
 

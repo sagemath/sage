@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-programming:
+
 Sage Introductory Programming Tutorial
 ======================================
 
@@ -270,7 +272,7 @@ powers of the original matrix come in the same order as the list.
 Python.)
 
 For the curious: this is better, but still not perfect.  It would be
-best to find a quicker way to write the the possible values for
+best to find a quicker way to write the possible values for
 :math:`i`.  There are two ways to do this in Sage.
 
 ::
@@ -301,8 +303,9 @@ Below, we show that one can get step sizes other than one as well.
 
 ::
 
-    sage: range(3, 23, 2); [3,5..21]
+    sage: range(3, 23, 2)   # py2
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
+    sage: [3,5..21]
     [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
 
 .. note::
@@ -659,7 +662,7 @@ conditionals ("if" clauses) before.
     sage: B = matrix([[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,0]])
     sage: for i in range(5): # all integers from 0 to 4, remember
     ....:     if B^i==0: # We ask if the power is the zero matrix
-    ....:         print i
+    ....:         print(i)
     4
 
 We use the double equals sign to test for equality, because ``=``
@@ -718,14 +721,14 @@ not have :math:`I=\sqrt{-1}`, decimal points, or division.
 
 ::
 
-    sage: print parent(a)
+    sage: parent(a)
     Integer Ring
-    sage: print parent(b)
+    sage: parent(b)
     Rational Field
-    sage: print parent(c)
+    sage: parent(c)
     Real Field with 53 bits of precision
-    sage: print parent(d)
+    sage: parent(d)
     Symbolic Ring
-    sage: print parent(e)
+    sage: parent(e)
     Symbolic Ring
 

@@ -38,25 +38,23 @@ As an example suppose you write the following simple C program
 which you want to call from python. First make a shared object
 library by doing (at the command line)
 
-::
+.. CODE-BLOCK:: shell-session
 
-    gcc -c sum.c
-    gcc -shared -o sum.so sum.o
+    $ gcc -c sum.c
+    $ gcc -shared -o sum.so sum.o
 
 Note that on OSX -shared should be replaced by -dynamiclib and
 sum.so should be called sum.dylib Then you can do
 
-::
+.. CODE-BLOCK:: python
 
     from ctypes import *
     my_sum=CDLL('sum.so')
     a=numpy.array(range(10),dtype=float)
     my_sum.sum(a.ctypes.data_as(c_void_p),int(10))
 
-Note here that a.ctypes.data
-as(c
-void
-p) returns a ctypes object that is void pointer to the underlying
+Note here that ``a.ctypes.data_as(c_void_p)`` returns a ctypes
+object that is void pointer to the underlying
 array of a. Note that even though sum takes a double\*, as long as
 we have a pointer to the correct data it doesn't matter what its
 type is since it will be automatically cast.
@@ -64,7 +62,7 @@ type is since it will be automatically cast.
 Note that actually there are other ways to pass in the required
 array of doubles. For example
 
-::
+.. CODE-BLOCK:: python
 
     a=(c_double*10)()
     for i in range(10):
@@ -74,7 +72,7 @@ array of doubles. For example
 This example only uses ctypes. Ctypes has wrappers for C data types
 so for example
 
-::
+.. CODE-BLOCK:: python
 
     a=c_double(10.4)
 
@@ -84,7 +82,7 @@ parameters by reference. This is used in the next example. c
 double\*10, is a python object that represents an array of 10
 doubles and
 
-::
+.. CODE-BLOCK:: python
 
     a=(c_double*10)()
 
@@ -99,7 +97,7 @@ on your system. Also on linux the file would be liblapack.so and
 you will probably use dgesv
 (OSX use CLAPACK hence the lack of the underscore).
 
-::
+.. CODE-BLOCK:: python
 
     from ctypes import *
     def ctypes_solve(m,b,n):
@@ -162,14 +160,14 @@ this.
 
 We can compile it by running at the command line
 
-::
+.. CODE-BLOCK:: shell-session
 
-     gcc -c laplace.c
-     gcc -shared -o laplace.so laplace.o
+     $ gcc -c laplace.c
+     $ gcc -shared -o laplace.so laplace.o
 
 Now in sage (notebook or command line) execute
 
-::
+.. CODE-BLOCK:: python
 
     from ctypes import *
     laplace=CDLL('/home/jkantor/laplace.so')
@@ -199,18 +197,18 @@ Note the line laplace.timestep.restype=c
 double. By default ctypes assumes the return values are ints. If
 they are not you need to tell it by setting restype to the correct
 return type. If you execute the above code, then solve(u) will
-solve the system. It is comparable to the weave or fortran
-solutions taking around .2 seconds. Alternatively you could do
+solve the system. It is comparable to the fortran solution taking 
+around .2 seconds. Alternatively you could do
 
-::
+.. CODE-BLOCK:: python
 
     n=c_int(int(51))
     dx=c_double(float(pi/50))
     laplace.solve_in_C(n.ctypes.data_as(c_void_p),n,n,dx,dx)
 
 which computes the solution entirely in C. This is very fast.
-Admittedly we could have had our fortran or weave routines do the
-entire solution at the C/Fortran level and we would have the same
+Admittedly we could have had our fortran routines do the
+entire solution at the Fortran level and we would have the same
 speed.
 
 As I said earlier you can just as easily call a shared object

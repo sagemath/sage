@@ -1,10 +1,6 @@
 """
 Symbolic matrices
 
-Matrices with symbolic entries.  The underlying representation is a
-pointer to a Maxima object.
-
-
 EXAMPLES::
 
     sage: matrix(SR, 2, 2, range(4))
@@ -83,9 +79,9 @@ Test pickling::
 Comparison::
 
     sage: m = matrix(SR, 2, [sqrt(2), 3, pi, e])
-    sage: cmp(m,m)
-    0
-    sage: cmp(m,3) != 0
+    sage: m == m
+    True
+    sage: m != 3
     True
     sage: m = matrix(SR,2,[1..4]); n = m^2
     sage: (exp(m+n) - exp(m)*exp(n)).simplify_rational() == 0       # indirect test
@@ -146,14 +142,24 @@ Conversion to Maxima::
     sage: m._maxima_()
     matrix([sqrt(2),3],[%pi,%e])
 
+TESTS:
+
+Check that :trac:`12778` is fixed::
+
+    sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]]); M
+    [                1 0.900000000000000               1/5               x^2]
+    [                2  1.90000000000000               2/5               x^3]
+    [                3  2.90000000000000               3/5               x^4]
+    sage: parent(M)
+    Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
 
 from sage.rings.polynomial.all import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
-from matrix_generic_dense cimport Matrix_generic_dense
-cimport matrix
+from .matrix_generic_dense cimport Matrix_generic_dense
+cimport sage.matrix.matrix as matrix
 
 cdef maxima
 
@@ -163,7 +169,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
     def eigenvalues(self):
         """
         Compute the eigenvalues by solving the characteristic
-        polynomial in maxima
+        polynomial in maxima.
 
         EXAMPLES::
 
@@ -173,13 +179,22 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         """
         maxima_evals = self._maxima_(maxima).eigenvalues()._sage_()
-        if len(maxima_evals)==0:
+        if not len(maxima_evals):
             raise ArithmeticError("could not determine eigenvalues exactly using symbolic matrices; try using a different type of matrix via self.change_ring(), if possible")
-        return sum([[eval]*int(mult) for eval,mult in zip(*maxima_evals)],[])
+        return sum([[ev] * int(mult) for ev, mult in zip(*maxima_evals)], [])
 
-    def eigenvectors_left(self):
+    def eigenvectors_left(self, other=None):
         r"""
         Compute the left eigenvectors of a matrix.
+
+        INPUT:
+
+        - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
+          eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
+          solved (currently supported only if the base ring of ``self`` is
+          ``RDF`` or ``CDF``)
+
+        OUTPUT:
 
         For each distinct eigenvalue, returns a list of the form (e,V,n)
         where e is the eigenvalue, V is a list of eigenvectors forming a
@@ -193,11 +208,13 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [3 4 5]
             [6 7 8]
             sage: es = A.eigenvectors_left(); es
-            [(-3*sqrt(6) + 6, [(1, -1/5*sqrt(6) + 4/5, -2/5*sqrt(3)*sqrt(2) + 3/5)], 1), (3*sqrt(6) + 6, [(1, 1/5*sqrt(6) + 4/5, 2/5*sqrt(3)*sqrt(2) + 3/5)], 1), (0, [(1, -2, 1)], 1)]
+            [(-3*sqrt(6) + 6, [(1, -1/5*sqrt(6) + 4/5, -2/5*sqrt(6) + 3/5)], 1),
+             (3*sqrt(6) + 6, [(1, 1/5*sqrt(6) + 4/5, 2/5*sqrt(6) + 3/5)], 1),
+             (0, [(1, -2, 1)], 1)]
             sage: eval, [evec], mult = es[0]
             sage: delta = eval*evec - evec*A
             sage: abs(abs(delta)) < 1e-10
-            sqrt(abs(1/25*(3*(2*sqrt(3)*sqrt(2) - 3)*(sqrt(6) - 2) + 16*sqrt(3)*sqrt(2) + 5*sqrt(6) - 54)^2 + 1/25*(3*(sqrt(6) - 2)*(sqrt(6) - 4) + 14*sqrt(3)*sqrt(2) + 4*sqrt(6) - 42)^2 + 144/25*(sqrt(3)*sqrt(2) - sqrt(6))^2)) < (1.00000000000000e-10)
+            3/5*sqrt(((2*sqrt(6) - 3)*(sqrt(6) - 2) + 7*sqrt(6) - 18)^2 + ((sqrt(6) - 2)*(sqrt(6) - 4) + 6*sqrt(6) - 14)^2) < (1.00000000000000e-10)
             sage: abs(abs(delta)).n() < 1e-10
             True
 
@@ -239,29 +256,53 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: symbolic_evalue
             1/2*sqrt(5) - 1/2
 
-            sage: qqbar_evalue == symbolic_evalue
+            sage: bool(qqbar_evalue == symbolic_evalue)
             True
 
         A slightly larger matrix with a "nice" spectrum. ::
 
-            sage: G=graphs.CycleGraph(6)
+            sage: G = graphs.CycleGraph(6)
             sage: am = G.adjacency_matrix().change_ring(SR)
             sage: am.eigenvectors_left()
             [(-1, [(1, 0, -1, 1, 0, -1), (0, 1, -1, 0, 1, -1)], 2), (1, [(1, 0, -1, -1, 0, 1), (0, 1, 1, 0, -1, -1)], 2), (-2, [(1, -1, 1, -1, 1, -1)], 1), (2, [(1, 1, 1, 1, 1, 1)], 1)]
-        """
-        from sage.modules.free_module_element import vector
-        from sage.all import ZZ
 
-        [evals,mults],evecs=self.transpose()._maxima_(maxima).eigenvectors()._sage_()
-        result=[]
-        for e,evec,m in zip(evals,evecs,mults):
-            result.append((e,[vector(v) for v in evec], ZZ(m)))
+        TESTS::
+
+            sage: A = matrix(SR, [[1, 2], [3, 4]])
+            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A.eigenvectors_left(B)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: generalized eigenvector decomposition is
+            implemented for RDF and CDF, but not for Symbolic Ring
+        """
+        if other is not None:
+            raise NotImplementedError('generalized eigenvector decomposition '
+                                      'is implemented for RDF and CDF, but '
+                                      'not for %s' % self.base_ring())
+
+        from sage.modules.free_module_element import vector
+        from sage.rings.integer_ring import ZZ
+
+        [evals, mults], evecs = self.transpose()._maxima_(maxima).eigenvectors()._sage_()
+        result = []
+        for e, evec, m in zip(evals, evecs, mults):
+            result.append((e, [vector(v) for v in evec], ZZ(m)))
 
         return result
 
-    def eigenvectors_right(self):
+    def eigenvectors_right(self, other=None):
         r"""
         Compute the right eigenvectors of a matrix.
+
+        INPUT:
+
+        - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
+          eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
+          solved (currently supported only if the base ring of ``self`` is
+          ``RDF`` or ``CDF``)
+
+        OUTPUT:
 
         For each distinct eigenvalue, returns a list of the form (e,V,n)
         where e is the eigenvalue, V is a list of eigenvectors forming a
@@ -283,14 +324,24 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [(-1/2*sqrt(17) + 3/2, [(1, -1/2*sqrt(17) + 3/2)], 1), (1/2*sqrt(17) + 3/2, [(1, 1/2*sqrt(17) + 3/2)], 1)]
             sage: right[0][1] == left[0][1]
             True
+
+        TESTS::
+
+            sage: A = matrix(SR, [[1, 2], [3, 4]])
+            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A.eigenvectors_right(B)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: generalized eigenvector decomposition is
+            implemented for RDF and CDF, but not for Symbolic Ring
         """
-        return self.transpose().eigenvectors_left()
+        return self.transpose().eigenvectors_left(other=other)
 
     def exp(self):
         r"""
-        Return the matrix exponential of this matrix $X$, which is the matrix
+        Return the matrix exponential of this matrix `X`, which is the matrix
 
-        .. math::
+        .. MATH::
 
            e^X = \sum_{k=0}^{\infty} \frac{X^k}{k!}.
 
@@ -323,7 +374,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: m.exp()
             [e^2]
 
-        Commuting matrices $m, n$ have the property that
+        Commuting matrices `m, n` have the property that
         `e^{m+n} = e^m e^n` (but non-commuting matrices need not)::
 
             sage: m = matrix(SR,2,[1..4]); n = m^2
@@ -364,24 +415,32 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         """
         if not self.is_square():
-            raise ValueError, "exp only defined on square matrices"
+            raise ValueError("exp only defined on square matrices")
         if self.nrows() == 0:
             return self
         # Maxima's matrixexp function chokes on floating point numbers
         # so we automatically convert floats to rationals by passing
         # keepfloat: false
         m = self._maxima_(maxima)
-        z = maxima('matrixexp(%s), keepfloat: false'%m.name())
+        z = maxima('matrixexp(%s), keepfloat: false' % m.name())
         if self.nrows() == 1:
             # We do the following, because Maxima stupidly exp's 1x1
             # matrices into non-matrices!
-            z = maxima('matrix([%s])'%z.name())
+            z = maxima('matrix([%s])' % z.name())
 
         return z._sage_()
 
     def charpoly(self, var='x', algorithm=None):
-        """
-        Compute the characteristic polynomial of self, using maxima.
+        r"""
+        Compute the characteristic polynomial of ``self``, using maxima.
+
+        .. NOTE::
+
+            The characteristic polynomial is defined as `\det(xI-A)`.
+
+        INPUT:
+
+        - ``var`` -- (default: 'x') name of variable of charpoly
 
         EXAMPLES::
 
@@ -419,6 +478,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
             sage: matrix([[sqrt(2), -1], [pi, e^2]]).charpoly()
             x^2 + (-sqrt(2) - e^2)*x + pi + sqrt(2)*e^2
+
+        Test that :trac:`26427` is fixed::
+
+            sage: M = matrix(SR, 7, 7, SR.var('a', 49))
+            sage: M.charpoly().degree() # long time
+            7
         """
         cache_key = 'charpoly'
         cp = self.fetch(cache_key)
@@ -471,18 +536,18 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         if mp is None:
             mp = self._maxima_lib_().jordan().minimalPoly().expand()
             d = mp.hipow('x')
-            mp = [mp.coeff('x', i) for i in xrange(0, d + 1)]
+            mp = [mp.coeff('x', i) for i in xrange(int(d) + 1)]
             mp = PolynomialRing(self.base_ring(), 'x')(mp)
             self.cache('minpoly', mp)
         return mp.change_variable_name(var)
 
     def fcp(self, var='x'):
         """
-        Return the factorization of the characteristic polynomial of self.
+        Return the factorization of the characteristic polynomial of ``self``.
 
         INPUT:
 
-        - ``var`` - (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: 'x') name of variable of charpoly
 
         EXAMPLES::
 
@@ -507,9 +572,117 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         sub_dict = {var: SR.var(var)}
         return Factorization(self.charpoly(var).subs(**sub_dict).factor_list())
 
+    def jordan_form(self, subdivide=True, transformation=False):
+        """
+        Return a Jordan normal form of ``self``.
+
+        INPUT:
+
+        - ``self`` -- a square matrix
+
+        - ``subdivide`` -- boolean (default: ``True``)
+
+        - ``transformation`` -- boolean (default: ``False``)
+
+        OUTPUT:
+
+        If ``transformation`` is ``False``, only a Jordan normal form
+        (unique up to the ordering of the Jordan blocks) is returned.
+        Otherwise, a pair ``(J, P)`` is returned, where ``J`` is a
+        Jordan normal form and ``P`` is an invertible matrix such that
+        ``self`` equals ``P * J * P^(-1)``.
+
+        If ``subdivide`` is ``True``, the Jordan blocks in the
+        returned matrix ``J`` are indicated by a subdivision in
+        the sense of :meth:`~sage.matrix.matrix2.subdivide`.
+
+        EXAMPLES:
+
+        We start with some examples of diagonalisable matrices::
+
+            sage: a,b,c,d = var('a,b,c,d')
+            sage: matrix([a]).jordan_form()
+            [a]
+            sage: matrix([[a, 0], [1, d]]).jordan_form(subdivide=True)
+            [d|0]
+            [-+-]
+            [0|a]
+            sage: matrix([[a, 0], [1, d]]).jordan_form(subdivide=False)
+            [d 0]
+            [0 a]
+            sage: matrix([[a, x, x], [0, b, x], [0, 0, c]]).jordan_form()
+            [c|0|0]
+            [-+-+-]
+            [0|b|0]
+            [-+-+-]
+            [0|0|a]
+
+        In the following examples, we compute Jordan forms of some
+        non-diagonalisable matrices::
+
+            sage: matrix([[a, a], [0, a]]).jordan_form()
+            [a 1]
+            [0 a]
+            sage: matrix([[a, 0, b], [0, c, 0], [0, 0, a]]).jordan_form()
+            [c|0 0]
+            [-+---]
+            [0|a 1]
+            [0|0 a]
+
+        The following examples illustrate the ``transformation`` flag.
+        Note that symbolic expressions may need to be simplified to
+        make consistency checks succeed::
+
+            sage: A = matrix([[x - a*c, a^2], [-c^2, x + a*c]])
+            sage: J, P = A.jordan_form(transformation=True)
+            sage: J, P
+            (
+            [x 1]  [-a*c    1]
+            [0 x], [-c^2    0]
+            )
+            sage: A1 = P * J * ~P; A1
+            [             -a*c + x (a*c - x)*a/c + a*x/c]
+            [                 -c^2               a*c + x]
+            sage: A1.simplify_rational() == A
+            True
+
+            sage: B = matrix([[a, b, c], [0, a, d], [0, 0, a]])
+            sage: J, T = B.jordan_form(transformation=True)
+            sage: J, T
+            (
+            [a 1 0]  [b*d   c   0]
+            [0 a 1]  [  0   d   0]
+            [0 0 a], [  0   0   1]
+            )
+            sage: (B * T).simplify_rational() == T * J
+            True
+
+        Finally, some examples involving square roots::
+
+            sage: matrix([[a, -b], [b, a]]).jordan_form()
+            [a - I*b|      0]
+            [-------+-------]
+            [      0|a + I*b]
+            sage: matrix([[a, b], [c, d]]).jordan_form(subdivide=False)
+            [1/2*a + 1/2*d - 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)                                                   0]
+            [                                                  0 1/2*a + 1/2*d + 1/2*sqrt(a^2 + 4*b*c - 2*a*d + d^2)]
+        """
+        A = self._maxima_lib_()
+        jordan_info = A.jordan()
+        J = jordan_info.dispJordan()._sage_()
+        if subdivide:
+            v = [x[1] for x in jordan_info]
+            w = [sum(v[0:i]) for i in xrange(1, len(v))]
+            J.subdivide(w, w)
+        if transformation:
+            P = A.diag_mode_matrix(jordan_info)._sage_()
+            return J, P
+        else:
+            return J
+
     def simplify(self):
         """
-        Simplifies self.
+        Simplify ``self``.
 
         EXAMPLES::
 
@@ -523,7 +696,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [    x^2 y^2 + 2]
         """
         return self.parent()([x.simplify() for x in self.list()])
-
 
     def simplify_trig(self):
         """
@@ -561,9 +733,62 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         """
         return self._maxima_(maxima).fullratsimp()._sage_()
 
+    def simplify_full(self):
+        """
+        Simplify a symbolic matrix by calling
+        :meth:`Expression.simplify_full()` componentwise.
+
+        INPUT:
+
+        - ``self`` -- the matrix whose entries we should simplify.
+
+        OUTPUT:
+
+        A copy of ``self`` with all of its entries simplified.
+
+        EXAMPLES:
+
+        Symbolic matrices will have their entries simplified::
+
+            sage: a,n,k = SR.var('a,n,k')
+            sage: f1 = sin(x)^2 + cos(x)^2
+            sage: f2 = sin(x/(x^2 + x))
+            sage: f3 = binomial(n,k)*factorial(k)*factorial(n-k)
+            sage: f4 = x*sin(2)/(x^a)
+            sage: A = matrix(SR, [[f1,f2],[f3,f4]])
+            sage: A.simplify_full()
+            [                1    sin(1/(x + 1))]
+            [     factorial(n) x^(-a + 1)*sin(2)]
+
+        """
+        M = self.parent()
+        return M([expr.simplify_full() for expr in self])
+
+    def canonicalize_radical(self):
+        r"""
+        Choose a canonical branch of each entry of ``self`` by calling
+        :meth:`Expression.canonicalize_radical()` componentwise.
+
+        EXAMPLES::
+
+            sage: var('x','y')
+            (x, y)
+            sage: l1 = [sqrt(2)*sqrt(3)*sqrt(6) , log(x*y)]
+            sage: l2 = [sin(x/(x^2 + x)) , 1]
+            sage: m = matrix([l1, l2])
+            sage: m
+            [sqrt(6)*sqrt(3)*sqrt(2)                log(x*y)]
+            [       sin(x/(x^2 + x))                       1]
+            sage: m.canonicalize_radical()
+            [              6 log(x) + log(y)]
+            [ sin(1/(x + 1))               1]
+        """
+        M = self.parent()
+        return M([expr.canonicalize_radical() for expr in self])
+
     def factor(self):
         """
-        Operates point-wise on each element.
+        Operate point-wise on each element.
 
         EXAMPLES::
 
@@ -578,7 +803,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
     def expand(self):
         """
-        Operates point-wise on each element.
+        Operate point-wise on each element.
 
         EXAMPLES::
 
@@ -590,13 +815,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [       x^2 + 2       -2*x + 3]
             [      -4*x + 6 x^2 - 6*x + 11]
         """
-        from sage.misc.misc import attrcall
+        from sage.misc.call import attrcall
         return self.apply_map(attrcall('expand'))
-
 
     def variables(self):
         """
-        Returns the variables of self.
+        Return the variables of ``self``.
 
         EXAMPLES::
 
@@ -618,7 +842,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
     def arguments(self):
         """
-        Returns a tuple of the arguments that self can take.
+        Return a tuple of the arguments that ``self`` can take.
 
         EXAMPLES::
 
@@ -634,7 +858,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
     def number_of_arguments(self):
         """
-        Returns the number of arguments that self can take.
+        Return the number of arguments that ``self`` can take.
 
         EXAMPLES::
 
@@ -670,16 +894,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: h
             [cos(x) + sin(x)               0]
             [              0 cos(x) + sin(x)]
-            sage: h(1)
-            doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
-            See http://trac.sagemath.org/4513 for details.
-            doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
-            See http://trac.sagemath.org/5930 for details.
-            [cos(1) + sin(1)               0]
-            [              0 cos(1) + sin(1)]
-            sage: h(x)
-            [cos(x) + sin(x)               0]
-            [              0 cos(x) + sin(x)]
 
             sage: f = M([0,x,y,z]); f
             [0 x]
@@ -689,15 +903,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: f()
             [0 x]
             [y z]
-            sage: f(1)
-            [0 1]
-            [y z]
-            sage: f(1,2)
-            [0 1]
-            [2 z]
-            sage: f(1,2,3)
-            [0 1]
-            [2 3]
             sage: f(x=1)
             [0 1]
             [y z]
@@ -711,58 +916,56 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [0 1]
             [2 3]
 
+        TESTS::
+
             sage: f(1, x=2)
             Traceback (most recent call last):
             ...
             ValueError: args and kwargs cannot both be specified
-            sage: f(1,2,3,4)
+            sage: f(x=1,y=2,z=3,t=4)
+            [0 1]
+            [2 3]
+
+            sage: h(1)
             Traceback (most recent call last):
             ...
-            ValueError: the number of arguments must be less than or equal to 3
+            ValueError: use named arguments, like EXPR(x=..., y=...)
         """
         if kwargs and args:
-            raise ValueError, "args and kwargs cannot both be specified"
+            raise ValueError("args and kwargs cannot both be specified")
 
-        if len(args) == 1 and isinstance(args[0], dict):
-            kwargs = dict([(repr(x[0]), x[1]) for x in args[0].iteritems()])
+        if args:
+            if len(args) == 1 and isinstance(args[0], dict):
+                kwargs = {repr(x): vx for x, vx in args[0].iteritems()}
+            else:
+                raise ValueError('use named arguments, like EXPR(x=..., y=...)')
 
-        if kwargs:
-            #Handle the case where kwargs are specified
-            new_entries = []
-            for entry in self.list():
-                try:
-                    new_entries.append( entry(**kwargs) )
-                except ValueError:
-                    new_entries.append(entry)
-        else:
-            #Handle the case where args are specified
-
-            if args:
-                from sage.misc.superseded import deprecation
-                deprecation(4513, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
-            #Get all the variables
-            variables = list( self.arguments() )
-
-            if len(args) > self.number_of_arguments():
-                raise ValueError, "the number of arguments must be less than or equal to %s"%self.number_of_arguments()
-
-            new_entries = []
-            for entry in self.list():
-                try:
-                    entry_vars = entry.variables()
-                    if len(entry_vars) == 0:
-                        if len(args) != 0:
-                            new_entries.append( entry(args[0]) )
-                        else:
-                            new_entries.append( entry )
-                        continue
-                    else:
-                        indices = [i for i in map(variables.index, entry_vars) if i < len(args)]
-                        if len(indices) == 0:
-                            new_entries.append( entry )
-                        else:
-                            new_entries.append( entry(*[args[i] for i in indices]) )
-                except ValueError:
-                    new_entries.append( entry )
+        new_entries = []
+        for entry in self.list():
+            try:
+                new_entries.append(entry(**kwargs))
+            except ValueError:
+                new_entries.append(entry)
 
         return self.parent(new_entries)
+
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        r"""
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: M = matrix(SR, [[0,1,0],[0,0,0]])
+            sage: M.zero_pattern_matrix()  # indirect doctest
+            [1 0 1]
+            [1 1 1]
+        """
+        entry = self.get_unsafe(i, j)
+        # See if we can avoid the full proof machinery that the entry is 0
+        if entry.is_trivial_zero():
+            return 1
+        if entry:
+            return 0
+        else:
+            return 1
+

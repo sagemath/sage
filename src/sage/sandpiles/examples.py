@@ -21,6 +21,7 @@ The examples are accessible by typing ``sandpiles.NAME``, where
 
 See the documentation for each particular type of example for full details.
 """
+from __future__ import print_function
 
 from sage.sandpiles.sandpile import Sandpile
 from sage.graphs.graph_generators import graphs
@@ -64,12 +65,13 @@ class SandpileExamples(object):
         EXAMPLES::
 
             sage: sandpiles()
-            Try sandpile.FOO() where FOO is in the list:
+            Try sandpiles.FOO() where FOO is in the list:
             <BLANKLINE>
                 Complete, Cycle, Diamond, Fan, Grid, House, Wheel
         """
-        print 'Try sandpile.FOO() where FOO is in the list:\n'
-        print "    " + ", ".join([str(i) for i in dir(sandpiles) if i[0]!='_'])
+        print('Try sandpiles.FOO() where FOO is in the list:\n')
+        print("    " + ", ".join([str(i) for i in dir(sandpiles)
+                                  if i[0] != '_']))
 
     def Complete(self, n):
         """

@@ -1,0 +1,12 @@
+*** a/src/randomDataGenerators.cpp	Sat Sep  7 14:09:19 2013
+--- b/src/randomDataGenerators.cpp	Sat Sep  7 14:10:19 2013
+***************
+*** 25,30 ****
+--- 25,31 ----
+  
+  #include <limits>
+  #include <ctime>
++ #include <unistd.h> /* needed for getpid */
+  
+  void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
+    VarNames names(variableCount);

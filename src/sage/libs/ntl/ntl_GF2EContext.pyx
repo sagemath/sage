@@ -1,3 +1,6 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -13,7 +16,6 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 import weakref
@@ -21,10 +23,11 @@ import weakref
 GF2EContextDict = {}
 
 
-cdef class ntl_GF2EContext_class:
+cdef class ntl_GF2EContext_class(object):
     def __init__(self, ntl_GF2X v):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             # You can construct contexts manually.
             sage: ctx = ntl.GF2EContext(ntl.GF2X([1,1,0,1]))
             sage: n1 = ntl.GF2E([1,1],ctx)
@@ -46,15 +49,13 @@ cdef class ntl_GF2EContext_class:
         pass
 
     def __cinit__(self, ntl_GF2X v):
-        GF2EContext_construct_GF2X(&self.x, &((<ntl_GF2X>v).x))
+        self.x = GF2EContext_c(v.x)
         self.m = v
-
-    def __dealloc__(self):
-        GF2EContext_destruct(&self.x)
 
     def __reduce__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.GF2EContext(GF(2^5,'b'))
             sage: loads(dumps(c)) is c
             True
@@ -65,10 +66,11 @@ cdef class ntl_GF2EContext_class:
         """
         Returns a print representation of self.
 
-        EXAMPLES:
-        sage: c = ntl.GF2EContext(GF(2^16,'a'))
-        sage: c
-        NTL modulus [1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1]
+        EXAMPLES::
+
+            sage: c = ntl.GF2EContext(GF(2^16,'a'))
+            sage: c
+            NTL modulus [1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1]
         """
         return "NTL modulus %s"%(self.m)
 
@@ -77,7 +79,8 @@ cdef class ntl_GF2EContext_class:
         Return the current modulus associated to this
         context.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.GF2EContext(GF(2^7,'foo'))
             sage: c.modulus()
             [1 1 0 0 0 0 0 1]
@@ -87,7 +90,8 @@ cdef class ntl_GF2EContext_class:
 
     def restore(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c1 = ntl.GF2E([0,1],GF(2^4,'a')) ; c2 = ntl.GF2E([1,0,1],GF(2^4,'a'))
             sage: c1+c2
             [1 1 1]
@@ -103,7 +107,9 @@ cdef class ntl_GF2EContext_class:
 def ntl_GF2EContext( v ):
     """
     Create a new GF2EContext.
-    EXAMPLES:
+
+    EXAMPLES::
+
         sage: c = ntl.GF2EContext(GF(2^2,'a'))
         sage: n1 = ntl.GF2E([0,1],c)
         sage: n1
@@ -111,7 +117,7 @@ def ntl_GF2EContext( v ):
     """
     v = ntl_GF2X(v)
     if (GF2X_deg((<ntl_GF2X>v).x) < 1):
-        raise ValueError, "%s is not a valid modulus."%v
+        raise ValueError("%s is not a valid modulus." % v)
     key = hash(v)
     if key in GF2EContextDict:
         context = GF2EContextDict[key]()

@@ -1,12 +1,12 @@
 r"""
 Interface to TIDES
 
-This module contains tools to write the .c files needed for TIDES [TI]_ .
+This module contains tools to write the .c files needed for TIDES [TIDES]_ .
 
 Tides is an integration engine based on the Taylor method. It is implemented
 as a c library. The user must translate its initial value problem (IVP) into a
 pair of .c files that will then be compiled and linked against the TIDES
-library. The reulting binary will produce the desired output. The tools in this
+library. The resulting binary will produce the desired output. The tools in this
 module can be used to automate the generation of these files from the symbolic
 expression of the differential equation.
 
@@ -33,12 +33,9 @@ AUTHORS:
 
 REFERENCES:
 
-.. [ALG924] A. Abad, R. Barrio, F. Blesa, M. Rodriguez. Algorithm 924. *ACM Transactions on Mathematical Software*, *39* (1), 1-28.
+- [ABBR2012]_
 
-.. [TI]
-   A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
-   TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
-   <http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>
+- [TIDES]_
 """
 
 
@@ -407,7 +404,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     -  ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
-    later with the min_tides library [TI]_.
+    later with the min_tides library [TIDES]_.
 
 
     TESTS::
@@ -478,12 +475,12 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
     remove_repeated(l1, l2)
     remove_constants(l1, l2)
-    l0 = map(str, l1)
+    l0 = [str(l) for l in l1]
     #generate the corresponding c lines
 
     l3=[]
     var = f[0].arguments()
-    lv = map(str, var)
+    lv = [str(v) for v in var]
     for i in l2:
         oper = i[0]
         if oper in ["log", "exp", "sin", "cos"]:
@@ -505,14 +502,14 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
                 aa = 'XX[{}]'.format(l0.index(str(a))+len(var))
             else:
                 consta=True
-                aa = RR(a).str(truncate=False)
+                aa = RR(a).str()
             if str(b) in lv:
                 bb = 'XX[{}]'.format(lv.index(str(b)))
             elif str(b) in l0:
                 bb = 'XX[{}]'.format(l0.index(str(b))+len(var))
             else:
                 constb = True
-                bb = RR(b).str(truncate=False)
+                bb = RR(b).str()
             if consta:
                 oper += '_c'
                 if not oper=='div':
@@ -629,12 +626,12 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     """%(n-1)
     outfile.write(auxstring)
     for i in range(len(ics)):
-        outfile.write('\tv[{}] = {} ; \n'.format(i, RR(ics[i]).str(truncate=False)))
-    outfile.write('\ttini = {} ;\n'.format(RR(initial).str(truncate=False)))
-    outfile.write('\ttend = {} ;\n'.format(RR(final).str(truncate=False)))
-    outfile.write('\tdt   = {} ;\n'.format(RR(delta).str(truncate=False)))
-    outfile.write('\ttolrel = {} ;\n'.format(RR(tolrel).str(truncate=False)))
-    outfile.write('\ttolabs = {} ;\n'.format(RR(tolabs).str(truncate=False)))
+        outfile.write('\tv[{}] = {} ; \n'.format(i, RR(ics[i]).str()))
+    outfile.write('\ttini = {} ;\n'.format(RR(initial).str()))
+    outfile.write('\ttend = {} ;\n'.format(RR(final).str()))
+    outfile.write('\tdt   = {} ;\n'.format(RR(delta).str()))
+    outfile.write('\ttolrel = {} ;\n'.format(RR(tolrel).str()))
+    outfile.write('\ttolabs = {} ;\n'.format(RR(tolabs).str()))
     outfile.write('\textern char ofname[500];')
     outfile.write('\tstrcpy(ofname, "'+ output +'");\n')
     outfile.write('\tminc_tides(v,VARS,p,PARS,tini,tend,dt,tolrel,tolabs);\n')
@@ -669,7 +666,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     - ``parameter_values`` -- the values of the parameters for the particular
        initial value problem.
 
-    - ``dig`` -- the number of digits of precission that will be used in the integration
+    - ``dig`` -- the number of digits of precision that will be used in the integration
 
     - ``tolrel`` -- the relative tolerance.
 
@@ -678,7 +675,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     -  ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
-    later with the tides library ([TI]_).
+    later with the tides library ([TIDES]_).
 
 
     TESTS::
@@ -720,7 +717,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         sage: l[16]
         '    int nfun = 0;\n'
         sage: l[26]
-        '\tmpfr_set_str(v[2], "0.0000000000000000000000000000000000000000000000000000", 10, TIDES_RND);\n'
+        '\tmpfr_set_str(v[2], "0.000000000000000000000000000000000000000000000000000", 10, TIDES_RND);\n'
         sage: l[30]
         '\tmpfr_init2(tolabs, TIDES_PREC); \n'
         sage: l[34]
@@ -755,9 +752,9 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         sage: shutil.rmtree(tempdir)
 
     """
-    if parameters == None:
+    if parameters is None:
         parameters = []
-    if parameter_values == None:
+    if parameter_values is None:
         parameter_values = []
     RR = RealField(ceil(dig * 3.3219))
     l1, l2 = subexpressions_list(f, parameters)
@@ -765,9 +762,9 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     remove_constants(l1, l2)
     l3=[]
     var = f[0].arguments()
-    l0 = map(str, l1)
-    lv = map(str, var)
-    lp = map(str, parameters)
+    l0 = [str(l) for l in l1]
+    lv = [str(v) for v in var]
+    lp = [str(p) for p in parameters]
     for i in l2:
         oper = i[0]
         if oper in ["log", "exp", "sin", "cos", "atan", "asin", "acos"]:
@@ -795,7 +792,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 aa = 'par[{}]'.format(lp.index(sa))
             else:
                 consta=True
-                aa = RR(a).str(truncate=False)
+                aa = RR(a).str()
             if sb in lv:
                 bb = 'var[{}]'.format(lv.index(sb))
             elif sb in l0:
@@ -804,7 +801,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                 bb = 'par[{}]'.format(lp.index(sb))
             else:
                 constb=True
-                bb = RR(b).str(truncate=False)
+                bb = RR(b).str()
             if consta:
                 oper += '_c'
                 if not oper=='div':
@@ -936,24 +933,24 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     outfile.write('\tfor(i=0; i<npar; i++) mpfr_init2(p[i], TIDES_PREC);\n')
 
     for i in range(npar):
-        outfile.write('\tmpfr_set_str(p[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(parameter_values[i]).str(truncate=False)))
+        outfile.write('\tmpfr_set_str(p[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(parameter_values[i]).str()))
     outfile.write('\tint nvar = {};\n\tmpfr_t v[nvar];\n'.format(VAR))
     outfile.write('\tfor(i=0; i<nvar; i++) mpfr_init2(v[i], TIDES_PREC);\n')
     for i in range(len(ics)):
-        outfile.write('\tmpfr_set_str(v[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(ics[i]).str(truncate=False)))
+        outfile.write('\tmpfr_set_str(v[{}], "{}", 10, TIDES_RND);\n'.format(i,RR(ics[i]).str()))
     outfile.write('\tmpfr_t tolrel, tolabs;\n')
     outfile.write('\tmpfr_init2(tolrel, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(tolabs, TIDES_PREC); \n')
-    outfile.write('\tmpfr_set_str(tolrel, "{}", 10, TIDES_RND);\n'.format(RR(tolrel).str(truncate=False)))
-    outfile.write('\tmpfr_set_str(tolabs, "{}", 10, TIDES_RND);\n'.format(RR(tolabs).str(truncate=False)))
+    outfile.write('\tmpfr_set_str(tolrel, "{}", 10, TIDES_RND);\n'.format(RR(tolrel).str()))
+    outfile.write('\tmpfr_set_str(tolabs, "{}", 10, TIDES_RND);\n'.format(RR(tolabs).str()))
 
     outfile.write('\tmpfr_t tini, dt; \n')
     outfile.write('\tmpfr_init2(tini, TIDES_PREC); \n')
     outfile.write('\tmpfr_init2(dt, TIDES_PREC); \n')
 
 
-    outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str(truncate=False)))
-    outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str(truncate=False)))
+    outfile.write('\tmpfr_set_str(tini, "{}", 10, TIDES_RND);;\n'.format(RR(initial).str()))
+    outfile.write('\tmpfr_set_str(dt, "{}", 10, TIDES_RND);\n'.format(RR(delta).str()))
     outfile.write('\tint nipt = {};\n'.format(floor((final-initial)/delta)))
     outfile.write('\tFILE* fd = fopen("' + output + '", "w");\n')
     outfile.write('\tmp_tides_delta(function_iteration, NULL, nvar, npar, nfun, v, p, tini, dt, nipt, tolrel, tolabs, NULL, fd);\n')

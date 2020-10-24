@@ -1,5 +1,6 @@
-from weightspace import  WeightSpace_constructor as pAdicWeightSpace
+from __future__ import absolute_import
+from .weightspace import  WeightSpace_constructor as pAdicWeightSpace
 
-from genus0 import OverconvergentModularForms
+from .genus0 import OverconvergentModularForms
 
-from hecke_series import hecke_series
+from .hecke_series import hecke_series

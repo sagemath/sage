@@ -144,8 +144,7 @@ two variables :math:`X,Y` simply replace ``R.<X>`` by ``R.<X,Y>``).
 
     sage: R.<X> = K[]
     sage: R
-    Univariate Polynomial Ring in X over Number Field in sqrt2
-    with defining polynomial x^2 - 2
+    Univariate Polynomial Ring in X over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
 
 Now we can make a polynomial over the number field
 :math:`K=\QQ(\sqrt{2})`, and construct the extension of

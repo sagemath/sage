@@ -1,6 +1,7 @@
 r"""
 Hopf algebras
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                     Nicolas M. Thiery <nthiery at users.sf.net>
@@ -8,19 +9,19 @@ Hopf algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-
 from sage.misc.lazy_import import LazyImport
-from category import Category
-from category_types import Category_over_base_ring
+from .category import Category
+from .category_types import Category_over_base_ring
 from sage.categories.bialgebras import Bialgebras
 from sage.categories.tensor import TensorProductsCategory # tensor
 from sage.categories.realizations import RealizationsCategory
+from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.cachefunc import cached_method
 #from sage.misc.lazy_attribute import lazy_attribute
 
 class HopfAlgebras(Category_over_base_ring):
     """
-    The category of Hopf algebras
+    The category of Hopf algebras.
 
     EXAMPLES::
 
@@ -33,7 +34,6 @@ class HopfAlgebras(Category_over_base_ring):
 
         sage: TestSuite(HopfAlgebras(ZZ)).run()
     """
-
     def super_categories(self):
         """
         EXAMPLES::
@@ -46,7 +46,7 @@ class HopfAlgebras(Category_over_base_ring):
 
     def dual(self):
         """
-        Returns the dual category
+        Return the dual category
 
         EXAMPLES:
 
@@ -61,9 +61,10 @@ class HopfAlgebras(Category_over_base_ring):
     WithBasis = LazyImport('sage.categories.hopf_algebras_with_basis',  'HopfAlgebrasWithBasis')
 
     class ElementMethods:
+
         def antipode(self):
             """
-            Returns the antipode of self.
+            Return the antipode of self
 
             EXAMPLES::
 
@@ -100,10 +101,47 @@ class HopfAlgebras(Category_over_base_ring):
 
     class Morphism(Category):
         """
-        The category of Hopf algebra morphisms
+        The category of Hopf algebra morphisms.
         """
         pass
 
+    class Super(SuperModulesCategory):
+        r"""
+        The category of super Hopf algebras.
+
+        .. NOTE::
+
+            A super Hopf algebra is *not* simply a Hopf
+            algebra with a `\ZZ/2\ZZ` grading due to the
+            signed bialgebra compatibility conditions.
+        """
+        def dual(self):
+            """
+            Return the dual category.
+
+            EXAMPLES:
+
+            The category of super Hopf algebras over any field is self dual::
+
+                sage: C = HopfAlgebras(QQ).Super()
+                sage: C.dual()
+                Category of super hopf algebras over Rational Field
+            """
+            return self
+
+        class ElementMethods:
+            def antipode(self):
+                """
+                Return the antipode of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = SteenrodAlgebra(3)
+                    sage: a = A.an_element()
+                    sage: a, a.antipode()
+                    (2 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
+                """
+                return self.parent().antipode(self)
 
     class TensorProducts(TensorProductsCategory):
         """

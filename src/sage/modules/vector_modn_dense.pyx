@@ -1,5 +1,5 @@
 """
-Vectors with integer mod n entries, with n small.
+Vectors with integer mod n entries, with n small
 
 EXAMPLES::
 
@@ -79,25 +79,41 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
+Test that :trac:`28042` is fixed::
+
+    sage: p = 193379
+    sage: K = GF(p)
+    sage: a = K(1)
+    sage: b = K(191495)
+    sage: c = K(109320)
+    sage: d = K(167667)
+    sage: e = 103937
+    sage: a*c+b*d-e
+    102041
+    sage: vector([a,b]) * vector([c,d]) - e
+    102041
+    sage: type(vector([a,b]) * vector([c,d])) # py3
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    sage: type(vector([a,b]) * vector([c,d])) # py2
+    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+
 AUTHOR:
 
 - William Stein (2007)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include 'sage/ext/interrupt.pxi'
-include 'sage/ext/stdsage.pxi'
-from sage.ext.memory cimport check_allocarray
-
+from cysignals.memory cimport check_allocarray, sig_free
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT64_LIMIT
 
 MAX_MODULUS = INTEGER_MOD_INT64_LIMIT
@@ -112,12 +128,12 @@ cdef mod_int ivalue(IntegerMod_abstract x) except -1:
     elif type(x) is IntegerMod_int64:
         return (<IntegerMod_int64>x).ivalue
     else:
-        raise TypeError, "non-fixed size integer"
+        raise TypeError("non-fixed size integer")
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 
-cimport free_module_element
-from free_module_element import vector
+cimport sage.modules.free_module_element as free_module_element
+from .free_module_element import vector
 
 cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -155,6 +171,8 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __init__(self, parent, x, coerce=True, copy=True):
         cdef Py_ssize_t i
         cdef mod_int a, p
+        if isinstance(x, xrange):
+            x = tuple(x)
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
@@ -163,7 +181,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 p = R.order()
                 for i from 0 <= i < self._degree:
                     a = int(R(x[i]))
-                    self._entries[i] = a%p
+                    self._entries[i] = a % p
             else:
                 for i from 0 <= i < self._degree:
                     self._entries[i] = x[i]
@@ -175,9 +193,9 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 self._entries[i] = 0
 
     def __dealloc__(self):
-        sage_free(self._entries)
+        sig_free(self._entries)
 
-    cpdef int _cmp_(left, Element right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -194,14 +212,14 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef mod_int l, r
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             l = left._entries[i]
             r = (<Vector_modn_dense>right)._entries[i]
             if l < r:
-                return -1
+                return rich_to_bool(op, -1)
             elif l > r:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -258,7 +276,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree, self._p, self._is_mutable)
 
-    cpdef ModuleElement _add_(self, ModuleElement right):
+    cpdef _add_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -268,7 +286,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return z
 
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -277,22 +295,31 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._p + self._entries[i] - r._entries[i]) % self._p
         return z
 
-    cpdef Element _dot_product_(self, Vector right):
-        cdef Py_ssize_t i
+    cpdef _dot_product_(self, Vector right):
+        cdef size_t i
         cdef IntegerMod_int n
+        cdef IntegerMod_int64 m
         cdef Vector_modn_dense r = right
-        n =  IntegerMod_int.__new__(IntegerMod_int)
-        IntegerMod_abstract.__init__(n, self.base_ring())
-        n.ivalue = 0
 
-        for i from 0 <= i < self._degree:
-            n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
+        if use_32bit_type(self._p):
+            n =  IntegerMod_int.__new__(IntegerMod_int)
+            IntegerMod_abstract.__init__(n, self.base_ring())
+            n.ivalue = 0
+            for i in range(self._degree):
+                n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return n
+        else:
+            m = IntegerMod_int64.__new__(IntegerMod_int64)
+            IntegerMod_abstract.__init__(m, self.base_ring())
+            m.ivalue = 0
+            for i in range(self._degree):
+                m.ivalue = (m.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return m
 
-        return n
-
-    cpdef Vector _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right):
         """
-        EXAMPLES:
+        EXAMPLES::
+
            sage: v = vector(Integers(8), [2,3]); w = vector(Integers(8), [2,5])
            sage: v * w
            3
@@ -307,7 +334,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * r._entries[i]) % self._p
         return z
 
-    cpdef ModuleElement _rmul_(self, RingElement left):
+    cpdef _lmul_(self, Element left):
         cdef Vector_modn_dense z
 
         cdef mod_int a = ivalue(left)
@@ -318,10 +345,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * a) % self._p
         return z
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
-        return self._rmul_(right)
-
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         cdef Vector_modn_dense z
         z = self._new_c()
         cdef Py_ssize_t i

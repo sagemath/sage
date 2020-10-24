@@ -1,15 +1,5 @@
 """
 Finite Fields of Characteristic 2
-
-TESTS:
-
-Test backwards compatibility::
-
-    sage: from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-    sage: FiniteField_ntl_gf2e(16, 'a')
-    doctest:...: DeprecationWarning: constructing a FiniteField_ntl_gf2e without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead
-    See http://trac.sagemath.org/16983 for details.
-    Finite Field in a of size 2^4
 """
 
 #*****************************************************************************
@@ -27,8 +17,8 @@ Test backwards compatibility::
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.libs.pari.all import pari
-from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+
 
 def late_import():
     """
@@ -54,8 +44,8 @@ def late_import():
     import sage.rings.finite_rings.element_ntl_gf2e
     Cache_ntl_gf2e = sage.rings.finite_rings.element_ntl_gf2e.Cache_ntl_gf2e
 
-    import sage.rings.finite_rings.constructor
-    GF = sage.rings.finite_rings.constructor.GF
+    import sage.rings.finite_rings.finite_field_constructor
+    GF = sage.rings.finite_rings.finite_field_constructor.GF
     GF2 = GF(2)
 
     import sage.rings.polynomial.polynomial_element
@@ -90,7 +80,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         sage: k.<a> = GF(2^1024)
         sage: k.modulus()
         x^1024 + x^19 + x^6 + x + 1
-        sage: set_random_seed(0)
+        sage: set_random_seed(6397)
         sage: k.<a> = GF(2^17, modulus='random')
         sage: k.modulus()
         x^17 + x^16 + x^15 + x^10 + x^8 + x^6 + x^4 + x^3 + x^2 + x + 1
@@ -147,17 +137,9 @@ class FiniteField_ntl_gf2e(FiniteField):
             raise ValueError("q must be a 2-power")
         FiniteField.__init__(self, GF2, names, normalize=True)
 
-        self._kwargs = {'repr':repr}
-
         from sage.rings.polynomial.polynomial_element import is_Polynomial
         if not is_Polynomial(modulus):
-            from sage.misc.superseded import deprecation
-            deprecation(16983, "constructing a FiniteField_ntl_gf2e without giving a polynomial as modulus is deprecated, use the more general FiniteField constructor instead")
-            R = GF2['x']
-            if modulus is None or isinstance(modulus, str):
-                modulus = R.irreducible_element(k, algorithm=modulus)
-            else:
-                modulus = R(modulus)
+            raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)
         self._modulus = modulus
@@ -225,7 +207,7 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k(1+x+x^10+x^55)
             a^19 + a^17 + a^16 + a^15 + a^12 + a^11 + a^8 + a^6 + a^4 + a^2 + 1
 
-            sage: V = k.vector_space()
+            sage: V = k.vector_space(map=False)
             sage: v = V.random_element(); v
             (1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
             sage: k(v)

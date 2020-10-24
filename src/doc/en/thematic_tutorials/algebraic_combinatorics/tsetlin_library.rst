@@ -82,7 +82,7 @@ This is the antichain poset. Its linear extensions are all permutations of `\{1,
     sage: L
     The set of all linear extensions of Finite poset containing 3 elements
     sage: L.list()
-    [[3, 2, 1], [3, 1, 2], [2, 3, 1], [2, 1, 3], [1, 3, 2], [1, 2, 3]]
+    [[3, 2, 1], [3, 1, 2], [1, 3, 2], [1, 2, 3], [2, 1, 3], [2, 3, 1]]
 
 The graph is produced via::
 
@@ -95,12 +95,12 @@ its eigenvalue and eigenvectors::
 
     sage: M = L.markov_chain_transition_matrix(labeling='source')
     sage: M
-    [-x1 - x2       x0        0        0       x0        0]
+    [-x0 - x1       x2        0        0       x2        0]
     [      x1 -x0 - x2       x1        0        0        0]
-    [       0        0 -x1 - x2       x0        0       x0]
-    [      x2        0       x2 -x0 - x1        0        0]
+    [       0        0 -x0 - x1       x2        0       x2]
+    [      x0        0       x0 -x1 - x2        0        0]
     [       0        0        0       x1 -x0 - x2       x1]
-    [       0       x2        0        0       x2 -x0 - x1]
+    [       0       x0        0        0       x0 -x1 - x2]
 
 This matrix is normalized so that all columns add to 0. So we need to
 add `(x_0 + x_1 + x_2)` times the `6\times 6` identity matrix to get the
@@ -109,12 +109,12 @@ probability matrix::
     sage: x = M.base_ring().gens()
     sage: Mt = (x[0]+x[1]+x[2])*matrix.identity(6)+M
     sage: Mt
-    [x0 x0  0  0 x0  0]
+    [x2 x2  0  0 x2  0]
     [x1 x1 x1  0  0  0]
-    [ 0  0 x0 x0  0 x0]
-    [x2  0 x2 x2  0  0]
+    [ 0  0 x2 x2  0 x2]
+    [x0  0 x0 x0  0  0]
     [ 0  0  0 x1 x1 x1]
-    [ 0 x2  0  0 x2 x2]
+    [ 0 x0  0  0 x0 x0]
 
 Since the `x_i` are formal variables, we need to compute the eigenvalues and
 eigenvectors in the symbolic ring ``SR``::
@@ -129,13 +129,17 @@ number `d_{n-|S|}`. Derangment numbers count permutations without fixed point.
 For the eigenvectors we obtain::
 
     sage: Mt.change_ring(SR).eigenvectors_right()
-    [(x2, [(0, 0, 0, 1, 0, -1)], 1),
+    [(x2, [(1, 0, -1, 0, 0, 0)], 1),
      (x1, [(0, 1, 0, 0, -1, 0)], 1),
-     (x0, [(1, 0, -1, 0, 0, 0)], 1),
+     (x0, [(0, 0, 0, 1, 0, -1)], 1),
      (x0 + x1 + x2,
-     [(1, (x1 + x2)/(x0 + x2), x2/x1, (x1*x2 + x2^2)/(x0*x1 + x1^2),
-      (x1*x2 + x2^2)/(x0^2 + x0*x2), (x1*x2 + x2^2)/(x0^2 + x0*x1))], 1),
-      (0, [(1, 0, -1, 0, -1, 1), (0, 1, -1, 1, -1, 0)], 2)]
+      [(1,
+        (x0 + x1)/(x0 + x2),
+        x0/x1,
+        (x0^2 + x0*x1)/(x1^2 + x1*x2),
+        (x0^2 + x0*x1)/(x0*x2 + x2^2),
+        (x0^2 + x0*x1)/(x1*x2 + x2^2))], 1),
+     (0, [(1, 0, -1, 0, -1, 1), (0, 1, -1, 1, -1, 0)], 2)]
 
 The stationary distribution is the eigenvector of eigenvalues `1=x_0+x_1+x_2`. Do you see a pattern?
 
@@ -148,7 +152,7 @@ The stationary distribution is the eigenvector of eigenvalues `1=x_0+x_1+x_2`. D
         `0,1,\cdots,n-1`, and to represent each state in the Markov chain by a permutation
         of the set `\{0,\dots,n-1\}` as a tuple. Construct the state space `\Omega_n` as::
 
-            sage: map(tuple, Permutations(range(3)))
+            sage: list(map(tuple, Permutations(range(3))))
             [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
 
     #.  Write a function ``transition_operator(sigma, i)`` which implements the operator
@@ -183,4 +187,4 @@ arbitrary posets was given in [AKS2013]_.
 .. [AKS2013] Arvind Ayyer, Steven Klee, Anne Schilling.
     *Combinatorial Markov chains on linear extensions*
     J. Algebraic Combinatorics,
-    :doi:`10.1007/s10801-013-0470-9`, :arXiv:`1205.7074`.
+    :doi:`10.1007/s10801-013-0470-9`, :arxiv:`1205.7074`.

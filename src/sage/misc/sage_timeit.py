@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 
@@ -41,7 +42,7 @@ class SageTimeitResult(object):
 
     ::
 
-        sage: units = ["s", "ms", "\xc2\xb5s", "ns"]
+        sage: units = [u"s", u"ms", u"μs", u"ns"]
         sage: scaling = [1, 1e3, 1e6, 1e9]
         sage: number = 7
         sage: repeat = 13
@@ -86,9 +87,17 @@ class SageTimeitResult(object):
             sage: from sage.misc.sage_timeit import SageTimeitResult
             sage: stats = (1, 2, int(3), pi, 'ns')
             sage: SageTimeitResult(stats)           #indirect doctest
-            1 loops, best of 2: 3.14 ns per loop
+            1 loop, best of 2: 3.14 ns per loop
         """
-        return "%d loops, best of %d: %.*g %s per loop" % self.stats
+        if self.stats[0] > 1:
+            s =  u"%d loops, best of %d: %.*g %s per loop" % self.stats
+        else:
+            s =  u"%d loop, best of %d: %.*g %s per loop" % self.stats
+
+        if isinstance(s, str):
+            return s
+        return s.encode("utf-8")
+
 
 def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, precision=3, seconds=False):
     """nodetex
@@ -160,19 +169,19 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: from os import linesep as CR
         sage: # sage_timeit(r'a = 2\\nb=131\\nfactor(a^b-1)')
         sage: sage_timeit('a = 2' + CR + 'b=131' + CR + 'factor(a^b-1)',
-        ...               globals(), number=10)
+        ....:             globals(), number=10)
         10 loops, best of 3: ... per loop
 
     Test to make sure that ``timeit`` behaves well with output::
 
-        sage: timeit("print 'Hi'", number=50)
+        sage: timeit("print('Hi')", number=50)
         50 loops, best of 3: ... per loop
 
     If you want a machine-readable output, use the ``seconds=True`` option::
 
-        sage: timeit("print 'Hi'", seconds=True)   # random output
+        sage: timeit("print('Hi')", seconds=True)   # random output
         1.42555236816e-06
-        sage: t = timeit("print 'Hi'", seconds=True)
+        sage: t = timeit("print('Hi')", seconds=True)
         sage: t     #r random output
         3.6010742187499999e-07
 
@@ -192,15 +201,15 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         sage: gc.isenabled()
         True
     """
-    import time, math
+    import math
     import timeit as timeit_
 
     import sage.repl.interpreter as interpreter
     import sage.repl.preparse as preparser
 
-    number=int(number)
-    repeat=int(repeat)
-    precision=int(precision)
+    number = int(number)
+    repeat = int(repeat)
+    precision = int(precision)
     if preparse is None:
         preparse = interpreter._do_preparse
     if preparse:
@@ -208,7 +217,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     if stmt == "":
         return ''
 
-    units = ["s", "ms", "\xc2\xb5s", "ns"]
+    units = [u"s", u"ms", u"μs", u"ns"]
     scaling = [1, 1e3, 1e6, 1e9]
 
     timer = timeit_.Timer()
@@ -217,8 +226,8 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     # but is there a better way to achieve that the code stmt has access
     # to the shell namespace?
 
-    src = timeit_.template % {'stmt': timeit_.reindent(stmt, 8),
-                             'setup': "pass"}
+    src = timeit_.template.format(stmt=timeit_.reindent(stmt, 8),
+                                  setup="pass", init='')
     code = compile(src, "<magic-timeit>", "exec")
     ns = {}
     if not globals_dict:
@@ -258,3 +267,4 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         order = 3
     stats = (number, repeat, precision, best * scaling[order], units[order])
     return SageTimeitResult(stats,series=series)
+

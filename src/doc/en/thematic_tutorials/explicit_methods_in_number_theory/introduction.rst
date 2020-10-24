@@ -34,8 +34,7 @@ Using Sage
 ----------
 
 To use Sage, install it on your computer, and use either the command
-line or start the Sage notebook by typing ``notebook()`` at the
-command line.
+line or use the notebook by starting Sage as ``sage -n``.
 
 We show Sage sessions as follows::
 
@@ -74,7 +73,7 @@ And, this example draws a similar 3d plot::
     sage: import warnings
     sage: warnings.simplefilter('ignore', UserWarning)
     sage: v = [[len(factor(n*m)) for n in [1..15]] for m in [1..15]]
-    sage: list_plot3d(v, interpolation_type='nn')
+    sage: list_plot3d(v, interpolation_type='clough')
     Graphics3d Object
 
 

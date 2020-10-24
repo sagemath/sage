@@ -7,36 +7,37 @@ represent the integer sequences of length `n`::
     sage: DegreeSequences(6)
     Degree sequences on 6 elements
 
-With the object ``DegreeSequences(n)``, one can :
+With the object ``DegreeSequences(n)``, one can:
 
-    * Check whether a sequence is indeed a degree sequence ::
+* Check whether a sequence is indeed a degree sequence::
 
-        sage: DS = DegreeSequences(5)
-        sage: [4, 3, 3, 3, 3] in DS
-        True
-        sage: [4, 4, 0, 0, 0] in DS
-        False
+    sage: DS = DegreeSequences(5)
+    sage: [4, 3, 3, 3, 3] in DS
+    True
+    sage: [4, 4, 0, 0, 0] in DS
+    False
 
-    * List all the possible degree sequences of length `n`::
+* List all the possible degree sequences of length `n`::
 
-        sage: for seq in DegreeSequences(4):
-        ...       print seq
-        [0, 0, 0, 0]
-        [1, 1, 0, 0]
-        [2, 1, 1, 0]
-        [3, 1, 1, 1]
-        [1, 1, 1, 1]
-        [2, 2, 1, 1]
-        [2, 2, 2, 0]
-        [3, 2, 2, 1]
-        [2, 2, 2, 2]
-        [3, 3, 2, 2]
-        [3, 3, 3, 3]
+    sage: for seq in DegreeSequences(4):
+    ....:     print(seq)
+    [0, 0, 0, 0]
+    [1, 1, 0, 0]
+    [2, 1, 1, 0]
+    [3, 1, 1, 1]
+    [1, 1, 1, 1]
+    [2, 2, 1, 1]
+    [2, 2, 2, 0]
+    [3, 2, 2, 1]
+    [2, 2, 2, 2]
+    [3, 3, 2, 2]
+    [3, 3, 3, 3]
 
 .. NOTE::
 
     Given a degree sequence, one can obtain a graph realizing it by using
-    :meth:`sage.graphs.graph_generators.graphs.DegreeSequence`. For instance ::
+    :func:`~sage.graphs.generators.degree_sequence.DegreeSequence`.
+    For instance::
 
         sage: ds = [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
         sage: g = graphs.DegreeSequence(ds)
@@ -48,8 +49,9 @@ Definitions
 
 A sequence of integers `d_1,...,d_n` is said to be a *degree sequence* (or
 *graphic* sequence) if there exists a graph in which vertex `i` is of degree
-`d_i`. It is often required to be *non-increasing*, i.e. that `d_1 \geq ... \geq
-d_n`.
+`d_i`. It is often required to be *non-increasing*, i.e. that
+`d_1 \geq ... \geq d_n`. Finding a graph with given degree sequence is
+known as *graph realization problem*.
 
 An integer sequence need not necessarily be a degree sequence. Indeed, in a
 degree sequence of length `n` no integer can be larger than `n-1` -- the degree
@@ -57,19 +59,20 @@ of a vertex is at most `n-1` -- and the sum of them is at most `n(n-1)`.
 
 Degree sequences are completely characterized by a result from Erdos and Gallai:
 
-**Erdos and Gallai:** *The sequence of integers* `d_1\geq ... \geq d_n` *is a
-degree sequence if and only if* `\sum_i d_i` is even and `\forall i`
+**Erdos and Gallai:** *The sequence of integers* `d_1 \geq \cdots \geq d_n`
+*is a degree sequence if and only if* `\sum_i d_i` is even and `\forall i`
 
 .. MATH::
-    \sum_{j\leq i}d_j \leq j(j-1) + \sum_{j>i}\min(d_j,i)
 
-Alternatively, a degree sequence can be defined recursively :
+    \sum_{j\leq i}d_j \leq j(j-1) + \sum_{j>i} \min(d_j,i).
+
+Alternatively, a degree sequence can be defined recursively:
 
 **Havel and Hakimi:** *The sequence of integers* `d_1\geq ... \geq d_n` *is a
 degree sequence if and only if* `d_2-1,...,d_{d_1+1}-1, d_{d_1+2}, ...,d_n` *is
 also a degree sequence.*
 
-Or equivalently :
+Or equivalently:
 
 **Havel and Hakimi (bis):** *If there is a realization of an integer sequence as
 a graph (i.e. if the sequence is a degree sequence), then it can be realized in
@@ -87,85 +90,100 @@ given sequence is non-increasing and has length `n`.
 
 **Iterating through the sequences of length** `n`
 
-From Havel and Hakimi's recursive definition of a degree sequence, one can build
-an enumeration algorithm as done in [RCES]_. It consists in trying to **extend**
-a current degree sequence on `n` elements into a degree sequence on `n+1`
-elements by adding a vertex of degree larger than those already present in the
-sequence. This can be seen as **reversing** the reduction operation described in
-Havel and Hakimi's characterization. This operation can appear in several
-different ways :
+From Havel and Hakimi's recursive definition of a degree sequence, one can
+build an enumeration algorithm as done in [RCES1994]_. It consists in
+trying to **extend** a current degree sequence on `n` elements into a
+degree sequence on `n+1` elements by adding a vertex of degree larger
+than those already present in the sequence. This can be seen as **reversing**
+the reduction operation described in Havel and Hakimi's characterization.
+This operation can appear in several different ways:
 
-    * Extensions of a degree sequence that do **not** change the value of the
-      maximum element
+* Extensions of a degree sequence that do **not** change the value of the
+  maximum element
 
-        * If the maximum element of a given degree sequence is `0`, then one can
-          remove it to reduce the sequence, following Havel and Hakimi's
-          rule. Conversely, if the maximum element of the (current) sequence is
-          `0`, then one can always extend it by adding a new element of degree
-          `0` to the sequence.
+  * If the maximum element of a given degree sequence is `0`, then one can
+    remove it to reduce the sequence, following Havel and Hakimi's
+    rule. Conversely, if the maximum element of the (current) sequence is
+    `0`, then one can always extend it by adding a new element of degree
+    `0` to the sequence.
 
-          .. MATH::
-              0, 0, 0 \xrightarrow{Extension} {\bf 0}, 0, 0, 0 \xrightarrow{Extension} {\bf 0}, 0, 0, ..., 0, 0, 0 \xrightarrow{Reduction} 0, 0, 0, 0 \xrightarrow{Reduction} 0, 0, 0
+    .. MATH::
 
-        * If there are at least `\Delta+1` elements of (maximum) degree `\Delta`
-          in a given degree sequence, then one can reduce it by removing a
-          vertex of degree `\Delta` and decreasing the values of `\Delta`
-          elements of value `\Delta` to `\Delta-1`. Conversely, if the maximum
-          element of the (current) sequence is `d>0`, then one can add a new
-          element of degree `d` to the sequence if it can be linked to `d`
-          elements of (current) degree `d-1`. Those `d` vertices of degree `d-1`
-          hence become vertices of degree `d`, and so `d` elements of degree
-          `d-1` are removed from the sequence while `d+1` elements of degree `d`
-          are added to it.
+        0, 0, 0 \xrightarrow{Extension} {\bf 0}, 0, 0, 0 \xrightarrow{Extension}
+        {\bf 0}, 0, 0, ..., 0, 0, 0 \xrightarrow{Reduction} 0, 0, 0, 0
+        \xrightarrow{Reduction} 0, 0, 0
 
-          .. MATH::
-              3, 2, 2, 2, 1 \xrightarrow{Extension} {\bf 3}, 3, (2+1), (2+1), (2+1), 1 =  {\bf 3}, 3, 3, 3, 3, 1 \xrightarrow{Reduction} 3, 2, 2, 2, 1
+  * If there are at least `\Delta+1` elements of (maximum) degree `\Delta`
+    in a given degree sequence, then one can reduce it by removing a
+    vertex of degree `\Delta` and decreasing the values of `\Delta`
+    elements of value `\Delta` to `\Delta-1`. Conversely, if the maximum
+    element of the (current) sequence is `d>0`, then one can add a new
+    element of degree `d` to the sequence if it can be linked to `d`
+    elements of (current) degree `d-1`. Those `d` vertices of degree `d-1`
+    hence become vertices of degree `d`, and so `d` elements of degree
+    `d-1` are removed from the sequence while `d+1` elements of degree `d`
+    are added to it.
 
-    * Extension of a degree sequence that changes the value of the maximum
-      element :
+    .. MATH::
 
-        * In the general case, i.e. when the number of elements of value
-          `\Delta,\Delta-1` is small compared to `\Delta` (i.e. the maximum
-          element of a given degree sequence), reducing a sequence strictly
-          decreases the value of the maximum element. According to Havel and
-          Hakimi's characterization there is only **one** way to reduce a
-          sequence, but reversing this operation is more complicated than in the
-          previous cases. Indeed, the following extensions are perfectly valid
-          according to the reduction rule.
+        3, 2, 2, 2, 1 \xrightarrow{Extension} {\bf 3}, 3, (2+1), (2+1), (2+1), 1
+        = {\bf 3}, 3, 3, 3, 3, 1 \xrightarrow{Reduction} 3, 2, 2, 2, 1
 
-          .. MATH::
-              2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), (1+1), (1+1), 0, 0 = 3, 3, 2, 2, 0, 0 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
-              2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), (1+1), 1, (0+1), 0 = 3, 3, 2, 1, 1, 0 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
-              2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), 1, 1, (0+1), (0+1) = 3, 3, 1, 1, 1, 1 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
-              ...
+* Extension of a degree sequence that changes the value of the maximum
+  element:
 
-          In order to extend a current degree sequence while strictly increasing
-          its maximum degree, it is equivalent to pick a set `I` of elements of
-          the degree sequence with `|I|>\Delta` in such a way that the
-          `(d_i+1)_{i\in I}` are the `|I|` maximum elements of the sequence
-          `(d_i+\genfrac{}{}{0pt}{}{1\text{ if }i\in I}{0\text{ if }i\not \in
-          I})_{1\leq i \leq n}`, and to add to this new sequence an element of
-          value `|I|`. The non-increasing sequence containing the elements `|I|`
-          and `(d_i+\genfrac{}{}{0pt}{}{1\text{ if }i\in I}{0\text{ if }i\not
-          \in I})_{1\leq i \leq n}` can be reduced to `(d_i)_{1\leq i \leq n}`
-          by Havel and Hakimi's rule.
+  * In the general case, i.e. when the number of elements of value
+    `\Delta,\Delta-1` is small compared to `\Delta` (i.e. the maximum
+    element of a given degree sequence), reducing a sequence strictly
+    decreases the value of the maximum element. According to Havel and
+    Hakimi's characterization there is only **one** way to reduce a
+    sequence, but reversing this operation is more complicated than in the
+    previous cases. Indeed, the following extensions are perfectly valid
+    according to the reduction rule.
 
-          .. MATH::
-              ... 1, 1, 2, {\bf 2}, {\bf 2}, 2, 2, 3, 3, \underline{3}, {\bf 3}, {\bf 3}, {\bf 4}, {\bf 6}, ... \xrightarrow{Extension} ... 1, 1, 2, 2, 2, 3, 3, \underline{3}, {\bf 3}, {\bf 3}, {\bf 4}, {\bf 4}, {\bf 5}, {\bf 7}, ...
+    .. MATH::
 
-          The number of possible sets `I` having this property (i.e. the number
-          of possible extensions of a sequence) is smaller than it
-          seems. Indeed, by definition, if `j\not \in I` then for all `i\in I`
-          the inequality `d_j\leq d_i+1` holds. Hence, each set `I` is entirely
-          determined by the largest element `d_k` of the sequence that it does
-          **not** contain (hence `I` contains `\{1,...,k-1\}`), and by the
-          cardinalities of `\{i\in I:d_i= d_k\}` and `\{i\in I:d_i= d_k-1\}`.
+        2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), (1+1), (1+1), 0, 0
+        = 3, 3, 2, 2, 0, 0 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
+        2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), (1+1), 1, (0+1), 0
+        = 3, 3, 2, 1, 1, 0 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
+        2,1,1,0,0\xrightarrow{Extension} {\bf 3}, (2+1), 1, 1, (0+1), (0+1)
+        = 3, 3, 1, 1, 1, 1 \xrightarrow{Reduction} 2, 1, 1, 0, 0\\
+        ...
 
-          .. MATH::
-              I = \{i \in I : d_i= d_k \} \cup \{i \in I : d_i= d_k-1 \} \cup \{i : d_i> d_k \}
+    In order to extend a current degree sequence while strictly increasing
+    its maximum degree, it is equivalent to pick a set `I` of elements of
+    the degree sequence with `|I|>\Delta` in such a way that the
+    `(d_i+1)_{i\in I}` are the `|I|` maximum elements of the sequence
+    `(d_i+\genfrac{}{}{0pt}{}{1\text{ if }i\in I}{0\text{ if }i\not \in
+    I})_{1\leq i \leq n}`, and to add to this new sequence an element of
+    value `|I|`. The non-increasing sequence containing the elements `|I|`
+    and `(d_i+\genfrac{}{}{0pt}{}{1\text{ if }i\in I}{0\text{ if }i\not
+    \in I})_{1\leq i \leq n}` can be reduced to `(d_i)_{1\leq i \leq n}`
+    by Havel and Hakimi's rule.
 
-          The number of possible extensions is hence at most cubic, and is
-          easily enumerated.
+    .. MATH::
+
+        ... 1, 1, 2, {\bf 2}, {\bf 2}, 2, 2, 3, 3, \underline{3}, {\bf 3},
+        {\bf 3}, {\bf 4}, {\bf 6}, ... \xrightarrow{Extension} ... 1, 1,
+        2, 2, 2, 3, 3, \underline{3}, {\bf 3}, {\bf 3}, {\bf 4}, {\bf 4},
+        {\bf 5}, {\bf 7}, ...
+
+    The number of possible sets `I` having this property (i.e. the number
+    of possible extensions of a sequence) is smaller than it
+    seems. Indeed, by definition, if `j\not \in I` then for all `i\in I`
+    the inequality `d_j\leq d_i+1` holds. Hence, each set `I` is entirely
+    determined by the largest element `d_k` of the sequence that it does
+    **not** contain (hence `I` contains `\{1,...,k-1\}`), and by the
+    cardinalities of `\{i\in I:d_i= d_k\}` and `\{i\in I:d_i= d_k-1\}`.
+
+    .. MATH::
+
+        I = \{i \in I : d_i= d_k \} \cup \{i \in I : d_i= d_k-1 \}
+        \cup \{i : d_i> d_k \}.
+
+    The number of possible extensions is hence at most cubic, and is
+    easily enumerated.
 
 About the implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -185,48 +203,43 @@ the sequence currently stored in ``seq[0]...seq[depth-1]``. When it is called,
 ``maximum`` must be set to the maximum value of an element in the partial
 sequence ``seq[0]...seq[depth-1]``.
 
-If during its run the function ``enum`` heavily works on the content of the
-``seq`` array, the value of ``seq`` is the **same** before and after the run of
-``enum``.
+If during its run the function ``enum`` heavily works on the content of
+the ``seq`` array, the value of ``seq`` is the **same** before and after
+the run of ``enum``.
 
 **Extending the current partial sequence**
 
 The two cases for which the maximum degree of the partial sequence does not
-change are easy to detect. It is (sligthly) harder to enumerate all the sets `I`
-corresponding to possible extensions of the partial sequence. As said
+change are easy to detect. It is (sligthly) harder to enumerate all the sets
+`I` corresponding to possible extensions of the partial sequence. As said
 previously, to each set `I` one can associate an integer ``current_box`` such
 that `I` contains all the `i` satisfying `d_i>current\_box`. The variable
 ``taken`` represents the number of all such elements `i`, so that when
 enumerating all possible sets `I` in the algorithm we have the equality
 
 .. MATH::
-    I = \text{taken }+\text{ number of elements of value }current\_box+ \text{ number of elements of value }current\_box-1
 
-References
-~~~~~~~~~~
+    I = \text{taken }+\text{ number of elements of value }current\_box+
+    \text{ number of elements of value }current\_box-1.
 
-  .. [RCES] Alley CATs in search of good homes
-    Ruskey, R. Cohen, P. Eades, A. Scott
-    Congressus numerantium, 1994
-    Pages 97--110
+REFERENCES:
 
+- [RCES1994]_
 
-Author
-~~~~~~
+AUTHORS:
 
-Nathann Cohen
+- Nathann Cohen
 
-Tests
-~~~~~
+TESTS:
 
 The sequences produced by random graphs *are* degree sequences::
 
     sage: n = 30
     sage: DS = DegreeSequences(30)
     sage: for i in range(10):
-    ...      g = graphs.RandomGNP(n,.2)
-    ...      if not g.degree_sequence() in DS:
-    ...          print "Something is very wrong !"
+    ....:     g = graphs.RandomGNP(n,.2)
+    ....:     if not g.degree_sequence() in DS:
+    ....:         print("Something is very wrong !")
 
 Checking that we indeed enumerate *all* the degree sequences for `n=5`::
 
@@ -244,8 +257,8 @@ Checking the consistency of enumeration and test::
 .. WARNING::
 
     For the moment, iterating over all degree sequences involves building the
-    list of them first, then iterate on this list.  This is obviously bad, as it
-    requires uselessly a **lot** of memory for large values of `n`.
+    list of them first, then iterate on this list.  This is obviously bad,
+    as it requires uselessly a **lot** of memory for large values of `n`.
 
     This should be changed. Updating the code does not require more
     than a couple of minutes.
@@ -263,9 +276,10 @@ Checking the consistency of enumeration and test::
 
 
 from libc.string cimport memset
+from cysignals.memory cimport check_calloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.rings.integer cimport Integer
-include 'sage/ext/stdsage.pxi'
-include "sage/ext/interrupt.pxi"
 
 
 cdef unsigned char * seq
@@ -283,14 +297,24 @@ class DegreeSequences:
         information, please refer to the documentation of the
         :mod:`DegreeSequence<sage.combinat.degree_sequences>` module.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: DegreeSequences(8)
             Degree sequences on 8 elements
             sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
             True
 
+        TESTS:
+
+        :trac:`21824`::
+
+            sage: DegreeSequences(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: The input parameter must be >= 0.
         """
+        if n < 0:
+            raise ValueError("The input parameter must be >= 0.")
         self._n = n
 
     def __contains__(self, seq):
@@ -298,7 +322,7 @@ class DegreeSequences:
         Checks whether a given integer sequence is the degree sequence
         of a graph on `n` elements
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: [3,3,2,2,2,2,2,2] in DegreeSequences(8)
             True
@@ -309,13 +333,24 @@ class DegreeSequences:
 
             sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
             False
+
+        :trac:`21824`::
+
+            sage: [d for d in DegreeSequences(0)]
+            [[]]
+            sage: [d for d in DegreeSequences(1)]
+            [[0]]
+            sage: [d for d in DegreeSequences(3)]
+            [[0, 0, 0], [1, 1, 0], [2, 1, 1], [2, 2, 2]]
+            sage: [d for d in DegreeSequences(1)]
+            [[0]]
         """
         cdef int n = self._n
         if len(seq)!=n:
             return False
 
         # Is the sum even ?
-        if sum(seq)%2 == 1:
+        if sum(seq) % 2:
             return False
 
         # Partial represents the left side of Erdos and Gallai's inequality,
@@ -353,7 +388,7 @@ class DegreeSequences:
         """
         Representing the element
 
-        TEST::
+        TESTS::
 
             sage: DegreeSequences(6)
             Degree sequences on 6 elements
@@ -367,22 +402,19 @@ class DegreeSequences:
         TODO: THIS SHOULD BE UPDATED AS SOON AS THE YIELD KEYWORD APPEARS IN
         CYTHON. See comment in the class' documentation.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: DS = DegreeSequences(6)
             sage: all(seq in DS for seq in DS)
             True
         """
-
-        init(self._n)
-        return iter(sequences)
+        return iter( init(self._n) )
 
     def __dealloc__():
         """
         Freeing the memory
         """
-        if seq != NULL:
-            sage_free(seq)
+        sig_free(seq)
 
 cdef init(int n):
     """
@@ -397,10 +429,7 @@ cdef init(int n):
     elif n == 1:
         return [[0]]
 
-    sig_on()
-    seq = <unsigned char *> sage_malloc((n+1)*sizeof(unsigned char))
-    memset(seq,0,(n+1)*sizeof(unsigned char))
-    sig_off()
+    seq = <unsigned char *>check_calloc(n + 1, sizeof(unsigned char))
 
     # We begin with one vertex of degree 0
     seq[0] = 1
@@ -408,7 +437,7 @@ cdef init(int n):
     N = n
     sequences = []
     enum(1,0)
-    sage_free(seq)
+    sig_free(seq)
     return sequences
 
 cdef inline add_seq():
@@ -432,14 +461,14 @@ cdef inline add_seq():
      sequences.append(s)
 
 cdef void enum(int k, int M):
-    """
-    Main function. For an explanation of the algorithm please refer to the
-    class' documentation.
+    r"""
+    Main function; for an explanation of the algorithm please refer to the
+    :mod:`sage.combinat.degree_sequences` documentation.
 
     INPUT:
 
-    * ``k`` -- depth of the partial degree sequence
-    * ``M`` -- value of a maximum element in the partial degree sequence
+    - ``k`` -- depth of the partial degree sequence
+    - ``M`` -- value of a maximum element in the partial degree sequence
     """
     cdef int i,j
     global seq
@@ -494,7 +523,7 @@ cdef void enum(int k, int M):
             seq[current_box] = 0
             continue
 
-        # The degree of the new vertex will be taken + i + j where :
+        # The degree of the new vertex will be taken + i + j where:
         #
         # * i is the number of vertices taken in the *current* box
         # * j the number of vertices taken in the *previous* one
@@ -502,7 +531,7 @@ cdef void enum(int k, int M):
         n_current_box = seq[current_box]
         n_previous_box = seq[current_box-1]
 
-        # Note to self, and others :
+        # Note to self, and others:
         #
         # In the following lines, there are many incrementation/decrementation
         # that *may* be replaced by only +1 and -1 and save some
@@ -512,7 +541,7 @@ cdef void enum(int k, int M):
         # changing the lower bounds in the for loops would require tests
         # afterwards.
 
-        for max(0,((M+1)-n_previous_box-taken)) <= i < n_current_box:
+        for max(0, (M+1)-n_previous_box-taken) <= i < n_current_box:
             seq[current_box] -= i
             seq[current_box+1] += i
 
@@ -557,3 +586,4 @@ cdef void enum(int k, int M):
         seq[i] = seq[i+1]
 
     sig_off()
+

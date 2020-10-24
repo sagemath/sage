@@ -9,19 +9,20 @@ AUTHORS:
   their tests
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2013 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
 from sage.structure.element import coerce_binop
+from sage.structure.sequence import Sequence
+
 
 class EuclideanDomains(Category_singleton):
     """
@@ -63,9 +64,75 @@ class EuclideanDomains(Category_singleton):
             """
             return True
 
+        def gcd_free_basis(self, elts):
+            r"""
+            Compute a set of coprime elements that can be used to express the
+            elements of ``elts``.
+
+            INPUT:
+
+            - ``elts`` - A sequence of elements of ``self``.
+
+            OUTPUT:
+
+            A GCD-free basis (also called a coprime base) of ``elts``; that is,
+            a set of pairwise relatively prime elements of ``self`` such that
+            any element of ``elts`` can be written as a product of elements of
+            the set.
+
+            ALGORITHM:
+
+            Naive implementation of the algorithm described in Section 4.8 of
+            Bach & Shallit [BS1996]_.
+
+            EXAMPLES::
+
+                sage: ZZ.gcd_free_basis([1])
+                []
+                sage: ZZ.gcd_free_basis([4, 30, 14, 49])
+                [2, 15, 7]
+
+                sage: Pol.<x> = QQ[]
+                sage: sorted(Pol.gcd_free_basis([
+                ....:     (x+1)^3*(x+2)^3*(x+3), (x+1)*(x+2)*(x+3),
+                ....:     (x+1)*(x+2)*(x+4)]))
+                [x + 3, x + 4, x^2 + 3*x + 2]
+
+            TESTS::
+
+                sage: R.<x> = QQ[]
+                sage: QQ.gcd_free_basis([x+1,x+2])
+                Traceback (most recent call last):
+                ...
+                TypeError: unable to convert x + 1 to an element of Rational Field
+            """
+            def refine(a, b):
+                g = a.gcd(b)
+                if g.is_unit():
+                    return (a, set(), b)
+                l1, s1, r1 = refine(a//g, g)
+                l2, s2, r2 = refine(r1, b//g)
+                s1.update(s2)
+                s1.add(l2)
+                return (l1, s1, r2)
+            elts = Sequence(elts, universe=self)
+            res = set()
+            if len(elts) == 1:
+                res.update(elts)
+            else:
+                r = elts[-1]
+                for t in self.gcd_free_basis(elts[:-1]):
+                    l, s, r = refine(t, r)
+                    res.update(s)
+                    res.add(l)
+                res.add(r)
+            units = [x for x in res if x.is_unit()]
+            res.difference_update(units)
+            return Sequence(res, universe=self, check=False)
+
         def _test_euclidean_degree(self, **options):
             r"""
-            Test that the assumptions on a euclidean degree are met.
+            Test that the assumptions on an Euclidean degree are met.
 
             EXAMPLES::
 
@@ -81,14 +148,14 @@ class EuclideanDomains(Category_singleton):
 
             min_degree = self.one().euclidean_degree()
 
-            from sage.rings.all import NN
+            from sage.rings.semirings.non_negative_integer_semiring import NN
             for a in S:
                 tester.assertIn(a.euclidean_degree(), NN)
                 tester.assertGreaterEqual(a.euclidean_degree(), min_degree)
                 tester.assertEqual(a.euclidean_degree() == min_degree, a.is_unit())
 
-            from sage.combinat.cartesian_product import CartesianProduct
-            for a,b in tester.some_elements(CartesianProduct(S,S)):
+            from sage.misc.misc import some_tuples
+            for a,b in some_tuples(S, 2, tester._max_runs):
                 p = a * b
                 # For rings which are not exact, we might get something that
                 #   acts like a zero divisor.
@@ -114,9 +181,8 @@ class EuclideanDomains(Category_singleton):
             """
             tester = self._tester(**options)
             S = tester.some_elements()
-
-            from sage.combinat.cartesian_product import CartesianProduct
-            for a,b in tester.some_elements(CartesianProduct(S,S)):
+            from sage.misc.misc import some_tuples
+            for a,b in some_tuples(S, 2, tester._max_runs):
                 if b.is_zero():
                     tester.assertRaises(ZeroDivisionError, lambda: a.quo_rem(b))
                 else:
@@ -131,7 +197,7 @@ class EuclideanDomains(Category_singleton):
         @abstract_method
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of a euclidean
+            Return the degree of this element as an element of an Euclidean
             domain, i.e., for elements `a`, `b` the euclidean degree `f`
             satisfies the usual properties:
 
@@ -171,17 +237,13 @@ class EuclideanDomains(Category_singleton):
 
             ALGORITHM:
 
-            Algorithm 3.2.1 in [Coh1996]_.
-
-            REFERENCES:
-
-            .. [Coh1996] Henri Cohen. *A Course in Computational Algebraic
-               Number Theory*. Springer, 1996.
+            Algorithm 3.2.1 in [Coh1993]_.
 
             EXAMPLES::
 
-                sage: EuclideanDomains().ElementMethods().gcd(6,4)
-                2
+                sage: R.<x> = PolynomialRing(QQ, sparse=True)
+                sage: EuclideanDomains().element_class.gcd(x,x+1)
+                -1
             """
             A = self
             B = other
@@ -201,7 +263,9 @@ class EuclideanDomains(Category_singleton):
 
             - ``other`` -- an element in the same euclidean domain
 
-            OUTPUT
+            OUTPUT:
+
+            a pair of elements
 
             EXAMPLES::
 
@@ -209,3 +273,4 @@ class EuclideanDomains(Category_singleton):
                 sage: x.quo_rem(x)
                 (1, 0)
             """
+

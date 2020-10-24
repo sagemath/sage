@@ -1,0 +1,45 @@
+From 37f3233e7eead521c25f798cab1df5746b9e8708 Mon Sep 17 00:00:00 2001
+From: Antonio Rojas <arojas@archlinux.org>
+Date: Sun, 26 Jul 2020 20:04:35 +0200
+Subject: [PATCH 1/2] define PY_SSIZE_T_CLEAN
+
+As required by python 3.8
+---
+ ginac/function.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ginac/function.cpp b/ginac/function.cpp
+index c158723..689e2b8 100644
+--- a/ginac/function.cpp
++++ b/ginac/function.cpp
+@@ -21,6 +21,7 @@
+  */
+ 
+ #define register
++#define PY_SSIZE_T_CLEAN
+ #include <Python.h>
+ #include "py_funcs.h"
+ #include "function.h"
+
+From 0869189faf3899d6aeb07501e16719159f13cb2f Mon Sep 17 00:00:00 2001
+From: Antonio Rojas <arojas@archlinux.org>
+Date: Sun, 26 Jul 2020 20:05:19 +0200
+Subject: [PATCH 2/2] define PY_SSIZE_T_CLEAN
+
+As required by Python 3.8
+---
+ ginac/numeric.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ginac/numeric.cpp b/ginac/numeric.cpp
+index 276d86c..b463806 100644
+--- a/ginac/numeric.cpp
++++ b/ginac/numeric.cpp
+@@ -50,6 +50,7 @@
+  */
+ 
+ #define register
++#define PY_SSIZE_T_CLEAN
+ #include <Python.h>
+ #include <longintrepr.h>
+ #include "flint/fmpz.h"

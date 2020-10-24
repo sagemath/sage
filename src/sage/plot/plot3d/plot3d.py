@@ -1,23 +1,68 @@
 r"""
 Plotting Functions
 
+
 EXAMPLES::
 
-    sage: def f(x,y):
-    ...       return math.sin(y*y+x*x)/math.sqrt(x*x+y*y+.0001)
-    ...
-    sage: P = plot3d(f,(-3,3),(-3,3), adaptive=True, color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
-    sage: P.show()
+    sage: x, y = var('x y')
+    sage: W = plot3d(sin(pi*((x)^2+(y)^2))/2,(x,-1,1),(y,-1,1), frame=False, color='purple', opacity=0.8)
+    sage: S = sphere((0,0,0),size=0.3, color='red', aspect_ratio=[1,1,1])
+    sage: show(W + S, figsize=8)
+
+.. PLOT::
+
+    x, y = var('x y')
+    W = plot3d(sin(pi*((x)**2+(y)**2))/2,(x,-1,1),(y,-1,1), frame=False, color='purple', opacity=0.8)
+    S = sphere((0,0,0),size=0.3, color='red', aspect_ratio=[1,1,1])
+    sphinx_plot(W + S)
 
 ::
 
     sage: def f(x,y):
-    ...       return math.exp(x/5)*math.sin(y)
+    ....:     return math.sin(y^2+x^2)/math.sqrt(x^2+y^2+0.0001)
+    sage: P = plot3d(f,(-3,3),(-3,3), adaptive=True, color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
+    sage: P.show()
+
+.. PLOT::
+
+    def f(x,y): return math.sin(y*y+x*x)/math.sqrt(x*x+y*y+0.0001)
+    P = plot3d(f,(-3,3),(-3,3), adaptive=True, color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
+    sphinx_plot(P)
+
+::
+
+    sage: def f(x,y):
+    ....:     return math.exp(x/5)*math.sin(y)
     ...
     sage: P = plot3d(f,(-5,5),(-5,5), adaptive=True, color=['red','yellow'])
     sage: from sage.plot.plot3d.plot3d import axes
     sage: S = P + axes(6, color='black')
     sage: S.show()
+
+.. PLOT::
+
+    def f(x,y): return math.exp(x/5)*math.sin(y)
+    P = plot3d(f,(-5,5),(-5,5), adaptive=True, color=['red','yellow'])
+    from sage.plot.plot3d.plot3d import axes
+    S = P + axes(6, color='black')
+    sphinx_plot(S)
+
+Here is an example using a colormap and a color function ``c``::
+
+    sage: x, y = var('x y')
+    sage: cm = colormaps.hsv
+    sage: def c(x,y): return float((x+y+x*y)/15) % 1
+    sage: plot3d(x*x+y*y,(x,-4,4),(y,-4,4),color=(c,cm))
+    Graphics3d Object
+
+.. PLOT::
+
+    x, y = var('x y')
+    cm = colormaps.hsv
+    def c(x,y): return float((x+y+x*y)/15) % 1
+    sphinx_plot(plot3d(x*x+y*y,(x,-4,4),(y,-4,4),color=(c,cm)))
+
+Beware that the color function must take values between 0 and 1.
 
 We plot "cape man"::
 
@@ -38,10 +83,37 @@ We plot "cape man"::
     sage: cape_man = P.scale(.2) + S.translate(1,0,0)
     sage: cape_man.show(aspect_ratio=[1,1,1])
 
+.. PLOT::
+
+    S = sphere(size=.5, color='yellow')
+    from sage.plot.plot3d.shapes import Cone
+    S += Cone(.5, .5, color='red').translate(0,0,.3)
+    S += sphere((.45,-.1,.15), size=.1, color='white') + sphere((.51,-.1,.17), size=.05, color='black')
+    S += sphere((.45, .1,.15),size=.1, color='white') + sphere((.51, .1,.17), size=.05, color='black')
+    S += sphere((.5,0,-.2),size=.1, color='yellow')
+    def f(x,y): return math.exp(x/5)*math.cos(y)
+    P = plot3d(f,(-5,5),(-5,5), adaptive=True, color=['red','yellow'], max_depth=10)
+    cape_man = P.scale(.2) + S.translate(1,0,0)
+    cape_man.aspect_ratio([1,1,1])
+    sphinx_plot(cape_man)
+
 Or, we plot a very simple function indeed::
 
     sage: plot3d(pi, (-1,1), (-1,1))
     Graphics3d Object
+
+.. PLOT::
+
+    sphinx_plot(plot3d(pi, (-1,1), (-1,1)))
+
+Transparent with fractional opacity value::
+
+    sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2), opacity=8/10)
+    Graphics3d Object
+
+.. TODO::
+
+    Add support for smooth triangles.
 
 AUTHORS:
 
@@ -55,12 +127,7 @@ AUTHORS:
 
 - Oscar Lazo, William Cauchois, Jason Grout (2009-2010): Adding coordinate transformations
 """
-
-
-#TODO:
-#    -- smooth triangles
-
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -72,27 +139,30 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
+import inspect
 
-
-from tri_plot import TrianglePlot
-from index_face_set import IndexFaceSet
-from shapes import arrow3d
-from base import Graphics3dGroup
+from .tri_plot import TrianglePlot
+from .index_face_set import IndexFaceSet
+from .shapes import arrow3d
+from .base import Graphics3dGroup
 from sage.plot.colors import rainbow
-from texture import Texture
+from .texture import Texture
 
 from sage.ext.fast_eval import fast_float_arg
 
 from sage.functions.trig import cos, sin
+from sage.misc.sageinspect import sage_getargspec
+
 
 class _Coordinates(object):
     """
     This abstract class encapsulates a new coordinate system for plotting.
     Sub-classes must implement the :meth:`transform` method which, given
     symbolic variables to use, generates a 3-tuple of functions in terms of
-    those variables that can be used to find the cartesian (X, Y, and Z)
+    those variables that can be used to find the Cartesian (X, Y, and Z)
     coordinates for any point in this space.
     """
     def __init__(self, dep_var, indep_vars):
@@ -116,8 +186,7 @@ class _Coordinates(object):
             sage: arb((x+z,y*z,z), z, (x,y))
             Arbitrary Coordinates coordinate transform (z in terms of x, y)
         """
-        import inspect
-        all_vars=inspect.getargspec(self.transform).args[1:]
+        all_vars = sage_getargspec(self.transform).args[1:]
         if set(all_vars) != set(indep_vars + [dep_var]):
             raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s'%list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
         self.dep_var = dep_var
@@ -156,18 +225,18 @@ class _Coordinates(object):
 
     def to_cartesian(self, func, params=None):
         """
-        Returns a 3-tuple of functions, parameterized over ``params``, that
-        represents the cartesian coordinates of the value of ``func``.
+        Return a 3-tuple of functions, parameterized over ``params``, that
+        represents the Cartesian coordinates of the value of ``func``.
 
         INPUT:
 
-         - ``func`` - A function in this coordinate space. Corresponds to the
-           independent variable.
+         - ``func`` -- function in this coordinate space. Corresponds
+           to the independent variable.
 
-         - ``params`` - The parameters of func. Corresponds to the dependent
-           variables.
+         - ``params`` -- the parameters of ``func``. Corresponds to
+           the dependent variables.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates
             sage: x, y, z = var('x y z')
@@ -187,37 +256,40 @@ class _Coordinates(object):
             sage: f(a, b) = 2*a+b
             sage: T.to_cartesian(f, [a, b])
             (a + b, a - b, 2*a + b)
+
             sage: t1,t2,t3=T.to_cartesian(lambda a,b: 2*a+b)
-            sage: import inspect
-            sage: inspect.getargspec(t1)
+            sage: from sage.misc.sageinspect import sage_getargspec
+            sage: sage_getargspec(t1)
             ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
-            sage: inspect.getargspec(t2)
+            sage: sage_getargspec(t2)
             ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
-            sage: inspect.getargspec(t3)
+            sage: sage_getargspec(t3)
             ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
+
             sage: def g(a,b): return 2*a+b
             sage: t1,t2,t3=T.to_cartesian(g)
-            sage: inspect.getargspec(t1)
+            sage: sage_getargspec(t1)
             ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
             sage: t1,t2,t3=T.to_cartesian(2*a+b)
-            sage: inspect.getargspec(t1)
+            sage: sage_getargspec(t1)
             ArgSpec(args=['a', 'b'], varargs=None, keywords=None, defaults=None)
 
         If we cannot guess the right parameter names, then the
         parameters are named `u` and `v`::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates
+            sage: from sage.misc.sageinspect import sage_getargspec
             sage: x, y, z = var('x y z')
             sage: T = _ArbitraryCoordinates((x + y, x - y, z), z,[x,y])
             sage: t1,t2,t3=T.to_cartesian(operator.add)
-            sage: inspect.getargspec(t1)
+            sage: sage_getargspec(t1)
             ArgSpec(args=['u', 'v'], varargs=None, keywords=None, defaults=None)
             sage: [h(1,2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
             sage: [h(u=1,v=2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
 
-        The output of the function `func` is coerced to a float when
+        The output of the function ``func`` is coerced to a float when
         it is evaluated if the function is something like a lambda or
         python callable. This takes care of situations like f returning a
         singleton numpy array, for example.
@@ -226,10 +298,10 @@ class _Coordinates(object):
             sage: v_phi=array([ 0.,  1.57079637,  3.14159274, 4.71238911,  6.28318548])
             sage: v_theta=array([ 0.,  0.78539819,  1.57079637,  2.35619456,  3.14159274])
             sage: m_r=array([[ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422],
-            ... [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
-            ... [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422],
-            ... [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
-            ... [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
+            ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
+            ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422],
+            ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
+            ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
             sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r)
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
@@ -259,8 +331,8 @@ class _Coordinates(object):
             if params is None:
                 if callable(func):
                     params = _find_arguments_for_callable(func)
-                    if params is None:
-                        params=['u','v']
+                    if not params:
+                        params = ['u', 'v']
                 else:
                     raise ValueError("function is not callable")
             def subs_func(t):
@@ -294,13 +366,12 @@ class _Coordinates(object):
           (self._name, self.dep_var, ', '.join(self.indep_vars))
 
 
-import inspect
-
 def _find_arguments_for_callable(func):
     """
     Find the names of arguments (that do not have default values) for
     a callable function, taking care of several special cases in Sage.
-    If the parameters cannot be found, then return None.
+
+    If the parameters cannot be found, then return ``[]``.
 
     EXAMPLES::
 
@@ -322,26 +393,22 @@ def _find_arguments_for_callable(func):
         sage: _find_arguments_for_callable(a+b)
         ['a', 'b']
         sage: _find_arguments_for_callable(operator.add)
+        []
     """
     if inspect.isfunction(func):
-        f_args=inspect.getargspec(func)
-        if f_args.defaults is None:
-            params=f_args.args
-        else:
-            params=f_args.args[:-len(f_args.defaults)]
+        pass
+    elif hasattr(func, 'arguments'):
+        # Might be a symbolic function with arguments
+        return [repr(s) for s in func.arguments()]
     else:
-        try:
-            f_args=inspect.getargspec(func.__call__)
-            if f_args.defaults is None:
-                params=f_args.args
-            else:
-                params=f_args.args[:-len(f_args.defaults)]
-        except TypeError:
-            # func.__call__ may be a built-in (or Cython) function
-            if hasattr(func, 'arguments'):
-                params=[repr(s) for s in func.arguments()]
-            else:
-                params=None
+        func = func.__call__
+
+    f_args = sage_getargspec(func)
+    if f_args.defaults is None:
+        params = f_args.args
+    else:
+        params = f_args.args[:-len(f_args.defaults)]
+
     return params
 
 
@@ -382,7 +449,7 @@ class _ArbitraryCoordinates(_Coordinates):
 
     def transform(self, **kwds):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates
             sage: x, y, z = var('x y z')
@@ -427,12 +494,24 @@ class Spherical(_Coordinates):
         sage: plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T)
         Graphics3d Object
 
+    .. PLOT::
+
+        r, phi, theta = var('r phi theta')
+        T = Spherical('radius', ['azimuth', 'inclination'])
+        sphinx_plot(plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T))
+
     We next graph the function where the inclination angle is constant::
 
         sage: S=Spherical('inclination', ['radius', 'azimuth'])
         sage: r,theta=var('r,theta')
         sage: plot3d(3, (r,0,3), (theta, 0, 2*pi), transformation=S)
         Graphics3d Object
+
+    .. PLOT::
+
+        S=Spherical('inclination', ['radius', 'azimuth'])
+        r,theta=var('r,theta')
+        sphinx_plot(plot3d(r-r+3, (r,0,3), (theta, 0, 2*pi), transformation=S))
 
     See also :func:`spherical_plot3d` for more examples of plotting in spherical
     coordinates.
@@ -442,7 +521,7 @@ class Spherical(_Coordinates):
         """
         A spherical coordinates transform.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = Spherical('radius', ['azimuth', 'inclination'])
             sage: T.transform(radius=var('r'), azimuth=var('theta'), inclination=var('phi'))
@@ -484,6 +563,12 @@ class SphericalElevation(_Coordinates):
         sage: plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T)
         Graphics3d Object
 
+    .. PLOT::
+
+        T = SphericalElevation('radius', ['azimuth', 'elevation'])
+        r, theta, phi = var('r theta phi')
+        sphinx_plot(plot3d(phi * theta, (theta, 0, pi), (phi, 0, 1), transformation=T))
+
     We next graph the function where the elevation angle is constant. This
     should be compared to the similar example for the ``Spherical`` coordinate
     system::
@@ -493,12 +578,26 @@ class SphericalElevation(_Coordinates):
         sage: plot3d(3, (r,0,3), (theta, 0, 2*pi), transformation=SE)
         Graphics3d Object
 
+    .. PLOT::
+
+        SE=SphericalElevation('elevation', ['radius', 'azimuth'])
+        r,theta=var('r,theta')
+        sphinx_plot(plot3d(3+r-r, (r,0,3), (theta, 0, 2*pi), transformation=SE))
+
     Plot a sin curve wrapped around the equator::
 
         sage: P1=plot3d( (pi/12)*sin(8*theta), (r,0.99,1), (theta, 0, 2*pi), transformation=SE, plot_points=(10,200))
         sage: P2=sphere(center=(0,0,0), size=1, color='red', opacity=0.3)
         sage: P1+P2
         Graphics3d Object
+
+    .. PLOT::
+
+        r,theta=var('r,theta')
+        SE=SphericalElevation('elevation', ['radius', 'azimuth'])
+        P1=plot3d( (pi/12)*sin(8*theta), (r,0.99,1), (theta, 0, 2*pi), transformation=SE, plot_points=(10,200))
+        P2=sphere(center=(0,0,0), size=1, color='red', opacity=0.3)
+        sphinx_plot(P1+P2)
 
     Now we graph several constant elevation functions alongside several constant
     inclination functions. This example illustrates the difference between the
@@ -514,6 +613,19 @@ class SphericalElevation(_Coordinates):
         sage: P2 = [plot3d( a, (r,0,3), (theta, 0, 2*pi), transformation=S, opacity=0.85, color='red') for a in angles]
         sage: show(sum(P1+P2), aspect_ratio=1)
 
+    .. PLOT::
+
+        r, phi, theta = var('r phi theta')
+        SE = SphericalElevation('elevation', ['radius', 'azimuth'])
+        S = Spherical('inclination', ['radius', 'azimuth'])
+        angles = [pi/18, pi/12, pi/6]
+        P1=Graphics()
+        P2=Graphics()
+        for a in angles:
+            P1 += plot3d( a, (r,0,3), (theta, 0, 2*pi), transformation=SE, opacity=0.85, color='blue')
+            P2 += plot3d( a, (r,0,3), (theta, 0, 2*pi), transformation=S, opacity=0.85, color='red')
+        sphinx_plot(P1+P2)
+
     See also :func:`spherical_plot3d` for more examples of plotting in spherical
     coordinates.
     """
@@ -522,7 +634,7 @@ class SphericalElevation(_Coordinates):
         """
         A spherical elevation coordinates transform.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = SphericalElevation('radius', ['azimuth', 'elevation'])
             sage: T.transform(radius=var('r'), azimuth=var('theta'), elevation=var('phi'))
@@ -565,12 +677,24 @@ class Cylindrical(_Coordinates):
         sage: plot3d(9-r^2, (r, 0, 3), (theta, 0, pi), transformation=T)
         Graphics3d Object
 
+    .. PLOT::
+
+        T = Cylindrical('height', ['radius', 'azimuth'])
+        r, theta, z = var('r theta z')
+        sphinx_plot(plot3d(9-r**2, (r, 0, 3), (theta, 0, pi), transformation=T))
+
     We next graph the function where the radius is constant::
 
         sage: S=Cylindrical('radius', ['azimuth', 'height'])
         sage: theta,z=var('theta, z')
         sage: plot3d(3, (theta,0,2*pi), (z, -2, 2), transformation=S)
         Graphics3d Object
+
+    .. PLOT::
+
+        S=Cylindrical('radius', ['azimuth', 'height'])
+        theta,z=var('theta, z')
+        sphinx_plot(plot3d(3+z-z, (theta,0,2*pi), (z, -2, 2), transformation=S))
 
     See also :func:`cylindrical_plot3d` for more examples of plotting in cylindrical
     coordinates.
@@ -580,7 +704,7 @@ class Cylindrical(_Coordinates):
         """
         A cylindrical coordinates transform.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: T = Cylindrical('height', ['azimuth', 'radius'])
             sage: T.transform(radius=var('r'), azimuth=var('theta'), height=var('z'))
@@ -648,9 +772,11 @@ class TrivialTriangleFactory:
         """
         return [a,b,c]
 
-import parametric_plot3d
+from . import parametric_plot3d
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     """
+    Plots a function in 3d.
+
     INPUT:
 
 
@@ -665,7 +791,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
     -  ``adaptive`` - (default: False) whether to use
        adaptive refinement to draw the plot (slower, but may look better).
-       This option does NOT work in conjuction with a transformation
+       This option does NOT work in conjunction with a transformation
        (see below).
 
     -  ``mesh`` - bool (default: False) whether to display
@@ -681,7 +807,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     - ``transformation`` - (default: None) a transformation to
       apply. May be a 3 or 4-tuple (x_func, y_func, z_func,
       independent_vars) where the first 3 items indicate a
-      transformation to cartesian coordinates (from your coordinate
+      transformation to Cartesian coordinates (from your coordinate
       system) in terms of u, v, and the function variable fvar (for
       which the value of f will be substituted). If a 3-tuple is
       specified, the independent variables are chosen from the range
@@ -700,15 +826,27 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2))
         Graphics3d Object
 
+    .. PLOT::
+
+        sphinx_plot(plot3d(lambda x, y: x**2 + y**2, (-2,2), (-2,2)))
+
     We plot the same 3d function but using adaptive refinement::
 
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2), adaptive=True)
         Graphics3d Object
 
+    .. PLOT::
+
+        sphinx_plot(plot3d(lambda x, y: x**2 + y**2, (-2,2), (-2,2), adaptive=True))
+
     Adaptive refinement but with more points::
 
         sage: plot3d(lambda x, y: x^2 + y^2, (-2,2), (-2,2), adaptive=True, initial_depth=5)
         Graphics3d Object
+
+    .. PLOT::
+
+        sphinx_plot(plot3d(lambda x, y: x**2 + y**2, (-2,2), (-2,2), adaptive=True, initial_depth=5))
 
     We plot some 3d symbolic functions::
 
@@ -716,8 +854,21 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         (x, y)
         sage: plot3d(x^2 + y^2, (x,-2,2), (y,-2,2))
         Graphics3d Object
+
+    .. PLOT::
+
+        var('x y')
+        sphinx_plot(plot3d(x**2 + y**2, (x,-2,2), (y,-2,2)))
+
+    ::
+
         sage: plot3d(sin(x*y), (x, -pi, pi), (y, -pi, pi))
         Graphics3d Object
+
+    .. PLOT::
+
+        var('x y')
+        sphinx_plot(plot3d(sin(x*y), (x, -pi, pi), (y, -pi, pi)))
 
     We give a plot with extra sample points::
 
@@ -725,8 +876,21 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         (x, y)
         sage: plot3d(sin(x^2+y^2),(x,-5,5),(y,-5,5), plot_points=200)
         Graphics3d Object
+
+    .. PLOT::
+
+        var('x y')
+        sphinx_plot(plot3d(sin(x**2+y**2),(x,-5,5),(y,-5,5), plot_points=200))
+
+    ::
+
         sage: plot3d(sin(x^2+y^2),(x,-5,5),(y,-5,5), plot_points=[10,100])
         Graphics3d Object
+
+    .. PLOT::
+
+        var('x y')
+        sphinx_plot(plot3d(sin(x**2+y**2),(x,-5,5),(y,-5,5), plot_points=[10,100]))
 
     A 3d plot with a mesh::
 
@@ -734,6 +898,11 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         (x, y)
         sage: plot3d(sin(x-y)*y*cos(x),(x,-3,3),(y,-3,3), mesh=True)
         Graphics3d Object
+
+    .. PLOT::
+
+        var('x y')
+        sphinx_plot(plot3d(sin(x-y)*y*cos(x),(x,-3,3),(y,-3,3), mesh=True))
 
     Two wobby translucent planes::
 
@@ -743,6 +912,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: P + Q
         Graphics3d Object
 
+    .. PLOT::
+
+        x,y=var('x y')
+        P = plot3d(x+y+sin(x*y), (x,-10,10),(y,-10,10), opacity=0.87, color='blue')
+        Q = plot3d(x-2*y-cos(x*y),(x,-10,10),(y,-10,10),opacity=0.3,color='red')
+        sphinx_plot(P+Q)
+
     We draw two parametric surfaces and a transparent plane::
 
         sage: L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color="lightblue", opacity=0.8)
@@ -751,11 +927,23 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: L + P + Q
         Graphics3d Object
 
+    .. PLOT::
+
+        L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color="lightblue", opacity=0.8)
+        P = plot3d(lambda x,y: 4 - x**3 - y**2, (-2,2), (-2,2), color='green')
+        Q = plot3d(lambda x,y: x**3 + y**2 - 4, (-2,2), (-2,2), color='orange')
+        sphinx_plot(L+P+Q)
+
     We draw the "Sinus" function (water ripple-like surface)::
 
         sage: x, y = var('x y')
         sage: plot3d(sin(pi*(x^2+y^2))/2,(x,-1,1),(y,-1,1))
         Graphics3d Object
+
+    .. PLOT::
+
+        x, y = var('x y')
+        sphinx_plot(plot3d(sin(pi*(x**2+y**2))/2,(x,-1,1),(y,-1,1)))
 
     Hill and valley (flat surface with a bump and a dent)::
 
@@ -763,17 +951,37 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: plot3d( 4*x*exp(-x^2-y^2), (x,-2,2), (y,-2,2))
         Graphics3d Object
 
+    .. PLOT::
+
+        x, y = var('x y')
+        sphinx_plot(plot3d( 4*x*exp(-x**2-y**2), (x,-2,2), (y,-2,2)))
+
     An example of a transformation::
 
         sage: r, phi, z = var('r phi z')
         sage: trans=(r*cos(phi),r*sin(phi),z)
         sage: plot3d(cos(r),(r,0,17*pi/2),(phi,0,2*pi),transformation=trans,opacity=0.87).show(aspect_ratio=(1,1,2),frame=False)
 
+    .. PLOT::
+
+        r, phi, z = var('r phi z')
+        trans = (r*cos(phi),r*sin(phi),z)
+        P = plot3d(cos(r),(r,0,17*pi/2),(phi,0,2*pi),transformation=trans,opacity=0.87)
+        P.aspect_ratio([1,1,2])
+        sphinx_plot(P)
+
     An example of a transformation with symbolic vector::
 
         sage: cylindrical(r,theta,z)=[r*cos(theta),r*sin(theta),z]
         sage: plot3d(3,(theta,0,pi/2),(z,0,pi/2),transformation=cylindrical)
         Graphics3d Object
+
+    .. PLOT::
+
+        r, theta, z = var('r theta z')
+        cylindrical=(r*cos(theta),r*sin(theta),z)
+        P = plot3d(z-z+3,(theta,0,pi/2),(z,0,pi/2),transformation=cylindrical)
+        sphinx_plot(P)
 
     Many more examples of transformations::
 
@@ -792,9 +1000,10 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: D = plot3d(2,(u,-pi,pi),(v,0,pi),transformation=cylindric_axial,plot_points=[100,100])
         sage: E = plot3d(2,(u,-pi,pi),(v,-pi,pi),transformation=parabolic_cylindrical,plot_points=[100,100])
         sage: @interact
-        ... def _(which_plot=[A,B,C,D,E]):
-        ...       show(which_plot)
-        <html>...
+        ....: def _(which_plot=[A,B,C,D,E]):
+        ....:     show(which_plot)
+        Interactive function <function _ at ...> with 1 widget
+          which_plot: Dropdown(description=u'which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
 
     Now plot a function::
 
@@ -805,9 +1014,10 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         sage: I = plot3d(g,(u,-pi,pi),(v,0,pi),transformation=cylindric_axial,plot_points=[100,100])
         sage: J = plot3d(g,(u,-pi,pi),(v,0,pi),transformation=parabolic_cylindrical,plot_points=[100,100])
         sage: @interact
-        ... def _(which_plot=[F, G, H, I, J]):
-        ...       show(which_plot)
-        <html>...
+        ....: def _(which_plot=[F, G, H, I, J]):
+        ....:     show(which_plot)
+        Interactive function <function _ at ...> with 1 widget
+          which_plot: Dropdown(description=u'which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
 
     TESTS:
 
@@ -914,6 +1124,13 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
         sage: from sage.plot.plot3d.plot3d import plot3d_adaptive
         sage: x,y=var('x,y'); plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5)
         Graphics3d Object
+
+    .. PLOT::
+
+        from sage.plot.plot3d.plot3d import plot3d_adaptive
+        x,y=var('x,y')
+        sphinx_plot(plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5))
+
     """
     if initial_depth >= max_depth:
         max_depth = initial_depth
@@ -923,7 +1140,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
     xmin,xmax = ranges[0][:2]
     ymin,ymax = ranges[1][:2]
 
-    opacity = kwds.get('opacity',1)
+    opacity = float(kwds.get('opacity',1))
 
     if color == "automatic":
         texture = rainbow(num_colors, 'rgbtuple')
@@ -955,18 +1172,19 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
                 span = 0
             else:
                 span = (len(texture)-1) / (max_z - min_z)    # max to avoid dividing by 0
-            parts = P.partition(lambda x,y,z: int((z-min_z)*span))
+            parts = P.partition(lambda x, y, z: int((z-min_z)*span))
         all = []
-        for k, G in parts.iteritems():
+        for k, G in parts.items():
             G.set_texture(texture[k], opacity=opacity)
             all.append(G)
         P = Graphics3dGroup(all)
     else:
         P.set_texture(texture)
 
-    P.frame_aspect_ratio([1.0,1.0,0.5])
+    P.frame_aspect_ratio([1.0, 1.0, 0.5])
     P._set_extra_kwds(kwds)
     return P
+
 
 def spherical_plot3d(f, urange, vrange, **kwds):
     """
@@ -1002,6 +1220,11 @@ def spherical_plot3d(f, urange, vrange, **kwds):
         sage: spherical_plot3d(2,(x,0,2*pi),(y,0,pi))
         Graphics3d Object
 
+    .. PLOT::
+
+        x,y=var('x,y')
+        sphinx_plot(spherical_plot3d(x-x+2,(x,0,2*pi),(y,0,pi)))
+
     The real and imaginary parts of a spherical harmonic with `l=2` and `m=1`::
 
         sage: phi, theta = var('phi, theta')
@@ -1010,16 +1233,34 @@ def spherical_plot3d(f, urange, vrange, **kwds):
         sage: ima = spherical_plot3d(abs(imag(Y)), (phi,0,2*pi), (theta,0,pi), color='red', opacity=0.6)
         sage: (rea + ima).show(aspect_ratio=1)  # long time (4s on sage.math, 2011)
 
+    .. PLOT::
+
+        phi, theta = var('phi, theta')
+        Y = spherical_harmonic(2, 1, theta, phi)
+        rea = spherical_plot3d(abs(real(Y)), (phi,0,2*pi), (theta,0,pi), color='blue', opacity=0.6)
+        ima = spherical_plot3d(abs(imag(Y)), (phi,0,2*pi), (theta,0,pi), color='red', opacity=0.6)
+        sphinx_plot(rea+ima)
+
     A drop of water::
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d(e^-y,(x,0,2*pi),(y,0,pi),opacity=0.5).show(frame=False)
+
+    .. PLOT::
+
+        x,y=var('x,y')
+        sphinx_plot(spherical_plot3d(e**-y,(x,0,2*pi),(y,0,pi),opacity=0.5))
 
     An object similar to a heart::
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d((2+cos(2*x))*(y+1),(x,0,2*pi),(y,0,pi),rgbcolor=(1,.1,.1))
         Graphics3d Object
+
+    .. PLOT::
+
+        x,y=var('x,y')
+        sphinx_plot(spherical_plot3d((2+cos(2*x))*(y+1),(x,0,2*pi),(y,0,pi),rgbcolor=(1,.1,.1)))
 
     Some random figures:
 
@@ -1029,10 +1270,21 @@ def spherical_plot3d(f, urange, vrange, **kwds):
         sage: spherical_plot3d(1+sin(5*x)/5,(x,0,2*pi),(y,0,pi),rgbcolor=(1,0.5,0),plot_points=(80,80),opacity=0.7)
         Graphics3d Object
 
+    .. PLOT::
+
+        x,y=var('x,y')
+        sphinx_plot(spherical_plot3d(1+sin(5*x)/5,(x,0,2*pi),(y,0,pi),rgbcolor=(1,0.5,0),plot_points=(80,80),opacity=0.7))
+
     ::
 
         sage: x,y=var('x,y')
         sage: spherical_plot3d(1+2*cos(2*y),(x,0,3*pi/2),(y,0,pi)).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        x,y=var('x,y')
+        sphinx_plot(spherical_plot3d(1+2*cos(2*y),(x,0,3*pi/2),(y,0,pi)))
+
     """
     return plot3d(f, urange, vrange, transformation=Spherical('radius', ['azimuth', 'inclination']), **kwds)
 
@@ -1046,6 +1298,13 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
         sage: T = (r*cos(u), r*sin(u), v, [u,v])
         sage: plot3d(f, urange, vrange, transformation=T)
         Graphics3d Object
+
+    .. PLOT::
+
+        r,u,v=var('r,u,v')
+        f=u*v; urange=(u,0,pi); vrange=(v,0,pi)
+        T = (r*cos(u), r*sin(u), v, [u,v])
+        sphinx_plot(plot3d(f, urange, vrange, transformation=T))
 
     or equivalently::
 
@@ -1074,6 +1333,11 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
         sage: cylindrical_plot3d(2,(theta,0,3*pi/2),(z,-2,2))
         Graphics3d Object
 
+    .. PLOT::
+
+        theta,z=var('theta,z')
+        sphinx_plot(cylindrical_plot3d(z-z+2,(theta,0,3*pi/2),(z,-2,2)))
+
     Some random figures:
 
     ::
@@ -1081,9 +1345,22 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
         sage: cylindrical_plot3d(cosh(z),(theta,0,2*pi),(z,-2,2))
         Graphics3d Object
 
+    .. PLOT::
+
+        theta,z=var('theta,z')
+        sphinx_plot(cylindrical_plot3d(cosh(z),(theta,0,2*pi),(z,-2,2)))
+
     ::
 
         sage: cylindrical_plot3d(e^(-z^2)*(cos(4*theta)+2)+1,(theta,0,2*pi),(z,-2,2),plot_points=[80,80]).show(aspect_ratio=(1,1,1))
+
+    .. PLOT::
+
+        theta,z=var('theta,z')
+        P = cylindrical_plot3d(e**(-z**2)*(cos(4*theta)+2)+1,(theta,0,2*pi),(z,-2,2),plot_points=[80,80])
+        P.aspect_ratio([1,1,1])
+        sphinx_plot(P)
+
     """
     return plot3d(f, urange, vrange, transformation=Cylindrical('radius', ['azimuth', 'height']), **kwds)
 
@@ -1104,10 +1381,23 @@ def axes(scale=1, radius=None, **kwds):
         sage: S = axes(6, color='black'); S
         Graphics3d Object
 
+    .. PLOT::
+
+        from sage.plot.plot3d.plot3d import axes
+        S = axes(6, color='black')
+        sphinx_plot(S)
+
     ::
 
         sage: T = axes(2, .5); T
         Graphics3d Object
+
+    .. PLOT::
+
+        from sage.plot.plot3d.plot3d import axes
+        T = axes(2, .5)
+        sphinx_plot(T)
+
     """
     if radius is None:
         radius = scale/100.0

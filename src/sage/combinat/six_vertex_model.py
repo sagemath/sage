@@ -1,6 +1,7 @@
 r"""
 Six Vertex Model
 """
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -36,7 +37,7 @@ class SixVertexConfiguration(ClonableArray):
                 |    |    |
             --> # <- # <- # <--
                 |    ^    ^
-                V    |    |  
+                V    |    |
             --> # -> # <- # <--
                 |    |    ^
                 V    V    |
@@ -104,12 +105,12 @@ class SixVertexConfiguration(ClonableArray):
 
         The signed matrix corresponding to a six vertex configuration is
         given by `0` if there is a cross flow, a `1` if the outward arrows
-        are vertical and `-1` if the outward arrows are horizonal.
+        are vertical and `-1` if the outward arrows are horizontal.
 
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: map(lambda x: x.to_signed_matrix(), M)
+            sage: [x.to_signed_matrix() for x in M]
             [
             [1 0 0]  [1 0 0]  [ 0  1  0]  [0 1 0]  [0 1 0]  [0 0 1]  [0 0 1]
             [0 1 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [1 0 0]  [0 1 0]
@@ -146,7 +147,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(2, boundary_conditions='ice')
-            sage: print M[0].plot().description()
+            sage: print(M[0].plot().description())
             Arrow from (-1.0,0.0) to (0.0,0.0)
             Arrow from (-1.0,1.0) to (0.0,1.0)
             Arrow from (0.0,0.0) to (0.0,-1.0)
@@ -161,7 +162,6 @@ class SixVertexConfiguration(ClonableArray):
             Arrow from (2.0,1.0) to (1.0,1.0)
         """
         from sage.plot.graphics import Graphics
-        from sage.plot.circle import circle
         from sage.plot.arrow import arrow
 
         if color == 4:
@@ -562,21 +562,21 @@ class SixVertexModel(UniqueRepresentation, Parent):
 
         bdry = [self._bdry_cond[0]]
         lbd = list(self._bdry_cond[3]) + [None] # Dummy
-        left = [ [lbd[0]] ]
+        left = [[lbd[0]]]
         cur = [[-1]]
         n = self._nrows
         m = self._ncols
         # [[3, 1], [5, 3]]
         # [[4, 3], [3, 2]]
 
-        while len(cur) > 0:
+        while cur:
             # If we're at the last row
             if len(cur) > n:
                 cur.pop()
                 left.pop()
-                # Check if all our bottom boundry conditions are statisfied
+                # Check if all our bottom boundary conditions are satisfied
                 if all(x is not self._bdry_cond[2][i]
-                       for i,x in enumerate(bdry[-1])):
+                       for i, x in enumerate(bdry[-1])):
                     yield self.element_class(self, tuple(tuple(x) for x in cur))
                 bdry.pop()
 
@@ -584,7 +584,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             row = cur[-1]
             l = left[-1]
             i = len(cur) - 1
-            while len(row) > 0:
+            while row:
                 row[-1] += 1
                 # Check to see if we have more vertices
                 if row[-1] > 5:
@@ -663,10 +663,10 @@ class SquareIceModel(SixVertexModel):
 
     The square ice model is a 6 vertex model on an `n \times n` grid with
     the boundary conditions that the top and bottom boundaries are pointing
-    outward and the left and right boundaries are pointing inward. These 
+    outward and the left and right boundaries are pointing inward. These
     boundary conditions are also called domain wall boundary conditions.
 
-    Configurations of the 6 vertex model with domain wall boundary conditions 
+    Configurations of the 6 vertex model with domain wall boundary conditions
     are in bijection with alternating sign matrices.
     """
     def __init__(self, n):
@@ -772,7 +772,8 @@ class SquareIceModel(SixVertexModel):
                 [ 0  1 -1  1]
                 [ 0  0  1  0]
             """
-            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrices
-            ASM = AlternatingSignMatrices(self.parent()._nrows)
-            return ASM(self.to_signed_matrix())
+            from sage.combinat.alternating_sign_matrix import AlternatingSignMatrix #AlternatingSignMatrices
+            #ASM = AlternatingSignMatrices(self.parent()._nrows)
+            #return ASM(self.to_signed_matrix())
+            return AlternatingSignMatrix(self.to_signed_matrix())
 

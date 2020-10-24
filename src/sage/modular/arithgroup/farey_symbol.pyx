@@ -1,3 +1,4 @@
+# distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
 r"""
 Farey Symbol for arithmetic subgroups of `{\rm PSL}_2(\ZZ)`
 
@@ -8,45 +9,89 @@ AUTHORS:
 based on the *KFarey* package by Chris Kurth. Implemented as C++ module
 for speed.
 """
+
 #*****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/interrupt.pxi'
-include 'sage/ext/cdefs.pxi'
+from cpython.object cimport PyObject_RichCompare
+from itertools import groupby
+from cysignals.signals cimport sig_on, sig_off
 
-include "farey.pxd"
+from sage.libs.gmpxx cimport *
 
-import sage.rings.arith
 from sage.rings.all import CC, RR
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
-from congroup_gammaH import is_GammaH
-from congroup_gamma1 import is_Gamma1
-from congroup_gamma0 import is_Gamma0
-from congroup_gamma import is_Gamma
-from congroup_sl2z import SL2Z
+from .congroup_gammaH import is_GammaH
+from .congroup_gamma1 import is_Gamma1
+from .congroup_gamma0 import is_Gamma0
+from .congroup_gamma import is_Gamma
+from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
 from sage.plot.all import Graphics
 from sage.plot.colors import to_mpl_color
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
 
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.structure.richcmp cimport richcmp_not_equal
+
+
+cdef extern from "sage/modular/arithgroup/sl2z.hpp":
+    cppclass cpp_SL2Z "SL2Z":
+        mpz_class a, b, c, d
+        cpp_SL2Z(int, int, int, int)
+        cpp_SL2Z(mpz_class, mpz_class, mpz_class, mpz_class)
+        mpz_class a()
+        mpz_class b()
+        mpz_class c()
+        mpz_class d()
+
+cdef extern from "sage/modular/arithgroup/farey.hpp":
+    cppclass is_element_Gamma0:
+        is_element_Gamma0(int)
+    cppclass is_element_Gamma1:
+        is_element_Gamma1(int)
+    cppclass is_element_Gamma:
+        is_element_Gamma(int)
+    cppclass is_element_GammaH:
+        is_element_GammaH(int, object)
+    cppclass cpp_farey "FareySymbol":
+        cpp_farey()
+        cpp_farey(object)
+        cpp_farey(object, is_element_Gamma*)
+        cpp_farey(object, is_element_Gamma0*)
+        cpp_farey(object, is_element_Gamma1*)
+        cpp_farey(object, is_element_GammaH*)
+        size_t genus()
+        size_t index()
+        size_t level()
+        size_t nu2()
+        size_t nu3()
+        object is_element(mpz_t, mpz_t, mpz_t, mpz_t)
+        object word_problem(mpz_t, mpz_t, mpz_t, mpz_t, cpp_SL2Z *)
+        size_t get_cusp_class(mpz_t, mpz_t)
+        object get_cusps()
+        object get_cusp_widths()
+        object get_transformation_to_cusp(mpz_t, mpz_t)
+        object get_fractions()
+        object get_coset()
+        object get_generators()
+        object get_pairings()
+        object get_paired_sides()
+        object get_pairing_matrices()
+        object dumps()
+
 
 cdef class Farey:
     r"""
@@ -198,14 +243,14 @@ cdef class Farey:
             self.this_ptr = new cpp_farey(group)
             sig_off()
 
-    def __deallocpp__(self):
+    def __dealloc__(self):
         r"""
-        Remove reference to FareySymbol::
+        Remove reference to FareySymbol.
+
+        TESTS::
 
             sage: F = FareySymbol(Gamma0(23))
-
             sage: del F
-
         """
         del self.this_ptr
 
@@ -229,7 +274,7 @@ cdef class Farey:
             sage: F = Gamma0(40).farey_symbol()
             sage: table = F.pairing_matrices_to_tietze_index()
             sage: table[12]
-            -2
+            (-2, -1)
             sage: F.pairing_matrices()[12]
             [  3  -1]
             [ 40 -13]
@@ -237,57 +282,74 @@ cdef class Farey:
             [ -3   1]
             [-40  13]
         """
-        gens_dict = self._get_dict_of_generators()
+        gens_dict = {g:i+1 for i,g in enumerate(self.generators())}
         ans = []
         for pm in self.pairing_matrices():
             a, b, c, d = pm.matrix().list()
             newval = gens_dict.get(SL2Z([a, b, c, d]))
             if newval is not None:
-                ans.append(newval)
+                ans.append((newval,1))
+                continue
+            newval = gens_dict.get(SL2Z([-a, -b, -c, -d]))
+            if newval is not None:
+                ans.append((newval,-1))
                 continue
             newval = gens_dict.get(SL2Z([d, -b, -c, a]))
             if newval is not None:
-                ans.append(-newval)
+                ans.append((-newval,1))
+                continue
+            newval = gens_dict.get(SL2Z([-d, b, c, -a]))
+            if newval is not None:
+                ans.append((-newval,-1))
                 continue
             raise RuntimeError("This should have not happened")
         return ans
 
     @cached_method
-    def _get_dict_of_generators(self):
+    def _get_minus_one(self):
         r"""
-        Obtain a dict indexed by the generators.
+        If -I belongs to self, return a Tietze word representing it.
 
         OUTPUT:
 
-        A dict of key-value pairs (g,i+1) and (-g,i+1) (the latter one -I belongs to self),
-        where the i-th generator is g.
+        A Tietze word representing the element -I if it belongs to self.
+        Otherwise return []
 
         EXAMPLES::
 
-            sage: G = Gamma1(30)
-            sage: F = G.farey_symbol()
-            sage: dict_gens = F._get_dict_of_generators()
-            sage: g = F.generators()[5]
-            sage: dict_gens[g] # Note that the answer is 1-based.
-            6
-
-        The dict also contains -g if -I belongs to the arithmetic group::
-
-            sage: G = Gamma0(20)
-            sage: F = G.farey_symbol()
-            sage: dict_gens = F._get_dict_of_generators()
-            sage: E = G([-1,0,0,-1])
-            sage: h = F.generators()[7] * E
-            sage: dict_gens[h]
-            8
+            sage: Gamma1(30).farey_symbol()._get_minus_one()
+            []
+            sage: G = Gamma0(30).farey_symbol()
+            sage: G._get_minus_one()
+            [14]
+            sage: g = G.generators()[13]
+            sage: (-g.matrix()).is_one()
+            True
+            sage: G = Gamma(1).farey_symbol()
+            sage: G._get_minus_one()
+            [1, 1]
+            sage: g = G.generators()[0]**2
+            sage: (-g.matrix()).is_one()
+            True
+            sage: G = Gamma0(3).farey_symbol()
+            sage: G._get_minus_one()
+            [2, 2, 2]
+            sage: g = G.generators()[1]**3
+            sage: (-g.matrix()).is_one()
+            True
         """
-        ans = {g:i+1 for i,g in enumerate(self.generators())}
-        E = SL2Z([-1,0,0,-1])
-        if E in self.group:
-            ans.update({(g * E):i+1 for i,g in enumerate(self.generators())})
-        return ans
+        for i,g in enumerate(self.generators()):
+            m = g.matrix()
+            if (-m).is_one():
+                return [i+1]
+            t = m.trace()
+            if t == 0: # order = 4
+                return 2 * [i+1]
+            elif t == 1: # order = 6
+                return 3 * [i+1]
+        return []
 
-    def word_problem(self, M, output = 'standard'):
+    def word_problem(self, M, output = 'standard', check = True):
         r"""
         Solve the word problem (up to sign) using this Farey symbol.
 
@@ -296,6 +358,7 @@ cdef class Farey:
         - ``M`` -- An element `M` of `{\rm SL}_2(\ZZ)`.
         - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
           ``'syllables'``, ``'gens'``.
+        - ``check`` -- (default: ``True``) Whether to check for correct input and output.
 
         OUTPUT:
 
@@ -352,16 +415,38 @@ cdef class Farey:
 
         Check that problem with forgotten generator is fixed::
 
+            sage: from sage.misc.misc_c import prod
             sage: G = Gamma0(10)
             sage: F = G.farey_symbol()
             sage: g = G([-701,-137,4600,899])
             sage: g1 = prod(F.generators()[i]**a for i,a in F.word_problem(g, output = 'syllables'))
-            sage: g == g1 or g * G([-1,0,0,-1]) == g1
+            sage: g == g1
             True
 
+        Check that it works for GammaH as well (:trac:`19660`)::
+
+            sage: G = GammaH(147, [8])
+            sage: G.farey_symbol().word_problem(G([1,1,0,1]))
+            (1,)
+
+        Check that :trac:`20347` is solved::
+
+            sage: from sage.misc.misc_c import prod
+            sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")
+            sage: S = G.farey_symbol()
+            sage: g1,g2 = S.generators()
+            sage: g = g1^3 * g2^-2 * g1 * g2
+            sage: S.word_problem(g)
+            (2, 2, 2, 1, 1, 1, 2, 1, 2)
+            sage: h = prod(S.generators()[i]**a for i,a in S.word_problem(g, output = 'syllables'))
+            sage: g == h
+            True
         """
         if output not in ['standard', 'syllables', 'gens']:
             raise ValueError('Unrecognized output format')
+        if check:
+            if M not in self.group:
+                raise ValueError("Matrix ( %s ) is not in group ( %s )"%(M,self.group))
         cdef Integer a = M.d()
         cdef Integer b = -M.b()
         cdef Integer c = -M.c()
@@ -371,26 +456,64 @@ cdef class Farey:
         sig_on()
         result = self.this_ptr.word_problem(a.value, b.value, c.value, d.value, cpp_beta)
         sig_off()
-        beta = convert_to_SL2Z(cpp_beta[0])
+        beta = convert_to_SL2Z(cpp_beta[0])**-1
+        mbeta = SL2Z([-beta.a(),-beta.b(),-beta.c(),-beta.d()])
         V = self.pairing_matrices_to_tietze_index()
-        tietze = [V[o-1] if o > 0 else -V[-o-1] for o in result]
-        if not beta.is_one() and beta != E: # We need to correct for beta
-            gens_dict = self._get_dict_of_generators()
+        sgn = 1
+        tietze = []
+        for o in result:
+            if o > 0:
+                tietze.append(V[o-1][0])
+                sgn *= V[o-1][1]
+            else:
+                tietze.append(-V[-o-1][0])
+                sgn *= V[-o-1][1]
+        if sgn == -1:
+            beta, mbeta = mbeta, beta
+
+        gens_dict = {g:i+1 for i,g in enumerate(self.generators())}
+        extra_tietze = []
+        if beta.is_one():
+            found = True
+        elif mbeta.is_one():
+            found = True
+            extra_tietze = self._get_minus_one()
+        else:
+            found = False
+        if not found:
             newval = gens_dict.get(beta)
             if newval is not None:
-                newval = -newval
-            else:
-                newval = gens_dict.get(beta**-1)
-                assert newval is not None
-            tietze.append(newval)
+                found = True
+                extra_tietze = [newval]
+        if not found:
+            newval = gens_dict.get(beta**-1)
+            if newval is not None:
+                found = True
+                extra_tietze = [-newval]
+        if not found:
+            newval = gens_dict.get(mbeta)
+            if newval is not None:
+                found = True
+                extra_tietze = [newval] + self._get_minus_one()
+        if not found:
+            newval = gens_dict.get(mbeta**-1)
+            if newval is not None:
+                found = True
+                extra_tietze = [-newval] + self._get_minus_one()
+        tietze.extend(extra_tietze)
         tietze.reverse()
+        gens = self.generators()
+        if check:
+            tmp = SL2Z([1,0,0,1])
+            for i in range(len(tietze)):
+                t = tietze[i]
+                tmp = tmp * gens[t-1] if t > 0 else tmp * gens[-t-1]**-1
+            assert tmp.matrix() == M.matrix(),'%s %s %s'%(tietze, tmp.matrix(),M.matrix())
         if output == 'standard':
             return tuple(tietze)
-        from itertools import groupby
         if output == 'syllables':
             return tuple((a-1,len(list(g))) if a > 0 else (-a-1,-len(list(g))) for a,g in groupby(tietze))
         else: # output == 'gens'
-            gens = self.generators()
             return tuple((gens[a-1],len(list(g))) if a > 0 else (gens[-a-1],-len(list(g))) for a,g in groupby(tietze))
 
     def __contains__(self, M):
@@ -415,7 +538,7 @@ cdef class Farey:
         sig_off()
         return result
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         r"""
         Compare self to others.
 
@@ -427,16 +550,20 @@ cdef class Farey:
             sage: FareySymbol(Gamma0(23)) == loads(dumps(FareySymbol(Gamma0(23))))
             True
         """
-        cmp_fcts = [lambda fs: fs.coset_reps(),
-                    lambda fs: fs.cusps(),
-                    lambda fs: fs.fractions()]
+        if not isinstance(other, Farey):
+            return NotImplemented
 
-        for cf in cmp_fcts:
-            c = cmp(cf(self), cf(other))
-            if c != 0:
-                return c
+        cosetA = self.coset_reps()
+        cosetB = other.coset_reps()
+        if cosetA != cosetB:
+            return richcmp_not_equal(cosetA, cosetB, op)
 
-        return c
+        cuspA = self.cusps()
+        cuspB = other.cusps()
+        if cuspA != cuspB:
+            return richcmp_not_equal(cuspA, cuspB, op)
+
+        return PyObject_RichCompare(self.fractions(), other.fractions(), op)
 
     def __reduce__(self):
         r"""
@@ -460,7 +587,7 @@ cdef class Farey:
         if hasattr(self.group, "_repr_"):
             return "FareySymbol(%s)" % self.group._repr_()
         elif hasattr(self.group, "__repr__"):
-            return "FareySymbol(%s)" % self.group.__repr__()
+            return "FareySymbol(%r)" % self.group
         else:
             return "FareySymbol(?)"
 
@@ -592,7 +719,7 @@ cdef class Farey:
 
     def generators(self):
         r"""
-        Minmal set of generators of the group of the FareySymbol.
+        Minimal set of generators of the group of the FareySymbol.
 
         EXAMPLES:
 

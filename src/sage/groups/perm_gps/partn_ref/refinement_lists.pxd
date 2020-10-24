@@ -1,16 +1,16 @@
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
-#      Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pxd.pxi' # includes bitsets
+from .data_structures cimport *
 
-
-from sage.rings.integer cimport Integer
-from double_coset cimport double_coset
 
 # name of the three functions to customize
 cdef int refine_list(PartitionStack *, void *, int *, int)

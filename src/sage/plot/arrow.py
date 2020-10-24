@@ -22,6 +22,7 @@ from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 
+
 class CurveArrow(GraphicPrimitive):
     def __init__(self, path, options):
         """
@@ -30,7 +31,8 @@ class CurveArrow(GraphicPrimitive):
         EXAMPLES::
 
             sage: from sage.plot.arrow import CurveArrow
-            sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],options={})
+            sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],
+            ....:                options={})
             sage: b
             CurveArrow from (0, 0) to (0, 0)
         """
@@ -52,7 +54,8 @@ class CurveArrow(GraphicPrimitive):
         EXAMPLES::
 
             sage: from sage.plot.arrow import CurveArrow
-            sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],options={})
+            sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],
+            ....:                options={})
             sage: d = b.get_minmax_data()
             sage: d['xmin']
             0.0
@@ -66,12 +69,13 @@ class CurveArrow(GraphicPrimitive):
 
     def _allowed_options(self):
         """
-        Return the dictionary of allowed options for the curve arrow graphics primitive.
+        Return the dictionary of allowed options for the curve arrow graphics
+        primitive.
 
         EXAMPLES::
 
              sage: from sage.plot.arrow import CurveArrow
-             sage: list(sorted(CurveArrow(path=[[(0,0),(2,3)]],options={})._allowed_options().iteritems()))
+             sage: list(sorted(CurveArrow(path=[[(0,0),(2,3)]],options={})._allowed_options().items()))
              [('arrowsize', 'The size of the arrowhead'),
              ('arrowstyle', 'todo'),
              ('head', '2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)'),
@@ -82,19 +86,21 @@ class CurveArrow(GraphicPrimitive):
              'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.',
              respectively."),
              ('rgbcolor', 'The color as an RGB tuple.'),
+             ('thickness', 'The thickness of the arrow.'),
              ('width', 'The width of the shaft of the arrow, in points.'),
              ('zorder', '2-d only: The layer level in which to draw')]
         """
-        return {'width':'The width of the shaft of the arrow, in points.',
-                'rgbcolor':'The color as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'legend_label':'The label for this item in the legend.',
-                'legend_color':'The color of the legend text.',
+        return {'width': 'The width of the shaft of the arrow, in points.',
+                'rgbcolor': 'The color as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'legend_label': 'The label for this item in the legend.',
+                'legend_color': 'The color of the legend text.',
                 'arrowstyle': 'todo',
-                'arrowsize':'The size of the arrowhead',
-                'zorder':'2-d only: The layer level in which to draw',
-                'head':'2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)',
-                'linestyle':"2d only: The style of the line, which is one of "
+                'arrowsize': 'The size of the arrowhead',
+                'thickness': 'The thickness of the arrow.',
+                'zorder': '2-d only: The layer level in which to draw',
+                'head': '2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)',
+                'linestyle': "2d only: The style of the line, which is one of "
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
 
@@ -108,17 +114,20 @@ class CurveArrow(GraphicPrimitive):
             sage: CurveArrow(path=[[(0,0),(1,4),(2,3)]],options={})._repr_()
             'CurveArrow from (0, 0) to (2, 3)'
         """
-        return "CurveArrow from %s to %s"%(self.path[0][0],self.path[-1][-1])
+        return "CurveArrow from %s to %s" % (self.path[0][0], self.path[-1][-1])
 
     def _render_on_subplot(self, subplot):
         """
-        Render this arrow in a subplot.  This is the key function that
-        defines how this arrow graphics primitive is rendered in
-        matplotlib's library.
+        Render this arrow in a subplot.
 
-        EXAMPLES::
+        This is the key function that defines how this arrow graphics
+        primitive is rendered in matplotlib's library.
 
-        This function implicitly ends up rendering this arrow on a matplotlib subplot:
+        EXAMPLES:
+
+        This function implicitly ends up rendering this arrow on a matplotlib
+        subplot::
+
             sage: arrow(path=[[(0,1), (2,-1), (4,5)]])
             Graphics object consisting of 1 graphics primitive
         """
@@ -131,17 +140,17 @@ class CurveArrow(GraphicPrimitive):
         elif head == 1: style = '-|>'
         elif head == 2: style = '<|-|>'
         else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
-        arrowsize = float(options.get('arrowsize',5))
-        head_width=arrowsize
-        head_length=arrowsize*2.0
+        arrowsize = float(options.get('arrowsize', 5))
+        head_width = arrowsize
+        head_length = arrowsize * 2.0
         color = to_mpl_color(options['rgbcolor'])
         from matplotlib.patches import FancyArrowPatch
         from matplotlib.path import Path
         bpath = Path(self.vertices, self.codes)
         p = FancyArrowPatch(path=bpath,
-                            lw=width, arrowstyle='%s,head_width=%s,head_length=%s'%(style,head_width, head_length),
-                            fc=color, ec=color)
-        p.set_linestyle(get_matplotlib_linestyle(options['linestyle'],return_type='long'))
+                            lw=width, arrowstyle='%s,head_width=%s,head_length=%s' % (style, head_width, head_length),
+                            fc=color, ec=color,
+                            linestyle=get_matplotlib_linestyle(options['linestyle'], return_type='long'))
         p.set_zorder(options['zorder'])
         p.set_label(options['legend_label'])
         subplot.add_patch(p)
@@ -196,15 +205,15 @@ class Arrow(GraphicPrimitive):
                 'ymin': min(self.ytail, self.yhead),
                 'ymax': max(self.ytail, self.yhead)}
 
-
     def _allowed_options(self):
         """
-        Return the dictionary of allowed options for the line arrow graphics primitive.
+        Return the dictionary of allowed options for the line arrow graphics
+        primitive.
 
         EXAMPLES::
 
              sage: from sage.plot.arrow import Arrow
-             sage: list(sorted(Arrow(0,0,2,3,{})._allowed_options().iteritems()))
+             sage: list(sorted(Arrow(0,0,2,3,{})._allowed_options().items()))
              [('arrowshorten', 'The length in points to shorten the arrow.'),
              ('arrowsize', 'The size of the arrowhead'),
              ('head',
@@ -217,19 +226,21 @@ class Arrow(GraphicPrimitive):
              'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.',
              respectively."),
              ('rgbcolor', 'The color as an RGB tuple.'),
+             ('thickness', 'The thickness of the arrow.'),
              ('width', 'The width of the shaft of the arrow, in points.'),
              ('zorder', '2-d only: The layer level in which to draw')]
         """
-        return {'width':'The width of the shaft of the arrow, in points.',
-                'rgbcolor':'The color as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'arrowshorten':'The length in points to shorten the arrow.',
-                'arrowsize':'The size of the arrowhead',
-                'legend_label':'The label for this item in the legend.',
-                'legend_color':'The color of the legend text.',
-                'zorder':'2-d only: The layer level in which to draw',
-                'head':'2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)',
-                'linestyle':"2d only: The style of the line, which is one of "
+        return {'width': 'The width of the shaft of the arrow, in points.',
+                'rgbcolor': 'The color as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'arrowshorten': 'The length in points to shorten the arrow.',
+                'arrowsize': 'The size of the arrowhead',
+                'thickness': 'The thickness of the arrow.',
+                'legend_label': 'The label for this item in the legend.',
+                'legend_color': 'The color of the legend text.',
+                'zorder': '2-d only: The layer level in which to draw',
+                'head': '2-d only: Which end of the path to draw the head (one of 0 (start), 1 (end) or 2 (both)',
+                'linestyle': "2d only: The style of the line, which is one of "
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
 
@@ -274,8 +285,8 @@ class Arrow(GraphicPrimitive):
             'draw line_1 diameter 2 arrow {0.0 0.0 0.0}  {1.0 1.0 0.0} '
 
         Note that we had to index the arrow to get the Arrow graphics
-        primitive.  We can also change the height via the plot3d method
-        of Graphics, but only as a whole::
+        primitive.  We can also change the height via the :meth:`Graphics.plot3d`
+        method, but only as a whole::
 
             sage: A = arrow((0,0),(1,1)).plot3d(3)
             sage: A.jmol_repr(A.testing_render_params())[0][0]
@@ -304,7 +315,7 @@ class Arrow(GraphicPrimitive):
             sage: Arrow(0,0,2,3,{})._repr_()
             'Arrow from (0.0,0.0) to (2.0,3.0)'
         """
-        return "Arrow from (%s,%s) to (%s,%s)"%(self.xtail, self.ytail, self.xhead, self.yhead)
+        return "Arrow from (%s,%s) to (%s,%s)" % (self.xtail, self.ytail, self.xhead, self.yhead)
 
     def _render_on_subplot(self, subplot):
         r"""
@@ -327,7 +338,7 @@ class Arrow(GraphicPrimitive):
         this into account. See :trac:`12836`::
 
             sage: fig = Graphics().matplotlib()
-            sage: sp = fig.add_subplot(1,1,1)
+            sage: sp = fig.add_subplot(1,1,1, label='axis1')
             sage: a = arrow((0,0), (1,1))
             sage: b = arrow((0,0), (1,1), width=20)
             sage: p1 = a[0]._render_on_subplot(sp)
@@ -337,26 +348,12 @@ class Arrow(GraphicPrimitive):
             sage: p1.shrinkB == p2.shrinkB
             True
 
-        Dashed arrows should have solid arrowheads,
-        :trac:`12852`. This test saves the plot of a dashed arrow to
-        an EPS file. Within the EPS file, ``stroke`` will be called
-        twice: once to draw the line, and again to draw the
-        arrowhead. We check that both calls do not occur while the
-        dashed line style is enabled::
-
-            sage: a = arrow((0,0), (1,1), linestyle='dashed')
-            sage: filename = tmp_filename(ext='.eps')
-            sage: a.save(filename=filename)
-            sage: with open(filename, 'r') as f:
-            ....:     contents = f.read().replace('\n', ' ')
-            sage: two_stroke_pattern = r'setdash.*stroke.*stroke.*setdash'
-            sage: import re
-            sage: two_stroke_re = re.compile(two_stroke_pattern)
-            sage: two_stroke_re.search(contents) is None
-            True
+        Dashed arrows should have solid arrowheads, :trac:`12852`. We tried to
+        make up a test for this, which turned out to be fragile and hence was
+        removed. In general, robust testing of graphics seems basically need a
+        human eye or AI.
         """
         from sage.plot.misc import get_matplotlib_linestyle
-
 
         options = self.options()
         head = options.pop('head')
@@ -365,32 +362,36 @@ class Arrow(GraphicPrimitive):
         elif head == 2: style = '<|-|>'
         else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
         width = float(options['width'])
-        arrowshorten_end = float(options.get('arrowshorten',0))/2.0
-        arrowsize = float(options.get('arrowsize',5))
-        head_width=arrowsize
-        head_length=arrowsize*2.0
+        arrowshorten_end = float(options.get('arrowshorten', 0)) / 2.0
+        arrowsize = float(options.get('arrowsize', 5))
+        head_width = arrowsize
+        head_length = arrowsize * 2.0
         color = to_mpl_color(options['rgbcolor'])
         from matplotlib.patches import FancyArrowPatch
         p = FancyArrowPatch((self.xtail, self.ytail), (self.xhead, self.yhead),
-                            lw=width, arrowstyle='%s,head_width=%s,head_length=%s'%(style,head_width, head_length),
+                            lw=width,
+                            arrowstyle='%s,head_width=%s,head_length=%s' % (style, head_width, head_length),
                             shrinkA=arrowshorten_end, shrinkB=arrowshorten_end,
-                            fc=color, ec=color)
-        p.set_linestyle(get_matplotlib_linestyle(options['linestyle'],return_type='long'))
+                            fc=color, ec=color,
+                            linestyle=get_matplotlib_linestyle(options['linestyle'], return_type='long'))
         p.set_zorder(options['zorder'])
         p.set_label(options['legend_label'])
 
-        if options['linestyle']!='solid':
-            # The next few lines work around a design issue in matplotlib. Currently, the specified
-            # linestyle is used to draw both the path and the arrowhead.  If linestyle is 'dashed', this
-            # looks really odd.  This code is from Jae-Joon Lee in response to a post to the matplotlib mailing
-            # list.  See http://sourceforge.net/mailarchive/forum.php?thread_name=CAG%3DuJ%2Bnw2dE05P9TOXTz_zp-mGP3cY801vMH7yt6vgP9_WzU8w%40mail.gmail.com&forum_name=matplotlib-users
+        if options['linestyle'] != 'solid':
+            # The next few lines work around a design issue in matplotlib.
+            # Currently, the specified linestyle is used to draw both the path
+            # and the arrowhead.  If linestyle is 'dashed', this looks really
+            # odd. This code is from Jae-Joon Lee in response to a post to the
+            # matplotlib mailing list.
+            # See http://sourceforge.net/mailarchive/forum.php?thread_name=CAG%3DuJ%2Bnw2dE05P9TOXTz_zp-mGP3cY801vMH7yt6vgP9_WzU8w%40mail.gmail.com&forum_name=matplotlib-users
 
             import matplotlib.patheffects as pe
+
             class CheckNthSubPath(object):
                 def __init__(self, patch, n):
                     """
-                    creates an callable object that returns True if the provided
-                    path is the n-th path from the patch.
+                    creates an callable object that returns True if the
+                    provided path is the n-th path from the patch.
                     """
                     self._patch = patch
                     self._n = n
@@ -405,11 +406,7 @@ class Arrow(GraphicPrimitive):
                     vert1, code1 = path.vertices, path.codes
                     import numpy as np
 
-                    if np.all(vert1 == tpath.vertices) and np.all(code1 == tpath.codes):
-                        return True
-                    else:
-                        return False
-
+                    return np.array_equal(vert1, tpath.vertices) and np.array_equal(code1, tpath.codes)
 
             class ConditionalStroke(pe.RendererBase):
 
@@ -428,12 +425,13 @@ class Arrow(GraphicPrimitive):
                         for pe1 in self._pe_list:
                             pe1.draw_path(renderer, gc, tpath, affine, rgbFace)
 
-            pe1 = ConditionalStroke(CheckNthSubPath(p, 0),[pe.Stroke()])
-            pe2 = ConditionalStroke(CheckNthSubPath(p, 1),[pe.Stroke(linestyle="solid")])
+            pe1 = ConditionalStroke(CheckNthSubPath(p, 0), [pe.Stroke()])
+            pe2 = ConditionalStroke(CheckNthSubPath(p, 1), [pe.Stroke(dashes={'dash_offset': 0, 'dash_list': None})])
             p.set_path_effects([pe1, pe2])
 
         subplot.add_patch(p)
         return p
+
 
 def arrow(tailpoint=None, headpoint=None, **kwds):
     """
@@ -447,8 +445,20 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
         sage: arrow((0,0), (1,1))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arrow((0,0), (1,1)))
+
+    ::
+
         sage: arrow((0,0,1), (1,1,1))
         Graphics3d Object
+
+    .. PLOT::
+
+        sphinx_plot(arrow((0,0,1), (1,1,1)))
+
     """
     try:
         return arrow2d(tailpoint, headpoint, **kwds)
@@ -456,13 +466,15 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
         from sage.plot.plot3d.shapes import arrow3d
         return arrow3d(tailpoint, headpoint, **kwds)
 
+
 @rename_keyword(color='rgbcolor')
-@options(width=2, rgbcolor=(0,0,1),zorder=2, head = 1, linestyle='solid', legend_label=None)
+@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid', legend_label=None)
 def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     """
-    If tailpoint and headpoint are provided, returns an arrow from (xmin, ymin)
-    to (xmax, ymax).  If tailpoint or headpoint is None and path is not None,
-    returns an arrow along the path.  (See further info on paths in bezier_path).
+    If ``tailpoint`` and ``headpoint`` are provided, returns an arrow from
+    (xtail, ytail) to (xhead, yhead).  If ``tailpoint`` or ``headpoint`` is None and
+    ``path`` is not None, returns an arrow along the path.  (See further info on
+    paths in :class:`bezier_path`).
 
     INPUT:
 
@@ -470,74 +482,116 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     - ``headpoint`` - where the arrow is pointing to
 
-    - ``path`` - the list of points and control points (see bezier_path for detail) that
-      the arrow will follow from source to destination
+    - ``path`` - the list of points and control points (see bezier_path for
+      detail) that the arrow will follow from source to destination
 
-    - ``head`` - 0, 1 or 2, whether to draw the head at the start (0), end (1) or both (2)
-      of the path (using 0 will swap headpoint and tailpoint).  This is ignored
-      in 3D plotting.
+    - ``head`` - 0, 1 or 2, whether to draw the head at the start (0), end (1)
+      or both (2) of the path (using 0 will swap headpoint and tailpoint).
+      This is ignored in 3D plotting.
 
-    - ``linestyle`` - (default: ``'solid'``) The style of the line, which is one of
-      ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``, ``':'``,
-      ``'-'``, ``'-.'``, respectively.
+    - ``linestyle`` - (default: ``'solid'``) The style of the line, which is
+      one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
+      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
 
     - ``width`` - (default: 2) the width of the arrow shaft, in points
 
-    - ``color`` - (default: (0,0,1)) the color of the arrow (as an RGB tuple or a string)
+    - ``color`` - (default: (0,0,1)) the color of the arrow (as an RGB tuple or
+      a string)
 
     - ``hue`` - the color of the arrow (as a number)
 
     - ``arrowsize`` - the size of the arrowhead
 
-    - ``arrowshorten`` - the length in points to shorten the arrow (ignored if using path
-      parameter)
+    - ``arrowshorten`` - the length in points to shorten the arrow (ignored if
+      using path parameter)
 
     - ``legend_label`` - the label for this item in the legend
 
     - ``legend_color`` - the color for the legend label
 
-    - ``zorder`` - the layer level to draw the arrow-- note that this is ignored in 3D
-      plotting.
+    - ``zorder`` - the layer level to draw the arrow-- note that this is
+      ignored in 3D plotting.
 
     EXAMPLES:
 
     A straight, blue arrow::
 
-       sage: arrow2d((1, 1), (3, 3))
+       sage: arrow2d((1,1), (3,3))
        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arrow2d((1,1), (3,3)))
 
     Make a red arrow::
 
-       sage: arrow2d((-1, -1), (2, 3), color=(1,0,0))
+       sage: arrow2d((-1,-1), (2,3), color=(1,0,0))
        Graphics object consisting of 1 graphics primitive
-       sage: arrow2d((-1, -1), (2, 3), color='red')
+
+    .. PLOT::
+
+        sphinx_plot(arrow2d((-1,-1), (2,3), color=(1,0,0)))
+
+    ::
+
+       sage: arrow2d((-1,-1), (2,3), color='red')
        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(arrow2d((-1,-1), (2,3), color='red'))
 
     You can change the width of an arrow::
 
-        sage: arrow2d((1, 1), (3, 3), width=5, arrowsize=15)
+        sage: arrow2d((1,1), (3,3), width=5, arrowsize=15)
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = arrow2d((1,1), (3,3), width=5, arrowsize=15)
+        sphinx_plot(P)
 
     Use a dashed line instead of a solid one for the arrow::
 
-        sage: arrow2d((1, 1), (3, 3), linestyle='dashed')
+        sage: arrow2d((1,1), (3,3), linestyle='dashed')
         Graphics object consisting of 1 graphics primitive
-        sage: arrow2d((1, 1), (3, 3), linestyle='--')
+        sage: arrow2d((1,1), (3,3), linestyle='--')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = arrow2d((1,1), (3,3), linestyle='--')
+        sphinx_plot(P)
 
     A pretty circle of arrows::
 
         sage: sum([arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi)) for x in [0..2*pi,step=0.1]])
         Graphics object consisting of 63 graphics primitives
 
+    .. PLOT::
+
+        P = sum([arrow2d((0,0), (cos(x*0.1),sin(x*0.1)), hue=x/(20*pi)) for x in range(floor(20*pi)+1)])
+        sphinx_plot(P)
+
     If we want to draw the arrow between objects, for example, the
-    boundaries of two lines, we can use the arrowshorten option
+    boundaries of two lines, we can use the ``arrowshorten`` option
     to make the arrow shorter by a certain number of points::
 
-        sage: line([(0,0),(1,0)],thickness=10)+line([(0,1),(1,1)], thickness=10)+arrow2d((0.5,0),(0.5,1), arrowshorten=10,rgbcolor=(1,0,0))
+        sage: L1 = line([(0,0), (1,0)], thickness=10)
+        sage: L2 = line([(0,1), (1,1)], thickness=10)
+        sage: A = arrow2d((0.5,0), (0.5,1), arrowshorten=10, rgbcolor=(1,0,0))
+        sage: L1 + L2 + A
         Graphics object consisting of 3 graphics primitives
 
-    If BOTH headpoint and tailpoint are None, then an empty plot is returned::
+    .. PLOT::
+
+        L1 = line([(0,0), (1,0)],thickness=10)
+        L2 = line([(0,1), (1,1)], thickness=10)
+        A = arrow2d((0.5,0), (0.5,1), arrowshorten=10, rgbcolor=(1,0,0))
+        sphinx_plot(L1 + L2 + A)
+
+    If BOTH ``headpoint`` and ``tailpoint`` are None, then an empty plot is
+    returned::
 
         sage: arrow2d(headpoint=None, tailpoint=None)
         Graphics object consisting of 0 graphics primitives
@@ -547,11 +601,23 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
         sage: arrow((0,0), (0,2), legend_label='up', legend_color='purple')
         Graphics object consisting of 1 graphics primitive
 
-    Extra options will get passed on to show(), as long as they are valid::
+    .. PLOT::
 
-        sage: arrow2d((-2, 2), (7,1), frame=True)
+        P = arrow((0,0), (0,2), legend_label='up', legend_color='purple')
+        sphinx_plot(P)
+
+    Extra options will get passed on to :meth:`Graphics.show()`, as long as they are valid::
+
+        sage: arrow2d((-2,2), (7,1), frame=True)
         Graphics object consisting of 1 graphics primitive
-        sage: arrow2d((-2, 2), (7,1)).show(frame=True)
+
+    .. PLOT::
+
+        sphinx_plot(arrow2d((-2,2), (7,1), frame=True))
+
+    ::
+
+        sage: arrow2d((-2,2), (7,1)).show(frame=True)
     """
     from sage.plot.all import Graphics
     g = Graphics()

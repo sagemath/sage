@@ -1,4 +1,4 @@
-$(INST)/$(READLINE) $(INST)/$(SACLIB)
+readline saclib
 
 ----------
 All lines of this file are ignored except the first.

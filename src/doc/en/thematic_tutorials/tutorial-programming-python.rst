@@ -60,7 +60,9 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 
 * A *list* is a data structure which groups values. It is constructed using
   brackets as in ``[1, 3, 4]``. The :func:`range` function creates integer
-  lists. One can also create lists using *list comprehension*::
+  lists. One can also create lists using *list comprehension*:
+
+  .. CODE-BLOCK:: python
 
       [ <expr> for <name> in <iterable> (if <condition>) ]
 
@@ -95,7 +97,9 @@ The *standard types* are :class:`bool`, :class:`int`, :class:`list`,
 
 * A *dictionary* is an association table, which associates values to
   keys. Keys must be hashable. One creates dictionaries using the
-  constructor :class:`dict`, or using the syntax::
+  constructor :class:`dict`, or using the syntax:
+
+  .. CODE-BLOCK:: python
 
       {key1 : value1, key2 : value2 ...}
 
@@ -127,7 +131,9 @@ instructions block. Blocks are delimited solely by means of
 indentation. Most of the time a new block is introduced by
 ``:``. Python has the following control structures:
 
-* Conditional instruction::
+* Conditional instruction:
+
+  .. CODE-BLOCK:: python
 
      if <condition>:
          <instruction sequence>
@@ -136,18 +142,22 @@ indentation. Most of the time a new block is introduced by
      [else:
          <instruction sequence>]
 
-* Inside expression exclusively, one can write::
+* Inside expression exclusively, one can write:
+
+  .. CODE-BLOCK:: python
 
    <value> if <condition> else <value>
 
-* Iterative instructions::
+* Iterative instructions:
+
+  .. CODE-BLOCK:: python
 
      for <name> in <iterable>:
          <instruction sequence>
      [else:
          <instruction sequence>]
 
-  ::
+  .. CODE-BLOCK:: python
 
      while <condition>:
          <instruction sequence>
@@ -162,7 +172,9 @@ indentation. Most of the time a new block is introduced by
 * An iterable is an object which can be iterated through. Iterable
   types include lists, tuples, dictionaries, and strings.
 
-* An error (also called exception) is raised by::
+* An error (also called exception) is raised by:
+
+  .. CODE-BLOCK:: python
 
      raise <ErrorType> [, error message]
 
@@ -179,14 +191,18 @@ Functions
     doesn't make sense to do mathematical manipulation such as
     additions or derivations on Python functions.
 
-One defines a function using the keyword ``def`` as::
+One defines a function using the keyword ``def`` as:
+
+.. CODE-BLOCK:: python
 
     def <name>(<argument list>):
          <instruction sequence>
 
 The result of the function is given by the instruction
 ``return``. Very short functions can be created anonymously using
-``lambda`` (remark that there is no instruction ``return`` here)::
+``lambda`` (remark that there is no instruction ``return`` here):
+
+.. CODE-BLOCK:: python
 
     lambda <arguments>: <expression>
 
@@ -213,7 +229,7 @@ Creating Lists I: [Square brackets]
     sage: L
     [3, [5, 1, 4, 2, 3], 17, 17, 3, 51]
 
-**Exercise:** Create the list :math:`[63, 12, -10, \text{``a''}, 12]`,
+**Exercise:** Create the list ``[63, 12, -10, "a", 12]``,
 assign it to the variable ``L``, and print the list.
 
 ::
@@ -230,7 +246,9 @@ Creating Lists II: range
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :func:`range` function provides an easy way to construct a list of
-integers. Here is the documentation of the :func:`range` function::
+integers. Here is the documentation of the :func:`range` function:
+
+.. CODE-BLOCK:: text
 
     range([start,] stop[, step]) -> list of integers
 
@@ -262,9 +280,10 @@ be negative. Use range to construct the list `[10, 7, 4, 1, -2]`.
 
 .. SEEALSO::
 
-    - :func:`xrange`: returns an iterator rather than building a list.
+    - :func:`xrange`: returns an iterator rather than building a list,
+      (only for Python2, replaced by range in Python 3).
     - :func:`srange`: like range but with Sage integers; see below.
-    - :func:`sxrange`: like xrange but with Sage integers.
+    - :func:`xsrange`: like xrange but with Sage integers.
 
 Creating Lists III: list comprehensions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -274,7 +293,7 @@ Creating Lists III: list comprehensions
 
 **Example** We already know how to create the list `[1, 2, \dots, 16]`::
 
-    sage: range(1,17)
+    sage: range(1,17)   # py2
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 Using a *list comprehension*, we can now create the list
@@ -470,9 +489,9 @@ To *extend* a list by another list::
 
     sage: L1 = [1,2,3]
     sage: L2 = [7,8,9,0]
-    sage: print L1
+    sage: L1
     [1, 2, 3]
-    sage: print L2
+    sage: L2
     [7, 8, 9, 0]
 
 ::
@@ -535,7 +554,7 @@ return a sublist of ``L``.
 **Exercise:** Below are some examples of slicing lists. Try to guess
 what the output will be before evaluating the cell::
 
-    sage: L = range(20)
+    sage: L = list(range(20))
     sage: L
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
 
@@ -670,7 +689,7 @@ to use each item once.
     sage: g[0]
     Traceback (most recent call last):
     ...
-    TypeError: 'generator' object has no attribute '__getitem__'
+    TypeError: 'generator' object ...
 
 ::
 
@@ -710,7 +729,7 @@ braces, ``{}``, with comma-separated entries given in the form
 A second method is to use the constructor :class:`dict` which admits a
 list (or actually any iterable) of 2-tuples *(key, value)*::
 
-    sage: dd = dict((i,i^2) for i in xrange(10))
+    sage: dd = dict((i,i^2) for i in range(10))
     sage: dd
     {0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
 
@@ -814,7 +833,9 @@ below::
 Create a dictionary whose keys are the vertices of the above directed graph,
 and whose values are the lists of the vertices that it points to. For
 instance, the vertex 1 points to the vertices 2 and 3, so the dictionary will
-look like::
+look like:
+
+.. CODE-BLOCK:: python
 
     d = { ..., 1:[2,3], ... }
 
@@ -837,12 +858,14 @@ Using Sage types: The srange command
 **Example:** Construct a `3 \times 3` matrix whose `(i,j)` entry is
 the rational number `\frac{i}{j}`. The integers generated by
 :func:`range` are Python :class:`int`'s. As a consequence, dividing
-them does euclidean division::
+them does euclidean division (in Python2)::
 
-    sage: matrix([[ i/j for j in range(1,4)] for i in range(1,4)])
+    sage: matrix([[i/j for j in range(1,4)] for i in range(1,4)]) # not tested
     [1 0 0]
     [2 1 0]
     [3 1 1]
+
+In Python3, the division of Python integers returns a float instead.
 
 Whereas dividing a Sage :class:`Integer` by a Sage :class:`Integer`
 produces a rational number::
@@ -923,7 +946,7 @@ http://docs.python.org/tutorial/controlflow.html
 
     sage: i = 0
     sage: while i < 10:
-    ....:     print i
+    ....:     print(i)
     ....:     i += 1
     0
     1
@@ -943,7 +966,7 @@ http://docs.python.org/tutorial/controlflow.html
     ....:     if i % 2 == 1:
     ....:         i += 1
     ....:         continue
-    ....:     print i
+    ....:     print(i)
     ....:     i += 1
     0
     2
@@ -978,7 +1001,7 @@ is evaluated using :class:`bool`::
 
     sage: i = 4
     sage: while i:
-    ....:     print i
+    ....:     print(i)
     ....:     i -= 1
     4
     3
@@ -992,7 +1015,7 @@ Here is a basic *for* loop iterating over all of the elements in the list ``l``:
 
     sage: l = ['a', 'b', 'c']
     sage: for letter in l:
-    ....:     print letter
+    ....:     print(letter)
     a
     b
     c
@@ -1009,28 +1032,28 @@ included:
 
 ::
 
-    sage: range(4)
+    sage: range(4)  # py2
     [0, 1, 2, 3]
 
 ::
 
-    sage: range(1, 5)
+    sage: range(1, 5)  # py2
     [1, 2, 3, 4]
 
 ::
 
-    sage: range(1, 11, 2)
+    sage: range(1, 11, 2)  # py2
     [1, 3, 5, 7, 9]
 
 ::
 
-    sage: range(10, 0, -1)
+    sage: range(10, 0, -1)  # py2
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 ::
 
     sage: for i in range(4):
-    ....:     print i, i*i
+    ....:     print("{} {}".format(i, i*i))
     0 0
     1 1
     2 4
@@ -1042,7 +1065,7 @@ in the loop::
     sage: for i in range(10):
     ....:     if i % 2 == 0:
     ....:         continue
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -1056,7 +1079,7 @@ If you want to break out of the loop, use the *break* keyword::
     ....:         continue
     ....:     if i == 7:
     ....:         break
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -1066,7 +1089,7 @@ value, one (not so elegant) way would be to do the following::
 
     sage: l = ['a', 'b', 'c']
     sage: for i in range(len(l)):
-    ....:     print i, l[i]
+    ....:     print("{} {}".format(i, l[i]))
     0 a
     1 b
     2 c
@@ -1076,7 +1099,7 @@ as the value::
 
     sage: l = ['a', 'b', 'c']
     sage: for i, letter in enumerate(l):
-    ....:     print i, letter
+    ....:     print("{} {}".format(i, letter))
     0 a
     1 b
     2 c
@@ -1088,7 +1111,7 @@ function by using :func:`zip` to zip two lists together:
 
     sage: l = ['a', 'b', 'c']
     sage: for i, letter in zip(range(len(l)), l):
-    ....:     print i, letter
+    ....:     print("{} {}".format(i, letter))
     0 a
     1 b
     2 c
@@ -1097,7 +1120,7 @@ function by using :func:`zip` to zip two lists together:
 sorts of different objects to be looped over. For example::
 
     sage: for i in GF(5):
-    ....:     print i, i*i
+    ....:     print("{} {}".format(i, i*i))
     0 0
     1 1
     2 4
@@ -1109,7 +1132,7 @@ How does this work?
 ::
 
     sage: it = iter(GF(5)); it
-    <generator object __iter__ at 0x...>
+    <generator object ...__iter__ at 0x...>
 
     sage: next(it)
     0
@@ -1263,7 +1286,7 @@ You can return multiple values from a function::
 ::
 
     sage: type(g)
-    <type 'function'>
+    <... 'function'>
 
 ::
 
@@ -1283,14 +1306,14 @@ You can also take a variable number of arguments and keyword arguments
 in a function::
 
     sage: def h(*args, **kwds):
-    ....:     print type(args), args
-    ....:     print type(kwds), kwds
+    ....:     print("{} {}".format(type(args), args))
+    ....:     print("{} {}".format(type(kwds), kwds))
 
 ::
 
     sage: h(1,2,3,n=4)
-    <type 'tuple'> (1, 2, 3)
-    <type 'dict'> {'n': 4}
+    <... 'tuple'> (1, 2, 3)
+    <... 'dict'> {'n': 4}
 
 Let's use the *yield* instruction to make a generator for the
 Fibonacci numbers up to `n`::
@@ -1307,7 +1330,7 @@ Fibonacci numbers up to `n`::
 ::
 
     sage: for i in fib_gen(50):
-    ....:     print i
+    ....:     print(i)
     1
     1
     2

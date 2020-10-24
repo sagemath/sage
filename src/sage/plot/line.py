@@ -42,10 +42,10 @@ class Line(GraphicPrimitive_xydata):
             sage: Line([-1,2], [17,4], {'thickness':2})
             Line defined by 2 points
         """
-        valid_options = self._allowed_options().keys()
-        for opt in options.iterkeys():
+        valid_options = self._allowed_options()
+        for opt in options:
             if opt not in valid_options:
-                raise RuntimeError("Error in line(): option '%s' not valid."%opt)
+                raise RuntimeError("Error in line(): option '%s' not valid." % opt)
         self.xdata = xdata
         self.ydata = ydata
         GraphicPrimitive_xydata.__init__(self, options)
@@ -57,7 +57,7 @@ class Line(GraphicPrimitive_xydata):
         EXAMPLES::
 
             sage: from sage.plot.line import Line
-            sage: list(sorted(Line([-1,2], [17,4], {})._allowed_options().iteritems()))
+            sage: list(sorted(Line([-1,2], [17,4], {})._allowed_options().items()))
             [('alpha', 'How transparent the line is.'),
              ('hue', 'The color given as a hue.'),
              ('legend_color', 'The color of the legend text.'),
@@ -105,6 +105,7 @@ class Line(GraphicPrimitive_xydata):
             sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
             sage: L.plot3d()
             Traceback (most recent call last):
+            ...
             NotImplementedError: Invalid 3d line style: ':'
         """
         if options is None:
@@ -497,19 +498,12 @@ def line2d(points, **options):
 
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')
         Graphics object consisting of 1 graphics primitive
-
     """
     from sage.plot.all import Graphics
     from sage.plot.plot import xydata_from_point_list
-    from sage.rings.all import CC, CDF
-    if points in CC or points in CDF:
-        pass
-    else:
-        try:
-            if not points:
-                return Graphics()
-        except ValueError: # numpy raises a ValueError if not empty
-            pass
+    points = list(points) # make sure points is a python list
+    if not points:
+        return Graphics()
     xdata, ydata = xydata_from_point_list(points)
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))

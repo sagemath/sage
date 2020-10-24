@@ -1,6 +1,6 @@
 # distutils: libraries = gmp
 
-from types cimport *
+from .types cimport *
 from libc.stdio cimport FILE
 
 from libc.stdint cimport intmax_t, uintmax_t
@@ -133,6 +133,8 @@ cdef extern from "gmp.h":
     int mpz_ui_kronecker (unsigned long a, mpz_t b)
     unsigned long int mpz_remove (mpz_t rop, mpz_t op, mpz_t f)
     void mpz_fac_ui (mpz_t rop, unsigned long int op)
+    void mpz_2fac_ui (mpz_t rop, unsigned long int op)
+    void mpz_mfac_uiui (mpz_t rop, unsigned long int n, unsigned long int m)
     void mpz_bin_ui (mpz_t rop, mpz_t n, unsigned long int k)
     void mpz_bin_uiui (mpz_t rop, unsigned long int n, unsigned long int k)
     void mpz_fib_ui (mpz_t fn, unsigned long int n)

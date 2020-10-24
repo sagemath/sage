@@ -1,3 +1,6 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -13,11 +16,15 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.cpython.string cimport char_to_str
+from sage.ext.cplusplus cimport ccreadstr
+
 include "decl.pxi"
 include 'misc.pxi'
 
+from cpython.object cimport Py_EQ, Py_NE
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ import unpickle_class_value
 
@@ -25,6 +32,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
+from sage.arith.power cimport generic_power_pos
 
 ZZ = IntegerRing()
 
@@ -33,7 +41,7 @@ cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
     cdef ntl_ZZ y
     y = ntl_ZZ()
     y.x = x[0]
-    ZZ_delete(x)
+    del x
     return y
 
 # You must do sig_on() before calling this function
@@ -47,7 +55,7 @@ cdef inline ntl_ZZX make_ZZX(ZZX_c* x):
     cdef ntl_ZZX y
     y = ntl_ZZX()
     y.x = x[0]
-    ZZX_delete(x)
+    del x
     return y
 
 # You must do sig_on() before calling this function
@@ -67,7 +75,7 @@ cdef proof_flag(t):
 ##############################################################################
 
 
-cdef class ntl_ZZX:
+cdef class ntl_ZZX(object):
     r"""
     The class \class{ZZX} implements polynomials in $\Z[X]$, i.e.,
     univariate polynomials with integer coefficients.
@@ -101,7 +109,8 @@ cdef class ntl_ZZX:
     # See ntl_ZZX.pxd for definition of data members
     def __init__(self, v=None):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,5,-9])
             sage: f
             [1 2 5 -9]
@@ -127,8 +136,7 @@ cdef class ntl_ZZX:
                     cc = x
                 ZZX_SetCoeff(self.x, i, cc.x)
         else:
-            v = str(v)
-            ZZX_from_str(&self.x, v)
+            ccreadstr(self.x, str(v))
 
     def __reduce__(self):
         """
@@ -139,23 +147,18 @@ cdef class ntl_ZZX:
         """
         return unpickle_class_value, (ntl_ZZX, self.list())
 
-    def __cinit__(self):
-        ZZX_construct(&self.x)
-
-    def __dealloc__(self):
-        ZZX_destruct(&self.x)
-
     def __repr__(self):
         """
         Return the string representation of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: ntl.ZZX([1,3,0,5]).__repr__()
             '[1 3 0 5]'
         """
         cdef char * val
         val = ZZX_repr(&self.x)
-        result = str(val)
+        result = char_to_str(val)
         cpp_delete_array(val)
         return result
 
@@ -163,7 +166,8 @@ cdef class ntl_ZZX:
         """
         Return a copy of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZX([1,32])
             sage: y = copy(x)
             sage: y == x
@@ -183,7 +187,7 @@ cdef class ntl_ZZX:
             [1 4 3]
         """
         if i < 0:
-            raise IndexError, "index (i=%s) must be >= 0"%i
+            raise IndexError("index (i=%s) must be >= 0" % i)
         cdef ntl_ZZ cc
         if isinstance(a, ntl_ZZ):
             cc = a
@@ -251,11 +255,11 @@ cdef class ntl_ZZX:
 
         sage: x = ntl.ZZX([2, 3, 5, -7, 11])
         sage: i = x.getitem_as_int_doctest(3)
-        sage: print i
+        sage: i
          -7
-        sage: print type(i)
-         <type 'int'>
-        sage: print x.getitem_as_int_doctest(15)
+        sage: type(i)
+         <... 'int'>
+        sage: x.getitem_as_int_doctest(15)
          0
         """
         return self.getitem_as_int(i)
@@ -264,7 +268,8 @@ cdef class ntl_ZZX:
         r"""
         Retrieves coefficients as a list of ntl.ZZ Integers.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x = ntl.ZZX([129381729371289371237128318293718237, 2, -3, 0, 4])
             sage: L = x.list(); L
             [129381729371289371237128318293718237, 2, -3, 0, 4]
@@ -279,8 +284,9 @@ cdef class ntl_ZZX:
 
     def __add__(ntl_ZZX self, ntl_ZZX other):
         """
-        EXAMPLES:
-            sage: ntl.ZZX(range(5)) + ntl.ZZX(range(6))
+        EXAMPLES::
+
+            sage: ntl.ZZX(list(range(5))) + ntl.ZZX(list(range(6)))
             [0 2 4 6 8 5]
         """
         cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
@@ -293,8 +299,9 @@ cdef class ntl_ZZX:
 
     def __sub__(ntl_ZZX self, ntl_ZZX other):
         """
-        EXAMPLES:
-            sage: ntl.ZZX(range(5)) - ntl.ZZX(range(6))
+        EXAMPLES::
+
+            sage: ntl.ZZX(list(range(5))) - ntl.ZZX(list(range(6)))
             [0 0 0 0 0 -5]
         """
         cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
@@ -307,8 +314,9 @@ cdef class ntl_ZZX:
 
     def __mul__(ntl_ZZX self, ntl_ZZX other):
         """
-        EXAMPLES:
-            sage: ntl.ZZX(range(5)) * ntl.ZZX(range(6))
+        EXAMPLES::
+
+            sage: ntl.ZZX(list(range(5))) * ntl.ZZX(list(range(6)))
             [0 0 1 4 10 20 30 34 31 20]
         """
         cdef ntl_ZZX r = ntl_ZZX.__new__(ntl_ZZX)
@@ -321,12 +329,13 @@ cdef class ntl_ZZX:
         sig_off()
         return r
 
-    def __div__(ntl_ZZX self, ntl_ZZX other):
+    def __truediv__(ntl_ZZX self, ntl_ZZX other):
         """
         Compute quotient self / other, if the quotient is a polynomial.
         Otherwise an Exception is raised.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3]) * ntl.ZZX([4,5])**2
             sage: g = ntl.ZZX([4,5])
             sage: f/g
@@ -334,7 +343,7 @@ cdef class ntl_ZZX:
             sage: ntl.ZZX([1,2,3]) * ntl.ZZX([4,5])
             [4 13 22 15]
 
-            sage: f = ntl.ZZX(range(10)); g = ntl.ZZX([-1,0,1])
+            sage: f = ntl.ZZX(list(range(10))); g = ntl.ZZX([-1,0,1])
             sage: f/g
             Traceback (most recent call last):
             ...
@@ -345,9 +354,9 @@ cdef class ntl_ZZX:
         cdef ZZX_c* q
         q = ZZX_div(&self.x, &other.x, &divisible)
         if not divisible:
-            ZZX_delete(q)
+            del q
             sig_off()
-            raise ArithmeticError, "self (=%s) is not divisible by other (=%s)"%(self, other)
+            raise ArithmeticError("self (=%s) is not divisible by other (=%s)"%(self, other))
         result = make_ZZX_sig_off(q)
         return result
 
@@ -358,12 +367,13 @@ cdef class ntl_ZZX:
         function returns q if q lies in ZZ[X], and otherwise raises an
         Exception.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,4,6]); g = ntl.ZZX([2])
             sage: f % g   # 0
             []
 
-            sage: f = ntl.ZZX(range(10)); g = ntl.ZZX([-1,0,1])
+            sage: f = ntl.ZZX(list(range(10))); g = ntl.ZZX([-1,0,1])
             sage: f % g
             [20 25]
         """
@@ -382,8 +392,9 @@ cdef class ntl_ZZX:
         Returns the unique integral q and r such that self = q*other +
         r, if they exist.  Otherwise raises an Exception.
 
-        EXAMPLES:
-           sage: f = ntl.ZZX(range(10)); g = ntl.ZZX([-1,0,1])
+        EXAMPLES::
+
+           sage: f = ntl.ZZX(list(range(10))); g = ntl.ZZX([-1,0,1])
            sage: q, r = f.quo_rem(g)
            sage: q, r
            ([20 24 18 21 14 16 8 9], [20 25])
@@ -403,7 +414,8 @@ cdef class ntl_ZZX:
         """
         Return f*f.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([-1,0,1])
             sage: f*f
             [1 0 -2 0 1]
@@ -415,22 +427,33 @@ cdef class ntl_ZZX:
         """
         Return the n-th nonnegative power of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: g = ntl.ZZX([-1,0,1])
-            sage: g**10
+            sage: g ^ 10
             [1 0 -10 0 45 0 -120 0 210 0 -252 0 210 0 -120 0 45 0 -10 0 1]
+            sage: g ^ 0
+            [1]
+            sage: g ^ 1
+            [-1 0 1]
+            sage: g ^ (-1)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError
         """
+        if n == 0:
+            from copy import copy
+            return copy(one_ZZX)
         if n < 0:
-            raise NotImplementedError
-        import sage.groups.generic as generic
-        from copy import copy
-        return generic.power(self, n, copy(one_ZZX))
+            raise ArithmeticError
+        return generic_power_pos(self, <unsigned long>n)
 
-    def __cmp__(ntl_ZZX self, ntl_ZZX other):
+    def __richcmp__(ntl_ZZX self, other, int op):
         """
-        Decide whether or not self and other are equal.
+        Compare self to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3])
             sage: g = ntl.ZZX([1,2,3,0])
             sage: f == g
@@ -438,16 +461,26 @@ cdef class ntl_ZZX:
             sage: g = ntl.ZZX([0,1,2,3])
             sage: f == g
             False
+            sage: f == ntl.ZZ(0)
+            False
         """
-        if ZZX_equal(self.x, other.x):
-            return 0
-        return -1
+        if op != Py_EQ and op != Py_NE:
+            raise TypeError("polynomials are not ordered")
+
+        cdef ntl_ZZX b
+        try:
+            b = <ntl_ZZX?>other
+        except TypeError:
+            b = ntl_ZZX(other)
+
+        return (op == Py_EQ) == (self.x == b.x)
 
     def is_zero(self):
         """
         Return True exactly if this polynomial is 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([0,0,0,0])
             sage: f.is_zero()
             True
@@ -463,7 +496,8 @@ cdef class ntl_ZZX:
         """
         Return True exactly if this polynomial is 1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,1])
             sage: f.is_one()
             False
@@ -477,7 +511,8 @@ cdef class ntl_ZZX:
         """
         Return True exactly if this polynomial is monic.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,0,0,1])
             sage: f.is_monic()
             True
@@ -498,7 +533,9 @@ cdef class ntl_ZZX:
     def __neg__(self):
         """
         Return the negative of self.
-        EXAMPLES:
+
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,0,0,1])
             sage: -f
             [-2 0 0 -1]
@@ -510,7 +547,8 @@ cdef class ntl_ZZX:
         Return the polynomial obtained by shifting all coefficients of
         this polynomial to the left n positions.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,0,0,1])
             sage: f
             [2 0 0 1]
@@ -530,7 +568,8 @@ cdef class ntl_ZZX:
         Return the polynomial obtained by shifting all coefficients of
         this polynomial to the right n positions.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,0,0,1])
             sage: f
             [2 0 0 1]
@@ -549,7 +588,8 @@ cdef class ntl_ZZX:
         leading coefficient of f.  Also, our convention is that the
         content of 0 is 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([2,0,0,2])
             sage: f.content()
             2
@@ -573,7 +613,8 @@ cdef class ntl_ZZX:
         coefficient of the primitive part is nonnegative, and the primitive
         part of 0 is 0.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([6,12,3,9])
             sage: f.primitive_part()
             [2 4 1 3]
@@ -596,7 +637,8 @@ cdef class ntl_ZZX:
         deg(b), and \code{LeadCoeff(b)\^(deg(a)-deg(b)+1) a = b q + r}.
         Only the classical algorithm is used.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([0,1])
             sage: g = ntl.ZZX([1,2,3])
             sage: g.pseudo_quo_rem(f)
@@ -619,7 +661,8 @@ cdef class ntl_ZZX:
         Return the gcd d = gcd(a, b), where by convention the leading coefficient
         of d is >= 0.  We use a multi-modular algorithm.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3]) * ntl.ZZX([4,5])**2
             sage: g = ntl.ZZX([1,1,1])**3 * ntl.ZZX([1,2,3])
             sage: f.gcd(g)
@@ -634,7 +677,8 @@ cdef class ntl_ZZX:
         """
         Return the least common multiple of self and other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: x1 = ntl.ZZX([-1,0,0,1])
             sage: x2 = ntl.ZZX([-1,0,0,0,0,0,1])
             sage: x1.lcm(x2)
@@ -662,7 +706,8 @@ cdef class ntl_ZZX:
         $2^{-80}$.
 
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3]) * ntl.ZZX([4,5])**2
             sage: g = ntl.ZZX([1,1,1])**3 * ntl.ZZX([1,2,3])
             sage: f.xgcd(g)   # nothing since they are not coprime
@@ -691,11 +736,12 @@ cdef class ntl_ZZX:
         Return the degree of this polynomial.  The degree of the 0
         polynomial is -1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([5,0,1])
             sage: f.degree()
             2
-            sage: f = ntl.ZZX(range(100))
+            sage: f = ntl.ZZX(list(range(100)))
             sage: f.degree()
             99
             sage: f = ntl.ZZX()
@@ -711,7 +757,8 @@ cdef class ntl_ZZX:
         """
         Return the leading coefficient of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([3,6,9])
             sage: f.leading_coefficient()
             9
@@ -727,7 +774,8 @@ cdef class ntl_ZZX:
         """
         Return the constant coefficient of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([3,6,9])
             sage: f.constant_term()
             3
@@ -743,7 +791,8 @@ cdef class ntl_ZZX:
         """
         Set this polynomial to the monomial "x".
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX()
             sage: f.set_x()
             sage: f
@@ -762,7 +811,8 @@ cdef class ntl_ZZX:
         """
         True if this is the polynomial "x".
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX()
             sage: f.set_x()
             sage: f.is_x()
@@ -780,7 +830,8 @@ cdef class ntl_ZZX:
         """
         Return the derivative of this polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,7,0,13])
             sage: f.derivative()
             [7 0 39]
@@ -793,7 +844,8 @@ cdef class ntl_ZZX:
         of this polynomial.  If hi is set then this function behaves
         as if this polynomial has degree hi.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3,4,5])
             sage: f.reverse()
             [5 4 3 2 1]
@@ -814,7 +866,8 @@ cdef class ntl_ZZX:
         Return the truncation of this polynomial obtained by
         removing all terms of degree >= m.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3,4,5])
             sage: f.truncate(3)
             [1 2 3]
@@ -839,7 +892,8 @@ cdef class ntl_ZZX:
         """
         Return self*other but with terms of degree >= m removed.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3,4,5])
             sage: g = ntl.ZZX([10])
             sage: f.multiply_and_truncate(g, 2)
@@ -856,7 +910,8 @@ cdef class ntl_ZZX:
         """
         Return self*self but with terms of degree >= m removed.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3,4,5])
             sage: f.square_and_truncate(4)
             [1 4 10 20]
@@ -873,7 +928,8 @@ cdef class ntl_ZZX:
         Compute and return the inverse of self modulo $x^m$.
         The constant term of self must be 1 or -1.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3,4,5,6,7])
             sage: f.invert_and_truncate(20)
             [1 -2 1 0 0 0 0 8 -23 22 -7 0 0 0 64 -240 337 -210 49]
@@ -882,11 +938,10 @@ cdef class ntl_ZZX:
             [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -512 1344 -1176 343]
         """
         if m < 0:
-            raise ArithmeticError, "m (=%s) must be positive"%m
+            raise ArithmeticError("m (=%s) must be positive" % m)
         n = self.constant_term()
         if n != ntl_ZZ(1) and n != ntl_ZZ(-1):
-            raise ArithmeticError, \
-                  "The constant term of self must be 1 or -1."
+            raise ArithmeticError("The constant term of self must be 1 or -1.")
         sig_on()
         return make_ZZX_sig_off(ZZX_invert_and_truncate(&self.x, m))
 
@@ -895,7 +950,8 @@ cdef class ntl_ZZX:
         Return self*other % modulus.  The modulus must be monic with
         deg(modulus) > 0, and self and other must have smaller degree.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: modulus = ntl.ZZX([1,2,0,1])    # must be monic
             sage: g = ntl.ZZX([-1,0,1])
             sage: h = ntl.ZZX([3,7,13])
@@ -911,7 +967,8 @@ cdef class ntl_ZZX:
         The modulus must be monic, and of positive degree degree bigger
         than the degree of self.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,0,3])
             sage: mod = ntl.ZZX([5,3,-1,1,1])
             sage: f.trace_mod(mod)
@@ -926,12 +983,14 @@ cdef class ntl_ZZX:
         monomial x modulo this polynomial for i = 0, ..., deg(f)-1.
         This polynomial must be monic.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,0,3,0,1])
             sage: f.trace_list()
             [5, 0, -6, 0, 10]
 
-        The input polynomial must be monic or a ValueError is raised:
+        The input polynomial must be monic or a ValueError is raised::
+
             sage: f = ntl.ZZX([1,2,0,3,0,2])
             sage: f.trace_list()
             Traceback (most recent call last):
@@ -939,11 +998,13 @@ cdef class ntl_ZZX:
             ValueError: polynomial must be monic.
         """
         if not self.is_monic():
-            raise ValueError, "polynomial must be monic."
+            raise ValueError("polynomial must be monic.")
         sig_on()
         cdef char* t
         t = ZZX_trace_list(&self.x)
-        return eval(string_delete(t).replace(' ', ','))
+        r = eval(char_to_str(t).replace(' ', ','))
+        string_delete(t)
+        return r
 
     def resultant(self, ntl_ZZX other, proof=None):
         """
@@ -953,7 +1014,8 @@ cdef class ntl_ZZX:
         randomized strategy that errors with probability no more than
         $2^{-80}$.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([17,0,1,1])
             sage: g = ntl.ZZX([34,-17,18,2])
             sage: f.resultant(g)
@@ -962,26 +1024,30 @@ cdef class ntl_ZZX:
             1345873
         """
         proof = proof_flag(proof)
-        # NOTES: Within a factor of 2 in speed compared to MAGMA.
+        # NOTE: Within a factor of 2 in speed compared to MAGMA.
         sig_on()
         return make_ZZ_sig_off(ZZX_resultant(&self.x, &other.x, proof))
 
     def norm_mod(self, ntl_ZZX modulus, proof=None):
         """
-        Return the norm of this polynomial modulo the modulus.  The
-        modulus must be monic, and of positive degree strictly greater
-        than the degree of self.  If proof=False (the default is
-        proof=None, see proof.polynomial or sage.structure.proof, but
-        the global default is proof=True) then it may use a randomized
-        strategy that errors with probability no more than $2^{-80}$.
+        Return the norm of this polynomial modulo the modulus.
 
-        EXAMPLE:
+        The modulus must be monic, and of positive degree strictly
+        greater than the degree of self.  If proof=False (the default
+        is proof=None, see proof.polynomial or sage.structure.proof,
+        but the global default is proof=True) then it may use a
+        randomized strategy that errors with probability no more than
+        $2^{-80}$.
+
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,0,3])
             sage: mod = ntl.ZZX([-5,2,0,0,1])
             sage: f.norm_mod(mod)
             -8846
 
-        The norm is the constant term of the characteristic polynomial.
+        The norm is the constant term of the characteristic polynomial::
+
             sage: f.charpoly_mod(mod)
             [-8846 -594 -60 14 1]
         """
@@ -1002,7 +1068,8 @@ cdef class ntl_ZZX:
         randomized strategy that errors with probability no more than
         $2^{-80}$.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,0,3])
             sage: f.discriminant()
             -339
@@ -1027,7 +1094,8 @@ cdef class ntl_ZZX:
         randomized strategy that errors with probability no more than
         $2^{-80}$.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,0,3])
             sage: mod = ntl.ZZX([-5,2,0,0,1])
             sage: f.charpoly_mod(mod)
@@ -1045,14 +1113,16 @@ cdef class ntl_ZZX:
         self.  In all cases, this function may use a randomized
         strategy that errors with probability no more than $2^{-80}$.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([0,0,1])
             sage: g = f*f
             sage: f.charpoly_mod(g)
             [0 0 0 0 1]
 
         However, since $f^2 = 0$ modulo $g$, its minimal polynomial
-        is of degree $2$.
+        is of degree $2$::
+
             sage: f.minpoly_mod_noproof(g)
             [0 0 1]
         """
@@ -1063,7 +1133,8 @@ cdef class ntl_ZZX:
         """
         Reset this polynomial to 0.  Changes this polynomial in place.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3])
             sage: f
             [1 2 3]
@@ -1081,7 +1152,8 @@ cdef class ntl_ZZX:
         the polynomial grows.  (You might save a millisecond with this
         function.)
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([1,2,3])
             sage: f.preallocate_space(20)
             sage: f
@@ -1102,7 +1174,8 @@ cdef class ntl_ZZX:
         is a factor, and the second is its exponent.
         Assumes that self is primitive.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: f = ntl.ZZX([0, 1, 2, 1])
             sage: f.squarefree_decomposition()
             [([0 1], 1), ([1 1], 2)]
@@ -1116,8 +1189,8 @@ cdef class ntl_ZZX:
         F = []
         for i from 0 <= i < n:
             F.append((make_ZZX(v[i]), e[i]))
-        sage_free(v)
-        sage_free(e)
+        sig_free(v)
+        sig_free(e)
         return F
 
 

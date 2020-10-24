@@ -11,12 +11,10 @@ Next we illustrate how to load programs written in a separate file
 into Sage. Create a file called ``example.sage`` with the following
 content:
 
-.. skip
+.. CODE-BLOCK:: python
 
-::
-
-    print "Hello World"
-    print 2^3
+    print("Hello World")
+    print(2^3)
 
 You can read in and execute ``example.sage`` file using the ``load``
 command.
@@ -57,16 +55,16 @@ and replacing e.g., ``R.2`` by ``R.gen(2)``. The converted version of
 and is called ``example.sage.py``. This file contains the following
 code:
 
-::
+.. CODE-BLOCK:: python
 
-    print "Hello World"
-    print Integer(2)**Integer(3)
+    print("Hello World")
+    print(Integer(2)**Integer(3))
 
 Integer literals are wrapped and the ``^`` is replaced by a ``**``.
 (In Python ``^`` means "exclusive or" and ``**`` means
 "exponentiation".)
 
-This preparsing is implemented in ``sage/misc/interpreter.py``.)
+(This preparsing is implemented in ``sage/misc/interpreter.py``.)
 
 You can paste multi-line indented code into Sage as long as there
 are newlines to make new blocks (this is not necessary in files).
@@ -108,7 +106,7 @@ NO Sage preparsing is applied to spyx files, e.g., ``1/3`` will result in
 ``foo`` is a function in the Sage library, to use it from a spyx file
 import ``sage.all`` and use ``sage.all.foo``.
 
-::
+.. CODE-BLOCK:: python
 
     import sage.all
     def foo(n):
@@ -123,7 +121,7 @@ in the same directory with contents:
 
 The pure C code: ``test.c``
 
-::
+.. CODE-BLOCK:: c
 
     int add_one(int n) {
       return n + 1;
@@ -131,7 +129,7 @@ The pure C code: ``test.c``
 
 The Cython code: ``test.spyx``:
 
-::
+.. CODE-BLOCK:: cython
 
     cdef extern from "test.c":
         int add_one(int n)
@@ -163,29 +161,27 @@ Standalone Python/Sage Scripts
 The following standalone Sage script factors integers, polynomials,
 etc:
 
-::
+.. CODE-BLOCK:: python
 
-    #!/usr/bin/env sage -python
+    #!/usr/bin/env sage
 
     import sys
     from sage.all import *
 
     if len(sys.argv) != 2:
-        print "Usage: %s <n>"%sys.argv[0]
-        print "Outputs the prime factorization of n."
+        print("Usage: %s <n>" % sys.argv[0])
+        print("Outputs the prime factorization of n.")
         sys.exit(1)
 
-    print factor(sage_eval(sys.argv[1]))
+    print(factor(sage_eval(sys.argv[1])))
 
 In order to use this script, your ``SAGE_ROOT`` must be in your PATH.
 If the above script is called ``factor``, here is an example usage:
 
-::
+.. CODE-BLOCK:: shell-session
 
-    bash $ ./factor 2006
+    $ ./factor 2006
     2 * 17 * 59
-    bash $ ./factor "32*x^5-1"
-    (2*x - 1) * (16*x^4 + 8*x^3 + 4*x^2 + 2*x + 1)
 
 Data Types
 ==========
@@ -198,17 +194,17 @@ ints and floats, as illustrated:
 ::
 
     sage: s = "sage"; type(s)
-    <type 'str'>
+    <... 'str'>
     sage: s = 'sage'; type(s)      # you can use either single or double quotes
-    <type 'str'>
+    <... 'str'>
     sage: s = [1,2,3,4]; type(s)
-    <type 'list'>
+    <... 'list'>
     sage: s = (1,2,3,4); type(s)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: s = int(2006); type(s)
-    <type 'int'>
+    <... 'int'>
     sage: s = float(2006); type(s)
-    <type 'float'>
+    <... 'float'>
 
 To this, Sage adds many other types. E.g., vector spaces:
 
@@ -288,7 +284,7 @@ elements of the list are indexed starting from :math:`0`:
     sage: v = [2, 3, 5, 'x', SymmetricGroup(3)]; v
     [2, 3, 5, 'x', Symmetric group of order 3! as a permutation group]
     sage: type(v)
-    <type 'list'>
+    <... 'list'>
     sage: v[0]
     2
     sage: v[2]
@@ -315,7 +311,7 @@ Integers):
 
 ::
 
-    sage: range(1, 15)
+    sage: range(1, 15)  # py2
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 This is useful when using list comprehensions to construct lists:
@@ -323,7 +319,7 @@ This is useful when using list comprehensions to construct lists:
 ::
 
     sage: L = [factor(n) for n in range(1, 15)]
-    sage: print L
+    sage: L
     [1, 2, 3, 2^2, 5, 2 * 3, 7, 2^3, 3^2, 2 * 5, 11, 2^2 * 3, 13, 2 * 7]
     sage: L[12]
     13
@@ -345,7 +341,7 @@ starting at the :math:`m^{th}` element and stopping at the
     sage: L = [factor(n) for n in range(1, 20)]
     sage: L[4:9]
     [5, 2 * 3, 7, 2^3, 3^2]
-    sage: print L[:4]
+    sage: L[:4]
     [1, 2, 3, 2^2]
     sage: L[14:4]
     []
@@ -361,7 +357,7 @@ they can't be changed.
     sage: v = (1,2,3,4); v
     (1, 2, 3, 4)
     sage: type(v)
-    <type 'tuple'>
+    <... 'tuple'>
     sage: v[1] = 5
     Traceback (most recent call last):
     ...
@@ -404,7 +400,7 @@ used:
     sage: list(v)
     [1, 2, 3, 4/5]
     sage: type(list(v))
-    <type 'list'>
+    <... 'list'>
 
 As another example, basis for vector spaces are immutable
 sequences, since it's important that you don't change them.
@@ -440,9 +436,9 @@ arbitrary objects.
 
     sage: d = {1:5, 'sage':17, ZZ:GF(7)}
     sage: type(d)
-    <type 'dict'>
-    sage: d.keys()
-     [1, 'sage', Integer Ring]
+    <... 'dict'>
+    sage: list(d.keys())
+    [1, 'sage', Integer Ring]
     sage: d['sage']
     17
     sage: d[ZZ]
@@ -459,7 +455,7 @@ You can turn the above dictionary into a list with the same data:
 
 ::
 
-    sage: d.items()
+    sage: list(d.items())
     [(1, 5), ('sage', 17), (Integer Ring, Finite Field of size 7)]
 
 A common idiom is to iterate through the pairs in a dictionary:
@@ -467,7 +463,7 @@ A common idiom is to iterate through the pairs in a dictionary:
 ::
 
     sage: d = {2:4, 3:9, 4:16}
-    sage: [a*b for a, b in d.iteritems()]
+    sage: [a*b for a, b in d.items()]
     [8, 27, 64]
 
 A dictionary is unordered, as the last output illustrates.
@@ -511,7 +507,7 @@ example,
     {1, 2/3}
     sage: X.intersection(Y)
     {1}
-    sage: print latex(Y)
+    sage: print(latex(Y))
     \left\{1, \frac{2}{3}\right\}
     sage: Set(ZZ)
     Set of elements of Integer Ring
@@ -526,7 +522,8 @@ nonnegative integers up to :math:`10000000`.
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))
+    sage: v = (n^2 for n in xrange(10000000))  # py2
+    sage: v = (n^2 for n in range(10000000))  # py3
     sage: next(v)
     0
     sage: next(v)
@@ -570,7 +567,7 @@ Loops, Functions, Control Statements, and Comparisons
 We have seen a few examples already of some common uses of ``for``
 loops. In Python, a ``for`` loop has an indented structure, such as
 
-::
+.. CODE-BLOCK:: pycon
 
     >>> for i in range(5):
     ...     print(i)
@@ -653,16 +650,6 @@ convert both numbers into the same type if possible:
     True
     True
 
-Almost any two objects may be compared; there is no assumption that
-the objects are equipped with a total ordering.
-
-::
-
-    sage: 2 < CC(3.1,1)
-    True
-    sage: 5 < VectorSpace(QQ,3)   # output can be somewhat random
-    True
-
 Use bool for symbolic inequalities:
 
 ::
@@ -684,7 +671,7 @@ the Python int ``1`` is unique, but the Sage Integer ``1`` is not:
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)
+    sage: int(1) is int(2)/int(2)   # py2
     True
     sage: 1 is 1
     False
@@ -819,11 +806,9 @@ visualization.
 
 On a system shell, type
 
-.. skip
+.. CODE-BLOCK:: shell-session
 
-::
-
-    hotshot2calltree -o cachegrind.out.42 pythongrind.prof
+    $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 
 The output file ``cachegrind.out.42`` can now be examined with
 ``kcachegrind``. Please note that the naming convention

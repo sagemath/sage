@@ -1,5 +1,5 @@
 """
-Matching games.
+Matching games
 
 This module implements a class for matching games (stable marriage problems)
 [DI1989]_. At present the extended Gale-Shapley algorithm is implemented
@@ -23,6 +23,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ
 from copy import deepcopy
 from sage.graphs.bipartite_graph import BipartiteGraph
+
 
 class MatchingGame(SageObject):
     r"""
@@ -96,9 +97,9 @@ class MatchingGame(SageObject):
         sage: m
         A matching game with 4 suitors and 4 reviewers
         sage: m.suitors()
-        ('K', 'J', 'M', 'L')
+        ('J', 'K', 'L', 'M')
         sage: m.reviewers()
-        ('A', 'C', 'B', 'D')
+        ('A', 'B', 'C', 'D')
 
     A matching `M` is any bijection between `S` and `R`. If `s \in S` and
     `r \in R` are matched by `M` we denote:
@@ -136,12 +137,12 @@ class MatchingGame(SageObject):
     It is possible to initiate a matching game without having to name each
     suitor and reviewer::
 
-        sage: n = 10
+        sage: n = 8
         sage: big_game = MatchingGame(n)
         sage: big_game.suitors()
-        (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        (1, 2, 3, 4, 5, 6, 7, 8)
         sage: big_game.reviewers()
-        (-1, -2, -3, -4, -5, -6, -7, -8, -9, -10)
+        (-1, -2, -3, -4, -5, -6, -7, -8)
 
     If we attempt to obtain the stable matching for the above game,
     without defining the preference function we obtain an error::
@@ -162,7 +163,7 @@ class MatchingGame(SageObject):
         ....:     big_game.suitors()[player].pref = suitr_preferences[player]
         ....:     big_game.reviewers()[player].pref = revr_preferences[-player]
         sage: big_game.solve()
-        {1: -1, 2: -8, 3: -9, 4: -10, 5: -7, 6: -6, 7: -5, 8: -4, 9: -3, 10: -2}
+        {1: -1, 2: -8, 3: -6, 4: -7, 5: -5, 6: -4, 7: -3, 8: -2}
 
     Note that we can also combine the two ways of creating a game. For example
     here is an initial matching game::
@@ -179,9 +180,9 @@ class MatchingGame(SageObject):
         sage: g.add_reviewer()
         sage: g.add_suitor()
         sage: g.reviewers()
-        ('Rosaline', 'Juliet', -3)
+        (-3, 'Juliet', 'Rosaline')
         sage: g.suitors()
-        ('Mercutio', 'Romeo', 3)
+        (3, 'Mercutio', 'Romeo')
 
     Note that when adding a reviewer or a suitor all preferences are wiped::
 
@@ -199,15 +200,15 @@ class MatchingGame(SageObject):
         ValueError: suitor preferences are not complete
 
     Here we update the preferences so that the new reviewers and suitors
-    don't affect things too much (they prefer each other and are the least
+    do not affect things too much (they prefer each other and are the least
     preferred of the others)::
 
-        sage: g.suitors()[0].pref = suitrs['Mercutio'] + (-3,)
-        sage: g.suitors()[1].pref = suitrs['Romeo'] + (-3,)
-        sage: g.suitors()[2].pref = (-3, 'Juliet', 'Rosaline')
-        sage: g.reviewers()[0].pref = revwrs['Rosaline'] + (3,)
+        sage: g.suitors()[1].pref = suitrs['Mercutio'] + (-3,)
+        sage: g.suitors()[2].pref = suitrs['Romeo'] + (-3,)
+        sage: g.suitors()[0].pref = (-3, 'Juliet', 'Rosaline')
+        sage: g.reviewers()[2].pref = revwrs['Rosaline'] + (3,)
         sage: g.reviewers()[1].pref = revwrs['Juliet'] + (3,)
-        sage: g.reviewers()[2].pref = (3, 'Romeo', 'Mercutio')
+        sage: g.reviewers()[0].pref = (3, 'Romeo', 'Mercutio')
 
     Now the game can be solved::
 
@@ -268,10 +269,10 @@ class MatchingGame(SageObject):
         ....:                 'C': ('K', 'M', 'L', 'J'),
         ....:                 'D': ('M', 'K', 'J', 'L')}
         sage: m = MatchingGame([suitr_pref, reviewr_pref])
-        sage: m._suitors
-        ['K', 'J', 'M', 'L']
-        sage: m._reviewers
-        ['A', 'C', 'B', 'D']
+        sage: m.suitors()
+        ('J', 'K', 'L', 'M')
+        sage: m.reviewers()
+        ('A', 'B', 'C', 'D')
 
     Also works for numbers::
 
@@ -318,13 +319,6 @@ class MatchingGame(SageObject):
         ....:   r.pref = (1, 2, 3)
         sage: g.solve()
         {1: -1, 2: -2, 3: -3}
-
-
-    REFERENCES:
-
-    .. [DI1989]  Dan Gusfield and Robert W. Irving.
-       *The stable marriage problem: structure and algorithms*.
-       Vol. 54. Cambridge: MIT press, 1989.
     """
     def __init__(self, generator, revr=None):
         r"""
@@ -397,8 +391,8 @@ class MatchingGame(SageObject):
             sage: M
             A matching game with 2 suitors and 2 reviewers
         """
-        return 'A matching game with {} suitors and {} reviewers'.format(
-                    len(self._suitors), len(self._reviewers))
+        txt = 'A matching game with {} suitors and {} reviewers'
+        return txt.format(len(self._suitors), len(self._reviewers))
 
     def _latex_(self):
         r"""
@@ -424,10 +418,10 @@ class MatchingGame(SageObject):
         """
         output = "\\text{Suitors:}\n\\begin{aligned}"
         for suitor in self._suitors:
-            output += "\n\\\\ %s & \\to %s"%(suitor, suitor.pref)
+            output += "\n\\\\ %s & \\to %s" % (suitor, suitor.pref)
         output += "\n\\end{aligned}\n\\text{Reviewers:}\n\\begin{aligned}"
         for reviewer in self._reviewers:
-            output += "\n\\\\ %s & \\to %s"%(reviewer, reviewer.pref)
+            output += "\n\\\\ %s & \\to %s" % (reviewer, reviewer.pref)
         return output + "\n\\end{aligned}"
 
     def __eq__(self, other):
@@ -474,7 +468,7 @@ class MatchingGame(SageObject):
             sage: g1.reviewers()
             (-1, -2, -3)
             sage: g1.suitors()
-            (1, 3, 2)
+            (1, 2, 3)
 
             sage: g2 = MatchingGame(1)
             sage: g2.add_reviewer(-2)
@@ -493,22 +487,12 @@ class MatchingGame(SageObject):
                 and set(self._suitors) == set(other._suitors)
                 and set(self._reviewers) == set(other._reviewers)
                 and all(r1.pref == r2.pref for r1, r2 in
-                    zip(set(self._reviewers), set(other._reviewers)))
+                        zip(set(self._reviewers), set(other._reviewers)))
                 and all(s1.pref == s2.pref for s1, s2 in
-                    zip(set(self._suitors), set(other._suitors))))
+                        zip(set(self._suitors), set(other._suitors))))
 
-    def __hash__(self):
-        """
-        Raise an error because this is mutable.
-
-        EXAMPLES::
-
-            sage: hash(MatchingGame(3))
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable because matching games are mutable
-        """
-        raise TypeError("unhashable because matching games are mutable")
+    __hash__ = None
+   # not hashable because this is mutable.
 
     def plot(self):
         r"""
@@ -689,7 +673,7 @@ class MatchingGame(SageObject):
         r"""
         Add a suitor to the game.
 
-        INPUTS:
+        INPUT:
 
         - ``name`` -- can be a string or a number; if left blank will
           automatically generate an integer
@@ -760,7 +744,7 @@ class MatchingGame(SageObject):
         r"""
         Add a reviewer to the game.
 
-        INPUTS:
+        INPUT:
 
         - ``name`` -- can be a string or number; if left blank will
           automatically generate an integer
@@ -809,11 +793,11 @@ class MatchingGame(SageObject):
             ....:         -3: (1, 0)}
             sage: g = MatchingGame([suit, revr])
             sage: g.reviewers()
-            (-3, -1)
+            (-1, -3)
 
             sage: g.add_reviewer()
             sage: g.reviewers()
-            (-3, -1, -4)
+            (-1, -3, -4)
         """
         if name is None:
             name = -len(self._reviewers) - 1
@@ -837,7 +821,7 @@ class MatchingGame(SageObject):
             sage: g.suitors()
             (1, 2)
         """
-        return tuple(self._suitors)
+        return tuple(sorted(self._suitors, key=lambda s:str(s._name)))
 
     def reviewers(self):
         """
@@ -849,7 +833,7 @@ class MatchingGame(SageObject):
             sage: g.reviewers()
             (-1, -2)
         """
-        return tuple(self._reviewers)
+        return tuple(sorted(self._reviewers, key=lambda r:str(r._name)))
 
     def solve(self, invert=False):
         r"""
@@ -950,8 +934,8 @@ class MatchingGame(SageObject):
             self._sol_dict[r] = [r.partner]
 
         if invert:
-            return {key:self._sol_dict[key][0] for key in self._reviewers}
-        return {key:self._sol_dict[key][0] for key in self._suitors}
+            return {key: self._sol_dict[key][0] for key in self._reviewers}
+        return {key: self._sol_dict[key][0] for key in self._suitors}
 
 
 class Player(object):

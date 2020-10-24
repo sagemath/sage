@@ -1,5 +1,17 @@
 r"""
-Factories to construct Function Fields
+Factories to construct function fields
+
+This module provides factories to construct function fields. These factories
+are only for internal use.
+
+EXAMPLES::
+
+    sage: K.<x> = FunctionField(QQ); K
+    Rational function field in x over Rational Field
+    sage: L.<x> = FunctionField(QQ); L
+    Rational function field in x over Rational Field
+    sage: K is L
+    True
 
 AUTHORS:
 
@@ -11,15 +23,8 @@ AUTHORS:
 - Julian Rueth (2011-09-14): replaced ``@cached_function`` with
   ``UniqueFactory``
 
-EXAMPLES::
-
-    sage: K.<x> = FunctionField(QQ); K
-    Rational function field in x over Rational Field
-    sage: L.<x> = FunctionField(QQ); L
-    Rational function field in x over Rational Field
-    sage: K is L
-    True
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -42,7 +47,7 @@ class FunctionFieldFactory(UniqueFactory):
 
     INPUT:
 
-    - ``F`` -- a field
+    - ``F`` -- field
 
     - ``names`` -- name of variable as a string or a tuple containing a string
 
@@ -69,7 +74,7 @@ class FunctionFieldFactory(UniqueFactory):
         sage: K is N
         False
     """
-    def create_key(self,F,names):
+    def create_key(self, F, names):
         """
         Given the arguments and keywords, create a key that uniquely
         determines this object.
@@ -78,28 +83,35 @@ class FunctionFieldFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ) # indirect doctest
         """
-        if not isinstance(names,tuple):
+        if not isinstance(names, tuple):
             names=(names,)
-        return (F,names)
+        return (F, names)
 
-    def create_object(self,version,key,**extra_args):
+    def create_object(self, version, key,**extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
 
         EXAMPLES::
 
-            sage: K.<x> = FunctionField(QQ)
-            sage: L.<x> = FunctionField(QQ)
+            sage: K.<x> = FunctionField(QQ)  # indirect doctest
+            sage: L.<x> = FunctionField(QQ)  # indirect doctest
             sage: K is L
             True
         """
-        from function_field import RationalFunctionField
-        return RationalFunctionField(key[0],names=key[1])
+        if key[0].is_finite():
+            from .function_field import RationalFunctionField_global
+            return RationalFunctionField_global(key[0], names=key[1])
+        elif key[0].characteristic() == 0:
+            from .function_field import RationalFunctionField_char_zero
+            return RationalFunctionField_char_zero(key[0], names=key[1])
+        else:
+            from .function_field import RationalFunctionField
+            return RationalFunctionField(key[0], names=key[1])
 
 FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
 
-class FunctionFieldPolymodFactory(UniqueFactory):
+class FunctionFieldExtensionFactory(UniqueFactory):
     """
     Create a function field defined as an extension of another
     function field by adjoining a root of a univariate polynomial.
@@ -109,11 +121,11 @@ class FunctionFieldPolymodFactory(UniqueFactory):
 
     INPUT:
 
-    - ``polynomial`` -- a univariate polynomial over a function field
+    - ``polynomial`` -- univariate polynomial over a function field
 
     - ``names`` -- variable names (as a tuple of length 1 or string)
 
-    - ``category`` -- a category (defaults to category of function fields)
+    - ``category`` -- category (defaults to category of function fields)
 
     EXAMPLES::
 
@@ -122,8 +134,8 @@ class FunctionFieldPolymodFactory(UniqueFactory):
         sage: y2 = y*1
         sage: y2 is y
         False
-        sage: L.<w>=K.extension(x-y^2)
-        sage: M.<w>=K.extension(x-y2^2)
+        sage: L.<w>=K.extension(x - y^2)
+        sage: M.<w>=K.extension(x - y2^2)
         sage: L is M
         True
     """
@@ -135,8 +147,8 @@ class FunctionFieldPolymodFactory(UniqueFactory):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: R.<y>=K[]
-            sage: L.<w> = K.extension(x-y^2) # indirect doctest
+            sage: R.<y> = K[]
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest
 
         TESTS:
 
@@ -144,11 +156,11 @@ class FunctionFieldPolymodFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2-x)
+            sage: L.<y> = K.extension(y^2 - x)
             sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z-1)
+            sage: M.<z> = L.extension(z - 1)
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z-1)
+            sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
 
@@ -167,14 +179,33 @@ class FunctionFieldPolymodFactory(UniqueFactory):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: R.<y>=K[]
-            sage: L.<w> = K.extension(x-y^2) # indirect doctest
+            sage: R.<y> = K[]
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest
             sage: y2 = y*1
-            sage: M.<w> = K.extension(x-y2^2) # indirect doctest
+            sage: M.<w> = K.extension(x - y2^2) # indirect doctest
             sage: L is M
             True
         """
-        from function_field import FunctionField_polymod
-        return FunctionField_polymod(key[0],names=key[1])
+        from . import function_field
+        f = key[0]
+        names = key[1]
+        base_field = f.base_ring()
+        if isinstance(base_field, function_field.RationalFunctionField):
+            k = base_field.constant_field()
+            if k.is_finite(): # then we are in positive characteristic
+                # irreducible and separable
+                if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
+                    # monic and integral
+                    if f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
+                        return function_field.FunctionField_global_integral(f, names)
+                    else:
+                        return function_field.FunctionField_global(f, names)
+            elif k.characteristic() == 0:
+                if f.is_irreducible() and f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
+                    return function_field.FunctionField_char_zero_integral(f, names)
+                else:
+                    return function_field.FunctionField_char_zero(f, names)
+        return function_field.FunctionField_polymod(f, names)
 
-FunctionField_polymod=FunctionFieldPolymodFactory("sage.rings.function_field.constructor.FunctionField_polymod")
+FunctionFieldExtension=FunctionFieldExtensionFactory(
+    "sage.rings.function_field.constructor.FunctionFieldExtension")

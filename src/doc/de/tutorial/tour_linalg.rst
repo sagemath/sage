@@ -136,7 +136,7 @@ Wir erzeugen den Raum :math:`\text{Mat}_{3\times 3}(\QQ)` der  `3 \times
 ``MatrixSpace(QQ,3,4)`` benutzen. Falls die Anzahl der Spalten nicht
 angegeben wurde, ist diese standardmäßig gleich der Anzahl der Zeilen,
 so dass ``MatrixSpace(QQ,3)`` ein Synonym für ``MatrixSpace(QQ,3,3)``
-ist.) Der Matrizenraum hat eine Basis, die Sage als Liste speichert:
+ist.) Der Matrizenraum ist mit seiner kanonischen Basis ausgestattet:
 
 .. link
 
@@ -145,7 +145,7 @@ ist.) Der Matrizenraum hat eine Basis, die Sage als Liste speichert:
     sage: B = M.basis()
     sage: len(B)
     9
-    sage: B[1]
+    sage: B[0,1]
     [0 1 0]
     [0 0 0]
     [0 0 0]
@@ -255,4 +255,4 @@ Beachten Sie, dass Python zwischen Klein- und Großschreibung unterscheidet:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: __classcall__() got an unexpected keyword argument 'Sparse'
+    TypeError: __init__() got an unexpected keyword argument 'Sparse'

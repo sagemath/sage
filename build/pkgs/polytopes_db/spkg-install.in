@@ -1,0 +1,1 @@
+sdh_install src/* "$SAGE_SHARE"/reflexive_polytopes

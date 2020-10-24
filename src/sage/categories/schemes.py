@@ -1,19 +1,19 @@
 r"""
 Schemes
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
-from sage.categories.homsets import HomsetsCategory
 from sage.categories.sets_cat import Sets
+
 
 class Schemes(Category):
     """
@@ -108,14 +108,14 @@ class Schemes(Category):
         We create a scheme morphism from a ring homomorphism.x::
 
             sage: phi = ZZ.hom(QQ); phi
-            Ring Coercion morphism:
+            Natural morphism:
               From: Integer Ring
               To:   Rational Field
             sage: f = S(phi); f                 # indirect doctest
             Affine Scheme morphism:
               From: Spectrum of Rational Field
               To:   Spectrum of Integer Ring
-              Defn: Ring Coercion morphism:
+              Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
 
@@ -127,7 +127,7 @@ class Schemes(Category):
             Affine Scheme morphism:
               From: Spectrum of Rational Field
               To:   Spectrum of Integer Ring
-              Defn: Ring Coercion morphism:
+              Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
 
@@ -138,12 +138,14 @@ class Schemes(Category):
         from sage.schemes.generic.morphism import is_SchemeMorphism
         if is_SchemeMorphism(x):
             return x
-        from sage.rings.morphism import is_RingHomomorphism
-        from sage.rings.commutative_ring import is_CommutativeRing
+        from sage.rings.ring import CommutativeRing
         from sage.schemes.generic.spec import Spec
-        if is_CommutativeRing(x):
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
+        if isinstance(x, CommutativeRing):
             return Spec(x)
-        elif is_RingHomomorphism(x):
+        elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
+            # x is a morphism of Rings
             A = Spec(x.codomain())
             return A.hom(x)
         else:

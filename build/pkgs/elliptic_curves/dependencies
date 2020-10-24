@@ -1,4 +1,4 @@
-| $(INST)/$(SQLITE) $(INST)/$(PYTHON)
+| sqlite $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

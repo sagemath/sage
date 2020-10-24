@@ -1,7 +1,8 @@
 r"""
 Partition backtrack functions for sets
 
-DOCTEST:
+EXAMPLES::
+
     sage: import sage.groups.perm_gps.partn_ref.refinement_sets
 
 REFERENCE:
@@ -16,13 +17,19 @@ REFERENCE:
 """
 
 #*****************************************************************************
-#      Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'data_structures_pyx.pxi' # includes bitsets
+from .data_structures cimport *
+from .double_coset cimport double_coset
+from sage.data_structures.bitset_base cimport *
+
 
 def set_stab_py(generators, sett, relab=False):
     r"""
@@ -136,32 +143,32 @@ def set_stab_py(generators, sett, relab=False):
     cdef int i, j, n = len(generators[0]), n_gens = len(generators)
     cdef StabilizerChain *supergroup = SC_new(n)
     cdef aut_gp_and_can_lab *stabilizer
-    cdef int *gens = <int *> sage_malloc(n*n_gens * sizeof(int))
-    cdef subset *subset_sett = <subset *> sage_malloc(sizeof(subset))
+    cdef int *gens = <int *> sig_malloc(n*n_gens * sizeof(int))
+    cdef subset *subset_sett = <subset *> sig_malloc(sizeof(subset))
     if gens is NULL or supergroup is NULL or subset_sett is NULL:
         SC_dealloc(supergroup)
-        sage_free(gens)
-        sage_free(subset_sett)
+        sig_free(gens)
+        sig_free(subset_sett)
         raise MemoryError
     bitset_init(&subset_sett.bits, n)
-    subset_sett.scratch = <int *> sage_malloc((3*n+1) * sizeof(int))
+    subset_sett.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
     for i from 0 <= i < len(generators):
         for j from 0 <= j < n:
             gens[n*i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         SC_dealloc(supergroup)
-        sage_free(gens)
-        sage_free(subset_sett)
+        sig_free(gens)
+        sig_free(subset_sett)
         raise MemoryError
-    sage_free(gens)
+    sig_free(gens)
     bitset_clear(&subset_sett.bits)
     for i in sett:
         bitset_add(&subset_sett.bits, i)
     stabilizer = set_stab(supergroup, subset_sett, relab)
     SC_dealloc(supergroup)
     bitset_free(&subset_sett.bits)
-    sage_free(subset_sett.scratch)
-    sage_free(subset_sett)
+    sig_free(subset_sett.scratch)
+    sig_free(subset_sett)
     if stabilizer is NULL:
         raise MemoryError
     stab_gens = []
@@ -371,33 +378,31 @@ def sets_isom_py(generators, set1, set2):
         False
         sage: sets_isom_py([[2,3,0,1]], [0,1,3], [1,2,3])
         [2, 3, 0, 1]
-
-
     """
-    from sage.misc.misc import uniq
-    set1 = uniq(set1)
-    set2 = uniq(set2)
-    if len(generators) == 0:
+    set1 = set(set1)
+    set2 = set(set2)
+    if not generators:
         if set1 == set2:
-            return range(max(set1)+1)
+            return list(xrange(max(set1) + 1))
         else:
             return False
+
     cdef int i, j, n = len(generators[0]), n_gens = len(generators)
     cdef StabilizerChain *supergroup = SC_new(n)
-    cdef int *gens = <int *> sage_malloc(n*n_gens * sizeof(int))
-    cdef int *isom = <int *> sage_malloc(n * sizeof(int))
-    cdef subset *subset_sett1 = <subset *> sage_malloc(sizeof(subset))
-    cdef subset *subset_sett2 = <subset *> sage_malloc(sizeof(subset))
+    cdef int *gens = <int *> sig_malloc(n*n_gens * sizeof(int))
+    cdef int *isom = <int *> sig_malloc(n * sizeof(int))
+    cdef subset *subset_sett1 = <subset *> sig_malloc(sizeof(subset))
+    cdef subset *subset_sett2 = <subset *> sig_malloc(sizeof(subset))
     bitset_init(&subset_sett1.bits, n)
     bitset_init(&subset_sett2.bits, n)
-    subset_sett1.scratch = <int *> sage_malloc((3*n+1) * sizeof(int))
-    subset_sett2.scratch = <int *> sage_malloc((3*n+1) * sizeof(int))
+    subset_sett1.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
+    subset_sett2.scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
     for i from 0 <= i < len(generators):
         for j from 0 <= j < n:
             gens[n*i + j] = generators[i][j]
     if SC_insert(supergroup, 0, gens, n_gens):
         raise MemoryError
-    sage_free(gens)
+    sig_free(gens)
     bitset_clear(&subset_sett1.bits)
     bitset_clear(&subset_sett2.bits)
     for i in set1:
@@ -408,15 +413,15 @@ def sets_isom_py(generators, set1, set2):
     SC_dealloc(supergroup)
     bitset_free(&subset_sett1.bits)
     bitset_free(&subset_sett2.bits)
-    sage_free(subset_sett1.scratch)
-    sage_free(subset_sett2.scratch)
-    sage_free(subset_sett1)
-    sage_free(subset_sett2)
+    sig_free(subset_sett1.scratch)
+    sig_free(subset_sett2.scratch)
+    sig_free(subset_sett1)
+    sig_free(subset_sett2)
     if isomorphic:
         output_py = [isom[i] for i from 0 <= i < n]
     else:
         output_py = False
-    sage_free(isom)
+    sig_free(isom)
     return output_py
 
 cdef int sets_isom(StabilizerChain *supergroup, subset *set1, subset *set2, int *isom) except -1:
@@ -482,17 +487,17 @@ cdef void *allocate_subset(int n):
     r"""
     Allocates a subset struct of degree n.
     """
-    cdef subset *set1 = <subset *> sage_malloc(sizeof(subset))
-    cdef int *scratch = <int *> sage_malloc((3*n+1) * sizeof(int))
+    cdef subset *set1 = <subset *> sig_malloc(sizeof(subset))
+    cdef int *scratch = <int *> sig_malloc((3*n+1) * sizeof(int))
     if set1 is NULL or scratch is NULL:
-        sage_free(set1)
-        sage_free(scratch)
+        sig_free(set1)
+        sig_free(scratch)
         return NULL
     try:
         bitset_init(&set1.bits, n)
     except MemoryError:
-        sage_free(set1)
-        sage_free(scratch)
+        sig_free(set1)
+        sig_free(scratch)
         return NULL
     set1.scratch = scratch
     return <void *> set1
@@ -503,16 +508,16 @@ cdef void free_subset(void *child):
     """
     cdef subset *set1 = <subset *> child
     if set1 is not NULL:
-        sage_free(set1.scratch)
+        sig_free(set1.scratch)
         bitset_free(&set1.bits)
-    sage_free(set1)
+    sig_free(set1)
 
 cdef void *allocate_sgd(int degree):
     r"""
     Allocates the data part of an iterator which generates augmentations, i.e.,
     elements to add to the set.
     """
-    cdef subset_generator_data *sgd = <subset_generator_data *> sage_malloc(sizeof(subset_generator_data))
+    cdef subset_generator_data *sgd = <subset_generator_data *> sig_malloc(sizeof(subset_generator_data))
     sgd.orbits = OP_new(degree)
     if sgd is NULL or sgd.orbits is NULL:
         deallocate_sgd(sgd)
@@ -526,7 +531,7 @@ cdef void deallocate_sgd(void *data):
     cdef subset_generator_data *sgd = <subset_generator_data *> data
     if sgd is not NULL:
         OP_dealloc(sgd.orbits)
-    sage_free(sgd)
+    sig_free(sgd)
 
 cdef void *subset_generator_next(void *data, int *degree, bint *mem_err):
     r"""
@@ -617,10 +622,10 @@ cdef iterator *allocate_subset_gen(int degree, int max_size):
     r"""
     Allocates the generator of subsets.
     """
-    cdef iterator *subset_gen = <iterator *> sage_malloc(sizeof(iterator))
+    cdef iterator *subset_gen = <iterator *> sig_malloc(sizeof(iterator))
     if subset_gen is not NULL:
         if allocate_subset_gen_2(degree, max_size, subset_gen):
-            sage_free(subset_gen)
+            sig_free(subset_gen)
             subset_gen = NULL
     return subset_gen
 
@@ -647,7 +652,7 @@ cdef int allocate_subset_gen_2(int degree, int max_size, iterator *it):
             deallocate_cgd(cgd)
             return 1
     it.data = <void *> cgd
-    it.next = &canonical_generator_next
+    it.next = canonical_generator_next
     return 0
 
 cdef void free_subset_gen(iterator *subset_gen):
@@ -657,7 +662,7 @@ cdef void free_subset_gen(iterator *subset_gen):
     if subset_gen is NULL: return
     cdef canonical_generator_data *cgd = <canonical_generator_data *> subset_gen.data
     deallocate_cgd(cgd)
-    sage_free(subset_gen)
+    sig_free(subset_gen)
 
 cdef iterator *setup_set_gen(iterator *subset_gen, int degree, int max_size):
     r"""
@@ -802,26 +807,26 @@ def sets_modulo_perm_group(list generators, int max_size, bint indicate_mem_err 
     if len(generators) == 0:
         ll = []
         for i in range(max_size,-1,-1):
-            ll.append(range(i))
+            ll.append(list(xrange(i)))
         return ll
     cdef int n = len(generators[0]), n_gens = len(generators)
     cdef iterator *subset_iterator
     cdef subset *thing
 
     cdef StabilizerChain *group = SC_new(n)
-    cdef int *gens = <int *> sage_malloc(n*n_gens * sizeof(int))
+    cdef int *gens = <int *> sig_malloc(n*n_gens * sizeof(int))
     if group is NULL or gens is NULL:
         SC_dealloc(group)
-        sage_free(gens)
+        sig_free(gens)
         raise MemoryError
     for i from 0 <= i < len(generators):
         for j from 0 <= j < n:
             gens[n*i + j] = generators[i][j]
     if SC_insert(group, 0, gens, n_gens):
         SC_dealloc(group)
-        sage_free(gens)
+        sig_free(gens)
         raise MemoryError
-    sage_free(gens)
+    sig_free(gens)
 
     cdef iterator *subset_gen = allocate_subset_gen(n, max_size)
     if subset_gen is NULL:

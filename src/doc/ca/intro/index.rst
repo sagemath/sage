@@ -49,8 +49,8 @@ Assignació de variables i escriptura
 - Per assignar variables: ``nom_variable = valor``.
 - Per mostrar per pantalla:
 
-  + El valor de les variables ``var1, var2``: ``print var1, var2``.
-  + Text: ``print "Un text"``.
+  + El valor de les variables ``var1, var2``: ``var1, var2``.
+  + Text: ``print("Un text")``.
 
 Operadors relacionals
 ---------------------
@@ -154,7 +154,7 @@ Exemples:
 ::
 
     sage: for i in [2..5]:
-    ....:     print i + 1
+    ....:     print(i + 1)
     3
     4
     5
@@ -163,7 +163,7 @@ Exemples:
 ::
 
     sage: for i in [-1,"foo",3.4]:
-    ....:     print i
+    ....:     print(i)
     -1
     foo
     3.40000000000000
@@ -172,7 +172,7 @@ Exemples:
 
     sage: i = 1
     sage: while i < 4:
-    ....:     print i
+    ....:     print(i)
     ....:     i += 1
     1
     2
@@ -201,8 +201,10 @@ Per exemple::
     sage: C = Set(S)
     sage: S
     [121, 49, 25, 9, 9, 25, 49, 121]
-    sage: C
+    sage: C    # random
     {121, 9, 49, 25}
+    sage: sorted(C)
+    [9, 25, 49, 121]
 
 La `i`-èssima entrada d'una seqüència (o d'un conjunt) `C`
 és ``C[i]``. Però compte perquè Sage
@@ -252,12 +254,12 @@ Per exemple, hauríem pogut crear ``S``
 de la manera següent::
 
     sage: S = [ n^2 for n in [-11,-9..11] if is_prime(abs(n)) ]
-    sage: print S
+    sage: print(S)
     [121, 49, 25, 9, 9, 25, 49, 121]
 
 Podem aplicar una funció a tots els elements d'una llista de la manera següent::
 
-    sage: map(cos, [0,pi..6*pi])
+    sage: [cos(t) for t in [0,pi..6*pi]]
     [1, -1, 1, -1, 1, -1, 1]
 
 
@@ -319,16 +321,16 @@ Per exemple::
     ....:     discriminant = b^2 - 4*a*c
     ....:     arrel_discr = sqrt(discriminant)
     ....:     if discriminant > 0:
-    ....:         print "hi ha dues solucions reals"
+    ....:         print("hi ha dues solucions reals")
     ....:         sol1 = (-b + arrel_discr) / (2*a)
     ....:         sol2 = (-b - arrel_discr) / (2*a)
     ....:         return (sol1, sol2)
     ....:     elif discriminant == 0:
-    ....:         print "hi ha una solucio real"
+    ....:         print("hi ha una solucio real")
     ....:         sol = -b / (2*a)
     ....:         return (sol)
     ....:     else:
-    ....:         print "no hi ha solucions reals"
+    ....:         print("no hi ha solucions reals")
     ....:         return ()
 
 Observem que l'indentat és important.
@@ -376,9 +378,9 @@ Observem el resultat del codi següent:
 ::
 
     sage: a = 3
-    sage: print f()
+    sage: print(f())
     5
-    sage: print a
+    sage: print(a)
     3
 
 
@@ -495,10 +497,10 @@ repetim els primers exemples::
     sage: len(solutions)
     2
     sage: type(solutions[0])
-    <type 'dict'>
-    sage: for sol in solutions: print sol[x].n(digits=3), ",", sol[y].n(digits=3)
-    5.00 - 5.59*I , 5.00 + 5.59*I
-    5.00 + 5.59*I , 5.00 - 5.59*I
+    <... 'dict'>
+    sage: for sol in solutions: print((sol[x].n(digits=3), sol[y].n(digits=3)))
+    (5.00 - 5.59*I, 5.00 + 5.59*I)
+    (5.00 + 5.59*I, 5.00 - 5.59*I)
 
 Anell de polinomis
 ==================
@@ -842,7 +844,7 @@ Podem dibuixar cercles, línies, polígons; gràfics de funcions en
 coordenades cartesianes; i també en coordenades polars, corbes de nivell
 i gràfics de camps vectorials. Podem trobar més exemples de les funcions
 gràfiques del Sage a la documentació
-`Sage Constructions <http://www.sagemath.org/doc/constructions/>`_
+`Sage Constructions <http://doc.sagemath.org/html/en/constructions/>`_
 
 
 Per dibuixar un cercle groc de radi 1, centrat a l'origen, fem::

@@ -1,33 +1,41 @@
+# cython: binding=True
 """
 Chromatic Polynomial
 
 AUTHORS:
-    -- Gordon Royle - original C implementation
-    -- Robert Miller - transplant
+
+- Gordon Royle - original C implementation
+- Robert Miller - transplant
 
 REFERENCE:
+
     Ronald C Read, An improved method for computing the chromatic polynomials of
     sparse graphs.
 """
 
 #*****************************************************************************
-#           Copyright (C) 2008 Robert Miller and Gordon Royle
+#       Copyright (C) 2008 Robert Miller
+#       Copyright (C) 2008 Gordon Royle
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.signals cimport sig_check
+
+from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.misc.all import prod
-include 'sage/ext/interrupt.pxi'
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/stdsage.pxi'
 
-def chromatic_polynomial(G, return_tree_basis = False):
+
+def chromatic_polynomial(G, return_tree_basis=False):
     """
-    Computes the chromatic polynomial of the graph G.
+    Compute the chromatic polynomial of the graph G.
 
     The algorithm used is a recursive one, based on the following observations
     of Read:
@@ -51,7 +59,7 @@ def chromatic_polynomial(G, return_tree_basis = False):
         sage: graphs.CompleteBipartiteGraph(3,3).chromatic_polynomial()
         x^6 - 9*x^5 + 36*x^4 - 75*x^3 + 78*x^2 - 31*x
         sage: for i in range(2,7):
-        ...     graphs.CompleteGraph(i).chromatic_polynomial().factor()
+        ....:     graphs.CompleteGraph(i).chromatic_polynomial().factor()
         (x - 1) * x
         (x - 2) * (x - 1) * x
         (x - 3) * (x - 2) * (x - 1) * x
@@ -74,20 +82,38 @@ def chromatic_polynomial(G, return_tree_basis = False):
 
         sage: G = graphs.PetersenGraph()
         sage: P = G.chromatic_polynomial()
-        sage: min((i for i in xrange(11) if P(i) > 0)) == G.chromatic_number()
+        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
         True
 
         sage: G = graphs.RandomGNP(10,0.7)
         sage: P = G.chromatic_polynomial()
-        sage: min((i for i in xrange(11) if P(i) > 0)) == G.chromatic_number()
+        sage: min(i for i in range(11) if P(i) > 0) == G.chromatic_number()
         True
+
+    TESTS:
+
+    Check that :trac:`21502` is solved::
+
+        sage: graphs.EmptyGraph().chromatic_polynomial()
+        1
+
+    Check that :trac:`27966` is solved::
+
+        sage: Graph([[1, 1]], multiedges=True, loops=True).chromatic_polynomial()
+        0
     """
+    if not G:
+        R = ZZ['x']
+        return R.one()
+    if G.has_loops():
+        R = ZZ['x']
+        return R.zero()
     if not G.is_connected():
         return prod([chromatic_polynomial(g) for g in G.connected_components_subgraphs()])
     R = ZZ['x']
     x = R.gen()
     if G.is_tree():
-        return x*(x-1)**(G.num_verts()-1)
+        return x * (x - 1) ** (G.num_verts() - 1)
 
     cdef int nverts, nedges, i, j, u, v, top, bot, num_chords, next_v
     cdef int *queue
@@ -157,11 +183,7 @@ def chromatic_polynomial(G, return_tree_basis = False):
                     chords2[i] = j
                     i -= 1
     try:
-        sig_on()
-        try:
-            contract_and_count(chords1, chords2, num_chords, nverts, tot, parent)
-        finally:
-            sig_off()
+        contract_and_count(chords1, chords2, num_chords, nverts, tot, parent)
     except BaseException:
         for i in range(nverts):
             mpz_clear(tot[i])
@@ -205,8 +227,9 @@ def chromatic_polynomial(G, return_tree_basis = False):
 
     return f
 
-cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nverts, \
-                         mpz_t *tot, int *parent):
+
+cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nverts,
+                         mpz_t *tot, int *parent) except -1:
     if num_chords == 0:
         mpz_add_ui(tot[nverts], tot[nverts], 1)
         return 0
@@ -216,7 +239,9 @@ cdef int contract_and_count(int *chords1, int *chords2, int num_chords, int nver
     cdef int *ins_list1   = <int *> mem.allocarray(num_chords, sizeof(int))
     cdef int *ins_list2   = <int *> mem.allocarray(num_chords, sizeof(int))
     cdef int i, j, k, x1, xj, z, num, insnum, parent_checked
-    for i from 0 <= i < num_chords:
+    for i in range(num_chords):
+        sig_check()
+
         # contract chord i, and recurse
         z = chords1[i]
         x1 = chords2[i]

@@ -14,11 +14,12 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.integer_list import IntegerListsLex
+from sage.combinat.integer_lists import IntegerListsLex
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
@@ -164,10 +165,9 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             False
             sage: matrix([[-1, 3, 1]]) in IM
             False
-
         """
-        from sage.matrix.matrix import Matrix
-        if not isinstance(x, Matrix):
+        from sage.structure.element import is_Matrix
+        if not is_Matrix(x):
             return False
         row_sums = [ZZ.zero()] * x.nrows()
         col_sums = [ZZ.zero()] * x.ncols()
@@ -283,7 +283,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             [0 2]  [1 1]  [0 2]  [2 0]  [1 1]  [0 2]
             [0 2], [0 2], [1 1], [0 2], [1 1], [2 0]
             ]
-            sage: for m in IM: print IM.to_composition(m)
+            sage: for m in IM: print(IM.to_composition(m))
             [2, 1, 2, 2]
             [1, 2, 1, 1, 2]
             [1, 2, 2, 1, 1]
@@ -312,26 +312,26 @@ def integer_matrices_generator(row_sums, column_sums):
 
         sage: from sage.combinat.integer_matrices import integer_matrices_generator
         sage: iter = integer_matrices_generator([3,2,2], [2,5]); iter
-        <generator object integer_matrices_generator at ...>
-        sage: for m in iter: print m
+        <generator object ...integer_matrices_generator at ...>
+        sage: for m in iter: print(m)
         [[2, 1], [0, 2], [0, 2]]
         [[1, 2], [1, 1], [0, 2]]
         [[1, 2], [0, 2], [1, 1]]
         [[0, 3], [2, 0], [0, 2]]
         [[0, 3], [1, 1], [1, 1]]
         [[0, 3], [0, 2], [2, 0]]
-
     """
-    row_sums = list(row_sums)
     column_sums = list(column_sums)
     if sum(row_sums) != sum(column_sums):
-        raise StopIteration
-    if len(row_sums) == 0:
+        return
+    if not row_sums:
         yield []
     elif len(row_sums) == 1:
         yield [column_sums]
     else:
-        for comp in IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums):
+        I = IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums)
+        for comp in I.backend._iter():
             t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat
+

@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 r"""
-Families of graphs
+Various families of graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
 
-###########################################################################
+# ****************************************************************************
+#       Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
+#                          Emily A. Kirkman
+#                     2009 Michael C. Yurko <myurko@gmail.com>
+#                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
 #
-#           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
-#                              and Emily A. Kirkman
-#           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
-#
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
-###########################################################################
-
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, division
 
 from copy import copy
 from math import sin, cos, pi
 from sage.graphs.graph import Graph
-from sage.graphs import graph
 
 
 def JohnsonGraph(n, k):
@@ -29,8 +31,8 @@ def JohnsonGraph(n, k):
     Johnson graphs are a special class of undirected graphs defined from systems
     of sets. The vertices of the Johnson graph `J(n,k)` are the `k`-element
     subsets of an `n`-element set; two vertices are adjacent when they meet in a
-    `(k-1)`-element set. For more information about Johnson graphs, see the
-    corresponding :wikipedia:`Wikipedia page <Johnson_graph>`.
+    `(k-1)`-element set. See the :wikipedia:`Johnson_graph` for more
+    information.
 
     EXAMPLES:
 
@@ -46,8 +48,8 @@ def JohnsonGraph(n, k):
         sage: g.is_vertex_transitive()
         True
 
-    The complement of the Johnson graph `J(n,2)` is isomorphic to the Knesser
-    Graph `K(n,2)`.  In paritcular the complement of `J(5,2)` is isomorphic to
+    The complement of the Johnson graph `J(n,2)` is isomorphic to the Kneser
+    Graph `K(n,2)`.  In particular the complement of `J(5,2)` is isomorphic to
     the Petersen graph.  ::
 
         sage: g = graphs.JohnsonGraph(5,2)
@@ -84,22 +86,23 @@ def KneserGraph(n,k):
     For example, the Petersen Graph can be defined
     as the Kneser Graph with parameters `5,2`.
 
-    EXAMPLE::
+    EXAMPLES::
 
-        sage: KG=graphs.KneserGraph(5,2)
-        sage: print KG.vertices()
-        [{4, 5}, {1, 3}, {2, 5}, {2, 3}, {3, 4}, {3, 5}, {1, 4}, {1, 5}, {1, 2}, {2, 4}]
-        sage: P=graphs.PetersenGraph()
+        sage: KG = graphs.KneserGraph(5,2)
+        sage: sorted(KG.vertex_iterator(), key=str)
+        [{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5},
+         {3, 4}, {3, 5}, {4, 5}]
+        sage: P = graphs.PetersenGraph()
         sage: P.is_isomorphic(KG)
         True
 
     TESTS::
 
-        sage: KG=graphs.KneserGraph(0,0)
+        sage: KG = graphs.KneserGraph(0,0)
         Traceback (most recent call last):
         ...
         ValueError: Parameter n should be a strictly positive integer
-        sage: KG=graphs.KneserGraph(5,6)
+        sage: KG = graphs.KneserGraph(5,6)
         Traceback (most recent call last):
         ...
         ValueError: Parameter k should be a strictly positive integer inferior to n
@@ -114,7 +117,7 @@ def KneserGraph(n,k):
 
     from sage.combinat.subset import Subsets
     S = Subsets(n,k)
-    if k>n/2:
+    if 2 * k > n:
         g.add_vertices(S)
 
     s0 = S.underlying_set()    # {1,2,...,n}
@@ -122,6 +125,372 @@ def KneserGraph(n,k):
         for t in Subsets(s0.difference(s), k):
             g.add_edge(s,t)
 
+    return g
+
+
+def FurerGadget(k, prefix=None):
+    r"""
+    Return a Furer gadget of order ``k`` and their coloring.
+
+    Construct the Furer gadget described in [CFI1992]_,
+    a graph composed by a middle layer of `2^(k-1)` nodes
+    and two sets of nodes `(a_0, ... , a_{k-1})` and
+    `(b_0, ... , b_{k-1})`.
+    Each node in the middle is connected to either `a_i` or `b_i`,
+    for each i in [0,k[.
+    To read about the complete construction, see [CFI1992]_.
+    The returned coloring colors the middle section with one color, and
+    then each pair `(a_i, b_i)` with another color.
+    Since this method is mainly used to create Furer gadgets for the
+    Cai-Furer-Immerman construction, returning gadgets that don't
+    always have the same vertex labels is important, that's why there is
+    a parameter to manually set a prefix to be appended to each vertex label.
+
+    INPUT:
+
+    - ``k``      -- The order of the returned Furer gadget, greater than 0.
+
+    - ``prefix`` -- Prefix of to be appended to each vertex label,
+                    so as to individualise the returned Furer gadget.
+                    Must be comparable for equality and hashable.
+
+    OUTPUT:
+
+    - ``G``        -- The Furer gadget of order ``k``
+
+    - ``coloring`` -- A list of list of vertices, representing the
+                      partition induced by the coloring of ``G``'s
+                      vertices
+
+    EXAMPLES:
+
+    Furer gadget of order 3, without any prefix. ::
+
+        sage: G, p = graphs.FurerGadget(3)
+        sage: sorted(G, key=str)
+        [(), (0, 'a'), (0, 'b'), (0, 1), (0, 2),
+         (1, 'a'), (1, 'b'), (1, 2), (2, 'a'), (2, 'b')]
+        sage: sorted(G.edge_iterator(), key=str)
+        [((), (0, 'b'), None), ((), (1, 'b'), None),
+         ((), (2, 'b'), None), ((0, 'b'), (1, 2), None),
+         ((0, 1), (0, 'a'), None), ((0, 1), (1, 'a'), None),
+         ((0, 1), (2, 'b'), None), ((0, 2), (0, 'a'), None),
+         ((0, 2), (1, 'b'), None), ((0, 2), (2, 'a'), None),
+         ((1, 2), (1, 'a'), None), ((1, 2), (2, 'a'), None)]
+
+    Furer gadget of order 3, with a prefix. ::
+
+        sage: G, p = graphs.FurerGadget(3, 'Prefix')
+        sage: sorted(G, key=str)
+        [('Prefix', ()), ('Prefix', (0, 'a')), ('Prefix', (0, 'b')),
+         ('Prefix', (0, 1)), ('Prefix', (0, 2)), ('Prefix', (1, 'a')),
+         ('Prefix', (1, 'b')), ('Prefix', (1, 2)), ('Prefix', (2, 'a')),
+         ('Prefix', (2, 'b'))]
+        sage: sorted(G.edge_iterator(), key=str)
+        [(('Prefix', ()), ('Prefix', (0, 'b')), None),
+         (('Prefix', ()), ('Prefix', (1, 'b')), None),
+         (('Prefix', ()), ('Prefix', (2, 'b')), None),
+         (('Prefix', (0, 'b')), ('Prefix', (1, 2)), None),
+         (('Prefix', (0, 1)), ('Prefix', (0, 'a')), None),
+         (('Prefix', (0, 1)), ('Prefix', (1, 'a')), None),
+         (('Prefix', (0, 1)), ('Prefix', (2, 'b')), None),
+         (('Prefix', (0, 2)), ('Prefix', (0, 'a')), None),
+         (('Prefix', (0, 2)), ('Prefix', (1, 'b')), None),
+         (('Prefix', (0, 2)), ('Prefix', (2, 'a')), None),
+         (('Prefix', (1, 2)), ('Prefix', (1, 'a')), None),
+         (('Prefix', (1, 2)), ('Prefix', (2, 'a')), None)]
+    """
+    from itertools import repeat as rep, chain, combinations
+    if k <= 0:
+        raise ValueError("The order of the Furer gadget must be greater than zero")
+    G = Graph()
+    V_a = list(enumerate(rep('a', k)))
+    V_b = list(enumerate(rep('b', k)))
+    if prefix is not None:
+        V_a = list(zip(rep(prefix, k), V_a))
+        V_b = list(zip(rep(prefix, k), V_b))
+    G.add_vertices(V_a)
+    G.add_vertices(V_b)
+    powerset = list(chain.from_iterable(combinations(range(k), r) for r in range(0,k+1,2)))
+    if prefix is not None:
+        G.add_edges(chain.from_iterable([((prefix,s),(prefix,(i,'a'))) for i in s] for s in powerset))
+        G.add_edges(chain.from_iterable([((prefix,s),(prefix,(i,'b'))) for i in range(k) if i not in s] for s in powerset))
+    else:
+        G.add_edges(chain.from_iterable([(s,(i,'a')) for i in s] for s in powerset))
+        G.add_edges(chain.from_iterable([(s,(i,'b')) for i in range(k) if i not in s] for s in powerset))
+    partition = []
+    for i in range(k):
+        partition.append([V_a[i], V_b[i]])
+    if prefix is not None:
+        powerset = [(prefix,s) for s in powerset]
+    partition.append(powerset)
+    return G, partition
+
+
+def CaiFurerImmermanGraph(G, twisted=False):
+    r"""
+    Return the a Cai-Furer-Immerman graph from `G`, possibly a twisted
+    one, and a partition of its nodes.
+
+    A Cai-Furer-Immerman graph from/on `G` is a graph created by
+    applying the transformation described in [CFI1992]_ on a graph
+    `G`, that is substituting every vertex v in `G` with a
+    Furer gadget `F(v)` of order d equal to the degree of the vertex,
+    and then substituting every edge `(v,u)` in `G`
+    with a pair of edges, one connecting the two "a" nodes of
+    `F(v)` and `F(u)` and the other their two "b" nodes.
+    The returned coloring of the vertices is made by the union of the
+    colorings of each single Furer gadget, individualised for each
+    vertex of `G`.
+    To understand better what these "a" and "b" nodes are, see the
+    documentation on  Furer gadgets.
+
+    Furthermore, this method can apply what is described in the paper
+    mentioned above as a "twist" on an edge, that is taking only one of
+    the pairs of edges introduced in the new graph and swap two of their
+    extremes, making each edge go from an "a" node to a "b" node.
+    This is only doable if the original graph G is connected.
+
+    A CaiFurerImmerman graph on a graph with no balanced vertex
+    separators smaller than s and its twisted version
+    cannot be distinguished by k-WL for any k < s.
+
+    INPUT:
+
+    - ``G``       -- An undirected graph on which to construct the
+                     Cai-Furer-Immerman graph
+
+    - ``twisted`` -- A boolean indicating if the version to construct
+                     is a twisted one or not
+
+    OUTPUT:
+
+    - ``H``        -- The Cai-Furer-Immerman graph on ``G``
+
+    - ``coloring`` -- A list of list of vertices, representing the
+                      partition induced by the coloring on ``H``
+
+    EXAMPLES:
+
+    CaiFurerImmerman graph with no balanced vertex separator smaller
+    than 2 ::
+
+        sage: G = graphs.CycleGraph(4)
+        sage: CFI, p = graphs.CaiFurerImmermanGraph(G)
+        sage: sorted(CFI, key=str)
+        [(0, ()), (0, (0, 'a')), (0, (0, 'b')), (0, (0, 1)), (0, (1, 'a')),
+         (0, (1, 'b')), (1, ()), (1, (0, 'a')), (1, (0, 'b')), (1, (0, 1)),
+         (1, (1, 'a')), (1, (1, 'b')), (2, ()), (2, (0, 'a')), (2, (0, 'b')),
+         (2, (0, 1)), (2, (1, 'a')), (2, (1, 'b')), (3, ()), (3, (0, 'a')),
+         (3, (0, 'b')), (3, (0, 1)), (3, (1, 'a')), (3, (1, 'b'))]
+        sage: sorted(CFI.edge_iterator(), key=str)
+        [((0, ()), (0, (0, 'b')), None),
+         ((0, ()), (0, (1, 'b')), None),
+         ((0, (0, 'a')), (1, (0, 'a')), None),
+         ((0, (0, 'b')), (1, (0, 'b')), None),
+         ((0, (0, 1)), (0, (0, 'a')), None),
+         ((0, (0, 1)), (0, (1, 'a')), None),
+         ((0, (1, 'a')), (3, (0, 'a')), None),
+         ((0, (1, 'b')), (3, (0, 'b')), None),
+         ((1, ()), (1, (0, 'b')), None),
+         ((1, ()), (1, (1, 'b')), None),
+         ((1, (0, 1)), (1, (0, 'a')), None),
+         ((1, (0, 1)), (1, (1, 'a')), None),
+         ((1, (1, 'a')), (2, (0, 'a')), None),
+         ((1, (1, 'b')), (2, (0, 'b')), None),
+         ((2, ()), (2, (0, 'b')), None),
+         ((2, ()), (2, (1, 'b')), None),
+         ((2, (0, 1)), (2, (0, 'a')), None),
+         ((2, (0, 1)), (2, (1, 'a')), None),
+         ((2, (1, 'a')), (3, (1, 'a')), None),
+         ((2, (1, 'b')), (3, (1, 'b')), None),
+         ((3, ()), (3, (0, 'b')), None),
+         ((3, ()), (3, (1, 'b')), None),
+         ((3, (0, 1)), (3, (0, 'a')), None),
+         ((3, (0, 1)), (3, (1, 'a')), None)]
+    """
+    isConnected = G.is_connected()
+    newG = Graph()
+    total_partition = []
+    edge_index = {}
+    for v in G:
+        Fk, p = FurerGadget(G.degree(v), v)
+        total_partition += p
+        newG=newG.union(Fk)
+        edge_index[v] = 0
+    for v,u in G.edge_iterator(labels=False):
+        i = edge_index[v]
+        edge_index[v] += 1
+        j = edge_index[u]
+        edge_index[u] += 1
+        edge_va = (v, (i, 'a'))
+        edge_vb = (v, (i, 'b'))
+        edge_ua = (u, (j, 'a'))
+        edge_ub = (u, (j, 'b'))
+        if isConnected and twisted:
+            temp = edge_ua
+            edge_ua = edge_ub
+            edge_ub = temp
+            isConnected = False
+        newG.add_edge(edge_va, edge_ua)
+        newG.add_edge(edge_vb, edge_ub)
+    if twisted and G.is_connected():
+        s = " twisted"
+    else:
+        s = ""
+    newG.name("CaiFurerImmerman" + s + " graph constructed from a " + G.name())
+    return newG, total_partition
+
+
+def EgawaGraph(p, s):
+    r"""
+    Return the Egawa graph with parameters `p`, `s`.
+
+    Egawa graphs are a peculiar family of graphs devised by Yoshimi
+    Egawa in  [Ega1981]_ .
+    The Shrikhande graph is a special case of this family of graphs,
+    with parameters `(1,0)`.
+    All the graphs in this family are not recognizable by 1-WL
+    (Weisfeiler Lehamn algorithm of the first order) and 2-WL, that is
+    their orbits are not correctly returned by k-WL for k lower than 3.
+
+    Furthermore, all the graphs in this family are distance-regular, but
+    they are not distance-transitive if `p \neq 0`.
+
+    The Egawa graph with parameters `(0, s)` is isomorphic to the
+    Hamming graph with parameters `(s, 4)`, when the underlying
+    set of the Hamming graph is `[0,1,2,3]`
+
+    INPUT:
+
+    - ``p`` -- power to which the graph named `Y` in the reference
+               provided above will be raised
+
+    - ``s`` -- power to which the graph named `X` in the reference
+               provided above will be raised
+
+    OUTPUT:
+
+    - ``G`` -- The Egawa graph with parameters (p,s)
+
+    EXAMPLES:
+
+    Every Egawa graph is distance regular.  ::
+
+        sage: g = graphs.EgawaGraph(1, 2)
+        sage: g.is_distance_regular()
+        True
+
+    An Egawa graph with parameters (0,s) is isomorphic to the Hamming
+    graph with parameters (s, 4).  ::
+
+        sage: g = graphs.EgawaGraph(0, 4)
+        sage: g.is_isomorphic(graphs.HammingGraph(4,4))
+        True
+    """
+    from sage.graphs.generators.basic import CompleteGraph
+    from itertools import product, chain, repeat
+    g = Graph(name="Egawa Graph with parameters " + str(p) + "," + str(s), multiedges=False)
+    X = CompleteGraph(4)
+    Y = Graph('O?Wse@UgqqT_LUebWkbT_')
+    g.add_vertices(product(*chain(repeat(Y, p), repeat(X,s))))
+    for v in g:
+        for i in range(p):
+            prefix = v[:i]
+            suffix = v[i+1:]
+            for el in Y.neighbor_iterator(v[i]):
+                u = prefix + (el,) + suffix
+                g.add_edge(v,u)
+        for i in range(p, s+p):
+            prefix = v[:i]
+            suffix = v[i+1:]
+            for el in X:
+                if el == v[i]:
+                    continue
+                u = prefix + (el,) + suffix
+                g.add_edge(v,u)
+    return g
+
+
+def HammingGraph(n, q, X=None):
+    r"""
+    Returns the Hamming graph with parameters ``n``, ``q`` over ``X``.
+
+    Hamming graphs are graphs over the cartesian product of n copies
+    of ``X``, where `q = |X|`, where the vertices, labelled with the
+    corresponding tuple in `X^n`, are connected if the Hamming distance
+    between their labels is 1. All Hamming graphs are regular,
+    vertex-transitive and distance-regular.
+
+    Hamming graphs with parameters `(1,q)` represent the complete graph
+    with q vertices over the set ``X``.
+
+    INPUT:
+
+    - ``n`` -- power to which ``X`` will be raised to provide vertices
+               for the Hamming graph
+
+    - ``q`` -- cardinality of ``X``
+
+    - ``X`` -- list of labels representing the vertices of the
+                underlying graph the Hamming graph will be based on; if
+                ``None`` (or left unused), the list `[0, ... , q-1]`
+                will be used
+
+    OUTPUT:
+
+    - ``G`` -- The Hamming graph with parameters `(n,q,X)`
+
+    EXAMPLES:
+
+    Every Hamming graph is distance-regular, regular and
+    vertex-transitive.  ::
+
+        sage: g = graphs.HammingGraph(3, 7)
+        sage: g.is_distance_regular()
+        True
+        sage: g.is_regular()
+        True
+        sage: g.is_vertex_transitive()
+        True
+
+    A Hamming graph with parameters (1,q) is isomorphic to the
+    Complete graph with parameter q.  ::
+
+        sage: g = graphs.HammingGraph(1, 23)
+        sage: g.is_isomorphic(graphs.CompleteGraph(23))
+        True
+
+    If a parameter ``q`` is provided which is not equal to ``X``'s
+    cardinality, an exception is raised. ::
+
+        sage: X = ['a','b','c','d','e']
+        sage: g = graphs.HammingGraph(2, 3, X)
+        Traceback (most recent call last):
+        ...
+        ValueError: q must be the cardinality of X
+
+    REFERENCES:
+
+    For a more accurate description, see the following wikipedia page:
+    :wikipedia:`Hamming_graph`
+    """
+    from itertools import product, repeat
+    if not X:
+        X = list(range(q))
+    if q != len(X):
+        raise ValueError("q must be the cardinality of X")
+    g = Graph(name="Hamming Graph with parameters " + str(n) + "," + str(q), multiedges=False)
+    g.add_vertices(product(*repeat(X, n)))
+    for v in g:
+        for i in range(n):
+            prefix = v[:i]
+            suffix = v[i+1:]
+            for el in X:
+                if el == v[i]:
+                    continue
+                u = prefix + (el,) + suffix
+                g.add_edge(v,u)
     return g
 
 def BalancedTree(r, h):
@@ -192,25 +561,17 @@ def BalancedTree(r, h):
     gracefully::
 
         sage: graphs.BalancedTree(1, 10)
-        Balanced tree: Graph on 2 vertices
-
-        sage: graphs.BalancedTree(-1, 10)
-        Balanced tree: Graph on 1 vertex
+        Balanced tree: Graph on 11 vertices
 
     Similarly, we usually want the tree must have height `h \geq 1`
     but the algorithm also degenerates gracefully here::
 
         sage: graphs.BalancedTree(3, 0)
         Balanced tree: Graph on 1 vertex
-
-        sage: graphs.BalancedTree(5, -2)
-        Balanced tree: Graph on 0 vertices
-
-        sage: graphs.BalancedTree(-2,-2)
-        Balanced tree: Graph on 0 vertices
     """
     import networkx
     return Graph(networkx.balanced_tree(r, h), name="Balanced tree")
+
 
 def BarbellGraph(n1, n2):
     r"""
@@ -219,11 +580,6 @@ def BarbellGraph(n1, n2):
 
     A barbell graph is a basic structure that consists of a path graph
     of order ``n2`` connecting two complete graphs of order ``n1`` each.
-
-    This constructor depends on `NetworkX <http://networkx.lanl.gov>`_
-    numeric labels. In this case, the ``n1``-th node connects to the
-    path graph from one complete graph and the ``n1 + n2 + 1``-th node
-    connects to the path graph from the other complete graph.
 
     INPUT:
 
@@ -237,10 +593,6 @@ def BarbellGraph(n1, n2):
 
     A barbell graph of order ``2*n1 + n2``. A ``ValueError`` is
     returned if ``n1 < 2`` or ``n2 < 0``.
-
-    ALGORITHM:
-
-    Uses `NetworkX <http://networkx.lanl.gov>`_.
 
     PLOTTING:
 
@@ -280,80 +632,275 @@ def BarbellGraph(n1, n2):
         sage: P_n2.is_isomorphic(s_P)
         True
 
-    Create several barbell graphs in a Sage graphics array::
+    TESTS::
 
-        sage: g = []
-        sage: j = []
-        sage: for i in range(6):
-        ...       k = graphs.BarbellGraph(i + 2, 4)
-        ...       g.append(k)
-        ...
-        sage: for i in range(2):
-        ...       n = []
-        ...       for m in range(3):
-        ...           n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...       j.append(n)
-        ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
-
-    TESTS:
+        sage: n1, n2 = randint(3, 10), randint(0, 10)
+        sage: g = graphs.BarbellGraph(n1, n2)
+        sage: g.num_verts() == 2 * n1 + n2
+        True
+        sage: g.num_edges() == 2 * binomial(n1, 2) + n2 + 1
+        True
+        sage: g.is_connected()
+        True
+        sage: g.girth() == 3
+        True
 
     The input ``n1`` must be `\geq 2`::
 
         sage: graphs.BarbellGraph(1, randint(0, 10^6))
         Traceback (most recent call last):
         ...
-        ValueError: Invalid graph description, n1 should be >= 2
+        ValueError: invalid graph description, n1 should be >= 2
         sage: graphs.BarbellGraph(randint(-10^6, 1), randint(0, 10^6))
         Traceback (most recent call last):
         ...
-        ValueError: Invalid graph description, n1 should be >= 2
+        ValueError: invalid graph description, n1 should be >= 2
 
     The input ``n2`` must be `\geq 0`::
 
         sage: graphs.BarbellGraph(randint(2, 10^6), -1)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid graph description, n2 should be >= 0
+        ValueError: invalid graph description, n2 should be >= 0
         sage: graphs.BarbellGraph(randint(2, 10^6), randint(-10^6, -1))
         Traceback (most recent call last):
         ...
-        ValueError: Invalid graph description, n2 should be >= 0
+        ValueError: invalid graph description, n2 should be >= 0
         sage: graphs.BarbellGraph(randint(-10^6, 1), randint(-10^6, -1))
         Traceback (most recent call last):
         ...
-        ValueError: Invalid graph description, n1 should be >= 2
+        ValueError: invalid graph description, n1 should be >= 2
     """
     # sanity checks
     if n1 < 2:
-        raise ValueError("Invalid graph description, n1 should be >= 2")
+        raise ValueError("invalid graph description, n1 should be >= 2")
     if n2 < 0:
-        raise ValueError("Invalid graph description, n2 should be >= 0")
+        raise ValueError("invalid graph description, n2 should be >= 0")
 
-    pos_dict = {}
+    G = Graph(name="Barbell graph")
+    G.add_clique(list(range(n1)))
+    G.add_path(list(range(n1 - 1 , n1 + n2 + 1)))
+    G.add_clique(list(range(n1 + n2, n1 + n2 + n1)))
 
-    for i in range(n1):
-        x = float(cos((pi / 4) - ((2 * pi) / n1) * i) - (n2 / 2) - 1)
-        y = float(sin((pi / 4) - ((2 * pi) / n1) * i) - (n2 / 2) - 1)
-        j = n1 - 1 - i
-        pos_dict[j] = (x, y)
-    for i in range(n1, n1 + n2):
-        x = float(i - n1 - (n2 / 2) + 1)
-        y = float(i - n1 - (n2 / 2) + 1)
-        pos_dict[i] = (x, y)
-    for i in range(n1 + n2, (2 * n1) + n2):
-        x = float(
-            cos((5 * (pi / 4)) + ((2 * pi) / n1) * (i - n1 - n2))
-            + (n2 / 2) + 2)
-        y = float(
-            sin((5 * (pi / 4)) + ((2 * pi) / n1) * (i - n1 - n2))
-            + (n2 / 2) + 2)
-        pos_dict[i] = (x, y)
+    G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
+    G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
+    G._circle_embedding(list(range(n1 + n2, n1 + n2 + n1)), center=(n2 + 3, n2 + 3), angle=5*pi/4)
+    return G
 
-    import networkx
-    G = networkx.barbell_graph(n1, n2)
-    return Graph(G, pos=pos_dict, name="Barbell graph")
+
+def LollipopGraph(n1, n2):
+    r"""
+    Returns a lollipop graph with n1+n2 nodes.
+
+    A lollipop graph is a path graph (order n2) connected to a complete
+    graph (order n1). (A barbell graph minus one of the bells).
+
+    PLOTTING: Upon construction, the position dictionary is filled to
+    override the spring-layout algorithm. By convention, the complete
+    graph will be drawn in the lower-left corner with the (n1)th node
+    at a 45 degree angle above the right horizontal center of the
+    complete graph, leading directly into the path graph.
+
+    EXAMPLES:
+
+    Construct and show a lollipop graph Candy = 13, Stick = 4::
+
+        sage: g = graphs.LollipopGraph(13,4); g
+        Lollipop graph: Graph on 17 vertices
+        sage: g.show() # long time
+
+    TESTS::
+
+        sage: n1, n2 = randint(3, 10), randint(0, 10)
+        sage: g = graphs.LollipopGraph(n1, n2)
+        sage: g.num_verts() == n1 + n2
+        True
+        sage: g.num_edges() == binomial(n1, 2) + n2
+        True
+        sage: g.is_connected()
+        True
+        sage: g.girth() == 3
+        True
+        sage: graphs.LollipopGraph(n1, 0).is_isomorphic(graphs.CompleteGraph(n1))
+        True
+        sage: graphs.LollipopGraph(0, n2).is_isomorphic(graphs.PathGraph(n2))
+        True
+        sage: graphs.LollipopGraph(0, 0).is_isomorphic(graphs.EmptyGraph())
+        True
+
+        The input ``n1`` must be `\geq 0`::
+
+        sage: graphs.LollipopGraph(-1, randint(0, 10^6))
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid graph description, n1 should be >= 0
+
+    The input ``n2`` must be `\geq 0`::
+
+        sage: graphs.LollipopGraph(randint(2, 10^6), -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid graph description, n2 should be >= 0
+    """
+    # sanity checks
+    if n1 < 0:
+        raise ValueError("invalid graph description, n1 should be >= 0")
+    if n2 < 0:
+        raise ValueError("invalid graph description, n2 should be >= 0")
+
+    G = Graph(n1 + n2, name="Lollipop graph")
+    G.add_clique(list(range(n1)))
+    G.add_path(list(range(n1, n1 + n2)))
+    if n1 * n2 > 0:
+        G.add_edge(n1 - 1, n1)
+    if n1 == 1:
+        G.set_pos({0:(0, 0)})
+    else:
+        G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
+    G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
+    return G
+
+
+def TadpoleGraph(n1, n2):
+    r"""
+    Return a tadpole graph with n1+n2 nodes.
+
+    A tadpole graph is a path graph (order n2) connected to a cycle graph
+    (order n1).
+
+    PLOTTING: Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, the cycle graph will be drawn
+    in the lower-left corner with the (n1)th node at a 45 degree angle above
+    the right horizontal center of the cycle graph, leading directly into the
+    path graph.
+
+    EXAMPLES:
+
+    Construct and show a tadpole graph Cycle = 13, Stick = 4::
+
+        sage: g = graphs.TadpoleGraph(13, 4); g
+        Tadpole graph: Graph on 17 vertices
+        sage: g.show() # long time
+
+    TESTS::
+
+        sage: n1, n2 = randint(3, 10), randint(0, 10)
+        sage: g = graphs.TadpoleGraph(n1, n2)
+        sage: g.num_verts() == n1 + n2
+        True
+        sage: g.num_edges() == n1 + n2
+        True
+        sage: g.girth() == n1
+        True
+        sage: graphs.TadpoleGraph(n1, 0).is_isomorphic(graphs.CycleGraph(n1))
+        True
+
+    The input ``n1`` must be `\geq 3`::
+
+        sage: graphs.TadpoleGraph(2, randint(0, 10^6))
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid graph description, n1 should be >= 3
+
+    The input ``n2`` must be `\geq 0`::
+
+        sage: graphs.TadpoleGraph(randint(2, 10^6), -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid graph description, n2 should be >= 0
+    """
+    # sanity checks
+    if n1 < 3:
+        raise ValueError("invalid graph description, n1 should be >= 3")
+    if n2 < 0:
+        raise ValueError("invalid graph description, n2 should be >= 0")
+
+    G = Graph(n1 + n2, name="Tadpole graph")
+    G.add_cycle(list(range(n1)))
+    G.add_path(list(range(n1, n1 + n2)))
+    if n1 * n2 > 0:
+        G.add_edge(n1 - 1, n1)
+    G._circle_embedding(list(range(n1)), shift=1, angle=pi/4)
+    G._line_embedding(list(range(n1, n1 + n2)), first=(2, 2), last=(n2 + 1, n2 + 1))
+    return G
+
+
+def AztecDiamondGraph(n):
+    """
+    Return the Aztec Diamond graph of order ``n``.
+
+    See the :wikipedia:`Aztec_diamond` for more information.
+
+    EXAMPLES::
+
+        sage: graphs.AztecDiamondGraph(2)
+        Aztec Diamond graph of order 2
+
+        sage: [graphs.AztecDiamondGraph(i).num_verts() for i in range(8)]
+        [0, 4, 12, 24, 40, 60, 84, 112]
+
+        sage: [graphs.AztecDiamondGraph(i).num_edges() for i in range(8)]
+        [0, 4, 16, 36, 64, 100, 144, 196]
+
+        sage: G = graphs.AztecDiamondGraph(3)
+        sage: sum(1 for p in G.perfect_matchings())
+        64
+    """
+    from sage.graphs.generators.basic import Grid2dGraph
+    if n:
+        N = 2 * n
+        G = Grid2dGraph(N, N)
+        H = G.subgraph([(i, j) for i in range(N) for j in range(N)
+                        if i - n <= j <= n + i and
+                        n - 1 - i <= j <= 3 * n - i - 1])
+    else:
+        H = Graph()
+    H.rename('Aztec Diamond graph of order {}'.format(n))
+    return H
+
+
+
+def DipoleGraph(n):
+    r"""
+    Returns a dipole graph with n edges.
+
+    A dipole graph is a multigraph consisting of 2 vertices connected with n
+    parallel edges.
+
+    EXAMPLES:
+
+    Construct and show a dipole graph with 13 edges::
+
+        sage: g = graphs.DipoleGraph(13); g
+        Dipole graph: Multi-graph on 2 vertices
+        sage: g.show() # long time
+
+    TESTS::
+
+        sage: n = randint(0, 10)
+        sage: g = graphs.DipoleGraph(n)
+        sage: g.num_verts() == 2
+        True
+        sage: g.num_edges() == n
+        True
+        sage: g.is_connected() == (n > 0)
+        True
+        sage: g.diameter() == (1 if n > 0 else infinity)
+        True
+
+    The input ``n`` must be `\geq 0`::
+
+        sage: graphs.DipoleGraph(-randint(1, 10))
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid graph description, n should be >= 0
+    """
+    # sanity checks
+    if n < 0:
+        raise ValueError("invalid graph description, n should be >= 0")
+
+    return Graph([[0,1], [(0,1)]*n], name="Dipole graph", multiedges=True)
+
 
 def BubbleSortGraph(n):
     r"""
@@ -369,7 +916,7 @@ def BubbleSortGraph(n):
     :class:`~sage.groups.perm_gps.permgroup_named.SymmetricGroup`.
 
     The bubble sort graph is the underlying graph of the
-    :meth:`~sage.geometry.polyhedron.library.Polytopes.permutahedron`. 
+    :meth:`~sage.geometry.polyhedron.library.Polytopes.permutahedron`.
 
     INPUT:
 
@@ -429,14 +976,14 @@ def BubbleSortGraph(n):
         return Graph(CompleteGraph(n), name="Bubble sort")
     from sage.combinat.permutation import Permutations
     #create set from which to permute
-    label_set = [str(i) for i in xrange(1, n + 1)]
+    label_set = [str(i) for i in range(1, n + 1)]
     d = {}
     #iterate through all vertices
     for v in Permutations(label_set):
         v = list(v) # So we can easily mutate it
         tmp_dict = {}
         #add all adjacencies
-        for i in xrange(n - 1):
+        for i in range(n - 1):
             #swap entries
             v[i], v[i + 1] = v[i + 1], v[i]
             #add new vertex
@@ -454,8 +1001,8 @@ def chang_graphs():
 
     Three of the four strongly regular graphs of parameters `(28,12,6,4)` are
     called the Chang graphs. The fourth is the line graph of `K_8`. For more
-    information about the Chang graphs, see :wikipedia:`Chang_graphs` or
-    http://www.win.tue.nl/~aeb/graphs/Chang.html.
+    information about the Chang graphs, see the :wikipedia:`Chang_graphs` or
+    https://www.win.tue.nl/~aeb/graphs/Chang.html.
 
     EXAMPLES: check that we get 4 non-isomorphic s.r.g.'s with the
     same parameters::
@@ -465,7 +1012,7 @@ def chang_graphs():
         sage: T8 = K8.line_graph()
         sage: four_srg = chang_graphs + [T8]
         sage: for g in four_srg:
-        ....:     print g.is_strongly_regular(parameters=True)
+        ....:     print(g.is_strongly_regular(parameters=True))
         (28, 12, 6, 4)
         (28, 12, 6, 4)
         (28, 12, 6, 4)
@@ -481,8 +1028,8 @@ def chang_graphs():
         sage: s=[K8.subgraph_search(c8).edges(),
         ....:    [(0,1,None),(2,3,None),(4,5,None),(6,7,None)],
         ....:    K8.subgraph_search(c3c5).edges()]
-        sage: map(lambda x,G: T8.seidel_switching(x, inplace=False).is_isomorphic(G),
-        ....:                  s, chang_graphs)
+        sage: list(map(lambda x,G: T8.seidel_switching(x, inplace=False).is_isomorphic(G),
+        ....:                  s, chang_graphs))
         [True, True, True]
 
     """
@@ -490,7 +1037,7 @@ def chang_graphs():
                loops=False, multiedges=False)
     g2 = Graph("[~z^UipkkZPr_~Y_LOIiATOLBBxPR@`acoojBBSoWXTaabN?Yts?Yji_QyioClXZ",
                loops=False, multiedges=False)
-    g3 = Graph("[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
+    g3 = Graph(r"[~~vVMWdKFpV`^UGIaIERQ`\DBxpA@g`CbGRI`AxICNaFM[?fM\?Ytj@CxrGGlYt",
                loops=False, multiedges=False)
     return [g1,g2,g3]
 
@@ -499,7 +1046,7 @@ def CirculantGraph(n, adjacency):
     Returns a circulant graph with n nodes.
 
     A circulant graph has the property that the vertex `i` is connected
-    with the vertices `i+j` and `i-j` for each j in adj.
+    with the vertices `i+j` and `i-j` for each j in ``adjacency``.
 
     INPUT:
 
@@ -540,16 +1087,14 @@ def CirculantGraph(n, adjacency):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ...    k = graphs.CirculantGraph(i+3,i)
-        ...    g.append(k)
-        ...
+        ....:     k = graphs.CirculantGraph(i+4, i+1)
+        ....:     g.append(k)
         sage: for i in range(3):
-        ...    n = []
-        ...    for m in range(3):
-        ...        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...    j.append(n)
-        ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        ....:     n = []
+        ....:     for m in range(3):
+        ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:     j.append(n)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
 
     Compare to plotting with the spring-layout algorithm::
@@ -557,17 +1102,15 @@ def CirculantGraph(n, adjacency):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ...    spr = networkx.cycle_graph(i+3)
-        ...    k = Graph(spr)
-        ...    g.append(k)
-        ...
+        ....:     spr = networkx.cycle_graph(i+3)
+        ....:     k = Graph(spr)
+        ....:     g.append(k)
         sage: for i in range(3):
-        ...    n = []
-        ...    for m in range(3):
-        ...        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...    j.append(n)
-        ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        ....:  n = []
+        ....:  for m in range(3):
+        ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:  j.append(n)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
 
     Passing a 1 into adjacency should give the cycle.
@@ -592,13 +1135,11 @@ def CirculantGraph(n, adjacency):
         (4, 5),
         (5, 6)]
     """
-    from sage.graphs.graph_plot import _circle_embedding
-
-    if not isinstance(adjacency,list):
-        adjacency=[adjacency]
+    if not isinstance(adjacency, list):
+        adjacency = [adjacency]
 
     G = Graph(n, name="Circulant graph ("+str(adjacency)+")")
-    _circle_embedding(G, range(n))
+    G._circle_embedding(list(range(n)))
 
     for v in G:
         G.add_edges([(v,(v+j)%n) for j in adjacency])
@@ -629,16 +1170,16 @@ def CubeGraph(n):
         sage: g = []
         sage: j = []
         sage: for i in range(6):
-        ...    k = graphs.CubeGraph(i+1)
-        ...    g.append(k)
+        ....:  k = graphs.CubeGraph(i+1)
+        ....:  g.append(k)
         ...
         sage: for i in range(2):
-        ...    n = []
-        ...    for m in range(3):
-        ...        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...    j.append(n)
+        ....:  n = []
+        ....:  for m in range(3):
+        ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:  j.append(n)
         ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show(figsize=[6,4]) # long time
 
     Use the plot options to display larger `n`-cubes
@@ -660,10 +1201,10 @@ def CubeGraph(n):
     pn={}
 
     # construct recursively the adjacency dict and the positions
-    for i in xrange(n):
+    for i in range(n):
         ci = float(cos(i*theta))
         si = float(sin(i*theta))
-        for v,e in d.iteritems():
+        for v,e in d.items():
             v0 = v+'0'
             v1 = v+'1'
             l0 = [v1]
@@ -682,19 +1223,85 @@ def CubeGraph(n):
     # construct the graph
     r = Graph(name="%d-Cube"%n)
     r.add_vertices(d.keys())
-    for u,L in d.iteritems():
+    for u,L in d.items():
         for v in L:
             r.add_edge(u,v)
     r.set_pos(p)
 
     return r
 
+def GoethalsSeidelGraph(k,r):
+    r"""
+    Returns the graph `\text{Goethals-Seidel}(k,r)`.
+
+    The graph `\text{Goethals-Seidel}(k,r)` comes from a construction presented
+    in Theorem 2.4 of [GS1970]_. It relies on a :func:`(v,k)-BIBD
+    <sage.combinat.designs.bibd.balanced_incomplete_block_design>` with `r`
+    blocks and a
+    :func:`~sage.combinat.matrices.hadamard_matrix.hadamard_matrix` of order
+    `r+1`. The result is a
+    :func:`sage.graphs.strongly_regular_db.strongly_regular_graph` on `v(r+1)`
+    vertices with degree `k=(n+r-1)/2`.
+
+    It appears under this name in Andries Brouwer's `database of strongly
+    regular graphs <https://www.win.tue.nl/~aeb/graphs/srg/srgtab.html>`__.
+
+    INPUT:
+
+    - ``k,r`` -- integers
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_goethals_seidel`
+
+    EXAMPLES::
+
+        sage: graphs.GoethalsSeidelGraph(3,3)
+        Graph on 28 vertices
+        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)
+        (28, 15, 6, 10)
+
+    """
+    from sage.combinat.designs.bibd import balanced_incomplete_block_design
+    from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
+    from sage.matrix.constructor import Matrix
+    from sage.matrix.constructor import block_matrix
+
+    v = (k-1)*r+1
+    n = v*(r+1)
+
+    # N is the (v times b) incidence matrix of a bibd
+    N = balanced_incomplete_block_design(v,k).incidence_matrix()
+
+    # L is a (r+1 times r) matrix, where r is the row sum of N
+    L = hadamard_matrix(r+1).submatrix(0,1)
+    L = [Matrix(C).transpose() for C in L.columns()]
+    zero = Matrix(r+1,1,[0]*(r+1))
+
+    # For every row of N, we replace the 0s with a column of zeros, and we
+    # replace the ith 1 with the ith column of L. The result is P.
+    P = []
+    for row in N:
+        Ltmp = L[:]
+        P.append([Ltmp.pop(0) if i else zero
+                  for i in row])
+
+    P = block_matrix(P)
+
+    # The final graph
+    PP = P*P.transpose()
+    for i in range(n):
+        PP[i,i] = 0
+
+    G = Graph(PP, format="seidel_adjacency_matrix")
+    return G
+
 def DorogovtsevGoltsevMendesGraph(n):
     """
     Construct the n-th generation of the Dorogovtsev-Goltsev-Mendes
     graph.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: G = graphs.DorogovtsevGoltsevMendesGraph(8)
         sage: G.size()
@@ -720,8 +1327,7 @@ def FoldedCubeGraph(n):
     `2^{n-1}` vertices by adding an edge between opposed vertices. This
     second construction is the one produced by this method.
 
-    For more information on folded cube graphs, see the corresponding
-    :wikipedia:`Wikipedia page <Folded_cube_graph>`.
+    See the :wikipedia:`Folded_cube_graph` for more information.
 
     EXAMPLES:
 
@@ -755,15 +1361,14 @@ def FoldedCubeGraph(n):
 
 def FriendshipGraph(n):
     r"""
-    Returns the friendship graph `F_n`.
+    Return the friendship graph `F_n`.
 
     The friendship graph is also known as the Dutch windmill graph. Let
     `C_3` be the cycle graph on 3 vertices. Then `F_n` is constructed by
     joining `n \geq 1` copies of `C_3` at a common vertex. If `n = 1`,
     then `F_1` is isomorphic to `C_3` (the triangle graph). If `n = 2`,
     then `F_2` is the butterfly graph, otherwise known as the bowtie
-    graph. For more information, see this
-    `Wikipedia article on the friendship graph <http://en.wikipedia.org/wiki/Friendship_graph>`_.
+    graph. For more information, see the :wikipedia:`Friendship_graph`.
 
     INPUT:
 
@@ -775,7 +1380,7 @@ def FriendshipGraph(n):
     - The friendship graph `F_n` obtained from `n` copies of the cycle
       graph `C_3`.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :meth:`GraphGenerators.ButterflyGraph`
 
@@ -785,14 +1390,14 @@ def FriendshipGraph(n):
 
         sage: A = []; B = []
         sage: for i in range(9):
-        ...       g = graphs.FriendshipGraph(i + 1)
-        ...       A.append(g)
+        ....:     g = graphs.FriendshipGraph(i + 1)
+        ....:     A.append(g)
         sage: for i in range(3):
-        ...       n = []
-        ...       for j in range(3):
-        ...           n.append(A[3*i + j].plot(vertex_size=20, vertex_labels=False))
-        ...       B.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(B)
+        ....:     n = []
+        ....:     for j in range(3):
+        ....:         n.append(A[3*i + j].plot(vertex_size=20, vertex_labels=False))
+        ....:     B.append(n)
+        sage: G = graphics_array(B)
         sage: G.show()  # long time
 
     For `n = 1`, the friendship graph `F_1` is isomorphic to the cycle
@@ -853,24 +1458,15 @@ def FriendshipGraph(n):
         G = CycleGraph(3)
         G.name("Friendship graph")
         return G
-    # build the edge and position dictionaries
-    from sage.functions.trig import cos, sin
-    from sage.rings.real_mpfr import RR
-    from sage.symbolic.constants import pi
-    N = 2*n + 1           # order of F_n
-    d = (2*pi) / (N - 1)  # angle between external nodes
-    edge_dict = {}
-    pos_dict = {}
-    for i in range(N - 2):
-        if i & 1:  # odd numbered node
-            edge_dict.setdefault(i, [i + 1, N - 1])
-        else:      # even numbered node
-            edge_dict.setdefault(i, [N - 1])
-        pos_dict.setdefault(i, [RR(cos(i*d)), RR(sin(i*d))])
-    edge_dict.setdefault(N - 2, [0, N - 1])
-    pos_dict.setdefault(N - 2, [RR(cos(d * (N-2))), RR(sin(d * (N-2)))])
-    pos_dict.setdefault(N - 1, [0, 0])
-    return Graph(edge_dict, pos=pos_dict, name="Friendship graph")
+    # build the edges and position dictionaries
+    N = 2 * n + 1           # order of F_n
+    center = 2 * n
+    G = Graph(N, name="Friendship graph")
+    for i in range(0, N - 1, 2):
+        G.add_cycle([center, i, i+1])
+    G.set_pos({center:(0, 0)})
+    G._circle_embedding(list(range(N - 1)), radius=1)
+    return G
 
 def FuzzyBallGraph(partition, q):
     r"""
@@ -890,16 +1486,16 @@ def FuzzyBallGraph(partition, q):
 
     EXAMPLES::
 
-        sage: graphs.FuzzyBallGraph([3,1],2).adjacency_matrix()
-        [0 1 1 1 1 1 1 0]
-        [1 0 1 1 1 1 1 0]
-        [1 1 0 1 1 1 1 0]
-        [1 1 1 0 1 1 0 1]
-        [1 1 1 1 0 1 0 0]
-        [1 1 1 1 1 0 0 0]
-        [1 1 1 0 0 0 0 0]
-        [0 0 0 1 0 0 0 0]
-
+        sage: F = graphs.FuzzyBallGraph([3,1],2)
+        sage: F.adjacency_matrix(vertices=list(F))
+        [0 0 1 1 1 0 0 0]
+        [0 0 0 0 0 1 0 0]
+        [1 0 0 1 1 1 1 1]
+        [1 0 1 0 1 1 1 1]
+        [1 0 1 1 0 1 1 1]
+        [0 1 1 1 1 0 1 1]
+        [0 0 1 1 1 1 0 1]
+        [0 0 1 1 1 1 1 0]
 
     Pick positive integers `m` and `k` and a nonnegative integer `q`.
     All the FuzzyBallGraphs constructed from partitions of `m` with
@@ -908,7 +1504,7 @@ def FuzzyBallGraph(partition, q):
 
         sage: m=4; q=2; k=2
         sage: g_list=[graphs.FuzzyBallGraph(p,q) for p in Partitions(m, length=k)]
-        sage: set([g.laplacian_matrix(normalized=True).charpoly() for g in g_list])  # long time (7s on sage.math, 2011)
+        sage: set([g.laplacian_matrix(normalized=True, vertices=list(g)).charpoly() for g in g_list])  # long time (7s on sage.math, 2011)
         {x^8 - 8*x^7 + 4079/150*x^6 - 68689/1350*x^5 + 610783/10800*x^4 - 120877/3240*x^3 + 1351/100*x^2 - 931/450*x}
     """
     from sage.graphs.generators.basic import CompleteGraph
@@ -922,12 +1518,14 @@ def FuzzyBallGraph(partition, q):
         curr_vertex+=p
     return g
 
+
 def FibonacciTree(n):
     r"""
-    Returns the graph of the Fibonacci Tree `F_{i}` of order `n`.
-    `F_{i}` is recursively defined as the a tree with a root vertex
-    and two attached child trees `F_{i-1}` and `F_{i-2}`, where
-    `F_{1}` is just one vertex and `F_{0}` is empty.
+    Return the graph of the Fibonacci Tree `F_{i}` of order `n`.
+
+    The Fibonacci tree `F_{i}` is recursively defined as the tree
+    with a root vertex and two attached child trees `F_{i-1}` and
+    `F_{i-2}`, where `F_{1}` is just one vertex and `F_{0}` is empty.
 
     INPUT:
 
@@ -950,9 +1548,11 @@ def FibonacciTree(n):
 
     - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
     """
-    T = Graph(name="Fibonacci-Tree-%d"%n)
-    if n == 1: T.add_vertex(0)
-    if n < 2: return T
+    T = Graph(name="Fibonacci-Tree-%d" % n)
+    if n == 1:
+        T.add_vertex(0)
+    if n < 2:
+        return T
 
     from sage.combinat.combinat import fibonacci_sequence
     F = list(fibonacci_sequence(n + 2))
@@ -961,7 +1561,8 @@ def FibonacciTree(n):
 
     def fib(level, node, y):
         pos[node] = (node, y)
-        if level < 2: return
+        if level < 2:
+            return
         level -= 1
         y -= s
         diff = F[level]
@@ -973,13 +1574,14 @@ def FibonacciTree(n):
         fib(level, node - diff, y)
         fib(level - 1, node + diff, y)
 
-    T.add_vertices(xrange(sum(F[:-1])))
+    T.add_vertices(range(sum(F[:-1])))
     fib(n, F[n + 1] - 1, 0)
     T.set_pos(pos)
 
     return T
 
-def GeneralizedPetersenGraph(n,k):
+
+def GeneralizedPetersenGraph(n, k):
     r"""
     Returns a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
@@ -987,7 +1589,7 @@ def GeneralizedPetersenGraph(n,k):
     For `k=1` the result is a graph isomorphic to the circular ladder graph
     with the same `n`. The regular Petersen Graph has `n=5` and `k=2`.
     Other named graphs that can be described using this notation include
-    the Desargues graph and the Moebius-Kantor graph.
+    the Desargues graph and the Möbius-Kantor graph.
 
     INPUT:
 
@@ -1024,25 +1626,18 @@ def GeneralizedPetersenGraph(n,k):
 
     - Anders Jonsson (2009-10-15)
     """
-    if (n < 3):
+    if n < 3:
             raise ValueError("n must be larger than 2")
-    if (k < 1 or k>((n-1)/2)):
+    if k < 1 or k > (n - 1) // 2:
             raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
-    pos_dict = {}
-    G = Graph()
-    for i in range(n):
-        x = float(cos((pi/2) + ((2*pi)/n)*i))
-        y = float(sin((pi/2) + ((2*pi)/n)*i))
-        pos_dict[i] = (x,y)
-    for i in range(n, 2*n):
-        x = float(0.5*cos((pi/2) + ((2*pi)/n)*i))
-        y = float(0.5*sin((pi/2) + ((2*pi)/n)*i))
-        pos_dict[i] = (x,y)
+    G = Graph(2 * n, name="Generalized Petersen graph (n="+str(n)+",k="+str(k)+")")
     for i in range(n):
         G.add_edge(i, (i+1) % n)
         G.add_edge(i, i+n)
         G.add_edge(i+n, n + (i+k) % n)
-    return Graph(G, pos=pos_dict, name="Generalized Petersen graph (n="+str(n)+",k="+str(k)+")")
+    G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
+    G._circle_embedding(list(range(n, 2*n)), radius=.5, angle=pi/2)
+    return G
 
 def HararyGraph( k, n ):
     r"""
@@ -1078,9 +1673,9 @@ def HararyGraph( k, n ):
 
         sage: n=10
         sage: for k in range(2,n):
-        ...       g = graphs.HararyGraph(k,n)
-        ...       if k != g.vertex_connectivity():
-        ...          print "Connectivity of Harary graphs not satisfied."
+        ....:     g = graphs.HararyGraph(k,n)
+        ....:     if k != g.vertex_connectivity():
+        ....:        print("Connectivity of Harary graphs not satisfied.")
     """
     if k < 2:
         raise ValueError("Connectivity parameter k should be at least 2.")
@@ -1088,10 +1683,10 @@ def HararyGraph( k, n ):
         raise ValueError("Number of vertices n should be greater than k.")
 
     if k%2 == 0:
-        G = CirculantGraph( n, range(1,k//2+1) )
+        G = CirculantGraph( n, list(range(1,k//2+1)) )
     else:
         if n%2 == 0:
-            G = CirculantGraph( n, range(1,(k-1)//2+1) )
+            G = CirculantGraph( n, list(range(1,(k-1)//2+1)) )
             for i in range(n):
                 G.add_edge( i, (i + n//2)%n )
         else:
@@ -1147,19 +1742,20 @@ def HyperStarGraph(n,k):
     g = Graph(name="HS(%d,%d)"%(n,k))
     g.add_vertices(comb_to_str.values())
 
-    for c in Combinations(range(1,n),k): # 0 is not in c
+    for c in Combinations(list(range(1, n)), k):  # 0 is not in c
         L = []
         u = comb_to_str[tuple(c)]
         # switch 0 with the 1s
-        for i in xrange(len(c)):
+        for i in range(len(c)):
             v = tuple([0]+c[:i]+c[i+1:])
             g.add_edge( u , comb_to_str[v] )
 
     return g
 
+
 def LCFGraph(n, shift_list, repeats):
-    """
-    Returns the cubic graph specified in LCF notation.
+    r"""
+    Return the cubic graph specified in LCF notation.
 
     LCF (Lederberg-Coxeter-Fruchte) notation is a concise way of
     describing cubic Hamiltonian graphs. The way a graph is constructed
@@ -1228,13 +1824,9 @@ def LCFGraph(n, shift_list, repeats):
       1965.  http://profiles.nlm.nih.gov/BB/A/B/I/U/_/bbabiu.pdf.
     """
     import networkx
-    pos_dict = {}
-    for i in range(n):
-        x = float(cos(pi/2 + ((2*pi)/n)*i))
-        y = float(sin(pi/2 + ((2*pi)/n)*i))
-        pos_dict[i] = [x,y]
-    return Graph(networkx.LCF_graph(n, shift_list, repeats),\
-                 pos=pos_dict, name="LCF Graph")
+    G = Graph(networkx.LCF_graph(n, shift_list, repeats), name="LCF Graph")
+    G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
+    return G
 
 def MycielskiGraph(k=1, relabel=True):
     r"""
@@ -1265,7 +1857,7 @@ def MycielskiGraph(k=1, relabel=True):
     - ``relabel`` Relabel the vertices so their names are the integers
       ``range(n)`` where ``n`` is the number of vertices in the graph.
 
-    EXAMPLE:
+    EXAMPLES:
 
     The Mycielski graph `M_k` is triangle-free and has chromatic
     number equal to `k`. ::
@@ -1309,7 +1901,8 @@ def MycielskiGraph(k=1, relabel=True):
     g0 = MycielskiGraph(k-1)
     g = MycielskiStep(g0)
     g.name("Mycielski Graph " + str(k))
-    if relabel: g.relabel()
+    if relabel:
+        g.relabel()
 
     return g
 
@@ -1389,14 +1982,14 @@ def NKStarGraph(n,k):
     """
     from sage.combinat.permutation import Arrangements
     #set from which to permute
-    set = [str(i) for i in xrange(1,n+1)]
+    set = [str(i) for i in range(1,n+1)]
     #create dict
     d = {}
     for v in Arrangements(set,k):
         v = list(v) # So we can easily mutate it
         tmp_dict = {}
         #add edges of dimension i
-        for i in xrange(1,k):
+        for i in range(1,k):
             #swap 0th and ith element
             v[0], v[i] = v[i], v[0]
             #convert to str and add to list
@@ -1447,7 +2040,7 @@ def NStarGraph(n):
     """
     from sage.combinat.permutation import Permutations
     #set from which to permute
-    set = [str(i) for i in xrange(1,n+1)]
+    set = [str(i) for i in range(1,n+1)]
     #create dictionary of lists
     #vertices are adjacent if the first element
     #is swapped with the ith element
@@ -1455,7 +2048,7 @@ def NStarGraph(n):
     for v in Permutations(set):
         v = list(v) # So we can easily mutate it
         tmp_dict = {}
-        for i in xrange(1,n):
+        for i in range(1,n):
             if v[0] != v[i]:
                 #swap 0th and ith element
                 v[0], v[i] = v[i], v[0]
@@ -1481,18 +2074,19 @@ def OddGraph(n):
     For example, the Petersen Graph can be defined
     as the Odd Graph with parameter `3`.
 
-    EXAMPLE::
+    EXAMPLES::
 
-        sage: OG=graphs.OddGraph(3)
-        sage: print OG.vertices()
-        [{4, 5}, {1, 3}, {2, 5}, {2, 3}, {3, 4}, {3, 5}, {1, 4}, {1, 5}, {1, 2}, {2, 4}]
-        sage: P=graphs.PetersenGraph()
+        sage: OG = graphs.OddGraph(3)
+        sage: sorted(OG.vertex_iterator(), key=str)
+        [{1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 3}, {2, 4}, {2, 5},
+         {3, 4}, {3, 5}, {4, 5}]
+        sage: P = graphs.PetersenGraph()
         sage: P.is_isomorphic(OG)
         True
 
     TESTS::
 
-        sage: KG=graphs.OddGraph(1)
+        sage: KG = graphs.OddGraph(1)
         Traceback (most recent call last):
         ...
         ValueError: Parameter n should be an integer strictly greater than 1
@@ -1513,24 +2107,168 @@ def PaleyGraph(q):
 
     EXAMPLES::
 
-        sage: G=graphs.PaleyGraph(9);G
+        sage: G = graphs.PaleyGraph(9); G
         Paley graph with parameter 9: Graph on 9 vertices
         sage: G.is_regular()
         True
 
     A Paley graph is always self-complementary::
 
-        sage: G.complement().is_isomorphic(G)
+        sage: G.is_self_complementary()
         True
+
+    TESTS:
+
+    Wrong parameter::
+
+        sage: graphs.PaleyGraph(6)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter q must be a prime power
+        sage: graphs.PaleyGraph(3)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter q must be congruent to 1 mod 4
     """
     from sage.rings.finite_rings.integer_mod import mod
-    from sage.rings.finite_rings.constructor import FiniteField
-    from sage.rings.arith import is_prime_power
-    assert is_prime_power(q), "Parameter q must be a prime power"
-    assert mod(q,4)==1, "Parameter q must be congruent to 1 mod 4"
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    from sage.arith.all import is_prime_power
+    if not is_prime_power(q):
+        raise ValueError("parameter q must be a prime power")
+    if not mod(q, 4) == 1:
+        raise ValueError("parameter q must be congruent to 1 mod 4")
     g = Graph([FiniteField(q,'a'), lambda i,j: (i-j).is_square()],
-    loops=False, name = "Paley graph with parameter %d"%q)
+                  loops=False, name="Paley graph with parameter {}".format(q))
     return g
+
+def PasechnikGraph(n):
+    r"""
+    Pasechnik strongly regular graph on `(4n-1)^2` vertices
+
+    A strongly regular graph with parameters of the orthogonal array graph
+    :func:`~sage.graphs.graph_generators.GraphGenerators.OrthogonalArrayBlockGraph`,
+    also known as pseudo Latin squares graph `L_{2n-1}(4n-1)`, constructed from
+    a skew Hadamard matrix of order `4n` following [Pas1992]_.
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    EXAMPLES::
+
+        sage: graphs.PasechnikGraph(4).is_strongly_regular(parameters=True)
+        (225, 98, 43, 42)
+        sage: graphs.PasechnikGraph(5).is_strongly_regular(parameters=True)  # long time
+        (361, 162, 73, 72)
+        sage: graphs.PasechnikGraph(9).is_strongly_regular(parameters=True)  # not tested
+        (1225, 578, 273, 272)
+
+    TESTS::
+
+        sage: graphs.PasechnikGraph(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be >= 1
+    """
+    if n < 1:
+        raise ValueError("parameter n must be >= 1")
+    from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
+    from sage.matrix.constructor import identity_matrix
+    H = skew_hadamard_matrix(4 * n)
+    M = H[1:].T[1:] - identity_matrix(4 * n - 1)
+    G = Graph(M.tensor_product(M.T), format='seidel_adjacency_matrix')
+    G.relabel()
+    G.name("Pasechnik Graph_{}".format(n))
+    return G
+
+
+def SquaredSkewHadamardMatrixGraph(n):
+    r"""
+    Pseudo-`OA(2n,4n-1)`-graph from a skew Hadamard matrix of order `4n`
+
+    A strongly regular graph with parameters of the orthogonal array graph
+    :func:`~sage.graphs.graph_generators.GraphGenerators.OrthogonalArrayBlockGraph`,
+    also known as pseudo Latin squares graph `L_{2n}(4n-1)`, constructed from a
+    skew Hadamard matrix of order `4n`, due to Goethals and Seidel, see
+    [BL1984]_.
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    EXAMPLES::
+
+        sage: graphs.SquaredSkewHadamardMatrixGraph(4).is_strongly_regular(parameters=True)
+        (225, 112, 55, 56)
+        sage: graphs.SquaredSkewHadamardMatrixGraph(5).is_strongly_regular(parameters=True)  # long time
+        (361, 180, 89, 90)
+        sage: graphs.SquaredSkewHadamardMatrixGraph(9).is_strongly_regular(parameters=True)  # not tested
+        (1225, 612, 305, 306)
+
+    TESTS::
+
+        sage: graphs.SquaredSkewHadamardMatrixGraph(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be >= 1
+    """
+    if n < 1:
+        raise ValueError("parameter n must be >= 1")
+    from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
+    from sage.matrix.constructor import identity_matrix, matrix
+    idm = identity_matrix(4 * n - 1)
+    e = matrix([1] * (4 * n - 1))
+    H = skew_hadamard_matrix(4 * n)
+    M = H[1:].T[1:] - idm
+    s = M.tensor_product(M.T) - idm.tensor_product(e.T * e - idm)
+    G = Graph(s, format='seidel_adjacency_matrix')
+    G.relabel()
+    G.name("skewhad^2_{}".format(n))
+    return G
+
+def SwitchedSquaredSkewHadamardMatrixGraph(n):
+    r"""
+    A strongly regular graph in Seidel switching class of
+    `SquaredSkewHadamardMatrixGraph`
+
+    A strongly regular graph in the :meth:`Seidel switching
+    <Graph.seidel_switching>` class of the disjoint union of a 1-vertex graph
+    and the one produced by :func:`Pseudo-L_{2n}(4n-1)
+    <sage.graphs.graph_generators.GraphGenerators.SquaredSkewHadamardMatrixGraph>`
+
+    In this case, the other possible parameter set of a strongly regular graph
+    in the Seidel switching class of the latter graph (see [BH12]_) coincides
+    with the set of parameters of the complement of the graph returned by this
+    function.
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_switch_skewhad`
+
+    EXAMPLES::
+
+        sage: g=graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
+        sage: g.is_strongly_regular(parameters=True)
+        (226, 105, 48, 49)
+        sage: from sage.combinat.designs.twographs import twograph_descendant
+        sage: twograph_descendant(g,0).is_strongly_regular(parameters=True)
+        (225, 112, 55, 56)
+        sage: twograph_descendant(g.complement(),0).is_strongly_regular(parameters=True)
+        (225, 112, 55, 56)
+
+    TESTS::
+
+        sage: graphs.SwitchedSquaredSkewHadamardMatrixGraph(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be >= 1
+    """
+    G = SquaredSkewHadamardMatrixGraph(n).complement()
+    G.add_vertex((4 * n - 1)**2)
+    G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
+    G.name("switch skewhad^2+*_" + str((n)))
+    return G
+
 
 def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     r"""
@@ -1581,7 +2319,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     So the solution to a 3-disk puzzle (with at least
     two pegs) can be expressed by the shortest path between
     ``(0,0,0)`` and ``(1,1,1)``.  For more on this representation
-    of the graph, or its properties, see [ARETT-DOREE]_.
+    of the graph, or its properties, see [AD2010]_.
 
     For greatest speed we create graphs with integer vertices,
     where we encode the tuples as integers with a base equal
@@ -1665,13 +2403,6 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         ...
         ValueError: Disks for Tower of Hanoi graph should be one or greater (not 0)
 
-    .. rubric:: Citations
-
-    .. [ARETT-DOREE] Arett, Danielle and Doree, Suzanne
-       "Coloring and counting on the Hanoi graphs"
-       Mathematics Magazine, Volume 83, Number 3, June 2010, pages 200-9
-
-
     AUTHOR:
 
     - Rob Beezer, (2009-12-26), with assistance from Su Doree
@@ -1718,7 +2449,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         # We construct all such pairs of new states and add as edges
         from sage.combinat.subset import Subsets
         for state in range(nverts):
-            emptypegs = range(pegs)
+            emptypegs = list(range(pegs))
             reduced_state = state
             for i in range(d-1):
                 apeg = reduced_state % pegs
@@ -1751,7 +2482,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         one = Integer(1)
         if positions:
             radius_multiplier = 1 + csc(pi/pegs)
-            sine = []; cosine = []
+            sine = []
+            cosine = []
             for i in range(pegs):
                 angle = 2*i*pi/float(pegs)
                 sine.append(sin(angle))
@@ -1764,7 +2496,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
                 mapping[i] = tuple(state)
                 state.reverse()
             if positions:
-                locx = 0.0; locy = 0.0
+                locx = 0.0
+                locy = 0.0
                 radius = 1.0
                 parity = -1.0
                 for index in range(disks):
@@ -1788,13 +2521,12 @@ def line_graph_forbidden_subgraphs():
     r"""
     Returns the 9 forbidden subgraphs of a line graph.
 
-    `Wikipedia article on the line graphs
-    <http://en.wikipedia.org/wiki/Line_graph>`_
+    See the :wikipedia:`Line_graph` for more information.
 
     The graphs are returned in the ordering given by the Wikipedia
     drawing, read from left to right and from top to bottom.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: graphs.line_graph_forbidden_subgraphs()
         [Claw graph: Graph on 4 vertices,
@@ -1884,7 +2616,7 @@ def petersen_family(generate=False):
       `\Delta-Y` transformations. When set to ``False`` (default) a hardcoded
       version of the graphs (with a prettier layout) is returned.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: graphs.petersen_family()
         [Petersen graph: Graph on 10 vertices,
@@ -1908,7 +2640,6 @@ def petersen_family(generate=False):
     if not generate:
         from sage.graphs.generators.basic import CompleteGraph, \
              CompleteBipartiteGraph, CompleteMultipartiteGraph
-        from sage.graphs.graph_plot import _circle_embedding
         l = [PetersenGraph(), CompleteGraph(6),
              CompleteMultipartiteGraph([3, 3, 1])]
         g = CompleteBipartiteGraph(4, 4)
@@ -1916,16 +2647,16 @@ def petersen_family(generate=False):
         g.name("")
         l.append(g)
         g = Graph('HKN?Yeb')
-        _circle_embedding(g, [1, 2, 4, 3, 0, 5])
-        _circle_embedding(g, [6, 7, 8], radius=.6, shift=1.25)
+        g._circle_embedding([1, 2, 4, 3, 0, 5])
+        g._circle_embedding([6, 7, 8], radius=.6, shift=1.25)
         l.append(g)
         g = Graph('Fs\\zw')
-        _circle_embedding(g, [1, 2, 3])
-        _circle_embedding(g, [4, 5, 6], radius=.7)
+        g._circle_embedding([1, 2, 3])
+        g._circle_embedding([4, 5, 6], radius=.7)
         g.get_pos()[0] = (0, 0)
         l.append(g)
         g = Graph('GYQ[p{')
-        _circle_embedding(g, [1, 4, 6, 0, 5, 7, 3], shift=0.25)
+        g._circle_embedding([1, 4, 6, 0, 5, 7, 3], shift=0.25)
         g.get_pos()[2] = (0, 0)
         l.append(g)
         return l
@@ -2010,7 +2741,7 @@ def SierpinskiGasketGraph(n):
 
     .. SEEALSO::
 
-        There is another familly of graphs called Sierpinski graphs,
+        There is another family of graphs called Sierpinski graphs,
         where all vertices but 3 have valence 3. They are available using
         ``graphs.HanoiTowerGraph(3, n)``.
 
@@ -2027,9 +2758,7 @@ def SierpinskiGasketGraph(n):
 
     REFERENCES:
 
-    .. [LLWC] Chien-Hung Lin, Jia-Jie Liu, Yue-Li Wang, William Chung-Kung Yen,
-       *The Hub Number of Sierpinski-Like Graphs*, Theory Comput Syst (2011),
-       vol 49, :doi:`10.1007/s00224-010-9286-3`
+    [LLWC2011]_
     """
     from sage.modules.free_module_element import vector
     from sage.rings.rational_field import QQ
@@ -2064,38 +2793,36 @@ def WheelGraph(n):
     """
     Returns a Wheel graph with n nodes.
 
-    A Wheel graph is a basic structure where one node is connected to
-    all other nodes and those (outer) nodes are connected cyclically.
+    A Wheel graph is a basic structure where one node is connected to all other
+    nodes and those (outer) nodes are connected cyclically.
 
-    This constructor depends on NetworkX numeric labels.
+    PLOTTING: Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, each wheel graph will be
+    displayed with the first (0) node in the center, the second node at the top,
+    and the rest following in a counterclockwise manner.
 
-    PLOTTING: Upon construction, the position dictionary is filled to
-    override the spring-layout algorithm. By convention, each wheel
-    graph will be displayed with the first (0) node in the center, the
-    second node at the top, and the rest following in a
-    counterclockwise manner.
+    With the wheel graph, we see that it doesn't take a very large n at all for
+    the spring-layout to give a counter-intuitive display. (See Graphics Array
+    examples below).
 
-    With the wheel graph, we see that it doesn't take a very large n at
-    all for the spring-layout to give a counter-intuitive display. (See
-    Graphics Array examples below).
+    EXAMPLES:
 
-    EXAMPLES: We view many wheel graphs with a Sage Graphics Array,
-    first with this constructor (i.e., the position dictionary
-    filled)::
+    We view many wheel graphs with a Sage Graphics Array, first with this
+    constructor (i.e., the position dictionary filled)::
 
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ...    k = graphs.WheelGraph(i+3)
-        ...    g.append(k)
+        ....:  k = graphs.WheelGraph(i+3)
+        ....:  g.append(k)
         ...
         sage: for i in range(3):
-        ...    n = []
-        ...    for m in range(3):
-        ...        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...    j.append(n)
+        ....:  n = []
+        ....:  for m in range(3):
+        ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:  j.append(n)
         ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
 
     Next, using the spring-layout algorithm::
@@ -2104,17 +2831,17 @@ def WheelGraph(n):
         sage: g = []
         sage: j = []
         sage: for i in range(9):
-        ...    spr = networkx.wheel_graph(i+3)
-        ...    k = Graph(spr)
-        ...    g.append(k)
+        ....:  spr = networkx.wheel_graph(i+3)
+        ....:  k = Graph(spr)
+        ....:  g.append(k)
         ...
         sage: for i in range(3):
-        ...    n = []
-        ...    for m in range(3):
-        ...        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
-        ...    j.append(n)
+        ....:  n = []
+        ....:  for m in range(3):
+        ....:      n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:  j.append(n)
         ...
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
 
     Compare the plotting::
@@ -2125,15 +2852,109 @@ def WheelGraph(n):
         sage: spring23.show() # long time
         sage: posdict23.show() # long time
     """
-    pos_dict = {}
-    pos_dict[0] = (0,0)
-    for i in range(1,n):
-        x = float(cos((pi/2) + ((2*pi)/(n-1))*(i-1)))
-        y = float(sin((pi/2) + ((2*pi)/(n-1))*(i-1)))
-        pos_dict[i] = (x,y)
-    import networkx
-    G = networkx.wheel_graph(n)
-    return Graph(G, pos=pos_dict, name="Wheel graph")
+    from sage.graphs.generators.basic import CycleGraph
+    if n < 4:
+        G = CycleGraph(n)
+    else:
+        G = CycleGraph(n-1)
+        G.relabel(perm=list(range(1, n)), inplace=True)
+        G.add_edges([(0, i) for i in range(1, n)])
+        G._pos[0] = (0, 0)
+    G.name("Wheel graph")
+    return G
+
+def WindmillGraph(k, n):
+    r"""
+    Return the Windmill graph `Wd(k, n)`.
+
+    The windmill graph `Wd(k, n)` is an undirected graph constructed for `k \geq
+    2` and `n \geq 2` by joining `n` copies of the complete graph `K_k` at a
+    shared vertex. It has `(k-1)n+1` vertices and `nk(k-1)/2` edges, girth 3 (if
+    `k > 2`), radius 1 and diameter 2. It has vertex connectivity 1 because its
+    central vertex is an articulation point; however, like the complete graphs
+    from which it is formed, it is `(k-1)`-edge-connected. It is trivially
+    perfect and a block graph.
+
+    .. SEEALSO::
+
+        - :wikipedia:`Windmill_graph`
+        - :meth:`GraphGenerators.StarGraph`
+        - :meth:`GraphGenerators.FriendshipGraph`
+
+    EXAMPLES:
+
+    The Windmill graph `Wd(2, n)` is a star graph::
+
+        sage: n = 5
+        sage: W = graphs.WindmillGraph(2, n)
+        sage: W.is_isomorphic( graphs.StarGraph(n) )
+        True
+
+    The Windmill graph `Wd(3, n)` is the Friendship graph `F_n`::
+
+        sage: n = 5
+        sage: W = graphs.WindmillGraph(3, n)
+        sage: W.is_isomorphic( graphs.FriendshipGraph(n) )
+        True
+
+    The Windmill graph `Wd(3, 2)` is the Butterfly graph::
+
+        sage: W = graphs.WindmillGraph(3, 2)
+        sage: W.is_isomorphic( graphs.ButterflyGraph() )
+        True
+
+    The Windmill graph `Wd(k, n)` has chromatic number `k`::
+
+        sage: n,k = 5,6
+        sage: W = graphs.WindmillGraph(k, n)
+        sage: W.chromatic_number() == k
+        True
+
+    TESTS:
+
+    Giving too small parameters::
+
+        sage: graphs.WindmillGraph(1, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameters k and n must be >= 2
+        sage: graphs.WindmillGraph(2, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameters k and n must be >= 2
+    """
+    if k < 2 or n < 2:
+        raise ValueError('parameters k and n must be >= 2')
+
+    if k == 2:
+        from sage.graphs.generators.basic import StarGraph
+        G = StarGraph(n)
+    else:
+        sector = 2*pi/n
+        slide = 1/sin(sector/4)
+
+        pos_dict = {}
+        for i in range(0,k):
+            x = float(cos(i*pi/(k-2)))
+            y = float(sin(i*pi/(k-2))) + slide
+            pos_dict[i] = (x,y)
+
+        G = Graph()
+        pos = {0: [0, 0]}
+        for i in range(n):
+            V = list( range(i*(k-1)+1, (i+1)*(k-1)+1) )
+            G.add_clique([0]+V)
+            for j,v in enumerate(V):
+                x,y = pos_dict[j]
+                xv = x*cos(i*sector) - y*sin(i*sector)
+                yv = x*sin(i*sector) + y*cos(i*sector)
+                pos[v] = [xv, yv]
+
+        G.set_pos(pos)
+
+    G.name("Windmill graph Wd({}, {})".format(k, n))
+    return G
+
 
 def trees(vertices):
     r"""
@@ -2161,7 +2982,7 @@ def trees(vertices):
 
         sage: tree_iterator = graphs.trees(7)
         sage: for T in tree_iterator:
-        ...     print T.degree_sequence()
+        ....:     print(T.degree_sequence())
         [2, 2, 2, 2, 2, 1, 1]
         [3, 2, 2, 2, 1, 1, 1]
         [3, 2, 2, 2, 1, 1, 1]
@@ -2195,7 +3016,7 @@ def RingedTree(k, vertex_labels = True):
     vertices `[2^i...2^{i+1}-1]`) two vertices `u,v` are adjacent if `u=v+1` or
     if `u=2^i` and `v=`2^{i+1}-1`.
 
-    Ringed trees are defined in [CFHM12]_.
+    Ringed trees are defined in [CFHM2013]_.
 
     INPUT:
 
@@ -2204,7 +3025,7 @@ def RingedTree(k, vertex_labels = True):
     - ``vertex_labels`` (boolean) -- whether to label vertices as binary words
       (default) or as integers.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: G = graphs.RingedTree(5)
         sage: P = G.plot(vertex_labels=False, vertex_size=10)
@@ -2215,7 +3036,7 @@ def RingedTree(k, vertex_labels = True):
          '1000', '1001', '101', '1010', '1011', '11', '110', '1100', '1101',
          '111', '1110', '1111']
 
-    TEST::
+    TESTS::
 
         sage: G = graphs.RingedTree(-1)
         Traceback (most recent call last):
@@ -2225,17 +3046,9 @@ def RingedTree(k, vertex_labels = True):
         sage: G.vertices()
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
         18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
-
-    REFERENCES:
-
-    .. [CFHM12] On the Hyperbolicity of Small-World and Tree-Like Random Graphs
-      Wei Chen, Wenjie Fang, Guangda Hu, Michael W. Mahoney
-      http://arxiv.org/abs/1201.1717
     """
     if k<1:
         raise ValueError('The number of levels must be >= 1.')
-
-    from sage.graphs.graph_plot import _circle_embedding
 
     # Creating the Balanced tree, which contains most edges already
     g = BalancedTree(2,k-1)
@@ -2243,7 +3056,7 @@ def RingedTree(k, vertex_labels = True):
 
     # We consider edges layer by layer
     for i in range(1,k):
-        vertices = range(2**(i)-1,2**(i+1)-1)
+        vertices = list(range(2**(i)-1,2**(i+1)-1))
 
         # Add the missing edges
         g.add_cycle(vertices)
@@ -2251,7 +3064,7 @@ def RingedTree(k, vertex_labels = True):
         # And set the vertices' positions
         radius = i if i <= 1 else 1.5**i
         shift = -2**(i-2)+.5 if i > 1 else 0
-        _circle_embedding(g, vertices, radius = radius, shift = shift)
+        g._circle_embedding(vertices, radius = radius, shift = shift)
 
     # Specific position for the central vertex
     g.get_pos()[0] = (0,0.2)
@@ -2271,592 +3084,593 @@ def RingedTree(k, vertex_labels = True):
 
     return g
 
-def SymplecticGraph(d, q, algorithm=None):
+def MathonPseudocyclicMergingGraph(M, t):
     r"""
-    Returns the Symplectic graph `Sp(d,q)`.
+    Mathon's merging of classes in a pseudo-cyclic 3-class association scheme
 
-    The Symplectic Graph `Sp(d,q)` is built from a projective space of dimension
-    `d-1` over a field `F_q`, and a symplectic form `f`. Two vertices `u,v` are
-    made adjacent if `f(u,v)=0`.
-
-    See the page `on symplectic graphs on Andries Brouwer's website
-    <http://www.win.tue.nl/~aeb/graphs/Sp.html>`_.
+    Construct strongly regular graphs from p.97 of [BL1984]_.
 
     INPUT:
 
-    - ``d,q`` (integers) -- note that only even values of `d` are accepted by
-      the function.
+    - ``M`` -- the list of matrices in a pseudo-cyclic 3-class association scheme.
+      The identity matrix must be the first entry.
 
-    - ``algorithm`` -- if set to 'gap' then the computation is carried via GAP
-      library interface, computing totally singular subspaces, which is faster for `q>3`.
-      Otherwise it is done directly.
-
-    EXAMPLES:
-
-    Computation of the spectrum of `Sp(6,2)`::
-
-        sage: g = graphs.SymplecticGraph(6,2)
-        sage: g.is_strongly_regular(parameters=True)
-        (63, 30, 13, 15)
-        sage: set(g.spectrum()) == {-5, 3, 30}
-        True
-
-    The parameters of `Sp(4,q)` are the same as of `O(5,q)`, but they are
-    not isomorphic if `q` is odd::
-
-        sage: G = graphs.SymplecticGraph(4,3)
-        sage: G.is_strongly_regular(parameters=True)
-        (40, 12, 2, 4)
-        sage: O=graphs.OrthogonalPolarGraph(5,3)
-        sage: O.is_strongly_regular(parameters=True)
-        (40, 12, 2, 4)
-        sage: O.is_isomorphic(G)
-        False
-        sage: graphs.SymplecticGraph(6,4,algorithm="gap").is_strongly_regular(parameters=True) # not tested (long time)
-        (1365, 340, 83, 85)
-
-    TESTS::
-
-        sage: graphs.SymplecticGraph(4,4,algorithm="gap").is_strongly_regular(parameters=True)
-        (85, 20, 3, 5)
-        sage: graphs.SymplecticGraph(4,4).is_strongly_regular(parameters=True)
-        (85, 20, 3, 5)
-        sage: graphs.SymplecticGraph(4,4,algorithm="blah")
-        Traceback (most recent call last):
-        ...
-        ValueError: unknown algorithm!
-    """
-    if d < 1 or d%2 != 0:
-        raise ValueError("d must be even and greater than 2")
-
-    if algorithm == "gap":     # faster for larger (q>3)  fields
-        from sage.libs.gap.libgap import libgap
-        G = _polar_graph(d, q, libgap.SymplecticGroup(d, q))
-
-    elif algorithm == None:    # faster for small (q<4) fields
-        from sage.rings.finite_rings.constructor import FiniteField
-        from sage.modules.free_module import VectorSpace
-        from sage.schemes.projective.projective_space import ProjectiveSpace
-        from sage.matrix.constructor import identity_matrix, block_matrix, zero_matrix
-
-        F = FiniteField(q,"x")
-        M = block_matrix(F, 2, 2,
-                         [zero_matrix(F,d/2),
-                          identity_matrix(F,d/2),
-                          -identity_matrix(F,d/2),
-                          zero_matrix(F,d/2)])
-
-        V = VectorSpace(F,d)
-        PV = list(ProjectiveSpace(d-1,F))
-        G = Graph([[tuple(_) for _ in PV], lambda x,y:V(x)*(M*V(y)) == 0], loops = False)
-
-    else:
-        raise ValueError("unknown algorithm!")
-
-    G.name("Symplectic Graph Sp("+str(d)+","+str(q)+")")
-    G.relabel()
-    return G
-
-def AffineOrthogonalPolarGraph(d,q,sign="+"):
-    r"""
-    Returns the affine polar graph `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`.
-
-    Affine Polar graphs are built from a `d`-dimensional vector space over
-    `F_q`, and a quadratic form which is hyperbolic, elliptic or parabolic
-    according to the value of ``sign``.
-
-    Note that `VO^+(d,q),VO^-(d,q)` are strongly regular graphs, while `VO(d,q)`
-    is not.
-
-    For more information on Affine Polar graphs, see `Affine Polar
-    Graphs page of Andries Brouwer's website
-    <http://www.win.tue.nl/~aeb/graphs/VO.html>`_.
-
-    INPUT:
-
-    - ``d`` (integer) -- ``d`` must be even if ``sign != None``, and odd
-      otherwise.
-
-    - ``q`` (integer) -- a power of a prime number, as `F_q` must exist.
-
-    - ``sign`` -- must be equal to ``"+"``, ``"-"``, or ``None`` to compute
-      (respectively) `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`. By default
-      ``sign="+"``.
-
-    .. NOTE::
-
-        The graph `VO^\epsilon(d,q)` is the graph induced by the
-        non-neighbors of a vertex in an :meth:`Orthogonal Polar Graph
-        <OrthogonalPolarGraph>` `O^\epsilon(d+2,q)`.
-
-    EXAMPLES:
-
-    The :meth:`Brouwer-Haemers graph <BrouwerHaemersGraph>` is isomorphic to
-    `VO^-(4,3)`::
-
-        sage: g = graphs.AffineOrthogonalPolarGraph(4,3,"-")
-        sage: g.is_isomorphic(graphs.BrouwerHaemersGraph())
-        True
-
-    Some examples from `Brouwer's table or strongly regular graphs
-    <http://www.win.tue.nl/~aeb/graphs/srg/srgtab.html>`_::
-
-        sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"-"); g
-        Affine Polar Graph VO^-(6,2): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
-        (64, 27, 10, 12)
-        sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"+"); g
-        Affine Polar Graph VO^+(6,2): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
-        (64, 35, 18, 20)
-
-    When ``sign is None``::
-
-        sage: g = graphs.AffineOrthogonalPolarGraph(5,2,None); g
-        Affine Polar Graph VO^-(5,2): Graph on 32 vertices
-        sage: g.is_strongly_regular(parameters=True)
-        False
-        sage: g.is_regular()
-        True
-        sage: g.is_vertex_transitive()
-        True
-    """
-    if sign in ["+","-"]:
-        s = 1 if sign == "+" else -1
-        if d%2 == 1:
-            raise ValueError("d must be even when sign!=None")
-    else:
-        if d%2 == 0:
-            raise ValueError("d must be odd when sign==None")
-        s = 0
-
-    from sage.interfaces.gap import gap
-    from sage.rings.finite_rings.constructor import FiniteField
-    from sage.modules.free_module import VectorSpace
-    from sage.matrix.constructor import Matrix
-    from sage.libs.gap.libgap import libgap
-    from itertools import combinations
-
-    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(s,d,q))['matrix'])
-    F = libgap.GF(q).sage()
-    V = list(VectorSpace(F,d))
-
-    G = Graph()
-    G.add_vertices([tuple(_) for _ in V])
-    for x,y in combinations(V,2):
-        if not (x-y)*M*(x-y):
-            G.add_edge(tuple(x),tuple(y))
-
-    G.name("Affine Polar Graph VO^"+str('+' if s == 1 else '-')+"("+str(d)+","+str(q)+")")
-    G.relabel()
-    return G
-
-def OrthogonalPolarGraph(m, q, sign="+"):
-    r"""
-    Returns the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
-
-    For more information on Orthogonal Polar graphs, see see the `page of
-    Andries Brouwer's website <http://www.win.tue.nl/~aeb/graphs/srghub.html>`_.
-
-    INPUT:
-
-    - ``m,q`` (integers) -- `q` must be a prime power.
-
-    - ``sign`` -- ``"+"`` or ``"-"`` if `m` is even, ``"+"`` (default)
-      otherwise.
-
-    EXAMPLES::
-
-        sage: G = graphs.OrthogonalPolarGraph(6,3,"+"); G
-        Orthogonal Polar Graph O^+(6, 3): Graph on 130 vertices
-        sage: G.is_strongly_regular(parameters=True)
-        (130, 48, 20, 16)
-        sage: G = graphs.OrthogonalPolarGraph(6,3,"-"); G
-        Orthogonal Polar Graph O^-(6, 3): Graph on 112 vertices
-        sage: G.is_strongly_regular(parameters=True)
-        (112, 30, 2, 10)
-        sage: G = graphs.OrthogonalPolarGraph(5,3); G
-        Orthogonal Polar Graph O(5, 3): Graph on 40 vertices
-        sage: G.is_strongly_regular(parameters=True)
-        (40, 12, 2, 4)
-
-    TESTS::
-
-        sage: G = graphs.OrthogonalPolarGraph(4,3,"")
-        Traceback (most recent call last):
-        ...
-        ValueError: sign must be equal to either '-' or '+' when m is even
-        sage: G = graphs.OrthogonalPolarGraph(5,3,"-")
-        Traceback (most recent call last):
-        ...
-        ValueError: sign must be equal to either '' or '+' when m is odd
-    """
-    from sage.schemes.projective.projective_space import ProjectiveSpace
-    from sage.rings.finite_rings.constructor import FiniteField
-    from sage.modules.free_module_element import free_module_element as vector
-    from sage.matrix.constructor import Matrix
-    from sage.libs.gap.libgap import libgap
-    from itertools import combinations
-
-    if m % 2 == 0:
-        if sign != "+" and sign != "-":
-            raise ValueError("sign must be equal to either '-' or '+' when "
-                             "m is even")
-    else:
-        if sign != "" and sign != "+":
-            raise ValueError("sign must be equal to either '' or '+' when "
-                             "m is odd")
-        sign = ""
-
-    e = {'+': 1,
-         '-': -1,
-         '' : 0}[sign]
-
-    M = Matrix(libgap.InvariantQuadraticForm(libgap.GeneralOrthogonalGroup(e,m,q))['matrix'])
-    Fq = libgap.GF(q).sage()
-    PG = ProjectiveSpace(m - 1, Fq)
-    m_over_two = m // 2
-
-    def F(x):
-        return x*M*x
-
-    V = [x for x in PG if F(vector(x)) == 0]
-
-    G = Graph([V,lambda x,y:F(vector(x)-vector(y))==0],loops=False)
-
-    G.relabel()
-    G.name("Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q)))
-    return G
-
-def _polar_graph(m, q, g, intersection_size=None):
-    r"""
-    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`
-
-    Building a graph on an orbit of a group `g` of `m\times m` matrices over `GF(q)` on
-    the points (or subspaces of dimension ``m//2``) isotropic w.r.t. the form `F`
-    left invariant by the group `g`.
-
-    The only constraint is that the first ``m//2`` elements of the standard
-    basis must generate a totally isotropic w.r.t. `F` subspace; this is the case with
-    these groups coming from GAP; namely, `F` has the anti-diagonal all-1 matrix.
-
-    INPUT:
-
-    - ``m`` -- the dimension of the underlying vector space
-
-    - ``q`` -- the size of the field
-
-    - ``g`` -- the group acting
-
-    - ``intersection_size`` -- if ``None``, build the graph on the isotropic points, with
-      adjacency being orthogonality w.r.t. `F`. Otherwise, build the graph on the maximal
-      totally isotropic subspaces, with adjacency specified by ``intersection_size`` being
-      as given.
-
-    TESTS::
-
-        sage: from sage.graphs.generators.families import _polar_graph
-        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2))
-        Graph on 45 vertices
-        sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)
-        Graph on 27 vertices
-    """
-    from sage.libs.gap.libgap import libgap
-    from itertools import combinations
-    W=libgap.FullRowSpace(libgap.GF(q), m)  # F_q^m
-    B=libgap.Elements(libgap.Basis(W))      # the standard basis of W
-    V = libgap.Orbit(g,B[0],libgap.OnLines) # orbit on isotropic points
-    gp = libgap.Action(g,V,libgap.OnLines)  # make a permutation group
-    s = libgap.Subspace(W,[B[i] for i in range(m//2)]) # a totally isotropic subspace
-    # and the points there
-    sp = [libgap.Elements(libgap.Basis(x))[0] for x in libgap.Elements(s.Subspaces(1))]
-    h = libgap.Set(map(lambda x: libgap.Position(V, x), sp)) # indices of the points in s
-    L = libgap.Orbit(gp, h, libgap.OnSets) # orbit on these subspaces
-    if intersection_size == None:
-        G = Graph()
-        for x in L: # every pair of points in the subspace is adjacent to each other in G
-            G.add_edges(combinations(x, 2))
-        return G
-    else:
-        return Graph([L, lambda i,j: libgap.Size(libgap.Intersection(i,j))==intersection_size],
-                        loops=False)
-
-def UnitaryPolarGraph(m, q, algorithm="gap"):
-    r"""
-    Returns the Unitary Polar Graph `U(m,q)`.
-
-    For more information on Unitary Polar graphs, see the `page of
-    Andries Brouwer's website <http://www.win.tue.nl/~aeb/graphs/srghub.html>`_.
-
-    INPUT:
-
-    - ``m,q`` (integers) -- `q` must be a prime power.
-
-    - ``algorithm`` -- if set to 'gap' then the computation is carried via GAP
-      library interface, computing totally singular subspaces, which is faster for
-      large examples (especially with `q>2`). Otherwise it is done directly.
-
-    EXAMPLES::
-
-        sage: G = graphs.UnitaryPolarGraph(4,2); G
-        Unitary Polar Graph U(4, 2); GQ(4, 2): Graph on 45 vertices
-        sage: G.is_strongly_regular(parameters=True)
-        (45, 12, 3, 3)
-        sage: graphs.UnitaryPolarGraph(5,2).is_strongly_regular(parameters=True)
-        (165, 36, 3, 9)
-        sage: graphs.UnitaryPolarGraph(6,2)    # not tested (long time)
-        Unitary Polar Graph U(6, 2): Graph on 693 vertices
-
-    TESTS::
-
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="gap").is_strongly_regular(parameters=True)
-        (280, 36, 8, 4)
-        sage: graphs.UnitaryPolarGraph(4,3).is_strongly_regular(parameters=True) # not tested (long time)
-        (280, 36, 8, 4)
-        sage: graphs.UnitaryPolarGraph(4,3, algorithm="foo")
-        Traceback (most recent call last):
-        ...
-        ValueError: unknown algorithm!
-    """
-    if algorithm == "gap":
-        from sage.libs.gap.libgap import libgap
-        G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q))
-
-    elif algorithm == None: # slow on large examples
-        from sage.schemes.projective.projective_space import ProjectiveSpace
-        from sage.rings.finite_rings.constructor import FiniteField
-        from sage.modules.free_module_element import free_module_element as vector
-        from __builtin__ import sum as psum
-        Fq = FiniteField(q**2, 'a')
-        PG = ProjectiveSpace(m - 1, Fq)
-        def P(xx,yy):
-            x = vector(xx)
-            y = vector(yy)
-            return psum(map(lambda j: x[j]*y[m-1-j]**q, xrange(m)))==0  
-
-        V = filter(lambda x: P(x,x), PG)
-        G = Graph([V,lambda x,y:  # bottleneck is here, of course:
-                     P(vector(x),vector(y))], loops=False)
-    else:
-        raise ValueError("unknown algorithm!")
-
-    G.relabel()
-    G.name("Unitary Polar Graph U" + str((m, q)))
-    if m==4:
-        G.name(G.name()+'; GQ'+str((q**2,q)))
-    if m==5:
-        G.name(G.name()+'; GQ'+str((q**2,q**3)))
-    return G
-
-
-def UnitaryDualPolarGraph(m, q):
-    r"""
-    Returns the Dual Unitary Polar Graph `U(m,q)`.
-
-    For more information on Unitary Dual Polar graphs, see [BCN89]_ and
-    Sect. 2.3.1 of [Co81]_.
-
-    INPUT:
-
-    - ``m,q`` (integers) -- `q` must be a prime power.
-
-    EXAMPLES:
-
-    The point graph of a generalized quadrangle of order (8,4)::
-
-        sage: G = graphs.UnitaryDualPolarGraph(5,2); G   # long time
-        Unitary Dual Polar Graph DU(5, 2); GQ(8, 4): Graph on 297 vertices
-        sage: G.is_strongly_regular(parameters=True)     # long time
-        (297, 40, 7, 5)
-
-    Another way to get the  generalized quadrangle of order (2,4)::
-
-        sage: G = graphs.UnitaryDualPolarGraph(4,2); G
-        Unitary Dual Polar Graph DU(4, 2); GQ(2, 4): Graph on 27 vertices
-        sage: G.is_isomorphic(graphs.OrthogonalPolarGraph(6,2,'-'))
-        True
-
-    A bigger graph::
-
-        sage: G = graphs.UnitaryDualPolarGraph(6,2); G   # not tested (long time)
-        Unitary Dual Polar Graph DU(6, 2): Graph on 891 vertices
-        sage: G.is_distance_regular(parameters=True)     # not tested (long time)
-        ([42, 40, 32, None], [None, 1, 5, 21])
-
-    TESTS::
-
-        sage: graphs.UnitaryDualPolarGraph(6,6)
-        Traceback (most recent call last):
-        ...
-        ValueError: libGAP: Error, <subfield> must be a prime or a finite field
-    """
-    from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-            intersection_size=(q**(2*(m//2-1))-1)/(q**2-1))
-    G.relabel()
-    G.name("Unitary Dual Polar Graph DU" + str((m, q)))
-    if m==4:
-        G.name(G.name()+'; GQ'+str((q,q**2)))
-    if m==5:
-        G.name(G.name()+'; GQ'+str((q**3,q**2)))
-    return G
-
-
-def SymplecticDualPolarGraph(m, q):
-    r"""
-    Returns the Symplectic Dual Polar Graph `DSp(m,q)`.
-
-    For more information on Symplectic Dual Polar graphs, see [BCN89]_ and
-    Sect. 2.3.1 of [Co81]_.
-
-    REFERENCE:
-
-    .. [Co81] A. M. Cohen,
-      `A synopsis of known distance-regular graphs with large diameters
-      <http://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775>`_,
-      Stichting Mathematisch Centrum, 1981.
-
-    INPUT:
-
-    - ``m,q`` (integers) -- `q` must be a prime power, and `m` must be even.
-
-    EXAMPLES::
-
-        sage: G = graphs.SymplecticDualPolarGraph(6,3); G       # not tested (long time)
-        Symplectic Dual Polar Graph DSp(6, 3): Graph on 1120 vertices
-        sage: G.is_distance_regular(parameters=True)            # not tested (long time)
-        ([39, 36, 27, None], [None, 1, 4, 13])
-
-    TESTS::
-
-        sage: G = graphs.SymplecticDualPolarGraph(6,2); G
-        Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
-        sage: G.is_distance_regular(parameters=True)
-        ([14, 12, 8, None], [None, 1, 3, 7])
-        sage: graphs.SymplecticDualPolarGraph(6,6)
-        Traceback (most recent call last):
-        ...
-        ValueError: libGAP: Error, <subfield> must be a prime or a finite field
-    """
-    from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-             intersection_size=(q**(m/2-1)-1)/(q-1))
-
-    G.relabel()
-    G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
-    if m==4:
-        G.name(G.name()+'; GQ'+str((q,q)))
-    return G
-
-def TaylorTwographDescendantSRG(q, clique_partition=None):
-    r"""
-    constructing the descendant graph of the Taylor's two-graph for `U_3(q)`, `q` odd
-
-    This is a strongly regular graph with parameters
-    `(v,k,\lambda,\mu)=(q^3, (q^2+1)(q-1)/2, (q-1)^3/4-1, (q^2+1)(q-1)/4)`
-    obtained as a two-graph descendant of the
-    :func:`Taylor's two-graph <sage.combinat.designs.twographs.taylor_twograph>` `T`.
-    This graph admits a partition into cliques of size `q`, which are useful in
-    :func:`TaylorTwographSRG <sage.graphs.generators.families.TaylorTwographSRG>`,
-    a strongly regular graph on `q^3+1` vertices in the
-    Seidel switching class of `T`, for which we need `(q^2+1)/2` cliques.
-    The cliques are the `q^2` lines on `v_0` of the projective plane containing the unital
-    for `U_3(q)`, and intersecting the unital (i.e. the vertices of the graph and the point
-    we remove) in `q+1` points. This is all taken from §7E of [BvL84]_.
-
-    INPUT:
-
-    - ``q`` -- a power of an odd prime number
-
-    - ``clique_partition`` -- if ``True``, return `q^2-1` cliques of size `q`
-      with empty pairwise intersection. (Removing all of them leaves a clique, too),
-      and the point removed from the unital.
-
-    EXAMPLES::
-
-        sage: g=graphs.TaylorTwographDescendantSRG(3); g
-        Taylor two-graph descendant SRG: Graph on 27 vertices
-        sage: g.is_strongly_regular(parameters=True)
-        (27, 10, 1, 5)
-        sage: from sage.combinat.designs.twographs import taylor_twograph
-        sage: T = taylor_twograph(3)                           # long time
-        sage: g.is_isomorphic(T.descendant(T.ground_set()[1])) # long time
-        True
-        sage: g=graphs.TaylorTwographDescendantSRG(5)    # not tested (long time)
-        sage: g.is_strongly_regular(parameters=True)  # not tested (long time)
-        (125, 52, 15, 26)
-
-    TESTS::
-
-        sage: g,l,_=graphs.TaylorTwographDescendantSRG(3,clique_partition=True)
-        sage: all(map(lambda x: g.is_clique(x), l))
-        True
-        sage: graphs.TaylorTwographDescendantSRG(4)
-        Traceback (most recent call last):
-        ...
-        ValueError: q must be a an odd prime power
-        sage: graphs.TaylorTwographDescendantSRG(6)
-        Traceback (most recent call last):
-        ...
-        ValueError: q must be a an odd prime power
-    """
-    from sage.rings.arith import is_prime_power
-    p, k = is_prime_power(q,get_data=True)
-    if k==0 or p==2:
-       raise ValueError('q must be a an odd prime power')
-    from sage.schemes.projective.projective_space import ProjectiveSpace
-    from sage.rings.finite_rings.constructor import FiniteField
-    from sage.modules.free_module_element import free_module_element as vector
-    from sage.rings.finite_rings.integer_mod import mod
-    from __builtin__ import sum
-    Fq = FiniteField(q**2, 'a')
-    PG = map(tuple,ProjectiveSpace(2, Fq))
-    def S(x,y):
-        return sum(map(lambda j: x[j]*y[2-j]**q, xrange(3)))
-
-    V = filter(lambda x: S(x,x)==0, PG) # the points of the unital
-    v0 = V[0]
-    V.remove(v0)
-    if mod(q,4)==1:
-        G = Graph([V,lambda y,z: not (S(v0,y)*S(y,z)*S(z,v0)).is_square()], loops=False)
-    else:
-        G = Graph([V,lambda y,z:     (S(v0,y)*S(y,z)*S(z,v0)).is_square()], loops=False)
-    G.name("Taylor two-graph descendant SRG")
-    if clique_partition:
-        lines = map(lambda x: filter(lambda t: t[0]+x*t[1]==0, V),
-                     filter(lambda z: z != 0, Fq))
-        return (G, lines, v0)
-    else:
-        return G
-
-def TaylorTwographSRG(q):
-    r"""
-    constructing a strongly regular graph from the Taylor's two-graph for `U_3(q)`, `q` odd
-
-    This is a strongly regular graph with parameters
-    `(v,k,\lambda,\mu)=(q^3+1, q(q^2+1)/2, (q^2+3)(q-1)/4, (q^2+1)(q+1)/4)`
-    in the Seidel switching class of
-    :func:`Taylor two-graph <sage.combinat.designs.twographs.taylor_twograph>`.
-    Details are in §7E of [BvL84]_.
-
-    INPUT:
-
-    - ``q`` -- a power of an odd prime number
+    - ``t`` (integer) -- the number of the graph, from 0 to 2.
 
     .. SEEALSO::
 
-        * :func:`TaylorTwographDescendantSRG <sage.graphs.generators.families.TaylorTwographDescendantSRG>`
+        - :func:`~sage.graphs.strongly_regular_db.is_muzychuk_S6`
+
+    TESTS::
+
+        sage: from sage.graphs.generators.families import MathonPseudocyclicMergingGraph as mer
+        sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme as ES
+        sage: G = mer(ES(3), 0) # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
+        (784, 243, 82, 72)
+        sage: G = mer(ES(3), 1) # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
+        (784, 270, 98, 90)
+        sage: G = mer(ES(3), 2) # long time
+        sage: G.is_strongly_regular(parameters=True)    # long time
+        (784, 297, 116, 110)
+        sage: G = mer(ES(2), 2)
+        Traceback (most recent call last):
+        ...
+        AssertionError...
+        sage: M = ES(3)
+        sage: M = [M[1],M[0],M[2],M[3]]
+        sage: G = mer(M, 2)
+        Traceback (most recent call last):
+        ...
+        AssertionError...
+    """
+    from sage.graphs.graph import Graph
+    from sage.matrix.constructor import identity_matrix
+    assert len(M) == 4
+    assert M[0] == identity_matrix(M[0].nrows())
+    A = sum(x.tensor_product(x) for x in M[1:])
+    if t > 0:
+        A += sum(x.tensor_product(M[0]) for x in M[1:])
+    if t > 1:
+        A += sum(M[0].tensor_product(x) for x in M[1:])
+    return Graph(A)
+
+def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
+    r"""
+    Return a strongly regular graph on `(4t+1)(4t-1)^2` vertices from
+    [Mat1978]_.
+
+    Let `4t-1` be a prime power, and `4t+1` be such that there exists
+    a strongly regular graph `G` with parameters `(4t+1,2t,t-1,t)`. In
+    particular, `4t+1` must be a sum of two squares [Mat1978]_. With
+    this input, Mathon [Mat1978]_ gives a construction of a strongly regular
+    graph with parameters `(4 \mu + 1, 2 \mu, \mu-1, \mu)`, where
+    `\mu =  t(4t(4t-1)-1)`. The construction is optionally parametrised by an
+    a skew-symmetric Latin square of order `4t+1`, with entries in
+    `-2t,...,-1,0,1,...,2t`.
+
+    Our implementation follows a description given in [ST1981]_.
+
+    INPUT:
+
+    - ``t`` -- a positive integer
+
+    - ``G`` -- if ``None`` (default), try to construct the necessary graph
+      with parameters `(4t+1,2t,t-1,t)`, otherwise use the user-supplied one,
+      with vertices labelled from `0` to `4t`.
+
+    - ``L`` -- if ``None`` (default), construct a necessary skew Latin square,
+      otherwise use the user-supplied one. Here non-isomorphic Latin squares
+      -- one constructed from `Z/9Z`, and the other from `(Z/3Z)^2` --
+      lead to non-isomorphic graphs.
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_mathon_PC_srg`
+
+    EXAMPLES:
+
+    Using default ``G`` and ``L``. ::
+
+        sage: from sage.graphs.generators.families import MathonPseudocyclicStronglyRegularGraph
+        sage: G=MathonPseudocyclicStronglyRegularGraph(1); G
+        Mathon's PC SRG on 45 vertices: Graph on 45 vertices
+        sage: G.is_strongly_regular(parameters=True)
+        (45, 22, 10, 11)
+
+    Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::
+
+        sage: G = graphs.PaleyGraph(9)
+        sage: a = G.automorphism_group(partition=[sorted(G)])
+        sage: it = (x for x in a.normal_subgroups() if x.order() == 9)
+        sage: subg = next(iter(it))
+        sage: r = [matrix(libgap.PermutationMat(libgap(z), 9).sage())
+        ....:      for z in subg]
+        sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
+        ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
+        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L
+        [ 0  1 -1 -3 -2 -4  3  4  2]
+        [-1  0  1 -4 -3 -2  2  3  4]
+        [ 1 -1  0 -2 -4 -3  4  2  3]
+        [ 3  4  2  0  1 -1 -3 -2 -4]
+        [ 2  3  4 -1  0  1 -4 -3 -2]
+        [ 4  2  3  1 -1  0 -2 -4 -3]
+        [-3 -2 -4  3  4  2  0  1 -1]
+        [-4 -3 -2  2  3  4 -1  0  1]
+        [-2 -4 -3  4  2  3  1 -1  0]
+
+        sage: G.relabel(range(9))
+        sage: G3x3=graphs.MathonPseudocyclicStronglyRegularGraph(2,G=G,L=L)
+        sage: G3x3.is_strongly_regular(parameters=True)
+        (441, 220, 109, 110)
+        sage: G3x3.automorphism_group(algorithm="bliss").order() # optional - bliss
+        27
+        sage: G9=graphs.MathonPseudocyclicStronglyRegularGraph(2)
+        sage: G9.is_strongly_regular(parameters=True)
+        (441, 220, 109, 110)
+        sage: G9.automorphism_group(algorithm="bliss").order() # optional - bliss
+        9
+
+    TESTS::
+
+        sage: graphs.MathonPseudocyclicStronglyRegularGraph(5)
+        Traceback (most recent call last):
+        ...
+        ValueError: 21  must be a sum of two squares!...
+    """
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+    from sage.rings.integer_ring import ZZ
+    from sage.matrix.constructor import matrix, block_matrix, \
+        ones_matrix, identity_matrix
+    from sage.arith.all import two_squares
+    p = 4*t+1
+    try:
+        x = two_squares(p)
+    except ValueError:
+        raise ValueError(str(p)+" must be a sum of two squares!")
+    if G is None:
+        from sage.graphs.strongly_regular_db import strongly_regular_graph as SRG
+        G = SRG(p, 2*t, t-1)
+        G.relabel(range(p))
+    if L is None:
+        from sage.matrix.constructor import circulant
+        L = circulant(list(range(2 * t + 1))+list(range(-2 * t, 0)))
+    q = 4*t -1
+    K = GF(q,prefix='x')
+    K_pairs = set(frozenset([x,-x]) for x in K)
+    K_pairs.discard(frozenset([0]))
+    a = [None]*(q-1)    # order the non-0 elements of K as required
+    for i,(x,y) in enumerate(K_pairs):
+        a[i] = x
+        a[-i-1] = y
+    a.append(K(0))      # and append the 0 of K at the end
+    P = [matrix(ZZ, q, q, lambda i, j: 1 if a[j] == a[i] + b else 0)
+         for b in a]
+    g = K.primitive_element()
+    F = sum(P[a.index(g**(2*i))] for i in range(1, 2*t))
+    E = matrix(ZZ, q, q, lambda i, j: 0 if (a[j] - a[0]).is_square() else 1)
+
+    def B(m):
+        I = identity_matrix(q)
+        J = ones_matrix(q)
+        if m == 0:
+            def f(i, j):
+                if i == j:
+                    return 0 * I
+                elif (a[j]-a[i]).is_square():
+                    return I + F
+                else:
+                    return J - F
+        elif m < 2*t:
+            def f(i, j):
+                return F * P[a.index(g**(2*m) * (a[i]+a[j]))]
+        elif m == 2*t:
+            def f(i, j):
+                return E * P[i]
+        return block_matrix(q,q, [f(i, j) for i in range(q) for j in range(q)])
+
+    def Acon(i, j):
+        J = ones_matrix(q**2)
+        if i==j:
+            return              B(0)
+        if L[i,j]>0:
+            if G.has_edge(i,j):
+                return          B(L[i,j])
+            return              J-B(L[i,j])
+        if G.has_edge(i,j):
+            return              B(-L[i,j]).T
+        return                  J-B(-L[i,j]).T
+
+    A = Graph(block_matrix(p, p, [Acon(i,j) for i in range(p) for j in range(p)]))
+    A.name("Mathon's PC SRG on "+str(p*q**2)+" vertices")
+    A.relabel()
+    return A
+
+def TuranGraph(n,r):
+    r"""
+    Returns the Turan graph with parameters `n, r`.
+
+    Turan graphs are complete multipartite graphs with `n` vertices and `r`
+    subsets, denoted `T(n,r)`, with the property that the sizes of the subsets
+    are as close to equal as possible. The graph `T(n,r)` will have `n \pmod r`
+    subsets of size `\lfloor n/r \rfloor` and `r - (n \pmod r)` subsets of size
+    `\lceil n/r \rceil`. See the :wikipedia:`Turan_graph` for more information.
+
+    INPUT:
+
+    - ``n`` (integer)-- the number of vertices in the graph.
+
+    - ``r`` (integer) -- the number of partitions of the graph.
+
+    EXAMPLES:
+
+    The Turan graph is a complete multipartite graph.  ::
+
+        sage: g = graphs.TuranGraph(13, 4)
+        sage: k = graphs.CompleteMultipartiteGraph([3,3,3,4])
+        sage: g.is_isomorphic(k)
+        True
+
+    The Turan graph `T(n,r)` has `\lfloor \frac{(r-1)(n^2)}{2r} \rfloor` edges.  ::
+
+        sage: n = 13
+        sage: r = 4
+        sage: g = graphs.TuranGraph(n,r)
+        sage: g.size() == floor((r-1)*(n**2)/(2*r))
+        True
+
+    TESTS::
+
+        sage: g = graphs.TuranGraph(3,6)
+        Traceback (most recent call last):
+        ...
+        ValueError: Input parameters must satisfy "1 < r < n".
+    """
+
+    if n<1 or n<r or r<1:
+        raise ValueError('Input parameters must satisfy "1 < r < n".')
+
+    from sage.graphs.generators.basic import CompleteMultipartiteGraph
+
+    vertex_sets = [n//r]*(r-(n%r))+[n//r+1]*(n%r)
+
+    g = CompleteMultipartiteGraph(vertex_sets)
+    g.name('Turan Graph with n: {}, r: {}'.format(n,r))
+
+    return g
+
+def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
+    r"""
+    Return a strongly regular graph of S6 type from [Muz2007]_ on
+    `n^d((n^d-1)/(n-1)+1)` vertices.
+
+    The construction depends upon a number of parameters, two of them, `n` and
+    `d`, mandatory, and `\Phi` and `\Sigma` mappings defined in [Muz2007]_.
+    These graphs have parameters `(mn^d, n^{d-1}(m-1) - 1,\mu - 2,\mu)`, where
+    `\mu=\frac{n^{d-1}-1}{n-1}n^{d-1}` and `m:=\frac{n^d-1}{n-1}+1`.
+
+    Some details on `\Phi` and `\Sigma` are as follows.  Let `L` be the
+    complete graph on `M:=\{0,..., m-1\}` with the matching
+    `\{(2i,2i+1) | i=0,...,m/2\}` removed.
+    Then one arbitrarily chooses injections `\Phi_i`
+    from the edges of `L` on `i \in M` into sets of parallel classes of affine
+    `d`-dimensional designs; our implementation uses the designs of hyperplanes
+    in `d`-dimensional affine geometries over `GF(n)`. Finally, for each edge
+    `ij` of `L` one arbitrarily chooses bijections `\Sigma_{ij}` between
+    `\Phi_i` and `\Phi_j`. More details, in particular how these choices lead
+    to non-isomorphic graphs, are in [Muz2007]_.
+
+    INPUT:
+
+    - ``n`` (integer)-- a prime power
+
+    - ``d`` (integer)-- must be odd if `n` is odd
+
+    - ``Phi`` is an optional parameter of the construction; it must be either
+
+        - 'fixed'-- this will generate fixed default `\Phi_i`, for `i \in M`, or
+
+        - 'random'-- `\Phi_i` are generated at random, or
+
+        - A dictionary describing the functions `\Phi_i`; for `i \in M`,
+          Phi[(i, T)] in `M`, for each edge T of `L` on `i`.
+          Also, each `\Phi_i` must be injective.
+
+    - ``Sigma`` is an optional parameter of the construction; it must be either
+
+        - 'fixed'-- this will generate a fixed default `\Sigma`, or
+
+        - 'random'-- `\Sigma` is generated at random.
+
+    - ``verbose`` (Boolean)-- default is False. If True, print progress information
+
+    .. SEEALSO::
+
+        - :func:`~sage.graphs.strongly_regular_db.is_muzychuk_S6`
+
+    .. TODO::
+
+        Implement the possibility to explicitly supply the parameter `\Sigma`
+        of the construction.
 
     EXAMPLES::
 
-        sage: t=graphs.TaylorTwographSRG(3); t
-        Taylor two-graph SRG: Graph on 28 vertices
-        sage: t.is_strongly_regular(parameters=True)
-        (28, 15, 6, 10)
+        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
+        (378, 116, 34, 36)
+        sage: phi={(2,(0,2)):0,(1,(1,3)):1,(0,(0,3)):1,(2,(1,2)):1,(1,(1,
+        ....:  2)):0,(0,(0,2)):0,(3,(0,3)):0,(3,(1,3)):1}
+        sage: graphs.MuzychukS6Graph(2,2,Phi=phi).is_strongly_regular(parameters=True)
+        (16, 5, 0, 2)
 
+    TESTS::
+
+        sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)
+        (16, 5, 0, 2)
+        sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)
+        (378, 116, 34, 36)
+        sage: graphs.MuzychukS6Graph(3,2)
+        Traceback (most recent call last):
+        ...
+        AssertionError: n must be even or d must be odd
+        sage: graphs.MuzychukS6Graph(6,2)
+        Traceback (most recent call last):
+        ...
+        AssertionError: n must be a prime power
+        sage: graphs.MuzychukS6Graph(3,1)
+        Traceback (most recent call last):
+        ...
+        AssertionError: d must be at least 2
+        sage: graphs.MuzychukS6Graph(3,3,Phi=42)
+        Traceback (most recent call last):
+        ...
+        AssertionError: Phi must be a dictionary or 'random' or 'fixed'
+        sage: graphs.MuzychukS6Graph(3,3,Sigma=42)
+        Traceback (most recent call last):
+        ...
+        ValueError: Sigma must be 'random' or 'fixed'
     """
-    G, l, v0 = TaylorTwographDescendantSRG(q, clique_partition=True)
-    G.add_vertex(v0)
-    G.seidel_switching(sum(l[:(q**2+1)/2],[]))
-    G.name("Taylor two-graph SRG")
+    ### TO DO: optimise
+    ###        add option to return phi, sigma? generate phi, sigma from seed? (int say?)
+
+    from sage.combinat.designs.block_design import ProjectiveGeometryDesign
+    from sage.misc.prandom import randrange
+    from sage.misc.functional import is_even
+    from sage.arith.misc import is_prime_power
+    from sage.graphs.generators.basic import CompleteGraph
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.matrix.special import ones_matrix
+    from sage.matrix.constructor import matrix
+    from sage.rings.rational_field import QQ
+    from sage.rings.integer_ring import ZZ
+    from time import time
+    import itertools
+
+    assert d > 1,              'd must be at least 2'
+    assert is_even(n * (d-1)), 'n must be even or d must be odd'
+    assert is_prime_power(n),  'n must be a prime power'
+    t = time()
+
+    # build L, L_i and the design
+    m = int((n**d-1)/(n-1) + 1) #from m = p + 1, p = (n^d-1) / (n-1)
+    L = CompleteGraph(m)
+    L.delete_edges([(2 * x, 2 * x + 1) for x in range(m // 2)])
+    L_i = [L.edges_incident(x, labels=False) for x in range(m)]
+    Design = ProjectiveGeometryDesign(d, d-1, GF(n, 'a'), point_coordinates=False)
+    projBlocks = Design.blocks()
+    atInf = projBlocks[-1]
+    Blocks = [[x for x in block if x not in atInf] for block in projBlocks[:-1]]
+    if verbose:
+        print('finished preamble at %f (+%f)' % (time() - t, time() - t))
+    t1 = time()
+
+    # sort the hyperplanes into parallel classes
+    ParClasses = [Blocks]
+    while ParClasses[0]:
+        nextHyp = ParClasses[0].pop()
+        for C in ParClasses[1:]:
+            listC = sum(C,[])
+            for x in nextHyp:
+                if x in listC:
+                    break
+            else:
+                C.append(nextHyp)
+                break
+        else:
+            ParClasses.append([nextHyp])
+    del ParClasses[0]
+    if verbose:
+        print('finished ParClasses at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # build E^C_j
+    E = {}
+    v = ZZ(n**d)
+    k = ZZ(n**(d-1))
+    ones = ones_matrix(v)
+    ones_v = ones/v
+    for C in ParClasses:
+        EC = matrix(QQ, v)
+        for line in C:
+            for i,j in itertools.combinations(line, 2):
+                EC[i,j] = EC[j,i] = 1/k
+        EC -= ones_v
+        E[tuple(C[0])] = EC
+    if verbose:
+        print('finished E at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # handle Phi
+    if Phi == 'random':
+        Phi = {}
+        for x in range(m):
+            temp = list(range(len(ParClasses)))
+            for line in L_i[x]:
+                rand = randrange(0, len(temp))
+                Phi[(x, line)] = temp.pop(rand)
+    elif Phi == 'fixed':
+        Phi = {(x,line):val for x in range(m) for val,line in enumerate(L_i[x])}
+    else:
+        assert isinstance(Phi, dict), \
+            "Phi must be a dictionary or 'random' or 'fixed'"
+        assert set(Phi.keys()) == \
+        set([(x, line) for x in range(m) for line in L_i[x]]), \
+        'each Phi_i must have domain L_i'
+        for x in range(m):
+            assert m - 2 == len(set([val
+                for (key, val) in Phi.items() if key[0] == x])), \
+            'each phi_i must be injective'
+        for val in Phi.values():
+            assert val in range(m-1), \
+            'codomain should be {0,..., (n^d - 1)/(n - 1) - 1}'
+    phi = {(x, line):ParClasses[Phi[(x, line)]] for x in range(m) for line in L_i[x]}
+    if verbose:
+        print('finished phi at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # handle sigma
+    sigma = {}
+    if Sigma == 'random':
+        for x in range(m):
+            for line in L_i[x]:
+                [i, j] = line
+                temp = phi[(j, line)][:]
+                for hyp in phi[(i, line)]:
+                    rand = randrange(0, len(temp))
+                    sigma[(i, j, tuple(hyp))] = temp[rand]
+                    sigma[(j, i, tuple(temp[rand]))] = hyp
+                    del temp[rand]
+    elif Sigma == 'fixed':
+        for x in range(m):
+            for line in L_i[x]:
+                [i, j] = line
+                temp = phi[(j, line)][:]
+                for hyp in phi[(i, line)]:
+                    val = temp.pop()
+                    sigma[(i, j, tuple(hyp))] = val
+                    sigma[(j, i, tuple(val))] = hyp
+    else:
+        raise ValueError("Sigma must be 'random' or 'fixed'")
+    if verbose:
+        print('finished sigma at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # build V
+    edges = [] ###how many? *m^2*n^2
+    for (i, j) in L.edges(labels=False):
+        for hyp in phi[(i, (i, j))]:
+            for x in hyp:
+                newEdges = [((i, x), (j, y))
+                            for y in sigma[(i, j, tuple(hyp))]]
+                edges.extend(newEdges)
+    if verbose:
+        print('finished edges at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+    V = Graph(edges)
+    if verbose:
+        print('finished V at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # build D_i, F_i and A_i
+    D_i = [0]*m
+    for x in range(m):
+        D_i[x] = sum([E[tuple(phi[x, line][0])] for line in L_i[x]])
+    F_i = [1 - D_i[x] - ones_v for x in range(m)]
+    # as the sum of (1/v)*J_\Omega_i, D_i, F_i is identity
+    A_i = [(v-k)*ones_v - k*F_i[x] for x in range(m)]
+        # we know A_i = k''*(1/v)*J_\Omega_i + r''*D_i + s''*F_i,
+        # and (k'', s'', r'') = (v - k, 0, -k)
+    if verbose:
+        print('finished D, F and A at %f (+%f)' % (time() - t, time() - t1))
+    t1 = time()
+
+    # add the edges of the graph of B to V
+    for i in range(m):
+        V.add_edges([((i, x), (i, y)) for x in range(v)
+                     for y in range(v) if not A_i[i][(x, y)]])
+
+    V.name('Muzychuk S6 graph with parameters ('+str(n)+','+str(d)+')')
+    if verbose:
+        print('finished at %f (+%f)' % ((time() - t), time() - t1))
+    return V
+
+def CubeConnectedCycle(d):
+    r"""
+    Return the cube-connected cycle of dimension `d`.
+
+    The cube-connected cycle of order `d` is the `d`-dimensional hypercube
+    with each of its vertices replaced by a cycle of length `d`. This graph has
+    order `d \times 2^d`.
+    The construction is as follows:
+    Construct vertex `(x,y)` for `0 \leq x < 2^d`, `0 \leq y < d`.
+    For each vertex, `(x,y)`, add an edge between it and `(x, (y-1) \mod d))`,
+    `(x,(y+1) \mod d)`, and `(x \oplus 2^y, y)`, where `\oplus` is the bitwise
+    xor operator.
+    
+    For `d=1` and `2`, the cube-connected cycle graph contains self-loops or
+    multiple edges between a pair of vertices, but for all other `d`, it is
+    simple.
+
+    INPUT:
+
+    - ``d`` -- The dimension of the desired hypercube as well as the length
+      of the cycle to be placed at each vertex of the `d`-dimensional
+      hypercube. `d` must be a positive integer.
+
+    EXAMPLES:
+
+    The order of the graph is `d \times 2^d` ::
+
+        sage: d = 3
+        sage: g = graphs.CubeConnectedCycle(d)
+        sage: len(g) == d*2**d
+        True
+
+    The diameter of cube-connected cycles for `d > 3` is
+    `2d + \lfloor \frac{d}{2} \rfloor - 2` ::
+
+        sage: d = 4
+        sage: g = graphs.CubeConnectedCycle(d)
+        sage: g.diameter() == 2*d+d//2-2
+        True
+
+    All vertices have degree `3` when `d > 1` ::
+
+        sage: g = graphs.CubeConnectedCycle(5)
+        sage: all(g.degree(v) == 3 for v in g)
+        True
+
+    TESTS::
+
+        sage: g = graphs.CubeConnectedCycle(0)
+        Traceback (most recent call last):
+        ...
+        ValueError: the dimension d must be greater than 0
+    """
+    if d < 1:
+        raise ValueError('the dimension d must be greater than 0')
+
+    G = Graph(name="Cube-Connected Cycle of dimension {}".format(d))
+
+    if d == 1:
+        G.allow_loops(True)
+        # only d = 1 requires loops
+        G.add_edges([((0,0),(0,1)), ((0,0),(0,0)), ((0,1),(0,1))])
+        return G
+
+    if d == 2:
+        # only d = 2 require multiple edges
+        G.allow_multiple_edges(True)
+        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
+                     ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
+                     ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
+                     ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))])
+        return G
+
+    for x in range(1<<d):
+        G.add_cycle([(x, y) for y in range(d)])
+
+    for x, y in G:
+        G.add_edge((x, y), (x^(1<<y), y))
+
     return G

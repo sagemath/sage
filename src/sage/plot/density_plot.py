@@ -22,7 +22,8 @@ Density Plots
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
 from sage.plot.colors import get_cmap
-from sage.misc.misc import xsrange
+from sage.arith.srange import xsrange
+
 
 class DensityPlot(GraphicPrimitive):
     """
@@ -45,7 +46,7 @@ class DensityPlot(GraphicPrimitive):
     Note this should normally be used indirectly via ``density_plot``::
 
         sage: from sage.plot.density_plot import DensityPlot
-        sage: D = DensityPlot([[1,3],[2,4]],(1,2),(2,3),options={})
+        sage: D = DensityPlot([[1,3],[2,4]], (1,2), (2,3),options={})
         sage: D
         DensityPlot defined by a 2 x 2 data grid
         sage: D.yrange
@@ -58,7 +59,7 @@ class DensityPlot(GraphicPrimitive):
     We test creating a density plot::
 
         sage: x,y = var('x,y')
-        sage: density_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+        sage: density_plot(x^2 - y^3 + 10*sin(x*y), (x,-4,4), (y,-4,4), plot_points=121, cmap='hsv')
         Graphics object consisting of 1 graphics primitive
     """
     def __init__(self, xy_data_array, xrange, yrange, options):
@@ -68,7 +69,7 @@ class DensityPlot(GraphicPrimitive):
         EXAMPLES::
 
             sage: x,y = var('x,y')
-            sage: D = density_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+            sage: D = density_plot(x^2 - y^3 + 10*sin(x*y), (x,-4,4), (y,-4,4), plot_points=121, cmap='hsv')
             sage: D[0].xrange
             (-4.0, 4.0)
             sage: D[0].options()['plot_points']
@@ -89,7 +90,7 @@ class DensityPlot(GraphicPrimitive):
 
             sage: x,y = var('x,y')
             sage: f(x, y) = x^2 + y^2
-            sage: d = density_plot(f, (3, 6), (3, 6))[0].get_minmax_data()
+            sage: d = density_plot(f, (3,6), (3,6))[0].get_minmax_data()
             sage: d['xmin']
             3.0
             sage: d['ymin']
@@ -107,12 +108,12 @@ class DensityPlot(GraphicPrimitive):
             sage: isinstance(density_plot(x, (-2,3), (1,10))[0]._allowed_options(), dict)
             True
         """
-        return {'plot_points':'How many points to use for plotting precision',
-                'cmap':"""the name of a predefined colormap,
+        return {'plot_points': 'How many points to use for plotting precision',
+                'cmap': """the name of a predefined colormap,
                        a list of colors or an instance of a
                        matplotlib Colormap. Type: import matplotlib.cm; matplotlib.cm.datad.keys()
                        for available colormap names.""",
-                'interpolation':'What interpolation method to use'}
+                'interpolation': 'What interpolation method to use'}
 
     def _repr_(self):
         """
@@ -121,7 +122,7 @@ class DensityPlot(GraphicPrimitive):
         EXAMPLES::
 
             sage: x,y = var('x,y')
-            sage: D = density_plot(x^2-y^2,(x,-2,2),(y,-2,2))
+            sage: D = density_plot(x^2 - y^2, (x,-2,2), (y,-2,2))
             sage: d = D[0]; d
             DensityPlot defined by a 25 x 25 data grid
         """
@@ -134,34 +135,37 @@ class DensityPlot(GraphicPrimitive):
         A somewhat random plot, but fun to look at::
 
             sage: x,y = var('x,y')
-            sage: density_plot(x^2-y^3+10*sin(x*y), (x, -4, 4), (y, -4, 4),plot_points=121,cmap='hsv')
+            sage: density_plot(x^2 - y^3 + 10*sin(x*y), (x,-4,4), (y,-4,4), plot_points=121, cmap='hsv')
             Graphics object consisting of 1 graphics primitive
         """
         options = self.options()
         cmap = get_cmap(options['cmap'])
 
-        x0,x1 = float(self.xrange[0]), float(self.xrange[1])
-        y0,y1 = float(self.yrange[0]), float(self.yrange[1])
+        x0, x1 = float(self.xrange[0]), float(self.xrange[1])
+        y0, y1 = float(self.yrange[0]), float(self.yrange[1])
 
-        subplot.imshow(self.xy_data_array, origin='lower', cmap=cmap, extent=(x0,x1,y0,y1), interpolation=options['interpolation'])
+        subplot.imshow(self.xy_data_array, origin='lower',
+                       cmap=cmap, extent=(x0,x1,y0,y1),
+                       interpolation=options['interpolation'])
+
 
 @options(plot_points=25, cmap='gray', interpolation='catrom')
 def density_plot(f, xrange, yrange, **options):
     r"""
     ``density_plot`` takes a function of two variables, `f(x,y)`
-    and plots the height of of the function over the specified
+    and plots the height of the function over the specified
     ``xrange`` and ``yrange`` as demonstrated below.
 
-    ``density_plot(f, (xmin, xmax), (ymin, ymax), ...)``
+    ``density_plot(f, (xmin,xmax), (ymin,ymax), ...)``
 
     INPUT:
 
     - ``f`` -- a function of two variables
 
-    - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
+    - ``(xmin,xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
       ``(x,xmin,xmax)``
 
-    - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
+    - ``(ymin,ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
     The following inputs must all be passed in as named parameters:
@@ -169,7 +173,10 @@ def density_plot(f, xrange, yrange, **options):
     - ``plot_points`` -- integer (default: 25); number of points to plot
       in each direction of the grid
 
-    - ``cmap`` -- a colormap (type ``cmap_help()`` for more information).
+    - ``cmap`` -- a colormap (default: ``'gray'``), the name of
+      a predefined colormap, a list of colors or an instance of a matplotlib
+      Colormap. Type: ``import matplotlib.cm; matplotlib.cm.datad.keys()``
+      for available colormap names.
 
     - ``interpolation`` -- string (default: ``'catrom'``), the interpolation
       method to use: ``'bilinear'``, ``'bicubic'``, ``'spline16'``,
@@ -185,29 +192,53 @@ def density_plot(f, xrange, yrange, **options):
     declare the variables in 3-tuples for the range::
 
         sage: x,y = var('x,y')
-        sage: density_plot(sin(x)*sin(y), (x, -2, 2), (y, -2, 2))
+        sage: density_plot(sin(x) * sin(y), (x,-2,2), (y,-2,2))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(sin(x) * sin(y), (x,-2,2), (y,-2,2))
+        sphinx_plot(g)
 
     Here we change the ranges and add some options; note that here
     ``f`` is callable (has variables declared), so we can use 2-tuple ranges::
 
         sage: x,y = var('x,y')
-        sage: f(x,y) = x^2*cos(x*y)
-        sage: density_plot(f, (x,-10,5), (y, -5,5), interpolation='sinc', plot_points=100)
+        sage: f(x,y) = x^2 * cos(x*y)
+        sage: density_plot(f, (x,-10,5), (y,-5,5), interpolation='sinc', plot_points=100)
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        x,y = var('x,y')
+        def f(x,y): return x**2 * cos(x*y)
+        g = density_plot(f, (x,-10,5), (y,-5,5), interpolation='sinc', plot_points=100)
+        sphinx_plot(g)
 
     An even more complicated plot::
 
         sage: x,y = var('x,y')
-        sage: density_plot(sin(x^2 + y^2)*cos(x)*sin(y), (x, -4, 4), (y, -4, 4), cmap='jet', plot_points=100)
+        sage: density_plot(sin(x^2+y^2) * cos(x) * sin(y), (x,-4,4), (y,-4,4), cmap='jet', plot_points=100)
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(sin(x**2 + y**2)*cos(x)*sin(y), (x,-4,4), (y,-4,4), cmap='jet', plot_points=100)
+        sphinx_plot(g)
 
     This should show a "spotlight" right on the origin::
 
         sage: x,y = var('x,y')
-        sage: density_plot(1/(x^10+y^10), (x, -10, 10), (y, -10, 10))
+        sage: density_plot(1/(x^10 + y^10), (x,-10,10), (y,-10,10))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(1/(x**10 + y**10), (x,-10,10), (y,-10,10))
+        sphinx_plot(g)
 
     Some elliptic curves, but with symbolic endpoints.  In the first
     example, the plot is rotated 90 degrees because we switch the
@@ -216,19 +247,37 @@ def density_plot(f, xrange, yrange, **options):
         sage: density_plot(y^2 + 1 - x^3 - x, (y,-pi,pi), (x,-pi,pi))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(y**2 + 1 - x**3 - x, (y,-pi,pi), (x,-pi,pi))
+        sphinx_plot(g)
+
     ::
 
         sage: density_plot(y^2 + 1 - x^3 - x, (x,-pi,pi), (y,-pi,pi))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(y**2 + 1 - x**3 - x, (x,-pi,pi), (y,-pi,pi))
+        sphinx_plot(g)
+
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: density_plot(log(x) + log(y), (x, 1, 10), (y, 1, 10), dpi=20)
+        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10), dpi=20)
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        x,y = var('x,y')
+        g = density_plot(log(x) + log(y), (x,1,10), (y,1,10), dpi=20)
+        sphinx_plot(g)
 
     ::
 
-        sage: density_plot(log(x) + log(y), (x, 1, 10), (y, 1, 10)).show(dpi=20) # These are equivalent
+        sage: density_plot(log(x) + log(y), (x,1,10), (y,1,10)).show(dpi=20) # These are equivalent
 
     TESTS:
 
@@ -250,12 +299,12 @@ def density_plot(f, xrange, yrange, **options):
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid([f], [xrange, yrange], options['plot_points'])
     g = g[0]
-    xrange,yrange=[r[:2] for r in ranges]
+    xrange, yrange = [r[:2] for r in ranges]
 
-    xy_data_array = [[g(x, y) for x in xsrange(*ranges[0], include_endpoint=True)]
-                              for y in xsrange(*ranges[1], include_endpoint=True)]
+    xy_data_array = [[g(x,y) for x in xsrange(*ranges[0], include_endpoint=True)]
+                            for y in xsrange(*ranges[1], include_endpoint=True)]
 
     g = Graphics()
-    g._set_extra_kwds(Graphics._extract_kwds_for_show(options, ignore=['xmin', 'xmax']))
+    g._set_extra_kwds(Graphics._extract_kwds_for_show(options, ignore=['xmin','xmax']))
     g.add_primitive(DensityPlot(xy_data_array, xrange, yrange, options))
     return g

@@ -12,8 +12,8 @@ coercitions pour utiliser comme il faut les structures algébriques fournies par
 Sage.
 
 Nous allons voir ici ce que ces notions signifient, mais pas comment les mettre
-en œuvre pour implémenter une nouvelle structure algébrique. Un tutorial
-thématique couvrant ce point est disponible `ici <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+en œuvre pour implémenter une nouvelle structure algébrique. Un tutoriel
+thématique couvrant ce point est disponible `ici <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Éléments
 --------
@@ -58,7 +58,7 @@ contre matrices creuses par exemple).
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
     sage: type(a); type(b); type(c)
     <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    <class 'sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_sparse'>
+    <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category.element_class'>
     <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 Deux problèmes se posent alors. D'une part, si deux éléments sont instances de
@@ -119,6 +119,7 @@ par ailleurs les catégories en tant que telles :
     sage: ZZ.category()
     Join of Category of euclidean domains
         and Category of infinite enumerated sets
+        and Category of metric spaces
     sage: ZZ.category().is_subcategory(Rings())
     True
     sage: ZZ in Rings()
@@ -204,7 +205,7 @@ les conversions en Sage avec les conversions de type du C !
 
 Nous nous limitons ici à une brève présentation, et renvoyons le lecteur à la
 section du manuel de référence consacrée aux coercitions ainsi qu'au
-`tutoriel <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+`tutoriel <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 spécifique pour plus de détails.
 
 On peut adopter deux positions extrêmes sur les opérations arithmétiques entre
@@ -376,7 +377,7 @@ fractions de ``ZZ['x']``. Cependant, Sage tente de choisir un parent commun
 fonctionne de façon fiable, Sage ne se contente *pas* de prendre n'importe
 lequel lorsque plusieurs candidats semblent aussi naturels les uns que les
 autres. La manière dont le choix est fait est décrite dans le `tutoriel
-<http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+<http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 spécifique déjà mentionné.
 
 Dans l'exemple suivant, il n'y a pas de coercition vers un parent commun :
@@ -388,7 +389,7 @@ Dans l'exemple suivant, il n'y a pas de coercition vers un parent commun :
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 En effet, Sage refuse de choisir entre les candidats  ``QQ['x']['y']``,
 ``QQ['y']['x']``, ``QQ['x','y']`` et ``QQ['y','x']``, car ces quatre structures

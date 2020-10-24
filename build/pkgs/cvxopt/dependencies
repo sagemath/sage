@@ -1,4 +1,4 @@
-$(INST)/$(NUMPY) $(INST)/$(ATLAS) $(INST)/$(CEPHES) $(INST)/$(GSL) $(INST)/$(GLPK) | $(INST)/$(MATPLOTLIB)
+$(PYTHON) numpy $(BLAS) gsl glpk suitesparse | $(PYTHON_TOOLCHAIN) pkgconfig nose matplotlib
 
 matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
 

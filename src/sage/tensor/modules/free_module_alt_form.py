@@ -24,11 +24,11 @@ AUTHORS:
 
 REFERENCES:
 
-- Chap. 23 of R. Godement: *Algebra*, Hermann (Paris) / Houghton Mifflin
-  (Boston) (1968)
-- Chap. 15 of S. Lang: *Algebra*, 3rd ed., Springer (New York) (2002)
+- Chap. 23 of R. Godement : *Algebra* [God1968]_
+- Chap. 15 of S. Lang : *Algebra* [Lan2002]_
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -47,7 +47,7 @@ class FreeModuleAltForm(FreeModuleTensor):
     Alternating form on a free module of finite rank over a commutative ring.
 
     This is a Sage *element* class, the corresponding *parent* class being
-    :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`.
+    :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule`.
 
     INPUT:
 
@@ -71,7 +71,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         Alternating form a of degree 2 on the
          Rank-3 free module M over the Integer Ring
         sage: type(a)
-        <class 'sage.tensor.modules.free_module_alt_form.ExtPowerFreeModule_with_category.element_class'>
+        <class 'sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule_with_category.element_class'>
         sage: a.parent()
         2nd exterior power of the dual of the Rank-3 free module M over the Integer Ring
         sage: a[1,2], a[2,3] = 4, -3
@@ -95,7 +95,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         Linear form b on the Rank-3 free module M over the Integer Ring
         sage: b[:] = [2,-1,3]  # components w.r.t. the module's default basis (e)
 
-    A linear form is a tensor of type (0,1)::
+    A linear form is a tensor of type `(0,1)`::
 
         sage: b.tensor_type()
         (0, 1)
@@ -208,10 +208,10 @@ class FreeModuleAltForm(FreeModuleTensor):
     The exterior product is nilpotent on linear forms::
 
         sage: s = b.wedge(b) ; s
-        Alternating form b/\b of degree 2 on the Rank-3 free module M over the
+        Alternating form zero of degree 2 on the Rank-3 free module M over the
          Integer Ring
         sage: s.display(e)
-        b/\b = 0
+        zero = 0
 
     """
     def __init__(self, fmodule, degree, name=None, latex_name=None):
@@ -229,7 +229,7 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         In the above test suite, _test_category fails because a is not an
         instance of a.parent().category().element_class. Actually alternating
-        forms must be constructed via ExtPowerFreeModule.element_class and
+        forms must be constructed via ExtPowerDualFreeModule.element_class and
         not by a direct call to FreeModuleAltForm::
 
             sage: a1 = M.dual_exterior_power(2).element_class(M, 2, name='a')
@@ -238,10 +238,9 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         """
         FreeModuleTensor.__init__(self, fmodule, (0,degree), name=name,
-                                  latex_name=latex_name, antisym=range(degree),
+                                  latex_name=latex_name,
+                                  antisym=range(degree),
                                   parent=fmodule.dual_exterior_power(degree))
-        FreeModuleAltForm._init_derived(self) # initialization of derived
-                                              # quantities
 
     def _repr_(self):
         r"""
@@ -272,32 +271,6 @@ class FreeModuleAltForm(FreeModuleTensor):
             description += "of degree {} ".format(self._tensor_rank)
         description += "on the {}".format(self._fmodule)
         return description
-
-    def _init_derived(self):
-        r"""
-        Initialize the derived quantities.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: a = M.alternating_form(2)
-            sage: a._init_derived()
-
-        """
-        FreeModuleTensor._init_derived(self)
-
-    def _del_derived(self):
-        r"""
-        Delete the derived quantities.
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: a = M.alternating_form(2)
-            sage: a._del_derived()
-
-        """
-        FreeModuleTensor._del_derived(self)
 
     def _new_instance(self):
         r"""
@@ -367,7 +340,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         r"""
         Return the degree of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: a = M.alternating_form(2, name='a')
@@ -377,11 +350,9 @@ class FreeModuleAltForm(FreeModuleTensor):
         """
         return self._tensor_rank
 
-
-    def display(self, basis=None, format_spec=None):
+    def _display_expansion(self, basis=None, format_spec=None):
         r"""
-        Display the alternating form ``self`` in terms of its expansion w.r.t.
-        a given module basis.
+        Return the pure expansion of ``self`` w.r.t. a given module basis.
 
         The expansion is actually performed onto exterior products of elements
         of the cobasis (dual basis) associated with ``basis`` (see examples
@@ -396,10 +367,10 @@ class FreeModuleAltForm(FreeModuleTensor):
         - ``format_spec`` -- (default: ``None``) format specification passed
           to ``self._fmodule._output_formatter`` to format the output
 
-        EXAMPLES:
+        TESTS:
 
-        Display of an alternating form of degree 1 (linear form) on a rank-3
-        free module::
+        Expansion display of an alternating form of degree 1 (linear form) on a
+        rank-3 free module::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')
@@ -407,85 +378,19 @@ class FreeModuleAltForm(FreeModuleTensor):
             Dual basis (e^0,e^1,e^2) on the Rank-3 free module M over the Integer Ring
             sage: a = M.linear_form('a', latex_name=r'\alpha')
             sage: a[:] = [1,-3,4]
-            sage: a.display(e)
-            a = e^0 - 3 e^1 + 4 e^2
-            sage: a.display()  # a shortcut since e is M's default basis
-            a = e^0 - 3 e^1 + 4 e^2
-            sage: latex(a.display())  # display in the notebook
-            \alpha = e^0 -3 e^1 + 4 e^2
-
-        A shortcut is ``disp()``::
-
-            sage: a.disp()
-            a = e^0 - 3 e^1 + 4 e^2
-
-        Display of an alternating form of degree 2 on a rank-3 free module::
-
-            sage: b = M.alternating_form(2, 'b', latex_name=r'\beta')
-            sage: b[0,1], b[0,2], b[1,2] = 3, 2, -1
-            sage: b.display()
-            b = 3 e^0/\e^1 + 2 e^0/\e^2 - e^1/\e^2
-            sage: latex(b.display())  # display in the notebook
-            \beta = 3 e^0\wedge e^1 + 2 e^0\wedge e^2 -e^1\wedge e^2
-
-        Display of an alternating form of degree 3 on a rank-3 free module::
-
-            sage: c = M.alternating_form(3, 'c')
-            sage: c[0,1,2] = 4
-            sage: c.display()
-            c = 4 e^0/\e^1/\e^2
-            sage: latex(c.display())
-            c = 4 e^0\wedge e^1\wedge e^2
-
-        Display of a vanishing alternating form::
-
-            sage: c[0,1,2] = 0  # the only independent component set to zero
-            sage: c.is_zero()
-            True
-            sage: c.display()
-            c = 0
-            sage: latex(c.display())
-            c = 0
-            sage: c[0,1,2] = 4  # value restored for what follows
-
-        Display in a basis which is not the default one::
-
-            sage: aut = M.automorphism(matrix=[[0,1,0], [0,0,-1], [1,0,0]],
-            ....:                      basis=e)
-            sage: f = e.new_basis(aut, 'f')
-            sage: a.display(f)
-            a = 4 f^0 + f^1 + 3 f^2
-            sage: a.disp(f)     # shortcut notation
-            a = 4 f^0 + f^1 + 3 f^2
-            sage: b.display(f)
-            b = -2 f^0/\f^1 - f^0/\f^2 - 3 f^1/\f^2
-            sage: c.display(f)
-            c = -4 f^0/\f^1/\f^2
-
-        The output format can be set via the argument ``output_formatter``
-        passed at the module construction::
-
-            sage: N = FiniteRankFreeModule(QQ, 3, name='N', start_index=1,
-            ....:                   output_formatter=Rational.numerical_approx)
-            sage: e = N.basis('e')
-            sage: b = N.alternating_form(2, 'b')
-            sage: b[1,2], b[1,3], b[2,3] = 1/3, 5/2, 4
-            sage: b.display()  # default format (53 bits of precision)
-            b = 0.333333333333333 e^1/\e^2 + 2.50000000000000 e^1/\e^3
-             + 4.00000000000000 e^2/\e^3
-
-        The output format is then controled by the argument ``format_spec`` of
-        the method :meth:`display`::
-
-            sage: b.display(format_spec=10)  # 10 bits of precision
-            b = 0.33 e^1/\e^2 + 2.5 e^1/\e^3 + 4.0 e^2/\e^3
+            sage: a._display_expansion(e)
+            e^0 - 3 e^1 + 4 e^2
+            sage: a._display_expansion() # a shortcut since e is M's default basis
+            e^0 - 3 e^1 + 4 e^2
+            sage: latex(a._display_expansion())  # display in the notebook
+            e^{0} -3 e^{1} + 4 e^{2}
 
         """
         from sage.misc.latex import latex
-        from sage.tensor.modules.format_utilities import is_atomic, \
-                                                         FormattedExpansion
-        if basis is None:
-            basis = self._fmodule._def_basis
+        from sage.tensor.modules.format_utilities import (is_atomic,
+                                                          FormattedExpansion)
+        basis, format_spec = self._preparse_display(basis=basis,
+                                                    format_spec=format_spec)
         cobasis = basis.dual_basis()
         comp = self.comp(basis)
         terms_txt = []
@@ -493,7 +398,13 @@ class FreeModuleAltForm(FreeModuleTensor):
         for ind in comp.non_redundant_index_generator():
             ind_arg = ind + (format_spec,)
             coef = comp[ind_arg]
-            if coef != 0:
+            # Check whether the coefficient is zero, preferably via
+            # the fast method is_trivial_zero():
+            if hasattr(coef, 'is_trivial_zero'):
+                zero_coef = coef.is_trivial_zero()
+            else:
+                zero_coef = coef == 0
+            if not zero_coef:
                 bases_txt = []
                 bases_latex = []
                 for k in range(self._tensor_rank):
@@ -538,18 +449,134 @@ class FreeModuleAltForm(FreeModuleTensor):
                     expansion_latex += term
                 else:
                     expansion_latex += "+" + term
+        return FormattedExpansion(expansion_txt, expansion_latex)
+
+    def display(self, basis=None, format_spec=None):
+        r"""
+        Display the alternating form ``self`` in terms of its expansion w.r.t.
+        a given module basis.
+
+        The expansion is actually performed onto exterior products of elements
+        of the cobasis (dual basis) associated with ``basis`` (see examples
+        below). The output is either text-formatted (console mode) or
+        LaTeX-formatted (notebook mode).
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) basis of the free module with
+          respect to which the alternating form is expanded; if none is
+          provided, the module's default basis is assumed
+        - ``format_spec`` -- (default: ``None``) format specification passed
+          to ``self._fmodule._output_formatter`` to format the output
+
+        EXAMPLES:
+
+        Display of an alternating form of degree 1 (linear form) on a rank-3
+        free module::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e.dual_basis()
+            Dual basis (e^0,e^1,e^2) on the Rank-3 free module M over the Integer Ring
+            sage: a = M.linear_form('a', latex_name=r'\alpha')
+            sage: a[:] = [1,-3,4]
+            sage: a.display(e)
+            a = e^0 - 3 e^1 + 4 e^2
+            sage: a.display()  # a shortcut since e is M's default basis
+            a = e^0 - 3 e^1 + 4 e^2
+            sage: latex(a.display())  # display in the notebook
+            \alpha = e^{0} -3 e^{1} + 4 e^{2}
+
+        A shortcut is ``disp()``::
+
+            sage: a.disp()
+            a = e^0 - 3 e^1 + 4 e^2
+
+        Display of an alternating form of degree 2 on a rank-3 free module::
+
+            sage: b = M.alternating_form(2, 'b', latex_name=r'\beta')
+            sage: b[0,1], b[0,2], b[1,2] = 3, 2, -1
+            sage: b.display()
+            b = 3 e^0/\e^1 + 2 e^0/\e^2 - e^1/\e^2
+            sage: latex(b.display())  # display in the notebook
+            \beta = 3 e^{0}\wedge e^{1} + 2 e^{0}\wedge e^{2} -e^{1}\wedge e^{2}
+
+        Display of an alternating form of degree 3 on a rank-3 free module::
+
+            sage: c = M.alternating_form(3, 'c')
+            sage: c[0,1,2] = 4
+            sage: c.display()
+            c = 4 e^0/\e^1/\e^2
+            sage: latex(c.display())
+            c = 4 e^{0}\wedge e^{1}\wedge e^{2}
+
+        Display of a vanishing alternating form::
+
+            sage: c[0,1,2] = 0  # the only independent component set to zero
+            sage: c.is_zero()
+            True
+            sage: c.display()
+            c = 0
+            sage: latex(c.display())
+            c = 0
+            sage: c[0,1,2] = 4  # value restored for what follows
+
+        Display in a basis which is not the default one::
+
+            sage: aut = M.automorphism(matrix=[[0,1,0], [0,0,-1], [1,0,0]],
+            ....:                      basis=e)
+            sage: f = e.new_basis(aut, 'f')
+            sage: a.display(f)
+            a = 4 f^0 + f^1 + 3 f^2
+            sage: a.disp(f)     # shortcut notation
+            a = 4 f^0 + f^1 + 3 f^2
+            sage: b.display(f)
+            b = -2 f^0/\f^1 - f^0/\f^2 - 3 f^1/\f^2
+            sage: c.display(f)
+            c = -4 f^0/\f^1/\f^2
+
+        The output format can be set via the argument ``output_formatter``
+        passed at the module construction::
+
+            sage: N = FiniteRankFreeModule(QQ, 3, name='N', start_index=1,
+            ....:                   output_formatter=Rational.numerical_approx)
+            sage: e = N.basis('e')
+            sage: b = N.alternating_form(2, 'b')
+            sage: b[1,2], b[1,3], b[2,3] = 1/3, 5/2, 4
+            sage: b.display()  # default format (53 bits of precision)
+            b = 0.333333333333333 e^1/\e^2 + 2.50000000000000 e^1/\e^3
+             + 4.00000000000000 e^2/\e^3
+
+        The output format is then controlled by the argument ``format_spec`` of
+        the method :meth:`display`::
+
+            sage: b.display(format_spec=10)  # 10 bits of precision
+            b = 0.33 e^1/\e^2 + 2.5 e^1/\e^3 + 4.0 e^2/\e^3
+
+        Check that the bug reported in :trac:`22520` is fixed::
+
+            sage: M = FiniteRankFreeModule(SR, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.alternating_form(2)
+            sage: a[0,1] = SR.var('t', domain='real')
+            sage: a.display()
+            t e^0/\e^1
+
+        """
+        from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import FormattedExpansion
+        exp = self._display_expansion(basis=basis, format_spec=format_spec)
         if self._name is None:
-            resu_txt = expansion_txt
+            resu_txt = repr(exp)
         else:
-            resu_txt = self._name + " = " + expansion_txt
+            resu_txt = self._name + " = " + repr(exp)
         if self._latex_name is None:
-            resu_latex = expansion_latex
+            resu_latex = latex(exp)
         else:
-            resu_latex = latex(self) + " = " + expansion_latex
+            resu_latex = latex(self) + " = " + latex(exp)
         return FormattedExpansion(resu_txt, resu_latex)
 
     disp = display
-
 
     def wedge(self, other):
         r"""
@@ -582,7 +609,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: latex(c)
             A\wedge B
             sage: latex(c.display())
-            A\wedge B = 5 e^0\wedge e^1 -6 e^0\wedge e^2 -2 e^1\wedge e^2
+            A\wedge B = 5 e^{0}\wedge e^{1} -6 e^{0}\wedge e^{2} -2 e^{1}\wedge e^{2}
 
         Test of the computation::
 
@@ -617,26 +644,34 @@ class FreeModuleAltForm(FreeModuleTensor):
             True
 
         """
-        from format_utilities import is_atomic
+        from .format_utilities import is_atomic
         if not isinstance(other, FreeModuleAltForm):
             raise TypeError("the second argument for the exterior product " +
                             "must be an alternating form")
         if other._tensor_rank == 0:
-            return other*self
+            return other * self
         if self._tensor_rank == 0:
-            return self*other
+            return self * other
         fmodule = self._fmodule
+        rank_r = self._tensor_rank + other._tensor_rank
+        # Facilitate computations involving zero:
+        if rank_r > fmodule._rank:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        if self._is_zero or other._is_zero:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        if self is other and (self._tensor_rank % 2) == 1:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        # Generic case:
         basis = self.common_basis(other)
         if basis is None:
             raise ValueError("no common basis for the exterior product")
-        rank_r = self._tensor_rank + other._tensor_rank
         cmp_s = self._components[basis]
         cmp_o = other._components[basis]
         cmp_r = CompFullyAntiSym(fmodule._ring, basis, rank_r,
                                  start_index=fmodule._sindex,
                                  output_formatter=fmodule._output_formatter)
-        for ind_s, val_s in cmp_s._comp.iteritems():
-            for ind_o, val_o in cmp_o._comp.iteritems():
+        for ind_s, val_s in cmp_s._comp.items():
+            for ind_o, val_o in cmp_o._comp.items():
                 ind_r = ind_s + ind_o
                 if len(ind_r) == len(set(ind_r)): # all indices are different
                     cmp_r[[ind_r]] += val_s * val_o
@@ -659,3 +694,175 @@ class FreeModuleAltForm(FreeModuleTensor):
                 olname = '(' + olname + ')'
             result._latex_name = slname + r'\wedge ' + olname
         return result
+
+    def interior_product(self, alt_tensor):
+        r"""
+        Interior product with an alternating contravariant tensor.
+
+        If ``self`` is an alternating form `A` of degree `p` and `B` is an
+        alternating contravariant tensor of degree `q\geq p` on the same free
+        module, the interior product of `A` by `B` is the alternating
+        contravariant tensor `\iota_A B` of degree `q-p` defined by
+
+        .. MATH::
+
+            (\iota_A B)^{i_1\ldots i_{q-p}} = A_{k_1\ldots k_p}
+                            B^{k_1\ldots k_p i_1\ldots i_{q-p}}
+
+        .. NOTE::
+
+            ``A.interior_product(B)`` yields the same result as
+            ``A.contract(0,..., p-1, B, 0,..., p-1)`` (cf.
+            :meth:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor.contract`),
+            but ``interior_product`` is more efficient, the alternating
+            character of `A` being not used to reduce the computation in
+            :meth:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor.contract`
+
+        INPUT:
+
+        - ``alt_tensor`` -- alternating contravariant tensor `B` (instance of
+          :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`);
+          the degree of `B` must be at least equal to the degree of ``self``
+
+        OUTPUT:
+
+        - element of the base ring (case `p=q`) or
+          :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
+          (case `p<q`) representing the interior product `\iota_A B`, where `A`
+          is ``self``
+
+        .. SEEALSO::
+
+            :meth:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor.interior_product`
+            for the interior product of an alternating contravariant tensor by
+            an alternating form
+
+        EXAMPLES:
+
+        Let us consider a rank-3 free module::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
+            sage: e = M.basis('e')
+
+        and various interior products on it, starting with a linear form
+        (``p=1``) and a module element (``q=1``)::
+
+            sage: a = M.linear_form(name='A')
+            sage: a[:] = [-2, 4, 3]
+            sage: b = M([3, 1, 5], basis=e, name='B')
+            sage: c = a.interior_product(b); c
+            13
+            sage: c == a.contract(b)
+            True
+
+        Case  ``p=1`` and ``q=2``::
+
+            sage: b = M.alternating_contravariant_tensor(2, name='B')
+            sage: b[1,2], b[1,3], b[2,3] = 5, 2, 3
+            sage: c = a.interior_product(b); c
+            Element i_A B of the Rank-3 free module M over the Integer Ring
+            sage: c.display()
+            i_A B = -26 e_1 - 19 e_2 + 8 e_3
+            sage: latex(c)
+            \iota_{A} B
+            sage: c == a.contract(b)
+            True
+
+        Case  ``p=1`` and ``q=3``::
+
+            sage: b = M.alternating_contravariant_tensor(3, name='B')
+            sage: b[1,2,3] = 5
+            sage: c = a.interior_product(b); c
+            Alternating contravariant tensor i_A B of degree 2 on the Rank-3 free module M over the Integer Ring
+            sage: c.display()
+            i_A B = 15 e_1/\e_2 - 20 e_1/\e_3 - 10 e_2/\e_3
+            sage: c == a.contract(b)
+            True
+
+        Case  ``p=2`` and ``q=2``::
+
+            sage: a = M.alternating_form(2, name='A')
+            sage: a[1,2], a[1,3], a[2,3] = 2, -3, 1
+            sage: b = M.alternating_contravariant_tensor(2, name='B')
+            sage: b[1,2], b[1,3], b[2,3] = 5, 2, 3
+            sage: c = a.interior_product(b); c
+            14
+            sage: c == a.contract(0, 1, b, 0, 1)   # contraction on all indices of a
+            True
+
+        Case  ``p=2`` and ``q=3``::
+
+            sage: b = M.alternating_contravariant_tensor(3, name='B')
+            sage: b[1,2,3] = 5
+            sage: c = a.interior_product(b); c
+            Element i_A B of the Rank-3 free module M over the Integer Ring
+            sage: c.display()
+            i_A B = 10 e_1 + 30 e_2 + 20 e_3
+            sage: c == a.contract(0, 1, b, 0, 1)
+            True
+
+        Case  ``p=3`` and ``q=3``::
+
+            sage: a = M.alternating_form(3, name='A')
+            sage: a[1,2,3] = -2
+            sage: c = a.interior_product(b); c
+            -60
+            sage: c  == a.contract(0, 1, 2, b, 0, 1, 2)
+            True
+
+        """
+        from .format_utilities import is_atomic
+        from .alternating_contr_tensor import AlternatingContrTensor
+        if not isinstance(alt_tensor,  AlternatingContrTensor):
+            raise TypeError("{} is not an alternating ".format(alt_tensor) +
+                            "contravariant tensor")
+        p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result
+        if self._tensor_rank == 1:
+            # Case p = 1:
+            res = self.contract(alt_tensor)  # contract() deals efficiently
+                                             # with antisymmetry for p = 1
+        else:
+            # Case p > 1:
+            if alt_tensor._fmodule != self._fmodule:
+                raise ValueError("{} is not defined on ".format(alt_tensor) +
+                                 "the same module as the {}".format(self))
+            if alt_tensor._tensor_rank < self._tensor_rank:
+                raise ValueError("the degree of the {} ".format(alt_tensor) +
+                                 "is lower than that of the {}".format(self))
+            # Interior product at the component level:
+            basis = self.common_basis(alt_tensor)
+            if basis is None:
+                raise ValueError("no common basis for the interior product")
+            comp = self._components[basis].interior_product(
+                                                 alt_tensor._components[basis])
+            if p_res == 0:
+                res = comp  # result is a scalar
+            else:
+                res = self._fmodule.tensor_from_comp((p_res, 0), comp)
+        # Name of the result
+        res_name = None
+        if self._name is not None and alt_tensor._name is not None:
+            sname = self._name
+            oname = alt_tensor._name
+            if not is_atomic(sname):
+                sname = '(' + sname + ')'
+            if not is_atomic(oname):
+                oname = '(' + oname + ')'
+            res_name = 'i_' + sname + ' ' + oname
+        res_latex_name = None
+        if self._latex_name is not None and alt_tensor._latex_name is not None:
+            slname = self._latex_name
+            olname = alt_tensor._latex_name
+            if not is_atomic(olname):
+                olname = r'\left(' + olname + r'\right)'
+            res_latex_name = r'\iota_{' + slname + '} ' + olname
+        if p_res == 0:
+            if res_name:
+                try:  # there is no guarantee that base ring elements have
+                      # set_name
+                    res.set_name(res_name, latex_name=res_latex_name)
+                except (AttributeError, TypeError):
+                    pass
+        else:
+            res.set_name(res_name, latex_name=res_latex_name)
+        return res

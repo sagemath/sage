@@ -1,18 +1,91 @@
 """
 Assumptions
+
+The ``GenericDeclaration`` class provides assumptions about a symbol or
+function in verbal form. Such assumptions can be made using the :func:`assume`
+function in this module, which also can take any relation of symbolic
+expressions as argument. Use :func:`forget` to clear all assumptions.
+Creating a variable with a specific domain is equivalent with making an
+assumption about it.
+
+There is only rudimentary support for consistency and satisfiability checking
+in Sage. Assumptions are used both in Maxima and Pynac to support or refine
+some computations. In the following we show how to make and query assumptions.
+Please see the respective modules for more practical examples.
+
+In addition to the global :func:`assumptions` database, :func:`assuming`
+creates reusable, stackable context managers allowing for temporary
+updates of the database for evaluation of a (block of) statements.
+
+EXAMPLES:
+
+The default domain of a symbolic variable is the complex plane::
+
+    sage: var('x')
+    x
+    sage: x.is_real()
+    False
+    sage: assume(x,'real')
+    sage: x.is_real()
+    True
+    sage: forget()
+    sage: x.is_real()
+    False
+
+Here is the list of acceptable features::
+
+    sage: maxima('features')
+    [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+
+Set positive domain using a relation::
+
+    sage: assume(x>0)
+    sage: x.is_positive()
+    True
+    sage: x.is_real()
+    True
+    sage: assumptions()
+    [x > 0]
+
+Assumptions also affect operations that do not use Maxima::
+
+    sage: forget()
+    sage: assume(x, 'even')
+    sage: assume(x, 'real')
+    sage: (-1)^x
+    1
+    sage: (-gamma(pi))^x
+    gamma(pi)^x
+    sage: binomial(2*x, x).is_integer()
+    True
+
+Assumptions are added and in some cases checked for consistency::
+
+    sage: assume(x>0)
+    sage: assume(x<0)
+    Traceback (most recent call last):
+    ...
+    ValueError: Assumption is inconsistent
+    sage: forget()
 """
-from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ, QQ, RR, CC
 from sage.symbolic.ring import is_SymbolicVariable
-_assumptions = []
+from sage.structure.unique_representation import UniqueRepresentation
 
+# #30074: We use the keys of a dict to store the assumptions.
+# As of Python 3.6.x, dicts preserve the insertion order.
+# In this way, we keep the same order of the assumptions
+# as previous code that was using lists.
+_assumptions = dict()
 
-class GenericDeclaration(SageObject):
+_valid_feature_strings = set()
+
+class GenericDeclaration(UniqueRepresentation):
     """
     This class represents generic assumptions, such as a variable being
     an integer or a function being increasing. It passes such
-    information to maxima's declare (wrapped in a context so it is able
-    to forget).
+    information to Maxima's declare (wrapped in a context so it is able
+    to forget) and to Pynac.
 
     INPUT:
 
@@ -28,8 +101,6 @@ class GenericDeclaration(SageObject):
         sage: decl = GenericDeclaration(x, 'integer')
         sage: decl.assume()
         sage: sin(x*pi)
-        sin(pi*x)
-        sage: sin(x*pi).simplify()
         0
         sage: decl.forget()
         sage: sin(x*pi)
@@ -41,6 +112,12 @@ class GenericDeclaration(SageObject):
 
         sage: maxima('features')
         [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+
+    Test unique representation behavior::
+
+        sage: GenericDeclaration(x, 'integer') is GenericDeclaration(SR.var("x"), 'integer')
+        True
+
     """
 
     def __init__(self, var, assumption):
@@ -64,8 +141,6 @@ class GenericDeclaration(SageObject):
             sage: decl = GenericDeclaration(x, 'integer')
             sage: decl.assume()
             sage: sin(x*pi)
-            sin(pi*x)
-            sage: sin(x*pi).simplify()
             0
             sage: decl.forget()
             sage: sin(x*pi)
@@ -90,26 +165,6 @@ class GenericDeclaration(SageObject):
         """
         return "%s is %s" % (self._var, self._assumption)
 
-    def __cmp__(self, other):
-        """
-        TESTS::
-
-            sage: from sage.symbolic.assumptions import GenericDeclaration as GDecl
-            sage: var('y')
-            y
-            sage: GDecl(x, 'integer') == GDecl(x, 'integer')
-            True
-            sage: GDecl(x, 'integer') == GDecl(x, 'rational')
-            False
-            sage: GDecl(x, 'integer') == GDecl(y, 'integer')
-            False
-        """
-        if isinstance(self, GenericDeclaration) and isinstance(other, GenericDeclaration):
-            return cmp((self._var, self._assumption),
-                       (other._var, other._assumption))
-        else:
-            return cmp(type(self), type(other))
-
     def has(self, arg):
         """
         Check if this assumption contains the argument ``arg``.
@@ -127,11 +182,38 @@ class GenericDeclaration(SageObject):
         """
         return (arg - self._var).is_trivial_zero()
 
+    def _validate_feature(self):
+        """
+        Check if this assumption is a known maxima feature, raise an error otherwise
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.assumptions import GenericDeclaration as GDecl
+            sage: var('b')
+            b
+            sage: GDecl(b, 'bougie')
+            b is bougie
+            sage: _.assume()
+            Traceback (most recent call last):
+            ...
+            ValueError: bougie not a valid assumption, must be one of ['analytic', ... 'symmetric']
+        """
+        from sage.calculus.calculus import maxima
+        global _valid_feature_strings
+        if self._assumption in _valid_feature_strings:
+            return
+        # We get the list here because features may be added with time.
+        _valid_feature_strings.update(repr(x).strip() for x in list(maxima("features")))
+        if self._assumption in _valid_feature_strings:
+            return
+        raise ValueError("%s not a valid assumption, must be one of %s"
+                         % (self._assumption, sorted(_valid_feature_strings)))
+
     def assume(self):
         """
         Make this assumption.
 
-        TEST::
+        TESTS::
 
             sage: from sage.symbolic.assumptions import GenericDeclaration
             sage: decl = GenericDeclaration(x, 'even')
@@ -145,32 +227,62 @@ class GenericDeclaration(SageObject):
             ValueError: Assumption is inconsistent
             sage: decl.forget()
         """
+        if self in _assumptions:
+            return
         from sage.calculus.calculus import maxima
+        cur = None
+        context = None
         if self._context is None:
-            # We get the list here because features may be added with time.
-            valid_features = list(maxima("features"))
-            if self._assumption not in [repr(x).strip() for x in list(valid_features)]:
-                raise ValueError("%s not a valid assumption, must be one of %s" % (self._assumption, valid_features))
+            self._validate_feature()
             cur = maxima.get("context")
-            self._context = maxima.newcontext('context' + maxima._next_var_name())
+            # newcontext makes a fresh context that only has $global as
+            # a subcontext, and makes it the current $context,
+            # but does not deactivate other current contexts.
+            context = maxima.newcontext('context' + maxima._next_var_name())
+            must_declare = True
+        elif not maxima.featurep(self._var, self._assumption):
+            # Reactivating a previously active context.
+            # Run $declare again with the assumption
+            # to catch possible inconsistency
+            # with the active contexts.
+            cur = maxima.get("context")
+            # Redeclaring on the existing context does not seem to trigger
+            # inconsistency checking.
+            ## maxima.set("context", self._context._maxima_init_())
+            # Instead, use a temporary context for this purpose
+            context = maxima.newcontext('context' + maxima._next_var_name())
+            must_declare = True
+        else:
+            must_declare = False
+
+        if must_declare:
             try:
                 maxima.eval("declare(%s, %s)" % (self._var._maxima_init_(), self._assumption))
             except RuntimeError as mess:
                 if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
+                    # Inconsistency with one of the active contexts.
                     raise ValueError("Assumption is inconsistent")
                 else:
                     raise
-            maxima.set("context", cur)
+            else:
+                if self._context is None:
+                    self._context = context
+                    context = None
+            finally:
+                assert cur is not None
+                maxima.set("context", cur)
+                if context is not None:
+                    maxima.killcontext(context)
 
-        if not self in _assumptions:
-            maxima.activate(self._context)
-            _assumptions.append(self)
+        maxima.activate(self._context)
+        self._var.decl_assume(self._assumption)
+        _assumptions[self] = True
 
     def forget(self):
         """
         Forget this assumption.
 
-        TEST::
+        TESTS::
 
             sage: from sage.symbolic.assumptions import GenericDeclaration
             sage: decl = GenericDeclaration(x, 'odd')
@@ -183,11 +295,12 @@ class GenericDeclaration(SageObject):
             sage: cos(x*pi).simplify()
             cos(pi*x)
         """
+        self._var.decl_forget(self._assumption)
         from sage.calculus.calculus import maxima
         if self._context is not None:
             try:
-                _assumptions.remove(self)
-            except ValueError:
+                del _assumptions[self]
+            except KeyError:
                 return
             maxima.deactivate(self._context)
         else: # trying to forget a declaration explicitly rather than implicitly
@@ -264,9 +377,9 @@ class GenericDeclaration(SageObject):
         elif self._assumption == 'noninteger':
             return value in ZZ
         elif self._assumption == 'even':
-            return value not in ZZ or ZZ(value) % 2 != 0
+            return value not in ZZ or bool(ZZ(value) % 2)
         elif self._assumption == 'odd':
-            return value not in ZZ or ZZ(value) % 2 != 1
+            return value not in ZZ or not (ZZ(value) % 2)
         elif self._assumption == 'rational':
             return value not in QQ
         elif self._assumption == 'irrational':
@@ -310,12 +423,44 @@ def preprocess_assumptions(args):
 
 
 def assume(*args):
-    """
+    r"""
     Make the given assumptions.
 
     INPUT:
 
-    -  ``*args`` -- assumptions
+    - ``*args`` -- a variable-length sequence of assumptions, each
+      consisting of:
+
+      - any number of symbolic inequalities, like ``0 < x, x < 1``
+
+      - a subsequence of variable names, followed by some property that
+        should be assumed for those variables; for example, ``x, y, z,
+        'integer'`` would assume that each of ``x``, ``y``, and ``z``
+        are integer variables, and ``x, 'odd'`` would assume that ``x``
+        is odd (as opposed to even).
+
+      The two types can be combined, but a symbolic inequality cannot
+      appear in the middle of a list of variables.
+
+    OUTPUT:
+
+    If everything goes as planned, there is no output.
+
+    If you assume something that is not one of the two forms above, then
+    an ``AttributeError`` is raised as we try to call its ``assume``
+    method.
+
+    If you make inconsistent assumptions (for example, that ``x`` is
+    both even and odd), then a ``ValueError`` is raised.
+
+    .. WARNING::
+
+        Do not use Python's chained comparison notation in assumptions.
+        Python literally translates the expression ``0 < x < 1`` to
+        ``(0 < x) and (x < 1)``, but the value of ``bool(0 < x)`` is
+        ``False`` when ``x`` is a symbolic variable. Therefore, by the
+        definition of Python's logical "and" operator, the entire expression
+        is equal to ``0 < x``.
 
     EXAMPLES:
 
@@ -330,6 +475,8 @@ def assume(*args):
 
     This will be assumed in the current Sage session until forgotten::
 
+        sage: bool(sqrt(x^2) == x)
+        True
         sage: forget()
         sage: bool(sqrt(x^2) == x)
         False
@@ -361,23 +508,32 @@ def assume(*args):
 
     An integer constraint::
 
-        sage: var('n, P, r, r2')
-        (n, P, r, r2)
+        sage: n,P,r,r2 = SR.var('n, P, r, r2')
         sage: assume(n, 'integer')
         sage: c = P*e^(r*n)
         sage: d = P*(1+r2)^n
         sage: solve(c==d,r2)
         [r2 == e^r - 1]
+        sage: forget()
 
     Simplifying certain well-known identities works as well::
 
+        sage: n = SR.var('n')
+        sage: assume(n, 'integer')
         sage: sin(n*pi)
-        sin(pi*n)
-        sage: sin(n*pi).simplify()
         0
         sage: forget()
         sage: sin(n*pi).simplify()
         sin(pi*n)
+
+    Instead of using chained comparison notation, each relationship
+    should be passed as a separate assumption::
+
+        sage: x = SR.var('x')
+        sage: assume(0 < x, x < 1) # instead of assume(0 < x < 1)
+        sage: assumptions()
+        [0 < x, x < 1]
+        sage: forget()
 
     If you make inconsistent or meaningless assumptions,
     Sage will let you know::
@@ -439,15 +595,72 @@ def assume(*args):
         sin(pi*n)
         sage: sin(m*pi).simplify()
         sin(pi*m)
+
+    Check that positive integers can be created (:trac:`20132`)
+
+        sage: x = SR.var('x', domain='positive')
+        sage: assume(x, 'integer')
+        sage: x.is_positive() and x.is_integer()
+        True
+        sage: forget()
+
+        sage: x = SR.var('x', domain='integer')
+        sage: assume(x > 0)
+        sage: x.is_positive() and x.is_integer()
+        True
+        sage: forget()
+
+        sage: assume(x, "integer")
+        sage: assume(x > 0)
+        sage: x.is_positive() and x.is_integer()
+        True
+        sage: forget()
+
+    Ensure that an ``AttributeError`` is raised if we are given junk::
+
+        sage: assume(3)
+        Traceback (most recent call last):
+        ...
+        AttributeError: 'sage.rings.integer.Integer' object has no
+        attribute 'assume'
+
+    Ensure that we can combine the two types of assumptions, as documented::
+
+        sage: x,y = SR.var('x,y')
+        sage: assume(x > 0, x, y, 'integer')
+        sage: assumptions()
+        [x > 0, x is integer, y is integer]
+        sage: forget()
+        sage: assume(x, y, 'integer', x > 0)
+        sage: assumptions()
+        [x is integer, y is integer, x > 0]
+        sage: forget()
+
+    Test that our WARNING block is accurate::
+
+        sage: x = SR.var('x')
+        sage: bool(0 < x)
+        False
+        sage: 0 < x < 1
+        0 < x
+        sage: assume(0 < x < 1)
+        sage: assumptions()
+        [0 < x]
+        sage: forget()
+
+    Check that :trac:`28538` is fixed::
+
+        sage: x, y = SR.var('x, y')
+        sage: assume(x > 0)
+        sage: assume(y > 0)
+        sage: bool(y*(x - y) == 0)
+        False
     """
     for x in preprocess_assumptions(args):
         if isinstance(x, (tuple, list)):
             assume(*x)
         else:
-            try:
-                x.assume()
-            except KeyError:
-                raise TypeError("assume not defined for objects of type '%s'"%type(x))
+            x.assume()
 
 
 def forget(*args):
@@ -466,10 +679,11 @@ def forget(*args):
 
     We define and forget multiple assumptions::
 
+        sage: forget()
         sage: var('x,y,z')
         (x, y, z)
         sage: assume(x>0, y>0, z == 1, y>0)
-        sage: list(sorted(assumptions(), lambda x,y:cmp(str(x),str(y))))
+        sage: sorted(assumptions(), key=lambda x:str(x))
         [x > 0, y > 0, z == 1]
         sage: forget(x>0, z==1)
         sage: assumptions()
@@ -527,7 +741,7 @@ def assumptions(*args):
         []
         sage: assume(x > y)
         sage: assume(z > w)
-        sage: list(sorted(assumptions(), lambda x,y:cmp(str(x),str(y))))
+        sage: sorted(assumptions(), key=lambda x: str(x))
         [x > y, z > w]
         sage: forget()
         sage: assumptions()
@@ -603,9 +817,167 @@ def _forget_all():
         sin(pi*m)
     """
     global _assumptions
-    if len(_assumptions) == 0:
+    if not(_assumptions):
         return
     #maxima._eval_line('forget([%s]);'%(','.join([x._maxima_init_() for x in _assumptions])))
-    for x in _assumptions[:]: # need to do this because x.forget() removes x from _assumptions
+    for x in list(_assumptions): # need to do this because x.forget() removes x from _assumptions
         x.forget()
-    _assumptions = []
+    _assumptions = dict()
+
+
+class assuming:
+    """
+    Temporarily modify assumptions.
+    
+    Create a context manager in which temporary assumptions are added
+    (or substituted) to the current assumptions set.
+
+    The set of possible assumptions and declarations  is the same as for 
+    :func:`assume`.
+
+    This can be useful in interactive mode to discover the assumptions
+    necessary to a given integration, or the exact solution to a system of
+    equations.
+
+    It can also be used to explore the branches of a :func:`cases()` expression.
+
+    As with :func:`assume`, it is an error to add an assumption either redundant
+    or inconsistent with the current assumption set (unless ``replace=True`` is
+    used). See examples.
+
+    INPUT:
+
+    - ``*args`` -- assumptions (same format as for :func:`assume`).
+
+    - ``replace`` -- a boolean (default : ``False``).
+        Specifies whether the new assumptions are added to (default)
+        or replace (if ``replace=True``) the current assumption set.
+
+    OUTPUT:
+
+    A context manager useable in a ``with`` statement (see examples).
+
+    EXAMPLES:
+
+    Basic functionality : inside a :func:`with assuming:` block, Sage uses the
+    updated assumptions database. After exit, the original database is
+    restored. ::
+
+        sage: var("x")
+        x
+        sage: forget(assumptions())
+        sage: solve(x^2 == 4,x)
+        [x == -2, x == 2]
+        sage: with assuming(x > 0):
+        ....:     solve(x^2 == 4,x)
+        ....:     
+        [x == 2]
+        sage: assumptions()
+        []
+
+    The local assumptions can be stacked. We can use this functionality to
+    discover incrementally the assumptions necessary to a given calculation
+    (and by the way, to check that Sage's default integrator
+    (Maxima's, that is), sometimes nitpicks for naught). ::
+
+        sage: var("y,k,theta")
+        (y, k, theta)
+        sage: dgamma(y,k,theta)=y^(k-1)*e^(-y/theta)/(theta^k*gamma(k))
+        sage: integrate(dgamma(y,k,theta),y,0,oo)
+        Traceback (most recent call last):
+        ...
+        ValueError: Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume(theta>0)', see `assume?` for more details)
+        Is theta positive or negative?
+        sage: a1=assuming(theta>0)
+        sage: with a1:integrate(dgamma(y,k,theta),y,0,oo)
+        Traceback (most recent call last):
+        ...
+        ValueError: Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume(k>0)', see `assume?` for more details)
+        Is k positive, negative or zero?
+        sage: a2=assuming(k>0)
+        sage: with a1,a2:integrate(dgamma(y,k,theta),y,0,oo)
+        Traceback (most recent call last):
+        ...
+        ValueError: Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume(k>0)', see `assume?` for more details)
+        Is k an integer?
+        sage: a3=assuming(k,"noninteger")
+        sage: with a1,a2,a3:integrate(dgamma(y,k,theta),y,0,oo)
+        1
+        sage: a4=assuming(k,"integer")
+        sage: with a1,a2,a4:integrate(dgamma(y,k,theta),y,0,oo)
+        1
+
+    As mentioned above, it is an error to try to introduce redundant or
+    inconsistent assumptions. ::
+
+        sage: assume(x > 0)
+        sage: with assuming(x > -1): "I won't see this"
+        Traceback (most recent call last):
+        ...
+        ValueError: Assumption is redundant
+        
+        sage: with assuming(x < -1): "I won't see this"
+        Traceback (most recent call last):
+        ...
+        ValueError: Assumption is inconsistent
+
+    """
+    def __init__(self,*args, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: foo.Ass
+            (x > 0,)
+            sage: bool(x>-1)
+            False
+
+        """
+        self.replace=kwds.pop("replace",False)
+        self.Ass=args
+
+    def __enter__(self):
+        r"""
+        EXAMPLES::
+
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: bool(x>-1)
+            False
+            sage: foo.__enter__()
+            sage: bool(x>-1)
+            True
+            sage: foo.__exit__()
+            sage: bool(x>-1)
+            False
+
+        """
+        if self.replace:
+            self.OldAss=assumptions()
+            forget(assumptions())
+        assume(self.Ass)
+
+    def __exit__(self, *args, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: forget()
+            sage: foo=assuming(x>0)
+            sage: bool(x>-1)
+            False
+            sage: foo.__enter__()
+            sage: bool(x>-1)
+            True
+            sage: foo.__exit__()
+            sage: bool(x>-1)
+            False
+            sage: forget()
+
+        """
+        if self.replace:
+            forget(assumptions())
+            assume(self.OldAss)
+        else:
+            if len(self.Ass) > 0:
+                forget(self.Ass)

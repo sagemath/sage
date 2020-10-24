@@ -1,4 +1,4 @@
-$(INST)/$(ATLAS) $(INST)/$(ICONV) $(INST)/$(READLINE)
+$(BLAS) gfortran iconv readline bzip2 xz pcre curl | pkgconf
 
 ----------
 All lines of this file are ignored except the first.

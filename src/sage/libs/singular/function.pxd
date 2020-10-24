@@ -1,5 +1,5 @@
 """
-Direct Access to Singular's Functions via libSingular.
+Direct Access to Singular's Functions via libSingular
 
 AUTHORS:
 
@@ -82,4 +82,4 @@ cdef class SingularKernelFunction(SingularFunction):
     pass
 
 # the most direct function call interface
-cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=?, object attributes=?)
+cdef call_function(SingularFunction self, tuple args, object R, bint signal_handler=?, object attributes=?)

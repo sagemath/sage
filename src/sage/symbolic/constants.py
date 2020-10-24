@@ -1,4 +1,4 @@
-"""
+r"""
 Mathematical constants
 
 The following standard mathematical constants are defined in Sage,
@@ -59,13 +59,13 @@ can be coerced into other systems or evaluated.
     sage: a = pi + e*4/5; a
     pi + 4/5*e
     sage: maxima(a)
-    %pi+4*%e/5
+    %pi+(4*%e)/5
     sage: RealField(15)(a)           # 15 *bits* of precision
     5.316
     sage: gp(a)
     5.316218116357029426750873360              # 32-bit
     5.3162181163570294267508733603616328824    # 64-bit
-    sage: print mathematica(a)                     # optional - mathematica
+    sage: print(mathematica(a))                  # optional - mathematica
      4 E
      --- + Pi
       5
@@ -214,10 +214,13 @@ Check that :trac:`8237` is fixed::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
+from __future__ import print_function, absolute_import
+
 import math
 from functools import partial
 from sage.rings.infinity import (infinity, minus_infinity,
                                  unsigned_infinity)
+from sage.structure.richcmp import richcmp_method, op_EQ, op_GE, op_LE
 
 constants_table = {}
 constants_name_table = {}
@@ -225,13 +228,14 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-import sage.symbolic.pynac
-sage.symbolic.pynac.register_symbol(infinity, {'maxima':'inf'})
-sage.symbolic.pynac.register_symbol(minus_infinity, {'maxima':'minf'})
-sage.symbolic.pynac.register_symbol(unsigned_infinity, {'maxima':'infinity'})
-
-from pynac import I
-sage.symbolic.pynac.register_symbol(I, {'mathematica':'I'})
+from sage.libs.pynac.pynac import register_symbol, I
+register_symbol(infinity, {'maxima':'inf'})
+register_symbol(minus_infinity, {'maxima':'minf'})
+register_symbol(unsigned_infinity, {'maxima':'infinity'})
+register_symbol(I, {'mathematica':'I'})
+register_symbol(True, {'giac':'true', 'mathematica':'True', 'maxima':'true'})
+register_symbol(False, {'giac':'false', 'mathematica':'False',
+                        'maxima':'false'})
 
 
 def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
@@ -262,6 +266,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
         cls = globals()[class_name]
         return cls(name=name)
 
+@richcmp_method
 class Constant(object):
     def __init__(self, name, conversions=None, latex=None, mathml="",
                  domain='complex'):
@@ -283,16 +288,15 @@ class Constant(object):
             setattr(self, "_%s_"%system, partial(self._generic_interface, value))
             setattr(self, "_%s_init_"%system, partial(self._generic_interface_init, value))
 
-        from sage.symbolic.constants_c import PynacConstant
+        from sage.libs.pynac.constant import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
         self._serial = self._pynac.serial()
         constants_table[self._serial] = self
         constants_name_table[self._name] = self
 
-        from sage.symbolic.pynac import register_symbol
         register_symbol(self.expression(), self._conversions)
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -306,8 +310,10 @@ class Constant(object):
             sage: p != s
             True
         """
-        return (self.__class__ == other.__class__ and
-                self._name == other._name)
+        if self.__class__ == other.__class__ and self._name == other._name:
+            return op in [op_EQ, op_GE, op_LE]
+        else:
+            return NotImplemented
 
     def __reduce__(self):
         """
@@ -541,7 +547,7 @@ class Constant(object):
 
 class Pi(Constant):
     def __init__(self, name="pi"):
-        """
+        r"""
         TESTS::
 
             sage: pi._latex_()
@@ -550,9 +556,8 @@ class Pi(Constant):
             \pi
             sage: mathml(pi)
             <mi>&pi;</mi>
-
         """
-        conversions = dict(axiom='%pi', maxima='%pi', giac='pi', gp='Pi', kash='PI',
+        conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi', gp='Pi', kash='PI',
                            mathematica='Pi', matlab='pi', maple='pi',
                            octave='pi', pari='Pi', pynac='Pi')
         Constant.__init__(self, name, conversions=conversions,
@@ -622,7 +627,7 @@ Note that conversions to real fields will give TypeErrors::
     sage: RR(I)
     Traceback (most recent call last):
     ...
-    TypeError: Unable to convert x (='1.00000000000000*I') to real number.
+    TypeError: unable to convert '1.00000000000000*I' to a real number
 
 Expressions involving I that are real-valued can be converted to real fields::
 
@@ -656,7 +661,7 @@ We can convert to complex fields::
     1j
 
     sage: QQbar(I)
-    1*I
+    I
 
     sage: abs(I)
     1
@@ -679,6 +684,9 @@ TESTS::
 # coercion is implemented in the module sage.symbolic.constants_c for speed.
 from sage.symbolic.constants_c import E
 e = E()
+
+# Allow for backtranslation to this symbol from Mathematica (#29833).
+register_symbol(e, {'mathematica': 'E'})
 
 class NotANumber(Constant):
     """
@@ -948,7 +956,7 @@ class EulerGamma(Constant):
         """
         conversions = dict(kash='EulerGamma(R)', maple='gamma',
                            mathematica='EulerGamma', pari='Euler',
-                           maxima='%gamma', pynac='Euler')
+                           maxima='%gamma', pynac='Euler', giac='euler_gamma')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 
@@ -1080,8 +1088,7 @@ class Khinchin(Constant):
         sage: m = mathematica(khinchin); m             # optional - mathematica
         Khinchin
         sage: m.N(200)                                 # optional - mathematica
-        2.68545200106530644530971483548179569382038229399446295305115234555721885953715200280114117493184769799515346590528809008289767771641096305179253348325966838185231542133211949962603932852204481940961807          # 32-bit
-        2.6854520010653064453097148354817956938203822939944629530511523455572188595371520028011411749318476979951534659052880900828976777164109630517925334832596683818523154213321194996260393285220448194096181                # 64-bit
+        2.685452001065306445309714835481795693820382293...32852204481940961807
     """
     def __init__(self, name='khinchin'):
         """

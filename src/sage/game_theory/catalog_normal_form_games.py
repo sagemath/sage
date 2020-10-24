@@ -1,5 +1,5 @@
 r"""
-A catalog of normal form games.
+A catalog of normal form games
 
 This allows us to construct common games directly::
 
@@ -26,29 +26,17 @@ More information is available in the following references:
 
 REFERENCES:
 
-.. [Basu] Kaushik Basu.
-   *The Traveler's Dilemma: Paradoxes of Rationality in Game Theory*.
-   The American Economic Review (1994): 391-395.
+- [Ba1994]_
 
-.. [Cressman] Cressman, Ross.
-   *Evolutionary dynamics and extensive form games*.
-   MIT Press.
+- [Cre2003]_
 
-.. [McMillan] John McMillan.
-   *Games, strategies, and managers*.
-   Oxford University Press.
+- [McM1992]_
 
-.. [Skyrms] Brian Skyrms.
-   *The stag hunt and the evolution of social structure*.
-   Cambridge University Press.
+- [Sky2003]_
 
-.. [Watson] Joel Watson.
-   *Strategy: an introduction to game theory*.
-   WW Norton.
+- [Wat2003]_
 
-.. [Webb] James Webb.
-   *Game theory: decisions, interaction and Evolution*.
-   Springer Science & Business Media.
+- [Web2007]_
 
 AUTHOR:
 
@@ -70,7 +58,7 @@ def PrisonersDilemma(R=-2, P=-4, S=-5, T=0):
     If they both defect they both get a medium length sentence.
 
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -92,7 +80,7 @@ def PrisonersDilemma(R=-2, P=-4, S=-5, T=0):
     - `P` denotes the utility for punishing the other player.
     - `T` denotes the temptation payoff.
 
-    An often used version [Webb]_ is the following:
+    An often used version [Web2007]_ is the following:
 
     .. MATH::
 
@@ -156,7 +144,7 @@ def CoordinationGame(A=10, a=5, B=0, b=0, C=0, c=0, D=5, d=10):
     Return a 2 by 2 Coordination Game.
 
     A coordination game is a particular type of game where the pure Nash
-    equilibrium is for the players to pick the same strategies [Webb]_.
+    equilibrium is for the players to pick the same strategies [Web2007]_.
 
     In general these are represented as a normal form game using the
     following two matrices:
@@ -228,7 +216,7 @@ def CoordinationGame(A=10, a=5, B=0, b=0, C=0, c=0, D=5, d=10):
         TypeError: the input values for a Coordination game must
                         be of the form A > B, D > C, a > c and d > b
     """
-    if not (A > B  and  D > C and a > c and d > b):
+    if not (A > B and D > C and a > c and d > b):
         raise TypeError("the input values for a Coordination game must be of the form A > B, D > C, a > c and d > b")
     from sage.matrix.constructor import matrix
     A = matrix([[A, C], [B, D]])
@@ -247,7 +235,7 @@ def BattleOfTheSexes():
     watch a movie. They both however want to spend their evening
     together.
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -297,7 +285,7 @@ def StagHunt():
     hare by himself, but a hare is worth less than a stag.
 
     This can be modeled as a normal form game using the following two matrices
-    [Skyrms]_:
+    [Sky2003]_:
 
     .. MATH::
 
@@ -343,7 +331,7 @@ def AntiCoordinationGame(A=3, a=3, B=5, b=1, C=1, c=5, D=0, d=0):
     Return a 2 by 2 AntiCoordination Game.
 
     An anti coordination game is a particular type of game where the pure Nash
-    equilibria is for the players to pick different strategies strategies.
+    equilibria is for the players to pick different strategies.
 
     In general these are represented as a normal form game using the
     following two matrices:
@@ -414,7 +402,7 @@ def AntiCoordinationGame(A=3, a=3, B=5, b=1, C=1, c=5, D=0, d=0):
         ...
         TypeError: the input values for an Anti coordination game must be of the form A < B, D < C, a < c and d < b
     """
-    if not (A < B  and  D < C and a < c and d < b):
+    if not (A < B and D < C and a < c and d < b):
         raise TypeError("the input values for an Anti coordination game must be of the form A < B, D < C, a < c and d < b")
     from sage.matrix.constructor import matrix
     A = matrix([[A, C], [B, D]])
@@ -438,7 +426,7 @@ def HawkDove(v=2, c=3):
       `c>v`.
 
     This can be modeled as a normal form game using the following two matrices
-    [Webb]_:
+    [Web2007]_:
 
     .. MATH::
 
@@ -506,9 +494,10 @@ def HawkDove(v=2, c=3):
         ...
         TypeError: the input values for a Hawk Dove game must be of the form c > v
     """
-    if not (c>v):
+    if not (c > v):
         raise TypeError("the input values for a Hawk Dove game must be of the form c > v")
-    g = AntiCoordinationGame(A=v/2-c, a=v/2-c, B=0, b=v, C=v, c=0, D=v/2, d=v/2)
+    g = AntiCoordinationGame(A=v/2-c, a=v/2-c, B=0, b=v,
+                             C=v, c=0, D=v/2, d=v/2)
     g.rename('Hawk-Dove - ' + repr(g))
     return g
 
@@ -531,7 +520,7 @@ def Pigs():
     to eat a third of the food (and they will also both lose 1 unit of food).
 
     This can be modeled as a normal form game using the following two matrices
-    [McMillan]_ (we assume that the dominant pig's utilities are given by
+    [McM1992]_ (we assume that the dominant pig's utilities are given by
     `A`):
 
     .. MATH::
@@ -581,7 +570,7 @@ def MatchingPennies():
     if not then player 2 wins.
 
     This can be modeled as a zero sum normal form game with the following
-    matrix [Webb]_:
+    matrix [Web2007]_:
 
     .. MATH::
 
@@ -602,7 +591,7 @@ def MatchingPennies():
         ....:     (0, 0): [1, -1], (1, 1): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/2, 1/2), (1/2, 1/2)]]
     """
     from sage.matrix.constructor import matrix
@@ -627,7 +616,7 @@ def RPS():
     the tie.
 
     This can be modeled as a zero sum normal form game with the following
-    matrix [Webb]_:
+    matrix [Web2007]_:
 
     .. MATH::
 
@@ -647,7 +636,7 @@ def RPS():
         ....:      (2, 2): [0, 0], (1, 0): [1, -1], (0, 2): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
     """
     from sage.matrix.constructor import matrix
@@ -655,6 +644,7 @@ def RPS():
     g = NormalFormGame([A])
     g.rename('Rock-Paper-Scissors - ' + repr(g))
     return g
+
 
 def RPSLS():
     r"""
@@ -710,13 +700,13 @@ def RPSLS():
         ....:      (0, 2): [1, -1]}
         sage: g == d
         True
-        sage: g.obtain_nash()
+        sage: g.obtain_nash('enumeration')
         [[(1/5, 1/5, 1/5, 1/5, 1/5), (1/5, 1/5, 1/5, 1/5, 1/5)]]
     """
     from sage.matrix.constructor import matrix
     A = matrix([[0, -1, 1, 1, -1],
                 [1, 0, -1, -1, 1],
-                [-1, 1, 0, 1 , -1],
+                [-1, 1, 0, 1, -1],
                 [-1, 1, -1, 0, 1],
                 [1, -1, 1, -1, 0]])
     g = NormalFormGame([A])
@@ -750,7 +740,7 @@ def Chicken(A=0, a=0, B=1, b=-1, C=-1, c=1, D=-10, d=-10):
     Where `A < B, D < C` and `a < c, d < b` but with the extra
     condition that `A > C` and `a > b`.
 
-    Here are the numeric values used by default [Watson]_:
+    Here are the numeric values used by default [Wat2003]_:
 
     .. MATH::
 
@@ -814,6 +804,7 @@ def Chicken(A=0, a=0, B=1, b=-1, C=-1, c=1, D=-10, d=-10):
     g.rename('Chicken - ' + repr(g))
     return g
 
+
 def TravellersDilemma(max_value=10):
     r"""
     Return a Travellers dilemma game.
@@ -838,7 +829,7 @@ def TravellersDilemma(max_value=10):
     write down?
 
     This can be modeled as a normal form game using the following two matrices
-    [Basu]_:
+    [Ba1994]_:
 
     .. MATH::
 
@@ -904,7 +895,7 @@ def TravellersDilemma(max_value=10):
         ....:      (3, 4): [4, 8], (0, 2): [6, 10], (8, 4): [4, 0]}
         sage: g == d
         True
-        sage: g.obtain_nash() # optional - lrs
+        sage: g.obtain_nash() # optional - lrslib
         [[(0, 0, 0, 0, 0, 0, 0, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0, 1)]]
 
     Note that this command can be used to create travellers dilemma for a
@@ -929,7 +920,7 @@ def TravellersDilemma(max_value=10):
     from sage.matrix.constructor import matrix
     from sage.functions.generalized import sign
     A = matrix([[min(i, j) + 2 * sign(j - i) for j in range(max_value, 1, -1)]
-                                             for i in range(max_value, 1, -1)])
+                for i in range(max_value, 1, -1)])
     g = NormalFormGame([A, A.transpose()])
     g.rename('Travellers dilemma - ' + repr(g))
     return g

@@ -4,6 +4,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -14,16 +15,16 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from hecke_triangle_groups import HeckeTriangleGroup
+from .hecke_triangle_groups import HeckeTriangleGroup
 
-from series_constructor    import MFSeriesConstructor
+from .series_constructor    import MFSeriesConstructor
 
-from graded_ring import ( QuasiMeromorphicModularFormsRing, QuasiWeakModularFormsRing, QuasiModularFormsRing,\
+from .graded_ring import ( QuasiMeromorphicModularFormsRing, QuasiWeakModularFormsRing, QuasiModularFormsRing,\
                           QuasiCuspFormsRing, MeromorphicModularFormsRing, WeakModularFormsRing,\
                           ModularFormsRing, CuspFormsRing )
 
-from space       import ( QuasiMeromorphicModularForms, QuasiWeakModularForms, QuasiModularForms, QuasiCuspForms,\
+from .space       import ( QuasiMeromorphicModularForms, QuasiWeakModularForms, QuasiModularForms, QuasiCuspForms,\
                           MeromorphicModularForms, WeakModularForms, ModularForms, CuspForms,\
                           ZeroForm )
 
-from subspace    import ModularFormsSubSpace
+from .subspace    import ModularFormsSubSpace

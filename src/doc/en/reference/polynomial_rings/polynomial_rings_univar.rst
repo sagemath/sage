@@ -35,6 +35,7 @@ whereas others have multiple bases.
 
    sage/rings/polynomial/real_roots
    sage/rings/polynomial/complex_roots
+   sage/rings/polynomial/refine_root
 
    sage/rings/polynomial/ideal
    sage/rings/polynomial/polynomial_quotient_ring

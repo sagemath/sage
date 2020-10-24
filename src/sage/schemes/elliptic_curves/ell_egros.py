@@ -1,5 +1,5 @@
 r"""
-Elliptic curves with prescribed good reduction.
+Elliptic curves with prescribed good reduction
 
 Construction of elliptic curves with good reduction outside a finite
 set of primes
@@ -71,9 +71,10 @@ required have conductors 13068 and 52272 so are in the database)::
 AUTHORS:
 
 - John Cremona (6 April 2009): initial version (over `\QQ` only).
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #   Copyright (C) 2009 John Cremona <john.cremona@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -85,13 +86,13 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
-from sage.misc.all import prod
 from sage.misc.all import xmrange
 from sage.rings.all import QQ
-from constructor import EllipticCurve, EllipticCurve_from_j
+from .constructor import EllipticCurve, EllipticCurve_from_j
 
 
 def is_possible_j(j, S=[]):
@@ -116,36 +117,38 @@ def is_possible_j(j, S=[]):
     """
     j = QQ(j)
     return (j.is_zero() and 3 in S) \
-        or (j==1728)                \
+        or (j == 1728)              \
         or (j.is_S_integral(S)      \
             and j.prime_to_S_part(S).is_nth_power(3) \
             and (j-1728).prime_to_S_part(S).abs().is_square())
 
 
-def curve_cmp(E1, E2):
+def curve_key(E1):
     r"""
-    Comparison function for elliptic curves over `\QQ`.
+    Comparison key for elliptic curves over `\QQ`.
 
-    Order by label if in the database, else first by conductor, then
-    by c_invariants.
+    The key is a tuple:
+
+    - if the curve is in the database: (conductor, 0, label, number)
+
+    - otherwise: (conductor, 1, a_invariants)
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_egros import curve_key
+        sage: E = EllipticCurve_from_j(1728)
+        sage: curve_key(E)
+        (32, 0, 0, 2)
+        sage: E = EllipticCurve_from_j(1729)
+        sage: curve_key(E)
+        (2989441, 1, (1, 0, 0, -36, -1))
     """
-    t = cmp(E1.conductor(), E2.conductor())
-    if t:
-        return t
-
-    # Now they have the same conductor
     try:
         from sage.databases.cremona import parse_cremona_label, class_to_int
-        k1 = parse_cremona_label(E1.label())
-        k2 = parse_cremona_label(E2.label())
-        t = cmp(class_to_int(k1[1]),class_to_int(k2[1]))
-        if t:
-            return t
-        return cmp(k1[2], k2[2])
-    except RuntimeError: # if not in database, label() will fail
-        pass
-
-    return cmp(E1.ainvs(),E2.ainvs())
+        N, l, k = parse_cremona_label(E1.label())
+        return (N, 0, class_to_int(l), k)
+    except LookupError:
+        return (E1.conductor(), 1, E1.ainvs())
 
 
 def egros_from_j_1728(S=[]):
@@ -180,16 +183,16 @@ def egros_from_j_1728(S=[]):
         ['32a1', '32a2', '64a1', '64a4', '256b1', '256b2', '256c1', '256c2']
 
     """
-    Elist=[]
-    no2 = not 2 in S
-    for ei in xmrange([2] + [4]*len(S)):
-        u = prod([p**e for p,e in zip([-1]+S,ei)],QQ(1))
+    Elist = []
+    no2 = 2 not in S
+    for ei in xmrange([2] + [4] * len(S)):
+        u = QQ.prod(p**e for p, e in zip([-1] + S, ei))
         if no2:
-            u*=4 ## make sure 12|val(D,2)
-        Eu = EllipticCurve([0,0,0,u,0]).minimal_model()
+            u *= 4  # make sure 12|val(D,2)
+        Eu = EllipticCurve([0, 0, 0, u, 0]).minimal_model()
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
@@ -226,22 +229,22 @@ def egros_from_j_0(S=[]):
         sage: len(egros_from_j_0([2,3,5]))  # long time (8s on sage.math, 2013)
         432
     """
-    Elist=[]
-    if not 3 in S:
+    Elist = []
+    if 3 not in S:
         return Elist
-    no2 = not 2 in S
-    for ei in xmrange([2] + [6]*len(S)):
-        u = prod([p**e for p,e in zip([-1]+S,ei)],QQ(1))
+    no2 = 2 not in S
+    for ei in xmrange([2] + [6] * len(S)):
+        u = QQ.prod(p**e for p, e in zip([-1] + S, ei))
         if no2:
-            u*=16 ## make sure 12|val(D,2)
-        Eu = EllipticCurve([0,0,0,0,u]).minimal_model()
+            u *= 16  # make sure 12|val(D,2)
+        Eu = EllipticCurve([0, 0, 0, 0, u]).minimal_model()
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
-def egros_from_j(j,S=[]):
+def egros_from_j(j, S=[]):
     r"""
     Given a rational j and a list of primes S, returns a list of
     elliptic curves over `\QQ` with j-invariant j and good reduction
@@ -285,19 +288,19 @@ def egros_from_j(j,S=[]):
     # Now j != 0, 1728
 
     E = EllipticCurve_from_j(j)
-    Elist=[]
+    Elist = []
 
-    for ei in xmrange([2]*(1+len(S))):
-        u = prod([p**e for p,e in zip(reversed([-1]+S),ei)],QQ(1))
+    for ei in xmrange([2] * (1 + len(S))):
+        u = QQ.prod(p**e for p, e in zip(reversed([-1] + S), ei))
         Eu = E.quadratic_twist(u).minimal_model()
         if Eu.has_good_reduction_outside_S(S):
             Elist += [Eu]
 
-    Elist.sort(cmp=curve_cmp)
+    Elist.sort(key=curve_key)
     return Elist
 
 
-def egros_from_jlist(jlist,S=[]):
+def egros_from_jlist(jlist, S=[]):
     r"""
     Given a list of rational j and a list of primes S, returns a list
     of elliptic curves over `\QQ` with j-invariant in the list and good
@@ -337,8 +340,8 @@ def egros_from_jlist(jlist,S=[]):
         (0, 0, 1, 0, 2),
         (0, 0, 1, 0, -61)]
     """
-    elist = sum([egros_from_j(j,S) for j in jlist],[])
-    elist.sort(cmp=curve_cmp)
+    elist = [e for j in jlist for e in egros_from_j(j, S)]
+    elist.sort(key=curve_key)
     return elist
 
 
@@ -385,41 +388,38 @@ def egros_get_j(S=[], proof=None, verbose=False):
         83
 
     """
-    if not all([p.is_prime() for p in S]):
+    if not all(p.is_prime() for p in S):
         raise ValueError("Elements of S must be prime.")
 
-        if proof is None:
-            from sage.structure.proof.proof import get_flag
-            proof = get_flag(proof, "elliptic_curve")
-        else:
-            proof = bool(proof)
+    if proof is None:
+        from sage.structure.proof.proof import get_flag
+        proof = get_flag(proof, "elliptic_curve")
+    else:
+        proof = bool(proof)
 
     if verbose:
         import sys  # so we can flush stdout for debugging
 
     SS = [-1] + S
 
-    jlist=[]
-    wcount=0
+    jlist = []
+    wcount = 0
     nw = 6**len(S) * 2
 
     if verbose:
-        print "Finding possible j invariants for S = ",S
-        print "Using ", nw, " twists of base curve"
+        print("Finding possible j invariants for S = ", S)
+        print("Using ", nw, " twists of base curve")
         sys.stdout.flush()
 
-    for ei in xmrange([6]*len(S) + [2]):
-        w = prod([p**e for p,e in zip(reversed(SS),ei)],QQ(1))
-        wcount+=1
+    for ei in xmrange([6] * len(S) + [2]):
+        w = QQ.prod(p**e for p, e in zip(reversed(SS), ei))
+        wcount += 1
         if verbose:
-            print "Curve #",wcount, "/",nw,":";
-            print "w = ",w,"=",w.factor()
+            print("Curve #", wcount, "/", nw, ":")
+            print("w = ", w, "=", w.factor())
             sys.stdout.flush()
-        a6 = -1728*w
-        d2 = 0
-        d3 = 0
-        u0 = (2**d2)*(3**d3)
-        E = EllipticCurve([0,0,0,0,a6])
+        a6 = -1728 * w
+        E = EllipticCurve([0, 0, 0, 0, a6])
         # This curve may not be minimal at 2 or 3, but the
         # S-integral_points function requires minimality at primes in
         # S, so we find a new model which is p-minimal at both 2 and 3
@@ -430,19 +430,19 @@ def egros_get_j(S=[], proof=None, verbose=False):
         urst = E23.isomorphism_to(E)
 
         try:
-            pts = E23.S_integral_points(S,proof=proof)
+            pts = E23.S_integral_points(S, proof=proof)
         except RuntimeError:
-            pts=[]
-            print "Failed to find S-integral points on ",E23.ainvs()
+            pts = []
+            print("Failed to find S-integral points on ", E23.ainvs())
             if proof:
                 if verbose:
-                    print "--trying again with proof=False"
+                    print("--trying again with proof=False")
                     sys.stdout.flush()
-                pts = E23.S_integral_points(S,proof=False)
+                pts = E23.S_integral_points(S, proof=False)
                 if verbose:
-                    print "--done"
+                    print("--done")
         if verbose:
-            print len(pts), " S-integral points: ",pts
+            print(len(pts), " S-integral points: ", pts)
             sys.stdout.flush()
         for P in pts:
             P = urst(P)
@@ -450,14 +450,14 @@ def egros_get_j(S=[], proof=None, verbose=False):
             y = P[1]
             j = x**3 /w
             assert j-1728 == y**2 /w
-            if is_possible_j(j,S):
+            if is_possible_j(j, S):
                 if not j in jlist:
                     if verbose:
-                        print "Adding possible j = ",j
+                        print("Adding possible j = ", j)
                         sys.stdout.flush()
                     jlist += [j]
             else:
-                if True: #verbose:
-                    print "Discarding illegal j = ",j
+                if verbose:
+                    print("Discarding illegal j = ", j)
                     sys.stdout.flush()
     return sorted(jlist, key=lambda j: j.height())

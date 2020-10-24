@@ -25,9 +25,23 @@ AUTHORS:
 #*****************************************************************************
 
 
+from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_FromLong
-from cpython.long cimport PyLong_CheckExact, PyLong_FromLong
-from mpz cimport *
+from cpython.long cimport PyLong_FromLong
+from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
+from .mpz cimport *
+
+cdef extern from *:
+    Py_ssize_t* Py_SIZE_PTR "&Py_SIZE"(object)
+    int hash_bits """
+        #ifdef _PyHASH_BITS
+        _PyHASH_BITS         /* Python 3 */
+        #else
+        (8 * sizeof(void*))  /* Python 2 */
+        #endif
+        """
+    int limb_bits "(8 * sizeof(mp_limb_t))"
+
 
 # Unused bits in every PyLong digit
 cdef size_t PyLong_nails = 8*sizeof(digit) - PyLong_SHIFT
@@ -40,10 +54,13 @@ cdef mpz_get_pylong_large(mpz_srcptr z):
     cdef size_t nbits = mpz_sizeinbase(z, 2)
     cdef size_t pylong_size = (nbits + PyLong_SHIFT - 1) // PyLong_SHIFT
     L = _PyLong_New(pylong_size)
-    mpz_export((<PyLongObject*>L).ob_digit, NULL,
+    mpz_export(L.ob_digit, NULL,
             -1, sizeof(digit), 0, PyLong_nails, z)
     if mpz_sgn(z) < 0:
-        (<PyLongObject*>L).ob_size = -(<PyLongObject*>L).ob_size
+        # Set correct size (use a pointer to hack around Cython's
+        # non-support for lvalues).
+        sizeptr = Py_SIZE_PTR(L)
+        sizeptr[0] = -pylong_size
     return L
 
 
@@ -70,34 +87,72 @@ cdef int mpz_set_pylong(mpz_ptr z, L) except -1:
     """
     Convert a Python ``long`` `L` to an ``mpz``.
     """
-    cdef Py_ssize_t pylong_size = (<PyLongObject*>L).ob_size
+    cdef Py_ssize_t pylong_size = Py_SIZE(L)
     if pylong_size < 0:
         pylong_size = -pylong_size
     mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails,
-            (<PyLongObject*>L).ob_digit)
-    if (<PyLongObject*>L).ob_size < 0:
+            (<py_long>L).ob_digit)
+    if Py_SIZE(L) < 0:
         mpz_neg(z, z)
 
 
 cdef Py_hash_t mpz_pythonhash(mpz_srcptr z):
     """
     Hash an ``mpz``, where the hash value is the same as the hash value
-    of the corresponding Python ``long``.
+    of the corresponding Python ``int`` or ``long``, except that we do
+    not replace -1 by -2 (the Cython wrapper for ``__hash__`` does that).
     """
-    # Add all limbs, adding 1 for every carry
-    cdef mp_limb_t h1 = 0
-    cdef mp_limb_t h0
+    if mpz_sgn(z) == 0:
+        return 0
+
+    # The hash value equals z % m where m = 2 ^ hash_bits - 1.
+    #
+    # Safely compute 2 ^ hash_bits - 1 without overflow
+    cdef mp_limb_t modulus = (((<mp_limb_t>(1) << (hash_bits - 1)) - 1) * 2) + 1
+
+    cdef mp_limb_t h = 0
+    cdef mp_limb_t x, y
     cdef size_t i, n
+    cdef unsigned int r
     n = mpz_size(z)
     for i in range(n):
-        h0 = h1
-        h1 += mpz_getlimbn(z, i)
-        # Add 1 on overflow
-        if h1 < h0: h1 += 1
+        x = mpz_getlimbn(z, i)
 
-    cdef Py_hash_t h = h1
+        # Computing modulo 2 ^ hash_bits - 1 means that the bit at
+        # position j is really moved to position (j % hash_bits).
+        # We need to shift every bit of x left by (limb_bits * i)
+        # and then put it in the right position to account for
+        # the modulo operation. Store the result in y.
+        if limb_bits == hash_bits:
+            y = x
+        else:
+            r = (limb_bits * i) % hash_bits
+            y = (x << r) & modulus
+            y += (x >> (hash_bits - r)) & modulus
+            # Only do this shift if we don't shift more than the size of the
+            # type
+            if r > 2 * hash_bits - limb_bits:
+                y += (x >> (2 * hash_bits - r))
+            # At this point, y <= 2 * modulus, so y did not overflow, but we
+            # need y <= modulus. We use > instead of >= on the line below
+            # because it generates more efficient code.
+            if y > modulus:
+                y -= modulus
+
+        # Safely compute h = (h + y) % modulus knowing that h < modulus
+        # and y <= modulus
+        if h < modulus - y:
+            h = h + y
+        else:
+            h = h - (modulus - y)
+
+    # Special case for Python 2
+    if limb_bits == hash_bits and h == 0:
+        h = -1
+
     if mpz_sgn(z) < 0:
-        h = -h
-    if h == -1:
-        return -2
+        return -h
     return h
+
+
+assert hash_bits <= limb_bits <= 2 * hash_bits

@@ -126,7 +126,7 @@ class FourTi2(object):
             sage: four_ti_2.write_matrix([[1,2],[3,4]], "test_file")
         """
         from sage.matrix.constructor import matrix
-        from sage.matrix.matrix import is_Matrix
+        from sage.structure.element import is_Matrix
         if not is_Matrix(mat):
             mat = matrix(ZZ, mat)
         if mat.base_ring() != ZZ:
@@ -240,27 +240,27 @@ class FourTi2(object):
         EXAMPLES::
 
             sage: from sage.interfaces.four_ti_2 import four_ti_2
-            sage: pr = four_ti_2._process_input( \
-            ....:     {'project': "test_file", \
-            ....:      'self': None, \
+            sage: pr = four_ti_2._process_input(
+            ....:     {'project': "test_file",
+            ....:      'self': None,
             ....:      'tst': [[1,2,3],[3,4,5]]})
             sage: four_ti_2.read_matrix("test_file.tst")
             [1 2 3]
             [3 4 5]
         """
-        kwds.pop('self', None)
-
         # Get the project
-        project = kwds.pop('project', None)
+        project = kwds.get('project', None)
         if project is None:
             project = self.temp_project()
 
-        for ext, value in kwds.iteritems():
+        for ext, value in kwds.items():
             if value is None:
+                continue
+            if ext == "project" or ext == "self":
                 continue
 
             if (isinstance(value, list) and
-                not (len(value) > 0 and isinstance(value[0], list))):
+                not (value and isinstance(value[0], list))):
                 self.write_single_row(value, project + "." + ext)
             else:
                 self.write_matrix(value, project + "." + ext)

@@ -1,8 +1,9 @@
 """
-Plane quartic curves over a general ring. These are generic genus 3 curves,
-as distinct from hyperelliptic curves of genus 3.
+Plane quartic curves over a general ring
 
-EXAMPLE::
+These are generic genus 3 curves, as distinct from hyperelliptic curves of genus 3.
+
+EXAMPLES::
 
     sage: PP.<X,Y,Z> = ProjectiveSpace(2, QQ)
     sage: f = X^4 + Y^4 + Z^4 - 3*X*Y*Z*(X+Y+Z)
@@ -17,7 +18,7 @@ EXAMPLE::
 #*****************************************************************************
 
 
-import sage.schemes.plane_curves.projective_curve as projective_curve
+import sage.schemes.curves.projective_curve as projective_curve
 
 def is_QuarticCurve(C):
     """
@@ -34,7 +35,7 @@ def is_QuarticCurve(C):
     """
     return isinstance(C, QuarticCurve_generic)
 
-class QuarticCurve_generic(projective_curve.ProjectiveCurve_generic):
+class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
     # DRK: Note that we should check whether the curve is
 
     def _repr_type(self):

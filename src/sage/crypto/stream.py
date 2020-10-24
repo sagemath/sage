@@ -1,26 +1,28 @@
 """
 Stream Cryptosystems
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cryptosystem import SymmetricKeyCryptosystem
-from stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
+from .cryptosystem import SymmetricKeyCryptosystem
+from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
 
 from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
-from sage.rings.arith import gcd
-from sage.rings.arith import power_mod
-from sage.rings.finite_rings.constructor import FiniteField
+from sage.arith.all import gcd, power_mod
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
 
@@ -57,7 +59,6 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         if field.cardinality() != 2:
             raise NotImplementedError("Not yet implemented.")
         S = BinaryStrings()
-        P = PolynomialRing(FiniteField(2),'x')
         SymmetricKeyCryptosystem.__init__(self, S, S, None)
         self._field = field
 
@@ -70,13 +71,13 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT: A polynomial and initial state of the LFSR.
         """
-        if not isinstance(key, (list,tuple)) and len(key) == 2:
+        if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
-        poly = key[0]; IS = key[1]
+        poly, IS = key
         if not is_Polynomial(poly):
             raise TypeError("poly (= %s) must be a polynomial." % poly)
-        if not isinstance(IS, (list,tuple)):
-            raise TypeError("IS (= %s) must be an initial in the key space."%K)
+        if not isinstance(IS, (list, tuple)):
+            raise TypeError("IS (= %s) must be an initial in the key space." % IS)
         if len(IS) != poly.degree():
             raise TypeError("The length of IS (= %s) must equal the degree of poly (= %s)" % (IS, poly))
         return LFSRCipher(self, poly, IS)
@@ -122,7 +123,6 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         if field.cardinality() != 2:
             raise NotImplementedError("Not yet implemented.")
         S = BinaryStrings()
-        P = PolynomialRing(field, 'x')
         SymmetricKeyCryptosystem.__init__(self, S, S, None)
         self._field = field
 
@@ -166,8 +166,8 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     r"""
     The Blum-Blum-Shub (BBS) pseudorandom bit generator.
 
-    See the original paper by Blum, Blum and Shub [BlumBlumShub1986]_. The
-    BBS algorithm is also discussed in section 5.5.2 of [MenezesEtAl1996]_.
+    See the original paper by Blum, Blum and Shub [BBS1986]_. The
+    BBS algorithm is also discussed in section 5.5.2 of [MvOV1996]_.
 
     INPUT:
 
@@ -241,7 +241,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     ALGORITHM:
 
     The BBS algorithm as described below is adapted from the presentation
-    in Algorithm 5.40, page 186 of [MenezesEtAl1996]_.
+    in Algorithm 5.40, page 186 of [MvOV1996]_.
 
     #. Let `L` be the desired number of bits in the output bit sequence.
        That is, `L` is the desired length of the bit string.
@@ -278,7 +278,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
         sage: blum_blum_shub(length=6, lbound=10**4, ubound=10**5)  # random
         110111
 
-    Under some reasonable hypotheses, Blum-Blum-Shub [BlumBlumShub1982]_
+    Under some reasonable hypotheses, Blum-Blum-Shub [BBS1982]_
     sketch a proof that the period of the BBS stream cipher is equal to
     `\lambda(\lambda(n))`, where `\lambda(n)` is the Carmichael function of
     `n`. This is verified below in a few examples by using the function
@@ -341,17 +341,6 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
         Traceback (most recent call last):
         ...
         ValueError: The lower bound must be less than the upper bound.
-
-    REFERENCES:
-
-    .. [BlumBlumShub1982] L. Blum, M. Blum, and M. Shub.
-      Comparison of Two Pseudo-Random Number Generators.
-      *Advances in Cryptology: Proceedings of Crypto '82*,
-      pp.61--78, 1982.
-
-    .. [BlumBlumShub1986] L. Blum, M. Blum, and M. Shub.
-      A Simple Unpredictable Pseudo-Random Number Generator.
-      *SIAM Journal on Computing*, 15(2):364--383, 1986.
     """
     # sanity checks
     if length < 0:
@@ -387,7 +376,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
         x0 = power_mod(s, 2, n)
     # start generating pseudorandom bits
     z = []
-    for i in xrange(length):
+    for i in range(length):
         x1 = power_mod(x0, 2, n)
         z.append(x1 % 2)
         x0 = x1

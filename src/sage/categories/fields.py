@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Fields
 """
@@ -19,7 +20,6 @@ from sage.categories.category_singleton import Category_contains_method_by_paren
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
 
-import sage.rings.ring
 from sage.structure.element import coerce_binop
 
 class Fields(CategoryWithAxiom):
@@ -91,19 +91,34 @@ class Fields(CategoryWithAxiom):
             sage: GR in Fields()
             True
 
-        The following tests against a memory leak fixed in :trac:`13370`::
+        The following tests against a memory leak fixed in :trac:`13370`. In order
+        to prevent non-deterministic deallocation of fields that have been created
+        in other doctests, we introduced a strong reference to all previously created
+        uncollected objects in :trac:`19244`. ::
 
             sage: import gc
             sage: _ = gc.collect()
-            sage: n = len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)])
+            sage: permstore = [X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]
+            sage: n = len(permstore)
             sage: for i in prime_range(100):
-            ...     R = ZZ.quotient(i)
-            ...     t = R in Fields()
+            ....:     R = ZZ.quotient(i)
+            ....:     t = R in Fields()
+
+        First, we show that there are now more quotient rings in cache than before::
+
+            sage: len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) > n
+            True
+
+        When we delete the last quotient ring created in the loop and then do a garbage
+        collection, all newly created rings vanish::
+
+            sage: del R
             sage: _ = gc.collect()
             sage: len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
-            1
+            0
 
         """
+        import sage.rings.ring
         try:
             return self._contains_helper(x) or sage.rings.ring._is_Field(x)
         except Exception:
@@ -126,8 +141,8 @@ class Fields(CategoryWithAxiom):
             sage: P.<x> = QQ[]
             sage: Q = P.quotient(x^2+2)
             sage: Q.category()
-            Category of commutative no zero divisors quotients
-            of algebras over Rational Field
+            Category of commutative no zero divisors quotients of algebras
+             over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -200,32 +215,168 @@ class Fields(CategoryWithAxiom):
             """
             return True
 
-        def _gcd_univariate_polynomial(self, f, g):
+        def _gcd_univariate_polynomial(self, a, b):
             """
-            Return the greatest common divisor of ``f`` and ``g``, as a
-            monic polynomial.
+            Return the gcd of ``a`` and ``b`` as a monic polynomial.
 
             INPUT:
 
-            - ``f``, ``g`` -- two polynomials defined over ``self``
+            - ``a``, ``b`` -- two univariate polynomials defined over ``self``
 
-            .. NOTE::
+            .. WARNING::
 
-                This is a helper method for
-                :meth:`sage.rings.polynomial.polynomial_element.Polynomial.gcd`.
+                If the base ring is inexact, the results may not be
+                entirely stable.
 
             EXAMPLES::
 
                 sage: R.<x> = QQbar[]
-                sage: QQbar._gcd_univariate_polynomial(2*x,2*x^2)
+                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)
                 x
 
+            TESTS::
+
+                sage: for A in (RR, CC, QQbar):
+                ....:     g = A._gcd_univariate_polynomial
+                ....:     R.<x> = A[]
+                ....:     z = R.zero()
+                ....:     assert(g(2*x, 2*x^2) == x and
+                ....:            g(z, 2*x) == x and
+                ....:            g(2*x, z) == x and
+                ....:            g(z, z) == z)
+
+                sage: R.<x> = RR[]
+                sage: (x^3).gcd(x^5+1)
+                1.00000000000000
+                sage: (x^3).gcd(x^5+x^2)
+                x^2
+                sage: f = (x+3)^2 * (x-1)
+                sage: g = (x+3)^5
+                sage: f.gcd(g)
+                x^2 + 6.00000000000000*x + 9.00000000000000
+
+            The following example illustrates the fact that for inexact
+            base rings, the returned gcd is often 1 due to rounding::
+
+                sage: f = (x+RR.pi())^2 * (x-1)
+                sage: g = (x+RR.pi())^5
+                sage: f.gcd(g)
+                1.00000000000000
+
+            Check :trac:`23012`::
+
+                sage: R.<x> = QQ[]
+                sage: Q = R.quotient(x^2-1)   # Not a field
+                sage: P.<x> = Q[]
+                sage: def always_True(*args, **kwds): return True
+                sage: Q.is_field = always_True
+                sage: Q in Fields()
+                True
+                sage: Q._gcd_univariate_polynomial(x, x)
+                x
             """
-            ret = EuclideanDomains().ElementMethods().gcd(f,g)
-            c = ret.leading_coefficient()
-            if c.is_unit():
-                return (1/c)*ret
-            return ret
+            while b:
+                q, r = a.quo_rem(b)
+                a, b = b, r
+            if a:
+                a = a.monic()
+            return a
+
+        def _xgcd_univariate_polynomial(self, a, b):
+            r"""
+            Return an extended gcd of ``a`` and ``b``.
+
+            INPUT:
+
+            - ``a``, ``b`` -- two univariate polynomials defined over ``self``
+
+            OUTPUT:
+
+            A tuple ``(d, u, v)`` of polynomials such that ``d`` is the
+            greatest common divisor (monic or zero) of ``a`` and ``b``,
+            and ``u``, ``v`` satisfy ``d = u*a + v*b``.
+
+            .. WARNING::
+
+                If the base ring is inexact, the results may not be
+                entirely stable.
+
+            ALGORITHM:
+
+            This uses the extended Euclidean algorithm; see for example
+            [Coh1993]_, Algorithm 3.2.2.
+
+            EXAMPLES::
+
+                sage: P.<x> = QQ[]
+                sage: F = (x^2 + 2)*x^3; G = (x^2+2)*(x-3)
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(F,G)
+                sage: g, u, v
+                (x^2 + 2, 1/27, -1/27*x^2 - 1/9*x - 1/3)
+                sage: u*F + v*G
+                x^2 + 2
+
+            ::
+
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(x,P(0)); g, u, v
+                (x, 1, 0)
+                sage: g == u*x + v*P(0)
+                True
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(P(0),x); g, u, v
+                (x, 0, 1)
+                sage: g == u*P(0) + v*x
+                True
+
+            TESTS::
+
+                sage: for A in (RR, CC, QQbar):
+                ....:     g = A._xgcd_univariate_polynomial
+                ....:     R.<x> = A[]
+                ....:     z, h = R(0), R(1/2)
+                ....:     assert(g(2*x, 2*x^2) == (x, h, z) and
+                ....:            g(z, 2*x) == (x, z, h) and
+                ....:            g(2*x, z) == (x, h, z) and
+                ....:            g(z, z) == (z, z, z))
+
+                sage: P.<x> = QQ[]
+                sage: F = (x^2 + 2)*x^3; G = (x^2+2)*(x-3)
+                sage: g, u, v = QQ._xgcd_univariate_polynomial(F,G)
+                sage: g, u, v
+                (x^2 + 2, 1/27, -1/27*x^2 - 1/9*x - 1/3)
+                sage: u*F + v*G
+                x^2 + 2
+
+            We check that the behavior of xgcd with zero elements is
+            compatible with gcd (:trac:`17671`)::
+
+                sage: R.<x> = QQbar[]
+                sage: zero = R.zero()
+                sage: zero.xgcd(2*x)
+                (x, 0, 1/2)
+                sage: (2*x).xgcd(zero)
+                (x, 1/2, 0)
+                sage: zero.xgcd(zero)
+                (0, 0, 0)
+            """
+            R = a.parent()
+            zero = R.zero()
+            if not b:
+                if not a:
+                    return (zero, zero, zero)
+                c = ~a.leading_coefficient()
+                return (c*a, R(c), zero)
+            elif not a:
+                c = ~b.leading_coefficient()
+                return (c*b, zero, R(c))
+            (u, d, v1, v3) = (R.one(), a, zero, b)
+            while v3:
+                q, r = d.quo_rem(v3)
+                (u, d, v1, v3) = (v1, v3, u - v1*q, r)
+            v = (d - a*u) // b
+            if d:
+                c = ~d.leading_coefficient()
+                d, u, v = c*d, c*u, c*v
+            return d, u, v
 
         def is_perfect(self):
             r"""
@@ -299,7 +450,7 @@ class Fields(CategoryWithAxiom):
             - ``f`` -- a univariate non-zero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
-            descriped in [Yun]_. Other fields may provide their own
+            described in [Yun1976]_. Other fields may provide their own
             implementation by overriding this method.
 
             EXAMPLES::
@@ -317,13 +468,6 @@ class Fields(CategoryWithAxiom):
                 sage: f = QQbar['x'](1)
                 sage: f.squarefree_decomposition()
                 1
-
-            REFERENCES:
-
-            .. [Yun] Yun, David YY. On square-free decomposition algorithms.
-               In Proceedings of the third ACM symposium on Symbolic and algebraic
-               computation, pp. 26-35. ACM, 1976.
-
             """
             from sage.structure.factorization import Factorization
             if f.degree() == 0:
@@ -356,7 +500,7 @@ class Fields(CategoryWithAxiom):
 
             return Factorization(factors, unit=unit, sort=False)
 
-        def __pow__(self, n):
+        def _pow_int(self, n):
             r"""
             Returns the vector space of dimension `n` over ``self``.
 
@@ -368,92 +512,41 @@ class Fields(CategoryWithAxiom):
             from sage.modules.all import FreeModule
             return FreeModule(self, n)
 
-        def _xgcd_univariate_polynomial(self, left, right):
+        def vector_space(self, *args, **kwds):
             r"""
-            Return an extended gcd of ``left`` and ``right``.
+            Gives an isomorphism of this field with a vector space over a subfield.
+
+            This method is an alias for ``free_module``, which may have more documentation.
 
             INPUT:
 
-            - ``left``, ``right`` -- two polynomials over this field
+            - ``base`` -- a subfield or morphism into this field (defaults to the base field)
+
+            - ``basis`` -- a basis of the field as a vector space
+              over the subfield; if not given, one is chosen automatically
+
+            - ``map`` -- whether to return maps from and to the vector space
 
             OUTPUT:
 
-            Polynomials ``g``, ``u``, and ``v`` such that ``g`` is a
-            greatest common divisor of ``left and ``right``, and such
-            that ``g = u*left + v*right`` holds.
-
-            .. NOTE::
-
-                This is a helper method for
-                :meth:`sage.rings.polynomial.polynomial_element.Polynomial.xgcd`.
+            - ``V`` -- a vector space over ``base``
+            - ``from_V`` -- an isomorphism from ``V`` to this field
+            - ``to_V`` -- the inverse isomorphism from this field to ``V``
 
             EXAMPLES::
 
-                sage: P.<x> = QQ[]
-                sage: F = (x^2 + 2)*x^3; G = (x^2+2)*(x-3)
-                sage: g, u, v = QQ._xgcd_univariate_polynomial(F,G)
-                sage: g, u, v
-                (x^2 + 2, 1/27, -1/27*x^2 - 1/9*x - 1/3)
-                sage: u*F + v*G
-                x^2 + 2
-
-            ::
-
-                sage: g, u, v = QQ._xgcd_univariate_polynomial(x,P(0)); g, u, v
-                (x, 1, 0)
-                sage: g == u*x + v*P(0)
-                True
-                sage: g, u, v = QQ._xgcd_univariate_polynomial(P(0),x); g, u, v
-                (x, 0, 1)
-                sage: g == u*P(0) + v*x
-                True
-
-            TESTS:
-
-            We check that the behavior of xgcd with zero elements is
-            compatible with gcd (:trac:`17671`)::
-
-                sage: R.<x> = QQbar[]
-                sage: zero = R.zero()
-                sage: zero.xgcd(2*x)
-                (x, 0, 1/2)
-                sage: (2*x).xgcd(zero)
-                (x, 1/2, 0)
-                sage: zero.xgcd(zero)
-                (0, 0, 0)
+                sage: K.<a> = Qq(125)
+                sage: V, fr, to = K.vector_space()
+                sage: v = V([1,2,3])
+                sage: fr(v, 7)
+                (3*a^2 + 2*a + 1) + O(5^7)
             """
-            R = left.parent()
-            zero = R.zero()
-            one = R.one()
-            if right.is_zero():
-                if left.is_zero():
-                    return (zero, zero, zero)
-                else:
-                    c = left.leading_coefficient()
-                    return (left/c, one/c, zero)
-            elif left.is_zero():
-                c = right.leading_coefficient()
-                return (right/c, zero, one/c)
-
-            # Algorithm 3.2.2 of Cohen, GTM 138
-            A = left
-            B = right
-            U = one
-            G = A
-            V1 = zero
-            V3 = B
-            while not V3.is_zero():
-                Q, R = G.quo_rem(V3)
-                G, U, V1, V3 = V3, V1, U-V1*Q, R
-            V = (G-A*U)//B
-            lc = G.leading_coefficient()
-            return G/lc, U/lc, V/lc
-
+            return self.free_module(*args, **kwds)
 
     class ElementMethods:
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of a euclidean
+            Return the degree of this element as an element of an Euclidean
             domain.
 
             In a field, this returns 0 for all but the zero element (for
@@ -466,7 +559,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.is_zero():
                 raise ValueError("euclidean degree not defined for the zero element")
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.zero()
 
         def quo_rem(self, other):
@@ -532,7 +625,7 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(15.0,12.0)
                 3.00000000000000
 
-            But for others floating point numbers, the gcd is just `0.0` or `1.0`::
+            But for other floating point numbers, the gcd is just `0.0` or `1.0`::
 
                 sage: gcd(3.2, 2.18)
                 1.00000000000000
@@ -617,7 +710,7 @@ class Fields(CategoryWithAxiom):
 
         @coerce_binop
         def xgcd(self, other):
-            """
+            r"""
             Compute the extended gcd of ``self`` and ``other``.
 
             INPUT:
@@ -680,3 +773,56 @@ class Fields(CategoryWithAxiom):
                 return (P.one(), P.zero(), ~other)
             # else both are 0
             return (P.zero(), P.zero(), P.zero())
+
+        def factor(self):
+            """
+            Return a factorization of ``self``.
+
+            Since ``self`` is either a unit or zero, this function is trivial.
+
+            EXAMPLES::
+
+                sage: x = GF(7)(5)
+                sage: x.factor()
+                5
+                sage: RR(0).factor()
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: factorization of 0.000000000000000 is not defined
+            """
+            if not self:
+                raise ArithmeticError("factorization of {!r} is not defined".format(self))
+            from sage.structure.factorization import Factorization
+            return Factorization([], self)  # No factor; "self" as unit
+
+        def inverse_of_unit(self):
+            r"""
+            Return the inverse of this element.
+
+            EXAMPLES::
+
+                sage: NumberField(x^7+2,'a')(2).inverse_of_unit()
+                1/2
+
+            Trying to invert the zero element typically raises a
+            ``ZeroDivisionError``::
+
+                sage: QQ(0).inverse_of_unit()
+                Traceback (most recent call last):
+                ...
+                ZeroDivisionError: rational division by zero
+
+            To catch that exception in a way that also works for non-units
+            in more general rings, use something like::
+
+                sage: try:
+                ....:    QQ(0).inverse_of_unit()
+                ....: except ArithmeticError:
+                ....:    pass
+
+            Also note that some “fields” allow one to invert the zero element::
+
+                sage: RR(0).inverse_of_unit()
+                +infinity
+            """
+            return ~self

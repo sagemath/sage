@@ -19,7 +19,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -70,7 +70,7 @@ def IntegerVectorsIterator(vect, min = None):
 
     OUTPUT:
 
-    A list in lexicograohic order of all integer vectors (as lists) which are
+    A list in lexicographic order of all integer vectors (as lists) which are
     dominated elementwise by ``vect`` and are greater than or equal to ``min`` in
     lexicographic order.
 
@@ -83,19 +83,20 @@ def IntegerVectorsIterator(vect, min = None):
         sage: list(IntegerVectorsIterator([1, 1], min = [1, 0]))
         [[1, 0], [1, 1]]
     """
-    if len(vect) == 0:
+    if not vect:
         yield []
     else:
         if min is None:
-            min = [0]*len(vect)
+            min = [0] * len(vect)
         if vect < min:
             return
         else:
-            for vec in IntegerVectorsIterator(vect[1:], min =min[1:]):
-                yield [min[0]]+vec
-            for j in range(min[0]+1,vect[0]+1):
+            for vec in IntegerVectorsIterator(vect[1:], min=min[1:]):
+                yield [min[0]] + vec
+            for j in range(min[0] + 1, vect[0] + 1):
                 for vec in IntegerVectorsIterator(vect[1:]):
-                    yield [j]+vec
+                    yield [j] + vec
+
 
 class VectorPartition(CombinatorialElement):
     r"""
@@ -177,7 +178,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
         sage: VP = VectorPartitions([2, 2])
         sage: for vecpar in VP:
-        ....:     print vecpar
+        ....:     print(vecpar)
         [[0, 1], [0, 1], [1, 0], [1, 0]]
         [[0, 1], [0, 1], [2, 0]]
         [[0, 1], [1, 0], [1, 1]]
@@ -194,7 +195,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
 
         sage: VP = VectorPartitions([2, 2], min = [1, 0])
         sage: for vecpar in VP:
-        ....:     print vecpar
+        ....:     print(vecpar)
         [[1, 0], [1, 2]]
         [[1, 1], [1, 1]]
         [[2, 2]]
@@ -257,7 +258,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             sage: VP.cardinality()
             9
         """
-        if all([coord==0 for coord in self._vec]):
+        if all(coord == 0 for coord in self._vec):
             yield self.element_class(self, []) # the zero vector has only the empty partition
         else:
             for vec in IntegerVectorsIterator(list(self._vec), min = list(self._min)): # choose the first part

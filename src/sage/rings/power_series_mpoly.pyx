@@ -1,15 +1,13 @@
 # NOT ready to be used -- possibly should be deleted.
 
-
-from power_series_ring_element cimport PowerSeries
+from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
-from infinity import infinity, is_Infinite
-import arith
+from .infinity import infinity, is_Infinite
 from sage.libs.all import PariError
-from power_series_ring_element import is_PowerSeries
-import rational_field
-from polynomial.multi_polynomial_ring_generic import is_MPolynomialRing
-import power_series_poly
+from .power_series_ring_element import is_PowerSeries
+from . import rational_field
+from .polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from . import power_series_poly
 
 cdef class PowerSeries_mpoly(PowerSeries):
 
@@ -104,7 +102,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
     def _mpoly(self):
         return self.__f
 
-    cpdef RingElement _mul_(self, RingElement right_r):
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
         """
@@ -117,7 +115,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
 
     def __iter__(self):
         """
-        Return an interator over the coefficients of this power series.
+        Return an iterator over the coefficients of this power series.
         """
         return iter(self.__f)
 
@@ -128,7 +126,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef ModuleElement _add_(self, ModuleElement right_m):
+    cpdef _add_(self, right_m):
         """
         EXAMPLES:
         """
@@ -136,7 +134,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f + right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef ModuleElement _sub_(self, ModuleElement right_m):
+    cpdef _sub_(self, right_m):
         """
         Return difference of two power series.
 
@@ -146,10 +144,10 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f - right.__f, \
                                          self.common_prec_c(right), check=True)
 
-    cpdef ModuleElement _rmul_(self, RingElement c):
+    cpdef _rmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._rmul_(c), self._prec, check=False)
 
-    cpdef ModuleElement _lmul_(self, RingElement c):
+    cpdef _lmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._lmul_(c), self._prec, check=False)
 
 

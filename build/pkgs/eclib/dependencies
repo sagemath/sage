@@ -1,4 +1,4 @@
-$(INST)/$(PARI) $(INST)/$(NTL) $(INST)/$(FLINT)
+pari ntl flint
 
 ----------
 All lines of this file are ignored except the first.

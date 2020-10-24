@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(GF2X)
+$(MP_LIBRARY) gf2x
 
 ----------
 All lines of this file are ignored except the first.

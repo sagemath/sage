@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Combinatorics
 =============
 
@@ -13,10 +13,12 @@ Thematic indexes
 
 - :ref:`sage.combinat.algebraic_combinatorics`
 
+  - :ref:`sage.combinat.chas`
   - :ref:`sage.combinat.cluster_algebra_quiver`
   - :ref:`sage.combinat.crystals`
   - :ref:`sage.combinat.root_system`
   - :ref:`sage.combinat.sf`
+  - :class:`~sage.combinat.fully_commutative_elements.FullyCommutativeElements`
 
 - :ref:`sage.combinat.counting`
 - :ref:`sage.combinat.enumerated_sets`
@@ -43,9 +45,5 @@ Related topics
 - :ref:`sage.graphs`
 
 """
-#import demo
-#import demo_short
-#import demo_algebraic_combinatorics
-#import tutorial_enumerated_sets
-import quickref
-import tutorial
+from . import quickref
+from . import tutorial

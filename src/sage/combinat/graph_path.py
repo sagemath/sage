@@ -15,7 +15,9 @@ Paths in Directed Acyclic Graphs
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from combinat import CombinatorialClass
+from __future__ import absolute_import
+
+from .combinat import CombinatorialClass
 import sage.graphs.digraph as digraph
 
 
@@ -38,8 +40,9 @@ def GraphPaths(g, source=None, target=None):
         Paths in Multi-digraph on 5 vertices
         sage: p.cardinality()
         37
-        sage: p.random_element()
-        [1, 2, 3, 4, 5]
+        sage: path = p.random_element()
+        sage: all(G.has_edge(*path[i:i+2]) for i in range(len(path) -1))
+        True
 
     If the source is specified, then the returned class contains all of
     the paths starting at the vertex source (including the trivial
@@ -206,7 +209,7 @@ class GraphPaths_common:
 
     def paths(self):
         """
-        Returns a list of all the paths of self.
+        Return a list of all the paths of ``self``.
 
         EXAMPLES::
 
@@ -216,9 +219,10 @@ class GraphPaths_common:
             37
         """
         paths = []
-        for source in self.graph.vertices():
+        for source in self.graph.vertex_iterator():
             paths += self.outgoing_paths(source)
         return paths
+
 
 class GraphPaths_all(CombinatorialClass, GraphPaths_common):
     """

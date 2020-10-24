@@ -231,12 +231,12 @@ dédoublement des ``\`` dans les chaînes Python. ::
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
     sage: from sage.misc.latex import latex_extra_preamble
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
     sage: latex.add_macro("\\newcommand{\\foo}{bar}")
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
@@ -260,7 +260,7 @@ contre-obliques sont dédoublées. ::
     sage: latex.add_to_preamble('\\geometry{letterpaper,total={8in,10in}}')
     sage: latex.extra_preamble()
     '\\usepackage{geometry}\\geometry{letterpaper,total={8in,10in}}'
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \usepackage{geometry}\geometry{letterpaper,total={8in,10in}}
     \newcommand{\ZZ}{\Bold{Z}}
     ...
@@ -440,10 +440,10 @@ respectivement à l'adresse http://sourceforge.net/projects/dvipng/ et dans
 `Ghostscript <http://www.ghostscript.com/>`_.
 
 Le rendu des graphes nécessite une version suffisamment récente de PGF, ainsi
-que les fichiers ``tkz-graph.sty``, ``tkz-arith.sty`` et suivant les cas
-``tkz-berge.sty``, tous issus du site web `Altermundus
-<http://www.altermundus.fr/pages/graph.html>`_ (`version anglaise
-<http://altermundus.com/pages/graph/>`_).
+que les fichiers ``tkz-graph.sty``, disponible sur le site web
+https://www.ctan.org/pkg/tkz-graph, ``tkz-arith.sty`` et suivant les
+cas ``tkz-berge.sty``, disponibles sur le site web
+https://www.ctan.org/pkg/tkz-berge.
 
 Programmes externes
 ===================
@@ -460,21 +460,3 @@ on peut imaginer de maintenir la correspondance entre questions et réponses
 dans un sujet d'examen en utilisant Sage pour calculer les unes à partir des
 autres. Sagetex est décrit plus en détail en section :ref:`sec-sagetex` de ce
 document.
-
-tex2sws est un convertisseur LaTeX vers feuille de travail Sage. Il prend lui
-aussi en entrée un document LaTeX contenant du code Sage dans des
-environnements spécifiques. Après traitement convenable, on obtient une feuille
-de travail pour le bloc-notes, dans laquelle les formules du document de départ
-sont affichées avec MathJax et le code Sage repris dans des cellules d'entrée.
-Ainsi, un manuel ou un article initialement rédigé avec LaTeX qui contient du
-code Sage peut être transformé en une page web interactive où les formules
-mathématiques restent formatées correctement tandis que les blocs de code Sage
-deviennent exécutables. Cet outil est en cours de développement, on consultera
-la page `tex2sws @ BitBucket <http://bitbucket.org/rbeezer/tex2sws/>`_ pour
-plus d'information.
-
-sws2tex fait l'inverse : il part d'une feuille de travail Sage, qu'il convertit
-en document LaTeX pour permettre de la traiter ensuite avec tous les outils
-disponibles pour les documents LaTeX. sws2tex est en cours de développement, on
-pourra se référer à la page  `sws2tex @ BitBucket
-<http://bitbucket.org/whuss/sws2tex/>`_ pour plus d'information.

@@ -27,31 +27,25 @@ using namespace NTL;
 #endif
 
 #ifndef __cplusplus
-struct ZZ;
-struct ZZ_p;
-struct ZZX;
-struct ZZ_pX;
-struct zz_p;
-struct zz_pX;
-struct ZZ_pEContext;
-struct ZZ_pE;
-struct ZZ_pEX;
-struct ZZ_pE;
-struct GF2X;
-struct GF2EContext;
-struct GF2X_c;
-struct GF2E;
-struct GF2;
+/* Ensure that code passing around pointers to NTL classes can be
+ * compiled in pure C mode. */
+typedef struct {} ZZ;
+typedef struct {} ZZ_p;
+typedef struct {} ZZX;
+typedef struct {} ZZ_pX;
+typedef struct {} zz_p;
+typedef struct {} zz_pX;
+typedef struct {} ZZ_pEContext;
+typedef struct {} ZZ_pE;
+typedef struct {} ZZ_pEX;
+typedef struct {} GF2X;
+typedef struct {} GF2EContext;
+typedef struct {} GF2X_c;
+typedef struct {} GF2E;
+typedef struct {} GF2;
 typedef struct {} mat_ZZ;
 typedef struct {} mat_GF2;
 typedef struct {} mat_GF2E;
 #endif
-
-#define zz_p_set_from_long( obj1, obj2 )\
-        ((obj1) = (obj2))
-#define NTL_zz_p_DOUBLE_EQUALS( obj1, obj2 )\
-        ((obj1) == (obj2))
-#define NTL_zz_pX_DOUBLE_EQUALS( obj1, obj2 )\
-        ((obj1) == (obj2))
 
 #endif

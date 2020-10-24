@@ -11,13 +11,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
-from sage.env import SAGE_DOC
-sys.path.append(SAGE_DOC)
-from common.conf import *
+import os
+from sage.env import SAGE_DOC_SRC, SAGE_DOC
+from sage.docs.conf import release, latex_elements, exclude_patterns
+from sage.docs.conf import *
 
-ref_src = os.path.join(SAGE_DOC, 'en', 'reference')
-ref_out = os.path.join(SAGE_DOC, 'output', 'html', 'en', 'reference')
+ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
+ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
 # General information about the project.
 project = u"Sage Reference Manual"
@@ -53,20 +53,20 @@ latex_elements['preamble'] += r'''
 '''
 
 #Ignore all .rst in the _sage subdirectory
-exclude_trees = exclude_trees + ['_sage']
+exclude_patterns = exclude_patterns + ['_sage']
 
 multidocs_is_master = True
 
 # Sorted list of subdocs. Include all subdirectories of ref_src except
 # for 'static' and 'templates', and to deal with upgrades: 'sage',
-# 'sagenb', 'media', and 'other'.
-bad_directories = ['static', 'templates', 'sage', 'sagenb', 'media', 'other']
+# 'media', and 'other'.
+bad_directories = ['static', 'templates', 'sage', 'media', 'other']
 multidocs_subdoc_list = sorted([x for x in os.listdir(ref_src)
                                 if os.path.isdir(os.path.join(ref_src, x))
                                 and x not in bad_directories])
 
 # List of directories, relative to source directory, that shouldn't be
 # searched for source files.
-exclude_trees += multidocs_subdoc_list + [
-    'sage', 'sagenb', 'options'
+exclude_patterns += multidocs_subdoc_list + [
+    'sage', 'options'
     ]

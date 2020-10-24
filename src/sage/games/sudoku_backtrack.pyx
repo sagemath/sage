@@ -3,6 +3,7 @@ This module contains Cython code for a backtracking algorithm to solve Sudoku pu
 
 Once Cython implements closures and the ``yield`` keyword is possible, this can be moved into the ``sage.games.sudoku`` module, as part of the ``Sudoku.backtrack`` method, and this module can be banned.
 """
+
 def backtrack_all(n, puzzle):
     r"""
     A routine to compute all the solutions to a Sudoku puzzle.
@@ -17,7 +18,7 @@ def backtrack_all(n, puzzle):
 
         A list of solutions, where each solution is a (1-based) list similar to ``puzzle``.
 
-    TEST:
+    TESTS:
 
     This is just a cursory test here, since eventually this code will move.
     See the `backtrack` method of the `Sudoku` class in the
@@ -25,7 +26,7 @@ def backtrack_all(n, puzzle):
 
         sage: from sage.games.sudoku_backtrack import backtrack_all
         sage: c = [0, 0, 0, 0, 1, 0, 9, 0, 0, 8, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 3, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 2, 0, 4, 0, 0, 0, 0, 0, 0, 0, 5, 8, 0, 6, 0, 0, 0, 0, 1, 3, 0, 7, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0]
-        sage: print backtrack_all(3, c)
+        sage: print(backtrack_all(3, c))
         [[6, 5, 4, 3, 1, 2, 9, 8, 7, 8, 3, 1, 4, 7, 9, 5, 2, 6, 2, 9, 7, 6, 8, 5, 4, 1, 3, 4, 7, 2, 5, 3, 8, 6, 9, 1, 3, 8, 5, 1, 9, 6, 2, 7, 4, 9, 1, 6, 7, 2, 4, 3, 5, 8, 5, 6, 8, 9, 4, 7, 1, 3, 2, 7, 4, 3, 2, 5, 1, 8, 6, 9, 1, 2, 9, 8, 6, 3, 7, 4, 5]]
 
     ALGORITHM:
@@ -37,10 +38,6 @@ def backtrack_all(n, puzzle):
     So at each new level of the search tree, we propagate as many fixed symbols as we can, placing them into a two-ended queue (``fixed`` and ``fixed_symbol``) that we process until it is empty or we need to prune.  All this recording of ineligible symbols and numbers of eligible symbols has to be unwound as we backup the tree, though.
 
     The notion of propagating singleton cells forward comes from an essay by Peter Norvig [sudoku:norvig]_.
-
-    .. rubric:: Citations
-
-    .. [sudoku:norvig] Perter Norvig, "Solving Every Sudoku Puzzle", http://norvig.com/sudoku.html
     """
     cdef:
         # Arrays sizes are n^4, and n^2, with 3n^2-2n-1 for second slot of peers, n = 4

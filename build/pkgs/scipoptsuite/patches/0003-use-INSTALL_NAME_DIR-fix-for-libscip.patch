@@ -1,0 +1,24 @@
+From a6ff146209ed3dfab985870aa529889625492196 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Mon, 16 Apr 2018 12:17:08 +0200
+Subject: [PATCH 3/3] use INSTALL_NAME_DIR fix for libscip
+
+---
+ scip/src/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scip/src/CMakeLists.txt b/scip/src/CMakeLists.txt
+index ef55fe7..838ef15 100644
+--- a/scip/src/CMakeLists.txt
++++ b/scip/src/CMakeLists.txt
+@@ -834,6 +834,7 @@ add_dependencies(scip scip_update_githash)
+ set_target_properties(libscip PROPERTIES
+     VERSION ${SCIP_VERSION_MAJOR}.${SCIP_VERSION_MINOR}.${SCIP_VERSION_PATCH}.${SCIP_VERSION_SUB}
+     SOVERSION ${SCIP_VERSION_MAJOR}.${SCIP_VERSION_MINOR}
++    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+     INSTALL_RPATH_USE_LINK_PATH TRUE)
+ 
+ # set the install rpath to the installed destination
+-- 
+2.11.0
+

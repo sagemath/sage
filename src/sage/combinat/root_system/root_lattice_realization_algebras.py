@@ -1,23 +1,25 @@
 r"""
 Group algebras of root lattice realizations
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #                          Mark Shimozono <mshimo at vt.edu>
 #                          Daniel Bump
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-import functools, operator
-from sage.misc.cachefunc import cached_method, cached_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+import functools
+import operator
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.categories.algebra_functor import AlgebrasCategory
 lazy_import('sage.rings.integer_ring', 'ZZ')
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
+
 
 class Algebras(AlgebrasCategory):
     """
@@ -38,9 +40,9 @@ class Algebras(AlgebrasCategory):
             EXAMPLES::
 
                 sage: RootSystem(["A",2,1]).ambient_space().algebra(QQ) # indirect doctest
-                Group algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
+                Algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
             """
-            return "Group algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
+            return "Algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
 
         def some_elements(self):
             r"""
@@ -114,7 +116,8 @@ class Algebras(AlgebrasCategory):
             .. TODO:: make this work for Laurent polynomials too
             """
             L = self.basis().keys()
-            return self.sum_of_terms((L.from_vector(vector(t)), c) for (t,c) in p.dict().iteritems())
+            return self.sum_of_terms((L.from_vector(vector(t)), c)
+                                     for (t,c) in p.dict().items())
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
@@ -225,7 +228,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Kumar1987] S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
+            .. [Kumar1987] \S. Kumar, Demazure character formula in arbitrary Kac-Moody setting,
                Invent. Math. 89 (1987), no. 2, 395-423.
 
             EXAMPLES:
@@ -251,13 +254,13 @@ class Algebras(AlgebrasCategory):
             This is indeed a Schur function::
 
                 sage: s = SymmetricFunctions(QQ).s()
-                sage: s[2,1].expand(3, P.gens())
+                sage: s[2,1].expand(3, P.variable_names())
                 x^2*y + x*y^2 + x^2*z + 2*x*y*z + y^2*z + x*z^2 + y*z^2
 
             Let us check this systematically on Schur functions of degree 6::
 
                 sage: for p in Partitions(6, max_length=3).list():
-                ....:     assert s.monomial(p).expand(3, P.gens()) == pi0(KL.monomial(L(tuple(p)))).expand(P.gens())
+                ....:     assert s.monomial(p).expand(3, P.variable_names()) == pi0(KL.monomial(L(tuple(p)))).expand(P.gens())
 
             We check systematically that these operators satisfy the Iwahori-Hecke algebra relations::
 
@@ -310,7 +313,6 @@ class Algebras(AlgebrasCategory):
                         # Demazure operators are not defined in this case
                         continue
                     x = self.monomial(weight)
-                    #print x,i
                     result = pi[i](x)
                     tester.assertEqual(result * (self.one()-emalphai),
                                        x - emalphai * x.map_support(s[i]))
@@ -425,11 +427,11 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Lusztig1985] G. Lusztig,
+            .. [Lusztig1985] \G. Lusztig,
                *Equivariant K-theory and representations of Hecke algebras*,
                Proc. Amer. Math. Soc. 94 (1985), no. 2, 337-342.
 
-            .. [Cherednik1995] I. Cherednik,
+            .. [Cherednik1995] \I. Cherednik,
                *Nonsymmetric Macdonald polynomials*. IMRN 10, 483-515 (1995).
 
             EXAMPLES::
@@ -733,7 +735,7 @@ class Algebras(AlgebrasCategory):
             # In type BC dual we used q^2 and q elsewhere
             # Not sure this is the right thing to do or just a workaround ...
             # This probably makes up for the fact that, in type BC
-            # dual, the null null coroot is twice Sage's deltacheck
+            # dual, the null coroot is twice Sage's deltacheck
             # whereas the null root is delta. So we need to map delta
             # to q^2 in the q_projection.
             # Should this go in q_project instead?
@@ -752,7 +754,7 @@ class Algebras(AlgebrasCategory):
 
             REFERENCES:
 
-            .. [Haiman06] M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
+            .. [Haiman06] \M. Haiman, Cherednik algebras, Macdonald polynomials and combinatorics, ICM 2006.
 
             .. WARNING::
 
@@ -783,10 +785,10 @@ class Algebras(AlgebrasCategory):
             The following results have not been checked::
 
                 sage: for x in some_weights:
-                ....:     print x, ": ", f(x)
-                (1, 0, 0, 0) :  q1*B[(1, 0, 0, 0)]
-                (1, 1, 0, 0) :  q1*B[(1, 1, 0, 0)]
-                (1, 1, 1, 0) :  q1*B[(1, 1, 1, 0)]
+                ....:     print("{} : {}".format(x, f(x)))
+                (1, 0, 0, 0) : q1*B[(1, 0, 0, 0)]
+                (1, 1, 0, 0) : q1*B[(1, 1, 0, 0)]
+                (1, 1, 1, 0) : q1*B[(1, 1, 1, 0)]
 
             Some examples for type `B_2^{(1)}` dual::
 
@@ -826,7 +828,7 @@ class Algebras(AlgebrasCategory):
             a0 = ct.a()[special_node]
             A0 = self.classical()
             T = A0.demazure_lusztig_operators(q1, q2, convention=convention)
-            # TODO: use the formula expressing the inverse of T as a demazure lusztig operator? Or go through the affine action of T_0 for the dual
+            # TODO: use the formula expressing the inverse of T as a Demazure Lusztig operator? Or go through the affine action of T_0 for the dual
             L0 = A0.basis().keys()
             # The dominant short root of the classical system
             if ct.type() == 'BC':
@@ -863,12 +865,12 @@ class Algebras(AlgebrasCategory):
 
                 sage: KL = RootSystem(["A",2,1]).ambient_space().algebra(QQ)
                 sage: KL.classical()
-                Group algebra of the Ambient space of the Root system of type ['A', 2] over Rational Field
+                Algebra of the Ambient space of the Root system of type ['A', 2] over Rational Field
             """
             return self.basis().keys().classical().algebra(self.base_ring())
 
         def q_project_on_basis(self, l, q):
-            """
+            r"""
             Return the monomial `c * cl(l)`  in the group algebra of the classical lattice.
 
             INPUT:
@@ -896,7 +898,7 @@ class Algebras(AlgebrasCategory):
             return KL0.term(L0(l), q**l["delta"])
 
         def q_project(self, x, q):
-            """
+            r"""
             Implement the `q`-projection morphism from ``self`` to the group algebra of the classical space.
 
             INPUT:
@@ -977,7 +979,7 @@ class Algebras(AlgebrasCategory):
             """
             if i == 0: # should use the special node
                 if convention != "dominant":
-                    raise NotImplementedError("The twisted Demazure-Lustig operator T_0 is only implemented in the dominant convention")
+                    raise NotImplementedError("The twisted Demazure-Lusztig operator T_0 is only implemented in the dominant convention")
                 return self.T0_check_on_basis(q1, q2, convention=convention)(weight)
             else:
                 L = self.classical()
@@ -1088,7 +1090,7 @@ class Algebras(AlgebrasCategory):
                     sage: T = KL.twisted_demazure_lusztig_operators(q1,q2, convention="dominant")
                     sage: T._test_relations()
                     Traceback (most recent call last):
-                    ... tester.assert_(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
+                    ... tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero()) ...
                     AssertionError: False is not true
 
             Comparison with T0::
@@ -1166,13 +1168,13 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <type 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
             return codomain.sum( c * prod(X**int(n) for X,n in zip(alphabet,vector(m))) for m,c in self)

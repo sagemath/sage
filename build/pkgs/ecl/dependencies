@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(READLINE) $(INST)/$(BOEHM_GC)
+$(MP_LIBRARY) readline gc libffi
 
 ----------
 All lines of this file are ignored except the first.

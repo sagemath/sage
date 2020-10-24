@@ -1,4 +1,4 @@
-$(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS) $(INST)/$(BACKPORTS_SSL_MATCH_HOSTNAME) $(INST)/$(CERTIFI)
+$(PYTHON) certifi | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

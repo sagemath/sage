@@ -27,46 +27,46 @@ AUTHORS:
 - Joel B. Mohler (2008-03-17) -- ETuple rewrite as sparse C array
 """
 
-#*****************************************************************************
-#       Copyright (C) 2005 William Stein (wstein@ucsd.edu)
+# ****************************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include "sage/ext/stdsage.pxi"
 from libc.string cimport memcpy
 from cpython.dict cimport *
+cimport cython
+from cpython.object cimport (Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE)
+from cysignals.memory cimport sig_malloc, sig_free
+from sage.structure.richcmp cimport rich_to_bool
 
 import copy
 from functools import reduce
-from sage.structure.element import generic_power
+from sage.arith.power import generic_power
+from pprint import pformat
+
 from sage.misc.misc import cputime
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 
-import sage.rings.ring_element as ring_element
 
 cdef class PolyDict:
     def __init__(PolyDict self, pdict, zero=0, remove_zero=False, force_int_exponents=True, force_etuples=True):
         """
         INPUT:
 
-        - ``pdict`` -- list, which represents a multi-variable polynomial with
-          the distribute representation (a copy is not made)
+        - ``pdict`` -- dict or list, which represents a multi-variable
+          polynomial with the distribute representation (a copy is not made)
 
         - ``zero`` --  (optional) zero in the base ring
 
         - ``force_int_exponents`` -- bool (optional) arithmetic with int
           exponents is much faster than some of the alternatives, so this is
-          True by default.
+          ``True`` by default
 
         - ``force_etuples`` -- bool (optional) enforce that the exponent tuples
           are instances of ETuple class
@@ -75,7 +75,7 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            PolyDict with representation {(1, 2): 3, (2, 3): 2, (2, 1): 4}
+            PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 2}
 
             # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
             #sage: PolyDict({(2/3,3,5):2, (1,2,1):3, (2,1):4}, force_int_exponents=False)
@@ -87,86 +87,194 @@ cdef class PolyDict:
             sage: PolyDict({(0,0):RIF(-1,1)}, remove_zero=True)
             PolyDict with representation {(0, 0): 0.?}
         """
+        cdef dict v
+
         if not isinstance(pdict, dict):
             if isinstance(pdict, list):
                 v = {}
-                for w in pdict:
+                L = <list> pdict
+                for w in L:
                     if w[0] != 0:
                         v[ETuple(w[1])] = w[0]
                 remove_zero = False
                 pdict = v
             else:
-                raise TypeError("pdict must be a list.")
+                raise TypeError("pdict must be a list")
 
-        if isinstance(pdict,dict) and force_etuples==True:
-            pdict2 = []
-            for k,v in pdict.iteritems():
-                pdict2.append((ETuple(k),v))
-
-            pdict = dict(pdict2)
+        if isinstance(pdict, dict) and force_etuples is True:
+            v = pdict
+            pdict = {}
+            for k, val in v.iteritems():
+                pdict[ETuple(k)] = val
 
         if force_int_exponents:
             new_pdict = {}
-            if remove_zero:
+            if remove_zero and zero is not None:
                 for k, c in pdict.iteritems():
                     if not c == zero:
-                        new_pdict[ETuple(map(int,k))] = c
+                        new_pdict[ETuple([int(i) for i in k])] = c
             else:
                 for k, c in pdict.iteritems():
-                    new_pdict[ETuple(map(int,k))] = c
+                    new_pdict[ETuple([int(i) for i in k])] = c
             pdict = new_pdict
         else:
-            if remove_zero:
-                for k in pdict.keys():
+            if remove_zero and zero is not None:
+                for k in list(pdict):
                     if pdict[k] == zero:
                         del pdict[k]
-        self.__repn  = pdict
+        self.__repn = <dict> pdict
         self.__zero = zero
 
-    def __cmp__(self, PolyDict right):
-        return cmp(self.__repn, right.__repn)
+    def __hash__(self):
+        """
+        Return the hash.
 
-    def compare(PolyDict self, PolyDict other, fn=None):
-        if fn is None:
-            return cmp(self.__repn, other.__repn)
+        The hash of two PolyDicts is the same whether or not they use ETuples
+        for their keys since that's just an implementation detail.
 
-        left  = iter(sorted( self.__repn,fn,reverse=True)) #start with biggest
-        right = iter(sorted(other.__repn,fn,reverse=True))
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: PD1 = PolyDict({(2,3):0, (1,2):3, (2,1):4})
+            sage: PD2 = PolyDict({(2,3):0, (1,2):3, (2,1):4}, remove_zero=True)
+            sage: PD3 = PolyDict({(2,3):0, (1,2):3, (2,1):4},
+            ....:                force_etuples=False, force_int_exponents=False)
+            sage: PD4 = PolyDict({(2,3):0, (1,2):3, (2,1):4}, zero=4)
+            sage: hash(PD1) == hash(PD2)
+            False
+            sage: hash(PD1) == hash(PolyDict({(2,3):0, (1,2):3, (2,1):4}))
+            True
+            sage: hash(PD1) == hash(PD3)
+            True
+            sage: hash(PD3) == hash(PolyDict({(2,3):0, (1,2):3, (2,1):4},
+            ....:                            force_etuples=False))
+            True
+            sage: hash(PD1) == hash(PD4)
+            False
+            sage: hash(PD4) == hash(PolyDict({(2,3):0, (1,2):3, (2,1):4},
+            ....:                            zero=4))
+            True
+        """
+
+        repn = frozenset((tuple(key), val) for key, val in self.__repn.items())
+        return hash((type(self), repn, self.__zero))
+
+    def __richcmp__(PolyDict left, PolyDict right, int op):
+        """
+        Implement the ``__richcmp__`` protocol for `PolyDict`s.
+
+        Uses `PolyDict.rich_compare` without a key  (so only ``==`` and ``!=``
+        are supported on Python 3; on Python 2 this will fall back on Python 2
+        default comparison behavior).
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: p1 = PolyDict({(0,): 1})
+            sage: p2 = PolyDict({(0,): 2})
+            sage: p1 == p2
+            False
+            sage: p1 < p2  # py2 - random
+            False
+            sage: p1 < p2  # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of
+            'sage.rings.polynomial.polydict.PolyDict' and
+            'sage.rings.polynomial.polydict.PolyDict'
+        """
+        try:
+            return left.rich_compare(right, op)
+        except TypeError:
+            return NotImplemented
+
+    def rich_compare(PolyDict self, PolyDict other, int op, sortkey=None):
+        """
+        Compare two `PolyDict`s.  If a ``sortkey`` argument is given it should
+        be a sort key used to specify a term order.
+
+        If not sort key is provided than only comparison by equality (``==`` or
+        ``!=``) is supported.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: from sage.structure.richcmp import op_EQ, op_NE, op_LT
+            sage: p1 = PolyDict({(0,): 1})
+            sage: p2 = PolyDict({(0,): 2})
+            sage: p1.rich_compare(PolyDict({(0,): 1}), op_EQ)
+            True
+            sage: p1.rich_compare(p2, op_EQ)
+            False
+            sage: p1.rich_compare(p2, op_NE)
+            True
+            sage: p1.rich_compare(p2, op_LT)
+            Traceback (most recent call last):
+            ...
+            TypeError: ordering of PolyDicts requires a sortkey
+
+            sage: O = TermOrder()
+            sage: p1.rich_compare(p2, op_LT, O.sortkey)
+            True
+
+            sage: p3 = PolyDict({(3, 2, 4): 1, (3, 2, 5): 2})
+            sage: p4 = PolyDict({(3, 2, 4): 1, (3, 2, 3): 2})
+            sage: p3.rich_compare(p4, op_LT, O.sortkey)
+            False
+        """
+        if sortkey is not None:
+            # start with biggest
+            left = iter(sorted(self.__repn, key=sortkey, reverse=True))
+            right = iter(sorted(other.__repn, key=sortkey, reverse=True))
+        elif not (op == Py_EQ or op == Py_NE):
+            raise TypeError("ordering of PolyDicts requires a sortkey")
+        else:
+            return (op == Py_EQ) == (self.__repn == other.__repn)
+
 
         for m in left:
             try:
                 n = next(right)
             except StopIteration:
-                return 1 # left has terms, right doesn't
-            ret =  fn(m,n)
-            if ret!=0:
-                return ret # we have a difference
-            ret = cmp(self.__repn[m],other.__repn[n]) #compare coefficients
-            if ret!=0:
-                return ret #if they differ use it
-            #try next pair
+                return rich_to_bool(op, 1)  # left has terms, right does not
 
+            # first compare the leading monomials
+            keym = sortkey(m)
+            keyn = sortkey(n)
+            if keym > keyn:
+                return rich_to_bool(op, 1)
+            elif keym < keyn:
+                return rich_to_bool(op, -1)
+
+            # same leading monomial, compare their coefficients
+            coefm = self.__repn[m]
+            coefn = other.__repn[n]
+            if coefm > coefn:
+                return rich_to_bool(op, 1)
+            elif coefm < coefn:
+                return rich_to_bool(op, -1)
+
+        # try next pair
         try:
             n = next(right)
+            return rich_to_bool(op, -1)  # right has terms, left does not
         except StopIteration:
-            return 0 # both have no terms
-
-        return -1 # right has terms, left doesn't
+            return rich_to_bool(op, 0)  # both have no terms
 
     def list(PolyDict self):
         """
-        Return a list that defines self. It is safe to change this.
+        Return a list that defines ``self``. It is safe to change this.
 
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.list()
-            [[3, [1, 2]], [2, [2, 3]], [4, [2, 1]]]
+            sage: sorted(f.list())
+            [[2, [2, 3]], [3, [1, 2]], [4, [2, 1]]]
         """
         ret = []
-        for e,c in self.__repn.iteritems():
-            ret.append([c,list(e)])
+        for e, c in self.__repn.iteritems():
+            ret.append([c, list(e)])
         return ret
 
     def dict(PolyDict self):
@@ -191,10 +299,10 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.coefficients()
-            [3, 2, 4]
+            sage: sorted(f.coefficients())
+            [2, 3, 4]
         """
-        return self.__repn.values()
+        return list(self.__repn.values())
 
     def exponents(PolyDict self):
         """
@@ -204,10 +312,10 @@ cdef class PolyDict:
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.exponents()
-            [(1, 2), (2, 3), (2, 1)]
+            sage: sorted(f.exponents())
+            [(1, 2), (2, 1), (2, 3)]
         """
-        return self.__repn.keys()
+        return list(self.__repn)
 
     def __len__(PolyDict self):
         """
@@ -238,12 +346,13 @@ cdef class PolyDict:
         return self.__repn[ETuple(e)]
 
     def __repr__(PolyDict self):
-        return 'PolyDict with representation %s'%self.__repn
+        repn = ' '.join(pformat(self.__repn).splitlines())
+        return 'PolyDict with representation %s' % repn
 
     def degree(PolyDict self, PolyDict x=None):
         if x is None:
             return self.total_degree()
-        L = x.__repn.keys()
+        L = list(x.__repn)
         if len(L) != 1:
             raise TypeError("x must be one of the generators of the parent.")
         L = L[0]
@@ -254,18 +363,17 @@ cdef class PolyDict:
         if L[i] != 1:
             raise TypeError("x must be one of the generators of the parent.")
         _max = []
-        for v in self.__repn.keys():
+        for v in self.__repn:
             _max.append(v[i])
-        return max(_max)
+        return max(_max or [-1])
 
-    def valuation(PolyDict self, PolyDict x = None):
-        L = x.__repn.keys()
+    def valuation(PolyDict self, PolyDict x=None):
         if x is None:
             _min = []
             negative = False
-            for k in self.__repn.keys():
+            for v in self.__repn.values():
                 _sum = 0
-                for m in self.__repn[k].nonzero_values(sort=False):
+                for m in v.nonzero_values(sort=False):
                     if m < 0:
                         negative = True
                         break
@@ -275,10 +383,11 @@ cdef class PolyDict:
                 _min.append(_sum)
             else:
                 return min(_min)
-            for k in self.__repn.keys():
-                _min.append(sum([m for m in self.__repn[k].nonzero_values(sort=False) if m < 0]))
+            for v in self.__repn.values():
+                _min.append(sum(m for m in v.nonzero_values(sort=False) if m < 0))
             return min(_min)
-        L = x.__repn.keys()
+
+        L = list(x.__repn)
         if len(L) != 1:
             raise TypeError("x must be one of the generators of the parent.")
         L = L[0]
@@ -289,15 +398,19 @@ cdef class PolyDict:
         if L[i] != 1:
             raise TypeError("x must be one of the generators of the parent.")
         _min = []
-        for v in self.__repn.keys():
+        for v in self.__repn:
             _min.append(v[i])
         return min(_min)
 
     def total_degree(PolyDict self):
-        return max([-1] + map(sum,self.__repn.keys()))
+        return max([-1] + [sum(k) for k in self.__repn])
 
     def monomial_coefficient(PolyDict self, mon):
         """
+        INPUT:
+
+        a PolyDict with a single key
+
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
@@ -305,7 +418,7 @@ cdef class PolyDict:
             sage: f.monomial_coefficient(PolyDict({(2,1):1}).dict())
             4
         """
-        K = mon.keys()[0]
+        K, = mon.keys()
         if K not in self.__repn:
             return 0
         return self.__repn[K]
@@ -325,10 +438,10 @@ cdef class PolyDict:
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.polynomial_coefficient([2,None])
-            PolyDict with representation {(0, 3): 2, (0, 1): 4}
+            PolyDict with representation {(0, 1): 4, (0, 3): 2}
             sage: f = PolyDict({(0,3):2, (0,2):3, (2,1):4})
             sage: f.polynomial_coefficient([0,None])
-            PolyDict with representation {(0, 3): 2, (0, 2): 3}
+            PolyDict with representation {(0, 2): 3, (0, 3): 2}
         """
         nz = []
         cdef int i
@@ -336,7 +449,7 @@ cdef class PolyDict:
             if degrees[i] is not None:
                 nz.append(i)
         ans = {}
-        for S in self.__repn.keys():
+        for S in self.__repn:
             exactly_divides = True
             for j in nz:
                 if S[j] != degrees[j]:
@@ -359,10 +472,10 @@ cdef class PolyDict:
         polynomial, then the coefficient is the sum T/mon where the
         sum is over terms T in f that are exactly divisible by mon.
         """
-        K = mon.keys()[0]
-        nz = K.nonzero_positions() #set([i for i in range(len(K)) if K[i] != 0])
+        K, = mon.keys()
+        nz = K.nonzero_positions()  # set([i for i in range(len(K)) if K[i] != 0])
         ans = {}
-        for S in self.__repn.keys():
+        for S in self.__repn:
             exactly_divides = True
             for j in nz:
                 if S[j] != K[j]:
@@ -376,12 +489,31 @@ cdef class PolyDict:
         return PolyDict(ans, force_etuples=False)
 
     def is_homogeneous(PolyDict self):
-        K = self.__repn.keys()
-        if len(K) == 0:
+        if not self.__repn:
             return True
         # A polynomial is homogeneous if the number of different
         # exponent sums is at most 1.
-        return len(set(map(sum,K))) <= 1
+        return len(set(map(sum, self.__repn))) <= 1
+
+    def is_constant(self):
+        """
+        Return ``True`` if ``self`` is a constant and ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: f.is_constant()
+            False
+            sage: g = PolyDict({(0,0):2})
+            sage: g.is_constant()
+            True
+            sage: h = PolyDict({})
+            sage: h.is_constant()
+            True
+        """
+        cdef int ell = len(self.__repn)
+        return ell == 0 or (ell == 1 and sum(sum(k) for k in self.__repn) == 0)
 
     def homogenize(PolyDict self, var):
         R = self.__repn
@@ -394,7 +526,8 @@ cdef class PolyDict:
             H[ETuple(f)] = val
         return PolyDict(H, zero=self.__zero, force_etuples=False)
 
-    def latex(PolyDict self, vars, atomic_exponents=True, atomic_coefficients=True, cmpfn = None):
+    def latex(PolyDict self, vars, atomic_exponents=True,
+              atomic_coefficients=True, sortkey=None):
         r"""
         Return a nice polynomial latex representation of this PolyDict, where
         the vars are substituted in.
@@ -402,14 +535,14 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: True)
-        - ``atomic_coefficients`` -- bool (default: True)
+        - ``atomic_exponents`` -- bool (default: ``True``)
+        - ``atomic_coefficients`` -- bool (default: ``True``)
 
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.latex(['a','WW'])
+            sage: f.latex(['a', 'WW'])
             '2 a^{2} WW^{3} + 4 a^{2} WW + 3 a WW^{2}'
 
         When ``atomic_exponents`` is False, the exponents are surrounded in
@@ -417,32 +550,47 @@ cdef class PolyDict:
 
             # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
             #sage: f = PolyDict({(2/3,3,5):2, (1,2,1):3, (2,1,1):4}, force_int_exponents=False)
-            #sage: f.latex(['a','b','c'], atomic_exponents=False)
+            #sage: f.latex(['a', 'b', 'c'], atomic_exponents=False)
             #'4 a^{2}bc + 3 ab^{2}c + 2 a^{2/3}b^{3}c^{5}'
 
         TESTS:
 
-        We check that the issue on Trac 9478 is resolved::
+        We check that the issue on :trac:`9478` is resolved::
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
-            sage: print latex(xi*x)
+            sage: print(latex(xi*x))
             \xi x
+
+        TESTS:
+
+        Check that :trac:`29604` is fixed::
+
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
+            'x'
         """
         n = len(vars)
         poly = ""
-        E = self.__repn.keys()
-        if cmpfn:
-            E.sort(cmp = cmpfn, reverse=True)
-        else:
-            E.sort(reverse=True)
+
+        sort_kwargs = {'reverse': True}
+        if sortkey:
+            sort_kwargs['key'] = sortkey
+
+        E = sorted(self.__repn, **sort_kwargs)
+
+        if not E:
+            return "0"
         try:
-            pos_one = self.__zero.parent()(1)
+            ring = self.__repn[E[0]].parent()
+            pos_one = ring.one()
             neg_one = -pos_one
         except AttributeError:
-            # probably self.__zero is not a ring element
+            # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
+
+        is_characteristic_2 = bool(pos_one == neg_one)
+
         for e in E:
             c = self.__repn[e]
             if not c == self.__zero:
@@ -454,18 +602,18 @@ cdef class PolyDict:
                 # Next determine coefficient of multinomial
                 if len(multi) == 0:
                     multi = latex(c)
-                elif c == neg_one:
+                elif c == neg_one and not is_characteristic_2:
                     # handle -1 specially because it's a pain
                     if len(poly) > 0:
                         sign_switch = True
                     else:
-                        multi = "-%s"%(multi)
+                        multi = "-%s" % multi
                 elif c != pos_one:
-                    if not atomic_coefficients:
-                        c = latex(c)
-                        if c.find("+") != -1 or c.find("-") != -1 or c.find(" ") != -1:
-                            c = "(%s)"%c
-                    multi = "%s %s"%(c,multi)
+                    c = latex(c)
+                    if (not atomic_coefficients and multi and
+                            ('+' in c or '-' in c or ' ' in c)):
+                        c = "\\left(%s\\right)" % c
+                    multi = "%s %s" % (c, multi)
 
                 # Now add on coefficiented multinomials
                 if len(poly) > 0:
@@ -475,13 +623,13 @@ cdef class PolyDict:
                         poly = poly + " + "
                 poly = poly + multi
         poly = poly.lstrip().rstrip()
-        poly = poly.replace("+ -","- ")
+        poly = poly.replace("+ -", "- ")
         if len(poly) == 0:
             return "0"
         return poly
 
-
-    def poly_repr(PolyDict self, vars, atomic_exponents=True, atomic_coefficients=True, cmpfn = None):
+    def poly_repr(PolyDict self, vars, atomic_exponents=True,
+                  atomic_coefficients=True, sortkey=None):
         """
         Return a nice polynomial string representation of this PolyDict, where
         the vars are substituted in.
@@ -489,48 +637,64 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: True)
-        - ``atomic_coefficients`` -- bool (default: True)
+        - ``atomic_exponents`` -- bool (default: ``True``)
+        - ``atomic_coefficients`` -- bool (default: ``True``)
 
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
-            sage: f.poly_repr(['a','WW'])
+            sage: f.poly_repr(['a', 'WW'])
             '2*a^2*WW^3 + 4*a^2*WW + 3*a*WW^2'
 
-        When atomic_exponents is False, the exponents are surrounded
+        When atomic_exponents is ``False``, the exponents are surrounded
         in parenthesis, since ^ has such high precedence. ::
 
             # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
             #sage: f = PolyDict({(2/3,3,5):2, (1,2,1):3, (2,1,1):4}, force_int_exponents=False)
-            #sage: f.poly_repr(['a','b','c'], atomic_exponents=False)
+            #sage: f.poly_repr(['a', 'b', 'c'], atomic_exponents=False)
             #'4*a^(2)*b*c + 3*a*b^(2)*c + 2*a^(2/3)*b^(3)*c^(5)'
 
         We check to make sure that when we are in characteristic two, we
         don't put negative signs on the generators. ::
 
-            sage: Integers(2)['x,y'].gens()
+            sage: Integers(2)['x, y'].gens()
             (x, y)
 
         We make sure that intervals are correctly represented. ::
 
             sage: f = PolyDict({(2,3):RIF(1/2,3/2), (1,2):RIF(-1,1)})
-            sage: f.poly_repr(['x','y'])
+            sage: f.poly_repr(['x', 'y'])
             '1.?*x^2*y^3 + 0.?*x*y^2'
+
+        TESTS:
+
+        Check that :trac:`29604` is fixed::
+
+            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])
+            'x'
+            sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
+            sage: P.gens()
+            (x, y)
+            sage: -x - y
+            x + y
         """
         n = len(vars)
         poly = ""
-        E = self.__repn.keys()
-        if cmpfn:
-            E.sort(cmp = cmpfn, reverse=True)
-        else:
-            E.sort(reverse=True)
+        sort_kwargs = {'reverse': True}
+        if sortkey:
+            sort_kwargs['key'] = sortkey
+
+        E = sorted(self.__repn, **sort_kwargs)
+
+        if not E:
+            return "0"
         try:
-            pos_one = self.__zero.parent()(1)
+            ring = self.__repn[E[0]].parent()
+            pos_one = ring.one()
             neg_one = -pos_one
         except AttributeError:
-            # probably self.__zero is not a ring element
+            # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
 
@@ -548,9 +712,9 @@ cdef class PolyDict:
                     multi = multi + vars[j]
                     if e[j] != 1:
                         if atomic_exponents:
-                            multi = multi + "^%s"%e[j]
+                            multi = multi + "^%s" % e[j]
                         else:
-                            multi = multi + "^(%s)"%e[j]
+                            multi = multi + "^(%s)" % e[j]
                 # Next determine coefficient of multinomial
                 if len(multi) == 0:
                     multi = str(c)
@@ -559,13 +723,13 @@ cdef class PolyDict:
                     if len(poly) > 0:
                         sign_switch = True
                     else:
-                        multi = "-%s"%(multi)
+                        multi = "-%s" % multi
                 elif not c == pos_one:
                     if not atomic_coefficients:
                         c = str(c)
                         if c.find("+") != -1 or c.find("-") != -1 or c.find(" ") != -1:
-                            c = "(%s)"%c
-                    multi = "%s*%s"%(c,multi)
+                            c = "(%s)" % c
+                    multi = "%s*%s" % (c, multi)
 
                 # Now add on coefficiented multinomials
                 if len(poly) > 0:
@@ -575,24 +739,24 @@ cdef class PolyDict:
                         poly = poly + " + "
                 poly = poly + multi
         poly = poly.lstrip().rstrip()
-        poly = poly.replace("+ -","- ")
+        poly = poly.replace("+ -", "- ")
         if len(poly) == 0:
             return "0"
         return poly
 
-
-    def __add__(PolyDict self,PolyDict other):
+    def __add__(PolyDict self, PolyDict other):
         """
         Add two PolyDict's in the same number of variables.
 
         EXAMPLES:
+
         We add two polynomials in 2 variables::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: g = PolyDict({(1,5):-3, (2,3):-2, (1,1):3})
-            sage: f+g
-            PolyDict with representation {(1, 2): 3, (2, 1): 4, (1, 1): 3, (1, 5): -3}
+            sage: f + g
+            PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4}
 
         Next we add two polynomials with fractional exponents in 3 variables::
 
@@ -603,18 +767,18 @@ cdef class PolyDict:
             #PolyDict with representation {(1, 2, 1): 3, (2/3, 3, 5): 5, (2, 1, 1): 4}
         """
         zero = self.__zero
-        #D = copy.copy(self.__repn)
-        D = self.__repn.copy() #faster!
+        # D = copy.copy(self.__repn)
+        D = self.__repn.copy()  # faster!
         R = other.__repn
-        for e,c in R.iteritems():
+        for e, c in R.iteritems():
             try:
                 D[e] += c
             except KeyError:
                 D[e] = c
-        F = PolyDict(D, zero=zero, remove_zero=True, force_int_exponents=False,  force_etuples=False)
-        return F
+        return PolyDict(D, zero=zero, remove_zero=True,
+                        force_int_exponents=False, force_etuples=False)
 
-    def __mul__(PolyDict self,PolyDict  right):
+    def __mul__(PolyDict self, PolyDict right):
         """
         Multiply two PolyDict's in the same number of variables.
 
@@ -625,21 +789,7 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: g = PolyDict({(1,5):-3, (2,3):-2, (1,1):3})
             sage: f*g
-            PolyDict with representation {(2, 3): 9, (3, 2): 12, (2, 7): -9, (3, 5): -6, (4, 6): -4, (3, 4): 6, (3, 6): -12, (4, 4): -8, (3, 8): -6}
-
-        Next we multiply two polynomials with fractional exponents in 3 variables::
-
-            # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
-            #sage: f = PolyDict({(2/3,3,5):2, (1,2,1):3, (2,1,1):4}, force_int_exponents=False)
-            #sage: g = PolyDict({(2/3,3,5):3}, force_int_exponents=False)
-            #sage: f*g
-            #PolyDict with representation {(8/3, 4, 6): 12, (5/3, 5, 6): 9, (4/3, 6, 10): 6}
-
-        Finally we print the result in a nice format. ::
-
-            # I've removed fractional exponent support in ETuple when moving to a sparse C integer array
-            #sage: (f*g).poly_repr(['a','b','c'], atomic_exponents = False)
-            #'12*a^(8/3)*b^(4)*c^(6) + 9*a^(5/3)*b^(5)*c^(6) + 6*a^(4/3)*b^(6)*c^(10)'
+            PolyDict with representation {(2, 3): 9, (2, 7): -9, (3, 2): 12, (3, 4): 6, (3, 5): -6, (3, 6): -12, (3, 8): -6, (4, 4): -8, (4, 6): -4}
         """
         cdef PyObject *cc
         newpoly = {}
@@ -649,11 +799,11 @@ cdef class PolyDict:
             for e1, c1 in right.__repn.iteritems():
                 e = (<ETuple>e0).eadd(<ETuple>e1)
                 c = c0*c1
-                cc = PyDict_GetItem(newpoly,e)
+                cc = PyDict_GetItem(newpoly, e)
                 if cc == <PyObject*>0:
-                    PyDict_SetItem(newpoly,e,c)
+                    PyDict_SetItem(newpoly, e, c)
                 else:
-                    PyDict_SetItem(newpoly,e,<object>cc+c)
+                    PyDict_SetItem(newpoly, e, <object>cc+c)
         F = PolyDict(newpoly, self.__zero, force_int_exponents=False, remove_zero=True, force_etuples=False)
         return F
 
@@ -664,15 +814,15 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x,y=FreeMonoid(2,'x,y').gens()  # a strange object to live in a polydict, but non-commutative!
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!
             sage: f = PolyDict({(2,3):x})
             sage: f.scalar_rmult(y)
             PolyDict with representation {(2, 3): x*y}
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_rmult(-2)
-            PolyDict with representation {(1, 2): -6, (2, 3): -4, (2, 1): -8}
+            PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
             sage: f.scalar_rmult(RIF(-1,1))
-            PolyDict with representation {(1, 2): 0.?e1, (2, 3): 0.?e1, (2, 1): 0.?e1}
+            PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         v = {}
         # if s is 0, then all the products will be zero
@@ -688,15 +838,15 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x,y=FreeMonoid(2,'x,y').gens()  # a strange object to live in a polydict, but non-commutative!
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!
             sage: f = PolyDict({(2,3):x})
             sage: f.scalar_lmult(y)
             PolyDict with representation {(2, 3): y*x}
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
-            PolyDict with representation {(1, 2): -6, (2, 3): -4, (2, 1): -8}
+            PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
             sage: f.scalar_lmult(RIF(-1,1))
-            PolyDict with representation {(1, 2): 0.?e1, (2, 3): 0.?e1, (2, 1): 0.?e1}
+            PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         v = {}
         # if s is 0, then all the products will be zero
@@ -705,7 +855,70 @@ cdef class PolyDict:
                 v[e] = s*c
         return PolyDict(v, self.__zero, force_int_exponents=False, force_etuples=False)
 
-    def __sub__(PolyDict self,PolyDict  other):
+    def term_lmult(self, exponent, s):
+        """
+        Return this element multiplied by ``s`` on the left
+        and with exponents shifted by ``exponent``.
+
+        INPUT:
+
+        - ``exponent`` -- a ETuple
+
+        - ``s`` -- a scalar
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!
+            sage: f = PolyDict({(2, 3): x})
+            sage: f.term_lmult(ETuple((1, 2)), y)
+            PolyDict with representation {(3, 5): y*x}
+
+            sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
+            sage: f.term_lmult(ETuple((1, 2)), -2)
+            PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
+
+        """
+        v = {}
+        # if s is 0, then all the products will be zero
+        if not s == self.__zero:
+            for e, c in self.__repn.iteritems():
+                v[e.eadd(exponent)] = s*c
+        return PolyDict(v, self.__zero, force_int_exponents=False, force_etuples=False)
+
+    def term_rmult(self, exponent, s):
+        """
+        Return this element multiplied by ``s`` on the right
+        and with exponents shifted by ``exponent``.
+
+        INPUT:
+
+        - ``exponent`` -- a ETuple
+
+        - ``s`` -- a scalar
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!
+            sage: f = PolyDict({(2, 3): x})
+            sage: f.term_rmult(ETuple((1, 2)), y)
+            PolyDict with representation {(3, 5): x*y}
+
+            sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
+            sage: f.term_rmult(ETuple((1, 2)), -2)
+            PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
+
+        """
+        v = {}
+        # if s is 0, then all the products will be zero
+        if not s == self.__zero:
+            for e, c in self.__repn.iteritems():
+                v[e.eadd(exponent)] = c*s
+        return PolyDict(v, self.__zero, force_int_exponents=False, force_etuples=False)
+
+
+    def __sub__(PolyDict self, PolyDict  other):
         """
         Subtract two PolyDict's.
 
@@ -715,12 +928,12 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: g = PolyDict({(2,3):2, (1,1):-10})
             sage: f - g
-            PolyDict with representation {(1, 2): 3, (2, 1): 4, (1, 1): 10}
+            PolyDict with representation {(1, 1): 10, (1, 2): 3, (2, 1): 4}
             sage: g - f
-            PolyDict with representation {(1, 2): -3, (1, 1): -10, (2, 1): -4}
+            PolyDict with representation {(1, 1): -10, (1, 2): -3, (2, 1): -4}
         """
 
-        # TOOD: should refactor add, make abstract operator, so can do both +/-; or copy code.
+        # TODO: should refactor add, make abstract operator, so can do both +/-; or copy code.
         return self + other.scalar_lmult(-1)
 
     def __one(PolyDict self):
@@ -728,7 +941,7 @@ cdef class PolyDict:
         if len(self.__repn) == 0:
             v = {(0):one}
         else:
-            v = {ETuple({},len(self.__repn.keys()[0])):one}
+            v = {ETuple({}, len(next(iter(self.__repn)))): one}
         return PolyDict(v, self.__zero, force_int_exponents=False, force_etuples=False)
 
     def __pow__(PolyDict self, n, ignored):
@@ -740,13 +953,15 @@ cdef class PolyDict:
             sage: from sage.rings.polynomial.polydict import PolyDict
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f**2
-            PolyDict with representation {(4, 2): 16, (3, 3): 24, (3, 5): 12, (4, 6): 4, (2, 4): 9, (4, 4): 16}
+            PolyDict with representation {(2, 4): 9, (3, 3): 24, (3, 5): 12, (4, 2): 16, (4, 4): 16, (4, 6): 4}
             sage: f**0
             PolyDict with representation {(0, 0): 1}
             sage: (f-f)**0
             PolyDict with representation {0: 1}
         """
-        return generic_power(self, n, self.__one())
+        if not n:
+            return self.__one()
+        return generic_power(self, n)
 
     def lcmt(PolyDict self, greater_etuple):
         """
@@ -758,9 +973,9 @@ cdef class PolyDict:
         - ``greater_etuple`` -- a term order
         """
         try:
-            return ETuple(reduce(greater_etuple,self.__repn.keys()))
+            return ETuple(reduce(greater_etuple, self.__repn))
         except KeyError:
-            raise ArithmeticError("%s not supported",greater_etuple)
+            raise ArithmeticError("%s not supported", greater_etuple)
 
     def __reduce__(PolyDict self):
         """
@@ -772,7 +987,7 @@ cdef class PolyDict:
             sage: loads(dumps(f)) == f
             True
         """
-        return make_PolyDict,(self.__repn,)
+        return make_PolyDict, (self.__repn,)
 
     def min_exp(self):
         """
@@ -791,8 +1006,8 @@ cdef class PolyDict:
             sage: PolyDict({}).min_exp() # returns None
         """
         cdef ETuple r
-        ETuples = self.__repn.keys()
-        if len(ETuples)>0:
+        ETuples = list(self.__repn)
+        if len(ETuples) > 0:
             r = <ETuple>ETuples[0]
             for e in ETuples:
                 r = r.emin(e)
@@ -817,33 +1032,14 @@ cdef class PolyDict:
             sage: PolyDict({}).max_exp() # returns None
         """
         cdef ETuple r
-        ETuples = self.__repn.keys()
-        if len(ETuples)>0:
+        ETuples = list(self.__repn)
+        if len(ETuples) > 0:
             r = <ETuple>ETuples[0]
             for e in ETuples:
                 r = r.emax(e)
             return r
         else:
             return None
-
-cdef class ETupleIter:
-    cdef int _i
-    cdef int _length
-    cdef object _data
-
-    def __init__(self, data, length):
-        self._data = data
-        self._length = length
-        self._i = -1
-
-    def __next__(self):
-        self._i = self._i + 1
-
-        if self._i == self._length:
-            self._i = -1
-            raise StopIteration
-
-        return self._data.get(self._i,0)
 
 cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2):
     """
@@ -892,7 +1088,7 @@ cdef class ETuple:
     """
     Representation of the exponents of a polydict monomial. If
     (0,0,3,0,5) is the exponent tuple of x_2^3*x_4^5 then this class
-    only stores {2:3,4:5} instead of the full tuple. This sparse
+    only stores {2:3, 4:5} instead of the full tuple. This sparse
     information may be obtained by provided methods.
 
     The index/value data is all stored in the _data C int array member
@@ -927,10 +1123,19 @@ cdef class ETuple:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: ETuple([1,1,0])
+            sage: ETuple([1, 1, 0])
             (1, 1, 0)
-            sage: ETuple({int(1):int(2)},int(3))
+            sage: ETuple({int(1): int(2)}, int(3))
             (0, 2, 0)
+
+        TESTS:
+
+        Iterators are not accepted::
+
+            sage: ETuple(iter([2, 3, 4]))
+            Traceback (most recent call last):
+            ...
+            TypeError: Error in ETuple((), <list... object at ...>, None)
         """
         if data is None:
             return
@@ -939,26 +1144,26 @@ cdef class ETuple:
         if isinstance(data, ETuple):
             self._length = (<ETuple>data)._length
             self._nonzero = (<ETuple>data)._nonzero
-            self._data = <int*>sage_malloc(sizeof(int)*self._nonzero*2)
-            memcpy(self._data,(<ETuple>data)._data,sizeof(int)*self._nonzero*2)
+            self._data = <int*>sig_malloc(sizeof(int)*self._nonzero*2)
+            memcpy(self._data, (<ETuple>data)._data, sizeof(int)*self._nonzero*2)
         elif isinstance(data, dict) and isinstance(length, int):
             self._length = length
             self._nonzero = len(data)
-            self._data = <int*>sage_malloc(sizeof(int)*self._nonzero*2)
-            nz_elts = sorted(data.iteritems())
+            self._data = <int*>sig_malloc(sizeof(int)*self._nonzero*2)
+            nz_elts = sorted(data.items())
             ind = 0
-            for index,exp in nz_elts:
+            for index, exp in nz_elts:
                 self._data[2*ind] = index
                 self._data[2*ind+1] = exp
                 ind += 1
-        elif isinstance(data, list) or isinstance(data, tuple):
+        elif isinstance(data, (list, tuple)):
             self._length = len(data)
             self._nonzero = 0
             for v in data:
                 if v != 0:
                     self._nonzero += 1
             ind = 0
-            self._data = <int*>sage_malloc(sizeof(int)*self._nonzero*2)
+            self._data = <int*>sig_malloc(sizeof(int)*self._nonzero*2)
             for i from 0 <= i < self._length:
                 v = data[i]
                 if v != 0:
@@ -966,18 +1171,18 @@ cdef class ETuple:
                     self._data[ind+1] = v
                     ind += 2
         else:
-            raise TypeError
+            raise TypeError("Error in ETuple(%s, %s, %s)" % (self, data, length))
 
     def __cinit__(ETuple self):
         self._data = <int*>0
 
     def __dealloc__(self):
         if self._data != <int*>0:
-            sage_free(self._data)
+            sig_free(self._data)
 
     # methods to simulate tuple
 
-    def __add__(ETuple self,ETuple other):
+    def __add__(ETuple self, ETuple other):
         """
         x.__add__(n) <==> x+n
 
@@ -986,23 +1191,23 @@ cdef class ETuple:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: ETuple([1,1,0]) + ETuple({int(1):int(2)},int(3))
+            sage: ETuple([1,1,0]) + ETuple({int(1):int(2)}, int(3))
             (1, 1, 0, 0, 2, 0)
         """
         cdef size_t index = 0
         cdef ETuple result = <ETuple>ETuple.__new__(ETuple)
         result._length = self._length+other._length
         result._nonzero = self._nonzero+other._nonzero
-        result._data = <int*>sage_malloc(sizeof(int)*result._nonzero*2)
+        result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
         for index from 0 <= index < self._nonzero:
             result._data[2*index] = self._data[2*index]
             result._data[2*index+1] = self._data[2*index+1]
         for index from 0 <= index < other._nonzero:
-            result._data[2*(index+self._nonzero)] = other._data[2*index]+self._length # offset the second tuple (append to end!)
+            result._data[2*(index+self._nonzero)] = other._data[2*index]+self._length  # offset the second tuple (append to end!)
             result._data[2*(index+self._nonzero)+1] = other._data[2*index+1]
         return result
 
-    def __mul__(ETuple self,factor):
+    def __mul__(ETuple self, factor):
         """
         x.__mul__(n) <==> x*n
 
@@ -1020,9 +1225,9 @@ cdef class ETuple:
             return result
         cdef size_t index
         cdef size_t f
-        result._length = self._length*factor
-        result._nonzero = self._nonzero*factor
-        result._data = <int*>sage_malloc(sizeof(int)*result._nonzero*2)
+        result._length = self._length * factor
+        result._nonzero = self._nonzero * factor
+        result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
         for index from 0 <= index < self._nonzero:
             for f from 0 <= f < factor:
                 result._data[2*(f*self._nonzero+index)] = self._data[2*index]+f*self._length
@@ -1055,7 +1260,7 @@ cdef class ETuple:
             elif start > self._length:
                 start = self._length
 
-            if stop > self._length or stop is None:
+            if stop is None or stop > self._length:
                 stop = self._length
             elif stop < 0:
                 stop = stop % self._length
@@ -1065,14 +1270,26 @@ cdef class ETuple:
             d = [self[ind] for ind from start <= ind < stop]
             return ETuple(d)
         else:
-            ind = 0
-            for ind from 0 <= ind < self._nonzero:
-                if self._data[2*ind] == i:
-                    return self._data[2*ind+1]
-                elif self._data[2*ind] > i:
+            for ind in range(0, 2*self._nonzero, 2):
+                if self._data[ind] == i:
+                    return self._data[ind+1]
+                elif self._data[ind] > i:
                     # the indices are sorted in _data, we are beyond, so quit
                     return 0
             return 0
+
+    cdef size_t get_exp(ETuple self, int i):
+        """
+        Return the exponent for the ``i``-th variable.
+        """
+        cdef size_t ind = 0
+        for ind in range(0, 2*self._nonzero, 2):
+            if self._data[ind] == i:
+                return self._data[ind+1]
+            elif self._data[ind] > i:
+                # the indices are sorted in _data, we are beyond, so quit
+                return 0
+        return 0
 
     def __hash__(ETuple self):
         """
@@ -1103,11 +1320,10 @@ cdef class ETuple:
         """
         x.__contains__(n) <==> n in x
 
-
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple
-            sage: e = ETuple({int(1):int(2)},int(3)); e
+            sage: e = ETuple({int(1):int(2)}, int(3)); e
             (0, 2, 0)
             sage: 1 in e
             False
@@ -1150,7 +1366,7 @@ cdef class ETuple:
             False
         """
         cdef size_t ind = 0
-        if op == 2: #==
+        if op == Py_EQ:  # ==
             if self._nonzero != other._nonzero:
                 return False
             for ind from 0 <= ind < self._nonzero:
@@ -1160,7 +1376,7 @@ cdef class ETuple:
                     return False
             return self._length == other._length
 
-        if op == 0:  #<
+        if op == Py_LT:  # <
             while ind < self._nonzero and ind < other._nonzero:
                 if self._data[2*ind] < other._data[2*ind]:
                     return self._data[2*ind+1] < 0
@@ -1175,7 +1391,7 @@ cdef class ETuple:
                 return other._data[2*ind+1] > 0
             return self._length < other._length
 
-        if op == 4: #>
+        if op == Py_GT:  # >
             while ind < self._nonzero and ind < other._nonzero:
                 if self._data[2*ind] < other._data[2*ind]:
                     return self._data[2*ind+1] > 0
@@ -1192,34 +1408,66 @@ cdef class ETuple:
 
         # the rest of these are not particularly fast
 
-        if op == 1: #<=
+        if op == Py_LE:  # <=
             return tuple(self) <= tuple(other)
 
-        if op == 3: #!=
+        if op == Py_NE:  # !=
             return tuple(self) != tuple(other)
 
-        if op == 5: #>=
+        if op == Py_GE:  # >=
             return tuple(self) >= tuple(other)
 
     def __iter__(ETuple self):
         """
         x.__iter__() <==> iter(x)
+
+        TESTS::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple((4,0,0,2,0))
+            sage: list(e)
+            [4, 0, 0, 2, 0]
+
+        Check that :trac:`28178` is fixed::
+
+            sage: it = iter(e)
+            sage: iter(it) is it
+            True
         """
-        cdef size_t ind
-        # this is not particularly fast, but I doubt many people care
-        # if you do, feel free to tweak!
-        d = dict([(self._data[2*ind],self._data[2*ind+1]) for ind from 0<=ind<self._nonzero])
-        return ETupleIter(d,self._length)
+        cdef size_t i
+        cdef size_t ind = 0
+
+        for i in range(self._length):
+            if ind >= self._nonzero:
+                yield 0
+            elif self._data[2*ind] == i:
+                yield self._data[2*ind + 1]
+                ind += 1
+            else:
+                yield 0
 
     def __str__(ETuple self):
-        return self.__repr__()
+        return repr(self)
 
     def __repr__(ETuple self):
-        res = [0,]*self._length
-        cdef size_t ind = 0
-        for ind from 0 <= ind < self._nonzero:
-            res[self._data[2*ind]] = self._data[2*ind+1]
-        return str(tuple(res))
+        r"""
+        TESTS::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: ETuple((0,))
+            (0,)
+            sage: ETuple((1,))
+            (1,)
+            sage: ETuple((0,1,2))
+            (0, 1, 2)
+        """
+        if self._length == 1:
+            if self._nonzero:
+                return '(%d,)' % self._data[1]
+            else:
+                return '(0,)'
+        else:
+            return '(' + ', '.join(map(str, self)) + ')'
 
     def __reduce__(ETuple self):
         """
@@ -1233,14 +1481,136 @@ cdef class ETuple:
         cdef size_t ind
         # this is not particularly fast, but I doubt many people care
         # if you do, feel free to tweak!
-        d = dict([(self._data[2*ind],self._data[2*ind+1]) for ind from 0<=ind<self._nonzero])
-        return make_ETuple,(d,int(self._length))
+        d = {self._data[2*ind]: self._data[2*ind+1]
+             for ind from 0 <= ind < self._nonzero}
+        return make_ETuple, (d, int(self._length))
 
     # additional methods
 
-    cpdef ETuple eadd(ETuple self,ETuple other):
+    cpdef size_t unweighted_degree(self):
+        r"""
+        Return the sum of entries.
+
+        ASSUMPTION:
+
+        All entries are non-negative.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: e = ETuple([1,1,0,2,0])
+             sage: e.unweighted_degree()
+             4
         """
-        Vector addition of self with other.
+        cdef size_t degree = 0
+        cdef size_t i
+        for i in range(1, 2*self._nonzero, 2):
+            degree += self._data[i]
+        return degree
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cdef size_t weighted_degree(self, tuple w):
+        r"""
+        Return the weighted sum of entries.
+
+        INPUT:
+
+        - ``w`` -- tuple of non-negative integers
+
+        ASSUMPTIONS:
+
+        ``w`` has the same length as ``self``, and the entries of ``self``
+        and ``w`` are non-negative.
+        """
+        cdef size_t i
+        cdef size_t deg = 0
+        assert len(w) == self._length
+        for i in range(0, 2*self._nonzero, 2):
+            deg += <size_t> self._data[i+1] * <size_t> w[self._data[i]]
+        return deg
+
+    cdef size_t unweighted_quotient_degree(self, ETuple other):
+        """
+        Degree of ``self`` divided by its gcd with ``other``.
+
+        It amounts to counting the non-negative entries of
+        ``self.esub(other)``.
+        """
+        cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in double steps.
+        cdef size_t ind2 = 0
+        cdef int exponent
+        cdef int position
+        cdef size_t selfnz = 2 * self._nonzero
+        cdef size_t othernz = 2 * other._nonzero
+
+        cdef size_t deg = 0
+        while ind1 < selfnz:
+            position = self._data[ind1]
+            exponent = self._data[ind1+1]
+            while ind2 < othernz and other._data[ind2] < position:
+                ind2 += 2
+            if ind2 == othernz:
+                while ind1 < selfnz:
+                    deg += self._data[ind1+1]
+                    ind1 += 2
+                return deg
+            if other._data[ind2] > position:
+                # other[position] = 0
+                deg += exponent
+            elif other._data[ind2+1] < exponent:
+                # There is a positive difference that we have to insert
+                deg += (exponent - other._data[ind2+1])
+            ind1 += 2
+        return deg
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cdef size_t weighted_quotient_degree(self, ETuple other, tuple w):
+        r"""
+        Weighted degree of ``self`` divided by its gcd with ``other``.
+
+        INPUT:
+
+        - ``other`` -- an :class:`~sage.rings.polynomial.polydict.ETuple`
+        - ``w`` -- tuple of non-negative integers.
+
+        ASSUMPTIONS:
+
+        ``w`` and ``other`` have the same length as ``self``, and the
+        entries of ``self``, ``other`` and ``w`` are non-negative.
+        """
+        cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in double steps.
+        cdef size_t ind2 = 0
+        cdef size_t exponent
+        cdef int position
+        cdef size_t selfnz = 2 * self._nonzero
+        cdef size_t othernz = 2 * other._nonzero
+
+        cdef size_t deg = 0
+        assert len(w) == self._length
+        while ind1 < selfnz:
+            position = self._data[ind1]
+            exponent = self._data[ind1+1]
+            while ind2 < othernz and other._data[ind2] < position:
+                ind2 += 2
+            if ind2 == othernz:
+                while ind1 < selfnz:
+                    deg += <size_t>self._data[ind1+1] * <size_t> w[self._data[ind1]]
+                    ind1 += 2
+                return deg
+            if other._data[ind2] > position:
+                # other[position] = 0
+                deg += exponent * <size_t>w[position]
+            elif other._data[ind2+1] < exponent:
+                # There is a positive difference that we have to insert
+                deg += <size_t> (exponent - other._data[ind2+1]) * <size_t>w[position]
+            ind1 += 2
+        return deg
+
+    cpdef ETuple eadd(ETuple self, ETuple other):
+        """
+        Vector addition of ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -1250,15 +1620,15 @@ cdef class ETuple:
             sage: e.eadd(f)
             (1, 1, 3)
 
-        Verify that trac 6428 has been addressed::
+        Verify that :trac:`6428` has been addressed::
 
-            sage: R.<y,z> = Frac(QQ['x'])[]
+            sage: R.<y, z> = Frac(QQ['x'])[]
             sage: type(y)
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
             sage: y^(2^32)
             Traceback (most recent call last):
             ...
-            OverflowError: Exponent overflow (2147483648).
+            OverflowError: exponent overflow (2147483648)
         """
         if self._length!=other._length:
             raise ArithmeticError
@@ -1274,12 +1644,12 @@ cdef class ETuple:
             alloc_len = self._length
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = 0  # we don't know the correct length quite yet
-        result._data = <int*>sage_malloc(sizeof(int)*alloc_len*2)
-        while dual_etuple_iter(self,other,&ind1,&ind2,&index,&exp1,&exp2):
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
             s = exp1 + exp2
             # Check for overflow and underflow
             if (exp2 > 0 and s < exp1) or (exp2 < 0 and s > exp1):
-                raise OverflowError("Exponent overflow (%s)."%(int(exp1)+int(exp2)))
+                raise OverflowError("exponent overflow (%s)" % (int(exp1)+int(exp2)))
             if s != 0:
                 result._data[2*result._nonzero] = index
                 result._data[2*result._nonzero+1] = s
@@ -1288,7 +1658,7 @@ cdef class ETuple:
 
     cpdef ETuple eadd_p(ETuple self, int other, int pos):
         """
-        Adds other to self at position pos.
+        Add ``other`` to ``self`` at position ``pos``.
 
         EXAMPLES::
 
@@ -1309,13 +1679,13 @@ cdef class ETuple:
         cdef int new_value
         cdef int need_to_add = 1
         if pos < 0 or pos >= self._length:
-            raise ValueError("pos must be between 0 and %s"%self._length)
+            raise ValueError("pos must be between 0 and %s" % self._length)
 
         cdef size_t alloc_len = self._nonzero + 1
 
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = self._nonzero
-        result._data = <int*>sage_malloc(sizeof(int)*alloc_len*2)
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
 
         for index from 0 <= index < self._nonzero:
             if self._data[2*index] == pos:
@@ -1352,9 +1722,48 @@ cdef class ETuple:
 
         return result
 
-    cpdef ETuple esub(ETuple self,ETuple other):
+    cpdef ETuple eadd_scaled(ETuple self, ETuple other, int scalar):
         """
-        Vector subtraction of self with other.
+        Vector addition of ``self`` with ``scalar * other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple([1,0,2])
+            sage: f = ETuple([0,1,1])
+            sage: e.eadd_scaled(f, 3)
+            (1, 3, 5)
+        """
+        if self._length != other._length:
+            raise ArithmeticError
+
+        cdef size_t ind1 = 0
+        cdef size_t ind2 = 0
+        cdef size_t index
+        cdef int exp1
+        cdef int exp2
+        cdef int s  # sum
+        cdef size_t alloc_len = self._nonzero + other._nonzero  # we simply guesstimate the length -- there might be double the correct amount allocated -- who cares?
+        if alloc_len > self._length:
+            alloc_len = self._length
+        cdef ETuple result = <ETuple>self._new()
+        result._nonzero = 0  # we don't know the correct length quite yet
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
+            exp2 *= scalar
+            s = exp1 + exp2
+            # Check for overflow and underflow
+            if (exp2 > 0 and s < exp1) or (exp2 < 0 and s > exp1):
+                raise OverflowError("exponent overflow (%s)" % (int(exp1)+int(exp2)))
+            if s != 0:
+                result._data[2*result._nonzero] = index
+                result._data[2*result._nonzero+1] = s
+                result._nonzero += 1
+        return result
+
+    cpdef ETuple esub(ETuple self, ETuple other):
+        """
+        Vector subtraction of ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -1378,21 +1787,21 @@ cdef class ETuple:
             alloc_len = self._length
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = 0  # we don't know the correct length quite yet
-        result._data = <int*>sage_malloc(sizeof(int)*alloc_len*2)
-        while dual_etuple_iter(self,other,&ind1,&ind2,&index,&exp1,&exp2):
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
             # Check for overflow and underflow
             d = exp1 - exp2
             if (exp2 > 0 and d > exp1) or (exp2 < 0 and d < exp1):
-                raise OverflowError("Exponent overflow (%s)."%(int(exp1)-int(exp2)))
+                raise OverflowError("Exponent overflow (%s)" % (int(exp1)-int(exp2)))
             if d != 0:
                 result._data[2*result._nonzero] = index
                 result._data[2*result._nonzero+1] = d
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emul(ETuple self,int factor):
+    cpdef ETuple emul(ETuple self, int factor):
         """
-        Scalar Vector multiplication of self.
+        Scalar Vector multiplication of ``self``.
 
         EXAMPLES::
 
@@ -1405,18 +1814,18 @@ cdef class ETuple:
         cdef ETuple result = <ETuple>self._new()
         if factor == 0:
             result._nonzero = 0  # all zero, no non-zero entries!
-            result._data = <int*>sage_malloc(sizeof(int)*result._nonzero*2)
+            result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
         else:
             result._nonzero = self._nonzero
-            result._data = <int*>sage_malloc(sizeof(int)*result._nonzero*2)
+            result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
             for ind from 0 <= ind < self._nonzero:
                 result._data[2*ind] = self._data[2*ind]
                 result._data[2*ind+1] = self._data[2*ind+1]*factor
         return result
 
-    cpdef ETuple emax(ETuple self,ETuple other):
+    cpdef ETuple emax(ETuple self, ETuple other):
         """
-        Vector of maximum of components of self and other.
+        Vector of maximum of components of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1425,12 +1834,12 @@ cdef class ETuple:
             sage: f = ETuple([0,1,1])
             sage: e.emax(f)
             (1, 1, 2)
-            sage: e=ETuple((1,2,3,4))
-            sage: f=ETuple((4,0,2,1))
+            sage: e = ETuple((1,2,3,4))
+            sage: f = ETuple((4,0,2,1))
             sage: f.emax(e)
             (4, 2, 3, 4)
-            sage: e=ETuple((1,-2,-2,4))
-            sage: f=ETuple((4,0,0,0))
+            sage: e = ETuple((1,-2,-2,4))
+            sage: f = ETuple((4,0,0,0))
             sage: f.emax(e)
             (4, 0, 0, 4)
             sage: f.emax(e).nonzero_positions()
@@ -1449,8 +1858,8 @@ cdef class ETuple:
             alloc_len = self._length
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = 0  # we don't know the correct length quite yet
-        result._data = <int*>sage_malloc(sizeof(int)*alloc_len*2)
-        while dual_etuple_iter(self,other,&ind1,&ind2,&index,&exp1,&exp2):
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
             if exp1 >= exp2 and exp1 != 0:
                 result._data[2*result._nonzero] = index
                 result._data[2*result._nonzero+1] = exp1
@@ -1461,9 +1870,9 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emin(ETuple self,ETuple other):
+    cpdef ETuple emin(ETuple self, ETuple other):
         """
-        Vector of minimum of components of self and other.
+        Vector of minimum of components of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1477,7 +1886,7 @@ cdef class ETuple:
             sage: e.emin(f)
             (0, -2, -1)
         """
-        if self._length!=other._length:
+        if self._length != other._length:
             raise ArithmeticError
 
         cdef size_t ind1 = 0
@@ -1490,8 +1899,8 @@ cdef class ETuple:
             alloc_len = self._length
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = 0  # we don't know the correct length quite yet
-        result._data = <int*>sage_malloc(sizeof(int)*alloc_len*2)
-        while dual_etuple_iter(self,other,&ind1,&ind2,&index,&exp1,&exp2):
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
             if exp1 <= exp2 and exp1 != 0:
                 result._data[2*result._nonzero] = index
                 result._data[2*result._nonzero+1] = exp1
@@ -1502,14 +1911,226 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    def nonzero_positions(ETuple self,sort=False):
+    cpdef int dotprod(ETuple self, ETuple other):
         """
-        Returns the positions of non-zero exponents in the tuple.
+        Return the dot product of this tuple by ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple([1,0,2])
+            sage: f = ETuple([0,1,1])
+            sage: e.dotprod(f)
+            2
+            sage: e = ETuple([1,1,-1])
+            sage: f = ETuple([0,-2,1])
+            sage: e.dotprod(f)
+            -3
+
+        """
+        if self._length != other._length:
+            raise ArithmeticError
+
+        cdef size_t ind1 = 0
+        cdef size_t ind2 = 0
+        cdef size_t index
+        cdef int exp1
+        cdef int exp2
+        cdef int result = 0
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
+            result += exp1 * exp2
+        return result
+
+    cpdef ETuple escalar_div(ETuple self, int n):
+        r"""
+        Divide each exponent by ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: ETuple([1,0,2]).escalar_div(2)
+            (0, 0, 1)
+            sage: ETuple([0,3,12]).escalar_div(3)
+            (0, 1, 4)
+
+            sage: ETuple([1,5,2]).escalar_div(0)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError
+
+        TESTS:
+
+        Checking that memory allocation works fine::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: t = ETuple(list(range(2048)))
+            sage: for n in range(1,9):
+            ....:     t = t.escalar_div(n)
+            sage: assert t.is_constant()
+        """
+        if not n:
+            raise ZeroDivisionError
+        cdef size_t i, j
+        cdef ETuple result = self._new()
+        result._data = <int*> sig_malloc(sizeof(int) * 2 * self._nonzero)
+        result._nonzero = 0
+        for i in range(self._nonzero):
+            result._data[2 * result._nonzero + 1] = self._data[2 * i + 1] / n
+            if result._data[2 * result._nonzero + 1]:
+                result._data[2 * result._nonzero] = self._data[2 * i]
+                result._nonzero += 1
+        return result
+
+    cdef ETuple divide_by_gcd(self, ETuple other):
+        """
+        Return ``self / gcd(self, other)``.
+
+        The entries of the result are the maximum of 0 and the
+        difference of the corresponding entries of ``self`` and ``other``.
+        """
+        cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in 2-steps.
+        cdef size_t ind2 = 0
+        cdef int exponent
+        cdef int position
+        cdef size_t selfnz = 2 * self._nonzero
+        cdef size_t othernz = 2 * other._nonzero
+        cdef ETuple result = <ETuple> self._new()
+        result._nonzero = 0
+        result._data = <int*> sig_malloc(sizeof(int)*self._nonzero*2)
+        while ind1 < selfnz:
+            position = self._data[ind1]
+            exponent = self._data[ind1+1]
+            while ind2 < othernz and other._data[ind2] < position:
+                ind2 += 2
+            if ind2 == othernz:
+                while ind1 < selfnz:
+                    result._data[2*result._nonzero] = self._data[ind1]
+                    result._data[2*result._nonzero+1] = self._data[ind1+1]
+                    result._nonzero += 1
+                    ind1 += 2
+                return result
+            if other._data[ind2] > position:
+                # other[position] == 0
+                result._data[2*result._nonzero] = position
+                result._data[2*result._nonzero+1] = exponent
+                result._nonzero += 1
+            elif other._data[ind2+1] < exponent:
+                # There is a positive difference that we have to insert
+                result._data[2*result._nonzero] = position
+                result._data[2*result._nonzero+1] = exponent - other._data[ind2+1]
+                result._nonzero += 1
+            ind1 += 2
+        return result
+
+    cdef ETuple divide_by_var(self, size_t index):
+        """
+        Return division of ``self`` by ``var(index)`` or ``None``.
+
+        If ``self[Index] == 0`` then None is returned. Otherwise, an
+        :class:`~sage.rings.polynomial.polydict.ETuple` is returned
+        that is zero in position ``index`` and coincides with ``self``
+        in the other positions.
+        """
+        cdef size_t i, j
+        cdef int exp1
+        cdef ETuple result
+        for i in range(0, 2*self._nonzero,2):
+            if self._data[i] == index:
+                result = <ETuple>self._new()
+                result._data = <int*>sig_malloc(sizeof(int)*self._nonzero*2)
+                exp1 = self._data[i+1]
+                if exp1>1:
+                    # division doesn't change the number of nonzero positions
+                    result._nonzero = self._nonzero
+                    for j in range(0, 2*self._nonzero, 2):
+                        result._data[j] = self._data[j]
+                        result._data[j+1] = self._data[j+1]
+                    result._data[i+1] = exp1-1
+                else:
+                    # var(index) disappears from self
+                    result._nonzero = self._nonzero-1
+                    for j in range(0, i, 2):
+                        result._data[j] = self._data[j]
+                        result._data[j+1] = self._data[j+1]
+                    for j in range(i+2, 2*self._nonzero, 2):
+                        result._data[j-2] = self._data[j]
+                        result._data[j-1] = self._data[j+1]
+                return result
+        return None
+
+    cdef bint divides(self, ETuple other):
+        """
+        Whether ``self`` divides ``other``, i.e., no entry of ``self``
+        exceeds that of ``other``.
+        """
+        cdef size_t ind1     # will be increased in 2-steps
+        cdef size_t ind2 = 0 # will be increased in 2-steps
+        cdef int pos1, exp1
+        if self._nonzero > other._nonzero:
+            # Trivially self cannot divide other
+            return False
+        cdef size_t othernz2 = 2 * other._nonzero
+        for ind1 in range(0, 2*self._nonzero, 2):
+            pos1 = self._data[ind1]
+            exp1 = self._data[ind1+1]
+            # Because of the above trivial test, other._nonzero>0.
+            # So, other._data[ind2] initially makes sense.
+            while other._data[ind2] < pos1:
+                ind2 += 2
+                if ind2 >= othernz2:
+                    return False
+            if other._data[ind2] > pos1 or other._data[ind2+1] < exp1:
+                # Either other has no exponent at position pos1 or the exponent is less than in self
+                return False
+        return True
+
+    cpdef bint is_constant(ETuple self):
+        """
+        Return if all exponents are zero in the tuple.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple([1,0,2])
+            sage: e.is_constant()
+            False
+            sage: e = ETuple([0,0])
+            sage: e.is_constant()
+            True
+        """
+        return self._nonzero == 0
+
+    cpdef bint is_multiple_of(ETuple self, int n):
+        r"""
+        Test whether each entry is a multiple of ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+
+            sage: ETuple([0,0]).is_multiple_of(3)
+            True
+            sage: ETuple([0,3,12,0,6]).is_multiple_of(3)
+            True
+            sage: ETuple([0,0,2]).is_multiple_of(3)
+            False
+        """
+        if not n:
+            raise ValueError('n should not be zero')
+        cdef int i
+        for i in range(self._nonzero):
+            if self._data[2 * i + 1] % n:
+                return False
+        return True
+
+    cpdef list nonzero_positions(ETuple self, bint sort=False):
+        """
+        Return the positions of non-zero exponents in the tuple.
 
         INPUT:
 
-        - ``sort`` -- if True a sorted list is returned. If False an unsorted
-          list is returned. (default: False)
+        - ``sort`` -- (default: ``False``) if ``True`` a sorted list is
+          returned; if ``False`` an unsorted list is returned
 
         EXAMPLES::
 
@@ -1521,7 +2142,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2*ind] for ind from 0 <= ind < self._nonzero]
 
-    def common_nonzero_positions(ETuple self, ETuple other,sort=False):
+    cpdef common_nonzero_positions(ETuple self, ETuple other, bint sort=False):
         """
         Returns an optionally sorted list of non zero positions either
         in self or other, i.e. the only positions that need to be
@@ -1534,7 +2155,7 @@ cdef class ETuple:
             sage: f = ETuple([0,0,1])
             sage: e.common_nonzero_positions(f)
             {0, 2}
-            sage: e.common_nonzero_positions(f,sort=True)
+            sage: e.common_nonzero_positions(f, sort=True)
             [0, 2]
         """
         # TODO:  we should probably make a fast version of this!
@@ -1544,14 +2165,14 @@ cdef class ETuple:
         else:
             return res
 
-    def nonzero_values(ETuple self, sort=True):
+    cpdef list nonzero_values(ETuple self, bint sort=True):
         """
-        Returns the non-zero values of the tuple.
+        Return the non-zero values of the tuple.
 
         INPUT:
 
-        - ``sort`` -- if True the values are sorted by their indices. Otherwise
-          the values are returned unsorted. (default: True)
+        - ``sort`` -- (default: ``True``) if ``True`` the values are sorted
+          by their indices; otherwise the values are returned unsorted
 
         EXAMPLES::
 
@@ -1566,9 +2187,9 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2*ind+1] for ind from 0 <= ind < self._nonzero]
 
-    def reversed(ETuple self):
+    cpdef ETuple reversed(ETuple self):
         """
-        Returns the reversed ETuple of self.
+        Return the reversed ETuple of ``self``.
 
         EXAMPLES::
 
@@ -1580,16 +2201,16 @@ cdef class ETuple:
         cdef size_t ind
         cdef ETuple result = <ETuple>self._new()
         result._nonzero = self._nonzero
-        result._data = <int*>sage_malloc(sizeof(int)*result._nonzero*2)
+        result._data = <int*>sig_malloc(sizeof(int)*result._nonzero*2)
         for ind from 0 <= ind < self._nonzero:
-            result._data[2*(result._nonzero-ind-1)] = self._length-self._data[2*ind]-1
+            result._data[2*(result._nonzero-ind-1)] = self._length - self._data[2*ind] - 1
             result._data[2*(result._nonzero-ind-1)+1] = self._data[2*ind+1]
         return result
 
     def sparse_iter(ETuple self):
         """
-        Iterator over the elements of self where the elements are returned as
-        ``(i,e)`` where ``i`` is the position of ``e`` in the tuple.
+        Iterator over the elements of ``self`` where the elements are returned
+        as ``(i, e)`` where ``i`` is the position of ``e`` in the tuple.
 
         EXAMPLES::
 
@@ -1599,12 +2220,14 @@ cdef class ETuple:
             [(0, 1), (2, 2), (4, 3)]
         """
         cdef size_t ind
-        d = dict([(self._data[2*ind],self._data[2*ind+1]) for ind from 0<=ind<self._nonzero])
-        return d.iteritems()
+        for ind from 0 <= ind < self._nonzero:
+            yield (self._data[2*ind], self._data[2*ind+1])
 
     def combine_to_positives(ETuple self, ETuple other):
         """
-        Given a pair of ETuples (self, other), returns a triple of ETuples (a, b, c) so that self = a + b,other = a + c and b and c have all positive entries.
+        Given a pair of ETuples (self, other), returns a triple of
+        ETuples (a, b, c) so that self = a + b, other = a + c and b and c
+        have all positive entries.
 
         EXAMPLES::
 
@@ -1617,8 +2240,11 @@ cdef class ETuple:
         m = self.emin(other)
         return m, self.esub(m), other.esub(m)
 
-def make_PolyDict(data):
-    return PolyDict(data,remove_zero=False, force_int_exponents=False, force_etuples=False)
 
-def make_ETuple(data,length):
-    return ETuple(data,length)
+def make_PolyDict(data):
+    return PolyDict(data, remove_zero=False, force_int_exponents=False,
+                    force_etuples=False)
+
+
+def make_ETuple(data, length):
+    return ETuple(data, length)

@@ -1,34 +1,33 @@
-###############################################################################
-#   SAGE: System for Algebra and Geometry Experimentation
-#       Copyright (C) 2006 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
 cimport sage.structure.category_object
 from sage.structure.coerce_dict cimport MonoDict, TripleDict
 
-cdef class Parent(category_object.CategoryObject):
-
-    cdef public _element_constructor
+cdef class Parent(sage.structure.category_object.CategoryObject):
+    cdef _element_constructor
+    cdef bint _element_init_pass_parent
     cdef public _convert_method_name
-    cdef public bint _element_init_pass_parent
-    cdef public dict __cached_methods
     cdef public _initial_coerce_list
     cdef public _initial_action_list
     cdef public _initial_convert_list
     cdef readonly bint _coercions_used
 
-    cpdef bint is_coercion_cached(self, domain)
-    cpdef bint is_conversion_cached(self, domain)
+    # Flags, see below
+    cdef int flags
+    cdef inline bint get_flag(self, int flag):
+        return self.flags & flag
+
     cpdef register_coercion(self, mor)
     cpdef register_action(self, action)
     cpdef register_conversion(self, mor)
     cpdef register_embedding(self, embedding)
 
-    cpdef bint _richcmp(left, right, int op) except -2
-    cpdef int _cmp_(left, right) except -2
     cpdef bint is_exact(self) except -2
 
     # Called from the __init__ method to set up coercion.
@@ -46,6 +45,7 @@ cdef class Parent(category_object.CategoryObject):
     cpdef convert_map_from(self, S)
     cpdef _internal_convert_map_from(self, S)
     cpdef _convert_map_from_(self, S)
+    cdef convert_method_map(self, S, method_name)
 
     # returns the Action by/on self on/by S
     # corresponding to op and self_on_left
@@ -58,9 +58,9 @@ cdef class Parent(category_object.CategoryObject):
     cpdef an_element(self)
     cdef public object _cache_an_element
 
-
     # For internal use
-    cpdef _generic_convert_map(self, S)
+    cpdef _generic_convert_map(self, S, category=*)
+    cpdef _generic_coerce_map(self, S)
     cdef discover_coerce_map_from(self, S)
     cdef discover_convert_map_from(self, S)
     cdef discover_action(self, S, op, bint self_on_left, self_el=*, S_el=*)
@@ -83,8 +83,6 @@ cdef class Parent(category_object.CategoryObject):
     # do the correct thing.
     # Initialized at ring creation.
     cdef list _action_list
-    # Hashtable of everything we've (possibly recursively) discovered so far.
-    cdef TripleDict _action_hash
 
     # List consisting of Morphisms (from anything to self)
     # and Parents for which the __call__ method of self
@@ -96,4 +94,18 @@ cdef class Parent(category_object.CategoryObject):
     # An optional single Morphism that describes a canonical coercion out of self
     cdef _embedding
 
-cpdef Parent Set_PythonType(theType)
+    # Write-only hashtable of all actions discovered using this parent.
+    # This is only needed to keep a strong reference to actions, to
+    # prevent them being garbage collected prematurely.
+    cdef TripleDict _action_hash
+
+
+cdef class Set_generic(Parent):
+    pass
+
+
+# Flags for Parent.flags
+cdef enum:
+    # If this flag is set, call __richcmp__ on elements without
+    # coercion. This allows a completely custom comparison function.
+    Parent_richcmp_element_without_coercion = 1

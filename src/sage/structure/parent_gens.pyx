@@ -1,7 +1,7 @@
 r"""
 Base class for old-style parent objects with generators
 
-.. note::
+.. NOTE::
 
    This class is being deprecated, see
    ``sage.structure.parent.Parent`` and
@@ -58,200 +58,35 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#*****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
-import sage.misc.defaults
-from sage.misc.latex import latex_variable_name
-import gens_py
-cimport parent
-from sage.structure.coerce_dict import MonoDict
+from . import gens_py
+cimport sage.structure.parent as parent
+from sage.structure.coerce_dict cimport MonoDict
+cimport sage.structure.category_object as category_object
 
-include 'sage/ext/stdsage.pxi'
 
 cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
-        raise RuntimeError, "%s still using old coercion framework" % p
+        raise RuntimeError("%s still using old coercion framework" % p)
 
-def is_ParentWithGens(x):
-    """
-    Return True if x is a parent object with generators, i.e., derives from
-    :class:`sage.structure.parent_gens.ParentWithGens` and False otherwise.
 
-    EXAMPLES::
-
-        sage: from sage.structure.parent_gens import is_ParentWithGens
-        sage: is_ParentWithGens(QQ['x'])
-        doctest:...: DeprecationWarning: the function is_ParentWithGens() is deprecated
-        See http://trac.sagemath.org/18759 for details.
-        True
-        sage: is_ParentWithGens(CC)
-        True
-        sage: is_ParentWithGens(Primes())
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(18759, "the function is_ParentWithGens() is deprecated")
-    return isinstance(x, ParentWithGens)
-
-def is_ParentWithAdditiveAbelianGens(x):
-    """
-    Return True if x is a parent object with additive abelian generators, i.e.,
-    derives from
-    :mod:`sage.structure.parent_gens.ParentWithAdditiveAbelianGens` and False
-    otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.structure.parent_gens import is_ParentWithAdditiveAbelianGens
-        sage: is_ParentWithAdditiveAbelianGens(QQ)
-        doctest:...: DeprecationWarning: the class ParentWithAdditiveAbelianGens is deprecated
-        See http://trac.sagemath.org/18759 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(18759, "the class ParentWithAdditiveAbelianGens is deprecated")
-    return isinstance(x, ParentWithAdditiveAbelianGens)
-
-def is_ParentWithMultiplicativeAbelianGens(x):
-    """
-    Return True if x is a parent object with additive abelian generators, i.e.,
-    derives from
-    :class:`sage.structure.parent_gens.ParentWithMultiplicativeAbelianGens` and
-    False otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.structure.parent_gens import is_ParentWithMultiplicativeAbelianGens
-        sage: is_ParentWithMultiplicativeAbelianGens(QQ)
-        doctest:...: DeprecationWarning: the class ParentWithMultiplicativeAbelianGens is deprecated
-        See http://trac.sagemath.org/18759 for details.
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(18759, "the class ParentWithMultiplicativeAbelianGens is deprecated")
-    return isinstance(x, ParentWithMultiplicativeAbelianGens)
-
-def _certify_names(names):
-    v = []
-    try:
-        names = tuple(names)
-    except TypeError:
-        names = [str(names)]
-    for N in names:
-        if not isinstance(N, str):
-            N = str(N)
-        N = N.strip().strip("'")
-        if len(N) == 0:
-            raise ValueError, "variable name must be nonempty"
-        if not N.isalnum() and not N.replace("_","").isalnum():
-            # We must be alphanumeric, but we make an exception for non-leading '_' characters.
-            raise ValueError, "variable names must be alphanumeric, but one is '%s' which is not."%N
-        if not N[0].isalpha():
-            raise ValueError, "first letter of variable name must be a letter"
-        v.append(N)
-    return tuple(v)
-
-def normalize_names(int ngens, names=None):
-    r"""
-    Return a tuple of strings of variable names of length ngens given the input names.
-
-    INPUT:
-
-    - ``ngens`` - integer
-
-    - ``names``
-
-      - tuple or list of strings, such as ('x', 'y')
-
-      - a string prefix, such as 'alpha'
-
-      - string of single character names, such as 'xyz'
-
-    EXAMPLES::
-
-        sage: from sage.structure.parent_gens import normalize_names as nn
-        sage: nn(1, 'a')
-        ('a',)
-        sage: nn(2, 'zzz')
-        ('zzz0', 'zzz1')
-        sage: nn(2, 'ab')
-        ('a', 'b')
-        sage: nn(3, ('a', 'bb', 'ccc'))
-        ('a', 'bb', 'ccc')
-        sage: nn(4, ['a1', 'a2', 'b1', 'b11'])
-        ('a1', 'a2', 'b1', 'b11')
-
-    TESTS::
-
-        sage: nn(2, 'z1')
-        ('z10', 'z11')
-        sage: PolynomialRing(QQ, 2, 'alpha0')
-        Multivariate Polynomial Ring in alpha00, alpha01 over Rational Field
-    """
-    if names is None:
-        return None
-    if isinstance(names, str) and names.find(',') != -1:
-        names = names.split(',')
-    if isinstance(names, str) and ngens > 1 and len(names) == ngens:
-        maybe_names = tuple(names)
-        try:
-            _certify_names(maybe_names)
-            names = maybe_names
-        except ValueError:
-            # this happens when you try for 2 names starting "x0"
-            # that gets split to "x", "0" and fails the certification
-            pass
-    if isinstance(names, str):
-        name = names
-        names = sage.misc.defaults.variable_names(ngens, name)
-        names = _certify_names(names)
-    else:
-        names = _certify_names(names)
-        if not isinstance(names, (list, tuple)):
-            raise TypeError, "names must be a list or tuple of strings"
-        for x in names:
-            if not isinstance(x,str):
-                raise TypeError, "names must consist of strings"
-        if ngens != 0 and len(names) != ngens:
-            raise IndexError, "the number of names must equal the number of generators"
-    return names
-
-# Classes that derive from ParentWithGens must define gen(i) and
-# ngens() functions.  It is also good if they define gens() to return
-# all gens, but this is not necessary.
-
-## def make_parent_gens_v0(_class, _dict,
-##                         base, has_coerce_map_from, names):
-##     """
-##     This should work for any Python class deriving from this, as long
-##     as it doesn't implement some screwy __new__() method.
-##     """
-##     cdef ParentWithGens new_object
-##     new_object = _class.__new__(_class)
-##     if base is None:
-##         new_object._base = new_object
-##     else:
-##         new_object._base = base
-##     new_object._has_coerce_map_from = has_coerce_map_from
-##     new_object._names = names
-##     if not _dict is None:
-##         new_object.__dict__ = _dict
-##     return new_object
-
-cdef class ParentWithGens(parent_base.ParentWithBase):
+cdef class ParentWithGens(ParentWithBase):
     # Derived class *must* call __init__ and set the base!
     def __init__(self, base, names=None, normalize=True, category = None):
         """
         EXAMPLES::
 
             sage: class MyParent(ParentWithGens):
-            ...       def ngens(self): return 3
+            ....:     def ngens(self): return 3
             sage: P = MyParent(base = QQ, names = 'a,b,c', normalize = True, category = Groups())
             sage: P.category()
             Category of groups
@@ -259,37 +94,19 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             ('a', 'b', 'c')
         """
         self._base = base
-        self._has_coerce_map_from = MonoDict(23)
         self._assign_names(names=names, normalize=normalize)
 
-        # Why does not this call ParentWithBase.__init__ ?
-        parent_base.ParentWithBase.__init__(self, base, category=category)
-        #if category is not None:
-        #    self._init_category_(category)
-
-##     def x__reduce__(self):
-##         if self._base is self:
-##             base = None
-##         else:
-##             base = self._base
-##         if HAS_DICTIONARY(self):
-##             _dict = self.__dict__
-##         else:
-##             _dict = None
-##         return (make_parent_gens_v0, (self.__class__,
-##                                       _dict, base,
-##                                       self._has_coerce_map_from,
-##                                       self._names))
+        ParentWithBase.__init__(self, base, category=category)
 
     # Derived class *must* define ngens method.
     def ngens(self):
         check_old_coerce(self)
-        raise NotImplementedError, "Number of generators not known."
+        raise NotImplementedError("Number of generators not known.")
 
     # Derived class *must* define gen method.
     def gen(self, i=0):
         check_old_coerce(self)
-        raise NotImplementedError, "i-th generator not known."
+        raise NotImplementedError("i-th generator not known.")
 
     def gens(self):
        """
@@ -337,13 +154,13 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             return parent.Parent._assign_names(self, names=names, normalize=normalize)
         if names is None: return
         if normalize:
-            names = normalize_names(self.ngens(), names)
+            names = category_object.normalize_names(self.ngens(), names)
         if self._names is not None and names != self._names:
-            raise ValueError, 'variable names cannot be changed after object creation.'
+            raise ValueError('variable names cannot be changed after object creation.')
         if isinstance(names, str):
             names = (names, )  # make it a tuple
         elif not isinstance(names, tuple):
-            raise TypeError, "names must be a tuple of strings"
+            raise TypeError("names must be a tuple of strings")
         self._names = names
 
     #################################################################################
@@ -365,10 +182,6 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
         d['_list'] = self._list
         d['_names'] = self._names
         d['_latex_names'] = self._latex_names
-        try:
-            d['_generator_orders'] = self._generator_orders
-        except AttributeError:
-            pass
 
         return d
 
@@ -377,7 +190,6 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             return parent.Parent.__setstate__(self, d)
         try:
             self.__dict__.update(d)
-            self._generator_orders = d['_generator_orders']
         except (AttributeError,KeyError):
             pass
         self._base = d['_base']
@@ -391,33 +203,39 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
     # Morphisms of objects with generators
     #################################################################################
 
-    def hom(self, im_gens, codomain=None, check=True):
+    def hom(self, im_gens, codomain=None, base_map=None, category=None, check=True):
         r"""
         Return the unique homomorphism from self to codomain that
-        sends ``self.gens()`` to the entries of ``im_gens``.
+        sends ``self.gens()`` to the entries of ``im_gens``
+        and induces the map ``base_map`` on the base ring.
         Raises a TypeError if there is no such homomorphism.
 
         INPUT:
 
-        - ``im_gens`` - the images in the codomain of the generators of
+        - ``im_gens`` -- the images in the codomain of the generators of
           this object under the homomorphism
 
-        - ``codomain`` - the codomain of the homomorphism
+        - ``codomain`` -- the codomain of the homomorphism
 
-        - ``check`` - whether to verify that the images of generators extend
-          to define a map (using only canonical coercions).
+        - ``base_map`` -- a map from the base ring of the domain into something
+          that coerces into the codomain
+
+        - ``category`` -- the category of the resulting morphism
+
+        - ``check`` -- whether to verify that the images of generators extend
+          to define a map (using only canonical coercions)
 
         OUTPUT:
 
         - a homomorphism self --> codomain
 
-        .. note::
+        .. NOTE::
 
            As a shortcut, one can also give an object X instead of
            ``im_gens``, in which case return the (if it exists)
            natural map to X.
 
-        EXAMPLE: Polynomial Ring
+        EXAMPLES: Polynomial Ring
         We first illustrate construction of a few homomorphisms
         involving a polynomial ring.
 
@@ -432,7 +250,7 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             sage: f = R.hom([5], GF(7))
             Traceback (most recent call last):
             ...
-            TypeError: images do not define a valid homomorphism
+            ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
 
             sage: R.<x> = PolynomialRing(GF(7))
             sage: f = R.hom([3], GF(49,'a'))
@@ -446,7 +264,7 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             sage: f(x^2+1)
             3
 
-        EXAMPLE: Natural morphism
+        EXAMPLES: Natural morphism
 
         ::
 
@@ -454,7 +272,7 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             sage: f(7)
             2
             sage: f
-            Ring Coercion morphism:
+            Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
 
@@ -465,65 +283,38 @@ cdef class ParentWithGens(parent_base.ParentWithBase):
             sage: QQ.hom(ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: Natural coercion morphism from Rational Field to Integer Ring not defined.
+            TypeError: natural coercion morphism from Rational Field to Integer Ring not defined
+
+        You can specify a map on the base ring::
+
+            sage: k = GF(2)
+            sage: R.<a> = k[]
+            sage: l.<a> = k.extension(a^3 + a^2 + 1)
+            sage: R.<b> = l[]
+            sage: m.<b> = l.extension(b^2 + b + a)
+            sage: n.<z> = GF(2^6)
+            sage: m.hom([z^4 + z^3 + 1], base_map=l.hom([z^5 + z^4 + z^2]))
+            Ring morphism:
+              From: Univariate Quotient Polynomial Ring in b over Finite Field in a of size 2^3 with modulus b^2 + b + a
+              To:   Finite Field in z of size 2^6
+              Defn: b |--> z^4 + z^3 + 1
+                    with map of base ring
         """
         if self._element_constructor is not None:
-            return parent.Parent.hom(self, im_gens, codomain, check)
+            return parent.Parent.hom(self, im_gens, codomain, base_map=base_map, category=category, check=check)
         if isinstance(im_gens, parent.Parent):
             return self.Hom(im_gens).natural_map()
         if codomain is None:
             from sage.structure.all import Sequence
             im_gens = Sequence(im_gens)
             codomain = im_gens.universe()
-        return self.Hom(codomain)(im_gens, check=check)
-
-
-cdef class ParentWithMultiplicativeAbelianGens(ParentWithGens):
-    def __cinit__(self, *args, **kwds):
-        from sage.misc.superseded import deprecation
-        deprecation(18759, "the class ParentWithMultiplicativeAbelianGens is deprecated, use Parent instead")
-
-    def generator_orders(self):
-        check_old_coerce(self)
-        if self._generator_orders is not None:
-            return self._generator_orders
-        else:
-            g = []
-            for x in self.gens():
-                g.append(x.multiplicative_order())
-            self._generator_orders = g
-            return g
-
-    def __iter__(self):
-        """
-        Return an iterator over the elements in this object.
-        """
-        return gens_py.multiplicative_iterator(self)
-
-
-cdef class ParentWithAdditiveAbelianGens(ParentWithGens):
-    def __cinit__(self, *args, **kwds):
-        from sage.misc.superseded import deprecation
-        deprecation(18759, "the class ParentWithAdditiveAbelianGens is deprecated, use Parent instead")
-
-    def generator_orders(self):
-        check_old_coerce(self)
-        if self._generator_orders is not None:
-            return self._generator_orders
-        else:
-            g = []
-            for x in self.gens():
-                g.append(x.additive_order())
-            self._generator_orders = g
-            return g
-
-    def __iter__(self):
-        """
-        Return an iterator over the elements in this object.
-        """
-        return gens_py.abelian_iterator(self)
-
-
+        kwds = {}
+        if check is not None:
+            kwds['check'] = check
+        if base_map is not None:
+            kwds['base_map'] = base_map
+        Hom_kwds = {} if category is None else {'category': category}
+        return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)
 
 
 cdef class localvars:
@@ -553,11 +344,10 @@ cdef class localvars:
 
         sage: R.<x,y> = PolynomialRing(QQ,2)
         sage: with localvars(R, 'z,w'):
-        ...       print x^3 + y^3 - x*y
-        ...
+        ....:     print(x^3 + y^3 - x*y)
         z^3 + w^3 - z*w
 
-    .. note::
+    .. NOTE::
 
        I wrote this because it was needed to print elements of the
        quotient of a ring R by an ideal I using the print function for
@@ -576,7 +366,7 @@ cdef class localvars:
     def __init__(self, obj, names, latex_names=None, normalize=True):
         self._obj = obj
         if normalize:
-            self._names = normalize_names(obj.ngens(), names)
+            self._names = category_object.normalize_names(obj.ngens(), names)
             self._latex_names = latex_names
         else:
             self._names = names

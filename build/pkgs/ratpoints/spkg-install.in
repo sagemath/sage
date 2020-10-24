@@ -1,0 +1,46 @@
+PRIME_SIZE=7
+
+CCFLAGS_NO_SSE="-I$SAGE_LOCAL/include -Wall -O2 -fPIC -DRATPOINTS_MAX_BITS_IN_PRIME=$PRIME_SIZE"
+CCFLAGS2="-L$SAGE_LOCAL/lib -lgmp -lm $LDFLAGS"
+CCFLAGS3="-L. -lratpoints"
+
+if [[ "$UNAME" = "Darwin" ]]; then
+    CCFLAGS1="$CCFLAGS_NO_SSE"
+    echo "Building without SSE2 instructions (MacOS X)."
+else
+    CCFLAGS1="$CCFLAGS_NO_SSE -DUSE_SSE"
+    echo "Attempting to build ratpoints making use of SSE2 instructions."
+fi
+
+# Copy CFLAGS set externally to CCFLAGS.
+CCFLAGS="$CFLAGS"
+
+export CCFLAGS1
+export CCFLAGS2
+export CCFLAGS3
+export CCFLAGS
+
+cd src/
+
+#############################
+# Build (just) the library: #
+#############################
+
+# PLEASE, don't break this again by deleting "libratpoints.a".  See trac 8267.
+if ! $MAKE libratpoints.a; then
+    [ "$UNAME" = "Darwin" ] && sdh_die "Error building ratpoints."
+    echo "Build failed. Trying without SSE2 instructions."
+    CCFLAGS1="$CCFLAGS_NO_SSE"
+    sdh_make libratpoints.a
+fi
+
+##############################################
+# Install (just) the library and its header: #
+##############################################
+
+# The following requires that the Makefile got patched;
+# otherwise one could pass 'INSTALL_DIR=...' on the 'make'
+# command line:
+export INSTALL_DIR="$SAGE_DESTDIR_LOCAL"
+mkdir -p "$INSTALL_DIR"/{lib,include}
+sdh_make install-lib

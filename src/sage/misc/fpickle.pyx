@@ -1,10 +1,16 @@
+# cython: old_style_globals=True
+# cython: binding=True
 """
 Function pickling
 
 REFERENCE: The python cookbook.
 """
 
-import types, copy_reg, cPickle
+import copyreg
+import pickle
+import sys
+import types
+
 
 def code_ctor(*args):
     """
@@ -14,11 +20,12 @@ def code_ctor(*args):
 
         sage: def foo(a,b,c=10): return a+b+c
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
-        (<built-in function code_ctor>, ...)
+        (<cyfunction code_ctor at ...>, ...)
         sage: unpickle_function(pickle_function(foo))
         <function foo at ...>
     """
     return types.CodeType(*args)
+
 
 def reduce_code(co):
     """
@@ -26,16 +33,23 @@ def reduce_code(co):
 
         sage: def foo(N): return N+1
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
-        (<built-in function code_ctor>, ...)
+        (<cyfunction code_ctor at ...>, ...)
     """
     if co.co_freevars or co.co_cellvars:
         raise ValueError("Cannot pickle code objects from closures")
-    return code_ctor, (co.co_argcount, co.co_nlocals, co.co_stacksize,
-                       co.co_flags, co.co_code, co.co_consts, co.co_names,
-                       co.co_varnames, co.co_filename, co.co_name,
-                       co.co_firstlineno, co.co_lnotab)
 
-copy_reg.pickle(types.CodeType, reduce_code)
+    co_args = (co.co_argcount,)
+    if sys.version_info.minor >= 8:
+        co_args += (co.co_posonlyargcount,)
+    co_args += (co.co_kwonlyargcount, co.co_nlocals,
+                co.co_stacksize, co.co_flags, co.co_code,
+                co.co_consts, co.co_names, co.co_varnames, co.co_filename,
+                co.co_name, co.co_firstlineno, co.co_lnotab)
+
+    return (code_ctor, co_args)
+
+
+copyreg.pickle(types.CodeType, reduce_code)
 
 def pickle_function(func):
     """
@@ -64,20 +78,20 @@ def pickle_function(func):
         sage: h(10)
         11
     """
-    return cPickle.dumps(func.__code__)
+    return pickle.dumps(func.__code__)
 
 def unpickle_function(pickled):
     """
     Unpickle a pickled function.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: def f(N,M): return N*M
         ...
         sage: unpickle_function(pickle_function(f))(3,5)
         15
     """
-    recovered = cPickle.loads(pickled)
+    recovered = pickle.loads(pickled)
     return types.FunctionType(recovered, globals())
 
 
@@ -94,50 +108,57 @@ def call_pickled_function(fpargs):
 # import of twisted.persisted.styles takes a long time and we do not use
 # most functionality it provides
 def pickleMethod(method):
-    'support function for copy_reg to pickle method refs'
-    return unpickleMethod, (method.__func__.__name__,
-                             method.__self__,
-                             method.im_class)
+    'support function for copyreg to pickle method refs'
+
+    # Note: On Python 3 there is no .im_class but we can get the instance's
+    # class through .__self__.__class__
+    cls = getattr(method, 'im_class', method.__self__.__class__)
+    return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
+
 
 def unpickleMethod(im_name,
                     __self__,
                     im_class):
-    'support function for copy_reg to unpickle method refs'
+    'support function for copyreg to unpickle method refs'
     try:
         unbound = getattr(im_class,im_name)
         if __self__ is None:
             return unbound
-        bound=types.MethodType(unbound.__func__,
+
+        # Note: On Python 2 "unbound methods" are just functions, so they don't
+        # have a __func__
+        bound = types.MethodType(getattr(unbound, '__func__', unbound),
                                  __self__)
         return bound
     except AttributeError:
-        assert __self__ is not None,"No recourse: no instance to guess from."
+        assert __self__ is not None, "No recourse: no instance to guess from."
         # Attempt a common fix before bailing -- if classes have
         # changed around since we pickled this method, we may still be
         # able to get it by looking on the instance's current class.
-        unbound = getattr(__self__.__class__,im_name)
+        unbound = getattr(__self__.__class__, im_name)
         if __self__ is None:
             return unbound
-        bound=types.MethodType(unbound.__func__,
+
+        bound = types.MethodType(getattr(unbound, '__func__', unbound),
                                  __self__)
         return bound
 
-copy_reg.pickle(types.MethodType,
+copyreg.pickle(types.MethodType,
                 pickleMethod,
                 unpickleMethod)
 
 oldModules = {}
 
 def pickleModule(module):
-    'support function for copy_reg to pickle module refs'
+    'support function for copyreg to pickle module refs'
     return unpickleModule, (module.__name__,)
 
 def unpickleModule(name):
-    'support function for copy_reg to unpickle module refs'
+    'support function for copyreg to unpickle module refs'
     if name in oldModules:
         name = oldModules[name]
     return __import__(name,{},{},'x')
 
-copy_reg.pickle(types.ModuleType,
-                pickleModule,
-                unpickleModule)
+copyreg.pickle(types.ModuleType,
+               pickleModule,
+               unpickleModule)

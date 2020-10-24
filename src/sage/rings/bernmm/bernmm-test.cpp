@@ -70,7 +70,7 @@ void bern_naive(mpq_t* res, long n)
 */
 int testcase__bern_modp_powg(long p, long k, mpq_t b)
 {
-   double pinv = 1 / ((double) p);
+   mulmod_t pinv = PrepMulMod(p);
 
    // compute B_k mod p using _bern_modp_powg()
    long x = _bern_modp_powg(p, pinv, k);
@@ -147,7 +147,7 @@ int test__bern_modp_powg()
 */
 int testcase__bern_modp_pow2(long p, long k)
 {
-   double pinv = 1 / ((double) p);
+   mulmod_t pinv = PrepMulMod(p);
 
    if (PowerMod(2, k, p, pinv) == 1)
       return 1;

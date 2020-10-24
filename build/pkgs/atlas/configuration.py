@@ -5,7 +5,12 @@
 
 from __future__ import print_function
 
-import platform, os, sys, time, shutil, glob, subprocess
+import platform
+import os
+import sys
+import shutil
+import glob
+import subprocess
 
 
 # this dictionary will hold all configuration information
@@ -33,16 +38,6 @@ conf = dict()
 # 64bit?, 32bit?                                # bits
 # fortran_g95?, fortran_GNU?                    # fortran
 # linker_GNU?, linker_Solaris?, linker_Darwin?  # ld
-
-
-######################################################################
-### Sanity check
-######################################################################
-
-if 'SAGE_LOCAL' not in os.environ:
-    print("SAGE_LOCAL undefined ... exiting")
-    print("Maybe run 'sage -sh'?")
-    sys.exit(1)
 
 
 ######################################################################
@@ -161,19 +156,16 @@ conf['SPARC?'] = (platform.processor() == 'sparc')
 
 conf['generic_binary?'] = (os.environ.get('SAGE_FAT_BINARY', 'no') == 'yes')
 
+conf['user'] = os.environ.get('ATLAS_CONFIGURE', '')
+
 ######################################################################
 ### bit width
 ######################################################################
 
 conf['bits'] = platform.architecture()[0]
 
-if os.environ.get('SAGE64', 'no') == 'yes':
-    assert conf['bits'] == '64bit', 'SAGE64=yes on a 32-bit system!'
-    conf['64bit?'] = True
-else:
-    conf['64bit?'] = (conf['bits'] == '64bit')
-
-conf['32bit?'] = not conf['64bit?']
+conf['64bit?'] = (conf['bits'] == '64bit')
+conf['32bit?'] = (conf['bits'] != '64bit')
 
 
 ######################################################################
@@ -253,9 +245,5 @@ conf['SAGE_LOCAL'] = os.environ['SAGE_LOCAL']
 ######################################################################
 
 print("Configuration:")
-for key, value in conf.items():
-    print('    '+str(key)+': '+str(value))
-
-
-
-
+for k in sorted(conf, key=str.lower):
+    print('    {}: {}'.format(k, conf[k]))

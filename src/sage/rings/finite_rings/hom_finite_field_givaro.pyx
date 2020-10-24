@@ -1,3 +1,5 @@
+# distutils: libraries = givaro ntl gmp m
+# distutils: language = c++
 """
 Finite field morphisms using Givaro
 
@@ -25,24 +27,24 @@ AUTHOR:
 #****************************************************************************
 
 
-from sage.rings.finite_rings.constructor import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-from hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
-from hom_finite_field cimport FiniteFieldHomomorphism_generic
-from hom_finite_field cimport FrobeniusEndomorphism_finite_field
+from .hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
+from .hom_finite_field cimport FiniteFieldHomomorphism_generic
+from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
-from hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
+from .hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
 from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from element_givaro cimport FiniteField_givaroElement
+from .element_givaro cimport FiniteField_givaroElement
 #from element_givaro cimport make_FiniteField_givaroElement
 
 from sage.structure.parent cimport Parent
-from element_givaro cimport Cache_givaro
+from .element_givaro cimport Cache_givaro
 
 
 cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_generic):
@@ -151,7 +153,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         if not isinstance(codomain, FiniteField_givaro):
             raise TypeError("The codomain is not an instance of FiniteField_givaro")
 
-        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check,
+        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check=check,
                                                  section_class=SectionFiniteFieldHomomorphism_givaro)
 
         cdef Cache_givaro domain_cache = (<FiniteField_givaroElement>(domain.gen()))._cache

@@ -16,7 +16,6 @@ different types.  The hierarchy is as follows:
   - :class:`ManinSymbolList_character`
 
 """
-
 #*****************************************************************************
 #       Sage: System for Algebra and Geometry Experimentation
 #
@@ -33,23 +32,23 @@ different types.  The hierarchy is as follows:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
 
-import sage.matrix.all
-import sage.modular.cusps as cusps
 import sage.modular.modsym.p1list as p1list
 import sage.modular.modsym.g1list as g1list
 import sage.modular.modsym.ghlist as ghlist
-from sage.rings.arith import xgcd, gcd
 from sage.rings.all import Integer
 from sage.structure.parent import Parent
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
+from sage.structure.richcmp import richcmp_method, richcmp
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
-from apply import apply_to_monomial
+from .apply import apply_to_monomial
 
 from sage.modular.modsym.manin_symbol import ManinSymbol
 
 
+@richcmp_method
 class ManinSymbolList(Parent):
     """
     Base class for lists of all Manin symbols for a given weight, group or character.
@@ -80,7 +79,7 @@ class ManinSymbolList(Parent):
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList
             sage: ManinSymbolList(6,P1List(11))
-            <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_with_category'>
+            <sage.modular.modsym.manin_symbol_list.ManinSymbolList_with_category object at ...>
         """
         self._weight = weight
         self._symbol_list = lst
@@ -104,7 +103,7 @@ class ManinSymbolList(Parent):
             x = x.tuple()
         return self.element_class(self, x)
 
-    def __cmp__(self, right):
+    def __richcmp__(self, right, op):
         """
         Comparison function for ManinSymbolList objects.
 
@@ -122,9 +121,9 @@ class ManinSymbolList(Parent):
             False
         """
         if not isinstance(right, ManinSymbolList):
-            return cmp(type(self), type(right))
-        return cmp((self._weight, self._symbol_list),
-                   (right._weight, right._symbol_list))
+            return NotImplemented
+        return richcmp((self._weight, self._symbol_list),
+                       (right._weight, right._symbol_list), op)
 
     def symbol_list(self):
         """
@@ -277,7 +276,7 @@ class ManinSymbolList(Parent):
             sage: m.index(m.symbol_list()[2])
             2
             sage: S = m.symbol_list()
-            sage: all([i == m.index(S[i]) for i in xrange(len(S))])
+            sage: all(i == m.index(S[i]) for i in range(len(S)))
             True
         """
         if x in self._index:
@@ -322,8 +321,8 @@ class ManinSymbolList(Parent):
         try:
             return copy.copy(self.__manin_symbol_list)
         except AttributeError:
-            self.__manin_symbol_list = [self.manin_symbol(i) \
-                                        for i in xrange(len(self))]
+            self.__manin_symbol_list = [self.manin_symbol(i)
+                                        for i in range(len(self))]
         return copy.copy(self.__manin_symbol_list)
 
     list = manin_symbol_list
@@ -407,8 +406,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_group
         sage: ManinSymbolList_group(11, 2, P1List(11))
-        <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category'>
-
+        <sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category object at ...>
     """
     def __init__(self, level, weight, syms):
         """
@@ -427,7 +425,7 @@ class ManinSymbolList_group(ManinSymbolList):
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_group
             sage: L = ManinSymbolList_group(11, 2, P1List(11)); L
-            <class 'sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category'>
+            <sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category object at ...>
         """
         self.__level = level
         self.__syms = syms  # syms is anything with a normalize and list method.
@@ -474,7 +472,7 @@ class ManinSymbolList_group(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where k is the index of the symbol obtained by acting on the
-        `j`'th symbol with `S`, and `s` is the parity of of the `j`'th symbol
+        `j`'th symbol with `S`, and `s` is the parity of the `j`'th symbol
         (a Python ``int``, either 1 or -1).
 
         EXAMPLES::
@@ -483,7 +481,7 @@ class ManinSymbolList_group(ManinSymbolList):
             sage: m = ManinSymbolList_gamma0(5,8)
             sage: m.apply_S(4)
             (40, 1)
-            sage: [m.apply_S(i) for i in xrange(len(m))]
+            sage: [m.apply_S(i) for i in range(len(m))]
             [(37, 1),
             (36, 1),
             (41, 1),
@@ -532,16 +530,16 @@ class ManinSymbolList_group(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where k is the index of the symbol obtained by acting on the
-        `j`'th symbol with `I`, and `s` is the parity of of the `j`'th symbol
+        `j`'th symbol with `I`, and `s` is the parity of the `j`'th symbol
         (a Python ``int``, either 1 or -1)
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
             sage: m = ManinSymbolList_gamma0(5,8)
             sage: m.apply_I(4)
             (3, 1)
-            sage: [m.apply_I(i) for i in xrange(10)]
+            sage: [m.apply_I(i) for i in range(10)]
             [(0, 1),
             (1, 1),
             (5, 1),
@@ -570,13 +568,13 @@ class ManinSymbolList_group(ManinSymbolList):
 
         OUTPUT: see documentation for apply()
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
             sage: m = ManinSymbolList_gamma0(5,8)
             sage: m.apply_T(4)
             [(3, 1), (9, -6), (15, 15), (21, -20), (27, 15), (33, -6), (39, 1)]
-            sage: [m.apply_T(i) for i in xrange(10)]
+            sage: [m.apply_T(i) for i in range(10)]
             [[(5, 1), (11, -6), (17, 15), (23, -20), (29, 15), (35, -6), (41, 1)],
             [(0, 1), (6, -6), (12, 15), (18, -20), (24, 15), (30, -6), (36, 1)],
             [(4, 1), (10, -6), (16, 15), (22, -20), (28, 15), (34, -6), (40, 1)],
@@ -613,13 +611,13 @@ class ManinSymbolList_group(ManinSymbolList):
 
         OUTPUT: see documentation for apply()
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
             sage: m = ManinSymbolList_gamma0(5,8)
             sage: m.apply_TT(4)
             [(38, 1)]
-            sage: [m.apply_TT(i) for i in xrange(10)]
+            sage: [m.apply_TT(i) for i in range(10)]
             [[(37, 1)],
             [(41, 1)],
             [(39, 1)],
@@ -665,7 +663,7 @@ class ManinSymbolList_group(ManinSymbolList):
         `g = [a, b; c, d]` on a Manin symbol `[P(X,Y),(u,v)]` is
         `[P(aX+bY,cX+dY),(u,v)\*g]`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
             sage: m = ManinSymbolList_gamma0(5,8)
@@ -697,7 +695,7 @@ class ManinSymbolList_group(ManinSymbolList):
         ``(i,u,v)`` -- (3-tuple of ints) another tuple defining the associated
         normalized ManinSymbol
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
             sage: m = ManinSymbolList_gamma0(5,8)
@@ -727,7 +725,7 @@ class ManinSymbolList_gamma0(ManinSymbolList_group):
 
     - ``weight`` - (integer): the weight.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma0
         sage: m = ManinSymbolList_gamma0(5,2); m
@@ -780,7 +778,7 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
 
     - ``weight`` - (integer): the weight.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma1
         sage: m = ManinSymbolList_gamma1(5,2); m
@@ -800,7 +798,7 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
         True
     """
     def __init__(self, level, weight):
-        """
+        r"""
         Constructor for a ModularSymbolList for `\Gamma_0(N)`.
 
         EXAMPLES::
@@ -837,7 +835,7 @@ class ManinSymbolList_gamma_h(ManinSymbolList_group):
 
     - ``weight`` - (integer): the weight.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma_h
         sage: G = GammaH(117, [4])
@@ -863,7 +861,7 @@ class ManinSymbolList_gamma_h(ManinSymbolList_group):
         r"""
         Constructor for Manin symbols for `\Gamma_H(N)`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_gamma_h
             sage: G = GammaH(117, [4])
@@ -907,7 +905,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
     - ``weight`` -- (integer) the weight
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: eps = DirichletGroup(4).gen(0)
         sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -961,7 +959,7 @@ class ManinSymbolList_character(ManinSymbolList):
         """
         Standard function returning string representation.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1047,7 +1045,7 @@ class ManinSymbolList_character(ManinSymbolList):
         on the `j`'th symbol with `S`, and `s` is the parity of the
         `j`'th symbol.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1055,7 +1053,7 @@ class ManinSymbolList_character(ManinSymbolList):
             Manin Symbol List of weight 2 for Gamma1(4) with character [-1]
             sage: m.apply_S(4)
             (2, -1)
-            sage: [m.apply_S(i) for i in xrange(len(m))]
+            sage: [m.apply_S(i) for i in range(len(m))]
             [(1, 1), (0, -1), (4, 1), (5, -1), (2, -1), (3, 1)]
         """
         i, u, v = self._symbol_list[j]
@@ -1093,10 +1091,10 @@ class ManinSymbolList_character(ManinSymbolList):
         OUTPUT:
 
         ``(k, s)`` where `k` is the index of the symbol obtained by acting
-        on the `j`'th symbol with `I`, and `s` is the parity of of the
+        on the `j`'th symbol with `I`, and `s` is the parity of the
         `j`'th symbol.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1104,7 +1102,7 @@ class ManinSymbolList_character(ManinSymbolList):
             Manin Symbol List of weight 2 for Gamma1(4) with character [-1]
             sage: m.apply_I(4)
             (2, -1)
-            sage: [m.apply_I(i) for i in xrange(len(m))]
+            sage: [m.apply_I(i) for i in range(len(m))]
             [(0, 1), (1, -1), (4, -1), (3, -1), (2, -1), (5, 1)]
         """
         i, u, v = self._symbol_list[j]
@@ -1129,7 +1127,7 @@ class ManinSymbolList_character(ManinSymbolList):
         sum `c_i*x_i` is the image of self under the right action
         of the matrix `T`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1137,7 +1135,7 @@ class ManinSymbolList_character(ManinSymbolList):
             Manin Symbol List of weight 2 for Gamma1(4) with character [-1]
             sage: m.apply_T(4)
             [(1, -1)]
-            sage: [m.apply_T(i) for i in xrange(len(m))]
+            sage: [m.apply_T(i) for i in range(len(m))]
             [[(4, 1)], [(0, -1)], [(3, 1)], [(5, 1)], [(1, -1)], [(2, 1)]]
         """
         k = self._weight
@@ -1171,7 +1169,7 @@ class ManinSymbolList_character(ManinSymbolList):
         sum `c_i*x_i` is the image of self under the right action
         of the matrix `T^2`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1179,7 +1177,7 @@ class ManinSymbolList_character(ManinSymbolList):
             Manin Symbol List of weight 2 for Gamma1(4) with character [-1]
             sage: m.apply_TT(4)
             [(0, 1)]
-            sage: [m.apply_TT(i) for i in xrange(len(m))]
+            sage: [m.apply_TT(i) for i in range(len(m))]
             [[(1, -1)], [(4, -1)], [(5, 1)], [(2, 1)], [(0, 1)], [(3, 1)]]
         """
         k = self._weight
@@ -1206,7 +1204,7 @@ class ManinSymbolList_character(ManinSymbolList):
 
         The Dirichlet character of this Manin symbol list.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character
@@ -1235,7 +1233,7 @@ class ManinSymbolList_character(ManinSymbolList):
         base field).  If there is no Manin symbol equivalent to ``x``
         in the list, then ``(-1, 0)`` is returned.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: eps = DirichletGroup(4).gen(0)
             sage: from sage.modular.modsym.manin_symbol_list import ManinSymbolList_character

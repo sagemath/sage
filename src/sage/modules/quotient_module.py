@@ -1,6 +1,7 @@
 r"""
 Quotients of finite rank free modules over a field.
 """
+from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -17,7 +18,8 @@ Quotients of finite rank free modules over a field.
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-from free_module import FreeModule_ambient_field
+from .free_module import FreeModule_ambient_field
+
 
 class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
     """
@@ -31,41 +33,57 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: A = k^3; V = A.span([[1,0,i], [2,i,0]])
         sage: W = A.span([[3,i,i]])
         sage: U = V/W; U
-        Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 where
-        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I where
+        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: U.V()
-        Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
         sage: U.W()
-        Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: U.quotient_map()
         Vector space morphism represented by the matrix:
         [  1]
         [3*i]
-        Domain: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Domain: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        Codomain: Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 where
-        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1
+        Codomain: Vector space quotient V/W of dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I where
+        V: Vector space of degree 3 and dimension 2 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [ 1  0  i]
         [ 0  1 -2]
-        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1
+        W: Vector space of degree 3 and dimension 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
         Basis matrix:
         [    1 1/3*i 1/3*i]
         sage: Z = V.quotient(W)
         sage: Z == U
+        True
+
+    We create three quotient spaces and compare them::
+
+        sage: A = QQ^2
+        sage: V = A.span_of_basis([[1,0], [1,1]])
+        sage: W0 = V.span([V.1, V.0])
+        sage: W1 = V.span([V.1])
+        sage: W2 = V.span([V.1])
+        sage: Q0 = V/W0
+        sage: Q1 = V/W1
+        sage: Q2 = V/W2
+
+        sage: Q0 == Q1
+        False
+        sage: Q1 == Q2
         True
 
     TESTS::
@@ -79,9 +97,10 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: type(loads(dumps(U)) )
         <class 'sage.modules.quotient_module.FreeModule_ambient_field_quotient_with_category'>
     """
-    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix = None):
+    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix=None):
         """
-        Create this quotient space, from the given domain, sub-module, and quotient_matrix.
+        Create this quotient space, from the given domain, submodule,
+        and quotient_matrix.
 
         EXAMPLES::
 
@@ -95,9 +114,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             User basis matrix:
             [1/3 2/3  -1 5/9 1/2]
 
-        This creates a quotient vector space, which calls the init method::
+        This creates a quotient vector space::
 
-            sage: Q = V / W  #indirect doctest
+            sage: Q = V / W
 
         Behold the type of Q::
 
@@ -157,8 +176,8 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def __hash__(self):
         """
-        Return hash of this quotient space V/W, which is by definition the hash of
-        the tuple (V,W).
+        Return hash of this quotient space `V/W`, which is, by definition,
+        the hash of the tuple `(V, W)`.
 
         EXAMPLES:
 
@@ -168,44 +187,10 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             sage: A = QQ^2; V = A.span_of_basis([[1,0], [1,1]]); W = V.span([V.1, V.0])
             sage: Q = V/W; Q.dimension()
             0
-            sage: hash(Q)
-            954887582               # 32-bit
-            -5856620741060301410    # 64-bit
-
-        The hash is just got by hashing both V and W::
-
-            sage: hash((V, W))
-            954887582             # 32-bit
-            -5856620741060301410  # 64-bit
-        """
-        return self.__hash
-
-    def __cmp__(self, other):
-        """
-        Compare self and other.
-
-        If other is not a quotient of vector spaces, returns
-        comparison of the underlying types.  If it is, return
-        comparison of the pair (V,W) so that self is V/W for each of
-        self and other.
-
-        EXAMPLES:
-        We create three quotient spaces and compare them:
-            sage: A = QQ^2; V = A.span_of_basis([[1,0], [1,1]]);
-            sage: W0 = V.span([V.1, V.0]); W1 = V.span([V.1]); W2 = V.span([V.1])
-            sage: Q0 = V/W0; Q1 = V/W1; Q2 = V/W2
-            sage: cmp(Q0, Q1)
-            1
-            sage: cmp(Q1, Q0)
-            -1
-            sage: cmp(Q1, Q2)
-            0
-            sage: cmp(Q1, 5) != 0
+            sage: hash(Q) == hash((V,W))
             True
         """
-        if not isinstance(other, FreeModule_ambient_field_quotient):
-            return cmp(type(self), type(other))
-        return cmp((self.V(), self.W()), (other.V(), other.W()))
+        return self.__hash
 
     def _element_constructor_(self, x):
         """
@@ -276,23 +261,23 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             Composite map:
               From: Ambient free module of rank 2 over the principal ideal domain Integer Ring
               To:   Vector space quotient V/W of dimension 1 over Rational Field where
-                    V: Vector space of dimension 2 over Rational Field
-                    W: Vector space of degree 2 and dimension 1 over Rational Field
-                    Basis matrix:
-                    [1 2]
-              Defn:   Conversion map:
+            V: Vector space of dimension 2 over Rational Field
+            W: Vector space of degree 2 and dimension 1 over Rational Field
+            Basis matrix:
+            [1 2]
+              Defn:   Coercion map:
                       From: Ambient free module of rank 2 over the principal ideal domain Integer Ring
                       To:   Vector space of dimension 2 over Rational Field
                     then
                       Vector space morphism represented by the matrix:
-                      [   1]
-                      [-1/2]
-                      Domain: Vector space of dimension 2 over Rational Field
-                      Codomain: Vector space quotient V/W of dimension 1 over Rational Field where
-                                V: Vector space of dimension 2 over Rational Field
-                                W: Vector space of degree 2 and dimension 1 over Rational Field
-                                Basis matrix:
-                                [1 2]
+                    [   1]
+                    [-1/2]
+                    Domain: Vector space of dimension 2 over Rational Field
+                    Codomain: Vector space quotient V/W of dimension 1 over Rational Field where
+                    V: Vector space of dimension 2 over Rational Field
+                    W: Vector space of degree 2 and dimension 1 over Rational Field
+                    Basis matrix:
+                    [1 2]
 
         Make sure :trac:`10513` is fixed (no coercion from an abstract
         vector space to an isomorphic quotient vector space)::
@@ -318,7 +303,8 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def quotient_map(self):
         """
-        Given this quotient space $Q = V/W$, return the natural quotient map from V to Q.
+        Given this quotient space `Q = V / W`, return the natural quotient
+        map from `V` to `Q`.
 
         EXAMPLES::
 
@@ -341,9 +327,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         return self.__quo_map
 
     def lift_map(self):
-        """
-        Given this quotient space $Q = V/W$, return a fixed choice of linear homomorphism
-        (a section) from Q to V.
+        r"""
+        Given this quotient space `Q = V / W`, return a fixed choice of
+        linear homomorphism (a section) from `Q` to `V`.
 
         EXAMPLES::
 
@@ -362,8 +348,9 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         return self.__lift_map
 
     def lift(self, x):
-        """
-        Lift element of this quotient V/W to V by applying the fixed lift homomorphism.
+        r"""
+        Lift element of this quotient `V / W` to `V` by applying
+        the fixed lift homomorphism.
 
         The lift is a fixed homomorphism.
 
@@ -381,11 +368,11 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def W(self):
         """
-        Given this quotient space $Q = V/W$, return W.
+        Given this quotient space `Q = V/W`, return `W`.
 
         EXAMPLES::
 
-            sage: M = QQ^10 / [range(10), range(2,12)]
+            sage: M = QQ^10 / [list(range(10)), list(range(2,12))]
             sage: M.W()
             Vector space of degree 10 and dimension 2 over Rational Field
             Basis matrix:
@@ -396,11 +383,11 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def V(self):
         """
-        Given this quotient space $Q = V/W$, return $V$.
+        Given this quotient space `Q = V/W`, return `V`.
 
         EXAMPLES::
 
-            sage: M = QQ^10 / [range(10), range(2,12)]
+            sage: M = QQ^10 / [list(range(10)), list(range(2,12))]
             sage: M.V()
             Vector space of dimension 10 over Rational Field
         """
@@ -408,11 +395,13 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def cover(self):
         """
-        Given this quotient space $Q = V/W$, return $V$.  This is the same as self.V().
+        Given this quotient space `Q = V/W`, return `V`.
+
+        This is the same as :meth:`V`.
 
         EXAMPLES::
 
-            sage: M = QQ^10 / [range(10), range(2,12)]
+            sage: M = QQ^10 / [list(range(10)), list(range(2,12))]
             sage: M.cover()
             Vector space of dimension 10 over Rational Field
         """
@@ -420,11 +409,13 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
 
     def relations(self):
         """
-        Given this quotient space $Q = V/W$, return $W$.  This is the same as self.W().
+        Given this quotient space `Q = V/W`, return `W`.
+
+        This is the same as :meth:`W`.
 
         EXAMPLES::
 
-            sage: M = QQ^10 / [range(10), range(2,12)]
+            sage: M = QQ^10 / [list(range(10)), list(range(2,12))]
             sage: M.relations()
             Vector space of degree 10 and dimension 2 over Rational Field
             Basis matrix:
@@ -432,3 +423,4 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
             [ 0  1  2  3  4  5  6  7  8  9]
         """
         return self.W()
+

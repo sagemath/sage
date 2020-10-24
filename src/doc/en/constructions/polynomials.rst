@@ -42,23 +42,23 @@ Another approach to this:
     sage: a = S.gen()
     sage: a^20062006
     80*a
-    sage: print gap.eval("R:= PolynomialRing( GF(97))")
+    sage: print(gap.eval("R:= PolynomialRing( GF(97))"))
     GF(97)[x_1]
-    sage: print gap.eval("i:= IndeterminatesOfPolynomialRing(R)")
+    sage: print(gap.eval("i:= IndeterminatesOfPolynomialRing(R)"))
     [ x_1 ]
     sage: gap.eval("x:= i[1];; f:= x;;")
     ''
-    sage: print gap.eval("PowerMod( R, x, 20062006, x^3+7 );")
+    sage: print(gap.eval("PowerMod( R, x, 20062006, x^3+7 );"))
     Z(97)^41*x_1
-    sage: print gap.eval("PowerMod( R, x, 20062006, x^3+7 );")
+    sage: print(gap.eval("PowerMod( R, x, 20062006, x^3+7 );"))
     Z(97)^41*x_1
-    sage: print gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );")
+    sage: print(gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );"))
     Z(97)^4*x_1^2
     sage: a^2006200620062006
     43*a^2
-    sage: print gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );")
+    sage: print(gap.eval("PowerMod( R, x, 2006200620062006, x^3+7 );"))
     Z(97)^4*x_1^2
-    sage: print gap.eval("Int(Z(97)^4)")
+    sage: print(gap.eval("Int(Z(97)^4)"))
     43
 
 .. index::
@@ -114,8 +114,7 @@ This example illustrates multivariate polynomial GCD's:
 
 ::
 
-    sage: R = PolynomialRing(RationalField(),3, ['x','y','z'], 'lex')
-    sage: x,y,z = PolynomialRing(RationalField(),3, ['x','y','z'], 'lex').gens()
+    sage: R.<x,y,z> = PolynomialRing(RationalField(), order='lex')
     sage: f = 3*x^2*(x+y)
     sage: g = 9*x*(y^2 - x^2)
     sage: f.gcd(g)

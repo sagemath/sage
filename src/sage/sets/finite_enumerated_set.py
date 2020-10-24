@@ -1,7 +1,7 @@
 """
 Finite Enumerated Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,8 +13,9 @@ Finite Enumerated Sets
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+from __future__ import print_function
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -54,7 +55,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         Category of facade finite enumerated sets
         sage: TestSuite(S).run()
 
-    Note that being and enumerated set, the result depends on the order::
+    Note that being an enumerated set, the result depends on the order::
 
         sage: S1 = FiniteEnumeratedSet((1, 2, 3))
         sage: S1
@@ -74,7 +75,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         sage: S1
         {1, 2, 1, 2, 2, 3}
 
-    Finaly the elements are not aware of their parent::
+    Finally, the elements are not aware of their parent::
 
         sage: S.first().parent()
         Integer Ring
@@ -111,7 +112,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         self._elements = elements
         Parent.__init__(self, facade = True, category = FiniteEnumeratedSets())
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Conversion to boolean.
 
@@ -123,6 +124,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             False
         """
         return bool(self._elements)
+
+    __nonzero__ = __bool__
 
     def _repr_(self):
         """
@@ -169,7 +172,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: for i in FiniteEnumeratedSet([1,2,3]): print i
+            sage: for i in FiniteEnumeratedSet([1,2,3]): print(i)
             1
             2
             3
@@ -269,7 +272,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
     def unrank(self,i):
         r"""
-        Return the element at position i.
+        Return the element at position ``i``.
 
         EXAMPLES::
 
@@ -279,7 +282,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S[3]
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
             sage: S[-1], S[-2], S[-3]
             (-51, 'a', 1)
             sage: S[-4]
@@ -305,9 +308,9 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         :meth:`Parent.__call__` enforces that
         :meth:`_element_constructor_` return an :class:`Element` (more
         precisely, it calls :meth:`_element_constructor_` through a
-        :class:`sage.structure.coerce_maps.DefaultConvertMap`, and any
-        :class:`sage.categories.map.Map` requires its results to be
-        instances of :class:`Element`).
+        :class:`sage.structure.coerce_maps.DefaultConvertMap_unique`,
+        and any :class:`sage.categories.map.Map` requires its results
+        to be instances of :class:`Element`).
 
         Since :class:`FiniteEnumeratedSets` is often a facade over
         plain Python objects, :trac:`16280` introduced this method
@@ -320,6 +323,11 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
             This workaround prevents conversions or coercions from
             facade parents over plain Python objects into ``self``.
+
+        If the :meth:`Parent.__call__` fails, then we try
+        :meth:`_element_constructor_` directly as the element returned
+        may not be a subclass of :class:`Element`, which is currently
+        not supported (see :trac:`19553`).
 
         EXAMPLES::
 
@@ -339,7 +347,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             2
             sage: phi.register_as_conversion()
 
-            sage: from sage.structure.parent import Set_PythonType_class
+            sage: from sage.sets.pythonclass import Set_PythonType_class
             sage: psi = Hom(Set_PythonType_class(str), F, Sets())(lambda s: ZZ(len(s)))
             sage: psi.register_as_conversion()
             sage: psi('a')
@@ -348,11 +356,21 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             2
             sage: F('a')
             'a'
+
+        Check that :trac:`19554` is fixed::
+
+            sage: S = FiniteEnumeratedSet(range(5))
+            sage: S(1)
+            1
+            sage: type(S(1))
+            <type 'int'>
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
+        try:
             return Parent.__call__(self, el)
+        except TypeError:
+            return self._element_constructor_(el)
 
     def _element_constructor_(self, el):
         """

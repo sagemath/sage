@@ -13,7 +13,7 @@ in Sage effectively and efficiently.
 
 Note that we try to explain notions, but we do not show here how to
 implement them. An implementation-oriented tutorial is available as a
-`Sage thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`Sage thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Elements
 --------
@@ -56,7 +56,7 @@ providing different implementations of the same mathematical structure
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
     sage: type(a); type(b); type(c)
     <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    <class 'sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_sparse'>
+    <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category.element_class'>
     <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
 
 That poses two problems: On the one hand, if one has elements that are
@@ -118,6 +118,7 @@ implemented in Sage as well:
     sage: ZZ.category()
     Join of Category of euclidean domains
         and Category of infinite enumerated sets
+        and Category of metric spaces
     sage: ZZ.category().is_subcategory(Rings())
     True
     sage: ZZ in Rings()
@@ -205,7 +206,7 @@ type conversion in C with conversion in Sage!
 We give here a rather brief account. For a detailed description and
 for information on the implementation, we refer to the section on
 coercion in the reference manual and to the
-`thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 There are two extremal positions concerning the possibility
 of doing arithmetic with elements of *different* rings:
@@ -379,7 +380,7 @@ in our example). If several potential common parents seem equally
 natural, Sage will *not* pick one of them at random, in order to have
 a reliable result. The mechanisms which that choice is based upon is
 explained in the
-`thematic tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`thematic tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 No coercion into a common parent will take place in the following
 example:
@@ -391,7 +392,7 @@ example:
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 The reason is that Sage would not choose one of the potential
 candidates ``QQ['x']['y']``, ``QQ['y']['x']``, ``QQ['x','y']`` or

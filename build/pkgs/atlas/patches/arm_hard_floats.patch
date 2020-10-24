@@ -1,6 +1,6 @@
-diff -druN ATLAS.detect/CONFIG/src/atlcomp.txt ATLAS/CONFIG/src/atlcomp.txt
---- ATLAS.detect/CONFIG/src/atlcomp.txt	2013-01-08 10:15:42.000000000 -0800
-+++ ATLAS/CONFIG/src/atlcomp.txt	2014-02-10 04:36:26.113011794 -0800
+diff -druN ATLAS.detect/ATLAS/CONFIG/src/atlcomp.txt ATLAS/ATLAS/CONFIG/src/atlcomp.txt
+--- ATLAS.detect/ATLAS/CONFIG/src/atlcomp.txt	2013-01-08 10:15:42.000000000 -0800
++++ ATLAS/ATLAS/CONFIG/src/atlcomp.txt	2014-02-10 04:36:26.113011794 -0800
 @@ -255,13 +255,13 @@
  # ARM defaults
  #

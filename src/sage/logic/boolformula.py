@@ -123,7 +123,8 @@ AUTHORS:
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
 
 """
-#*****************************************************************************
+from __future__ import absolute_import, division
+# *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
@@ -131,14 +132,13 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-import booleval
-import logictable
-import logicparser
+from . import booleval
+from . import logictable
+from . import logicparser
 # import boolopt
-from types import TupleType, ListType
 from sage.misc.flatten import flatten
 
 latex_operators = [('&', '\\wedge '),
@@ -503,7 +503,7 @@ class BooleanFormula(object):
 
     def __eq__(self, other):
         r"""
-        Overload the ``==`` operator to deterine logical equivalence.
+        Overload the ``==`` operator to determine logical equivalence.
 
         INPUT:
 
@@ -545,7 +545,7 @@ class BooleanFormula(object):
         - ``start`` -- (default: 0) an integer; this is the first
           row of the truth table to be created
 
-        - ``end`` -- (default: -1) an integer; this is the laste
+        - ``end`` -- (default: -1) an integer; this is the last
           row of the truth table to be created
 
         OUTPUT:
@@ -742,6 +742,90 @@ class BooleanFormula(object):
             False
         """
         return not self.is_satisfiable()
+
+    def is_consequence(self, *hypotheses):
+        r"""
+        Determine if ``self`` (the desired conclusion) is a logical consequence of the
+        hypotheses. The function call ``is_consequence(conclusion, *hypotheses)`` is a
+        synonym for ``conclusion.is_consequence(*hypotheses)``.
+
+        INPUT:
+
+        - ``*hypotheses`` -- instances of :class:`BooleanFormula`
+
+        OUTPUT:
+
+        A boolean value to be determined as follows:
+
+        - ``True`` - if ``self`` (the desired conclusion) is a logical consequence
+          of the set of hypotheses
+
+        - ``False`` - if ``self`` (the desired conclusion) is not a logical consequence
+          of the set of hypotheses
+
+        EXAMPLES::
+
+            sage: from sage.logic.propcalc import formula
+            sage: formula("a | b").is_consequence(formula("b"))
+            True
+            sage: formula("a & b").is_consequence(formula("b"))
+            False
+            sage: formula("b").is_consequence(formula("a"), formula("a -> b"))
+            True
+            sage: formula("b -> a").is_consequence(formula("a -> b"))
+            False
+            sage: formula("~b -> ~a").is_consequence(formula("a -> b"))
+            True
+
+        ::
+
+            sage: f, g, h = propcalc.get_formulas("a & ~b", "c -> b", "c | e")
+            sage: propcalc.formula("a & e").is_consequence(f, g, h)
+            True
+            sage: i = propcalc.formula("a & ~e")
+            sage: i.is_consequence(f, g, h)
+            False
+            sage: from sage.logic.boolformula import is_consequence
+            sage: is_consequence(i, f, g, h)
+            False
+            sage: is_consequence(propcalc.formula("((p <-> q) & r) -> ~c"), f, g, h)
+            True
+
+        Only a tautology is a logical consequence of an empty set of formulas::
+
+            sage: propcalc.formula("a | ~a").is_consequence()
+            True
+            sage: propcalc.formula("a | b").is_consequence()
+            False
+
+        TESTS:
+
+        Arguments must be instances of :class:`BooleanFormula` (not strings, for example)::
+
+            sage: propcalc.formula("a | b").is_consequence("a | b")
+            Traceback (most recent call last):
+            ...
+            TypeError: is_consequence only takes instances of BooleanFormula() class as input
+
+        AUTHORS:
+
+        - Paul Scurek (2013-08-12)
+        """
+        # make sure every argument is an instance of :class:`BooleanFormula`
+        for formula in (self,) + hypotheses:
+            if not isinstance(formula, BooleanFormula):
+                raise TypeError("is_consequence only takes instances of BooleanFormula() class as input")
+
+        if not hypotheses:
+            # if there are no hypotheses, then we just want to know whether self is a tautology
+            return self.is_tautology()
+        else:
+            # conjoin all of the hypotheses into a single Boolean formula
+            conjunction = hypotheses[0]
+            for hypothesis in hypotheses[1:]:
+                conjunction = conjunction & hypothesis
+
+            return conjunction.implies(self)
 
     def implies(self, other):
         r"""
@@ -967,7 +1051,7 @@ class BooleanFormula(object):
                 s += '0 '
             else:
                 varname = ''
-                while i < self.__expression[i] not in '|) ':
+                if self.__expression[i] not in '|) ':
                     varname += self.__expression[i]
                     i += 1
                 s += vars_num[varname] + ' '
@@ -989,7 +1073,8 @@ class BooleanFormula(object):
 #        OUTPUT:
 #            A simplified expression.
 #
-#        EXAMPLES:
+#        EXAMPLES::
+
 #            sage: import sage.logic.propcalc as propcalc
 #            sage: f = propcalc.formula("a&((b|c)^a->c)<->b")
 #            sage: f.truthtable()
@@ -1015,7 +1100,7 @@ class BooleanFormula(object):
 #            True   True   False  True
 #            True   True   True   True
 #
-#        .. NOTES::
+#        .. NOTE::
 #
 #            If the instance of boolean formula has not been converted to
 #            cnf form by a call to convert_cnf() or convert_cnf_recur()
@@ -1029,16 +1114,16 @@ class BooleanFormula(object):
 #        wtd = boolopt.WFFtoDNF()
 #        dnf = wtd(wff)
 #        dnf = wtd.clean(dnf)
-#        if(dnf == [] or dnf == [[]]):
+#        if dnf == [] or dnf == [[]]:
 #            exp = self.__vars_order[0] + '&~' + self.__vars_order[0] + ' '
 #        opt = boolopt.optimize(dnf)
-#        if(exp == '' and (opt == [] or opt == [[]])):
+#        if exp == '' and (opt == [] or opt == [[]]):
 #            exp = self.__vars_order[0] + '|~' + self.__vars_order[0] + ' '
-#        if(exp == ''):
+#        if exp == '':
 #            for con in opt:
 #                s = '('
 #                for prop in con:
-#                    if(prop[0] == 'notprop'):
+#                    if prop[0] == 'notprop':
 #                       s += '~'
 #                    s += prop[1] + '&'
 #                exp += s[:-1] + ')|'
@@ -1079,11 +1164,11 @@ class BooleanFormula(object):
             :func:`~sage.logic.logicparser.apply_func()` in
             :mod:`~sage.logic.logicparser`.
         """
-        if not isinstance(tree[1], TupleType) and not (tree[1] is None):
+        if not isinstance(tree[1], tuple) and not (tree[1] is None):
             lval = ('prop', tree[1])
         else:
             lval = tree[1]
-        if not isinstance(tree[2], TupleType) and not(tree[2] is None):
+        if not isinstance(tree[2], tuple) and not(tree[2] is None):
             rval = ('prop', tree[2])
         else:
             rval = tree[2]
@@ -1182,11 +1267,8 @@ class BooleanFormula(object):
         """
         bits = []
         while x > 0:
-            if x % 2 == 0:
-                b = False
-            else:
-                b = True
-            x = int(x / 2)
+            b = bool(x % 2)
+            x = x // 2
             bits.append(b)
         if c > len(bits) - 1:
             return False
@@ -1270,7 +1352,7 @@ class BooleanFormula(object):
             as an argument to :func:`~sage.logic.logicparser.apply_func()`
             in :mod:`~sage.logic.logicparser`.
         """
-        if tree[0] == '~' and isinstance(tree[1], ListType):
+        if tree[0] == '~' and isinstance(tree[1], list):
             op = tree[1][0]
             if op != '~':
                 if op == '&':
@@ -1315,11 +1397,11 @@ class BooleanFormula(object):
             as an argument to :func:`~sage.logic.logicparser.apply_func()`
             in :mod:`~sage.logic.logicparser`.
         """
-        if tree[0] == '|' and isinstance(tree[2], ListType) and tree[2][0] == '&':
+        if tree[0] == '|' and isinstance(tree[2], list) and tree[2][0] == '&':
             new_tree = ['&', ['|', tree[1], tree[2][1]],
                         ['|', tree[1], tree[2][2]]]
             return logicparser.apply_func(new_tree, self.dist_ors)
-        if tree[0] == '|' and isinstance(tree[1], ListType) and tree[1][0] == '&':
+        if tree[0] == '|' and isinstance(tree[1], list) and tree[1][0] == '&':
             new_tree = ['&', ['|', tree[1][1], tree[2]],
                         ['|', tree[1][2], tree[2]]]
             return logicparser.apply_func(new_tree, self.dist_ors)
@@ -1426,3 +1508,51 @@ class BooleanFormula(object):
         while i < len(str) - 1 and str[i] != '&' and str[i] != '|':
             i += 1
         return str[i]
+
+    def __len__(self):
+        r"""
+        Return the length of a Boolean formula.
+
+        OUTPUT:
+
+        The length of the Boolean formula. This is the number of operators plus
+        the number of variables (counting multiplicity). Parentheses are ignored.
+
+        EXAMPLES::
+
+            sage: import sage.logic.propcalc as propcalc
+            sage: s = propcalc.formula("a")
+            sage: len(s)
+            1
+            sage: s = propcalc.formula("(a)")
+            sage: len(s)
+            1
+            sage: s = propcalc.formula("~a")
+            sage: len(s)
+            2
+            sage: s = propcalc.formula("a -> b")
+            sage: len(s)
+            3
+            sage: s = propcalc.formula("alpha -> beta")
+            sage: len(s)
+            3
+            sage: s = propcalc.formula("a -> a")
+            sage: len(s)
+            3
+            sage: s = propcalc.formula("~(a -> b)")
+            sage: len(s)
+            4
+            sage: s = propcalc.formula("((a&b)|(a&c))->~d")
+            sage: len(s)
+            10
+
+        TESTS::
+
+            sage: s = propcalc.formula("(((alpha) -> ((beta))))")
+            sage: len(s)
+            3
+        """
+        return len(flatten(self.full_tree()))
+
+# allow is_consequence to be called as a function (not only as a method of BooleanFormula)
+is_consequence = BooleanFormula.is_consequence

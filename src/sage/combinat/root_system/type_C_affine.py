@@ -7,7 +7,10 @@ Root system data for (untwisted) type C affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from cartan_type import CartanType_standard_untwisted_affine
+from __future__ import print_function
+from __future__ import absolute_import
+
+from .cartan_type import CartanType_standard_untwisted_affine
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self, n):
         """
@@ -62,11 +65,11 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         n = self.n
         if n == 1:
-            import cartan_type
+            from . import cartan_type
             res = cartan_type.CartanType(["A",1,1]).dynkin_diagram()
             res._cartan_type = self
             return res
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
         for i in range(1, n):
             g.add_edge(i, i+1)
@@ -80,7 +83,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: print CartanType(['C',4,1])._latex_dynkin_diagram()
+            sage: print(CartanType(['C',4,1])._latex_dynkin_diagram())
             \draw (0, 0.1 cm) -- +(2 cm,0);
             \draw (0, -0.1 cm) -- +(2 cm,0);
             \draw[shift={(1.2, 0)}, rotate=0] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
@@ -97,7 +100,7 @@ class CartanType(CartanType_standard_untwisted_affine):
             }
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
 
-            sage: print CartanType(['C',4,1]).dual()._latex_dynkin_diagram()
+            sage: print(CartanType(['C',4,1]).dual()._latex_dynkin_diagram())
             \draw (0, 0.1 cm) -- +(2 cm,0);
             \draw (0, -0.1 cm) -- +(2 cm,0);
             \draw[shift={(0.8, 0)}, rotate=180] (135 : 0.45cm) -- (0,0) -- (-135 : 0.45cm);
@@ -118,7 +121,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
-            import cartan_type
+            from . import cartan_type
             return cartan_type.CartanType(["A",1,1])._latex_dynkin_diagram(label, node, node_dist)
 
         ret = "\\draw (0, 0.1 cm) -- +(%s cm,0);\n"%node_dist
@@ -138,26 +141,26 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: print CartanType(['C',5,1]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['C',5,1]).ascii_art(label = lambda x: x+2))
             O=>=O---O---O---O=<=O
             2   3   4   5   6   7
 
-            sage: print CartanType(['C',3,1]).ascii_art()
+            sage: print(CartanType(['C',3,1]).ascii_art())
             O=>=O---O=<=O
             0   1   2   3
 
-            sage: print CartanType(['C',2,1]).ascii_art()
+            sage: print(CartanType(['C',2,1]).ascii_art())
             O=>=O=<=O
             0   1   2
 
-            sage: print CartanType(['C',1,1]).ascii_art()
+            sage: print(CartanType(['C',1,1]).ascii_art())
             O<=>O
             0   1
         """
         if node is None:
             node = self._ascii_art_node
         n = self.n
-        from cartan_type import CartanType
+        from .cartan_type import CartanType
         if n == 1:
             return CartanType(["A",1,1]).ascii_art(label, node)
         ret = node(label(0)) + "=>=" + "---".join(node(label(i)) for i in range(1,n))

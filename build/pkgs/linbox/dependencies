@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(NTL) $(INST)/$(GIVARO) $(INST)/$(MPFR) $(INST)/$(LIBFPLLL) $(INST)/$(IML) $(INST)/$(M4RI) $(INST)/$(M4RIE) $(INST)/$(FFLAS_FFPACK)
+$(MP_LIBRARY) ntl givaro mpfr fplll iml flint fflas_ffpack
 
 ----------
 All lines of this file are ignored except the first.

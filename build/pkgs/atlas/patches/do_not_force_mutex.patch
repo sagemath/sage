@@ -1,10 +1,10 @@
 Always use assembly over mutex since the mutex version fails to build
 a shared library. See #15045 for details.
 
-diff --git a/tune/threads/tune_count.c b/tune/threads/tune_count.c
+diff --git a/ATLAS/tune/threads/tune_count.c b/ATLAS/tune/threads/tune_count.c
 index f09717f..4dc3fde 100644
---- a/tune/threads/tune_count.c
-+++ b/tune/threads/tune_count.c
+--- a/ATLAS/tune/threads/tune_count.c
++++ b/ATLAS/tune/threads/tune_count.c
 @@ -241,8 +241,8 @@ int main(int nargs, char **args)
   */
        if (tmut < tldec*1.02)

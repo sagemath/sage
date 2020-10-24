@@ -11,12 +11,12 @@ AUTHORS:
 - Martin Albrecht, Robert Fitzpatrick, Daniel Cabracas, Florian Göpfert,
   Michael Schneider: initial version
 
-EXAMPLE::
+EXAMPLES::
 
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
     sage: sigma = 3.0; n=1000
-    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)() for _ in xrange(n)]
-    sage: l = map(lambda f: vector(f).norm().n(), l)
+    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)() for _ in range(n)]
+    sage: l = [vector(f).norm().n() for f in l]
     sage: mean(l), sqrt(64)*sigma
     (23.83..., 24.0...)
 
@@ -52,22 +52,24 @@ EXAMPLE::
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
 #*****************************************************************************/
+from __future__ import absolute_import
 
-from sage.rings.all import RealField, RR, ZZ
-from discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
+from sage.rings.all import RR, ZZ
+from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
+
 
 class DiscreteGaussianDistributionPolynomialSampler(SageObject):
     r"""
     Discrete Gaussian sampler for polynomials.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
         sage: DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
         3*x^7 + 3*x^6 - 3*x^5 - x^4 - 5*x^2 + 3
         sage: gs = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
-        sage: [gs() for _ in xrange(3)]
+        sage: [gs() for _ in range(3)]
         [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7, -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x, 2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
 
     .. automethod:: __init__
@@ -88,13 +90,13 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
           :class:`sage.stats.distributions.discrete_gaussian_integer.DiscreteGaussianDistributionIntegerSampler`
           is passed, then this sampler is used to sample coefficients.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
             sage: DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
             3*x^7 + 3*x^6 - 3*x^5 - x^4 - 5*x^2 + 3
             sage: gs = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
-            sage: [gs() for _ in xrange(3)]
+            sage: [gs() for _ in range(3)]
             [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7, -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x, 2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
         """
         if isinstance(sigma, DiscreteGaussianDistributionIntegerSampler):
@@ -108,7 +110,7 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         """
         Return a new sample.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
             sage: sampler = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 12.0)
@@ -116,15 +118,15 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
             8*x^7 - 11*x^5 - 19*x^4 + 6*x^3 - 34*x^2 - 21*x + 9
         """
         coeffs = [self.D() for _ in range(self.n)]
-        f = self.P(coeffs)
-        return f
+        return self.P(coeffs)
 
     def _repr_(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
             sage: DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
             Discrete Gaussian sampler for polynomials of degree < 8 with σ=3.000000 in each component
         """
-        return "Discrete Gaussian sampler for polynomials of degree < %d with σ=%f in each component"%(self.n, self.D.sigma)
+        # beware of unicode character in ascii string !
+        return "Discrete Gaussian sampler for polynomials of degree < %d with σ=%f in each component" % (self.n, self.D.sigma)

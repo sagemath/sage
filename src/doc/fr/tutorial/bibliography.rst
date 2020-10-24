@@ -8,12 +8,12 @@ Bibliographie
     http://www.diveintopython.net/.
 
 ..  [GAP] The GAP Group, GAP - Groups, Algorithms, and
-    Programming, Version 4.4; 2005, http://www.gap-system.org
+    Programming, Version 4.4; 2005, https://www.gap-system.org
 
 ..  [GAPkg] GAP Packages,
     http://www.gap-system.org/Packages/packages.html
 
-..  [GP] PARI/GP http://pari.math.u-bordeaux.fr/.
+..  [GP] PARI/GP https://pari.math.u-bordeaux.fr/.
 
 ..  [Ip] The IPython shell http://ipython.scipy.org.
 
@@ -31,21 +31,20 @@ Bibliographie
 ..  [Py] The Python language http://www.python.org/
     Reference Manual http://docs.python.org/ref/ref.html.
 
-..  [PyDev] Guido, Some Guys, and a Mailing List: How Python is
-    Developed,
-    http://www.python.org/dev/dev_intro.html.
+..  [PyDev] Python Developer's Guide
+    https://docs.python.org/devguide/.
 
 ..  [Pyr] Pyrex,
     http://www.cosc.canterbury.ac.nz/~greg/python/Pyrex/.
 
 ..  [PyT] The Python Tutorial http://www.python.org/.
 
-..  [SA] Sage web site http://www.sagemath.org/.
+..  [SA] Sage web site https://www.sagemath.org/.
 
-..  [Si] G.-M. Greuel, G. Pfister, and H. Schönemann. Singular
+..  [Si] \G.-M. Greuel, G. Pfister, and H. Schönemann. Singular
     3.0. A Computer Algebra System for Polynomial Computations. Center
     for Computer Algebra, University of Kaiserslautern (2005).
-    http://www.singular.uni-kl.de.
+    https://www.singular.uni-kl.de.
 
 ..  [SJ] William Stein, David Joyner, Sage: System for Algebra and
     Geometry Experimentation, Comm. Computer Algebra {39}(2005)61-64.

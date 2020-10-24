@@ -1,4 +1,4 @@
-cimport sage.misc.cython_metaclass
+cimport sage.cpython.cython_metaclass
 
 cdef class InheritComparisonMetaclass(type):
     pass

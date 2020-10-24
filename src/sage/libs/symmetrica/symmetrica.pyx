@@ -1,4 +1,7 @@
-include "sage/ext/interrupt.pxi"
+# distutils: libraries = symmetrica
+"""
+Symmetrica library
+"""
 
 include "symmetrica.pxi"
 

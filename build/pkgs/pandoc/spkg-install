@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+echo Error: pandoc, a prerequisite of rst2ipynb, is not installed.
+echo Please install it manually, for example using the system packages
+echo recommended by ./configure.
+exit 1

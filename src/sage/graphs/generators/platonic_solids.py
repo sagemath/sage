@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Platonic solids
+1-skeletons of Platonic solids
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 
@@ -61,7 +61,7 @@ def TetrahedralGraph():
         ....:     for m in range(2):
         ....:         n.append(g[i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
     """
     import networkx
@@ -111,7 +111,7 @@ def HexahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
     """
     return Graph({0:[1,3,4], 1:[2,5], 2:[3,6], 3:[7], 4:[5,7], 5:[6], 6:[7]},
@@ -166,7 +166,7 @@ def OctahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
     """
     import networkx
@@ -225,7 +225,7 @@ def IcosahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
     """
     import networkx
@@ -282,7 +282,7 @@ def DodecahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
+        sage: G = graphics_array(j)
         sage: G.show() # long time
     """
     import networkx

@@ -1,19 +1,18 @@
 r"""
 Graded modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_class_attribute
+from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base_ring
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_over_base_ring):
     def __init__(self, base_category):
@@ -26,8 +25,8 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
             sage: C.base_category()
             Category of algebras over Rational Field
             sage: sorted(C.super_categories(), key=str)
-            [Category of algebras over Rational Field,
-             Category of graded modules over Rational Field]
+            [Category of filtered algebras over Rational Field,
+             Category of graded vector spaces over Rational Field]
 
             sage: AlgebrasWithBasis(QQ).Graded().base_ring()
             Rational Field
@@ -56,16 +55,64 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
         """
         return "graded {}".format(self.base_category()._repr_object_names())
 
+    @classmethod
+    def default_super_categories(cls, category, *args):
+        r"""
+        Return the default super categories of ``category.Graded()``.
+
+        Mathematical meaning: every graded object (module, algebra,
+        etc.) is a filtered object with the (implicit) filtration
+        defined by `F_i = \bigoplus_{j \leq i} G_j`.
+
+        INPUT:
+
+        - ``cls`` -- the class ``GradedModulesCategory``
+        - ``category`` -- a category
+
+        OUTPUT: a (join) category
+
+        In practice, this returns ``category.Filtered()``, joined
+        together with the result of the method
+        :meth:`RegressiveCovariantConstructionCategory.default_super_categories() <sage.categories.covariant_functorial_construction.RegressiveCovariantConstructionCategory.default_super_categories>`
+        (that is the join of ``category.Filtered()`` and ``cat`` for
+        each ``cat`` in the super categories of ``category``).
+
+        EXAMPLES:
+
+        Consider ``category=Algebras()``, which has ``cat=Modules()``
+        as super category. Then, a grading of an algebra `G`
+        is also a filtration of `G`::
+
+            sage: Algebras(QQ).Graded().super_categories()
+            [Category of filtered algebras over Rational Field,
+             Category of graded vector spaces over Rational Field]
+
+        This resulted from the following call::
+
+            sage: sage.categories.graded_modules.GradedModulesCategory.default_super_categories(Algebras(QQ))
+            Join of Category of filtered algebras over Rational Field
+             and Category of graded vector spaces over Rational Field
+        """
+        cat = super(GradedModulesCategory, cls).default_super_categories(category, *args)
+        return Category.join([category.Filtered(), cat])
+
 class GradedModules(GradedModulesCategory):
-    """
+    r"""
     The category of graded modules.
+
+    We consider every graded module `M = \bigoplus_i M_i` as a
+    filtered module under the (natural) filtration given by
+
+    .. MATH::
+
+        F_i = \bigoplus_{j < i} M_j.
 
     EXAMPLES::
 
         sage: GradedModules(ZZ)
         Category of graded modules over Integer Ring
         sage: GradedModules(ZZ).super_categories()
-        [Category of modules over Integer Ring]
+        [Category of filtered modules over Integer Ring]
 
     The category of graded modules defines the graded structure which
     shall be preserved by morphisms::
@@ -77,71 +124,9 @@ class GradedModules(GradedModulesCategory):
 
         sage: TestSuite(GradedModules(ZZ)).run()
     """
-
-    def extra_super_categories(self):
-        r"""
-        Adds :class:`VectorSpaces` to the super categories of ``self`` if
-        the base ring is a field.
-
-        EXAMPLES::
-
-            sage: Modules(QQ).Graded().extra_super_categories()
-            [Category of vector spaces over Rational Field]
-            sage: Modules(ZZ).Graded().extra_super_categories()
-            []
-
-        This makes sure that ``Modules(QQ).Graded()`` returns an
-        instance of :class:`GradedModules` and not a join category of
-        an instance of this class and of ``VectorSpaces(QQ)``::
-
-            sage: type(Modules(QQ).Graded())
-            <class 'sage.categories.graded_modules.GradedModules_with_category'>
-
-        .. TODO::
-
-            Get rid of this workaround once there is a more systematic
-            approach for the alias ``Modules(QQ)`` -> ``VectorSpaces(QQ)``.
-            Probably the later should be a category with axiom, and
-            covariant constructions should play well with axioms.
-        """
-        from sage.categories.modules import Modules
-        from sage.categories.fields import Fields
-        base_ring = self.base_ring()
-        if base_ring in Fields:
-            return [Modules(base_ring)]
-        else:
-            return []
-
-    class SubcategoryMethods:
-
-        @cached_method
-        def Connected(self):
-            r"""
-            Return the full subcategory of the connected objects of ``self``.
-
-            EXAMPLES::
-
-                sage: Modules(ZZ).Graded().Connected()
-                Category of graded connected modules over Integer Ring
-                sage: Coalgebras(QQ).Graded().Connected()
-                Join of Category of graded connected modules over Rational Field
-                    and Category of coalgebras over Rational Field
-                sage: GradedAlgebrasWithBasis(QQ).Connected()
-                Category of graded connected algebras with basis over Rational Field
-
-            TESTS::
-
-                sage: TestSuite(Modules(ZZ).Graded().Connected()).run()
-                sage: Coalgebras(QQ).Graded().Connected.__module__
-                'sage.categories.graded_modules'
-            """
-            return self._with_axiom("Connected")
-
-    class Connected(CategoryWithAxiom_over_base_ring):
-        pass
-
     class ParentMethods:
         pass
 
     class ElementMethods:
         pass
+

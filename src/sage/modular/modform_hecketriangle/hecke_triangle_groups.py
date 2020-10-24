@@ -7,19 +7,20 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, PolynomialRing, NumberField
-from sage.functions.all import cos,exp,sec
-from sage.functions.other import psi1
-from sage.symbolic.all import pi,i
+from sage.functions.all import cos, exp, sec
+from sage.functions.gamma import psi1
+from sage.symbolic.all import pi, i
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
@@ -28,10 +29,10 @@ from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGro
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
-from hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
+from .hecke_triangle_group_element import HeckeTriangleGroupElement, cyclic_representative, coerce_AA
 
-
-class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentation):
+class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
+                         UniqueRepresentation):
     r"""
     Hecke triangle group (2, n, infinity).
     """
@@ -88,16 +89,17 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
         if n in [3, infinity]:
             self._base_ring = ZZ
-            self._lam = ZZ(1) if n==3 else ZZ(2)
+            self._lam = ZZ(1) if n == 3 else ZZ(2)
         else:
-            lam_symbolic = 2*cos(pi/n)
-            K = NumberField(self.lam_minpoly(), 'lam', embedding = coerce_AA(lam_symbolic))
+            lam_symbolic = 2 * cos(pi / n)
+            K = NumberField(self.lam_minpoly(), 'lam',
+                            embedding=coerce_AA(lam_symbolic))
             #self._base_ring = K.order(K.gens())
             self._base_ring = K.maximal_order()
             self._lam = self._base_ring.gen(1)
 
-        T = matrix(self._base_ring, [[1,self._lam],[0,1]])
-        S = matrix(self._base_ring, [[0,-1],[1,0]])
+        T = matrix(self._base_ring, [[1, self._lam], [0, 1]])
+        S = matrix(self._base_ring, [[0, -1], [1, 0]])
 
         FinitelyGeneratedMatrixGroup_generic.__init__(self, ZZ(2), self._base_ring, [S, T])
 
@@ -111,7 +113,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(10)
             Hecke triangle group for n = 10
         """
-
         return "Hecke triangle group for n = {}".format(self._n)
 
     def _latex_(self):
@@ -125,8 +126,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: latex(a)
             \Gamma^{(5)}
         """
-
-        return '\\Gamma^{(%s)}'%(latex(self._n))
+        return '\\Gamma^{(%s)}' % latex(self._n)
 
     def element_repr_method(self, method=None):
         r"""
@@ -158,7 +158,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G.element_repr_method()
             'basic'
         """
-
         if method is None:
             return self._element_repr_method
         elif method in ["default", "basic", "block", "conj"]:
@@ -183,7 +182,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G(1).parent()
             Hecke triangle group for n = 10
         """
-
         return self.I()
 
     def lam_minpoly(self):
@@ -200,9 +198,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).lam_minpoly()
             x - 2
         """
-
         # TODO: Write an explicit (faster) implementation
-        lam_symbolic = 2*cos(pi/self._n)
+        lam_symbolic = 2 * cos(pi / self._n)
         return coerce_AA(lam_symbolic).minpoly()
 
     def base_ring(self):
@@ -215,9 +212,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(n=infinity).base_ring()
             Integer Ring
             sage: HeckeTriangleGroup(n=7).base_ring()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
-
         return self._base_ring
 
     def base_field(self):
@@ -230,9 +226,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(n=infinity).base_field()
             Rational Field
             sage: HeckeTriangleGroup(n=7).base_field()
-            Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
-
         if self._n in [3, infinity]:
             return QQ
         else:
@@ -253,7 +248,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).n()
             +Infinity
         """
-
         return self._n
 
     # TODO: rename this to a more descriptive lambda in a later update/patch
@@ -279,7 +273,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).lam()
             2
         """
-
         return self._lam
 
     def rho(self):
@@ -291,26 +284,24 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
-            sage: HeckeTriangleGroup(3).rho() == 1/2 + sqrt(3)/2*i
+            sage: HeckeTriangleGroup(3).rho() == QQbar(1/2 + sqrt(3)/2*i)
             True
-            sage: HeckeTriangleGroup(4).rho() == sqrt(2)/2*(1 + i)
+            sage: HeckeTriangleGroup(4).rho() == QQbar(sqrt(2)/2*(1 + i))
             True
-            sage: HeckeTriangleGroup(6).rho() == sqrt(3)/2 + 1/2*i
+            sage: HeckeTriangleGroup(6).rho() == QQbar(sqrt(3)/2 + 1/2*i)
             True
             sage: HeckeTriangleGroup(10).rho()
             0.95105651629515...? + 0.30901699437494...?*I
             sage: HeckeTriangleGroup(infinity).rho()
             1
         """
-
         # TODO: maybe rho should be replaced by -rhobar
         # Also we could use NumberFields...
-        if (self._n == infinity):
+        if self._n == infinity:
             return coerce_AA(1)
         else:
-            rho = AlgebraicField()(exp(pi/self._n*i))
+            rho = AlgebraicField()(exp(pi / self._n * i))
             rho.simplify()
-
             return rho
 
     def alpha(self):
@@ -335,8 +326,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).alpha()
             1/4
         """
-
-        return ZZ(1)/ZZ(2) * (ZZ(1)/ZZ(2) - ZZ(1)/self._n)
+        return ZZ(1) / ZZ(2) * (ZZ(1) / ZZ(2) - ZZ(1) / self._n)
 
     def beta(self):
         r"""
@@ -360,7 +350,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).beta()
             1/4
         """
-
         return ZZ(1)/ZZ(2) * (ZZ(1)/ZZ(2) + ZZ(1)/self._n)
 
     # We use cached method here to create unique instances of basic matrices
@@ -380,8 +369,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(10).I().parent()
             Hecke triangle group for n = 10
         """
-
-        return self(matrix(self._base_ring, [[1,0],[0,1]]), check=False)
+        return self(matrix(self._base_ring, [[1, 0], [0, 1]]), check=False)
 
     # We use cached method here to create unique instances of basic matrices
     # (major performance gain)
@@ -406,8 +394,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(10).T().parent()
             Hecke triangle group for n = 10
         """
-
-        return self(matrix(self._base_ring, [[1,self._lam*m],[0,1]]), check=False)
+        return self(matrix(self._base_ring, [[1, self._lam * m], [0, 1]]),
+                    check=False)
 
     # We use cached method here to create unique instances of basic matrices
     # (major performance gain)
@@ -434,7 +422,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(10).S().parent()
             Hecke triangle group for n = 10
         """
-
         return self.gen(0)
 
     # We use cached method here to create unique instances of basic matrices
@@ -469,7 +456,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(10).U().parent()
             Hecke triangle group for n = 10
         """
-
         return self.T() * self.S()
 
     def V(self, j):
@@ -520,14 +506,14 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G.V(5) == G.S()
             True
         """
-
         return self.U()**(j-1) * self.T()
 
     def dvalue(self):
         r"""
         Return a symbolic expression (or an exact value in case n=3, 4, 6)
         for the transfinite diameter (or capacity) of ``self``.
-        I.e. the first nontrivial Fourier coefficient of the Hauptmodul
+
+        This is the first nontrivial Fourier coefficient of the Hauptmodul
         for the Hecke triangle group in case it is normalized to ``J_inv(i)=1``.
 
         EXAMPLES::
@@ -542,23 +528,21 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(6).dvalue()
             1/108
             sage: HeckeTriangleGroup(10).dvalue()
-            e^(2*euler_gamma - pi*sec(1/10*pi) + psi(4/5) + psi(7/10))
+            e^(2*euler_gamma - 4*pi/sqrt(2*sqrt(5) + 10) + psi(4/5) + psi(7/10))
             sage: HeckeTriangleGroup(infinity).dvalue()
             1/64
         """
-
         n = self._n
-        if (n==3):
+        if n == 3:
             return ZZ(1)/ZZ(2**6*3**3)
-        elif (n==4):
+        elif n == 4:
             return ZZ(1)/ZZ(2**8)
-        elif (n==6):
+        elif n == 6:
             return ZZ(1)/ZZ(2**2*3**3)
-        elif (n==infinity):
+        elif n == infinity:
             return ZZ(1)/ZZ(2**6)
         else:
             return exp(-ZZ(2)*psi1(ZZ(1)) + psi1(ZZ(1)-self.alpha())+psi1(ZZ(1)-self.beta()) - pi*sec(pi/self._n))
-
 
     def is_arithmetic(self):
         r"""
@@ -580,11 +564,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(infinity).is_arithmetic()
             True
         """
-
-        if (self._n in [ZZ(3), ZZ(4), ZZ(6), infinity]):
-            return True
-        else:
-            return False
+        return self._n in [ZZ(3), ZZ(4), ZZ(6), infinity]
 
     def get_FD(self, z):
         r"""
@@ -632,7 +612,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: A.acton(w)
             134.1200000... + 0.2200000000...*I
         """
-
         ID = self.I()
         T  = self.T()
         S  = self.S()
@@ -674,7 +653,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: HeckeTriangleGroup(4).in_FD(CC(1.5/2 + 0.9*i))
             False
         """
-
         return self.get_FD(z)[0] == self.I()
 
     def root_extension_field(self, D):
@@ -719,7 +697,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G.root_extension_field(D)
             Number Field in e with defining polynomial x^2 - lam^2 + 4 over its base field
         """
-
         K = self.base_field()
         x = PolynomialRing(K, 'x').gen()
         D = self.base_ring()(D)
@@ -740,7 +717,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             #return NumberField(L.absolute_polynomial(), 'e', structure=AbsoluteFromRelative(L), embedding=(???))
             return L
 
-    # We cache this method for performance reasons (it is repeatadly reused)
+    # We cache this method for performance reasons (it is repeatedly reused)
     @cached_method
     def root_extension_embedding(self, D, K=None):
         r"""
@@ -755,7 +732,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         - ``D`` -- An element of the base ring of ``self``
                    corresponding to a discriminant.
 
-        - ``K`` -- A field to which we want the (correct) embeddding.
+        - ``K`` -- A field to which we want the (correct) embedding.
                    If ``K=None`` (default) then ``AlgebraicField()`` is
                    used for positive ``D`` and ``AlgebraicRealField()``
                    otherwise.
@@ -780,7 +757,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
               To:   Algebraic Field
               Defn: e |--> 2*I
             sage: G.root_extension_embedding(4)
-            Ring Coercion morphism:
+            Coercion map:
               From: Rational Field
               To:   Algebraic Real Field
 
@@ -801,7 +778,6 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
               Defn: e |--> 0.?... + 0.867767478235...?*I
                     lam |--> 1.801937735804...?
         """
-
         D = self.base_ring()(D)
         F = self.root_extension_field(D)
         if K is None:
@@ -867,12 +843,11 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G = HeckeTriangleGroup(n=5)
             sage: G.element_repr_method("conj")
             sage: G._elliptic_conj_reps()
-            sage: sorted(G._conj_prim.iteritems())
+            sage: sorted(G._conj_prim.items())
             [(-4, [[S], [S]]), (lam - 3, [[U], [U]]), (0, [[V(4)]])]
-            sage: sorted(G._conj_nonprim.iteritems())
+            sage: sorted(G._conj_nonprim.items())
             [(-lam - 2, [[U^(-2)], [U^2], [U^(-2)], [U^2]]), (lam - 3, [[U^(-1)], [U^(-1)]])]
         """
-
         if not hasattr(self, "_max_block_length"):
             self._conjugacy_representatives()
         elif ZZ(-4) in self._conj_prim:
@@ -930,37 +905,45 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: G.element_repr_method("conj")
             sage: G._conjugacy_representatives(2)
 
-            sage: list(G._conj_block[2])
-            [((4, 1), (3, 1)), ((2, 2),), ((3, 2),), ((3, 1), (1, 1)), ((4, 1), (1, 1)), ((4, 1), (2, 1)), ((3, 1), (2, 1)), ((2, 1), (1, 1))]
+            sage: sorted(G._conj_block[2])
+            [((2, 1), (1, 1)),
+             ((2, 2),),
+             ((3, 1), (1, 1)),
+             ((3, 1), (2, 1)),
+             ((3, 2),),
+             ((4, 1), (1, 1)),
+             ((4, 1), (2, 1)),
+             ((4, 1), (3, 1))]
 
-            sage: [key for key in G._conj_prim]
-            [0, lam - 3, 15*lam + 6, 7*lam + 6, 4*lam, 9*lam + 5, 33*lam + 21, -4]
-            sage: for key in G._conj_prim: print G._conj_prim[key]
-            [[V(4)]]
-            [[U], [U]]
-            [[V(1)*V(3)], [V(2)*V(4)]]
-            [[V(1)*V(4)]]
-            [[V(3)], [V(2)]]
-            [[V(3)*V(4)], [V(1)*V(2)]]
-            [[V(2)*V(3)]]
+            sage: [key for key in sorted(G._conj_prim)]
+            [-4, lam - 3, 0, 4*lam, 7*lam + 6, 9*lam + 5, 15*lam + 6, 33*lam + 21]
+            sage: for key in sorted(G._conj_prim):
+            ....:     print(sorted(G._conj_prim[key]))
             [[S], [S]]
-            sage: [key for key in G._conj_nonprim]
-            [lam - 3, 32*lam + 16, -lam - 2]
+            [[U], [U]]
+            [[V(4)]]
+            [[V(3)], [V(2)]]
+            [[V(1)*V(4)]]
+            [[V(3)*V(4)], [V(1)*V(2)]]
+            [[V(2)*V(4)], [V(1)*V(3)]]
+            [[V(2)*V(3)]]
+            sage: [key for key in sorted(G._conj_nonprim)]
+            [-lam - 2, lam - 3, 32*lam + 16]
 
-            sage: for key in G._conj_nonprim: print G._conj_nonprim[key]
+            sage: for key in sorted(G._conj_nonprim):
+            ....:     print(sorted(G._conj_nonprim[key]))
+            [[U^(-2)], [U^(-2)], [U^2], [U^2]]
             [[U^(-1)], [U^(-1)]]
-            [[V(2)^2], [V(3)^2]]
-            [[U^(-2)], [U^2], [U^(-2)], [U^2]]
-
+            [[V(3)^2], [V(2)^2]]
 
             sage: G.element_repr_method("default")
         """
 
         from sage.combinat.partition import OrderedPartitions
         from sage.combinat.combinat import tuples
-        from sage.rings.arith import divisors
+        from sage.arith.all import divisors
 
-        if not D is None:
+        if D is not None:
             max_block_length = max(coerce_AA(0), coerce_AA((D + 4)/(self.lam()**2))).sqrt().floor()
         else:
             try:
@@ -1002,8 +985,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             return False
 
         def is_cycle_of_length(seq, n):
-            for i in range(n, len(seq)):
-                if seq[i] != seq[i % n]:
+            for j in range(n, len(seq)):
+                if seq[j] != seq[j % n]:
                     return False
             return True
 
@@ -1021,8 +1004,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
                 for ex in exp_list:
                     keep = True
                     if len_par > 1:
-                        for k in range(-1,len_par-1):
-                            if ex[k] == ex[k+1]:
+                        for k in range(-1, len_par - 1):
+                            if ex[k] == ex[k + 1]:
                                 keep = False
                                 break
                     # We don't want powers of V(1)
@@ -1113,24 +1096,23 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             [[U], [U^(-1)]]
 
             sage: R = G.class_representatives(14)
-            sage: R
+            sage: sorted(R)
             [[V(2)*V(3)], [V(1)*V(2)]]
-            sage: [v.continued_fraction()[1] for v in R]
+            sage: sorted(v.continued_fraction()[1] for v in R)
             [(1, 2, 2), (3,)]
 
             sage: R = G.class_representatives(32)
-            sage: R
+            sage: sorted(R)
             [[V(3)^2*V(1)], [V(1)^2*V(3)]]
-            sage: [v.continued_fraction()[1] for v in R]
+            sage: [v.continued_fraction()[1] for v in sorted(R)]
             [(1, 2, 1, 3), (1, 4)]
 
             sage: R = G.class_representatives(32, primitive=False)
-            sage: R
+            sage: sorted(R)
             [[V(3)^2*V(1)], [V(1)^2*V(3)], [V(2)^2]]
 
             sage: G.element_repr_method("default")
         """
-
         if coerce_AA(D) == 0 and not primitive:
             raise ValueError("There are infinitely many non-primitive conjugacy classes of discriminant 0.")
 
@@ -1150,7 +1132,8 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
     def class_number(self, D, primitive=True):
         r"""
         Return the class number of ``self`` for the discriminant ``D``.
-        I.e. the number of conjugacy classes of (primitive) elements
+
+        This is the number of conjugacy classes of (primitive) elements
         of discriminant ``D``.
 
         Note: Due to the 1-1 correspondence with hyperbolic fixed
@@ -1214,7 +1197,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
         - ``primitive``  -- If ``True`` (default) then only primitive
                             elements are considered.
 
-        OUPUT:
+        OUTPUT:
 
         ``True`` if ``D`` is a primitive discriminant (a discriminant of
         a primitive element) and ``False`` otherwise.
@@ -1269,7 +1252,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
                             discriminants which were gathered so far are listed
                             (however there might be missing discriminants inbetween).
 
-        OUPUT:
+        OUTPUT:
 
         A list of discriminants less than or equal to ``D``.
 
@@ -1332,15 +1315,14 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
             sage: [v.continued_fraction() for v in R]
             [((), (1, 3)), ((), (3, 1))]
             sage: R = G.reduced_elements(D=14)
-            sage: R
+            sage: sorted(R)
             [
-            [ 5*lam     -3]  [ 5*lam     -7]  [4*lam    -3]  [3*lam    -1]
-            [     7 -2*lam], [     3 -2*lam], [    3  -lam], [    1     0]
+            [3*lam    -1]  [4*lam    -3]  [ 5*lam     -7]  [ 5*lam     -3]
+            [    1     0], [    3  -lam], [     3 -2*lam], [     7 -2*lam]
             ]
-            sage: [v.continued_fraction() for v in R]
-            [((), (1, 2, 2)), ((), (2, 2, 1)), ((), (2, 1, 2)), ((), (3,))]
+            sage: sorted(v.continued_fraction() for v in R)
+            [((), (1, 2, 2)), ((), (2, 1, 2)), ((), (2, 2, 1)), ((), (3,))]
         """
-
         L = self.class_representatives(D=D, primitive=True)
         R = []
         for v in L:
@@ -1360,18 +1342,17 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(n=4)
-            sage: G.simple_elements(D=12)
+            sage: sorted(G.simple_elements(D=12))
             [
-            [  3 lam]  [  1 lam]
-            [lam   1], [lam   3]
+            [  1 lam]  [  3 lam]
+            [lam   3], [lam   1]
             ]
-            sage: G.simple_elements(D=14)
+            sage: sorted(G.simple_elements(D=14))
             [
-            [2*lam     1]  [  lam     1]  [2*lam     3]  [  lam     3]
-            [    3   lam], [    3 2*lam], [    1   lam], [    1 2*lam]
+            [  lam     1]  [  lam     3]  [2*lam     1]  [2*lam     3]
+            [    3 2*lam], [    1 2*lam], [    3   lam], [    1   lam]
             ]
         """
-
         L = self.class_representatives(D=D, primitive=True)
         R = []
         for v in L:
@@ -1397,16 +1378,18 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic, UniqueRepresentat
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(n=4)
-            sage: G.rational_period_functions(k=4, D=12)
+            sage: sorted(G.rational_period_functions(k=4, D=12))
             [(z^4 - 1)/z^4]
-            sage: G.rational_period_functions(k=-2, D=12)
+            sage: sorted(G.rational_period_functions(k=-2, D=12))
             [-z^2 + 1, 4*lam*z^2 - 4*lam]
-            sage: G.rational_period_functions(k=2, D=14)
-            [(z^2 - 1)/z^2, 1/z, (24*z^6 - 120*z^4 + 120*z^2 - 24)/(9*z^8 - 80*z^6 + 146*z^4 - 80*z^2 + 9), (24*z^6 - 120*z^4 + 120*z^2 - 24)/(9*z^8 - 80*z^6 + 146*z^4 - 80*z^2 + 9)]
-            sage: G.rational_period_functions(k=-4, D=14)
-            [-z^4 + 1, 16*z^4 - 16, -16*z^4 + 16]
+            sage: sorted(G.rational_period_functions(k=2, D=14))
+            [(24*z^6 - 120*z^4 + 120*z^2 - 24)/(9*z^8 - 80*z^6 + 146*z^4 - 80*z^2 + 9),
+             (24*z^6 - 120*z^4 + 120*z^2 - 24)/(9*z^8 - 80*z^6 + 146*z^4 - 80*z^2 + 9),
+             1/z,
+             (z^2 - 1)/z^2]
+            sage: sorted(G.rational_period_functions(k=-4, D=14))
+            [-16*z^4 + 16, -z^4 + 1, 16*z^4 - 16]
         """
-
         try:
             k = ZZ(k)
             if not ZZ(2).divides(k):

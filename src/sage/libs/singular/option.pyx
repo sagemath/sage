@@ -27,7 +27,7 @@ If we don't want this, we can create an option context, which disables
 this::
 
     sage: with opt_ctx(red_tail=False, red_sb=False):
-    ...      std(I)[-1]
+    ....:    std(I)[-1]
     d^2*e^6 + 8*c^3 + ...
 
 However, this does not affect the global state::
@@ -48,7 +48,7 @@ change the global state::
 Assigning values within an option context, only affects this context::
 
     sage: with opt_ctx:
-    ...      opt['red_tail'] = False
+    ....:    opt['red_tail'] = False
 
     sage: opt['red_tail']
     True
@@ -56,16 +56,15 @@ Assigning values within an option context, only affects this context::
 Option contexts can also be safely stacked::
 
     sage: with opt_ctx:
-    ...       opt['red_tail'] = False
-    ...       print opt
-    ...       with opt_ctx:
-    ...           opt['red_through'] = False
-    ...           print opt
-    ...
+    ....:     opt['red_tail'] = False
+    ....:     print(opt)
+    ....:     with opt_ctx:
+    ....:         opt['red_through'] = False
+    ....:         print(opt)
     general options for libSingular (current value 0x00000082)
     general options for libSingular (current value 0x00000002)
 
-    sage: print opt
+    sage: print(opt)
     general options for libSingular (current value 0x02000082)
 
 Furthermore, the integer valued options ``deg_bound`` and
@@ -149,7 +148,7 @@ cdef class LibSingularOptions_abstract:
 
         - ``**kwds`` - all keyword parameters are immediately applied.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import LibSingularOptions
             sage: opt = LibSingularOptions(redTail=False)
@@ -170,7 +169,7 @@ cdef class LibSingularOptions_abstract:
 
     def __getitem__(self, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt
             sage: opt['red_tail']
@@ -199,14 +198,14 @@ cdef class LibSingularOptions_abstract:
 
     def __setitem__(self, name, value):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt, opt_ctx
             sage: opt['redTail']
             True
             sage: with opt_ctx:
-            ...      opt['redTail'] = False
-            ...      opt['redTail']
+            ....:    opt['redTail'] = False
+            ....:    opt['redTail']
             False
             sage: opt['red_tail']
             True
@@ -229,7 +228,7 @@ cdef class LibSingularOptions_abstract:
 
     def __int__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt
             sage: hex(int(opt))
@@ -241,7 +240,7 @@ cdef class LibSingularOptions_abstract:
         """
         Return a triple of integers that allow reconstruction of the options.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt
             sage: opt['deg_bound']
@@ -266,7 +265,7 @@ cdef class LibSingularOptions_abstract:
 
     def load(self, value=None):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt as sopt
             sage: bck = sopt.save(); hex(bck[0]), bck[1], bck[2]
@@ -288,7 +287,7 @@ cdef class LibSingularOptions_abstract:
 
     def __repr__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt as sopt
             sage: sopt
@@ -346,7 +345,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
        ``res``, ``slimgb``, ``sres``, ``std``, ``stdfglm``,
        ``stdhilb``, ``syz``.
 
-     - `red_sb`` or ``redSB`` - computes a reduced standard basis in
+     - ``red_sb`` or ``redSB`` - computes a reduced standard basis in
        any standard basis computation.
 
      - ``red_tail`` or ``redTail`` - reduction of the tails of
@@ -354,7 +353,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
        is ring dependent. By default, it is set for rings with global
        degree orderings and not set for all other rings.
 
-     - ``red_through`` or ``redThrough`` - for inhomogenous input,
+     - ``red_through`` or ``redThrough`` - for inhomogeneous input,
        polynomial reductions during standard basis computations are
        never postponed, but always finished through. This option is
        ring dependent. By default, it is set for rings with global
@@ -372,7 +371,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
       is stopped if the total (weighted) degree exceeds ``deg_bound``.
       ``deg_bound`` should not be used for a global ordering with
       inhomogeneous input. Reset this bound by setting ``deg_bound``
-      to 0. The exact meaning of "degree" depends on the ring odering
+      to 0. The exact meaning of "degree" depends on the ring ordering
       and the command: ``slimgb`` uses always the total degree with
       weights 1, ``std`` does so for block orderings, only.
 
@@ -381,7 +380,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
       ordering and its multiplicity is lower than ``mult_bound``.
       Reset this bound by setting ``mult_bound`` to 0.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.singular.option import LibSingularOptions
         sage: libsingular_options = LibSingularOptions()
@@ -415,7 +414,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
         """
         Create a new option interface.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import LibSingularOptions
             sage: libsingular_options = LibSingularOptions()
@@ -445,7 +444,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
         """
         Reset libSingular's default options.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt
             sage: opt['red_tail']
@@ -499,7 +498,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
      - ``cancelunit`` - avoids to divide polynomials by non-constant
        units in ``std`` in the local case. Should usually not be used.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.singular.option import LibSingularVerboseOptions
         sage: libsingular_verbose = LibSingularVerboseOptions()
@@ -510,7 +509,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
         """
         Create a new option interface.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import LibSingularVerboseOptions
             sage: libsingular_verb_options = LibSingularVerboseOptions()
@@ -540,7 +539,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
         """
         Return to libSingular's default verbosity options
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt_verb
             sage: opt_verb['not_warn_sb']
@@ -562,7 +561,7 @@ cdef class LibSingularOptionsContext:
 
     This object localizes changes to options.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.singular.option import opt, opt_ctx
         sage: opt
@@ -571,14 +570,13 @@ cdef class LibSingularOptionsContext:
     ::
 
         sage: with opt_ctx(redTail=False):
-        ...       print opt
-        ...       with opt_ctx(redThrough=False):
-        ...           print opt
-        ...
+        ....:     print(opt)
+        ....:     with opt_ctx(redThrough=False):
+        ....:         print(opt)
         general options for libSingular (current value 0x04000082)
         general options for libSingular (current value 0x04000002)
 
-        sage: print opt
+        sage: print(opt)
         general options for libSingular (current value 0x06000082)
     """
     cdef list bck
@@ -591,7 +589,7 @@ cdef class LibSingularOptionsContext:
         """
         Create a new context.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import LibSingularOptionsContext, opt
             sage: LibSingularOptionsContext(opt)
@@ -605,13 +603,13 @@ cdef class LibSingularOptionsContext:
 
     def __enter__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt, opt_ctx
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         self.bck.append(self.opt.global_options[0])
@@ -625,13 +623,13 @@ cdef class LibSingularOptionsContext:
         """
         Return a new option context where ``**kwds`` are applied.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt, opt_ctx
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         new = self.__class__(self.opt, **kwds)
@@ -639,13 +637,13 @@ cdef class LibSingularOptionsContext:
 
     def __exit__(self, typ, value, tb):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt, opt_ctx
             sage: opt['redTail']
             True
             sage: with opt_ctx(redTail=False):
-            ...     opt['redTail']
+            ....:   opt['redTail']
             False
         """
         self.opt.global_options[0] = self.bck.pop()
@@ -656,7 +654,7 @@ cdef class LibSingularOptionsContext:
 
     def __repr__(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.libs.singular.option import opt_ctx
             sage: opt_ctx

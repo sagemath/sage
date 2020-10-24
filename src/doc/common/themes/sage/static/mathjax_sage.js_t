@@ -10,6 +10,8 @@ MathJax.Hub.Config({
     }
   },
   TeX: {
+    MAXBUFFER: 50*1024,
+
     Macros: {
      {{ theme_mathjax_macros|join(',\n') }}
     }

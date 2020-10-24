@@ -21,27 +21,27 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-class MultiplexFunction:
+class MultiplexFunction(object):
     """
     A simple wrapper object for functions that are called on a list of
     objects.
     """
     def __init__(self, multiplexer, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex, MultiplexFunction
             sage: m = Multiplex(1,1/2)
             sage: f = MultiplexFunction(m,'str')
             sage: f
-            <sage.misc.object_multiplexer.MultiplexFunction instance at 0x...>
+            <sage.misc.object_multiplexer.MultiplexFunction object at 0x...>
         """
         self.multiplexer = multiplexer
         self.name = name
 
     def __call__(self, *args, **kwds):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex, MultiplexFunction
             sage: m = Multiplex(1,1/2)
@@ -57,15 +57,15 @@ class MultiplexFunction:
         else:
             return tuple(l)
 
-class Multiplex:
+class Multiplex(object):
     """
-    Obbject for a list of children such that function calls on this
-    new objects implies that the same function is called on all
+    Object for a list of children such that function calls on this
+    new object implies that the same function is called on all
     children.
     """
     def __init__(self, *args):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex
             sage: m = Multiplex(1,1/2)
@@ -76,12 +76,12 @@ class Multiplex:
 
     def __getattr__(self, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.object_multiplexer import Multiplex
             sage: m = Multiplex(1,1/2)
             sage: m.str
-            <sage.misc.object_multiplexer.MultiplexFunction instance at 0x...>
+            <sage.misc.object_multiplexer.MultiplexFunction object at 0x...>
             sage: m.trait_names
             Traceback (most recent call last):
             ...

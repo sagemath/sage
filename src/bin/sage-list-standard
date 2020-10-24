@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-echo "DEPRECATION WARNING: this script is deprecated" >&2
-echo "do:"                                            >&2
-echo "    $ sage-list-packages standard"              >&2
-sage-list-packages standard

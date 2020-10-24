@@ -1,0 +1,24 @@
+--- a/src/FrobbyStringStream.cpp    2011-09-23 15:09:12.000000000 -0500
++++ b/src/FrobbyStringStream.cpp    2013-05-10 11:42:01.840492200 -0500
+@@ -41,6 +41,11 @@
+   return *this;
+ }
+ 
++FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long long integer) {
++  appendIntegerToString(_str, integer);
++  return *this;
++}
++
+ FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long integer) {
+   appendIntegerToString(_str, integer);
+   return *this;
+--- a/src/FrobbyStringStream.h      2011-09-23 15:09:12.000000000 -0500
++++ b/src/FrobbyStringStream.h      2013-05-10 11:42:01.843492400 -0500
+@@ -25,6 +25,7 @@
+  used for operations that need to be efficient. */
+ class FrobbyStringStream {
+  public:
++  FrobbyStringStream& operator<<(unsigned long long integer);
+   FrobbyStringStream& operator<<(unsigned long integer);
+   FrobbyStringStream& operator<<(unsigned int integer);
+   FrobbyStringStream& operator<<(const mpz_class& integer);

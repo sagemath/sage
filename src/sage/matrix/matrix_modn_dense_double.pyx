@@ -1,3 +1,8 @@
+# distutils: language = c++
+# distutils: libraries = CBLAS_LIBRARIES
+# distutils: library_dirs = CBLAS_LIBDIR
+# distutils: include_dirs = CBLAS_INCDIR
+# distutils: extra_compile_args = -D_XPG6
 """
 Dense matrices over `\ZZ/n\ZZ` for `n < 2^{23}` using LinBox's ``Modular<double>``
 
@@ -7,28 +12,32 @@ AUTHORS:
 - Martin Albrecht
 """
 ###############################################################################
-#   SAGE: Open Source Mathematical Software
 #       Copyright (C) 2011 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2011 Martin Albrecht <martinralbrecht@googlemail.com>
-#  Distributed under the terms of the GNU General Public License (GPL),
-#  version 2 or any later version.  The full text of the GPL is available at:
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###############################################################################
+#*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
 
 from sage.rings.finite_rings.stdint cimport *
 
-from sage.libs.linbox.echelonform cimport BlasMatrixDouble as BlasMatrix
-from sage.libs.linbox.modular cimport ModDoubleField as ModField, ModDoubleFieldElement as ModFieldElement
-from sage.libs.linbox.echelonform cimport EchelonFormDomainDouble as EchelonFormDomain
+from sage.libs.linbox.givaro cimport \
+    Modular_double as ModField, \
+    Poly1Dom, Dense
 
-from sage.libs.linbox.fflas cimport ModDouble_fgemm as Mod_fgemm, ModDouble_fgemv as Mod_fgemv, \
-    ModDoubleDet as ModDet, \
-    ModDoubleRank as ModRank, ModDouble_echelon as Mod_echelon, \
-    ModDouble_applyp as Mod_applyp, \
-    ModDouble_MinPoly as Mod_MinPoly, \
-    ModDouble_CharPoly as Mod_CharPoly
+from sage.libs.linbox.linbox cimport \
+    reducedRowEchelonize, \
+    DenseMatrix_Modular_double as DenseMatrix
+
+from sage.libs.linbox.fflas cimport \
+    fgemm, pfgemm, fgemv, Det, pDet, Rank, pRank, ReducedRowEchelonForm, pReducedRowEchelonForm, applyP, \
+    MinPoly, CharPoly, MinPoly, \
+    ModDoubleDensePolynomial as ModDensePoly
+
+ctypedef Poly1Dom[ModField, Dense] ModDensePolyRing
 
 # Limit for LinBox Modular<double>
 MAX_MODULUS = 2**23
@@ -48,7 +57,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
     ``Matrix_modn_dense_float`` class is used for smaller moduli.
 
     Routines here are for the most basic access, see the
-    `matrix_modn_dense_template.pxi` file for higher-level routines.
+    ``matrix_modn_dense_template.pxi`` file for higher-level routines.
     """
 
     def __cinit__(self):
@@ -69,7 +78,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         r"""
         Set the (i,j) entry of self to the int value.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = random_matrix(GF(3016963), 4, 4); A
             [ 220081 2824836  765701 2282256]
@@ -109,7 +118,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         Assumes that `x` is in the base ring.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = random_matrix(GF(3016963), 4, 4); A
             [ 220081 2824836  765701 2282256]
@@ -155,7 +164,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         :class:`sage.rings.finite_rings.integer_mod.IntegerMod_int64`
         object, depending on the modulus.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = random_matrix(GF(3016963), 4, 4); A
             [ 220081 2824836  765701 2282256]

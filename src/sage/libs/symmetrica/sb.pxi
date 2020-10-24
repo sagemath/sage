@@ -26,16 +26,17 @@ cdef object _check_schubert(object a, OP ca):
             _op_schubert_sp(a, ca)
             return min([max(i.reduced_word()+[0]) for i in a.support()])
         else:
-            raise ValueError, "a must be a Schubert polynomial over ZZ or QQ"
+            raise ValueError("a must be a Schubert polynomial over ZZ or QQ")
     else:
-        raise TypeError, "a must be a permutation or a Schubert polynomial"
+        raise TypeError("a must be a permutation or a Schubert polynomial")
 
 
 def mult_schubert_schubert_symmetrica(a, b):
     """
     Multiplies the Schubert polynomials a and b.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.mult_schubert_schubert([3,2,1], [3,2,1])
         X[5, 3, 1, 2, 4]
     """
@@ -68,7 +69,8 @@ def t_SCHUBERT_POLYNOM_symmetrica(a):
     Converts a Schubert polynomial to a 'regular' multivariate
     polynomial.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.t_SCHUBERT_POLYNOM([3,2,1])
         x0^2*x1
     """
@@ -97,7 +99,8 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
     """
     Converts a multivariate polynomial a to a Schubert polynomial.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: R.<x1,x2,x3> = QQ[]
         sage: w0 = x1^2*x2
         sage: symmetrica.t_POLYNOM_SCHUBERT(w0)
@@ -109,12 +112,12 @@ def t_POLYNOM_SCHUBERT_symmetrica(a):
 
     if not is_MPolynomial(a):
         freeall(ca); freeall(cres)
-        raise TypeError, "a (= %s) must be a multivariate polynomial"
+        raise TypeError("a (= %s) must be a multivariate polynomial")
     else:
         br = a.parent().base_ring()
         if br != QQ and br != ZZ:
             freeall(ca); freeall(cres)
-            raise ValueError, "a's base ring must be either ZZ or QQ"
+            raise ValueError("a's base ring must be either ZZ or QQ")
         else:
             _op_polynom(a, ca)
 
@@ -134,7 +137,8 @@ def mult_schubert_variable_symmetrica(a, i):
     Returns the product of a and x_i.  Note that indexing with i
     starts at 1.
 
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.mult_schubert_variable([3,2,1], 2)
         X[3, 2, 4, 1]
         sage: symmetrica.mult_schubert_variable([3,2,1], 4)
@@ -169,7 +173,8 @@ def divdiff_perm_schubert_symmetrica(perm, a):
     $\delta_i$ to $a$ where $a$ is either a permutation or a
     Schubert polynomial over QQ.
 
-    EXAMPLES:
+    EXAMPLES::
+
        sage: symmetrica.divdiff_perm_schubert([2,3,1], [3,2,1])
        X[2, 1]
        sage: symmetrica.divdiff_perm_schubert([3,1,2], [3,2,1])
@@ -191,7 +196,7 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
     if perm not in Permutations():
         freeall(ca); freeall(cperm); freeall(cres)
-        raise TypeError, "perm must be a permutation"
+        raise TypeError("perm must be a permutation")
     else:
         perm = Permutation(perm)
         rw = perm.reduced_word()
@@ -200,7 +205,7 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
     if max_perm > max_a:
         freeall(ca); freeall(cperm); freeall(cres)
-        raise ValueError, r"cannot apply \delta_{%s} to a (= %s)"%(perm, a)
+        raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (perm, a))
 
     sig_on()
     divdiff_perm_schubert(cperm, ca, cres)
@@ -215,7 +220,8 @@ def divdiff_perm_schubert_symmetrica(perm, a):
 
 def scalarproduct_schubert_symmetrica(a, b):
     """
-    EXAMPLES:
+    EXAMPLES::
+
         sage: symmetrica.scalarproduct_schubert([3,2,1], [3,2,1])
         X[1, 3, 5, 2, 4]
         sage: symmetrica.scalarproduct_schubert([3,2,1], [2,1,3])
@@ -251,7 +257,8 @@ def divdiff_schubert_symmetrica(i, a):
     $\delta_i$ to $a$ where $a$ is either a permutation or a
     Schubert polynomial over QQ.
 
-    EXAMPLES:
+    EXAMPLES::
+
        sage: symmetrica.divdiff_schubert(1, [3,2,1])
        X[2, 3, 1]
        sage: symmetrica.divdiff_schubert(2, [3,2,1])
@@ -273,13 +280,13 @@ def divdiff_schubert_symmetrica(i, a):
 
     if not isinstance(i, (int, Integer)):
         freeall(ca); freeall(ci); freeall(cres)
-        raise TypeError, "i must be an integer"
+        raise TypeError("i must be an integer")
     else:
         _op_integer(i, ci)
 
-    if i > max_a:
+    if i > max_a or i <= 0:
         freeall(ca); freeall(ci); freeall(cres)
-        raise ValueError, r"cannot apply \delta_{%s} to a (= %s)"%(i, a)
+        raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (i, a))
 
     sig_on()
     divdiff_schubert(ci, ca, cres)

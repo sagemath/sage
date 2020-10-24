@@ -1,3 +1,5 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
 """
 PowComputer_ext
 
@@ -48,10 +50,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-include "sage/ext/stdsage.pxi"
 from cpython.list cimport *
 from cpython.dict cimport *
+
+from cysignals.signals cimport sig_on, sig_off
+
+include "sage/libs/ntl/decl.pxi"
 
 import weakref
 from sage.misc.misc import cputime
@@ -62,6 +66,16 @@ from sage.libs.ntl.ntl_ZZ_pContext import ZZ_pContext_factory
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX, ntl_ZZ_pX_Modulus
 from sage.rings.integer cimport Integer
+
+cdef extern from "ccobject.h":
+     ZZ_c* Allocate_ZZ_array "Allocate_array<ZZ>"(size_t n)
+     void Delete_ZZ_array "Delete_array<ZZ>"(ZZ_c* v)
+     ZZ_pX_c* Allocate_ZZ_pX_array "Allocate_array<ZZ_pX>"(size_t n)
+     void Delete_ZZ_pX_array "Delete_array<ZZ_pX>"(ZZ_pX_c* v)
+     ZZ_pX_Multiplier_c* Allocate_ZZ_pX_Multiplier_array "Allocate_array<ZZ_pXMultiplier>"(size_t n)
+     void Delete_ZZ_pX_Multiplier_array "Delete_array<ZZ_pXMultiplier>"(ZZ_pX_Multiplier_c* v)
+     ZZ_pX_Modulus_c* Allocate_ZZ_pX_Modulus_array "Allocate_array<ZZ_pXModulus>"(size_t n)
+     void Delete_ZZ_pX_Modulus_array "Delete_array<ZZ_pXModulus>"(ZZ_pX_Modulus_c* v)
 
 cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) except -1:
     """
@@ -77,7 +91,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         sage: A = PowComputer_ext_maker(5, 10, 10, 40, False, ntl.ZZ_pX([-5,65,125,0,1],5^10), 'small','e',ntl.ZZ_pX([1,-13,-25],5^10)) # indirect doctest
     """
     if prime_pow.deg <= 1:
-        raise ValueError, "Eisenstein extension must have degree at least 2"
+        raise ValueError("Eisenstein extension must have degree at least 2")
     cdef unsigned long D = prime_pow.deg - 1
     cdef int low_length = 0
     cdef int high_length = 0
@@ -145,8 +159,8 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         (<PowComputer_ZZ_pX_FM_Eis>prime_pow).high_length = high_length
 
         sig_on()
-        (<PowComputer_ZZ_pX_FM_Eis>prime_pow).low_shifter = <ZZ_pX_Multiplier_c *>sage_malloc(sizeof(ZZ_pX_Multiplier_c) * low_length)
-        (<PowComputer_ZZ_pX_FM_Eis>prime_pow).high_shifter = <ZZ_pX_Multiplier_c *>sage_malloc(sizeof(ZZ_pX_Multiplier_c) * high_length)
+        (<PowComputer_ZZ_pX_FM_Eis>prime_pow).low_shifter = Allocate_ZZ_pX_Multiplier_array(low_length)
+        (<PowComputer_ZZ_pX_FM_Eis>prime_pow).high_shifter = Allocate_ZZ_pX_Multiplier_array(high_length)
         sig_off()
         low_shifter_m = (<PowComputer_ZZ_pX_FM_Eis>prime_pow).low_shifter
         high_shifter_m = (<PowComputer_ZZ_pX_FM_Eis>prime_pow).high_shifter
@@ -156,8 +170,8 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         (<PowComputer_ZZ_pX_small_Eis>prime_pow).high_length = high_length
 
         sig_on()
-        (<PowComputer_ZZ_pX_small_Eis>prime_pow).low_shifter = <ZZ_pX_c *>sage_malloc(sizeof(ZZ_pX_c) * low_length)
-        (<PowComputer_ZZ_pX_small_Eis>prime_pow).high_shifter = <ZZ_pX_c *>sage_malloc(sizeof(ZZ_pX_c) * high_length)
+        (<PowComputer_ZZ_pX_small_Eis>prime_pow).low_shifter = Allocate_ZZ_pX_array(low_length)
+        (<PowComputer_ZZ_pX_small_Eis>prime_pow).high_shifter = Allocate_ZZ_pX_array(high_length)
         sig_off()
         low_shifter_p = (<PowComputer_ZZ_pX_small_Eis>prime_pow).low_shifter
         high_shifter_p = (<PowComputer_ZZ_pX_small_Eis>prime_pow).high_shifter
@@ -167,8 +181,8 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         (<PowComputer_ZZ_pX_big_Eis>prime_pow).high_length = high_length
 
         sig_on()
-        (<PowComputer_ZZ_pX_big_Eis>prime_pow).low_shifter = <ZZ_pX_c *>sage_malloc(sizeof(ZZ_pX_c) * low_length)
-        (<PowComputer_ZZ_pX_big_Eis>prime_pow).high_shifter = <ZZ_pX_c *>sage_malloc(sizeof(ZZ_pX_c) * high_length)
+        (<PowComputer_ZZ_pX_big_Eis>prime_pow).low_shifter = Allocate_ZZ_pX_array(low_length)
+        (<PowComputer_ZZ_pX_big_Eis>prime_pow).high_shifter = Allocate_ZZ_pX_array(high_length)
         sig_off()
         low_shifter_p = (<PowComputer_ZZ_pX_big_Eis>prime_pow).low_shifter
         high_shifter_p = (<PowComputer_ZZ_pX_big_Eis>prime_pow).high_shifter
@@ -209,7 +223,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     ##printer.x = (low_shifter[0]).val()
     ##print printer
     ZZ_pX_InvMod_newton_ram(shift_seed_inv, shift_seed.x, prime_pow.get_top_modulus()[0], prime_pow.get_top_context().x)
-    for i from 0 <= i < low_length:
+    for i in range(low_length):
         # Currently tmp = p / x^(2^(i-1)).  Squaring yields p^2 / x^(2^i)
         #ZZ_pX_SqrMod(tmp, tmp, modup)
         # Now we divide by p.
@@ -220,10 +234,8 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
         ##printer.x = into_multiplier
         ##print printer
         if multiplier:
-            ZZ_pX_Multiplier_construct(&(low_shifter_m[i]))
             ZZ_pX_Multiplier_build(low_shifter_m[i], into_multiplier, prime_pow.get_top_modulus()[0])
         else:
-            ZZ_pX_construct(&(low_shifter_p[i]))
             low_shifter_p[i] = into_multiplier
 
     # Now we handle high_shifter.
@@ -253,20 +265,17 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     ##ZZ_pX_MulMod_pre(printer.x, into_multiplier, shift_seed.x, prime_pow.get_top_modulus()[0])
     ##print "product = %s"%printer
     if multiplier:
-        ZZ_pX_Multiplier_construct(high_shifter_m)
         ZZ_pX_Multiplier_build(high_shifter_m[0], into_multiplier, prime_pow.get_top_modulus()[0])
     else:
-        ZZ_pX_construct(high_shifter_p)
         high_shifter_p[0] = into_multiplier
     # Now we cache powers of p/x^e.  This is a unit, so we don't have to worry about precision issues (yay!)
-    for i from 1 <= i < high_length:
+    for i in range(1, high_length):
         ZZ_pX_SqrMod_pre(into_multiplier, into_multiplier, prime_pow.get_top_modulus()[0])
         if multiplier:
-            ZZ_pX_Multiplier_construct(&(high_shifter_m[i]))
             ZZ_pX_Multiplier_build(high_shifter_m[i], into_multiplier, prime_pow.get_top_modulus()[0])
         else:
-            ZZ_pX_construct(&(high_shifter_p[i]))
             high_shifter_p[i] = into_multiplier
+
 
 def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     """
@@ -316,7 +325,7 @@ cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long 
         sage: yr = xr^2
         sage: dtr = xr.derivative()
         sage: f_dtr = yr*dtr; f_dtr
-        (a^6 + 6*a^36 + 2*a^66 + 7*a^96 + 4*a^126 + O(a^156))*t^5 + (a^8 + 2*a^38 + 8*a^68 + 3*a^98 + O(a^158))*t^7 + (8*a^40 + 10*a^100 + 5*a^130 + O(a^160))*t^9 + (2*a^12 + 5*a^42 + 3*a^72 + 7*a^102 + O(a^162))*t^11 + (8*a^14 + a^44 + 6*a^74 + 4*a^104 + 7*a^134 + O(a^164))*t^13 + (2*a^16 + 8*a^46 + 5*a^106 + 4*a^136 + O(a^166))*t^15 + (a^18 + 6*a^48 + 5*a^78 + 2*a^108 + 9*a^138 + O(a^168))*t^17 + (8*a^50 + 2*a^110 + O(a^170))*t^19 + (4*a^52 + 2*a^82 + 7*a^112 + 5*a^142 + O(a^172))*t^21 + (2*a^54 + 3*a^84 + 8*a^114 + 6*a^144 + O(a^174))*t^23 + (a^26 + 6*a^56 + 4*a^86 + 9*a^116 + 3*a^146 + O(a^176))*t^25 + (10*a^28 + 5*a^58 + 4*a^88 + 10*a^118 + 6*a^148 + O(a^178))*t^27 + (5*a^30 + 5*a^60 + 4*a^90 + 9*a^120 + 3*a^150 + O(a^180))*t^29 + (4*a^32 + 10*a^62 + 5*a^92 + 7*a^122 + 3*a^152 + O(a^182))*t^31 + (5*a^34 + 9*a^94 + 3*a^124 + 6*a^154 + O(a^184))*t^33 + (4*a^36 + 3*a^66 + 10*a^96 + 2*a^126 + 6*a^156 + O(a^186))*t^35 + (6*a^38 + 9*a^68 + 7*a^128 + 10*a^158 + O(a^188))*t^37 + (7*a^40 + 3*a^70 + 4*a^100 + 4*a^130 + 8*a^160 + O(a^190))*t^39 + (a^42 + 10*a^72 + 10*a^102 + a^132 + 7*a^162 + O(a^192))*t^41 + (8*a^74 + 8*a^104 + 9*a^134 + 7*a^164 + O(a^194))*t^43 + (10*a^136 + 2*a^166 + O(a^196))*t^45 + (7*a^48 + 10*a^78 + 5*a^108 + 8*a^138 + 3*a^168 + O(a^198))*t^47 + (6*a^50 + 5*a^80 + a^110 + 6*a^170 + O(a^200))*t^49 + (a^52 + 8*a^82 + 2*a^112 + 10*a^172 + O(a^202))*t^51 + (9*a^54 + 2*a^84 + 6*a^114 + 4*a^144 + O(a^204))*t^53 + (2*a^56 + 5*a^86 + 2*a^116 + 4*a^146 + a^176 + O(a^206))*t^55 + (3*a^58 + 3*a^88 + a^118 + 5*a^148 + 2*a^178 + O(a^208))*t^57 + (5*a^60 + 10*a^90 + 9*a^120 + a^150 + 6*a^180 + O(a^210))*t^59 + (4*a^62 + 9*a^92 + 7*a^122 + 7*a^152 + 9*a^182 + O(a^212))*t^61 + (10*a^64 + 8*a^94 + 6*a^124 + 8*a^154 + 4*a^184 + O(a^214))*t^63 + (4*a^126 + 10*a^156 + 9*a^186 + O(a^216))*t^65 + (7*a^98 + 4*a^128 + 6*a^158 + 6*a^188 + O(a^218))*t^67 + (3*a^70 + 6*a^100 + 8*a^130 + 9*a^160 + 10*a^190 + O(a^220))*t^69 + (9*a^72 + 5*a^102 + 9*a^132 + 3*a^162 + 10*a^192 + O(a^222))*t^71 + (3*a^74 + 8*a^104 + 7*a^134 + 2*a^164 + O(a^224))*t^73 + (10*a^76 + a^106 + 2*a^136 + 4*a^166 + 9*a^196 + O(a^226))*t^75 + (3*a^78 + 6*a^108 + 9*a^138 + 4*a^168 + 5*a^198 + O(a^228))*t^77 + (4*a^80 + 10*a^110 + 7*a^170 + 8*a^200 + O(a^230))*t^79 + (5*a^82 + 4*a^112 + 9*a^142 + 8*a^172 + 8*a^202 + O(a^232))*t^81 + (4*a^84 + 9*a^114 + 8*a^144 + 2*a^174 + 6*a^204 + O(a^234))*t^83 + (3*a^86 + 5*a^116 + 4*a^146 + 8*a^206 + O(a^236))*t^85 + (a^118 + 7*a^148 + 6*a^208 + O(a^238))*t^87 + (4*a^90 + 9*a^120 + 9*a^150 + 6*a^180 + 6*a^210 + O(a^240))*t^89 + (10*a^122 + 3*a^152 + 8*a^182 + 4*a^212 + 2*a^242 + O(a^244))*t^91 + (9*a^154 + 10*a^184 + 10*a^214 + 7*a^244 + 9*a^274 + O(a^276))*t^93 + (9*a^186 + 4*a^216 + 5*a^246 + a^276 + 10*a^306 + O(a^308))*t^95
+        O(a^456)*t^2 + O(a^306)*t^3 + O(a^156)*t^4 + (a^6 + 6*a^36 + 2*a^66 + 7*a^96 + 4*a^126 + O(a^156))*t^5 + O(a^158)*t^6 + (a^8 + 2*a^38 + 8*a^68 + 3*a^98 + O(a^158))*t^7 + O(a^160)*t^8 + (8*a^40 + 10*a^100 + 5*a^130 + O(a^160))*t^9 + O(a^162)*t^10 + (2*a^12 + 5*a^42 + 3*a^72 + 7*a^102 + O(a^162))*t^11 + O(a^164)*t^12 + (8*a^14 + a^44 + 6*a^74 + 4*a^104 + 7*a^134 + O(a^164))*t^13 + O(a^166)*t^14 + (2*a^16 + 8*a^46 + 5*a^106 + 4*a^136 + O(a^166))*t^15 + O(a^168)*t^16 + (a^18 + 6*a^48 + 5*a^78 + 2*a^108 + 9*a^138 + O(a^168))*t^17 + O(a^170)*t^18 + (8*a^50 + 2*a^110 + O(a^170))*t^19 + O(a^172)*t^20 + (4*a^52 + 2*a^82 + 7*a^112 + 5*a^142 + O(a^172))*t^21 + O(a^174)*t^22 + (2*a^54 + 3*a^84 + 8*a^114 + 6*a^144 + O(a^174))*t^23 + O(a^176)*t^24 + (a^26 + 6*a^56 + 4*a^86 + 9*a^116 + 3*a^146 + O(a^176))*t^25 + O(a^178)*t^26 + (10*a^28 + 5*a^58 + 4*a^88 + 10*a^118 + 6*a^148 + O(a^178))*t^27 + O(a^180)*t^28 + (5*a^30 + 5*a^60 + 4*a^90 + 9*a^120 + 3*a^150 + O(a^180))*t^29 + O(a^182)*t^30 + (4*a^32 + 10*a^62 + 5*a^92 + 7*a^122 + 3*a^152 + O(a^182))*t^31 + O(a^184)*t^32 + (5*a^34 + 9*a^94 + 3*a^124 + 6*a^154 + O(a^184))*t^33 + O(a^186)*t^34 + (4*a^36 + 3*a^66 + 10*a^96 + 2*a^126 + 6*a^156 + O(a^186))*t^35 + O(a^188)*t^36 + (6*a^38 + 9*a^68 + 7*a^128 + 10*a^158 + O(a^188))*t^37 + O(a^190)*t^38 + (7*a^40 + 3*a^70 + 4*a^100 + 4*a^130 + 8*a^160 + O(a^190))*t^39 + O(a^192)*t^40 + (a^42 + 10*a^72 + 10*a^102 + a^132 + 7*a^162 + O(a^192))*t^41 + O(a^194)*t^42 + (8*a^74 + 8*a^104 + 9*a^134 + 7*a^164 + O(a^194))*t^43 + O(a^196)*t^44 + (10*a^136 + 2*a^166 + O(a^196))*t^45 + O(a^198)*t^46 + (7*a^48 + 10*a^78 + 5*a^108 + 8*a^138 + 3*a^168 + O(a^198))*t^47 + O(a^200)*t^48 + (6*a^50 + 5*a^80 + a^110 + 6*a^170 + O(a^200))*t^49 + O(a^202)*t^50 + (a^52 + 8*a^82 + 2*a^112 + 10*a^172 + O(a^202))*t^51 + O(a^204)*t^52 + (9*a^54 + 2*a^84 + 6*a^114 + 4*a^144 + O(a^204))*t^53 + O(a^206)*t^54 + (2*a^56 + 5*a^86 + 2*a^116 + 4*a^146 + a^176 + O(a^206))*t^55 + O(a^208)*t^56 + (3*a^58 + 3*a^88 + a^118 + 5*a^148 + 2*a^178 + O(a^208))*t^57 + O(a^210)*t^58 + (5*a^60 + 10*a^90 + 9*a^120 + a^150 + 6*a^180 + O(a^210))*t^59 + O(a^212)*t^60 + (4*a^62 + 9*a^92 + 7*a^122 + 7*a^152 + 9*a^182 + O(a^212))*t^61 + O(a^214)*t^62 + (10*a^64 + 8*a^94 + 6*a^124 + 8*a^154 + 4*a^184 + O(a^214))*t^63 + O(a^216)*t^64 + (4*a^126 + 10*a^156 + 9*a^186 + O(a^216))*t^65 + O(a^218)*t^66 + (7*a^98 + 4*a^128 + 6*a^158 + 6*a^188 + O(a^218))*t^67 + O(a^220)*t^68 + (3*a^70 + 6*a^100 + 8*a^130 + 9*a^160 + 10*a^190 + O(a^220))*t^69 + O(a^222)*t^70 + (9*a^72 + 5*a^102 + 9*a^132 + 3*a^162 + 10*a^192 + O(a^222))*t^71 + O(a^224)*t^72 + (3*a^74 + 8*a^104 + 7*a^134 + 2*a^164 + O(a^224))*t^73 + O(a^226)*t^74 + (10*a^76 + a^106 + 2*a^136 + 4*a^166 + 9*a^196 + O(a^226))*t^75 + O(a^228)*t^76 + (3*a^78 + 6*a^108 + 9*a^138 + 4*a^168 + 5*a^198 + O(a^228))*t^77 + O(a^230)*t^78 + (4*a^80 + 10*a^110 + 7*a^170 + 8*a^200 + O(a^230))*t^79 + O(a^232)*t^80 + (5*a^82 + 4*a^112 + 9*a^142 + 8*a^172 + 8*a^202 + O(a^232))*t^81 + O(a^234)*t^82 + (4*a^84 + 9*a^114 + 8*a^144 + 2*a^174 + 6*a^204 + O(a^234))*t^83 + O(a^236)*t^84 + (3*a^86 + 5*a^116 + 4*a^146 + 8*a^206 + O(a^236))*t^85 + O(a^238)*t^86 + (a^118 + 7*a^148 + 6*a^208 + O(a^238))*t^87 + O(a^240)*t^88 + (4*a^90 + 9*a^120 + 9*a^150 + 6*a^180 + 6*a^210 + O(a^240))*t^89 + O(a^244)*t^90 + (10*a^122 + 3*a^152 + 8*a^182 + 4*a^212 + 2*a^242 + O(a^244))*t^91 + O(a^276)*t^92 + (9*a^154 + 10*a^184 + 10*a^214 + 7*a^244 + 9*a^274 + O(a^276))*t^93 + O(a^308)*t^94 + (9*a^186 + 4*a^216 + 5*a^246 + a^276 + 10*a^306 + O(a^308))*t^95
     """
     ##print "starting..."
     cdef ZZ_pX_c low_part
@@ -493,33 +502,29 @@ cdef class PowComputer_ext(PowComputer_class):
 
             sage: PC = PowComputer_ext_maker(5, 10, 10, 20, False, ntl.ZZ_pX([-5, 0, 1], 5^10), 'small', 'e',ntl.ZZ_pX([1],5^10)) #indirect doctest
         """
+        PowComputer_class.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
+
         self._initialized = 0
-        sig_on()
-        self.small_powers = <ZZ_c *>sage_malloc(sizeof(ZZ_c) * (cache_limit + 1))
-        sig_off()
+        self.small_powers = Allocate_ZZ_array(cache_limit + 1)
         if self.small_powers == NULL:
-            raise MemoryError, "out of memory allocating power storing"
-        ZZ_construct(&self.top_power)
+            raise MemoryError("out of memory allocating power storing")
 
         cdef Py_ssize_t i
         cdef Integer x
 
-        ZZ_construct(self.small_powers)
         ZZ_conv_from_int(self.small_powers[0], 1)
 
         if cache_limit > 0:
-            ZZ_construct(&(self.small_powers[1]))
             mpz_to_ZZ(&(self.small_powers[1]), prime.value)
 
         sig_on()
-        for i from 2 <= i <= cache_limit:
-            ZZ_construct(&(self.small_powers[i]))
+        for i in range(2, cache_limit + 1):
             ZZ_mul(self.small_powers[i], self.small_powers[i-1], self.small_powers[1])
         mpz_to_ZZ(&self.top_power, prime.value)
         ZZ_power(self.top_power, self.top_power, prec_cap)
         sig_off()
         mpz_init(self.temp_m)
-        ZZ_construct(&self.temp_z)
+        mpz_init(self.temp_m2)
 
         self._poly = poly
         self._shift_seed = shift_seed
@@ -533,7 +538,7 @@ cdef class PowComputer_ext(PowComputer_class):
             sage: PC = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
             sage: del PC # indirect doctest
         """
-        if (<PowComputer_class>self)._initialized:
+        if (<PowComputer_ext>self)._initialized:
             self.cleanup_ext()
 
     def __repr__(self):
@@ -560,11 +565,11 @@ cdef class PowComputer_ext(PowComputer_class):
             PowComputer_ext for 5, with polynomial [9765620 0 1]
         """
         cdef Integer cache_limit, prec_cap, ram_prec_cap
-        cache_limit = PY_NEW(Integer)
+        cache_limit = Integer.__new__(Integer)
         mpz_set_si(cache_limit.value, self.cache_limit)
-        prec_cap = PY_NEW(Integer)
+        prec_cap = Integer.__new__(Integer)
         mpz_set_si(prec_cap.value, self.prec_cap)
-        ram_prec_cap = PY_NEW(Integer)
+        ram_prec_cap = Integer.__new__(Integer)
         mpz_set_si(ram_prec_cap.value, self.ram_prec_cap)
         return PowComputer_ext_maker, (self.prime, cache_limit, prec_cap, ram_prec_cap, self.in_field, self._poly, self._prec_type, self._ext_type, self._shift_seed)
 
@@ -577,15 +582,11 @@ cdef class PowComputer_ext(PowComputer_class):
             sage: PC = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
             sage: del PC # indirect doctest
         """
-        cdef Py_ssize_t i
-        for i from 0 <= i <= self.cache_limit:
-            ZZ_destruct(&(self.small_powers[i]))
-        sage_free(self.small_powers)
-        ZZ_destruct(&self.top_power)
+        Delete_ZZ_array(self.small_powers)
         mpz_clear(self.temp_m)
-        ZZ_destruct(&self.temp_z)
+        mpz_clear(self.temp_m2)
 
-    cdef mpz_srcptr pow_mpz_t_tmp(self, long n):
+    cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL:
         """
         Provides fast access to an mpz_t* pointing to self.prime^n.
 
@@ -608,25 +609,30 @@ cdef class PowComputer_ext(PowComputer_class):
             sage: PC._pow_mpz_t_tmp_test(4) #indirect doctest
             625
         """
-        # READ THE DOCSTRING
         if n < 0:
-            # Exception will be ignored by Cython
-            raise ValueError("n must be positive")
+            raise ValueError("n must be non-negative")
         if n <= self.cache_limit:
             ZZ_to_mpz(self.temp_m, &(self.small_powers[n]))
         elif n == self.prec_cap:
             ZZ_to_mpz(self.temp_m, &self.top_power)
         else:
+            sig_on()
+            # n may exceed self.prec_cap. Very large values can, however, lead to
+            # out-of-memory situations in the following computation. This
+            # sig_on()/sig_off() prevents sage from crashing in such cases.
+            # It does not have a significant impact on performance. For small
+            # values of n the powers are taken from self.small_powers, for large
+            # values, the computation dominates the cost of the sig_on()/sig_off().
             mpz_pow_ui(self.temp_m, self.prime.value, n)
+            sig_off()
         return self.temp_m
 
-    cdef ZZ_c* pow_ZZ_tmp(self, long n):
+    cdef ZZ_c* pow_ZZ_tmp(self, long n) except NULL:
         """
         Provides fast access to a ZZ_c* pointing to self.prime^n.
 
         The location pointed to depends on the underlying
-        representation.  In no circumstances should you ZZ_destruct
-        the result.  The value pointed to may be an internal temporary
+        representation. The value pointed to may be an internal temporary
         variable for the class.  In particular, you should not try to
         refer to the results of two pow_ZZ_tmp calls at the same time,
         because the second call may overwrite the memory pointed to by
@@ -641,8 +647,7 @@ cdef class PowComputer_ext(PowComputer_class):
             625
         """
         if n < 0:
-            # Exception will be ignored by Cython
-            raise ValueError("n must be positive")
+            raise ValueError("n must be non-negative")
         if n <= self.cache_limit:
             return &(self.small_powers[n])
         if n == self.prec_cap:
@@ -699,7 +704,7 @@ cdef class PowComputer_ext(PowComputer_class):
         m = Integer(m)
         n = Integer(n)
         if m < 0 or n < 0:
-            raise ValueError, "m, n must be non-negative"
+            raise ValueError("m, n must be non-negative")
         cdef ntl_ZZ ans = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_mul(ans.x, self.pow_ZZ_tmp(mpz_get_ui((<Integer>m).value))[0], self.pow_ZZ_tmp(mpz_get_ui((<Integer>n).value))[0])
         return ans
@@ -758,6 +763,16 @@ cdef class PowComputer_ext(PowComputer_class):
 
 cdef class PowComputer_ZZ_pX(PowComputer_ext):
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+        """
+        Initialization.
+
+        For input types see :func:`PowComputer_ext_maker`
+
+        TESTS::
+
+            sage: PC = PowComputer_ext_maker(5, 5, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
+            sage: TestSuite(PC).run()
+        """
         if not isinstance(poly, ntl_ZZ_pX):
             raise TypeError
         self.deg = ZZ_pX_deg((<ntl_ZZ_pX>poly).x)
@@ -870,7 +885,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         end = mpz_get_ui((<Integer>Integer(runs)).value)
         _n = mpz_get_ui((<Integer>Integer(n)).value)
         t = cputime()
-        for i from 0 <= i < end:
+        for i in range(end):
             # Put the function you want speed tested here.
             self.get_modulus(_n)
         return cputime(t)
@@ -1001,11 +1016,11 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         if self.pow_Integer(mpz_get_si(n.value)) != Integer(a.c.p):
             #print self.pow_Integer(mpz_get_si(n.value))
             #print a.c.p
-            raise ValueError, "a context mismatch"
+            raise ValueError("a context mismatch")
         if self.pow_Integer(mpz_get_si(n.value)) != Integer(b.c.p):
             #print self.pow_Integer(mpz_get_si(n.value))
             #print b.c.p
-            raise ValueError, "b context mismatch"
+            raise ValueError("b context mismatch")
         cdef ntl_ZZ_pX r = (<ntl_ZZ_pX>a)._new()
         cdef ntl_ZZ_pX aa = (<ntl_ZZ_pX>a)._new()
         cdef ntl_ZZ_pX bb = (<ntl_ZZ_pX>b)._new()
@@ -1096,7 +1111,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             4
         """
         cdef Integer _n = Integer(n)
-        cdef Integer ans = PY_NEW(Integer)
+        cdef Integer ans = Integer.__new__(Integer)
         mpz_set_si(ans.value, self.capdiv(mpz_get_si(_n.value)))
         return ans
 
@@ -1131,7 +1146,7 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
 
         OUTPUT:
 
-        - 1 -- x should be set to zero (or usually, ZZ_pX_destruct'd)
+        - 1 -- x should be set to zero
         - 0 -- normal
 
         EXAMPLES::
@@ -1225,8 +1240,8 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
             ZZ_pX_add(xnew_q, xnew_q, x[0])
             # while x != xnew:
             #     x = xnew
-            #     xnew = x + u*(x^p - x)
-            while not ZZ_pX_equal(x[0], xnew_q):
+            #     xnew = x + u*(x^q - x)
+            while x[0] != xnew_q:
                 x[0] = xnew_q
                 ZZ_pX_PowerMod_pre(xnew_q, x[0], q, self.get_modulus(absprec)[0])
                 ZZ_pX_sub(xnew_q, xnew_q, x[0])
@@ -1263,7 +1278,6 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
         self.c.restore_c()
         # For now, we don't do anything complicated with poly
         if isinstance(poly, ntl_ZZ_pX) and (<ntl_ZZ_pX>poly).c is self.c:
-            ZZ_pX_Modulus_construct(&self.mod)
             ZZ_pX_Modulus_build(self.mod, (<ntl_ZZ_pX>poly).x)
             if prec_cap == ram_prec_cap:
                 self.e = 1
@@ -1273,31 +1287,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
                 self.f = 1
             self.ram_prec_cap = ram_prec_cap
         else:
-            raise NotImplementedError, "NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM"
-
-
-    def __dealloc__(self):
-        """
-        Cleans up the memory for self.mod
-
-        EXAMPLES::
-
-            sage: A = PowComputer_ext_maker(5, 3, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
-            sage: del A # indirect doctest
-        """
-        if self._initialized:
-            self.cleanup_ZZ_pX_FM()
-
-    cdef void cleanup_ZZ_pX_FM(self):
-        """
-        Cleans up the memory for self.mod
-
-        EXAMPLES::
-
-            sage: A = PowComputer_ext_maker(5, 3, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10)) #indirect doctest
-            sage: del A # indirect doctest
-        """
-        ZZ_pX_Modulus_destruct(&self.mod)
+            raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
     cdef ntl_ZZ_pContext_class get_top_context(self):
         """
@@ -1372,7 +1362,7 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
         # The __new__ method for PowComputer_ZZ_pX_FM has already run, so we have access to self.mod
         self._ext_type = 'e'
         if not isinstance(shift_seed, ntl_ZZ_pX):
-            raise TypeError, "shift_seed must be an ntl_ZZ_pX"
+            raise TypeError("shift_seed must be an ntl_ZZ_pX")
         ZZ_pX_Eis_init(self, <ntl_ZZ_pX>shift_seed)
 
     def _low_shifter(self, i):
@@ -1427,7 +1417,8 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
             sage: A._high_shifter(0)
             [263296 51990 228 3465]
 
-            If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5.
+        If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5.::
+
             sage: R.<x> = ZZ[]
             sage: f = 263296 + 51990*x + 228*x^2 + 3465*x^3
             sage: g = x^4 + 15*x^2 + 75*x - 5
@@ -1437,12 +1428,14 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
             sage: A._high_shifter(1)
             [1420786 9298230 2217816 6212495]
 
-            Similarly:
+        Similarly::
+
             sage: f = 1420786 + 9298230*x + 2217816*x^2 + 6212495*x^3
             sage: h = f*x^8 % g; h
             -1328125000000*x^3 + 2962646484375*x^2 + 22094970703125*x - 1466308593725
 
-            Here, we need to remember that we're working modulo 5^10:
+        Here, we need to remember that we're working modulo 5^10::
+
             sage: h[0].valuation(5), h[1].valuation(5), h[2].valuation(5), h[3].valuation(5)
             (2, 12, 13, 13)
             sage: (h[0] - 25).valuation(5)
@@ -1479,13 +1472,8 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
             sage: A = PowComputer_ext_maker(5, 3, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
             sage: del A # indirect doctest
         """
-        cdef int i # yes, an int is good enough
-        for i from 0 <= i < self.low_length:
-            ZZ_pX_Multiplier_destruct(&(self.low_shifter[i]))
-        sage_free(self.low_shifter)
-        for i from 0 <= i < self.high_length:
-            ZZ_pX_Multiplier_destruct(&(self.high_shifter[i]))
-        sage_free(self.high_shifter)
+        Delete_ZZ_pX_Multiplier_array(self.low_shifter)
+        Delete_ZZ_pX_Multiplier_array(self.high_shifter)
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
@@ -1632,16 +1620,16 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
 
         if cache_limit != prec_cap:
             self.cleanup_ext()
-            raise ValueError, "prec_cap and cache_limit must be equal in the small case"
+            raise ValueError("prec_cap and cache_limit must be equal in the small case")
 
         self.c = []
         # We cache from 0 to cache_limit inclusive, and provide one extra slot to return moduli above the cache_limit
         sig_on()
-        self.mod = <ZZ_pX_Modulus_c *>sage_malloc(sizeof(ZZ_pX_Modulus_c) * (cache_limit + 2))
+        self.mod = Allocate_ZZ_pX_Modulus_array(cache_limit + 2)
         sig_off()
         if self.mod == NULL:
             self.cleanup_ext()
-            raise MemoryError, "out of memory allocating moduli"
+            raise MemoryError("out of memory allocating moduli")
 
         cdef ntl_ZZ_pX printer
         cdef Py_ssize_t i
@@ -1649,7 +1637,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
         if isinstance(poly, ntl_ZZ_pX):
             pol = (<ntl_ZZ_pX>poly).x
             self.c.append(None)
-            for i from 1 <= i <= cache_limit:
+            for i in range(1, cache_limit + 1):
                 self.c.append(PowComputer_ZZ_pX.get_context(self,i))
 
             # create a temporary polynomial with the highest modulus to
@@ -1657,12 +1645,10 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
             (<ntl_ZZ_pContext_class>self.c[cache_limit]).restore_c()
             tmp = (<ntl_ZZ_pX>poly).x
 
-            for i from 1 <= i <= cache_limit:
+            for i in range(1, cache_limit + 1):
                 (<ntl_ZZ_pContext_class>self.c[i]).restore_c()
-                ZZ_pX_Modulus_construct(&(self.mod[i]))
                 ZZ_pX_conv_modulus(tmp, pol, (<ntl_ZZ_pContext_class>self.c[i]).x)
                 ZZ_pX_Modulus_build(self.mod[i], tmp)
-            ZZ_pX_Modulus_construct(&(self.mod[cache_limit+1]))
             if prec_cap == ram_prec_cap:
                 self.e = 1
                 self.f = ZZ_pX_deg((<ntl_ZZ_pX>poly).x)
@@ -1671,7 +1657,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
                 self.f = 1
             self.ram_prec_cap = ram_prec_cap
         else:
-            raise NotImplementedError, "NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM"
+            raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
     def __dealloc__(self):
         """
@@ -1694,10 +1680,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
             sage: A = PowComputer_ext_maker(5, 10, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'small','e',ntl.ZZ_pX([1],5^10))
             sage: del A # indirect doctest
         """
-        cdef Py_ssize_t i
-        for i from 1 <= i <= self.cache_limit + 1:
-            ZZ_pX_Modulus_destruct(&(self.mod[i]))
-        sage_free(self.mod)
+        Delete_ZZ_pX_Modulus_array(self.mod)
 
     cdef ntl_ZZ_pContext_class get_context(self, long n):
         """
@@ -1817,9 +1800,21 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
     These are only stored at maximal precision: in order to get lower precision versions just reduce mod p^n.
     """
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+        """
+        Initialization.
+
+        For input types see :func:`PowComputer_ext_maker`
+
+        TESTS::
+
+            sage: A = PowComputer_ext_maker(5, 10, 10, 40, False, ntl.ZZ_pX([-5,75,15,0,1],5^10), 'small', 'e',ntl.ZZ_pX([1,-15,-3],5^10))
+            sage: type(A)
+            <type 'sage.rings.padics.pow_computer_ext.PowComputer_ZZ_pX_small_Eis'>
+            sage: TestSuite(A).run()
+        """
         self._ext_type = 'e'
         if not isinstance(shift_seed, ntl_ZZ_pX):
-            raise TypeError, "shift_seed must be an ntl_ZZ_pX"
+            raise TypeError("shift_seed must be an ntl_ZZ_pX")
         ZZ_pX_Eis_init(self, <ntl_ZZ_pX>shift_seed)
 
     def _low_shifter(self, i):
@@ -1874,7 +1869,8 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
             sage: A._high_shifter(0)
             [263296 51990 228 3465]
 
-            If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5.
+        If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5. ::
+
             sage: R.<x> = ZZ[]
             sage: f = 263296 + 51990*x + 228*x^2 + 3465*x^3
             sage: g = x^4 + 15*x^2 + 75*x - 5
@@ -1884,12 +1880,14 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
             sage: A._high_shifter(1)
             [1420786 9298230 2217816 6212495]
 
-            Similarly:
+        Similarly::
+
             sage: f = 1420786 + 9298230*x + 2217816*x^2 + 6212495*x^3
             sage: h = f*x^8 % g; h
             -1328125000000*x^3 + 2962646484375*x^2 + 22094970703125*x - 1466308593725
 
-            Here, we need to remember that we're working modulo 5^10:
+        Here, we need to remember that we're working modulo 5^10::
+
             sage: h[0].valuation(5), h[1].valuation(5), h[2].valuation(5), h[3].valuation(5)
             (2, 12, 13, 13)
             sage: (h[0] - 25).valuation(5)
@@ -1927,13 +1925,8 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
             sage: A = PowComputer_ext_maker(5, 3, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
             sage: del A # indirect doctest
         """
-        cdef int i # yes, an int is good enough
-        for i from 0 <= i < self.low_length:
-            ZZ_pX_destruct(&(self.low_shifter[i]))
-        sage_free(self.low_shifter)
-        for i from 0 <= i < self.high_length:
-            ZZ_pX_destruct(&(self.high_shifter[i]))
-        sage_free(self.high_shifter)
+        Delete_ZZ_pX_array(self.low_shifter)
+        Delete_ZZ_pX_array(self.high_shifter)
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
@@ -1992,20 +1985,20 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
         self.context_list = []
         #if self.c == NULL:
         #    self.cleanup_ext()
-        #    raise MemoryError, "out of memory allocating contexts"
+        #    raise MemoryError("out of memory allocating contexts")
         sig_on()
-        self.modulus_list = <ZZ_pX_Modulus_c *>sage_malloc(sizeof(ZZ_pX_Modulus_c) * (cache_limit + 1))
+        self.modulus_list = Allocate_ZZ_pX_Modulus_array(cache_limit + 1)
         sig_off()
         if self.modulus_list == NULL:
             self.cleanup_ext()
-            raise MemoryError, "out of memory allocating moduli"
+            raise MemoryError("out of memory allocating moduli")
 
         cdef Py_ssize_t i
         cdef ZZ_pX_c tmp, pol
         if isinstance(poly, ntl_ZZ_pX):
             pol = (<ntl_ZZ_pX>poly).x
             self.context_list.append(None)
-            for i from 1 <= i <= cache_limit:
+            for i in range(1, cache_limit + 1):
                 self.context_list.append(PowComputer_ZZ_pX.get_context(self,i))
 
             # create a temporary polynomial with the highest modulus to
@@ -2014,13 +2007,11 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
             (<ntl_ZZ_pContext_class>self.top_context).restore_c()
             tmp = (<ntl_ZZ_pX>poly).x
 
-            for i from 1 <= i <= cache_limit:
+            for i in range(1, cache_limit + 1):
                 (<ntl_ZZ_pContext_class>self.context_list[i]).restore_c()
-                ZZ_pX_Modulus_construct(&(self.modulus_list[i]))
                 ZZ_pX_conv_modulus(tmp, pol, (<ntl_ZZ_pContext_class>self.context_list[i]).x)
                 ZZ_pX_Modulus_build(self.modulus_list[i], tmp)
             (<ntl_ZZ_pContext_class>self.top_context).restore_c()
-            ZZ_pX_Modulus_construct(&(self.top_mod))
             ZZ_pX_conv_modulus(tmp, pol, self.top_context.x)
             ZZ_pX_Modulus_build(self.top_mod, tmp)
             self.context_dict = {}
@@ -2033,7 +2024,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
                 self.f = 1
             self.ram_prec_cap = ram_prec_cap
         else:
-            raise NotImplementedError, "NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM"
+            raise NotImplementedError("NOT IMPLEMENTED IN PowComputer_ZZ_pX_FM")
 
     def __dealloc__(self):
         """
@@ -2056,13 +2047,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
             sage: A = PowComputer_ext_maker(5, 6, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'big','e',ntl.ZZ_pX([1],5^10))
             sage: del A # indirect doctest
         """
-        #pass
-        ## These cause a segfault.  I don't know why.
-        cdef Py_ssize_t i
-        for i from 1 <= i <= self.cache_limit:
-            ZZ_pX_Modulus_destruct(&(self.modulus_list[i]))
-        sage_free(self.modulus_list)
-        ZZ_pX_Modulus_destruct(&self.top_mod)
+        Delete_ZZ_pX_Modulus_array(self.modulus_list)
 
     def reset_dictionaries(self):
         """
@@ -2246,9 +2231,21 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
     These are only stored at maximal precision: in order to get lower precision versions just reduce mod p^n.
     """
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+        """
+        Initialization.
+
+        For input types see :func:`PowComputer_ext_maker`
+
+        TESTS::
+
+            sage: A = PowComputer_ext_maker(5, 3, 10, 40, False, ntl.ZZ_pX([-5,75,15,0,1],5^10), 'big', 'e',ntl.ZZ_pX([1,-15,-3],5^10))
+            sage: type(A)
+            <type 'sage.rings.padics.pow_computer_ext.PowComputer_ZZ_pX_big_Eis'>
+            sage: TestSuite(A).run()
+        """
         self._ext_type = 'e'
         if not isinstance(shift_seed, ntl_ZZ_pX):
-            raise TypeError, "shift_seed must be an ntl_ZZ_pX"
+            raise TypeError("shift_seed must be an ntl_ZZ_pX")
         ZZ_pX_Eis_init(self, <ntl_ZZ_pX>shift_seed)
 
     def _low_shifter(self, i):
@@ -2303,7 +2300,8 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             sage: A._high_shifter(0)
             [263296 51990 228 3465]
 
-            If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5.
+        If we take this and multiply by x^4, and reduce modulo x^4 + 15*x^2 + 75*x - 5, we should get 5. ::
+
             sage: R.<x> = ZZ[]
             sage: f = 263296 + 51990*x + 228*x^2 + 3465*x^3
             sage: g = x^4 + 15*x^2 + 75*x - 5
@@ -2313,12 +2311,14 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             sage: A._high_shifter(1)
             [1420786 9298230 2217816 6212495]
 
-            Similarly:
+        Similarly::
+
             sage: f = 1420786 + 9298230*x + 2217816*x^2 + 6212495*x^3
             sage: h = f*x^8 % g; h
             -1328125000000*x^3 + 2962646484375*x^2 + 22094970703125*x - 1466308593725
 
-            Here, we need to remember that we're working modulo 5^10:
+        Here, we need to remember that we're working modulo 5^10::
+
             sage: h[0].valuation(5), h[1].valuation(5), h[2].valuation(5), h[3].valuation(5)
             (2, 12, 13, 13)
             sage: (h[0] - 25).valuation(5)
@@ -2356,13 +2356,8 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             sage: A = PowComputer_ext_maker(5, 3, 10, 20, False, ntl.ZZ_pX([-5,0,1],5^10), 'FM', 'e',ntl.ZZ_pX([1],5^10))
             sage: del A # indirect doctest
         """
-        cdef int i # yes, an int is good enough
-        for i from 0 <= i < self.low_length:
-            ZZ_pX_destruct(&(self.low_shifter[i]))
-        sage_free(self.low_shifter)
-        for i from 0 <= i < self.high_length:
-            ZZ_pX_destruct(&(self.high_shifter[i]))
-        sage_free(self.high_shifter)
+        Delete_ZZ_pX_array(self.low_shifter)
+        Delete_ZZ_pX_array(self.high_shifter)
 
     cdef int eis_shift(self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
         """
@@ -2454,4 +2449,3 @@ def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, 
         return PowComputer_ZZ_pX_FM_Eis(_prime, _cache_limit, _prec_cap, _ram_prec_cap, inf, poly, shift_seed)
     else:
         raise ValueError("prec_type must be one of 'small', 'big' or 'FM' and ext_type must be one of 'u' or 'e' or 't'")
-

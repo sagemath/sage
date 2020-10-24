@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Points
 
 TESTS::
@@ -10,26 +11,22 @@ TESTS::
     Graphics3d Object
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 from sage.plot.primitive import GraphicPrimitive_xydata
-import collections
+from collections.abc import Iterator
 
 
 # TODO: create _allowed_options for 3D point classes to
@@ -41,11 +38,11 @@ class Point(GraphicPrimitive_xydata):
 
     INPUT:
 
-    - xdata - list of x values for points in Point object
+    - xdata -- list of x values for points in Point object
 
-    - ydata - list of y values for points in Point object
+    - ydata -- list of y values for points in Point object
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -214,13 +211,13 @@ class Point(GraphicPrimitive_xydata):
         from sage.plot.plot3d.shapes2 import point3d
         options = self._plot3d_options()
         options.update(kwds)
-        zdata=[]
+        zdata = []
         if isinstance(z, list):
-            zdata=z
+            zdata = z
         else:
-            zdata=[z]*len(self.xdata)
-        if len(zdata)==len(self.xdata):
-            all = [point3d([(x, y, z) for x, y, z in zip(self.xdata, self.ydata, zdata)], **options)]
+            zdata = [z] * len(self.xdata)
+        if len(zdata) == len(self.xdata):
+            all = [point3d(list(zip(self.xdata, self.ydata, zdata)), **options)]
             if len(all) == 1:
                 return all[0]
             else:
@@ -270,7 +267,7 @@ class Point(GraphicPrimitive_xydata):
         #method does not interpret it as a list of 3 floating
         #point color specifications when there are
         #three points. This is mentioned in the matplotlib 0.98
-        #documentation and fixes \#2076
+        #documentation and fixes #2076
         from matplotlib.colors import rgb2hex
         c = rgb2hex(to_mpl_color(options['rgbcolor']))
 
@@ -343,7 +340,7 @@ def point(points, **kwds):
         sage: point(iter([(1,2),(3,5)]))
         Graphics object consisting of 1 graphics primitive
     """
-    if isinstance(points, collections.Iterator):
+    if isinstance(points, Iterator):
         points = list(points)
 
     try:
@@ -459,6 +456,10 @@ def point2d(points, **options):
         sage: point([CC(I), CC(I+1), CC(2+2*I)], pointsize=100)
         Graphics object consisting of 1 graphics primitive
 
+    TESTS::
+
+       sage: point2d(iter([]))
+       Graphics object consisting of 0 graphics primitives
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics

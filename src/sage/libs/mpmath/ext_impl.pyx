@@ -17,8 +17,14 @@ See if :trac:`15118` is fixed::
     ZeroDivisionError
 """
 
-include 'sage/ext/interrupt.pxi'
-include "sage/ext/stdsage.pxi"
+#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
 from cpython.int cimport *
 from cpython.long cimport *
 from cpython.float cimport *
@@ -28,6 +34,9 @@ from cpython.number cimport *
 from libc.math cimport sqrt as fsqrt
 from libc.math cimport frexp
 
+from cysignals.signals cimport sig_check
+
+from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
@@ -35,10 +44,10 @@ from sage.rings.integer cimport Integer
 from sage.libs.gmp.pylong cimport *
 
 cdef mpz_set_integer(mpz_t v, x):
-    if PyInt_Check(x):
-        mpz_set_si(v, PyInt_AS_LONG(x))
-    elif PyLong_Check(x):
+    if isinstance(x, long):
         mpz_set_pylong(v, x)
+    elif isinstance(x, int):
+        mpz_set_si(v, PyInt_AS_LONG(x))
     elif isinstance(x, Integer):
         mpz_set(v, (<Integer>x).value)
     else:
@@ -128,17 +137,12 @@ cdef inline rndmode_from_python(str rnd):
     if rnd == 'd': return ROUND_D
     if rnd == 'u': return ROUND_U
 
-cdef inline mpfr_rnd_t rndmode_to_mpfr(int rnd, int sign):
-    if rnd == ROUND_N: return GMP_RNDN
-    if rnd == ROUND_F: return GMP_RNDD
-    if rnd == ROUND_C: return GMP_RNDU
-    if rnd == ROUND_D: return GMP_RNDZ
-    if rnd == ROUND_U:
-        # return GMP_RNDA (unsupported)
-        if sign >= 0:
-            return GMP_RNDU
-        else:
-            return GMP_RNDD
+cdef inline mpfr_rnd_t rndmode_to_mpfr(int rnd):
+    if rnd == ROUND_N: return MPFR_RNDN
+    if rnd == ROUND_F: return MPFR_RNDD
+    if rnd == ROUND_C: return MPFR_RNDU
+    if rnd == ROUND_D: return MPFR_RNDZ
+    if rnd == ROUND_U: return MPFR_RNDA
 
 cdef inline int reciprocal_rnd(int rnd):
     if rnd == ROUND_N: return ROUND_N
@@ -1106,11 +1110,11 @@ cdef void _cy_exp_mpfr(mpz_t y, mpz_t x, int prec):
     cdef mpfr_t yf, xf
     mpfr_init2(xf, mpz_bitcount(x)+2)
     mpfr_init2(yf, prec+2)
-    mpfr_set_z(xf, x, GMP_RNDN)
-    mpfr_div_2exp(xf, xf, prec, GMP_RNDN)
-    mpfr_exp(yf, xf, GMP_RNDN)
-    mpfr_mul_2exp(yf, yf, prec, GMP_RNDN)
-    mpfr_get_z(y, yf, GMP_RNDN)
+    mpfr_set_z(xf, x, MPFR_RNDN)
+    mpfr_div_2exp(xf, xf, prec, MPFR_RNDN)
+    mpfr_exp(yf, xf, MPFR_RNDN)
+    mpfr_mul_2exp(yf, yf, prec, MPFR_RNDN)
+    mpfr_get_z(y, yf, MPFR_RNDN)
     mpfr_clear(yf)
     mpfr_clear(xf)
 
@@ -1289,7 +1293,7 @@ cdef int MPF_get_mpfr_overflow(mpfr_t y, MPF *x):
     cdef long prec, exp
     if x.special != S_NORMAL:
         if x.special == S_ZERO:
-            mpfr_set_ui(y, 0, GMP_RNDN)
+            mpfr_set_ui(y, 0, MPFR_RNDN)
         elif x.special == S_INF:
             mpfr_set_inf(y, 1)
         elif x.special == S_NINF:
@@ -1302,13 +1306,13 @@ cdef int MPF_get_mpfr_overflow(mpfr_t y, MPF *x):
     if prec < 2:
         prec = 2
     mpfr_set_prec(y, prec)
-    mpfr_set_z(y, x.man, GMP_RNDN)
+    mpfr_set_z(y, x.man, MPFR_RNDN)
     if mpz_reasonable_shift(x.exp):
         exp = mpz_get_si(x.exp)
         if exp >= 0:
-            mpfr_mul_2exp(y, y, exp, GMP_RNDN)
+            mpfr_mul_2exp(y, y, exp, MPFR_RNDN)
         else:
-            mpfr_div_2exp(y, y, -exp, GMP_RNDN)
+            mpfr_div_2exp(y, y, -exp, MPFR_RNDN)
         return 0
     else:
         return 1
@@ -1364,7 +1368,7 @@ cdef int MPF_log(MPF *y, MPF *x, MPopts opts):
     mpfr_init2(yy, opts.prec)
 
     overflow = MPF_get_mpfr_overflow(xx, x)
-    rndmode = rndmode_to_mpfr(opts.rounding, mpfr_cmp_ui(xx, 1))
+    rndmode = rndmode_to_mpfr(opts.rounding)
 
     if overflow:
         MPF_init(&t)
@@ -1372,7 +1376,7 @@ cdef int MPF_log(MPF *y, MPF *x, MPopts opts):
         mpz_set(t.exp, x.exp)
 
         # log(m * 2^e) = log(m) + e*log(2)
-        mpfr_abs(xx, xx, GMP_RNDN)
+        mpfr_abs(xx, xx, MPFR_RNDN)
         mpfr_log(yy, xx, rndmode)
         MPF_set_mpfr(y, yy, opts)
 
@@ -1384,7 +1388,7 @@ cdef int MPF_log(MPF *y, MPF *x, MPopts opts):
         MPF_add(y, y, &t, opts)
         MPF_clear(&t)
     else:
-        mpfr_abs(xx, xx, GMP_RNDN)
+        mpfr_abs(xx, xx, MPFR_RNDN)
         mpfr_log(yy, xx, rndmode)
         MPF_set_mpfr(y, yy, opts)
 
@@ -1454,10 +1458,10 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
 
         sage: from sage.libs.mpmath.ext_impl import cos_sin_fixed
         sage: c, s = cos_sin_fixed(1<<53, 53)
-        sage: print float(c) / 2^53
-        0.540302305868
-        sage: print float(s) / 2^53
-        0.841470984808
+        sage: float(c) / 2^53
+        0.5403023058681398
+        sage: float(s) / 2^53
+        0.8414709848078965
 
     """
     cdef Integer cv, sv
@@ -1465,15 +1469,15 @@ def cos_sin_fixed(Integer x, int prec, pi2=None):
     mpfr_init2(t, mpz_bitcount(x.value)+2)
     mpfr_init2(cf, prec)
     mpfr_init2(sf, prec)
-    mpfr_set_z(t, x.value, GMP_RNDN)
-    mpfr_div_2exp(t, t, prec, GMP_RNDN)
-    mpfr_sin_cos(sf, cf, t, GMP_RNDN)
-    mpfr_mul_2exp(cf, cf, prec, GMP_RNDN)
-    mpfr_mul_2exp(sf, sf, prec, GMP_RNDN)
+    mpfr_set_z(t, x.value, MPFR_RNDN)
+    mpfr_div_2exp(t, t, prec, MPFR_RNDN)
+    mpfr_sin_cos(sf, cf, t, MPFR_RNDN)
+    mpfr_mul_2exp(cf, cf, prec, MPFR_RNDN)
+    mpfr_mul_2exp(sf, sf, prec, MPFR_RNDN)
     cv = PY_NEW(Integer)
     sv = PY_NEW(Integer)
-    mpfr_get_z(cv.value, cf, GMP_RNDN)
-    mpfr_get_z(sv.value, sf, GMP_RNDN)
+    mpfr_get_z(cv.value, cf, MPFR_RNDN)
+    mpfr_get_z(sv.value, sf, MPFR_RNDN)
     mpfr_clear(t)
     mpfr_clear(cf)
     mpfr_clear(sf)
@@ -1492,10 +1496,10 @@ cdef mpz_log_int(mpz_t v, mpz_t n, int prec):
     """
     cdef mpfr_t f
     mpfr_init2(f, prec+15)
-    mpfr_set_z(f, n, GMP_RNDN)
-    mpfr_log(f, f, GMP_RNDN)
-    mpfr_mul_2exp(f, f, prec, GMP_RNDN)
-    mpfr_get_z(v, f, GMP_RNDN)
+    mpfr_set_z(f, n, MPFR_RNDN)
+    mpfr_log(f, f, MPFR_RNDN)
+    mpfr_mul_2exp(f, f, prec, MPFR_RNDN)
+    mpfr_get_z(v, f, MPFR_RNDN)
     mpfr_clear(f)
 
 def log_int_fixed(n, long prec, ln2=None):
@@ -1505,10 +1509,10 @@ def log_int_fixed(n, long prec, ln2=None):
     EXAMPLES::
 
         sage: from sage.libs.mpmath.ext_impl import log_int_fixed
-        sage: print float(log_int_fixed(5, 53)) / 2^53
-        1.60943791243
-        sage: print float(log_int_fixed(5, 53)) / 2^53   # exercise cache
-        1.60943791243
+        sage: float(log_int_fixed(5, 53)) / 2^53
+        1.6094379124341003
+        sage: float(log_int_fixed(5, 53)) / 2^53   # exercise cache
+        1.6094379124341003
 
     """
     global log_int_cache_initialized
@@ -1572,7 +1576,7 @@ cdef MPF_cos(MPF *c, MPF *x, MPopts opts):
     if overflow or opts.rounding == ROUND_U:
         _MPF_cos_python(c, x, opts)
     else:
-        mpfr_cos(cf, xf, rndmode_to_mpfr(opts.rounding, 1))
+        mpfr_cos(cf, xf, rndmode_to_mpfr(opts.rounding))
         MPF_set_mpfr(c, cf, opts)
     mpfr_clear(xf)
     mpfr_clear(cf)
@@ -1595,7 +1599,7 @@ cdef MPF_sin(MPF *s, MPF *x, MPopts opts):
     if overflow or opts.rounding == ROUND_U:
         _MPF_sin_python(s, x, opts)
     else:
-        mpfr_sin(sf, xf, rndmode_to_mpfr(opts.rounding, 1))
+        mpfr_sin(sf, xf, rndmode_to_mpfr(opts.rounding))
         MPF_set_mpfr(s, sf, opts)
     mpfr_clear(xf)
     mpfr_clear(sf)
@@ -1622,7 +1626,7 @@ cdef MPF_cos_sin(MPF *c, MPF *s, MPF *x, MPopts opts):
         _MPF_cos_python(c, x, opts)
         _MPF_sin_python(s, x, opts)
     else:
-        mpfr_sin_cos(sf, cf, xf, rndmode_to_mpfr(opts.rounding, 1))
+        mpfr_sin_cos(sf, cf, xf, rndmode_to_mpfr(opts.rounding))
         MPF_set_mpfr(s, sf, opts)
         MPF_set_mpfr(c, cf, opts)
     mpfr_clear(xf)

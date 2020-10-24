@@ -33,35 +33,35 @@ When you do arithmetic with::
 
 TESTS:
 
-The arguments in the definition must be symbolic variables #10747::
+The arguments in the definition must be symbolic variables (:trac:`10747`)::
 
     sage: f(1)=2
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call
+    SyntaxError: can...t assign to function call
 
     sage: f(x,1)=2
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call
+    SyntaxError: can...t assign to function call
 
     sage: f(1,2)=3
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call
+    SyntaxError: can...t assign to function call
 
     sage: f(1,2)=x
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call
+    SyntaxError: can...t assign to function call
 
     sage: f(x,2)=x
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call
+    SyntaxError: can...t assign to function call
 """
 
-from sage.symbolic.ring import SymbolicRing, SR, ParentWithBase
+from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 
 #########################################################################################
@@ -279,37 +279,15 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: f(x) = 1
             sage: f*e
             x |--> e
+
+        TESTS::
+
+            sage: TestSuite(f.parent()).run(skip=['_test_divides'])
         """
         self._arguments = arguments
-        ParentWithBase.__init__(self, SR)
+        SymbolicRing.__init__(self, SR)
         self._populate_coercion_lists_(coerce_list=[SR])
-
-    def __hash__(self):
-        """
-        EXAMPLES::
-
-            sage: f(x,y) = x + y
-            sage: hash(f.parent()) #random
-            -8878119762643067638
-        """
-        return hash(('CallableSymbolicExpressionRing', self._arguments))
-
-    def __cmp__(self, other):
-        """
-        EXAMPLES::
-
-            sage: f(x) = x+1
-            sage: g(y) = y+1
-            sage: h(x) = x^2
-            sage: f.parent() == g.parent()
-            False
-            sage: f.parent() == h.parent()
-            True
-        """
-        if self.__class__ != other.__class__:
-            return cmp(self.__class__, other.__class__)
-        else:
-            return cmp(self._arguments, other._arguments)
+        self.symbols = SR.symbols  # Use the same list of symbols as SR
 
     def _coerce_map_from_(self, R):
         """
@@ -477,13 +455,15 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: f(z=100)
             a + 2*x + 3*y + 100
         """
-        if any([type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args]): # avoid importing
+        if any(type(arg).__module__ == 'numpy' and type(arg).__name__ == "ndarray" for arg in args): # avoid importing
             raise NotImplementedError("Numpy arrays are not supported as arguments for symbolic expressions")
 
         d = dict(zip([repr(_) for _ in self.arguments()], args))
         d.update(kwds)
         return SR(_the_element.substitute(**d))
 
+    # __reduce__ gets replaced by the CallableSymbolicExpressionRingFactory
+    __reduce__ = object.__reduce__
 
 
 from sage.structure.factory import UniqueFactory

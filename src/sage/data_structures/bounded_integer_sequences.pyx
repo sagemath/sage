@@ -39,7 +39,7 @@ cimported in Cython modules:
 
   Hash value for ``S``.
 
-- ``cdef inline int biseq_cmp(biseq_t S1, biseq_t S2)``
+- ``cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op)``
 
   Comparison of ``S1`` and ``S2``. This takes into account the bound, the
   length, and the list of items of the two sequences.
@@ -97,23 +97,24 @@ AUTHORS:
 - Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugennt.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-include 'sage/data_structures/bitset.pxi'
+from cysignals.signals cimport sig_check, sig_on, sig_off
+from sage.data_structures.bitset_base cimport *
 
 from cpython.int cimport PyInt_FromSize_t
-from cpython.slice cimport PySlice_Check, PySlice_GetIndicesEx
+from cpython.slice cimport PySlice_GetIndicesEx
 from sage.libs.gmp.mpn cimport mpn_rshift, mpn_lshift, mpn_copyi, mpn_ior_n, mpn_zero, mpn_copyd, mpn_cmp
 from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 cimport cython
 
@@ -202,14 +203,12 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
 cdef inline Py_hash_t biseq_hash(biseq_t S):
     return S.itembitsize*(<Py_hash_t>1073807360)+bitset_hash(S.data)
 
-cdef inline int biseq_cmp(biseq_t S1, biseq_t S2):
-    cdef int c = cmp(S1.itembitsize, S2.itembitsize)
-    if c:
-        return c
-    c = cmp(S1.length, S2.length)
-    if c:
-        return c
-    return bitset_cmp(S1.data, S2.data)
+cdef inline bint biseq_richcmp(biseq_t S1, biseq_t S2, int op):
+    if S1.itembitsize != S2.itembitsize:
+        return richcmp_not_equal(S1.itembitsize, S2.itembitsize, op)
+    if S1.length != S2.length:
+        return richcmp_not_equal(S1.length, S2.length, op)
+    return rich_to_bool(op, bitset_cmp(S1.data, S2.data))
 
 #
 # Arithmetics
@@ -259,7 +258,7 @@ cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
 
 cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     """
-    Returns the position in ``S`` of an item in ``S[start:]``, or -1 if
+    Return the position in ``S`` of an item in ``S[start:]``, or -1 if
     ``S[start:]`` does not contain the item.
 
     """
@@ -445,9 +444,11 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
 # behaves like a tuple
 
 from sage.rings.integer cimport smallInteger
+
+
 cdef class BoundedIntegerSequence:
     """
-    A sequence of non-negative uniformely bounded integers.
+    A sequence of non-negative uniformly bounded integers.
 
     INPUT:
 
@@ -586,7 +587,7 @@ cdef class BoundedIntegerSequence:
         sage: BoundedIntegerSequence(16, [2, 7, -20])
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to size_t
+        OverflowError: can...t convert negative value to size_t
         sage: BoundedIntegerSequence(1, [0, 0, 0])
         <0, 0, 0>
         sage: BoundedIntegerSequence(1, [0, 1, 0])
@@ -677,7 +678,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(2^64+1, L)
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
 
         We are testing the corner case of the maximal possible bound::
 
@@ -690,7 +691,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(100, [2^256])
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
             sage: BoundedIntegerSequence(100, [100])
             Traceback (most recent call last):
             ...
@@ -701,7 +702,7 @@ cdef class BoundedIntegerSequence:
             sage: BoundedIntegerSequence(2^256, [200])
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert
+            OverflowError: ... int too large to convert...
 
         """
         if bound <= 0:
@@ -870,7 +871,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS::
 
-            sage: S = BoundedIntegerSequence(10^8, range(9))
+            sage: S = BoundedIntegerSequence(10^8, list(range(9)))
             sage: S[-1]
             8
             sage: S[8]
@@ -886,7 +887,7 @@ cdef class BoundedIntegerSequence:
             sage: S[2^63]
             Traceback (most recent call last):
             ...
-            OverflowError: long int too large to convert to int
+            OverflowError: ... int too large to convert to ...
 
         ::
 
@@ -948,7 +949,7 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence out
         cdef Py_ssize_t start, stop, step, slicelength
-        if PySlice_Check(index):
+        if isinstance(index, slice):
             PySlice_GetIndicesEx(index, self.data.length, &start, &stop, &step, &slicelength)
             if start==0 and stop==self.data.length and step==1:
                 return self
@@ -1238,9 +1239,9 @@ cdef class BoundedIntegerSequence:
 
     cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
         """
-        Returns ``self``'s maximal trailing sub-sequence that ``other`` starts with.
+        Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
-        Returns ``None`` if there is no overlap
+        Return ``None`` if there is no overlap.
 
         EXAMPLES::
 
@@ -1250,7 +1251,7 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,0,0,1])
             sage: (X+S).maximal_overlap(T)
             <2, 7, 2, 3, 0, 0, 0, 0, 0, 0, 0>
-            sage: print (X+S).maximal_overlap(BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,1]))
+            sage: print((X+S).maximal_overlap(BoundedIntegerSequence(21, [2,7,2,3,0,0,0,0,0,1])))
             None
             sage: (X+S).maximal_overlap(BoundedIntegerSequence(21, [0,0]))
             <0, 0>
@@ -1265,7 +1266,7 @@ cdef class BoundedIntegerSequence:
             return None
         return self[i:]
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Comparison of bounded integer sequences
 
@@ -1317,19 +1318,14 @@ cdef class BoundedIntegerSequence:
         """
         cdef BoundedIntegerSequence right
         cdef BoundedIntegerSequence left
-        if other is None:
-            return 1
-        if self is None:
-            return -1
+        if other is None or self is None:
+            return NotImplemented
         try:
             right = other
-        except TypeError:
-            return -1
-        try:
             left = self
         except TypeError:
-            return 1
-        return biseq_cmp(left.data, right.data)
+            return NotImplemented
+        return biseq_richcmp(left.data, right.data, op)
 
     def __hash__(self):
         """

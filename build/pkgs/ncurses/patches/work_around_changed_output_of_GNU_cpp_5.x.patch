@@ -11,20 +11,14 @@ output of 'cpp' w.r.t. line directives [1].  Anyway, the patch fixes the issue.)
 
 --- ncurses-5.9.20131221/ncurses/base/MKlib_gen.sh	2011-06-04 21:14:08.000000000 +0200
 +++ ncurses-5.9.20131221/ncurses/base/MKlib_gen.sh	2015-04-26 00:47:06.911680782 +0200
-@@ -62,7 +62,15 @@
+@@ -62,7 +62,9 @@
  if test "${LC_CTYPE+set}"    = set; then LC_CTYPE=C;    export LC_CTYPE;    fi
  if test "${LC_COLLATE+set}"  = set; then LC_COLLATE=C;  export LC_COLLATE;  fi
  
 -preprocessor="$1 -DNCURSES_INTERNALS -I../include"
-+# Work around "unexpected" output of GCC 5.1.0's cpp w.r.t. #line directives
++# Work around "unexpected" output of GCC 5.x's cpp w.r.t. #line directives
 +# by simply suppressing them:
-+case `$1 -dumpversion 2>/dev/null` in
-+    5.*.*)  # assume a "broken" one
-+        preprocessor="$1 -P -DNCURSES_INTERNALS -I../include"
-+        ;;
-+    *)
-+        preprocessor="$1 -DNCURSES_INTERNALS -I../include"
-+esac
++preprocessor="$1 -P -DNCURSES_INTERNALS -I../include"
  AWK="$2"
  USE="$3"
  

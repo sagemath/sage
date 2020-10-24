@@ -1,0 +1,23 @@
+diff -ur a/box/closure.c b/box/closure.c
+--- a/box/closure.c	2005-03-29 01:48:27.000000000 -0800
++++ b/box/closure.c	2007-01-30 12:10:54.000000000 -0800
+@@ -1,6 +1,6 @@
+ #include  "lie.h"
+ #define local  static
+-#include  <string.h>
++/* #include  <string.h> */
+ #define two_lengths(type) (strchr("BCFG",type)!=NULL)
+ #define grp_less(x,y) \
+  ((x)->lietype<(y)->lietype \
+diff -ur a/lie.h b/lie.h
+--- a/lie.h	2005-03-29 01:48:27.000000000 -0800
++++ b/lie.h	2007-01-30 12:10:40.000000000 -0800
+@@ -31,7 +31,7 @@
+ 
+ #include  <setjmp.h>
+ #include  <stdio.h>
+-#include  <string.h>
++/* #include  <string.h> */
+ #include  <ctype.h>
+ #include  <stdlib.h>
+ #include  <signal.h>

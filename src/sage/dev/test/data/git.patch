@@ -1,5 +1,0 @@
-From: David Roe <roed@math.harvard.edu>
-Subject: #12555: fixed modulus templates
-Date: Sun, 04 Mar 2012 05:08:43 -0000
-
-diff --git a/sage/rings/padics/FM_template.pxi b/sage/rings/padics/FM_template.pxi

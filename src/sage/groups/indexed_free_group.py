@@ -16,21 +16,20 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
-from copy import copy
 from sage.categories.groups import Groups
 from sage.categories.poor_man_map import PoorManMap
 from sage.groups.group import Group, AbelianGroup
 from sage.monoids.indexed_free_monoid import (IndexedMonoid,
-        IndexedMonoidElement, IndexedFreeMonoidElement,
-        IndexedFreeAbelianMonoidElement)
+        IndexedFreeMonoidElement, IndexedFreeAbelianMonoidElement)
 from sage.misc.cachefunc import cached_method
-from sage.combinat.dict_addition import dict_addition
+import sage.data_structures.blas_dict as blas
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.sets.family import Family
+
 
 class IndexedGroup(IndexedMonoid):
     """
@@ -114,6 +113,7 @@ class IndexedGroup(IndexedMonoid):
         """
         return self.group_generators().cardinality()
 
+    @cached_method
     def group_generators(self):
         """
         Return the group generators of ``self``.
@@ -206,33 +206,6 @@ class IndexedFreeGroup(IndexedGroup, Group):
             return self.element_class(self, ((x,1),))
 
     class Element(IndexedFreeMonoidElement):
-        def __lt__(self, other):
-            """
-            Return whether ``self`` is smaller than ``y``.
-
-            This is done by comparing lexicographically the words for
-            ``self`` and ``y``. In particular this assumes that the
-            (index of) the generators are totally ordered.
-
-            EXAMPLES::
-
-                sage: G = Groups().free(index_set=ZZ)
-                sage: a,b,c,d,e = [G.gen(i) for i in range(5)]
-                sage: a < b
-                True
-                sage: a^-1*b < b^-1*a
-                True
-                sage: a*b < a*a^-1
-                False
-                sage: a^-1*a < a^2
-                True
-                sage: a^2*b < a*b^-1*a*b
-                True
-            """
-            if not isinstance(other, IndexedMonoidElement):
-                return False
-            return self.to_word_list() < other.to_word_list()
-
         def __len__(self):
             """
             Return the length of ``self``.
@@ -281,7 +254,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
 
             ret = list(self._monomial)
             rhs = list(other._monomial)
-            while len(ret) > 0 and len(rhs) > 0 and ret[-1][0] == rhs[0][0]:
+            while ret and rhs and ret[-1][0] == rhs[0][0]:
                 rhs[0] = (rhs[0][0], rhs[0][1] + ret.pop()[1])
                 if rhs[0][1] == 0:
                     rhs.pop(0)
@@ -364,20 +337,40 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
 
         EXAMPLES::
 
-            sage: G = FreeAbelianMonoid(index_set=ZZ)
+            sage: G = Groups().Commutative().free(index_set=ZZ)
             sage: G(G.gen(2))
             F[2]
             sage: G([[1, 3], [-2, 12]])
             F[-2]^12*F[1]^3
-            sage: G({1:3, -2: 12})
+            sage: G({1: 3, -2: 12})
             F[-2]^12*F[1]^3
             sage: G(-5)
             Traceback (most recent call last):
             ...
-            ValueError: unable to convert -5, use gen() instead
+            TypeError: unable to convert -5, use gen() instead
+
+        TESTS::
+
+            sage: G([(1, 3), (1, -5)])
+            F[1]^-2
+
+            sage: G([(42, 0)])
+            1
+            sage: G([(42, 3), (42, -3)])
+            1
+            sage: G({42: 0})
+            1
         """
-        if isinstance(x, (list, tuple, dict)):
-            x = dict(x)
+        if isinstance(x, (list, tuple)):
+            d = dict()
+            for k, v in x:
+                if k in d:
+                    d[k] += v
+                else:
+                    d[k] = v
+            x = d
+        if isinstance(x, dict):
+            x = {k: v for k, v in x.items() if v != 0}
         return IndexedGroup._element_constructor_(self, x)
 
     @cached_method
@@ -429,7 +422,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 1
             """
             return self.__class__(self.parent(),
-                                  dict_addition([self._monomial, other._monomial]))
+                                  blas.add(self._monomial, other._monomial))
 
         def __invert__(self):
             """
@@ -444,7 +437,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 sage: x * ~x
                 1
             """
-            return self.__pow__(-1)
+            return self ** -1
 
         def __floordiv__(self, a):
             """
@@ -484,11 +477,11 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
                 sage: x^-3
                 F[0]^-3*F[1]^-6*F[3]^-3*F[4]^3
             """
-            if not isinstance(n, (int, long, Integer)):
+            if not isinstance(n, (int, Integer)):
                 raise TypeError("Argument n (= {}) must be an integer".format(n))
             if n == 1:
                 return self
             if n == 0:
                 return self.parent().one()
-            return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.iteritems()})
+            return self.__class__(self.parent(), {k:v*n for k,v in self._monomial.items()})
 

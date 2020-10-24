@@ -1,11 +1,12 @@
 # distutils: depends = NTL/ZZ.h
 
-from sage.ext.memory cimport sage_free
+from cysignals.memory cimport sig_free
+from cysignals.signals cimport sig_off
 
 # Unset the signal handler and create a string from the buffer,
 # then free the memory in the buffer.
-cdef extern from "sage/libs/ntl/ntlwrap.h":
-    void del_charstar(char*)
+cdef extern from *:
+    void del_charstar "delete[]"(char*)
 
 cdef object string(char* s):
     """
@@ -16,7 +17,7 @@ cdef object string(char* s):
     sig_off()
     # Makes a python string and deletes what is pointed to by s.
     t = str(s)
-    sage_free(s)
+    sig_free(s)
     return t
 
 cdef object string_delete(char* s):
@@ -29,7 +30,3 @@ cdef object string_delete(char* s):
     t = str(s)
     del_charstar(s)
     return t
-
-
-_INIT = None
-

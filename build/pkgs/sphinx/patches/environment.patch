@@ -1,16 +1,16 @@
---- Sphinx-1.2.2/sphinx/environment.py.orig	2014-03-02 20:38:09.000000000 +1300
-+++ Sphinx-1.2.2/sphinx/environment.py	2014-10-19 23:31:15.000000000 +1300
-@@ -424,10 +424,13 @@
+Prevent Sphinx from rebuilding documentation that is already built
+
+diff -ru a/sphinx/environment/__init__.py b/sphinx/environment/__init__.py
+--- a/sphinx/environment/__init__.py   2017-05-15 19:15:50.000000000 +0200
++++ b/sphinx/environment/__init__.py   2017-05-18 13:42:40.871043207 +0200
+@@ -251,7 +251,10 @@
          else:
              # check if a config value was changed that affects how
              # doctrees are read
 +            import inspect
-             for key, descr in config.values.iteritems():
-                 if descr[1] != 'env':
-                     continue
-                 if self.config[key] != config[key]:
-+                    if inspect.isfunction(config[key]):
-+                        continue
-                     msg = '[config changed] '
-                     config_changed = True
+             for item in config.filter('env'):
++                if inspect.isfunction(item.value):
++                    continue
+                 if self.config[item.name] != item.value:
+                     self.config_status = CONFIG_CHANGED
                      break

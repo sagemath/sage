@@ -1,0 +1,16 @@
+Do not include gslcblas in .pc. We already have the selected cblas
+added to libs. Which could be an external cblas if someone wanted too.
+
+diff --git a/gsl.pc.in b/gsl.pc.in
+index 5e9ef21..3a70648 100644
+--- a/gsl.pc.in
++++ b/gsl.pc.in
+@@ -2,7 +2,7 @@ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+ libdir=@libdir@
+ includedir=@includedir@
+-GSL_CBLAS_LIB=-lgslcblas
++GSL_CBLAS_LIB=
+ 
+ Name: GSL
+ Description: GNU Scientific Library

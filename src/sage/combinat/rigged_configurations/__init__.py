@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Rigged Configurations
 =====================
 
@@ -31,5 +31,6 @@ Bijections
 - :ref:`sage.combinat.rigged_configurations.bij_type_A2_even`
 - :ref:`sage.combinat.rigged_configurations.bij_type_A2_dual`
 - :ref:`sage.combinat.rigged_configurations.bij_type_D_twisted`
+- :ref:`sage.combinat.rigged_configurations.bij_type_D_tri`
 - :ref:`sage.combinat.rigged_configurations.bij_infinity`
 """

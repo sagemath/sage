@@ -49,7 +49,7 @@ def DivisorGroup(scheme, base_ring=None):
     if base_ring is None:
         base_ring = ZZ
 
-    from sage.schemes.plane_curves.curve import Curve_generic
+    from sage.schemes.curves.curve import Curve_generic
     if isinstance(scheme, Curve_generic):
         DG = DivisorGroup_curve(scheme, base_ring)
     else:
@@ -120,6 +120,27 @@ class DivisorGroup_generic(FormalSums):
             sage: from sage.schemes.generic.divisor_group import DivisorGroup_generic
             sage: DivisorGroup_generic(Spec(ZZ), QQ)
             Group of QQ-Divisors on Spectrum of Integer Ring
+
+        TESTS::
+
+            sage: from sage.schemes.generic.divisor_group import DivisorGroup
+            sage: D1 = DivisorGroup(Spec(ZZ))
+            sage: D2 = DivisorGroup(Spec(ZZ), base_ring=QQ)
+            sage: D3 = DivisorGroup(Spec(QQ))
+            sage: D1 == D1
+            True
+            sage: D1 == D2
+            False
+            sage: D1 != D3
+            True
+            sage: D2 == D2
+            True
+            sage: D2 == D3
+            False
+            sage: D3 != D3
+            False
+            sage: D1 == 'something'
+            False
         """
         super(DivisorGroup_generic,self).__init__(base_ring)
         self._scheme = scheme
@@ -168,45 +189,6 @@ class DivisorGroup_generic(FormalSums):
             return Divisor_generic([], check=False, reduce=False, parent=self)
         else:
             return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
-
-    def __cmp__(self, right):
-        r"""
-        Compare the divisor group.
-
-        INPUT:
-
-        - ``right`` -- anything.
-
-        OUTPUT:
-
-        ``+1``, ``0``, or ``-1`` depending on how ``self`` and
-        ``right`` compare.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.generic.divisor_group import DivisorGroup
-            sage: D1 = DivisorGroup(Spec(ZZ));
-            sage: D2 = DivisorGroup(Spec(ZZ),base_ring=QQ);
-            sage: D3 = DivisorGroup(Spec(QQ));
-            sage: abs(cmp(D1,D1))
-            0
-            sage: abs(cmp(D1,D2))
-            1
-            sage: abs(cmp(D1,D3))
-            1
-            sage: abs(cmp(D2,D2))
-            0
-            sage: abs(cmp(D2,D3))
-            1
-            sage: abs(cmp(D3,D3))
-            0
-            sage: abs(cmp(D1, 'something'))
-            1
-        """
-        if not is_DivisorGroup(right): return -1
-        c = cmp(self.base_ring(), right.base_ring())
-        if c!=0: return c
-        return cmp(self._scheme, right._scheme)
 
     def scheme(self):
         r"""

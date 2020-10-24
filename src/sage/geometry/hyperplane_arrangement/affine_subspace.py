@@ -264,7 +264,7 @@ class AffineSubspace(SageObject):
         """
         if self._linear_part == other._linear_part:
             return False
-        return self.__le__(other)
+        return self <= other
 
     def __contains__(self, q):
         r"""

@@ -90,9 +90,12 @@ Which you can't do with hyperplane arrangements::
     Arrangement <y | x | x + y - 1 | 3*x + 2*y - 5*z - 7>
     sage: arrangement + x
     Traceback (most recent call last):
-    TypeError: unsupported operand type(s) for +:
-    'HyperplaneArrangements_with_category.element_class' and 
-    'HyperplaneArrangements_with_category.element_class'
+    ...
+    TypeError: unsupported operand parent(s) for +:
+    'Hyperplane arrangements in 3-dimensional linear space
+         over Rational Field with coordinates x, y, z' and
+    'Hyperplane arrangements in 3-dimensional linear space
+         over Rational Field with coordinates x, y, z'
 """
 
 #*****************************************************************************
@@ -115,7 +118,7 @@ class Hyperplane(LinearExpression):
     """
     A hyperplane.
 
-    You shoud always use :class:`AmbientVectorSpace` to construct
+    You should always use :class:`AmbientVectorSpace` to construct
     instances of this class.
 
     INPUT:
@@ -137,7 +140,7 @@ class Hyperplane(LinearExpression):
         Hyperplane x + y - 1
 
     For technical reasons, we must allow the degenerate cases of
-    an empty empty and full space::
+    an empty space and of a full space::
 
         sage: 0*x
         Hyperplane 0*x + 0*y + 0
@@ -343,7 +346,7 @@ class Hyperplane(LinearExpression):
 
         Coordinate vector of the projection of ``point`` with respect
         to the basis of :meth:`linear_part`. In particular, the length
-        of this vector is is one less than the ambient space
+        of this vector is one less than the ambient space
         dimension.
 
         EXAMPLES::
@@ -544,7 +547,7 @@ class Hyperplane(LinearExpression):
             sage: (4*x - y - 8).primitive(signed=False)
             Hyperplane -4*x + y + 8
         """
-        from sage.rings.all import lcm, gcd
+        from sage.arith.all import lcm, gcd
         coeffs = self.coefficients()
         try:
             d = lcm([x.denom() for x in coeffs])
@@ -629,7 +632,31 @@ class Hyperplane(LinearExpression):
         arrangement = HyperplaneArrangements(parent.base_ring(), names=parent._names)
         return arrangement(self, other)
 
-            
+    def to_symmetric_space(self):
+        """
+        Return ``self`` considered as an element in the corresponding
+        symmetric space.
+
+        EXAMPLES::
+
+            sage: L.<x, y> = HyperplaneArrangements(QQ)
+            sage: h = -1/3*x + 1/2*y
+            sage: h.to_symmetric_space()
+            -1/3*x + 1/2*y
+
+            sage: hp = -1/3*x + 1/2*y - 1
+            sage: hp.to_symmetric_space()
+            Traceback (most recent call last):
+            ...
+            ValueError: the hyperplane must pass through the origin
+        """
+        coeff = self.coefficients()
+        if coeff[0] != 0:
+            raise ValueError("the hyperplane must pass through the origin")
+        S = self.parent().symmetric_space()
+        G = S.gens()
+        # We skip the first coefficient since it corresponds to the constant term
+        return S.sum(G[i]*c for i,c in enumerate(coeff[1:]))
 
 class AmbientVectorSpace(LinearExpressionModule):
     """
@@ -712,4 +739,24 @@ class AmbientVectorSpace(LinearExpressionModule):
             True
         """
         return AmbientVectorSpace(base_ring, self._names)
+
+    def symmetric_space(self):
+        r"""
+        Construct the symmetric space of ``self``.
+
+        Consider a hyperplane arrangement `A` in the vector space
+        `V = k^n`, for some field `k`. The symmetric space is the
+        symmetric algebra `S(V^*)` as the polynomial ring
+        `k[x_1, x_2, \ldots, x_n]` where `(x_1, x_2, \ldots, x_n)` is
+        a basis for `V`.
+
+        EXAMPLES::
+
+            sage: H.<x,y,z> = HyperplaneArrangements(QQ)
+            sage: A = H.ambient_space()
+            sage: A.symmetric_space()
+            Multivariate Polynomial Ring in x, y, z over Rational Field
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        return PolynomialRing(self.base_ring(), self.variable_names())
 

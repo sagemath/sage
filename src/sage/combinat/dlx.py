@@ -10,9 +10,9 @@ Exact Cover Problem via Dancing Links
 #  * Recursive search is now iterative
 #  * Removed callback functionality
 #  * Revamped the class to be a pythonic generator; new usage:
-#        for cover in DLXMatrix(ones,initialsolution):
+#        for cover in DLXMatrix(ones, initialsolution):
 #            blah(cover)
-#  * DOCUMENTATION AND TESTS GALORE HOLYCRAP 100% COVERAGE!!!!!1!!111@%^%*QQ!@E~
+#  * DOCUMENTATION AND TESTS GALORE HOLYCRAP 100% COVERAGE!
 
 # DLXMatrix class is used to store and solve an exact cover problem
 # with help of Dancing Links [1] technique by Donald Knuth. The
@@ -32,8 +32,6 @@ Exact Cover Problem via Dancing Links
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
 
-
-
 ROOTNODE = 0
 
 # Node's attributes
@@ -41,19 +39,19 @@ ROOTNODE = 0
 # INDEX is the (row) index of the node (None in the header nodes)
 # COLUMN/COUNT is column index on a regular node and count of nodes on
 # a header node
-LEFT   = 0
-RIGHT  = 1
-UP     = 2
-DOWN   = 3
+LEFT = 0
+RIGHT = 1
+UP = 2
+DOWN = 3
 COLUMN = 4
-INDEX  = 5
-COUNT  = 5
+INDEX = 5
+COUNT = 5
 
 
 class DLXMatrix:
     def __init__(self, ones, initialsolution=None):
         """
-        Solves the Exact Cover problem by using the Dancing Links algorithm
+        Solve the Exact Cover problem by using the Dancing Links algorithm
         described by Knuth.
 
         Consider a matrix M with entries of 0 and 1, and compute a subset
@@ -100,23 +98,24 @@ class DLXMatrix:
             sage: ones+= [[4,[4]]]
             sage: DLXM = DLXMatrix(ones,[4])
             sage: for C in DLXM:
-            ...      print C
+            ....:      print(C)
             [4, 1]
             [4, 2, 3]
 
-        .. note::
+        .. NOTE::
 
-           The 0 entry is reserved internally for headers in the
-           sparse representation, so rows and columns begin their
-           indexing with 1.  Apologies for any heartache this
-           causes. Blame the original author, or fix it yourself.
+            The 0 entry is reserved internally for headers in the
+            sparse representation, so rows and columns begin their
+            indexing with 1.  Apologies for any heartache this
+            causes. Blame the original author, or fix it yourself.
         """
-        if initialsolution is None: initialsolution = []
+        if initialsolution is None:
+            initialsolution = []
         self._cursolution = []
         self._nodes = [[0, 0, None, None, None, None]]
         self._constructmatrix(ones, initialsolution)
         self._level = 0
-        self._stack = [(None,None)]
+        self._stack = [(None, None)]
 
     def __eq__(self, other):
         r"""
@@ -130,7 +129,7 @@ class DLXMatrix:
         -  ``other`` - a DLX matrix
 
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1]]])
@@ -143,13 +142,13 @@ class DLXMatrix:
 
     def __iter__(self):
         """
-        Returns self.
+        Return ``self``.
 
         TESTS::
 
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1]]])
-            sage: print M.__iter__() is M
+            sage: M.__iter__() is M
             True
         """
 
@@ -157,8 +156,8 @@ class DLXMatrix:
 
     def _walknodes(self, firstnode, direction):
         """
-        Generator for iterating over all nodes in given direction (not
-        including firstnode).
+        Generator for iterating over all nodes in given ``direction`` (not
+        including ``firstnode``).
 
         TESTS::
 
@@ -170,13 +169,13 @@ class DLXMatrix:
             sage: DLX = DLXMatrix(ones,[4])
             sage: count = 0
             sage: for c in DLX._walknodes(ROOTNODE,RIGHT):
-            ...       count += DLX._nodes[c][COUNT]
-            ...       for d in DLX._walknodes(c,DOWN):
-            ...           count -= 1
-            sage: print count
+            ....:     count += DLX._nodes[c][COUNT]
+            ....:     for d in DLX._walknodes(c,DOWN):
+            ....:         count -= 1
+            sage: count
             0
         """
-        nodetable=self._nodes
+        nodetable = self._nodes
         n = nodetable[firstnode][direction]
         while n != firstnode:
             yield n
@@ -184,16 +183,19 @@ class DLXMatrix:
 
     def _constructmatrix(self, ones, initialsolution=None):
         """
-        Construct the (sparse) DLX matrix based on list 'ones'. The first
-        component in the list elements is row index (which will be returned
-        by solve) and the second component is list of column indexes of
-        ones in given row.
+        Construct the (sparse) DLX matrix based on list ``'ones'``.
+
+        The first component in the list elements is row index (which
+        will be returned by solve) and the second component is list of
+        column indexes of ones in given row.
 
         'initialsolution' is list of row indexes that are required to be
         part of the solution. They will be removed from the matrix.
 
-        Note: rows and cols are 1-indexed - the zero index is reserved for
-        the root node and column heads.
+        .. NOTE:
+
+            Rows and cols are 1-indexed ; the zero index is reserved for
+            the root node and column heads.
 
         TESTS::
 
@@ -207,18 +209,18 @@ class DLXMatrix:
             sage: c = DLX._nodes[ROOTNODE][RIGHT]
             sage: fullcount = 0
             sage: while c != ROOTNODE:
-            ...       fullcount += DLX._nodes[c][COUNT]
-            ...       d = DLX._nodes[c][DOWN]
-            ...       while d != c:
-            ...           bad = DLX._nodes[DLX._nodes[d][DOWN]][UP] != d
-            ...           bad|= DLX._nodes[DLX._nodes[d][UP]][DOWN] != d
-            ...           bad|= DLX._nodes[DLX._nodes[d][LEFT]][RIGHT] != d
-            ...           bad|= DLX._nodes[DLX._nodes[d][RIGHT]][LEFT] != d
-            ...           if bad:
-            ...               raise RuntimeError("Linked list inconsistent.")
-            ...           d = DLX._nodes[d][DOWN]
-            ...       c = DLX._nodes[c][RIGHT]
-            sage: print fullcount
+            ....:     fullcount += DLX._nodes[c][COUNT]
+            ....:     d = DLX._nodes[c][DOWN]
+            ....:     while d != c:
+            ....:         bad = DLX._nodes[DLX._nodes[d][DOWN]][UP] != d
+            ....:         bad|= DLX._nodes[DLX._nodes[d][UP]][DOWN] != d
+            ....:         bad|= DLX._nodes[DLX._nodes[d][LEFT]][RIGHT] != d
+            ....:         bad|= DLX._nodes[DLX._nodes[d][RIGHT]][LEFT] != d
+            ....:         if bad:
+            ....:             raise RuntimeError("Linked list inconsistent.")
+            ....:         d = DLX._nodes[d][DOWN]
+            ....:     c = DLX._nodes[c][RIGHT]
+            sage: fullcount
             6
         """
         if initialsolution is None:
@@ -231,11 +233,12 @@ class DLXMatrix:
         nodetable = self._nodes
         ones.sort()
         pruneNodes = []
-        headers = [ROOTNODE] # indexes of header nodes for faster access
+        headers = [ROOTNODE]  # indexes of header nodes for faster access
         for r in ones:
             curRow = r[0]  # row index
-            columns = r[1] # column indexes
-            if len(columns) == 0: continue
+            columns = r[1]  # column indexes
+            if not(columns):
+                continue
             columns.sort()
 
             # Do we need more headers?
@@ -254,16 +257,15 @@ class DLXMatrix:
             newind = len(nodetable)
             for i, c in enumerate(columns):
                 h = headers[c]
-                l = newind + ((i-1) % len(columns))
-                r = newind + ((i+1) % len(columns))
+                l = newind + ((i - 1) % len(columns))
+                r = newind + ((i + 1) % len(columns))
                 nodetable.append([l, r, nodetable[h][UP], h, h, curRow])
-                nodetable[nodetable[h][UP]][DOWN] = newind+i
-                nodetable[h][UP] = newind+i
+                nodetable[nodetable[h][UP]][DOWN] = newind + i
+                nodetable[h][UP] = newind + i
                 nodetable[h][COUNT] += 1
 
             if curRow in initialsolution:
                 pruneNodes.append(newind)
-
 
         # Remove columns that are required to be in the solution
         for n in pruneNodes:
@@ -274,7 +276,7 @@ class DLXMatrix:
 
     def _covercolumn(self, c):
         """
-        Performs the column covering operation, as described by Knuth's
+        Perform the column covering operation, as described by Knuth's
         pseudocode::
 
            cover(c):
@@ -298,14 +300,13 @@ class DLXMatrix:
             sage: M._covercolumn(one)
             sage: two = M._nodes[ROOTNODE][RIGHT]
             sage: three = M._nodes[two][RIGHT]
-            sage: print M._nodes[three][RIGHT] == ROOTNODE
+            sage: M._nodes[three][RIGHT] == ROOTNODE
             True
-            sage: print M._nodes[two][COUNT]
+            sage: M._nodes[two][COUNT]
             1
-            sage: print M._nodes[three][COUNT]
+            sage: M._nodes[three][COUNT]
             0
         """
-
         nodetable = self._nodes
         nodetable[nodetable[c][RIGHT]][LEFT] = nodetable[c][LEFT]
         nodetable[nodetable[c][LEFT]][RIGHT] = nodetable[c][RIGHT]
@@ -317,7 +318,7 @@ class DLXMatrix:
 
     def _uncovercolumn(self, c):
         """
-        Performs the column uncovering operation, as described by Knuth's
+        Perform the column uncovering operation, as described by Knuth's
         pseudocode::
 
             uncover(c):
@@ -342,9 +343,9 @@ class DLXMatrix:
             sage: M._covercolumn(one)
             sage: two = M._nodes[ROOTNODE][RIGHT]
             sage: M._uncovercolumn(one)
-            sage: print M._nodes[two][LEFT] == one
+            sage: M._nodes[two][LEFT] == one
             True
-            sage: print M._nodes[two][COUNT]
+            sage: M._nodes[two][COUNT]
             2
         """
         nodetable = self._nodes
@@ -356,7 +357,7 @@ class DLXMatrix:
         nodetable[nodetable[c][RIGHT]][LEFT] = c
         nodetable[nodetable[c][LEFT]][RIGHT] = c
 
-    def next(self):
+    def __next__(self):
         """
         Search for the first solution we can find, and return it.
 
@@ -404,27 +405,27 @@ class DLXMatrix:
             sage: from sage.combinat.dlx import *
             sage: M = DLXMatrix([[1,[1,2]],[2,[2,3]],[3,[1,3]]])
             sage: while 1:
-            ...     try:
-            ...         C = next(M)
-            ...     except StopIteration:
-            ...         print "StopIteration"
-            ...         break
-            ...     print C
+            ....:     try:
+            ....:         C = next(M)
+            ....:     except StopIteration:
+            ....:         print("StopIteration")
+            ....:         break
+            ....:     print(C)
             StopIteration
             sage: M = DLXMatrix([[1,[1,2]],[2,[2,3]],[3,[3]]])
             sage: for C in M:
-            ...       print C
+            ....:       print(C)
             [1, 3]
             sage: M = DLXMatrix([[1,[1]],[2,[2,3]],[3,[2]],[4,[3]]])
             sage: for C in M:
-            ...       print C
+            ....:       print(C)
             [1, 2]
             [1, 3, 4]
         """
-        nodetable = self._nodes # optimization: local variables are faster
+        nodetable = self._nodes  # optimization: local variables are faster
 
         while self._level >= 0:
-            c,r = self._stack[self._level]
+            c, r = self._stack[self._level]
             if c is None:
                 if nodetable[ROOTNODE][RIGHT] == ROOTNODE:
                     self._level -= 1
@@ -437,7 +438,7 @@ class DLXMatrix:
                             c = j
                             maxcount = nodetable[j][COUNT]
                     self._covercolumn(c)
-                    self._stack[self._level] = (c,c)
+                    self._stack[self._level] = (c, c)
             elif nodetable[r][DOWN] != c:
                 if c != r:
                     self._cursolution = self._cursolution[:-1]
@@ -447,12 +448,12 @@ class DLXMatrix:
                 self._cursolution += [nodetable[r][INDEX]]
                 for j in self._walknodes(r, RIGHT):
                     self._covercolumn(nodetable[j][COLUMN])
-                self._stack[self._level] = (c,r)
+                self._stack[self._level] = (c, r)
                 self._level += 1
                 if len(self._stack) == self._level:
-                    self._stack.append((None,None))
+                    self._stack.append((None, None))
                 else:
-                    self._stack[self._level] = (None,None)
+                    self._stack[self._level] = (None, None)
             else:
                 if c != r:
                     self._cursolution = self._cursolution[:-1]
@@ -463,50 +464,51 @@ class DLXMatrix:
 
         raise StopIteration
 
+    next = __next__
 
 
 def AllExactCovers(M):
     """
-    Utilizes A. Ajanki's DLXMatrix class to solve the exact cover
+    Use A. Ajanki's DLXMatrix class to solve the exact cover
     problem on the matrix M (treated as a dense binary matrix).
 
     EXAMPLES::
 
         sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
         sage: for cover in AllExactCovers(M):
-        ...       print cover
+        ....:     print(cover)
         sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
         sage: for cover in AllExactCovers(M):
-        ...       print cover
+        ....:     print(cover)
         [(1, 1, 0), (0, 0, 1)]
         [(1, 0, 1), (0, 1, 0)]
     """
     ones = []
-    r = 1   #damn 1-indexing
+    r = 1    # damn 1-indexing
     for R in M.rows():
         row = []
         for i in range(len(R)):
             if R[i]:
-                row.append(i+1) #damn 1-indexing
-        ones.append([r,row])
-        r+=1
+                row.append(i + 1)  # damn 1-indexing
+        ones.append([r, row])
+        r += 1
     for s in DLXMatrix(ones):
-        yield [M.row(i-1) for i in s] #damn 1-indexing
+        yield [M.row(i - 1) for i in s]  # damn 1-indexing
+
 
 def OneExactCover(M):
     """
-    Utilizes A. Ajanki's DLXMatrix class to solve the exact cover
+    Use A. Ajanki's DLXMatrix class to solve the exact cover
     problem on the matrix M (treated as a dense binary matrix).
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
-        sage: print OneExactCover(M)
-        None
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
-        sage: print OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
+        sage: OneExactCover(M)
+
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
+        sage: OneExactCover(M)
         [(1, 1, 0), (0, 0, 1)]
     """
-
     for s in AllExactCovers(M):
         return s

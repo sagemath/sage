@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -13,7 +14,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.rings.all import ZZ, QQ, infinity, PolynomialRing, FractionField
@@ -56,7 +57,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     - ``homo``           -- ``True`` if `f` also has a homogeneous numerator.
 
-    - ``k``              -- ``None`` if `f` is not homogeneneous, otherwise
+    - ``k``              -- ``None`` if `f` is not homogeneous, otherwise
                             the weight of `f` (which is the first component
                             of its degree).
 
@@ -117,7 +118,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         (True, True, -4, 1, weakly holomorphic modular)
     """
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
 
     # Determine whether f is zero
@@ -170,7 +171,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         weight = None
         ep     = None
 
-    # Note that we intentially leave out the d-factor!
+    # Note that we intentionally leave out the d-factor!
     if (n == infinity):
         finf_pol = (x-y**2)
     else:
@@ -184,7 +185,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     if (dhom(denom).is_constant()):
         analytic_type = analytic_type.reduce_to(["quasi", "holo"])
         # Determine whether f is cuspidal in the sense that finf divides it...
-        # Bug in singular: finf_pol.dividess(1.0) fails over RR
+        # Bug in singular: finf_pol.divides(1.0) fails over RR
         if (not dhom(num).is_constant() and finf_pol.divides(num)):
             if (n != infinity or x.divides(num)):
                 analytic_type = analytic_type.reduce_to(["quasi", "cusp"])
@@ -280,10 +281,10 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
         QuasiCuspForms(n=+Infinity, k=2, ep=-1) over Integer Ring
     """
 
-    from space import canonical_parameters
+    from .space import canonical_parameters
     (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep)
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
     analytic_type = AT(analytic_type)
 
@@ -292,19 +293,19 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
             if analytic_type <= AT("holo"):
                 if analytic_type <= AT("cusp"):
                     if analytic_type <= AT([]):
-                        from space import ZeroForm
+                        from .space import ZeroForm
                         return ZeroForm(group=group, base_ring=base_ring, k=k, ep=ep)
                     else:
-                        from space import CuspForms
+                        from .space import CuspForms
                         return CuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
                 else:
-                    from space import ModularForms
+                    from .space import ModularForms
                     return ModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
             else:
-                from space import WeakModularForms
+                from .space import WeakModularForms
                 return WeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
         else:
-            from space import MeromorphicModularForms
+            from .space import MeromorphicModularForms
             return MeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
     elif analytic_type <= AT(["mero", "quasi"]):
         if analytic_type <= AT(["weak", "quasi"]):
@@ -312,19 +313,19 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
                 if analytic_type <= AT(["cusp", "quasi"]):
                     if analytic_type <= AT(["quasi"]):
                         raise ValueError("There should be only non-quasi ZeroForms. That could be changed but then this exception should be removed.")
-                        from space import ZeroForm
+                        from .space import ZeroForm
                         return ZeroForm(group=group, base_ring=base_ring, k=k, ep=ep)
                     else:
-                        from space import QuasiCuspForms
+                        from .space import QuasiCuspForms
                         return QuasiCuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
                 else:
-                    from space import QuasiModularForms
+                    from .space import QuasiModularForms
                     return QuasiModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
             else:
-                from space import QuasiWeakModularForms
+                from .space import QuasiWeakModularForms
                 return QuasiWeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
         else:
-            from space import QuasiMeromorphicModularForms
+            from .space import QuasiMeromorphicModularForms
             return QuasiMeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
     else:
         raise NotImplementedError("Analytic type not implemented.")
@@ -388,10 +389,10 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
         QuasiCuspFormsRing(n=+Infinity) over Integer Ring
     """
 
-    from graded_ring import canonical_parameters
+    from .graded_ring import canonical_parameters
     (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom)
 
-    from analytic_type import AnalyticType
+    from .analytic_type import AnalyticType
     AT = AnalyticType()
     analytic_type = AT(analytic_type)
 
@@ -402,16 +403,16 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
                     if analytic_type <=AT([]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
-                        from graded_ring import CuspFormsRing
+                        from .graded_ring import CuspFormsRing
                         return CuspFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
                 else:
-                    from graded_ring import ModularFormsRing
+                    from .graded_ring import ModularFormsRing
                     return ModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
             else:
-                from graded_ring import WeakModularFormsRing
+                from .graded_ring import WeakModularFormsRing
                 return WeakModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
         else:
-            from graded_ring import MeromorphicModularFormsRing
+            from .graded_ring import MeromorphicModularFormsRing
             return MeromorphicModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
     elif analytic_type <= AT(["mero", "quasi"]):
         if analytic_type <= AT(["weak", "quasi"]):
@@ -420,16 +421,16 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
                     if analytic_type <=AT(["quasi"]):
                         raise ValueError("Analytic type Zero is not valid for forms rings.")
                     else:
-                        from graded_ring import QuasiCuspFormsRing
+                        from .graded_ring import QuasiCuspFormsRing
                         return QuasiCuspFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
                 else:
-                    from graded_ring import QuasiModularFormsRing
+                    from .graded_ring import QuasiModularFormsRing
                     return QuasiModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
             else:
-                from graded_ring import QuasiWeakModularFormsRing
+                from .graded_ring import QuasiWeakModularFormsRing
                 return QuasiWeakModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
         else:
-            from graded_ring import QuasiMeromorphicModularFormsRing
+            from .graded_ring import QuasiMeromorphicModularFormsRing
             return QuasiMeromorphicModularFormsRing(group=group, base_ring=base_ring, red_hom=red_hom)
     else:
         raise NotImplementedError("Analytic type not implemented.")

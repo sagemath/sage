@@ -8,13 +8,14 @@ Local Density Congruence
 ## by a quadratic form at a prime (possibly subject to additional
 ## congruence conditions).
 ##########################################################################
+from __future__ import print_function
 
 from copy import deepcopy
 
 from sage.sets.set import Set
 from sage.rings.rational_field import QQ
-from sage.rings.arith import valuation
-from sage.misc.misc import verbose
+from sage.arith.all import valuation
+from sage.misc.verbose import verbose
 
 from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 
@@ -294,7 +295,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
                     nz_flag = True
 
         ## Remember the (vector) index if it's not part of a Jordan block of norm divisible by 8
-        if (nz_flag == True):
+        if nz_flag:
             Not8vec += [i]
 
 
@@ -438,7 +439,6 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
         return self.local_good_density_congruence_odd(p, m, Zvec, NZvec)
 
     if (p == 2):
-        #print "\n Using the (p=2) Local_Good_Density_Even routine! \n"
         return self.local_good_density_congruence_even(m, Zvec, NZvec)
 
     raise RuntimeError("\n Error in Local_Good_Density: The 'prime' p = " + str(p) + " is < 2. \n")
@@ -660,7 +660,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
 
     ## Check that S1 is non-empty and p|m to proceed, otherwise return no solutions.
-    if (S1_empty_flag == True) or (m % p != 0):
+    if S1_empty_flag or m % p != 0:
         return 0
 
     ## Check some conditions for no bad-type I solutions to exist
@@ -671,8 +671,8 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     ## Check that the form is primitive...                     WHY DO WE NEED TO DO THIS?!?
     if (S0 == []):
-        print " Using Q = " + str(self)
-        print " and p = " + str(p)
+        print(" Using Q = " + str(self))
+        print(" and p = " + str(p))
         raise RuntimeError("Oops! The form is not primitive!")
 
 
@@ -847,8 +847,8 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     ## Check that the form is primitive...                     WHY IS THIS NECESSARY?
     if (S0 == []):
-        print " Using Q = " + str(self)
-        print " and p = " + str(p)
+        print(" Using Q = " + str(self))
+        print(" and p = " + str(p))
         raise RuntimeError("Oops! The form is not primitive!")
 
 

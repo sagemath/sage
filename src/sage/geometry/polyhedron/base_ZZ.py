@@ -2,27 +2,27 @@ r"""
 Base class for polyhedra over `\ZZ`
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#                  http://www.gnu.org/licenses/
-########################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+#*****************************************************************************
+from __future__ import print_function, absolute_import
 
-
-
-from sage.rings.all import ZZ, QQ, gcd
+from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method
 from sage.modules.free_module_element import vector
-from constructor import Polyhedron
-from base import Polyhedron_base
-
+from .base_QQ import Polyhedron_QQ
+from sage.arith.all import gcd
 
 
 #########################################################################
-class Polyhedron_ZZ(Polyhedron_base):
-    """
+class Polyhedron_ZZ(Polyhedron_QQ):
+    r"""
     Base class for Polyhedra over `\ZZ`
 
     TESTS::
@@ -31,73 +31,41 @@ class Polyhedron_ZZ(Polyhedron_base):
         A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
         sage: TestSuite(p).run(skip='_test_pickling')
     """
-    def _is_zero(self, x):
-        """
-        Test whether ``x`` is zero.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_zero(0)
-            True
-            sage: p._is_zero(1/100000)
-            False
-        """
-        return x==0
-
-    def _is_nonneg(self, x):
-        """
-        Test whether ``x`` is nonnegative.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_nonneg(1)
-            True
-            sage: p._is_nonneg(-1/100000)
-            False
-        """
-        return x>=0
-
-    def _is_positive(self, x):
-        """
-        Test whether ``x`` is positive.
-
-        INPUT:
-
-        - ``x`` -- a number in the base ring.
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron([(0,0)], base_ring=ZZ)
-            sage: p._is_positive(1)
-            True
-            sage: p._is_positive(0)
-            False
-        """
-        return x>0
-
     _base_ring = ZZ
+
+    def __getattribute__(self, name):
+        r"""
+        TESTS:
+
+        A lattice polytope does not have a Ehrhart quasipolynomial because it
+        is always a polynomial::
+
+            sage: P = polytopes.cube()
+            sage: P.__getattribute__(name='ehrhart_quasipolynomial')
+            Traceback (most recent call last):
+            ...
+            AttributeError: ehrhart_quasipolynomial
+        """
+        if name in ['ehrhart_quasipolynomial']:
+            raise AttributeError(name)
+        else:
+            return super(Polyhedron_ZZ, self).__getattribute__(name)
+
+    def __dir__(self):
+        r"""
+        TESTS:
+
+        Removes the Ehrhart quasipolynomial from the list of methods for the
+        lattice polyhedron::
+
+            sage: P = polytopes.cube()
+            sage: 'ehrhart_polynomial' in P.__dir__()
+            True
+            sage: 'ehrhart_quasipolynomial' in P.__dir__()
+            False
+        """
+        orig_dir = (set(dir(self.__class__)) | set(self.__dict__.keys()))
+        return sorted(orig_dir - set(['ehrhart_quasipolynomial']))
 
     def is_lattice_polytope(self):
         r"""
@@ -114,16 +82,24 @@ class Polyhedron_ZZ(Polyhedron_base):
             True
             sage: polytopes.regular_polygon(5).is_lattice_polytope()
             False
-        """
-        return True
 
-    def ehrhart_polynomial(self, verbose=False, dual=None,
+        TESTS:
+
+        Check :trac:`22622`::
+
+            sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
+            sage: P1.is_lattice_polytope()
+            False
+        """
+        return self.is_compact()
+
+    def _ehrhart_polynomial_latte(self, verbose=False, dual=None,
             irrational_primal=None, irrational_all_primal=None, maxdet=None,
             no_decomposition=None, compute_vertex_cones=None, smith_form=None,
             dualization=None, triangulation=None, triangulation_max_height=None,
             **kwds):
         r"""
-        Return the Ehrhart polynomial of this polyhedron.
+        Return the Ehrhart polynomial of this polyhedron using LattE integrale.
 
         Let `P` be a lattice polytope in `\RR^d` and define `L(P,t) = \# (tP
         \cap \ZZ^d)`. Then E. Ehrhart proved in 1962 that `L` coincides with a
@@ -133,36 +109,36 @@ class Polyhedron_ZZ(Polyhedron_base):
 
         INPUT:
 
-        - ``verbose`` - (boolean, default to ``False``) if ``True``, print the
+        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
           whole output of the LattE command.
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - (boolean) triangulate and signed-decompose in the dual
+        - ``dual`` - boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - (boolean) triangulate in the dual space,
+        - ``irrational_primal`` - boolean; triangulate in the dual space,
           signed-decompose in the primal space using irrationalization.
 
-        - ``irrational_all_primal`` - (boolean) Triangulate and signed-decompose
+        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
           in the primal space using irrationalization.
 
-        - ``maxdet`` -- (integer) decompose down to an index (determinant) of
+        - ``maxdet`` -- integer; decompose down to an index (determinant) of
           ``maxdet`` instead of index 1 (unimodular cones).
 
-        - ``no_decomposition`` -- (boolean) do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
 
-        - ``compute_vertex_cones`` -- (string) either 'cdd' or 'lrs' or '4ti2'
+        - ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
 
-        - ``smith_form`` -- (string) either 'ilio' or 'lidia'
+        - ``smith_form`` -- string; either 'ilio' or 'lidia'
 
-        - ``dualization`` -- (string) either 'cdd' or '4ti2'
+        - ``dualization`` -- string; either 'cdd' or '4ti2'
 
-        - ``triangulation`` - (string) 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
 
-        - ``triangulation_max_height`` - (integer) use a uniform distribution of
+        - ``triangulation_max_height`` - integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::
@@ -176,19 +152,23 @@ class Polyhedron_ZZ(Polyhedron_base):
         for lattice point enumeration (see
         https://www.math.ucdavis.edu/~latte/).
 
+        .. SEEALSO::
+
+            :mod:`~sage.interfaces.latte` the interface to LattE integrale
+
         EXAMPLES::
 
             sage: P = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
-            sage: p = P.ehrhart_polynomial()    # optional - latte_int
-            sage: p                             # optional - latte_int
+            sage: p = P._ehrhart_polynomial_latte()    # optional - latte_int
+            sage: p                                    # optional - latte_int
             7/2*t^3 + 2*t^2 - 1/2*t + 1
-            sage: p(1)                          # optional - latte_int
+            sage: p(1)                                 # optional - latte_int
             6
-            sage: len(P.integral_points())
+            sage: len(P.integral_points())             # optional - latte_int
             6
-            sage: p(2)                          # optional - latte_int
+            sage: p(2)                                 # optional - latte_int
             36
-            sage: len((2*P).integral_points())
+            sage: len((2*P).integral_points())         # optional - latte_int
             36
 
         The unit hypercubes::
@@ -196,22 +176,14 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: from itertools import product
             sage: def hypercube(d):
             ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)))
-            sage: hypercube(3).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(3)._ehrhart_polynomial_latte()   # optional - latte_int
             t^3 + 3*t^2 + 3*t + 1
-            sage: hypercube(4).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(4)._ehrhart_polynomial_latte()   # optional - latte_int
             t^4 + 4*t^3 + 6*t^2 + 4*t + 1
-            sage: hypercube(5).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(5)._ehrhart_polynomial_latte()   # optional - latte_int
             t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
-            sage: hypercube(6).ehrhart_polynomial()   # optional - latte_int
+            sage: hypercube(6)._ehrhart_polynomial_latte()   # optional - latte_int
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
-
-        An empty polyhedron::
-
-            sage: P = Polyhedron(ambient_dim=3, vertices=[])
-            sage: P.ehrhart_polynomial()    # optional - latte_int
-            0
-            sage: parent(_)                 # optional - latte_int
-            Univariate Polynomial Ring in t over Rational Field
 
         TESTS:
 
@@ -219,59 +191,49 @@ class Polyhedron_ZZ(Polyhedron_base):
 
             sage: P = Polyhedron(ieqs=[[1,-1,1,0], [-1,2,-1,0], [1,1,-2,0]], eqns=[[-1,2,-1,-3]], base_ring=ZZ)
 
-            sage: p = P.ehrhart_polynomial(maxdet=5, verbose=True)  # optional - latte_int
+            sage: p = P._ehrhart_polynomial_latte(maxdet=5, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' '--maxdet=5' --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--maxdet=5' /dev/stdin
             ...
             sage: p    # optional - latte_int
             1/2*t^2 + 3/2*t + 1
 
-            sage: p = P.ehrhart_polynomial(dual=True, verbose=True)  # optional - latte_int
+            sage: p = P._ehrhart_polynomial_latte(dual=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --dual --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --dual /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
 
-            sage: p = P.ehrhart_polynomial(irrational_primal=True, verbose=True)   # optional - latte_int
+            sage: p = P._ehrhart_polynomial_latte(irrational_primal=True, verbose=True)   # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-primal --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-primal /dev/stdin
             ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
 
-            sage: p = P.ehrhart_polynomial(irrational_all_primal=True, verbose=True)  # optional - latte_int
+            sage: p = P._ehrhart_polynomial_latte(irrational_all_primal=True, verbose=True)  # optional - latte_int
             This is LattE integrale ...
             ...
-            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --irrational-all-primal --cdd ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd --irrational-all-primal /dev/stdin
+            ...
             sage: p   # optional - latte_int
             1/2*t^2 + 3/2*t + 1
 
         Test bad options::
 
-            sage: P.ehrhart_polynomial(bim_bam_boum=19)   # optional - latte_int
+            sage: P._ehrhart_polynomial_latte(bim_bam_boum=19)   # optional - latte_int
             Traceback (most recent call last):
             ...
-            RuntimeError: LattE integrale failed with exit code 1 to execute...
+            RuntimeError: LattE integrale program failed (exit code 1):
+            ...
+            Invocation: count --ehrhart-polynomial '--redundancy-check=none' --cdd '--bim-bam-boum=19' /dev/stdin
+            Unknown command/option --bim-bam-boum=19
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        R = PolynomialRing(QQ, 't')
-        if self.is_empty():
-            return R.zero()
-
-        from sage.misc.misc import SAGE_TMP
-        from subprocess import Popen, PIPE
-
-        ine = self.cdd_Hrepresentation()
-
-        args = ['count', '--ehrhart-polynomial']
-        if 'redundancy_check' not in kwds:
-            args.append('--redundancy-check=none')
-
-        # note: the options below are explicitely written in the function
+        # note: the options below are explicitly written in the function
         # declaration in order to keep tab completion (see #18211).
         kwds.update({
             'dual'                    : dual,
@@ -285,41 +247,235 @@ class Polyhedron_ZZ(Polyhedron_base):
             'triangulation'           : triangulation,
             'triangulation_max_height': triangulation_max_height})
 
-        for key,value in kwds.items():
-            if value is None or value is False:
-                continue
+        from sage.interfaces.latte import count
+        ine = self.cdd_Hrepresentation()
+        return count(ine, cdd=True, ehrhart_polynomial=True, verbose=verbose, **kwds)
 
-            key = key.replace('_','-')
-            if value is True:
-                args.append('--{}'.format(key))
-            else:
-                args.append('--{}={}'.format(key, value))
-        args += ['--cdd', '/dev/stdin']
+    def _ehrhart_polynomial_normaliz(self, variable='t'):
+        r"""
+        Compute the Ehrhart polynomial of a lattice polytope using Normaliz.
 
-        try:
-            # The cwd argument is needed because latte
-            # always produces diagnostic output files.
-            latte_proc = Popen(args,
-                               stdin=PIPE, stdout=PIPE,
-                               stderr=(None if verbose else PIPE),
-                               cwd=str(SAGE_TMP))
-        except OSError:
-            raise ValueError("The package latte_int must be installed "
-                    "(type 'sage -i latte_int' in a console or "
-                    "'install_package('latte_int')' at a Sage prompt)!\n")
+        The backend of ``self`` must be 'normaliz'.
 
-        ans, err = latte_proc.communicate(ine)
-        ret_code = latte_proc.poll()
-        if ret_code:
-            if err is None:
-                err = ", see error message above"
-            else:
-                err = ":\n" + err
-            raise RuntimeError("LattE integrale failed with exit code {} to execute {}".format(ret_code, ' '.join(args)) + err.strip())
+        INPUT:
 
-        p = ans.splitlines()[-2]
+        - ``variable`` -- (string, default='t'); the variable in which the
+          Ehrhart polynomial is expressed.
 
-        return R(p)
+        OUTPUT:
+
+        A univariate polynomial over a rational field.
+
+        EXAMPLES::
+
+            sage: c = Polyhedron(vertices = [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]],backend='normaliz') # optional - pynormaliz
+            sage: c._ehrhart_polynomial_normaliz()             # optional - pynormaliz
+            t^3 + 3*t^2 + 3*t + 1
+
+        Changing the variable works::
+
+            sage: c._ehrhart_polynomial_normaliz(variable='k') # optional - pynormaliz
+            k^3 + 3*k^2 + 3*k + 1
+
+        TESTS:
+
+        Receive a type error if the backend is not normaliz::
+
+            sage: c = Polyhedron(vertices = [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]])
+            sage: c._ehrhart_polynomial_normaliz()             # optional - pynormaliz
+            Traceback (most recent call last):
+            ...
+            TypeError: The polyhedron's backend should be 'normaliz'
+        """
+        raise TypeError("The polyhedron's backend should be 'normaliz'")
+
+    @cached_method(do_pickle=True)
+    def ehrhart_polynomial(self, engine=None, variable='t', verbose=False, dual=None,
+            irrational_primal=None, irrational_all_primal=None, maxdet=None,
+            no_decomposition=None, compute_vertex_cones=None, smith_form=None,
+            dualization=None, triangulation=None, triangulation_max_height=None,
+            **kwds):
+        r"""
+        Return the Ehrhart polynomial of this polyhedron.
+
+        Let `P` be a lattice polytope in `\RR^d` and define `L(P,t) = \# (tP
+        \cap \ZZ^d)`. Then E. Ehrhart proved in 1962 that `L` coincides with a
+        rational polynomial of degree `d` for integer `t`. `L` is called the
+        *Ehrhart polynomial* of `P`. For more information see the
+        :wikipedia:`Ehrhart_polynomial`.
+
+        The Ehrhart polynomial may be computed using either  LattE Integrale
+        or Normaliz by setting ``engine``  to 'latte' or 'normaliz' respectively.
+
+        INPUT:
+
+        - ``engine`` -- string; The backend to use. Allowed values are:
+
+          * ``None`` (default); When no input is given the Ehrhart polynomial
+            is computed using LattE Integrale (optional)
+          * ``'latte'``; use LattE integrale program (optional)
+          * ``'normaliz'``; use Normaliz program (optional). The backend of
+            ``self`` must be set to 'normaliz'.
+
+        - ``variable`` -- string (default: 't'); The variable in which the
+          Ehrhart polynomial should be expressed.
+
+        - When the ``engine`` is 'latte' or None, the additional input values are:
+
+          * ``verbose`` - boolean (default: ``False``); if ``True``, print the
+            whole output of the LattE command.
+
+          The following options are passed to the LattE command, for details
+          consult `the LattE documentation
+          <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
+
+          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+            space
+          * ``irrational_primal`` - boolean; triangulate in the dual space,
+            signed-decompose in the primal space using irrationalization.
+          * ``irrational_all_primal`` - boolean; Triangulate and signed-decompose
+            in the primal space using irrationalization.
+          * ``maxdet`` -- integer; decompose down to an index (determinant) of
+            ``maxdet`` instead of index 1 (unimodular cones).
+          * ``no_decomposition`` -- boolean; do not signed-decompose
+            simplicial cones.
+          * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
+          * ``smith_form`` -- string; either 'ilio' or 'lidia'
+          * ``dualization`` -- string; either 'cdd' or '4ti2'
+          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+          * ``triangulation_max_height`` - integer; use a uniform distribution of
+            height from 1 to this number
+
+        OUTPUT:
+
+        The Ehrhart polynomial as a a univariate polynomial in ``variable``
+        over a rational field.
+
+        .. SEEALSO::
+
+            :mod:`~sage.interfaces.latte` the interface to LattE Integrale
+            `PyNormaliz <https://pypi.org/project/PyNormaliz>`_
+
+        EXAMPLES:
+
+        To start, we find the Ehrhart polynomial of a three-dimensional
+        ``simplex``, first using ``engine='latte'``. Leaving the engine
+        unspecified sets the ``engine`` to 'latte' by default::
+
+            sage: simplex = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
+            sage: poly = simplex.ehrhart_polynomial(engine = 'latte')  # optional - latte_int
+            sage: poly                                                 # optional - latte_int
+            7/2*t^3 + 2*t^2 - 1/2*t + 1
+            sage: poly(1)                                              # optional - latte_int
+            6
+            sage: len(simplex.integral_points())                       # optional - latte_int
+            6
+            sage: poly(2)                                              # optional - latte_int
+            36
+            sage: len((2*simplex).integral_points())                   # optional - latte_int
+            36
+
+        Now we find the same Ehrhart polynomial, this time using
+        ``engine='normaliz'``. To use the Normaliz engine, the ``simplex`` must
+        be defined with ``backend='normaliz'``::
+
+            sage: simplex = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)], backend='normaliz') # optional - pynormaliz
+            sage: poly = simplex.ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            sage: poly                                                 # optional - pynormaliz
+            7/2*t^3 + 2*t^2 - 1/2*t + 1
+
+        If the ``engine='normaliz'``, the backend should be ``'normaliz'``, otherwise
+        it returns an error::
+
+            sage: simplex = Polyhedron(vertices=[(0,0,0),(3,3,3),(-3,2,1),(1,-1,-2)])
+            sage: simplex.ehrhart_polynomial(engine='normaliz')        # optional - pynormaliz
+            Traceback (most recent call last):
+            ...
+            TypeError: The polyhedron's backend should be 'normaliz'
+
+        Now we find the Ehrhart polynomials of the unit hypercubes of
+        dimensions three through six. They are computed first with
+        ``engine='latte'`` and then with ``engine='normaliz'``.
+        The degree of the Ehrhart polynomial matches the dimension of the
+        hypercube, and the coefficient of the leading monomial equals the
+        volume of the unit hypercube::
+
+            sage: from itertools import product
+            sage: def hypercube(d):
+            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)))
+            sage: hypercube(3).ehrhart_polynomial()   # optional - latte_int
+            t^3 + 3*t^2 + 3*t + 1
+            sage: hypercube(4).ehrhart_polynomial()   # optional - latte_int
+            t^4 + 4*t^3 + 6*t^2 + 4*t + 1
+            sage: hypercube(5).ehrhart_polynomial()   # optional - latte_int
+            t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
+            sage: hypercube(6).ehrhart_polynomial()   # optional - latte_int
+            t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
+
+            sage: def hypercube(d):
+            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz') # optional - pynormaliz
+            sage: hypercube(3).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            t^3 + 3*t^2 + 3*t + 1
+            sage: hypercube(4).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            t^4 + 4*t^3 + 6*t^2 + 4*t + 1
+            sage: hypercube(5).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            t^5 + 5*t^4 + 10*t^3 + 10*t^2 + 5*t + 1
+            sage: hypercube(6).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
+            t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
+
+        An empty polyhedron::
+
+            sage: p = Polyhedron(ambient_dim=3, vertices=[])
+            sage: p.ehrhart_polynomial()
+            0
+            sage: parent(_)
+            Univariate Polynomial Ring in t over Rational Field
+
+        The polyhedron should be compact::
+
+            sage: C = Polyhedron(rays=[[1,2],[2,1]])
+            sage: C.ehrhart_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: Ehrhart polynomial only defined for compact polyhedra
+
+        TESTS:
+
+        The cache of the Ehrhart polynomial is being pickled::
+
+            sage: P = polytopes.cube()
+            sage: P.ehrhart_polynomial()  # optional - latte_int
+            8*t^3 + 12*t^2 + 6*t + 1
+            sage: Q = loads(dumps(P))
+            sage: Q.ehrhart_polynomial.is_in_cache()  # optional - latte_int
+            True
+        """
+        if self.is_empty():
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            from sage.rings.rational_field import QQ
+            R = PolynomialRing(QQ, variable)
+            return R.zero()
+
+        if not self.is_compact():
+            raise ValueError("Ehrhart polynomial only defined for compact polyhedra")
+
+        if engine is None:
+            # setting the default to 'latte'
+            engine = 'latte'
+        if engine == 'latte':
+            poly = self._ehrhart_polynomial_latte(verbose, dual,
+            irrational_primal, irrational_all_primal, maxdet,
+            no_decomposition, compute_vertex_cones, smith_form,
+            dualization, triangulation, triangulation_max_height,
+            **kwds)
+            return poly.change_variable_name(variable)
+            # TO DO: replace this change of variable by creating the appropriate
+            #        polynomial ring in the latte interface.
+
+        elif engine == 'normaliz':
+            return self._ehrhart_polynomial_normaliz(variable)
+        else:
+            raise ValueError("engine must be 'latte' or 'normaliz'")
 
     @cached_method
     def polar(self):
@@ -342,30 +498,80 @@ class Polyhedron_ZZ(Polyhedron_base):
             sage: p.polar()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
             sage: type(_)
-            <class 'sage.geometry.polyhedron.backend_ppl.Polyhedra_ZZ_ppl_with_category.element_class'>
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category.element_class'>
             sage: p.polar().base_ring()
             Integer Ring
+
+        TESTS:
+
+        Test that :trac:`28551` is fixed::
+
+            sage: polytopes.cube(backend='normaliz').polar().backend()  # optional - pynormaliz
+            'normaliz'
         """
         if not self.has_IP_property():
             raise ValueError('The polytope must have the IP property.')
 
-        vertices = [ ieq.A()/ieq.b() for
-                     ieq in self.inequality_generator() ]
+        vertices = tuple( ieq.A()/ieq.b() for
+                          ieq in self.inequality_generator() )
+
+        ieqs = ((1,) + tuple(v[:]) for v in self.vertices())
+
+        pref_rep = 'Hrep' if self.n_vertices() <= self.n_inequalities() else 'Vrep'
+
         if all( all(v_i in ZZ for v_i in v) for v in vertices):
-            return Polyhedron(vertices=vertices, base_ring=ZZ)
+            parent = self.parent()
+            vertices = (v.change_ring(ZZ) for v in vertices)
         else:
-            return Polyhedron(vertices=vertices, base_ring=QQ)
+            parent = self.parent().change_ring(QQ)
+
+        return parent.element_class(parent, [vertices, [], []], [ieqs, []],
+                                    Vrep_minimal=True, Hrep_minimal=True, pref_rep=pref_rep)
 
     @cached_method
     def is_reflexive(self):
-        """
+        r"""
+        A lattice polytope is reflexive if it contains the origin in its interior
+        and its polar with respect to the origin is a lattice polytope.
+
+        Equivalently, it is reflexive if it is of the form `\{x \in \mathbb{R}^d: Ax \leq 1\}`
+        for some integer matrix `A` and `d` the ambient dimension.
+
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(1,0,0),(0,1,0),(0,0,1),(-1,-1,-1)], base_ring=ZZ)
             sage: p.is_reflexive()
             True
+            sage: polytopes.hypercube(4).is_reflexive()
+            True
+            sage: p = Polyhedron(vertices=[(1,0), (0,2), (-1,0), (0,-1)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            False
+            sage: p = Polyhedron(vertices=[(1,0), (0,2), (-1,0)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            False
+
+        An error is raised, if the polyhedron is not compact::
+
+            sage: p = Polyhedron(rays=[(1,)], base_ring=ZZ)
+            sage: p.is_reflexive()
+            Traceback (most recent call last):
+            ...
+            ValueError: the polyhedron is not compact
         """
-        return self.polar().is_lattice_polytope()
+        if not self.is_compact():
+            raise ValueError("the polyhedron is not compact")
+
+        for H in self.Hrepresentation():
+            if H.is_equation():
+                return False
+            b = H.b()
+            if b < 1:
+                return False
+            if not all(v_i/b in ZZ for v_i in H.A()):
+                return False
+
+        return True
 
     @cached_method
     def has_IP_property(self):
@@ -396,12 +602,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
         REFERENCES:
 
-        ..  [PALP]
-            Maximilian Kreuzer, Harald Skarke:
-            "PALP: A Package for Analyzing Lattice Polytopes
-            with Applications to Toric Geometry"
-            Comput.Phys.Commun. 157 (2004) 87-106
-            :arxiv:`math/0204356`
+        - [PALP]_
         """
         return self.is_compact() and self.interior_contains(self.ambient_space().zero())
 
@@ -453,7 +654,7 @@ class Polyhedron_ZZ(Polyhedron_base):
                 plane._delete()
 
     def find_translation(self, translated_polyhedron):
-        """
+        r"""
         Return the translation vector to ``translated_polyhedron``.
 
         INPUT:
@@ -492,7 +693,7 @@ class Polyhedron_ZZ(Polyhedron_base):
         return v
 
     def _subpoly_parallel_facets(self):
-        """
+        r"""
         Generator for all lattice sub-polyhedra with parallel facets.
 
         In a sub-polyhedron `Y\subset X` not all edges of `Y` need to
@@ -511,9 +712,9 @@ class Polyhedron_ZZ(Polyhedron_base):
 
             sage: X = Polyhedron(vertices=[(0,0), (0,1), (1,0), (1,1)])
             sage: X._subpoly_parallel_facets()
-            <generator object _subpoly_parallel_facets at 0x...>
+            <generator object ..._subpoly_parallel_facets at 0x...>
             sage: for p in X._subpoly_parallel_facets():
-            ...       print p.Vrepresentation()
+            ....:     print(p.Vrepresentation())
             (A vertex at (0, 0),)
             (A vertex at (0, -1), A vertex at (0, 0))
             (A vertex at (-1, 0), A vertex at (0, 0))
@@ -548,8 +749,8 @@ class Polyhedron_ZZ(Polyhedron_base):
             edge_vectors.append([ v_prim*i for i in range(d+1) ])
         origin = self.ambient_space().zero()
         parent = self.parent()
-        from sage.combinat.cartesian_product import CartesianProduct
-        for edges in CartesianProduct(*edge_vectors):
+        from itertools import product
+        for edges in product(*edge_vectors):
             v = []
             point = origin
             for e in edges:
@@ -560,8 +761,8 @@ class Polyhedron_ZZ(Polyhedron_base):
             yield parent([v, [], []], None)
 
     @cached_method
-    def Minkowski_decompositions(self):
-        """
+    def minkowski_decompositions(self):
+        r"""
         Return all Minkowski sums that add up to the polyhedron.
 
         OUTPUT:
@@ -574,7 +775,7 @@ class Polyhedron_ZZ(Polyhedron_base):
         EXAMPLES::
 
             sage: square = Polyhedron(vertices=[(0,0),(1,0),(0,1),(1,1)])
-            sage: square.Minkowski_decompositions()
+            sage: square.minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices),
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
@@ -584,7 +785,7 @@ class Polyhedron_ZZ(Polyhedron_base):
 
             sage: Q = Polyhedron(vertices=[(4,0), (6,0), (0,3), (4,3)])
             sage: R = Polyhedron(vertices=[(0,0), (5,0), (8,4), (3,2)])
-            sage: (Q+R).Minkowski_decompositions()
+            sage: (Q+R).minkowski_decompositions()
             ((A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 7 vertices),
              (A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices,
@@ -602,13 +803,13 @@ class Polyhedron_ZZ(Polyhedron_base):
              (A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices,
               A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 6 vertices))
 
-           sage: [ len(square.dilation(i).Minkowski_decompositions())
-           ...     for i in range(6) ]
+           sage: [ len(square.dilation(i).minkowski_decompositions())
+           ....:   for i in range(6) ]
            [1, 2, 5, 8, 13, 18]
            sage: [ ceil((i^2+2*i-1)/2)+1 for i in range(10) ]
            [1, 2, 5, 8, 13, 18, 25, 32, 41, 50]
         """
-        if self.dim()>2 or not self.is_compact():
+        if self.dim() > 2 or not self.is_compact():
             raise NotImplementedError('only implemented for bounded polygons')
         summands = []
         def is_known_summand(poly):
@@ -623,9 +824,9 @@ class Polyhedron_ZZ(Polyhedron_base):
             if is_known_summand(X):
                 continue
             Y = self - X
+            Y = Y.change_ring(ZZ)  # Minkowski difference returns QQ-polyhedron
             if X+Y != self:
                 continue
-            decompositions.append((X,Y))
+            decompositions.append((X, Y))
             summands += [X, Y]
         return tuple(decompositions)
-

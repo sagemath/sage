@@ -48,7 +48,7 @@ and edges to other objects: the :mod:`graph backends
 <sage.graphs.base.graph_backends>`::
 
     sage: Graph()._backend
-    <type 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
+    <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
 
 A (di)graph backend is a simpler (di)graph class having only the most elementary
 methods (e.g.: add/remove vertices/edges). Its vertices can be arbitrary

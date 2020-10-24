@@ -1,8 +1,10 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
 """
 `p`-Adic ``ZZ_pX`` CR Element
 
 This file implements elements of Eisenstein and unramified extensions
-of `\mathbb{Z}_p` and `\mathbb{Q}_p` with capped relative precision.
+of `\ZZ_p` and `\QQ_p` with capped relative precision.
 
 For the parent class see padic_extension_leaves.pyx.
 
@@ -34,12 +36,11 @@ element contains the following data:
   ntl modulus determined by the absolute value of ``relprec``.  If
   ``relprec`` is 0, ``unit`` **is not initialized**, or destructed if
   normalized and found to be zero.  Otherwise, let `r` be relprec and
-  `e` be the ramification index over `\mathbb{Q}_p` or `\mathbb{Z}_p`.
+  `e` be the ramification index over `\QQ_p` or `\ZZ_p`.
   Then the modulus of unit is given by `p^{ceil(r/e)}`.  Note that all
   kinds of problems arise if you try to mix moduli.
   ``ZZ_pX_conv_modulus`` gives a semi-safe way to convert between
-  different moduli without having to pass through ``ZZX`` (see
-  ``sage/libs/ntl/decl.pxi`` and ``c_lib/src/ntlwrap.cpp``)
+  different moduli without having to pass through ``ZZX``.
 
 - ``prime_pow`` (some subclass of ``PowComputer_ZZ_pX``) -- a class,
   identical among all elements with the same parent, holding common
@@ -88,7 +89,7 @@ An Eisenstein extension::
     sage: S.<x> = R[]
     sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
     sage: W.<w> = R.ext(f); W
-    Eisenstein Extension of 5-adic Ring with capped relative precision 5 in w defined by (1 + O(5^5))*x^5 + (O(5^6))*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))
+    5-adic Eisenstein Extension Ring in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
     sage: z = (1+w)^5; z
     1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24 + O(w^25)
     sage: y = z >> 1; y
@@ -104,7 +105,7 @@ An Eisenstein extension::
     sage: (1/w)^12+w
     w^-12 + w + O(w^13)
     sage: (1/w).parent()
-    Eisenstein Extension of 5-adic Field with capped relative precision 5 in w defined by (1 + O(5^5))*x^5 + (O(5^6))*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))
+    5-adic Eisenstein Extension Field in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
 
 Unramified extensions::
 
@@ -153,12 +154,13 @@ You can get at the underlying ntl unit::
     sage: y._ntl_rep_abs()
     ([5 95367431640505 25 95367431640560 5], 0)
 
-NOTES::
+.. NOTE::
 
-    If you get an error ``internal error: can't grow this
-    _ntl_gbigint,`` it indicates that moduli are being mixed
-    inappropriately somewhere.  For example, when calling a function
-    with a ``ZZ_pX_c`` as an argument, it copies.  If the modulus is not
+    If you get an error ``internal error: can't grow this _ntl_gbigint,``
+    it indicates that moduli are being mixed inappropriately somewhere.
+
+    For example, when calling a function with a ``ZZ_pX_c`` as an
+    argument, it copies.  If the modulus is not
     set to the modulus of the ``ZZ_pX_c``, you can get errors.
 
 AUTHORS:
@@ -183,8 +185,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.stdsage cimport PY_NEW
+include "sage/libs/ntl/decl.pxi"
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -218,14 +221,14 @@ cdef long minusmaxordp = -maxordp
 
 cdef inline int check_ordp(long a) except -1:
     if a > maxordp or a < minusmaxordp:
-        raise ValueError, "valuation overflow"
+        raise ValueError("valuation overflow")
 
 
 cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
         """
         Creates an element of a capped relative precision, unramified
-        or Eisenstein extension of `\mathbb{Z}_p` or `\mathbb{Q}_p`.
+        or Eisenstein extension of `\ZZ_p` or `\QQ_p`.
 
         INPUT:
 
@@ -314,7 +317,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         cdef Rational xlift
         if isinstance(x, pAdicGenericElement):
             if self.prime_pow.in_field == 0 and x.valuation() < 0:
-                raise ValueError, "element has negative valuation"
+                raise ValueError("element has negative valuation")
             if x._is_base_elt(self.prime_pow.prime):
                 xlift = Rational(x.lift())
                 if mpq_sgn(xlift.value) == 0:
@@ -330,11 +333,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 self._set_from_mpq_both(xlift.value, aprec, rprec)
                 return
         if isinstance(x, GpElement):
-            x = x._pari_()
+            x = x.__pari__()
         if isinstance(x, pari_gen):
             if x.type() == "t_PADIC":
                 if x.variable() != self.prime_pow.prime:
-                    raise TypeError, "Cannot coerce a pari p-adic with the wrong prime."
+                    raise TypeError("Cannot coerce a pari p-adic with the wrong prime.")
                 ltmp = x.padicprec(self.prime_pow.prime) * self.prime_pow.e
                 if absprec is infinity or ltmp < aprec:
                     aprec = ltmp
@@ -349,10 +352,10 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 L = []
                 x = x.lift().lift()
                 for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoeff(i)))
+                    L.append(Integer(x.polcoef(i)))
                 x = L
             else:
-                raise TypeError, "unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed"
+                raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
         elif is_IntegerMod(x):
             mpz_init(tmp)
             ctx_prec = mpz_remove(tmp, (<Integer>x.modulus()).value, self.prime_pow.prime.value)
@@ -364,7 +367,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     absprec = 0 # absprec just has to be non-infinite: everything else uses aprec
             else:
                 mpz_clear(tmp)
-                raise TypeError, "cannot coerce from the given integer mod ring (not a power of the same prime)"
+                raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
         elif isinstance(x, ntl_ZZ_p):
             ctx_prec = ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
             if ZZ_IsOne(tmp_z):
@@ -376,14 +379,14 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     aprec = ctx_prec
                     absprec = 0 # absprec just has to be non-infinite: everything else uses aprec
             else:
-                raise TypeError, "cannot coerce the given ntl_ZZ_p (modulus not a power of the same prime)"
+                raise TypeError("cannot coerce the given ntl_ZZ_p (modulus not a power of the same prime)")
         elif isinstance(x, ntl_ZZ):
             tmp_Int = PY_NEW(Integer)
             ZZ_to_mpz(tmp_Int.value, &(<ntl_ZZ>x).x)
             x = tmp_Int
         elif isinstance(x, (int, long)):
             x = Integer(x)
-        elif x in parent.residue_field():
+        elif x in parent.residue_field() and x.parent().is_finite():
             # Should only reach here if x is not in F_p
             z = parent.gen()
             poly = x.polynomial().list()
@@ -478,7 +481,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                         rprec = _x.relprec
                     self._set(&_x.unit, _x.ordp, rprec)
             else:
-                raise NotImplementedError, "Conversion from different p-adic extensions not yet supported"
+                raise NotImplementedError("Conversion from different p-adic extensions not yet supported")
         else:
             try:
                 x = list(x)
@@ -486,7 +489,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 try:
                     x = x.list()
                 except AttributeError:
-                    raise TypeError, "cannot convert x to a p-adic element"
+                    raise TypeError("cannot convert x to a p-adic element")
             if absprec is infinity:
                 self._set_from_list_rel(x, rprec)
             else:
@@ -500,7 +503,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         functions or methods decorated with ``@cached_function`` or
         ``@cached_method`` respectively.
 
-        EXAMPLE:
+        EXAMPLES:
 
         In the following example, ``a`` and ``b`` compare equal. They cannot
         have a meaningful hash value since then their hash value would have to
@@ -513,7 +516,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: hash(a)
             Traceback (most recent call last):
             ...
-            TypeError: unhashable type: 'sage.rings.padics.padic_ZZ_pX_CR_element.pAdicZZpXCRElement'
+            TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
 
         However, we want to cache computations which depend on them. Therefore
         they define a ``_cache_key`` which is hashable and uniquely identifies
@@ -531,7 +534,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: K.zero()._cache_key()
             (..., 0)
             sage: K(0,1)._cache_key()
-            (..., 0, 1)
+            (..., 1, 0)
 
         """
         if self._is_exact_zero():
@@ -541,7 +544,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         else:
             return (self.parent(),
                     tuple(tuple(c) if isinstance(c, list) else c
-                          for c in self.unit_part().list()),
+                          for c in self.unit_part().expansion()),
                     self.valuation(), self.precision_relative())
 
     cdef int _set_inexact_zero(self, long absprec) except -1:
@@ -857,13 +860,13 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: y = F(3/847); repr(y)[3:]
             '5563A4105291255628.148272'
             sage: repr(y*847)[3:]
-            '3'
+            '000000000000000000000003'
             sage: repr(W(77/3, relprec=0))[3:]
-            ''
+            '000'
             sage: c = F(11^-1 + O(11^2)); repr(c)[3:]
-            '11111.01A'
+            '011111.01A'
             sage: repr(c * 11)[3:]
-            '1'
+            '000000001'
         """
         if mpq_sgn(x) == 0:
             self._set_exact_zero()
@@ -935,7 +938,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.ordp < 0 and self.prime_pow.in_field == 0:
             mpz_clear(num_unit)
             mpz_clear(den_unit)
-            raise ValueError, "p divides the denominator"
+            raise ValueError("p divides the denominator")
 
     cdef int _set_from_mpq_part2(self, mpz_t num_unit, mpz_t den_unit) except -1:
         """
@@ -1114,7 +1117,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             ctx_prec = self._check_ZZ_pContext(ctx) * self.prime_pow.e
         if ZZ_pX_IsZero(poly[0]):
             if ctx_prec == -1:
-                raise ValueError, "must specify either a context or an absolute precision bound"
+                raise ValueError("must specify either a context or an absolute precision bound")
             else:
                 self._set_inexact_zero(ctx_prec)
             return 0
@@ -1235,11 +1238,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self.relprec == relprec:
             return False
-        if self.relprec != 0:
-            ZZ_pX_destruct(&self.unit)
         if relprec != 0:
             self.prime_pow.restore_context_capdiv(relprec)
-            ZZ_pX_construct(&self.unit)
+            self.unit = ZZ_pX_c()
         self.relprec = relprec
         return True
 
@@ -1277,8 +1278,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: W(70, 8) # indirect doctest
             4*w^5 + 3*w^7 + O(w^8)
         """
-        if self.relprec != 0:
-            ZZ_pX_destruct(&self.unit)
         self.relprec = absprec - self.ordp
         cdef long arelprec
         if relprec < 0:
@@ -1292,7 +1291,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 self.relprec = arelprec
             if self.relprec != 0:
                 self.prime_pow.restore_context_capdiv(self.relprec)
-                ZZ_pX_construct(&self.unit)
+                self.unit = ZZ_pX_c()
                 if relprec < 0:
                     self.relprec = -self.relprec
         return self.relprec == 0
@@ -1322,7 +1321,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             if ZZ_pX_IsZero(self.unit):
                 self.ordp -= self.relprec # note that self.relprec < 0
                 self.relprec = 0
-                ZZ_pX_destruct(&self.unit)
             else:
                 ZZ_pX_min_val_coeff(minval, mini, self.unit, self.prime_pow.pow_ZZ_tmp(1)[0])
                 if self.prime_pow.e == 1:
@@ -1332,7 +1330,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 if shift >= -self.relprec:
                     self.ordp -= self.relprec # note that self.relprec < 0
                     self.relprec = 0
-                    ZZ_pX_destruct(&self.unit)
                 elif shift > 0:
                     self.relprec = -self.relprec - shift
                     self.ordp += shift
@@ -1342,15 +1339,15 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def _is_normalized(self):
         """
-        Returns whether this element is currently normalized.
+        Whether this element is currently normalized.
 
         EXAMPLES::
 
-            sage: R.<a> = ZqCR(125); b = 5*a + 4; c = 10*a^2 + 6; d = b + c
+            sage: R.<a> = ZqCR(125,implementation="NTL"); b = 5*a + 4; c = 10*a^2 + 6; d = b + c
             sage: d._is_normalized()
             False
-            sage: d
-            (2*a^2 + a + 2)*5 + O(5^20)
+            sage: d.valuation()
+            1
             sage: d._is_normalized()
             True
         """
@@ -1477,26 +1474,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     shift = shift >> 1
                     i += 1
 
-    def __dealloc__(self):
-        """
-        Deallocates ``self.unit`` if needed.
-
-        EXAMPLES::
-
-            sage: R = Qp(5,5)
-            sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
-            sage: W.<w> = R.ext(f)
-            sage: z = W(3/25, relprec = 6); z
-            3*w^-10 + 3*w^-8 + 2*w^-6 + O(w^-4)
-            sage: del z #indirect doctest
-        """
-        if self.relprec != 0:
-            ZZ_pX_destruct(&self.unit)
-
     cdef pAdicZZpXCRElement _new_c(self, long relprec):
         """
-        Returns a new element with the same parent as ``self`` and
+        Return a new element with the same parent as ``self`` and
         relative precision ``relprec``
 
         Note that if ``relprec`` is non-positive, the convention is that
@@ -1518,13 +1498,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if relprec > 0:
             self.prime_pow.restore_context_capdiv(relprec)
             ans.relprec = relprec
-            ZZ_pX_construct(&ans.unit)
         elif relprec == 0:
             ans._set_exact_zero()
         else:
             self.prime_pow.restore_context_capdiv(-relprec)
             ans.relprec = relprec
-            ZZ_pX_construct(&ans.unit)
         return ans
 
     def __reduce__(self):
@@ -1585,7 +1563,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def __invert__(self):
         """
-        Returns the inverse of ``self``.
+        Return the inverse of this element
 
         EXAMPLES::
 
@@ -1597,7 +1575,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: y = ~z; y # indirect doctest
             1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24 + O(w^25)
             sage: y.parent()
-            Eisenstein Extension of 5-adic Field with capped relative precision 5 in w defined by (1 + O(5^5))*x^5 + (O(5^6))*x^4 + (3*5^2 + O(5^6))*x^3 + (2*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))*x^2 + (5^3 + O(5^6))*x + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + O(5^6))
+            5-adic Eisenstein Extension Field in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: z = z - 1
             sage: ~z
             w^-5 + 4*w^-4 + 4*w^-3 + 4*w^-2 + 2*w^-1 + 1 + w + 4*w^2 + 4*w^3 + 4*w^4 + w^5 + w^6 + w^7 + 4*w^8 + 4*w^9 + 2*w^10 + w^11 + 2*w^12 + 4*w^13 + 4*w^14 + O(w^15)
@@ -1605,9 +1583,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             1 + O(w^20)
         """
         if self._is_exact_zero():
-            raise ZeroDivisionError, "cannot divide by zero"
+            raise ZeroDivisionError("cannot divide by zero")
         if self._is_inexact_zero(): # this calls _normalize
-            raise PrecisionError, "cannot divide by something indistinguishable from zero"
+            raise PrecisionError("cannot divide by something indistinguishable from zero")
         cdef pAdicZZpXCRElement ans = self._new_c(self.relprec)
         if not ans.prime_pow.in_field:
             ans._parent = self._parent.fraction_field()
@@ -1681,7 +1659,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             if self._is_exact_zero():
                 return self
             if self.prime_pow.in_field or mpz_sgn((<Integer>shift).value) > 0:
-                raise ValueError, "Shift does not fit in long"
+                raise ValueError("Shift does not fit in long")
             else:
                 ans = self._new_c(0)
                 ans.ordp = 0
@@ -1784,16 +1762,16 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             if self._is_exact_zero():
                 return self
             if self.prime_pow.in_field or mpz_sgn((<Integer>shift).value) < 0:
-                raise ValueError, "valuation overflow"
+                raise ValueError("valuation overflow")
             else:
                 ans = self._new_c(0)
                 ans.ordp = 0
                 return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         """
-        Returns ``-self``.
+        Negation
 
         EXAMPLES::
 
@@ -1835,14 +1813,14 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         Let `\alpha` be in `\mathcal{O}_K`.  Let
 
-        ..math ::
+        .. MATH::
 
             p = -\pi_K^{e_K} \epsilon
 
         be the factorization of `p` where `\epsilon` is a unit.  Then
         the `p`-th power of `1 + \alpha \pi_K^{\lambda}` satisfies
 
-        ..math ::
+        .. MATH::
 
             (1 + \alpha \pi^{\lambda})^p \equiv \left{ \begin{array}{lll}
             1 + \alpha^p \pi_K^{p \lambda} & \mod \mathfrak{p}_K^{p \lambda + 1} & \mbox{if $1 \le \lambda < \frac{e_K}{p-1}$} \\
@@ -1863,12 +1841,12 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         In computing `(a + O(\pi^k))^{b + O(p^m)}`, one needs that the
         reduction of `a` mod `\pi` is in the prime field
-        `\mathbb{F}_p` (so that the `p^m` power of the Teichmuller
+        `\GF{p}` (so that the `p^m` power of the Teichmuller
         part is constant as `m` increases).  Given this restriction,
         we can factor out the Teichmuller part and use the above lemma
         to find the first spot where
 
-        ..math::
+        .. MATH::
 
             (1 + \alpha \pi^{\lambda})^{p^m}
 
@@ -1962,7 +1940,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     return self.parent(1)
                 return self
             else:
-                raise TypeError, "exponent must be an integer, rational or base p-adic with the same prime"
+                raise TypeError("exponent must be an integer, rational or base p-adic with the same prime")
         elif self._is_inexact_zero():
             # If an integer exponent, return an inexact zero of valuation right * self.ordp.  Otherwise raise an error.
             if isinstance(_right, (int, long)):
@@ -1972,14 +1950,14 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 mpz_init_set_si(tmp, self.ordp)
                 mpz_mul(tmp, tmp, (<Integer>_right).value)
                 if mpz_cmp_si(tmp, maxordp) >= 0 or mpz_cmp_si(tmp, -maxordp) <= 0:
-                    raise ValueError, "valuation overflow"
+                    raise ValueError("valuation overflow")
                 ans.ordp = mpz_get_si(tmp)
                 mpz_clear(tmp)
                 return ans
             elif isinstance(_right, Rational) or (isinstance(_right, pAdicGenericElement) and _right._is_base_elt(self.prime_pow.prime)):
-                raise ValueError, "Need more precision"
+                raise ValueError("Need more precision")
             else:
-                raise TypeError, "exponent must be an integer, rational or base p-adic with the same prime"
+                raise TypeError("exponent must be an integer, rational or base p-adic with the same prime")
         if isinstance(_right, (int, long)):
             _right = Integer(_right)
         if isinstance(_right, Integer):
@@ -1994,25 +1972,25 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             exp_val = _right.valuation(self.prime_pow.prime) ##
         elif isinstance(_right, pAdicGenericElement) and _right._is_base_elt(self.prime_pow.prime):
             if self.ordp != 0:
-                raise ValueError, "in order to raise to a p-adic exponent, base must be a unit"
+                raise ValueError("in order to raise to a p-adic exponent, base must be a unit")
             right = Integer(_right)
             padic_exp = True
             exp_prec = _right.precision_absolute() ##
             exp_val = _right.valuation() ##
             if exp_val < 0:
-                raise NotImplementedError, "negative valuation exponents not yet supported"
+                raise NotImplementedError("negative valuation exponents not yet supported")
             # checks to see if the residue of self.unit is in the prime field.
             if self.prime_pow.e == 1:
                 for i from 1 <= i <= ZZ_pX_deg(self.unit):
                     if not ZZ_divide_test(ZZ_p_rep(ZZ_pX_coeff(self.unit, i)), self.prime_pow.pow_ZZ_tmp(1)[0]):
-                        raise ValueError, "in order to raise to a p-adic exponent, base must reduce to an element of F_p mod the uniformizer"
+                        raise ValueError("in order to raise to a p-adic exponent, base must reduce to an element of F_p mod the uniformizer")
             # compute the "level"
             teich_part = self.parent().teichmuller(self)
             base_level = (self / teich_part - 1).valuation() ##
         elif isinstance(_right, Rational):
             raise NotImplementedError
         else:
-            raise TypeError, "exponent must be an integer, rational or base p-adic with the same prime"
+            raise TypeError("exponent must be an integer, rational or base p-adic with the same prime")
         # Now we compute the increased relprec due to the exponent having positive p-adic valuation
         if exp_val > 0:
             mpz_init_set_si(tmp, self.relprec)
@@ -2054,7 +2032,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             mpz_init_set(tmp, right.value)
             mpz_mul_si(tmp, tmp, self.ordp)
             if mpz_cmp_si(tmp, maxordp) >= 0 or mpz_cmp_si(tmp, -maxordp) <= 0:
-                raise ValueError, "valuation overflow"
+                raise ValueError("valuation overflow")
             ans.ordp = mpz_get_si(tmp)
             mpz_clear(tmp)
         cdef ntl_ZZ rZZ = ntl_ZZ.__new__(ntl_ZZ)
@@ -2072,7 +2050,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cpdef ModuleElement _add_(self, ModuleElement _right):
+    cpdef _add_(self, _right):
         """
         Computes the sum of ``self`` and ``right``.
 
@@ -2128,8 +2106,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         cdef long rrprec = right.relprec
         if rrprec < 0:
             rrprec = -rrprec
-        #print "self.ordp = %s\nright.ordp = %s"%(self.ordp, right.ordp)
-        #print "self = %s\nright = %s"%(self, right)
         if self.ordp == right.ordp:
             # The relative precision of the sum is the minimum of the relative precisions in this case, possibly decreasing if we got cancellation
             # Since the valuations are the same, we could just add the units, if they had the same modulus.
@@ -2191,9 +2167,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 ans.relprec = -ans.relprec
         return ans
 
-    cpdef ModuleElement _sub_(self, ModuleElement right):
+    cpdef _sub_(self, right):
         """
-        Returns the difference of ``self`` and ``right``.
+        Return the difference of two elements
 
         EXAMPLES::
 
@@ -2217,9 +2193,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         # For now, a simple implementation
         return self + (-right)
 
-    cpdef RingElement _mul_(self, RingElement _right):
+    cpdef _mul_(self, _right):
         """
-        Returns the product of ``self`` and ``right``.
+        Return the product of two elements
 
         EXAMPLES::
 
@@ -2271,9 +2247,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef RingElement _div_(self, RingElement right):
+    cpdef _div_(self, right):
         """
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of two elements
 
         EXAMPLES::
 
@@ -2303,7 +2279,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def __copy__(self):
         """
-        Returns a copy of ``self``.
+        Return a copy of this element
 
         EXAMPLES::
 
@@ -2325,8 +2301,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def _integer_(self, Z=None):
         """
-        Returns an integer congruent to this element modulo
-        `\pi`^``self.absolute_precision()``, if possible.
+        Return an integer congruent to this element modulo
+        `\pi`^``self.absolute_precision()``, if possible
 
         EXAMPLES::
 
@@ -2354,10 +2330,10 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.ordp < 0:
             self._normalize()
             if self.ordp < 0:
-                raise ValueError, "This element has negative valuation"
+                raise ValueError("This element has negative valuation")
         cdef ntl_ZZ_pX f = <ntl_ZZ_pX>self._ntl_rep_abs()[0]
         if f.degree() > 0:
-            raise ValueError, "This element not well approximated by an integer."
+            raise ValueError("This element not well approximated by an integer.")
         ans = PY_NEW(Integer)
         tmp_z = ZZ_p_rep(ZZ_pX_ConstTerm(f.x))
         ZZ_to_mpz(ans.value, &tmp_z)
@@ -2365,11 +2341,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def is_zero(self, absprec = None):
         """
-        Returns whether the valuation of ``self`` is at least
-        ``absprec``.  If ``absprec`` is ``None``, returns if ``self``
+        Return whether the valuation of this element is at least
+        ``absprec``.  If ``absprec`` is ``None``, checks if this element
         is indistinguishable from zero.
 
-        If ``self`` is an inexact zero of valuation less than ``absprec``,
+        If this element is an inexact zero of valuation less than ``absprec``,
         raises a PrecisionError.
 
         EXAMPLES::
@@ -2404,22 +2380,22 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 if mpz_sgn((<Integer>absprec).value) < 0:
                     ans = True
                 elif self.relprec == 0:
-                    raise PrecisionError, "Not enough precision to determine if element is zero"
+                    raise PrecisionError("Not enough precision to determine if element is zero")
                 else:
                     ans = False
             else:
                 aprec = mpz_get_si((<Integer>absprec).value)
                 if self.relprec == 0 and aprec > self.ordp:
-                    raise PrecisionError, "Not enough precision to determine if element is zero"
+                    raise PrecisionError("Not enough precision to determine if element is zero")
                 else:
                     ans = (self.ordp >= aprec)
         return ans
 
     cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self):
         """
-        Returns an ``ntl_ZZ_pX`` holding the current unit part of ``self``.
+        Return an ``ntl_ZZ_pX`` holding the current unit part of this element
 
-        ``self`` is not normalized before this, so the polynomial
+        The element is not normalized before this operation, so the polynomial
         returned may not actually be a unit.
 
         EXAMPLES::
@@ -2437,7 +2413,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             [106 60 114 35 112]
         """
         if self.relprec == 0:
-            raise ValueError, "self == 0"
+            raise ValueError("self == 0")
         self.prime_pow.restore_context_capdiv(self.relprec)
         cdef ntl_ZZ_pX ans = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
         ans.c = self.prime_pow.get_context_capdiv(self.relprec)
@@ -2446,7 +2422,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef ntl_ZZ_pX _ntl_rep(self):
         """
-        Returns an ``ntl_ZZ_pX`` that holds the unit part of ``self``.
+        Return an ``ntl_ZZ_pX`` that holds the unit part of this element
 
         EXAMPLES::
 
@@ -2467,7 +2443,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef _ntl_rep_abs(self):
         """
-        Returns a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
+        Return a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
         non-positive integer such that ``self = f(self.parent.gen())*p^k``
 
         EXAMPLES::
@@ -2531,9 +2507,81 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ans.c = ctx
         return ans, ans_k
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: W.<w> = Qp(5).extension(x^3-5)
+            sage: (1 + w + O(w^11))._polynomial_list()
+            [1 + O(5^4), 1 + O(5^4)]
+            sage: (1 + w + O(w^11))._polynomial_list(pad=True)
+            [1 + O(5^4), 1 + O(5^4), O(5^3)]
+            sage: W(0)._polynomial_list()
+            []
+            sage: W(0)._polynomial_list(pad=True)
+            [0, 0, 0]
+            sage: W(O(w^7))._polynomial_list()
+            []
+            sage: W(O(w^7))._polynomial_list(pad=True)
+            [O(5^3), O(5^2), O(5^2)]
+            sage: T.<a> = Qp(5).extension(x^2-5)
+            sage: T(1/5)._polynomial_list()
+            [5^-1 + O(5^19)]
+            sage: T(a^-800)._polynomial_list()
+            [5^-400 + O(5^-380)]
+            sage: T(O(a^-2))._polynomial_list()
+            []
+        """
+        R = self.base_ring()
+        if self.is_zero():
+            L = []
+            k = 0
+        else:
+            f, k = self._ntl_rep_abs()
+            L = [Integer(c) for c in f.list()]
+        if pad:
+            n = self.parent().degree()
+            L.extend([R.zero()] * (n - len(L)))
+        if self._is_exact_zero():
+            return L
+        prec = self.relprec + self.ordp
+        e = self.parent().e()
+        if e == 1:
+            return [R(c, prec-k) << k for c in L]
+        else:
+            return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
+
+    def polynomial(self, var='x'):
+        """
+        Return a polynomial over the base ring that yields this element
+        when evaluated at the generator of the parent.
+
+        INPUT:
+
+        - ``var`` -- string, the variable name for the polynomial
+
+        EXAMPLES::
+
+            sage: S.<x> = ZZ[]
+            sage: W.<w> = Zp(5).extension(x^2 - 5)
+            sage: (w + W(5, 7)).polynomial()
+            (1 + O(5^3))*x + 5 + O(5^4)
+        """
+        R = self.base_ring()
+        S = R[var]
+        return S(self._polynomial_list())
+
     cdef ZZ_p_c _const_term(self):
         """
-        Returns the constant term of ``self.unit``.
+        Return the constant term of ``self.unit``.
 
         Note: this may be divisible by `p` if ``self`` is not normalized.
 
@@ -2551,9 +2599,10 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def is_equal_to(self, right, absprec = None):
         """
-        Returns whether ``self`` is equal to ``right`` modulo ``self.uniformizer()^absprec``.
+        Return whether this element is equal to ``right`` modulo ``self.uniformizer()^absprec``.
 
-        If ``absprec`` is ``None``, returns if ``self`` is equal to ``right`` modulo the lower of their two precisions.
+        If ``absprec`` is ``None``, checks whether this element is equal to ``right``
+        modulo the lower of their two precisions.
 
         EXAMPLES::
 
@@ -2572,7 +2621,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #    def lift(self):
 #        """
-#        Returns an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
+#        Return an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
 
 #        Not currently implemented.
 #        """
@@ -2580,7 +2629,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None):
         """
-        Returns a ``pAdicZZpXCRElement`` congruent to ``self`` but with
+        Return a ``pAdicZZpXCRElement`` congruent to this element but with
         absolute precision at least ``absprec``.
 
         INPUT:
@@ -2663,9 +2712,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ZZ_pX_conv_modulus(ans.unit, self.unit, self.prime_pow.get_context_capdiv(rprec).x)
         return ans
 
-    def list(self, lift_mode = 'simple'):
+    def expansion(self, n = None, lift_mode = 'simple'):
         """
-        Returns a list giving a series representation of self.
+        Return a list giving a series representation of self.
 
         - If ``lift_mode == 'simple'`` or ``'smallest'``, the returned
           list will consist of integers (in the Eisenstein case) or a
@@ -2690,6 +2739,11 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ``self.parent()`` is a field, so you must use the
         ``valuation`` function to fully reconstruct ``self``.
 
+        INPUT:
+
+        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
+          entry in the expansion.
+
         EXAMPLES::
 
             sage: R = Zp(5,5)
@@ -2698,9 +2752,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: W.<w> = R.ext(f)
             sage: y = W(775, 19); y
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
-            sage: (y>>9).list()
+            sage: (y>>9).expansion()
             [0, 1, 0, 4, 0, 2, 1, 2, 4, 1]
-            sage: (y>>9).list('smallest')
+            sage: (y>>9).expansion(lift_mode='smallest')
             [0, 1, 0, -1, 0, 2, 1, 2, 0, 1]
             sage: w^10 - w^12 + 2*w^14 + w^15 + 2*w^16 + w^18 + O(w^19)
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + O(w^19)
@@ -2708,56 +2762,60 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^6)
-            sage: y.list()
-            [[], [0, 4], [3, 1, 3], [0, 0, 4], [0, 0, 1]]
-            sage: y.list('smallest')
-            [[], [0, -1], [-2, 2, -2], [1], [0, 0, 2]]
+            sage: E = y.expansion(); E
+            5-adic expansion of 4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^6)
+            sage: list(E)
+            [[], [0, 4], [3, 1, 3], [0, 0, 4], [0, 0, 1], []]
+            sage: list(y.expansion(lift_mode='smallest'))
+            [[], [0, -1], [-2, 2, -2], [1], [0, 0, 2], []]
             sage: 5*((-2*5 + 25) + (-1 + 2*5)*a + (-2*5 + 2*125)*a^2)
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4 + O(5^6)
-            sage: W(0).list()
+            sage: list(W(0).expansion())
             []
-            sage: W(0,4).list()
-            [0]
-            sage: A(0,4).list()
-            [[]]
+            sage: list(W(0,4).expansion())
+            []
+            sage: list(A(0,4).expansion())
+            []
         """
-        cdef pAdicZZpXCRElement zero
+        if lift_mode == 'teichmuller':
+            zero = self.parent()(0)
+        elif self.prime_pow.e == 1:
+            zero = []
+        else:
+            zero = Integer(0)
+        if isinstance(n, slice):
+            return self.slice(n.start, n.stop, n.step)
+        elif n is not None:
+            if self._is_exact_zero() or n < self.ordp:
+                return zero
+            elif n >= self.ordp + self.relprec:
+                raise PrecisionError
         cdef Integer ordp
-        if self._is_exact_zero():
+        if self.relprec == 0: # cannot have n = None
             return []
-        elif self._is_inexact_zero():
-            if lift_mode == 'teichmuller':
-                zero = self._new_c(0)
-                zero._set_inexact_zero(self.ordp)
-                return [zero]
-            elif self.prime_pow.e == 1:
-                return [[]]
-            else:
-                return [Integer(0)]
         if lift_mode == 'simple':
-            ulist = self.ext_p_list(1)
+            ulist = self.ext_p_list(pos=True)
         elif lift_mode == 'smallest':
-            ulist = self.ext_p_list(0)
+            ulist = self.ext_p_list(pos=False)
         elif lift_mode == 'teichmuller':
-            ulist = self.teichmuller_list()
-        else:
-            raise ValueError, "lift mode must be one of 'simple', 'smallest' or 'teichmuller'"
-        if self.prime_pow.in_field == 0 and self.ordp > 0:
-            ordp = PY_NEW(Integer)
-            mpz_set_si(ordp.value, self.ordp)
-            if lift_mode == 'teichmuller':
-                zero = self._new_c(0)
-                return [zero]*ordp + ulist
-            elif self.prime_pow.e == 1:
-                return [[]] * ordp + ulist
+            if n is None:
+                ulist = self.teichmuller_expansion()
             else:
-                return [Integer(0)] * ordp + ulist
+                return self.teichmuller_expansion(n)
         else:
-            return ulist
+            raise ValueError("lift mode must be one of 'simple', 'smallest' or 'teichmuller'")
+        if n is not None:
+            try:
+                return ulist[n - self.ordp]
+            except IndexError:
+                return zero
+        if self.prime_pow.in_field == 0 and self.ordp > 0:
+            ulist = [zero] * self.ordp + ulist
+        return ulist
 
     def matrix_mod_pn(self):
         """
-        Returns the matrix of right multiplication by the element on
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
@@ -2795,7 +2853,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         """
         if self.valuation_c() < 0:
-            raise ValueError, "self must be integral"
+            raise ValueError("self must be integral")
         n = self.prime_pow.deg
         from sage.matrix.all import matrix
         if self._is_exact_zero():
@@ -2836,7 +2894,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
 #     def multiplicative_order(self, prec=None):
 #         """
-#         Returns the multiplicative order of self, ie the smallest
+#         Return the multiplicative order of self, ie the smallest
 #         positive n so that there is an exact p-adic element congruent
 #         to self modulo self's precision that is an nth root of unity.
 
@@ -2856,9 +2914,9 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-    def teichmuller_list(self):
+    def teichmuller_expansion(self, n = None):
         r"""
-        Returns a list [`a_0`, `a_1`,..., `a_n`] such that
+        Return a list [`a_0`, `a_1`,..., `a_n`] such that
 
         - `a_i^q = a_i`
         - ``self.unit_part()`` = `\sum_{i = 0}^n a_i \pi^i`, where `\pi` is a
@@ -2866,42 +2924,61 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         - if `a_i \ne 0`, the absolute precision of `a_i` is
           ``self.precision_relative() - i``
 
+        INPUT:
+
+        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
+          entry in the expansion.
+
         EXAMPLES::
 
             sage: R.<a> = ZqCR(5^4,4)
-            sage: L = a.teichmuller_list(); L
+            sage: E = a.teichmuller_expansion(); E
+            5-adic expansion of a + O(5^4) (teichmuller)
+            sage: list(E)
             [a + (2*a^3 + 2*a^2 + 3*a + 4)*5 + (4*a^3 + 3*a^2 + 3*a + 2)*5^2 + (4*a^2 + 2*a + 2)*5^3 + O(5^4), (3*a^3 + 3*a^2 + 2*a + 1) + (a^3 + 4*a^2 + 1)*5 + (a^2 + 4*a + 4)*5^2 + O(5^3), (4*a^3 + 2*a^2 + a + 1) + (2*a^3 + 2*a^2 + 2*a + 4)*5 + O(5^2), (a^3 + a^2 + a + 4) + O(5)]
-            sage: sum([5^i*L[i] for i in range(4)])
+            sage: sum([c * 5^i for i, c in enumerate(E)])
             a + O(5^4)
-            sage: all([L[i]^625 == L[i] for i in range(4)])
+            sage: all(c^625 == c for c in E)
             True
 
             sage: S.<x> = ZZ[]
             sage: f = x^3 - 98*x + 7
             sage: W.<w> = ZpCR(7,3).ext(f)
-            sage: b = (1+w)^5; L = b.teichmuller_list(); L
+            sage: b = (1+w)^5; L = b.teichmuller_expansion(); L
             [1 + O(w^9), 5 + 5*w^3 + w^6 + 4*w^7 + O(w^8), 3 + 3*w^3 + O(w^7), 3 + 3*w^3 + O(w^6), O(w^5), 4 + 5*w^3 + O(w^4), 3 + O(w^3), 6 + O(w^2), 6 + O(w)]
             sage: sum([w^i*L[i] for i in range(9)]) == b
             True
-            sage: all([L[i]^(7^3) == L[i] for i in range(9)])
+            sage: all(L[i]^(7^3) == L[i] for i in range(9))
             True
 
-            sage: L = W(3).teichmuller_list(); L
+            sage: L = W(3).teichmuller_expansion(); L
             [3 + 3*w^3 + w^7 + O(w^9), O(w^8), O(w^7), 4 + 5*w^3 + O(w^6), O(w^5), O(w^4), 3 + O(w^3), 6 + O(w^2)]
             sage: sum([w^i*L[i] for i in range(len(L))])
             3 + O(w^9)
         """
-        L = []
         cdef long rp = self.relprec
-        if rp == 0:
-            return L
-        cdef pAdicZZpXCRElement u = self.unit_part()
         cdef pAdicZZpXCRElement v
+        if n is None:
+            L = []
+            if rp == 0:
+                return L
+        elif self._is_exact_zero() or n < self.ordp:
+            return self.parent()(0)
+        elif n >= self.ordp + rp:
+            raise PrecisionError
+        else:
+            v = self._new_c(rp)
+        cdef pAdicZZpXCRElement u = self.unit_part()
+        cdef long goal
+        if n is not None: goal = rp - n + self.ordp
         while u.relprec > 0:
             v = self._new_c(rp)
             self.prime_pow.teichmuller_set_c(&v.unit, &u.unit, rp)
             v.ordp = 0
-            L.append(v)
+            if n is None:
+                L.append(v)
+            elif rp == goal:
+                return v
             if rp == 1: break
             ZZ_pX_sub(u.unit, u.unit, v.unit)
             u.relprec = -u.relprec
@@ -2910,12 +2987,22 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             rp -= 1
             u.ordp -= 1
             while u.ordp > 0:
-                v = self._new_c(0)
-                v._set_inexact_zero(rp)
-                L.append(v)
+                if n is None:
+                    v = self._new_c(0)
+                    v._set_inexact_zero(rp)
+                    L.append(v)
+                elif rp == goal:
+                    v = self._new_c(0)
+                    v._set_inexact_zero(rp)
+                    return v
                 rp -= 1
                 u.ordp -= 1
-        return L
+        if n is None:
+            return L
+        else:
+            v = self._new_c(0)
+            v._set_inexact_zero(rp)
+            return v
 
     def _teichmuller_set_unsafe(self):
         """
@@ -2947,7 +3034,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that #8239 is resolved::
+        We check that :trac:`8239` is resolved::
 
             sage: K.<a> = Qq(25)
             sage: K.teichmuller(K(2/5))
@@ -2959,15 +3046,15 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.ordp > 0:
             self._set_exact_zero()
         elif self.ordp < 0:
-            raise ValueError, "cannot set negative valuation element to Teichmuller representative."
+            raise ValueError("cannot set negative valuation element to Teichmuller representative.")
         elif self.relprec == 0:
-            raise ValueError, "not enough precision known"
+            raise ValueError("not enough precision known")
         else:
             self.prime_pow.teichmuller_set_c(&self.unit, &self.unit, self.relprec)
 
 #    def padded_list(self, n, lift_mode = 'simple'):
 #        """
-#        Returns a list of coefficients of pi starting with `pi^0` up to
+#        Return a list of coefficients of pi starting with `pi^0` up to
 #        `pi^n` exclusive (padded with zeros if needed)
 
 #        """
@@ -2975,7 +3062,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_absolute(self):
         """
-        Returns the absolute precision of ``self``, ie the power of the
+        Return the absolute precision of this element, ie the power of the
         uniformizer modulo which this element is defined.
 
         EXAMPLES::
@@ -3010,7 +3097,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     def precision_relative(self):
         """
-        Returns the relative precision of ``self``, ie the power of the
+        Return the relative precision of this element, ie the power of the
         uniformizer modulo which the unit part of ``self`` is defined.
 
         EXAMPLES::
@@ -3043,7 +3130,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of ``self``.
+        Return the valuation of this element
 
         EXAMPLES::
 
@@ -3067,7 +3154,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXCRElement unit_part(self):
         """
-        Returns the unit part of ``self``, ie ``self / uniformizer^(self.valuation())``
+        Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``
 
         EXAMPLES::
 
@@ -3105,7 +3192,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
     cdef ext_p_list(self, bint pos):
         """
-        Returns a list of integers (in the Eisenstein case) or a list
+        Return a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can be
         reconstructed as a sum of elements of the list times powers of
         the uniformiser (in the Eisenstein case), or as a sum of
@@ -3177,4 +3264,4 @@ def make_ZZpXCRElement(parent, unit, ordp, relprec, version):
             ans._set(&poly, mpz_get_si((<Integer>ordp).value), mpz_get_si((<Integer>relprec).value))
         return ans
     else:
-        raise ValueError, "unknown unpickling version"
+        raise ValueError("unknown unpickling version")

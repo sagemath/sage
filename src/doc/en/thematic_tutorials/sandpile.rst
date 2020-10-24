@@ -1,3 +1,4 @@
+.. -*- coding: utf-8 -*-
 .. Sage Sandpiles documentation master file, created by sphinx-quickstart on Fri May 22 23:01:09 2009.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -19,44 +20,53 @@ Introduction
 These notes provide an introduction to Dhar's abelian sandpile model (ASM) and
 to Sage Sandpiles, a collection of tools in Sage for doing sandpile
 calculations.  For a more thorough introduction to the theory of the ASM, the
-papers *Chip-Firing and Rotor-Routing on Directed Graphs* [H]_, by Holroyd et
-al. and *Riemann-Roch and Abel-Jacobi Theory on a Finite Graph* by Baker and
-Norine [BN]_ are recommended.
+papers *Chip-Firing and Rotor-Routing on Directed Graphs* [H]_ by Holroyd et
+al., and *Riemann-Roch and Abel-Jacobi Theory on a Finite Graph* by Baker and
+Norine [BN]_ are recommended. See also [PPW2013]_.
 
 To describe the ASM, we start with a *sandpile graph*: a directed multigraph
-`\Gamma` with a vertex `s` that is accessible from every vertex (except
-possibly `s`, itself).  By *multigraph*, we mean that each edge of `\Gamma` is
-assigned a nonnegative integer weight.  To say `s` is *accessible* from some
-vertex `v` means that there is a sequence of directed edges starting at `v` and
-ending at `s`.  We call `s` the *sink* of the sandpile graph, even though it might have outgoing edges, for reasons that will be made clear in a moment.
+`\Gamma` with a vertex `s` that is accessible from every vertex.
+By *multigraph*, we mean that each edge of `\Gamma` is assigned a nonnegative
+integer weight.  To say `s` is *accessible* from some vertex `v` means that
+there is a sequence (possibly empty) of directed edges starting at `v` and
+ending at `s`.  We call `s` the *sink* of the sandpile graph, even though it
+might have outgoing edges, for reasons that will be made clear in a moment.
 
-We denoted the vertices of `\Gamma` by `V` and define `\tilde{V} = V\setminus\{s\}`.
+We denote the vertex set of `\Gamma` by `V`, and define `\tilde{V} = V\setminus\{s\}`.
+For any vertex `v`, we let `\mbox{out-degree}(v)` (the *out-degree* of
+`v`) be the sum of the weights of all edges leaving `v`.
 
 Configurations and divisors
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A *configuration* on `\Gamma` is an element of `\mathbb{N}\tilde{V}`, i.e., the
-assignment of a nonnegative integer to each nonsink vertex.  We think of each
-integer as a number of grains of sand being placed at the corresponding
-vertex.  A *divisor* on `\Gamma` is an element of `\mathbb{Z}V`, i.e., an
-element in the free abelian group on *all* of the vertices.  In the context of
-divisors, it is sometimes useful to think of assigning dollars to each vertex,
-with negative integers signifying a debt.
+A *configuration* on `\Gamma` is an element of `\ZZ_{\geq 0} \tilde{V}`,
+i.e., the assignment of a nonnegative integer to each nonsink vertex.
+We think of each integer as a number of grains of sand being placed at
+the corresponding vertex.  A *divisor* on `\Gamma` is an element of `\ZZ V`,
+i.e., an element in the free abelian group on *all* of the vertices.
+In the context of divisors, it is sometimes useful to think of a divisor
+on `\Gamma` as assigning dollars to each vertex, with negative integers
+signifying a debt.
 
 Stabilization
 ^^^^^^^^^^^^^
 
 A configuration `c` is *stable* at a vertex `v\in\tilde{V}` if
-`c(v)<\mbox{out-degree}(v)`, and `c` itself is stable if it is stable at each
-nonsink vertex.  Otherwise, `c` is *unstable*.  If `c` is unstable at `v`, the vertex `v` can be *fired*
-(*toppled*) by removing `\mbox{out-degree}(v)` grains of sand from `v` and
-adding grains of sand to the neighbors of sand, determined by the weights of
-the edges leaving `v`.
+`c(v) < \mbox{out-degree}(v)`.  Otherwise, `c` is *unstable* at `v`.
+A configuration `c` (in itself) is *stable* if it is stable
+at each nonsink vertex.  Otherwise, `c` is *unstable*.
+If `c` is unstable at `v`, the vertex `v` can be *fired* (*toppled*)
+by removing `\mbox{out-degree}(v)` grains of sand from `v` and adding
+grains of sand to the neighbors of `v`, determined by the weights of
+the edges leaving `v` (each vertex `w` gets as many grains as
+the weight of the edge `(v, w)` is, if there is such an edge).
+Note that grains that are added to the sink `s` are not counted (i.e.,
+they "disappear").
 
 Despite our best intentions, we sometimes consider firing a stable vertex,
-resulting in a configuration with a "negative amount" of sand at that vertex.
-We may also *reverse-firing* a vertex, absorbing sand from the vertex's
-neighbors.
+resulting in a "configuration" with a negative amount of sand at that vertex.
+We may also *reverse-fire* a vertex, absorbing sand from the vertex's
+neighbors (including the sink).
 
 **Example.** Consider the graph:
 
@@ -67,44 +77,44 @@ neighbors.
 
 
 All edges have weight `1` except for the edge from vertex 1 to vertex 3,
-which has weight `2`.  If we let `c=(5,0,1)` with the indicated number of
+which has weight `2`.  If we let `c = (5,0,1)` with the indicated number of
 grains of sand on vertices 1, 2, and 3, respectively, then only vertex 1,
 whose out-degree is 4, is unstable.  Firing vertex 1 gives a new
-configuration `c'=(1,1,3)`.  Here, `4` grains have left vertex 1.  One of
-these has gone to the sink vertex (and forgotten), one has gone to vertex 1,
-and two have gone to vertex 2, since the edge from 1 to 2 has weight 2.
+configuration `c' = (1,1,3)`.  Here, `4` grains have left vertex 1.  One of
+these has gone to the sink vertex (and forgotten), one has gone to vertex 2,
+and two have gone to vertex 3, since the edge from 1 to 3 has weight `2`.
 Vertex 3 in the new configuration is now unstable.  The Sage code for this
 example follows. ::
 
-    sage: g = {'sink':{},
-    ....:      1:{'sink':1, 2:1, 3:2},
+    sage: g = {0:{},
+    ....:      1:{0:1, 2:1, 3:2},
     ....:      2:{1:1, 3:1},
     ....:      3:{1:1, 2:1}}
-    sage: S = Sandpile(g, 'sink')   # create the sandpile
+    sage: S = Sandpile(g, 0)   # create the sandpile
     sage: S.show(edge_labels=true)  # display the graph
 
-    Create the configuration:
+Create the configuration::
 
     sage: c = SandpileConfig(S, {1:5, 2:0, 3:1})
     sage: S.out_degree()
-    {1: 4, 2: 2, 3: 2, 'sink': 0}
+    {0: 0, 1: 4, 2: 2, 3: 2}
 
-    Fire vertex one:
+Fire vertex `1`::
 
     sage: c.fire_vertex(1)
     {1: 1, 2: 1, 3: 3}
 
-    The configuration is unchanged:
+The configuration is unchanged::
 
     sage: c
     {1: 5, 2: 0, 3: 1}
 
-    Repeatedly fire vertices until the configuration becomes stable:
+Repeatedly fire vertices until the configuration becomes stable::
 
     sage: c.stabilize()
     {1: 2, 2: 1, 3: 1}
 
-    Alternatives:
+Alternatives::
 
     sage: ~c             # shorthand for c.stabilize()
     {1: 2, 2: 1, 3: 1}
@@ -131,13 +141,17 @@ unique stable configuration.
 Laplacian
 ^^^^^^^^^
 
-Fix an order on the vertices of `\Gamma`. The *Laplacian* of `\Gamma` is
+Fix a total order on the vertices of `\Gamma`, thus leading to a labelling of the
+vertices by the numbers `1, 2, \ldots, n` for some `n` (in the given order).
+The *Laplacian* of `\Gamma` is
 
-.. math::
+.. MATH::
 
     L := D-A
 
-where `D` is the diagonal matrix of out-degrees of the vertices and `A` is the
+where `D` is the diagonal matrix of out-degrees of the vertices (i.e., the
+diagonal `n \times n`-matrix whose `(i, i)`-th entry is the out-degree of the
+vertex `i`) and `A` is the
 adjacency matrix whose `(i,j)`-th entry is the weight of the edge from vertex
 `i` to vertex `j`, which we take to be `0` if there is no edge.  The *reduced
 Laplacian*, `\tilde{L}`, is the submatrix of the Laplacian formed by removing
@@ -148,25 +162,26 @@ Laplacian.
 **Example.** (Continued.) ::
 
     sage: S.vertices()  # the ordering of the vertices
-    [1, 2, 3, 'sink']
+    [0, 1, 2, 3]
     sage: S.laplacian()
-    [ 4 -1 -2 -1]
-    [-1  2 -1  0]
-    [-1 -1  2  0]
     [ 0  0  0  0]
+    [-1  4 -1 -2]
+    [ 0 -1  2 -1]
+    [ 0 -1 -1  2]
     sage: S.reduced_laplacian()
     [ 4 -1 -2]
     [-1  2 -1]
     [-1 -1  2]
 
-    The configuration we considered previously:
+The configuration we considered previously::
 
     sage: c = SandpileConfig(S, [5,0,1])
     sage: c
     {1: 5, 2: 0, 3: 1}
 
-    Firing vertex 1 is the same as subtracting the
-    corresponding row from the reduced Laplacian:
+Firing vertex 1 is the same as subtracting the
+corresponding row of the reduced Laplacian from the configuration
+(regarded as a vector)::
 
     sage: c.fire_vertex(1).values()
     [1, 1, 3]
@@ -181,17 +196,20 @@ Recurrent elements
 Imagine an experiment in which grains of sand are dropped one-at-a-time onto a
 graph, pausing to allow the configuration to stabilize between drops.  Some
 configurations will only be seen once in this process.  For example, for most
-graphs, once sand is dropped on the graph, no addition of sand+stabilization
-will result in a graph empty of sand.  Other configurations---the so-called
-*recurrent configurations*---will be seen infinitely often as the process is
-repeated indefinitely.
+graphs, once sand is dropped on the graph, no sequence of additions of sand
+and stabilizations will result in a graph empty of sand.
+Other configurations---the so-called *recurrent configurations*---will be seen
+infinitely often as the process is repeated indefinitely.
 
-To be precise, a configuration `c` is *recurrent* if (i) it is stable, and (ii)
-given any configuration `a`, there is a configuration `b` such that
-`c=\mbox{stab}(a+b)`, the stabilization of `a+b`.
+To be precise, a configuration `c` is *recurrent* if (i) it is stable, and
+(ii) given any configuration `a`, there is a configuration `b` such that
+`c = \mbox{stab}(a+b)`, the stabilization of `a + b`.
 
-The *maximal-stable* configuration, denoted `c_{\mathrm{max}}` is defined by
-`c_{\mathrm{max}}(v)=\mbox{out-degree}(v)-1` for all nonsink vertices `v`.  It is clear that `c_{\mathrm{max}}` is recurrent.  Further, it is not hard to see that a configuration is recurrent if and only if it has the form `\mbox{stab}(a+c_{\mathrm{max}})` for some configuration `a`.
+The *maximal-stable* configuration, denoted `c_{\mathrm{max}}`, is defined by
+`c_{\mathrm{max}}(v)=\mbox{out-degree}(v)-1` for all nonsink vertices `v`.
+It is clear that `c_{\mathrm{max}}` is recurrent.  Further, it is not hard
+to see that a configuration is recurrent if and only if it has the form
+`\mbox{stab}(a+c_{\mathrm{max}})` for some configuration `a`.
 
 **Example.** (Continued.) ::
 
@@ -205,14 +223,14 @@ The *maximal-stable* configuration, denoted `c_{\mathrm{max}}` is defined by
     sage: S.max_stable()
     {1: 3, 2: 1, 3: 1}
 
-    Adding any configuration to the max-stable configuration and stabilizing
-    yields a recurrent configuration.
+Adding any configuration to the max-stable configuration and stabilizing
+yields a recurrent configuration::
 
     sage: x = SandpileConfig(S, [1,0,0])
     sage: x + S.max_stable()
     {1: 4, 2: 1, 3: 1}
 
-    Use & to add and stabilize:
+Use ``&`` to add and stabilize::
 
     sage: c = x & S.max_stable()
     sage: c
@@ -220,7 +238,7 @@ The *maximal-stable* configuration, denoted `c_{\mathrm{max}}` is defined by
     sage: c.is_recurrent()
     True
 
-    Note the various ways of performing addition + stabilization:
+Note the various ways of performing addition and stabilization::
 
     sage: m = S.max_stable()
     sage: (x + m).stabilize() == ~(x + m)
@@ -232,22 +250,25 @@ The *maximal-stable* configuration, denoted `c_{\mathrm{max}}` is defined by
 Burning Configuration
 ^^^^^^^^^^^^^^^^^^^^^
 
-A *burning configuration* is a nonnegative integer-linear combination of the
+A *burning configuration* is a `\ZZ_{\geq 0}`-linear combination `f` of the
 rows of the reduced Laplacian matrix having nonnegative entries and such that
-every vertex has a path from some vertex in its support.  The corresponding
-*burning script* gives the integer-linear combination needed to obtain the
-burning configuration.  So if `b` is the burning configuration, `\sigma` is its
-script, and `\tilde{L}` is the reduced Laplacian, then `\sigma\,\tilde{L} = b`.
-The *minimal burning configuration* is the one with the minimal script (its
-components are no larger than the components of any other script for a burning
-configuration).
+every vertex is accessible from some vertex in the support of `f`
+(in other words, for each vertex `w`, there is a path from some
+`v \in \operatorname{supp} f` to `w`).  The corresponding
+*burning script* gives the coefficients in the `\ZZ_{\geq 0}`-linear
+combination needed to obtain the burning configuration.  So if `b` is a burning
+configuration, `\sigma` is its script, and `\tilde{L}` is the reduced
+Laplacian, then `\sigma\,\tilde{L} = b`.
+The *minimal burning configuration* is the one with the minimal script (each
+of its components is no larger than the corresponding component of any other
+script for a burning configuration).
 
-The following are equivalent for a configuration `c` with burning
-configuration `b` having script `\sigma`:
+Given a burning configuration `b` having script `\sigma`, and any
+configuration `c` on the same graph, the following are equivalent:
 
- - `c` is recurrent;
- - `c+b` stabilizes to `c`;
- - the firing vector for the stabilization of `c+b` is `\sigma`.
+- `c` is recurrent;
+- `c + b` stabilizes to `c`;
+- the firing vector for the stabilization of `c + b` is `\sigma`.
 
 The burning configuration and script are computed using a modified
 version of Speer's script algorithm.  This is a generalization to
@@ -284,12 +305,12 @@ configuration (again, only in the case that `\Gamma` is a DAG).  So finding the
 identity element is an interesting problem.
 
 Let `n=|V|-1` and fix an ordering of the nonsink vertices. Let
-`\mathcal{\tilde{L}}\subset\mathbb{Z}^n` denote the column-span of
+`\mathcal{\tilde{L}}\subset\ZZ^n` denote the column-span of
 `\tilde{L}^t`, the transpose of the reduced Laplacian.  It is a theorem that
 
-.. math::
+.. MATH::
 
-    \mathcal{S}(\Gamma)\approx \mathbb{Z}^n/\mathcal{\tilde{L}}.
+    \mathcal{S}(\Gamma)\approx \ZZ^n/\mathcal{\tilde{L}}.
 
 Thus, the number of elements of the sandpile group is `\det{\tilde{L}}`, which
 by the matrix-tree theorem is the number of weighted trees directed into the
@@ -308,8 +329,8 @@ sink.
     [0 0 3], [ 0  1 -1], [4 1 5]
     )
 
-    Adding the identity to any recurrent configuration and stabilizing yields
-    the same recurrent configuration:
+Adding the identity to any recurrent configuration and stabilizing yields
+the same recurrent configuration::
 
     sage: S.identity()
     {1: 3, 2: 1, 3: 0}
@@ -327,12 +348,12 @@ The sandpile model was introduced by Bak, Tang, and Wiesenfeld in the paper,
 loosely taken to describe a system that naturally evolves to a state that is
 barely stable and such that the instabilities are described by a power law.
 In practice, *self-organized criticality* is often taken to mean *like the
-sandpile model on a grid-graph*.  The grid graph is just a grid with an extra
+sandpile model on a grid graph*.  The grid graph is just a grid with an extra
 sink vertex.  The vertices on the interior of each side have one edge to the
 sink, and the corner vertices have an edge of weight `2`.  Thus, every nonsink
 vertex has out-degree `4`.
 
-Imagine repeatedly dropping grains of sand on and empty grid graph, allowing
+Imagine repeatedly dropping grains of sand on an empty grid graph, allowing
 the sandpile to stabilize in between.  At first there is little activity, but
 as time goes on, the size and extent of the avalanche caused by a single grain
 of sand becomes hard to predict.  Computer experiments---I do not think there
@@ -376,51 +397,53 @@ A *divisor* on `\Gamma` is an element of the free abelian group on its
 vertices, including the sink.  Suppose, as above, that the `n+1` vertices of
 `\Gamma` have been ordered, and that `\mathcal{L}` is the column span of the
 transpose of the Laplacian.  A divisor is then identified with an element
-`D\in\mathbb{Z}^{n+1}` and two divisors are *linearly equivalent* if they
+`D\in\ZZ^{n+1}`, and two divisors are *linearly equivalent* if they
 differ by an element of `\mathcal{L}`.  A divisor `E` is *effective*, written
-`E\geq0`, if `E(v)\geq0` for each `v\in V`, i.e., if `E\in\mathbb{N}^{n+1}`.
-The *degree* of a divisor, `D`, is `deg(D) := \sum_{v\in V}D(v)`.   The
+`E\geq0`, if `E(v)\geq0` for each `v\in V`, i.e.,
+if `E\in\mathbb{Z}_{\geq 0}^{n+1}`.
+The *degree* of a divisor `D` is `\deg(D) := \sum_{v\in V} D(v)`.   The
 divisors of degree zero modulo linear equivalence form the *Picard group*, or
 *Jacobian* of the graph. For an undirected graph, the Picard group is
 isomorphic to the sandpile group.
 
 The *complete linear system* for a divisor `D`, denoted `|D|`, is the
-collection of effective divisors linearly equivalent to `D.`
+collection of effective divisors linearly equivalent to `D`.
 
 Riemann-Roch
 ~~~~~~~~~~~~
 To describe the Riemann-Roch theorem in this context, suppose that `\Gamma` is
-an undirected, unweighted graph. The *dimension*, `r(D)` of the linear system
-`|D|` is `-1` if `|D|=\emptyset` and otherwise is the greatest integer `s` such
+an undirected, unweighted graph. The *dimension*, `r(D)`, of the linear system
+`|D|` is `-1` if `|D|=\emptyset`, and otherwise is the greatest integer `s` such
 that `|D-E|\neq0` for all effective divisors `E` of degree `s`.  Define the
-*canonical divisor* by `K=\sum_{v\in V}(\deg(v)-2)v` and the *genus* by `g =
-\#(E) - \#(V) + 1`.  The Riemann-Roch theorem says that for any divisor `D`,
+*canonical divisor* by `K = \sum_{v\in V} (\deg(v)-2) v`, and the *genus* by
+`g = \#(E) - \#(V) + 1`.  The Riemann-Roch theorem says that for any divisor
+`D`,
 
-.. math::
+.. MATH::
 
-    r(D)-r(K-D)=\deg(D)+1-g.
+    r(D) - r(K-D) = \deg(D) + 1 - g.
 
-**Example.**::
+**Example.** ::
 
     sage: G = sandpiles.Complete(5)  # the sandpile on the complete graph with 5 vertices
 
-    A divisor on the graph:
+A divisor on the graph::
 
     sage: D = SandpileDivisor(G, [1,2,2,0,2])
 
-    Verify the Riemann-Roch theorem:
+Verify the Riemann-Roch theorem::
 
     sage: K = G.canonical_divisor()
     sage: D.rank() - (K - D).rank() == D.deg() + 1 - G.genus()
     True
 
-    The effective divisors linearly equivalent to D:
+The effective divisors linearly equivalent to `D`::
 
     sage: D.effective_div(False)
     [[0, 1, 1, 4, 1], [1, 2, 2, 0, 2], [4, 0, 0, 3, 0]]
 
-    The nonspecial divisors up to linear equivalence (divisors of degree
-    g-1 with empty linear systems)
+The nonspecial divisors up to linear equivalence (divisors of degree
+`g-1` with empty linear systems)::
 
     sage: N = G.nonspecial_divisors()
     sage: [E.values() for E in N[:5]]   # the first few
@@ -436,7 +459,7 @@ that `|D-E|\neq0` for all effective divisors `E` of degree `s`.  Define the
 
 Picturing linear systems
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Fix a divisor `D`.  There are at least two natural graphs associated with
+Fix a divisor `D`.  There are at least two natural graphs associated with the
 linear system associated with `D`.  First, consider the directed graph with
 vertex set `|D|` and with an edge from vertex `E` to vertex `F` if `F` is
 attained from `E` by firing a single unstable vertex. ::
@@ -451,8 +474,11 @@ attained from `E` by firing a single unstable vertex. ::
 .. figure:: media/sandpile/C_6.png
    :align: center
 
-   Complete linear system for (1,1,1,1,2,0) on `C_6`: single firings
+   Complete linear system for `(1,1,1,1,2,0)` on `C_6`: single firings
 
+The ``is_alive`` method checks whether the divisor `D` is alive, i.e.,
+whether every divisor linearly equivalent to `D` is unstable.
+   
 The second graph has the same set of vertices but with an edge from `E` to `F`
 if `F` is obtained from `E` by firing all unstable vertices of `E`. ::
 
@@ -464,13 +490,13 @@ if `F` is obtained from `E` by firing all unstable vertices of `E`. ::
 .. figure:: media/sandpile/C_6-parallel.png
    :align: center
 
-   Complete linear system for (1,1,1,1,2,0) on `C_6`: parallel firings
+   Complete linear system for `(1,1,1,1,2,0)` on `C_6`: parallel firings
 
-Note that in each of the examples, above, starting at any divisor in the linear
-system and following edges, one is eventually led into a cycle of length 6
-(cycling the divisor (1,1,1,1,2,0)).  Thus, ``D.alive()`` returns ``True``.  In
-Sage, one would be able to rotate the above figures to get a better idea of the
-structure.
+Note that in each of the examples above, starting at any divisor in the
+linear system and following edges, one is eventually led into a cycle of
+length `6` (cycling the divisor `(1,1,1,1,2,0)`).  Thus, ``D.alive()``
+returns ``True``.  In Sage, one would be able to rotate the above figures
+to get a better idea of the structure.
 
 Algebraic geometry of sandpiles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -478,71 +504,73 @@ Algebraic geometry of sandpiles
 Affine
 ~~~~~~
 
-Let `n=|V|-1`, and fix an ordering on the nonsink vertices of `\Gamma`.  let
-`\tilde{\mathcal{L}}\subset\mathbb{Z}^n` denote the column-span of
-`\tilde{L}^t`, the transpose of the reduced Laplacian.  Label vertex `i` with the
-indeterminate `x_i`, and let `\mathbb{C}[\Gamma_s] = \mathbb{C}[x_1,\dots,x_n]`.
+Let `n = |V| - 1`, and fix an ordering on the nonsink vertices of `\Gamma`.
+Let `\tilde{\mathcal{L}} \subset \ZZ^n` denote the column-span of
+`\tilde{L}^t`, the transpose of the reduced Laplacian.  Label vertex `i`
+with the indeterminate `x_i`, and let `\CC[\Gamma_s] = \CC[x_1, \dots, x_n]`.
 (Here, `s` denotes the sink vertex of `\Gamma`.) The *sandpile ideal* or
-*toppling ideal*, first studied by Cori, Rossin, and Salvy [CRS]_ for undirected graphs, is the lattice ideal for `\tilde{\mathcal{L}}`:
+*toppling ideal*, first studied by Cori, Rossin, and Salvy [CRS]_ for
+undirected graphs, is the lattice ideal for `\tilde{\mathcal{L}}`:
 
-.. math::
+.. MATH::
 
-    I = I(\Gamma_s) := \{x^u-x^v: u-v\in
-    \tilde{\mathcal{L}}\}\subset\mathbb{C}[\Gamma_s],
+    I = I(\Gamma_s) := \CC[\Gamma_s] \cdot \{x^u-x^v : u-v \in
+    \tilde{\mathcal{L}}\}\subset\CC[\Gamma_s],
 
-where `x^u := \prod_{i=1}^nx^{u_i}` for `u\in\mathbb{Z}^n`.
+where `x^u := \prod_{i=1}^n x^{u_i}` for `u \in \ZZ^n`.
 
-For each `c\in\mathbb{Z}^n` define `t(c) = x^{c^+} - x^{c^-}` where
-`c^+_i=\max\{c_i,0\}` and `c^-=\max\{-c_i,0\}` so that `c=c^+-c^-`.
-Then, for each `\sigma\in\mathbb{Z}^n`, define `T(\sigma) =
+For each `c\in\ZZ^n` define `t(c) = x^{c^+} - x^{c^-}` where
+`c^+_i = \max\{c_i,0\}` and `c^-_i = \max\{-c_i,0\}`, so that `c = c^+ - c^-`.
+Then, for each `\sigma \in \ZZ^n`, define `T(\sigma) =
 t(\tilde{L}^t\sigma)`.  It then turns out that
 
-.. math::
+.. MATH::
 
-    I = (T(e_1),\dots,T(e_n),x^b-1)
+    I = (T(e_1),\dots,T(e_n),x^b-1),
 
 where `e_i` is the `i`-th standard basis vector and `b` is any burning
 configuration.
 
-The affine coordinate ring, `\mathbb{C}[\Gamma_s]/I,` is isomorphic to the group
-algebra of the sandpile group, `\mathbb{C}[\mathcal{S}(\Gamma)].`
+The affine coordinate ring, `\CC[\Gamma_s]/I,` is isomorphic to the group
+algebra of the sandpile group, `\CC[\mathcal{S}(\Gamma)]`.
 
-The standard term-ordering on `\mathbb{C}[\Gamma_s]` is graded reverse
-lexigraphical order with `x_i>x_j` if vertex `v_i` is further from the sink than
-vertex `v_j`. (There are choices to be made for vertices equidistant from the
-sink). If `\sigma_b` is the script for a burning configuration (not
+The standard term-ordering on `\CC[\Gamma_s]` is graded reverse lexicographical
+order with `x_i > x_j` if vertex `v_i` is further from the sink than
+vertex `v_j`. (There are choices to be made for vertices equidistant from
+the sink.) If `\sigma_b` is the script for a burning configuration (not
 necessarily minimal), then
 
-.. math::
+.. MATH::
 
-    \{T(\sigma): \sigma\leq\sigma_b\}
+    \{T(\sigma) : \sigma \leq \sigma_b\}
 
-is a Groebner basis for `I`.
+is a Gröbner basis for `I`.
 
 Projective
 ~~~~~~~~~~
 
-Now let `\mathbb{C}[\Gamma]=\mathbb{C}[x_0,x_1,\dots,x_n]`, where `x_0`
+Now let `\CC[\Gamma] = \CC[x_0,x_1,\dots,x_n]`, where `x_0`
 corresponds to the sink vertex.  The *homogeneous sandpile ideal*, denoted
 `I^h`, is obtaining by homogenizing `I` with respect to `x_0`.  Let `L` be the
-(full) Laplacian, and `\mathcal{L}\subset\mathbb{Z}^{n+1}` be the column span of
+(full) Laplacian, and `\mathcal{L} \subset \ZZ^{n+1}` be the column span of
 its transpose, `L^t.`  Then `I^h` is the lattice ideal for `\mathcal{L}`:
 
-.. math::
+.. MATH::
 
-    I^h = I^h(\Gamma) := \{x^u-x^v: u-v \in\mathcal{L}\}\subset\mathbb{C}[\Gamma].
+    I^h = I^h(\Gamma) := \CC[\Gamma] \cdot \{x^u-x^v: u-v \in\mathcal{L}\}
+    \subset \CC[\Gamma].
 
 This ideal can be calculated by saturating the ideal
 
-.. math::
+.. MATH::
 
-    (T(e_i): i=0,\dots n)
+    (T(e_i): i=0, \ldots, n)
 
-with respect to the product of the indeterminates: `\prod_{i=0}^nx_i` (extending
-the `T` operator in the obvious way).  A Groebner basis with respect to the
-degree lexicographic order describe above (with `x_0` the smallest vertex), is
-obtained by homogenizing each element of the Groebner basis for the
-non-homogeneous sandpile ideal with respect to `x_0.`
+with respect to the product of the indeterminates: `\prod_{i=0}^n x_i`
+(extending the `T` operator in the obvious way).  A Gröbner basis with
+respect to the degree lexicographic order described above (with `x_0`
+the smallest vertex) is obtained by homogenizing each element of the
+Gröbner basis for the non-homogeneous sandpile ideal with respect to `x_0`.
 
 **Example.**  ::
 
@@ -552,14 +580,14 @@ non-homogeneous sandpile ideal with respect to `x_0.`
     sage: S.ring()
     Multivariate Polynomial Ring in x5, x4, x3, x2, x1, x0 over Rational Field
 
-    The homogeneous sandpile ideal:
+The homogeneous sandpile ideal::
 
     sage: S.ideal()
     Ideal (x2 - x0, x3^2 - x5*x0, x5*x3 - x0^2, x4^2 - x3*x1, x5^2 - x3*x0,
     x1^3 - x4*x3*x0, x4*x1^2 - x5*x0^2) of Multivariate Polynomial Ring
     in x5, x4, x3, x2, x1, x0 over Rational Field
 
-    The generators of the ideal:
+The generators of the ideal::
 
     sage: S.ideal(true)
     [x2 - x0,
@@ -570,12 +598,12 @@ non-homogeneous sandpile ideal with respect to `x_0.`
      x1^3 - x4*x3*x0,
      x4*x1^2 - x5*x0^2]
 
-    Its resolution:
+Its resolution::
 
     sage: S.resolution() # long time
     'R^1 <-- R^7 <-- R^19 <-- R^25 <-- R^16 <-- R^4'
 
-    and Betti table:
+and Betti table::
 
     sage: S.betti() # long time
                0     1     2     3     4     5
@@ -587,13 +615,13 @@ non-homogeneous sandpile ideal with respect to `x_0.`
     ------------------------------------------
     total:     1     7    19    25    16     4
 
-    The Hilbert function:
+The Hilbert function::
 
     sage: S.hilbert_function()
     [1, 5, 11, 15]
 
-    and its first differences (which counts the number of superstable
-    configurations in each degree):
+and its first differences (which count the number of superstable
+configurations in each degree)::
 
     sage: S.h_vector()
     [1, 4, 6, 4]
@@ -601,8 +629,8 @@ non-homogeneous sandpile ideal with respect to `x_0.`
     sage: sorted(x)
     [0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
 
-    The degree in which the Hilbert function equals the Hilbert polynomial, the
-    latter always being a constant in the case of a sandpile ideal:
+The degree in which the Hilbert function starts equalling the Hilbert
+polynomial, the latter always being a constant in the case of a sandpile ideal::
 
     sage: S.postulation()
     3
@@ -612,14 +640,25 @@ Zeros
 
 The *zero set* for the sandpile ideal `I` is
 
-.. math::
+.. MATH::
 
-    Z(I) = \{p\in\mathbb{C}^n: f(p)=0\mbox{ for all $f\in I$}\},
+    Z(I) = \{ p\in\CC^n : f(p)=0\mbox{ for all $f\in I$} \},
 
-the set of simultaneous zeros of the polynomials in `I.`  Letting `S^1` denote
+the set of simultaneous zeros of the polynomials in `I`.  Letting `S^1` denote
 the unit circle in the complex plane, `Z(I)` is a finite
-subgroup of `S^1\times\dots\times S^1\subset\mathbb{C}^n`, isomorphic to the
-sandpile group.  The zero set is actually linearly isomorphic to a faithful representation of the sandpile group on `\mathbb{C}^n.`
+subgroup of `S^1 \times \cdots \times S^1 \subset \CC^n`, isomorphic to
+the sandpile group.  The zero set is actually linearly isomorphic to a
+faithful representation of the sandpile group on `\CC^n`.
+
+.. TODO::
+
+    The above is not quite true. `Z(I)` is neither finite
+    nor a subgroup of
+    `S^1 \times \cdots \times S^1 \subset \CC^n`.
+    What is probably meant is that the subset of `Z(I)` in
+    which the coordinate of `p` corresponding to the sink
+    is set to `1` is a finite subgroup of
+    `S^1 \times \cdots \times S^1 \subset \CC^{n-1}`.
 
 **Example.** (Continued.) ::
 
@@ -627,24 +666,28 @@ sandpile group.  The zero set is actually linearly isomorphic to a faithful repr
     sage: S.ideal().gens()
     [x1^2 - x2^2, x1*x2^3 - x0^4, x2^5 - x1*x0^4]
 
-    Approximation to the zero set (setting ``x_0 = 1``):
+Approximation to the zero set (setting ``x_0 = 1``)::
 
     sage: S.solve()
-    [[-0.707107 + 0.707107*I, 0.707107 - 0.707107*I],
-    [-0.707107 - 0.707107*I, 0.707107 + 0.707107*I],
-    [-I, -I],
-    [I, I],
-    [0.707107 + 0.707107*I, -0.707107 - 0.707107*I],
-    [0.707107 - 0.707107*I, -0.707107 + 0.707107*I],
-    [1, 1],
-    [-1, -1]]
+    [[-0.707107000000000 + 0.707107000000000*I,
+      0.707107000000000 - 0.707107000000000*I],
+     [-0.707107000000000 - 0.707107000000000*I,
+      0.707107000000000 + 0.707107000000000*I],
+     [-I, -I],
+     [I, I],
+     [0.707107000000000 + 0.707107000000000*I,
+      -0.707107000000000 - 0.707107000000000*I],
+     [0.707107000000000 - 0.707107000000000*I,
+      -0.707107000000000 + 0.707107000000000*I],
+     [1, 1],
+     [-1, -1]]
     sage: len(_) == S.group_order()
     True
 
-    The zeros are generated as a group by a single vector:
+The zeros are generated as a group by a single vector::
 
     sage: S.points()
-    [[e^(1/4*I*pi), e^(-3/4*I*pi)]]
+    [[(1/2*I + 1/2)*sqrt(2), -(1/2*I + 1/2)*sqrt(2)]]
 
 
 Resolutions
@@ -652,47 +695,50 @@ Resolutions
 
 The homogeneous sandpile ideal, `I^h`, has a free resolution graded by the
 divisors on `\Gamma` modulo linear equivalence.  (See the section on
-:ref:`Discrete Riemann Surfaces <discrete_riemann_surfaces>` for the language of
-divisors and linear equivalence.)  Let
-`S=\mathbb{C}[\Gamma]=\mathbb{C}[x_0,\dots,x_n]`, as above, and let
+:ref:`Discrete Riemann Surfaces <discrete_riemann_surfaces>` for the
+language of divisors and linear equivalence.)  Let
+`S = \CC[\Gamma] = \CC[x_0,\dots,x_n]`, as above, and let
 `\mathfrak{S}` denote the group of divisors modulo rational equivalence.  Then
-`S` is graded by `\mathfrak{S}` by letting `\deg(x^c)= c\in\mathfrak{S}` for
-each monomial `x^c`.  The minimal free resolution of `I^h` has the form
+`S` is graded by `\mathfrak{S}` by letting `\deg(x^c) = c \in \mathfrak{S}`
+for each monomial `x^c`.  The minimal free resolution of `I^h` has the form
 
-.. math::
+.. MATH::
 
-     0\leftarrow I^h
-    \leftarrow\oplus_{D\in\mathfrak{S}}S(-D)^{\beta_{0,D}}\leftarrow\oplus_{D\in\mathfrak{S}}S(-D)^{\beta_{1,D}}
-    \leftarrow\dots\leftarrow\oplus_{D\in\mathfrak{S}}S(-D)^{\beta_{r,D}}\leftarrow0.
+    0 \leftarrow I^h
+    \leftarrow \bigoplus_{D\in\mathfrak{S}} S(-D)^{\beta_{0,D}}
+    \leftarrow \bigoplus_{D\in\mathfrak{S}} S(-D)^{\beta_{1,D}}
+    \leftarrow \cdots
+    \leftarrow \bigoplus_{D\in\mathfrak{S}} S(-D)^{\beta_{r,D}}
+    \leftarrow 0,
 
 where the `\beta_{i,D}` are the *Betti numbers* for `I^h`.
 
-For each divisor class `D\in\mathfrak{S}`, define a simplicial complex,
+For each divisor class `D\in\mathfrak{S}`, define a simplicial complex
 
-.. math::
+.. MATH::
 
-    \Delta_D := \{I\subseteq\{0,\dots,n\}: I\subseteq\mbox{supp}(E)\mbox{ for some}\
-    E\in |D|\}.
+    \Delta_D := \{I\subseteq\{0,\dots,n\}: I\subseteq\mbox{supp}(E)
+    \mbox{ for some } E \in |D|\}.
 
-The Betti number `\beta_{i,D}` equals the dimension over `\mathbb{C}` of the
+The Betti number `\beta_{i,D}` equals the dimension over `\CC` of the
 `i`-th reduced homology group of `\Delta_D`:
 
-.. math::
+.. MATH::
 
-    \beta_{i,D} = \dim_{\mathbb{C}}\tilde{H}_i(\Delta_D;\mathbb{C}).
+    \beta_{i,D} = \dim_{\CC}\tilde{H}_i(\Delta_D;\CC).
 
 ::
 
     sage: S = Sandpile({0:{},1:{0: 1, 2: 1, 3: 4},2:{3: 5},3:{1: 1, 2: 1}},0)
 
-    Representatives of all divisor classes with nontrivial homology:
+Representatives of all divisor classes with nontrivial homology::
 
     sage: p = S.betti_complexes()
     sage: p[0]
     [{0: -8, 1: 5, 2: 4, 3: 1},
-     Simplicial complex with vertex set (1, 2, 3) and facets {(1, 2), (3,)}]
+     Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}]
 
-    The homology associated with the first divisor in the list:
+The homology associated with the first divisor in the list::
 
     sage: D = p[0][0]
     sage: D.effective_div()
@@ -700,12 +746,11 @@ The Betti number `\beta_{i,D}` equals the dimension over `\mathbb{C}` of the
     sage: [E.support() for E in D.effective_div()]
     [[3], [1, 2]]
     sage: D.Dcomplex()
-    Simplicial complex with vertex set (1, 2, 3) and facets {(1, 2), (3,)}
+    Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}
     sage: D.Dcomplex().homology()
     {0: Z, 1: 0}
 
-
-    The minimal free resolution:
+The minimal free resolution::
 
     sage: S.resolution()
     'R^1 <-- R^5 <-- R^5 <-- R^1'
@@ -720,27 +765,27 @@ The Betti number `\beta_{i,D}` equals the dimension over `\mathbb{C}` of the
     sage: len(p)
     11
 
-    The degrees and ranks of the homology groups for each element of the list p
-    (compare with the Betti table, above):
+The degrees and ranks of the homology groups for each element of the list
+``p`` (compare with the Betti table, above)::
 
     sage: [[sum(d[0].values()),d[1].betti()] for d in p]
     [[2, {0: 2, 1: 0}],
-    [3, {0: 1, 1: 1, 2: 0}],
-    [2, {0: 2, 1: 0}],
-    [3, {0: 1, 1: 1, 2: 0}],
-    [2, {0: 2, 1: 0}],
-    [3, {0: 1, 1: 1, 2: 0}],
-    [2, {0: 2, 1: 0}],
-    [3, {0: 1, 1: 1}],
-    [2, {0: 2, 1: 0}],
-    [3, {0: 1, 1: 1, 2: 0}],
-    [5, {0: 1, 1: 0, 2: 1}]]
+     [3, {0: 1, 1: 1, 2: 0}],
+     [2, {0: 2, 1: 0}],
+     [3, {0: 1, 1: 1, 2: 0}],
+     [2, {0: 2, 1: 0}],
+     [3, {0: 1, 1: 1, 2: 0}],
+     [2, {0: 2, 1: 0}],
+     [3, {0: 1, 1: 1}],
+     [2, {0: 2, 1: 0}],
+     [3, {0: 1, 1: 1, 2: 0}],
+     [5, {0: 1, 1: 0, 2: 1}]]
 
 Complete Intersections and Arithmetically Gorenstein toppling ideals
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-NOTE: in the previous section note that the resolution always has length `n` since
-the ideal is Cohen-Macaulay.
+NOTE: in the previous section note that the resolution always has length `n`
+since the ideal is Cohen-Macaulay.
 
 To do.
 
@@ -757,9 +802,9 @@ Initialization
 
 There are three main classes for sandpile structures in Sage: ``Sandpile``,
 ``SandpileConfig``, and ``SandpileDivisor``.  Initialization for ``Sandpile``
-has the form
+has the form ::
 
-.. code-block:: python
+.. skip
 
     sage: S = Sandpile(graph, sink)
 
@@ -768,55 +813,57 @@ vertex.  There are four possible forms for ``graph``:
 
 1. a Python dictionary of dictionaries::
 
-    sage: g = {0: {}, 1: {0: 1, 3: 1, 4: 1}, 2: {0: 1, 3: 1, 5: 1},
-    ....:      3: {2: 1, 5: 1}, 4: {1: 1, 3: 1}, 5: {2: 1, 3: 1}}
+       sage: g = {0: {}, 1: {0: 1, 3: 1, 4: 1}, 2: {0: 1, 3: 1, 5: 1},
+       ....:      3: {2: 1, 5: 1}, 4: {1: 1, 3: 1}, 5: {2: 1, 3: 1}}
 
 
-.. figure:: media/sandpile/initial.png
-   :align: center
+   .. figure:: media/sandpile/initial.png
+      :align: center
 
    Graph from dictionary of dictionaries.
 
-Each key is the name of a vertex.  Next to each vertex name `v` is a dictionary
-consisting of pairs: ``vertex: weight``.  Each pair represents a directed edge
-emanating from `v` and ending at ``vertex`` having (non-negative integer) weight
-equal to ``weight``.  Loops are allowed. In the example above, all of the weights are 1.
+   Each key is the name of a vertex.  Next to each vertex name `v` is a dictionary
+   consisting of pairs: ``vertex: weight``.  Each pair represents a directed edge
+   emanating from `v` and ending at ``vertex`` having (non-negative integer) weight
+   equal to ``weight``.  Loops are allowed.
+   In the example above, all of the weights are 1.
 
 2. a Python dictionary of lists::
 
-    sage: g = {0: [], 1: [0, 3, 4], 2: [0, 3, 5],
-    ....:      3: [2, 5], 4: [1, 3], 5: [2, 3]}
+       sage: g = {0: [], 1: [0, 3, 4], 2: [0, 3, 5],
+       ....:      3: [2, 5], 4: [1, 3], 5: [2, 3]}
 
-This is a short-hand when all of the edge-weights are equal to 1.  The above
-example is for the same displayed graph.
+   This is a short-hand when all of the edge-weights are equal to 1.  The above
+   example is for the same displayed graph.
 
 3. a Sage graph (of type ``sage.graphs.graph.Graph``)::
 
-    sage: g = graphs.CycleGraph(5)
-    sage: S = Sandpile(g, 0)
-    sage: type(g)
-    <class 'sage.graphs.graph.Graph'>
+       sage: g = graphs.CycleGraph(5)
+       sage: S = Sandpile(g, 0)
+       sage: type(g)
+       <class 'sage.graphs.graph.Graph'>
 
-To see the types of built-in graphs, type ``graphs.``, including the period,
-and hit TAB.
+   To see the types of built-in graphs, type ``graphs.``, including
+   the period, and hit TAB.
 
 4. a Sage digraph::
 
-    sage: S = Sandpile(digraphs.RandomDirectedGNC(6), 0)
-    sage: S.show()
+       sage: S = Sandpile(digraphs.RandomDirectedGNC(6), 0)
+       sage: S.show()
 
-.. figure:: media/sandpile/random.png
-   :align: center
+   .. figure:: media/sandpile/random.png
+      :align: center
 
-   A random graph.
+      A random graph.
 
-See
-`sage.graphs.graph_generators <../reference/sage/graphs/graph_generators.html>`_ for
-more information on the Sage graph library and graph constructors.
+   See
+   `sage.graphs.graph_generators
+   <../reference/sage/graphs/graph_generators.html>`_
+   for more information on the Sage graph library and graph constructors.
 
 Each of these four formats is preprocessed by the Sandpile class so that,
 internally, the graph is represented by the dictionary of dictionaries format
-first presented.  This internal format is returned by  ``dict()``::
+first presented.  This internal format is returned by ``dict()``::
 
     sage: S = Sandpile({0:[], 1:[0, 3, 4], 2:[0, 3, 5], 3: [2, 5], 4: [1, 3], 5: [2, 3]},0)
     sage: S.dict()
@@ -827,14 +874,13 @@ first presented.  This internal format is returned by  ``dict()``::
      4: {1: 1, 3: 1},
      5: {2: 1, 3: 1}}
 
-
-.. note::
+.. NOTE::
 
    The user is responsible for assuring that each vertex has a directed path
    into the designated sink.  If the sink has out-edges, these will be ignored
    for the purposes of sandpile calculations (but not calculations on divisors).
 
-Code for checking whether a given vertex is a sink: ::
+Code for checking whether a given vertex is a sink::
 
     sage: S = Sandpile({0:[], 1:[0, 3, 4], 2:[0, 3, 5], 3: [2, 5], 4: [1, 3], 5: [2, 3]},0)
     sage: [S.distance(v,0) for v in S.vertices()] # 0 is a sink
@@ -845,11 +891,12 @@ Code for checking whether a given vertex is a sink: ::
 Methods
 ^^^^^^^
 
-Here are summaries of ``Sandpile``, ``SandpileConfig``, and ``SandpileDivisor`` methods
-(functions).  Each summary is followed by a list of complete descriptions of
-the methods.  There are many more methods available for a Sandpile, e.g.,
-those inherited from the class DiGraph.  To see them all, enter
-``dir(Sandpile)`` or type ``Sandpile.``, including the period, and hit TAB.
+Here are summaries of ``Sandpile``, ``SandpileConfig``, and ``SandpileDivisor``
+methods (functions).  Each summary is followed by a list of complete
+descriptions of the methods.  There are many more methods available
+for a Sandpile, e.g., those inherited from the class DiGraph.  To see them
+all, enter ``dir(Sandpile)`` or type ``Sandpile.``, including the period,
+and hit TAB.
 
 Sandpile
 ~~~~~~~~
@@ -1056,7 +1103,7 @@ EXAMPLES::
 
 The Betti table for the homogeneous toppling ideal.  If
 ``verbose`` is ``True``, it prints the standard Betti table, otherwise,
-it returns a less formated table.
+it returns a less formatted table.
 
 INPUT:
 
@@ -1098,7 +1145,7 @@ EXAMPLES::
     sage: S = Sandpile({0:{},1:{0: 1, 2: 1, 3: 4},2:{3: 5},3:{1: 1, 2: 1}},0)
     sage: p = S.betti_complexes()
     sage: p[0]
-    [{0: -8, 1: 5, 2: 4, 3: 1}, Simplicial complex with vertex set (1, 2, 3) and facets {(1, 2), (3,)}]
+    [{0: -8, 1: 5, 2: 4, 3: 1}, Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}]
     sage: S.resolution()
     'R^1 <-- R^5 <-- R^5 <-- R^1'
     sage: S.betti()
@@ -1425,7 +1472,7 @@ EXAMPLES::
     group_gens               -- A minimal list of generators for the sandpile group.
     group_order              -- The size of the sandpile group.
     h_vector                 -- The number of superstable configurations in each degree.
-    help                     -- List of Sandpile-specific methods (not inherited from Graph).
+    help                     -- List of Sandpile-specific methods (not inherited from "Graph").
     hilbert_function         -- The Hilbert function of the homogeneous toppling ideal.
     ideal                    -- The saturated homogeneous toppling ideal.
     identity                 -- The identity configuration.
@@ -1459,7 +1506,7 @@ EXAMPLES::
     stationary_density       -- The stationary density of the sandpile.
     superstables             -- The superstable configurations.
     symmetric_recurrents     -- The symmetric recurrent configurations.
-    tutte_polynomial         -- The Tutte polynomial.
+    tutte_polynomial         -- The Tutte polynomial of the underlying graph.
     unsaturated_ideal        -- The unsaturated, homogeneous toppling ideal.
     version                  -- The version number of Sage Sandpiles.
     zero_config              -- The all-zero configuration.
@@ -1706,42 +1753,42 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: m = s.markov_chain([0,0,0])
-    sage: m.next()          # random
+    sage: next(m)          # random
     {1: 0, 2: 0, 3: 0}
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 1, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 2, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [2, 2, 1]
     sage: m = s.markov_chain(s.zero_div(), [0.1,0.1,0.1,0.7])
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 0, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 1, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [0, 0, 1, 2]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 0]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 1]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 2]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 3]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 2, 4]
-    sage: m.next().values() # random
+    sage: next(m).values() # random
     [1, 1, 3, 4]
 
 .. NOTE::
@@ -1765,6 +1812,7 @@ REFERENCES:
 
 .. [Levine2014] Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
    Priezzhev and Ruelle, Communications in Mathematical Physics.
+   :arxiv:`1402.3283`
 
 ---
 
@@ -1927,7 +1975,7 @@ EXAMPLES::
 
     The "nonspecial divisors" are those divisors of degree `g-1` with
     empty linear system.  The term is only defined for undirected graphs.
-    Here, `g = |E| - |V| + 1` is the genus of the graph (not counted loops
+    Here, `g = |E| - |V| + 1` is the genus of the graph (not counting loops
     as part of `|E|`).  If ``verbose`` is ``False``, the divisors are converted
     to lists of integers.
 
@@ -2257,7 +2305,7 @@ EXAMPLES::
     sage: H.sink()
     (0, 0)
     sage: type(H.sink())
-    <type 'tuple'>
+    <... 'tuple'>
 
 ---
 
@@ -2283,7 +2331,7 @@ EXAMPLES::
     [0 4 0 0]
     [0 0 4 0]
     [0 0 0 0]
-    sage: U*s.laplacian()*V == D  # laplacian symmetric => tranpose not necessary
+    sage: U*s.laplacian()*V == D  # laplacian symmetric => transpose not necessary
     True
 
 ---
@@ -2303,7 +2351,18 @@ EXAMPLES::
 
     sage: S = Sandpile({0: {}, 1: {2: 2}, 2: {0: 4, 1: 1}}, 0)
     sage: S.solve()
-    [[-0.707107 + 0.707107*I, 0.707107 - 0.707107*I], [-0.707107 - 0.707107*I, 0.707107 + 0.707107*I], [-I, -I], [I, I], [0.707107 + 0.707107*I, -0.707107 - 0.707107*I], [0.707107 - 0.707107*I, -0.707107 + 0.707107*I], [1, 1], [-1, -1]]
+    [[-0.707107000000000 + 0.707107000000000*I,
+      0.707107000000000 - 0.707107000000000*I],
+     [-0.707107000000000 - 0.707107000000000*I,
+      0.707107000000000 + 0.707107000000000*I],
+     [-I, -I],
+     [I, I],
+     [0.707107000000000 + 0.707107000000000*I,
+      -0.707107000000000 - 0.707107000000000*I],
+     [0.707107000000000 - 0.707107000000000*I,
+      -0.707107000000000 + 0.707107000000000*I],
+     [1, 1],
+     [-1, -1]]
     sage: len(_)
     8
     sage: S.group_order()
@@ -2339,7 +2398,7 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(3)
     sage: a = s.stable_configs()
-    sage: a.next()
+    sage: next(a)
     {1: 0, 2: 0}
     sage: [i.values() for i in a]
     [[0, 1], [1, 0], [1, 1]]
@@ -2376,8 +2435,7 @@ EXAMPLES::
 
 REFERENCES:
 
-.. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-   Priezzhev and Ruelle, Communications in Mathematical Physics.
+- [Levine2014]_
 
 ---
 
@@ -2469,7 +2527,8 @@ EXAMPLES::
 
 **tutte_polynomial()**
 
-The Tutte polynomial.  Only defined for undirected sandpile graphs.
+The Tutte polynomial of the underlying graph.
+Only defined for undirected sandpile graphs.
 
 OUTPUT:
 
@@ -2516,7 +2575,6 @@ The version number of Sage Sandpiles.
 OUTPUT:
 
 string
-
 
 EXAMPLES::
 
@@ -2999,10 +3057,9 @@ fires in the stabilization.::
     sage: m = S.max_stable()
     sage: a = []
     sage: for i in range(1000):
-    ...       m = m.add_random()
-    ...       m, f = m.stabilize(True)
-    ...       a.append(sum(f.values()))
-    ...
+    ....:     m = m.add_random()
+    ....:     m, f = m.stabilize(True)
+    ....:     a.append(sum(f.values()))
     sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
     sage: p.axes_labels(['log(N)','log(D(N))'])
     sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
@@ -3052,14 +3109,13 @@ EXAMPLES::
 .. NOTE::
 
     To define ``c.burst(v)``, if `v` is not the sink, let `c'` be the unique
-    recurrent for which the the stabilization of `c' + v` is `c`.  The
+    recurrent for which the stabilization of `c' + v` is `c`.  The
     burst size is then the amount of sand that goes into the sink during this
     stabilization.  If `v` is the sink, the burst size is defined to be 1.
 
 REFERENCES:
 
-.. [Levine2014]_ Lionel Levine. Threshold state and a conjecture of Poghosyan, Poghosyan,
-   Priezzhev and Ruelle, Communications in Mathematical Physics.
+- [Levine2014]_
 
 ---
 
@@ -3554,14 +3610,14 @@ boolean
 
 EXAMPLES::
 
-    sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
-    sage: c = SandpileConfig(S, {'b':1, 1:2})
+    sage: S = Sandpile({'a':['c','b'], 'b':['c','a'], 'c':['a']},'a')
+    sage: c = SandpileConfig(S, {'b':1, 'c':2})
     sage: c
-    {1: 2, 'b': 1}
+    {'b': 1, 'c': 2}
     sage: c.values()
-    [2, 1]
+    [1, 2]
     sage: S.nonsink_vertices()
-    [1, 'b']
+    ['b', 'c']
 
 ---
 
@@ -3614,7 +3670,7 @@ SandpileDivisor
 
 - :ref:`is_weierstrass_pt <is_weierstrass_pt-divisor>` --- Is the given vertex a Weierstrass point?
 
-- :ref:`polytope <polytope-divisor>` --- The polytope determinining the complete linear system.
+- :ref:`polytope <polytope-divisor>` --- The polytope determining the complete linear system.
 
 - :ref:`polytope_integer_pts <polytope_integer_pts-divisor>` --- The integer points inside divisor's polytope.
 
@@ -3954,6 +4010,7 @@ OUTPUT:
 SandpileDivisor
 
 EXAMPLES::
+
     sage: S = sandpiles.Cycle(3)
     sage: D = SandpileDivisor(S, [1,2,3])
     sage: D.dualize()
@@ -3987,36 +4044,36 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: D = SandpileDivisor(s,[4,2,0,0])
-    sage: D.effective_div()
-    [{0: 0, 1: 6, 2: 0, 3: 0},
+    sage: sorted(D.effective_div(), key=str)
+    [{0: 0, 1: 2, 2: 0, 3: 4},
      {0: 0, 1: 2, 2: 4, 3: 0},
-     {0: 0, 1: 2, 2: 0, 3: 4},
+     {0: 0, 1: 6, 2: 0, 3: 0},
      {0: 1, 1: 3, 2: 1, 3: 1},
      {0: 2, 1: 0, 2: 2, 3: 2},
      {0: 4, 1: 2, 2: 0, 3: 0}]
-    sage: D.effective_div(False)
-    [[0, 6, 0, 0],
+    sage: sorted(D.effective_div(False))
+    [[0, 2, 0, 4],
      [0, 2, 4, 0],
-     [0, 2, 0, 4],
+     [0, 6, 0, 0],
      [1, 3, 1, 1],
      [2, 0, 2, 2],
      [4, 2, 0, 0]]
-    sage: D.effective_div(with_firing_vectors=True)
-    [({0: 0, 1: 6, 2: 0, 3: 0}, (0, -2, -1, -1)),
+    sage: sorted(D.effective_div(with_firing_vectors=True), key=str)
+    [({0: 0, 1: 2, 2: 0, 3: 4}, (0, -1, -1, -2)),
      ({0: 0, 1: 2, 2: 4, 3: 0}, (0, -1, -2, -1)),
-     ({0: 0, 1: 2, 2: 0, 3: 4}, (0, -1, -1, -2)),
+     ({0: 0, 1: 6, 2: 0, 3: 0}, (0, -2, -1, -1)),
      ({0: 1, 1: 3, 2: 1, 3: 1}, (0, -1, -1, -1)),
      ({0: 2, 1: 0, 2: 2, 3: 2}, (0, 0, -1, -1)),
      ({0: 4, 1: 2, 2: 0, 3: 0}, (0, 0, 0, 0))]
-    sage: a = _[0]
+    sage: a = _[2]
     sage: a[0].values()
     [0, 6, 0, 0]
     sage: vector(D.values()) - s.laplacian()*a[1]
     (0, 6, 0, 0)
-    sage: D.effective_div(False, True)
-    [([0, 6, 0, 0], (0, -2, -1, -1)),
+    sage: sorted(D.effective_div(False, True))
+    [([0, 2, 0, 4], (0, -1, -1, -2)),
      ([0, 2, 4, 0], (0, -1, -2, -1)),
-     ([0, 2, 0, 4], (0, -1, -1, -2)),
+     ([0, 6, 0, 0], (0, -2, -1, -1)),
      ([1, 3, 1, 1], (0, -1, -1, -1)),
      ([2, 0, 2, 2], (0, 0, -1, -1)),
      ([4, 2, 0, 0], (0, 0, 0, 0))]
@@ -4131,11 +4188,9 @@ EXAMPLES::
     is_q_reduced           -- Is the divisor q-reduced?
     is_symmetric           -- Is the divisor symmetric?
     is_weierstrass_pt      -- Is the given vertex a Weierstrass point?
-    linear_system          -- The complete linear system (deprecated: use "polytope_integer_pts").
-    polytope               -- The polytope determinining the complete linear system.
+    polytope               -- The polytope determining the complete linear system.
     polytope_integer_pts   -- The integer points inside divisor's polytope.
     q_reduced              -- The linearly equivalent q-reduced divisor.
-    r_of_D                 -- The rank of the divisor (deprecated: use "rank", instead).
     rank                   -- The rank of the divisor.
     sandpile               -- The divisor's underlying sandpile.
     show                   -- Show the divisor.
@@ -4321,8 +4376,9 @@ EXAMPLES::
 
 .. NOTE::
 
-    The vertex `v` is a (generalized) Weierstrass point for divisor `D` if the sequence of ranks `r(D - nv)`
-    for `n = 0, 1, 2, \dots` is not `r(D), r(D)-1, \dots, 0, -1, -1, \dots`
+    The vertex `v` is a (generalized) Weierstrass point for divisor `D` if the
+    sequence of ranks `r(D - nv)`
+    for `n = 0, 1, 2, \dots` is not `r(D), r(D)-1, \dots, 0, -1, -1, \dots`.
 
 ---
 
@@ -4330,7 +4386,7 @@ EXAMPLES::
 
 **polytope()**
 
-The polytope determinining the complete linear system.
+The polytope determining the complete linear system.
 
 OUTPUT:
 
@@ -4377,13 +4433,13 @@ EXAMPLES::
 
     sage: s = sandpiles.Complete(4)
     sage: D = SandpileDivisor(s,[4,2,0,0])
-    sage: D.polytope_integer_pts()
-    ((-2, -1, -1),
+    sage: sorted(D.polytope_integer_pts())
+    [(-2, -1, -1),
      (-1, -2, -1),
      (-1, -1, -2),
      (-1, -1, -1),
      (0, -1, -1),
-     (0, 0, 0))
+     (0, 0, 0)]
     sage: D = SandpileDivisor(s,[-1,0,0,0])
     sage: D.polytope_integer_pts()
     ()
@@ -4635,14 +4691,14 @@ boolean
 
 EXAMPLES::
 
-    sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
-    sage: D = SandpileDivisor(S, {'a':0, 'b':1, 1:2})
+    sage: S = Sandpile({'a':['c','b'], 'b':['c','a'], 'c':['a']},'a')
+    sage: D = SandpileDivisor(S, {'a':0, 'b':1, 'c':2})
     sage: D
-    {'a': 0, 1: 2, 'b': 1}
+    {'a': 0, 'b': 1, 'c': 2}
     sage: D.values()
-    [2, 0, 1]
+    [0, 1, 2]
     sage: S.vertices()
-    [1, 'a', 'b']
+    ['a', 'b', 'c']
 
 
 ---
@@ -4747,8 +4803,9 @@ EXAMPLES::
 
 .. NOTE::
 
-    The vertex `v` is a (generalized) Weierstrass point for divisor `D` if the sequence of ranks `r(D - nv)`
-    for `n = 0, 1, 2, \dots`` is not `r(D), r(D)-1, \dots, 0, -1, -1, \dots`
+    The vertex `v` is a (generalized) Weierstrass point for divisor `D` if the
+    sequence of ranks `r(D - nv)`
+    for `n = 0, 1, 2, \dots` is not `r(D), r(D)-1, \dots, 0, -1, -1, \dots`
 
 ---
 
@@ -4870,6 +4927,8 @@ Other
     EXAMPLES::
 
         sage: S = random_DAG(5, 0.3)
+        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
+        See https://trac.sagemath.org/30479 for details.
 
 ---
 
@@ -4938,7 +4997,9 @@ Help
 
 Documentation for each method is available through the Sage online help system:
 
-.. code-block:: python
+.. skip
+
+::
 
     sage: SandpileConfig.fire_vertex?
     Base Class:     <type 'instancemethod'>
@@ -4971,17 +5032,36 @@ Documentation for each method is available through the Sage online help system:
 
 Enter ``Sandpile.help()``, ``SandpileConfig.help()``, and ``SandpileDivisor.help()`` for lists of available Sandpile-specific methods. 
 
-General Sage documentation can be found at http://sagemath.org/doc/.
+General Sage documentation can be found at http://doc.sagemath.org/html/en/.
 
 Contact
 -------
 Please contact davidp@reed.edu with questions, bug reports, and suggestions for
 additional features and other improvements.
 
-.. [BN] Matthew Baker, Serguei Norine, `Riemann-Roch and Abel-Jacobi Theory on a Finite Graph <http://people.math.gatech.edu/~mbaker/papers.html>`_, Advances in Mathematics 215 (2007), 766--788.
+.. [BN] Matthew Baker, Serguei Norine, `Riemann-Roch and Abel-Jacobi Theory on a
+   Finite Graph <http://people.math.gatech.edu/~mbaker/papers.html>`_,
+   Advances in Mathematics 215 (2007), 766--788.
 
-.. [BTW] Per Bak, Chao Tang and Kurt Wiesenfeld (1987). *Self-organized criticality: an explanation of 1/ƒ noise*, Physical Review Letters 60: 381–384 `Wikipedia article <http://en.wikipedia.org/wiki/Bak-Tang-Wiesenfeld_sandpile>`_.
+.. [BTW] Per Bak, Chao Tang and Kurt Wiesenfeld (1987).
+   *Self-organized criticality: an explanation of 1/f noise*,
+   Physical Review Letters 60: 381--384;
+   :wikipedia:`Bak-Tang-Wiesenfeld_sandpile`.
 
-.. [CRS] Robert Cori, Dominique Rossin, and Bruno Salvy, *Polynomial ideals for sandpiles and their Gröbner bases*, Theoretical Computer Science, 276 (2002) no. 1--2, 1--15.
+.. [CRS] Robert Cori, Dominique Rossin, and Bruno Salvy, *Polynomial ideals for
+   sandpiles and their Gröbner bases*,
+   Theoretical Computer Science, 276 (2002) no. 1--2, 1--15.
 
-.. [H] Holroyd, Levine, Meszaros, Peres, Propp, Wilson, `Chip-Firing and Rotor-Routing on Directed Graphs <http://front.math.ucdavis.edu/0801.3306>`_. The final version of this paper appears in *In and out of Equilibrium II*, Eds. V. Sidoravicius, M. E. Vares, in the Series Progress in Probability, Birkhauser (2008).
+.. [H] Alexander E. Holroyd, Lionel Levine, Karola Meszaros, Yuval Peres,
+   James Propp, David B. Wilson,
+   *Chip-Firing and Rotor-Routing on Directed Graphs*, :arxiv:`0801.3306`.
+   An older version of this paper appears in *In and out of Equilibrium II*,
+   Eds. V. Sidoravicius, M. E. Vares, in the Series Progress in Probability,
+   Birkhauser (2008).
+
+.. [PPW2013] \D. Perkinson, J. Perlman, and J. Wilmes.
+             *Primer for the algebraic geometry of sandpiles*.
+             Tropical and Non-Archimedean
+             Geometry, Contemp. Math., 605, Amer. Math. Soc.,
+             Providence, RI, 2013.
+             :arxiv:`1112.6163`.

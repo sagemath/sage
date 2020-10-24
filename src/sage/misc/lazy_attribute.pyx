@@ -7,7 +7,7 @@ AUTHORS:
 - Nils Bruin (2013-05): Cython version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,14 +19,14 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cdef class _lazy_attribute(object):
     """
     Cython base class for lazy attributes.
 
-    EXAMPLE:
+    EXAMPLES:
 
     Only Python subclasses of this class are supposed to be instantiated::
 
@@ -169,7 +169,7 @@ class lazy_attribute(_lazy_attribute):
         ....:
         ....:     @lazy_attribute
         ....:     def x(self):
-        ....:         print "calculating x in A"
+        ....:         print("calculating x in A")
         ....:         return self.a + 1
         ....:
 
@@ -230,10 +230,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self):
         ....:         if hasattr(self, "y"):
-        ....:             print "calculating x from y in B"
+        ....:             print("calculating x from y in B")
         ....:             return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -266,10 +266,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self, existence_only=False):
         ....:         if existence_only:
-        ....:             print "testing for x existence"
+        ....:             print("testing for x existence")
         ....:             return True
         ....:         else:
-        ....:             print "calculating x in A"
+        ....:             print("calculating x in A")
         ....:             return 3
         ....:
         sage: a = A()
@@ -289,13 +289,13 @@ class lazy_attribute(_lazy_attribute):
         ....:     def x(self, existence_only=False):
         ....:         if hasattr(self, "y"):
         ....:             if existence_only:
-        ....:                 print "testing for x existence in B"
+        ....:                 print("testing for x existence in B")
         ....:                 return True
         ....:             else:
-        ....:                 print "calculating x from y in B"
+        ....:                 print("calculating x from y in B")
         ....:                 return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -337,33 +337,33 @@ class lazy_attribute(_lazy_attribute):
     Old style and new style classes play a bit differently with
     @property and attribute setting::
 
-        sage: class A:
+        sage: class A:  # py2 - no old-style classes on python 3
         ....:     @property
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return 3
         ....:
-        sage: a = A()
-        sage: a.x = 4
-        sage: a.__dict__
+        sage: a = A()  # py2
+        sage: a.x = 4  # py2
+        sage: a.__dict__  # py2
         {'x': 4}
-        sage: a.x
+        sage: a.x  # py2
         4
-        sage: a.__dict__['x']=5
-        sage: a.x
+        sage: a.__dict__['x']=5  # py2
+        sage: a.x  # py2
         5
 
         sage: class A (object):
         ....:     @property
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return 3
         ....:
         sage: a = A()
         sage: a.x = 4
         Traceback (most recent call last):
         ...
-        AttributeError: can't set attribute
+        AttributeError: can...t set attribute
         sage: a.__dict__
         {}
         sage: a.x
@@ -385,7 +385,7 @@ class lazy_attribute(_lazy_attribute):
         ....:
         ....:     @lazy_attribute
         ....:     def x(self):
-        ....:         print "calculating x"
+        ....:         print("calculating x")
         ....:         return self.a + 1
         ....:
         sage: a = A()
@@ -412,10 +412,10 @@ class lazy_attribute(_lazy_attribute):
         ....:     @lazy_attribute
         ....:     def x(self):
         ....:         if hasattr(self, "y"):
-        ....:             print "calculating x from y in B"
+        ....:             print("calculating x from y in B")
         ....:             return self.y
         ....:         else:
-        ....:             print "y not there; B does not define x"
+        ....:             print("y not there; B does not define x")
         ....:             return NotImplemented
         ....:
         sage: b = B()
@@ -465,7 +465,7 @@ class lazy_attribute(_lazy_attribute):
 
         sage: class descriptor(object):
         ....:     def __get__(self, obj, cls):
-        ....:         print cls
+        ....:         print(cls)
         ....:         return 1
         sage: class A(object):
         ....:     x = descriptor()
@@ -618,7 +618,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: class Cl(object):
         ....:     @lazy_class_attribute
         ....:     def x(cls):
-        ....:          print "computing x"
+        ....:          print("computing x")
         ....:          return 1
         sage: Cl.x
         computing x
@@ -633,12 +633,12 @@ class lazy_class_attribute(lazy_attribute):
         sage: b.x
         1
 
-    First access from an object also porperly triggers the computation::
+    First access from an object also properly triggers the computation::
 
         sage: class Cl1(object):
         ....:     @lazy_class_attribute
         ....:     def x(cls):
-        ....:          print "computing x"
+        ....:          print("computing x")
         ....:          return 1
         sage: Cl1().x
         computing x
@@ -646,7 +646,7 @@ class lazy_class_attribute(lazy_attribute):
         sage: Cl1().x
         1
 
-    ..WARNING::
+    .. WARNING::
 
         The behavior of lazy class attributes with respect to inheritance is
         not specified. It currently depends on the evaluation order::
@@ -654,11 +654,11 @@ class lazy_class_attribute(lazy_attribute):
             sage: class A(object):
             ....:     @lazy_class_attribute
             ....:     def x(cls):
-            ....:          print "computing x"
+            ....:          print("computing x")
             ....:          return str(cls)
             ....:     @lazy_class_attribute
             ....:     def y(cls):
-            ....:          print "computing y"
+            ....:          print("computing y")
             ....:          return str(cls)
             sage: class B(A):
             ....:     pass

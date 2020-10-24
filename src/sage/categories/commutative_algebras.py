@@ -38,7 +38,7 @@ class CommutativeAlgebras(CategoryWithAxiom_over_base_ring):
 
     Todo:
 
-     - product   ( = cartesian product)
+     - product   ( = Cartesian product)
      - coproduct ( = tensor product over base ring)
     """
 

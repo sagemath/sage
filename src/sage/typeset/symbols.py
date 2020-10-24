@@ -126,7 +126,7 @@ class CompoundSymbol(SageObject):
             sage: unicode_left_parenthesis
             multi_line version of "("
         """
-        return u'multi_line version of "{0}"'.format(self.character).encode('utf-8')
+        return u'multi_line version of "{0}"'.format(self.character)
 
     def __call__(self, num_lines):
         r"""

@@ -1,0 +1,56 @@
+--- a/extensions/sfext/formula/FTYPEINFO.c.orig	2018-01-25 14:25:22.000000000 -0700
++++ b/extensions/sfext/formula/FTYPEINFO.c	2018-08-29 20:06:48.870298902 -0600
+@@ -23,6 +23,6 @@ Word FTYPEINFO(Word A)
+     return TRUE;
+   if (FIRST(A) == FALSE)
+     return FALSE;
+-  
++  FAIL("FTYPEINFO","Unknown formula type!"); 
+ }
+       
+--- a/source/db/AFUPSFNDB.c.orig	2018-01-25 14:25:22.000000000 -0700
++++ b/source/db/AFUPSFNDB.c	2018-08-29 20:06:48.871298901 -0600
+@@ -5,7 +5,7 @@ AFUPSFN with Database.
+ ======================================================================*/
+ #include "qepcad.h"
+ 
+-Word AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_)
++void AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_)
+ {
+        Word t,Bt,F;
+ 
+--- a/source/db/SingSacPolicy.h.orig	2018-01-25 14:25:22.000000000 -0700
++++ b/source/db/SingSacPolicy.h	2018-08-29 20:06:48.872298900 -0600
+@@ -28,17 +28,17 @@ public:
+   Word IPRES(Word r, Word A, Word B)
+   {
+     if (r > 2)
+-      sing->IPRES(r,A,B);
++      return sing->IPRES(r,A,B);
+     else
+-      sac ->IPRES(r,A,B);
++      return sac ->IPRES(r,A,B);
+   }
+ 
+   Word IPDSCR(Word r, Word A)
+   {
+     if (r > 2)
+-      sing->IPDSCR(r,A);
++      return sing->IPDSCR(r,A);
+     else
+-      sac ->IPDSCR(r,A);
++      return sac ->IPDSCR(r,A);
+   }
+ 
+   Word IPFACTGB(Word r, Word I, Word N)  
+--- a/source/qepcad.h.orig	2018-08-29 20:04:27.596451754 -0600
++++ b/source/qepcad.h	2018-08-29 20:06:48.871298901 -0600
+@@ -34,7 +34,7 @@ Word AFPNIPDB(Word Mb, Word B);
+ void AFUPGCDB(Word M, Word A, Word B, Word *C_, Word *Ab_, Word *Bb_);
+ void AFUPLM(Word M, Word A, Word *L_, Word *P_);
+ void AFUPRWR(Word a, Word v, Word A, Word I);
+-Word AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_);
++void AFUPSFNDB(Word M, Word B, Word *t_, Word *Bt_, Word *F_);
+ Word APPEND(Word P, Word k, Word R);
+ void APPENDEC(Word P, Word k, Word R, Word *Ps_, Word *F_);
+ void ATOMFLWR(Word N, Word V, Word A);

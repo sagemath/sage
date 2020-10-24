@@ -1,4 +1,4 @@
-$(INST)/$(ATLAS) $(INST)/$(NUMPY)
+$(PYTHON) $(BLAS) gfortran numpy pybind11 | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

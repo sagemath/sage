@@ -48,11 +48,13 @@ we could do the following.
     sage: B = numpy.array([1.0]*5)
     sage: B.shape=(5,1)
     sage: print(B)
-    [[ 1.]
-     [ 1.]
-     [ 1.]
-     [ 1.]
-     [ 1.]]
+    [[1.]
+     [1.]
+     [1.]
+     [1.]
+     [1.]]
+
+
     sage: print(A)
     [ 2.00e+00  3.00e+00     0         0         0    ]
     [ 3.00e+00     0      4.00e+00     0      6.00e+00]
@@ -125,7 +127,7 @@ For a simple linear programming example, if we want to solve
 
 ::
 
-    sage: print sol['x']      # ... below since can get -00 or +00 depending on architecture
+    sage: print(sol['x'])    # ... below since can get -00 or +00 depending on architecture
     [ 1.00e...00]
     [ 1.00e+00]
 

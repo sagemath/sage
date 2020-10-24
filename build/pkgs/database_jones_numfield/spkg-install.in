@@ -1,0 +1,12 @@
+if [ -z "$SAGE_SHARE" ]; then
+    echo >&2 "SAGE_SHARE undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+TARGET="${SAGE_SHARE}/jones"
+if [ ! -d "${TARGET}" ]; then
+   mkdir "${TARGET}"
+fi
+
+cp 'src/jones.sobj' "${TARGET}/"

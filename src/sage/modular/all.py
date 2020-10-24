@@ -1,36 +1,42 @@
-from quatalg.all import *
+from sage.misc.lazy_import import lazy_import
 
-from modsym.all import *
+from .quatalg.all import *
 
-from modform.all import *
+from .modsym.all import *
 
-from ssmod.all import *
+from .modform.all import *
 
-from abvar.all import *
+from .ssmod.all import *
 
-from dirichlet import (DirichletGroup,
-                       kronecker_character, kronecker_character_upside_down,
-                       trivial_character)
+from .abvar.all import *
 
-from arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
-                            ArithmeticSubgroup_Permutation,
-                            CongruenceSubgroup, FareySymbol)
+from .dirichlet import (DirichletGroup,
+                        kronecker_character, kronecker_character_upside_down,
+                        trivial_character)
 
-from cusps import Cusp, Cusps
+from .arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
+                             ArithmeticSubgroup_Permutation,
+                             CongruenceSubgroup, FareySymbol)
 
-from dims import (dimension_cusp_forms,
-                  dimension_new_cusp_forms,
-                  dimension_eis,
-                  dimension_modular_forms,
-                  sturm_bound)
+from .cusps import Cusp, Cusps
 
-from buzzard import buzzard_tpslopes
+from .dims import (dimension_cusp_forms,
+                   dimension_new_cusp_forms,
+                   dimension_eis,
+                   dimension_modular_forms,
+                   sturm_bound)
 
-from etaproducts import *
+from .etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,
+                          AllCusps, CuspFamily)
 
-from overconvergent.all import *
+lazy_import('sage.modular.multiple_zeta', ['Multizeta', 'Multizetas'])
 
-from local_comp.all import *
+from .overconvergent.all import *
 
-from cusps_nf import NFCusp, NFCusps, NFCusps_clear_cache, Gamma0_NFCusps
+from .local_comp.all import *
 
+from .cusps_nf import NFCusp, NFCusps, Gamma0_NFCusps
+
+from .btquotients.all import *
+
+from .pollack_stevens.all import *

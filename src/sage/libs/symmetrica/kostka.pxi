@@ -1,4 +1,5 @@
 from cpython.object cimport *
+from cysignals.signals cimport sig_on, sig_off
 
 cdef extern from 'symmetrica/def.h':
     INT kostka_number(OP shape, OP content, OP result)

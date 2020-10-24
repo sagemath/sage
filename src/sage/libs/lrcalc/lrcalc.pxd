@@ -1,3 +1,5 @@
+# distutils: libraries = lrcalc
+
 cdef extern from "lrcalc/hashtab.h":
     ctypedef struct hashtab:
         pass
@@ -40,6 +42,12 @@ cdef extern from "lrcalc/vector.h":
     vector* vp_first(vecpair* vp)
     vector* vp_second(vecpair* vp)
 
+cdef extern from "lrcalc/list.h":
+    cdef struct _list:
+        void **array
+        size_t allocated
+        size_t length
+    void l_free(_list *lst)
 
 cdef extern from "lrcalc/symfcn.h":
     long long lrcoef_c "lrcoef"(vector* outer, vector* inner1, vector* inner2)
@@ -47,6 +55,7 @@ cdef extern from "lrcalc/symfcn.h":
     hashtab* skew_c "skew"(vector *outer, vector *inner, int maxrows)
     hashtab* coprod_c "coprod"(vector *part, int all)
     void fusion_reduce_c "fusion_reduce"(hashtab* ht, int rows, int cols, int opt_zero)
+    _list *quantum_reduce_c "quantum_reduce"(hashtab* ht, int rows, int col)
 
     ctypedef struct skewtab:
         vector *outer

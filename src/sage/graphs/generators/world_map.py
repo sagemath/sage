@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-World Map
+Graphs from the World Map
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
@@ -18,6 +18,243 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 
+def AfricaMap(continental=False, year=2018):
+    """
+    Return African states as a graph of common border.
+
+    "African state" here is defined as an independent
+    state having the capital city in Africa. The graph
+    has an edge between those countries that have common
+    *land* border.
+
+    INPUT:
+
+    - ``continental``, a Boolean -- if set, only return states in
+      the continental Africa
+    - ``year`` -- reserved for future use
+
+    EXAMPLES::
+
+        sage: Africa = graphs.AfricaMap(); Africa
+        Africa Map: Graph on 54 vertices
+        sage: sorted(Africa.neighbors('Libya'))
+        ['Algeria', 'Chad', 'Egypt', 'Niger', 'Sudan', 'Tunisia']
+
+        sage: cont_Africa = graphs.AfricaMap(continental=True)
+        sage: cont_Africa.order()
+        48
+        sage: 'Madagaskar' in cont_Africa
+        False
+
+    TESTS::
+
+        sage: Africa.plot()
+        Graphics object consisting of 159 graphics primitives
+    """
+    if year != 2018:
+        raise ValueError("currently only year 2018 is implemented")
+
+    common_border = {
+     'Algeria': ['Libya', 'Mali', 'Mauritania', 'Morocco', 'Niger', 'Tunisia'],
+     'Angola': ['Namibia', 'Zambia'],
+     'Benin': ['Burkina Faso', 'Niger', 'Nigeria', 'Togo'],
+     'Botswana': ['Namibia', 'South Africa', 'Zimbabwe'],
+     'Burkina Faso': ['Ghana', 'Ivory Coast', 'Mali', 'Niger', 'Togo'],
+     'Cameroon': ['Central Africa', 'Chad', 'Equatorial Guinea', 'Gabon', 'Nigeria'],
+     'Central Africa': ['Chad', 'South Sudan', 'Sudan'],
+     'Chad': ['Libya', 'Niger', 'Nigeria', 'Sudan'],
+     'Republic of the Congo': ['Gabon', 'Cameroon', 'Central Africa', 'Angola',
+                               'Democratic Republic of the Congo'],
+     'Democratic Republic of the Congo': ['Zambia', 'South Sudan', 'Tanzania', 'Burundi',
+                                          'Rwanda', 'Uganda', 'Central Africa', 'Angola'],
+     'Djibouti': ['Eritrea', 'Ethiopia', 'Somalia'],
+     'Ethiopia': ['Eritrea', 'Kenya', 'Somalia', 'South Sudan', 'Sudan'],
+     'Gabon': ['Equatorial Guinea'],
+     'Ghana': ['Ivory Coast', 'Togo'],
+     'Guinea': ['Guinea-Bissau', 'Ivory Coast', 'Liberia', 'Sierra Leone'],
+     'Kenya': ['Somalia', 'South Sudan', 'Tanzania', 'Uganda'],
+     'Liberia': ['Ivory Coast', 'Sierra Leone'],
+     'Libya': ['Egypt', 'Niger', 'Sudan', 'Tunisia'],
+     'Mali': ['Guinea', 'Ivory Coast', 'Mauritania', 'Niger', 'Senegal'],
+     'Mozambique': ['Malawi', 'South Africa', 'Swaziland', 'Zimbabwe'],
+     'Niger': ['Nigeria'],
+     'Rwanda': ['Burundi', 'Tanzania', 'Uganda'],
+     'Senegal': ['Guinea', 'Guinea-Bissau', 'Mauritania', 'Gambia'],
+     'South Africa': ['Lesotho', 'Namibia', 'Swaziland', 'Zimbabwe'],
+     'South Sudan': ['Uganda', 'Sudan', 'Democratic Republic of the Congo'],
+     'Sudan': ['Egypt', 'Eritrea'],
+     'Tanzania': ['Burundi', 'Malawi', 'Mozambique', 'Uganda', 'Zambia'],
+     'Zambia': ['Malawi', 'Mozambique', 'Namibia', 'Zimbabwe']
+     }
+
+    no_land_border = ['Cape Verde', 'Seychelles', 'Mauritius', u'São Tomé and Príncipe', 'Madagascar', 'Comoros']
+
+    G = Graph(common_border, format='dict_of_lists')
+
+    if continental:
+        G = G.subgraph(G.connected_component_containing_vertex('Central Africa'))
+        G.name(new="Continental Africa Map")
+    else:
+        G.add_vertices(no_land_border)
+        G.name(new="Africa Map")
+
+    return G
+
+
+def EuropeMap(continental=False, year=2018):
+    """
+    Return European states as a graph of common border.
+
+    "European state" here is defined as an independent
+    state having the capital city in Europe. The graph
+    has an edge between those countries that have common
+    *land* border.
+
+    INPUT:
+
+    - ``continental``, a Boolean -- if set, only return states in
+      the continental Europe
+    - ``year`` -- reserved for future use
+
+    EXAMPLES::
+
+        sage: Europe = graphs.EuropeMap(); Europe
+        Europe Map: Graph on 44 vertices
+        sage: Europe.neighbors('Ireland')
+        ['United Kingdom']
+
+        sage: cont_Europe = graphs.EuropeMap(continental=True)
+        sage: cont_Europe.order()
+        40
+        sage: 'Iceland' in cont_Europe
+        False
+    """
+    if year != 2018:
+        raise ValueError("currently only year 2018 is implemented")
+
+    common_border = {
+     'Poland': ['Slovakia', 'Czech Republic', 'Lithuania', 'Russia', 'Ukraine', 'Germany'],
+     'Germany': ['Czech Republic', 'Netherlands', 'Switzerland', 'Luxembourg', 'Denmark'],
+     'Croatia': ['Bosnia and Herzegovina', 'Serbia', 'Hungary', 'Montenegro', 'Slovenia'],
+     'Austria': ['Czech Republic', 'Germany', 'Switzerland', 'Slovenia', 'Liechtenstein'],
+     'France': ['Germany', 'Italy', 'Switzerland', 'Monaco', 'Luxembourg', 'Andorra'],
+     'Hungary': ['Slovakia', 'Serbia', 'Romania', 'Ukraine', 'Slovenia', 'Austria'],
+     'Italy': ['Switzerland', 'Vatican City', 'San Marino', 'Slovenia', 'Austria'],
+     'Belarus': ['Poland', 'Latvia', 'Lithuania', 'Russia', 'Ukraine'],
+     'Montenegro': ['Bosnia and Herzegovina', 'Serbia', 'Albania'],
+     'Belgium': ['Germany', 'Netherlands', 'Luxembourg', 'France'],
+     'Russia': ['Finland', 'Lithuania', 'Estonia', 'Ukraine'],
+     'Romania': ['Serbia', 'Moldova', 'Bulgaria', 'Ukraine'],
+     'Latvia': ['Lithuania', 'Russia', 'Estonia'],
+     'Slovakia': ['Czech Republic', 'Ukraine', 'Austria'], 'Switzerland': ['Liechtenstein'],
+     'Spain': ['Portugal', 'Andorra', 'France'], 'Norway': ['Finland', 'Sweden', 'Russia'],
+     'Ireland': ['United Kingdom'], 'Serbia': ['Bosnia and Herzegovina', 'Bulgaria'],
+     'Greece': ['Macedonia', 'Bulgaria', 'Albania'], 'Ukraine': ['Moldova'],
+     'Macedonia': ['Serbia', 'Bulgaria', 'Albania'], 'Sweden': ['Finland']
+    }
+    no_land_border = ['Iceland', 'Malta']
+
+    G = Graph(common_border, format='dict_of_lists')
+
+    if continental:
+        G = G.subgraph(G.connected_component_containing_vertex('Austria'))
+        G.name(new="Continental Europe Map")
+    else:
+        G.add_vertices(no_land_border)
+        G.name(new="Europe Map")
+
+    return G
+
+
+def USAMap(continental=False):
+    """
+    Return states of USA as a graph of common border.
+
+    The graph has an edge between those states that have
+    common *land* border line or point. Hence for example
+    Colorado and Arizona are marked as neighbors, but
+    Michigan and Minnesota are not.
+
+    INPUT:
+
+    - ``continental``, a Boolean -- if set, exclude Alaska
+      and Hawaii
+
+    EXAMPLES:
+
+    How many states are neighbor's neighbor for Pennsylvania::
+
+        sage: USA = graphs.USAMap()
+        sage: len([n2 for n2 in USA if USA.distance('Pennsylvania', n2) == 2])
+        7
+
+    Diameter for continental USA::
+
+        sage: USAcont = graphs.USAMap(continental=True)
+        sage: USAcont.diameter()
+        11
+    """
+    states = {
+    "Alabama": ["Florida", "Georgia", "Mississippi", "Tennessee"],
+    "Arizona": ["California", "Colorado", "Nevada", "New Mexico", "Utah"],
+    "Arkansas": ["Louisiana", "Mississippi", "Missouri", "Oklahoma", "Tennessee", "Texas"],
+    "California": ["Arizona", "Nevada", "Oregon"],
+    "Colorado": ["Arizona", "Kansas", "Nebraska", "New Mexico", "Oklahoma", "Utah", "Wyoming"],
+    "Connecticut": ["Massachusetts", "New York", "Rhode Island"],
+    "Delaware": ["Maryland", "New Jersey", "Pennsylvania"],
+    "Florida": ["Alabama", "Georgia"],
+    "Georgia": ["Alabama", "Florida", "North Carolina", "South Carolina", "Tennessee"],
+    "Idaho": ["Montana", "Nevada", "Oregon", "Utah", "Washington", "Wyoming"],
+    "Illinois": ["Indiana", "Iowa", "Michigan", "Kentucky", "Missouri", "Wisconsin"],
+    "Indiana": ["Illinois", "Kentucky", "Michigan", "Ohio"],
+    "Iowa": ["Illinois", "Minnesota", "Missouri", "Nebraska", "South Dakota", "Wisconsin"],
+    "Kansas": ["Colorado", "Missouri", "Nebraska", "Oklahoma"],
+    "Kentucky": ["Illinois", "Indiana", "Missouri", "Ohio", "Tennessee", "Virginia", "West Virginia"],
+    "Louisiana": ["Arkansas", "Mississippi", "Texas"],
+    "Maine": ["New Hampshire"],
+    "Maryland": ["Delaware", "Pennsylvania", "Virginia", "West Virginia"],
+    "Massachusetts": ["Connecticut", "New Hampshire", "New York", "Rhode Island", "Vermont"],
+    "Michigan": ["Illinois", "Indiana", "Ohio", "Wisconsin"],
+    "Minnesota": ["Iowa", "North Dakota", "South Dakota", "Wisconsin"],
+    "Mississippi": ["Alabama", "Arkansas", "Louisiana", "Tennessee"],
+    "Missouri": ["Arkansas", "Illinois", "Iowa", "Kansas", "Kentucky", "Nebraska", "Oklahoma", "Tennessee"],
+    "Montana": ["Idaho", "North Dakota", "South Dakota", "Wyoming"],
+    "Nebraska": ["Colorado", "Iowa", "Kansas", "Missouri", "South Dakota", "Wyoming"],
+    "Nevada": ["Arizona", "California", "Idaho", "Oregon", "Utah"],
+    "New Hampshire": ["Maine", "Massachusetts", "Vermont"],
+    "New Jersey": ["Delaware", "New York", "Pennsylvania"],
+    "New Mexico": ["Arizona", "Colorado", "Oklahoma", "Texas", "Utah"],
+    "New York": ["Connecticut", "Massachusetts", "New Jersey", "Pennsylvania", "Vermont"],
+    "North Carolina": ["Georgia", "South Carolina", "Tennessee", "Virginia"],
+    "North Dakota": ["Minnesota", "Montana", "South Dakota"],
+    "Ohio": ["Indiana", "Kentucky", "Michigan", "Pennsylvania", "West Virginia"],
+    "Oklahoma": ["Arkansas", "Colorado", "Kansas", "Missouri", "New Mexico", "Texas"],
+    "Oregon": ["California", "Idaho", "Nevada", "Washington"],
+    "Pennsylvania": ["Delaware", "Maryland", "New Jersey", "New York", "Ohio", "West Virginia"],
+    "Rhode Island": ["Connecticut", "Massachusetts"],
+    "South Carolina": ["Georgia", "North Carolina"],
+    "South Dakota": ["Iowa", "Minnesota", "Montana", "Nebraska", "North Dakota", "Wyoming"],
+    "Tennessee": ["Alabama", "Arkansas", "Georgia", "Kentucky", "Mississippi", "Missouri", "North Carolina", "Virginia"],
+    "Texas": ["Arkansas", "Louisiana", "New Mexico", "Oklahoma"],
+    "Utah": ["Arizona", "Colorado", "Idaho", "Nevada", "New Mexico", "Wyoming"],
+    "Vermont": ["Massachusetts", "New Hampshire", "New York"],
+    "Virginia": ["Kentucky", "Maryland", "North Carolina", "Tennessee", "West Virginia"],
+    "Washington": ["Idaho", "Oregon"],
+    "West Virginia": ["Kentucky", "Maryland", "Ohio", "Pennsylvania", "Virginia"],
+    "Wisconsin": ["Illinois", "Iowa", "Michigan", "Minnesota"],
+    "Wyoming": ["Colorado", "Idaho", "Montana", "Nebraska", "South Dakota", "Utah"]
+    }
+    if not continental:
+        states['Alaska'] = []
+        states['Hawaii'] = []
+        G = Graph(states, format='dict_of_lists')
+        G.name(new="USA Map")
+        return G
+
+    G = Graph(states, format='dict_of_lists')
+    G.name(new="Continental USA Map")
+    return G
+
 def WorldMap():
     """
     Returns the Graph of all the countries, in which two countries are adjacent
@@ -30,19 +267,24 @@ def WorldMap():
     equal to a dictionary containing the GPS coordinates
     of each country's capital city.
 
-    EXAMPLE::
+    EXAMPLES::
 
-        sage: g=graphs.WorldMap()
-        sage: g.has_edge("France","Italy")
+        sage: g = graphs.WorldMap()
+        sage: g.has_edge("France", "Italy")
         True
         sage: g.gps_coordinates["Bolivia"]
         [[17, 'S'], [65, 'W']]
         sage: sorted(g.connected_component_containing_vertex('Ireland'))
         ['Ireland', 'United Kingdom']
 
+    TESTS::
+
+        sage: 'Iceland' in graphs.WorldMap()  # Trac 24488
+        True
+
     REFERENCE:
 
-    .. [CIA] CIA Factbook 09 https://www.cia.gov/library/publications/the-world-factbook/
+    [CIA]_
     """
     edges = [
         ('Afghanistan', 'China', None), ('Afghanistan', 'Iran', None),
@@ -463,6 +705,7 @@ def WorldMap():
         }
     g = Graph()
     g.add_edges(edges)
+    g.add_vertices(gps_coordinates)
     g.gps_coordinates = gps_coordinates
     g.name("World Map")
     return g

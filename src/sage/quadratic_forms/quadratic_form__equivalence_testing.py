@@ -5,12 +5,13 @@ AUTHORS:
 
 - Anna Haensch (2014-12-01): added test for rational isometry
 """
+from __future__ import print_function, absolute_import
 
-from sage.rings.arith import hilbert_symbol, prime_divisors, is_prime, valuation, GCD, legendre_symbol
+from sage.arith.all import hilbert_symbol, prime_divisors, is_prime, valuation, GCD, legendre_symbol
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-from quadratic_form import is_QuadraticForm
+from .quadratic_form import is_QuadraticForm
 
 
 ################################################################################
@@ -18,11 +19,13 @@ from quadratic_form import is_QuadraticForm
 ## (For now, we require both forms to be positive definite.)                  ##
 ################################################################################
 
-def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_precision=None, check_local_equivalence=None):
+def is_globally_equivalent_to(self, other, return_matrix=False):
     """
-    Determines if the current quadratic form is equivalent to the
-    given form over ZZ.  If ``return_matrix`` is True, then we return
-    the transformation matrix `M` so that ``self(M) == other``.
+    Determine if the current quadratic form is equivalent to the
+    given form over ZZ.
+
+    If ``return_matrix`` is True, then we return the transformation
+    matrix `M` so that ``self(M) == other``.
 
     INPUT:
 
@@ -75,16 +78,20 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
         ...
         ValueError: not a definite form in QuadraticForm.is_globally_equivalent_to()
 
-    ALGORITHM: this uses the PARI function ``qfisom()``, implementing
+    ALGORITHM: this uses the PARI function :pari:`qfisom`, implementing
     an algorithm by Plesken and Souvignier.
-    """
-    if check_theta_to_precision is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(19111, "The check_theta_to_precision argument is deprecated and ignored")
-    if check_local_equivalence is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(19111, "The check_local_equivalence argument is deprecated and ignored")
 
+    TESTS:
+
+    :trac:`27749` is fixed::
+
+        sage: Q = QuadraticForm(ZZ, 2, [2, 3, 5])
+        sage: P = QuadraticForm(ZZ, 2, [8, 6, 5])
+        sage: Q.is_globally_equivalent_to(P)
+        False
+        sage: P.is_globally_equivalent_to(Q)
+        False
+    """
     ## Check that other is a QuadraticForm
     if not is_QuadraticForm(other):
         raise TypeError("you must compare two quadratic forms, but the argument is not a quadratic form")
@@ -93,7 +100,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
     if not self.is_definite() or not other.is_definite():
         raise ValueError("not a definite form in QuadraticForm.is_globally_equivalent_to()")
 
-    mat = other._pari_().qfisom(self)
+    mat = other.__pari__().qfisom(self)
     if not mat:
         return False
 
@@ -105,7 +112,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False, check_theta_to_p
 
 def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_equivalence_test=False):
     """
-    Determines if the current quadratic form (defined over ZZ) is
+    Determine if the current quadratic form (defined over ZZ) is
     locally equivalent to the given form over the real numbers and the
     `p`-adic integers for every prime p.
 
@@ -149,7 +156,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
         return False
 
     ## Test equivalence over Z_p for all primes
-    if (self.base_ring() == ZZ) and (force_jordan_equivalence_test == False):
+    if (self.base_ring() == ZZ) and (not force_jordan_equivalence_test):
 
         ## Test equivalence with Conway-Sloane genus symbols (default over ZZ)
         if self.CS_genus_symbol_list() != other.CS_genus_symbol_list():
@@ -157,14 +164,11 @@ def is_locally_equivalent_to(self, other, check_primes_only=False, force_jordan_
     else:
         ## Test equivalence via the O'Meara criterion.
         for p in prime_divisors(ZZ(2) * self.det()):
-            #print "checking the prime p = ", p
             if not self.has_equivalent_Jordan_decomposition_at_prime(other, p):
                 return False
 
     ## All tests have passed!
     return True
-
-
 
 
 def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
@@ -212,11 +216,6 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
     self_jordan = self.jordan_blocks_by_scale_and_unimodular(p, safe_flag= False)
     other_jordan = other.jordan_blocks_by_scale_and_unimodular(p, safe_flag=False)
 
-    ## DIAGNOSTIC
-    #print "self_jordan = ", self_jordan
-    #print "other_jordan = ", other_jordan
-
-
     ## Check for the same number of Jordan components
     if len(self_jordan) != len(other_jordan):
         return False
@@ -247,10 +246,6 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
                or (self_jordan[i][1].dim() != other_jordan[i][1].dim()) \
                or (valuation(GCD(self_jordan[i][1].coefficients()), p) != valuation(GCD(other_jordan[i][1].coefficients()), p)):
                 return False
-
-        ## DIAGNOSTIC
-        #print "Passed the Jordan invariant test."
-
 
         ## Use O'Meara's isometry test 93:29 on p277.
         ## ------------------------------------------
@@ -285,18 +280,6 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
             if scale_list[i-1] >= scale_list[i]:
                    raise RuntimeError("Oops!  There is something wrong with the Jordan Decomposition -- the given scales are not strictly increasing!")
 
-
-        ## DIAGNOSTIC
-        #print "scale_list = ", scale_list
-        #print "norm_list = ", norm_list
-        #print "dim_list = ", dim_list
-        #print
-        #print "self_chain_det_list = ", self_chain_det_list
-        #print "other_chain_det_list = ", other_chain_det_list
-        #print "self_hasse_chain_list = ", self_hasse_chain_list
-        #print "other_hasse_chain_det_list = ", other_hasse_chain_list
-
-
         ## Test O'Meara's two conditions
         for i in range(t-1):
 
@@ -305,14 +288,12 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
             if modulus > 8:
                    modulus = 8
             if (modulus > 1) and (((self_chain_det_list[i] / other_chain_det_list[i]) % modulus) != 1):
-                #print "Failed when i =", i, " in condition 1."
                 return False
 
             ## Check O'Meara's condition (ii) when appropriate
             if norm_list[i+1] % (4 * norm_list[i]) == 0:
                 if self_hasse_chain_list[i] * hilbert_symbol(norm_list[i] * other_chain_det_list[i], -self_chain_det_list[i], 2) \
                        != other_hasse_chain_list[i] * hilbert_symbol(norm_list[i], -other_chain_det_list[i], 2):      ## Nipp conditions
-                    #print "Failed when i =", i, " in condition 2."
                     return False
 
 
@@ -433,7 +414,7 @@ def is_rationally_isometric(self, other):
         ....:     m2 = t*m*t.transpose()
         ....:     Q2 = QuadraticForm(K, 3, [m2[i,j] / (2 if i==j else 1)
         ....:                               for i in range(3) for j in range(i,3)])
-        ....:     print Q.is_rationally_isometric(Q2)
+        ....:     print(Q.is_rationally_isometric(Q2))
         True
         True
         True

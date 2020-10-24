@@ -117,9 +117,10 @@ class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
             sage: RC = RiggedConfigurations(['A', 4, 1], [[2, 1]])
             sage: from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
             sage: bijection = RCToKRTBijectionTypeA(RC(partition_list=[[1],[1],[1],[1]]))
-            sage: bijection.next_state(0)
+            sage: bijection.next_state(1)
             5
         """
+        height -= 1 # indexing
         n = self.n
         ell = [None] * n
         b = None
@@ -156,3 +157,4 @@ class RCToKRTBijectionTypeA(RCToKRTBijectionAbstract):
             self.cur_partitions[n - 1].rigging[row_num] = self.cur_partitions[n - 1].vacancy_numbers[row_num]
 
         return(b)
+

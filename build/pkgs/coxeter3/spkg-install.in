@@ -1,0 +1,6 @@
+# Patch the Coxeter3 sources
+cd src
+sed -i.bak "s|@SAGE_LOCAL@|$SAGE_LOCAL|g" directories.h
+
+sdh_make
+sdh_make_install

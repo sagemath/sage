@@ -1,0 +1,25 @@
+From e449c91dcb7881c252bb256d2b426d9de41ef16b Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Fri, 1 May 2020 01:31:04 -0500
+Subject: [PATCH 3/3] Need LDFLAGS in LIBS too
+
+---
+ Makefile.PL | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.PL b/Makefile.PL
+index 737fa88..83d73c0 100644
+--- a/Makefile.PL
++++ b/Makefile.PL
+@@ -123,7 +123,7 @@ WriteMakefile
+      },
+      VERSION_FROM => 'Gnu.pm',
+      MIN_PERL_VERSION => '5.8.1',
+-     LIBS	  => [ "$RLLIB $libs" ],
++     LIBS	  => [ "$RLLIB $ENV{LDFLAGS} $libs" ],
+      LDDLFLAGS	  => "$RLLIB $Config{lddlflags} $ENV{LDFLAGS}",
+      dynamic_lib  => { OTHERLDFLAGS => $lddflags },
+      DEFINE	  => $defs,
+-- 
+2.24.1.1484.g7fcb965970
+

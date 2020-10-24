@@ -33,14 +33,14 @@ from sage.structure.sage_object import SageObject
 class SimplifiedDES(SageObject):
     r"""
     This class implements the Simplified Data Encryption Standard (S-DES)
-    described in [Sch96]_. Schaefer's S-DES is for educational purposes
+    described in [Sch1996]_. Schaefer's S-DES is for educational purposes
     only and is not secure for practical purposes. S-DES is a version of
     the DES with all parameters significantly reduced, but at the same time
     preserving the structure of DES. The goal of S-DES is to allow a
     beginner to understand the structure of DES, thus laying a foundation
     for a thorough study of DES. Its goal is as a teaching tool in the same
     spirit as Phan's
-    :mod:`Mini-AES <sage.crypto.block_cipher.miniaes>` [Pha02]_.
+    :mod:`Mini-AES <sage.crypto.block_cipher.miniaes>` [Pha2002]_.
 
     EXAMPLES:
 
@@ -51,7 +51,7 @@ class SimplifiedDES(SageObject):
         sage: sdes = SimplifiedDES(); sdes
         Simplified DES block cipher with 10-bit keys
         sage: bin = BinaryStrings()
-        sage: P = [bin(str(randint(0, 1))) for i in xrange(8)]
+        sage: P = [bin(str(randint(0, 1))) for i in range(8)]
         sage: K = sdes.random_key()
         sage: C = sdes.encrypt(P, K)
         sage: plaintxt = sdes.decrypt(C, K)
@@ -73,14 +73,6 @@ class SimplifiedDES(SageObject):
         sage: plaintxt = sdes(C, K, algorithm="decrypt")
         sage: plaintxt == P
         True
-
-    REFERENCES:
-
-    .. [Pha02] R. C.-W. Phan. Mini advanced encryption standard (mini-AES): a
-      testbed for cryptanalysis students. Cryptologia, 26(4):283--306, 2002.
-
-    .. [Sch96] E. Schaefer. A simplified data encryption algorithm.
-      Cryptologia, 20(1):77--84, 1996.
     """
 
     def __init__(self):
@@ -93,14 +85,14 @@ class SimplifiedDES(SageObject):
             sage: sdes = SimplifiedDES(); sdes
             Simplified DES block cipher with 10-bit keys
             sage: B = BinaryStrings()
-            sage: P = [B(str(randint(0, 1))) for i in xrange(8)]
+            sage: P = [B(str(randint(0, 1))) for i in range(8)]
             sage: K = sdes.random_key()
             sage: C = sdes.encrypt(P, K)
             sage: plaintxt = sdes.decrypt(C, K)
             sage: plaintxt == P
             True
         """
-        from sage.crypto.mq import SBox
+        from sage.crypto.sbox import SBox
         # the number of bits in a secret key
         self._key_size = 10
         # the S-box S_0
@@ -215,7 +207,7 @@ class SimplifiedDES(SageObject):
         bin = BinaryStrings()
         # encrypt each 8-bit block in succession
         if algorithm == "encrypt":
-            for i in xrange(N):
+            for i in range(N):
                 # get an 8-bit block
                 block = B[i*Blength : (i+1)*Blength]
                 block = self.string_to_list(str(block))
@@ -228,7 +220,7 @@ class SimplifiedDES(SageObject):
             return bin(S)
         # decrypt each 8-bit block in succession
         elif algorithm == "decrypt":
-            for i in xrange(N):
+            for i in range(N):
                 # get an 8-bit block
                 block = B[i*Blength : (i+1)*Blength]
                 block = self.string_to_list(str(block))
@@ -1255,31 +1247,31 @@ class SimplifiedDES(SageObject):
         if len(key) != 8:
             raise ValueError("input key must be an 8-bit subkey")
 
-        from sage.rings.finite_rings.constructor import FiniteField
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField
         GF = FiniteField(2, "x")
         bin = BinaryStrings()
         bin_to_GF2 = {bin("0"): GF(0), bin("1"): GF(1)}
 
         # the leftmost 4 bits of B
-        L = [ bin_to_GF2[bin(str(B[i]))] for i in xrange(4) ]
+        L = [ bin_to_GF2[bin(str(B[i]))] for i in range(4) ]
         # the rightmost 4 bits of B
-        R = [ bin_to_GF2[bin(str(B[i]))] for i in xrange(4, len(B)) ]
+        R = [ bin_to_GF2[bin(str(B[i]))] for i in range(4, len(B)) ]
         # get the GF(2) representation of the subkey
-        K = [ bin_to_GF2[bin(str(key[i]))] for i in xrange(len(key)) ]
+        K = [ bin_to_GF2[bin(str(key[i]))] for i in range(len(key)) ]
         # expand the rightmost 4 bits into an 8-bit block
         RX = [ R[3], R[0], R[1], R[2], R[1], R[2], R[3], R[0] ]
         # add the subkey to the expanded 8-bit block using exclusive-OR
-        P = [ RX[i] + K[i] for i in xrange(len(K)) ]
+        P = [ RX[i] + K[i] for i in range(len(K)) ]
         # run each half of P separately through the S-boxes
         left = self._sbox0([ P[0], P[3], P[1], P[2] ])
         right = self._sbox1([ P[4], P[7], P[5], P[6] ])
         # First concatenate the left and right parts, then get the
         # output of the function F.
         F = self.permutation4(left + right)
-        F = [ bin_to_GF2[F[i]] for i in xrange(len(F)) ]
+        F = [ bin_to_GF2[F[i]] for i in range(len(F)) ]
         # Add L to F using exclusive-OR. Then concatenate the result with
         # the rightmost 4 bits of B. This is the output of the function Pi_F.
-        L = [ L[i] + F[i] for i in xrange(len(F)) ]
+        L = [ L[i] + F[i] for i in range(len(F)) ]
         return L + R
 
     def random_key(self):
@@ -1298,7 +1290,7 @@ class SimplifiedDES(SageObject):
         """
         from sage.misc.prandom import randint
         bin = BinaryStrings()
-        return [bin(str(randint(0, 1))) for i in xrange(self._key_size)]
+        return [bin(str(randint(0, 1))) for i in range(self._key_size)]
 
     def sbox(self):
         r"""

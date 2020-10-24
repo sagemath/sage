@@ -16,4 +16,4 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from library import mandelbrot, julia, cellular_automaton
+from .library import mandelbrot, julia, cellular_automaton

@@ -1,14 +1,17 @@
 r"""
 Decorate interface for parallel computation
 """
+from __future__ import print_function, absolute_import
 
 import types
 
 from sage.rings.all import Integer
 
-from reference import parallel_iter as p_iter_reference
-from use_fork import p_iter_fork
-import multiprocessing_sage
+from .reference import parallel_iter as p_iter_reference
+from .use_fork import p_iter_fork
+from . import multiprocessing_sage
+from sage.docs.instancedoc import instancedoc
+
 
 def normalize_input(a):
     r"""
@@ -49,7 +52,7 @@ def normalize_input(a):
         return ((a,), {})
 
 
-class Parallel:
+class Parallel(object):
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -59,18 +62,18 @@ class Parallel:
         EXAMPLES::
 
             sage: P = sage.parallel.decorate.Parallel(); P
-            <sage.parallel.decorate.Parallel instance at 0x...>
+            <sage.parallel.decorate.Parallel object at 0x...>
         """
         # The default p_iter is currently the 'fork' implementation.
         # This has changed.
 
         self.p_iter = None
 
-        if isinstance(p_iter, (int, long, Integer)):
+        if isinstance(p_iter, (int, Integer)):
             p_iter, ncpus = 'fork', p_iter
 
         if ncpus is None:
-            from ncpus import ncpus as compute_ncpus
+            from .ncpus import ncpus as compute_ncpus
             ncpus = compute_ncpus()
 
         if p_iter == 'fork':
@@ -117,6 +120,8 @@ class Parallel:
         """
         return ParallelFunction(self, f)
 
+
+@instancedoc
 class ParallelFunction(object):
     """
     Class which parallelizes a function or class method.
@@ -148,7 +153,7 @@ class ParallelFunction(object):
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel()
             sage: def f(x):
-            ...       return x*x
+            ....:     return x*x
             sage: pf = p(f); pf
             <sage.parallel.decorate.ParallelFunction object at ...>
             sage: pf(2)
@@ -170,26 +175,26 @@ for a in args[0]))
 
         .. note::
 
-           This is the key to fixing Trac #11461.
+           This is the key to fixing :trac:`11461`.
 
         EXAMPLES:
 
-        We verify the the decorated functions work correctly on
+        We verify that the decorated functions work correctly on
         methods, classmethods, and staticmethods, for both the
         parallel and non-parallel versions::
 
             sage: class Foo(object):
-            ...       @parallel(2)
-            ...       def square(self, n):
-            ...           return n*n
-            ...       @parallel(2)
-            ...       @classmethod
-            ...       def square_classmethod(cls, n):
-            ...           return n*n
-            ...       @parallel(2)
-            ...       @staticmethod
-            ...       def square_staticmethod(n):
-            ...           return n*n
+            ....:     @parallel(2)
+            ....:     def square(self, n):
+            ....:         return n*n
+            ....:     @parallel(2)
+            ....:     @classmethod
+            ....:     def square_classmethod(cls, n):
+            ....:         return n*n
+            ....:     @parallel(2)
+            ....:     @staticmethod
+            ....:     def square_staticmethod(n):
+            ....:         return n*n
             sage: a = Foo()
             sage: a.square(3)
             9
@@ -236,7 +241,7 @@ for a in args[0]))
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel(2)
             sage: def f(x, y):
-            ...       return x + y
+            ....:     return x + y
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(p(f))
             ArgSpec(args=['x', 'y'], varargs=None, keywords=None, defaults=None)
@@ -256,7 +261,7 @@ for a in args[0]))
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel(2)
             sage: def f(x, y):
-            ...       return x + y
+            ....:     return x + y
             sage: from sage.misc.sageinspect import sage_getsource
             sage: 'return x + y' in sage_getsource(p(f))
             True
@@ -264,7 +269,7 @@ for a in args[0]))
         from sage.misc.sageinspect import sage_getsource
         return sage_getsource(self.func)
 
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         Returns the docstring for this object, which is just the
         docstring for the underlying function.  See
@@ -276,14 +281,13 @@ for a in args[0]))
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel(2)
             sage: def f(x, y):
-            ...       '''Test docstring'''
-            ...       return x + y
+            ....:     '''Test docstring'''
+            ....:     return x + y
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: sage_getdoc(p(f))
             'Test docstring\n'
         """
-        from sage.misc.sageinspect import sage_getdoc
-        return sage_getdoc(self.func)
+        return self.func.__doc__
 
 
 def parallel(p_iter='fork', ncpus=None, **kwds):
@@ -323,7 +327,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     of cpus (or cores, or hardware threads) is automatically detected::
 
         sage: @parallel
-        ... def f(n): return n*n
+        ....: def f(n): return n*n
         sage: f(10)
         100
         sage: sorted(list(f([1,2,3])))
@@ -332,27 +336,27 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     We use exactly two cpus::
 
         sage: @parallel(2)
-        ... def f(n): return n*n
+        ....: def f(n): return n*n
 
 
     We create a decorator that uses three subprocesses, and times out
     individual processes after 10 seconds::
 
         sage: @parallel(ncpus=3, timeout=10)
-        ... def fac(n): return factor(2^n-1)
-        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print X,Y
-        ((101,), {}) 7432339208719 * 341117531003194129
-        ((119,), {}) 127 * 239 * 20231 * 131071 * 62983048367 * 131105292137
-        ((151,), {}) 18121 * 55871 * 165799 * 2332951 * 7289088383388253664437433
-        ((197,), {}) 7487 * 26828803997912886929710867041891989490486893845712448833
-        ((209,), {}) 23 * 89 * 524287 * 94803416684681 * 1512348937147247 * 5346950541323960232319657
+        ....: def fac(n): return factor(2^n-1)
+        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))
+        (((101,), {}), 7432339208719 * 341117531003194129)
+        (((119,), {}), 127 * 239 * 20231 * 131071 * 62983048367 * 131105292137)
+        (((151,), {}), 18121 * 55871 * 165799 * 2332951 * 7289088383388253664437433)
+        (((197,), {}), 7487 * 26828803997912886929710867041891989490486893845712448833)
+        (((209,), {}), 23 * 89 * 524287 * 94803416684681 * 1512348937147247 * 5346950541323960232319657)
 
         sage: @parallel('multiprocessing')
-        ... def f(N): return N^2
+        ....: def f(N): return N^2
         sage: v = list(f([1,2,4])); v.sort(); v
         [(((1,), {}), 1), (((2,), {}), 4), (((4,), {}), 16)]
         sage: @parallel('reference')
-        ... def f(N): return N^2
+        ....: def f(N): return N^2
         sage: v = list(f([1,2,4])); v.sort(); v
         [(((1,), {}), 1), (((2,), {}), 4), (((4,), {}), 16)]
 
@@ -360,34 +364,34 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     when calling the parallel function::
 
         sage: @parallel
-        ... def f(a,b): return a*b
-        sage: for X, Y in sorted(list(f([(2,3),(3,5),(5,7)]))): print X, Y
-        ((2, 3), {}) 6
-        ((3, 5), {}) 15
-        ((5, 7), {}) 35
+        ....: def f(a,b): return a*b
+        sage: for X, Y in sorted(list(f([(2,3),(3,5),(5,7)]))): print((X, Y))
+        (((2, 3), {}), 6)
+        (((3, 5), {}), 15)
+        (((5, 7), {}), 35)
 
     For functions that take a single tuple as an argument, enclose it in an
     additional tuple at call time, to distinguish it as the first argument,
     as opposed to a tuple of arguments::
 
         sage: @parallel
-        ... def firstEntry(aTuple): return aTuple[0]
-        sage: for X, Y in sorted(list(firstEntry([((1,2,3,4),),((5,6,7,8),)]))): print X, Y
-        (((1, 2, 3, 4),), {}) 1
-        (((5, 6, 7, 8),), {}) 5
+        ....: def firstEntry(aTuple): return aTuple[0]
+        sage: for X, Y in sorted(list(firstEntry([((1,2,3,4),),((5,6,7,8),)]))): print((X, Y))
+        ((((1, 2, 3, 4),), {}), 1)
+        ((((5, 6, 7, 8),), {}), 5)
 
     The parallel decorator also works with methods, classmethods, and
     staticmethods.  Be sure to apply the parallel decorator after ("above")
     either the ``classmethod`` or ``staticmethod`` decorators::
 
         sage: class Foo(object):
-        ...       @parallel(2)
-        ...       def square(self, n):
-        ...           return n*n
-        ...       @parallel(2)
-        ...       @classmethod
-        ...       def square_classmethod(cls, n):
-        ...           return n*n
+        ....:     @parallel(2)
+        ....:     def square(self, n):
+        ....:         return n*n
+        ....:     @parallel(2)
+        ....:     @classmethod
+        ....:     def square_classmethod(cls, n):
+        ....:         return n*n
         sage: a = Foo()
         sage: a.square(3)
         9
@@ -405,7 +409,6 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
        Currently, parallel methods do not work with the
        multiprocessing implementation.
     """
-    import types
     if isinstance(p_iter, types.FunctionType):
         return Parallel()(p_iter)
     return Parallel(p_iter, ncpus, **kwds)
@@ -427,7 +430,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork:
+class Fork(object):
     """
     A ``fork`` decorator class.
     """
@@ -443,9 +446,9 @@ class Fork:
         EXAMPLES::
 
             sage: sage.parallel.decorate.Fork()
-            <sage.parallel.decorate.Fork instance at 0x...>
+            <sage.parallel.decorate.Fork object at 0x...>
             sage: sage.parallel.decorate.Fork(timeout=3)
-            <sage.parallel.decorate.Fork instance at 0x...>
+            <sage.parallel.decorate.Fork object at 0x...>
         """
         self.timeout = timeout
         self.verbose = verbose
@@ -507,10 +510,10 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: a = 5
         sage: @fork
-        ... def g(n, m):
-        ...       global a
-        ...       a = 10
-        ...       return factorial(n).ndigits() + m
+        ....: def g(n, m):
+        ....:     global a
+        ....:     a = 10
+        ....:     return factorial(n).ndigits() + m
         sage: g(5, m=5)
         8
         sage: a
@@ -520,7 +523,7 @@ def fork(f=None, timeout=0, verbose=False):
     second, no matter what::
 
         sage: @fork(timeout=1, verbose=True)
-        ... def g(n, m): return factorial(n).ndigits() + m
+        ....: def g(n, m): return factorial(n).ndigits() + m
         sage: g(5, m=5)
         8
         sage: g(10^7, m=5)
@@ -533,9 +536,9 @@ def fork(f=None, timeout=0, verbose=False):
         sage: gp.eval('a = 5')
         '5'
         sage: @fork()
-        ... def g():
-        ...       gp.eval('a = 10')
-        ...       return gp.eval('a')
+        ....: def g():
+        ....:     gp.eval('a = 10')
+        ....:     return gp.eval('a')
         sage: g()
         '10'
         sage: gp.eval('a')
@@ -547,16 +550,16 @@ def fork(f=None, timeout=0, verbose=False):
         sage: gp.eval('a = 15')
         '15'
         sage: @fork()
-        ... def g(): return gp.eval('a')
+        ....: def g(): return gp.eval('a')
         sage: g()
         'a'
 
     We illustrate that segfaulting subprocesses are no trouble at all::
 
-        sage: cython('def f(): print <char*>0')
+        sage: cython('def f(): print(<char*>0)')
         sage: @fork
-        ... def g(): f()
-        sage: print "this works"; g()
+        ....: def g(): f()
+        sage: print("this works"); g()
         this works...
         <BLANKLINE>
         ------------------------------------------------------------------------

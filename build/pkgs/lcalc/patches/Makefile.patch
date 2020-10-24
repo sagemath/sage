@@ -1,5 +1,17 @@
---- src.orig/src/Makefile	2012-08-08 23:21:56.274799100 +0200
-+++ src/src/Makefile	2012-08-08 23:21:45.430581000 +0200
+Notes on changes:
+Default to using pari
+Sanitize compiler settings and don't set CC as a c++ compiler for everything
+Sanitize compiler flags and use standard one
+Sanitize default compile rules
+Ad hock support for proper extension on windows and OS X
+Sanitize calls to make
+Remove the use of "PARI_LOCATION*" variables. Everything is in standard location and 
+patched to be found iin standard location.
+
+diff --git a/src/Makefile b/src/Makefile
+index 84e4e88..5d263a6 100644
+--- a/src/Makefile
++++ b/src/Makefile
 @@ -13,7 +13,7 @@
  # elliptic curve routines. Doing so disables the -e option.
  # g++ with -DINCLUDE_PARI sends a #define INCLUDE_PARI to the preprocessor.
@@ -9,26 +21,30 @@
  #PREPROCESSOR_DEFINE = -DUSE_LONG_DOUBLE
  
  #OPENMP_FLAG = -fopenmp
-@@ -29,7 +29,17 @@
+@@ -29,11 +29,21 @@ endif
  
  OS_NAME := $(shell uname)
  
 -CC = g++
++#CC = g++
+ #cc = /home/mrubinst/local/bin/gcc
+ #CC = /home/mrubinst/local/bin/g++
+ #LD = /home/mrubinst/local/bin/g++
+ 
 +ifneq (,$(findstring CYGWIN,$(OS_NAME)))
 +  OS_NAME := CYGWIN
 +endif
 +
-+#CC = g++
 +# Note: I've also changed various rules to use $CXX instead of $CC,
 +# since we mostly compile C++, not C, and $CC is by convention
 +# used for the *C* compiler.
 +CC ?= gcc
 +CXX ?= g++
 +
- #cc = /home/mrubinst/local/bin/gcc
- #CC = /home/mrubinst/local/bin/g++
- #LD = /home/mrubinst/local/bin/g++
-@@ -58,9 +68,7 @@
+ #CC = /Users/michaelrubinstein/math/L/packages/gcc4.3/usr/local/bin/g++
+ #EXTRA= -pg
+ #EXTRA = -ftree-vectorize -ftree-vectorizer-verbose=5 -funroll-loops
+@@ -58,29 +68,12 @@ ifeq ($(G5),TRUE)
     #MACHINE_SPECIFIC_FLAGS = -mpowerpc -mpowerpc64 -m64
  endif
  
@@ -39,27 +55,33 @@
  
  #warning- O2 doesn't help with -DUSE_LONG_DOUBLE on mac, and actually seems to hurt, making runtime longer
  #by a factor of 1.5
-@@ -68,12 +76,12 @@
  
- ifeq ($(PARI_DEFINE),-DINCLUDE_PARI)
-     #location of pari.h.
+ 
+-ifeq ($(PARI_DEFINE),-DINCLUDE_PARI)
+-    #location of pari.h.
 -    LOCATION_PARI_H = /usr/local/include/pari #usual location
-+    LOCATION_PARI_H = $(SAGE_LOCAL)/include/pari
- 
-     #location of libpari.a or of libpari.so
-     #depending on whether static or dynamic libraries are being used.
-     #On mac os x it's the former, on linux I think usually the latter.
+-
+-    #location of libpari.a or of libpari.so
+-    #depending on whether static or dynamic libraries are being used.
+-    #On mac os x it's the former, on linux I think usually the latter.
 -    LOCATION_PARI_LIBRARY = /usr/local/lib #usual location
-+    LOCATION_PARI_LIBRARY = $(SAGE_LOCAL)/lib
- else
-     #supplied as a dummy so as to avoid more ifeq's below
-     LOCATION_PARI_H = .
-@@ -88,26 +96,12 @@
+-else
+-    #supplied as a dummy so as to avoid more ifeq's below
+-    LOCATION_PARI_H = .
+-    LOCATION_PARI_LIBRARY = .
+-endif
+-
+-
+ 
+ #INCLUDEFILES= -I../include -I../../packages/gcc4.3/usr/local/include
+ INCLUDEFILES= -I../include
+@@ -88,27 +81,12 @@ INCLUDEFILES= -I../include
  #For Mac os x we omit shared library options
  
  ifeq ($(OS_NAME),Darwin)
 -    LDFLAGS2 =
-     DYN_OPTION=dynamiclib
+-    DYN_OPTION=dynamiclib
++    DYN_OPTION=dynamiclib -Wl,-headerpad_max_install_names
  else
 -    LDFLAGS1 = -Xlinker -export-dynamic #not sure why pari calls these when linking but on the web I found
 -    #'Libtool provides the `-export-dynamic' link flag (see section Link mode), which does this declaration.
@@ -78,11 +100,12 @@
 -else
 -    LDFLAGS = $(LDFLAGS2)
 -endif
-+LDFLAGS := -L$(LOCATION_PARI_LIBRARY) -lpari -lgmp $(LDFLAGS)
+-
++PARI_LIBS = -L$(SAGE_LOCAL)/lib -lpari -lgmp -lm
  
  
- 
-@@ -129,47 +123,64 @@
+ #NOTES:
+@@ -129,47 +107,63 @@ endif
  #become clear which libraries the computer can find.
  
  
@@ -123,7 +146,7 @@
 +#	$(MAKE) print_vars
 +	$(MAKE) libLfunction$(LIBEXT)
 +	$(MAKE) lcalc$(EXEEXT)
-+	$(MAKE) examples
++	$(MAKE) examples$(EXEEXT)
 +#	$(MAKE) find_L
 +#	$(MAKE) test
  
@@ -133,28 +156,28 @@
 -lcalc: $(OBJECTS)
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) $(OBJECTS) $(LDFLAGS) -o lcalc $(GMP_FLAGS)
 +lcalc$(EXEEXT): $(OBJECTS)
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(OBJECTS) $(LDFLAGS) -o lcalc$(EXEEXT) $(GMP_FLAGS)
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(LDFLAGS) $(OBJECTS) -o lcalc$(EXEEXT) $(PARI_LIBS) $(GMP_FLAGS)
  
- examples:
+-examples:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) example_programs/example.cc libLfunction.so -o example_programs/example $(GMP_FLAGS)
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/example.cc libLfunction$(LIBEXT) -o example_programs/example$(EXEEXT) $(GMP_FLAGS)
-+
++examples$(EXEEXT):
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/example.cc $(LDFLAGS) libLfunction$(LIBEXT) -o example_programs/example$(EXEEXT) $(PARI_LIBS) $(GMP_FLAGS)
  
-+proc$(EXEEXT):
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/proc.cc libLfunction$(LIBEXT) -o example_programs/proc$(EXEEXT) $(GMP_FLAGS)
  
 -proc:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) example_programs/proc.cc libLfunction.so -o example_programs/proc $(GMP_FLAGS)
-+test$(EXEEXT):
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/test.cc libLfunction$(LIBEXT) -o example_programs/test$(EXEEXT) $(GMP_FLAGS)
++proc$(EXEEXT):
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/proc.cc $(LDFLAGS) libLfunction$(LIBEXT) -o example_programs/proc$(EXEEXT) $(PARI_LIBS) $(GMP_FLAGS)
  
 -test:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) example_programs/test.cc libLfunction.so -o example_programs/test $(GMP_FLAGS)
-+find_L$(EXEEXT):
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) find_L_functions/find_L_functions.cc libLfunction$(LIBEXT) -o find_L_functions/find_L$(EXEEXT) $(GMP_FLAGS)
++test$(EXEEXT):
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) example_programs/test.cc $(LDFLAGS) libLfunction$(LIBEXT) -o example_programs/test$(EXEEXT) $(PARI_LIBS) $(GMP_FLAGS)
  
 -find_L:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) find_L_functions/find_L_functions.cc libLfunction.so -o find_L_functions/find_L $(GMP_FLAGS)
++find_L$(EXEEXT):
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) find_L_functions/find_L_functions.cc $(LDFLAGS) libLfunction$(LIBEXT) -o find_L_functions/find_L$(EXEEXT) $(PARI_LIBS) $(GMP_FLAGS)
  
  .cc.o:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -c $<
@@ -163,48 +186,44 @@
 +# Warning: We (Sage) add $CXXFLAGS to CXXFLAGS above.
  .c.o:
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -c $<
-+	$(CC) $(CXXFLAGS) $(INCLUDEFILES) -c $<
++	$(CC) $(CFLAGS) $(INCLUDEFILES) -c $<
  
  
  Lglobals.o: ../include/Lglobals.h ../include/Lcommon.h ../include/Lcomplex.h ../include/Lnumeric.h ../include/Lint_complex.h
-@@ -227,7 +238,7 @@
+@@ -227,7 +221,7 @@ Lcommandline_elliptic.o: ../include/Lnumberzeros.h ../include/Lgram.h
  Lcommandline_elliptic.o: ../include/Lvalue.h ../include/Lfind_zeros.h
  Lcommandline_elliptic.o: ../include/Lcommandline_numbertheory.h
  Lcommandline_elliptic.o: ../include/Lcommandline_globals.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline_elliptic.cc
  
  Lcommandline_twist.o: ../include/Lcommandline_twist.h ../include/L.h
  Lcommandline_twist.o: ../include/Lglobals.h ../include/Lcommon.h ../include/Lcomplex.h ../include/Lnumeric.h ../include/Lint_complex.h
-@@ -239,10 +250,10 @@
+@@ -239,7 +233,7 @@ Lcommandline_twist.o: ../include/Lvalue.h ../include/Lfind_zeros.h
  Lcommandline_twist.o: ../include/Lcommandline_numbertheory.h
  Lcommandline_twist.o: ../include/Lcommandline_globals.h
  Lcommandline_twist.o: ../include/Lcommandline_elliptic.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_twist.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline_twist.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline_twist.cc
  
  cmdline.o: ../include/cmdline.h ../include/getopt.h
--#$(CC) $(CCFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
-+#$(CC) $(CXXFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
- 
- 
- Lcommandline.o: ../include/Lcommandline.h ../include/L.h
-@@ -258,21 +269,21 @@
+ #$(CC) $(CCFLAGS) $(INCLUDEFILES) -DHAVE_LONG_LONG -c cmdline.c
+@@ -258,21 +252,21 @@ Lcommandline.o: ../include/Lcommandline_misc.h
  Lcommandline.o: ../include/Lcommandline_elliptic.h
  Lcommandline.o: ../include/Lcommandline_twist.h
  Lcommandline.o: ../include/Lcommandline_values_zeros.h
 -	$(CC) $(CCFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline.cc
-+	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) -I$(LOCATION_PARI_H) $(PARI_DEFINE) -c Lcommandline.cc
++	$(CXX) $(CXXFLAGS) $(INCLUDEFILES) $(PARI_DEFINE) -c Lcommandline.cc
  
  
 -libLfunction.so: $(OBJ_L)
 -	g++ -$(DYN_OPTION)  -o libLfunction.so $(OBJ_L)
 +libLfunction$(LIBEXT): $(OBJ_L)
-+	$(CXX) -$(DYN_OPTION) $(CXXFLAG64) -o libLfunction$(LIBEXT) $(OBJ_L)
++	$(CXX) -$(DYN_OPTION) $(CXXFLAGS) -o libLfunction$(LIBEXT) $(LDFLAGS) $(OBJ_L) $(PARI_LIBS)
  
  clean:
 -	rm -f *.o lcalc libLfunction.so example_programs/example
-+	rm -f *.o lcalc libLfunction$(LIBEXT) example_programs/example
++	rm -f *.o lcalc$(EXEEXT) libLfunction$(LIBEXT) example_programs/example$(EXEEXT)
  
  install:
 -	cp -f lcalc $(INSTALL_DIR)/bin/.
@@ -212,7 +231,7 @@
 -	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
 +	cp -f lcalc$(EXEEXT) $(INSTALL_DIR)/bin/.
 +	cp -f libLfunction$(LIBEXT) $(INSTALL_DIR)/lib/.
-+	cp -rf ../include $(INSTALL_DIR)/include/libLfunction
++	cp -rf ../include $(INSTALL_DIR)/include/Lfunction
  
  
  SRCS = Lcommandline.cc Lcommandline_elliptic.cc Lcommandline_globals.cc Lcommandline_misc.cc Lcommandline_numbertheory.cc Lcommandline_twist.cc Lcommandline_values_zeros.cc Lgamma.cc Lglobals.cc Lmisc.cc Lriemannsiegel.cc Lriemannsiegel_blfi.cc cmdline.c

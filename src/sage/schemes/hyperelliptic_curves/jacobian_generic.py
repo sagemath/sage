@@ -1,17 +1,19 @@
 """
-Jacobian of a General Hyperelliptic Curve
+Jacobian of a general hyperelliptic curve
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from __future__ import print_function, absolute_import
 
 from sage.rings.all import Integer
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
-import jacobian_homset
-import jacobian_morphism
+from . import jacobian_homset
+from . import jacobian_morphism
+
 
 class HyperellipticJacobian_generic(Jacobian_generic):
     """
@@ -77,11 +79,11 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         (u^2, v + 1)
         (u, v + 1)
         (1)
-        sage: Q1 = J(K)(P1); print "%s -> %s"%( P1, Q1 )
+        sage: Q1 = J(K)(P1); print("%s -> %s"%( P1, Q1 ))
         (0 : 1 : 1) -> (u, v - 1)
-        sage: Q2 = J(K)(P2); print "%s -> %s"%( P2, Q2 )
+        sage: Q2 = J(K)(P2); print("%s -> %s"%( P2, Q2 ))
         (2 : 4*t - 1 : 1) -> (u - 2, v - 4*t + 1)
-        sage: Q3 = J(K)(P3); print "%s -> %s"%( P3, Q3 )
+        sage: Q3 = J(K)(P3); print("%s -> %s"%( P3, Q3 ))
         (-1/2 : 7/8*t + 1/4 : 1) -> (u + 1/2, v - 7/8*t - 1/4)
         sage: R.<x> = PolynomialRing(K)
         sage: Q4 = J(K)([x^2-t,R(1)])
@@ -96,20 +98,37 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         (u^2 + 5663300808399913890623/14426454798950909645952*u - 26531814176395676231273/28852909597901819291904, v + (253155440321645614070860868199103/2450498420175733688903836378159104*t + 1/2)*u + 2427708505064902611513563431764311/4900996840351467377807672756318208*t)
         sage: R4 = Q4*5; R4
         (u^2 - 3789465233/116983808*u - 267915823/58491904, v + (233827256513849/1789384327168*t + 1/2)*u + 15782925357447/894692163584*t)
-        sage: # Thus we find the following identity:
+
+    Thus we find the following identity::
+
         sage: 5*Q2 + 5*Q4
         (1)
-        sage: # Moreover the following relation holds in the 5-torsion subgroup:
+
+    Moreover the following relation holds in the 5-torsion subgroup::
+
         sage: Q2 + Q4 == 2*Q1
         True
-    """
 
+    TESTS::
+
+        sage: k.<a> = GF(9); R.<x> = k[]
+        sage: J1 = HyperellipticCurve(x^3 + x - 1, x+a).jacobian()
+        sage: FF = FiniteField(2003)
+        sage: R.<x> = PolynomialRing(FF)
+        sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
+        sage: J2 = HyperellipticCurve(f).jacobian()
+        sage: J1 == J1
+        True
+        sage: J1 == J2
+        False
+    """
     def dimension(self):
         """
         Return the dimension of this Jacobian.
 
         OUTPUT:
-            Integer
+
+        Integer
 
         EXAMPLES::
 
@@ -119,7 +138,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             sage: g = HyperellipticCurve(x^6 + x - 1, x+a).jacobian().dimension(); g
             2
             sage: type(g)
-            <type 'sage.rings.integer.Integer'>
+            <... 'sage.rings.integer.Integer'>
         """
         return Integer(self.curve().genus())
 
@@ -134,10 +153,3 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     def _point(self, *args, **kwds):
         return jacobian_morphism.JacobianMorphism_divisor_class_field(*args, **kwds)
-
-    def _cmp_(self,other):
-        if self.curve() == other.curve():
-            return 0
-        else:
-            return -1
-

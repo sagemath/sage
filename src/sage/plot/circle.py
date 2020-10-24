@@ -1,6 +1,7 @@
 """
 Circles
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -17,10 +18,11 @@ Circles
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from primitive import GraphicPrimitive
+from .primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 from math import sin, cos, pi
+
 
 class Circle(GraphicPrimitive):
     """
@@ -29,13 +31,13 @@ class Circle(GraphicPrimitive):
 
     INPUT:
 
-    - x - `x`-coordinate of center of Circle
+    - x -- `x`-coordinate of center of Circle
 
-    - y - `y`-coordinate of center of Circle
+    - y -- `y`-coordinate of center of Circle
 
-    - r - radius of Circle object
+    - r -- radius of Circle object
 
-    - options - dict of valid plot options to pass to constructor
+    - options -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -107,17 +109,17 @@ class Circle(GraphicPrimitive):
             sage: p[0]._allowed_options()['facecolor']
             '2D only: The color of the face as an RGB tuple.'
         """
-        return {'alpha':'How transparent the figure is.',
-                'fill':'Whether or not to fill the circle.',
-                'legend_label':'The label for this item in the legend.',
-                'legend_color':'The color of the legend text.',
-                'thickness':'How thick the border of the circle is.',
-                'edgecolor':'2D only: The color of the edge as an RGB tuple.',
-                'facecolor':'2D only: The color of the face as an RGB tuple.',
-                'rgbcolor':'The color (edge and face) as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'zorder':'2D only: The layer level in which to draw',
-                'linestyle':"2D only: The style of the line, which is one of "
+        return {'alpha': 'How transparent the figure is.',
+                'fill': 'Whether or not to fill the circle.',
+                'legend_label': 'The label for this item in the legend.',
+                'legend_color': 'The color of the legend text.',
+                'thickness': 'How thick the border of the circle is.',
+                'edgecolor': '2D only: The color of the edge as an RGB tuple.',
+                'facecolor': '2D only: The color of the face as an RGB tuple.',
+                'rgbcolor': 'The color (edge and face) as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'zorder': '2D only: The layer level in which to draw',
+                'linestyle': "2D only: The style of the line, which is one of "
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively.",
                 'clip': 'Whether or not to clip the circle.'}
@@ -184,6 +186,11 @@ class Circle(GraphicPrimitive):
             sage: sum([circle((random(),random()), random()).plot3d(z=random()) for _ in range(20)])
             Graphics3d Object
 
+        .. PLOT::
+
+            P = sum([circle((random(),random()), random()).plot3d(z=random()) for _ in range(20)])
+            sphinx_plot(P)
+
         These examples are explicit, and pass z to this method::
 
             sage: C = circle((2,pi), 2, hue=.8, alpha=.3, fill=True)
@@ -213,11 +220,12 @@ class Circle(GraphicPrimitive):
         xdata = [x+r*cos(t*dt) for t in range(n+1)]
         ydata = [y+r*sin(t*dt) for t in range(n+1)]
         if fill:
-            from polygon import Polygon
+            from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
         else:
-            from line import Line
+            from .line import Line
             return Line(xdata, ydata, options).plot3d().translate((0,0,z))
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, edgecolor='blue', facecolor='blue', linestyle='solid',
@@ -260,11 +268,20 @@ def circle(center, radius, **options):
         sage: c
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(circle((1,1), 1))
+
     ::
 
         sage: c = circle((1,1), 1, rgbcolor=(1,0,0), linestyle='-.')
         sage: c
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        c = circle((1,1), 1, rgbcolor=(1,0,0), linestyle='-.')
+        sphinx_plot(c)
 
     We can also use this command to plot three-dimensional circles parallel
     to the `xy`-plane::
@@ -275,6 +292,11 @@ def circle(center, radius, **options):
         sage: type(c)
         <class 'sage.plot.plot3d.base.TransformGroup'>
 
+    .. PLOT::
+
+        c = circle((1,1,3), 1, rgbcolor=(1,0,0))
+        sphinx_plot(c)
+
     To correct the aspect ratio of certain graphics, it is necessary
     to show with a ``figsize`` of square dimensions::
 
@@ -283,26 +305,46 @@ def circle(center, radius, **options):
     Here we make a more complicated plot, with many circles of different colors::
 
         sage: g = Graphics()
-        sage: step=6; ocur=1/5; paths=16;
+        sage: step=6; ocur=1/5; paths=16
         sage: PI = math.pi    # numerical for speed -- fine for graphics
         sage: for r in range(1,paths+1):
-        ...       for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:
-        ...           g += circle((x,y), ocur, rgbcolor=hue(r/paths))
-        ...       rnext = (r+1)^2
-        ...       ocur = (rnext-r)-ocur
-        ...
+        ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:
+        ....:         g += circle((x,y), ocur, rgbcolor=hue(r/paths))
+        ....:     rnext = (r+1)^2
+        ....:     ocur = (rnext-r)-ocur
         sage: g.show(xmin=-(paths+1)^2, xmax=(paths+1)^2, ymin=-(paths+1)^2, ymax=(paths+1)^2, figsize=[6,6])
+
+    .. PLOT::
+
+        g = Graphics()
+        step=6; ocur=1/5; paths=16;
+        PI = math.pi    # numerical for speed -- fine for graphics
+        for r in range(1,paths+1):
+             for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:
+                 g += circle((x,y), ocur, rgbcolor=hue(r*1.0/paths))
+             rnext = (r+1)**2
+             ocur = (rnext-r)-ocur
+        g.set_axes_range(-(paths+1)**2,(paths+1)**2,-(paths+1)**2,(paths+1)**2)
+        sphinx_plot(g)
 
     Note that the ``rgbcolor`` option overrides the other coloring options.
     This produces red fill in a blue circle::
 
-        sage: circle((2,3), 1, fill=True, edgecolor='blue')
+        sage: circle((2,3), 1, fill=True, edgecolor='blue', facecolor='red')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(circle((2,3), 1, fill=True, edgecolor='blue', facecolor='red'))
 
     This produces an all-green filled circle::
 
         sage: circle((2,3), 1, fill=True, edgecolor='blue', rgbcolor='green')
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(circle((2,3), 1, fill=True, edgecolor='blue', rgbcolor='green'))
 
     The option ``hue`` overrides *all* other options, so be careful with its use.
     This produces a purplish filled circle::
@@ -310,13 +352,30 @@ def circle(center, radius, **options):
         sage: circle((2,3), 1, fill=True, edgecolor='blue', rgbcolor='green', hue=.8)
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        C = circle((2,3), 1, fill=True, edgecolor='blue', rgbcolor='green', hue=.8)
+        sphinx_plot(C)
+
     And circles with legends::
 
         sage: circle((4,5), 1, rgbcolor='yellow', fill=True, legend_label='the sun').show(xmin=0, ymin=0)
 
+    .. PLOT::
+
+        C = circle((4,5), 1, rgbcolor='yellow', fill=True, legend_label='the sun')
+        C.set_axes_range(xmin=0, ymin=0)
+        sphinx_plot(C)
+
     ::
 
         sage: circle((4,5), 1, legend_label='the sun', legend_color='yellow').show(xmin=0, ymin=0)
+
+    .. PLOT::
+
+        C = circle((4,5), 1, legend_label='the sun', legend_color='yellow')
+        C.set_axes_range(xmin=0, ymin=0)
+        sphinx_plot(C)
 
     Extra options will get passed on to show(), as long as they are valid::
 
@@ -358,9 +417,9 @@ def circle(center, radius, **options):
     if options['legend_label']:
         g.legend(True)
         g._legend_colors = [options['legend_color']]
-    if len(center)==2:
+    if len(center) == 2:
         return g
-    elif len(center)==3:
+    elif len(center) == 3:
         return g[0].plot3d(z=center[2])
     else:
         raise ValueError('The center of a plotted circle should have two or three coordinates.')

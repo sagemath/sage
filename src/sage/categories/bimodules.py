@@ -10,6 +10,7 @@ Bimodules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from __future__ import print_function
 
 from sage.categories.category import Category, CategoryWithParameters
 from sage.categories.left_modules import LeftModules
@@ -70,15 +71,25 @@ class Bimodules(CategoryWithParameters):
         EXAMPLES::
 
             sage: Bimodules(QQ,ZZ)._make_named_class_key('parent_class')
-            (Category of quotient fields,
-             Join of Category of euclidean domains and Category of infinite enumerated sets)
+            (Join of Category of number fields
+                 and Category of quotient fields
+                 and Category of metric spaces,
+             Join of Category of euclidean domains
+                 and Category of infinite enumerated sets
+                 and Category of metric spaces)
+
 
             sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
             (Category of fields,
-             Join of Category of euclidean domains and Category of infinite enumerated sets)
+             Join of Category of euclidean domains
+             and Category of infinite enumerated sets
+             and Category of metric spaces)
 
             sage: Bimodules(QQ, Rings())._make_named_class_key('element_class')
-            (Category of quotient fields, Category of rings)
+            (Join of Category of number fields
+                 and Category of quotient fields
+                 and Category of metric spaces,
+             Category of rings)
 
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
             (Category of fields, Category of rings)
@@ -96,7 +107,8 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules.an_instance()
             Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
         """
-        from sage.rings.all import QQ, RR
+        from sage.rings.rational_field import QQ
+        from sage.rings.real_mpfr import RR
         return cls(QQ, RR)
 
     def _repr_object_names(self):
@@ -134,12 +146,12 @@ class Bimodules(CategoryWithParameters):
         return self._right_base_ring
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
 
-            sage: print Bimodules(QQ, ZZ)._latex_()
+            sage: print(Bimodules(QQ, ZZ)._latex_())
             {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex

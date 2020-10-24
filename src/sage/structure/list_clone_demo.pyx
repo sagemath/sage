@@ -47,7 +47,7 @@ cdef class IncreasingArray(ClonableArray):
         cdef int i
         for i in range(len(self)-1):
             if self._getitem(i) > self._getitem(i+1):
-                raise ValueError, "array is not increasing"
+                raise ValueError("array is not increasing")
 
 
 class IncreasingArrays(UniqueRepresentation, Parent):
@@ -59,7 +59,7 @@ class IncreasingArrays(UniqueRepresentation, Parent):
 
         sage: from sage.structure.list_clone_demo import IncreasingArrays
         sage: IncreasingArrays().element_class
-        <type 'sage.structure.list_clone_demo.IncreasingArray'>
+        <... 'sage.structure.list_clone_demo.IncreasingArray'>
     """
 
     def __init__(self):
@@ -68,7 +68,7 @@ class IncreasingArrays(UniqueRepresentation, Parent):
 
             sage: from sage.structure.list_clone_demo import IncreasingArrays
             sage: IncreasingArrays()
-            <class 'sage.structure.list_clone_demo.IncreasingArrays_with_category'>
+            <sage.structure.list_clone_demo.IncreasingArrays_with_category object at ...>
             sage: IncreasingArrays() == IncreasingArrays()
             True
         """
@@ -97,7 +97,7 @@ class IncreasingLists(IncreasingArrays):
 
         sage: from sage.structure.list_clone_demo import IncreasingLists
         sage: IncreasingLists().element_class
-        <type 'sage.structure.list_clone_demo.IncreasingList'>
+        <... 'sage.structure.list_clone_demo.IncreasingList'>
     """
     Element = IncreasingList
 
@@ -130,7 +130,7 @@ cdef class IncreasingList(ClonableList):
         cdef int i
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError , "array is not increasing"
+                raise ValueError("array is not increasing")
 
 
 
@@ -165,7 +165,7 @@ cdef class IncreasingIntArray(ClonableIntArray):
             return
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError, "array is not increasing"
+                raise ValueError("array is not increasing")
 
 class IncreasingIntArrays(IncreasingArrays):
     """
@@ -176,7 +176,7 @@ class IncreasingIntArrays(IncreasingArrays):
 
         sage: from sage.structure.list_clone_demo import IncreasingIntArrays
         sage: IncreasingIntArrays().element_class
-        <type 'sage.structure.list_clone_demo.IncreasingIntArray'>
+        <... 'sage.structure.list_clone_demo.IncreasingIntArray'>
     """
     Element = IncreasingIntArray
 
@@ -229,7 +229,7 @@ cdef class SortedList(NormalizedClonableList):
         """
         for i in range(len(self)-1):
             if self._getitem(i) >= self._getitem(i+1):
-                raise ValueError, "list is not strictly increasing"
+                raise ValueError("list is not strictly increasing")
 
 class SortedLists(IncreasingLists):
     """

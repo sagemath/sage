@@ -1,0 +1,41 @@
+diff --git a/include/Lcommon.h b/include/Lcommon.h
+index 1b3be43..bf40532 100644
+--- a/include/Lcommon.h
++++ b/include/Lcommon.h
+@@ -48,7 +48,7 @@ const bool outputSeries=true;	  // Whether to output the coefficients or just th
+ 
+ // Loop i from m to n
+ // Useful in tidying up most for loops
+-#define loop(i,m,n) for(typeof(m) i=(m); i!=(n); i++)
++#define loop(i,m,n) for(auto i=(m); i!=(n); i++)
+ 
+ // A class for calculations involving polynomials of small degree
+ // Not efficient enough for huge polynomials
+diff --git a/include/Lcommon_ld.h b/include/Lcommon_ld.h
+index 86ae4df..33c560c 100644
+--- a/include/Lcommon_ld.h
++++ b/include/Lcommon_ld.h
+@@ -53,7 +53,7 @@ const bool outputSeries=true;	  // Whether to output the coefficients or just th
+ 
+ // Loop i from m to n
+ // Useful in tidying up most for loops
+-#define loop(i,m,n) for(typeof(m) i=(m); i!=(n); i++)
++#define loop(i,m,n) for(auto i=(m); i!=(n); i++)
+ 
+ // A class for calculations involving polynomials of small degree
+ // Not efficient enough for huge polynomials
+diff --git a/include/Lglobals.h b/include/Lglobals.h
+index 60002e4..ca2606c 100644
+--- a/include/Lglobals.h
++++ b/include/Lglobals.h
+@@ -24,9 +24,9 @@
+ #ifndef Lglobals_H
+ #define Lglobals_H
+ 
++#include <valarray>
+ using namespace std;
+ 
+-#include <valarray>
+ #ifdef USE_MPFR
+     #include "Lgmpfrxx.h"
+     typedef mpfr_class Double;

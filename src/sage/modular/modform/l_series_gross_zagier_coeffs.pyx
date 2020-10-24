@@ -1,11 +1,11 @@
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"
+from cysignals.memory cimport check_allocarray, check_calloc, sig_free
+from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.rings.fast_arith cimport arith_llong
 cdef arith_llong arith = arith_llong()
 
 from sage.rings.all import ZZ, PowerSeriesRing
-from sage.rings.arith import kronecker_symbol
+from sage.arith.all import kronecker_symbol
 
 from libc.math cimport ceil, floor, sqrt
 from libc.string cimport memcpy
@@ -41,7 +41,7 @@ def bqf_theta_series(Q, long bound, var=None):
 
     .. MATH::
 
-        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-infty}^{\infy} r(n)q^n
+        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
 
     where `r(n)` give the number of way `n` is represented by `f`.
 
@@ -68,7 +68,7 @@ def bqf_theta_series(Q, long bound, var=None):
     a, b, c = Q
     cdef long* terms = bqf_theta_series_c(NULL, bound, a, b, c)
     L = [terms[i] for i from 0 <= i <= bound]
-    sage_free(terms)
+    sig_free(terms)
     return to_series(L, var)
 
 
@@ -152,7 +152,7 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
     try:
         terms = <long*>check_allocarray(bound, sizeof(long))
     except MemoryError:
-        sage_free(con_terms)
+        sig_free(con_terms)
         raise
     i = 0
     for an in an_list:
@@ -172,6 +172,6 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
                 n += 1
     sig_off()
     L = [terms[i] for i in range(bound - 1)]
-    sage_free(con_terms)
-    sage_free(terms)
+    sig_free(con_terms)
+    sig_free(terms)
     return to_series(L, var)

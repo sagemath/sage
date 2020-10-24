@@ -1,3 +1,6 @@
+# distutils: libraries = ntl gmp m
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -13,20 +16,19 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
 include 'misc.pxi'
 include 'decl.pxi'
 import weakref
 
-from sage.rings.integer_ring import IntegerRing
+from sage.ext.cplusplus cimport ccrepr
+from sage.rings.integer cimport Integer
 
-ZZ_sage = IntegerRing()
 
-
-cdef class ntl_ZZ_pContext_class:
+cdef class ntl_ZZ_pContext_class(object):
     def __init__(self, ntl_ZZ v):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             # You can construct contexts manually.
             sage: c = ntl.ZZ_pContext(11)
             sage: n1 = ntl.ZZ_p(12,c)
@@ -47,16 +49,14 @@ cdef class ntl_ZZ_pContext_class:
         pass
 
     def __cinit__(self, ntl_ZZ v):
-        ZZ_pContext_construct_ZZ(&self.x, &(<ntl_ZZ>v).x)
+        self.x = ZZ_pContext_c(v.x)
         self.p = v
         self.p_bits = self.p._integer_().nbits()
 
-    def __dealloc__(self):
-        ZZ_pContext_destruct(&self.x)
-
     def __reduce__(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(13)
             sage: loads(dumps(c)) is c
             True
@@ -67,10 +67,11 @@ cdef class ntl_ZZ_pContext_class:
         """
         Returns a print representation of self.
 
-        EXAMPLES:
-        sage: c = ntl.ZZ_pContext(7)
-        sage: c
-        NTL modulus 7
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(7)
+            sage: c
+            NTL modulus 7
         """
         return "NTL modulus %s"%(self.p)
 
@@ -82,7 +83,8 @@ cdef class ntl_ZZ_pContext_class:
         Return the current modulus associated to this
         context.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c = ntl.ZZ_pContext(7)
             sage: c.modulus()
             7
@@ -93,12 +95,12 @@ cdef class ntl_ZZ_pContext_class:
             sage: c.modulus() == 10^30
             True
         """
-        return ZZ_sage(self.p)
-
+        return Integer(self.p)
 
     def restore(self):
         """
-        EXAMPLES:
+        EXAMPLES::
+
             sage: c1 = ntl.ZZ_p(5,92) ; c2 = ntl.ZZ_p(7,92)
             sage: c1+c2
             12
@@ -111,7 +113,48 @@ cdef class ntl_ZZ_pContext_class:
     cdef void restore_c(self):
         self.x.restore()
 
-cdef class ntl_ZZ_pContext_factory:
+    cpdef void _assert_is_current_modulus(self) except *:
+        """
+        Assert that is currently-set NTL modulus.
+
+        Mostly for debugging purposes. If false, an assertion is raised. This method segfaults if
+        the NTL modulus has never been set before.
+
+        EXAMPLES::
+
+            sage: c1 = ntl.ZZ_pContext(7)
+            sage: c2 = ntl.ZZ_pContext(5)
+            sage: c1.restore()
+            sage: c1._assert_is_current_modulus()
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 7
+            sage: c2.restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 7 != 5
+            sage: c2._assert_is_current_modulus()
+            sage: ntl.ZZ_pContext(3).restore()
+            sage: c1._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 7 != 3
+            sage: c2._assert_is_current_modulus()
+            Traceback (most recent call last):
+            ...
+            AssertionError: modulus mismatch: 5 != 3
+        """
+        if self.p.x == ntl_ZZ_p_current_modulus():
+            return
+        raise AssertionError('modulus mismatch: {} != {}'.format(
+            self.p,
+            ccrepr(ntl_ZZ_p_current_modulus())))
+
+
+cdef class ntl_ZZ_pContext_factory(object):
+
     def __init__(self):
         self.context_dict = {}
 
@@ -131,12 +174,16 @@ cdef class ntl_ZZ_pContext_factory:
         self.context_dict[v] = weakref.ref(context)
         return context
 
+
 ZZ_pContext_factory = ntl_ZZ_pContext_factory()
+
 
 def ntl_ZZ_pContext( v ):
     """
     Create a new ZZ_pContext.
-    EXAMPLES:
+
+    EXAMPLES::
+
         sage: c = ntl.ZZ_pContext(178)
         sage: n1 = ntl.ZZ_p(212,c)
         sage: n1
@@ -144,5 +191,5 @@ def ntl_ZZ_pContext( v ):
     """
     v = ntl_ZZ(v)
     if (v < ntl_ZZ(2)):
-        raise ValueError, "%s is not a valid modulus."%v
+        raise ValueError("%s is not a valid modulus." % v)
     return (<ntl_ZZ_pContext_factory>ZZ_pContext_factory).make_c(v)

@@ -1,0 +1,10 @@
+cat LICENSE
+echo "**************************************************"
+echo "NOTE that csdp's License is NOT GPL-compatible"
+echo "**************************************************"
+
+
+cd src
+sdh_configure CPPFLAGS=-DNOSHORTS
+sdh_make
+sdh_make_install

@@ -1,6 +1,7 @@
 """
 Modular Forms over a Non-minimal Base Ring
 """
+from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -10,9 +11,10 @@ Modular Forms over a Non-minimal Base Ring
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-import ambient
-from cuspidal_submodule import CuspidalSubmodule_R
+from . import ambient
+from .cuspidal_submodule import CuspidalSubmodule_R
 from sage.rings.all import ZZ
+from sage.misc.cachefunc import cached_method
 
 class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
     def __init__(self, M, base_ring):
@@ -32,8 +34,9 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             self.__R_character = M.character().change_ring(base_ring)
         else:
             self.__R_character = None
-        ambient.ModularFormsAmbient.__init__(self, M.group(), M.weight(), base_ring, M.character())
+        ambient.ModularFormsAmbient.__init__(self, M.group(), M.weight(), base_ring, M.character(), M._eis_only)
 
+    @cached_method(key=lambda self,sign: ZZ(sign)) # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self,sign=0):
         r"""
         Return the space of modular symbols attached to this space, with the given sign (default 0).
@@ -51,15 +54,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             True
         """
         sign = ZZ(sign)
-        try:
-            return self.__modular_symbols[sign]
-        except AttributeError:
-            self.__modular_symbols = {}
-        except KeyError:
-            pass
-        M = self.__M.modular_symbols(sign).change_ring(self.base_ring())
-        self.__modular_symbols[sign] = M
-        return M
+        return self.__M.modular_symbols(sign).change_ring(self.base_ring())
 
     def _repr_(self):
         """
@@ -132,7 +127,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:
-            # this returns a basis of q-expansions, without guaranteeing that 
+            # this returns a basis of q-expansions, without guaranteeing that
             # the first vectors form a basis of the cuspidal subspace
             # TODO: bring this in line with the other cases
             # simply using the above code fails because free modules over
@@ -144,7 +139,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         r"""
         Return the cuspidal subspace of this space.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: C = CuspForms(7, 4, base_ring=CyclotomicField(5)) # indirect doctest
             sage: type(C)
@@ -157,7 +152,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         r"""
         Return this modular forms space with the base ring changed to the ring R.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: chi = DirichletGroup(109, CyclotomicField(3)).0
             sage: M9 = ModularForms(chi, 2, base_ring = CyclotomicField(9))

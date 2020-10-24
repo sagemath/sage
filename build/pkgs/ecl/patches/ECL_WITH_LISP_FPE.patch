@@ -1,0 +1,47 @@
+From 75877dd8f0d534552284ba4380ba65baa74f028f Mon Sep 17 00:00:00 2001
+From: Marius Gerbershagen <marius.gerbershagen@gmail.com>
+Date: Sun, 28 Jun 2020 11:02:15 +0200
+Subject: [PATCH] fpe: fix ECL_WITH_LISP_FPE macro
+
+We can't use ecl_process_env_unsafe() == NULL to check if ECL has
+booted because the return value of ecl_process_env_unsafe is
+unpredictable before ECL has booted. The reason is that
+ecl_process_env_unsafe calls pthread_getspecific with an uninitialized
+key stored in cl_env_key. But another call to pthread_setspecific
+might have already registered a key which happens to be the same as
+the not yet initialized cl_env_key, yielding a non-NULL value.
+---
+ src/h/impl/math_fenv.h | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/src/h/impl/math_fenv.h b/src/h/impl/math_fenv.h
+index 0a93c8e0a..9630f4c6c 100644
+--- a/src/h/impl/math_fenv.h
++++ b/src/h/impl/math_fenv.h
+@@ -72,15 +72,14 @@
+ 
+ #if defined(HAVE_FENV_H) && !defined(ECL_AVOID_FPE_H)
+ # if defined(HAVE_FEENABLEEXCEPT)
+-#  define ECL_WITH_LISP_FPE_BEGIN do {                   \
+-        fenv_t __fenv;                                   \
+-        fegetenv(&__fenv);                               \
+-        cl_env_ptr __the_env = ecl_process_env_unsafe(); \
+-        if (__the_env) {                                 \
+-                int bits = __the_env->trap_fpe_bits;     \
+-                fedisableexcept(FE_ALL_EXCEPT & ~bits);  \
+-                feenableexcept(FE_ALL_EXCEPT & bits);    \
+-        }                                                \
++#  define ECL_WITH_LISP_FPE_BEGIN do {                       \
++        fenv_t __fenv;                                       \
++        fegetenv(&__fenv);                                   \
++        if (ecl_get_option(ECL_OPT_BOOTED) > 0) {            \
++                int bits = ecl_process_env()->trap_fpe_bits; \
++                fedisableexcept(FE_ALL_EXCEPT & ~bits);      \
++                feenableexcept(FE_ALL_EXCEPT & bits);        \
++        }                                                    \
+         feclearexcept(FE_ALL_EXCEPT);
+ # else
+ #  define ECL_WITH_LISP_FPE_BEGIN do {                   \
+-- 
+GitLab
+

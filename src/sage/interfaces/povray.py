@@ -2,9 +2,9 @@ r"""
 POV-Ray, The Persistence of Vision Ray Tracer
 """
 
-
 from sage.misc.pager import pager
 import os
+
 
 class POVRay:
     """
@@ -41,7 +41,7 @@ class POVRay:
             return "You must specify a width and height."
 
         cmd = "povray -D +FP +I%s +O%s " % (pov_file, outfile)
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             cmd += "+%s%s " % (k, v)
 
         if not block:
@@ -49,7 +49,9 @@ class POVRay:
         os.system(cmd)
 
     def usage(self):
-        r = os.popen('povray').read()
+        with os.popen('povray') as f:
+            r = f.read()
         pager()(r)
+
 
 povray = POVRay()

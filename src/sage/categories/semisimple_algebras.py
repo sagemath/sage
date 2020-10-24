@@ -1,6 +1,7 @@
 r"""
 Semisimple Algebras
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2011-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #
@@ -11,9 +12,9 @@ Semisimple Algebras
 from sage.misc.bindable_class import BoundClass
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from category_types import Category_over_base_ring
+from .category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from algebras import Algebras
+from .algebras import Algebras
 
 class SemisimpleAlgebras(Category_over_base_ring):
     """
@@ -48,7 +49,7 @@ class SemisimpleAlgebras(Category_over_base_ring):
         sage: DihedralGroup(5).algebra(IntegerModRing(7)) in SemisimpleAlgebras
         True
 
-    .. SEEALSO:: `<http://en.wikipedia.org/wiki/Semisimple_algebra>`_
+    .. SEEALSO:: :wikipedia:`Semisimple_algebra`
 
     TESTS::
 
@@ -98,14 +99,14 @@ class SemisimpleAlgebras(Category_over_base_ring):
 
                 sage: A = SymmetricGroup(4).algebra(QQ)
                 sage: A.radical_basis()
-                []
+                ()
 
             TESTS::
 
                 sage: A.radical_basis.__module__
-                'sage.categories.finite_dimensional_algebras_with_basis'
+                'sage.categories.finite_dimensional_semisimple_algebras_with_basis'
             """
-            return []
+            return ()
 
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
 

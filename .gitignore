@@ -1,10 +1,8 @@
 *.pyc
-/.BUILDSTART
 /dist
 /local
 /logs
 /upstream
-/src/mac-app/build
 
 #############################
 # Autotools generated files #
@@ -15,6 +13,12 @@
 /config.log
 /config.status
 /configure
+/conftest*
+
+/m4/sage_spkg_configures.m4
+
+# no longer generated, but may still be in user worktrees
+/src/lib/pkgconfig
 
 ###################
 # Temporary Files #
@@ -37,6 +41,9 @@
 # PyCharm
 .idea
 .iml
+
+# VSCode
+.vscode
 
 # XCode
 xcuserdata/
@@ -76,3 +83,34 @@ $RECYCLE.BIN/
 *.sage-chat
 *.sage-history
 *.syncdoc*
+
+###########
+# Jupyter #
+###########
+.ipynb_checkpoints
+Untitled*.ipynb
+
+#############################
+# GitLab CI generated files #
+#############################
+gitlab-build-docker.log
+
+/src/.cython_version
+/src/build
+/src/Makefile
+/src/bin/sage-env-config
+/build/bin/sage-build-env-config
+
+/build/pkgs/*/src/build
+/build/pkgs/*/src/dist
+/build/pkgs/*/src/MANIFEST
+/build/pkgs/*/src/*.egg-info
+/build/pkgs/*/src/.tox
+
+#######################
+# tox generated files #
+#######################
+
+/.tox
+/prefix
+worktree*

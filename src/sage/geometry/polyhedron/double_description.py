@@ -1,8 +1,8 @@
-"""
+r"""
 Double Description Algorithm for Cones
 
 This module implements the double description algorithm for extremal
-vertex enumeration in a pointed cone following [FukudaProdon]_. With a
+vertex enumeration in a pointed cone following [FP1996]_. With a
 little bit of preprocessing (see
 :mod:`~sage.geometry.polyhedron.double_description_inhomogeneous`)
 this defines a backend for polyhedral computations. But as far as this
@@ -36,14 +36,6 @@ The implementation works over any exact field that is embedded in
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),
      (0.07665629029830300?, 0.07665629029830300?, 0.2411809548974793?),
      (0.5822623322995881?, -0.4177376677004119?, 0.4177376677004119?)]
-
-REFERENCES:
-
-..  [FukudaProdon]
-    Komei Fukuda , Alain Prodon:
-    Double Description Method Revisited,
-    Combinatorics and Computer Science, volume 1120 of Lecture Notes
-    in Computer Science, page 91-111. Springer (1996)
 """
 
 #*****************************************************************************
@@ -62,12 +54,12 @@ REFERENCES:
 # TODO
 #
 # The adjacency check should use caching and the "combinatorial
-# criterion" instead of the "algebraic criterion", see [FukudaProdon]
+# criterion" instead of the "algebraic criterion", see [FP1996]
 # for definition. Since coefficient arithmetic is relatively expensive
 # we should avoid it as far as possible.
 #
 # Also, the variants of the double description algorithm described in
-# [FukudaProdon] should be implemented. The design of this module is
+# [FP1996] should be implemented. The design of this module is
 # such that variants of the basic algorithm should be easy to add as
 # subclasses of DoubleDescriptionPair and Problem.
 # *****************************************************************************
@@ -76,6 +68,8 @@ REFERENCES:
 # Compare with PPL if the base ring is QQ. Can be left enabled since
 # we don't use the Python fallback for polyhedra over QQ unless you
 # construct one by hand.
+from __future__ import division, absolute_import
+
 VERIFY_RESULT = True
 
 import itertools
@@ -84,6 +78,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.all import QQ
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
+
 
 def random_inequalities(d, n):
     """
@@ -97,7 +92,7 @@ def random_inequalities(d, n):
 
     OUTPUT:
 
-    A random set of inequalites as a :class:`StandardAlgorithm` instance.
+    A random set of inequalities as a :class:`StandardAlgorithm` instance.
 
     EXAMPLES::
 
@@ -217,11 +212,11 @@ class DoubleDescriptionPair:
         from sage.matrix.constructor import matrix
         s = ascii_art('Double description pair (A, R) defined by')
         A = ascii_art(matrix(self.A))
-        A._baseline = (len(self.A) / 2)
+        A._baseline = (len(self.A) // 2)
         A = ascii_art('A = ') + A
         R = ascii_art(matrix(self.R).transpose())
         if len(self.R) > 0:
-            R._baseline = (len(self.R[0]) / 2)
+            R._baseline = (len(self.R[0]) // 2)
         else:
             R._baseline = 0
         R = ascii_art('R = ') + R
@@ -252,7 +247,7 @@ class DoubleDescriptionPair:
         return matrix(self.problem.base_ring(), [[a.inner_product(r) for r in self.R] for a in self.A])
 
     def cone(self):
-        """
+        r"""
         Return the cone defined by `A`.
 
         This method is for debugging only. Assumes that the base ring
@@ -404,7 +399,7 @@ class DoubleDescriptionPair:
         Return a matrix space of size ``nrows`` and ``ncols`` over the base ring
         of ``self``.
 
-        These matrix spaces are cached to avoid the their creation in the very
+        These matrix spaces are cached to avoid their creation in the very
         demanding :meth:`add_inequality` and more precisely :meth:`are_adjacent`.
 
         EXAMPLES::
@@ -421,8 +416,7 @@ class DoubleDescriptionPair:
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()
             sage: DD.matrix_space(1,2)
-            Full MatrixSpace of 1 by 2 dense matrices over Number Field in sqrt2
-            with defining polynomial x^2 - 2
+            Full MatrixSpace of 1 by 2 dense matrices over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         """
         return MatrixSpace(self.problem.base_ring(), nrows, ncols)
 
@@ -527,7 +521,7 @@ class Problem:
     pair_class = DoubleDescriptionPair
 
     def __init__(self, A):
-        """
+        r"""
         Base class for implementations of the double description algorithm
 
         It does not make sense to instantiate the base class directly,
@@ -628,7 +622,7 @@ class Problem:
         return self._A.ncols()
 
     def __repr__(self):
-        """
+        r"""
         Return a string representation.
 
         OUTPUT:
@@ -730,7 +724,7 @@ class StandardAlgorithm(Problem):
     """
     Standard implementation of the double description algorithm
 
-    See [FukudaProdon]_ for the definition of the "Standard
+    See [FP1996]_ for the definition of the "Standard
     Algorithm".
 
     EXAMPLES::

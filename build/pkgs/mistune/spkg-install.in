@@ -1,0 +1,13 @@
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+cd src
+
+sdh_pip_install .
+if [ $? -ne 0 ]; then
+    echo "Error installing mistune ... exiting"
+    exit 1
+fi

@@ -1,10 +1,13 @@
 r"""
-Index of Channels
+Index of channels
+
+Channels in Sage implement the information theoretic notion of transmission of messages.
 
 The ``channels`` object may be used to access the codes that Sage can build.
 
-- :func:`channel_constructions.ErrorErasureChannel <sage.coding.channel_constructions.ErrorErasureChannel>`
-- :func:`channel_constructions.StaticErrorRateChannel <sage.coding.channel_constructions.StaticErrorRateChannel>`
+- :class:`channel.ErrorErasureChannel <sage.coding.channel.ErrorErasureChannel>`
+- :class:`channel.QarySymmetricChannel <sage.coding.channel.QarySymmetricChannel>`
+- :class:`channel.StaticErrorRateChannel <sage.coding.channel.StaticErrorRateChannel>`
 
 .. NOTE::
 
@@ -13,5 +16,19 @@ The ``channels`` object may be used to access the codes that Sage can build.
         sage: from sage.coding.channels_catalog import *
 
 """
+#*****************************************************************************
+#       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
+#
+#  Distributed under the terms of the GNU General Public License (GPL),
+#  version 2 or later (at your preference).
+#
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+from __future__ import absolute_import
 
-from channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel)
+from sage.misc.lazy_import import lazy_import as _lazy_import
+_lazy_import('sage.coding.channel', ['ErrorErasureChannel',
+                                     'QarySymmetricChannel',
+                                     'StaticErrorRateChannel'])
+# We don't want this to appear in tab completion
+del absolute_import

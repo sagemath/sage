@@ -14,15 +14,17 @@ Integers
    sage/rings/factorint
    sage/rings/fast_arith
    sage/rings/sum_of_squares
-   sage/ext/multi_modular
-   sage/rings/arith
+   sage/arith/functions
+   sage/arith/power
+   sage/arith/multi_modular
+   sage/arith/misc
 
 .. SEEALSO::
 
-    - :ref:`sage.sets.integer_range`
-    - :ref:`sage.sets.positive_integers`
-    - :ref:`sage.sets.non_negative_integers`
-    - :ref:`sage.sets.primes`
+    - :mod:`sage.sets.integer_range`
+    - :mod:`sage.sets.positive_integers`
+    - :mod:`sage.sets.non_negative_integers`
+    - :mod:`sage.sets.primes`
 
 Rationals
 ---------
@@ -32,6 +34,5 @@ Rationals
 
    sage/rings/rational_field
    sage/rings/rational
-   sage/rings/contfrac
 
 .. include:: ../footer.txt

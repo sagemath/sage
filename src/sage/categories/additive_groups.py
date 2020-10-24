@@ -9,9 +9,11 @@ Additive groups
 #******************************************************************************
 
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom_singleton, CategoryWithAxiom
+from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.additive_monoids import AdditiveMonoids
-from sage.structure.element import have_same_parent
+from sage.cpython.getattr import raw_getattr
+Groups = LazyImport('sage.categories.groups', 'Groups', at_startup=True)
 
 class AdditiveGroups(CategoryWithAxiom_singleton):
     r"""
@@ -51,5 +53,16 @@ class AdditiveGroups(CategoryWithAxiom_singleton):
         sage: TestSuite(C).run()
     """
     _base_category_class_and_axiom = (AdditiveMonoids, "AdditiveInverse")
+
+    class Algebras(AlgebrasCategory):
+        class ParentMethods:
+            group = raw_getattr(Groups.Algebras.ParentMethods, "group")
+
+    class Finite(CategoryWithAxiom):
+        class Algebras(AlgebrasCategory):
+            extra_super_categories = raw_getattr(Groups.Finite.Algebras, "extra_super_categories")
+
+            class ParentMethods:
+                __init_extra__ = raw_getattr(Groups.Finite.Algebras.ParentMethods, "__init_extra__")
 
     AdditiveCommutative = LazyImport('sage.categories.commutative_additive_groups', 'CommutativeAdditiveGroups', at_startup=True)

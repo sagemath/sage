@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-walkthrough:
 
 ========================
@@ -16,8 +18,8 @@ of commonly used git commands that you can print out and leave on your
 desk.  We have some :ref:`recommended references and tutorials
 <section-git-tutorials>` as well.
 
-You can alternatively fork and create a pull request at
-`github <http://github.com/sagemath/sage>`_ which will automatically fetch
+You can alternatively fork and create a merge request at
+`GitLab <https://gitlab.com/sagemath/sage>`_ which will automatically fetch
 your code and open a ticket on our trac server.
 
 
@@ -70,20 +72,45 @@ local installation of Sage, or (to start without Sage) download it
 from github which is a public read-only mirror (=faster) of our
 internal git repository::
 
-    [user@localhost]$ git clone git://github.com/sagemath/sage.git
+    [user@localhost ~]$ git clone git://github.com/sagemath/sage.git
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.
 
 This creates a directory named ``sage`` containing the sources for the
-current stable and development releases of Sage.  You will need to
-`compile Sage <http://www.sagemath.org/doc/installation/source.html>`_
-in order to use it (if you cloned, you will need to remain on the internet
-for it to download various packages of Sage).
+current stable and development releases of Sage. You next need to switch
+to the develop branch (latest development release)::
 
-(For the experts, note that the repository at
+    [user@localhost ~]$ cd sage
+    [user@localhost sage]$ git checkout develop
+
+You will then need to `compile Sage
+<http://doc.sagemath.org/html/en/installation/source.html>`_ in order to use it. If
+you cloned, you will need to remain on the internet for it to download various
+packages of Sage::
+
+    [user@localhost sage]$ make
+
+.. NOTE::
+
+    If your system supports multiprocessing and you want to use multiple
+    processors to build Sage, replace the last line above by::
+
+    [user@localhost sage]$ MAKE='make -jNUM' make
+
+    to tell the ``make`` program to run ``NUM`` jobs in parallel when
+    building Sage.
+
+.. NOTE::
+
+    Mac OS X allows changing directories without using exact capitalization.
+    Beware of this convenience when compiling for OS X. Ignoring exact
+    capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
+    errors for dependencies requiring exact capitalization in path names.
+
+For the experts, note that the repository at
 `git.sagemath.org <http://git.sagemath.org>`_ is where development
-actually takes place .)
+actually takes place.
 
 
 .. _section-walkthrough-branch:
@@ -96,44 +123,48 @@ A branch is a copy (except that it doesn't take up twice the space) of
 the Sage source code where you can store your modifications to the
 Sage source code and which you can upload to trac tickets.
 
-It is easy to create a new branch, just check out (switch to) the branch
-from where you want to start (that is, ``master``) and use the ``git
-branch`` command::
-
-    [user@localhost sage]$ git checkout master
-    [user@localhost sage]$ git branch last_twin_prime
-    [user@localhost sage]$ git checkout last_twin_prime
-
-You can list all branches using::
+To begin with, type the command ``git branch``. You will see the following::
 
     [user@localhost]$ git branch
+    * develop
       master
-    * last_twin_prime
 
 The asterisk shows you which branch you are on. Without an argument,
-the ``git branch`` command just displays a list of all local branches
-with the current one marked by an asterisk. Also note that ``git
-branch`` creates a new branch, but does not switch to it. For this,
-you have to use ``git checkout``::
+the ``git branch`` command displays a list of all local branches
+with the current one marked by an asterisk.
 
-    [user@localhost sage]$ git checkout master
-    Switched to branch 'master'
-    Your branch is up-to-date with 'github/master'.
-    [user@localhost sage]$ git branch
-    * master
-      last_twin_prime
+It is easy to create a new branch; first make sure you are on the branch from
+which you want to branch out. That is, if you are not currently on the
+``develop`` branch, type the command ``git checkout develop``::
+
+    [user@localhost sage]$ git checkout develop
+    Switched to branch 'develop'
+    Your branch is up-to-date with 'origin/develop'.
+
+Then use the ``git branch`` command to create a new branch, as follows::
+
+    [user@localhost sage]$ git branch last_twin_prime
+
+Also note that ``git branch`` creates a new branch, but does not switch
+to it. For this, you have to use ``git checkout``::
+
     [user@localhost sage]$ git checkout last_twin_prime
     Switched to branch 'last_twin_prime'
 
-Note that, unless you explicitly upload ("push") a branch to remote
-git repository, the local branch will only be on your computer and not
-visible to anyone else.
+Now if you use the command ``git branch``, you will see the following::
+
+    [user@localhost]$ git branch
+      develop
+    * last_twin_prime
+      master
+
+Note that unless you explicitly upload ("push") a branch to a remote
+git repository, the branch is a local branch that is only on your computer
+and not visible to anyone else.
 
 To avoid typing the new branch name twice you can use the shortcut
 ``git checkout -b my_new_branch`` to create and switch to the new
 branch in one command.
-
-
 
 .. _section_walkthrough_logs:
 
@@ -173,7 +204,7 @@ you which files changed, and how to continue with recording the
 changes::
 
     [user@localhost sage]$ git status
-    On branch master
+    On branch last_twin_prime
     Changes not staged for commit:
       (use "git add <file>..." to update what will be committed)
       (use "git checkout -- <file>..." to discard changes in working directory)
@@ -209,16 +240,27 @@ have to run::
     [user@localhost sage]$ ./sage -br
 
 to rebuild the Sage library and then start Sage. This should be quite
-fast. If you made changes to third-party packages then you have to
-run::
+fast. If you made changes to
+:ref:`third-party packages <chapter-packaging>`, then you have to run ::
 
     [user@localhost sage]$ make
 
 as if you were `installing Sage from scratch
-<http://www.sagemath.org/doc/installation/source.html>`_.
-However, simply running ``make`` will only recompile packages
-that were changed, so it shoud be much faster than compiling Sage
-the first time. Rarely there are conflicts with other packages,
+<http://doc.sagemath.org/html/en/installation/source.html>`_.
+However, this time only packages which were changed (or which depend
+on a changed package) will be recompiled,
+so it should be much faster than compiling Sage
+the first time.
+
+.. NOTE::
+
+    If you have `pulled a branch from trac
+    <http://doc.sagemath.org/html/en/developer/manual_git.html#checking-out-tickets>`_,
+    it may depend on changes to third-party packages, so ``./sage -br``
+    may fail.  If this happens (and you believe the code in this branch
+    should compile), try running ``make``.
+
+Rarely there are conflicts with other packages,
 or with the already-installed older version of the package that you
 changed, in that case you do have to recompile everything using::
 
@@ -226,6 +268,20 @@ changed, in that case you do have to recompile everything using::
 
 Also, don't forget to run the tests (see :ref:`chapter-doctesting`)
 and build the documentation (see :ref:`chapter-sage_manuals`).
+
+.. NOTE::
+
+    If you switch between branches based on different releases, the timestamps
+    of modified files will change. This triggers recythonization and recompilation
+    of modified files on subsequent builds, whether or not you have made any
+    additional changes to files. To minimize the impact of switching between branches,
+    install ccache using the command ::
+
+        [user@localhost sage]$ ./sage -i ccache
+
+    Recythonization will still occur when rebuilding, but the recompilation stage
+    first checks whether previously compiled files are cached for reuse before
+    compiling them again. This saves considerable time rebuilding.
 
 
 .. _section-walkthrough-commit:
@@ -270,7 +326,9 @@ snapshot with the ``git commit`` command::
 
 This will open an editor for you to write your commit message. The
 commit message should generally have a one-line description, followed
-by an empty line, followed by further explanatory text::
+by an empty line, followed by further explanatory text:
+
+.. CODE-BLOCK:: text
 
     Added the last twin prime
 

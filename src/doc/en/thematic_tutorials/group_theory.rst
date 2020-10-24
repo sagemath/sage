@@ -137,20 +137,20 @@ learn about how to drill down into Python lists. ::
 
     sage: n = 2600
     sage: decomposition = factor(n)
-    sage: print n, "decomposes as", decomposition
+    sage: print("{} decomposes as {}".format(n, decomposition))
     2600 decomposes as 2^3 * 5^2 * 13
     sage: secondterm = decomposition[1]
-    sage: print "Base and exponent (pair) for second prime:", secondterm
+    sage: print("Base and exponent (pair) for second prime: "+str(secondterm))
     Base and exponent (pair) for second prime: (5, 2)
     sage: base = secondterm[0]
     sage: exponent = secondterm[1]
-    sage: print "Base is", base
+    sage: print("Base is "+str(base))
     Base is 5
-    sage: print "Exponent is", exponent
+    sage: print("Exponent is "+str(exponent))
     Exponent is 2
     sage: thirdbase = decomposition[2][0]
     sage: thirdexponent = decomposition[2][1]
-    sage: print "Base of third term is", thirdbase, "with exponent", thirdexponent
+    sage: print("Base of third term is {} with exponent {}".format(thirdbase, thirdexponent))
     Base of third term is 13 with exponent  1
 
 With a bit more work, the ``factor()`` command can be used to factor
@@ -172,7 +172,7 @@ Then try ::
     sage: inverse_mod(4, 24)
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Inverse does not exist.
+    ZeroDivisionError: inverse of Mod(4, 24) does not exist
 
 and explain the result.
 
@@ -414,17 +414,17 @@ The command ::
     sage: H = DihedralGroup(6)
     sage: H.list()
     [(),
-     (1,6)(2,5)(3,4),
-     (1,2,3,4,5,6),
-     (1,5)(2,4),
-     (2,6)(3,5),
+     (1,5,3)(2,6,4),
      (1,3,5)(2,4,6),
-     (1,4)(2,3)(5,6),
      (1,6,5,4,3,2),
      (1,4)(2,5)(3,6),
-     (1,2)(3,6)(4,5),
-     (1,5,3)(2,6,4),
-     (1,3)(4,6)]
+     (1,2,3,4,5,6),
+     (2,6)(3,5),
+     (1,5)(2,4),
+     (1,3)(4,6),
+     (1,6)(2,5)(3,4),
+     (1,4)(2,3)(5,6),
+     (1,2)(3,6)(4,5)]
 
 will return all of the elements of `H` in a fixed order as a Python
 list.  Indexing (``[ ]``) can be used to extract the individual
@@ -434,7 +434,7 @@ list begins at zero. ::
     sage: H = DihedralGroup(6)
     sage: elements = H.list()
     sage: elements[2]
-    (1,2,3,4,5,6)
+    (1,3,5)(2,4,6)
 
 
 Cayley table
@@ -447,17 +447,17 @@ The command ::
     *  a b c d e f g h i j k l
      +------------------------
     a| a b c d e f g h i j k l
-    b| b a e h c j k d l f g i
-    c| c d f g b i l a k e h j
-    d| d c b a f e h g j i l k
-    e| e h j k a l i b g c d f
-    f| f g i l d k j c h b a e
-    g| g f d c i b a l e k j h
-    h| h e a b j c d k f l i g
-    i| i l k j g h e f a d c b
-    j| j k l i h g f e d a b c
-    k| k j h e l a b i c g f d
-    l| l i g f k d c j b h e a
+    b| b a d c f e h g j i l k
+    c| c k a e d g f i h l b j
+    d| d l b f c h e j g k a i
+    e| e j k g a i d l f b c h
+    f| f i l h b j c k e a d g
+    g| g h j i k l a b d c e f
+    h| h g i j l k b a c d f e
+    i| i f h l j b k c a e g d
+    j| j e g k i a l d b f h c
+    k| k c e a g d i f l h j b
+    l| l d f b h c j e k g i a
 
 
 will construct the Cayley table (or "multiplication table") of `H`.
@@ -471,7 +471,7 @@ element named ``e``::
     sage: T = H.cayley_table()
     sage: headings = T.row_keys()
     sage: headings[4]
-    (2,6)(3,5)
+    (1,3)(4,6)
 
 Center
 ------
@@ -541,28 +541,27 @@ preceded by the order of each element. ::
     sage: n = 20
     sage: CN = CyclicPermutationGroup(n)
     sage: for g in CN:
-    ....:     print g.order(), "  ", g
-    ...
-    1    ()
-    20    (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
-    10    (1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20)
-    20    (1,4,7,10,13,16,19,2,5,8,11,14,17,20,3,6,9,12,15,18)
-    5    (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)
-    4    (1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20)
-    10    (1,7,13,19,5,11,17,3,9,15)(2,8,14,20,6,12,18,4,10,16)
-    20    (1,8,15,2,9,16,3,10,17,4,11,18,5,12,19,6,13,20,7,14)
-    5    (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16)
-    20    (1,10,19,8,17,6,15,4,13,2,11,20,9,18,7,16,5,14,3,12)
-    2    (1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)
-    20    (1,12,3,14,5,16,7,18,9,20,11,2,13,4,15,6,17,8,19,10)
-    5    (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12)
-    20    (1,14,7,20,13,6,19,12,5,18,11,4,17,10,3,16,9,2,15,8)
-    10    (1,15,9,3,17,11,5,19,13,7)(2,16,10,4,18,12,6,20,14,8)
-    4    (1,16,11,6)(2,17,12,7)(3,18,13,8)(4,19,14,9)(5,20,15,10)
-    5    (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)
-    20    (1,18,15,12,9,6,3,20,17,14,11,8,5,2,19,16,13,10,7,4)
-    10    (1,19,17,15,13,11,9,7,5,3)(2,20,18,16,14,12,10,8,6,4)
-    20    (1,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2)
+    ....:     print("{}   {}".format(g.order(), g))
+    1   ()
+    20   (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
+    10   (1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20)
+    20   (1,4,7,10,13,16,19,2,5,8,11,14,17,20,3,6,9,12,15,18)
+    5   (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)
+    4   (1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20)
+    10   (1,7,13,19,5,11,17,3,9,15)(2,8,14,20,6,12,18,4,10,16)
+    20   (1,8,15,2,9,16,3,10,17,4,11,18,5,12,19,6,13,20,7,14)
+    5   (1,9,17,5,13)(2,10,18,6,14)(3,11,19,7,15)(4,12,20,8,16)
+    20   (1,10,19,8,17,6,15,4,13,2,11,20,9,18,7,16,5,14,3,12)
+    2   (1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)
+    20   (1,12,3,14,5,16,7,18,9,20,11,2,13,4,15,6,17,8,19,10)
+    5   (1,13,5,17,9)(2,14,6,18,10)(3,15,7,19,11)(4,16,8,20,12)
+    20   (1,14,7,20,13,6,19,12,5,18,11,4,17,10,3,16,9,2,15,8)
+    10   (1,15,9,3,17,11,5,19,13,7)(2,16,10,4,18,12,6,20,14,8)
+    4   (1,16,11,6)(2,17,12,7)(3,18,13,8)(4,19,14,9)(5,20,15,10)
+    5   (1,17,13,9,5)(2,18,14,10,6)(3,19,15,11,7)(4,20,16,12,8)
+    20   (1,18,15,12,9,6,3,20,17,14,11,8,5,2,19,16,13,10,7,4)
+    10   (1,19,17,15,13,11,9,7,5,3)(2,20,18,16,14,12,10,8,6,4)
+    20   (1,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2)
 
 By varying the size of the group (change the value of ``n``) you can
 begin to illustrate some of the structure of a cyclic group (for
@@ -587,7 +586,12 @@ subgroups. ::
 
     sage: C20 = CyclicPermutationGroup(20)
     sage: C20.conjugacy_classes_subgroups()
-    [Subgroup of (Cyclic group of order 20 as a permutation group) generated by [()], Subgroup of (Cyclic group of order 20 as a permutation group) generated by [(1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)], Subgroup of (Cyclic group of order 20 as a permutation group) generated by [(1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20)], Subgroup of (Cyclic group of order 20 as a permutation group) generated by [(1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)], Subgroup of (Cyclic group of order 20 as a permutation group) generated by [(1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20)], Subgroup of (Cyclic group of order 20 as a permutation group) generated by [(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)]]
+    [Subgroup generated by [()] of (Cyclic group of order 20 as a permutation group),
+     Subgroup generated by [(1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)] of (Cyclic group of order 20 as a permutation group),
+     Subgroup generated by [(1,6,11,16)(2,7,12,17)(3,8,13,18)(4,9,14,19)(5,10,15,20), (1,11)(2,12)(3,13)(4,14)(5,15)(6,16)(7,17)(8,18)(9,19)(10,20)] of (Cyclic group of order 20 as a permutation group),
+     Subgroup generated by [(1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)] of (Cyclic group of order 20 as a permutation group),
+     Subgroup generated by [(1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20), (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)] of (Cyclic group of order 20 as a permutation group),
+     Subgroup generated by [(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20), (1,3,5,7,9,11,13,15,17,19)(2,4,6,8,10,12,14,16,18,20), (1,5,9,13,17)(2,6,10,14,18)(3,7,11,15,19)(4,8,12,16,20)] of (Cyclic group of order 20 as a permutation group)]
 
 Be careful, this command uses some more advanced ideas and will not
 usually list *all* of the subgroups of a group. Here we are relying on
@@ -639,13 +643,27 @@ suitable `g`. As an illustration, the code below:
 
     sage: K = DihedralGroup(12)
     sage: sg = K.conjugacy_classes_subgroups()
-    sage: print "sg:\n", sg
-    sg:
-    [Subgroup of (Dihedral group of order 24 as a permutation group) generated by [()], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,7)(2,8)(3,9)(4,10)(5,11)(6,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,7)(2,8)(3,9)(4,10)(5,11)(6,12), (1,10,7,4)(2,11,8,5)(3,12,9,6)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12), (1,10,7,4)(2,11,8,5)(3,12,9,6)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(1,2,3,4,5,6,7,8,9,10,11,12), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)], Subgroup of (Dihedral group of order 24 as a permutation group) generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,2,3,4,5,6,7,8,9,10,11,12), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)]]
-    sage: print "\nAn order two subgroup:\n", sg[1].list()
-    <BLANKLINE>
+    sage: sg
+    [Subgroup generated by [()] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,7)(2,8)(3,9)(4,10)(5,11)(6,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,7)(2,8)(3,9)(4,10)(5,11)(6,12), (1,10,7,4)(2,11,8,5)(3,12,9,6)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12), (1,10,7,4)(2,11,8,5)(3,12,9,6)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,2,3,4,5,6,7,8,9,10,11,12), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(1,2)(3,12)(4,11)(5,10)(6,9)(7,8), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group),
+     Subgroup generated by [(2,12)(3,11)(4,10)(5,9)(6,8), (1,2,3,4,5,6,7,8,9,10,11,12), (1,3,5,7,9,11)(2,4,6,8,10,12), (1,5,9)(2,6,10)(3,7,11)(4,8,12)] of (Dihedral group of order 24 as a permutation group)]
+
+    sage: print("An order two subgroup:\n{}".format(sg[1].list()))
     An order two subgroup:
-    [(), (1,2)(3,12)(4,11)(5,10)(6,9)(7,8)]
+    [(), (1,7)(2,8)(3,9)(4,10)(5,11)(6,12)]
 
 It is important to note that this is a nice long list of subgroups,
 but will rarely create *every* such subgroup.  For example, the
@@ -741,29 +759,29 @@ entire symmetry group.  Use ::
     ....:     "(1,2,6,5)(4,3,7,8)", "(1,2,3,4)(5,6,7,8)"])
     sage: cube.list()
     [(),
+     (1,3)(2,4)(5,7)(6,8),
+     (1,6)(2,5)(3,8)(4,7),
+     (1,8)(2,7)(3,6)(4,5),
+     (1,4,3,2)(5,8,7,6),
      (1,2,3,4)(5,6,7,8),
-     (1,2,6,5)(3,7,8,4),
-     (1,5,8,4)(2,6,7,3),
-     (1,6,8)(2,7,4),
+     (1,5)(2,8)(3,7)(4,6),
+     (1,7)(2,6)(3,5)(4,8),
+     (2,5,4)(3,6,8),
      (1,3,8)(2,7,5),
      (1,6,3)(4,5,7),
-     (1,6)(2,5)(3,8)(4,7),
-     (2,5,4)(3,6,8),
-     (1,3)(2,4)(5,7)(6,8),
-     (1,8)(2,7)(3,6)(4,5),
-     (1,7)(2,3)(4,6)(5,8),
-     (1,5,6,2)(3,4,8,7),
-     (1,7)(2,6)(3,5)(4,8),
-     (1,7)(2,8)(3,4)(5,6),
-     (1,4,3,2)(5,8,7,6),
+     (1,8,6)(2,4,7),
      (1,4)(2,8)(3,5)(6,7),
-     (1,5)(2,8)(3,7)(4,6),
+     (1,2,6,5)(3,7,8,4),
+     (1,5,6,2)(3,4,8,7),
+     (1,7)(2,3)(4,6)(5,8),
+     (2,4,5)(3,8,6),
+     (1,3,6)(4,7,5),
+     (1,6,8)(2,7,4),
+     (1,8,3)(2,5,7),
      (1,4,8,5)(2,3,7,6),
      (1,2)(3,5)(4,6)(7,8),
-     (1,8,6)(2,4,7),
-     (1,3,6)(4,7,5),
-     (2,4,5)(3,8,6),
-     (1,8,3)(2,5,7)]
+     (1,5,8,4)(2,6,7,3),
+     (1,7)(2,8)(3,4)(5,6)]
 
 A cube has four distinct diagonals (joining opposite vertices through
 the center of the cube).  Each symmetry of the cube will cause the
@@ -790,29 +808,29 @@ two opposite faces) can be used as generators of the symmetry group::
     sage: cubeface = PermutationGroup(["(1,3,2,5)", "(1,4,2,6)", "(3,4,5,6)"])
     sage: cubeface.list()
     [(),
-     (3,4,5,6),
-     (1,4,2,6),
-     (1,3,2,5),
-     (1,3,4)(2,5,6),
-     (1,3,6)(2,5,4),
+     (3,5)(4,6),
+     (1,6,5)(2,4,3),
+     (1,6,3)(2,4,5),
+     (1,5,6)(2,3,4),
+     (1,5,4)(2,3,6),
+     (1,2)(4,6),
      (1,2)(3,5),
      (1,4,5)(2,6,3),
-     (1,5,6)(2,3,4),
-     (3,5)(4,6),
-     (1,2)(4,6),
-     (1,5,2,3),
+     (1,4,3)(2,6,5),
+     (1,3,4)(2,5,6),
+     (1,3,6)(2,5,4),
+     (1,4,2,6),
      (1,6)(2,4)(3,5),
-     (1,4)(2,6)(3,5),
+     (1,3,2,5),
+     (1,5,2,3),
      (1,2)(3,4)(5,6),
-     (1,3)(2,5)(4,6),
      (3,6,5,4),
-     (1,5)(2,3)(4,6),
      (1,6,2,4),
-     (1,2)(3,6)(4,5),
-     (1,6,3)(2,4,5),
-     (1,6,5)(2,4,3),
-     (1,5,4)(2,3,6),
-     (1,4,3)(2,6,5)]
+     (1,4)(2,6)(3,5),
+     (1,5)(2,3)(4,6),
+     (1,3)(2,5)(4,6),
+     (3,4,5,6),
+     (1,2)(3,6)(4,5)]
 
 Again, this subgroup of `S_6` is "same as" the full symmetric group, `S_4`::
 
@@ -963,7 +981,7 @@ of a subgroup of permutations on 4 symbols with order 16::
 
     sage: G = SymmetricGroup(7)
     sage: subgroups = G.conjugacy_classes_subgroups()
-    sage: map(order, subgroups)
+    sage: list(map(order, subgroups))
     [1, 2, 2, 2, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8, 8, 8, 9, 10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 14, 16, 18, 18, 18, 20, 20, 20, 21, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 36, 36, 36, 36, 40, 42, 48, 48, 48, 60, 60, 72, 72, 72, 72, 120, 120, 120, 120, 144, 168, 240, 360, 720, 2520, 5040]
 
 The ``map(order, subgroups)`` command will apply the ``order()``
@@ -988,7 +1006,9 @@ Groups of small order as permutation groups
 ============================================
 
 We list here constructions, as permutation groups, for all of the
-groups of order less than 16. ::
+groups of order less than 16.
+
+.. CODE-BLOCK:: text
 
     ---------------------------------------------------------------------------------------------
     Size  Construction                                Notes
@@ -1009,9 +1029,9 @@ groups of order less than 16. ::
     8     D1 = CyclicPermutationGroup(2)
           D2 = CyclicPermutationGroup(2)
           D3 = CyclicPermutationGroup(2)
-          G = direct_product_permgroups([D1,D2,D3])}  Abelian, non-cyclic
+          G = direct_product_permgroups([D1,D2,D3])   Abelian, non-cyclic
     8     DihedralGroup(4)                            Non-abelian
-    8     QuaternionGroup()}                          Quaternions, also DiCyclicGroup(2)
+    8     QuaternionGroup()                           Quaternions, also DiCyclicGroup(2)
     9     CyclicPermutationGroup(9)                   Cyclic
     9     D1 = CyclicPermutationGroup(3)
           D2 = CyclicPermutationGroup(3)

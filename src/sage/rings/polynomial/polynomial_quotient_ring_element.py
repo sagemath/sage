@@ -74,17 +74,23 @@ AUTHORS:
 - William Stein
 """
 
-###########################################################################
+#*****************************************************************************
 #       Copyright (C) 2005, 2007 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-###########################################################################
+#*****************************************************************************
 
-import sage.rings.commutative_ring_element as commutative_ring_element
+from sage.structure.element import CommutativeRingElement
+from sage.structure.richcmp import richcmp
 import sage.rings.number_field.number_field_rel as number_field_rel
 import sage.rings.polynomial.polynomial_singular_interface as polynomial_singular_interface
 
-class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_singular_repr,commutative_ring_element.CommutativeRingElement):
+
+class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_singular_repr, CommutativeRingElement):
     """
     Element of a quotient of a polynomial ring.
 
@@ -118,7 +124,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.polynomial.polynomial_element import Polynomial
 
-        commutative_ring_element.CommutativeRingElement.__init__(self, parent)
+        CommutativeRingElement.__init__(self, parent)
         if check:
             if not isinstance(parent, PolynomialQuotientRing_generic):
                 raise TypeError("parent must be a polynomial quotient ring")
@@ -147,11 +153,30 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
                 polynomial = R
         self._polynomial = polynomial
 
-    def _im_gens_(self, codomain, im_gens):
-        return self._polynomial._im_gens_(codomain, im_gens)
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this element under the morphism defined by
+        ``im_gens`` in ``codomain``, where elements of the
+        base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: Q.<q> = S.quotient(y^2*(y-1)*(y-i))
+            sage: T.<t> = S.quotient(y*(y+1))
+            sage: phi = Q.hom([t+1], base_map=cc)
+            sage: phi(q)
+            t + 1
+            sage: phi(i*q)
+            -i*t - i
+        """
+        return self._polynomial._im_gens_(codomain, im_gens, base_map=base_map)
 
     def __hash__(self):
-        return self._polynomial.__hash__()
+        return hash(self._polynomial)
 
     def __reduce__(self):
         """
@@ -190,7 +215,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         return self._polynomial._latex_(self.parent().variable_name())
 
-    def _pari_(self):
+    def __pari__(self):
         """
         Pari representation of this quotient element.
 
@@ -202,7 +227,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: pari(xb)^10
             Mod(0, x^10)
         """
-        return self._polynomial._pari_().Mod(self.parent().modulus()._pari_())
+        return self._polynomial.__pari__().Mod(self.parent().modulus())
 
     ##################################################
     # Arithmetic
@@ -271,16 +296,21 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
     def __neg__(self):
         return self.__class__(self.parent(), -self._polynomial)
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         Compare this element with something else, where equality testing
         coerces the object on the right, if possible (and necessary).
 
-        EXAMPLES:
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: S.<a> = R.quotient(x^3-2)
+            sage: (a^2 - 4) / (a+2) == a - 2
+            True
+            sage: a^2 - 4 == a
+            False
         """
-        return cmp(self._polynomial, other._polynomial)
-
-
+        return richcmp(self._polynomial, other._polynomial, op)
 
     def __getitem__(self, n):
         return self._polynomial[n]
@@ -330,11 +360,22 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: S(3).is_unit()
+            True
         """
         if self._polynomial.is_zero():
             return False
         if self._polynomial.is_one():
             return True
+        try:
+            if self._polynomial.is_unit():
+                return True
+        except NotImplementedError:
+            pass
+
         parent = self.parent()
         base = parent.base_ring()
         if not base.is_field():
@@ -366,7 +407,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         TESTS:
 
-        An element is not invertable if the base ring is not a field
+        An element is not invertible if the base ring is not a field
         (see :trac:`13303`)::
 
             sage: Z16x.<x> = Integers(16)[]
@@ -375,12 +416,26 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             Traceback (most recent call last):
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+
+        Check that :trac:`29469` is fixed::
+
+            sage: ~S(3)
+            11
         """
         if self._polynomial.is_zero():
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         if self._polynomial.is_one():
             return self
+
         parent = self.parent()
+
+        try:
+            if self._polynomial.is_unit():
+                inv_pol = self._polynomial.inverse_of_unit()
+                return parent(inv_pol)
+        except (TypeError, NotImplementedError):
+            pass
+
         base = parent.base_ring()
         if not base.is_field():
             raise NotImplementedError("The base ring (=%s) is not a field" % base)
@@ -389,23 +444,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible"%self)
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
-
-    def __long__(self):
-        """
-        Coerce this element to a long if possible.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
-            sage: long(S(10))
-            10L
-            sage: long(a)
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot coerce nonconstant polynomial to long
-        """
-        return long(self._polynomial)
 
     def field_extension(self, names):
         r"""
@@ -486,7 +524,8 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         """
         #TODO: is the return order backwards from the magma convention?
 
-##         We do another example over $\ZZ$.
+##         We do another example over $\ZZ$::
+##
 ##             sage: R.<x> = ZZ['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F.<b>, g, h = a.field_extension()
@@ -494,21 +533,24 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 ##             a^2 + 3
 ##             sage: g(x^2 + 2)
 ##             a^2 + 2
+##
 ##         Note that the homomorphism is not defined on the entire
 ##         ''domain''.   (Allowing creation of such functions may be
-##         disallowed in a future version of Sage.):        <----- INDEED!
+##         disallowed in a future version of Sage.)::        <----- INDEED!
+##
 ##             sage: h(1/3)
 ##             Traceback (most recent call last):
 ##             ...
 ##             TypeError: Unable to coerce rational (=1/3) to an Integer.
-##         Note that the parent ring must be an integral domain:
+##
+##         Note that the parent ring must be an integral domain::
+##
 ##             sage: R.<x> = GF(25,'b')['x']
 ##             sage: S.<a> = R.quo(x^3 - 2)
 ##             sage: F, g, h = a.field_extension()
 ##             Traceback (most recent call last):
 ##             ...
 ##             ValueError: polynomial must be irreducible
-
 
         R = self.parent()
         x = R.gen()
@@ -520,14 +562,13 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         if number_field_rel.is_RelativeNumberField(F):
 
-            base_hom = F.base_field().hom([R.base_ring().gen()])
-            g = F.Hom(R)(x, base_hom)
+            base_map = F.base_field().hom([R.base_ring().gen()])
+            g = F.Hom(R)(x, base_map)
 
         else:
             g = F.hom([x], R, check=False)
 
         return F, f, g
-
 
     def charpoly(self, var):
         """
@@ -586,9 +627,9 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
     def __iter__(self):
         return iter(self.list())
 
-    def list(self):
+    def list(self, copy=True):
         """
-        Return list of the elements of self, of length the same as the
+        Return list of the elements of ``self``, of length the same as the
         degree of the quotient polynomial ring.
 
         EXAMPLES::
@@ -600,7 +641,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (a^10).list()
             [300, -35, -134]
         """
-        v = self._polynomial.list()
+        v = self._polynomial.list(copy=False)
         R = self.parent()
         n = R.degree()
         return v + [R.base_ring()(0)]*(n - len(v))
@@ -630,7 +671,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             x = R.gen()
             a = R(1)
             d = R.degree()
-            for _ in xrange(d):
+            for _ in range(d):
                 v += (a*self).list()
                 a *= x
             S = R.base_ring()
@@ -648,7 +689,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
     def norm(self):
         """
-        The norm of this element, which is the norm of the matrix of right
+        The norm of this element, which is the determinant of the matrix of right
         multiplication by this element.
 
         EXAMPLES::

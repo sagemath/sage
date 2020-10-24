@@ -6,11 +6,14 @@ PATCHES="$SPKG_ROOT/patches"
 set -e
 shopt -s extglob
 
-# Remove old sources and download new
-rm -rf src
-tar xzf <( curl http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-0.17.4.tar.gz )
-mv TOPCOM-0.17.4 src
+TOPCOM_VERSION=0.17.7
 
+if [ -z "$TOPCOM_KEEP" ] ; then
+    # Remove old sources and download new
+    rm -rf src
+    tar xzf <( curl http://www.rambau.wm.uni-bayreuth.de/Software/TOPCOM-$TOPCOM_VERSION.tar.gz )
+    mv TOPCOM-$TOPCOM_VERSION src
+fi
 
 # Make everything writable
 chmod -R u+w src
@@ -25,7 +28,6 @@ rm -rf examples/*
 
 
 # libtool-ized automake sources
-rm configure.in
 cp -p "$PATCHES"/configure.ac                .
 cp -p "$PATCHES"/Makefile.am                 Makefile.am
 cp -p "$PATCHES"/src-Makefile.am             src/Makefile.am
@@ -38,9 +40,10 @@ cp -p "$PATCHES"/wrap-gmp-gmpxx-Makefile.am  wrap-gmp-gmpxx/Makefile.am
 cp -p "$PATCHES"/examples-Makefile.am     examples/Makefile.am
 
 # regenerate auto-generated files
+libtoolize   # only needed because of our broken autotools package
 autoreconf -fiv
-rm -rf autom4te.cache
+#rm -rf autom4te.cache
+./configure
+make dist-bzip2
+mv topcom-$TOPCOM_VERSION.tar.bz2 "$SPKG_ROOT"
 
-# pack it up
-cd "$SPKG_ROOT"
-tar cjf topcom-0.17.4.tar.bz2 src

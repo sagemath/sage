@@ -18,7 +18,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
+import operator
 from sage.misc.all import cached_method
 from sage.categories.semigroups import Semigroups
 from sage.categories.sets_cat import Sets
@@ -29,7 +31,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.family import Family
 from sage.rings.integer import Integer
-import operator
+from sage.cpython.getattr import raw_getattr
+
 
 class AutomaticSemigroup(UniqueRepresentation, Parent):
     r"""
@@ -134,18 +137,18 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
          ([], [1], (1, 'right')),
          ([], [2], (2, 'left')),
          ([], [2], (2, 'right'))]
-        sage: map(sorted, M.j_classes())
+        sage: list(map(sorted, M.j_classes()))
         [[[1], [1, 1]], [[], [2]]]
         sage: M.j_classes_of_idempotents()
         [[[1, 1]], [[]]]
         sage: M.j_transversal_of_idempotents()
         [[1, 1], []]
 
-        sage: map(attrcall('pseudo_order'), M.list())
+        sage: list(map(attrcall('pseudo_order'), M.list()))
         [[1, 0], [3, 1], [2, 0], [2, 1]]
 
     We can also use it to get submonoids from groups. We check that in the
-    symmetric group, a transposition and a cyle generate the whole group::
+    symmetric group, a transposition and a long cycle generate the whole group::
 
         sage: G5 = SymmetricGroup(5)
         sage: N = AutomaticSemigroup(Family({1: G5([2,1,3,4,5]), 2: G5([2,3,4,5,1])}), one=G5.one())
@@ -168,7 +171,6 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         ....:     z=x*y
         ....:     z.set_immutable()
         ....:     return z
-        ....:
         sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m, category=Monoids().Finite().Subobjects())
         sage: Mon.cardinality()
         24
@@ -201,7 +203,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         sage: len(M.idempotents())
         16
-        sage: all([len(j) == 1 for j in M.j_classes()])
+        sage: all(len(j) == 1 for j in M.j_classes())
         True
 
     TESTS::
@@ -474,7 +476,6 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             ....:     z=x*y
             ....:     z.set_immutable()
             ....:     return z
-            ....:
             sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m)
             sage: Mon.ambient()
             Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
@@ -503,14 +504,14 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: len(M._retract.get_cache().keys())
+            sage: len(M._retract.cache.keys())
             24
         """
         element = self._retract(ambient_element)
         if check:
             self.construct(up_to=ambient_element)
             if element not in self._elements_set:
-                cache = self._retract.get_cache()
+                cache = self._retract.cache
                 del cache[((ambient_element,), ())]
                 raise ValueError("%s not in %s"%(ambient_element, self))
         return element
@@ -627,9 +628,9 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         if self._constructed:
             return iter(self._elements)
         else:
-            return self._iter_concurent()
+            return self._iter_concurrent()
 
-    def _iter_concurent(self):
+    def _iter_concurrent(self):
         """
         We need to take special care since several iterators may run
         concurrently.
@@ -679,7 +680,12 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             # been called before we move on to the next line
             i += 1
             if i == len(self._elements) and not self._constructed:
-                next(self._iter)
+                try:
+                    next(self._iter)
+                except StopIteration:
+                    # Don't allow StopIteration to bubble up from generator
+                    # see PEP-479
+                    break
 
     def cardinality(self):
         """
@@ -865,18 +871,28 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 sage: R = IntegerModRing(15)
                 sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())
                 sage: M.construct()
-                sage: for m in M: print m, m.reduced_word()
-                1  []
-                3  [1]
-                5  [2]
-                9  [1, 1]
-                0  [1, 2]
-                10 [2, 2]
-                12 [1, 1, 1]
-                6  [1, 1, 1, 1]
+                sage: for m in M: print((m, m.reduced_word()))
+                (1, [])
+                (3, [1])
+                (5, [2])
+                (9, [1, 1])
+                (0, [1, 2])
+                (10, [2, 2])
+                (12, [1, 1, 1])
+                (6, [1, 1, 1, 1])
+
+            TESTS:
+
+            We check that :trac:`19631` is fixed::
+
+                sage: R = IntegerModRing(101)
+                sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())
+                sage: e = M.from_reduced_word([1, 1, 1, 2, 2, 2])
+                sage: e.reduced_word()
+                [1, 1, 1, 2, 2, 2]
             """
             if self._reduced_word is None:
-                self.construct(up_to=self)
+                self.parent().construct(up_to=self)
             return self._reduced_word
 
         def lift(self):
@@ -996,7 +1012,7 @@ class AutomaticMonoid(AutomaticSemigroup):
         return self._one
 
     # This method takes the monoid generators and adds the unit
-    semigroup_generators = Monoids.ParentMethods.semigroup_generators.__func__
+    semigroup_generators = raw_getattr(Monoids.ParentMethods, "semigroup_generators")
 
     def monoid_generators(self):
         """

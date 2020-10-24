@@ -6,11 +6,17 @@ TESTS:
 Check that a ``MemoryError`` is raised if we try to allocate a
 ridiculously large integer, see :trac:`15363`::
 
-    sage: 2^(2^63-2)
+    sage: 2^(2^63-2)                                           # optional - mpir
     Traceback (most recent call last):
     ...
-    RuntimeError: exponent must be at most 2147483647          # 32-bit
+    OverflowError: exponent must be at most 2147483647         # 32-bit
     MemoryError: failed to allocate 1152921504606847008 bytes  # 64-bit
+
+    sage: 2^(2^63-3)                                           # optional - gmp
+    Traceback (most recent call last):
+    ...
+    OverflowError: exponent must be at most 2147483647         # 32-bit
+    RuntimeError: Aborted                                      # 64-bit
 
 AUTHORS:
 
@@ -31,12 +37,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.signals cimport sig_error
+
 from sage.libs.gmp.misc cimport mp_set_memory_functions
-include "sage/ext/interrupt.pxi"
 
 cdef extern from "Python.h":
     # Declare as returning void without except value
     void PyErr_Format(object exception, char *format, ...)
+    int unlikely(int) nogil  # Defined by Cython
 
 
 cdef void alloc_error(size_t size) nogil:
@@ -54,7 +63,7 @@ cdef void* sage_sig_malloc(size_t size) nogil:
 
     Out-of-memory errors are handled using the ``sig_error`` mechanism.
     """
-    cdef void* p = sage_malloc(size)
+    cdef void* p = sig_malloc(size)
     if unlikely(p == NULL):
         alloc_error(size)
     return p
@@ -66,7 +75,7 @@ cdef void* sage_sig_realloc(void *ptr, size_t old_size, size_t new_size) nogil:
 
     Out-of-memory errors are handled using the ``sig_error`` mechanism.
     """
-    cdef void* p = sage_realloc(ptr, new_size)
+    cdef void* p = sig_realloc(ptr, new_size)
     if unlikely(p == NULL):
         alloc_error(new_size)
     return p
@@ -76,7 +85,7 @@ cdef void sage_sig_free(void *ptr, size_t size) nogil:
     """
     ``free()`` function for the MPIR/GMP library.
     """
-    sage_free(ptr)
+    sig_free(ptr)
 
 
 def init_memory_functions():

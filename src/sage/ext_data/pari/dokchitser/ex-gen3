@@ -1,0 +1,49 @@
+/*** EXAMPLE: L-function of a genus 3 curve over Q                   ***/
+/*** (illustration of precision issues when not enough coefficients) ***/
+/***                                                                 ***/
+/*** v1.2, July 2013, questions to tim.dokchitser@bristol.ac.uk      ***/
+/*** type \rex-gen3 or read("ex-gen3") at pari prompt to run this    ***/
+
+
+read("computel");                 \\ read the ComputeL package
+                                  \\ and set the default values
+default(realprecision,20);        \\ set working precision; used throughout
+                                  \\ actually need more coefficients for this
+
+/*** C: y^2+(x^3+x^2+x+1)y=x^7+2*x^6+2*x^5+x^4 (genus 3, hyperelliptic) ***/
+conductor = 13555; \\ conductor
+sgn       = 1;     \\ sign in the functional equation
+\\ Vector of 300 coefficients
+coef = [1,-1,-2,-1,-1,2,-2,1,4,1,-3,2,0,2,2,-1,8,-4,-3,1,4,3,4,-2,-3,0,-4,2,\
+  2,-2,-4,1,6,-8,2,-4,3,3,0,-1,-8,-4,-4,3,-4,-4,-5,2,1,3,-16,0,13,4,3,-2,6,\
+  -2,7,-2,0,4,-8,-1,0,-6,6,-8,-8,-2,-7,4,-9,-3,6,3,6,0,-10,1,0,8,-2,-4,-8,4,\
+  -4,-3,5,4,0,-4,8,5,3,-2,2,-1,-12,3,4,16,11,0,-4,-13,-9,4,2,-3,-6,2,7,-6,\
+  -4,-2,0,-7,-16,2,-14,0,16,4,3,8,13,9,8,0,8,-6,6,-6,4,8,-8,8,15,-2,10,7,0,\
+  -4,-2,9,-2,-3,4,-6,2,-3,32,-6,4,0,-20,10,-26,-1,-8,0,10,8,-6,2,14,4,-4,8,\
+  -12,4,-2,4,6,3,-14,-5,5,4,-9,0,0,4,-3,-8,-24,5,8,-3,6,2,7,-2,0,-1,-13,12,\
+  -9,-3,-12,-4,-4,16,8,-11,16,0,9,4,-11,-13,14,9,4,-4,8,-2,18,-3,0,6,-5,-2,\
+  -12,-7,13,-6,0,4,-12,2,17,0,5,-7,20,16,26,-2,-6,14,-2,0,-1,-16,0,-4,4,-3,\
+  -1,8,-12,-13,16,-1,16,-8,-6,0,8,-8,13,6,-13,-6,-10,-6,7,-4,-2,-8,0,8,9,8,\
+  8,-15,-16,2,-10,-10,16,7,-6,0,16,4,24,2,-4,9,-17,2,-7,3,12,-4,0,-6\
+];
+/*************************************************************************/
+
+                              \\ initialize other L-function parameters
+gammaV    = [0,0,0,1,1,1];    \\ list of gamma-factors
+weight    = 2;                \\ L(s)=sgn*L(weight-s)
+initLdata("coef[k]",-300);    \\ initialize the L-series data
+
+print("EXAMPLE: L-function of a genus 3 curve over Q");
+print("         with ",default(realprecision)," digits precision");
+print("C: y^2+(x^3+x^2+x+1)y=x^7+2*x^6+2*x^5+x^4 (hyperelliptic)");
+
+print("Actually need ",cflength()," coefficients to properly verify functional equation");
+print("          and ",cflength(1)," coefficients to compute L(s)");
+print("        given ",length(coef)," coefficients only, but let's try anyway:");
+print("Functional eq. = ", errprint(checkfeq(1.1))," <- indication of actual precision");
+print("Conductor      = ", conductor);
+print("Sign           = ", sgn);
+print("L(1)           = ", L(1));
+print(" (check)       = ", L(1,1.1));
+print("L(2)           = ", L(2));
+print(" (check)       = ", L(2,1.1));

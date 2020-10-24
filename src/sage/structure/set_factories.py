@@ -183,7 +183,7 @@ Here is an example::
 
     sage: selfpolicy = SelfParentPolicy(XYPairs, NewXYPair)
     sage: SelfS = XYPairs(policy=selfpolicy)
-    sage: el = SelfS.an_element();
+    sage: el = SelfS.an_element()
     sage: el.parent() is SelfS
     True
 
@@ -196,7 +196,7 @@ Now all subsets are the parent of the elements that they create::
     sage: el2.parent() is SelfS2
     True
 
-3 - Finaly, a common use case is to construct simple python object which are
+3 - Finally, a common use case is to construct simple python object which are
 not Sage :class:`sage.structure.Element`. As an example, we show how to build
 a parent ``TupleS`` which construct pairs as tuple. The corresponding policy
 is called :class:`BareFunctionPolicy`. It takes two parameters:
@@ -213,7 +213,7 @@ Here is how to do it::
     [(2, 0), (2, 1), (2, 2), (2, 3), (2, 4)]
     sage: el = P.an_element()
     sage: type(el)
-    <type 'tuple'>
+    <... 'tuple'>
 
 Here are the currently implemented policies:
 
@@ -316,7 +316,6 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.sets_cat import Sets
 from sage.misc.abstract_method import abstract_method
 
 ####################################################
@@ -434,12 +433,12 @@ class SetFactoryPolicy(UniqueRepresentation, SageObject):
     """
     def __init__(self, factory):
         r"""
-        TEST::
+        TESTS::
 
             sage: from sage.structure.set_factories import SetFactoryPolicy
             sage: from sage.structure.set_factories_example import XYPairs
             sage: S = SetFactoryPolicy(XYPairs); S
-            <class 'sage.structure.set_factories.SetFactoryPolicy'>
+            <sage.structure.set_factories.SetFactoryPolicy object at ...>
         """
         assert isinstance(factory, SetFactory)
         self._factory = factory
@@ -575,7 +574,7 @@ class SelfParentPolicy(SetFactoryPolicy):
     """
     def __init__(self, factory, Element):
         r"""
-        TEST::
+        TESTS::
 
             sage: from sage.structure.set_factories import SelfParentPolicy
             sage: from sage.structure.set_factories_example import XYPairs, XYPair
@@ -640,7 +639,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
     """
     def __init__(self, factory, top_constraints, Element):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.structure.set_factories import TopMostParentPolicy
             sage: from sage.structure.set_factories_example import XYPairs, XYPair
@@ -743,7 +742,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
     """
     def __init__(self, factory, parent):
         r"""
-        TEST::
+        TESTS::
 
             sage: from sage.structure.set_factories import FacadeParentPolicy
             sage: from sage.structure.set_factories_example import XYPairs, XYPair
@@ -797,12 +796,12 @@ class FacadeParentPolicy(SetFactoryPolicy):
 
 class BareFunctionPolicy(SetFactoryPolicy):
     r"""
-    Policy where element are contructed using a bare function.
+    Policy where element are constructed using a bare function.
 
     INPUT:
 
     - ``factory`` -- an instance of :class:`SetFactory`
-    - ``contructor`` -- a function
+    - ``constructor`` -- a function
 
     Given a factory ``F`` and a function ``c``, returns a policy for
     parent ``P`` creating element using the function ``f``.
@@ -816,11 +815,11 @@ class BareFunctionPolicy(SetFactoryPolicy):
         sage: P = XYPairs(x=2, policy=tuplepolicy)
         sage: el = P.an_element()
         sage: type(el)
-        <type 'tuple'>
+        <... 'tuple'>
     """
     def __init__(self, factory, constructor):
         """
-        TEST::
+        TESTS::
 
             sage: from sage.structure.set_factories import BareFunctionPolicy
             sage: from sage.structure.set_factories_example import XYPairs
@@ -846,7 +845,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
             sage: from sage.structure.set_factories_example import XYPairs
             sage: pol = BareFunctionPolicy(XYPairs, tuple)
             sage: pol.element_constructor_attributes(())
-            {'_element_constructor_': <type 'tuple'>, '_parent_for': None}
+            {'_element_constructor_': <... 'tuple'>, '_parent_for': None}
         """
         return {'_element_constructor_' : self._constructor, '_parent_for' : None}
 
@@ -857,7 +856,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
             sage: from sage.structure.set_factories import BareFunctionPolicy
             sage: from sage.structure.set_factories_example import XYPairs
             sage: BareFunctionPolicy(XYPairs, tuple)
-            Set factory policy for bare function <type 'tuple'>
+            Set factory policy for bare function <... 'tuple'>
         """
         return "Set factory policy for bare function {}".format(self._constructor)
 
@@ -1038,7 +1037,7 @@ class ParentWithSetFactory(Parent):
             sage: S._test_subset()
         """
         tester = self._tester(**options)
-        tester.assertTrue(self.subset() is self)
+        tester.assertIs(self.subset(), self)
 
     @abstract_method
     def check_element(self, x, check):

@@ -244,12 +244,12 @@ barras invertidas duplas nas strings do Python. ::
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
     sage: from sage.misc.latex import latex_extra_preamble
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
     sage: latex.add_macro("\\newcommand{\\foo}{bar}")
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
@@ -276,7 +276,7 @@ de barras duplas nas strings do Python. ::
     sage: latex.add_to_preamble('\\geometry{letterpaper,total={8in,10in}}')
     sage: latex.extra_preamble()
     '\\usepackage{geometry}\\geometry{letterpaper,total={8in,10in}}'
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \usepackage{geometry}\geometry{letterpaper,total={8in,10in}}
     \newcommand{\ZZ}{\Bold{Z}}
     ...
@@ -474,9 +474,10 @@ respectivamente, http://sourceforge.net/projects/dvipng/ e como parte
 do `Ghostscript <http://www.ghostscript.com/>`_.
 
 A criação de grafos combinatoriais requer uma versão recente da
-biblioteca PGF, e os arquivos ``tkz-graph.sty``, ``tkz-arith.sty`` e
-talvez ``tkz-berge.sty``, que estão disponíveis em `Altermundus site
-<http://altermundus.com/pages/tkz/graph/>`_.
+biblioteca PGF, e o arquivo ``tkz-graph.sty``, que está disponível em
+https://www.ctan.org/pkg/tkz-graph, os arquivos  ``tkz-arith.sty`` e
+talvez ``tkz-berge.sty``, que estão disponíveis em
+https://www.ctan.org/pkg/tkz-berge.
 
 Programas Externos
 ==================
@@ -492,21 +493,3 @@ ser executados automaticamente. Como um exemplo, um exame matemático
 pode manter uma correspondência entre questões e respostas usando o
 sagetex para fazer cálculos com o Sage. Veja :ref:`sec-sagetex` para
 mais informações.
-
-O tex2sws começa com um documento LaTeX, mas define ambientes
-adicionais para inserir código em Sage. Quando processado com as
-ferramentas adequadas, o resultado é uma folha de trabalho do Sage,
-com conteúdo apropriadamente formatado para o MathJax e com código em
-Sage incorporado como células de entrada. Então um livro texto ou
-artigo pode ser criado em LaTeX, ter blocos de código em Sage
-incluídos, e o documento todo pode ser transformado em uma folha de
-trabalho do Sage onde o texto matemático é bem formatado e os blocos
-de código em Sage podem ser facilmente executados. Atualmente em
-desenvolvimento, veja `tex2sws @ BitBucket
-<http://bitbucket.org/rbeezer/tex2sws/>`_ para mais informações.
-
-O sws2tex reverte o processo partindo de uma folha de trabalho do Sage
-e convertendo o conteúdo para LaTeX para ser posteriormente processado
-com as ferramentas disponíveis para documentos em LaTeX. Atualmente em
-desenvolvimento, veja `sws2tex @ BitBucket
-<http://bitbucket.org/whuss/sws2tex/>`_ para mais informações.

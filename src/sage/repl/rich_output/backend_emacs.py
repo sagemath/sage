@@ -13,10 +13,9 @@ based on the IPython shell version.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-import sys
 from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
 from sage.repl.rich_output.output_catalog import *
 
@@ -117,12 +116,12 @@ class BackendEmacs(BackendIPythonCommandline):
         """
 
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get()}, {})
+            return ({u'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get()}, {})
+            return ({u'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            text = "BEGIN_TEXT:" + plain_text.text.get() + ":END_TEXT\nBEGIN_LATEX:" + \
-                   rich_output.latex.get() + ":END_LATEX"
+            text = "BEGIN_TEXT:" + plain_text.text.get_str() + ":END_TEXT\nBEGIN_LATEX:" + \
+                   rich_output.latex.get_str() + ":END_LATEX"
             return ({u'text/plain': text}, {})
 
         # TODO: perhaps handle these by returning the data inline,

@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# sage-apply-patches [-p<num>] [-d patch-subdir] [patch-dir] -- [...]
+#
+# Apply any patches to original spkg sources.  Patch files must have
+# the .patch extension.
+#
+# By default the patches are applied from ../patches/ using the -p1
+# option, and it is assumed that the patches are being applied from
+# the root of the package source.
+#
+# An optional patch subdirectory may be specified with the -d flag.
+# For example `sage-apply-patches -d cygwin` applies only those
+# patches under <patch-dir>/cygwin.
+#
+# The -p<num> arg is the argument accepted by the `patch` command,
+# and overrides the default -p1
+#
+# Any additional arguments following " -- " are passed directly
+# to the `patch` command.
+#
+#***************************************************************************
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#***************************************************************************
+
+patchdir="../patches"
+patch_subdir=""
+patch_strip="-p1"
+patch_args_sep=""
+patch_args="--no-backup-if-mismatch"
+
+while [[ $# > 0 ]]; do
+    if [[ -z "$patch_args_sep" ]]; then
+        case $1 in
+            -d)
+                patch_subdir="${2%/}"
+                shift
+                ;;
+            -p[0-9])
+                patch_strip="$1"
+                ;;
+            --)
+                patch_args_sep="$1"
+                ;;
+            *)
+                patchdir="${1%/}"
+                ;;
+        esac
+    else
+        patch_args="$patch_args $1"
+    fi
+
+    shift
+done
+
+patchdir="${patchdir}/${patch_subdir}"
+patchdir="${patchdir%/}"
+patches=( "${patchdir}"/*.patch )
+
+if [[ -r "${patches[0]}" ]]; then
+    echo "Applying patches from ${patchdir}..."
+    for patch in ${patches[@]}; do
+        # Skip non-existing or non-readable patches
+        [ -r "$patch" ] || continue
+        echo "Applying $patch"
+        patch $patch_strip $patch_args < "$patch"
+        if [ $? -ne 0 ]; then
+            echo >&2 "Error applying '$patch'"
+            exit 1
+        fi
+    done
+else
+    >&2 echo "No patch files found in $patchdir"
+fi

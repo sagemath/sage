@@ -10,19 +10,16 @@ AUTHORS:
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import os
 import sage.misc.misc
+
 
 def coefficients_to_power_sums(n, m, a):
     r"""
@@ -49,18 +46,17 @@ def coefficients_to_power_sums(n, m, a):
 
     EXAMPLES::
 
-        sage: sage.rings.number_field.totallyreal_phc.coefficients_to_power_sums(3,2,[1,5,7])
+        sage: from sage.rings.number_field.totallyreal_phc import coefficients_to_power_sums
+        sage: coefficients_to_power_sums(3,2,[1,5,7])
         [3, -7, 39]
-        sage: sage.rings.number_field.totallyreal_phc.coefficients_to_power_sums(5,4,[1,5,7,9,8])
+        sage: coefficients_to_power_sums(5,4,[1,5,7,9,8])
         [5, -8, 46, -317, 2158]
     """
-
     S = [n] + [0]*m
     for k in range(1,m+1):
         S[k] = -sum([a[n-i]*S[k-i] for i in range(1,k)])-k*a[n-k]
     return S
 
-import os
 
 def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     r"""
@@ -81,14 +77,8 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     NOTES:
 
-    See Cohen [Cohen2000]_ for the general idea and unpublished work of the
+    See Cohen [Coh2000]_ for the general idea and unpublished work of the
     author for more detail.
-
-    REFERENCES:
-
-    .. [Cohen2000] Henri Cohen, Advanced topics in computational number theory,
-       Graduate Texts in Mathematics, vol. 193, Springer-Verlag, New York,
-       2000.
 
     AUTHORS:
 
@@ -124,7 +114,6 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
         tmpfile = sage.misc.misc.tmp_filename()
     f = open(tmpfile + '.phc', 'w')
     f.close()
-    x = [0]*m
 
     output_data = []
 

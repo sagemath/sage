@@ -1,5 +1,5 @@
 """
-Fast Lattice Polygons using PPL.
+Fast Lattice Polygons using PPL
 
 See :mod:`ppl_lattice_polytope` for the implementation of
 arbitrary-dimensional lattice polytopes. This module is about the
@@ -22,8 +22,7 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.all import cached_method, cached_function
 from sage.modules.all import (vector, zero_vector)
 from sage.matrix.constructor import (matrix, zero_matrix, block_matrix)
-from sage.libs.ppl import (C_Polyhedron, Generator_System_iterator,
-                           Poly_Con_Relation)
+from ppl import C_Polyhedron, Poly_Con_Relation
 from sage.geometry.polyhedron.lattice_euclidean_group_element import (
     LatticeEuclideanGroupElement)
 from sage.geometry.polyhedron.ppl_lattice_polytope import (
@@ -177,7 +176,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
     def _find_cyclic_isomorphism_matching_edge(self, polytope,
                                                polytope_origin, p_ray_left,
                                                p_ray_right):
-        """
+        r"""
         Helper to find an isomorphism of polygons
 
         INPUT:
@@ -243,7 +242,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
         raise LatticePolytopesNotIsomorphicError('different polygons')
 
     def find_isomorphism(self, polytope):
-        """
+        r"""
         Return a lattice isomorphism with ``polytope``.
 
         INPUT:
@@ -303,8 +302,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
             return self._find_isomorphism_degenerate(polytope)
 
         polytope_origin = polytope_vertices[0]
-        origin_P = C_Polyhedron(next(Generator_System_iterator(
-            polytope.minimized_generators())))
+        origin_P = C_Polyhedron(next(iter(polytope.minimized_generators())))
 
         neighbors = []
         for c in polytope.minimized_constraints():
@@ -363,7 +361,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
     def sub_polytopes(self):
         """
-        Returns a list of all lattice sub-polygons up to isomorphsm.
+        Return a list of all lattice sub-polygons up to isomorphism.
 
         OUTPUT:
 

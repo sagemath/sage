@@ -152,7 +152,7 @@
 - (void)webView:(WebView *)wv runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)listener {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginSheetForDirectory:nil
-                                 file:nil
+                                 file:@""
                        modalForWindow:[[self webView] window]
                         modalDelegate:self
                        didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)

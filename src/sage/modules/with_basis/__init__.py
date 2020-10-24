@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Concrete classes related to modules with a distinguished basis.
 
 This module provides concrete classes for various constructions

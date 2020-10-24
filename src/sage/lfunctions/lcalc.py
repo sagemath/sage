@@ -26,8 +26,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
+from __future__ import absolute_import, print_function
 
 import os
+
 from sage.structure.sage_object import SageObject
 from sage.misc.all import pager
 import sage.rings.all
@@ -51,7 +53,7 @@ class LCalc(SageObject):
        function
 
     -  elliptic curve E - where E is an elliptic curve over
-       `\mathbb{Q}`; defines `L(E,s)`
+       `\QQ`; defines `L(E,s)`
 
 
     You can also use the complete command-line interface of
@@ -63,8 +65,10 @@ class LCalc(SageObject):
         return "Rubinsteins L-function Calculator"
 
     def __call__(self, args):
-        cmd = 'lcalc %s'%args
-        return os.popen(cmd).read().strip()
+        cmd = 'lcalc %s' % args
+        with os.popen(cmd) as f:
+            res = f.read().strip()
+        return res
 
     def _compute_L(self, L):
         if isinstance(L, str):
@@ -247,7 +251,7 @@ class LCalc(SageObject):
                 x0,y0,x1,y1 = a.split()
                 w.append((CC(x0,y0), CC(x1,y1)))
             except ValueError:
-                print 'lcalc: ', a
+                print('lcalc: {}'.format(a))
         return w
 
     def twist_values(self, s, dmin, dmax, L=''):

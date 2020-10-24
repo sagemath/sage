@@ -39,15 +39,16 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from subprocess import Popen, PIPE
 
 
-class Gfan:
+class Gfan(object):
     """
     Interface to Anders Jensen's Groebner Fan program.
     """
-    def __call__(self, I, cmd='',verbose = False, format=True):
+    def __call__(self, I, cmd='', verbose=False, format=True):
         if cmd != '' and cmd.lstrip()[0] != '-':
             cmd = 'gfan_%s'%cmd
         else:
@@ -57,19 +58,19 @@ class Gfan:
             cmd = cmd.split(' ')
 
         if verbose:
-            print "gfan command:\n%s"%cmd
-            print "gfan input:\n%s"%I
+            print("gfan command:\n%s" % cmd)
+            print("gfan input:\n%s" % I)
 
-        gfan_processes = Popen(cmd,stdin = PIPE, stdout=PIPE, stderr=PIPE)
-        ans, err = gfan_processes.communicate(input = I)
+        gfan_processes = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                               encoding='latin-1')
+        ans, err = gfan_processes.communicate(input=I)
 
-        # since version 0.4, gfan indicates which LP algorithm it is using.
+        # sometimes, gfan outputs stuff to stderr even though everything is fine
         # we avoid interpreting this as an error
-        if (len(err) > 0) and not (err.startswith('LP algorithm being used:')):
+        if (len(err) > 0) and not (err.startswith('_application PolyhedralCone')):
             raise RuntimeError(err)
 
         return ans
 
 # The instance
 gfan = Gfan()
-

@@ -17,7 +17,6 @@ groups.
 #                  http://www.gnu.org/licenses/
 ########################################################################
 
-
 from sage.modules.free_module import VectorSpace
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup_fixed_gens
 from sage.rings.integer_ring import ZZ
@@ -58,8 +57,8 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
             C5 x C5 x C7 x C8 x C9
         """
         n = len(invfac)
-        A = ZZ**n
-        B = A.span([A.gen(i) * invfac[i] for i in xrange(n)])
+        A = ZZ ** n
+        B = A.span([A.gen(i) * invfac[i] for i in range(n)])
 
         AdditiveAbelianGroup_fixed_gens.__init__(self, A, B, A.gens())
         self._original_invts = invfac
@@ -101,7 +100,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
         return times.join(g)
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation of ``self``.
 
         EXAMPLES::
@@ -142,7 +141,7 @@ def HomologyGroup(n, base_ring, invfac=None):
     fixed degree.
 
     INPUT:
-    
+
     - ``n`` -- integer; the number of generators
 
     - ``base_ring`` -- ring; the base ring over which the homology is computed

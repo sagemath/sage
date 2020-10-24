@@ -43,13 +43,12 @@ AUTHORS:
 
 REFERENCES:
 
-- K. Conrad: *Tensor products*,
-  `http://www.math.uconn.edu/~kconrad/blurbs/ <http://www.math.uconn.edu/~kconrad/blurbs/>`_
-- Chap. 21 (Exer. 4) of R. Godement: *Algebra*, Hermann (Paris) / Houghton
-  Mifflin (Boston) (1968)
-- Chap. 16 of S. Lang: *Algebra*, 3rd ed., Springer (New York) (2002)
+- \K. Conrad: *Tensor products* [Con2015]_
+- Chap. 21 (Exer. 4) of R. Godement: *Algebra* [God1968]_
+- Chap. 16 of S. Lang: *Algebra* [Lan2002]_
 
 """
+from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -60,8 +59,10 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.tensor.modules.free_module_morphism import \
                                                    FiniteRankFreeModuleMorphism
@@ -125,7 +126,7 @@ class TensorFreeModule(FiniteRankFreeModule):
     ``T`` is a module (actually a free module) over `\ZZ`::
 
         sage: T.category()
-        Category of modules over Integer Ring
+        Category of finite dimensional modules over Integer Ring
         sage: T in Modules(ZZ)
         True
         sage: T.rank()
@@ -188,7 +189,7 @@ class TensorFreeModule(FiniteRankFreeModule):
     See the documentation of
     :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
     for the full list of arguments that can be provided to the __call__
-    operator. For instance, to contruct a tensor symmetric with respect to the
+    operator. For instance, to construct a tensor symmetric with respect to the
     last two indices::
 
         sage: t = T([], name='t', sym=(1,2))
@@ -215,7 +216,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         True
 
     Of course, for `p\geq 2`, there is no coercion in the reverse direction,
-    since not every tensor of type (0,p) is alternating::
+    since not every tensor of type `(0,p)` is alternating::
 
         sage: L2.has_coerce_map_from(T02)
         False
@@ -272,7 +273,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: lta == a
         True
 
-    There is a canonical identification between tensors of type (1,1) and
+    There is a canonical identification between tensors of type `(1,1)` and
     endomorphisms of module `M`. Accordingly, coercion maps have been
     implemented between `T^{(1,1)}(M)` and `\mathrm{End}(M)` (the module of
     all endomorphisms of `M`, see
@@ -282,9 +283,9 @@ class TensorFreeModule(FiniteRankFreeModule):
         Free module of type-(1,1) tensors on the Rank-3 free module M over the
          Integer Ring
         sage: End(M)
-        Set of Morphisms from Rank-3 free module M over the Integer Ring to
-         Rank-3 free module M over the Integer Ring in Category of modules
-         over Integer Ring
+        Set of Morphisms from Rank-3 free module M over the Integer Ring
+         to Rank-3 free module M over the Integer Ring
+         in Category of finite dimensional modules over Integer Ring
         sage: T11.has_coerce_map_from(End(M))
         True
         sage: End(M).has_coerce_map_from(T11)
@@ -331,7 +332,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         [ 1  1 -2]
 
     There is a coercion `\mathrm{GL}(M)\rightarrow T^{(1,1)}(M)`, i.e. from
-    automorphisms of `M` to type-(1,1) tensors on `M`::
+    automorphisms of `M` to type-`(1,1)` tensors on `M`::
 
         sage: GL = M.general_linear_group() ; GL
         General linear group of the Rank-3 free module M over the Integer Ring
@@ -354,7 +355,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         e_0*e^0 - e_1*e^1 + e_2*e^2
 
     Of course, there is no coercion in the reverse direction, since not
-    every type-(1,1) tensor is invertible::
+    every type-`(1,1)` tensor is invertible::
 
         sage: GL.has_coerce_map_from(T11)
         False
@@ -365,19 +366,16 @@ class TensorFreeModule(FiniteRankFreeModule):
 
     def __init__(self, fmodule, tensor_type, name=None, latex_name=None):
         r"""
-        TEST::
+        TESTS::
 
-            sage: from sage.tensor.modules.tensor_free_module import TensorFreeModule
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: T = TensorFreeModule(M, (2,3), name='T23', latex_name=r'T^2_3')
+            sage: T = M.tensor_module(2, 3)
             sage: TestSuite(T).run()
 
         """
         self._fmodule = fmodule
         self._tensor_type = tuple(tensor_type)
         rank = pow(fmodule._rank, tensor_type[0] + tensor_type[1])
-        self._zero_element = 0 # provisory (to avoid infinite recursion in what
-                               # follows)
         if self._tensor_type == (0,1):  # case of the dual
             if name is None and fmodule._name is not None:
                 name = fmodule._name + '*'
@@ -393,21 +391,8 @@ class TensorFreeModule(FiniteRankFreeModule):
         FiniteRankFreeModule.__init__(self, fmodule._ring, rank, name=name,
                                       latex_name=latex_name,
                                       start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
-        # Unique representation:
-        if self._tensor_type in self._fmodule._tensor_modules:
-            raise ValueError("the module of tensors of type {}".format(
-                                                          self._tensor_type) +
-                             " has already been created")
-        else:
-            self._fmodule._tensor_modules[self._tensor_type] = self
-        # Zero element
-        self._zero_element = self._element_constructor_(name='zero',
-                                                        latex_name='0')
-        for basis in self._fmodule._known_bases:
-            self._zero_element._components[basis] = \
-                                            self._zero_element._new_comp(basis)
-            # (since new components are initialized to zero)
+                                      output_formatter=fmodule._output_formatter)
+        fmodule._all_modules.add(self)
 
     #### Parent Methods
 
@@ -436,8 +421,9 @@ class TensorFreeModule(FiniteRankFreeModule):
             True
 
         """
-        if comp == 0:
-            return self._zero_element
+        from sage.rings.integer import Integer
+        if isinstance(comp, (int, Integer)) and comp == 0:
+            return self.zero()
         if isinstance(comp, FiniteRankFreeModuleMorphism):
             # coercion of an endomorphism to a type-(1,1) tensor:
             endo = comp  # for readability
@@ -446,11 +432,30 @@ class TensorFreeModule(FiniteRankFreeModule):
                 resu = self.element_class(self._fmodule, (1,1),
                                           name=endo._name,
                                           latex_name=endo._latex_name)
-                for basis, mat in endo._matrices.iteritems():
+                for basis, mat in endo._matrices.items():
                     resu.add_comp(basis[0])[:] = mat
             else:
                 raise TypeError("cannot coerce the {}".format(endo) +
                                 " to an element of {}".format(self))
+        elif isinstance(comp, AlternatingContrTensor):
+            # coercion of an alternating contravariant tensor of degree
+            # p to a type-(p,0) tensor:
+            tensor = comp # for readability
+            p = tensor.degree()
+            if self._tensor_type != (p,0) or \
+                                    self._fmodule != tensor.base_module():
+                raise TypeError("cannot coerce the {}".format(tensor) +
+                                " to an element of {}".format(self))
+            if p == 1:
+                asym = None
+            else:
+                asym = range(p)
+            resu = self.element_class(self._fmodule, (p,0),
+                                      name=tensor._name,
+                                      latex_name=tensor._latex_name,
+                                      antisym=asym)
+            for basis, comp in tensor._components.items():
+                resu._components[basis] = comp.copy()
         elif isinstance(comp, FreeModuleAltForm):
             # coercion of an alternating form to a type-(0,p) tensor:
             form = comp # for readability
@@ -466,7 +471,7 @@ class TensorFreeModule(FiniteRankFreeModule):
             resu = self.element_class(self._fmodule, (0,p), name=form._name,
                                       latex_name=form._latex_name,
                                       antisym=asym)
-            for basis, comp in form._components.iteritems():
+            for basis, comp in form._components.items():
                 resu._components[basis] = comp.copy()
         elif isinstance(comp, FreeModuleAutomorphism):
             # coercion of an automorphism to a type-(1,1) tensor:
@@ -477,7 +482,7 @@ class TensorFreeModule(FiniteRankFreeModule):
                                 " to an element of {}".format(self))
             resu = self.element_class(self._fmodule, (1,1), name=autom._name,
                                       latex_name=autom._latex_name)
-            for basis, comp in autom._components.iteritems():
+            for basis, comp in autom._components.items():
                 resu._components[basis] = comp.copy()
         else:
             # Standard construction:
@@ -488,6 +493,34 @@ class TensorFreeModule(FiniteRankFreeModule):
                 resu.set_comp(basis)[:] = comp
         return resu
 
+    @cached_method
+    def zero(self):
+        r"""
+        Return the zero of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: T11 = M.tensor_module(1,1)
+            sage: T11.zero()
+            Type-(1,1) tensor zero on the Rank-3 free module M over the Integer
+             Ring
+
+        The zero element is cached::
+
+            sage: T11.zero() is T11(0)
+            True
+
+        """
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._fmodule._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
+        return resu
+
     def _an_element_(self):
         r"""
         Construct some (unamed) element of ``self``.
@@ -496,7 +529,6 @@ class TensorFreeModule(FiniteRankFreeModule):
 
             sage: M = FiniteRankFreeModule(QQ, 2, name='M')
             sage: T = M.tensor_module(1,1)
-            sage: e = M.basis('e')
             sage: t = T._an_element_() ; t
             Type-(1,1) tensor on the 2-dimensional vector space M over the
              Rational Field
@@ -509,10 +541,11 @@ class TensorFreeModule(FiniteRankFreeModule):
 
         """
         resu = self.element_class(self._fmodule, self._tensor_type)
-        if self._fmodule._def_basis is not None:
-            sindex = self._fmodule._sindex
-            ind = [sindex for i in range(resu._tensor_rank)]
-            resu.set_comp()[ind] = self._fmodule._ring.an_element()
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        sindex = self._fmodule._sindex
+        ind = [sindex for i in range(resu._tensor_rank)]
+        resu.set_comp()[ind] = self._fmodule._ring.an_element()
         return resu
 
     def _coerce_map_from_(self, other):
@@ -521,7 +554,7 @@ class TensorFreeModule(FiniteRankFreeModule):
 
         EXAMPLES:
 
-        Sets of module endomorphisms coerce to type-(1,1) tensor modules::
+        Sets of module endomorphisms coerce to type-`(1,1)` tensor modules::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')
@@ -533,7 +566,7 @@ class TensorFreeModule(FiniteRankFreeModule):
             sage: M.tensor_module(0,1)._coerce_map_from_(End(M))
             False
 
-        and not to type-(1,1) tensor modules defined on another free module::
+        and not to type-`(1,1)` tensor modules defined on another free module::
 
             sage: N = FiniteRankFreeModule(ZZ, 3, name='N')
             sage: f = N.basis('f')
@@ -543,6 +576,15 @@ class TensorFreeModule(FiniteRankFreeModule):
         There is no coercion if the module morphisms are not endomorphisms::
 
             sage: M.tensor_module(1,1)._coerce_map_from_(Hom(M,N))
+            False
+
+        Coercion from alternating contravariant tensors::
+
+            sage: M.tensor_module(2,0)._coerce_map_from_(M.exterior_power(2))
+            True
+            sage: M.tensor_module(2,0)._coerce_map_from_(M.exterior_power(3))
+            False
+            sage: M.tensor_module(2,0)._coerce_map_from_(N.exterior_power(2))
             False
 
         Coercion from alternating forms::
@@ -557,25 +599,30 @@ class TensorFreeModule(FiniteRankFreeModule):
             False
 
         """
-        from free_module_homset import FreeModuleHomset
-        from ext_pow_free_module import ExtPowerFreeModule
-        from free_module_linear_group import FreeModuleLinearGroup
+        from .free_module_homset import FreeModuleHomset
+        from .ext_pow_free_module import (ExtPowerFreeModule,
+                                          ExtPowerDualFreeModule)
+        from .free_module_linear_group import FreeModuleLinearGroup
         if isinstance(other, FreeModuleHomset):
             # Coercion of an endomorphism to a type-(1,1) tensor:
             if self._tensor_type == (1,1):
                 return other.is_endomorphism_set() and \
-                                                self._fmodule is other.domain()
+                                         self._fmodule is other.domain()
             else:
                 return False
         if isinstance(other, ExtPowerFreeModule):
+            # Coercion of an alternating contravariant tensor to a
+            # type-(p,0) tensor:
+            return self._tensor_type == (other.degree(), 0) and \
+                                    self._fmodule is other.base_module()
+        if isinstance(other, ExtPowerDualFreeModule):
             # Coercion of an alternating form to a type-(0,p) tensor:
             return self._tensor_type == (0, other.degree()) and \
-                                           self._fmodule is other.base_module()
-
+                                    self._fmodule is other.base_module()
         if isinstance(other, FreeModuleLinearGroup):
             # Coercion of an automorphism to a type-(1,1) tensor:
             return self._tensor_type == (1,1) and \
-                                           self._fmodule is other.base_module()
+                                    self._fmodule is other.base_module()
         return False
 
     #### End of parent methods
@@ -584,7 +631,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(QQ, 2, name='M')
             sage: M.tensor_module(1,1)
@@ -608,9 +655,9 @@ class TensorFreeModule(FiniteRankFreeModule):
         - instance of :class:`FiniteRankFreeModule` representing the free
           module on which the tensor module is defined.
 
-        EXAMPLE:
+        EXAMPLES:
 
-        Base module of a type-(1,2) tensor module::
+        Base module of a type-`(1,2)` tensor module::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: T = M.tensor_module(1,2)
@@ -631,7 +678,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         - pair `(k,l)` such that ``self`` is the module tensor product
           `T^{(k,l)}(M)`
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3)
             sage: T = M.tensor_module(1,2)

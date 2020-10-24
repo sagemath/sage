@@ -1,0 +1,13 @@
+diff --git a/src/app_main.cpp b/src/app_main.cpp
+index a33c042..e7ade81 100644
+--- a/src/app_main.cpp
++++ b/src/app_main.cpp
+@@ -205,7 +205,7 @@ public:
+     }
+ 
+     ep->close();
+-    delete ep;//<--- In next release, make the class virtual
++//    delete ep;//<--- In next release, make the class virtual # this is miscompiled clang@xcode-6.3
+ 
+     printf("\n");
+ 

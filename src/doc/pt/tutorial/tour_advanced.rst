@@ -17,7 +17,7 @@ componentes irredutíveis da união.
     sage: C3 = Curve(x^3 + y^3 - 1)
     sage: D = C2 + C3
     sage: D
-    Affine Curve over Rational Field defined by 
+    Affine Plane Curve over Rational Field defined by 
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
     [
@@ -39,11 +39,11 @@ irredutíveis.
     sage: V.irreducible_components()
     [
     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
       y,
       x - 1,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+      y - 1,
+      x,
     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
       x + y + 2,
       2*y^2 + 4*y + 3
@@ -67,14 +67,13 @@ projetivo:
     in a, b, c, d over Rational Field
     sage: F.reduced_groebner_bases ()
     [[-c^2 + b*d, -b*c + a*d, -b^2 + a*c],
-    [-c^2 + b*d, b^2 - a*c, -b*c + a*d],
-    [-c^2 + b*d, b*c - a*d, b^2 - a*c, -c^3 + a*d^2],
-    [c^3 - a*d^2, -c^2 + b*d, b*c - a*d, b^2 - a*c],
-    [c^2 - b*d, -b*c + a*d, -b^2 + a*c],
-    [c^2 - b*d, b*c - a*d, -b^2 + a*c, -b^3 + a^2*d],
-    [c^2 - b*d, b*c - a*d, b^3 - a^2*d, -b^2 + a*c],
-    [c^2 - b*d, b*c - a*d, b^2 - a*c]]
-
+     [-b*c + a*d, -c^2 + b*d, b^2 - a*c],
+     [-c^3 + a*d^2, -c^2 + b*d, b*c - a*d, b^2 - a*c],
+     [-c^2 + b*d, b^2 - a*c, b*c - a*d, c^3 - a*d^2],
+     [-b*c + a*d, -b^2 + a*c, c^2 - b*d],
+     [-b^3 + a^2*d, -b^2 + a*c, c^2 - b*d, b*c - a*d],
+     [-b^2 + a*c, c^2 - b*d, b*c - a*d, b^3 - a^2*d],
+     [c^2 - b*d, b*c - a*d, b^2 - a*c]]
     sage: F.polyhedralfan()
     Polyhedral fan in 4 dimensions of dimension 4
 
@@ -126,19 +125,19 @@ Agora ilustramos cada uma dessas construções:
 
     sage: EllipticCurve([0,0,1,-1,0])
     Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-    
+
     sage: EllipticCurve([GF(5)(0),0,1,-1,0])
     Elliptic Curve defined by y^2 + y = x^3 + 4*x over Finite Field of size 5
-    
+
     sage: EllipticCurve([1,2])
     Elliptic Curve defined by y^2  = x^3 + x + 2 over Rational Field
-    
+
     sage: EllipticCurve('37a')
     Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-    
+
     sage: EllipticCurve_from_j(1)
     Elliptic Curve defined by y^2 + x*y = x^3 + 36*x + 3455 over Rational Field
-    
+
     sage: EllipticCurve(GF(5), [0,0,1,-1,0])
     Elliptic Curve defined by y^2 + y = x^3 + 4*x over Finite Field of size 5
 
@@ -175,7 +174,7 @@ seguinte forma:
     sage: E.conductor()
     2368
     sage: E.j_invariant()
-    110592/37      
+    110592/37
 
 Se criarmos uma curva com o mesmo invariante :math:`j` que a curva
 :math:`E`, ela não precisa ser isomórfica a :math:`E`. No seguinte
@@ -210,10 +209,10 @@ PARI.
 ::
 
     sage: E = EllipticCurve([0,0,1,-1,0])
-    sage: print E.anlist(30)  
-    [0, 1, -2, -3, 2, -2, 6, -1, 0, 6, 4, -5, -6, -2, 2, 6, -4, 0, -12, 0, -4, 
+    sage: E.anlist(30)
+    [0, 1, -2, -3, 2, -2, 6, -1, 0, 6, 4, -5, -6, -2, 2, 6, -4, 0, -12, 0, -4,
      3, 10, 2, 0, -1, 4, -9, -2, 6, -12]
-    sage: v = E.anlist(10000)    
+    sage: v = E.anlist(10000)
 
 Leva apenas um segundo para calcular todos os :math:`a_n` para
 :math:`n\leq 10^5`:
@@ -234,7 +233,7 @@ sobre o seu posto, números de Tomagawa, regulador, etc.
 
     sage: E = EllipticCurve("37b2")
     sage: E
-    Elliptic Curve defined by y^2 + y = x^3 + x^2 - 1873*x - 31833 over Rational 
+    Elliptic Curve defined by y^2 + y = x^3 + x^2 - 1873*x - 31833 over Rational
     Field
     sage: E = EllipticCurve("389a")
     sage: E
@@ -281,12 +280,12 @@ Um *caractere de Dirichlet* é a extensão de um homomorfismo
 
     sage: G = DirichletGroup(12)
     sage: G.list()
-    [Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1, 
-    Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1, 
-    Dirichlet character modulo 12 of conductor 3 mapping 7 |--> 1, 5 |--> -1, 
+    [Dirichlet character modulo 12 of conductor 1 mapping 7 |--> 1, 5 |--> 1,
+    Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1,
+    Dirichlet character modulo 12 of conductor 3 mapping 7 |--> 1, 5 |--> -1,
     Dirichlet character modulo 12 of conductor 12 mapping 7 |--> -1, 5 |--> -1]
     sage: G.gens()
-    (Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1, 
+    (Dirichlet character modulo 12 of conductor 4 mapping 7 |--> -1, 5 |--> 1,
     Dirichlet character modulo 12 of conductor 3 mapping 7 |--> 1, 5 |--> -1)
     sage: len(G)
     4
@@ -302,7 +301,7 @@ cálculos com ele.
     sage: chi = G.1; chi
     Dirichlet character modulo 21 of conductor 7 mapping 8 |--> 1, 10 |--> zeta6
     sage: chi.values()
-    [0, 1, zeta6 - 1, 0, -zeta6, -zeta6 + 1, 0, 0, 1, 0, zeta6, -zeta6, 0, -1, 
+    [0, 1, zeta6 - 1, 0, -zeta6, -zeta6 + 1, 0, 0, 1, 0, zeta6, -zeta6, 0, -1,
      0, 0, zeta6 - 1, zeta6, 0, -zeta6 + 1, -1]
     sage: chi.conductor()
     7
@@ -325,19 +324,17 @@ módulo.
 ::
 
     sage: chi.galois_orbit()
-    [Dirichlet character modulo 21 of conductor 7 mapping 8 |--> 1, 10 |--> zeta6, 
-    Dirichlet character modulo 21 of conductor 7 mapping 8 |--> 1, 10 |--> -zeta6 + 1]
-   
+    [Dirichlet character modulo 21 of conductor 7 mapping 8 |--> 1, 10 |--> -zeta6 + 1,
+     Dirichlet character modulo 21 of conductor 7 mapping 8 |--> 1, 10 |--> zeta6]
+
     sage: go = G.galois_orbits()
     sage: [len(orbit) for orbit in go]
     [1, 2, 2, 1, 1, 2, 2, 1]
-    
+
     sage: G.decomposition()
     [
-    Group of Dirichlet characters of modulus 3 over Cyclotomic Field of order 
-    6 and degree 2,
-    Group of Dirichlet characters of modulus 7 over Cyclotomic Field of order 
-    6 and degree 2
+    Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
+    Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2
     ]
 
 A seguir, construímos o grupo de caracteres de Dirichlet mod 20, mas
@@ -348,7 +345,7 @@ com valores em :math:`\QQ(i)`:
     sage: K.<i> = NumberField(x^2+1)
     sage: G = DirichletGroup(20,K)
     sage: G
-    Group of Dirichlet characters of modulus 20 over Number Field in i with defining polynomial x^2 + 1
+    Group of Dirichlet characters modulo 20 with values in Number Field in i with defining polynomial x^2 + 1
 
 Agora calculamos diversos invariantes de ``G``:
 
@@ -380,8 +377,7 @@ unidade no terceiro argumento do comando ``DirichletGroup`` abaixo.
     sage: K
     Number Field in a with defining polynomial x^4 + 1
     sage: G = DirichletGroup(5, K, a); G
-    Group of Dirichlet characters of modulus 5 over Number Field in a with 
-    defining polynomial x^4 + 1
+    Group of Dirichlet characters modulo 5 with values in the group of order 8 generated by a in Number Field in a with defining polynomial x^4 + 1
     sage: chi = G.0; chi
     Dirichlet character modulo 5 of conductor 5 mapping 2 |--> a^2
     sage: [(chi^i)(2) for i in range(4)]
@@ -423,7 +419,7 @@ símbolos modulares de nível :math:`1` e peso :math:`12`.
     ([X^8*Y^2,(0,0)], [X^9*Y,(0,0)], [X^10,(0,0)])
     sage: t2 = M.T(2)
     sage: t2
-    Hecke operator T_2 on Modular Symbols space of dimension 3 for Gamma_0(1) 
+    Hecke operator T_2 on Modular Symbols space of dimension 3 for Gamma_0(1)
     of weight 12 with sign 0 over Rational Field
     sage: t2.matrix()
     [ -24    0    0]
@@ -446,7 +442,7 @@ Podemos também criar espaços para :math:`\Gamma_0(N)` e
     Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
-    Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with 
+    Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
     sign 0 and over Rational Field
 
 Vamos calcular alguns polinômios característicos e expansões
@@ -456,10 +452,10 @@ Vamos calcular alguns polinômios característicos e expansões
 
     sage: M = ModularSymbols(Gamma1(11),2)
     sage: M.T(2).charpoly('x')
-    x^11 - 8*x^10 + 20*x^9 + 10*x^8 - 145*x^7 + 229*x^6 + 58*x^5 - 360*x^4 
+    x^11 - 8*x^10 + 20*x^9 + 10*x^8 - 145*x^7 + 229*x^6 + 58*x^5 - 360*x^4
          + 70*x^3 - 515*x^2 + 1804*x - 1452
     sage: M.T(2).charpoly('x').factor()
-    (x - 3) * (x + 2)^2 * (x^4 - 7*x^3 + 19*x^2 - 23*x + 11) 
+    (x - 3) * (x + 2)^2 * (x^4 - 7*x^3 + 19*x^2 - 23*x + 11)
             * (x^4 - 2*x^3 + 4*x^2 + 2*x + 11)
     sage: S = M.cuspidal_submodule()
     sage: S.T(2).matrix()
@@ -477,19 +473,19 @@ Podemos até mesmo calcular espaços de símbolos modulares com carácter.
     sage: G = DirichletGroup(13)
     sage: e = G.0^2
     sage: M = ModularSymbols(e,2); M
-    Modular Symbols space of dimension 4 and level 13, weight 2, character 
+    Modular Symbols space of dimension 4 and level 13, weight 2, character
     [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
     sage: M.T(2).charpoly('x').factor()
     (x - zeta6 - 2) * (x - 2*zeta6 - 1) * (x + zeta6 + 1)^2
     sage: S = M.cuspidal_submodule(); S
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of 
-    dimension 4 and level 13, weight 2, character [zeta6], sign 0, over 
+    Modular Symbols subspace of dimension 2 of Modular Symbols space of
+    dimension 4 and level 13, weight 2, character [zeta6], sign 0, over
     Cyclotomic Field of order 6 and degree 2
     sage: S.T(2).charpoly('x').factor()
     (x + zeta6 + 1)^2
     sage: S.q_expansion_basis(10)
     [
-    q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5 
+    q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5
       + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)
     ]
 
@@ -500,7 +496,7 @@ operadores de Hecke em um espaço de formas modulares.
 
     sage: T = ModularForms(Gamma0(11),2)
     sage: T
-    Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of 
+    Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of
     weight 2 over Rational Field
     sage: T.degree()
     2
@@ -514,7 +510,7 @@ operadores de Hecke em um espaço de formas modulares.
     Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for
     Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
     sage: T.eisenstein_subspace()
-    Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2 
+    Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2
     for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
     sage: M = ModularSymbols(11); M
     Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign

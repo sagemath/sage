@@ -1,5 +1,5 @@
 """
-Symmetric functions defined by orthogonality and triangularity.
+Symmetric functions defined by orthogonality and triangularity
 
 One characterization of Schur functions is that they are upper
 triangularly related to the monomial symmetric functions and
@@ -23,7 +23,7 @@ functions from this definition.
     sage: s2([2,1])^2
     s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #
@@ -36,12 +36,14 @@ functions from this definition.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import absolute_import
 
-import sfa
+from . import sfa
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+
 
 class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic):
 
@@ -186,8 +188,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
                               self._base_to_self_cache, to_other_function = self._to_base)
 
     def _to_base(self, part):
-        """
-        Returns a function which takes in a partition `\mu` and returns the
+        r"""
+        Return a function which takes in a partition `\mu` and returns the
         coefficient of a partition in the expansion of ``self`` `(part)` in base.
 
         INPUT:
@@ -248,5 +250,5 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         return self( self._sf_base(left)*self._sf_base(right) )
 
 # Backward compatibility for unpickling
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)

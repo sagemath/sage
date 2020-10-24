@@ -10,6 +10,8 @@ Graded Algebras
 #******************************************************************************
 
 from sage.categories.graded_modules import GradedModulesCategory
+from sage.categories.signed_tensor import SignedTensorProductsCategory
+from sage.misc.cachefunc import cached_method
 
 class GradedAlgebras(GradedModulesCategory):
     """
@@ -20,16 +22,63 @@ class GradedAlgebras(GradedModulesCategory):
         sage: GradedAlgebras(ZZ)
         Category of graded algebras over Integer Ring
         sage: GradedAlgebras(ZZ).super_categories()
-        [Category of algebras over Integer Ring,
+        [Category of filtered algebras over Integer Ring,
          Category of graded modules over Integer Ring]
 
     TESTS::
 
         sage: TestSuite(GradedAlgebras(ZZ)).run()
     """
-
     class ParentMethods:
-        pass
+        def graded_algebra(self):
+            """
+            Return the associated graded algebra to ``self``.
+
+            Since ``self`` is already graded, this just returns
+            ``self``.
+
+            EXAMPLES::
+
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: m.graded_algebra() is m
+                True
+            """
+            return self
 
     class ElementMethods:
         pass
+
+    class SubcategoryMethods:
+        def SignedTensorProducts(self):
+            r"""
+            Return the full subcategory of objects of ``self`` constructed
+            as signed tensor products.
+
+            .. SEEALSO::
+
+                - :class:`~sage.categories.signed_tensor.SignedTensorProductsCategory`
+                - :class:`~.covariant_functorial_construction.CovariantFunctorialConstruction`
+
+            EXAMPLES::
+
+                sage: AlgebrasWithBasis(QQ).Graded().SignedTensorProducts()
+                Category of signed tensor products of graded algebras with basis
+                 over Rational Field
+            """
+            return SignedTensorProductsCategory.category_of(self)
+
+    class SignedTensorProducts(SignedTensorProductsCategory):
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Algebras(QQ).Graded().SignedTensorProducts().extra_super_categories()
+                [Category of graded algebras over Rational Field]
+                sage: Algebras(QQ).Graded().SignedTensorProducts().super_categories()
+                [Category of graded algebras over Rational Field]
+
+            Meaning: a signed tensor product of algebras is an algebra
+            """
+            return [self.base_category()]
+

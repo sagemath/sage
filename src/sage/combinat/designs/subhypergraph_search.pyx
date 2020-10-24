@@ -31,50 +31,50 @@ over `|V(H_1)|` points. In particular, two sets of distinct cardinalities
 require the same memory space. A hypergraph is a C struct with the following
 fields:
 
-    * ``n,m`` (``int``) -- number of points and edges.
+* ``n,m`` (``int``) -- number of points and edges.
 
-    * ``limbs`` (``int``) -- number of 64-bits blocks per set.
+* ``limbs`` (``int``) -- number of 64-bits blocks per set.
 
-    * ``set_space`` (``uint64_t *``) -- address of the memory used to store the
-      sets.
+* ``set_space`` (``uint64_t *``) -- address of the memory used to store the
+  sets.
 
-    * ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
-      blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
-      cardinality of ``set[i]``, so that ``sets`` has lenth
-      ``m*(limbs+1)*sizeof(uint64_t)``.
+* ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
+  blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
+  cardinality of ``set[i]``, so that ``sets`` has lenth
+  ``m*(limbs+1)*sizeof(uint64_t)``.
 
-    * ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
-      points.
+* ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
+  points.
 
 The operations used on this data structure are:
 
-    * ``void permute(hypergraph * h, int n1, int n2)`` -- exchanges points `n1`
-      and `n2` in the data structure. Note that their names are also exchanged
-      so that we still know which is which.
+* ``void permute(hypergraph * h, int n1, int n2)`` -- exchanges points `n1`
+  and `n2` in the data structure. Note that their names are also exchanged
+  so that we still know which is which.
 
-    * ``int induced_hypergraph(hypergraph * h1, int n, hypergraph * tmp1)`` --
-      stores in ``tmp1`` the hypergraph induced by the first `n` points,
-      i.e. all sets `S` such that `S\subseteq \{0,...,n-1\}`. The function
-      returns the number of such sets.
+* ``int induced_hypergraph(hypergraph * h1, int n, hypergraph * tmp1)`` --
+  stores in ``tmp1`` the hypergraph induced by the first `n` points,
+  i.e. all sets `S` such that `S\subseteq \{0,...,n-1\}`. The function
+  returns the number of such sets.
 
-    * ``void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp)`` -- stores
-      in ``tmp1`` the trace of `h` on the first `n` points, i.e. all sets of the
-      form `S\cap \{0,...,n-1\}`.
+* ``void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp)`` -- stores
+  in ``tmp1`` the trace of `h` on the first `n` points, i.e. all sets of the
+  form `S\cap \{0, \ldots, n-1\}`.
 
 Algorithm
 ---------
 
 We try all possible assignments of a representant `r_i\in H_1` for every `i\in
 H_2`. When we have picked a representant for the first `n<` points
-`\{0,...,n-1\}\subsetneq V(H_2)`, we check that:
+`\{0, \ldots, n-1\}\subsetneq V(H_2)`, we check that:
 
-    * The hypergraph induced by the (ordered) list `0,...,n-1` in `H_2` is equal
-      to the one induced by `r_0,...,r_{n-1}` in `H_1`.
+* The hypergraph induced by the (ordered) list `0, \ldots, n-1` in `H_2` is
+  equal to the one induced by `r_0, \ldots, r_{n-1}` in `H_1`.
 
-    * If `S\subseteq \{0,...,n-1\}` is contained in `c` sets of size `k` in
-      `H_2`, then `\{r_i:i\in S\}` is contained in `\geq c` sets of size `k` in
-      `H_1`. This is done by comparing the trace of the hypergraphs while
-      remembering the original size of each set.
+* If `S\subseteq \{0,...,n-1\}` is contained in `c` sets of size `k` in
+  `H_2`, then `\{r_i:i\in S\}` is contained in `\geq c` sets of size `k` in
+  `H_1`. This is done by comparing the trace of the hypergraphs while
+  remembering the original size of each set.
 
 As we very often need to build the hypergraph obtained by the trace of the first
 `n` points (for all possible `n`), those hypergraphs are cached. The hypergraphs
@@ -119,7 +119,7 @@ Methods
 
 from libc.stdlib cimport qsort
 from libc.stdint cimport uint64_t
-include "sage/ext/stdsage.pxi"
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
 
 ctypedef struct hypergraph:
     int n
@@ -165,9 +165,9 @@ cdef void h_free(hypergraph h):
     r"""
     Free the hypergraph
     """
-    sage_free(h.names)
-    sage_free(h.set_space)
-    sage_free(h.sets)
+    sig_free(h.names)
+    sig_free(h.set_space)
+    sig_free(h.sets)
     h.names = NULL
     h.set_space = NULL
     h.sets = NULL
@@ -181,9 +181,9 @@ cdef hypergraph h_init(int n,list H):
     h.n          = n
     h.m          = len(H)
     h.limbs      = (n+63)/64 # =ceil(n/64)
-    h.names      = <int *>  sage_malloc(sizeof(int)*n)
-    h.sets       = <uint64_t **> sage_malloc(h.m*sizeof(uint64_t *))
-    h.set_space  = <uint64_t *>  sage_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
+    h.names      = <int *>  sig_malloc(sizeof(int)*n)
+    h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
+    h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
 
     # Consistency check
     for S in H:
@@ -244,7 +244,8 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
             num_sets += 1
     tmp.m = num_sets
     tmp.n = n
-    tmp.limbs =1
+    tmp.limbs = 1
+
 
 cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp):
     r"""
@@ -309,7 +310,7 @@ cdef int cmp_128_bits(void * a, void * b) nogil:
 
 cdef int is_induced_admissible64(hypergraph h1,hypergraph * h2_induced,int n,hypergraph tmp1):
     r"""
-    Tests if the hypergrap induced in h1 by 0,...,n-1 is equal to the hypergraph
+    Test if the hypergraph induced in h1 by 0,...,n-1 is equal to the hypergraph
     induced in h2 by 0,...,n-1.
 
     ``h2_induced`` is expected to be a pointer toward the hypergraph induced by
@@ -347,7 +348,7 @@ cdef class SubHypergraphSearch:
         r"""
         See the documentation's class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.combinat.designs.subhypergraph_search import SubHypergraphSearch
             sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(labels=False))
@@ -370,13 +371,13 @@ cdef class SubHypergraphSearch:
         self.tmp1 = h_init(n1,H1._blocks) # No actual need to fill them,
         self.tmp2 = h_init(n2,H2._blocks) # only allocate the memory
 
-        self.step = <int *> sage_malloc((n2+1)*sizeof(int))
+        self.step = <int *> sig_malloc((n2+1)*sizeof(int))
 
         # all possible traces/induced subgraphs for h2
         #
         # (calloc sets all internal pointers to NULL)
-        self.h2_traces  = <hypergraph *> sage_calloc(n2+1,sizeof(hypergraph))
-        self.h2_induced = <hypergraph *> sage_calloc(n2+1,sizeof(hypergraph))
+        self.h2_traces  = <hypergraph *> sig_calloc(n2+1,sizeof(hypergraph))
+        self.h2_induced = <hypergraph *> sig_calloc(n2+1,sizeof(hypergraph))
 
         if (self.h1.n   == -1 or
             self.h2.n   == -1 or
@@ -419,9 +420,9 @@ cdef class SubHypergraphSearch:
         h_free(self.h2)
         h_free(self.tmp1)
         h_free(self.tmp2)
-        sage_free(self.step)
-        sage_free(self.h2_traces)
-        sage_free(self.h2_induced)
+        sig_free(self.step)
+        sig_free(self.h2_traces)
+        sig_free(self.h2_induced)
 
     def relabel_heuristic(self):
         r"""
@@ -441,7 +442,7 @@ cdef class SubHypergraphSearch:
         This function is called when an instance of :class:`SubHypergraphSearch`
         is created.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: d = designs.projective_plane(3)
             sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()

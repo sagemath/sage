@@ -1,33 +1,42 @@
+from .function_mangling cimport ArgumentFixer
+
+cpdef dict_key(o)
+cpdef cache_key(o)
+
 cdef class CachedFunction(object):
     cdef public str __name__
     cdef public str __module__
-    cdef object _argument_fixer
-    cdef public object _fix_to_pos
-    cdef public object f
-    # cache is not always of type "dict"!
-    cdef public object cache
-    cdef tuple _default_key
+    cdef ArgumentFixer _argument_fixer
+    cdef public f
+    cdef public cache  # not always of type <dict>
     cdef bint is_classmethod
-    cdef argfix_init(self)
-    cpdef get_cache(self)
-    cpdef clear_cache(self)
-    cdef object key
-
-cdef class CachedMethod
-
-cdef class CachedMethodCaller(CachedFunction):
-    cdef public object _instance
-    cdef public bint _inst_in_key
-    cdef public CachedMethod _cachedmethod
-
-cdef class CachedMethodCallerNoArgs(CachedFunction):
-    cdef public object _instance
+    cdef int argfix_init(self) except -1
+    cdef get_key_args_kwds(self, tuple args, dict kwds)
+    cdef fix_args_kwds(self, tuple args, dict kwds)
+    cdef empty_key
+    cdef key
+    cdef bint do_pickle
 
 cdef class CachedMethod(object):
     cdef str _cache_name
     cdef public str __name__
     cdef public str __module__
     cdef CachedFunction _cachedfunc
-    cdef int nargs
-    cpdef dict _get_instance_cache(self, inst)
+    cdef Py_ssize_t nargs
+    cpdef _get_instance_cache(self, inst)
 
+cdef class CacheDict(dict):
+    pass
+
+cdef class CachedInParentMethod(CachedMethod):
+    pass
+
+cdef class CachedMethodCaller(CachedFunction):
+    cdef public _instance
+    cdef public CachedMethod _cachedmethod
+
+cdef class CachedMethodCallerNoArgs(CachedFunction):
+    cdef public _instance
+
+cdef class GloballyCachedMethodCaller(CachedMethodCaller):
+    pass

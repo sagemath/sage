@@ -13,5 +13,5 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
     cdef Polynomial_template _new(self)
     cdef int _set_list(self, x) except -1
     cdef int _set_fmpz_poly(self, fmpz_poly_t) except -1
-    cpdef _mul_trunc_opposite(self, Polynomial_zmod_flint other, length)
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, length)
     cpdef rational_reconstruct(self, m, n_deg=?, d_deg=?)

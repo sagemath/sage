@@ -5,12 +5,12 @@ AUTHORS:
 
 - Martin Raum (07-25-2011)
 """
-#*****************************************************************************
+# ****************************************************************************
 #                 Copyright (C) 2011 Martin Raum
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.sets.set import Set
 from sage.misc.all import cached_function
 from sage.rings.all import Integer
@@ -25,7 +25,7 @@ def sidon_sets(N, g = 1):
     that any integer `M` can be obtain at most `g` times as sums of unordered pairs of
     elements of `A` (the two elements are not necessary distinct):
 
-    .. math::
+    .. MATH::
 
         \#\{ (a_i, a_j) | a_i, a_j \in A, a_i + a_j = M,a_i \leq a_j \} \leq g
 
@@ -41,17 +41,17 @@ def sidon_sets(N, g = 1):
     EXAMPLES::
 
         sage: S = sidon_sets(3, 2)
-        sage: S
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(S, key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
         sage: S.cardinality()
         8
         sage: S.category()
-        Category of sets
+        Category of finite sets
         sage: sid = S.an_element()
         sage: sid
         {2}
         sage: sid.category()
-        Category of sets
+        Category of finite sets
 
     TESTS::
 
@@ -67,10 +67,10 @@ def sidon_sets(N, g = 1):
         sage: n = 1
         sage: L = []
         sage: for i in range(1,19):
-        ...       nb = max([S.cardinality() for S in sidon_sets(i)])
-        ...       if nb > n:
-        ...           L.append(i-1)
-        ...           n = nb
+        ....:     nb = max([S.cardinality() for S in sidon_sets(i)])
+        ....:     if nb > n:
+        ....:         L.append(i-1)
+        ....:         n = nb
         sage: L
         [1, 3, 6, 11, 17]
 
@@ -96,19 +96,18 @@ def sidon_sets(N, g = 1):
         ...
         ValueError: g must be a positive integer
     """
-    if not isinstance(N, (int, Integer)) or N < 1 :
+    if not isinstance(N, (int, Integer)) or N < 1:
         raise ValueError( "N must be a positive integer" )
-    elif not isinstance(g, (int, Integer)) or g < 1 :
+    elif not isinstance(g, (int, Integer)) or g < 1:
         raise ValueError( "g must be a positive integer" )
-
-    return sidon_sets_rec(N, g = g)
+    return sidon_sets_rec(N, g=g)
 
 
 # This recursive and cached slave function is mainly here because
 # caching the user entry function 'sidon_sets' prevents it from
 # appearing in the built documentation.
 @cached_function
-def sidon_sets_rec(N, g = 1):
+def sidon_sets_rec(N, g=1):
     r"""
     Return the set of all Sidon-`g` sets that have elements less than or equal
     to `N` without checking the arguments. This internal function should not
@@ -117,32 +116,32 @@ def sidon_sets_rec(N, g = 1):
     TESTS::
 
         sage: from sage.combinat.sidon_sets import sidon_sets_rec
-        sage: sidon_sets_rec(3,2)
-        {{2}, {3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, {1, 2, 3}}
+        sage: sorted(sidon_sets_rec(3,2), key=str)
+        [{1, 2, 3}, {1, 2}, {1, 3}, {1}, {2, 3}, {2}, {3}, {}]
     """
-    if N == 1 :
+    if N == 1:
         return Set([Set([]), Set([1])])
 
     pre_sidons = sidon_sets(N - 1, g)
     sidons = set(pre_sidons)
-    for psid in pre_sidons :
+    for psid in pre_sidons:
         psid_shift = Set([n - 1 for n in psid if n != 1] + [N - 1])
-        if not psid_shift in pre_sidons :
+        if not psid_shift in pre_sidons:
             continue
 
-        if not 1 in psid :
+        if not 1 in psid:
             add_sid = True
-        else :
+        else:
             add_sid = True
             Np1_count = 0
-            for n in psid :
+            for n in psid:
                 if N + 1 - n in psid and 2 * n <= N + 1:
                     Np1_count += 1
-                    if Np1_count >= g :
+                    if Np1_count >= g:
                         add_sid = False
                         break
 
-        if add_sid :
-            sidons.add(Set(psid.list()+[N]))
+        if add_sid:
+            sidons.add(Set(psid.list() + [N]))
 
     return Set(sidons)

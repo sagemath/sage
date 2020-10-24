@@ -1,196 +1,333 @@
 # -*- coding: utf-8 -*-
 """
-Commandline handling
+View for the Commandline UI
 
-Note that argparse is not part of Python 2.6, so we cannot rely on it here.
+This module handles the main "sage-package" commandline utility, which
+is also exposed as "sage --package".
 """
 
-
-#*****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import os
 import sys
-from textwrap import dedent
 import logging
 log = logging.getLogger()
 
-from sage_bootstrap.env import SAGE_DISTFILES
-from sage_bootstrap.package import Package
-from sage_bootstrap.download import Download
-from sage_bootstrap.mirror_list import MirrorList
-from sage_bootstrap.tarball import Tarball
+
+# Note that argparse is not part of Python 2.6, so we bundle it
+try:
+    import argparse
+except ImportError:
+    from sage_bootstrap.compat import argparse
+
+from sage_bootstrap.app import Application
 
 
-class CmdlineSubcommands(object):
+description = \
+"""
+Sage Bootstrap Library
+"""
 
-    def __init__(self, argv=None):
-        if argv is None:
-            argv = sys.argv
-        if len(argv) == 1:
-            self.print_help()
-            sys.exit(0)
-        self.subcommand = argv[1]
-        self.extra_args = argv[2:]
 
-    def print_help(self):
-        print(dedent(self.__doc__).lstrip())
-        print('Usage:')
-        for method in sorted(dir(self)):
-            if not method.startswith('run_'):
-                continue
-            doc = dedent(getattr(self, method).__doc__).lstrip().splitlines()
-            print('')
-            print('* ' + doc[0])
-            for line in doc[1:]:
-                print('  ' + line)
+epilog = \
+"""
+The individual subcommands have their own detailed help, for example
+run "sage --package config -h" to see the help on the config option.
+"""
+
+
+epilog_config = \
+"""
+Print the configuration
+
+EXAMPLE:
+
+    $ sage --package config
+    Configuration:
+    * log = info
+    * interactive = True
+"""
+
+
+epilog_list = \
+"""
+Print a list of all available packages
+
+EXAMPLE:
+
+    $ sage --package list | sort
+    4ti2
+    arb
+    atlas
+    autotools
+    [...]
+    zn_poly
+
+    $ sage --package list :standard: | sort
+    arb
+    atlas
+    backports_ssl_match_hostname
+    [...]
+    zn_poly
+"""
+
+
+epilog_name = \
+"""
+Find the package name given a tarball filename
+    
+EXAMPLE:
+
+    $ sage --package name pari-2.8-1564-gdeac36e.tar.gz
+    pari
+"""
+
+
+epilog_tarball = \
+"""
+Find the tarball filename given a package name
+    
+EXAMPLE:
+
+    $ sage --package tarball pari
+    pari-2.8-1564-gdeac36e.tar.gz
+"""
+
+
+epilog_apropos = \
+"""
+Find up to 5 package names that are close to the given name
+
+EXAMPLE:
+
+    $ sage --package apropos python
+    Did you mean: cython, ipython, python2, python3, patch?
+"""
         
-    def run(self):
-        try:
-            method = getattr(self, 'run_{0}'.format(self.subcommand))
-        except AttributeError:
-            log.error('unknown subcommand: {0}'.format(self.subcommand))
-            sys.exit(1)
-        try:
-            method(*self.extra_args)
-        except TypeError as err:
-            log.error('invalid arguments to the {0} subcommand: {1}'
-                      .format(self.subcommand, self.extra_args))
-            sys.exit(1)
 
-            
-class SagePkgApplication(CmdlineSubcommands):
+epilog_update = \
+"""
+Update a package. This modifies the Sage sources. 
+    
+EXAMPLE:
+
+    $ sage --package update pari 2015 --url=http://localhost/pari/tarball.tgz
+"""
+
+
+epilog_update_latest = \
+"""
+Update a package to the latest version. This modifies the Sage sources. 
+    
+EXAMPLE:
+
+    $ sage --package update-latest ipython
+"""
+
+
+epilog_download = \
+"""
+Download the tarball for a package and print the filename to stdout
+    
+EXAMPLE:
+
+    $ sage --package download pari
+    Using cached file /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
+    /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
+"""
+
+
+epilog_upload = \
+"""
+Upload the tarball to the Sage mirror network (requires ssh key authentication)
+    
+EXAMPLE:
+
+    $ sage --package upload pari
+    Uploading /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
+"""
+
+
+epilog_fix_checksum = \
+"""
+Fix the checksum of a package
+    
+EXAMPLE:
+
+    $ sage --package fix-checksum pari
+    Updating checksum of pari (tarball pari-2.8-2044-g89b0f1e.tar.gz)
+"""
+
+epilog_create = \
+"""
+Create new package, or overwrite existing package
+    
+EXAMPLE:
+
+    $ sage --package create foo --version=3.14 --tarball=Foo-VERSION.tar.bz2 --type=standard
+    Creating new package "foo"
+"""
+
+
+def make_parser():
     """
-    sage-package
-    --------
-    
-    The package script is used to manage third-party tarballs.
+    The main commandline argument parser
     """
+    parser = argparse.ArgumentParser(
+        description=description, epilog=epilog,
+        prog='sage --package',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument('--log', dest='log', default=None,
+                        help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')
+    subparsers = parser.add_subparsers(dest='subcommand')
+
+    parser_config = subparsers.add_parser(
+        'config', epilog=epilog_config,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print the configuration')
+
+    parser_list = subparsers.add_parser(
+        'list', epilog=epilog_list,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print a list of all available packages')
+    parser_list.add_argument(
+        'package_class',
+        type=str, default=':all:', nargs='?',
+        help='Package class like :all: (default) or :standard:')
+
+    parser_name = subparsers.add_parser(
+        'name', epilog=epilog_name,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Find the package name given a tarball filename')
+    parser_name.add_argument('tarball_filename', type=str, help='Tarball filename')
+
+    parser_tarball = subparsers.add_parser(
+        'tarball', epilog=epilog_tarball,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Find the tarball filename given a package name')
+    parser_tarball.add_argument('package_name', type=str, help='Package name')
     
-    def run_config(self):
-        """
-        config: Print the configuration
+    parser_apropos = subparsers.add_parser(
+        'apropos', epilog=epilog_apropos,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Find up to 5 package names that are close to the given name')
+    parser_apropos.add_argument(
+        'incorrect_name', type=str, 
+        help='Fuzzy name to search for')
 
-        $ sage-package config
-        Configuration:
-          * log = info
-          * interactive = True
-        """
-        from sage_bootstrap.config import Configuration
-        print(Configuration())
+    parser_update = subparsers.add_parser(
+        'update', epilog=epilog_update,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Update a package. This modifies the Sage sources.')
+    parser_update.add_argument(
+        'package_name', type=str, help='Package name')
+    parser_update.add_argument(
+        'new_version', type=str, help='New version')
+    parser_update.add_argument(
+        '--url', type=str, default=None, help='Download URL')
 
-    def run_list(self):
-        """
-        list: Print a list of all available packages
+    parser_update_latest = subparsers.add_parser(
+        'update-latest', epilog=epilog_update_latest,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Update a package to the latest version. This modifies the Sage sources.')
+    parser_update_latest.add_argument(
+        'package_name', type=str, help='Package name (:all: for all packages)')
 
-        $ sage-package list | sort
-        4ti2
-        arb
-        atlas
-        autotools
-        [...]
-        zn_poly
-        """
-        for pkg in Package.all():
-            print(pkg.name)
+    parser_download = subparsers.add_parser(
+        'download', epilog=epilog_download,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Download tarball')
+    parser_download.add_argument(
+        'package_name', type=str, help='Package name or :type:')
+    parser_download.add_argument(
+        '--allow-upstream', action="store_true",
+        help='Whether to fall back to downloading from the upstream URL')
 
-    def run_name(self, tarball_filename):
-        """
-        name: Find the package name given a tarball filename
+    parser_upload = subparsers.add_parser(
+        'upload', epilog=epilog_upload,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Upload tarball to Sage mirrors')
+    parser_upload.add_argument(
+        'package_name', type=str, help='Package name or :type:')
     
-        $ sage-package name pari-2.8-1564-gdeac36e.tar.gz
-        pari
-        """
-        tarball = Tarball(os.path.basename(tarball_filename))
-        print(tarball.package.name)
-
-    def run_tarball(self, package_name):
-        """
-        tarball: Find the tarball filename given a package name
+    parser_fix_checksum = subparsers.add_parser(
+        'fix-checksum', epilog=epilog_fix_checksum,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Fix the checksum of package.')
+    parser_fix_checksum.add_argument(
+        'package_name', nargs='?', default=None, type=str,
+        help='Package name. Default: fix all packages.')
     
-        $ sage-package tarball pari
-        pari-2.8-1564-gdeac36e.tar.gz
-        """
-        package = Package(package_name)
-        print(package.tarball.filename)
+    parser_create = subparsers.add_parser(
+        'create', epilog=epilog_create,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Create or overwrite package.')
+    parser_create.add_argument(
+        'package_name', nargs='?', default=None, type=str,
+        help='Package name. Default: fix all packages.')
+    parser_create.add_argument(
+        '--version', type=str, default=None, help='Package version')
+    parser_create.add_argument(
+        '--tarball', type=str, default=None, help='Tarball filename pattern, e.g. Foo-VERSION.tar.bz2')
+    parser_create.add_argument(
+        '--type', type=str, default=None, help='Package type')
+    parser_create.add_argument(
+        '--url', type=str, default=None, help='Download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
 
-    def run_apropos(self, incorrect_name):
-        """
-        apropos: Find up to 5 package names that are close to the given name
+    return parser
 
-        $ sage-package apropos python
-        Did you mean: cython, ipython, python2, python3, patch?
-        """
-        from sage_bootstrap.levenshtein import Levenshtein, DistanceExceeded
-        levenshtein = Levenshtein(5)
-        names = []
-        for pkg in Package.all():
-            try:
-                names.append([levenshtein(pkg.name, incorrect_name), pkg.name])
-            except DistanceExceeded:
-                pass
-        if names:
-            names = sorted(names)[:5]
-            print('Did you mean: {0}?'.format(', '.join(name[1] for name in names)))
+
+
+def run():
+    parser = make_parser()
+    if len(sys.argv) == 1:
+        parser.print_help()
+        return
+    args = parser.parse_args(sys.argv[1:])
+    if args.log is not None:
+        level = getattr(logging, args.log.upper())
+        log.setLevel(level=level)
+    log.debug('Commandline arguments: %s', args)
+    app = Application()
+    if args.subcommand == 'config':
+        app.config()
+    elif args.subcommand == 'list':
+        app.list_cls(args.package_class)
+    elif args.subcommand == 'name':
+        app.name(args.tarball_filename)
+    elif args.subcommand == 'tarball':
+        app.tarball(args.package_name)
+    elif args.subcommand == 'apropos':
+        app.apropos(args.incorrect_name)
+    elif args.subcommand == 'update':
+        app.update(args.package_name, args.new_version, url=args.url)
+    elif args.subcommand == 'update-latest':
+        if args.package_name == ':all:':
+            app.update_latest_all()
         else:
-            print('There is no package similar to {0}'.format(incorrect_name))
-            print('You can find further packages at http://files.sagemath.org/spkg/')
-
-
-class SageDownloadFileApplication(object):    
-    """
-    USAGE:
-    
-        sage-download-file --print-fastest-mirror
-    
-    Print out the fastest mirror. All further arguments are ignored in
-    that case.
-    
-        sage-download-file [--quiet] url-or-tarball [destination]
-    
-    The single mandatory argument can be a http:// url or a tarball
-    filename. In the latter case, the tarball is downloaded from the
-    mirror network and its checksum is verified.
-    
-    If the destination is not specified:
-    * a url will be downloaded and the content written to stdout
-    * a tarball will be saved under {SAGE_DISTFILES}
-    """
-    
-    def run(self):
-        progress = True
-        url = None
-        destination = None
-        for arg in sys.argv[1:]:
-            if arg.startswith('--print-fastest-mirror'):
-                print(MirrorList().fastest)
-                sys.exit(0)
-            if arg.startswith('--quiet'):
-                progress = False
-                continue
-            if url is None:
-                url = arg
-                continue
-            if destination is None:
-                destination = arg
-                continue
-            raise ValueError('too many arguments')
-        if url is None:
-            print(dedent(self.__doc__.format(SAGE_DISTFILES=SAGE_DISTFILES)))
-            sys.exit(1)
-        if url.startswith('http://') or url.startswith('https://') or url.startswith('ftp://'):
-            Download(url, destination, progress=progress, ignore_errors=True).run()
+            app.update_latest(args.package_name)
+    elif args.subcommand == 'download':
+        app.download_cls(args.package_name, args.allow_upstream)
+    elif args.subcommand == 'create':
+        app.create(args.package_name, args.version, args.tarball, args.type, args.url)
+    elif args.subcommand == 'upload':
+        app.upload_cls(args.package_name)
+    elif args.subcommand == 'fix-checksum':
+        if args.package_name is None:
+            app.fix_all_checksums()
         else:
-            # url is a tarball name
-            tarball = Tarball(url)
-            tarball.download()
-            if destination is not None:
-                tarball.save_as(destination)
-    
+            app.fix_checksum(args.package_name)
+    else:
+        raise RuntimeError('unknown subcommand: {0}'.format(args))
+
+        
+if __name__ == '__main__':
+    run()

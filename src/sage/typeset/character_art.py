@@ -4,13 +4,13 @@ Base Class for Character-Based Art
 
 This is the common base class for
 :class:`sage.typeset.ascii_art.AsciiArt` and
-:class:`sage.typeset.ascii_art.UnicodeArt`. They implement simple
+:class:`sage.typeset.unicode_art.UnicodeArt`. They implement simple
 graphics by placing characters on a rectangular grid, in other words,
 using monospace fonts. The difference is that one is restricted to
 7-bit ascii, the other uses all unicode code points.
 """
 
-#*******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2013 Jean-Baptiste Priez <jbp@kerios.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,22 +22,26 @@ using monospace fonts. The difference is that one is restricted to
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ******************************************************************************
+from __future__ import print_function
 
-import os, sys
+import os
+import sys
+import six
 from sage.structure.sage_object import SageObject
 
 
 ################################################################################
-### Global variable use to compute the maximal length allows for ascii art
-### object.
+# Global variable use to compute the maximal length allows for ascii art
+# object.
 MAX_WIDTH = None
 ################################################################################
 
+
 class CharacterArt(SageObject):
 
-    def __init__(self, lines=[], breakpoints=[], baseline=None, atomic=None):
+    def __init__(self, lines=[], breakpoints=[], baseline=None):
         r"""
         Abstract base class for character art
 
@@ -50,6 +54,11 @@ class CharacterArt(SageObject):
           split
 
         - ``baseline`` -- the reference line (from the bottom)
+
+        Instead of just integers, ``breakpoints`` may also contain tuples
+        consisting of an offset and the breakpoints of a nested substring at
+        that offset. This is used to prioritize the breakpoints, as line breaks
+        inside the substring will be avoided if possible.
 
         EXAMPLES::
 
@@ -68,10 +77,19 @@ class CharacterArt(SageObject):
               *
              * *
             *****
+
+        If there are nested breakpoints, line breaks are avoided inside the
+        nested elements (:trac:`29204`)::
+
+            sage: s = ascii_art([[1..5], [1..17], [1..25]])
+            sage: s._breakpoints
+            [(2, [4, 7, 10, 13]), 20, (21, [4, 7,..., 56]), 83, (84, [4, 7,..., 88])]
+            sage: str(s)
+            '[ [ 1, 2, 3, 4, 5 ],\n\n
+              [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ],\n\n
+              [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,\n\n
+              22, 23, 24, 25 ] ]'
         """
-        if atomic is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(18357, "the argument atomic is deprecated and will be ignored")
         self._matrix = lines
         self._breakpoints = breakpoints
         self._baseline = baseline if baseline is not None else 0
@@ -114,7 +132,7 @@ class CharacterArt(SageObject):
             sage: from sage.typeset.ascii_art import AsciiArt
             sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
             sage: for line in p5:
-            ....:     print line
+            ....:     print(line)
               *
              * *
             *****
@@ -137,17 +155,26 @@ class CharacterArt(SageObject):
             hsize = MAX_WIDTH
         else:
             hsize = self._terminal_width()
-        #########
-        # if the draw is larger than the max length it try to split...
+        # if the draw is larger than the max length, try to split it
         if hsize <= self._l and self._breakpoints:
             return self._split_repr_(hsize)
-        #########
-        output = ""
-        if len(self._matrix) > 0:
-            for i in range(len(self._matrix) - 1):
-                output += self._matrix[i] + "\n"
-            return output + self._matrix[len(self._matrix) - 1]
-        return output
+        return '\n'.join(self._matrix)
+
+    def __format__(self, fmt):
+        r"""
+        Format ``self``.
+
+        EXAMPLES::
+
+            sage: M = matrix([[1,2],[3,4]])
+            sage: format(ascii_art(M))
+            '[1 2]\n[3 4]'
+            sage: format(unicode_art(M))  # py2
+            u'\u239b1 2\u239e\n\u239d3 4\u23a0'
+            sage: format(unicode_art(M))  # py3
+            '\u239b1 2\u239e\n\u239d3 4\u23a0'
+        """
+        return format(self._string_type(self), fmt)
 
     def get_baseline(self):
         r"""
@@ -187,6 +214,11 @@ class CharacterArt(SageObject):
         r"""
         Return an iterator of breakpoints where the object can be split.
 
+        This method is deprecated, as its output is an implementation detail.
+        The mere breakpoints of a character art element do not reflect the best
+        way to split it if nested structures are involved. For details, see
+        :trac:`29204`.
+
         For example the expression::
 
                5    4
@@ -201,16 +233,20 @@ class CharacterArt(SageObject):
             sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
             sage: aa = ascii_art([p3, p5])
             sage: aa.get_breakpoints()
+            doctest:...: DeprecationWarning: get_breakpoints() is deprecated
+            See https://trac.sagemath.org/29204 for details.
             [6]
         """
+        from sage.misc.superseded import deprecation
+        deprecation(29204, "get_breakpoints() is deprecated")
         return self._breakpoints
 
     def _isatty(self):
         """
-        Test whether stdout is a TTY
+        Test whether ``stdout`` is a TTY.
 
-        If this test succeeds, you can assume that stdout is directly
-        connected to a terminal. Otherwise you should treat stdout as
+        If this test succeeds, you can assume that ``stdout`` is directly
+        connected to a terminal. Otherwise you should treat ``stdout`` as
         being redirected to a file.
 
         OUTPUT:
@@ -245,15 +281,92 @@ class CharacterArt(SageObject):
         """
         if not self._isatty():
             return 80
-        import fcntl, termios, struct
+        import fcntl
+        import termios
+        import struct
         rc = fcntl.ioctl(int(0), termios.TIOCGWINSZ,
                          struct.pack('HHHH', sys.stdout.fileno(), 0, 0, 0))
         h, w, hp, wp = struct.unpack('HHHH', rc)
         return w
 
+    def _splitting_points(self, size, offset=0):
+        """
+        Iterate over the breakpoints at which the representation can be split
+        to obtain chunks of length at most ``size``.
+
+        The final element returned will be the length of this object.
+
+        INPUT:
+
+        - ``size`` -- the maximum width of each chunk
+
+        - ``offset`` -- (default: ``0``); the first chunk has width at most
+          ``size - offset``
+
+        TESTS::
+
+            sage: list(ascii_art(*(['a'] * 90))._splitting_points(20, offset=5))
+            [15, 35, 55, 75, 90]
+        """
+        # We implement a custom iterator instead of repeatedly using
+        # itertools.chain to prepend elements in order to avoid quadratic time
+        # complexity
+        class PrependIterator(six.Iterator):
+            """
+            Iterator with support for prepending of elements.
+            """
+            def __init__(self, stack):
+                self._stack = [iter(elems) for elems in stack]
+            def prepend(self, elems):
+                self._stack.append(iter(elems))
+            def __iter__(self):
+                return self
+            def __next__(self):
+                while self._stack:
+                    try:
+                        return next(self._stack[-1])
+                    except StopIteration:
+                        self._stack.pop()
+                raise StopIteration
+
+        idx = -offset
+        breakpoints = PrependIterator([[self._l], self._breakpoints])
+        bp = None
+        for bp_next in breakpoints:
+            if not isinstance(bp_next, tuple):
+                if bp_next - idx > size and bp is not None:
+                    yield bp
+                    idx = bp
+                bp = bp_next
+            else:
+                sub_offset, sub_breakpoints = bp_next
+                try:
+                    bp_next = next(breakpoints)
+                except StopIteration:
+                    bp_next = None
+                if bp_next is None or isinstance(bp_next, tuple):
+                    raise ValueError("nested structure must be followed by a "
+                                     "regular breakpoint")
+                if bp_next - idx > size:
+                    # substructure is too wide for the current line, so force a
+                    # line break
+                    if bp is not None:
+                        yield bp
+                        idx = bp
+                    breakpoints.prepend([bp_next])
+                    breakpoints.prepend(_shifted_breakpoints(sub_breakpoints,
+                                                             sub_offset))
+                    # at this point, we do not know the next breakpoint yet,
+                    # but have already yielded bp, so discard it
+                    bp = None
+                else:
+                    bp = bp_next
+        if bp is not None:
+            yield bp
+
     def _split_repr_(self, size):
         r"""
-        Split the draw and the left part has length ``size``.
+        Split the representation into chunks of length at most ``size``.
 
         TESTS::
 
@@ -261,7 +374,7 @@ class CharacterArt(SageObject):
             sage: p3 = AsciiArt([" * ", "***"])
             sage: p5 = AsciiArt(["  *  ", " * * ", "*****"])
             sage: aa = ascii_art([p3, p5])
-            sage: print aa._split_repr_(10)
+            sage: print(aa._split_repr_(10))
             [
             [  *
             [ ***,
@@ -269,17 +382,28 @@ class CharacterArt(SageObject):
                 *   ]
                * *  ]
               ***** ]
+
+        ::
+
+            sage: ascii_art(['a' * k for k in (1..10)])._split_repr_(20)
+            '[ a, aa, aaa, aaaa,\n\n aaaaa, aaaaaa,\n\n aaaaaaa, aaaaaaaa,\n\n aaaaaaaaa,\n\n aaaaaaaaaa ]'
+
+        Check that wrapping happens exactly at the given size (:trac:`28527`)::
+
+            sage: len(ascii_art(*(['']*90), sep=',')._split_repr_(80).split('\n')[0])
+            80
         """
-        f_split = self._breakpoints[0]; i = 1
-        while i < len(self._breakpoints) and self._breakpoints[i] < size:
-            f_split = self._breakpoints[i]
-            i += 1
-        if size <= f_split:
-            import warnings
-            warnings.warn("the console size is smaller than the pretty" +
-                "representation of the object")
-        top, bottom = self.split(f_split)
-        return (top * self.empty()).__repr__() + "\n" + bottom.__repr__()
+        idx = 0
+        parts = []
+        for bp in self._splitting_points(size):
+            if bp - idx > size:
+                import warnings
+                warnings.warn("the console size is smaller than the pretty "
+                              "representation of the object")
+            # Note that this is faster than calling self.split() repeatedly
+            parts.append('\n'.join(line[idx:bp] for line in self))
+            idx = bp
+        return '\n\n'.join(parts)
 
     def split(self, pos):
         r"""
@@ -301,11 +425,13 @@ class CharacterArt(SageObject):
               * *  ]
              ***** ]
         """
-        left = []; right = []
+        left = []
+        right = []
         for line in self:
             left.append(line[:pos])
             right.append(line[pos:])
-        l_bp = []; r_bp = []
+        l_bp = []
+        r_bp = []
         for bp in self._breakpoints:
             if bp < pos:
                 l_bp.append(bp)
@@ -368,30 +494,8 @@ class CharacterArt(SageObject):
              |
              |
              |
-            sage: l5._baseline = None
-            sage: AsciiArt._compute_new_baseline(l3, l5)
-            2
-            sage: l3._baseline = 2
-            sage: AsciiArt._compute_new_baseline(l3, l5)
-            4
-            sage: l3 + l5
-            ||
-            ||
-            ||
-             |
-             |
-
         """
-        if obj1.get_baseline() is None:
-            if obj2.get_baseline() is None:
-                return None
-            return obj2.get_baseline() + max(obj1._h - obj2._h, 0)
-        if obj2.get_baseline() is None:
-            return obj1.get_baseline() + max(obj2._h - obj1._h, 0)
-        return max(
-            obj1.get_baseline(),
-            obj2.get_baseline()
-        )
+        return max(obj1.get_baseline(), obj2.get_baseline())
 
     @staticmethod
     def _compute_new_h(obj1, obj2):
@@ -449,8 +553,6 @@ class CharacterArt(SageObject):
              |
              |
         """
-        if obj1.get_baseline() is None or obj2.get_baseline() is None:
-            return max(obj1._h, obj2._h)
         return max(
             obj1.get_baseline(),
             obj2.get_baseline()
@@ -503,15 +605,15 @@ class CharacterArt(SageObject):
 
     def __add__(self, Nelt):
         r"""
-        Concatenate two ascii art object.
+        Concatenate two character art objects.
 
-        By default, when two object are concatenated, the new one will be
+        By default, when two objects are concatenated, the new one will be
         splittable between both.
 
         If the baseline is defined, the concatenation is computed such that the
-        new baseline coincidate with the olders.
+        new baseline coincides with the olders.
 
-        For example, let `T` be a tree with it's baseline ascii art
+        For example, let `T` be a tree with its baseline ascii art
         representation in the middle::
 
             o
@@ -520,7 +622,7 @@ class CharacterArt(SageObject):
              / \
             o   o
 
-        and let `M` be a matrix with it's baseline ascii art representation at
+        and let `M` be a matrix with its baseline ascii art representation at
         the middle two::
 
             [1 2 3]
@@ -535,14 +637,7 @@ class CharacterArt(SageObject):
              / \ [7 8 9]
             o   o
 
-        If one of the objects has not baseline, the concatenation is realized
-        from the top::
-
-            o    [1 2 3]
-             \   [4 5 6]
-              o  [7 8 9]
-             / \
-            o   o
+        Since :trac:`28527`, the baseline must always be a number.
 
         TESTS::
 
@@ -622,7 +717,7 @@ class CharacterArt(SageObject):
                 #  |
                 if new_h - new_baseline > self._h - self._baseline:
                     for _ in range((new_h - new_baseline) - (self._h - self._baseline)):
-                        new_matrix.insert(0, " "  * self._l)
+                        new_matrix.insert(0, " " * self._l)
 
             # right treatement
             i = 0
@@ -634,33 +729,33 @@ class CharacterArt(SageObject):
                 # ||
                 # ||
                 # |
-                i = max(new_h - new_baseline - Nelt._h + Nelt._baseline , 0)
+                i = max(new_h - new_baseline - Nelt._h + Nelt._baseline, 0)
             for j in range(Nelt._h):
-                new_matrix[i+j] += Nelt._matrix[j]
+                new_matrix[i + j] += Nelt._matrix[j]
         else:
             for line in self._matrix:
                 new_matrix.append(line + " " * (self._l - len(line)))
             for i, line_i in enumerate(Nelt._matrix):
                 if i == len(new_matrix):
                     new_matrix.append(" " * self._l + line_i)
-                else: new_matrix[i] += line_i
+                else:
+                    new_matrix[i] += line_i
 
         # breakpoint
         new_breakpoints = list(self._breakpoints)
-        new_breakpoints.append(self._l)
-        for bp in Nelt._breakpoints:
-            new_breakpoints.append(bp + self._l)
-        from sage.misc.misc import uniq
+        if self._l and Nelt._l:
+            new_breakpoints.append(self._l)
+        new_breakpoints.extend(_shifted_breakpoints(Nelt._breakpoints,
+                                                    self._l))
         return self.__class__(
             lines=new_matrix,
-            breakpoints=uniq(new_breakpoints),
+            breakpoints=new_breakpoints,
             baseline=new_baseline,
         )
 
     def __mul__(self, Nelt):
         r"""
-        The operator ``*`` is use to the representation ``self`` at
-        the top of an other ``Nelt``.
+        Stack two character art objects vertically.
 
         TESTS::
 
@@ -683,3 +778,22 @@ class CharacterArt(SageObject):
         """
         new_repr = self.__class__(self._matrix + Nelt._matrix)
         return new_repr
+
+
+def _shifted_breakpoints(breakpoints, offset):
+    """
+    Return an iterator that shifts all breakpoints by an offset.
+
+    TESTS::
+
+        sage: b = ascii_art([[1, 2, 3], [4, 5, 6]])._breakpoints; b
+        [(2, [4, 7]), 14, (15, [4, 7])]
+        sage: from sage.typeset.character_art import _shifted_breakpoints
+        sage: list(_shifted_breakpoints(b, 10))
+        [(12, [4, 7]), 24, (25, [4, 7])]
+    """
+    for bp in breakpoints:
+        if isinstance(bp, tuple):
+            yield bp[0] + offset, bp[1]
+        else:
+            yield bp + offset

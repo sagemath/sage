@@ -19,8 +19,10 @@ from sage.combinat.species.species import GenericCombinatorialSpecies
 from sage.combinat.species.structure import SpeciesStructureWrapper
 from sage.rings.all import QQ
 
+
 class CombinatorialSpeciesStructure(SpeciesStructureWrapper):
     pass
+
 
 class CombinatorialSpecies(GenericCombinatorialSpecies):
     def __init__(self):
@@ -88,15 +90,13 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             sage: A == B
             True
 
-        ::
-
             sage: C = species.CombinatorialSpecies()
             sage: E = species.EmptySetSpecies()
             sage: C.define(E+X*C*C)
             sage: A == C
             False
         """
-        if not isinstance(other, GenericCombinatorialSpecies):
+        if not isinstance(other, CombinatorialSpecies):
             return False
         if not hasattr(self, "_reference"):
             return False
@@ -108,9 +108,33 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         del self._computing_eq
         return res
 
+    def __ne__(self, other):
+        """
+        Check whether ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: A = species.CombinatorialSpecies()
+            sage: B = species.CombinatorialSpecies()
+            sage: A != B
+            True
+            sage: X = species.SingletonSpecies()
+            sage: A.define(X+A*A)
+            sage: B.define(X+B*B)
+            sage: A != B
+            False
+
+            sage: C = species.CombinatorialSpecies()
+            sage: E = species.EmptySetSpecies()
+            sage: C.define(E+X*C*C)
+            sage: A != C
+            True
+        """
+        return not (self == other)
+
     def _unique_info(self):
         """
-        Returns a tuple which should uniquely identify the species.
+        Return a tuple which should uniquely identify the species.
 
         EXAMPLES::
 
@@ -284,7 +308,9 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
     def define(self, x):
         """
-        Defines self to be equal to the combinatorial species x. This is
+        Define ``self`` to be equal to the combinatorial species ``x``.
+
+        This is
         used to define combinatorial species recursively. All of the real
         work is done by calling the .set() method for each of the series
         associated to self.

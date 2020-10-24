@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-calculus:
+
 Tutorial for Calculus
 =====================
 
@@ -308,7 +310,7 @@ help it look nicer in the browser?
 ::
 
     sage: integrate(1/(1+x^5),x)
-    1/5*sqrt(5)*(sqrt(5) + 1)*arctan((4*x + sqrt(5) - 1)/sqrt(2*sqrt(5) + 10))/sqrt(2*sqrt(5) + 10) + 1/5*sqrt(5)*(sqrt(5) - 1)*arctan((4*x - sqrt(5) - 1)/sqrt(-2*sqrt(5) + 10))/sqrt(-2*sqrt(5) + 10) - 1/2*(sqrt(5) + 3)*log(2*x^2 - x*(sqrt(5) + 1) + 2)/(5*sqrt(5) + 5) - 1/2*(sqrt(5) - 3)*log(2*x^2 + x*(sqrt(5) - 1) + 2)/(5*sqrt(5) - 5) + 1/5*log(x + 1)
+    1/5*sqrt(5)*(sqrt(5) + 1)*arctan((4*x + sqrt(5) - 1)/sqrt(2*sqrt(5) + 10))/sqrt(2*sqrt(5) + 10) + 1/5*sqrt(5)*(sqrt(5) - 1)*arctan((4*x - sqrt(5) - 1)/sqrt(-2*sqrt(5) + 10))/sqrt(-2*sqrt(5) + 10) - 1/10*(sqrt(5) + 3)*log(2*x^2 - x*(sqrt(5) + 1) + 2)/(sqrt(5) + 1) - 1/10*(sqrt(5) - 3)*log(2*x^2 + x*(sqrt(5) - 1) + 2)/(sqrt(5) - 1) + 1/5*log(x + 1)
 
 Some integrals are a little tricky, of course.  If Sage doesn't know the
 whole antiderivative, it returns as much of it as it (more properly, as
@@ -393,8 +395,8 @@ Fundamental Theorem of Calculus is not entirely helpful.  Recall that
 
 ::
 
-    sage: integral(h,(x,0,pi/8))
-    1/2*log(sin(1/8*pi) + 1) - 1/2*log(-sin(1/8*pi) + 1)
+    sage: integral(h,(x,0,pi/7))
+    1/2*log(sin(1/7*pi) + 1) - 1/2*log(-sin(1/7*pi) + 1)
 
 Here, just a number might be more helpful.  Sage has several ways of
 numerical evaluating integrals.
@@ -411,7 +413,7 @@ was also mentioned in the introductory tutorial.
 ::
 
     sage: N(integral(h,(x,0,pi/8)))
-    0.403199719161512
+    0.403199719161511
 
 The second function, ``numerical_integral``, uses a powerful numerical
 program (the GNU Scientific Library).

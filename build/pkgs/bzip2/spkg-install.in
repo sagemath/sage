@@ -1,0 +1,8 @@
+cd src/src
+
+# Autotoolify bzip2
+cp -r -f ../autotools/* ./
+
+sdh_configure
+sdh_make
+sdh_make_install

@@ -1,0 +1,13 @@
+cd src
+
+# Disable features that require packages SCIP and CoCoA, both of which
+# are experimental packages.
+
+# FLINT is a standard package and E-ANTIC is an optional package.  We
+# pass --enable-flint and --enable-enfnormaliz to configure so
+# that an error will be signalled if FLINT or E-ANTIC cannot be found, rather
+# than building normaliz without it.
+
+sdh_configure --with-flint --with-e-antic --with-nauty
+sdh_make
+sdh_make_install

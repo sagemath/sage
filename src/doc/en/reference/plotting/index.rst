@@ -22,6 +22,7 @@ Function and Data Plots
    sage/plot/contour_plot
    sage/plot/density_plot
    sage/plot/plot_field
+   sage/plot/streamline_plot
    sage/plot/scatter_plot
    sage/plot/step
    sage/plot/histogram
@@ -53,6 +54,7 @@ Basic Shapes
    sage/plot/polygon
    sage/plot/hyperbolic_arc
    sage/plot/hyperbolic_polygon
+   sage/plot/hyperbolic_regular_polygon
 
 Infrastructure and Low-Level Functions
 --------------------------------------
@@ -61,6 +63,7 @@ Infrastructure and Low-Level Functions
    :maxdepth: 2
 
    sage/plot/graphics
+   sage/plot/multigraphics
    sage/plot/primitive
    sage/plot/misc
 

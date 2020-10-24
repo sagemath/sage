@@ -1,5 +1,5 @@
 """
-Vectors over the symbolic ring.
+Vectors over the symbolic ring
 
 Implements vectors over the symbolic ring.
 
@@ -15,27 +15,27 @@ EXAMPLES::
     sage: u = vector([sin(x)^2 + cos(x)^2, log(2*y) + log(3*y)]); u
     (cos(x)^2 + sin(x)^2, log(3*y) + log(2*y))
     sage: type(u)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: u.simplify_full()
     (1, log(3*y) + log(2*y))
 
 TESTS:
 
 Check that the outcome of arithmetic with symbolic vectors is again
-a symbolic vector (#11549)::
+a symbolic vector (:trac:`11549`)::
 
     sage: v = vector(SR, [1, 2])
     sage: w = vector(SR, [sin(x), 0])
     sage: type(v)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(v + w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(-v)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
     sage: type(5*w)
-    <class 'sage.modules.vector_symbolic_dense.FreeModule_ambient_field_with_category.element_class'>
+    <class 'sage.modules.free_module.FreeModule_ambient_field_with_category.element_class'>
 
 Test pickling/unpickling::
 
@@ -44,6 +44,7 @@ Test pickling/unpickling::
     True
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2011 Joris Vankerschaver (jv@caltech.edu)
@@ -54,7 +55,7 @@ Test pickling/unpickling::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import free_module_element
+from . import free_module_element
 from sage.symbolic.all import Expression
 
 
@@ -109,8 +110,8 @@ class Vector_symbolic_dense(free_module_element.FreeModuleElement_generic_dense)
     pass
 
 # Add elementwise methods.
-for method in ['simplify', 'simplify_exp', 'simplify_factorial',
-        'simplify_log', 'simplify_radical', 'simplify_rational',
-        'simplify_trig', 'simplify_full', 'trig_expand',
-        'canonicalize_radical', 'trig_reduce']:
+for method in ['simplify', 'simplify_factorial',
+               'simplify_log', 'simplify_rational',
+               'simplify_trig', 'simplify_full', 'trig_expand',
+               'canonicalize_radical', 'trig_reduce']:
     setattr(Vector_symbolic_dense, method, apply_map(getattr(Expression, method)))

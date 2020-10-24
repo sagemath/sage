@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+if [ -z $SAGE_EXTCODE ]; then
+    SAGE_EXTCODE=`${0/-ipynb2rst} -c "from sage.env import SAGE_EXTCODE; print(SAGE_EXTCODE)"`
+fi
+
+fail () {
+    echo "ERROR: ${1}" 1>&2
+    exit 1
+}
+
+help () {
+    cat << EOF
+Usage:
+
+    sage -ipynb2rst <source> [<destination>]
+
+Generates reStructuredText source (.rst) from IPython worksheet (.ipynb).
+
+If the destination is not specified, the reStructuredText source is written in
+the standard output.
+
+Examples:
+
+    sage -ipynb2rst file.ipynb file.rst
+
+    sage -ipynb2rst file.ipynb
+
+Options:
+  -h, --help            show this help message and exit
+EOF
+}
+
+if [ "${1}" = '-h' ] || [ "${1}" = '--help' ] ; then help ; exit 0 ; fi
+
+case  "${#}" in
+    (1)
+        jupyter nbconvert --to rst --RSTExporter.template_path=[\'$SAGE_EXTCODE/nbconvert/\'] --RSTExporter.template_file='rst_sage.tpl' --NbConvertApp.output_files_dir='.' --output-dir='.' "${1}" || ( echo -e '\n' ; help )
+        $SAGE_EXTCODE/nbconvert/postprocess.py "${1/.ipynb/.rst}"
+        ;;
+    (2)
+        jupyter nbconvert --output="${2}" --to rst --RSTExporter.template_path=[\'$SAGE_EXTCODE/nbconvert/\'] --RSTExporter.template_file='rst_sage.tpl' --NbConvertApp.output_files_dir='.' "${1}" || ( echo -e '\n' ; help )
+        $SAGE_EXTCODE/nbconvert/postprocess.py "${2}"
+        ;;
+    (*)
+        help ;;
+esac
+
+exit 0
+

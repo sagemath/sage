@@ -1,0 +1,29 @@
+From d0a454a36e1e552beb15d9b09e8d16658489f4d5 Mon Sep 17 00:00:00 2001
+From: Marius Gerbershagen <marius.gerbershagen@gmail.com>
+Date: Wed, 6 May 2020 21:03:18 +0200
+Subject: [PATCH 3/3] printer: fix printing of symbols with non-ascii names
+
+Bug was introduced in commit c6b4296bb886ad70b83c5cc0f472f6855783e2f9
+in converting buffer_write_char from a macro to an inline
+function. Problem reported by Vladimir Sedach on the ecl-devel mailing
+list.
+---
+ src/c/printer/write_symbol.d | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/c/printer/write_symbol.d b/src/c/printer/write_symbol.d
+index a39bab97..49ef5d31 100644
+--- a/src/c/printer/write_symbol.d
++++ b/src/c/printer/write_symbol.d
+@@ -103,7 +103,7 @@ needs_to_be_escaped(cl_object s, cl_object readtable, cl_object print_case)
+ }
+ 
+ static inline void
+-buffer_write_char(char c, cl_object buffer, cl_object stream, cl_index *buffer_ndx, cl_index buffer_size) {
++buffer_write_char(ecl_character c, cl_object buffer, cl_object stream, cl_index *buffer_ndx, cl_index buffer_size) {
+   ecl_char_set(buffer, (*buffer_ndx)++, c);
+   if (*buffer_ndx >= buffer_size) {
+     si_fill_pointer_set(buffer, ecl_make_fixnum(buffer_size));
+-- 
+2.26.2
+

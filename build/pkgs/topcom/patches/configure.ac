@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([TOPCOM],[0.17.4])
+AC_INIT([TOPCOM],[0.17.7])
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -18,10 +18,11 @@ AC_C_CONST
 
 dnl ===== Begin checks for libraries ================
 
-dnl Check for soplex:
-AC_CHECK_LIB(soplex, main, ,
-             [csh -c 'echo soplex not found: --soplex will not work.'])
-
+dnl Removed check for soplex because SPXinterface will not compile with
+dnl Soplex 2.0.1.  (Header file spxdefaultpr.h does not exist any more.)
+dnl dnl Check for soplex:
+dnl AC_TRY_LINKCHECK_LIB(soplex, main, ,
+dnl              [csh -c 'echo soplex not found: --soplex will not work.'])
 
 dnl Find the GNU Multiple Precision Arithmetic Library
 AC_ARG_WITH(gmp,

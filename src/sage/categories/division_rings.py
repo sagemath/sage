@@ -50,7 +50,7 @@ class DivisionRings(CategoryWithAxiom):
             The :ref:`axioms-deduction-rules` section in the
             documentation of axioms
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: DivisionRings().extra_super_categories()
             (Category of domains,)
@@ -79,7 +79,7 @@ class DivisionRings(CategoryWithAxiom):
             sage: DivisionRings().Finite_extra_super_categories()
             (Category of commutative magmas,)
             sage: DivisionRings().Finite()
-            Category of finite fields
+            Category of finite enumerated fields
 
         .. WARNING::
 

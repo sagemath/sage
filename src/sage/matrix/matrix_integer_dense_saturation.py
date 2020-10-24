@@ -1,13 +1,15 @@
 """
 Saturation over ZZ
 """
+from __future__ import absolute_import
 
-from sage.rings.all import ZZ, gcd, GF
-from sage.rings.arith import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.arith.all import binomial, gcd
 from sage.matrix.constructor import identity_matrix, random_matrix
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 from sage.misc.randstate import current_randstate
-import matrix_integer_dense_hnf
+from . import matrix_integer_dense_hnf
 from copy import copy
 
 
@@ -88,13 +90,13 @@ def random_sublist_of_size(k, n):
     if n > k:
         raise ValueError("n must be <= len(v)")
     if n == k:
-        return range(k)
-    if n >= k//2+5:
+        return list(range(k))
+    if n >= k // 2 + 5:
         # use complement
-        w = random_sublist_of_size(k, k-n)
+        w = random_sublist_of_size(k, k - n)
         m = set(w)
-        w = [z for z in xrange(k) if z not in m]
-        assert(len(w)) == n
+        w = [z for z in range(k) if z not in m]
+        assert(len(w) == n)
         return w
 
     randrange = current_randstate().python_random().randrange
@@ -104,8 +106,8 @@ def random_sublist_of_size(k, n):
         z = randrange(k)
         if not z in w:
             w.add(z)
-    w = sorted(w)
-    return w
+    return sorted(w)
+
 
 def solve_system_with_difficult_last_row(B, A):
     """

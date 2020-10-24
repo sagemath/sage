@@ -1,0 +1,2 @@
+#! /bin/sh
+echo Installation of zope_interface is disabled, as a preparation for removal

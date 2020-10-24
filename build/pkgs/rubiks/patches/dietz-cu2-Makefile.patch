@@ -1,46 +1,46 @@
---- patches/dietz-cu2-Makefile	2009-09-28 18:39:39.327006842 -0700
-+++ src/dietz/cu2/Makefile	2008-02-17 17:02:11.000000000 -0800
-@@ -1,5 +1,10 @@
+--- rubiks-20070912/dietz/cu2/Makefile	2008-02-18 02:02:11.000000000 +0100
++++ dietz-cu2-Makefile	2015-12-21 20:13:22.404335387 +0100
+@@ -1,10 +1,5 @@
  # makefile for cu2 with gcc on *nix by Eric
  
-+CC=gcc
-+CPP=g++
-+LINK=g++
-+CFLAGS=-O2
-+LFLAGS=
+-CC=gcc
+-CPP=g++
+-LINK=g++
+-CFLAGS=-O2
+-LFLAGS=
  RM=rm -f
  INCLUDES=cu2.h config.h
  OBJS=cu2.o main.o
-@@ -14,10 +19,10 @@
+@@ -19,10 +14,10 @@
  debug: build-debug
  
  build: $(OBJS)
--	$(CXX) $(CXXFLAGS)  -o cu2  $(OBJS) $(LIBS)
-+	$(LINK) $(LFLAGS)  -o cu2  $(OBJS) $(LIBS)
+-	$(LINK) $(LFLAGS)  -o cu2  $(OBJS) $(LIBS)
++	$(CXX) $(CXXFLAGS)  -o cu2  $(OBJS) $(LIBS) $(LDFLAGS)
  
  build-debug: $(DBGOBJS)
--	$(CXX) $(DBGLFLAGS)  -o cu2  $(OBJS) $(DBGLIBS)
-+	$(LINK) $(DBGLFLAGS)  -o cu2  $(OBJS) $(DBGLIBS)
+-	$(LINK) $(DBGLFLAGS)  -o cu2  $(OBJS) $(DBGLIBS)
++	$(CXX) $(DBGLFLAGS)  -o cu2  $(OBJS) $(DBGLIBS) $(LDFLAGS)
  
  clean:
  	$(RM) $(OBJS)
-@@ -26,15 +31,15 @@
+@@ -31,15 +26,15 @@
  	$(RM) cu2
  
  main.o: main.cpp $(INCLUDES)
--	$(CXX) $(CXXFLAGS) -c main.cpp
-+	$(CPP) $(CFLAGS) -c main.cpp
+-	$(CPP) $(CFLAGS) -c main.cpp
++	$(CXX) $(CXXFLAGS) -c main.cpp
  
  cu2.o: cu2.cpp $(INCLUDES)
--	$(CXX) $(CXXFLAGS) -c cu2.cpp
-+	$(CPP) $(CFLAGS) -c cu2.cpp
+-	$(CPP) $(CFLAGS) -c cu2.cpp
++	$(CXX) $(CXXFLAGS) -c cu2.cpp
  
  main.o.dbg: main.cpp $(INCLUDES)
--	$(CXX) $(DBGCFLAGS) -c main.cpp
-+	$(CPP) $(DBGCFLAGS) -c main.cpp
+-	$(CPP) $(DBGCFLAGS) -c main.cpp
++	$(CXX) $(DBGCFLAGS) -c main.cpp
  
  cu2.o.dbg: cu2.cpp $(INCLUDES)
--	$(CXX) $(DBGCFLAGS) -c cu2.cpp
-+	$(CPP) $(DBGCFLAGS) -c cu2.cpp
+-	$(CPP) $(DBGCFLAGS) -c cu2.cpp
++	$(CXX) $(DBGCFLAGS) -c cu2.cpp
  
  dummy:

@@ -1,0 +1,25 @@
+#!/usr/bin/env sage-system-python
+
+# usage: sage-spkg-uninstall [-h] PKG [SAGE_LOCAL]
+#
+# Uninstall a Sage spkg installed in SAGE_LOCAL by removing all files
+# associated with that package.
+#
+# positional arguments:
+#   PKG         the name of the package to uninstall
+#   FILE        the path to SAGE_LOCAL (default: value of the $SAGE_LOCAL
+#               environment variable if set; exits otherwise)
+#
+# optional arguments:
+#   -h, --help  show this help message and exit
+
+
+try:
+    import sage_bootstrap
+except ImportError:
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    import sage_bootstrap
+
+from sage_bootstrap.uninstall import run
+run()

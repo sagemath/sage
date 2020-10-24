@@ -1,16 +1,13 @@
-from sage.libs.arb.mag cimport mag_t
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = arf.h
+
+from sage.libs.arb.types cimport *
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport fmpz_t
-from sage.libs.mpfr cimport mpfr_t, mpfr_rnd_t
+from sage.libs.mpfr.types cimport mpfr_t, mpfr_rnd_t
 
-cdef extern from "arf.h":
-    ctypedef struct arf_struct:
-        pass
-    ctypedef arf_struct arf_t[1]
-    ctypedef arf_struct * arf_ptr
-    ctypedef const arf_struct * arf_srcptr
-    ctypedef int arf_rnd_t
-
+# arf.h
+cdef extern from "arb_wrap.h":
     void arf_init(arf_t x)
     void arf_clear(arf_t x)
     void arf_zero(arf_t x)

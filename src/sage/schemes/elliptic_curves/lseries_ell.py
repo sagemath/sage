@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-L-series for elliptic curves
+`L`-series for elliptic curves
 
 AUTHORS:
 
@@ -12,7 +12,7 @@ AUTHORS:
 - William Stein et al. (2005 and later)
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein
 #       Copyright (C) 2013 Jeroen Demeyer
 #
@@ -24,9 +24,11 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import RealField, RationalField
-from math import sqrt, exp, log, ceil
+from math import sqrt, log, ceil
 import sage.functions.exp_integral as exp_integral
-import sage.misc.all as misc
+from sage.misc.verbose import verbose
+from sage.misc.cachefunc import cached_method
+
 
 class Lseries_ell(SageObject):
     """
@@ -76,11 +78,9 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries()
-            sage: L.taylor_series(series_prec=3)
+            sage: L.taylor_series(series_prec=3)   # abs tol 1e-14
             -1.27685190980159e-23 + (7.23588070754027e-24)*z + 0.759316500288427*z^2 + O(z^3)  # 32-bit
-            -2.72911738151096e-23 + (1.54658247036311e-23)*z + 0.759316500288427*z^2 + O(z^3)  # 64-bit
-            sage: L.taylor_series(series_prec=3)[2:]
-            0.000000000000000 + 0.000000000000000*z + 0.759316500288427*z^2 + O(z^3)
+            1.34667664606157e-19 + (-7.63157535163667e-20)*z + 0.759316500288427*z^2 + O(z^3)  # 64-bit
         """
         D = self.dokchitser(prec)
         return D.taylor_series(a, series_prec, var)
@@ -101,22 +101,29 @@ class Lseries_ell(SageObject):
     def dokchitser(self, prec=53,
                    max_imaginary_part=0,
                    max_asymp_coeffs=40,
-                   algorithm='gp'):
+                   algorithm=None):
         r"""
-        Return interface to Tim Dokchitser's program for computing
-        with the `L`-series of this elliptic curve; this provides a way
-        to compute Taylor expansions and higher derivatives of
-        `L`-series.
+        Return an interface for computing with the `L`-series
+        of this elliptic curve.
+
+        This provides a way to compute Taylor expansions and higher
+        derivatives of `L`-series.
 
         INPUT:
 
-        - ``prec`` -- integer (bits precision)
+        - ``prec`` -- optional integer (default 53) bits precision
 
-        - ``max_imaginary_part`` -- real number
+        - ``max_imaginary_part`` -- optional real number (default 0)
 
-        - ``max_asymp_coeffs`` -- integer
+        - ``max_asymp_coeffs`` -- optional integer (default 40)
 
-        - ``algorithm`` -- string: 'gp' or 'magma'
+        - ``algorithm`` -- optional string: 'gp' (default), 'pari' or 'magma'
+
+        If algorithm is "gp", this returns an interface to Tim
+        Dokchitser's program for computing with the L-functions.
+
+        If algorithm is "pari", this returns instead an interface to Pari's
+        own general implementation of L-functions.
 
         .. note::
 
@@ -134,43 +141,61 @@ class Lseries_ell(SageObject):
             sage: L.Evaluate(2)                                         # optional - magma
             0.38157540826071121129371040958008663667709753398892116
 
-        If the curve has too large a conductor, it isn't possible to
+        If the curve has too large a conductor, it is not possible to
         compute with the `L`-series using this command.  Instead a
         ``RuntimeError`` is raised::
 
             sage: e = EllipticCurve([1,1,0,-63900,-1964465932632])
-            sage: L = e.lseries().dokchitser(15)
+            sage: L = e.lseries().dokchitser(15, algorithm='gp')
             Traceback (most recent call last):
             ...
             RuntimeError: Unable to create L-series, due to precision or other limits in PARI.
+
+        Using the "pari" algorithm::
+
+            sage: E = EllipticCurve('37a')
+            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L(2)
+            0.381575408260711
         """
+        if algorithm is None:
+            algorithm = 'pari'
+
         if algorithm == 'magma':
             from sage.interfaces.all import magma
-            return magma(self.__E).LSeries(Precision = prec)
+            return magma(self.__E).LSeries(Precision=prec)
 
-        from sage.lfunctions.all import Dokchitser
-        key = (prec, max_imaginary_part, max_asymp_coeffs)
-        try:
-            return self.__dokchitser[key]
-        except KeyError:
-            pass
-        except AttributeError:
-            self.__dokchitser = {}
-        L = Dokchitser(conductor = self.__E.conductor(),
-                       gammaV = [0,1],
-                       weight = 2,
-                       eps = self.__E.root_number(),
-                       poles = [],
-                       prec = prec)
-        gp = L.gp()
-        s = 'e = ellinit(%s);'%list(self.__E.minimal_model().a_invariants())
-        s += 'a(k) = ellak(e, k);'
-        L.init_coeffs('a(k)', 1, pari_precode = s,
-                      max_imaginary_part=max_imaginary_part,
-                      max_asymp_coeffs=max_asymp_coeffs)
-        L.rename('Dokchitser L-function associated to %s'%self.__E)
-        self.__dokchitser[key] = L
-        return L
+        if algorithm == 'pari':
+            from sage.lfunctions.pari import LFunction, lfun_elliptic_curve
+            L = LFunction(lfun_elliptic_curve(self.__E), prec=prec)
+            L.rename('PARI L-function associated to %s' % self.__E)
+            return L
+
+        if algorithm == 'gp':
+            from sage.lfunctions.all import Dokchitser
+            key = (prec, max_imaginary_part, max_asymp_coeffs)
+            try:
+                return self.__dokchitser[key]
+            except KeyError:
+                pass
+            except AttributeError:
+                self.__dokchitser = {}
+            L = Dokchitser(conductor=self.__E.conductor(),
+                           gammaV=[0, 1],
+                           weight=2,
+                           eps=self.__E.root_number(),
+                           poles=[],
+                           prec=prec)
+            s = 'e = ellinit(%s);' % list(self.__E.minimal_model().a_invariants())
+            s += 'a(k) = ellak(e, k);'
+            L.init_coeffs('a(k)', 1, pari_precode=s,
+                          max_imaginary_part=max_imaginary_part,
+                          max_asymp_coeffs=max_asymp_coeffs)
+            L.rename('Dokchitser L-function associated to %s' % self.__E)
+            self.__dokchitser[key] = L
+            return L
+
+        raise ValueError('algorithm must be "gp", "pari" or "magma"')
 
     def sympow(self, n, prec):
         r"""
@@ -213,17 +238,17 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        -   n -- integer
+        - n -- integer
 
-        -   prec -- integer
+        - prec -- integer
 
-        -   d -- integer
+        - d -- integer
 
         OUTPUT:
 
         - a string, exactly as output by sympow
 
-        .. note ::
+        .. NOTE::
 
             To use this function you may have to run a few commands
             like ``sympow('-new_data 1d2')``, each which takes a few
@@ -233,7 +258,7 @@ class Lseries_ell(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
-            sage: print E.lseries().sympow_derivs(1,16,2)      # not tested -- requires precomputing "sympow('-new_data 2')"
+            sage: print(E.lseries().sympow_derivs(1,16,2))    # not tested -- requires precomputing "sympow('-new_data 2')"
             sympow 1.018 RELEASE  (c) Mark Watkins --- see README and COPYING for details
             Minimal model of curve  is [0,0,1,-1,0]
             At 37: Inertia Group is  C1 MULTIPLICATIVE REDUCTION
@@ -375,7 +400,7 @@ class Lseries_ell(SageObject):
 
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
-            sage: vals  # abs tol 1e-17
+            sage: vals  # abs tol 1e-15
             [(-11, 1.47824342), (-8, 8.9590946e-18), (-7, 1.85307619), (-4, 2.45138938)]
             sage: F = E.quadratic_twist(-8)
             sage: F.rank()
@@ -522,7 +547,7 @@ class Lseries_ell(SageObject):
         Rerror = RealField(24, rnd='RNDU')
 
         if self.__E.root_number() == -1:
-           return (R.zero(), Rerror.zero())
+            return (R.zero(), Rerror.zero())
 
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
@@ -534,7 +559,7 @@ class Lseries_ell(SageObject):
         L = R.zero()
         error = Rerror.zero()
 
-        for n in xrange(1,k+1):
+        for n in range(1, k + 1):
             term = (zpow * an[n])/n
             zpow *= z
             L += term
@@ -674,9 +699,9 @@ class Lseries_ell(SageObject):
         Rerror = RealField(24, rnd='RNDU')
 
         if self.__E.root_number() == 1:
-           # Order of vanishing at 1 of L(E) is even and assumed to be
-           # positive, so L'(E,1) = 0.
-           return (R.zero(), Rerror.zero())
+            # Order of vanishing at 1 of L(E) is even and assumed to be
+            # positive, so L'(E,1) = 0.
+            return (R.zero(), Rerror.zero())
 
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
@@ -689,7 +714,7 @@ class Lseries_ell(SageObject):
         # Sum of |an[n]|/n
         sumann = Rerror.zero()
 
-        for n in xrange(1,k+1):
+        for n in range(1, k + 1):
             term = (v[n-1] * an[n])/n
             L += term
             error += term.epsilon(Rerror)*5 + L.ulp(Rerror)
@@ -768,10 +793,12 @@ class Lseries_ell(SageObject):
         """
         return self.L_ratio() == 0
 
+    @cached_method
     def L_ratio(self):
         r"""
-        Returns the ratio `L(E,1)/\Omega` as an exact rational
-        number. The result is *provably* correct if the Manin
+        Return the ratio `L(E,1) / \Omega` as an exact rational number.
+
+        The result is *provably* correct if the Manin
         constant of the associated optimal quotient is `\leq 2`.  This
         hypothesis on the Manin constant is true for all semistable
         curves (i.e., squarefree conductor), by a theorem of Mazur
@@ -816,19 +843,12 @@ class Lseries_ell(SageObject):
 
         AUTHOR: William Stein, 2005-04-20.
         """
-        try:
-            return self.__lratio
-        except AttributeError:
-            pass
-
         if not self.__E.is_minimal():
-            self.__lratio = self.__E.minimal_model().lseries().L_ratio()
-            return self.__lratio
+            return self.__E.minimal_model().lseries().L_ratio()
 
         QQ = RationalField()
         if self.__E.root_number() == -1:
-            self.__lratio = QQ.zero()
-            return self.__lratio
+            return QQ.zero()
 
         # Even root number.  Decide if L(E,1) = 0.  If E is a modular
         # *OPTIMAL* quotient of J_0(N) elliptic curve, we know that T *
@@ -865,38 +885,38 @@ class Lseries_ell(SageObject):
         t = self.__E.torsion_subgroup().order()
         omega = self.__E.period_lattice().basis()[0]
         d = self.__E._multiple_of_degree_of_isogeny_to_optimal_curve()
-        C = 8*d*t
+        C = 8 * d * t
         eps = omega / C
 
-        sqrtN = 2*int(sqrt(self.__E.conductor()))
+        sqrtN = 2 * self.__E.conductor().isqrt()
         k = sqrtN + 10
         while True:
             L1, error_bound = self.at1(k)
             if error_bound < eps:
-                n = int(round(L1*C/omega))
-                quo = QQ((n,C))
-                self.__lratio = quo / self.__E.real_components()
-                return self.__lratio
+                n = (L1 * C / omega).round()
+                quo = QQ((n, C))
+                return quo / self.__E.real_components()
             k += sqrtN
-            misc.verbose("Increasing precision to %s terms."%k)
+            verbose("Increasing precision to %s terms." % k)
 
     def zero_sums(self, N=None):
         r"""
-        Return an LFunctionZeroSum class object for efficient computation
-        of sums over the zeros of self. This can be used to bound analytic
-        rank from above without having to compute with the $L$-series
-        directly.
+        Return an ``LFunctionZeroSum`` class object for efficient computation
+        of sums over the zeros of ``self``.
+
+        This can be used to bound analytic rank from above without
+        having to compute with the `L`-series directly.
 
         INPUT:
 
-        - ``N`` -- (default: None) If not None, the conductor of the
-          elliptic curve attached to self. This is passable so that zero
+        - ``N`` -- (default: ``None``) If not ``None``, the conductor of the
+          elliptic curve attached to ``self``. This is passable so that zero
           sum computations can be done on curves for which the conductor
           has been precomputed.
 
         OUTPUT:
 
-        A LFunctionZeroSum_EllipticCurve instance.
+        A ``LFunctionZeroSum_EllipticCurve`` instance.
 
         EXAMPLES::
 

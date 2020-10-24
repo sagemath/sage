@@ -1,28 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
+
+# This script is executed by $SAGE_LOCAL/bin/sage
+# before starting sage.
 
 from __future__ import print_function
 
-import os, sys, re
+import os
+import sys
 
 SAGE_ROOT     = os.path.realpath(os.environ['SAGE_ROOT'])
 SAGE_LOCAL    = os.environ['SAGE_LOCAL']
 
 location_file = os.path.join(SAGE_LOCAL, 'lib', 'sage-current-location.txt')
 force_file    = os.path.join(SAGE_LOCAL, 'lib', 'sage-force-relocate.txt')
-flags_file    = os.path.join(SAGE_LOCAL, 'lib', 'sage-flags.txt')
-
-
-# The flags we care about recording in the local/lib/sage-flags.txt file.
-# In SAGE_FAT_BINARY mode we only require that ['sse', 'sse2', '3d',
-# 'mmx', 'cmov'] be available, and in particular, we don't require pni
-# (Prescott New Instructions, including SSE3) or ssse3.
-
-SAGE_FAT_BINARY = os.environ.get('SAGE_FAT_BINARY',"")
-
-if SAGE_FAT_BINARY == "yes":
-    FLAGS = ['sse', 'sse2', '3d', 'mmx', 'cmov']
-else:
-    FLAGS = ['sse', 'sse2', 'ssse3', '3d', 'mmx', 'pni', 'cmov']
 
 
 def write_location_file():
@@ -32,6 +22,7 @@ def write_location_file():
     O = open(location_file, 'w')
     O.write(SAGE_ROOT)
     O.close()
+
 
 def read_location_file():
     """
@@ -48,174 +39,13 @@ def read_location_file():
     return os.path.abspath(path)
 
 
-def get_flags_info():
-    """
-    Return a space-separated string that lists the flags indicating what's
-    supported by this CPU by reading ``/proc/cpuinfo``.
-    """
-    try:
-        r = open('/proc/cpuinfo').read()
-        i = r.find('flags')
-        r = r[i:]
-        i = r.find(':')
-        r = r[i+1:]
-        i = r.find('\n')
-        r = r[:i]
-
-        # This line restricts the flags to just ones that start with sse, 3d or mmx.
-        # We do not want *all* flags, since some like "up" are not relevant (up = uniprocessor).
-        return ' '.join(set(x for x in r.split() if x in FLAGS))
-
-    except IOError:
-        # On a system without /proc/cpuinfo, so don't bother.  In
-        # particular, for non-Linux systems I have no clue how to get
-        # the processor flags, and we so far have never ever had any
-        # problem with processor flags on such machines.  So we don't
-        # bother.
-        return ''
-
-
-def check_processor_flags():
-    """
-    Make sure all processor flags from the build machine are on this machine.
-    If the ``sage-flags.txt`` file is missing, create it.
-    """
-    # Write the flags file if it isn't there:
-    if not os.path.isfile(flags_file):
-        f = open(flags_file, 'w')
-        f.write(get_flags_info())
-        f.close()
-        return
-
-    # We check that the processor flags of the original build are a
-    # subset of the new machine.  If not, we print a massive warning.
-    X = set(open(flags_file).read().split()).intersection(FLAGS)
-    X.difference_update(get_flags_info().split())
-    if X:
-        print("")
-        print("*"*70)
-        print("WARNING!  This Sage install was built on a machine that supports")
-        print("instructions that are not available on this computer.  Sage will")
-        print("likely fail with ILLEGAL INSTRUCTION errors! The following processor")
-        print("flags were on the build machine but are not on this computer:\n")
-        print(*X)
-        print("")
-        print("Email http://groups.google.com/group/sage-support for help.")
-        print("To remove this warning and make Sage start, just delete")
-        print("     %s"%flags_file)
-        print("*"*70)
-        sys.exit(1)
-
-
-def update_library_files():
-    """
-    Manually change the paths in all ``.la`` libtool archives.
-    """
-    for libdir in ["lib", "lib32", "lib64"]:
-        LIB = os.path.join(SAGE_LOCAL, libdir)
-        if not os.path.isdir(LIB):
-            continue
-
-        # The .la files hardcode path info, so we manually fix the path info:
-        for F in os.listdir(LIB):
-           if os.path.splitext(F)[-1] == ".la":
-               G = open(os.path.join(LIB,F)).read()
-               i = G.find('libdir=')
-               j = i+8 + G[i+8:].find("'")
-               z = G[i+8:j].strip().strip("'")
-               i = z.rfind('local/')
-               if i != -1:
-                   z = z[:i]
-                   H = G.replace(z, SAGE_ROOT + '/')
-                   open(os.path.join(LIB, F),'w').write(H)
-
-
-def update_pkgconfig_files():
-    """
-    Call ``update_pkgconfig_file()`` for every ``pkg-config`` file in
-    ``$SAGE_LOCAL/lib``.
-    """
-    PKG = os.path.join(SAGE_LOCAL, 'lib', 'pkgconfig')
-    for name in os.listdir(PKG):
-        filename = os.path.join(PKG, name)
-        if os.path.splitext(filename)[1] == ".pc":
-            update_pkgconfig_file(filename)
-
-def update_pkgconfig_file(filename):
-    """
-    Edit the ``pkg-config`` file ``filename`` such that it contains
-    a definition of a ``SAGE_ROOT`` variable, and replace occurrences of
-    its current and previous value by references ``${SAGE_ROOT}`` to
-    that variable.
-    """
-    # Pattern matching a *definition* of SAGE_ROOT:
-    def_pat = re.compile(r"^SAGE_ROOT=.*\n", re.MULTILINE)
-
-    with open(filename, 'r+') as f:
-        config = f.read()
-
-        # Delete old definition(s) of SAGE_ROOT
-        config = def_pat.sub("", config)
-
-        # Replace all occurrences of the current value of SAGE_ROOT
-        # by references to the pkg-config variable SAGE_ROOT.
-        # This is needed for the initial install of Sage.
-        config = config.replace(SAGE_ROOT, "${SAGE_ROOT}")
-        if OLD_SAGE_ROOT is not None:
-            # Also replace old values of SAGE_ROOT, this is needed for
-            # manually installed packages after the initial
-            # sage-location run.
-            config = config.replace(OLD_SAGE_ROOT, "${SAGE_ROOT}")
-
-        # New definition of SAGE_ROOT:
-        definition = "SAGE_ROOT=%s\n" % SAGE_ROOT
-
-        # Re-write the file
-        f.seek(0)
-        f.truncate()
-        f.write(definition + config)
-
-
-def make_scripts_relative():
-    """
-    For all interpreter scripts in ``$SAGE_LOCAL/bin`` running python,
-    replace first line by "#!/usr/bin/env python"
-    """
-    os.chdir(os.path.join(SAGE_LOCAL, 'bin'))
-    for filename in os.listdir('.'):
-        # Only ordinary files
-        if not os.path.isfile(filename):
-            continue
-
-        try:
-            with open(filename, 'rb+') as f:
-                # Read at most 512 bytes, this should be more than enough.
-                # If we don't find '\n' in the first 512 bytes, we most likely
-                # have a binary file.
-                L = f.readline(512)
-                # Make sure we read a complete line
-                if len(L) < 1 or L[-1] != '\n':
-                    continue
-                # Is the first line "#!.../python"?
-                if L.startswith("#!") and L.find("/python") >= 0:
-                    # Read the rest of the file
-                    script = f.read()
-
-                    # Write the file again with a proper interpreter line
-                    f.seek(0)
-                    f.truncate()
-                    f.write("#!/usr/bin/env python\n" + script)
-        except IOError:
-            pass
-
-
 def write_config_files():
     """
     Write various configuration files which contain the ``SAGE_ROOT``
     path.
     """
     # Currently only one file (for the experimental package qepcad):
-    # $SAGE_ROOT/local/default.qepcadrc
+    # $SAGE_LOCAL/default.qepcadrc
     f = open(os.path.join(SAGE_LOCAL, 'default.qepcadrc'), 'w')
     text = \
 """# THIS FILE IS AUTOMATICALLY GENERATED by sage-location -- DO NOT EDIT
@@ -234,23 +64,6 @@ SINGULAR %s
     f.close()
 
 
-def remove_files(path, remove_extensions):
-    """
-    Walk the tree starting at ``path``, and remove all files with
-    extensions in ``remove_extensions``.
-    The extensions in ``remove_extensions`` should start with a period, i.e.,
-    e.g. use ``remove_files(path, ('.pyc', '.pyo'))``.
-    """
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            filename = os.path.join(root, file)
-            if os.path.splitext(filename)[1] in remove_extensions:
-                try:
-                    os.unlink(filename)
-                except OSError as msg:
-                    print(msg)
-
-
 def sage_relocate():
     """
     High-level function which calls various functions to handle
@@ -260,22 +73,42 @@ def sage_relocate():
     These operations should all be idempotent: executing them more than
     once should be equivalent to executing them once.
     """
-    check_processor_flags()
-    update_library_files()
-    update_pkgconfig_files()
-    make_scripts_relative()
     write_config_files()
 
-    # Compiled python files need to be regenerated, so we remove them:
-    remove_files(os.path.join(SAGE_LOCAL, 'lib', 'python'),
-                 remove_extensions=('.pyc', '.pyo'))
-
     # Write the new location file as last thing in this script,
-    # such that it only gets written if there were no exceptions.
+    # so that it only gets written if there were no exceptions.
     write_location_file()
 
 
+RELOCATION_ERROR = """
+ERROR:  The Sage installation tree has moved
+
+from {OLD_SAGE_ROOT}
+  to {SAGE_ROOT}
+
+This is not supported, and Sage will not work. To install Sage from a
+binary package:
+
+1. Open the .tar.bz2 archive (or .dmg on OSX)
+
+2. Move the SageMath folder/app to where you want it to be. You can
+   also rename the directory now.
+
+3. Start sage for the first time. This will then automatically patch
+   paths in binaries.
+
+After starting Sage for the first time you cannot change the
+installation any more. To install Sage elsewhere, start over from the
+binary package. Or recompile Sage from scratch in the new location
+("make distclean && make")
+"""
+
+
 if __name__ == '__main__':
+
+    if SAGE_ROOT is None:
+        print('You must run this script from within a Sage shell')
+        sys.exit(1)
 
     # Previous SAGE_ROOT, read from "sage-location.txt".
     # OLD_SAGE_ROOT is None if this is a first-time install.
@@ -292,17 +125,18 @@ if __name__ == '__main__':
     if OLD_SAGE_ROOT != SAGE_ROOT or force_relocate:
         if OLD_SAGE_ROOT is None:
             print("This looks like the first time you are running Sage.")
+        elif OLD_SAGE_ROOT != SAGE_ROOT:
+            print(RELOCATION_ERROR.format(OLD_SAGE_ROOT=OLD_SAGE_ROOT, SAGE_ROOT=SAGE_ROOT))
+            sys.exit(1)
         elif force_relocate:
             print("Forcing sage-location, probably because a new package was installed.")
         else:
             print("The Sage installation tree has moved")
             print("from %s" % OLD_SAGE_ROOT)
             print("  to %s" % SAGE_ROOT)
-        print("Updating various hardcoded paths...")
-        print("(Please wait at most a few minutes.)")
-        print("DO NOT INTERRUPT THIS.")
+            assert(False)
+        print("Cleaning up, do not interrupt this.")
         sys.stdout.flush() # One never knows...
 
         sage_relocate()
-
-        print("Done updating paths.")
+        print("Done cleaning.")

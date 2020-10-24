@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 for pkg in $SAGE_ROOT/build/pkgs/*
 do
     if [ -d $pkg ]; then
-        sage-spkg -f -d `basename $pkg`
+        sage-spkg -d `basename $pkg`
     fi
 done

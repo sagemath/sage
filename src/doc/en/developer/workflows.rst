@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-workflows:
 
 =======================
@@ -24,7 +26,7 @@ third person.
 Simple Workflow
 ===============
 
-.. image:: static/flowchart.*
+.. IMAGE:: static/flowchart.*
     :align: center
 
 

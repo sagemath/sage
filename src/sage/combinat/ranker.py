@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Rankers
 """
 #*****************************************************************************
@@ -6,19 +7,14 @@ Rankers
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #  Ported from MuPAD-Combinat (combinat::rankers)
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from collections import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from sage.misc.cachefunc import cached_function
 from sage.misc.callable_dict import CallableDict
 from sage.structure.parent import Parent
@@ -88,9 +84,9 @@ def rank_from_list(l):
     implementation detail::
 
         sage: type(r)
-        <type 'sage.misc.callable_dict.CallableDict'>
+        <... 'sage.misc.callable_dict.CallableDict'>
         sage: r
-        {'a': 0, 'c': 2, 'b': 1}
+        {'a': 0, 'b': 1, 'c': 2}
 
     With the current implementation, no error is issued in case of
     duplicate value in ``l``. Instead, the rank function returns the
@@ -188,21 +184,21 @@ def unrank(L, i):
 
     The purpose of this utility is to give a uniform idiom to recover
     the `i`-th element of an object ``L``, whether ``L`` is a list,
-    tuple (or more generally a :class:`collections.Sequence`), an
+    tuple (or more generally a :class:`collections.abc.Sequence`), an
     enumerated set, some old parent of Sage still implementing
     unranking in the method ``__getitem__``, or an iterable (see
-    :class:`collections.Iterable`). See :trac:`15919`.
+    :class:`collections.abc.Iterable`). See :trac:`15919`.
 
     EXAMPLES:
 
-    Lists, tuples, and other :class:`sequences <collections.Sequence>`::
+    Lists, tuples, and other :class:`sequences <collections.abc.Sequence>`::
 
         sage: from sage.combinat.ranker import unrank
         sage: unrank(['a','b','c'], 2)
         'c'
         sage: unrank(('a','b','c'), 1)
         'b'
-        sage: unrank(xrange(3,13,2), 1)
+        sage: unrank(range(3,13,2), 1)
         5
 
     Enumerated sets::
@@ -211,18 +207,6 @@ def unrank(L, i):
         2
         sage: unrank(IntegerModRing(29), 10)
         10
-
-    An old parent with unranking implemented in ``__getitem__``::
-
-        sage: M = MatrixSpace(GF(3), 2, 2)
-        sage: hasattr(M, "unrank")
-        False
-        sage: M[42]
-        [1 0]
-        [2 1]
-        sage: unrank(M, 42)
-        [1 0]
-        [2 1]
 
     An iterable::
 
@@ -251,7 +235,7 @@ def unrank(L, i):
     TESTS::
 
         sage: from sage.combinat.ranker import unrank
-        sage: unrank(range(3), 10)
+        sage: unrank(list(range(3)), 10)
         Traceback (most recent call last):
         ...
         IndexError: list index out of range
@@ -260,11 +244,6 @@ def unrank(L, i):
         Traceback (most recent call last):
         ...
         IndexError: index out of range
-
-        sage: M[100]
-        Traceback (most recent call last):
-        ...
-        IndexError: list index out of range
     """
     if L in EnumeratedSets:
         return L.unrank(i)
@@ -282,7 +261,6 @@ def unrank(L, i):
             for _ in range(i):
                 next(it)
             return next(it)
-        except StopIteration as e:
+        except StopIteration:
             raise IndexError("index out of range")
     raise ValueError("Don't know how to unrank on {}".format(L))
-

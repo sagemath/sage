@@ -5,13 +5,14 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-10-17): Initial version
 """
-
 #*****************************************************************************
 #  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+# python3
+from __future__ import division
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -22,7 +23,8 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.hall_polynomial import hall_polynomial
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.rings.all import ZZ
-from functools import reduce
+from functools import cmp_to_key, reduce
+
 
 def transpose_cmp(x, y):
     r"""
@@ -62,6 +64,7 @@ def transpose_cmp(x, y):
     xexp = x.to_exp()
     yexp = y.to_exp()
     n = min(len(xexp), len(yexp))
+
     def check(m, l):
         s1 = 0
         s2 = 0
@@ -75,7 +78,10 @@ def transpose_cmp(x, y):
         return 1
     if check(yexp, xexp):
         return -1
-    return cmp(x, y)
+    if x < y:
+        return -1
+    return 1
+
 
 class HallAlgebra(CombinatorialFreeModule):
     r"""
@@ -91,7 +97,7 @@ class HallAlgebra(CombinatorialFreeModule):
         I_\mu \cdot I_\lambda = \sum_\nu P^{\nu}_{\mu, \lambda}(q) I_\nu,
 
     where `P^{\nu}_{\mu, \lambda}` is a Hall polynomial (see
-    :meth:`~sage.combinat.hall_polynomial.hall_polynomial`). The
+    :func:`~sage.combinat.hall_polynomial.hall_polynomial`). The
     unity of this algebra is `I_{\emptyset}`.
 
     The (classical) Hall algebra is also known as the Hall-Steinitz
@@ -111,7 +117,7 @@ class HallAlgebra(CombinatorialFreeModule):
     the `\lambda`-th Hall-Littlewood `P`-function, and where
     `n(\lambda) = \sum_i (i - 1) \lambda_i`.
 
-    See section 2.3 in [Schiffmann]_, and sections II.2 and III.3
+    See section 2.3 in [Sch2006]_, and sections II.2 and III.3
     in [Macdonald1995]_ (where our `I_{\lambda}` is called `u_{\lambda}`).
 
     EXAMPLES::
@@ -205,11 +211,6 @@ class HallAlgebra(CombinatorialFreeModule):
         sage: e = SymmetricFunctions(R).e()
         sage: e(H[1,1,1])
         (q^-3)*e[3]
-
-    REFERENCES:
-
-    .. [Schiffmann] Oliver Schiffmann. *Lectures on Hall algebras*.
-       :arxiv:`0611617v2`.
     """
     def __init__(self, base_ring, q, prefix='H'):
         """
@@ -243,7 +244,7 @@ class HallAlgebra(CombinatorialFreeModule):
             category = AlgebrasWithBasis(base_ring)
         CombinatorialFreeModule.__init__(self, base_ring, Partitions(),
                                          prefix=prefix, bracket=False,
-                                         monomial_cmp=transpose_cmp,
+                                         sorting_key=cmp_to_key(transpose_cmp),
                                          category=category)
 
         # Coercions
@@ -379,7 +380,7 @@ class HallAlgebra(CombinatorialFreeModule):
         """
         if all(x == 1 for x in la):
             r = len(la)
-            q = (-1)**r * self._q**(-r*(r-1)/2)
+            q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
             return self._from_dict({p: q for p in Partitions(r)})
 
         I = HallAlgebraMonomials(self.base_ring(), self._q)
@@ -463,7 +464,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
             Note that `a_{\lambda}` can be interpreted as the number
             of automorphisms of a certain object in a category
-            corresponding to `\lambda`. See Lemma 2.8 in [Schiffmann]_
+            corresponding to `\lambda`. See Lemma 2.8 in [Sch2006]_
             for details.
 
             EXAMPLES::
@@ -598,7 +599,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         # Coercions
         if hopf_structure:
             e = SymmetricFunctions(base_ring).e()
-            f = lambda la: q**sum(-(r*(r-1)/2) for r in la)
+            f = lambda la: q ** sum(-((r * (r - 1)) // 2) for r in la)
             M = self.module_morphism(diagonal=f, codomain=e)
             M.register_as_coercion()
             (~M).register_as_coercion()
@@ -713,7 +714,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         H = HallAlgebra(self.base_ring(), self._q)
         cur = self.one()
         for r in a:
-            q = (-1)**r * self._q**(-r*(r-1)/2)
+            q = (-1) ** r * self._q ** (-(r * (r - 1)) // 2)
             cur *= self(H._from_dict({p: q for p in Partitions(r)}))
         return cur
 

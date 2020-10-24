@@ -1,5 +1,5 @@
 """
-libSingular: Function Factory.
+libSingular: Function Factory
 
 AUTHORS:
 
@@ -21,7 +21,7 @@ class SingularFunctionFactory(object):
     """
     def __getattr__(self, name):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: import sage.libs.singular.function_factory
             sage: groebner = sage.libs.singular.function_factory.ff.groebner
@@ -48,7 +48,7 @@ class SingularFunctionFactory(object):
 
     def trait_names(self):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: import sage.libs.singular.function_factory
             sage: "groebner" in sage.libs.singular.function_factory.ff.trait_names()

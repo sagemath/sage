@@ -18,7 +18,6 @@ EXAMPLES::
 
     sage: def f(X):
     ....:     return min(len(X), 3)
-    ....:
     sage: M = Matroid(groundset=range(6), rank_function=f)
     sage: M.is_valid()
     True
@@ -30,7 +29,6 @@ EXAMPLES::
     ....:         return 1
     ....:     else:
     ....:         return 0
-    ....:
     sage: N = Matroid(groundset='abc', rank_function=g)
     sage: N.is_valid()
     False
@@ -49,6 +47,7 @@ AUTHORS:
 Methods
 =======
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -59,7 +58,7 @@ Methods
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from matroid import Matroid
+from .matroid import Matroid
 
 
 class RankMatroid(Matroid):
@@ -81,7 +80,6 @@ class RankMatroid(Matroid):
         sage: from sage.matroids.advanced import *
         sage: def f(X):
         ....:     return min(len(X), 3)
-        ....:
         sage: M = RankMatroid(groundset=range(6), rank_function=f)
         sage: M.is_valid()
         True
@@ -194,10 +192,8 @@ class RankMatroid(Matroid):
             sage: from sage.matroids.advanced import *
             sage: def f(X):
             ....:     return min(len(X), 3)
-            ....:
             sage: def g(X):
             ....:     return min(len(X), 3)
-            ....:
             sage: M1 = RankMatroid(groundset=range(6), rank_function=f)
             sage: M2 = RankMatroid(groundset=range(6), rank_function=g)
             sage: M3 = RankMatroid(groundset=range(7), rank_function=f)
@@ -237,10 +233,8 @@ class RankMatroid(Matroid):
             sage: from sage.matroids.advanced import *
             sage: def f(X):
             ....:     return min(len(X), 3)
-            ....:
             sage: def g(X):
             ....:     return min(len(X), 3)
-            ....:
             sage: M1 = RankMatroid(groundset=range(6), rank_function=f)
             sage: M2 = RankMatroid(groundset=range(6), rank_function=g)
             sage: M3 = RankMatroid(groundset=range(7), rank_function=f)
@@ -252,7 +246,7 @@ class RankMatroid(Matroid):
             sage: M1 != M4
             False
         """
-        return not self.__eq__(other)
+        return not self == other
 
     # Copying, loading, saving:
 
@@ -271,11 +265,11 @@ class RankMatroid(Matroid):
             sage: M.groundset() is N.groundset()
             True
         """
-        from copy import copy
         N = RankMatroid(groundset=[], rank_function=None)
         N._groundset = self._groundset
         N._rank_function = self._rank_function
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default copy
+        if getattr(self, '__custom_name') is not None:
+            # because of name wrangling, this is not caught by the default copy
             N.rename(getattr(self, '__custom_name'))
         return N
 

@@ -1,4 +1,4 @@
-$(INST)/$(READLINE) $(INST)/$(SAGE_MP_LIBRARY) | $(INST)/$(PARI_GALDATA) $(INST)/$(PARI_SEADATA_SMALL)
+readline $(MP_LIBRARY) | pari_galdata pari_seadata_small
 
 ----------
 All lines of this file are ignored except the first.

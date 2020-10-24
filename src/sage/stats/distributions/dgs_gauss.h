@@ -190,7 +190,7 @@ struct _dgs_disc_gauss_mp_t;
 typedef struct _dgs_disc_gauss_dp_t {
 
   /**
-     The width paramter `σ`, i.e. samples are accepted with probability
+     The width parameter `σ`, i.e. samples are accepted with probability
      proportional to `\exp(-(x-c)²/(2σ²))`
   */
 
@@ -222,7 +222,7 @@ typedef struct _dgs_disc_gauss_dp_t {
   dgs_bern_uniform_t *B;
 
   /**
-     To realise rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
+     To realize rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
      if it returns 1.
 
      Used when ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` or
@@ -410,7 +410,7 @@ void dgs_disc_gauss_dp_clear(dgs_disc_gauss_dp_t *self);
 typedef struct _dgs_disc_gauss_mp_t {
 
   /**
-      The width paramter `σ`, i.e. samples are accepted with probability
+      The width parameter `σ`, i.e. samples are accepted with probability
       proportional to `\exp(-(x-c)²/(2σ²))`
    */
 
@@ -443,7 +443,7 @@ typedef struct _dgs_disc_gauss_mp_t {
   dgs_bern_uniform_t *B;
 
   /**
-     To realise rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
+     To realize rejection sampling, we call `B_{exp(-(x·x)/(2σ²))}` and accept
      if it returns 1.
 
      Used when ``DGS_DISC_GAUSS_UNIFORM_LOGTABLE`` or

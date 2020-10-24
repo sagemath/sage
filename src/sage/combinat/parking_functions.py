@@ -36,17 +36,17 @@ rooted forests on `n` vertices and is equal to `(n+1)^{n-1}`.
 
 REFERENCES:
 
-.. [Beck] M. Beck, Stanford Math Circle - Parking Functions, October 2010,
+.. [Beck] \M. Beck, Stanford Math Circle - Parking Functions, October 2010,
     http://math.stanford.edu/circle/parkingBeck.pdf
 
 .. [Hag08] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
     With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
     University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
 
-.. [Shin] H. Shin, Forests and Parking Functions, slides from talk September 24, 2008,
+.. [Shin] \H. Shin, Forests and Parking Functions, slides from talk September 24, 2008,
     http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf
 
-.. [GXZ] A. M. Garsia, G. Xin, M. Zabrocki, A three shuffle case of the
+.. [GXZ] \A. M. Garsia, G. Xin, M. Zabrocki, A three shuffle case of the
     compositional parking function conjecture, :arxiv:`1208.5796v1`
 
 AUTHORS:
@@ -229,7 +229,7 @@ class ParkingFunctions_all(InfiniteAbstractCombinatorialClass):
 
     def _infinite_cclass_slice(self, n):
         """
-        Needed by InfiniteAbstractCombinatorialClass to buid __iter__.
+        Needed by InfiniteAbstractCombinatorialClass to build __iter__.
 
         TESTS::
 
@@ -309,7 +309,7 @@ class ParkingFunctions_n(CombinatorialClass):
             True
             sage: [1,4,1] in PF3
             False
-            sage: all([p in PF3 for p in PF3])
+            sage: all(p in PF3 for p in PF3)
             True
         """
         if isinstance(x, ParkingFunction_class):
@@ -494,7 +494,7 @@ def ParkingFunction(pf=None, labelling=None, area_sequence=None,
         return from_labelled_dyck_word(labelled_dyck_word)
     elif area_sequence is not None:
         DW = DyckWord(area_sequence)
-        return ParkingFunction(labelling=range(1, DW.size() + 1),
+        return ParkingFunction(labelling=list(range(1, DW.size() + 1)),
                                area_sequence=DW)
 
     raise ValueError("did not manage to make this into a parking function")
@@ -666,7 +666,7 @@ class ParkingFunction_class(CombinatorialObject):
         out = {}
         for i in range(len(self)):
             j = 0
-            while self[i] + j in out.keys():
+            while self[i] + j in out:
                 j += 1
             out[self[i] + j] = i
         return Permutation([out[i + 1] + 1 for i in range(len(self))])
@@ -1010,7 +1010,13 @@ class ParkingFunction_class(CombinatorialObject):
         Return the :meth:`~sage.combinat.permutation.Permutation.descents` sequence
         of the inverse of the :meth:`diagonal_reading_word` of ``self``.
 
-        For example, ``ides(PF) = [1, 2, 3, 5]`` means that descents are at the 2nd, 3rd,
+        .. WARNING::
+
+            Here we use the standard convention that descent labels
+            start at `1`. This behaviour has been changed in
+            :trac:`20555`.
+
+        For example, ``ides(PF) = [2, 3, 4, 6]`` means that descents are at the 2nd, 3rd,
         4th and 6th positions in the inverse of the
         :meth:`diagonal_reading_word` of the parking function (see [GXZ]_ p. 2).
 
@@ -1027,16 +1033,16 @@ class ParkingFunction_class(CombinatorialObject):
 
             sage: PF = ParkingFunction([6, 1, 5, 2, 2, 1, 5])
             sage: PF.ides()
-            [1, 2, 3, 5]
+            [2, 3, 4, 6]
 
         ::
 
             sage: ParkingFunction([3,1,1,4]).ides()
-            [1]
-            sage: ParkingFunction([4,1,1,1]).ides()
-            [1, 2]
-            sage: ParkingFunction([4,3,1,1]).ides()
             [2]
+            sage: ParkingFunction([4,1,1,1]).ides()
+            [2, 3]
+            sage: ParkingFunction([4,3,1,1]).ides()
+            [3]
         """
         return self.diagonal_reading_word().inverse().descents()
 

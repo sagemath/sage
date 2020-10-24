@@ -11,6 +11,8 @@ Bialgebras
 
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.all import Algebras, Coalgebras
+from sage.categories.super_modules import SuperModulesCategory
+from sage.misc.lazy_import import LazyImport
 
 class Bialgebras(Category_over_base_ring):
     """
@@ -56,8 +58,8 @@ class Bialgebras(Category_over_base_ring):
         """
         return None
 
-    class ParentMethods:
+    class Super(SuperModulesCategory):
         pass
 
-    class ElementMethods:
-        pass
+    WithBasis = LazyImport('sage.categories.bialgebras_with_basis', 'BialgebrasWithBasis')
+

@@ -18,7 +18,7 @@ AUTHORS:
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
@@ -26,11 +26,13 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-include 'sage/data_structures/bitset.pxi'
-from basis_matroid cimport BasisMatroid
-from sage.rings.arith import binomial
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.data_structures.bitset_base cimport *
+from .basis_matroid cimport BasisMatroid
+from sage.arith.all import binomial
+
 
 cdef class CutNode:
     """
@@ -40,11 +42,11 @@ cdef class CutNode:
     A linear subclass is a set of hyperplanes `mc` with the property that
     certain sets of hyperplanes must either be fully contained in `mc` or
     intersect `mc` in at most 1 element. The way we generate them is by a
-    depth-first seach. This class represents a node in the search tree.
+    depth-first search. This class represents a node in the search tree.
 
     It contains the set of hyperplanes selected so far, as well as a
     collection of hyperplanes whose insertion has been explored elsewhere in
-    the seach tree.
+    the search tree.
 
     The class has methods for selecting a hyperplane to insert, for inserting
     hyperplanes and closing the set to become a linear subclass again, and for
@@ -193,7 +195,7 @@ cdef class LinearSubclassesIter:
             sage: from sage.matroids.extension import LinearSubclasses
             sage: M = matroids.Uniform(3, 6)
             sage: type(LinearSubclasses(M).__iter__())
-            <type 'sage.matroids.extension.LinearSubclassesIter'>
+            <... 'sage.matroids.extension.LinearSubclassesIter'>
         """
         cdef CutNode first_cut = CutNode(MC)
         self._MC = MC
@@ -291,8 +293,7 @@ cdef class LinearSubclasses:
         sage: len([mc for mc in LinearSubclasses(M, line_length=5)])
         22
         sage: for mc in LinearSubclasses(M, subsets=[[0, 1], [2, 3], [4, 5]]):
-        ....:     print len(mc)
-        ....:
+        ....:     print(len(mc))
         3
         15
 
@@ -313,21 +314,18 @@ cdef class LinearSubclasses:
             22
             sage: for mc in LinearSubclasses(M,
             ....:                           subsets=[[0, 1], [2, 3], [4, 5]]):
-            ....:     print len(mc)
-            ....:
+            ....:     print(len(mc))
             3
             15
             sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
             Matroid of rank 3 on 11 elements with 140 bases
             sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
             sage: for mc in LinearSubclasses(Mf, splice=Me):
-            ....:     print Mf.extension(f, mc)
-            ....:
+            ....:     print(Mf.extension(f, mc))
             Matroid of rank 3 on 11 elements with 141 bases
             Matroid of rank 3 on 11 elements with 140 bases
             sage: for mc in LinearSubclasses(Me, splice=Mf):
-            ....:     print Me.extension(e, mc)
-            ....:
+            ....:     print(Me.extension(e, mc))
             Matroid of rank 3 on 11 elements with 141 bases
             Matroid of rank 3 on 11 elements with 140 bases
         """
@@ -390,7 +388,7 @@ cdef class LinearSubclasses:
             sage: from sage.matroids.extension import LinearSubclasses
             sage: M = matroids.Uniform(3, 6)
             sage: for mc in LinearSubclasses(M, subsets=[[0, 1], [2, 3], [4, 5]]):
-            ....:     print len(mc)
+            ....:     print(len(mc))
             3
             15
         """
@@ -451,16 +449,16 @@ cdef class MatroidExtensions(LinearSubclasses):
         sage: len([N for N in MatroidExtensions(M, 'x', line_length=5)])
         22
         sage: for N in MatroidExtensions(M, 'x', subsets=[[0, 1], [2, 3],
-        ....:                                             [4, 5]]): print N
+        ....:                                             [4, 5]]): print(N)
         Matroid of rank 3 on 7 elements with 32 bases
         Matroid of rank 3 on 7 elements with 20 bases
         sage: M = BasisMatroid(matroids.named_matroids.BetsyRoss()); M
         Matroid of rank 3 on 11 elements with 140 bases
         sage: e = 'k'; f = 'h'; Me = M.delete(e); Mf=M.delete(f)
-        sage: for N in MatroidExtensions(Mf, f, splice=Me): print N
+        sage: for N in MatroidExtensions(Mf, f, splice=Me): print(N)
         Matroid of rank 3 on 11 elements with 141 bases
         Matroid of rank 3 on 11 elements with 140 bases
-        sage: for N in MatroidExtensions(Me, e, splice=Mf): print N
+        sage: for N in MatroidExtensions(Me, e, splice=Mf): print(N)
         Matroid of rank 3 on 11 elements with 141 bases
         Matroid of rank 3 on 11 elements with 140 bases
 
@@ -480,7 +478,7 @@ cdef class MatroidExtensions(LinearSubclasses):
             sage: len([N for N in MatroidExtensions(M, 'x', line_length=5)])
             22
             sage: for N in MatroidExtensions(M, 'x', subsets=[[0, 1], [2, 3],
-            ....:                                            [4, 5]]): print N
+            ....:                                            [4, 5]]): print(N)
             Matroid of rank 3 on 7 elements with 32 bases
             Matroid of rank 3 on 7 elements with 20 bases
 

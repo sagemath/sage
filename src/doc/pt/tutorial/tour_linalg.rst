@@ -115,7 +115,7 @@ Agora criamos o espaço :math:`\text{Mat}_{3\times 3}(\QQ)` de matrizes
 ``MatrixSpace(QQ,3,4)``. Se o número de colunas é omitido, ele é
 considerado como igual ao número de linhas, portanto,
 ``MatrixSpace(QQ,3)`` é sinônimo de ``MatrixSpace(QQ,3,3)``.) O espaço
-de matrizes possui uma base que o Sage armazena como uma lista:
+de matrizes é equipado com sua base canônica:
 
 .. link
 
@@ -124,7 +124,7 @@ de matrizes possui uma base que o Sage armazena como uma lista:
     sage: B = M.basis()
     sage: len(B)
     9
-    sage: B[1]
+    sage: B[0,1]
     [0 1 0]
     [0 0 0]
     [0 0 0]
@@ -230,4 +230,4 @@ Note que o Python é sensível a maiúsculas e minúsculas:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: __classcall__() got an unexpected keyword argument 'Sparse'
+    TypeError: __init__() got an unexpected keyword argument 'Sparse'

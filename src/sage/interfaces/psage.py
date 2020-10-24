@@ -39,10 +39,13 @@ finished::
      23^2 * 47 * 89 * 178481 * 4103188409 * 199957736328435366769577 * 44667711762797798403039426178361,
      9623 * 68492481833 * 23579543011798993222850893929565870383844167873851502677311057483194673]
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
-import os, time
+import os
+import time
 
-from sage0 import Sage, SageElement
+from .sage0 import Sage, SageElement
 from pexpect import ExceptionPexpect
 
 number = 0
@@ -56,24 +59,34 @@ class PSage(Sage):
         import sage.misc.misc
         T = sage.misc.temporary_file.tmp_dir('sage_smp')
         self.__tmp_dir = T
-        self.__tmp = '%s/lock'%T
+        self.__tmp = '%s/lock' % T
         self._unlock()
-        self._unlock_code = "open('%s','w').write('__unlocked__')"%self.__tmp
+        self._unlock_code = "with open('%s', 'w') as f: f.write('__unlocked__')" % self.__tmp
 
         global number
         self._number = number
         number += 1
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: from sage.interfaces.psage import PSage
+            sage: PSage()                                   # indirect doctest
+            A running non-blocking (parallel) instance of Sage (number ...)
+
+        """
         return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
 
     def _unlock(self):
         self._locked = False
-        open(self.__tmp, 'w').write('__unlocked__')
+        with open(self.__tmp, 'w') as fobj:
+            fobj.write('__unlocked__')
 
     def _lock(self):
         self._locked = True
-        open(self.__tmp, 'w').write('__locked__')
+        with open(self.__tmp, 'w') as fobj:
+            fobj.write('__locked__')
 
     def _start(self):
         Sage._start(self)
@@ -81,24 +94,43 @@ class PSage(Sage):
         self.expect().delaybeforesend = 0.01
 
     def is_locked(self):
-        if open(self.__tmp).read() == '__locked__':
-            try:
-                self.expect().expect(self._prompt)
-                self.expect().expect(self._prompt)
-            except ExceptionPexpect:
-                pass
-        return open(self.__tmp).read() == '__locked__'
+        with open(self.__tmp) as fobj:
+            if fobj.read() == '__locked__':
+                try:
+                    self.expect().expect(self._prompt)
+                    self.expect().expect(self._prompt)
+                except ExceptionPexpect:
+                    pass
+
+        with open(self.__tmp) as fobj:
+            return fobj.read() == '__locked__'
 
     def __del__(self):
-        print "deleting"
-        for x in os.listdir(self.__tmp_dir):
-            os.remove('%s/%s'%(self.__tmp_dir, x))
-        os.removedirs(self.__tmp_dir)
+        """
+        TESTS:
+
+        Check that :trac:`29989` is fixed::
+
+            sage: PSage().__del__()
+        """
+        try:
+            files = os.listdir(self.__tmp_dir)
+        except OSError:
+            pass
+        else:
+            for x in files:
+                try:
+                    os.remove(os.path.join(self.__tmp_dir, x))
+                except OSError:
+                    pass
+        try:
+            os.removedirs(self.__tmp_dir)
+        except OSError:
+            pass
+
         if not (self._expect is None):
             cmd = 'kill -9 %s'%self._expect.pid
-            print cmd
             os.system(cmd)
-        Sage.__del__(self)
 
     def eval(self, x, strip=True, **kwds):
         """
@@ -124,7 +156,7 @@ class PSage(Sage):
         Get the value of the variable var.
         """
         try:
-            return self.eval('print %s'%var)
+            return self.eval('print(%s)' % var)
         except ExceptionPexpect:
             return "<<currently executing code>>"
 

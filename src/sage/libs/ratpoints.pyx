@@ -1,9 +1,20 @@
+# distutils: libraries = ratpoints
 r"""
-Hyperelliptic Curve Point Finding, via ratpoints.
+Hyperelliptic Curve Point Finding, via ratpoints (deprecated)
+
+This module is deprecated, use PARI instead::
+
+    sage: pari(EllipticCurve("389a1")).ellratpoints(4)
+    [[-2, 0], [-2, -1], [-1, 1], [-1, -2], [0, 0], [0, -1], [1, 0], [1, -1], [3, 5], [3, -6], [4, 8], [4, -9], [-3/4, 7/8], [-3/4, -15/8]]
+    sage: pari("[x^3 + x^2 - 2*x, 1]").hyperellratpoints(4)
+    [[-2, 0], [-2, -1], [-1, 1], [-1, -2], [0, 0], [0, -1], [1, 0], [1, -1], [3, 5], [3, -6], [4, 8], [4, -9], [-3/4, 7/8], [-3/4, -15/8]]
 """
 
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.misc.superseded import deprecation
+deprecation(24531, "the module sage.libs.ratpoints is deprecated; use pari.ellratpoints or pari.hyperellratpoints instead")
 
 
 cdef int process(long x, long z, mpz_t y, void *info0, int *quit):
@@ -15,9 +26,9 @@ cdef int process(long x, long z, mpz_t y, void *info0, int *quit):
     if plist.array_size == plist.num_points:
         i = plist.array_size
         plist.array_size *= 2
-        plist.xes = <long *> sage_realloc(plist.xes, plist.array_size * sizeof(long))
-        plist.ys = <mpz_t *> sage_realloc(plist.ys, plist.array_size * sizeof(mpz_t))
-        plist.zs = <long *> sage_realloc(plist.zs, plist.array_size * sizeof(long))
+        plist.xes = <long *> sig_realloc(plist.xes, plist.array_size * sizeof(long))
+        plist.ys = <mpz_t *> sig_realloc(plist.ys, plist.array_size * sizeof(mpz_t))
+        plist.zs = <long *> sig_realloc(plist.zs, plist.array_size * sizeof(long))
         while i < plist.array_size:
             mpz_init(plist.ys[i])
             i += 1
@@ -39,14 +50,15 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
     INPUT:
 
-    -   coeffs  -- list of integer coefficients a_0, a_1, ..., a_n
+    - ``coeffs`` -- list of integer coefficients `a_0` , `a_1`, ..., `a_n`
 
-    -   H       -- the bound for the denominator and the absolute value of the
-        numerator of the x-coordinate
+    - ``H`` -- the bound for the denominator and the absolute value of the
+      numerator of the `x`-coordinate
 
-    -   verbose -- if True, ratpoints will print comments about its progress
+    - ``verbose`` -- if ``True``, ratpoints will print comments about
+      its progress
 
-    -   max     -- maximum number of points to find (if 0, find all of them)
+    - ``max`` -- maximum number of points to find (if 0, find all of them)
 
     OUTPUT:
 
@@ -55,11 +67,13 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
     `y^2 = a_n x^n + \cdots + a_1 x z^{n-1} + a_0 z^n` while if n is odd, it is
     `y^2 = a_n x^n z + \cdots + a_1 x z^n + a_0 z^{n+1}`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.libs.ratpoints import ratpoints
+        doctest:...: DeprecationWarning: the module sage.libs.ratpoints is deprecated; use pari.ellratpoints or pari.hyperellratpoints instead
+        See http://trac.sagemath.org/24531 for details.
         sage: for x,y,z in ratpoints([1..6], 200):
-        ...    print -1*y^2 + 1*z^6 + 2*x*z^5 + 3*x^2*z^4 + 4*x^3*z^3 + 5*x^4*z^2 + 6*x^5*z
+        ....:     print(-1*y^2 + 1*z^6 + 2*x*z^5 + 3*x^2*z^4 + 4*x^3*z^3 + 5*x^4*z^2 + 6*x^5*z)
         0
         0
         0
@@ -68,7 +82,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
         0
         0
         sage: for x,y,z in ratpoints([1..5], 200):
-        ...    print -1*y^2 + 1*z^4 + 2*x*z^3 + 3*x^2*z^2 + 4*x^3*z + 5*x^4
+        ....:    print(-1*y^2 + 1*z^4 + 2*x*z^3 + 3*x^2*z^2 + 4*x^3*z + 5*x^4)
         0
         0
         0
@@ -79,7 +93,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
         0
 
         sage: for x,y,z in ratpoints([1..200], 1000):
-        ...    print x,y,z
+        ....:    print("{} {} {}".format(x,y,z))
         1 0 0
         0 1 1
         0 -1 1
@@ -137,22 +151,22 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
     verby = ~0 if verbose else 0
 
-    # Set the soefficient array:
+    # Set the coefficient array:
     coeffs = [Integer(a) for a in coeffs]
     args.degree = len(coeffs)-1
-    args.cof = <mpz_t *> sage_malloc((args.degree+1) * sizeof(mpz_t))
+    args.cof = <mpz_t *> sig_malloc((args.degree+1) * sizeof(mpz_t))
 
     # Create an array to hold the points found:
-    plist = <point_list *> sage_malloc(sizeof(point_list))
+    plist = <point_list *> sig_malloc(sizeof(point_list))
     if max == 0:
         plist.array_size = 64
     else:
         plist.array_size = max
-    plist.xes = <long *> sage_malloc(plist.array_size * sizeof(long))
-    plist.ys = <mpz_t *> sage_malloc(plist.array_size * sizeof(mpz_t))
+    plist.xes = <long *> sig_malloc(plist.array_size * sizeof(long))
+    plist.ys = <mpz_t *> sig_malloc(plist.array_size * sizeof(mpz_t))
     for i from 0 <= i < plist.array_size:
         mpz_init(plist.ys[i])
-    plist.zs = <long *> sage_malloc(plist.array_size * sizeof(long))
+    plist.zs = <long *> sig_malloc(plist.array_size * sizeof(long))
     plist.num_points = 0
     plist.max_num_points = max
 
@@ -161,7 +175,7 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
     # Set the intervals to be searched, including any specified:
     args.num_inter = len(intervals)
-    args.domain = <ratpoints_interval *> sage_malloc((args.num_inter + args.degree) * sizeof(ratpoints_interval))
+    args.domain = <ratpoints_interval *> sig_malloc((args.num_inter + args.degree) * sizeof(ratpoints_interval))
     for i,I in enumerate(intervals):
         args.domain[i].low = I[0]
         args.domain[i].up  = I[1]
@@ -198,8 +212,8 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
     for i from 0 <= i <= args.degree:
         mpz_clear(args.cof[i])
 
-    sage_free(args.cof)
-    sage_free(args.domain)
+    sig_free(args.cof)
+    sig_free(args.domain)
 
     cdef list L = []
     for i from 0 <= i < plist.num_points:
@@ -213,10 +227,10 @@ def ratpoints(list coeffs, long H, verbose=False, long max=0,
 
     for i from 0 <= i < plist.array_size:
         mpz_clear(plist.ys[i])
-    sage_free(plist.xes)
-    sage_free(plist.ys)
-    sage_free(plist.zs)
-    sage_free(plist)
+    sig_free(plist.xes)
+    sig_free(plist.ys)
+    sig_free(plist.zs)
+    sig_free(plist)
 
     return L
 
@@ -225,7 +239,7 @@ cdef int process_exists_only(long x, long z, mpz_t y, void *info0, int *quit):
     cdef Integer YY
     if info_s.verbose:
         YY = Integer(0); mpz_set(YY.value, y)
-        print 'Found point [ %d : %d : %d ], quitting'%(x,YY,z)
+        print('Found point [ %d : %d : %d ], quitting' % (x, YY, z))
     quit[0] = -1
     return 1
 
@@ -242,7 +256,7 @@ cdef int ratpoints_mpz_exists_only(mpz_t *coeffs, long H, int degree, bint verbo
     assert degree <= RATPOINTS_MAX_DEGREE
     args.degree = degree
     args.cof = coeffs
-    args.domain = <ratpoints_interval *> sage_malloc(2*args.degree * sizeof(ratpoints_interval))
+    args.domain = <ratpoints_interval *> sig_malloc(2*args.degree * sizeof(ratpoints_interval))
     args.height = H
     args.num_inter = 0
     args.b_low = 1
@@ -257,7 +271,7 @@ cdef int ratpoints_mpz_exists_only(mpz_t *coeffs, long H, int degree, bint verbo
     sig_on()
     total = find_points(&args, process_exists_only, <void *>(&info_s))
     sig_off()
-    sage_free(args.domain)
+    sig_free(args.domain)
     if total == RATPOINTS_NON_SQUAREFREE:
         raise RuntimeError('Polynomial must be square-free')
     if total == RATPOINTS_BAD_ARGS:

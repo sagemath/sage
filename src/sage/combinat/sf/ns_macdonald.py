@@ -1,14 +1,19 @@
 """
 Non-symmetric Macdonald Polynomials
 """
-from sage.combinat.combinat import CombinatorialObject, CombinatorialClass
+import copy
+
+from sage.combinat.combinat import CombinatorialObject
 from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
 from sage.rings.all import QQ, PolynomialRing
 from sage.misc.all import prod
 from sage.combinat.backtrack import GenericBacktracker
-import copy
+from sage.structure.parent import Parent
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class LatticeDiagram(CombinatorialObject):
     def boxes(self):
@@ -23,14 +28,15 @@ class LatticeDiagram(CombinatorialObject):
             [(1, 1), (1, 2), (2, 1), (3, 1), (3, 2), (3, 3), (6, 1), (6, 2)]
         """
         res = []
-        for i in range(1, len(self)+1):
-            res += [ (i,j+1) for j in range(self[i]) ]
+        for i in range(1, len(self) + 1):
+            res += [(i, j + 1) for j in range(self[i])]
         return res
 
     def __getitem__(self, i):
         """
-        Return the `i^{th}` entry of ``self``. Note that the indexing
-        for lattice diagrams starts at `1`.
+        Return the `i^{th}` entry of ``self``.
+
+        Note that the indexing for lattice diagrams starts at `1`.
 
         EXAMPLES::
 
@@ -48,7 +54,7 @@ class LatticeDiagram(CombinatorialObject):
             raise ValueError("indexing starts at 1")
         elif i < 0:
             i += 1
-        return self._list[i-1]
+        return self._list[i - 1]
 
     def leg(self, i, j):
         """
@@ -60,7 +66,7 @@ class LatticeDiagram(CombinatorialObject):
             sage: a.leg(5,2)
             [(5, 3)]
         """
-        return [(i,k) for k in range(j+1,self[i]+1)]
+        return [(i, k) for k in range(j + 1, self[i] + 1)]
 
     def arm_left(self, i, j):
         """
@@ -72,7 +78,7 @@ class LatticeDiagram(CombinatorialObject):
             sage: a.arm_left(5,2)
             [(1, 2), (3, 2)]
         """
-        return [(ip,j) for ip in range(1,i) if self[ip] <= self[i] and j <= self[ip]]
+        return [(ip, j) for ip in range(1, i) if j <= self[ip] <= self[i]]
 
     def arm_right(self, i, j):
         """
@@ -84,7 +90,8 @@ class LatticeDiagram(CombinatorialObject):
             sage: a.arm_right(5,2)
             [(8, 1)]
         """
-        return [(ip,j-1) for ip in range(i+1,len(self)+1) if self[ip] < self[i] and j-1 <= self[ip] ]
+        return [(ip, j - 1) for ip in range(i + 1, len(self) + 1)
+                if j - 1 <= self[ip] < self[i]]
 
     def arm(self, i, j):
         """
@@ -96,7 +103,7 @@ class LatticeDiagram(CombinatorialObject):
             sage: a.arm(5,2)
             [(1, 2), (3, 2), (8, 1)]
         """
-        return self.arm_left(i,j) + self.arm_right(i,j)
+        return self.arm_left(i, j) + self.arm_right(i, j)
 
     def l(self, i, j):
         """
@@ -110,7 +117,6 @@ class LatticeDiagram(CombinatorialObject):
         """
         return self[i] - j
 
-
     def a(self, i, j):
         """
         Return the length of the arm of the box ``(i,j)`` in ``self``.
@@ -121,8 +127,7 @@ class LatticeDiagram(CombinatorialObject):
             sage: a.a(5,2)
             3
         """
-        return len(self.arm(i,j))
-
+        return len(self.arm(i, j))
 
     def size(self):
         """
@@ -136,7 +141,6 @@ class LatticeDiagram(CombinatorialObject):
         """
         return sum(self._list)
 
-
     def flip(self):
         """
         Return the flip of ``self``, where flip is defined as follows. Let
@@ -149,7 +153,7 @@ class LatticeDiagram(CombinatorialObject):
             [0, 3, 1]
         """
         r = max(self)
-        return LatticeDiagram([r-i for i in self])
+        return LatticeDiagram([r - i for i in self])
 
     def boxes_same_and_lower_right(self, ii, jj):
         """
@@ -172,12 +176,12 @@ class LatticeDiagram(CombinatorialObject):
             [(3, 3), (3, 2), (6, 2)]
         """
         res = []
-        #Add all of the boxes in the same row
-        for i in range(1, len(self)+1):
+        # Add all of the boxes in the same row
+        for i in range(1, len(self) + 1):
             if self[i] >= jj and i != ii:
                 res.append((i, jj))
 
-        for i in range(ii+1, len(self)+1):
+        for i in range(ii + 1, len(self) + 1):
             if self[i] >= jj - 1:
                 res.append((i, jj - 1))
 
@@ -198,9 +202,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             True
         """
         if pi is None:
-            pi = [1]
-            pi = Permutation(pi).to_permutation_group_element()
-        self._list = [[pi(i+1)]+l[i] for i in range(len(l))]
+            pi = Permutation([1]).to_permutation_group_element()
+        self._list = [[pi(i + 1)] + li for i, li in enumerate(l)]
 
     def __getitem__(self, i):
         """
@@ -220,12 +223,12 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a[3][2]
             4
         """
+        if isinstance(i, tuple):
+            i, j = i
+            return self._list[i - 1][j]
         if i < 1:
             raise ValueError("indexing starts at 1")
-        if isinstance(i, tuple):
-            i,j = i
-            return self._list[i-1][j]
-        return self._list[i-1]
+        return self._list[i - 1]
 
     def shape(self):
         """
@@ -237,7 +240,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.shape()
             [2, 1, 3, 0, 0, 2]
         """
-        return LatticeDiagram([max(0,len(self[i])-1) for i in range(1, len(self)+1)])
+        return LatticeDiagram([max(0, len(self[i]) - 1)
+                               for i in range(1, len(self) + 1)])
 
     def __contains__(self, ij):
         """
@@ -252,13 +256,10 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: (1,0) in a
             False
         """
-        i,j = ij
-        if i > 0 and i <= len(self):
-            if j > 0 and j <= len(self[i]):
-                return True
-        return False
+        i, j = ij
+        return 0 < i <= len(self) and 0 < j <= len(self[i])
 
-    def are_attacking(self, i,j, ii, jj):
+    def are_attacking(self, i, j, ii, jj):
         """
         Return ``True`` if the boxes ``(i,j)`` and ``(ii,jj)`` in ``self`` are attacking.
 
@@ -270,22 +271,19 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.are_attacking(1,1,3,2)
             False
         """
-        #If the two boxes are at the same height,
-        #then they are attacking
+        # If the two boxes are at the same height,
+        # then they are attacking
         if j == jj:
             return True
 
-        #Make it so that the lower box is in position i,j
+        # Make it so that the lower box is in position i,j
         if jj < j:
-            i,j,ii,jj = ii,jj,i,j
+            i, j, ii, jj = ii, jj, i, j
 
-        #If the lower box is one row below and
-        #strictly to the right, then they are
-        #attacking.
-        if j == jj - 1 and i > ii:
-            return True
-
-        return False
+        # If the lower box is one row below and
+        # strictly to the right, then they are
+        # attacking.
+        return j == jj - 1 and i > ii
 
     def boxes(self):
         """
@@ -311,11 +309,12 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
              (5, 0),
              (6, 0)]
         """
-        return self.shape().boxes() + [ (i,0) for i in range(1, len(self.shape())+1) ]
+        return self.shape().boxes() + [(i, 0)
+                                       for i in range(1, len(self.shape()) + 1)]
 
     def attacking_boxes(self):
         """
-        Returns a list of pairs of boxes in ``self`` that are attacking.
+        Return a list of pairs of boxes in ``self`` that are attacking.
 
         EXAMPLES::
 
@@ -329,11 +328,10 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         """
         boxes = self.boxes()
         res = []
-        for (i,j),(ii,jj) in Combinations(boxes,2):
-            if self.are_attacking(i,j,ii,jj):
-                res.append( ((i,j),(ii,jj)) )
+        for (i, j), (ii, jj) in Combinations(boxes, 2):
+            if self.are_attacking(i, j, ii, jj):
+                res.append(((i, j), (ii, jj)))
         return res
-
 
     def is_non_attacking(self):
         """
@@ -355,7 +353,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.is_non_attacking()
             True
         """
-        for a,b in self.attacking_boxes():
+        for a, b in self.attacking_boxes():
             if self[a] == self[b]:
                 return False
         return True
@@ -371,9 +369,9 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             [1, 2, 1, 1, 2, 1]
         """
         ed = self.reading_word().evaluation_dict()
-        entries = ed.keys()
+        entries = list(ed)
         m = max(entries) + 1 if entries else -1
-        return [ed.get(k,0) for k in range(1,m)]
+        return [ed.get(k, 0) for k in range(1, m)]
 
     def descents(self):
         """
@@ -386,9 +384,9 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             [(1, 2), (3, 2)]
         """
         res = []
-        for i,j in self.shape().boxes():
-            if self[i,j] > self[i,j-1]:
-                res.append( (i,j) )
+        for i, j in self.shape().boxes():
+            if self[i, j] > self[i, j - 1]:
+                res.append((i, j))
         return res
 
     def maj(self):
@@ -403,15 +401,16 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         """
         res = 0
         shape = self.shape()
-        for i,j in self.descents():
-            res += shape.l(i,j) + 1
+        for i, j in self.descents():
+            res += shape.l(i, j) + 1
         return res
 
     def reading_order(self):
         """
         Return a list of coordinates of the boxes in ``self``, starting from
-        the top right, and reading from right to left. Note that this
-        includes the 'basement row' of ``self``.
+        the top right, and reading from right to left.
+
+        Note that this includes the 'basement row' of ``self``.
 
         EXAMPLES::
 
@@ -433,8 +432,10 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
              (1, 0)]
         """
         boxes = self.boxes()
-        f = lambda ij: (-ij[1],-ij[0])
-        boxes.sort(key=f)
+
+        def fn(ij):
+            return (-ij[1], -ij[0])
+        boxes.sort(key=fn)
         return boxes
 
     def reading_word(self):
@@ -448,9 +449,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.reading_word()
             word: 25465321
         """
-        w = [self[i,j] for i,j in self.reading_order() if j > 0]
+        w = [self[i, j] for i, j in self.reading_order() if j > 0]
         return Word(w)
-
 
     def inversions(self):
         """
@@ -472,11 +472,11 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         res = []
         order = self.reading_order()
         for a in range(len(order)):
-            i,j = order[a]
-            for b in range(a+1,len(order)):
-                ii,jj = order[b]
-                if self[i,j] > self[ii,jj] and  set( ((i,j),(ii,jj)) ) in atboxes:
-                    res.append( ((i,j), (ii,jj)) )
+            i, j = order[a]
+            for b in range(a + 1, len(order)):
+                ii, jj = order[b]
+                if self[i, j] > self[ii, jj] and set(((i, j), (ii, jj))) in atboxes:
+                    res.append(((i, j), (ii, jj)))
         return res
 
     def _inv_aux(self):
@@ -489,12 +489,11 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         """
         res = 0
         shape = self.shape()
-        for i in range(1, len(self)+1):
-            for j in range(i+1, len(self)+1):
+        for i in range(1, len(self) + 1):
+            for j in range(i + 1, len(self) + 1):
                 if shape[i] <= shape[j]:
                     res += 1
         return res
-
 
     def inv(self):
         """
@@ -506,8 +505,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.inv()
             15
         """
-        res  = len(self.inversions())
-        res -= sum(self.shape().a(i,j) for i,j in self.descents())
+        res = len(self.inversions())
+        res -= sum(self.shape().a(i, j) for i, j in self.descents())
         res -= self._inv_aux()
         return res
 
@@ -522,8 +521,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             2
         """
         shape = self.shape()
-        return sum(shape.a(i,j) for i,j in shape.boxes()) - self.inv()
-
+        return sum(shape.a(i, j) for i, j in shape.boxes()) - self.inv()
 
     def coeff(self, q, t):
         """
@@ -540,9 +538,10 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         """
         res = 1
         shape = self.shape()
-        for i,j in shape.boxes():
-            if self[i,j] != self[i,j-1]:
-                res *= (1-t)/(1-q**(shape.l(i,j)+1)*t**(shape.a(i,j)+1))
+        for i, j in shape.boxes():
+            if self[i, j] != self[i, j - 1]:
+                res *= (1 - t) / (1 - q**(shape.l(i, j) + 1)
+                                  * t**(shape.a(i, j) + 1))
         return res
 
     def coeff_integral(self, q, t):
@@ -560,12 +559,12 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         """
         res = 1
         shape = self.shape()
-        for i,j in shape.boxes():
-            if self[i,j] != self[i,j-1]:
-                res *= (1-q**(shape.l(i,j)+1)*t**(shape.a(i,j)+1))
-        for i,j in shape.boxes():
-            if self[i,j] == self[i,j-1]:
-                res *= (1-t)
+        for i, j in shape.boxes():
+            if self[i, j] != self[i, j - 1]:
+                res *= (1 - q**(shape.l(i, j) + 1) * t**(shape.a(i, j) + 1))
+        for i, j in shape.boxes():
+            if self[i, j] == self[i, j - 1]:
+                res *= (1 - t)
         return res
 
     def permuted_filling(self, sigma):
@@ -577,16 +576,17 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: AugmentedLatticeDiagramFilling(fill).permuted_filling(pi)
             [[2, 1], [1, 2, 1, 4], [4], [3, 4, 2]]
         """
-        new_filling=[]
+        new_filling = []
         for col in self:
             nc = [sigma(x) for x in col]
             nc.pop(0)
             new_filling.append(nc)
         return AugmentedLatticeDiagramFilling(new_filling, sigma)
 
+
 def NonattackingFillings(shape, pi=None):
     """
-    Returning the combinatorial class of nonattacking fillings of a
+    Returning the finite set of nonattacking fillings of a
     given shape.
 
     EXAMPLES::
@@ -607,9 +607,10 @@ def NonattackingFillings(shape, pi=None):
          [[1], [2, 2], [3, 3, 2]],
          [[1], [2, 2], [3, 3, 3]]]
     """
-    return NonattackingFillings_shape(shape, pi)
+    return NonattackingFillings_shape(tuple(shape), pi)
 
-class NonattackingFillings_shape(CombinatorialClass):
+
+class NonattackingFillings_shape(Parent, UniqueRepresentation):
     def __init__(self, shape, pi=None):
         """
         EXAMPLES::
@@ -618,26 +619,36 @@ class NonattackingFillings_shape(CombinatorialClass):
             sage: n == loads(dumps(n))
             True
         """
-        self.pi=pi
+        self.pi = pi
         self._shape = LatticeDiagram(shape)
-        self._name = "Nonattacking fillings of %s"%shape
+        self._name = "Nonattacking fillings of %s" % list(shape)
+        Parent.__init__(self, category=FiniteEnumeratedSets())
+
+    def __repr__(self):
+        """
+        EXAMPLES::
+
+            sage: NonattackingFillings([0,1,2])
+            Nonattacking fillings of [0, 1, 2]
+        """
+        return self._name
 
     def flip(self):
         """
-        Returns the nonattacking fillings of the the flipped shape.
+        Return the nonattacking fillings of the flipped shape.
 
         EXAMPLES::
 
             sage: NonattackingFillings([0,1,2]).flip()
             Nonattacking fillings of [2, 1, 0]
         """
-        return NonattackingFillings(list(self._shape.flip()),self.pi)
+        return NonattackingFillings(list(self._shape.flip()), self.pi)
 
     def __iter__(self):
         """
         EXAMPLES::
 
-            sage: NonattackingFillings([0,1,2]).list() #indirect doctest
+            sage: NonattackingFillings([0,1,2]).list()  #indirect doctest
             [[[1], [2, 1], [3, 2, 1]],
              [[1], [2, 1], [3, 2, 2]],
              [[1], [2, 1], [3, 2, 3]],
@@ -667,11 +678,12 @@ class NonattackingFillings_shape(CombinatorialClass):
             24
         """
         if sum(self._shape) == 0:
-            yield AugmentedLatticeDiagramFilling([ [] for s in self._shape ], self.pi)
+            yield AugmentedLatticeDiagramFilling([[] for s in self._shape],
+                                                 self.pi)
             return
 
         for z in NonattackingBacktracker(self._shape, self.pi):
-            yield AugmentedLatticeDiagramFilling(z , self.pi)
+            yield AugmentedLatticeDiagramFilling(z, self.pi)
 
 
 class NonattackingBacktracker(GenericBacktracker):
@@ -688,18 +700,18 @@ class NonattackingBacktracker(GenericBacktracker):
         """
         self._shape = shape
         self._n = sum(shape)
-        self._initial_data = [ [None]*s for s in shape ]
+        self._initial_data = [[None] * s for s in shape]
         if pi is None:
-            pi=Permutation([1]).to_permutation_group_element()
-        self.pi=pi
+            pi = Permutation([1]).to_permutation_group_element()
+        self.pi = pi
 
-        #The ending position will be at the highest box
-        #which is farthest right
+        # The ending position will be at the highest box
+        # which is farthest right
         ending_row = max(shape)
         ending_col = len(shape) - list(reversed(list(shape))).index(ending_row)
         self._ending_position = (ending_col, ending_row)
 
-        #Get the lowest box that is farthest left
+        # Get the lowest box that is farthest left
         starting_row = 1
         nonzero = [i for i in shape if i != 0]
         starting_col = list(shape).index(nonzero[0]) + 1
@@ -720,28 +732,28 @@ class NonattackingBacktracker(GenericBacktracker):
             [([[], [1], [None, None]], (3, 1), False),
              ([[], [2], [None, None]], (3, 1), False)]
         """
-        #We need to set the i,j^th entry.
+        # We need to set the i,j^th entry.
         i, j = state
 
-        #Get the next state
+        # Get the next state
         new_state = self.get_next_pos(i, j)
         yld = True if new_state is None else False
 
-        for k in range(1, len(self._shape)+1):
-            #We check to make sure that k does not
-            #violate any of the attacking conditions
-            if j==1 and any( self.pi(x)==k for x in range(i+1, len(self._shape)+1)):
+        for k in range(1, len(self._shape) + 1):
+            # We check to make sure that k does not
+            # violate any of the attacking conditions
+            if j == 1 and any(self.pi(x + 1) == k
+                              for x in range(i, len(self._shape))):
                 continue
-            if any( obj[ii-1][jj-1] == k for ii, jj in
+            if any(obj[ii - 1][jj - 1] == k for ii, jj in
                     self._shape.boxes_same_and_lower_right(i, j) if jj != 0):
                 continue
 
-            #Fill in the in the i,j box with k+1
-            obj[i-1][j-1] = k
+            # Fill in the in the i,j box with k+1
+            obj[i - 1][j - 1] = k
 
-            #Yield the object
+            # Yield the object
             yield copy.deepcopy(obj), new_state, yld
-
 
     def get_next_pos(self, ii, jj):
         """
@@ -761,11 +773,11 @@ class NonattackingBacktracker(GenericBacktracker):
         if (ii, jj) == self._ending_position:
             return None
 
-        for i in range(ii+1, len(self._shape)+1):
+        for i in range(ii + 1, len(self._shape) + 1):
             if self._shape[i] >= jj:
                 return i, jj
 
-        for i in range(1, ii+1):
+        for i in range(1, ii + 1):
             if self._shape[i] >= jj + 1:
                 return i, jj + 1
 
@@ -807,8 +819,8 @@ def _check_muqt(mu, q, t, pi=None):
         ValueError: the parents of q and t must be the same
     """
     if q is None and t is None:
-        P = PolynomialRing(QQ,'q,t').fraction_field()
-        q,t = P.gens()
+        P = PolynomialRing(QQ, 'q,t').fraction_field()
+        q, t = P.gens()
     elif q is not None and t is not None:
         if q.parent() != t.parent():
             raise ValueError("the parents of q and t must be the same")
@@ -820,9 +832,10 @@ def _check_muqt(mu, q, t, pi=None):
     x = R.gens()
     return P, q, t, n, R, x
 
+
 def E(mu, q=None, t=None, pi=None):
     """
-    Returns the non-symmetric Macdonald polynomial in type A
+    Return the non-symmetric Macdonald polynomial in type A
     corresponding to a shape ``mu``, with basement permuted according to
     ``pi``.
 
@@ -833,7 +846,7 @@ def E(mu, q=None, t=None, pi=None):
 
     - J. Haglund, M. Haiman, N. Loehr.
       *A combinatorial formula for non-symmetric Macdonald polynomials*.
-      :arXiv:`math/0601693v3`.
+      :arxiv:`math/0601693v3`.
 
     .. SEEALSO::
 
@@ -868,12 +881,13 @@ def E(mu, q=None, t=None, pi=None):
     res = 0
     for a in n:
         weight = a.weight()
-        res += q**a.maj()*t**a.coinv()*a.coeff(q,t)*prod( x[i]**weight[i] for i in range(len(weight)) )
+        res += q**a.maj() * t**a.coinv() * a.coeff(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
     return res
+
 
 def E_integral(mu, q=None, t=None, pi=None):
     """
-    Returns the integral form for the non-symmetric Macdonald
+    Return the integral form for the non-symmetric Macdonald
     polynomial in type A corresponding to a shape mu.
 
     Note that if both q and t are specified, then they must have the
@@ -883,7 +897,7 @@ def E_integral(mu, q=None, t=None, pi=None):
 
     - J. Haglund, M. Haiman, N. Loehr.
       *A combinatorial formula for non-symmetric Macdonald polynomials*.
-      :arXiv:`math/0601693v3`.
+      :arxiv:`math/0601693v3`.
 
     EXAMPLES::
 
@@ -911,12 +925,13 @@ def E_integral(mu, q=None, t=None, pi=None):
     res = 0
     for a in n:
         weight = a.weight()
-        res += q**a.maj()*t**a.coinv()*a.coeff_integral(q,t)*prod( x[i]**weight[i] for i in range(len(weight)) )
+        res += q**a.maj() * t**a.coinv() * a.coeff_integral(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
     return res
+
 
 def Ht(mu, q=None, t=None, pi=None):
     """
-    Returns the symmetric Macdonald polynomial using the Haiman,
+    Return the symmetric Macdonald polynomial using the Haiman,
     Haglund, and Loehr formula.
 
     Note that if both `q` and `t` are specified, then they must have the
@@ -926,7 +941,7 @@ def Ht(mu, q=None, t=None, pi=None):
 
     - J. Haglund, M. Haiman, N. Loehr.
       *A combinatorial formula for non-symmetric Macdonald polynomials*.
-      :arXiv:`math/0601693v3`.
+      :arxiv:`math/0601693v3`.
 
     EXAMPLES::
 
@@ -945,5 +960,5 @@ def Ht(mu, q=None, t=None, pi=None):
     res = 0
     for a in n:
         weight = a.weight()
-        res += q**a.maj()*t**a.inv()*prod( x[i]**weight[i] for i in range(len(weight)) )
+        res += q**a.maj() * t**a.inv() * prod(x[i]**weight[i] for i in range(len(weight)))
     return res

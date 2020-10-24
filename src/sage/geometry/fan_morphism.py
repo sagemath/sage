@@ -47,18 +47,18 @@ face fan. We can rectify the situation in the following way::
     Domain fan: Rational polyhedral fan in 2-d lattice N
     Codomain fan: Rational polyhedral fan in 2-d lattice N
     sage: fm.domain_fan().rays()
-    N(-1,  1),
     N( 1,  1),
-    N(-1, -1),
     N( 1, -1),
+    N(-1, -1),
+    N(-1,  1),
     N( 0, -1),
     N( 0,  1)
     in 2-d lattice N
     sage: normal.rays()
-    N(-1,  1),
     N( 1,  1),
+    N( 1, -1),
     N(-1, -1),
-    N( 1, -1)
+    N(-1,  1)
     in 2-d lattice N
 
 As you see, it was necessary to insert two new rays (to prevent "upper" and
@@ -66,29 +66,30 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 """
 
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
 
 import operator
 
 from sage.categories.all import Hom
 from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan, is_Fan, discard_faces
+from sage.geometry.fan import Fan, is_Fan
 from sage.matrix.all import identity_matrix, matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.misc.all import cached_method, latex, prod, walltime
 from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
 from sage.rings.all import Infinity, ZZ
 from sage.rings.infinity import is_Infinite
 from functools import reduce
+
 
 class FanMorphism(FreeModuleMorphism):
     r"""
@@ -202,7 +203,7 @@ class FanMorphism(FreeModuleMorphism):
         sage: phi = End(N).identity()
         sage: F1 = Fan(cones=[(0,1)], rays=[(1,0), (0,1)])
         sage: F2 = Fan(cones=[(0,1), (2,3)],
-        ...            rays=[(1,0), (2,1), (1,2), (0,1)])
+        ....:          rays=[(1,0), (2,1), (1,2), (0,1)])
         sage: FanMorphism(phi, F1, F2)
         Traceback (most recent call last):
         ...
@@ -231,7 +232,7 @@ class FanMorphism(FreeModuleMorphism):
     can test it on the example above::
 
         sage: fm = FanMorphism(phi, F1, F2, subdivide=True,
-        ...                    check=False, verbose=True)
+        ....:                  check=False, verbose=True)
         Placing ray images (... ms)
         Computing chambers (... ms)
         Number of domain cones: 1.
@@ -356,16 +357,16 @@ class FanMorphism(FreeModuleMorphism):
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
-            ...           normal, face, subdivide=True)
+            ....:         normal, face, subdivide=True)
             sage: fm._RISGIS()
-            (frozenset({3}),
-             frozenset({2}),
-             frozenset({1}),
+            (frozenset({2}),
+             frozenset({3}),
              frozenset({0}),
-             frozenset({1, 3}),
+             frozenset({1}),
              frozenset({0, 1}),
-             frozenset({0, 2}),
-             frozenset({2, 3}))
+             frozenset({0, 3}),
+             frozenset({2, 3}),
+             frozenset({1, 2}))
         """
         if "_RISGIS_" not in self.__dict__:
             try:
@@ -495,7 +496,7 @@ class FanMorphism(FreeModuleMorphism):
             [0 1]
             Domain fan: Rational polyhedral fan in 2-d lattice N
             Codomain fan: Rational polyhedral fan in 2-d lattice N
-            sage: print fm._latex_()
+            sage: print(fm._latex_())
             \left(\begin{array}{rr}
             1 & 0 \\
             0 & 1
@@ -560,7 +561,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: quadrant = Fan([quadrant])
             sage: quadrant_bl = quadrant.subdivide([(1,1)])
             sage: fm = FanMorphism(identity_matrix(2), quadrant_bl, quadrant)
-            sage: print fm._repr_()
+            sage: print(fm._repr_())
             Fan morphism defined by the matrix
             [1 0]
             [0 1]
@@ -609,7 +610,7 @@ class FanMorphism(FreeModuleMorphism):
             ValueError: the image of generating cone #0 of the domain fan
             is not contained in a single cone of the codomain fan!
             sage: fm = FanMorphism(identity_matrix(2), quadrant,
-            ...                    quadrant_bl, subdivide=True)
+            ....:                  quadrant_bl, subdivide=True)
             sage: fm.domain_fan().rays()  # indirect doctest
             N(1, 0),
             N(0, 1),
@@ -627,7 +628,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: phi = End(N).identity()
             sage: F1 = Fan(cones=[(0,1)], rays=[(1,0), (0,1)])
             sage: F2 = Fan(cones=[(0,1), (2,3)],
-            ...            rays=[(1,0), (2,1), (1,2), (0,1)])
+            ....:          rays=[(1,0), (2,1), (1,2), (0,1)])
             sage: FanMorphism(phi, F1, F2)
             Traceback (most recent call last):
             ...
@@ -644,12 +645,12 @@ class FanMorphism(FreeModuleMorphism):
             into the support of
             Rational polyhedral fan in 2-d lattice N!
 
-        We check that Trac #10943 is fixed::
+        We check that :trac:`10943` is fixed::
 
             sage: Sigma = Fan(rays=[(1,1,0), (1,-1,0)], cones=[(0,1)])
             sage: Sigma_prime = FaceFan(lattice_polytope.cross_polytope(3))
             sage: fm = FanMorphism(identity_matrix(3),
-            ...                    Sigma, Sigma_prime, subdivide=True)
+            ....:                  Sigma, Sigma_prime, subdivide=True)
             sage: fm.domain_fan().rays()
             N(1,  1, 0),
             N(1, -1, 0),
@@ -662,7 +663,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: Sigma = Fan([sigma])
             sage: Sigma_prime = Sigma.subdivide([(1,1), (2,1)])
             sage: FanMorphism(identity_matrix(2),
-            ...               Sigma, Sigma_prime, subdivide=True)
+            ....:             Sigma, Sigma_prime, subdivide=True)
             Fan morphism defined by the matrix
             [1 0]
             [0 1]
@@ -670,15 +671,14 @@ class FanMorphism(FreeModuleMorphism):
             Codomain fan: Rational polyhedral fan in 2-d lattice N
         """
         domain_fan = self._domain_fan
-        codomain_fan = self._codomain_fan
         lattice_dim = self.domain().dimension()
         if verbose:
             start = walltime()
-            print "Placing ray images",
+            print("Placing ray images", end=" ")
         # Figure out where 1-dimensional cones (i.e. rays) are mapped.
         RISGIS = self._RISGIS()
         if verbose:
-            print "(%.3f ms)" % walltime(start)
+            print("(%.3f ms)" % walltime(start))
         # Subdivide cones that require it.
         chambers = None # preimages of codomain cones, computed if necessary
         new_cones = []
@@ -693,17 +693,17 @@ class FanMorphism(FreeModuleMorphism):
             if chambers is None:
                 if verbose:
                     start = walltime()
-                    print "Computing chambers",
+                    print("Computing chambers", end=" ")
                 chambers, cone_to_chamber = self._chambers()
                 if verbose:
-                    print "(%.3f ms)" % walltime(start)
-                    print ("Number of domain cones: %d.\n"
-                           "Number of chambers: %d." %
-                           (domain_fan.ngenerating_cones(), len(chambers)))
+                    print("(%.3f ms)" % walltime(start))
+                    print("Number of domain cones: %d.\n"
+                          "Number of chambers: %d." %
+                          (domain_fan.ngenerating_cones(), len(chambers)))
             # Subdivide domain_cone.
             if verbose:
                 start = walltime()
-                print "Cone %d sits in chambers" % cone_index,
+                print("Cone %d sits in chambers" % cone_index, end=" ")
             # It seems that there is no quick way to determine which chambers
             # do NOT intersect this domain cone, so we go over all of them.
             parts = []
@@ -720,7 +720,7 @@ class FanMorphism(FreeModuleMorphism):
                     not any(part.is_equivalent(new_part) for part in parts)):
                     parts.append(new_part)
                     if verbose:
-                        print chamber_index,
+                        print(chamber_index, end=" ")
             if check:
                 # Check if the subdivision is complete, i.e. there are no
                 # missing pieces of domain_cone. To do this, we construct a
@@ -729,9 +729,9 @@ class FanMorphism(FreeModuleMorphism):
                 # original cone. In any case we know that we are constructing
                 # a valid fan, so passing check=False to Fan(...) is OK.
                 if verbose:
-                    print "(%.3f ms)" % walltime(start)
+                    print("(%.3f ms)" % walltime(start))
                     start = walltime()
-                    print "Checking for missing pieces",
+                    print("Checking for missing pieces", end=" ")
                 cone_subdivision = Fan(parts, check=False)
                 for cone in cone_subdivision(dim - 1):
                     if len(cone.star_generators()) == 1:
@@ -740,7 +740,7 @@ class FanMorphism(FreeModuleMorphism):
                             self._support_error()
             new_cones.extend(parts)
             if verbose:
-                print "(%.3f ms)" % walltime(start)
+                print("(%.3f ms)" % walltime(start))
         if len(new_cones) > domain_fan.ngenerating_cones():
             # Construct a new fan keeping old rays in the same order
             new_rays = list(domain_fan.rays())
@@ -771,7 +771,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: quadrant = Fan([quadrant])
             sage: quadrant_bl = quadrant.subdivide([(1,1)])
             sage: fm = FanMorphism(identity_matrix(2),
-            ...             quadrant, quadrant_bl, check=False)
+            ....:           quadrant, quadrant_bl, check=False)
 
         Now we report that the morphism is invalid::
 
@@ -812,8 +812,8 @@ class FanMorphism(FreeModuleMorphism):
             sage: H = Hom(N3, N2)
             sage: phi = H([N2.0, N2.1, N2.0])
             sage: F1 = Fan(cones=[(0,1,2), (1,2,3)],
-            ...            rays=[(1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1)],
-            ...            lattice=N3)
+            ....:          rays=[(1,1,1), (1,1,-1), (1,-1,1), (1,-1,-1)],
+            ....:          lattice=N3)
             sage: F1.rays()
             N3(1,  1,  1),
             N3(1,  1, -1),
@@ -823,8 +823,8 @@ class FanMorphism(FreeModuleMorphism):
             sage: [phi(ray) for ray in F1.rays()]
             [N2(2, 1), N2(0, 1), N2(2, -1), N2(0, -1)]
             sage: F2 = Fan(cones=[(0,1,2), (1,2,3)],
-            ...            rays=[(1,1,1), (1,1,-1), (1,2,1), (1,2,-1)],
-            ...            lattice=N3)
+            ....:          rays=[(1,1,1), (1,1,-1), (1,2,1), (1,2,-1)],
+            ....:          lattice=N3)
             sage: F2.rays()
             N3(1, 1,  1),
             N3(1, 1, -1),
@@ -834,8 +834,8 @@ class FanMorphism(FreeModuleMorphism):
             sage: [phi(ray) for ray in F2.rays()]
             [N2(2, 1), N2(0, 1), N2(2, 2), N2(0, 2)]
             sage: F3 = Fan(cones=[(0,1), (1,2)],
-            ...            rays=[(1,0), (2,1), (0,1)],
-            ...            lattice=N2)
+            ....:          rays=[(1,0), (2,1), (0,1)],
+            ....:          lattice=N2)
             sage: FanMorphism(phi, F2, F3)
             Fan morphism defined by the matrix
             [1 0]
@@ -980,7 +980,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: normal = NormalFan(diamond)
             sage: N = face.lattice()
             sage: fm = FanMorphism(identity_matrix(2),
-            ...           normal, face, subdivide=True)
+            ....:         normal, face, subdivide=True)
             sage: fm.image_cone(Cone([(1,0)]))
             1-d cone of Rational polyhedral fan in 2-d lattice N
             sage: fm.image_cone(Cone([(1,1)]))
@@ -1023,7 +1023,7 @@ class FanMorphism(FreeModuleMorphism):
         If no cone was specified, this function computes the index of the
         image of ``self`` in the codomain. If a cone `\sigma` was given, the
         index of ``self`` over `\sigma` is computed in the sense of
-        Definition 2.1.7 of [HLY]: if `\sigma'` is any cone of the
+        Definition 2.1.7 of [HLY2002]_: if `\sigma'` is any cone of the
         :meth:`domain_fan` of ``self`` whose relative interior is mapped to the
         relative interior of `\sigma`, it is the index of the image of
         `N'(\sigma')` in `N(\sigma)`, where `N'` and `N` are domain and codomain
@@ -1061,8 +1061,8 @@ class FanMorphism(FreeModuleMorphism):
             N( 1,  0)
             in 2-d lattice N
             sage: xi.factor()[0].domain_fan().rays()
-            N( 1, 0),
-            N(-1, 0)
+            N(-1, 0),
+            N( 1, 0)
             in Sublattice <N(1, 0)>
 
         We see that one of the rays of the fan of ``P1`` is mapped to a ray,
@@ -1093,7 +1093,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: zeta = prod(zeta.factor()[1:])
             sage: Sigma_p = zeta.codomain_fan()
             sage: [zeta.index(cone) for cone in flatten(Sigma_p.cones())]
-            [4, 4, 1, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1]
+            [4, 4, 4, 1, 4, 4, 4, 1, 1, 1, 1, 1, 1]
             sage: zeta.index() == zeta.index(Sigma_p(0)[0])
             True
         """
@@ -1164,17 +1164,9 @@ class FanMorphism(FreeModuleMorphism):
         If a fan morphism `\phi: \Sigma \to \Sigma'` is a bundle, then
         `X_\Sigma` is a fiber bundle over `X_{\Sigma'}` with fibers
         `X_{\Sigma_0, N_0}`, where `N_0` is the kernel lattice of `\phi`. See
-        [CLS11]_ for more details.
+        [CLS2011]_ for more details.
 
-        .. seealso:: :meth:`is_fibration`, :meth:`kernel_fan`.
-
-        REFERENCES:
-
-        ..  [CLS11]
-            David A. Cox, John Little, and Hal Schenck.
-            *Toric Varieties*.
-            Volume 124 of *Graduate Studies in Mathematics*.
-            American Mathematical Society, Providence, RI, 2011.
+        .. SEEALSO:: :meth:`is_fibration`, :meth:`kernel_fan`.
 
         EXAMPLES:
 
@@ -1254,7 +1246,7 @@ class FanMorphism(FreeModuleMorphism):
         if for any cone `\sigma' \in \Sigma'` and any primitive
         preimage cone `\sigma \in \Sigma` corresponding to `\sigma'`
         the linear map of vector spaces `\phi_\RR` induces a bijection
-        between `\sigma` and `\sigma'`, and, in addition, `phi` is
+        between `\sigma` and `\sigma'`, and, in addition, `\phi` is
         :meth:`dominant <is_dominant>` (that is, `\phi_\RR: N_\RR \to
         N'_\RR$ is surjective).
 
@@ -1263,18 +1255,10 @@ class FanMorphism(FreeModuleMorphism):
         X_{\Sigma'}` is a fibration in the sense that it is surjective and all
         of its fibers have the same dimension, namely `\dim X_\Sigma -
         \dim X_{\Sigma'}`. These fibers do *not* have to be isomorphic, i.e. a
-        fibration is not necessarily a fiber bundle. See [HLY02]_ for more
+        fibration is not necessarily a fiber bundle. See [HLY2002]_ for more
         details.
 
-        .. seealso:: :meth:`is_bundle`, :meth:`primitive_preimage_cones`.
-
-        REFERENCES:
-
-        ..  [HLY02]
-            Yi Hu, Chien-Hao Liu, and Shing-Tung Yau.
-            Toric morphisms and fibrations of toric Calabi-Yau hypersurfaces.
-            *Adv. Theor. Math. Phys.*, 6(3):457-506, 2002.
-            arXiv:math/0010082v2 [math.AG].
+        .. SEEALSO:: :meth:`is_bundle`, :meth:`primitive_preimage_cones`.
 
         EXAMPLES:
 
@@ -1309,7 +1293,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example on Trac 11200 works as expected::
+        We check that reviewer's example on :trac:`11200` works as expected::
 
             sage: P1 = toric_varieties.P1()
             sage: A1 = toric_varieties.A1()
@@ -1356,7 +1340,7 @@ class FanMorphism(FreeModuleMorphism):
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
         X_{\Sigma'}` is injective.
 
-        .. seealso:: :meth:`factor`.
+        .. SEEALSO:: :meth:`factor`.
 
         EXAMPLES:
 
@@ -1429,7 +1413,7 @@ class FanMorphism(FreeModuleMorphism):
         associated morphism between toric varieties `\tilde{\phi}: X_\Sigma \to
         X_{\Sigma'}` is surjective.
 
-        .. seealso:: :meth:`is_bundle`, :meth:`is_fibration`,
+        .. SEEALSO:: :meth:`is_bundle`, :meth:`is_fibration`,
             :meth:`preimage_cones`, :meth:`is_complete`.
 
         EXAMPLES:
@@ -1521,7 +1505,7 @@ class FanMorphism(FreeModuleMorphism):
             The lattice of the kernel fan is the :meth:`kernel` sublattice of
             ``self``.
 
-        .. seealso:: :meth:`preimage_fan`.
+        .. SEEALSO:: :meth:`preimage_fan`.
 
         EXAMPLES::
 
@@ -1556,7 +1540,7 @@ class FanMorphism(FreeModuleMorphism):
           <sage.geometry.cone.ConvexRationalPolyhedralCone>` of the
           :meth:`domain_fan` of ``self``, sorted by dimension.
 
-        .. seealso:: :meth:`preimage_fan`.
+        .. SEEALSO:: :meth:`preimage_fan`.
 
         EXAMPLES::
 
@@ -1573,7 +1557,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example from Trac #9972 is handled correctly::
+        We check that reviewer's example from :trac:`9972` is handled correctly::
 
             sage: N1 = ToricLattice(1)
             sage: N2 = ToricLattice(2)
@@ -1596,7 +1580,7 @@ class FanMorphism(FreeModuleMorphism):
             RISGIS = self._RISGIS()
             domain_fan = self._domain_fan
             possible_rays = frozenset(i for i in range(domain_fan.nrays())
-                                        if RISGIS[i].issuperset(CSGI))
+                                      if RISGIS[i].issuperset(CSGI))
             preimage_cones = []
             for dcones in domain_fan.cones():
                 for dcone in dcones:
@@ -1627,7 +1611,7 @@ class FanMorphism(FreeModuleMorphism):
             that are mapped into its boundary. So this fan is not necessarily
             generated by :meth:`preimage_cones` of ``cone``.
 
-        .. seealso:: :meth:`kernel_fan`, :meth:`preimage_cones`.
+        .. SEEALSO:: :meth:`kernel_fan`, :meth:`preimage_cones`.
 
         EXAMPLES::
 
@@ -1635,7 +1619,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: quadrant_fan = Fan([quadrant_cone])
             sage: quadrant_bl = quadrant_fan.subdivide([(1,1)])
             sage: fm = FanMorphism(identity_matrix(2),
-            ...                    quadrant_bl, quadrant_fan)
+            ....:                  quadrant_bl, quadrant_fan)
             sage: fm.preimage_fan(Cone([(1,0)])).cones()
             ((0-d cone of Rational polyhedral fan in 2-d lattice N,),
              (1-d cone of Rational polyhedral fan in 2-d lattice N,))
@@ -1683,7 +1667,7 @@ class FanMorphism(FreeModuleMorphism):
 
         Primitive cones play an important role for fibration morphisms.
 
-        .. seealso:: :meth:`is_fibration`, :meth:`preimage_cones`,
+        .. SEEALSO:: :meth:`is_fibration`, :meth:`preimage_cones`,
             :meth:`preimage_fan`.
 
         EXAMPLES:
@@ -1756,7 +1740,7 @@ class FanMorphism(FreeModuleMorphism):
         and the restriction of the :meth:`codomain_fan`, i.e. if ``self`` maps
         `\Sigma \to \Sigma'`, then we have factorization into
 
-        .. math::
+        .. MATH::
 
             \Sigma
             \twoheadrightarrow
@@ -1836,9 +1820,9 @@ class FanMorphism(FreeModuleMorphism):
             Domain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             Codomain fan: Rational polyhedral fan in Sublattice <N(1, 0, 0), N(0, 1, 0)>
             sage: phi_b.codomain_fan().rays()
-            N( 1,  0, 0),
+            N(-1, -1, 0),
             N( 0,  1, 0),
-            N(-1, -1, 0)
+            N( 1,  0, 0)
             in Sublattice <N(1, 0, 0), N(0, 1, 0)>
 
         Coordinate plane inclusion (injective)::
@@ -1910,7 +1894,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: Bl = A2.subdivide([(1,1)])
             sage: f = FanMorphism(identity_matrix(2), Bl, A2)
             sage: for c1 in Bl(1):
-            ...       print f.relative_star_generators(c1)
+            ....:     print(f.relative_star_generators(c1))
             (1-d cone of Rational polyhedral fan in 2-d lattice N,)
             (1-d cone of Rational polyhedral fan in 2-d lattice N,)
             (2-d cone of Rational polyhedral fan in 2-d lattice N,

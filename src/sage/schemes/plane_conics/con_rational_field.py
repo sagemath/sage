@@ -8,6 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -26,7 +27,6 @@ AUTHORS:
 
 from sage.rings.all import (PolynomialRing, ZZ, QQ)
 
-from sage.rings.morphism import is_RingHomomorphism
 from sage.rings.real_mpfr import is_RealField
 
 from sage.structure.sequence import Sequence
@@ -35,11 +35,11 @@ from sage.matrix.constructor import Matrix
 
 from sage.quadratic_forms.qfsolve import qfsolve, qfparam
 
-from con_number_field import ProjectiveConic_number_field
+from .con_number_field import ProjectiveConic_number_field
 
 from sage.structure.element import is_InfinityElement
 
-from sage.rings.arith import (lcm, hilbert_symbol)
+from sage.arith.all import lcm, hilbert_symbol
 
 class ProjectiveConic_rational_field(ProjectiveConic_number_field):
     r"""
@@ -145,8 +145,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: c = [Conic(QQ, a) for a in l if a != [0,0,0] and a != (0,0,0,0,0,0)]
             sage: d = []
             sage: d = [[C]+[C.has_rational_point(algorithm = algorithm, read_cache = False, obstruction = (algorithm != 'rnfisnorm'), point = (algorithm != 'local')) for algorithm in ['local', 'qfsolve', 'rnfisnorm']] for C in c[::10]] # long time: 7 seconds
-            sage: assert all([e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d])
-            sage: assert all([e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0]])
+            sage: assert all(e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d)
+            sage: assert all(e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0])
         """
         if read_cache:
             if self._rational_point is not None:
@@ -190,7 +190,10 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                                            algorithm = algorithm, \
                                            read_cache = read_cache)
         if point or obstruction:
-            if is_RingHomomorphism(ret[1]):
+            from sage.categories.map import Map
+            from sage.categories.all import Rings
+            if isinstance(ret[1], Map) and ret[1].category_for().is_subcategory(Rings()):
+                # ret[1] is a morphism of Rings
                 ret[1] = -1
         return ret
 
@@ -219,6 +222,9 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             True
 
         """
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
+
         D, T = self.diagonal_matrix()
         abc = [D[j, j] for j in range(3)]
         if abc[2] == 0:
@@ -227,7 +233,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         b = -abc[1]/abc[2]
         if is_RealField(p) or is_InfinityElement(p):
             p = -1
-        elif is_RingHomomorphism(p):
+        elif isinstance(p, Map) and p.category_for().is_subcategory(Rings()):
+            # p is a morphism of Rings
             if p.domain() is QQ and is_RealField(p.codomain()):
                 p = -1
             else:

@@ -25,7 +25,7 @@ AUTHORS:
 include "padic_template_element_header.pxi"
 
 from sage.categories.morphism cimport Morphism
-from sage.rings.morphism cimport RingHomomorphism_coercion, RingMap
+from sage.rings.morphism cimport RingHomomorphism, RingMap
 
 cdef class CAElement(pAdicTemplateElement):
     cdef celement value
@@ -33,7 +33,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef CAElement _new_c(self)
 
-cdef class pAdicCoercion_ZZ_CA(RingHomomorphism_coercion):
+cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
     cdef CAElement _zero
     cdef RingMap _section
 cdef class pAdicConvert_CA_ZZ(RingMap):
@@ -42,3 +42,8 @@ cdef class pAdicConvert_QQ_CA(Morphism):
     cdef CAElement _zero
     cdef RingMap _section
 # There should also be a pAdicConvert_CA_QQ for extension rings....
+cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
+    cdef CRElement _zero
+    cdef Morphism _section
+cdef class pAdicConvert_CA_frac_field(Morphism):
+    cdef CAElement _zero

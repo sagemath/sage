@@ -1,3 +1,6 @@
+# distutils: libraries = ntl gmp
+# distutils: language = c++
+
 """
 NTL error handler
 
@@ -20,8 +23,8 @@ AUTHOR:
 #*****************************************************************************
 
 
-include "sage/ext/interrupt.pxi"
-from ntl_tools cimport ErrorMsgCallback
+from .ntl_tools cimport ErrorMsgCallback
+from ...cpython.string cimport char_to_str
 
 
 class NTLError(RuntimeError):
@@ -39,7 +42,7 @@ class NTLError(RuntimeError):
 
 
 cdef void NTL_error_callback(const char* s) except *:
-    raise NTLError(s)
+    raise NTLError(char_to_str(s))
 
 
 def setup_NTL_error_callback():

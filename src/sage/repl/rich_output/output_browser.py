@@ -12,7 +12,7 @@ class OutputHtml(OutputBase):
     def __init__(self, html):
         """
         HTML Output
-        
+
         INPUT:
 
         - ``html`` --
@@ -37,18 +37,18 @@ class OutputHtml(OutputBase):
         Construct a sample Html output container
 
         This static method is meant for doctests, so they can easily
-        construt an example.
+        construct an example.
 
         OUTPUT:
 
         An instance of :class:`OutputHtml`.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputHtml
             sage: OutputHtml.example()
             OutputHtml container
-            sage: OutputHtml.example().html.get()
+            sage: OutputHtml.example().html.get_str()
             '<div>Hello World!</div>'
         """
         return cls('<div>Hello World!</div>')
@@ -66,7 +66,7 @@ class OutputHtml(OutputBase):
             sage: rich_output.print_to_stdout()
             <div>Hello World!</div>
         """
-        print(self.html.get())
+        print(self.html.get_unicode())
 
     def with_html_tag(self):
         r"""
@@ -83,6 +83,4 @@ class OutputHtml(OutputBase):
             sage: rich_output.with_html_tag()
             '<html><div>Hello World!</div></html>'
         """
-        return '<html>{0}</html>'.format(self.html.get())
-        
-    
+        return '<html>{0}</html>'.format(self.html.get_unicode())

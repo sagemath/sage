@@ -14,7 +14,7 @@ forma efetiva e eficiente.
 Note que vamos explicar algumas noções, mas não vamos mostrar aqui
 como implementá-las. Um tutorial voltado à implementação está
 disponível (em inglês) como um 
-`tutorial temática <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+`tutorial temática <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Elementos
 ---------
@@ -57,10 +57,12 @@ fornecendo implementações diferentes da mesma estrutura matemática
     sage: P.<a> = PolynomialRing(ZZ)
     sage: Q.<b> = PolynomialRing(ZZ, sparse=True)
     sage: R.<c> = PolynomialRing(ZZ, implementation='NTL')
-    sage: type(a); type(b); type(c)
-    <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
-    <class 'sage.rings.polynomial.polynomial_element_generic.Polynomial_generic_sparse'>
-    <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+    sage: type(a) == type(b)
+    False
+    sage: type(a) == type(c)
+    False
+    sage: type(b) == type(c)
+    False
 
 Isso apresenta dois problemas: Por um lado, se tivéssemos elementos
 que são duas instancias da mesma classe, então poderia-se esperar que
@@ -121,7 +123,9 @@ categorias matemáticas também são implementadas no Sage:
     sage: Rings()
     Category of rings
     sage: ZZ.category()
-    Join of Category of euclidean domains and Category of infinite enumerated sets
+    Join of Category of euclidean domains
+        and Category of infinite enumerated sets
+        and Category of metric spaces
 
     sage: ZZ.category().is_subcategory(Rings())
     True
@@ -207,7 +211,7 @@ tipo em C com conversão em Sage!
 Aqui se encontra uma breve apresentação. Para uma descrição detalhada
 e informações sobre a implementação, referimos à seção sobre coação no
 manual de referência e para o `tutorial
-<http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_.
+<http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_.
 
 Existem duas possibilidades extremas com respeito à possibilidade de
 fazer aritmética com elementos de *anéis diferentes*:
@@ -383,7 +387,7 @@ nosso exemplo). Se várias famílias potencialmente comuns parecem
 igualmente naturais, o Sage *não* vai escolher um deles
 aleatoriamente. Os mecanismos sobre os quais essa escolha se baseia é
 explicado em um
-`tutorial <http://sagemath.org/doc/thematic_tutorials/coercion_and_categories.html>`_
+`tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/coercion_and_categories.html>`_
 
 Nenhuma coação para um parente comum vai ocorrer no seguinte exemplo:
 
@@ -394,7 +398,7 @@ Nenhuma coação para um parente comum vai ocorrer no seguinte exemplo:
     sage: x+y
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Rational Field' and 'Univariate Polynomial Ring in y over Rational Field'
 
 A razão é que o Sage não escolhe um dos potenciais candidatos
 ``QQ['x']['y']``, ``QQ['y']['x']``, ``QQ['x','y']`` ou

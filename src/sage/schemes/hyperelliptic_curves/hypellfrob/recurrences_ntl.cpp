@@ -550,7 +550,7 @@ struct Evaluator
       tree = new ProductTree<SCALAR, POLY, VECTOR>(points);
       moduli.reserve(2*points.length());
       build(tree);
-      assert(moduli.size() <= 2*points.length());
+      assert(moduli.size() <= static_cast<size_t>(2*points.length()));
    }
 
    // Compute modulus objects for each polynomial under the supplied node of
@@ -775,7 +775,7 @@ void ntl_short_interval_products(vector<MATRIX>& output,
 
    // Determine maximum target interval length
    int max_length = -1;
-   for (int i = 0; i < target.size(); i += 2)
+   for (size_t i = 0; i < target.size(); i += 2)
    {
       int temp = to_ulong(target[i+1] - target[i]);
       if (temp > max_length)
@@ -868,7 +868,7 @@ void ntl_short_interval_products(vector<MATRIX>& output,
    leftover_target.reserve(target.size());
 
    ZZ current, next;
-   for (int i = 0; i < target.size(); i += 2)
+   for (size_t i = 0; i < target.size(); i += 2)
    {
       current = target[i];
       next = current + L;
@@ -904,7 +904,7 @@ void ntl_short_interval_products(vector<MATRIX>& output,
 
    // main_matrices[i] will hold M(X, X+L) for the i-th evaluation point X.
    vector<MATRIX> main_matrices(eval_points.length());
-   for (int i = 0; i < main_matrices.size(); i++)
+   for (size_t i = 0; i < main_matrices.size(); i++)
       main_matrices[i].SetDims(dim, dim);
 
    VECTOR block, values;
@@ -941,7 +941,7 @@ void ntl_short_interval_products(vector<MATRIX>& output,
 
    output.clear();
    output.resize(target.size() / 2);
-   for (int i = 0; i < target.size()/2; i++)
+   for (size_t i = 0; i < target.size()/2; i++)
       output[i].SetDims(dim, dim);
 
    int main_index = 0;       // index into main_matrices
@@ -950,7 +950,7 @@ void ntl_short_interval_products(vector<MATRIX>& output,
    MATRIX temp;
    temp.SetDims(dim, dim);
 
-   for (int i = 0; i < target.size(); i += 2)
+   for (size_t i = 0; i < target.size(); i += 2)
    {
       current = target[i];
       next = current + L;
@@ -1014,13 +1014,13 @@ void ntl_interval_products(vector<MATRIX>& output,
    vector<MATRIX> step0_matrix;
    vector<ZZ> step0_index;
    // preallocate the maximum number of matrices that could arise (plus safety)
-   int reserve_size = target.size() +
+   size_t reserve_size = target.size() +
                       4*NumBits(target.back() - target.front());
    step0_matrix.reserve(reserve_size);
    step0_index.reserve(2 * reserve_size);
 
    ZZ current_index = target.front();
-   int next_target = 0;   // index into "target" array
+   size_t next_target = 0;   // index into "target" array
 
    // This flag indicates whether the last entry of step0_matrix is
    // still accumulating matrices (in which the right endpoint of the
@@ -1139,7 +1139,7 @@ void ntl_interval_products(vector<MATRIX>& output,
    // Step 1: Make a list of all subintervals that we are going to need in
    // the refining steps.
 
-   int next_step0 = 0;        // index into step0_index
+   size_t next_step0 = 0;        // index into step0_index
    vector<ZZ> step1_index;    // list of pairs of endpoints of needed intervals
    step1_index.reserve(2*target.size());
 
@@ -1218,9 +1218,9 @@ void ntl_interval_products(vector<MATRIX>& output,
    step1_index.push_back(target.back() + 20);
 
    next_step0 = 0;       // index into step0_matrix
-   int next_step1 = 0;   // index into step1_matrix
+   size_t next_step1 = 0;   // index into step1_matrix
 
-   for (int next_step2 = 0; next_step2 < step2_matrix.size(); next_step2++)
+   for (size_t next_step2 = 0; next_step2 < step2_matrix.size(); next_step2++)
    {
       if (step0_index[2*next_step0] < step1_index[2*next_step1])
       {
@@ -1252,13 +1252,13 @@ void ntl_interval_products(vector<MATRIX>& output,
    // Step 3: Walk through target intervals, and merge together appropriate
    // intervals from step2 to get those target intervals.
 
-   int next_step2 = 0;    // index into step2_matrix
+   size_t next_step2 = 0;    // index into step2_matrix
 
    // add sentinels to make the next loop simpler
    step2_index.push_back(target.back() + 1);
    step2_index.push_back(target.back() + 2);
 
-   for (int next_target = 0; next_target < target.size(); next_target += 2)
+   for (size_t next_target = 0; next_target < target.size(); next_target += 2)
    {
       // search for step2 interval matching the start of this target interval
       while (step2_index[2*next_step2] < target[next_target])

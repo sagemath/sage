@@ -4,6 +4,7 @@ Root systems
 
 See :ref:`sage.combinat.root_system` for an overview.
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>
@@ -17,11 +18,12 @@ See :ref:`sage.combinat.root_system` for an overview.
 # Design largely inspired from MuPAD-Combinat
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from cartan_type import CartanType
+from .cartan_type import CartanType
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method
-from root_space import RootSpace
-from weight_space import WeightSpace
+from .root_space import RootSpace
+from .weight_space import WeightSpace
+
 
 class RootSystem(UniqueRepresentation, SageObject):
     r"""
@@ -205,13 +207,13 @@ class RootSystem(UniqueRepresentation, SageObject):
         sage: W = L.weyl_group()
         sage: S3 = [ w.action(id) for w in W.classical() ]
         sage: [L.classical()(x) for x in S3]
-        [(1, 2, 3), (3, 2, 1), (3, 1, 2), (2, 1, 3), (2, 3, 1), (1, 3, 2)]
+        [(1, 2, 3), (3, 1, 2), (2, 3, 1), (2, 1, 3), (1, 3, 2), (3, 2, 1)]
 
     And the action of `s_0` on these yields::
 
         sage: s = W.simple_reflections()
         sage: [L.classical()(s[0].action(x)) for x in S3]
-        [(0, 2, 4), (-2, 2, 6), (-1, 1, 6), (0, 1, 5), (-2, 3, 5), (-1, 3, 4)]
+        [(0, 2, 4), (-1, 1, 6), (-2, 3, 5), (0, 1, 5), (-1, 3, 4), (-2, 2, 6)]
 
     We can also plot various components of the ambient spaces::
 
@@ -252,7 +254,7 @@ class RootSystem(UniqueRepresentation, SageObject):
     The coweight lattice and space are defined similarly. Note that, to
     limit confusion, all the output have been tweaked appropriately.
 
-    .. seealso::
+    .. SEEALSO::
 
         - :mod:`sage.combinat.root_system`
         - :class:`RootSpace`
@@ -276,7 +278,23 @@ class RootSystem(UniqueRepresentation, SageObject):
     ::
 
         sage: for T in CartanType.samples(crystallographic=True):  # long time (13s on sage.math, 2012)
-        ...       TestSuite(RootSystem(T)).run()
+        ....:     TestSuite(RootSystem(T)).run()
+
+    Some checks for equality::
+
+        sage: r1 = RootSystem(['A',3])
+        sage: r2 = RootSystem(['B',3])
+        sage: r1 == r1
+        True
+        sage: r1 == r2
+        False
+        sage: r1 != r1
+        False
+
+    Check that root systems inherit a hash method from ``UniqueRepresentation``::
+
+        sage: hash(r1)  # random
+        42
     """
 
     @staticmethod
@@ -284,7 +302,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         Straighten arguments to enable unique representation
 
-        .. seealso:: :class:`UniqueRepresentation`
+        .. SEEALSO:: :class:`UniqueRepresentation`
 
         TESTS::
 
@@ -329,9 +347,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
             sage: RootSystem(["A",3])._test_root_lattice_realizations()
 
-        See also :class:`TestSuite`.
+        .. SEEALSO:: :class:`TestSuite`.
         """
-        tester = self._tester(**options)
         options.pop('tester', None)
         from sage.misc.sage_unittest import TestSuite
         TestSuite(self.root_lattice()).run(**options)
@@ -437,28 +454,6 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.cartan_type().is_irreducible()
 
-    def __cmp__(self, other):
-        """
-        EXAMPLES::
-
-            sage: r1 = RootSystem(['A',3])
-            sage: r2 = RootSystem(['B',3])
-            sage: r1 == r1
-            True
-            sage: r1 == r2
-            False
-
-        Check that they inherit a hash method from ``UniqueRepresentation``::
-
-            sage: hash(r1)  # random
-            42
-        """
-        if self.__class__ != other.__class__:
-            return cmp(self.__class__, other.__class__)
-        if self._cartan_type != other._cartan_type:
-            return cmp(self._cartan_type, other._cartan_type)
-        return 0
-
     def root_lattice(self):
         """
         Returns the root lattice associated to self.
@@ -540,7 +535,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         Returns the weight lattice associated to self.
 
-        .. see also::
+        .. SEEALSO::
 
             - :meth:`weight_space`
             - :meth:`coweight_space`, :meth:`coweight_lattice`
@@ -561,7 +556,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         Returns the weight space associated to self.
 
-        .. see also::
+        .. SEEALSO::
 
             - :meth:`weight_lattice`
             - :meth:`coweight_space`, :meth:`coweight_lattice`
@@ -583,7 +578,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         This is the weight lattice of the dual root system.
 
-        .. see also::
+        .. SEEALSO::
 
             - :meth:`coweight_space`
             - :meth:`weight_space`, :meth:`weight_lattice`
@@ -605,7 +600,7 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         This is the weight space of the dual root system.
 
-        .. see also::
+        .. SEEALSO::
 
             - :meth:`coweight_lattice`
             - :meth:`weight_space`, :meth:`weight_lattice`
@@ -669,7 +664,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         root or weight lattice (and dually).
 
         There is no mechanical way to define the ambient space just
-        from the Cartan matrix. Instead is is constructed from hard
+        from the Cartan matrix. Instead it is constructed from hard
         coded type by type data, according to the usual Bourbaki
         conventions. Such data is provided for all the finite
         (crystallographic) types. From this data, ambient spaces can be
@@ -816,9 +811,9 @@ def WeylDim(ct, coeffs):
         8
         sage: WeylDim(['B',3],[1,0,1]) # sum of the first and third fundamental weights
         48
-        sage: [WeylDim(['F',4],x) for x in [1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+        sage: [WeylDim(['F',4],x) for x in ([1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1])]
         [52, 1274, 273, 26]
-        sage: [WeylDim(['E', 6], x) for x in [0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0]]
+        sage: [WeylDim(['E', 6], x) for x in ([0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 2], [0, 0, 0, 0, 1, 0], [0, 0, 1, 0, 0, 0], [1, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1], [2, 0, 0, 0, 0, 0])]
         [1, 78, 27, 351, 351, 351, 27, 650, 351]
     """
     ct = CartanType(ct)

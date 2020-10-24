@@ -17,6 +17,8 @@ from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
+from sage.categories.rings import Rings
+from sage.categories.fields import Fields
 
 from sage.combinat.ncsym.bases import NCSymDualBases, NCSymBasis_abstract
 from sage.combinat.partition import Partition
@@ -39,8 +41,12 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: NCSymD1 = SymmetricFunctionsNonCommutingVariablesDual(FiniteField(23))
+            sage: NCSymD2 = SymmetricFunctionsNonCommutingVariablesDual(Integers(23))
             sage: TestSuite(SymmetricFunctionsNonCommutingVariables(QQ).dual()).run()
         """
+        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
+        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed once CategoryObject won't override base_ring
         category = GradedHopfAlgebras(R)  # TODO: .Commutative()
         Parent.__init__(self, category=category.WithRealizations())
@@ -123,18 +129,11 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                 sage: w = SymmetricFunctionsNonCommutingVariables(QQ).dual().w()
                 sage: TestSuite(w).run()
             """
-            def lt_set_part(A, B):
-                A = sorted(map(sorted, A))
-                B = sorted(map(sorted, B))
-                for i in range(len(A)):
-                    if A[i] > B[i]:
-                        return 1
-                    elif A[i] < B[i]:
-                        return -1
-                return 0
+            def key_func_set_part(A):
+                return sorted(map(sorted, A))
             CombinatorialFreeModule.__init__(self, NCSymD.base_ring(), SetPartitions(),
                                              prefix='w', bracket=False,
-                                             monomial_cmp=lt_set_part,
+                                             sorting_key=key_func_set_part,
                                              category=NCSymDualBases(NCSymD))
 
         @lazy_attribute
@@ -346,7 +345,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             return sum(coeff * y[I] for (I, coeff) in x)
 
         def sum_of_partitions(self, la):
-            """
+            r"""
             Return the sum over all sets partitions whose shape is ``la``,
             scaled by `\prod_i m_i!` where `m_i` is the multiplicity
             of `i` in ``la``.
@@ -373,16 +372,16 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
         def _set_par_to_par(self, A):
             r"""
-            Return the the shape of ``A`` if ``A`` is the canonical standard
+            Return the shape of ``A`` if ``A`` is the canonical standard
             set partition `A_1 | A_2 | \cdots | A_k` where `|` is the pipe
             operation (see
-            :meth:~sage.combinat.set_partition.SetPartition.pipe()` )
+            :meth:`~sage.combinat.set_partition.SetPartition.pipe()` )
             and `A_i = [\lambda_i]` where `\lambda_1 \leq \lambda_2 \leq
             \cdots \leq \lambda_k`. Otherwise, return ``None``.
 
             This is the trailing term of `h_{\lambda}` mapped by `\chi` to
             the `\mathbf{w}` basis and is used by the coercion framework to
-            constuct the preimage `\chi^{-1}`.
+            construct the preimage `\chi^{-1}`.
 
             INPUT:
 
@@ -414,7 +413,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             cur = 1
             prev_len = 0
             for p in A:
-                if prev_len > len(p) or list(p) != range(cur, cur+len(p)):
+                if prev_len > len(p) or list(p) != list(range(cur, cur+len(p))):
                     return None
                 prev_len = len(p)
                 cur += len(p)
@@ -445,7 +444,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
                 REFERENCES:
 
-                .. [HNT06] F. Hivert, J.-C. Novelli, J.-Y. Thibon.
+                .. [HNT06] \F. Hivert, J.-C. Novelli, J.-Y. Thibon.
                    *Commutative combinatorial Hopf algebras*. (2006).
                    :arxiv:`0605262v1`.
 

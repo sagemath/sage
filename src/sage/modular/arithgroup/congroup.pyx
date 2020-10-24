@@ -6,23 +6,19 @@ to the standard congruence subgroups `\Gamma_0, \Gamma_1, \Gamma_H`.  These
 functions are for internal use by routines elsewhere in the Sage library.
 """
 
-################################################################################
-#
-#       Copyright (C) 2009, The Sage Group -- http://www.sagemath.org/
-#
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#  The full text of the GPL is available at:
-#
+#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#
-################################################################################
+#*****************************************************************************
 
-include 'sage/ext/stdsage.pxi'
+from cysignals.memory cimport check_allocarray, sig_free
 
 import random
-from congroup_gamma1 import Gamma1_constructor as Gamma1
-from congroup_gamma0 import Gamma0_constructor as Gamma0
+from .congroup_gamma1 import Gamma1_constructor as Gamma1
+from .congroup_gamma0 import Gamma0_constructor as Gamma0
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
@@ -109,10 +105,10 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         14
     """
     if N % M != 0:
-        raise ArithmeticError, "M (=%s) must be a divisor of N (=%s)"%(M,N)
+        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
 
     if (N/M) % t != 0:
-        raise ArithmeticError, "t (=%s) must be a divisor of N/M (=%s)"%(t,N/M)
+        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
 
     cdef int n, i, j, k, aa, bb, cc, dd, g, Ndivt, halfmax, is_new
     cdef int* R
@@ -121,9 +117,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
     n = Gamma0(N).index() / Gamma0(M).index()
     k = 0   # number found so far
     Ndivt = N / t
-    R = <int*> sage_malloc(sizeof(int) * (4*n))
-    if R == <int*>0:
-        raise MemoryError
+    R = <int*>check_allocarray(4 * n, sizeof(int))
     halfmax = 2*(n+10)
     while k < n:
         # try to find another coset representative.
@@ -155,7 +149,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
     for i from 0 <= i < k:
         j = 4*i
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
-    sage_free(R)
+    sig_free(R)
     return S
 
 def degeneracy_coset_representatives_gamma1(int N, int M, int t):
@@ -191,7 +185,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     `[a',b';c',d']` of `\Gamma_1(N/t,t)` in `{\rm SL}_2(\ZZ)` are equivalent if
     and only if
 
-    .. math::
+    .. MATH::
 
         a \cong a' \pmod{t},
         b \cong b' \pmod{t},
@@ -210,10 +204,10 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     """
 
     if N % M != 0:
-        raise ArithmeticError, "M (=%s) must be a divisor of N (=%s)"%(M,N)
+        raise ArithmeticError("M (=%s) must be a divisor of N (=%s)" % (M,N))
 
     if (N/M) % t != 0:
-        raise ArithmeticError, "t (=%s) must be a divisor of N/M (=%s)"%(t,N/M)
+        raise ArithmeticError("t (=%s) must be a divisor of N/M (=%s)"%(t,N/M))
 
     cdef int d, g, i, j, k, n, aa, bb, cc, dd, Ndivt, halfmax, is_new
     cdef int* R
@@ -225,9 +219,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     n = n / d
     k = 0   # number found so far
     Ndivt = N / t
-    R = <int*> sage_malloc(sizeof(int) * (4*n))
-    if R == <int*>0:
-        raise MemoryError
+    R = <int*>check_allocarray(4 * n, sizeof(int))
     halfmax = 2*(n+10)
     while k < n:
         # try to find another coset representative.
@@ -252,8 +244,8 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         # If our matrix is new add it to the list.
         if is_new:
             if k > n:
-                sage_free(R)
-                raise RuntimeError, "bug!!"
+                sig_free(R)
+                raise RuntimeError("bug!!")
             R[4*k] = aa
             R[4*k+1] = bb
             R[4*k+2] = cc
@@ -265,7 +257,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     for i from 0 <= i < k:
         j = 4*i
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
-    sage_free(R)
+    sig_free(R)
     return S
 
 def generators_helper(coset_reps, level):
@@ -320,8 +312,8 @@ def generators_helper(coset_reps, level):
         z_index = crs.index(z_index)
         y = reps[y_index]
         z = reps[z_index]
-        y = y._invert_unit()
-        z = z._invert_unit()
+        y = y.inverse_of_unit()
+        z = z.inverse_of_unit()
         ans.append(x*genS*y)
         ans.append(x*genT*z)
     return [x for x in ans if x != genI]

@@ -62,7 +62,7 @@ point d'interrogation :
             0.69314718055994530941723212145817656807   # 64-bit
     sage: sudoku?
     File:        sage/local/lib/python2.5/site-packages/sage/games/sudoku.py
-    Type:        <type 'function'>
+    Type:        <... 'function'>
     Definition:  sudoku(A)
     Docstring:
 
@@ -216,7 +216,7 @@ ou en Java :
 ::
 
     sage: for i in range(3):
-    ....:     print i
+    ....:     print(i)
     0
     1
     2
@@ -226,7 +226,7 @@ La première ligne ci-dessous correspond à ``for(i=2;i<5;i++)``.
 ::
 
     sage: for i in range(2,5):
-    ....:     print i
+    ....:     print(i)
     2
     3
     4
@@ -237,7 +237,7 @@ suit est équivalent à ``for(i=1;i<6;i+=2)``.
 ::
 
     sage: for i in range(1,6,2):
-    ....:     print i
+    ....:     print(i)
     1
     3
     5
@@ -250,7 +250,7 @@ et des cubes en trois colonnes, chacune d'une largeur de six caractères.
 ::
 
     sage: for i in range(5):
-    ....:     print '%6s %6s %6s'%(i, i^2, i^3)
+    ....:     print('%6s %6s %6s' % (i, i^2, i^3))
          0      0      0
          1      1      1
          2      4      8
@@ -260,11 +260,13 @@ et des cubes en trois colonnes, chacune d'une largeur de six caractères.
 La structure de données de base de Sage est la liste, qui est — comme
 son nom l'indique — une liste d'objets arbitraires. Par exemple, la
 commande ``range`` que nous avons utilisée plus haut crée en fait une
-liste :
+liste (en python 2):
 
 ::
 
-    sage: range(2,10)
+    sage: range(2,10)   # py2
+    [2, 3, 4, 5, 6, 7, 8, 9]
+    sage: list(range(2,10))   # py3
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 Voici un exemple plus compliqué de liste :

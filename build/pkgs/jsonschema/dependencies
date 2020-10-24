@@ -1,4 +1,4 @@
-$(INST)/$(PYTHON) $(INST)/$(SETUPTOOLS)
+$(PYTHON) vcversioner attrs importlib_metadata pyrsistent | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

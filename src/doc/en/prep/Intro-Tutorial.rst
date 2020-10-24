@@ -2,6 +2,8 @@
 
 .. linkall
 
+.. _prep-intro-tutorial:
+
 Introductory Sage Tutorial
 ==========================
 
@@ -12,18 +14,25 @@ by NSF DUE 0817071).  It is licensed under the Creative Commons
 Attribution\-ShareAlike 3.0 license (`CC BY\-SA
 <http://creativecommons.org/licenses/by-sa/3.0/>`_).
 
-If you are unsure how to log on to a Sage server or to create a new
-worksheet, you might find the :doc:`prelude on logging in <Logging-On>`
-helpful.  Otherwise, you can continue with this tutorial, which has the
+If you are unsure how to log on to a Sage server, start using a local 
+installation, or to create a new worksheet, you might find the 
+:doc:`prelude on logging in <Logging-On>` helpful.
+
+Otherwise, you can continue with this tutorial, which has the
 following sections:
 
 - :ref:`SageCommands`
+
+  - See :ref:`SageJupyterCommands` for the Jupyter notebook
 
 - :ref:`SageFunctions`
 
 - :ref:`SageHelp`
 
 - :ref:`SageAnnotation`
+
+  - See :ref:`JupyterAnnotation` for the Jupyter notebook
+
 
 This tutorial only introduces the most basic level of functionality.
 Later tutorials address topics such as calculus, advanced plotting, and
@@ -36,85 +45,60 @@ Evaluating Sage Commands
 
 .. rubric:: Or, How do I get Sage to do some math?
 
-In any Sage worksheet, there are little boxes called *input cells* or
+- See :ref:`SageJupyterCommands` for the Jupyter notebook
+
+
+.. _SageJupyterCommands:
+
+Evaluating in the Jupyter notebook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In a Jupyter worksheet, there are little boxes called *input cells* or
 *code cells*. They should be about the width of your browser.
 
-.. image:: media/FirstCell.png
+.. image:: media/BlankJupyter.png
     :align: center
 
-Evaluating the content of an input cell is very easy.
+To do math in a Jupyter cell, one must do two things.
 
 - First, click inside the cell so that the cell is active (i.e., has a
-  bright blue border).
+  bright green border).  This was already the case in the first cell
+  above. (If it is blue, the Jupyter notebook is in "command mode").
+  Type some math in it.
 
-  .. image:: media/ActiveCell.png
-      :align: center
-
-- Then, just below the cell on the left, an "evaluate" link appears;
-  clicking this link evaluates the cell.
-
-  .. image:: media/EvaluateCell.png
-      :align: center
-
-If you are using the live version of this documentation, try evaluating
-the following cell.
-
-::
-
-    sage: 2+2
-    4
-
-Sage prints out its response just below the cell (that's the ``4``
-above, so Sage confirms that :math:`2+2=4`).  Note also that Sage has
-automatically made the next cell active after you evaluated your first
-cell.
-
-You can also evaluate a cell using a keyboard shortcut.
-
-- If a cell isn't active (such as below, in the live documentation),
-  click in it.
-
-- Then hold down the Shift key while you press the Enter key.
-
-We call this "Shift\-Enter".  Try doing Shift\-Enter with this cell.
-
-::
-
-    sage: factor(2012)
-    2^2 * 503
-
-An input cell isn't much use if it can only do one thing, so you can
-edit a cell and evaluate it again.  Just click inside, and then make any
-changes you wish by typing as usual.
-
-Try changing the number ``2012`` above to ``2011`` and evaluate the cell
-to find its factorization (surprised?); then try your own favorite
-number.
-
-To do more math, we'll need to be able to create new input cells.  This
-is also easy.
-
-- Move your cursor over the space above or below another cell.
-
-- A blue horizontal line as wide as the browser should appear.
-
-- Click on the line to insert a new cell.
-
-.. image:: media/ClickBlueLine.png
+.. image:: media/InputJupyter.png
     :align: center
 
-If for some reason you need to remove or delete an input cell, just
-delete all the text inside of it, and then press backspace in the
-now\-empty cell.
+- Then, there are two options.  A not-very-evident icon that looks like
+  the "play" symbol on a recording device can be clicked:
 
-Try creating a few new input cells below, doing some arithmetic in those
-cells, and then deleting one of the input cells.
+  .. image:: media/RunCellIcon.png
+      :align: center
 
-.. skip
+  Or one can use the keyboard shortcut of holding down the Shift key
+  while you press the Enter key.  We call this "Shift\-Enter".
 
-::
+Sage prints out its response just below the cell (that's the ``4``
+below, so Sage confirms that :math:`2+2=4`).  Note also that Sage has
+automatically made a new cell, and made it active, after you evaluated
+your first cell.
 
-    'Do some arithmetic in me, and make some other cells after me!'
+.. image:: media/OutputJupyter.png
+    :align: center
+
+To do more mathematics, just do the same thing with more cells!
+
+.. image:: media/MoreCells.png
+    :align: center
+
+One has to learn a variety of keyboard shortcuts
+or click on various menu items to manipulate cells.  There is a help
+menu to get you started on this; the Jupyter developers also maintain
+`an example notebook <http://nbviewer.jupyter.org/github/ipython/ipython/blob/3.x/examples/Notebook/Index.ipynb>`_
+which may assist you.
+
+.. image:: media/JupyterHelpMenu.png
+    :align: center
 
 .. _SageFunctions:
 
@@ -521,103 +505,61 @@ Whether one uses Sage in the classroom or in research, it is usually
 helpful to describe to the reader what is being done, such as in the
 description you are now reading.
 
-Thanks to `the mini\-word processor TinyMCE
-<http://tinymce.moxiecode.com/>`_ and a TeX rendering engine called
+- :ref:`JupyterAnnotation`
+
+.. _JupyterAnnotation:
+
+Jupyter Annotation
+~~~~~~~~~~~~~~~~~~
+
+Thanks to a styling language called
+`Markdown <http://jupyter-notebook.readthedocs.io/en/latest/examples/Notebook/Working%20With%20Markdown%20Cells.html>`_
+and the TeX rendering engine called
 `MathJax <http://www.mathjax.org/>`_, you can type much
 more in Sage than just Sage commands.  This math\-aware setup makes Sage
 perfect for annotating computations.
 
-To use the word processor, we create a *text cell* (as opposed to a
+Jupyter notebook can function as a word processor.
+To use this functionality, we create a *Markdown cell* (as opposed to a
 *input cell* that contains Sage commands that Sage evaluates).
 
-To create a text cell, do the following.
+To do this without the keyboard shortcut, there is a menu for each cell;
+select "Markdown".
 
-- First, move the cursor between two input cells, until the thin blue
-  line appears.
+.. image:: media/MarkDownMenu.png
+    :align: center
 
-- Then hold the Shift key and click on the thin blue line.
+Now you can type in whatever you want, including mathematics using
+LaTeX.
 
-  .. image:: media/ClickBlueLine.png
-      :align: center
+.. image:: media/MDInput.png
+    :align: center
 
-So to create an input cell, one merely clicks, but one "Shift\-Click"s
-to create a text cell.  Here is what your text cell will look like.
+Then evaluate the cell (for instance, with "Shift\-Enter"):
 
-  .. image:: media/TextEditor.png
-      :align: center
+.. image:: media/MDOutput.png
+    :align: center
 
-In the live documentation, try inserting a text cell between the input
-cells below.
+Markdown supports a fair amount of basic formatting, such as bold,
+underline, basic lists, and so forth.
 
-.. skip
+It can be fun to type in fairly complicated math, like this:
 
-::
+.. MATH::
 
-    2+2
+   \zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)\; .
 
-.. skip
+One just types things like:
 
-::
+.. CODE-BLOCK:: latex
 
-    2+2
+   $$\zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)$$
 
-TinyMCE makes it easy for format text in many ways.  Try experimenting
-with the usual **bold** button, underline button, different text fonts
-and colors, ordered and unordered lists, centering, and so on. Some of
-the shortcut keys you are familiar with from other word processors may
-also work, depending on your system.
+in a Markdown cell.
 
-There are two other things you can do which take advantage of the
-worksheet being on the web.
+.. image:: media/Riemann.png
+    :align: center
 
-- It is easy to link to other helpful websites for additional information.
-
- - While in the editor, highlight a word or two, and then click on the
-   little chain link toward the bottom right of the buttons.
-
- - You can now type in a web address to link to.
-
- - Be sure to prepend ``http://`` to the address.  Normally, one should
-   also select it to appear in a new window (so the Sage session isn't
-   interrupted if someone clicks on it).
-
-- You may have already noticed that some of the descriptions above had
-  typeset mathematics in them. In fact we can add nearly arbitrary LaTeX
-  to our text cells!
-
- - For instance, it isn't too hard to add things like
-
-    .. MATH::
-
-       \zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)\; .
-
- - One just types things like::
-
-       $$\zeta(s)=\sum_{n=1}^{\infty}\frac{1}{n^s}=\prod_p \left(\frac{1}{1-p^{-s}}\right)$$
-
-   in the word processor.
-
- - Whether this shows up as nicely as possible depends on what fonts you
-   have in your browser, but it should be legible.
-
- - More realistically, we might type ``$f(x)=x^2$`` so that we remember
-   that :math:`f(x)=x^2` in this worksheet.
-
-Here is a simpler example.
-
-::
-
-    sage: f(x)=x^2
-    sage: f(9)
-    81
-
-If :math:`f(x)=x^2`, then :math:`f(9)=81`.
-
-It is simple to edit a text cell; simply double\-click on the text.
-
-If you are in the live version of this tutorial, try double\-clicking on
-this text to edit this text cell (or any text cell) to see how we typed
-the mathematics!
 
 Of course, one can do much more, since Sage can execute arbitrary
 commands in the `Python <http://www.python.org>`_ programming language,
@@ -629,6 +571,11 @@ programming experience to do things like this, go for it!
 ::
 
     sage: html("Sage is <a style='text-decoration:line-through'>somewhat</a> <b>really</b> cool! <p style='color:red'>(It even does HTML.)</p>")
+
+.. _Conclusion:
+
+Conclusion
+----------
 
 This concludes the introductory tutorial.  Our hope is that now you can
 try finding and using simple commands and functions in Sage.  Remember,

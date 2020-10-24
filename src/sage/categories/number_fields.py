@@ -26,6 +26,11 @@ class NumberFields(Category_singleton):
         sage: C
         Category of number fields
 
+    By definition, it is infinite::
+
+        sage: NumberFields().Infinite() is NumberFields()
+        True
+
     Notice that the rational numbers `\QQ` *are* considered as
     an object in this category::
 
@@ -58,9 +63,9 @@ class NumberFields(Category_singleton):
         EXAMPLES::
 
             sage: NumberFields().super_categories()
-            [Category of fields]
+            [Category of infinite fields]
         """
-        return[Fields()]
+        return [Fields().Infinite()]
 
     def __contains__(self, x):
         r"""

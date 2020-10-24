@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `C_n^{(1)}`.
+Bijection classes for type `C_n^{(1)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `C_n^{(1)}`.
@@ -171,9 +171,10 @@ class RCToKRTBijectionTypeC(RCToKRTBijectionTypeA):
             sage: RC = RiggedConfigurations(['C', 3, 1], [[2, 1]])
             sage: from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
             sage: bijection = RCToKRTBijectionTypeC(RC(partition_list=[[2],[2],[1]]))
-            sage: bijection.next_state(0)
+            sage: bijection.next_state(1)
             -1
         """
+        height -= 1 # indexing
         n = self.n
         ell = [None] * (2*n)
         case_S = [False] * n

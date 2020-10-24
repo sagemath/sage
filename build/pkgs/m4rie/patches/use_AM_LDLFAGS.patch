@@ -1,0 +1,32 @@
+https://bitbucket.org/malb/m4rie/pull-requests/4/do-not-interfere-with-ldflags-while
+
+--- a/tests/Makefile.am	2020-04-27 03:46:40.283668933 +0000
++++ b/tests/Makefile.am	2020-04-27 03:46:53.955804875 +0000
+@@ -2,7 +2,7 @@
+ 
+ AM_CFLAGS = ${SIMD_FLAGS} ${OPENMP_CFLAGS} ${DEBUG_FLAGS} ${M4RIE_M4RI_CFLAGS} ${M4RI_CFLAGS} -I${top_srcdir}
+ LDADD = ${top_builddir}/libm4rie.la -lm4ri -lm
+-LDFLAGS = ${M4RIE_M4RI_LDFLAGS} -no-install
++AM_LDFLAGS = ${M4RIE_M4RI_LDFLAGS} -no-install
+ 
+ EXTRA_DIST = testing.h
+ 
+--- a/tests/Makefile.in
++++ b/tests/Makefile.in
+@@ -441,7 +441,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_SCRIPT = @INSTALL_SCRIPT@
+ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+ LD = @LD@
+-LDFLAGS = ${M4RIE_M4RI_LDFLAGS} -no-install
++LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+ LIBS = @LIBS@
+ LIBTOOL = @LIBTOOL@
+@@ -535,6 +535,7 @@ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = foreign subdir-objects
+ AM_CFLAGS = ${SIMD_FLAGS} ${OPENMP_CFLAGS} ${DEBUG_FLAGS} ${M4RIE_M4RI_CFLAGS} ${M4RI_CFLAGS} -I${top_srcdir}
+ LDADD = ${top_builddir}/libm4rie.la -lm4ri -lm
++AM_LDFLAGS = ${M4RIE_M4RI_LDFLAGS} -no-install
+ EXTRA_DIST = testing.h
+ all: all-am
+ 

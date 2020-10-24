@@ -3,8 +3,8 @@ Interacts for Statistics
 
 AUTHORS:
 
-- Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
-
+- Harald Schilly (2011-01-16): initial version (:trac:`9623`)
+  partially based on work by Lauri Ruotsalainen
 """
 
 #*****************************************************************************
@@ -16,4 +16,4 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from library import coin
+from .library import coin

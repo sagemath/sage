@@ -1,21 +1,17 @@
 """
 Interface to Bill Hart's Quadratic Sieve
 """
+from __future__ import print_function
+from __future__ import absolute_import
 
 import os
+import subprocess as sp
 
 import sage.rings.integer
 
+from sage.cpython.string import bytes_to_str
 from sage.misc.all import tmp_dir
 
-_tmp_dir = False
-def tmpdir():
-    global _tmp_dir
-    if _tmp_dir:
-        return
-    X = tmp_dir('qsieve')
-    os.environ['TMPDIR'] = X
-    _tmp_dir = True
 
 def qsieve(n, block=True, time=False, verbose=False):
     r"""
@@ -80,15 +76,19 @@ def qsieve_block(n, time, verbose=False):
     Compute the factorization of n using Hart's quadratic Sieve
     blocking until complete.
     """
+
+    cmd = ['QuadraticSieve']
     if time:
-        t = 'time '
-    else:
-        t = ''
-    tmpdir()
-    out = os.popen('echo "%s" | %s QuadraticSieve 2>&1'%(n,t)).read()
+        cmd = ['time'] + cmd
+
+    env = os.environ.copy()
+    env['TMPDIR'] = tmp_dir('qsieve')
+    p = sp.Popen(cmd, env=env, stdout=sp.PIPE, stderr=sp.STDOUT,
+                 stdin=sp.PIPE, encoding='latin1')
+    out, err = p.communicate(str(n))
     z = data_to_list(out, n, time=time)
     if verbose:
-        print z[-1]
+        print(z[-1])
     return z[:2]
 
 def data_to_list(out, n, time):
@@ -131,7 +131,7 @@ def data_to_list(out, n, time):
 
 from sage.interfaces.sagespawn import SageSpawn
 import pexpect
-import cleaner
+from . import cleaner
 class qsieve_nonblock:
     """
     A non-blocking version of Hart's quadratic sieve.
@@ -164,8 +164,9 @@ class qsieve_nonblock:
             cmd = 'time QuadraticSieve'
         else:
             cmd = 'QuadraticSieve'
-        tmpdir()
-        self._p = SageSpawn(cmd)
+        env = os.environ.copy()
+        env['TMPDIR'] = tmp_dir('qsieve')
+        self._p = SageSpawn(cmd, env=env)
         cleaner.cleaner(self._p.pid, 'QuadraticSieve')
         self._p.sendline(str(self._n)+'\n\n\n')
         self._done = False
@@ -284,11 +285,7 @@ class qsieve_nonblock:
         except pexpect.TIMEOUT:
             pass
         except pexpect.EOF:
-            pass
             self._done = True
             self._p.close()
-        self._out += e.before
+        self._out += bytes_to_str(e.before)
         return self._out
-
-
-

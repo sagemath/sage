@@ -1,10 +1,14 @@
-"Interpreter reset"
+# cython: old_style_globals=True
+"""
+Interpreter reset
+"""
 
 import sys
 
 # Exclude these from the reset command.
 # DATA, base64 -- needed by the notebook
-EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64'])
+# Add exit and quit to EXCLUDE to resolve trac #22529 and trac #16704
+EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
 def reset(vars=None, attached=False):
     """
@@ -35,7 +39,8 @@ def reset(vars=None, attached=False):
 
         sage: fn = tmp_filename(ext='foo.py')
         sage: sage.misc.reset.EXCLUDE.add('fn')
-        sage: open(fn, 'w').write('a = 111')
+        sage: with open(fn, 'w') as f:
+        ....:     _ = f.write('a = 111')
         sage: attach(fn)
         sage: [fn] == attached_files()
         True
@@ -49,7 +54,7 @@ def reset(vars=None, attached=False):
 
     TESTS:
 
-    Confirm that assumptions don't survive a reset (trac #10855)::
+    Confirm that assumptions don't survive a reset (:trac:`10855`)::
 
         sage: assume(x > 3)
         sage: assumptions()
@@ -69,7 +74,7 @@ def reset(vars=None, attached=False):
         return
     G = globals()  # this is the reason the code must be in Cython.
     T = type(sys)
-    for k in G.keys():
+    for k in list(G):
         if k[0] != '_' and not isinstance(k, T) and k not in EXCLUDE:
             try:
                 del G[k]

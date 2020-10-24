@@ -7,9 +7,7 @@ AUTHORS:
 
 - Volker Braun (2011-08-11): documenting, improving, refactoring.
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2008 Kiran Kedlaya <kedlaya@mit.edu>
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
@@ -18,18 +16,13 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.misc.all import cached_method
-from sage.rings.all import (IntegerRing,
-                            ZZ, GF, PowerSeriesRing,
-                            Rationals)
-
-from sage.rings.commutative_ring import is_CommutativeRing
+from sage.rings.all import (ZZ, CommutativeRing)
 from sage.rings.ideal import is_Ideal
-from sage.rings.morphism import is_RingHomomorphism
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
@@ -58,9 +51,8 @@ def is_Scheme(x):
     return isinstance(x, Scheme)
 
 
-
 class Scheme(Parent):
-    """
+    r"""
     The base class for all schemes.
 
     INPUT:
@@ -71,13 +63,13 @@ class Scheme(Parent):
       of the ring will be used as base.
 
     - ``category`` -- the category (optional). Will be automatically
-      construted by default.
+      constructed by default.
 
     EXAMPLES::
 
         sage: from sage.schemes.generic.scheme import Scheme
         sage: Scheme(ZZ)
-        <class 'sage.schemes.generic.scheme.Scheme_with_category'>
+        <sage.schemes.generic.scheme.Scheme_with_category object at ...>
 
     A scheme is in the category of all schemes over its base::
 
@@ -107,6 +99,8 @@ class Scheme(Parent):
 
         """
         from sage.schemes.generic.morphism import is_SchemeMorphism
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
 
         if X is None:
             self._base_ring = ZZ
@@ -114,9 +108,10 @@ class Scheme(Parent):
             self._base_scheme = X
         elif is_SchemeMorphism(X):
             self._base_morphism = X
-        elif is_CommutativeRing(X):
+        elif isinstance(X, CommutativeRing):
             self._base_ring = X
-        elif is_RingHomomorphism(X):
+        elif isinstance(X, Map) and X.category_for().is_subcategory(Rings()):
+            # X is a morphism of Rings
             self._base_ring = X.codomain()
         else:
             raise ValueError('The base must be define by a scheme, '
@@ -183,7 +178,7 @@ class Scheme(Parent):
         """
         Extend the base of the scheme.
 
-        Derived clases must override this method.
+        Derived classes must override this method.
 
         EXAMPLES::
 
@@ -257,7 +252,7 @@ class Scheme(Parent):
         if len(args) == 1:
             from sage.schemes.generic.morphism import SchemeMorphism_point
             S = args[0]
-            if is_CommutativeRing(S):
+            if isinstance(S, CommutativeRing):
                 return self.point_homset(S)
             elif is_Scheme(S):
                 return S.Hom(self)
@@ -377,7 +372,7 @@ class Scheme(Parent):
         """
         raise NotImplementedError
 
-    def __div__(self, Y):
+    def __truediv__(self, Y):
         """
         Return the base extension of self to Y.
 
@@ -673,11 +668,6 @@ class Scheme(Parent):
         An integer. The number of points over `\GF{q}, \ldots,
         \GF{q^n}` on a scheme over a finite field `\GF{q}`.
 
-        .. note::
-
-           This is currently only implemented for schemes over prime
-           order finite fields.
-
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(GF(3))
@@ -686,19 +676,43 @@ class Scheme(Parent):
             [6, 12, 18, 96]
             sage: C.base_extend(GF(9,'a')).count_points(2)
             [12, 96]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])
+            sage: X.count_points(2)
+            [5, 17]
         """
         F = self.base_ring()
         if not F.is_finite():
             raise TypeError("Point counting only defined for schemes over finite fields")
-        q = F.cardinality()
-        if not q.is_prime():
-            raise NotImplementedError("Point counting only implemented for schemes over prime fields")
-        a = []
-        for i in range(1, n+1):
-            F1 = GF(q**i, name='z')
-            S1 = self.base_extend(F1)
+        a = [len(self.rational_points())]
+        for i in range(2, n+1):
+            F1, psi = F.extension(i, map=True)
+            S1 = self.change_ring(psi)
             a.append(len(S1.rational_points()))
-        return(a)
+        return a
+
+    def zeta_function(self):
+        r"""
+        Compute the zeta function of a generic scheme.
+
+        Derived classes should override this method.
+
+        OUTPUT: rational function in one variable.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])
+            sage: X.zeta_function()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        raise NotImplementedError
+
 
     def zeta_series(self, n, t):
         """
@@ -709,16 +723,13 @@ class Scheme(Parent):
 
         INPUT:
 
-        -  ``n`` -- the number of terms of the power series to
-           compute
+        - ``n`` -- the number of terms of the power series to compute
 
-        -  ``t`` -- the variable which the series should be
-           returned
-
+        - ``t`` -- the variable which the series should be returned
 
         OUTPUT:
 
-        A power series approximating the zeta function of self
+        A power series approximating the zeta function of ``self``
 
         EXAMPLES::
 
@@ -730,27 +741,51 @@ class Scheme(Parent):
             sage: (1+2*t+3*t^2)/(1-t)/(1-3*t) + O(t^5)
             1 + 6*t + 24*t^2 + 78*t^3 + 240*t^4 + O(t^5)
 
-        Note that this function depends on count_points, which is only
+        If the scheme has a method ``zeta_function``, this is used to
+        provide the required approximation.
+        Otherwise this function depends on ``count_points``, which is only
         defined for prime order fields for general schemes.
         Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
             sage: C.base_extend(GF(9,'a')).zeta_series(4,t)
             1 + 12*t + 120*t^2 + 1092*t^3 + 9840*t^4 + O(t^5)
-        """
 
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4,'t'), 2)
+            sage: X = P.subscheme([y^2*z - x^3 - z^3])
+            sage: R.<t> = PowerSeriesRing(Integers())
+            sage: X.zeta_series(2,t)
+            1 + 5*t + 21*t^2 + O(t^3)
+
+        TESTS::
+
+            sage: P.<x> = PolynomialRing(ZZ)
+            sage: C = HyperellipticCurve(x^3+x+1)
+            sage: R.<t> = PowerSeriesRing(Integers())
+            sage: C.zeta_series(4,t)
+            Traceback (most recent call last):
+            ...
+            TypeError: zeta functions only defined for schemes
+            over finite fields
+        """
         F = self.base_ring()
         if not F.is_finite():
             raise TypeError('zeta functions only defined for schemes over finite fields')
+        R = t.parent()
+        u = t.O(n + 1)
+        try:
+            return self.zeta_function()(u)
+        except (AttributeError, NotImplementedError):
+            pass
         try:
             a = self.count_points(n)
         except AttributeError:
             raise NotImplementedError('count_points() required but not implemented')
-        R = PowerSeriesRing(Rationals(), 'u')
-        u = R.gen()
-        temp = sum(a[i-1]*(u.O(n+1))**i/i for i in range(1,n+1))
-        temp2 = temp.exp()
-        return(temp2(t).O(n+1))
+        temp = R.sum(a[i - 1] * u**i / i for i in range(1, n + 1))
+        return temp.exp()
+
 
 def is_AffineScheme(x):
     """
@@ -916,7 +951,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: P = S(ZZ.ideal(3)); P
             Point on Spectrum of Integer Ring defined by the Principal ideal (3) of Integer Ring
             sage: type(P)
-            <class 'sage.schemes.generic.point.AffineScheme_with_category.element_class'>
+            <class 'sage.schemes.generic.scheme.AffineScheme_with_category.element_class'>
             sage: S(ZZ.ideal(next_prime(1000000)))
             Point on Spectrum of Integer Ring defined by the Principal ideal (1000003) of Integer Ring
 
@@ -1020,7 +1055,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Point on Spectrum of Integer Ring defined by the Principal ideal (811) of Integer Ring
         """
         if self.coordinate_ring() is ZZ:
-            from sage.rings.arith import random_prime
+            from sage.arith.all import random_prime
             return self(ZZ.ideal(random_prime(1000)))
         return self(self.coordinate_ring().zero_ideal())
 
@@ -1102,13 +1137,16 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Spectrum of Integer Ring
             sage: Spec_ZZ.base_extend(QQ)
             Spectrum of Rational Field
+
+            sage: Spec(ZZ['x']).base_extend(Spec(QQ))
+            Spectrum of Univariate Polynomial Ring in x over Rational Field
         """
         from sage.categories.commutative_rings import CommutativeRings
         if R in CommutativeRings():
             return AffineScheme(self.coordinate_ring().base_extend(R), self.base_ring())
         if not self.base_scheme() == R.base_scheme():
             raise ValueError('the new base scheme must be a scheme over the old base scheme')
-        return AffineScheme(self.coordinate_ring().base_extend(new_base.coordinate_ring()),
+        return AffineScheme(self.coordinate_ring().base_extend(R.coordinate_ring()),
                             self.base_ring())
 
     def _point_homset(self, *args, **kwds):
@@ -1155,7 +1193,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             Affine Scheme morphism:
               From: Spectrum of Rational Field
               To:   Spectrum of Integer Ring
-              Defn: Ring Coercion morphism:
+              Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
 
@@ -1169,12 +1207,16 @@ class AffineScheme(UniqueRepresentation, Scheme):
             sage: A1.hom([2,r],A1_emb)
             Scheme morphism:
               From: Affine Space of dimension 1 over Rational Field
-              To:   Affine Curve over Rational Field defined by p - 2
+              To:   Affine Plane Curve over Rational Field defined by p - 2
               Defn: Defined on coordinates by sending (r) to
                     (2, r)
         """
+        from sage.categories.map import Map
+        from sage.categories.all import Rings
+
         if is_Scheme(x):
             return self.Hom(x).natural_map()
-        if Y is None and is_RingHomomorphism(x):
+        if Y is None and isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
+            # x is a morphism of Rings
             Y = AffineScheme(x.domain())
         return Scheme.hom(self, x, Y)

@@ -1,42 +1,42 @@
---- patches/dietz-solver-Makefile	Tue Sep 29 00:55:12 2009
-+++ src/dietz/solver/Makefile	Mon Feb 18 01:02:34 2008
-@@ -1,14 +1,8 @@
+--- rubiks-20070912/dietz/solver/Makefile	2008-02-18 02:02:34.000000000 +0100
++++ dietz-solver-Makefile	2015-12-21 20:13:25.108301582 +0100
+@@ -1,8 +1,14 @@
  # Makefile for cubex by Eric
--# This Makefile was seriously broken. 
--# CC was set to g++. Since it was compiling C++ files, 
--# CXX should have been used. 
--# LINK was set to g++, so I changed that to LD
--# CFLAGS was set to -O2. I've removed that, so it can be set
--# in spkg-install. 
--# In any case, it should have been CXXFLAGS
--# LFLAGS and INCLUDES were both empty
--# David Kirkby, 29th Sept 2009
--
-+CC=g++
-+LINK=g++
-+CFLAGS=-O2
-+LFLAGS=
+-CC=g++
+-LINK=g++
+-CFLAGS=-O2
+-LFLAGS=
++# This Makefile was seriously broken.
++# CC was set to g++. Since it was compiling C++ files,
++# CXX should have been used.
++# LINK was set to g++, so I changed that to LD
++# CFLAGS was set to -O2. I've removed that, so it can be set
++# in spkg-install.
++# In any case, it should have been CXXFLAGS
++# LFLAGS and INCLUDES were both empty
++# David Kirkby, 29th Sept 2009
++
  INCLUDES=
  OBJS=cubex.o main.o
  RM=/bin/rm -f
-@@ -16,7 +10,7 @@
+@@ -10,7 +16,7 @@
  all: build
  
  build: $(OBJS)
--	$(CXX) $(CXXFLAGS)  -o cubex  $(OBJS)
-+	$(LINK) $(LFLAGS)  -o cubex  $(OBJS)
+-	$(LINK) $(LFLAGS)  -o cubex  $(OBJS)
++	$(CXX) $(CXXFLAGS)  -o cubex  $(OBJS) $(LDFLAGS)
  
  clean:
  	$(RM) $(OBJS)
-@@ -25,9 +19,9 @@
+@@ -19,9 +25,9 @@
  	$(RM) cubex
  
  cubex.o: cubex.cpp $(INCLUDES) cubex.h
--	$(CXX) $(CXXFLAGS) -c cubex.cpp
-+	$(CC) $(CFLAGS) -c cubex.cpp
+-	$(CC) $(CFLAGS) -c cubex.cpp
++	$(CXX) $(CXXFLAGS) -c cubex.cpp
  
  main.o: main.cpp $(INCLUDES) cubex.h
--	$(CXX) $(CXXFLAGS) -c main.cpp
-+	$(CC) $(CFLAGS) -c main.cpp
+-	$(CC) $(CFLAGS) -c main.cpp
++	$(CXX) $(CXXFLAGS) -c main.cpp
  
  dummy:

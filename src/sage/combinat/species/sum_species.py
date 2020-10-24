@@ -1,6 +1,7 @@
 """
 Sum species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,8 +16,8 @@ Sum species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from structure import SpeciesStructureWrapper
+from .species import GenericCombinatorialSpecies
+from .structure import SpeciesStructureWrapper
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -61,11 +62,38 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     _default_structure_class = SumSpeciesStructure
 
+    def left_summand(self):
+        """
+        Returns the left summand of this species.
+
+        EXAMPLES::
+
+            sage: P = species.PermutationSpecies()
+            sage: F = P + P*P
+            sage: F.left_summand()
+            Permutation species
+        """
+        return self._F
+
+    def right_summand(self):
+        """
+        Returns the right summand of this species.
+
+        EXAMPLES::
+
+            sage: P = species.PermutationSpecies()
+            sage: F = P + P*P
+            sage: F.right_summand()
+            Product of (Permutation species) and (Permutation species)
+        """        
+        return self._G
+
     def _name(self):
         """
         Note that we use a function to return the name of this species
         because we can't do it in the __init__ method due to it
-        requiring that self._F and self._G already be unpickled.
+        requiring that self.left_summand() and self.right_summand()
+        already be unpickled.
 
         EXAMPLES::
 
@@ -74,7 +102,7 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F._name()
             'Sum of (Permutation species) and (Permutation species)'
         """
-        return "Sum of (%s) and (%s)"%(self._F, self._G)
+        return "Sum of (%s) and (%s)"%(self.left_summand(), self.right_summand())
 
     def _structures(self, structure_class, labels):
         """
@@ -85,10 +113,10 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.structures([1,2]).list()
             [[1, 2], [2, 1], [1, 2], [2, 1]]
         """
-        for res in self._F.structures(labels):
+        for res in self.left_summand().structures(labels):
             yield structure_class(self, res, tag="left")
 
-        for res in self._G.structures(labels):
+        for res in self.right_summand().structures(labels):
             yield structure_class(self, res, tag="right")
 
     def _isotypes(self, structure_class, labels):
@@ -117,7 +145,8 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.generating_series().coefficients(5)
             [2, 2, 2, 2, 2]
         """
-        return self._F.generating_series(base_ring) + self._G.generating_series(base_ring)
+        return (self.left_summand().generating_series(base_ring) +
+                self.right_summand().generating_series(base_ring))
 
 
     def _itgs(self, series_ring, base_ring):
@@ -131,8 +160,8 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: F.isotype_generating_series().coefficients(5)
             [2, 2, 4, 6, 10]
         """
-        return (self._F.isotype_generating_series(base_ring) +
-                self._G.isotype_generating_series(base_ring))
+        return (self.left_summand().isotype_generating_series(base_ring) +
+                self.right_summand().isotype_generating_series(base_ring))
 
     def _cis(self, series_ring, base_ring):
         """
@@ -149,7 +178,8 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              2*p[1, 1, 1] + 2*p[2, 1] + 2*p[3],
              2*p[1, 1, 1, 1] + 2*p[2, 1, 1] + 2*p[2, 2] + 2*p[3, 1] + 2*p[4]]
         """
-        return self._F.cycle_index_series(base_ring) + self._G.cycle_index_series(base_ring)
+        return (self.left_summand().cycle_index_series(base_ring) +
+                self.right_summand().cycle_index_series(base_ring))
 
     def weight_ring(self):
         """
@@ -171,7 +201,8 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: C.weight_ring()
             Univariate Polynomial Ring in t over Rational Field
         """
-        return self._common_parent([self._F.weight_ring(), self._G.weight_ring()])
+        return self._common_parent([self.left_summand().weight_ring(),
+                                    self.right_summand().weight_ring()])
 
     def _equation(self, var_mapping):
         """

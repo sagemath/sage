@@ -28,6 +28,7 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.all import GradedHopfAlgebras
@@ -37,7 +38,9 @@ from sage.categories.realizations import Realizations, Category_realization_of_p
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
 from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
-from sage.rings.all import Integer
+from sage.rings.all import Integer, ZZ
+from sage.cpython.getattr import raw_getattr
+
 
 class KBoundedQuotient(UniqueRepresentation, Parent):
 
@@ -76,11 +79,11 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: F[1,2]
             Traceback (most recent call last):
             ...
-            ValueError: [1, 2] is not a valid partition
+            ValueError: [1, 2] is not an element of 3-Bounded Partitions
             sage: F[4,2]
             Traceback (most recent call last):
             ...
-            ValueError: Partition is not 3-bounded
+            ValueError: [4, 2] is not an element of 3-Bounded Partitions
             sage: km[2,1]*km[2,1]
             4*m3[2, 2, 1, 1] + 6*m3[2, 2, 2] + 2*m3[3, 2, 1] + 2*m3[3, 3]
             sage: HLPk = Q.kHallLittlewoodP()
@@ -95,7 +98,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: Q = Sym.kBoundedQuotient(3)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert t to a rational
+            TypeError: unable to convert 't' to a rational
             sage: Sym = SymmetricFunctions(QQ['t'].fraction_field())
             sage: Q = Sym.kBoundedQuotient(3)
             sage: km = Q.km()
@@ -569,7 +572,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
             """
             return self.realization_of()._sym
 
-        def __getitem__(self, c, *rest):
+        def __getitem__(self, c):
             r"""
             Implements shorthand for accessing basis elements.
 
@@ -587,15 +590,10 @@ class KBoundedQuotientBases(Category_realization_of_parent):
                 sage: F[[]]
                 F3[]
             """
-            if isinstance(c, Partition):
-                assert len(rest) == 0
+            if c in ZZ:
+                c = self._kbounded_partitions([c])
             else:
-                if len(rest) > 0 or isinstance(c,(int,Integer)):
-                    c = self._kbounded_partitions.element_class(self._kbounded_partitions, [c]+list(rest))
-                else:
-                    c = self._kbounded_partitions.element_class(self._kbounded_partitions, list(c))
-            if len(c) != 0 and c[0] > self.k:
-                raise ValueError("Partition is not %d-bounded"%self.k)
+                c = self._kbounded_partitions(c)
             return self.monomial(c)
 
         def _repr_term(self, c):
@@ -904,8 +902,8 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedQuotientBases(kBoundedRing),
-            prefix='%s%d'%(prefix, kBoundedRing.k))
+            category=KBoundedQuotientBases(kBoundedRing),
+            prefix='%s%d' % (prefix, kBoundedRing.k))
 
         self._kBoundedRing = kBoundedRing
         self.k = kBoundedRing.k
@@ -915,10 +913,10 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
     # The following are meant to be inherited with the category framework, but
     # this fails because they are methods of Parent. The trick below overcomes
     # this problem.
-    __getitem__ = KBoundedQuotientBases.ParentMethods.__getitem__.__func__
-    _repr_term = KBoundedQuotientBases.ParentMethods._repr_term.__func__
-    _element_constructor_ = KBoundedQuotientBases.ParentMethods._element_constructor_.__func__
-    _element_constructor = _element_constructor_
+    __getitem__ = raw_getattr(KBoundedQuotientBases.ParentMethods, "__getitem__")
+    _repr_term = raw_getattr(KBoundedQuotientBases.ParentMethods, "_repr_term")
+    _element_constructor_ = raw_getattr(KBoundedQuotientBases.ParentMethods, "_element_constructor_")
+
 
 class kMonomial(KBoundedQuotientBasis):
     r"""
@@ -1126,7 +1124,8 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
         else:
             HLP = self._kBoundedRing._quotient_basis
             m = self._kBoundedRing._sym.m()
-            elt = dict({ x for x in dict(HLP(m(la))).iteritems() if x[0] in self._kbounded_partitions })
+            elt = dict(x for x in dict(HLP(m(la))).items()
+                       if x[0] in self._kbounded_partitions)
             return self._from_dict(elt)
 
     def _HLP_to_mk_on_basis(self, la):
@@ -1242,7 +1241,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [LLMSSZ] T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki,
+    .. [LLMSSZ] \T. Lam, L. Lapointe, J. Morse, A. Schilling, M. Shimozono, M. Zabrocki,
         k-Schur functions and affine Schubert calculus.
     """
 
@@ -1364,7 +1363,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     REFERENCES:
 
-    .. [Lam2006] T. Lam, Schubert polynomials for the affine Grassmannian, J. Amer.
+    .. [Lam2006] \T. Lam, Schubert polynomials for the affine Grassmannian, J. Amer.
         Math. Soc., 21 (2008), 259-281.
     """
 

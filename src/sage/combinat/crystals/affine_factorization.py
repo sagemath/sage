@@ -8,19 +8,22 @@ Affine factorization crystal of type `A`
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.classical_crystals import ClassicalCrystals
+from sage.categories.crystals import CrystalMorphism
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.homset import Hom
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
+from sage.combinat.rsk import RSK
 
 class AffineFactorizationCrystal(UniqueRepresentation, Parent):
     r"""
-    This is an implementation of the crystal on affine factorizations
-    with a cut-point, as introduced by Morse and Schilling,
-    "Crystal operators and flag Gromov-Witten invariants".
+    The crystal on affine factorizations with a cut-point, as introduced
+    by [MS2015]_.
 
     INPUT:
 
@@ -184,6 +187,42 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
     # temporary workaround while an_element is overriden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
+    @lazy_attribute
+    def _tableaux_isomorphism(self):
+        """
+        Return the isomorphism from ``self`` to the tableaux model.
+
+        EXAMPLES::
+
+            sage: W = WeylGroup(['A',3,1], prefix='s')
+            sage: w = W.from_reduced_word([3,2,1])
+            sage: B = crystals.AffineFactorization(w,4)
+            sage: B._tableaux_isomorphism
+            ['A', 3] Crystal morphism:
+              From: Crystal on affine factorizations of type A3 associated to s3*s2*s1
+              To:   The crystal of tableaux of type ['A', 3] and shape(s) [[3]]
+
+            sage: W = WeylGroup(['A',3,1], prefix='s')
+            sage: w = W.from_reduced_word([2,1,3,2])
+            sage: B = crystals.AffineFactorization(w,3)
+            sage: B._tableaux_isomorphism
+            ['A', 2] Crystal morphism:
+              From: Crystal on affine factorizations of type A2 associated to s2*s3*s1*s2
+              To:   The crystal of tableaux of type ['A', 2] and shape(s) [[2, 2]]
+        """
+        # Constructing the tableaux crystal
+        from sage.combinat.crystals.tensor_product import CrystalOfTableaux
+        def mg_to_shape(mg):
+            l = list(mg.weight().to_vector())
+            while l and l[-1] == 0:
+                l.pop()
+            return l
+        sh = [mg_to_shape(mg) for mg in self.highest_weight_vectors()]
+        C = CrystalOfTableaux(self.cartan_type(), shapes=sh)
+        phi = FactorizationToTableaux(Hom(self, C, category=self.category()))
+        phi.register_as_coercion()
+        return phi
+
     class Element(ElementWrapper):
 
         def e(self, i):
@@ -283,6 +322,41 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
                     left_unbracketed += [m]
             return [[j for j in left_unbracketed],[j for j in right_n]]
 
+        def to_tableau(self):
+            """
+            Return the tableau representation of ``self``.
+
+            Uses the recording tableau of a minor variation of
+            Edelman-Greene insertion. See Theorem 4.11 in [MS2015]_.
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',3,1], prefix='s')
+                sage: w = W.from_reduced_word([2,1,3,2])
+                sage: B = crystals.AffineFactorization(w,3)
+                sage: for x in B:
+                ....:     x
+                ....:     x.to_tableau().pp()
+                (1, s2*s1, s3*s2)
+                  1  1
+                  2  2
+                (s2, s1, s3*s2)
+                  1  1
+                  2  3
+                (s2, s3*s1, s2)
+                  1  2
+                  2  3
+                (s2*s1, 1, s3*s2)
+                  1  1
+                  3  3
+                (s2*s1, s3, s2)
+                  1  2
+                  3  3
+                (s2*s1, s3*s2, 1)
+                  2  2
+                  3  3
+            """
+            return self.parent()._tableaux_isomorphism(self)
 
 def affine_factorizations(w, l, weight=None):
     r"""
@@ -292,7 +366,7 @@ def affine_factorizations(w, l, weight=None):
 
     - ``w`` -- an (affine) permutation or element of the (affine) Weyl group
 
-    - ``l`` -- nonegative integer
+    - ``l`` -- nonnegative integer
 
     - ``weight`` -- (default: None) tuple of nonnegative integers specifying the length of the factors
 
@@ -369,3 +443,67 @@ def affine_factorizations(w, l, weight=None):
         else:
             return [[u]+p for (u,v) in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
                     for p in affine_factorizations(v,l-1,weight[1:]) ]
+
+#####################################################################
+## Crystal isomorphisms
+
+class FactorizationToTableaux(CrystalMorphism):
+    def _call_(self, x):
+        """
+        Return the image of ``x`` under ``self``.
+
+        TESTS::
+
+            sage: W = WeylGroup(['A',3,1], prefix='s')
+            sage: w = W.from_reduced_word([2,1,3,2])
+            sage: B = crystals.AffineFactorization(w,3)
+            sage: phi = B._tableaux_isomorphism
+            sage: [phi(b) for b in B]
+            [[[1, 1], [2, 2]],
+             [[1, 1], [2, 3]],
+             [[1, 2], [2, 3]],
+             [[1, 1], [3, 3]],
+             [[1, 2], [3, 3]],
+             [[2, 2], [3, 3]]]
+        """
+        p = []
+        q = []
+        for i,factor in enumerate(reversed(x.value)):
+            word = factor.reduced_word()
+            p += [i+1]*len(word)
+            # We sort for those pesky commutative elements
+            # The word is most likely in reverse order to begin with
+            q += sorted(reversed(word))
+        C = self.codomain()
+        return C(RSK(p, q, insertion=RSK.rules.EG)[1])
+
+    def is_isomorphism(self):
+        """
+        Return ``True`` as this is an isomorphism.
+
+        EXAMPLES::
+
+            sage: W = WeylGroup(['A',3,1], prefix='s')
+            sage: w = W.from_reduced_word([2,1,3,2])
+            sage: B = crystals.AffineFactorization(w,3)
+            sage: phi = B._tableaux_isomorphism
+            sage: phi.is_isomorphism()
+            True
+
+        TESTS::
+
+            sage: W = WeylGroup(['A',4,1], prefix='s')
+            sage: w = W.from_reduced_word([2,1,3,2,4,3,2,1])
+            sage: B = crystals.AffineFactorization(w, 4)
+            sage: phi = B._tableaux_isomorphism
+            sage: all(phi(b).e(i) == phi(b.e(i)) and phi(b).f(i) == phi(b.f(i))
+            ....:     for b in B for i in B.index_set())
+            True
+            sage: set(phi(b) for b in B) == set(phi.codomain())
+            True
+        """
+        return True
+
+    is_embedding = is_isomorphism
+    is_surjective = is_isomorphism
+

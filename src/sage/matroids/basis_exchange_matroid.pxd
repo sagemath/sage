@@ -1,7 +1,8 @@
 from sage.data_structures.bitset cimport *
+from sage.data_structures.bitset_base cimport bitset_t, bitset_s
 
-from matroid cimport Matroid
-from set_system cimport SetSystem
+from .matroid cimport Matroid
+from .set_system cimport SetSystem
 
 cdef class BasisExchangeMatroid(Matroid):
     cdef long _groundset_size, _matroid_rank, _bitset_size
@@ -89,7 +90,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef _flush(self)
 
     cpdef _equitable_partition(self, P=*)
-    cpdef _is_isomorphic(self, other)
+    cpdef _is_isomorphic(self, other, certificate=*)
     cpdef _isomorphism(self, other)
     cpdef _is_isomorphism(self, other, morphism)
     cdef bint __is_isomorphism(self, BasisExchangeMatroid other, morphism)

@@ -1,0 +1,5 @@
+CFLAGS="-O2 -g $CFLAGS -DFAST -DALLTRUE"
+export CFLAGS LDFLAGS # Currently redundant, but safe.
+
+cd src
+sdh_make_check

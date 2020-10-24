@@ -14,13 +14,15 @@
  * Hence, we use signed 64-bit ints. This gives us fast conversion
  * to/from Python on 64-bit Linux and OSX, and a large number of
  * available (but not quite as fast) primes on 64-bit Windows and all
- * 32-bit platforms (see Trac ##10281)
+ * 32-bit platforms (see Trac #10281)
  */
-#define mod_int int_fast64_t
+
+typedef int64_t mod_int;
 
 /* The largest value we can do arithmetic on without risking overflowing.
  * That is, you can multiply two MOD_INT_MAX in a mod_int.
  */
-#define MOD_INT_OVERFLOW ((((mod_int)1) << (sizeof(mod_int)*8 - 1)) - 1)
-#define MOD_INT_MAX ((mod_int)sqrt(MOD_INT_OVERFLOW) - 1)
+#define MOD_INT_OVERFLOW_UNSIGNED ((((uint64_t)1) << (sizeof(mod_int)*8 - 1)) - 1)
+#define MOD_INT_OVERFLOW ((mod_int)MOD_INT_OVERFLOW_UNSIGNED)
+#define MOD_INT_MAX ((mod_int)sqrt(MOD_INT_OVERFLOW_UNSIGNED) - 1)
 

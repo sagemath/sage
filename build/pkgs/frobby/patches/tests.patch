@@ -1,0 +1,53 @@
+--- a/test/messages/runtest 2011-09-23 15:09:12.000000000 -0500
++++ b/test/messages/runtest 2013-05-10 11:42:01.825491400 -0500
+@@ -9,7 +9,7 @@
+ action="$1"
+ shift
+ 
+-tmpFile="/tmp/errorTestHelperTmp"
++tmpFile="./errorTestHelperTmp"
+ echo "$1" > $tmpFile
+ shift
+ 
+--- a/test/testScripts/run_euler_test       2011-09-23 15:09:13.000000000 -0500
++++ b/test/testScripts/run_euler_test       2013-05-10 11:42:01.829491600 -0500
+@@ -3,9 +3,9 @@
+ frobby=../../bin/frobby
+ testhelper=../testScripts/testhelper
+ test="$1"
+-tmpFile=/tmp/frobbyEulerRadicalTmp
+-tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
+-tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
++tmpFile=./frobbyEulerRadicalTmp
++tmpFileInverted=./frobbyEulerRadicalInvertedTmp
++tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
+ genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
+ stdPivots="popvar rarevar popgcd any random"
+ shift
+--- a/test/testScripts/testhelper   2011-09-23 15:09:13.000000000 -0500
++++ b/test/testScripts/testhelper   2013-05-10 11:42:01.833491800 -0500
+@@ -57,10 +57,10 @@
+ 
+ origParams="$*" # used for debug output below
+ origFrobby="../../bin/frobby"
+-origFrobbyOut="/tmp/frobbyTestScriptTemporary_standardOutput"
+-origFrobbyErr="/tmp/frobbyTestScriptTemporary_standardError"
+-frobbyChangedErr="/tmp/frobbyTestScriptTemporary_standardErrorChanged"
+-frobbyChangedInput="/tmp/frobbyTestScriptTemporary_standardInput"
++origFrobbyOut="./frobbyTestScriptTemporary_standardOutput"
++origFrobbyErr="./frobbyTestScriptTemporary_standardError"
++frobbyChangedErr="./frobbyTestScriptTemporary_standardErrorChanged"
++frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
+ 
+ frobby="$origFrobby"
+ frobbyOut="$origFrobbyOut"
+--- a/test/internal/runtests      2011-09-23 13:09:12.000000000 -0700
++++ b/test/internal/runtests        2014-07-30 10:46:31.033944047 -0700
+@@ -7,6 +7,6 @@
+ fi
+ 
+ $frobby test 2> /dev/null > /dev/null
+-if [ $? == 0 ]; then exit 0; fi
++if [ $? = 0 ]; then exit 0; fi
+ echo "*** Internal test failed, rerunning tests with output ***"
+ $frobby test

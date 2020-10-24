@@ -20,7 +20,7 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-
+from __future__ import print_function
 
 from sage.plot.colors import hue
 from math import sqrt
@@ -62,7 +62,7 @@ class Triangle:
 
             sage: from sage.plot.plot3d.tri_plot import Triangle
             sage: tri = Triangle([0,0,0],[-1,2,3],[0,2,0])
-            sage: print tri.str()
+            sage: print(tri.str())
             [0, 0, 0] [-1, 2, 3] [0, 2, 0] 0
         """
         return "%s %s %s %s"%(self._a, self._b, self._c, self._color)
@@ -133,7 +133,7 @@ class SmoothTriangle(Triangle):
 
             sage: from sage.plot.plot3d.tri_plot import SmoothTriangle
             sage: t = SmoothTriangle([1,2,3],[2,3,4],[0,0,0],[0,0,1],[0,1,0],[1,0,0])
-            sage: print t.str()
+            sage: print(t.str())
             [1, 2, 3] [2, 3, 4] [0, 0, 0] 0 [0, 0, 1] [0, 1, 0] [1, 0, 0]
         """
         return "%s %s %s %s %s %s %s"%(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)

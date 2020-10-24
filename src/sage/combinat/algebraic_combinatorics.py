@@ -23,19 +23,10 @@ Enumerated sets of combinatorial objects
 - :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
 - :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
 
-Combinatorial Hopf Algebras
----------------------------
-
-- :ref:`sage.combinat.sf`
-- :ref:`sage.combinat.ncsf_qsym`
-- :ref:`sage.combinat.schubert_polynomial`
-- :ref:`sage.combinat.ncsym`
-
 Groups and Algebras
 -------------------
 
-.. TODO:: add link to the catalog of algebras when it exists
-
+- :ref:`Catalog of algebras <sage.algebras.catalog>`
 - :ref:`Groups <sage.groups.groups_catalog>`
 - :class:`SymmetricGroup`, :class:`CoxeterGroup`, :class:`WeylGroup`
 - :class:`~sage.combinat.diagram_algebras.PartitionAlgebra`
@@ -45,6 +36,7 @@ Groups and Algebras
 - :class:`~sage.algebras.affine_nil_temperley_lieb.AffineNilTemperleyLiebTypeA`
 - :ref:`sage.combinat.descent_algebra`
 - :ref:`sage.combinat.diagram_algebras`
+- :ref:`sage.combinat.blob_algebra`
 
 Combinatorial Representation Theory
 -----------------------------------
@@ -61,5 +53,7 @@ Combinatorial Representation Theory
 Operads and their algebras
 --------------------------
 
+- :ref:`sage.combinat.free_dendriform_algebra`
 - :ref:`sage.combinat.free_prelie_algebra`
+- :ref:`sage.algebras.free_zinbiel_algebra`
 """

@@ -29,12 +29,15 @@ from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals
+from sage.categories.supercrystals import SuperCrystals
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
+from sage.structure.richcmp import richcmp
+
 
 class Subcrystal(UniqueRepresentation, Parent):
-    """
+    r"""
     A subcrystal `X` of an ambient crystal `Y` is a crystal formed by taking a
     subset of `Y` and whose crystal structure is induced by `Y`.
 
@@ -81,8 +84,8 @@ class Subcrystal(UniqueRepresentation, Parent):
         [[[1, 1], [3]],
          [[1, 2], [3]],
          [[1, 1], [2]],
-         [[1, 2], [2]],
          [[2, 2], [3]],
+         [[1, 2], [2]],
          [[2, 3], [3]],
          [[1, 3], [2]],
          [[1, 3], [3]]]
@@ -97,6 +100,16 @@ class Subcrystal(UniqueRepresentation, Parent):
     .. TODO::
 
         Include support for subcrystals which only contains certain arrows.
+
+    TESTS:
+
+    Check that the subcrystal respects being in the category
+    of supercrystals (:trac:`27368`)::
+
+        sage: T = crystals.Tableaux(['A',[1,1]], [2,1])
+        sage: S = T.subcrystal(max_depth=3)
+        sage: S.category()
+        Category of finite super crystals
     """
     @staticmethod
     def __classcall_private__(cls, ambient, contained=None, generators=None,
@@ -127,6 +140,10 @@ class Subcrystal(UniqueRepresentation, Parent):
             generators = ambient.module_generators
 
         category = Crystals().or_subcategory(category)
+        if ambient in SuperCrystals():
+            category = category & SuperCrystals()
+        if ambient in FiniteCrystals() or isinstance(contained, frozenset):
+            category = category.Finite()
 
         if virtualization is not None:
             if scaling_factors is None:
@@ -250,6 +267,18 @@ class Subcrystal(UniqueRepresentation, Parent):
             sage: S = B.subcrystal(max_depth=4)
             sage: S.cardinality()
             22
+
+        TESTS:
+
+        Check that :trac:`19481` is fixed::
+
+            sage: from sage.combinat.crystals.virtual_crystal import VirtualCrystal
+            sage: A = crystals.infinity.Tableaux(['A',3])
+            sage: V = VirtualCrystal(A, {1:(1,3), 2:(2,)}, {1:1, 2:2}, cartan_type=['C',2])
+            sage: V.cardinality()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unknown cardinality
         """
         if self._cardinality is not None:
             return self._cardinality
@@ -261,7 +290,10 @@ class Subcrystal(UniqueRepresentation, Parent):
         except AttributeError:
             if self in FiniteCrystals():
                 return Integer(len(self.list()))
-            card = super(Subcrystal, self).cardinality()
+            try:
+                card = super(Subcrystal, self).cardinality()
+            except AttributeError:
+                raise NotImplementedError("unknown cardinality")
             if card == infinity:
                 self._cardinality = card
                 return card
@@ -285,33 +317,64 @@ class Subcrystal(UniqueRepresentation, Parent):
         """
         An element of a subcrystal. Wraps an element in the ambient crystal.
         """
-        def __lt__(self, other):
+        def _richcmp_(self, other, op):
             """
-            Check less than.
+            EXAMPLES:
 
-            EXAMPLES::
+            For == operator::
 
                 sage: A = crystals.KirillovReshetikhin(['C',2,1], 1,2).affinization()
                 sage: S = A.subcrystal(max_depth=2)
                 sage: sorted(S)
                 [[[1, 1]](-1),
-                [[1, 2]](-1),
-                [](0),
-                [[1, 1]](0),
-                [[1, 2]](0),
-                [[1, -2]](0),
-                [[2, 2]](0),
-                [](1),
-                [[2, -1]](1),
-                [[-2, -1]](1),
-                [[-1, -1]](1),
-                [[-1, -1]](2)]
+                 [[1, 2]](-1),
+                 [](0),
+                 [[1, 1]](0),
+                 [[1, 2]](0),
+                 [[1, -2]](0),
+                 [[2, 2]](0),
+                 [](1),
+                 [[2, -1]](1),
+                 [[-2, -1]](1),
+                 [[-1, -1]](1),
+                 [[-1, -1]](2)]
+
+            For != operator::
+
+                sage: ([(i,j) for i in range(len(S)) for j in range(len(S)) if S[i]!=S[j]]
+                ....: == [(i,j) for i in range(len(S)) for j in range(len(S)) if
+                ....: S[i].value!=S[j].value])
+                True
+
+            For < operator::
+
+                sage: ([(i,j) for i in range(len(S)) for j in range(len(S)) if S[i]<S[j]]
+                ....: == [(i,j) for i in range(len(S)) for j in range(len(S)) if
+                ....: S[i].value<S[j].value])
+                True
+
+            For <= operator::
+
+                sage: ([(i,j) for i in range(len(S)) for j in range(len(S)) if S[i]<=S[j]]
+                ....: == [(i,j) for i in range(len(S)) for j in range(len(S)) if
+                ....: S[i].value<=S[j].value])
+                True
+
+            For > operator::
+
+                sage: ([(i,j) for i in range(len(S)) for j in range(len(S)) if S[i]>S[j]]
+                ....: == [(i,j) for i in range(len(S)) for j in range(len(S)) if
+                ....: S[i].value>S[j].value])
+                True
+
+            For >= operator::
+
+                sage: ([(i,j) for i in range(len(S)) for j in range(len(S)) if S[i]>=S[j]]
+                ....: == [(i,j) for i in range(len(S)) for j in range(len(S)) if
+                ....: S[i].value>=S[j].value])
+                True
             """
-            if not isinstance(other, Subcrystal.Element):
-                return False
-            if other.parent() is not self.parent():
-                return False
-            return self.value < other.value
+            return richcmp(self.value, other.value, op)
 
         def e(self, i):
             """

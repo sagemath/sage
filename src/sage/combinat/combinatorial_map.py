@@ -18,8 +18,10 @@ that is a map between two :class:`enumerated sets <EnumeratedSets>`::
 By default, this decorator is a no-op: it returns the decorated method
 as is::
 
-    sage: MyPermutation.reverse
+    sage: MyPermutation.reverse  # py2
     <unbound method MyPermutation.reverse>
+    sage: MyPermutation.reverse  # py3
+    <function MyPermutation.reverse at ...>
 
 See :func:`combinatorial_map_wrapper` for the various options this
 decorator can take.
@@ -45,15 +47,15 @@ thereof, for all the combinatorial maps that apply to it.
     ``sage.combinat.combinatorial_map.combinatorial_map``. This is
     good enough for those doctests, but remains fragile.
 
-    For real use cases it's probably best to just edit this source
+    For real use cases, it is probably best to just edit this source
     file statically (see below).
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Christian Stump <christian.stump at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 def combinatorial_map_trivial(f=None, order=None, name=None):
     r"""
@@ -93,10 +95,15 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
         ....:         '''
         ....:         # ... code ...
 
-        sage: MyPermutation.reverse
+        sage: MyPermutation.reverse  # py2
         <unbound method MyPermutation.reverse>
-        sage: MyPermutation.descent_set
+        sage: MyPermutation.reverse  # py3
+        <function MyPermutation.reverse at ...>
+
+        sage: MyPermutation.descent_set  # py2
         <unbound method MyPermutation.descent_set>
+        sage: MyPermutation.descent_set  # py3
+        <function MyPermutation.descent_set at ...>
     """
     if f is None:
         return lambda f: f
@@ -175,14 +182,15 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
 
     The method ``major_index`` defined about is not a combinatorial map::
 
-        sage: MyPermutation.major_index
+        sage: MyPermutation.major_index  # py2
         <unbound method MyPermutation.major_index>
+        sage: MyPermutation.major_index  # py3
+        <function MyPermutation.major_index at ...>
 
     But one can define a function that turns ``major_index`` into a combinatorial map::
 
         sage: def major_index(p):
         ....:     return p.major_index()
-        ....:
         sage: major_index
         <function major_index at ...>
         sage: combinatorial_map(major_index)
@@ -210,7 +218,7 @@ class CombinatorialMap(object):
     """
     def __init__(self, f, order=None, name=None):
         """
-        Constructor for combinatorial maps
+        Constructor for combinatorial maps.
 
         EXAMPLES::
 
@@ -218,7 +226,6 @@ class CombinatorialMap(object):
             sage: def f(x):
             ....:     "doc of f"
             ....:     return x
-            ....:
             sage: x = combinatorial_map(f); x
             Combinatorial map: f
             sage: x.__doc__
@@ -248,8 +255,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation);
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: p.left_tableau.__repr__()
             'Combinatorial map: Robinson-Schensted insertion tableau'
@@ -257,21 +265,22 @@ class CombinatorialMap(object):
         return "Combinatorial map: %s" %self.name()
 
     def _sage_src_lines_(self):
-        """
-        Returns the source code location for the wrapped function.
+        r"""
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation);
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: cm = p.left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
             sage: (src, lines) = cm._sage_src_lines_()
             sage: src[0]
             "    @combinatorial_map(name='Robinson-Schensted insertion tableau')\n"
-            sage: lines # random
+            sage: lines  # random
             2653
         """
         from sage.misc.sageinspect import sage_getsourcelines
@@ -284,8 +293,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation);
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: p.left_tableau #indirect doctest
             Combinatorial map: Robinson-Schensted insertion tableau
@@ -300,8 +310,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation);
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: cm = type(p).left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
@@ -326,8 +337,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation);
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: from sage.combinat.permutation import Permutation
             sage: pi = Permutation([1,3,2])
             sage: f = pi.reverse
@@ -379,6 +391,7 @@ class CombinatorialMap(object):
         else:
             return self._f.__name__
 
+
 def combinatorial_maps_in_class(cls):
     """
     Return the combinatorial maps of the class as a list of combinatorial maps.
@@ -390,8 +403,9 @@ def combinatorial_maps_in_class(cls):
     EXAMPLES::
 
         sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-        sage: import imp
-        sage: _ = imp.reload(sage.combinat.permutation);
+        sage: from imp import reload        # py2
+        sage: from importlib import reload  # py3
+        sage: _ = reload(sage.combinat.permutation)
         sage: from sage.combinat.combinatorial_map import combinatorial_maps_in_class
         sage: p = Permutation([1,3,2,4])
         sage: cmaps = combinatorial_maps_in_class(p)

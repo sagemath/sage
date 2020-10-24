@@ -1,0 +1,58 @@
+From 4dc58ff28b6cc21dc9edc03b76277affc0da2bd6 Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 3/9] hardcoded_dirs
+
+Make R_HOME_DIR relative to SAGE_LOCAL by setting
+R_HOME_DIR to "${SAGE_LOCAL}/lib/R/" when running R.
+
+Also remove the sed scripts hardcoding R_*_DIR's in the "frontend" R script.
+See Sage trac #9668.
+
+This allows to move Sage install tree.
+
+---
+ src/scripts/Makefile.in | 7 +------
+ src/scripts/R.sh.in     | 8 ++++++++
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/src/scripts/Makefile.in b/src/scripts/Makefile.in
+index a7fa60d..ce504a0 100644
+--- a/src/scripts/Makefile.in
++++ b/src/scripts/Makefile.in
+@@ -89,12 +89,7 @@ $(top_builddir)/libtool:
+ 
+ install: installdirs install-cmds
+ 	@rm -f $(DESTDIR)$(bindir)/R
+-	@(d=`$(ECHO) '$(rhome)' | sed 's,/,\\\/,g';`; \
+-	  d2=`$(ECHO) '$(rsharedir)' | sed 's,/,\\\/,g';`; \
+-	  d3=`$(ECHO) '$(rincludedir)' | sed 's,/,\\\/,g';`; \
+-	  d4=`$(ECHO) '$(rdocdir)' | sed 's,/,\\\/,g';`; \
+-	  sed -e "1,/R_HOME_DIR=/s/\\(R_HOME_DIR=\\).*/\\1$${d}/;" -e "s/\\(R_SHARE_DIR=\\).*/\\1$${d2}/;" -e  "s/\\(R_INCLUDE_DIR=\\).*/\\1$${d3}/;" -e "s/\\(R_DOC_DIR=\\).*/\\1$${d4}/;"\
+-	  < R.fe > "$(DESTDIR)$(Rexecbindir)/R")
++	@cat R.fe > "$(DESTDIR)$(Rexecbindir)/R"
+ 	@$(INSTALL_SCRIPT)  "$(DESTDIR)$(Rexecbindir)/R" "$(DESTDIR)$(bindir)/R"
+ 	@chmod 755 "$(DESTDIR)$(bindir)/R" "$(DESTDIR)$(Rexecbindir)/R"
+ ## why of all the scripts does this alone chmod just one copy?
+diff --git a/src/scripts/R.sh.in b/src/scripts/R.sh.in
+index 674d5e0..11bfede 100644
+--- a/src/scripts/R.sh.in
++++ b/src/scripts/R.sh.in
+@@ -26,6 +26,14 @@ if test "${R_HOME_DIR}" = "@prefix@/@LIBnn@/R"; then
+   esac
+ fi
+ 
++# Make R_HOME_DIR relative to SAGE_LOCAL (if SAGE_LOCAL is set)
++# unless SAGE_BUILDING_R is set (as spkg-install does).
++if test -n "$SAGE_LOCAL"; then
++    if test -z "$SAGE_BUILDING_R"; then
++        R_HOME_DIR="$SAGE_LOCAL/lib/R/"
++    fi
++fi
++
+ if test -n "${R_HOME}" && \
+    test "${R_HOME}" != "${R_HOME_DIR}"; then
+   echo "WARNING: ignoring environment value of R_HOME"
+-- 
+2.16.1
+

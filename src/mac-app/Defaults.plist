@@ -50,7 +50,7 @@ end tell</string>
 		<string>set the_script to &quot;%@; exit&quot;
 
 tell application &quot;System Events&quot;
-	set is_running to (&quot;iTerm&quot; is in name of every application process)
+	set is_running to (&quot;iTerm2&quot; is in name of every application process)
 end tell
 
 tell application &quot;iTerm&quot;
@@ -70,7 +70,7 @@ end tell</string>
 		<string>set the_script to &quot;%@&quot;
 
 tell application &quot;System Events&quot;
-	set is_running to (&quot;iTerm&quot; is in name of every application process)
+	set is_running to (&quot;iTerm2&quot; is in name of every application process)
 end tell
 
 tell application &quot;iTerm&quot;
@@ -90,6 +90,38 @@ end tell</string>
 		<string>do shell script &quot;xterm -e &apos;%@&apos; &amp;&quot;</string>
 		<key>xterm - don&apos;t exit</key>
 		<string>do shell script &quot;xterm -hold -e &apos;%@&apos; &amp;&quot;</string>
+		<key>iTerm v3</key>
+		<string>set the_script to &quot;%@; exit&quot;
+
+tell application &quot;System Events&quot;
+	set is_running to (&quot;iTerm2&quot; is in name of every application process)
+end tell
+
+tell application &quot;iTerm&quot;
+	if is_running then
+		set w to (create window with default profile)
+	end if
+	tell the (current session of window 1)
+		write text the_script
+	end tell
+	activate
+end tell</string>
+		<key>iTerm v3 - don&apos;t exit</key>
+		<string>set the_script to &quot;%@&quot;
+
+tell application &quot;System Events&quot;
+	set is_running to (&quot;iTerm2&quot; is in name of every application process)
+end tell
+
+tell application &quot;iTerm&quot;
+	if is_running then
+		set w to (create window with default profile)
+	end if
+	tell the (current session of window 1)
+		write text the_script
+	end tell
+	activate
+end tell</string>
 	</dict>
 	<key>alsoShowMenuExtra</key>
 	<true/>
@@ -124,5 +156,13 @@ end tell</string>
 	<true/>
 	<key>autoStartServer</key>
 	<true/>
+	<key>askToUpgradeNB</key>
+	<true/>
+	<key>hasNBToUpgrade</key>
+	<true/>
+	<key>preferSageNB</key>
+	<false/>
+	<key>defaultJupyterPath</key>
+	<string>~/Documents/Sage/</string>
 </dict>
 </plist>

@@ -1,5 +1,9 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(MPFR) $(INST)/$(MPC) $(INST)/$(ZLIB)
+| $(MP_LIBRARY) mpfr mpc zlib xz
 
-----------
-All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.
+------------------------------------------------------------------------
+NOTE: all dependencies of GCC must be order-only dependencies
+(appearing after the | symbol). This is to prevent rebuilds of GCC
+even if the dependencies are updated. There is logic in the top-level
+configure file to ensure that GCC is rebuilt anyway if required. See
+https://trac.sagemath.org/ticket/24907
+------------------------------------------------------------------------

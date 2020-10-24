@@ -3,16 +3,15 @@
 Test Sage Package Handling
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import unittest
 from sage_bootstrap.package import Package
@@ -20,6 +19,8 @@ from sage_bootstrap.tarball import Tarball
 
 
 class PackageTestCase(unittest.TestCase):
+
+    maxDiff = None
 
     def test_package(self):
         pkg = Package('pari')
@@ -36,4 +37,3 @@ class PackageTestCase(unittest.TestCase):
     def test_all(self):
         pari = Package('pari')
         self.assertTrue(pari in Package.all())
-

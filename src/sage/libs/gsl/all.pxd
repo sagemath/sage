@@ -57,7 +57,6 @@ from .ntuple cimport *
 from .monte cimport *
 from .odeiv cimport *
 from .interp cimport *
-from .diff cimport *
 from .chebyshev cimport *
 from .sum cimport *
 from .roots cimport *

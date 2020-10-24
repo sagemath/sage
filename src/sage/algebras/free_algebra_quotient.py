@@ -13,7 +13,9 @@ different implementation. See
 :mod:`~sage.algebras.letterplace.free_algebra_letterplace` and
 :mod:`~sage.rings.quotient_ring`.
 
-TESTS::
+TESTS:
+
+::
 
     sage: n = 2
     sage: A = FreeAlgebra(QQ,n,'x')
@@ -28,9 +30,20 @@ TESTS::
     True
     sage: i == loads(dumps(i))
     True
+
+Test comparison by equality::
+
+    sage: HQ = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]
+    sage: HZ = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)[0]
+    sage: HQ == HQ
+    True
+    sage: HQ == HZ
+    False
+    sage: HZ == QQ
+    False
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -42,15 +55,15 @@ TESTS::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.modules.free_module import FreeModule
 from sage.algebras.algebra import Algebra
 from sage.algebras.free_algebra import is_FreeAlgebra
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
-from sage.structure.parent_gens import ParentWithGens
 from sage.structure.unique_representation import UniqueRepresentation
+
 
 class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
     @staticmethod
@@ -76,12 +89,13 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
     Element = FreeAlgebraQuotientElement
     def __init__(self, A, mons, mats, names):
         """
-        Returns a quotient algebra defined via the action of a free algebra
-        A on a (finitely generated) free module. The input for the quotient
-        algebra is a list of monomials (in the underlying monoid for A)
-        which form a free basis for the module of A, and a list of
-        matrices, which give the action of the free generators of A on this
-        monomial basis.
+        Return a quotient algebra defined via the action of a free algebra
+        A on a (finitely generated) free module.
+
+        The input for the quotient algebra is a list of monomials (in
+        the underlying monoid for A) which form a free basis for the
+        module of A, and a list of matrices, which give the action of
+        the free generators of A on this monomial basis.
 
         EXAMPLES:
 
@@ -122,7 +136,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: x**128
             -170141183460469231731687303715884105728 + 170141183460469231731687303715884105728*i + 170141183460469231731687303715884105728*j + 170141183460469231731687303715884105728*i*j
 
-        TEST::
+        TESTS::
 
             sage: TestSuite(H2).run()
 
@@ -142,35 +156,12 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
         self.__monomial_basis = mons # elements of free monoid
         Algebra.__init__(self, R, names, normalize=True)
 
-    def __eq__(self, right):
-        """
-        Return True if all defining properties of self and right match up.
-
-        EXAMPLES::
-
-            sage: HQ = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0]
-            sage: HZ = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)[0]
-            sage: HQ == HQ
-            True
-            sage: HQ == HZ
-            False
-            sage: HZ == QQ
-            False
-        """
-        return isinstance(right, FreeAlgebraQuotient) and \
-               self.ngens() == right.ngens() and \
-               self.rank() == right.rank() and \
-               self.module() == right.module() and \
-               self.matrix_action() == right.matrix_action() and \
-               self.monomial_basis() == right.monomial_basis()
-
-
     def _element_constructor_(self, x):
         """
         EXAMPLES::
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-            sage: H._element_constructor_(i) is i
+            sage: H(i) is i
             True
             sage: a = H._element_constructor_(1); a
             1
@@ -179,8 +170,6 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             sage: a = H._element_constructor_([1,2,3,4]); a
             1 + 2*i + 3*j + 4*k
         """
-        if isinstance(x, FreeAlgebraQuotientElement) and x.parent() is self:
-            return x
         return self.element_class(self,x)
 
     def _coerce_map_from_(self,S):
@@ -242,8 +231,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
         R = self.base_ring()
         F = self.__free_algebra.monoid()
-        n = self.__ngens
-        return self.element_class(self,{F.gen(i):R(1)})
+        return self.element_class(self, {F.gen(i): R.one()})
 
     def ngens(self):
         """
@@ -283,6 +271,9 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
 
     def monomial_basis(self):
         """
+        The free monoid of generators of the algebra as elements of a free
+        monoid.
+
         EXAMPLES::
 
             sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].monomial_basis()
@@ -322,18 +313,6 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             Free monoid on 3 generators (i0, i1, i2)
         """
         return self.__free_algebra.monoid()
-
-    def monomial_basis(self):
-        """
-        The free monoid of generators of the algebra as elements of a free
-        monoid.
-
-       EXAMPLES::
-
-            sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].monomial_basis()
-            (1, i0, i1, i2)
-        """
-        return self.__monomial_basis
 
     def free_algebra(self):
         """

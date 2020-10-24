@@ -7,7 +7,7 @@ AUTHORS:
 - Travis Scrimshaw (2013-03-30): Put derangements into category framework
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Alasdair McAndrew <amca01@gmail.com>,
 #                     2013 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
@@ -21,13 +21,13 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.all import prod
-from sage.misc.prandom import random, randint
+from sage.misc.prandom import random, randrange
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import ZZ, QQ
 from sage.rings.integer import Integer
@@ -66,9 +66,10 @@ class Derangement(CombinatorialElement):
             ...
             ValueError: Can only convert to a permutation for derangements of [1, 2, ..., n]
         """
-        if self.parent()._set != tuple(range(1, len(self)+1)):
+        if self.parent()._set != tuple(range(1, len(self) + 1)):
             raise ValueError("Can only convert to a permutation for derangements of [1, 2, ..., n]")
         return Permutation(list(self))
+
 
 class Derangements(UniqueRepresentation, Parent):
     r"""
@@ -80,7 +81,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     For an integer, or a list or string with all elements
     distinct, the derangements are obtained by a standard result described
-    in [DerUB]_. For a list or string with repeated elements, the derangements
+    in [BV2004]_. For a list or string with repeated elements, the derangements
     are formed by computing all permutations of the input and discarding all
     non-derangements.
 
@@ -91,8 +92,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-    .. [DerUB] http://www.u-bourgogne.fr/LE2I/jl.baril/derange.pdf
-
+    - [BV2004]_
     - :wikipedia:`Derangement`
 
     EXAMPLES::
@@ -145,7 +145,7 @@ class Derangements(UniqueRepresentation, Parent):
             True
         """
         if x in ZZ:
-            x = range(1, x+1)
+            x = list(range(1, x + 1))
         return super(Derangements, cls).__classcall__(cls, tuple(x))
 
     def __init__(self, x):
@@ -179,8 +179,8 @@ class Derangements(UniqueRepresentation, Parent):
             Derangements of the multiset [2, 2, 1, 1]
         """
         if self.__multi:
-            return "Derangements of the multiset %s"%list(self._set)
-        return "Derangements of the set %s"%list(self._set)
+            return "Derangements of the multiset %s" % list(self._set)
+        return "Derangements of the set %s" % list(self._set)
 
     def _element_constructor_(self, der):
         """
@@ -197,7 +197,7 @@ class Derangements(UniqueRepresentation, Parent):
         if isinstance(der, Derangement):
             if der.parent() is self:
                 return der
-            raise ValueError("Cannot convert %s to an element of %s"%(der, self))
+            raise ValueError("Cannot convert %s to an element of %s" % (der, self))
         return self.element_class(self, der)
 
     Element = Derangement
@@ -286,12 +286,12 @@ class Derangements(UniqueRepresentation, Parent):
                     yield self.element_class(self, list(p))
         else:
             for d in self._iter_der(len(self._set)):
-                yield self.element_class(self, [self._set[i-1] for i in d])
+                yield self.element_class(self, [self._set[i - 1] for i in d])
 
     def _iter_der(self, n):
         r"""
         Iterate through all derangements of the list `[1, 2, 3, \ldots, n]`
-        using the method given in [DerUB]_.
+        using the method given in [BV2004]_.
 
         EXAMPLES::
 
@@ -310,22 +310,22 @@ class Derangements(UniqueRepresentation, Parent):
         if n <= 1:
             return
         elif n == 2:
-            yield [2,1]
+            yield [2, 1]
         elif n == 3:
-            yield [2,3,1]
-            yield [3,1,2]
+            yield [2, 3, 1]
+            yield [3, 1, 2]
         elif n >= 4:
-            for d in self._iter_der(n-1):
-                for i in xrange(1, n):
+            for d in self._iter_der(n - 1):
+                for i in range(1, n):
                     s = d[:]
                     ii = d.index(i)
                     s[ii] = n
                     yield s + [i]
-            for d in self._iter_der(n-2):
-                for i in xrange(1, n):
+            for d in self._iter_der(n - 2):
+                for i in range(1, n):
                     s = d[:]
-                    s = [x >= i and x+1 or x for x in s]
-                    s.insert(i-1, n)
+                    s = [x >= i and x + 1 or x for x in s]
+                    s.insert(i - 1, n)
                     yield s + [i]
 
     def _fixed_point(self, a):
@@ -340,7 +340,7 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D._fixed_point([5,4,3,2,1])
             True
         """
-        return any([x == y for (x, y) in zip(a, self._set)])
+        return any(x == y for (x, y) in zip(a, self._set))
 
     def _count_der(self, n):
         """
@@ -366,8 +366,8 @@ class Derangements(UniqueRepresentation, Parent):
         # n >= 4
         last = Integer(2)
         second_last = Integer(1)
-        for i in range(4, n+1):
-            current = (i-1) * (last + second_last)
+        for i in range(4, n + 1):
+            current = (i - 1) * (last + second_last)
             second_last = last
             last = current
         return last
@@ -376,7 +376,7 @@ class Derangements(UniqueRepresentation, Parent):
         r"""
         Counts the number of derangements of a positive integer, a
         list, or a string.  The list or string may contain repeated
-        elements.  If an integer `n` is given, the the value returned
+        elements.  If an integer `n` is given, the value returned
         is the number of derangements of `[1, 2, 3, \ldots, n]`.
 
         For an integer, or a list or string with all elements
@@ -419,36 +419,39 @@ class Derangements(UniqueRepresentation, Parent):
             A = [self._set.count(i) for i in sL]
             R = PolynomialRing(QQ, 'x', len(A))
             S = sum(i for i in R.gens())
-            e = prod((S-x)**y for (x, y) in zip(R.gens(), A))
+            e = prod((S - x)**y for (x, y) in zip(R.gens(), A))
             return Integer(e.coefficient(dict([(x, y) for (x, y) in zip(R.gens(), A)])))
         return self._count_der(len(self._set))
 
     def _rand_der(self):
-        """
-        Produces a random derangement of `[1, 2, \ldots, n]` This is an
-        implementention of the algorithm described by Martinez et. al. in
-        [Martinez08]_.
+        r"""
+        Produces a random derangement of `[1, 2, \ldots, n]`.
+
+        This is an
+        implementation of the algorithm described by Martinez et. al. in
+        [MPP2008]_.
 
         EXAMPLES::
 
             sage: D = Derangements(4)
-            sage: D._rand_der()
-            [2, 3, 4, 1]
+            sage: d = D._rand_der()
+            sage: d in D
+            True
         """
         n = len(self._set)
-        A = range(1, n+1)
-        mark = [x<0 for x in A]
-        i,u = n,n
+        A = list(range(1, n + 1))
+        mark = [x < 0 for x in A]
+        i, u = n, n
         while u >= 2:
-            if not(mark[i-1]):
+            if not(mark[i - 1]):
                 while True:
-                    j = randint(1,i-1)
-                    if not(mark[j-1]):
-                        A[i-1], A[j-1] = A[j-1], A[i-1]
+                    j = randrange(1, i)
+                    if not(mark[j - 1]):
+                        A[i - 1], A[j - 1] = A[j - 1], A[i - 1]
                         break
                 p = random()
-                if p < (u-1) * self._count_der(u-2) // self._count_der(u):
-                    mark[j-1] = True
+                if p < (u - 1) * self._count_der(u - 2) // self._count_der(u):
+                    mark[j - 1] = True
                     u -= 1
                 u -= 1
             i -= 1
@@ -463,7 +466,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         For an integer, or a list or string with all elements
         distinct, the value is obtained by an algorithm described in
-        [Martinez08]_. For a list or string with repeated elements the
+        [MPP2008]_. For a list or string with repeated elements the
         derangement is formed by choosing an element at random from the list of
         all possible derangements.
 
@@ -471,11 +474,6 @@ class Derangements(UniqueRepresentation, Parent):
 
         A single list or string containing a derangement, or an
         empty list if there are no derangements.
-
-        REFERENCES:
-
-        .. [Martinez08]
-           http://www.siam.org/proceedings/analco/2008/anl08_022martinezc.pdf
 
         EXAMPLES::
 
@@ -497,13 +495,19 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.random_element()
             []
+
+        TESTS:
+
+        Check that index error discovered in :trac:`29974` is fixed::
+
+            sage: D = Derangements([1,1,2,2])
+            sage: _ = [D.random_element() for _ in range(20)]
         """
         if self.__multi:
             L = list(self)
             if len(L) == 0:
                 return self.element_class(self, [])
-            i = randint(0, len(L))
+            i = randrange(len(L))
             return L[i]
         temp = self._rand_der()
-        return self.element_class(self, [self._set[i-1] for i in temp])
-
+        return self.element_class(self, [self._set[ii - 1] for ii in temp])

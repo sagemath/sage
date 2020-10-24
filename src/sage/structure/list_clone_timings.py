@@ -30,7 +30,8 @@ Various timings using a Cython class::
     sage: size = 5
     sage: e = IncreasingArrays()(range(size))
     sage: # random
-    ....: for p in cmd: print "{0:36} : ".format(p),; timeit(p)
+    ....: for p in cmd:
+    ....:     print("{0:36} : ".format(p), end=""); timeit(p)
                                          :
     e.__copy__()                         :  625 loops, best of 3: 446 ns per loop
     copy(e)                              :  625 loops, best of 3: 1.94 µs per loop
@@ -53,7 +54,7 @@ Various timings using a Python class::
 
     sage: e = IncreasingArraysPy()(range(size))
     sage: # random
-    ....: for p in cmd: print "{0:36} : ".format(p),; timeit(p)
+    ....: for p in cmd: print("{0:36} : ".format(p), end=""); timeit(p)
                                          :
     e.__copy__()                         :  625 loops, best of 3: 869 ns per loop
     copy(e)                              :  625 loops, best of 3: 2.13 µs per loop
@@ -78,11 +79,11 @@ Various timings using a Python class::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
+from __future__ import print_function
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.list_clone_demo import IncreasingArrays
-from sage.structure.list_clone_timings_cy import *
+
 
 class IncreasingArraysPy(IncreasingArrays):
 

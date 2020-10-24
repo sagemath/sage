@@ -1,0 +1,8 @@
+unset RM  # This was in the original version of this file but no obvious
+          # reason is given, so we leave it in for now...
+
+cd src
+
+sdh_configure
+sdh_make
+sdh_make_install -j1

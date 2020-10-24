@@ -27,35 +27,7 @@ class FiniteWeylGroups(CategoryWithAxiom):
     TESTS::
 
         sage: W = FiniteWeylGroups().example()
-        sage: TestSuite(W).run(verbose = "True")
-        running ._test_an_element() . . . pass
-        running ._test_associativity() . . . pass
-        running ._test_cardinality() . . . pass
-        running ._test_category() . . . pass
-        running ._test_elements() . . .
-          Running the test suite of self.an_element()
-          running ._test_category() . . . pass
-          running ._test_eq() . . . pass
-          running ._test_not_implemented_methods() . . . pass
-          running ._test_pickling() . . . pass
-          pass
-        running ._test_elements_eq_reflexive() . . . pass
-        running ._test_elements_eq_symmetric() . . . pass
-        running ._test_elements_eq_transitive() . . . pass
-        running ._test_elements_neq() . . . pass
-        running ._test_enumerated_set_contains() . . . pass
-        running ._test_enumerated_set_iter_cardinality() . . . pass
-        running ._test_enumerated_set_iter_list() . . . pass
-        running ._test_eq() . . . pass
-        running ._test_has_descent() . . . pass
-        running ._test_inverse() . . . pass
-        running ._test_not_implemented_methods() . . . pass
-        running ._test_one() . . . pass
-        running ._test_pickling() . . . pass
-        running ._test_prod() . . . pass
-        running ._test_reduced_word() . . . pass
-        running ._test_simple_projections() . . . pass
-        running ._test_some_elements() . . . pass
+        sage: TestSuite(W).run()
     """
 
     class ParentMethods:

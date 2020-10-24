@@ -14,20 +14,19 @@ matrix morphisms.
 
 EXAMPLES::
 
-    from sage.matrix.constructor import zero_matrix
     sage: S = simplicial_complexes.Sphere(1)
     sage: S
-    Simplicial complex with vertex set (0, 1, 2) and facets {(1, 2), (0, 2), (0, 1)}
+    Minimal triangulation of the 1-sphere
     sage: C = S.chain_complex()
     sage: C.differential()
-    {0: [], 1: [ 1  1  0]
-    [ 0 -1 -1]
-    [-1  0  1], 2: []}
+    {0: [], 1: [-1 -1  0]
+     [ 1  0 -1]
+     [ 0  1  1], 2: []}
     sage: f = {0:zero_matrix(ZZ,3,3),1:zero_matrix(ZZ,3,3)}
     sage: G = Hom(C,C)
     sage: x = G(f)
     sage: x
-    Chain complex morphism from Chain complex with at most 2 nonzero terms over Integer Ring to Chain complex with at most 2 nonzero terms over Integer Ring
+    Chain complex endomorphism of Chain complex with at most 2 nonzero terms over Integer Ring
     sage: x._matrix_dictionary
     {0: [0 0 0]
     [0 0 0]
@@ -48,17 +47,19 @@ EXAMPLES::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #*****************************************************************************
 
-import sage.matrix.all as matrix
-from sage.structure.sage_object import SageObject
-from sage.rings.integer_ring import ZZ
+from sage.matrix.constructor import block_diagonal_matrix, zero_matrix
+from sage.categories.morphism import Morphism
+from sage.categories.homset import Hom
+from sage.categories.chain_complexes import ChainComplexes
+
 
 def is_ChainComplexMorphism(x):
     """
-    Returns ``True`` if and only if ``x`` is a chain complex morphism.
+    Return ``True`` if and only if ``x`` is a chain complex morphism.
 
     EXAMPLES::
 
@@ -71,14 +72,16 @@ def is_ChainComplexMorphism(x):
         sage: i = H.identity()
         sage: x = i.associated_chain_complex_morphism()
         sage: x # indirect doctest
-        Chain complex morphism from Chain complex with at most 7 nonzero terms over
-        Integer Ring to Chain complex with at most 7 nonzero terms over Integer Ring
+        Chain complex morphism:
+          From: Chain complex with at most 7 nonzero terms over Integer Ring
+          To: Chain complex with at most 7 nonzero terms over Integer Ring
         sage: is_ChainComplexMorphism(x)
         True
     """
-    return isinstance(x,ChainComplexMorphism)
+    return isinstance(x, ChainComplexMorphism)
 
-class ChainComplexMorphism(SageObject):
+
+class ChainComplexMorphism(Morphism):
     """
     An element of this class is a morphism of chain complexes.
     """
@@ -88,22 +91,19 @@ class ChainComplexMorphism(SageObject):
 
         EXAMPLES::
 
-            from sage.matrix.constructor import zero_matrix
             sage: S = simplicial_complexes.Sphere(1)
             sage: S
-            Simplicial complex with vertex set (0, 1, 2) and facets {(1, 2), (0, 2), (0, 1)}
+            Minimal triangulation of the 1-sphere
             sage: C = S.chain_complex()
             sage: C.differential()
-            {0: [], 1: [ 1  1  0]
-            [ 0 -1 -1]
-            [-1  0  1], 2: []}
+            {0: [], 1: [-1 -1  0]
+             [ 1  0 -1]
+             [ 0  1  1], 2: []}
             sage: f = {0:zero_matrix(ZZ,3,3),1:zero_matrix(ZZ,3,3)}
             sage: G = Hom(C,C)
             sage: x = G(f)
             sage: x
-            Chain complex morphism from Chain complex with at most 2 nonzero terms
-            over Integer Ring to Chain complex with at most 2 nonzero terms over 
-            Integer Ring
+            Chain complex endomorphism of Chain complex with at most 2 nonzero terms over Integer Ring
             sage: x._matrix_dictionary
             {0: [0 0 0]
             [0 0 0]
@@ -117,9 +117,9 @@ class ChainComplexMorphism(SageObject):
             sage: Y = simplicial_complexes.Simplex(0)
             sage: g = Hom(X,Y)({0:0, 1:0})
             sage: g.associated_chain_complex_morphism()
-            Chain complex morphism from Chain complex with at most 2 nonzero 
-            terms over Integer Ring to Chain complex with at most 1 nonzero terms 
-            over Integer Ring
+            Chain complex morphism:
+              From: Chain complex with at most 2 nonzero terms over Integer Ring
+              To: Chain complex with at most 1 nonzero terms over Integer Ring
 
         Check that an error is raised if the matrices are the wrong size::
 
@@ -130,7 +130,9 @@ class ChainComplexMorphism(SageObject):
             ...
             ValueError: matrix in degree 0 is not the right size
             sage: Hom(C,D)({0: matrix(2, 1, [1, 1])})  # 2x1 is right.
-            Chain complex morphism from Chain complex with at most 1 nonzero terms over Integer Ring to Chain complex with at most 1 nonzero terms over Integer Ring
+            Chain complex morphism:
+              From: Chain complex with at most 1 nonzero terms over Integer Ring
+              To: Chain complex with at most 1 nonzero terms over Integer Ring
         """
         if not C.base_ring() == D.base_ring():
             raise NotImplementedError('morphisms between chain complexes of different'
@@ -139,8 +141,8 @@ class ChainComplexMorphism(SageObject):
         if d != D.degree_of_differential():
             raise ValueError('degree of differential does not match')
             
-        from sage.misc.misc import uniq
-        degrees = uniq(C.differential().keys() + D.differential().keys())
+        degrees = list(C.differential()) + list(D.differential())
+        degrees = sorted(set(degrees))
         initial_matrices = dict(matrices)
         matrices = dict()
         for i in degrees:
@@ -151,9 +153,9 @@ class ChainComplexMorphism(SageObject):
             try:
                 matrices[i] = initial_matrices.pop(i)
             except KeyError:
-                matrices[i] = matrix.zero_matrix(C.base_ring(),
-                                                 D.differential(i).ncols(),
-                                                 C.differential(i).ncols(), sparse=True)
+                matrices[i] = zero_matrix(C.base_ring(),
+                                          D.differential(i).ncols(),
+                                          C.differential(i).ncols(), sparse=True)
         if check:
             # All remaining matrices given must be 0x0.
             if not all(m.ncols() == m.nrows() == 0 for m in initial_matrices.values()):
@@ -177,9 +179,13 @@ class ChainComplexMorphism(SageObject):
                 mC = matrices[i+d] * C.differential(i)
                 if mC != Dm:
                     raise ValueError('matrices must define a chain complex morphism')
-        self._matrix_dictionary = matrices
-        self._domain = C
-        self._codomain = D
+        self._matrix_dictionary = {}
+        for i in matrices:
+            m = matrices[i]
+            # Use immutable matrices because they're hashable.
+            m.set_immutable()
+            self._matrix_dictionary[i] = m
+        Morphism.__init__(self, Hom(C,D, ChainComplexes(C.base_ring())))
 
     def in_degree(self, n):
         """
@@ -212,14 +218,80 @@ class ChainComplexMorphism(SageObject):
         try:
             return self._matrix_dictionary[n]
         except KeyError:
-            from sage.matrix.constructor import zero_matrix
-            rows = self._codomain.free_module_rank(n)
-            cols = self._domain.free_module_rank(n)
-            return zero_matrix(self._domain.base_ring(), rows, cols)
+            rows = self.codomain().free_module_rank(n)
+            cols = self.domain().free_module_rank(n)
+            return zero_matrix(self.domain().base_ring(), rows, cols)
+
+    def to_matrix(self, deg=None):
+        """
+        The matrix representing this chain map.
+
+        If the degree ``deg`` is specified, return the matrix in that
+        degree; otherwise, return the (block) matrix for the whole
+        chain map.
+
+        INPUT:
+
+        - ``deg`` -- (optional, default ``None``) the degree
+
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: identity_matrix(ZZ, 1)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
+            sage: f = Hom(C,D)({0: identity_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
+            sage: f.to_matrix(0)
+            [1]
+            sage: f.to_matrix()
+            [1|0|]
+            [-+-+]
+            [0|0|]
+            [-+-+]
+            [0|0|]
+        """
+        if deg is not None:
+            return self.in_degree(deg)
+        blocks = [self._matrix_dictionary[n]
+                  for n in sorted(self._matrix_dictionary)]
+        return block_diagonal_matrix(blocks)
+
+    def dual(self):
+        """
+        The dual chain map to this one.
+
+        That is, the map from the dual of the codomain of this one to
+        the dual of its domain, represented in each degree by the
+        transpose of the corresponding matrix.
+
+        EXAMPLES::
+
+            sage: X = simplicial_complexes.Simplex(1)
+            sage: Y = simplicial_complexes.Simplex(0)
+            sage: g = Hom(X,Y)({0:0, 1:0})
+            sage: f = g.associated_chain_complex_morphism()
+            sage: f.in_degree(0)
+            [1 1]
+            sage: f.dual()
+            Chain complex morphism:
+              From: Chain complex with at most 1 nonzero terms over Integer Ring
+              To: Chain complex with at most 2 nonzero terms over Integer Ring
+            sage: f.dual().in_degree(0)
+            [1]
+            [1]
+            sage: ascii_art(f.domain())
+                        [-1]
+                        [ 1]
+             0 <-- C_0 <----- C_1 <-- 0
+            sage: ascii_art(f.dual().codomain())
+                        [-1  1]
+             0 <-- C_1 <-------- C_0 <-- 0
+        """
+        matrix_dict = self._matrix_dictionary
+        matrices = {i: matrix_dict[i].transpose() for i in matrix_dict}
+        return ChainComplexMorphism(matrices, self.codomain().dual(), self.domain().dual())
 
     def __neg__(self):
         """
-        Returns ``-x``.
+        Return ``-x``.
 
         EXAMPLES::
 
@@ -248,11 +320,11 @@ class ChainComplexMorphism(SageObject):
         f = dict()
         for i in self._matrix_dictionary.keys():
             f[i] = -self._matrix_dictionary[i]
-        return ChainComplexMorphism(f, self._domain, self._codomain)
+        return ChainComplexMorphism(f, self.domain(), self.codomain())
 
     def __add__(self,x):
         """
-        Returns ``self + x``.
+        Return ``self + x``.
 
         EXAMPLES::
 
@@ -278,12 +350,12 @@ class ChainComplexMorphism(SageObject):
             [0 0 0 2]}
 
         """
-        if not isinstance(x,ChainComplexMorphism) or self._codomain != x._codomain or self._domain != x._domain or self._matrix_dictionary.keys() != x._matrix_dictionary.keys():
+        if not isinstance(x,ChainComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._matrix_dictionary.keys() != x._matrix_dictionary.keys():
             raise TypeError("Unsupported operation.")
         f = dict()
         for i in self._matrix_dictionary.keys():
             f[i] = self._matrix_dictionary[i] + x._matrix_dictionary[i]
-        return ChainComplexMorphism(f, self._domain, self._codomain)
+        return ChainComplexMorphism(f, self.domain(), self.codomain())
 
     def __mul__(self,x):
         """
@@ -350,29 +422,31 @@ class ChainComplexMorphism(SageObject):
             sage: f = ChainComplexMorphism({}, C0, C1)
             sage: g = ChainComplexMorphism({}, C1, C2)
             sage: g * f
-            Chain complex morphism from Chain complex with at most 1 nonzero terms over Integer Ring to Chain complex with at most 1 nonzero terms over Integer Ring
+            Chain complex morphism:
+              From: Chain complex with at most 1 nonzero terms over Integer Ring
+              To: Chain complex with at most 1 nonzero terms over Integer Ring
             sage: f._matrix_dictionary
             {0: [], 1: []}
             sage: g._matrix_dictionary
             {1: [], 2: []}
         """
-        if not isinstance(x,ChainComplexMorphism) or self._domain != x._codomain:
+        if not isinstance(x,ChainComplexMorphism) or self.domain() != x.codomain():
             try:
-                y = self._domain.base_ring()(x)
+                y = self.domain().base_ring()(x)
             except TypeError:
                 raise TypeError("multiplication is not defined")
             f = dict()
             for i in self._matrix_dictionary:
                 f[i] = self._matrix_dictionary[i] * y
-            return ChainComplexMorphism(f,self._domain,self._codomain)
+            return ChainComplexMorphism(f,self.domain(),self.codomain())
         f = dict()
         for i in self._matrix_dictionary:
             f[i] = self._matrix_dictionary[i]*x.in_degree(i)
-        return ChainComplexMorphism(f,x._domain,self._codomain)
+        return ChainComplexMorphism(f,x.domain(),self.codomain())
 
     def __rmul__(self,x):
         """
-        Returns ``x * self`` if ``x`` is an element of the base ring.
+        Return ``x * self`` if ``x`` is an element of the base ring.
 
         EXAMPLES::
 
@@ -386,13 +460,13 @@ class ChainComplexMorphism(SageObject):
             False
         """
         try:
-            y = self._domain.base_ring()(x)
+            y = self.domain().base_ring()(x)
         except TypeError:
             raise TypeError("multiplication is not defined")
         f = dict()
         for i in self._matrix_dictionary.keys():
             f[i] = y * self._matrix_dictionary[i]
-        return ChainComplexMorphism(f,self._domain,self._codomain)
+        return ChainComplexMorphism(f,self.domain(),self.codomain())
 
     def __sub__(self,x):
         """
@@ -420,7 +494,6 @@ class ChainComplexMorphism(SageObject):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]}
-
         """
         return self + (-x)
 
@@ -435,8 +508,9 @@ class ChainComplexMorphism(SageObject):
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism()
             sage: x
-            Chain complex morphism from Trivial chain complex over Integer Ring
-            to Trivial chain complex over Integer Ring
+            Chain complex morphism:
+              From: Trivial chain complex over Integer Ring
+              To: Trivial chain complex over Integer Ring
             sage: f = x._matrix_dictionary
             sage: C = S.chain_complex()
             sage: G = Hom(C,C)
@@ -445,13 +519,13 @@ class ChainComplexMorphism(SageObject):
             True
         """
         return isinstance(x,ChainComplexMorphism) \
-                and self._codomain == x._codomain \
-                and self._domain == x._domain \
+                and self.codomain() == x.codomain() \
+                and self.domain() == x.domain() \
                 and self._matrix_dictionary == x._matrix_dictionary
 
-    def _repr_(self):
+    def is_identity(self):
         """
-        Return the string representation of ``self``.
+        True if this is the identity map.
 
         EXAMPLES::
 
@@ -459,12 +533,73 @@ class ChainComplexMorphism(SageObject):
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism()
-            sage: x
-            Chain complex morphism from Trivial chain complex over Integer Ring
-            to Trivial chain complex over Integer Ring
-            sage: x._repr_()
-            'Chain complex morphism from Trivial chain complex over Integer Ring
-            to Trivial chain complex over Integer Ring'
+            sage: x.is_identity()
+            True
         """
-        return "Chain complex morphism from {} to {}".format(self._domain, self._codomain)
+        return self.to_matrix().is_one()
 
+    def is_surjective(self):
+        """
+        True if this map is surjective.
+
+        EXAMPLES::
+
+            sage: S1 = simplicial_complexes.Sphere(1)
+            sage: H = Hom(S1, S1)
+            sage: flip = H({0:0, 1:2, 2:1})
+            sage: flip.associated_chain_complex_morphism().is_surjective()
+            True
+
+            sage: pt = simplicial_complexes.Simplex(0)
+            sage: inclusion = Hom(pt, S1)({0:2})
+            sage: inclusion.associated_chain_complex_morphism().is_surjective()
+            False
+            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_surjective()
+            True
+        """
+        m = self.to_matrix()
+        return m.rank() == m.nrows()
+
+    def is_injective(self):
+        """
+        True if this map is injective.
+
+        EXAMPLES::
+
+            sage: S1 = simplicial_complexes.Sphere(1)
+            sage: H = Hom(S1, S1)
+            sage: flip = H({0:0, 1:2, 2:1})
+            sage: flip.associated_chain_complex_morphism().is_injective()
+            True
+
+            sage: pt = simplicial_complexes.Simplex(0)
+            sage: inclusion = Hom(pt, S1)({0:2})
+            sage: inclusion.associated_chain_complex_morphism().is_injective()
+            True
+            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_injective()
+            False
+        """
+        return self.to_matrix().right_nullity() == 0
+
+    def __hash__(self):
+        """
+        TESTS::
+
+            sage: C = ChainComplex({0: identity_matrix(ZZ, 1)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 1)})
+            sage: f = Hom(C,D)({0: identity_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})
+            sage: hash(f)  # random
+            17
+        """
+        return hash(self.domain()) ^ hash(self.codomain()) ^ hash(tuple(self._matrix_dictionary.items()))
+
+    def _repr_type(self):
+        """
+        EXAMPLES::
+
+            sage: C = ChainComplex({0: identity_matrix(ZZ, 1)})
+            sage: D = ChainComplex({0: zero_matrix(ZZ, 1)})
+            sage: Hom(C,D)({0: identity_matrix(ZZ, 1), 1: zero_matrix(ZZ, 1)})._repr_type()
+            'Chain complex'
+        """
+        return "Chain complex"

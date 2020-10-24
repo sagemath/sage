@@ -140,7 +140,7 @@ product into irreducibles::
 The element `spin` of the WeylCharacterRing is the representation
 corresponding to the third highest weight representation, the
 eight-dimensional spin representation of `spin(7)`. We could
-just as easily construct it with the commmand::
+just as easily construct it with the command::
 
     sage: spin = B3(1/2,1/2,1/2)
 
@@ -164,13 +164,13 @@ coefficients) through the usual free module accessors::
     [((0, 0, 0), 1), ((1, 0, 0), 1), ((1, 1, 0), 1), ((1, 1, 1), 1)]
     sage: pprint(dict(chi))
     {(0, 0, 0): 1, (1, 0, 0): 1, (1, 1, 0): 1, (1, 1, 1): 1}
-    sage: chi.monomials()
+    sage: M = sorted(chi.monomials(), key=lambda x: x.support()); M
     [B3(0,0,0), B3(1,0,0), B3(1,1,0), B3(1,1,1)]
-    sage: chi.support()
+    sage: sorted(chi.support())
     [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1)]
     sage: chi.coefficients()
     [1, 1, 1, 1]
-    sage: [r.degree() for r in chi.monomials()]
+    sage: [r.degree() for r in M]
     [1, 7, 21, 35]
     sage: sum(r.degree() for r in chi.monomials())
     64
@@ -203,12 +203,12 @@ Example
 
 Suppose that we wish to compute the integral
 
-.. MATH ::
+.. MATH::
 
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
+compact subgroup of `GL(n,\mathbb{C})`. The irreducible unitary representations
 of `U(n)` may be regarded as the basis elements of the WeylCharacterRing of
 type `A_r`, where `r=n-1` so we might work in that ring. The trace `tr(g)` is
 then just the character of the standard representation. We may realize
@@ -273,7 +273,8 @@ odd spin groups::
     ....:
     sage: spinrepn(3)
     B3(1/2,1/2,1/2)
-    sage: for r in [1..4]: print r, spinrepn(r).frobenius_schur_indicator()
+    sage: for r in [1..4]:
+    ....:     print("{} {}".format(r, spinrepn(r).frobenius_schur_indicator()))
     1 -1
     2 -1
     3 1
@@ -366,7 +367,7 @@ SL versus GL
 ------------
 
 Sage takes the weight space for type ``['A',r]`` to be `r+1`
-dimensional. As a biproduct, if you create the Weyl character ring
+dimensional. As a by-product, if you create the Weyl character ring
 with the command::
 
     sage: A2 = WeylCharacterRing("A2")
@@ -456,12 +457,12 @@ Integration
 
 Suppose that we wish to compute the integral
 
-.. MATH ::
+.. MATH::
 
    \int_{U(n)} |tr(g)|^{2k}\,dg
 
 for various `n`. Here `U(n)` is the unitary group, which is the maximal
-compact subroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
+compact subgroup of `GL(n,\mathbf{C})`, and `dg` is the Haar measure on
 `U(n)`, normalized so that the volume of the group is 1.
 
 The irreducible unitary representations of `U(n)` may be regarded as the basis
@@ -484,10 +485,10 @@ itself, that is, the integral of `|tr(g)|^{10}`::
 
     sage: tr^5
     5*A2(2,2,1) + 6*A2(3,1,1) + 5*A2(3,2,0) + 4*A2(4,1,0) + A2(5,0,0)
-    sage: (tr^5).monomials()
+    sage: sorted((tr^5).monomials(), key=lambda x: x.support())
     [A2(2,2,1), A2(3,1,1), A2(3,2,0), A2(4,1,0), A2(5,0,0)]
-    sage: (tr^5).coefficients()
-    [5, 6, 5, 4, 1]
+    sage: sorted((tr^5).coefficients())
+    [1, 4, 5, 5, 6]
     sage: sum(x^2 for x in (tr^5).coefficients())
     103
 
@@ -533,4 +534,86 @@ obtain that using the method ``multiplicity``::
 
     sage: (ad^3).multiplicity(ad)
     8
+
+
+Weight Rings
+------------
+
+You may wish to work directly with the weights of a representation.
+
+Weyl character ring elements are represented internally by a
+dictionary of their weights with multiplicities. However these are
+subject to a constraint: the coefficients must be invariant under the
+action of the Weyl group.
+
+The :class:`WeightRing` is also a ring whose elements are represented
+internally by a dictionary of their weights with multiplicities, but
+it is not subject to this constraint of Weyl group invariance. The
+weights are allowed to be fractional, that is, elements of the ambient
+space. In other words, the weight ring is the group algebra over the
+ambient space of the weight lattice.
+
+To create a :class:`WeightRing` first construct the
+:class:`WeylCharacterRing`, then create the
+:class:`WeightRing` as follows::
+
+    sage: A2 = WeylCharacterRing(['A',2])
+    sage: a2 = WeightRing(A2)
+
+You may coerce elements of the :class:`WeylCharacterRing` into the weight
+ring. For example, if you want to see the weights of the adjoint
+representation of `GL(3)`, you may use the method ``mlist``, but
+another way is to coerce it into the weight ring::
+
+    sage: from pprint import pprint
+    sage: A2 = WeylCharacterRing(['A',2])
+    sage: ad = A2(1,0,-1)
+    sage: pprint(ad.weight_multiplicities())
+    {(0, 0, 0): 2, (-1, 1, 0): 1, (-1, 0, 1): 1, (1, -1, 0): 1,
+     (1, 0, -1): 1, (0, -1, 1): 1, (0, 1, -1): 1}
+
+This command produces a dictionary of the weights that appear in
+the representation, together with their multiplicities. But another
+way of getting the same information, with an aim of working with it,
+is to coerce it into the weight ring::
+
+    sage: a2 = WeightRing(A2)
+    sage: a2(ad)
+    2*a2(0,0,0) + a2(-1,1,0) + a2(-1,0,1) + a2(1,-1,0) + a2(1,0,-1) + a2(0,-1,1) + a2(0,1,-1)
+
+For example, the Weyl denominator formula is usually written this way:
+
+.. MATH::
+
+    \prod_{\alpha\in\Phi^+}\left(e^{\alpha/2}-e^{-\alpha/2}\right)
+    =
+    \sum_{w\in W} (-1)^{l(w)}e^{w(\rho)}.
+
+The notation is as follows. Here if `\lambda` is a weight, or more
+generally, an element of the ambient space, then `e^\lambda` means the
+image of `\lambda` in the group algebra of the ambient space of the
+weight lattice `\lambda`. Since this group algebra is just the weight
+ring, we can interpret `e^\lambda` as its image in the weight ring.
+
+Let us confirm the Weyl denominator formula for ``A2``::
+
+    sage: A2 = WeylCharacterRing("A2")
+    sage: a2 = WeightRing(A2)
+    sage: L = A2.space()
+    sage: W = L.weyl_group()
+    sage: rho = L.rho().coerce_to_sl()
+    sage: lhs = prod(a2(alpha/2)-a2(-alpha/2) for alpha in L.positive_roots()); lhs
+    a2(-1,1,0) - a2(-1,0,1) - a2(1,-1,0) + a2(1,0,-1) + a2(0,-1,1) - a2(0,1,-1)
+    sage: rhs = sum((-1)^(w.length())*a2(w.action(rho)) for w in W); rhs
+    a2(-1,1,0) - a2(-1,0,1) - a2(1,-1,0) + a2(1,0,-1) + a2(0,-1,1) - a2(0,1,-1)
+    sage: lhs == rhs
+    True
+
+Note that we have to be careful to use the right value of `\rho`. The
+reason for this is explained in :ref:`SLvsGL`.
+
+We have seen that elements of the :class:`WeylCharacterRing` can be coerced
+into the :class:`WeightRing`. Elements of the :class:`WeightRing` can be
+coerced into the :class:`WeylCharacterRing` *provided* they are invariant
+under the Weyl group.
 

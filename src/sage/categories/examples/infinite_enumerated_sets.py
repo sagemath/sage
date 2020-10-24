@@ -29,7 +29,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         sage: NN.list()
         Traceback (most recent call last):
         ...
-        NotImplementedError: infinite list
+        NotImplementedError: cannot list an infinite set
         sage: NN.element_class
         <type 'sage.rings.integer.Integer'>
         sage: it = iter(NN)
@@ -53,10 +53,12 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
@@ -69,6 +71,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         running ._test_enumerated_set_iter_cardinality() . . . pass
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -133,12 +136,12 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             Integer Ring
             sage: NN(-1)
             Traceback (most recent call last):
+            ...
             ValueError: Value -1 is not a non negative integer.
         """
         if elt in self:
             return self._element_constructor_(elt)
-        else:
-            raise ValueError("Value %s is not a non negative integer."%(elt))
+        raise ValueError("Value %s is not a non negative integer." % (elt))
 
     def an_element(self):
         """

@@ -1,46 +1,140 @@
---- Makefile.orig	2012-07-11 11:50:44.733022911 +1200
-+++ Makefile	2012-07-11 12:20:02.644997882 +1200
-@@ -75,18 +75,10 @@
+diff --git a/Makefile b/Makefile
+index 9556cf4..40127b6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -22,20 +22,8 @@ STACTDUMP_OPTIONS = -DSTACKDUMP_ENABLED -D__assert_fail=__assert_fail2
+ endif
+ 
+ 
+-ifeq ($(sagepath),)
+-SAGE_LINKOPTIONS = 
+-SAGE_INCLUDEOPTIONS =
+-else
+-SAGE_LINKOPTIONS = -L$(sagepath)/ -lpython2.6 -lcsage -lsingular
+-SAGE_INCLUDEOPTIONS = -I $(sagepath)/
+-SAGE_OBJECTS = sage.o sage_link.so
+-
+-sage_link.so: sage_link.pyx setup.py
+-	python setup.py build_ext --inplace --pyrex-include-dirs=$(SAGE_ROOT)/devel/sage/
+-endif
+-
+ ifeq ($(gmppath),)
+-GMP_LINKOPTIONS = -lgmp
++GMP_LINKOPTIONS = -lgmp -lm
+ GMP_INCLUDEOPTIONS =
+ else
+ GMP_LINKOPTIONS = $(gmppath)/lib/libgmp.a
+@@ -49,7 +37,7 @@ CDDDEFINE_PREFIX = -DNOCDDPREFIX
+ endif
+ 
+ ifeq ($(cddpath),)
+-CDD_LINKOPTIONS = -L/usr/local -lcddgmp
++CDD_LINKOPTIONS = -lcddgmp
+ CDD_INCLUDEOPTIONS =
+ else
+ CDD_LINKOPTIONS = $(cddpath)/lib/libcddgmp.a
+@@ -71,37 +59,8 @@ SOPLEX_OBJECTS = lp_soplexcdd.o
+ endif
+ 
+ 
+-# rememember to adjust USEFACTORY in field_rationalfunctions2
+-ifeq ($(singular),)
+-ifeq ($(factory),)
+-SINGULAR_PATH =
+-SINGULAR_LINKOPTIONS =
+-SINGULAR_INCLUDEOPTIONS =
+-SINGULAR_OBJECTS = src/polynomialgcd.o 
+-else
+-SINGULAR_PATH =
+-SINGULAR_LINKOPTIONS = -lcf -lcfmem
+-SINGULAR_INCLUDEOPTIONS = -I /usr/local/include/factory/
+-SINGULAR_OBJECTS = src/polynomialgcd.o src/ftmpl_inst.o
+-endif
+-else
+-#SINGULAR_PATH = $(HOME)/math/software/Singular-3-1-0
+-#SINGULAR_LINKOPTIONS =  -L$(SINGULAR_PATH)/Singular -lsingular -lncurses -lreadline
+-#SINGULAR_INCLUDEOPTIONS = -I $(SINGULAR_PATH)/kernel -I $(SINGULAR_PATH)/omalloc
+-#SINGULAR_OBJECTS = src/singular.o src/singularconversion.o
+-SINGULAR_PATH = $(HOME)/math/software/Singular-svn/trunk/x86_64-Linux
+-SINGULAR_LINKOPTIONS =  -L$(SINGULAR_PATH)/lib -lsingular -lncurses -lreadline  -lcf -lcfmem
+-SINGULAR_INCLUDEOPTIONS = -I $(SINGULAR_PATH)/include -I $(SINGULAR_PATH)/include/omalloc
+-SINGULAR_OBJECTS = src/ftmpl_inst.o src/singular.o src/singularconversion.o
+-#Run the following line before running gfan
+-#export LD_LIBRARY_PATH="/home/anders/math/software/Singular-svn/trunk/x86_64-Linux/lib/:${LD_LIBRARY_PATH}"
+-endif
+-
+-# To produce factory templates:
+-#g++ -c /home/anders/math/software/factory-3-1-7/ftmpl_inst.cc  -fno-implicit-templates -I /usr/local/include/factory/ -I/home/anders/math/software/factory-3-1-7/ -O2 -fomit-frame-pointer -o ftmpl_inst.o
+-
+-ADDITIONALLINKOPTIONS = $(CDD_LINKOPTIONS) $(GMP_LINKOPTIONS) $(SOPLEX_LINKOPTIONS) $(SINGULAR_LINKOPTIONS) $(SAGE_LINKOPTIONS) 
+-ADDITIONALINCLUDEOPTIONS = $(CDD_INCLUDEOPTIONS) $(GMP_INCLUDEOPTIONS) $(SOPLEX_INCLUDEOPTIONS) $(SINGULAR_INCLUDEOPTIONS) $(SAGE_INCLUDEOPTIONS)
++ADDITIONALLINKOPTIONS = $(CDD_LINKOPTIONS) $(GMP_LINKOPTIONS) $(SOPLEX_LINKOPTIONS) 
++ADDITIONALINCLUDEOPTIONS = $(CDD_INCLUDEOPTIONS) $(GMP_INCLUDEOPTIONS) $(SOPLEX_INCLUDEOPTIONS)
+ 
+ 
  MKDIR=mkdir -p
- 
- 
--SHELL       = /bin/sh
--#ARCH        = LINUX
--CC          = gcc
+@@ -110,10 +69,8 @@ MKDIR=mkdir -p
+ PREFIX =
+ SHELL       = /bin/sh
+ #ARCH        = LINUX
+-CC          = $(PREFIX)gcc
 -CLINKER     = $(CC)
--CXX         = g++
+-CXX         = $(PREFIX)g++
 -CCLINKER    = $(CXX)
--#OPTFLAGS    = -O2 -DGMPRATIONAL -DNDEBUG
- OPTFLAGS    = -O2 -DGMPRATIONAL -Wuninitialized
++CC          ?= $(PREFIX)gcc
++CXX         ?= $(PREFIX)g++
+ #OPTFLAGS    = -O2 -DGMPRATIONAL -DNDEBUG
+ # Note that gcc produces wrong code with -O3
+ OPTFLAGS    =  -DGMPRATIONAL -Wuninitialized -fno-omit-frame-pointer -O2	 #-O3 -fno-guess-branch-probability #-DNDEBUG
+@@ -125,10 +82,10 @@ OPTFLAGS    =  -DGMPRATIONAL -Wuninitialized -fno-omit-frame-pointer -O2	 #-O3 -
+ #OPTFLAGS    =  -DGMPRATIONAL -Wuninitialized -fno-omit-frame-pointer -O3 -msse2 -ftree-vectorizer-verbose=2 -ffast-math #-DNDEBUG
+ #OPTFLAGS    =  -DGMPRATIONAL -Wuninitialized -fno-omit-frame-pointer -O3 -mavx -msse2 -ftree-vectorizer-verbose=2 -ffast-math #-DNDEBUG
  
--CFLAGS	  = $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
+-CFLAGS	  = $(OPTFLAGS) $(GPROFFLAG) $(STACTDUMP_OPTIONS) $(ADDITIONALINCLUDEOPTIONS) -std=c++0x -g $(CDDDEFINE_PREFIX) #-pedantic
+-#CFLAGS	  = $(OPTFLAGS) $(GPROFFLAG) $(STACTDUMP_OPTIONS) $(ADDITIONALINCLUDEOPTIONS) -D_GLIBCXX_DEBUG -std=c++0x -g $(CDDDEFINE_PREFIX) #-pedantic
 -CCFLAGS	  = $(CFLAGS)
 -FFLAGS	  = $(OPTFLAGS)
-+CFLAGS_LOCAL  = $(CFLAGS) $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
-+CXXFLAGS_LOCAL= $(CXXFLAGS) $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
++CFLAGS	  := $(CFLAGS) $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
++CXXFLAGS  := $(CXXFLAGS) $(OPTFLAGS) $(GPROFFLAG) $(ADDITIONALINCLUDEOPTIONS) #-pedantic
++
++SINGULAR_OBJECTS = src/polynomialgcd.o
  
- CATSOBJECTS =	$(GCATSPATH)lp_cdd.o \
- 		$(SOPLEX_OBJECTS) \
-@@ -317,7 +309,7 @@
- default: $(OBJECTS) $(ADDITIONALOBJECTS) $(EXECS)
+ CATSOBJECTS =	lp_cdd.o \
+ 		parser.o \
+@@ -394,16 +351,15 @@ EXECS	  = $(MAIN)
+ # (compiling with gcc version 4.7.2 and running gfan _tropicaltraverse on a starting cone for Grassmann3_7)
+ # Either this is a bug in the code or in the compiler. The bug disappears by compiling with -fno-guess-branch-probability
+ src/symmetrictraversal.o: src/symmetrictraversal.cpp
+-	$(CXX) $(CFLAGS) -fno-guess-branch-probability  -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++	$(CXX) $(CXXFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ # If compiling with clang, use the line below instead:
+-#	$(CXX) $(CFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++#	$(CXX) $(CXXFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ 
+ # Define suffixes to make the program compile on legolas.imf.au.dk :
+ .SUFFIXES: .o .cpp .c
+ 
+ OBJECTS = 	$(addprefix src/,$(SOPLEX_OBJECTS)) \
+ 		$(SINGULAR_OBJECTS) \
+-		$(SAGE_OBJECTS) \
+ 		$(addprefix src/,$(CATSOBJECTS)) \
+ 		$(addprefix src/,$(APPOBJECTS)) \
+ 		src/symmetrictraversal.o
+@@ -420,7 +376,7 @@ default: $(OBJECTS) $(ADDITIONALOBJECTS) $(EXECS)
  
  $(MAIN): $(OBJECTS)
--	$(CCLINKER) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -o $(MAIN)
-+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -o $(MAIN) $(LDFLAGS)
+ #	$(CCLINKER) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -lpthread  -o $(MAIN)
+-	$(CCLINKER) $(OBJECTS) $(ADDITIONALLINKOPTIONS) $(GPROFFLAG) -lpthread -rdynamic -o $(MAIN)
++	$(CXX) $(CXXFLAGS) -pthread -o $(MAIN) $(LDFLAGS) $(OBJECTS) -lpthread $(ADDITIONALLINKOPTIONS) $(GPROFFLAG)
  
  release:
  	rm -f -r $(RELEASEDIR)/*
-@@ -431,11 +423,11 @@
- 	cp gfanlib_* gfanlib/
- 	tar zcf -  gfanlib > gfanlib.tar.gz
+@@ -546,7 +502,7 @@ check:
  .c.o:
--	$(CC) $(CFLAGS) -c $<
-+	$(CC) $(CFLAGS_LOCAL) $(CPPFLAGS) -c $<
- .cc.o:
- 	$(CXX) -c $<
+ 	$(CC) $(CFLAGS) -c $< -o $(patsubst %.c,%.o,$<)
  .cpp.o:
--	$(CXX) $(CFLAGS) -c $<
-+	$(CXX) $(CXXFLAGS_LOCAL) $(CPPFLAGS) -c $<
- .C.o:
- 	$(CXX) -c $<
+-	$(CXX) $(CFLAGS) -c $< -o $(patsubst %.cpp,%.o,$<)
++	$(CXX) $(CXXFLAGS) -c $< -o $(patsubst %.cpp,%.o,$<)
+ 
  # wget http://ftp.sunet.se/pub/gnu/gmp/gmp-4.2.2.tar.gz
+ # tar -xzvf gmp-4.2.2.tar.gz

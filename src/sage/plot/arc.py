@@ -15,12 +15,15 @@ Arcs of circles and ellipses
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.plot.primitive import GraphicPrimitive
 from sage.plot.colors import to_mpl_color
 
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 
 from math import fmod, sin, cos, pi, atan
+
 
 class Arc(GraphicPrimitive):
     """
@@ -44,8 +47,8 @@ class Arc(GraphicPrimitive):
     Note that the construction should be done using ``arc``::
 
         sage: from sage.plot.arc import Arc
-        sage: print Arc(0,0,1,1,pi/4,pi/4,pi/2,{})
-        Arc with center (0.0,0.0) radii (1.0,1.0) angle 0.785398163397 inside the sector (0.785398163397,1.57079632679)
+        sage: print(Arc(0,0,1,1,pi/4,pi/4,pi/2,{}))
+        Arc with center (0.0,0.0) radii (1.0,1.0) angle 0.78539816339... inside the sector (0.78539816339...,1.5707963267...)
     """
     def __init__(self, x, y, r1, r2, angle, s1, s2, options):
         """
@@ -62,18 +65,18 @@ class Arc(GraphicPrimitive):
             True
             sage: A[0].r2 == 1
             True
-            sage: bool(A[0].angle == pi/4)
-            True
+            sage: A[0].angle
+            0.7853981633974483
             sage: bool(A[0].s1 == 0)
             True
-            sage: bool(A[0].s2 == pi)
-            True
+            sage: A[0].s2
+            3.141592653589793
 
         TESTS::
 
             sage: from sage.plot.arc import Arc
             sage: a = Arc(0,0,1,1,0,0,1,{})
-            sage: print loads(dumps(a))
+            sage: print(loads(dumps(a)))
             Arc with center (0.0,0.0) radii (1.0,1.0) angle 0.0 inside the sector (0.0,1.0)
         """
         self.x = float(x)
@@ -87,12 +90,12 @@ class Arc(GraphicPrimitive):
         self.s1 = float(s1)
         self.s2 = float(s2)
         if self.s2 < self.s1:
-            self.s1,self.s2=self.s2,self.s1
+            self.s1, self.s2 = self.s2, self.s1
         GraphicPrimitive.__init__(self, options)
 
     def get_minmax_data(self):
-        """
-        Returns a dictionary with the bounding box data.
+        r"""
+        Return a dictionary with the bounding box data.
 
         The bounding box is computed as minimal as possible.
 
@@ -126,91 +129,113 @@ class Arc(GraphicPrimitive):
         """
         from sage.plot.plot import minmax_data
 
-        twopi = 2*pi
+        twopi = 2 * pi
 
         s1 = self.s1
         s2 = self.s2
-        s = s2-s1
-        s1 = fmod(s1,twopi)
-        if s1 < 0: s1 += twopi
-        s2 = fmod(s1 + s,twopi)
-        if s2 < 0: s2 += twopi
+        s = s2 - s1
+        s1 = fmod(s1, twopi)
+        if s1 < 0:
+            s1 += twopi
+        s2 = fmod(s1 + s, twopi)
+        if s2 < 0:
+            s2 += twopi
 
         r1 = self.r1
         r2 = self.r2
 
-        angle = fmod(self.angle,twopi)
-        if angle < 0: angle += twopi
+        angle = fmod(self.angle, twopi)
+        if angle < 0:
+            angle += twopi
 
         epsilon = float(0.0000001)
 
         cos_angle = cos(angle)
         sin_angle = sin(angle)
 
-        if cos_angle > 1-epsilon:
-            xmin=-r1; ymin=-r2
-            xmax=r1; ymax=r2
-            axmin = pi; axmax = 0
-            aymin = 3*pi/2; aymax = pi/2
+        if cos_angle > 1 - epsilon:
+            xmin = -r1
+            ymin = -r2
+            xmax = r1
+            ymax = r2
+            axmin = pi
+            axmax = 0
+            aymin = 3 * pi / 2
+            aymax = pi / 2
 
-        elif cos_angle < -1+epsilon:
-            xmin=-r1; ymin=-r2
-            xmax=r1; ymax=r2
-            axmin=0; axmax=pi
-            aymin=pi/2; aymax=3*pi/2
+        elif cos_angle < -1 + epsilon:
+            xmin = -r1
+            ymin = -r2
+            xmax = r1
+            ymax = r2
+            axmin = 0
+            axmax = pi
+            aymin = pi / 2
+            aymax = 3 * pi / 2
 
-        elif sin_angle > 1-epsilon:
-            xmin=-r2; ymin=-r1
-            xmax=r2; ymax=r1
-            axmin = pi/2; axmax = 3*pi/2
-            aymin = pi; aymax = 0
+        elif sin_angle > 1 - epsilon:
+            xmin = -r2
+            ymin = -r1
+            xmax = r2
+            ymax = r1
+            axmin = pi / 2
+            axmax = 3 * pi / 2
+            aymin = pi
+            aymax = 0
 
-        elif sin_angle < -1+epsilon:
-            xmin=-r2; ymin=-r1
-            xmax=r2; ymax=r1
-            axmin = 3*pi/2; axmax = pi/2
-            aymin = 0; aymax = pi
+        elif sin_angle < -1 + epsilon:
+            xmin = -r2
+            ymin = -r1
+            xmax = r2
+            ymax = r1
+            axmin = 3 * pi / 2
+            axmax = pi / 2
+            aymin = 0
+            aymax = pi
 
         else:
             tan_angle = sin_angle / cos_angle
-            axmax = atan(-r2/r1*tan_angle)
-            if axmax < 0: axmax += twopi
-            xmax = (
-              r1 * cos_angle * cos(axmax) -
-              r2 * sin_angle * sin(axmax))
+            axmax = atan(-r2 / r1 * tan_angle)
+            if axmax < 0:
+                axmax += twopi
+            xmax = (r1 * cos_angle * cos(axmax) -
+                    r2 * sin_angle * sin(axmax))
             if xmax < 0:
                 xmax = -xmax
-                axmax = fmod(axmax+pi,twopi)
+                axmax = fmod(axmax + pi, twopi)
             xmin = -xmax
-            axmin = fmod(axmax + pi,twopi)
+            axmin = fmod(axmax + pi, twopi)
 
-            aymax = atan(r2/(r1*tan_angle))
-            if aymax < 0: aymax += twopi
-            ymax = (
-              r1 * sin_angle * cos(aymax) +
-              r2 * cos_angle * sin(aymax))
+            aymax = atan(r2 / (r1 * tan_angle))
+            if aymax < 0:
+                aymax += twopi
+            ymax = (r1 * sin_angle * cos(aymax) +
+                    r2 * cos_angle * sin(aymax))
             if ymax < 0:
                 ymax = -ymax
-                aymax = fmod(aymax+pi,twopi)
+                aymax = fmod(aymax + pi, twopi)
             ymin = -ymax
             aymin = fmod(aymax + pi, twopi)
 
-        if s < twopi-epsilon: # bb determined by the sector
-            def is_cyclic_ordered(x1,x2,x3):
-                return (
-                  (x1 < x2 and x2 < x3) or
-                  (x2 < x3 and x3 < x1) or
-                  (x3 < x1 and x1 < x2))
+        if s < twopi - epsilon:  # bb determined by the sector
+            def is_cyclic_ordered(x1, x2, x3):
+                return ((x1 < x2 and x2 < x3) or
+                        (x2 < x3 and x3 < x1) or
+                        (x3 < x1 and x1 < x2))
 
-            x1 = cos_angle*r1*cos(s1) - sin_angle*r2*sin(s1)
-            x2 = cos_angle*r1*cos(s2) - sin_angle*r2*sin(s2)
-            y1 = sin_angle*r1*cos(s1) + cos_angle*r2*sin(s1)
-            y2 = sin_angle*r1*cos(s2) + cos_angle*r2*sin(s2)
+            x1 = cos_angle * r1 * cos(s1) - sin_angle * r2 * sin(s1)
+            x2 = cos_angle * r1 * cos(s2) - sin_angle * r2 * sin(s2)
+            y1 = sin_angle * r1 * cos(s1) + cos_angle * r2 * sin(s1)
+            y2 = sin_angle * r1 * cos(s2) + cos_angle * r2 * sin(s2)
 
-            if is_cyclic_ordered(s1,s2,axmin): xmin = min(x1,x2)
-            if is_cyclic_ordered(s1,s2,aymin): ymin = min(y1,y2)
-            if is_cyclic_ordered(s1,s2,axmax): xmax = max(x1,x2)
-            if is_cyclic_ordered(s1,s2,aymax): ymax = max(y1,y2)
+            if is_cyclic_ordered(s1, s2, axmin):
+                xmin = min(x1, x2)
+            if is_cyclic_ordered(s1, s2, aymin):
+                ymin = min(y1, y2)
+            if is_cyclic_ordered(s1, s2, axmax):
+                xmax = max(x1, x2)
+            if is_cyclic_ordered(s1, s2, aymax):
+                ymax = max(y1, y2)
 
         return minmax_data([self.x + xmin, self.x + xmax],
                            [self.y + ymin, self.y + ymax],
@@ -226,14 +251,86 @@ class Arc(GraphicPrimitive):
             sage: p[0]._allowed_options()['alpha']
             'How transparent the figure is.'
         """
-        return {'alpha':'How transparent the figure is.',
-                'thickness':'How thick the border of the arc is.',
-                'hue':'The color given as a hue.',
-                'rgbcolor':'The color',
-                'zorder':'2D only: The layer level in which to draw',
-                'linestyle':"2D only: The style of the line, which is one of "
+        return {'alpha': 'How transparent the figure is.',
+                'thickness': 'How thick the border of the arc is.',
+                'hue': 'The color given as a hue.',
+                'rgbcolor': 'The color',
+                'zorder': '2D only: The layer level in which to draw',
+                'linestyle': "2D only: The style of the line, which is one of "
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
+
+    def _matplotlib_arc(self):
+        """
+        Return ``self`` as a matplotlib arc object.
+
+        EXAMPLES::
+
+            sage: from sage.plot.arc import Arc
+            sage: Arc(2,3,2.2,2.2,0,2,3,{})._matplotlib_arc()
+            <matplotlib.patches.Arc object at ...>
+        """
+        import matplotlib.patches as patches
+        p = patches.Arc((self.x, self.y),
+                        2. * self.r1,
+                        2. * self.r2,
+                        fmod(self.angle, 2 * pi) * (180. / pi),
+                        self.s1 * (180. / pi),
+                        self.s2 * (180. / pi))
+        return p
+
+    def bezier_path(self):
+        """
+        Return ``self`` as a Bezier path.
+
+        This is needed to concatenate arcs, in order to
+        create hyperbolic polygons.
+
+        EXAMPLES::
+
+            sage: from sage.plot.arc import Arc
+            sage: op = {'alpha':1,'thickness':1,'rgbcolor':'blue','zorder':0,
+            ....:     'linestyle':'--'}
+            sage: Arc(2,3,2.2,2.2,0,2,3,op).bezier_path()
+            Graphics object consisting of 1 graphics primitive
+
+            sage: a = arc((0,0),2,1,0,(pi/5,pi/2+pi/12), linestyle="--", color="red")
+            sage: b = a[0].bezier_path()
+            sage: b[0]
+            Bezier path from (1.133..., 0.8237...) to (-0.2655..., 0.9911...)
+        """
+        from sage.plot.bezier_path import BezierPath
+        from sage.plot.graphics import Graphics
+        from matplotlib.path import Path
+        import numpy as np
+        ma = self._matplotlib_arc()
+        def theta_stretch(theta, scale):
+            theta = np.deg2rad(theta)
+            x = np.cos(theta)
+            y = np.sin(theta)
+            return np.rad2deg(np.arctan2(scale * y, x))
+        theta1 = theta_stretch(ma.theta1, ma.width / ma.height)
+        theta2 = theta_stretch(ma.theta2, ma.width / ma.height)
+
+        pa = ma
+        pa._path = Path.arc(theta1, theta2)
+        transform = pa.get_transform().get_matrix()
+        cA, cC, cE = transform[0]
+        cB, cD, cF = transform[1]
+        points = []
+        for u in pa._path.vertices:
+            x, y = list(u)
+            points += [(cA * x + cC * y + cE, cB * x + cD * y + cF)]
+        cutlist = [points[0: 4]]
+        N = 4
+        while N < len(points):
+            cutlist += [points[N: N + 3]]
+            N += 3
+        g = Graphics()
+        opt = self.options()
+        opt['fill'] = False
+        g.add_primitive(BezierPath(cutlist, opt))
+        return g
 
     def _repr_(self):
         """
@@ -242,10 +339,10 @@ class Arc(GraphicPrimitive):
         EXAMPLES::
 
             sage: from sage.plot.arc import Arc
-            sage: print Arc(2,3,2.2,2.2,0,2,3,{})
+            sage: print(Arc(2,3,2.2,2.2,0,2,3,{}))
             Arc with center (2.0,3.0) radii (2.2,2.2) angle 0.0 inside the sector (2.0,3.0)
         """
-        return "Arc with center (%s,%s) radii (%s,%s) angle %s inside the sector (%s,%s)" %(self.x,self.y,self.r1,self.r2,self.angle,self.s1,self.s2)
+        return "Arc with center (%s,%s) radii (%s,%s) angle %s inside the sector (%s,%s)" % (self.x, self.y, self.r1, self.r2, self.angle, self.s1, self.s2)
 
     def _render_on_subplot(self, subplot):
         """
@@ -254,26 +351,19 @@ class Arc(GraphicPrimitive):
             sage: A = arc((1,1),3,4,pi/4,(pi,4*pi/3)); A
             Graphics object consisting of 1 graphics primitive
         """
-        import matplotlib.patches as patches
         from sage.plot.misc import get_matplotlib_linestyle
-
 
         options = self.options()
 
-        p = patches.Arc(
-                (self.x,self.y),
-                2.*self.r1,
-                2.*self.r2,
-                fmod(self.angle,2*pi)*(180./pi),
-                self.s1*(180./pi),
-                self.s2*(180./pi))
+        p = self._matplotlib_arc()
         p.set_linewidth(float(options['thickness']))
         a = float(options['alpha'])
         p.set_alpha(a)
-        z = int(options.pop('zorder',1))
+        z = int(options.pop('zorder', 1))
         p.set_zorder(z)
         c = to_mpl_color(options['rgbcolor'])
-        p.set_linestyle(get_matplotlib_linestyle(options['linestyle'],return_type='long'))
+        p.set_linestyle(get_matplotlib_linestyle(options['linestyle'],
+                                                 return_type='long'))
         p.set_edgecolor(c)
         subplot.add_patch(p)
 
@@ -289,10 +379,11 @@ class Arc(GraphicPrimitive):
         """
         raise NotImplementedError
 
+
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, thickness=1, linestyle='solid', zorder=5,rgbcolor='blue',
+@options(alpha=1, thickness=1, linestyle='solid', zorder=5, rgbcolor='blue',
          aspect_ratio=1.0)
-def arc(center, r1, r2=None, angle=0.0, sector=(0.0,2*pi), **options):
+def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
     r"""
     An arc (that is a portion of a circle or an ellipse)
 
@@ -304,7 +395,7 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0,2*pi), **options):
 
     - ``r1``, ``r2`` - positive real numbers - radii of the ellipse. If only ``r1``
       is set, then the two radii are supposed to be equal and this function returns
-      an arc of of circle.
+      an arc of circle.
 
     - ``angle`` - real number - angle between the horizontal and the axis that
       corresponds to ``r1``.
@@ -372,19 +463,19 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0,2*pi), **options):
     if scale == 'semilogy' or scale == 'semilogx':
         options['aspect_ratio'] = 'automatic'
 
-    if len(center)==2:
-        if r2 is None: r2 = r1
+    if len(center) == 2:
+        if r2 is None:
+            r2 = r1
         g = Graphics()
         g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
         if len(sector) != 2:
             raise ValueError("the sector must consist of two angles")
         g.add_primitive(Arc(
-            center[0],center[1],
-            r1,r2,
+            center[0], center[1],
+            r1, r2,
             angle,
-            sector[0],sector[1],
+            sector[0], sector[1],
             options))
         return g
-    elif len(center)==3:
+    elif len(center) == 3:
         raise NotImplementedError
-

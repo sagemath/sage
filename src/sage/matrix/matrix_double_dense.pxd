@@ -1,7 +1,7 @@
-cimport matrix_dense
+from .matrix_dense cimport Matrix_dense
 cimport numpy as cnumpy
 
-cdef class Matrix_double_dense(matrix_dense.Matrix_dense):
+cdef class Matrix_double_dense(Matrix_dense):
     cdef object _numpy_dtype
     # cdef cnumpy.NPY_TYPES _numpy_dtypeint
     cdef int _numpy_dtypeint

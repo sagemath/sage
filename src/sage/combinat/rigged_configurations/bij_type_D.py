@@ -378,7 +378,7 @@ class KRTToRCBijectionTypeD(KRTToRCBijectionTypeA):
                 self.ret_rig_con[i].vacancy_numbers[j] *= 2
 
     def halving_map(self):
-        """
+        r"""
         Perform the halving map of the rigged configuration at the current
         state of the bijection.
 
@@ -542,7 +542,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
             self._graph.pop(0) # Remove the dummy at the start
             from sage.graphs.digraph import DiGraph
             from sage.graphs.dot2tex_utils import have_dot2tex
-            self._graph = DiGraph(self._graph)
+            self._graph = DiGraph(self._graph, format="list_of_edges")
             if have_dot2tex():
                 self._graph.set_latex_options(format="dot2tex", edge_labels=True)
 
@@ -677,7 +677,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
         return(b)
 
     def doubling_map(self):
-        """
+        r"""
         Perform the doubling map of the rigged configuration at the current
         state of the bijection.
 
@@ -714,7 +714,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                 partition.vacancy_numbers[j] *= 2
 
     def halving_map(self):
-        """
+        r"""
         Perform the halving map of the rigged configuration at the current
         state of the bijection.
 
@@ -742,7 +742,7 @@ class RCToKRTBijectionTypeD(RCToKRTBijectionTypeA):
                 partition.vacancy_numbers[j] //= 2
 
     def _correct_vacancy_nums(self):
-        """
+        r"""
         Correct the vacancy numbers with special considerations for spinor
         columns.
 

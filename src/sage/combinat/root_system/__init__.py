@@ -1,4 +1,4 @@
-__doc__="""
+"""
 Root Systems
 ============
 
@@ -35,6 +35,7 @@ Cartan datum
 - :ref:`sage.combinat.root_system.dynkin_diagram`
 - :ref:`sage.combinat.root_system.cartan_matrix`
 - :ref:`sage.combinat.root_system.coxeter_matrix`
+- :ref:`sage.combinat.root_system.coxeter_type`
 
 Root systems
 ------------
@@ -55,15 +56,28 @@ Coxeter groups
 - :ref:`sage.combinat.root_system.weyl_group`
 - :ref:`sage.combinat.root_system.extended_affine_weyl_group`
 - :ref:`sage.combinat.root_system.fundamental_group`
+- :ref:`sage.combinat.root_system.braid_move_calculator`
+- :ref:`sage.combinat.root_system.braid_orbit`
 
 .. SEEALSO::
 
     The categories :class:`CoxeterGroups` and :class:`WeylGroups`
 
+Finite reflection groups
+------------------------
+
+- :ref:`sage.combinat.root_system.reflection_group_complex`
+- :ref:`sage.combinat.root_system.reflection_group_real`
+
+.. SEEALSO::
+
+    The category :class:`~sage.categories.complex_reflection_groups.ComplexReflectionGroups`
+
 Representation theory
 ---------------------
 
 - :ref:`sage.combinat.root_system.weyl_characters`
+- :ref:`sage.combinat.root_system.fusion_ring`
 - :ref:`sage.combinat.root_system.integrable_representations`
 - :ref:`sage.combinat.root_system.branching_rules`
 - :ref:`sage.combinat.root_system.hecke_algebra_representation`
@@ -77,6 +91,7 @@ Root system data and code for specific families of Cartan types
 - :ref:`sage.combinat.root_system.type_folded`
 - :ref:`sage.combinat.root_system.type_reducible`
 - :ref:`sage.combinat.root_system.type_relabel`
+- :ref:`sage.combinat.root_system.type_marked`
 
 Root system data and code for specific Cartan types
 ---------------------------------------------------
@@ -98,15 +113,15 @@ Root system data and code for specific Cartan types
 - :ref:`sage.combinat.root_system.type_F_affine`
 - :ref:`sage.combinat.root_system.type_G_affine`
 - :ref:`sage.combinat.root_system.type_BC_affine`
+- :ref:`sage.combinat.root_system.type_super_A`
+- :ref:`sage.combinat.root_system.type_A_infinity`
 """
-
-# currently needed to activate the backward compatibility register_unpickle_override
-import type_A
-import type_B
-import type_C
-import type_D
-import type_E
-import type_F
-import type_G
-
-import all
+# currently needed to activate the backward compatibility
+# register_unpickle_override
+from . import type_A
+from . import type_B
+from . import type_C
+from . import type_D
+from . import type_E
+from . import type_F
+from . import type_G

@@ -1,0 +1,44 @@
+# These flags confuse numpy's distutils.  In particular,
+# if they are set empty bad things happen.
+unset CFLAGS CXXFLAGS SHAREDFLAGS
+echo "Note: CFLAGS, CXXFLAGS and SHAREDFLAGS are taken from distutils,"
+echo "      so their current settings are ignored."
+
+if [ "$UNAME" = "Darwin" ]; then
+    unset ATLAS
+    unset BLAS
+    unset LAPACK
+    export LDFLAGS="-bundle -undefined dynamic_lookup $LDFLAGS"
+    export CPPFLAGS="-D__ACCELERATE__ $CPPFLAGS"
+else
+    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
+    export LDFLAGS="-shared $LDFLAGS"
+fi
+
+# Make sure that the fortran objects are compiled with -fPIC
+export FFLAGS="$FFLAGS -fPIC"
+export FCFLAGS="$FCFLAGS -fPIC"
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Trac #30643
+    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
+fi
+
+if [ "$UNAME" = "CYGWIN" -a "$SAGE_DEBUG" = "yes" ]; then
+    # Needed for just one or two modules when compiling in debug mode
+    # Otherwise the debug symbols create too many sections in the binary
+    export CPPFLAGS="$CPPFLAGS -Wa,-mbig-obj"
+fi
+
+
+# This avoids problems on some systems -- until we officially
+# support umfpack (which we will likely do, since cvxopt I think includes it):
+UMFPACK="None"; export UMFPACK
+# See http://projects.scipy.org/pipermail/scipy-user/2006-July/008661.html
+# (Currently SWIG gets invoked by scipy when building the umfpack interface,
+# which is bad.)
+
+cd src/
+
+# Install:
+sdh_pip_install .

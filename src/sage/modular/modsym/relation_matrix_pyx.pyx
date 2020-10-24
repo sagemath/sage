@@ -1,64 +1,65 @@
 """
-Optimized Cython code for computing relation matrices in certain cases.
+Optimized Cython code for computing relation matrices in certain cases
 """
 
 #############################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL) v2+.
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #############################################################################
 
-import sage.misc.misc as misc
+from sage.misc.verbose import verbose
 from sage.rings.rational cimport Rational
+
 
 def sparse_2term_quotient_only_pm1(rels, n):
     r"""
-    Performs Sparse Gauss elimination on a matrix all of whose columns
+    Perform Sparse Gauss elimination on a matrix all of whose columns
     have at most 2 nonzero entries with relations all 1 or -1.
 
     This algorithm is more subtle than just "identify symbols in pairs",
     since complicated relations can cause generators to equal 0.
 
-    NOTE: Note the condition on the s,t coefficients in the relations
-    being 1 or -1 for this optimized function.  There is a more
-    general function in relation_matrix.py, which is much, much
-    slower.
+    .. NOTE::
+
+        Note the condition on the s,t coefficients in the relations
+        being 1 or -1 for this optimized function.  There is a more
+        general function in relation_matrix.py, which is much, much
+        slower.
 
     INPUT:
 
-        - ``rels`` - set of pairs ((i,s), (j,t)). The pair represents
-          the relation s*x_i + t*x_j = 0, where the i, j must be
-          Python int's, and the s,t must all be 1 or -1.
+    - ``rels`` -- iterable made of pairs ((i,s), (j,t)). The pair
+      represents the relation s*x_i + t*x_j = 0, where the i, j must
+      be Python int's, and the s,t must all be 1 or -1.
 
-        - ``n`` - int, the x_i are x_0, ..., x_n-1.
+    - ``n`` -- int, the x_i are x_0, ..., x_n-1.
 
     OUTPUT:
 
-        -  ``mod`` - list such that mod[i] = (j,s), which means
-           that x_i is equivalent to s*x_j, where the x_j are a basis for
-           the quotient.
+    - ``mod`` -- list such that mod[i] = (j,s), which means that x_i
+      is equivalent to s*x_j, where the x_j are a basis for the
+      quotient.
+
+    The output depends on the order of the input.
 
     EXAMPLES::
 
-        sage: v = [((0,1), (1,-1)), ((1,1), (3,1)), ((2,1),(3,1)), ((4,1),(5,-1))]
-        sage: rels = set(v)
-        sage: n = 6
         sage: from sage.modular.modsym.relation_matrix_pyx import sparse_2term_quotient_only_pm1
+        sage: rels = [((0,1), (1,-1)), ((1,1), (3,1)), ((2,1),(3,1)), ((4,1),(5,-1))]
+        sage: n = 6
         sage: sparse_2term_quotient_only_pm1(rels, n)
         [(3, -1), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
-    if not isinstance(rels, set):
-        raise TypeError, "rels must be a set"
-
     n = int(n)
 
-    tm = misc.verbose("Starting optimized integer sparse 2-term quotient...")
+    tm = verbose("Starting optimized integer sparse 2-term quotient...")
 
     cdef int c0, c1, i, die
-    free = range(n)
-    coef = [1]*n
-    related_to_me = [[] for i in range(n)]
+    cdef list free = list(xrange(n))
+    cdef list coef = [1] * n
+    cdef list related_to_me = [[] for i in range(n)]
 
     for v0, v1 in rels:
         c0 = coef[v0[0]] * v0[1]
@@ -83,8 +84,8 @@ def sparse_2term_quotient_only_pm1(rels, n):
             x = free[v0[0]]
             free[x] = free[v1[0]]
             if c0 != 1 and c0 != -1:
-                raise ValueError, "coefficients must all be -1 or 1."
-            coef[x] = -c1/c0
+                raise ValueError("coefficients must all be -1 or 1.")
+            coef[x] = -c1 * c0
             for i in related_to_me[x]:
                 free[i] = free[x]
                 coef[i] *= coef[x]
@@ -100,8 +101,7 @@ def sparse_2term_quotient_only_pm1(rels, n):
     # Special casing the rationals leads to a huge speedup,
     # actually.  (All the code above is slower than just this line
     # without this special case.)
-    mod = [(free[i], Rational(coef[i])) for i in range(len(free))]
+    mod = [(fi, Rational(ci)) for fi, ci in zip(free, coef)]
 
-    misc.verbose("finished",tm)
+    verbose("finished", tm)
     return mod
-

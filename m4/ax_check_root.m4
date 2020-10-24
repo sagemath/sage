@@ -48,7 +48,7 @@ AC_DEFUN([AX_CHECK_ROOT],[
 AC_MSG_CHECKING([for root user])
 
 uid=`id -u`
-if test "x$uid" == "x0"; then
+if test "x$uid" = "x0"; then
     AC_MSG_RESULT([yes])
     $1
 else

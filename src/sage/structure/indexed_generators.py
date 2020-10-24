@@ -1,14 +1,18 @@
+# -*- coding: utf-8 -*-
 """
 Indexed Generators
 """
-#*****************************************************************************
-#       Copyright (C) 2013      Travis Scrimshaw <tscrim at ucdavis.edu>,
+# ****************************************************************************
+#       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.structure.category_object import normalize_names
 
-from sage.rings.all import Integer
 
 class IndexedGenerators(object):
     r"""nodetex
@@ -71,8 +75,14 @@ class IndexedGenerators(object):
       string to use for tensor product in the print representation. If
       ``None``, use  ``sage.categories.tensor.symbol``.
 
-    - ``generator_cmp`` -- a comparison function (default: ``cmp``),
+    - ``sorting_key`` -- a key function (default: ``lambda x: x``),
       to use for sorting elements in the output of elements
+
+    - ``sorting_reverse`` -- bool (default: ``False``), if ``True`` 
+      sort elements in reverse order in the output of elements
+
+    - ``string_quotes`` -- bool (default: ``True``), if ``True`` then
+      display string indices with quotes
 
     .. NOTE::
 
@@ -130,7 +140,9 @@ class IndexedGenerators(object):
                                'scalar_mult': "*",
                                'latex_scalar_mult': None,
                                'tensor_symbol': None,
-                               'generator_cmp': cmp}
+                               'string_quotes': True,
+                               'sorting_key': lambda x: x,
+                               'sorting_reverse': False}
         # 'bracket': its default value here is None, meaning that
         # the value of self._repr_option_bracket is used; the default
         # value of that attribute is True -- see immediately before
@@ -185,9 +197,11 @@ class IndexedGenerators(object):
         - ``scalar_mult``
         - ``latex_scalar_mult``
         - ``tensor_symbol``
-        - ``generator_cmp``
+        - ``string_quotes``
+        - ``sorting_key``
+        - ``sorting_reverse``
 
-        See the documentation for :class:`CombinatorialFreeModule` for
+        See the documentation for :class:`IndexedGenerators` for
         descriptions of the effects of setting each of these options.
 
         OUTPUT: if the user provides any input, set the appropriate
@@ -206,10 +220,13 @@ class IndexedGenerators(object):
         TESTS::
 
             sage: sorted(F.print_options().items())
-            [('bracket', '('), ('generator_cmp', <built-in function cmp>),
+            [('bracket', '('),
              ('latex_bracket', False), ('latex_prefix', None),
              ('latex_scalar_mult', None), ('prefix', 'x'),
-             ('scalar_mult', '*'), ('tensor_symbol', None)]
+             ('scalar_mult', '*'),
+             ('sorting_key', <function ...<lambda> at ...>),
+             ('sorting_reverse', False), ('string_quotes', True),
+             ('tensor_symbol', None)]
             sage: F.print_options(bracket='[') # reset
         """
         # don't just use kwds.get(...) because I want to distinguish
@@ -217,11 +234,7 @@ class IndexedGenerators(object):
         # being there altogether.
         if kwds:
             for option in kwds:
-                # TODO: make this into a set and put it in a global variable?
-                if option in ['prefix', 'latex_prefix', 'bracket', 'latex_bracket',
-                              'scalar_mult', 'latex_scalar_mult', 'tensor_symbol',
-                              'generator_cmp'
-                             ]:
+                if option in self._print_options:
                     self._print_options[option] = kwds[option]
                 else:
                     raise ValueError('{} is not a valid print option.'.format(option))
@@ -262,6 +275,9 @@ class IndexedGenerators(object):
             sage: e = F.basis()
             sage: e['a'] + 2*e['b']    # indirect doctest
             F['a'] + 2*F['b']
+            sage: F.print_options(string_quotes=False)
+            sage: e['a'] + 2*e['b']
+            F[a] + 2*F[b]
 
             sage: QS3 = CombinatorialFreeModule(QQ, Permutations(3), prefix="")
             sage: original_print_options = QS3.print_options()
@@ -309,6 +325,9 @@ class IndexedGenerators(object):
         else:
             left = bracket
             right = bracket
+        quotes = self._print_options.get('string_quotes', True)
+        if not quotes and isinstance(m, str):
+            return self.prefix() + left + m + right
         return self.prefix() + left + repr(m) + right # mind the (m), to accept a tuple for m
 
     def _ascii_art_generator(self, m):
@@ -324,17 +343,48 @@ class IndexedGenerators(object):
               **
              **
              *
-            sage: Partitions.global_options(diagram_str="#", convention="french")
+            sage: Partitions.options(diagram_str="#", convention="french")
             sage: ascii_art(R[1,2,2,4])
             R
              #
              ##
               ##
                ####
+            sage: Partitions.options._reset()
         """
         from sage.typeset.ascii_art import AsciiArt, ascii_art
         pref = AsciiArt([self.prefix()])
-        r = pref * (AsciiArt([" "**Integer(len(pref))]) + ascii_art(m))
+        r = pref * (AsciiArt([" " * len(pref)]) + ascii_art(m))
+        r._baseline = r._h - 1
+        return r
+
+    def _unicode_art_generator(self, m):
+        r"""
+        Return an unicode art representing the generator indexed by ``m``.
+
+        TESTS::
+
+            sage: R = NonCommutativeSymmetricFunctions(QQ).R()
+            sage: unicode_art(R[1,2,2,4])
+            R
+               ┌┬┬┬┐
+              ┌┼┼┴┴┘
+             ┌┼┼┘
+             ├┼┘
+             └┘
+            sage: Partitions.options.convention="french"
+            sage: unicode_art(R[1,2,2,4])
+            R
+             ┌┐
+             ├┼┐
+             └┼┼┐
+              └┼┼┬┬┐
+               └┴┴┴┘
+            sage: Partitions.options._reset()
+        """
+        from sage.typeset.unicode_art import UnicodeArt, unicode_art
+        pref = UnicodeArt([self.prefix()])
+        r = pref * (UnicodeArt([" " * len(pref)]) + unicode_art(m))
         r._baseline = r._h - 1
         return r
 
@@ -433,4 +483,212 @@ class IndexedGenerators(object):
         if prefix == "":
             return left + s + right
         return "%s_{%s}" % (prefix, s)
+
+def split_index_keywords(kwds):
+    """
+    Split the dictionary ``kwds`` into two dictionaries, one containing
+    keywords for :class:`IndexedGenerators`, and the other is everything else.
+
+    OUTPUT:
+
+    The dictionary containing only they keywords
+    for :class:`IndexedGenerators`. This modifies the dictionary ``kwds``.
+
+    .. WARNING::
+
+        This modifies the input dictionary ``kwds``.
+
+    EXAMPLES::
+
+        sage: from sage.structure.indexed_generators import split_index_keywords
+        sage: d = {'string_quotes': False, 'bracket': None, 'base': QQ}
+        sage: split_index_keywords(d)
+        {'bracket': None, 'string_quotes': False}
+        sage: d
+        {'base': Rational Field}
+    """
+    ret = {}
+    for option in ['prefix', 'latex_prefix', 'bracket', 'latex_bracket',
+                   'scalar_mult', 'latex_scalar_mult', 'tensor_symbol',
+                   'sorting_key', 'sorting_reverse',
+                   'string_quotes']:
+        try:
+            ret[option] = kwds.pop(option)
+        except KeyError:
+            pass
+    return ret
+
+def parse_indices_names(names, index_set, prefix, kwds={}):
+    """
+    Parse the names, index set, and prefix input, along with setting
+    default values for keyword arguments ``kwds``.
+
+    OUTPUT:
+
+    The triple ``(N, I, p)``:
+
+    - ``N`` is the tuple of variable names,
+    - ``I`` is the index set, and
+    - ``p`` is the prefix.
+
+    This modifies the dictionary ``kwds``.
+
+    .. NOTE::
+
+        When the indices, names, or prefix have not been given, it
+        should be passed to this function as ``None``.
+
+    .. NOTE::
+
+        For handling default prefixes, if the result will be ``None`` if
+        it is not processed in this function.
+
+    EXAMPLES::
+
+        sage: from sage.structure.indexed_generators import parse_indices_names
+        sage: d = {}
+        sage: parse_indices_names('x,y,z', ZZ, None, d)
+        (('x', 'y', 'z'), Integer Ring, None)
+        sage: d
+        {}
+        sage: d = {}
+        sage: parse_indices_names('x,y,z', None, None, d)
+        (('x', 'y', 'z'), {'x', 'y', 'z'}, '')
+        sage: d
+        {'bracket': False, 'string_quotes': False}
+        sage: d = {}
+        sage: parse_indices_names(None, ZZ, None, d)
+        (None, Integer Ring, None)
+        sage: d
+        {}
+
+    ::
+
+        sage: d = {'string_quotes':True, 'bracket':'['}
+        sage: parse_indices_names(['a','b','c'], ZZ, 'x', d)
+        (('a', 'b', 'c'), Integer Ring, 'x')
+        sage: d
+        {'bracket': '[', 'string_quotes': True}
+        sage: parse_indices_names('x,y,z', None, 'A', d)
+        (('x', 'y', 'z'), {'x', 'y', 'z'}, 'A')
+        sage: d
+        {'bracket': '[', 'string_quotes': True}
+    """
+    if index_set is None:
+        if names is None:
+            raise ValueError("either the indices or names must be given")
+
+        if prefix is None:
+            prefix = ''
+        kwds.setdefault('string_quotes', False)
+        kwds.setdefault('bracket', False)
+
+    names, index_set = standardize_names_index_set(names, index_set, -1)
+
+    return (names, index_set, prefix)
+
+def standardize_names_index_set(names=None, index_set=None, ngens=None):
+    """
+    Standardize the ``names`` and ``index_set`` inputs.
+
+    INPUT:
+
+    - ``names`` -- (optional) the variable names
+    - ``index_set`` -- (optional) the index set
+    - ``ngens`` -- (optional) the number of generators
+
+    If ``ngens`` is a negative number, then this does not check that
+    the number of variable names matches the size of the index set.
+
+    OUTPUT:
+
+    A pair ``(names_std, index_set_std)``, where ``names_std`` is either
+    ``None`` or a tuple of strings, and where ``index_set_std`` is a finite
+    enumerated set.
+    The purpose of ``index_set_std`` is to index the generators of some object
+    (e.g., the basis of a module); the strings in ``names_std``, when they
+    exist, are used for printing these indices. The ``ngens``
+
+    If ``names`` contains exactly one name ``X`` and ``ngens`` is greater than
+    1, then ``names_std`` are ``Xi`` for ``i`` in ``range(ngens)``.
+
+    TESTS::
+
+        sage: from sage.structure.indexed_generators import standardize_names_index_set
+        sage: standardize_names_index_set('x,y')
+        (('x', 'y'), {'x', 'y'})
+        sage: standardize_names_index_set(['x','y'])
+        (('x', 'y'), {'x', 'y'})
+        sage: standardize_names_index_set(['x','y'], ['a','b'])
+        (('x', 'y'), {'a', 'b'})
+        sage: standardize_names_index_set('x,y', ngens=2)
+        (('x', 'y'), {'x', 'y'})
+        sage: standardize_names_index_set(index_set=['a','b'], ngens=2)
+        (None, {'a', 'b'})
+        sage: standardize_names_index_set('x', ngens=3)
+        (('x0', 'x1', 'x2'), {'x0', 'x1', 'x2'})
+
+        sage: standardize_names_index_set()
+        Traceback (most recent call last):
+        ...
+        ValueError: the index_set, names, or number of generators must be specified
+        sage: standardize_names_index_set(['x'], ['a', 'b'])
+        Traceback (most recent call last):
+        ...
+        IndexError: the number of names must equal the size of the indexing set
+        sage: standardize_names_index_set('x,y', ['a'])
+        Traceback (most recent call last):
+        ...
+        IndexError: the number of names must equal the size of the indexing set
+        sage: standardize_names_index_set('x,y,z', ngens=2)
+        Traceback (most recent call last):
+        ...
+        IndexError: the number of names must equal the number of generators
+        sage: standardize_names_index_set(index_set=['a'], ngens=2)
+        Traceback (most recent call last):
+        ...
+        IndexError: the size of the indexing set must equal the number of generators
+    """
+    if names is not None:
+        if ngens is None or ngens < 0:
+            names = normalize_names(-1, names)
+        else:
+            names = normalize_names(ngens, names)
+
+    if index_set is None:
+        if names is None:
+            # If neither is specified, we make range(ngens) the index set
+            if ngens is None:
+                raise ValueError("the index_set, names, or number of"
+                                 " generators must be specified")
+            index_set = tuple(range(ngens))
+        else:
+            # If only the names are specified, then we make the indexing set
+            #   be the names
+            index_set = tuple(names)
+
+    from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+    if isinstance(index_set, dict): # dict of {name: index} -- not likely to be used
+        if names is not None:
+            raise ValueError("cannot give index_set as a dict and names")
+        names = normalize_names(-1, tuple(index_set.keys()))
+        index_set = FiniteEnumeratedSet([index_set[n] for n in names])
+    elif isinstance(index_set, str):
+        index_set = FiniteEnumeratedSet(list(index_set))
+    elif isinstance(index_set, (tuple, list)):
+        index_set = FiniteEnumeratedSet(index_set)
+
+    if ngens is None or ngens >= 0:
+        if names is not None:
+            if len(names) != index_set.cardinality():
+                raise IndexError("the number of names must equal"
+                                 " the size of the indexing set")
+            if ngens is not None and len(names) != ngens:
+                raise IndexError("the number of names must equal the"
+                                 " number of generators")
+        elif ngens is not None and index_set.cardinality() != ngens:
+            raise IndexError("the size of the indexing set must equal"
+                             " the number of generators")
+
+    return (names, index_set)
 

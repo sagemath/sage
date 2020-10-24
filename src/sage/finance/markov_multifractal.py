@@ -16,6 +16,7 @@ TESTS::
     sage: loads(dumps(msm)) == msm
     True
 """
+from __future__ import absolute_import
 import math
 
 class MarkovSwitchingMultifractal:
@@ -53,28 +54,59 @@ class MarkovSwitchingMultifractal:
         self.__kbar = int(kbar)
         assert self.__kbar > 0, "kbar must be positive"
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
-        Compare ``self`` and ``other``.
+        Test equality of ``self`` and ``other``.
 
         Comparison is done on the tuple ``(m0, sigma, b, gamma_kbar, kbar)``.
 
         EXAMPLES::
 
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
-            sage: msm.__cmp__(3) # random - depends on memory layout
-            -1
-            sage: msm.__cmp__(msm)
-            0
+
+            sage: msm == msm
+            True
             sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11); cad_usd
             Markov switching multifractal model with m0 = 1.278, sigma = 0.262, b = 2.11, and gamma_10 = 0.644
-            sage: msm.__cmp__(cad_usd)
-            1
+            sage: msm == cad_usd
+            False
         """
         if not isinstance(other, MarkovSwitchingMultifractal):
-            return cmp(type(self), type(other))
-        return cmp((self.__m0, self.__sigma, self.__b, self.__gamma_kbar, self.__kbar),
-                   (other.__m0, other.__sigma, other.__b, other.__gamma_kbar, other.__kbar))
+            return False
+        return (self.__m0 == other.__m0 and
+                self.__sigma == other.__sigma and
+                self.__b == other.__b and
+                self.__gamma_kbar == other.__gamma_kbar and
+                self.__kbar == other.__kbar)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+            sage: H = hash(msm)
+        """
+        return hash((self.__m0, self.__sigma, self.__b, self.__gamma_kbar,
+                     self.__kbar))
+
+    def __ne__(self, other):
+        """
+        Test inequality of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+
+            sage: msm != msm
+            False
+            sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11); cad_usd
+            Markov switching multifractal model with m0 = 1.278, sigma = 0.262, b = 2.11, and gamma_10 = 0.644
+            sage: msm != cad_usd
+            True
+        """
+        return not (self == other)
 
     def __repr__(self):
         """
@@ -218,7 +250,7 @@ class MarkovSwitchingMultifractal:
             sage: cad_usd = finance.MarkovSwitchingMultifractal(10,1.278,0.262,0.644,2.11); cad_usd
             Markov switching multifractal model with m0 = 1.278, sigma = 0.262, b = 2.11, and gamma_10 = 0.644
         """
-        import markov_multifractal_cython
+        from . import markov_multifractal_cython
         return markov_multifractal_cython.simulations(n, k,
                    self.__m0, self.__sigma,
                    self.__kbar, self.gamma())

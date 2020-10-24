@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Crystals
 ========
 
@@ -21,8 +21,9 @@ Catalogs of crystals
 See also
 --------
 
-- The categories for crystals: :class:`Crystals`, :class:`HighestWeightCrystals`, :class:`FiniteCrystals`, :class:`ClassicalCrystals`, :class:`RegularCrystals` -- The categories for crystals
+- The categories for crystals: :class:`Crystals`, :class:`HighestWeightCrystals`,
+  :class:`FiniteCrystals`, :class:`ClassicalCrystals`, :class:`RegularCrystals`,
+  :class:`~sage.categories.regular_supercrystals.RegularSuperCrystals`
+  -- The categories for crystals
 - :ref:`sage.combinat.root_system`
 """
-
-import all

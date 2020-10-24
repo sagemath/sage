@@ -2,21 +2,15 @@
 Basic arithmetic with C integers
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 ###################################################################
 # We define the following functions in this file, both
@@ -41,44 +35,50 @@ Basic arithmetic with C integers
 
 # The int definitions
 
-from sage.ext.stdsage cimport PY_NEW
-include "sage/ext/cdefs.pxi"
+from libc.math cimport sqrt
+from sage.libs.gmp.mpz cimport mpz_set_ui
 
-from sage.libs.pari.paridecl cimport *
-from sage.libs.pari.gen cimport gen as pari_gen
+from sage.ext.stdsage cimport PY_NEW
+
+from cypari2.paridecl cimport *
+from cypari2.gen cimport Gen as pari_gen
 from sage.libs.pari.all import pari
 from sage.rings.integer cimport Integer
 
 cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False):
     r"""
-    List of all primes between start and stop-1, inclusive.  If the
-    second argument is omitted, returns the primes up to the first
-    argument.
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 
-    This function is closely related to (and can use) the primes iterator.
-    Use algorithm "pari_primes" when both start and stop are not too large,
-    since in all cases this function makes a table of primes up to
-    stop. If both are large, use algorithm "pari_isprime" instead.
+    If the second argument is omitted, this returns the primes up to the
+    first argument.
 
-    Algorithm "pari_primes" is faster for most input, but crashes for larger input.
-    Algorithm "pari_isprime" is slower but will work for much larger input.
+    This function is closely related to (and can use) the primes
+    iterator.  Use algorithm ``"pari_primes"`` when both ``start`` and
+    ``stop`` are not too large, since in all cases this function makes
+    a table of primes up to ``stop``. If both are large, use algorithm
+    ``"pari_isprime"`` instead.
+
+    Algorithm ``"pari_primes"`` is faster for most input, but crashes
+    for larger input.
+    Algorithm ``"pari_isprime"`` is slower but will work for much larger input.
 
     INPUT:
 
-        - ``start`` -- lower bound
+    - ``start`` -- integer, lower bound
 
-        - ``stop`` -- upper bound
+    - ``stop`` -- integer, upper bound
 
-        - ``algorithm`` -- string, one of:
+    - ``algorithm`` -- optional string, one of:
 
-             - "pari_primes": Uses PARI's primes function.  Generates all primes up to stop.
-                              Depends on PARI's primepi function.
+         - ``"pari_primes"``: Uses PARI's :pari:`primes` function.
+            Generates all primes up to stop.
+            Depends on PARI's :pari:`primepi` function.
 
-             - "pari_isprime": Uses a mod 2 wheel and PARI's isprime function by calling
-                             the primes iterator.
+         - "pari_isprime": Uses a mod 2 wheel and PARI's :pari:`isprime`
+           function by calling the primes iterator.
 
-        - ``py_ints`` -- boolean (default False), return Python ints rather than Sage Integers (faster)
-
+    - ``py_ints`` -- optional boolean (default ``False``), return
+      Python ints rather than Sage Integers (faster)
 
     EXAMPLES::
 
@@ -121,6 +121,13 @@ cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False)
 
         sage: prime_range(4652360, 4652400)
         []
+
+    Test for non-existing algorithm::
+
+        sage: prime_range(55, algorithm='banana')
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be "pari_primes" or "pari_isprime"
 
     AUTHORS:
 
@@ -166,24 +173,25 @@ cpdef prime_range(start, stop=None, algorithm="pari_primes", bint py_ints=False)
             NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
 
     elif algorithm == "pari_isprime":
-        from sage.rings.arith import primes
+        from sage.arith.all import primes
         res = list(primes(start, stop))
     else:
-        raise ValueError("algorithm argument must be either ``pari_primes`` or ``pari_isprime``")
+        raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
     return res
 
+
 cdef class arith_int:
-    cdef public int abs_int(self, int x) except -1:
+    cdef int abs_int(self, int x) except -1:
         if x < 0:
             return -x
         return x
 
-    cdef public int sign_int(self, int n) except -2:
+    cdef int sign_int(self, int n) except -2:
         if n < 0:
             return -1
         return 1
 
-    cdef public int c_gcd_int(self, int a, int b) except -1:
+    cdef int c_gcd_int(self, int a, int b) except -1:
         cdef int c
         if a==0:
             return self.abs_int(b)
@@ -197,12 +205,10 @@ cdef class arith_int:
             b = c
         return a
 
-
     def gcd_int(self, int a, int b):
         return self.c_gcd_int(a,b)
 
-
-    cdef public int c_xgcd_int(self, int a, int b, int* ss, int* tt) except -1:
+    cdef int c_xgcd_int(self, int a, int b, int* ss, int* tt) except -1:
         cdef int psign, qsign, p, q, r, s, c, quot, new_r, new_s
 
         if a == 0:
@@ -239,17 +245,16 @@ cdef class arith_int:
         g = self.c_xgcd_int(a,b, &s, &t)
         return (g,s,t)
 
-    cdef public int c_inverse_mod_int(self, int a, int m) except -1:
+    cdef int c_inverse_mod_int(self, int a, int m) except -1:
         if a == 1 or m<=1: return a%m   # common special case
         cdef int g, s, t
         g = self.c_xgcd_int(a,m, &s, &t)
         if g != 1:
-            raise ArithmeticError, "The inverse of %s modulo %s is not defined."%(a,m)
+            raise ArithmeticError("The inverse of %s modulo %s is not defined." % (a, m))
         s = s % m
         if s < 0:
             s = s + m
         return s
-
 
     def inverse_mod_int(self, int a, int m):
         return self.c_inverse_mod_int(a, m)
@@ -309,17 +314,17 @@ cdef class arith_int:
 # The long long versions are next.
 cdef class arith_llong:
 
-    cdef public long long abs_longlong(self, long long x) except -1:
+    cdef long long abs_longlong(self, long long x) except -1:
         if x < 0:
             return -x
         return x
 
-    cdef public long long sign_longlong(self, long long n) except -2:
+    cdef long long sign_longlong(self, long long n) except -2:
         if n < 0:
             return -1
         return 1
 
-    cdef public long long c_gcd_longlong(self, long long a, long long b) except -1:
+    cdef long long c_gcd_longlong(self, long long a, long long b) except -1:
         cdef long long c
         if a==0:
             return self.abs_longlong(b)
@@ -333,16 +338,13 @@ cdef class arith_llong:
             b = c
         return a
 
-
     def gcd_longlong(self, long long a, long long b):
         return self.c_gcd_longlong(a,b)
 
-
-    cdef public long long c_xgcd_longlong(self, long long a, long long b,
-                                          long long *ss,
-                                          long long *tt) except -1:
+    cdef long long c_xgcd_longlong(self, long long a, long long b,
+                                   long long *ss,
+                                   long long *tt) except -1:
         cdef long long psign, qsign, p, q, r, s, c, quot, new_r, new_s
-
 
         if a == 0:
             ss[0] = 0
@@ -371,10 +373,9 @@ cdef class arith_llong:
         ss[0] = p*psign
         tt[0] = q*qsign
 
-
         return a
 
-    cdef public long long c_inverse_mod_longlong(self, long long a, long long m) except -1:
+    cdef long long c_inverse_mod_longlong(self, long long a, long long m) except -1:
         cdef long long g, s, t
         g = self.c_xgcd_longlong(a,m, &s, &t)
         if g != 1:
@@ -438,7 +439,3 @@ cdef class arith_llong:
         cdef long long n, d
         self.c_rational_recon_longlong(a, m, &n, &d)
         return (n,d)
-
-
-
-

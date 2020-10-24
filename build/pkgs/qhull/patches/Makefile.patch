@@ -1,0 +1,40 @@
+* fix dependencies between target (otherwise compilation fails with "make -j3")
+
+--- a/Makefile
++++ b/Makefile
+@@ -200,7 +200,7 @@ cleanall: clean
+ doc: 
+ 	$(PRINTMAN) $(TXTFILES) $(DOCFILES)
+ 
+-install:
++install: bin/qconvex bin/qdelaunay bin/qhalf bin/qhull bin/qvoronoi bin/rbox
+ 	mkdir -p $(BINDIR)
+ 	mkdir -p $(DOCDIR)
+ 	mkdir -p $(INCDIR)/libqhull
+@@ -240,7 +240,7 @@ printc:
+ printf:
+ 	$(PRINTC) $(FILES)
+ 
+-qtest:
++qtest: bin/testqset bin/rbox
+ 	@echo ============================================
+ 	@echo == make qtest ==============================
+ 	@echo ============================================
+@@ -262,7 +262,7 @@ qtest:
+ 	@echo ============================================
+ 	-bin/rbox D4 | bin/qhull Tv
+ 	
+-test: qtest
++test: qtest  bin/qconvex bin/qdelaunay bin/qhalf bin/qhull bin/qvoronoi bin/rbox
+ 	@echo ============================================
+ 	@echo == make test ===============================
+ 	@echo ============================================
+@@ -319,7 +319,7 @@ testall: test
+ 	-eg/q_egtest
+ 	-eg/q_test
+ 
+-qconvex-prompt:
++qconvex-prompt: bin/qconvex bin/rbox
+ 	bin/qconvex
+ 	@echo
+ 	@echo ============================================

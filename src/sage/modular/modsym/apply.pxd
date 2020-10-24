@@ -1,4 +1,4 @@
-from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.types cimport fmpz_poly_t
 
 cdef class Apply:
     cdef fmpz_poly_t f, g, ff, gg

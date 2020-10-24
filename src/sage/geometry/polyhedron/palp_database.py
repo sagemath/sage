@@ -9,34 +9,36 @@ EXAMPLES::
     ....:     fan = Fan([cone])
     ....:     X = ToricVariety(fan)
     ....:     ideal = X.affine_algebraic_patch(cone).defining_ideal()
-    ....:     print lp.n_vertices(), ideal.hilbert_series()
-    3 (-t^2 - 7*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
-    3 (-t^2 - t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+    ....:     print("{} {}".format(lp.n_vertices(), ideal.hilbert_series()))
+    3 (t^2 + 7*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
+    3 (t^2 + t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     3 (t^2 + 6*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     3 (t^2 + 2*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     3 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
-    4 (-t^2 - 5*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
-    4 (-t^2 - 3*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+    4 (t^2 + 5*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
+    4 (t^2 + 3*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     4 (t^2 + 2*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     4 (t^2 + 6*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     4 (t^2 + 6*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     4 (t^2 + 2*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     4 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
-    5 (-t^2 - 3*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
-    5 (-t^2 - 5*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+    5 (t^2 + 3*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
+    5 (t^2 + 5*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     5 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     6 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
 """
+from __future__ import print_function
+
+import os
 
 from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
-from sage.matrix.all import matrix
-from sage.rings.all import Integer, ZZ
+from sage.rings.all import ZZ
+
+from sage.interfaces.process import terminate
 
 from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
-from sage.geometry.polyhedron.constructor import Polyhedron
-
 
 
 #########################################################################
@@ -47,7 +49,7 @@ class PALPreader(SageObject):
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension of the poylhedra
+    - ``dim`` -- integer. The dimension of the polyhedra
 
     - ``data_basename`` -- string or ``None`` (default). The directory
       and database base filename (PALP usually uses ``'zzdb'``) name
@@ -69,12 +71,12 @@ class PALPreader(SageObject):
         sage: next(iter(PALPreader(2, output='list')))
         [[1, 0], [0, 1], [-1, -1]]
         sage: type(_)
-        <type 'list'>
+        <... 'list'>
 
         sage: next(iter(PALPreader(2, output='Polyhedron')))
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: type(_)
-        <class 'sage.geometry.polyhedron.backend_ppl.Polyhedra_ZZ_ppl_with_category.element_class'>
+        <class 'sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category.element_class'>
 
         sage: next(iter(PALPreader(2, output='PPL')))
         A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
@@ -105,13 +107,13 @@ class PALPreader(SageObject):
         if data_basename is not None:
             self._data_basename = data_basename
         else:
-            import os
-            from sage.env import SAGE_SHARE
-            self._data_basename = os.path.join(SAGE_SHARE, 'reflexive_polytopes',
-                                               'Full'+str(dim)+'d', 'zzdb')
+            from sage.env import POLYTOPE_DATA_DIR
+            self._data_basename = os.path.join(POLYTOPE_DATA_DIR,
+                                               'Full{}d'.format(dim), 'zzdb')
             info = self._data_basename + '.info'
             if not os.path.exists(info):
-                raise ValueError('Cannot find PALP database: '+info)
+                raise ValueError('Cannot find PALP database: {}'.format(info))
+
         from sage.geometry.polyhedron.parent import Polyhedra
         self._polyhedron_parent = Polyhedra(ZZ, dim)
         self._output = output.lower()
@@ -129,12 +131,14 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: polygons._palp_Popen()
-            <subprocess.Popen object at 0x...>
+            <...Popen...>
         """
-        return Popen(["class.x", "-b2a", "-di", self._data_basename], stdout=PIPE)
+
+        return Popen(["class.x", "-b2a", "-di", self._data_basename],
+                     stdout=PIPE, encoding='utf-8', errors='surrogateescape')
 
     def _read_vertices(self, stdout, rows, cols):
-        """
+        r"""
         Read vertex data from the PALP output pipe.
 
         OUTPUT:
@@ -151,14 +155,14 @@ class PALPreader(SageObject):
             sage: polygons._read_vertices(palp.stdout, 2, 3)
             [[1, 0], [0, 1], [-1, -1]]
         """
-        m = [ [] for col in range(0,cols) ]
-        for row in range(0,rows):
+        m = [[] for col in range(0, cols)]
+        for row in range(0, rows):
             for col,x in enumerate(stdout.readline().split()):
                 m[col].append(ZZ(x))
         return m
 
     def _read_vertices_transposed(self, stdout, rows, cols):
-        """
+        r"""
         Read vertex data from the PALP output pipe.
 
         OUTPUT:
@@ -176,8 +180,8 @@ class PALPreader(SageObject):
             [[1, 0, -1], [0, 1, -1]]
         """
         m = []
-        for row in range(0,rows):
-            m.append( [ ZZ(x) for x in stdout.readline().split() ] )
+        for row in range(0, rows):
+            m.append([ZZ(x) for x in stdout.readline().split()])
         return m
 
     def _iterate_list(self, start, stop, step):
@@ -206,38 +210,31 @@ class PALPreader(SageObject):
         if step is None:
             step = 1
         palp = self._palp_Popen()
-        try:
+        with terminate(palp):
             palp_out = palp.stdout
             i = 0
             while True:
                 l = palp_out.readline().strip()
-                if l=='' or l.startswith('#'):
+                if l == '' or l.startswith('#'):
                     return  # EOF
-                l=l.split()
-                dim = ZZ(l[0]);  # dimension
-                n = ZZ(l[1]);    # number of vertices
-                if i>=start and (i-start) % step == 0:
+                l = l.split()
+                dim = ZZ(l[0])  # dimension
+                n = ZZ(l[1])    # number of vertices
+                if i >= start and (i - start) % step == 0:
                     if dim == self._dim:
                         vertices = self._read_vertices(palp_out, dim, n)
-                    elif n == self._dim:  # PALP sometimes returns transposed data #@!#@
+                    elif n == self._dim:
+                        # PALP sometimes returns transposed data #@!#@
                         vertices = self._read_vertices_transposed(palp_out, dim, n)
                     else:
                         raise ValueError('PALP output dimension mismatch.')
                     yield vertices
                 else:
-                    for row in range(0,dim):
+                    for row in range(0, dim):
                         palp_out.readline()
                 i += 1
-                if stop is not None and i>=stop:
+                if stop is not None and i >= stop:
                     return
-        finally:
-            palp.poll()
-            if palp.returncode is None:
-                palp.terminate()
-            palp.poll()
-            if palp.returncode is None:
-                palp.kill()
-
 
     def _iterate_Polyhedron(self, start, stop, step):
         """
@@ -262,7 +259,7 @@ class PALPreader(SageObject):
         """
         parent = self._polyhedron_parent
         for vertices in self._iterate_list(start, stop, step):
-            p = parent.element_class(parent, [vertices,[],[]], None)
+            p = parent.element_class(parent, [vertices, [], []], None)
             yield p
 
     def _iterate_PPL(self, start, stop, step):
@@ -314,8 +311,9 @@ class PALPreader(SageObject):
             in Ambient free module of rank 2 over the principal ideal domain Integer Ring
         """
         from sage.modules.free_module import FreeModule
-        N = FreeModule(ZZ, self._dim)
         from sage.geometry.point_collection import PointCollection
+
+        N = FreeModule(ZZ, self._dim)
         for vertices in self._iterate_list(start, stop, step):
             yield PointCollection(vertices, module=N)
 
@@ -331,13 +329,13 @@ class PALPreader(SageObject):
 
         A function generating lattice polytopes in the specified output format.
 
-        EAMPLES::
+        EXAMPLES::
 
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: func = polygons._iterate(output='list')
             sage: func
-            <bound method PALPreader._iterate_list of <class 'sage.geometry.polyhedron.palp_database.PALPreader'>>
+            <bound method PALPreader._iterate_list of <sage.geometry.polyhedron.palp_database.PALPreader object at ...>>
             sage: iter = func(0,1,1)
             sage: next(iter)
             [[1, 0], [0, 1], [-1, -1]]
@@ -353,7 +351,7 @@ class PALPreader(SageObject):
         elif output == 'list':
             return self._iterate_list
         else:
-            raise TypeError('Unknown output format (='+str(self._output)+').')
+            raise TypeError('Unknown output format (={}).'.format(self._output))
 
     def __iter__(self):
         """
@@ -368,7 +366,7 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: polygons.__iter__()
-            <generator object _iterate_Polyhedron at 0x...>
+            <generator object ..._iterate_Polyhedron at 0x...>
         """
         iterator = self._iterate()
         return iterator(None, None, None)
@@ -390,7 +388,7 @@ class PALPreader(SageObject):
             return iterator(item.start, item.stop, item.step)
         else:
             try:
-                return next(iterator(item, item+1, 1))
+                return next(iterator(item, item + 1, 1))
             except StopIteration:
                 raise IndexError('Index out of range.')
 
@@ -402,7 +400,7 @@ class Reflexive4dHodge(PALPreader):
     Read the PALP database for Hodge numbers of 4d polytopes.
 
     The database is very large and not installed by default. You can
-    install it with the command ``install_package('polytopes_db_4d')``.
+    install it with the shell command ``sage -i polytopes_db_4d``.
 
     INPUT:
 
@@ -428,20 +426,21 @@ class Reflexive4dHodge(PALPreader):
 
         TESTS::
 
-        sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
-        sage: Reflexive4dHodge(1,101)  # optional - polytopes_db_4d
-        <class 'sage.geometry.polyhedron.palp_database.Reflexive4dHodge'>
+            sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
+            sage: Reflexive4dHodge(1,101)  # optional - polytopes_db_4d
+            <class 'sage.geometry.polyhedron.palp_database.Reflexive4dHodge'>
         """
         dim = 4
         if data_basename is None:
-            import os
-            from sage.env import SAGE_SHARE
-            data_basename = os.path.join(SAGE_SHARE, 'reflexive_polytopes',
+            from sage.env import POLYTOPE_DATA_DIR
+            data_basename = os.path.join(POLYTOPE_DATA_DIR,
                                          'Hodge4d', 'all')
             info = data_basename + '.vinfo'
             if not os.path.exists(info):
-                raise ValueError('Cannot find PALP database: '+info+
-                                 '. Did you install the polytopes_db_4d optional spkg?')
+                raise ValueError(
+                    'Cannot find PALP database: {}. Did you install the '
+                    'polytopes_db_4d optional spkg?'.format(info))
+
         PALPreader.__init__(self, dim, data_basename=data_basename, **kwds)
         self._h11 = h11
         self._h21 = h21
@@ -459,11 +458,10 @@ class Reflexive4dHodge(PALPreader):
             sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
             sage: polygons = Reflexive4dHodge(1, 101)   # optional - polytopes_db_4d
             sage: polygons._palp_Popen()                # optional - polytopes_db_4d
-            <subprocess.Popen object at 0x...>
+            <...Popen...>
         """
+
         return Popen(['class-4d.x', '-He',
-                      'H'+str(self._h21)+':'+str(self._h11)+'L100000000',
-                      '-di', self._data_basename], stdout=PIPE)
-
-
-
+                      'H{}:{}L100000000'.format(self._h21, self._h11),
+                      '-di', self._data_basename], stdout=PIPE,
+                      encoding='utf-8', errors='surrogateescape')

@@ -1,0 +1,128 @@
+From 51f36ef29e7d2482c23ea4da697e626cc61da611 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 2 May 2019 13:31:00 +0200
+Subject: [PATCH 2/3] Add PERL_SET_CONTEXT for thread correctness
+
+---
+ lib/callable/src/perl/methods.cc | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/callable/src/perl/methods.cc b/lib/callable/src/perl/methods.cc
+index 11beefb2..fccf63b7 100644
+--- a/lib/callable/src/perl/methods.cc
++++ b/lib/callable/src/perl/methods.cc
+@@ -40,6 +40,7 @@ const char Extension[]="Polymake::Core::Extension";
+ void Main::set_application(const AnyString& appname)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(1);
+    mPUSHp(appname.ptr, appname.len);
+    PUTBACK;
+@@ -49,6 +50,7 @@ void Main::set_application(const AnyString& appname)
+ void Main::set_application_of(const Object& x)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(1);
+    PUSHs(x.obj_ref);
+    PUTBACK;
+@@ -58,6 +60,7 @@ void Main::set_application_of(const Object& x)
+ void Main::add_extension(const AnyString& path)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(2);
+    mPUSHp(Extension, sizeof(Extension)-1);
+    mPUSHp(path.ptr, path.len);
+@@ -83,6 +86,7 @@ void Main::reset_preference(const AnyString& label_exp)
+ SV* Main::lookup_extension(const AnyString& path)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(2);
+    mPUSHp(Extension, sizeof(Extension)-1);
+    mPUSHp(path.ptr, path.len);
+@@ -93,6 +97,7 @@ SV* Main::lookup_extension(const AnyString& path)
+ void Main::call_app_method(const char* method, const AnyString& arg)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(2);
+    SV* const app=glue::get_current_application(aTHX);
+    PUSHs(app);
+@@ -104,6 +109,7 @@ void Main::call_app_method(const char* method, const AnyString& arg)
+ void Main::set_custom_var(const AnyString& name, const AnyString& key, Value& x)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(3);
+    mPUSHp(name.ptr, name.len);
+    if (key.ptr) mPUSHp(key.ptr, key.len);
+@@ -115,6 +121,7 @@ void Main::set_custom_var(const AnyString& name, const AnyString& key, Value& x)
+ void Main::reset_custom(const AnyString& name, const AnyString& key)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(2);
+    mPUSHp(name.ptr, name.len);
+    if (key.ptr) mPUSHp(key.ptr, key.len);
+@@ -125,6 +132,7 @@ void Main::reset_custom(const AnyString& name, const AnyString& key)
+ Scope Main::newScope()
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(0);
+    return Scope(this, call_func_scalar(aTHX_ new_scope_cv));
+ }
+@@ -137,6 +145,7 @@ void Scope::prefer_now(const AnyString& labels) const
+ void Scope::set_custom_var(const AnyString& name, const AnyString& key, Value& x) const
+ {
+    dTHXa(pm_main->pi);
++   PERL_SET_CONTEXT(pm_main->pi);
+    PmStartFuncall(3);
+    mPUSHp(name.ptr, name.len);
+    if (key.ptr) mPUSHp(key.ptr, key.len);
+@@ -148,6 +157,7 @@ void Scope::set_custom_var(const AnyString& name, const AnyString& key, Value& x
+ std::string Main::greeting(int verbose)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(1);
+    mPUSHi(verbose);
+    PUTBACK;
+@@ -157,6 +167,7 @@ std::string Main::greeting(int verbose)
+ void Main::shell_enable()
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(0);
+    glue::call_func_void(aTHX_ shell_enable_cv);
+ }
+@@ -167,6 +178,7 @@ Main::shell_execute_t Main::shell_execute(const std::string& input)
+       return shell_execute_t(true, input, input, input);
+ 
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(1);
+    mPUSHp(input.c_str(), input.size());
+    PUTBACK;
+@@ -187,6 +199,7 @@ Main::shell_execute_t Main::shell_execute(const std::string& input)
+ Main::shell_complete_t Main::shell_complete(const std::string& input)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(1);
+    mPUSHp(input.c_str(), input.size());
+    PUTBACK;
+@@ -209,6 +222,7 @@ Main::shell_complete_t Main::shell_complete(const std::string& input)
+ std::vector<std::string> Main::shell_context_help(const std::string& input, size_t pos, bool full, bool html)
+ {
+    dTHXa(pi);
++   PERL_SET_CONTEXT(pi);
+    PmStartFuncall(4);
+    mPUSHp(input.c_str(), input.size());
+    if (pos == std::string::npos)
+-- 
+2.19.0
+

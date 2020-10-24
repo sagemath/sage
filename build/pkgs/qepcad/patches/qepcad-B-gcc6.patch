@@ -1,0 +1,59 @@
+--- a/plot2d/plot.cc.orig	2018-08-29 20:10:06.396075816 -0600
++++ b/plot2d/plot.cc	2018-08-29 20:11:48.982924732 -0600
+@@ -276,7 +276,7 @@ bool SNoverSR::read(istream &in)
+   V.resize(N);
+   for(int i = 0; i < N; i++)
+     in >> V[i];
+-  return in;
++  return in.good();
+ }
+   
+ void SNoverSR::glRend(const CADColors &C)
+@@ -333,7 +333,7 @@ bool SRoverSR::read(istream &in)
+     }
+   }
+ 
+-  return in;
++  return in.good();
+ }
+   
+ void SRoverSR::glRend(const CADColors &C)
+@@ -351,7 +351,7 @@ bool SRoverSN::read(istream &in)
+ {
+   in >> colorType >> a >> b.y;
+   b.x = a.x;
+-  return in;
++  return in.good();
+ }
+ 
+ void SRoverSN::glRend(const CADColors &C)
+@@ -365,7 +365,8 @@ void SRoverSN::glRend(const CADColors &C
+ 
+ bool SNoverSN::read(istream &in)
+ {
+-  return in >> colorType >> a;
++  in >> colorType >> a;
++  return in.good();
+ }
+   
+ void SNoverSN::glRend(const CADColors &C)
+@@ -380,7 +381,8 @@ void SNoverSN::glRend(const CADColors &C
+ 
+ bool SN::read(istream &in)
+ {
+-  return in >> colorType >> x;
++  in >> colorType >> x;
++  return in.good();
+ }
+   
+ void SN::glRend(const CADColors &C)
+@@ -394,7 +396,8 @@ void SN::glRend(const CADColors &C)
+ 
+ bool SR::read(istream &in)
+ {
+-  return in >> colorType >> x1 >> x2;
++  in >> colorType >> x1 >> x2;
++  return in.good();
+ }
+   
+ void SR::glRend(const CADColors &C)

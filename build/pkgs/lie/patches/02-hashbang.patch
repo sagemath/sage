@@ -1,0 +1,8 @@
+diff -ur a/lie_script b/lie_script
+--- a/lie_script	2012-05-24 15:48:05.763203064 -0700
++++ b/lie_script	2012-05-24 15:48:24.339275579 -0700
+@@ -1,2 +1,4 @@
++#!/bin/sh
++
+ LD=actual directory gets substituted here
+ exec $LD/Lie.exe initfile $LD

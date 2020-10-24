@@ -6,42 +6,31 @@ of the period lattice of an elliptic curve, used in computing minimum height
 bounds.
 
 In particular, these are the approximating sets ``S^{(v)}`` in section 3.2 of
-Thotsaphon Thongjunthug's Ph.D. Thesis and paper [TT]_.
+Thotsaphon Thongjunthug's Ph.D. Thesis and paper [Tho2010]_.
 
 AUTHORS:
 
 - Robert Bradshaw (2010): initial version
 
 - John Cremona (2014): added some docstrings and doctests
-
-REFERENCES:
-
-.. [T] T. Thongjunthug, Computing a lower bound for the canonical
-   height on elliptic curves over number fields, Math. Comp. 79
-   (2010), pages 2431-2449.
-
 """
 
-##############################################################################
+#*****************************************************************************
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##############################################################################
-
+#*****************************************************************************
 
 import numpy as np
 cimport numpy as np
 
 from sage.rings.all import CIF
+from cpython.object cimport Py_EQ, Py_NE
+
 
 cdef class PeriodicRegion:
 
@@ -60,7 +49,7 @@ cdef class PeriodicRegion:
 
     def __init__(self, w1, w2, data, full=True):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: import numpy as np
             sage: from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
@@ -75,7 +64,6 @@ cdef class PeriodicRegion:
         """
         if data.dtype is not np.int8:
             data = data.astype(np.int8)
-        full = int(full)
         self.w1 = w1
         self.w2 = w2
         self.data = data
@@ -244,9 +232,9 @@ cdef class PeriodicRegion:
             dw2 /= 2
             for i in range(2*m):
                 for j in range(2*n):
-                    if less[i/2, j/2]:
+                    if less[i//2, j//2]:
                         new_data[i,j] = True
-                    elif fuzz[i/2, j/2]:
+                    elif fuzz[i//2, j//2]:
                         new_data[i,j] = condition(dw1*(i+.5) + dw2*(j+.5))
         return PeriodicRegion(self.w1, self.w2, new_data, self.full).refine(condition, times-1)
 
@@ -370,7 +358,7 @@ cdef class PeriodicRegion:
         m, n = self.data.shape
         return self.data[int(m * i), int(n * j)]
 
-    def __div__(self, unsigned int n):
+    def __truediv__(self, unsigned int n):
         """
         Returns a new region of the same resolution that is the image
         of this region under the map z -> z/n.
@@ -425,7 +413,7 @@ cdef class PeriodicRegion:
             sage: S / (-1)
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned int
+            OverflowError: can...t convert negative value to unsigned int
         """
         cdef unsigned int i, j, a, b, rows, cols
         if n <= 1:
@@ -522,11 +510,11 @@ cdef class PeriodicRegion:
             right._ensure_full()
         return PeriodicRegion(left.w1, left.w2, left.data ^ right.data, left.full)
 
-    def __cmp__(left, right):
+    def __richcmp__(left, right, op):
         """
-        Compares to regions.
+        Compare two regions.
 
-        Note: this is good for equality but not an ordering relation.
+        .. NOTE:: This is good for equality but not an ordering relation.
 
         TESTS::
 
@@ -546,17 +534,20 @@ cdef class PeriodicRegion:
             sage: S2 == S3
             False
         """
-        c = cmp(type(left), type(right))
-        if c: return c
-        c = cmp((left.w1, left.w2), (right.w1, right.w2))
-        if c: return c
-        if left.full ^ right.full:
-            left._ensure_full()
-            right._ensure_full()
-        if (left.data == right.data).all():
-            return 0
+        if type(left) is not type(right) or op not in [Py_EQ, Py_NE]:
+            return NotImplemented
+
+        if (left.w1, left.w2) != (right.w1, right.w2):
+            equal = False
         else:
-            return 1
+            if left.full ^ right.full:
+                left._ensure_full()
+                right._ensure_full()
+            equal = (left.data == right.data).all()
+
+        if op is Py_EQ:
+            return equal
+        return not equal
 
     def border(self, raw=True):
         """
@@ -659,10 +650,11 @@ cdef class PeriodicRegion:
             sage: plot(S) + plot(S.expand(), rgbcolor=(1, 0, 1), thickness=2)
             Graphics object consisting of 46 graphics primitives
         """
-        from sage.all import line
+        from sage.plot.line import line
         dw1, dw2 = self.ds()
         L = []
-        F = line([(0,0), tuple(self.w1), tuple(self.w1+self.w2), tuple(self.w2), (0,0)])
+        F = line([(0,0), tuple(self.w1),
+                  tuple(self.w1+self.w2), tuple(self.w2), (0,0)])
         if not self.full:
             F += line([tuple(self.w2/2), tuple(self.w1+self.w2/2)])
         if 'rgbcolor' not in kwds:

@@ -1,11 +1,6 @@
 """
 Abstract base class for modules
 
-Two classes for modules are defined here: :class:`.Module_old` and
-:class:`.Module`. The former is a legacy class which should not be used for new
-code anymore as it does not conform to the coercion model. Eventually all
-occurences shall be ported to :class:`.Module`.
-
 AUTHORS:
 
 - William Stein: initial version
@@ -16,16 +11,17 @@ EXAMPLES:
 
 A minimal example of a module::
 
+    sage: from sage.structure.richcmp import richcmp
     sage: class MyElement(sage.structure.element.ModuleElement):
     ....:     def __init__(self, parent, x):
     ....:         self.x = x
     ....:         sage.structure.element.ModuleElement.__init__(self, parent=parent)
-    ....:     def _rmul_(self, c):
+    ....:     def _lmul_(self, c):
     ....:         return self.parent()(c*self.x)
     ....:     def _add_(self, other):
     ....:         return self.parent()(self.x + other.x)
-    ....:     def __cmp__(self, other):
-    ....:         return cmp(self.x, other.x)
+    ....:     def _richcmp_(self, other, op):
+    ....:         return richcmp(self.x, other.x, op)
     ....:     def __hash__(self):
     ....:         return hash(self.x)
     ....:     def _repr_(self):
@@ -36,9 +32,11 @@ A minimal example of a module::
     ....:     def _element_constructor_(self, x):
     ....:         if isinstance(x, MyElement): x = x.x
     ....:         return self.element_class(self, self.base_ring()(x))
-    ....:     def __cmp__(self, other):
-    ....:         if not isinstance(other, MyModule): return cmp(type(other),MyModule)
-    ....:         return cmp(self.base_ring(),other.base_ring())
+    ....:     def __eq__(self, other):
+    ....:         if not isinstance(other, MyModule): return False
+    ....:         return self.base_ring() == other.base_ring()
+    ....:     def __hash__(self):
+    ....:         return hash(self.base_ring())
 
     sage: M = MyModule(QQ)
     sage: M(1)
@@ -67,28 +65,7 @@ A minimal example of a module::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.parent_gens cimport ParentWithAdditiveAbelianGens
-from sage.structure.parent cimport Parent
-
-cdef class Module_old(sage.structure.parent_gens.ParentWithAdditiveAbelianGens):
-    """
-    Generic module class.
-    """
-    def __init__(self, *args, **kwds):
-        """
-        TESTS::
-
-            sage: sage.modules.module.Module_old(ZZ)
-            doctest:...: DeprecationWarning: the class Module_old is superseded by Module.
-            See http://trac.sagemath.org/17543 for details.
-            <type 'sage.modules.module.Module_old'>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(17543, "the class Module_old is superseded by Module.")
-        ParentWithAdditiveAbelianGens.__init__(self, *args, **kwds)
-
-
-cdef class Module(sage.structure.parent.Parent):
+cdef class Module(Parent):
     """
     Generic module class.
 
@@ -273,8 +250,7 @@ cdef class Module(sage.structure.parent.Parent):
             sage: from sage.modules.module import Module
             sage: M = Module(ZZ)
             sage: M.endomorphism_ring()
-            Set of Morphisms from <type 'sage.modules.module.Module'> to <type 'sage.modules.module.Module'> in Category of modules over Integer Ring
-
+            Set of Morphisms from <sage.modules.module.Module object at ...> to <sage.modules.module.Module object at ...> in Category of modules over Integer Ring
         """
         from sage.categories.all import End
         return End(self)
@@ -297,7 +273,7 @@ def is_Module(x):
         False
 
     """
-    return isinstance(x, Module) or isinstance(x, Module_old)
+    return isinstance(x, Module)
 
 def is_VectorSpace(x):
     """

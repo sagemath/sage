@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Element Wrapper
 
@@ -8,19 +9,25 @@ AUTHORS:
 - Nicolas Thiery (2008-2010): Initial version
 - Travis Scrimshaw (2013-05-04): Cythonized version
 """
-#*****************************************************************************
-#  Copyright (C) 2008-2010 Nicolas M. Thiery <nthiery at users.sf.net>
+
+# ****************************************************************************
+#       Copyright (C) 2008-2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include "../ext/python.pxi"
-from cpython cimport bool
+from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, PyObject_RichCompare
 
-from sage.structure.parent cimport Parent
+from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element
+from sage.structure.parent cimport Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
+
 
 cdef class ElementWrapper(Element):
     r"""
@@ -80,8 +87,6 @@ cdef class ElementWrapper(Element):
         Versions before :trac:`14519` had parent as the second argument and
         the value as the first.
     """
-    cdef public object value
-
     def __init__(self, parent, value):
         """
         EXAMPLES::
@@ -93,27 +98,13 @@ cdef class ElementWrapper(Element):
 
             sage: TestSuite(a).run(skip = "_test_category")
 
-            sage: a = ElementWrapper(1, DummyParent("A parent"))
-            doctest:...: DeprecationWarning: the first argument must be a parent
-            See http://trac.sagemath.org/14519 for details.
-
         .. NOTE::
 
             :class:`ElementWrapper` is not intended to be used directly,
             hence the failing category test.
         """
-        #assert isinstance(value, self.wrapped_class)
-        if not isinstance(parent, Parent):
-            from sage.misc.superseded import deprecation
-            deprecation(14519, 'the first argument must be a parent')
-            value, parent = parent, value
         Element.__init__(self, parent=parent)
         self.value = value
-
-    # When self is an extension type without a __dict__ attribute,
-    # this prevents self.__dict__ to return whatever crap obtained by
-    # lookup through the categories ...
-    __dict__ = {}
 
     def __getstate__(self):
         """
@@ -137,7 +128,12 @@ cdef class ElementWrapper(Element):
             sage: a.__getstate__() == (P, {'value': 1, 'x': 2})
             True
         """
-        d = self.__dict__.copy()
+        try:
+            d = self.__dict__
+        except AttributeError:
+            d = {}
+        else:
+            d = d.copy()
         d['value'] = self.value
         return (self._parent, d)
 
@@ -173,12 +169,6 @@ cdef class ElementWrapper(Element):
             sage: a = ElementWrapper(DummyParent("A parent"), 1)
             sage: a == loads(dumps(a))
             True
-
-        Checking that we can still load pickle from before :trac:`14519`::
-
-            sage: f = loads('x\x9c\x85\x8d\xbb\n\xc2@\x14D\xf1\x11\x8d\xebO\xd8\xda,\xf8\t\x82\xf6\x12\x08\x96a\x8dC\x08f\xd7\xdc\xbb{\x15\x8b\x80\x16\xd1\xdf6\x10\xad,,\xcf0s\xe6>\xcc\xbd)\xa0}`\xc9\x8304*X\xb8\x90]\xd9\xd45Xm{\xde\x7f\x90\x06\xcb\x07\xfd\x8c\xc4\x95$\xc8\x185\xc3wm\x13\xca\xb3S\xe2\x18G\xc9\xa1h\xf4\xefe#\xd6\xdev\x86\xbbL\xd18\x8d\xd7\x8b\x1e(j\x9b\x17M\x12\x9a6\x14\xa7\xd1\xc5T\x02\x9a\xf56.]\xe1u\xe9\x02\x8a\xce`\xcd\t\xd9\x17H\xa5\x83U\x9b\xd0\xdc?\x0f\xfa\rl4S\xbc')
-            sage: f == ElementWrapper(DummyParent("A Parent"), 1)
-            True
         """
         # Make sure the first part of the state is the parent
         if not isinstance(state[0], Parent):
@@ -212,6 +202,38 @@ cdef class ElementWrapper(Element):
         from sage.misc.latex import latex
         return latex(self.value)
 
+    def _ascii_art_(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.structure.element_wrapper import DummyParent
+            sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
+            1
+            sage: x = var('x')
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()
+             2
+            x  + x
+        """
+        from sage.typeset.ascii_art import ascii_art
+        return ascii_art(self.value)
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.structure.element_wrapper import DummyParent
+            sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
+            1
+            sage: x = var('x')
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()
+             2
+            x  + x
+        """
+        from sage.typeset.unicode_art import unicode_art
+        return unicode_art(self.value)
+
     def __hash__(self):
         """
         Return the same hash as for the wrapped element.
@@ -237,7 +259,7 @@ cdef class ElementWrapper(Element):
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
         Default implementation of ``self == other``: two elements are
-        equal if they have the same class, same parent, and same value.
+        equal if they have equal parents and equal values.
 
         Default implementation of ``self < other``: two elements are
         always incomparable.
@@ -247,6 +269,33 @@ cdef class ElementWrapper(Element):
             Another option would be to not define ``__lt__``, but
             given the current implementation of SageObject, sorted(...)
             would break.
+
+        TESTS:
+
+        Check that elements of equal-but-not-identical parents compare
+        properly (see :trac:`19488`)::
+
+            sage: from sage.misc.nested_class_test import TestParent4
+            sage: P = TestParent4()
+            sage: Q = TestParent4()
+            sage: P == Q
+            True
+            sage: P is Q
+            False
+            sage: x = P.an_element(); x
+            '_an_element_'
+            sage: y = Q.an_element(); y
+            '_an_element_'
+            sage: x == y
+            True
+        """
+        if isinstance(right, ElementWrapper) and left.parent() == right.parent():
+            return left._richcmp_(right, op)
+        return coercion_model.richcmp(left, right, op)
+
+    cpdef _richcmp_(left, right, int op):
+        """
+        Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
         TESTS:
 
@@ -292,27 +341,23 @@ cdef class ElementWrapper(Element):
             sage: parent = DummyParent("A parent")
             sage: x = ElementWrapper(parent, 1)
             sage: y = ElementWrapper(parent, 2)
-            sage: x.__lt__(x), x.__lt__(y), y.__lt__(x), x.__lt__(1)
-            (False, False, False, False)
-            sage: x < x, x < y, y < x, x < 1
-            (False, False, False, False)
+            sage: x.__lt__(x), x.__lt__(y), y.__lt__(x)
+            (False, False, False)
+            sage: x < x, x < y, y < x
+            (False, False, False)
             sage: sorted([x,y])
             [1, 2]
             sage: sorted([y,x])
             [2, 1]
         """
-        cdef ElementWrapper self
-        self = left
-        if self.__class__ != right.__class__ \
-                or self._parent != (<ElementWrapper>right)._parent:
-            return op == Py_NE
+        cdef ElementWrapper self = left
         if op == Py_EQ or op == Py_LE or op == Py_GE:
             return self.value == (<ElementWrapper>right).value
         if op == Py_NE:
             return self.value != (<ElementWrapper>right).value
         return False
 
-    cpdef bool _lt_by_value(self, other):
+    cpdef bint _lt_by_value(self, other):
         """
         Return whether ``self`` is strictly smaller than ``other``.
 
@@ -340,51 +385,10 @@ cdef class ElementWrapper(Element):
             False
             sage: l11 < 1                # class differ
             False
-            sage: 1 < l11                # random, since it depends on what the Integer 1 decides to do, which may just involve memory locations
-            False
         """
-        return self.__class__ is other.__class__ \
-            and self._parent is other.parent() \
-            and self.value < (<ElementWrapper>other).value
-
-    cpdef int _cmp_by_value(self, other):
-        """
-        Implementation of ``cmp`` by comparing first values, then
-        parents, then class. This behavior (which implies a total
-        order) is not always desirable and hard to override. Hence
-        derived subclasses that want to take advantage of this
-        feature need to explicitely set :meth:`.__cmp__`.
-
-        EXAMPLES::
-
-            sage: class MyElement(ElementWrapper):
-            ....:     __cmp__ = ElementWrapper._cmp_by_value
-            ....:
-            sage: from sage.structure.element_wrapper import DummyParent
-            sage: parent1 = DummyParent("A parent")
-            sage: parent2 = DummyParent("Another parent")
-            sage: parent1 == parent2
-            False
-            sage: l11 = MyElement(parent1, 1)
-            sage: l12 = MyElement(parent1, 2)
-            sage: l21 = MyElement(parent2, 1)
-            sage: l22 = MyElement(parent2, 2)
-            sage: cmp(l11, l11)
-            0
-            sage: cmp(l11, l12), cmp(l12, l11)   # values differ
-            (-1, 1)
-            sage: cmp(l11, l21) in [-1, 1]       # parents differ
-            True
-            sage: cmp(l21, l11) == -cmp(l11, l21)
-            True
-            sage: cmp(l11, 1) in [-1,1]          # class differ
-            True
-        """
-        if self.__class__ != other.__class__:
-            return cmp(self.__class__, other.__class__)
-        if self.parent() != other.parent():
-            return cmp(self.parent(), other.parent())
-        return cmp(self.value, other.value)
+        return (self.__class__ is other.__class__
+                and self._parent is other.parent()
+                and self.value < (<ElementWrapper>other).value)
 
     def __copy__(self):
         """
@@ -419,11 +423,10 @@ cdef class ElementWrapper(Element):
         res.value = copy(self.value)
         return res
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+
 class DummyParent(UniqueRepresentation, Parent):
     """
-    A class for creating dummy parents for testing ElementWrapper
+    A class for creating dummy parents for testing :class:`ElementWrapper`
     """
     def __init__(self, name):
         """
@@ -431,14 +434,12 @@ class DummyParent(UniqueRepresentation, Parent):
 
             sage: from sage.structure.element_wrapper import DummyParent
             sage: parent = DummyParent("A Parent")
-            sage: TestSuite(parent).run(skip = ["_test_an_element",\
-                                                "_test_category",\
-                                                "_test_elements",\
-                                                "_test_elements_eq_reflexive",\
-                                                "_test_elements_eq_symmetric",\
-                                                "_test_elements_eq_transitive",\
-                                                "_test_elements_neq",\
-                                                "_test_some_elements"])
+            sage: skipped = ["_test_an_element", "_test_category",
+            ....:            "_test_elements", "_test_elements_eq_reflexive",
+            ....:            "_test_elements_eq_symmetric",
+            ....:            "_test_elements_eq_transitive",
+            ....:            "_test_elements_neq", "_test_some_elements"]
+            sage: TestSuite(parent).run(skip=skipped)
         """
         self.name = name
 
@@ -451,6 +452,7 @@ class DummyParent(UniqueRepresentation, Parent):
             A Parent
         """
         return self.name
+
 
 class ElementWrapperTester(ElementWrapper):
     """
@@ -509,5 +511,72 @@ class ElementWrapperTester(ElementWrapper):
             sage: x.value = [2,32]; x # indirect doctest
             [n=0, value=[2, 32]]
         """
-        return "[n=%s, value=%s]"%(self.n, self.value)
+        return "[n=%s, value=%s]" % (self.n, self.value)
 
+
+cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
+    """
+    An :class:`element wrapper <ElementWrapper>` such that comparison
+    operations are done against subclasses of ``wrapped_class``.
+    """
+    wrapped_class = object
+
+    def __hash__(self):
+        """
+        Return the same hash as for the wrapped element.
+
+        EXAMPLES::
+
+            sage: A = cartesian_product([ZZ, ZZ])
+            sage: e1 = A((6,9))
+            sage: e2 = A((3,8))
+            sage: e3 = A((6,9))
+            sage: hash(e1) == hash(e2)
+            False
+            sage: hash(e1) == hash(e3)
+            True
+        """
+        return hash(self.value)
+
+    def __richcmp__(self, right, int op):
+        """
+        Return ``True`` if ``self`` compares with ``right`` based on ``op``.
+
+        EXAMPLES::
+
+            sage: A = cartesian_product([ZZ, ZZ])
+            sage: elt = A((1,1))
+            sage: (1, 1) == elt
+            True
+            sage: elt == (1, 1)
+            True
+            sage: A((1, 2)) > elt
+            True
+            sage: elts = [A((x,y)) for y in range(3) for x in range(2)]
+            sage: elts
+            [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)]
+            sage: sorted(elts)
+            [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
+
+        ::
+
+            sage: A = cartesian_product([ZZ, ZZ])
+            sage: B = cartesian_product([GF(3), GF(5)])
+            sage: A((3,5)) == B((0,0))
+            True
+        """
+        if type(self) is type(right):
+            # Both are instances of ElementWrapperCheckWrappedClass:
+            # compare using wrapped element if the parents are the same
+            other = <ElementWrapperCheckWrappedClass>right
+            if self._parent is other._parent:
+                return PyObject_RichCompare(self.value, other.value, op)
+        elif not isinstance(right, Element):
+            # Right is not an Element: compare using wrapped element
+            return PyObject_RichCompare(self.value, right, op)
+        elif self._parent is (<Element>right)._parent:
+            # Different types but same parent? This should not happen
+            raise TypeError(f"cannot compare {type(self).__name__} with {type(right).__name__} if parents are equal")
+
+        # Different parents => use coercion model
+        return coercion_model.richcmp(self, right, op)

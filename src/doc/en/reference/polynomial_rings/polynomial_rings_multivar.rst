@@ -24,7 +24,7 @@ are implemented using the PolyBoRi library (cf. :mod:`sage.rings.polynomial.pbor
 
    sage/rings/polynomial/term_order
 
-   sage/rings/polynomial/multi_polynomial_ring_generic
+   sage/rings/polynomial/multi_polynomial_ring_base
    sage/rings/polynomial/multi_polynomial
 
    sage/rings/polynomial/multi_polynomial_ring
@@ -37,5 +37,8 @@ are implemented using the PolyBoRi library (cf. :mod:`sage.rings.polynomial.pbor
    sage/rings/polynomial/multi_polynomial_ideal_libsingular
 
    sage/rings/polynomial/polydict
+   sage/rings/polynomial/hilbert
+
+   sage/rings/polynomial/flatten
 
    sage/rings/monomials

@@ -1,7 +1,6 @@
 """
 Matrix Plots
 """
-
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -18,9 +17,12 @@ Matrix Plots
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import absolute_import
+
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
 from sage.plot.colors import get_cmap
+
 
 class MatrixPlot(GraphicPrimitive):
     """
@@ -33,10 +35,12 @@ class MatrixPlot(GraphicPrimitive):
       the grid
 
     - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
-      (number of columns in the matrix)
+      (number of columns in the matrix). If ``None``, the defaults are used as
+      indicated in :func:`matrix_plot`.
 
     - ``yrange`` - tuple of 2 floats indicating range for vertical direction
-      (number of rows in the matrix)
+      (number of rows in the matrix). If ``None``, the defaults are used as
+      indicated in :func:`matrix_plot`.
 
     - ``options`` - dict of valid plot options to pass to constructor
 
@@ -75,8 +79,8 @@ class MatrixPlot(GraphicPrimitive):
         EXAMPLES::
 
             sage: M = matrix_plot([[mod(i,5)^j for i in range(5)] for j in range(1,6)], cmap='jet')
-            sage: M[0].xrange
-            (0, 5)
+            sage: M[0].get_minmax_data()
+            {'xmax': 4.5, 'xmin': -0.5, 'ymax': 4.5, 'ymin': -0.5}
             sage: M[0].options()['cmap']
             'jet'
             sage: M[0].xy_array_row
@@ -101,21 +105,27 @@ class MatrixPlot(GraphicPrimitive):
 
             sage: m = matrix_plot(matrix([[1,3,5,1],[2,4,5,6],[1,3,5,7]]))[0]
             sage: list(sorted(m.get_minmax_data().items()))
-            [('xmax', 3.5), ('xmin', -0.5), ('ymax', -0.5), ('ymin', 2.5)]
+            [('xmax', 3.5), ('xmin', -0.5), ('ymax', 2.5), ('ymin', -0.5)]
 
+        TESTS:
 
+        We verify that :trac:`27891` is fixed::
+
+            sage: p = matrix_plot(identity_matrix(5)) + point((2, 2), zorder=1)
+            sage: sorted(p.get_minmax_data().items())
+            [('xmax', 4.5), ('xmin', -0.5), ('ymax', 4.5), ('ymin', -0.5)]
         """
         from sage.plot.plot import minmax_data
-        limits= minmax_data(self.xrange, self.yrange, dict=True)
-        if self.options()['origin']!='lower':
-            # flip y-axis so that the picture looks correct.
-            limits['ymin'],limits['ymax']=limits['ymax'],limits['ymin']
-
-        # center the matrix so that, for example, the square representing the
-        # (0,0) entry is centered on the origin.
-        for k,v in limits.iteritems():
-            limits[k]-=0.5
-        return limits
+        xrange = self.xrange
+        yrange = self.yrange
+        # if xrange/yrange are not specified, add offset to the matrix so that,
+        # for example, the square representing the (0,0) entry is centered on
+        # the origin.
+        if not xrange:
+            xrange = (-.5, self.xy_array_col -.5)
+        if not yrange:
+            yrange = (-.5, self.xy_array_row -.5)
+        return minmax_data(xrange, yrange, dict=True)
 
     def _allowed_options(self):
         """
@@ -139,7 +149,7 @@ class MatrixPlot(GraphicPrimitive):
                 'norm': "The normalization function",
                 'vmin': "The minimum value",
                 'vmax': "The maximum value",
-                'origin': "If 'lower', draw the matrix with the first row on the bottom of the graph",
+                'flip_y': "If False, draw the matrix with the first row on the bottom of the graph",
                 'subdivisions': "If True, draw subdivisions of the matrix",
                 'subdivision_options': "Options (boundaries and style) of the subdivisions"}
 
@@ -164,7 +174,7 @@ class MatrixPlot(GraphicPrimitive):
         """
         options = self.options()
         cmap = get_cmap(options.pop('cmap',None))
-        origin=options['origin']
+        flip_y = options['flip_y']
 
         norm=options['norm']
 
@@ -172,6 +182,7 @@ class MatrixPlot(GraphicPrimitive):
             import matplotlib
             norm=matplotlib.colors.NoNorm()
 
+        lim=self.get_minmax_data()
         if options['subdivisions']:
             subdiv_options=options['subdivision_options']
             if isinstance(subdiv_options['boundaries'], (list, tuple)):
@@ -190,61 +201,70 @@ class MatrixPlot(GraphicPrimitive):
                 colstyle=dict()
 
             # Make line objects for subdivisions
-            from line import line2d
-            lim=self.get_minmax_data()
+            from .line import line2d
             # First draw horizontal lines representing row subdivisions
             for y in rowsub:
-                l=line2d([(lim['xmin'],y-0.5), (lim['xmax'],y-0.5)], **rowstyle)[0]
+                y = lim['ymin'] + ((lim['ymax'] - lim['ymin'])
+                                   * y / self.xy_array_row)
+                l = line2d([(lim['xmin'], y), (lim['xmax'], y)], **rowstyle)[0]
                 l._render_on_subplot(subplot)
             for x in colsub:
-                l=line2d([(x-0.5, lim['ymin']), (x-0.5, lim['ymax'])], **colstyle)[0]
+                x = lim['xmin'] + ((lim['xmax'] - lim['xmin'])
+                                   * x / self.xy_array_col)
+                l = line2d([(x, lim['ymin']), (x, lim['ymax'])], **colstyle)[0]
                 l._render_on_subplot(subplot)
 
         if hasattr(self.xy_data_array, 'tocoo'):
             # Sparse matrix -- use spy
             opts=options.copy()
-            for opt in ['vmin', 'vmax', 'norm', 'origin','subdivisions','subdivision_options',
-                        'colorbar','colorbar_options']:
+            for opt in ['vmin', 'vmax', 'norm', 'flip_y', 'subdivisions',
+                        'subdivision_options', 'colorbar', 'colorbar_options']:
                 del opts[opt]
-            if origin=='lower':
-                subplot.spy(self.xy_data_array.tocsr()[::-1], **opts)
-            else:
-                subplot.spy(self.xy_data_array, **opts)
+            subplot.spy(self.xy_data_array, **opts)
         else:
+            extent = (lim['xmin'], lim['xmax'],
+                      lim['ymax' if flip_y else 'ymin'],
+                      lim['ymin' if flip_y else 'ymax'])
             opts = dict(cmap=cmap, interpolation='nearest', aspect='equal',
                       norm=norm, vmin=options['vmin'], vmax=options['vmax'],
-                      origin=origin,zorder=options.get('zorder',None))
-            image=subplot.imshow(self.xy_data_array, **opts)
+                      origin=('upper' if flip_y else 'lower'),
+                      extent=extent, zorder=options.get('zorder'))
+            image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
                 cax,kwds=colorbar.make_axes_gridspec(subplot,**colorbar_options)
-                cb=colorbar.Colorbar(cax,image, **kwds)
+                colorbar.Colorbar(cax, image, **kwds)
 
-        if origin=='upper':
+        if flip_y:
             subplot.xaxis.tick_top()
-        elif origin=='lower':
+        else:
             subplot.xaxis.tick_bottom()
         subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
 
 
 
-
 @suboptions('colorbar', orientation='vertical', format=None)
 @suboptions('subdivision',boundaries=None, style=None)
-@options(aspect_ratio=1, axes=False, cmap='gray', colorbar=False,
-         frame=True, marker='.', norm=None, origin='upper',
+@options(aspect_ratio=1, axes=False, cmap='Greys', colorbar=False,
+         frame=True, marker='.', norm=None, flip_y=True,
          subdivisions=False, ticks_integer=True, vmin=None, vmax=None)
-def matrix_plot(mat, **options):
+def matrix_plot(mat, xrange=None, yrange=None, **options):
     r"""
     A plot of a given matrix or 2D array.
 
+    If the matrix is sparse, colors only indicate whether an element is
+    nonzero or zero, so the plot represents the sparsity pattern of the
+    matrix.
+
     If the matrix is dense, each matrix element is given a different
     color value depending on its relative size compared to the other
-    elements in the matrix.  If the matrix is sparse, colors only
-    indicate whether an element is nonzero or zero, so the plot
-    represents the sparsity pattern of the matrix.
+    elements in the matrix.
+
+    The default is for the lowest number to be black and the highest
+    number to be white in a greyscale pattern; see the information about
+    normalizing below. To reverse this, use ``cmap='Greys'``.
 
     The tick marks drawn on the frame axes denote the row numbers
     (vertical ticks) and the column numbers (horizontal ticks) of the
@@ -254,14 +274,32 @@ def matrix_plot(mat, **options):
 
     - ``mat`` - a 2D matrix or array
 
+    - ``xrange`` - (default: None) tuple of the horizontal extent
+      ``(xmin, xmax)`` of the bounding box in which to draw the matrix.  The
+      image is stretched individually along x and y to fill the box.
+
+      If None, the extent is determined by the following conditions.  Matrix
+      entries have unit size in data coordinates.  Their centers are on integer
+      coordinates, and their center coordinates range from 0 to columns-1
+      horizontally and from 0 to rows-1 vertically.
+
+      If the matrix is sparse, this keyword is ignored.
+
+    - ``yrange`` - (default: None) tuple of the vertical extent
+      ``(ymin, ymax)`` of the bounding box in which to draw the matrix.
+      See ``xrange`` for details.
+
     The following input must all be passed in as named parameters, if
     default not used:
 
-    - ``cmap`` - a colormap (default: 'gray'), the name of
-      a predefined colormap, a list of colors,
-      or an instance of a matplotlib Colormap.
-      Type: ``import matplotlib.cm; matplotlib.cm.datad.keys()``
-      for available colormap names.
+    - ``cmap`` - a colormap (default: 'Greys'), the name of a predefined
+      colormap, a list of colors, or an instance of a matplotlib Colormap.
+
+      The list of predefined color maps can be visualized in `matplotlib's
+      documentation
+      <https://matplotlib.org/examples/color/colormaps_reference.html>`__. You
+      can also type ``import matplotlib.cm; matplotlib.cm.datad.keys()`` to list
+      their names.
 
     - ``colorbar`` -- boolean (default: False) Show a colorbar or not (dense matrices only).
 
@@ -288,9 +326,9 @@ def matrix_plot(mat, **options):
 
     - ``vmax`` - The maximum value (values above this are set to this value)
 
-    - ``origin`` - If 'upper' (default), the first row of the matrix
-      is on the top of the graph.  If 'lower', the first row is on the
-      bottom of the graph.
+    - ``flip_y`` - (default: True) boolean.  If False, the first row of the
+      matrix is on the bottom of the graph.  Otherwise, the first row is on the
+      top of the graph.
 
     - ``subdivisions`` - If True, plot the subdivisions of the matrix as lines.
 
@@ -310,6 +348,11 @@ def matrix_plot(mat, **options):
 
         sage: matrix_plot(matrix([[1,3,5,1],[2,4,5,6],[1,3,5,7]]))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        P = matrix_plot(matrix([[1,3,5,1],[2,4,5,6],[1,3,5,7]]))
+        sphinx_plot(P)
 
     Here we make a random matrix over `\RR` and use ``cmap='hsv'``
     to color the matrix elements different RGB colors::
@@ -360,9 +403,26 @@ def matrix_plot(mat, **options):
     Generally matrices are plotted with the (0,0) entry in the upper
     left.  However, sometimes if we are plotting an image, we'd like
     the (0,0) entry to be in the lower left.  We can do that with the
-    ``origin`` argument::
+    ``flip_y`` argument::
 
-        sage: matrix_plot(identity_matrix(100), origin='lower')
+        sage: matrix_plot(identity_matrix(100), flip_y=False)
+        Graphics object consisting of 1 graphics primitive
+
+    A custom bounding box in which to draw the matrix can be specified using
+    the ``xrange`` and ``yrange`` arguments::
+
+        sage: P = matrix_plot(identity_matrix(10), xrange=(0, pi), yrange=(-pi, 0))
+        sage: P
+        Graphics object consisting of 1 graphics primitive
+        sage: P.get_minmax_data()
+        {'xmax': 3.14159..., 'xmin': 0.0, 'ymax': 0.0, 'ymin': -3.14159...}
+
+    If the horizontal and vertical dimension of the image are very different,
+    the default ``aspect_ratio=1`` may be unsuitable and can be changed to
+    ``automatic``::
+
+        sage: matrix_plot(random_matrix(RDF, 2, 2), (-100, 100), (0, 1),
+        ....:             aspect_ratio='automatic')
         Graphics object consisting of 1 graphics primitive
 
     Another random plot, but over `\GF{389}`::
@@ -398,7 +458,7 @@ def matrix_plot(mat, **options):
 
     Here we plot a random sparse matrix::
 
-        sage: sparse = matrix(dict([((randint(0, 10), randint(0, 10)), 1) for i in xrange(100)]))
+        sage: sparse = matrix(dict([((randint(0, 10), randint(0, 10)), 1) for i in range(100)]))
         sage: matrix_plot(sparse)
         Graphics object consisting of 1 graphics primitive
 
@@ -444,11 +504,11 @@ def matrix_plot(mat, **options):
 
     A plot title can be added to the matrix plot.::
 
-        sage: matrix_plot(identity_matrix(50), origin='lower', title='not identity')
+        sage: matrix_plot(identity_matrix(50), flip_y=False, title='not identity')
         Graphics object consisting of 1 graphics primitive
 
-    The title position is adjusted upwards if the ``origin`` keyword is set
-    to ``"upper"`` (this is the default).::
+    The title position is adjusted upwards if the ``flip_y`` keyword is set
+    to True (this is the default).::
 
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive
@@ -485,11 +545,24 @@ def matrix_plot(mat, **options):
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()
         1
+
+    The origin keyword is deprecated::
+
+        sage: matrix_plot(identity_matrix(100), origin='lower')
+        doctest:...: DeprecationWarning: the option 'origin' is replaced by 'flip_y'
+        See https://trac.sagemath.org/27891 for details.
+        Graphics object consisting of 1 graphics primitive
     """
+    if 'origin' in options:
+        from sage.misc.superseded import deprecation
+        deprecation(27891, "the option 'origin' is replaced by 'flip_y'")
+        options['flip_y'] = (options['origin'] != 'lower')
+        del options['origin']
+
     import numpy as np
     import scipy.sparse as scipysparse
     from sage.plot.all import Graphics
-    from sage.matrix.matrix import is_Matrix
+    from sage.structure.element import is_Matrix
     from sage.rings.all import RDF
     orig_mat=mat
     if is_Matrix(mat):
@@ -524,17 +597,26 @@ def matrix_plot(mat, **options):
     if len(xy_data_array.shape) < 2:
         raise TypeError("mat must be a Matrix or a two dimensional array")
 
-    xrange = (0, xy_data_array.shape[1])
-    yrange = (0, xy_data_array.shape[0])
+    # Sparse matrices are not plotted with imshow, so extent is not supported,
+    # hence we ignore custom bounds.
+    if sparse:
+        xrange = None
+        yrange = None
+    if xrange:
+        xrange = tuple(float(v) for v in xrange)
+    if yrange:
+        yrange = tuple(float(v) for v in yrange)
 
     if options['subdivisions'] and options['subdivision_options']['boundaries'] is None:
         options['subdivision_options']['boundaries']=orig_mat.get_subdivisions()
 
     # Custom position the title. Otherwise it overlaps with tick labels
-    if options['origin'] == 'upper' and 'title_pos' not in options:
+    if options['flip_y'] and 'title_pos' not in options:
         options['title_pos'] = (0.5, 1.05)
 
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
+    # Keep flip_y for _render_on_subplot
+    options['flip_y'] = g._extra_kwds['flip_y']
     g.add_primitive(MatrixPlot(xy_data_array, xrange, yrange, options))
     return g

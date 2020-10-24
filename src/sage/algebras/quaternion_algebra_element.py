@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 #######################################################################
 # Backward compatible unpickle functions
 #######################################################################
 
-from quatalg.quaternion_algebra_element import (QuaternionAlgebraElement_generic,
+from .quatalg.quaternion_algebra_element import (QuaternionAlgebraElement_generic,
                                                 QuaternionAlgebraElement_rational_field,
                                                 QuaternionAlgebraElement_number_field)
 

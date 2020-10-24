@@ -21,24 +21,26 @@ AUTHOR:
    - William Stein, 2010-03
 """
 
-#############################################################################
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL) v2+.
-#  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-
-cdef extern from "math.h":
-    double log(double)
+from libc.math cimport log
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.finance.time_series cimport TimeSeries
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.all import matrix
 from sage.misc.randstate cimport current_randstate, randstate
+from cpython.object cimport PyObject_RichCompare
 
-from util cimport HMM_Util
+from .util cimport HMM_Util
 
 cdef HMM_Util util = HMM_Util()
 
@@ -59,7 +61,7 @@ cdef class HiddenMarkovModel:
             sage: pi = m.initial_probabilities(); pi
             [0.2000, 0.8000]
             sage: type(pi)
-            <type 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.finance.time_series.TimeSeries'>
 
         The returned time series is a copy, so changing it does not
         change the model.
@@ -160,14 +162,14 @@ cdef class HiddenMarkovModel:
 
         OUTPUT:
 
-            - if number is not given, return a single TimeSeries.
-            - if number is given, return a list of TimeSeries.
+        - if number is not given, return a single TimeSeries.
+        - if number is given, return a list of TimeSeries.
 
         EXAMPLES::
 
             sage: set_random_seed(0)
             sage: a = hmm.DiscreteHiddenMarkovModel([[0.1,0.9],[0.1,0.9]], [[1,0],[0,1]], [0,1])
-            sage: print a.sample(10, 3)
+            sage: print(a.sample(10, 3))
             [[1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1, 0, 1, 1, 1]]
             sage: a.sample(15)
             [1, 1, 1, 1, 0 ... 1, 1, 1, 1, 1]
@@ -196,7 +198,7 @@ cdef class HiddenMarkovModel:
 
 
     #########################################################
-    # Some internal funcitons used for various general
+    # Some internal functions used for various general
     # HMM algorithms.
     #########################################################
     cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta):
@@ -335,11 +337,11 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         if not is_Matrix(B):
             B = matrix(B)
         if B.nrows() != self.N:
-            raise ValueError, "number of rows of B must equal number of states"
+            raise ValueError("number of rows of B must equal number of states")
         self.B = TimeSeries(B.list())
         self.n_out = B.ncols()
         if emission_symbols is not None and len(emission_symbols) != self.n_out:
-            raise ValueError, "number of emission symbols must equal number of output states"
+            raise ValueError("number of emission symbols must equal number of output states")
         cdef Py_ssize_t i
         if normalize:
             for i in range(self.N):
@@ -358,7 +360,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return unpickle_discrete_hmm_v1, \
                (self.A, self.B, self.pi, self.n_out, self._emission_symbols, self._emission_symbols_dict)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         EXAMPLES::
 
@@ -374,16 +376,18 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             False
         """
         if not isinstance(other, DiscreteHiddenMarkovModel):
-            raise ValueError
-        return cmp(self.__reduce__()[1], other.__reduce__()[1])
-
+            return NotImplemented
+        return PyObject_RichCompare(self.__reduce__()[1],
+                                    other.__reduce__()[1], op)
 
     def emission_matrix(self):
         """
         Return the matrix whose i-th row specifies the emission
-        probability distribution for the i-th state.  More precisely,
+        probability distribution for the i-th state.
+
+        More precisely,
         the i,j entry of the matrix is the probability of the Markov
-        model outputing the j-th symbol when it is in the i-th state.
+        model outputting the j-th symbol when it is in the i-th state.
 
         OUTPUT:
 
@@ -410,7 +414,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
 
     def __repr__(self):
-        """
+        r"""
         Return string representation of this discrete hidden Markov model.
 
         EXAMPLES::
@@ -548,7 +552,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             -inf
         """
         if obs.max() > self.N or obs.min() < 0:
-            raise ValueError, "invalid observation sequence, since it includes unknown states"
+            raise ValueError("invalid observation sequence, since it includes unknown states")
 
         cdef Py_ssize_t i, j, t, T = len(obs)
 
@@ -706,7 +710,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             (['up', 'up', 'down', 'down', 'down'], [0, 0, 1, 1, 1])
         """
         if length < 0:
-            raise ValueError, "length must be nonnegative"
+            raise ValueError("length must be nonnegative")
 
         # Create Integer lists for states and observations
         cdef IntList states = IntList(length)
@@ -746,7 +750,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         else:
             q = starting_state
             if q < 0 or q >= self.N:
-                raise ValueError, "starting state must be between 0 and %s"%(self.N-1)
+                raise ValueError("starting state must be between 0 and %s"%(self.N-1))
 
         states._values[0] = q
         # Generate a symbol from state q
@@ -1320,20 +1324,31 @@ def unpickle_discrete_hmm_v0(A, B, pi, emission_symbols, name):
     return DiscreteHiddenMarkovModel(A,B,pi,emission_symbols,normalize=False)
 
 def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols_dict):
-    """
+    r"""
+    Return a :class:`DiscreteHiddenMarkovModel`, restored from the arguments.
+
+    This function is used internally for unpickling.
+
     TESTS::
 
         sage: m = hmm.DiscreteHiddenMarkovModel([[0.4,0.6],[0.1,0.9]], [[0.0,1.0],[0.5,0.5]], [1,0],['a','b'])
-        sage: loads(dumps(m)) == m   # indirect test
+        sage: m2 = loads(dumps(m)) # indirect doctest
+        sage: m2 == m
+        True
+
+    Test that :trac:`15711` has been resolved::
+
+        sage: str(m2) == str(m)
+        True
+        sage: m2.log_likelihood('baa'*2) == m.log_likelihood('baa'*2)
         True
     """
     cdef DiscreteHiddenMarkovModel m = DiscreteHiddenMarkovModel.__new__(DiscreteHiddenMarkovModel)
     m.A = A
     m.B = B
     m.pi = pi
+    m.N = len(pi)
     m.n_out = n_out
     m._emission_symbols = emission_symbols
     m._emission_symbols_dict = emission_symbols_dict
     return m
-
-

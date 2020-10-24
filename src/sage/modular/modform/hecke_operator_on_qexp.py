@@ -1,23 +1,26 @@
 """
 Hecke Operators on `q`-expansions
 """
+from __future__ import absolute_import
 
-#########################################################################
-#       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
+#*****************************************************************************
+#       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#########################################################################
+#*****************************************************************************
 
 from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
-from sage.rings.all import (divisors, gcd, ZZ, Integer,
-                            Infinity, CyclotomicField)
+from sage.rings.all import ZZ, Integer, Infinity, CyclotomicField
+from sage.arith.all import divisors, gcd
 
 from sage.rings.power_series_ring_element import is_PowerSeries
 
 from sage.matrix.all import matrix, MatrixSpace
-from element import is_ModularFormElement
+from .element import is_ModularFormElement
 
 def hecke_operator_on_qexp(f, n, k, eps = None,
                            prec=None, check=True, _return_list=False):
@@ -129,7 +132,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         [       0 14348908]
 
     The following used to cause a segfault due to accidentally
-    transposed second and third argument (#2107)::
+    transposed second and third argument (:trac:`2107`)::
 
         sage: B = victor_miller_basis(100,30)
         sage: t2 = hecke_operator_on_basis(B, 100, 2)
@@ -188,14 +191,14 @@ def hecke_operator_on_basis(B, n, k, eps=None,
 
     TESTS:
 
-    This shows that the problem with finite fields reported at trac #8281 is solved::
+    This shows that the problem with finite fields reported at :trac:`8281` is solved::
 
         sage: bas_mod5 = [f.change_ring(GF(5)) for f in victor_miller_basis(12, 20)]
         sage: hecke_operator_on_basis(bas_mod5, 2, 12)
         [4 0]
         [0 1]
 
-    This shows that empty input is handled sensibly (trac #12202)::
+    This shows that empty input is handled sensibly (:trac:`12202`)::
 
         sage: x = hecke_operator_on_basis([], 3, 12); x
         []

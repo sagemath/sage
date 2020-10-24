@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -x
 #
 # Script to prepare a GIAC spkg for Sage.  This script is only for the
 # package maintainer, not for building GIAC during a Sage install.
@@ -13,15 +13,15 @@ fi
 # Exit on failure
 set -e
 
-# TODO on the next update: l71 switch from gz to bz2 as wished in #18826
-VERSION="1.2.0"
-VERSIONREV="19"
+VERSION="1.5.0"
+VERSIONREV="87"
+PATCHSUFFIX="p2"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
 
 # The name of the output file without tar.gz or tar.bz2 extension
-OUTPUTFILEBASENAME="$SAGE_DISTFILES"/giac-"$VERSION"."$VERSIONREV"
+OUTPUTFILEBASENAME="$SAGE_DISTFILES"/giac-"$VERSION"."$VERSIONREV""$PATCHSUFFIX"
 
 # Testing if the output file already exist in one of gz or bz2 format:
 if [ -f "$OUTPUTFILEBASENAME".tar.gz -o -f "$OUTPUTFILEBASENAME".tar.bz2 ] ; then
@@ -29,8 +29,8 @@ if [ -f "$OUTPUTFILEBASENAME".tar.gz -o -f "$OUTPUTFILEBASENAME".tar.bz2 ] ; the
     exit 1
 fi
 
-# Build a temporary working dir. (subdir of SAGE_DISTFILES)
-TARGET=$(mktemp -d -p"$SAGE_DISTFILES")
+# Build a temporary working dir. (preferably, a subdir of SAGE_DISTFILES)
+TARGET=$(mktemp -d -p"$SAGE_DISTFILES" 2>/dev/null || mktemp -d)
 ORIGDIR=`pwd`
 cd "$TARGET"
 
@@ -45,9 +45,12 @@ tar -xzf giac"$SOURCEORIG".tar.gz
 # rename top sourcedir
 mv giac-"$VERSION" src
 
+# remove unnecessary files
+rm -rf src/doc/pari/*.html
+
 # removing french html doc, but keep keywords, and working makefiles.
 # NB: the french html doc is huge and not GPL.
-# it is freely redistibuable only for non commercial purposes.
+# it is freely redistributable only for non commercial purposes.
 cd src/doc/fr
 rm -rf [^Mkx]*
 rm -rf *.pdf *.eps *.pdf *.png *.cxx *.cas *.jpg *.tex *.stamp *html* cas* *.fig fig*
@@ -64,14 +67,16 @@ touch html_mtt
 touch html_vall
 #
 
-
 # building giac source tarball for the spkg
-cd ../../../
-tar -cz src -f "$OUTPUTFILEBASENAME".tar.gz
-# On the next update don't forget to change to bz2 as wished in #18826
-#tar -cj src -f  -f "$OUTPUTFILEBASENAME".tar.bz2
+cd ../../
 
+for a in "$SAGE_ROOT"/build/pkgs/giac/patches/autotools/*.patch; do
+    patch -p1 < $a
+done
+autoreconf -fi
 
+cd ..
+tar -cjf "$OUTPUTFILEBASENAME".tar.bz2 src
 
 # cleaning extracted dir.
 cd ..
@@ -79,3 +84,6 @@ rm -rf "$TARGET"
 
 # going back to starting dir
 cd "$ORIGDIR"
+#$SAGE_ROOT/sage -package update giac "$VERSION"."$VERSIONREV""$PATCHSUFFIX"
+echo "$VERSION"."$VERSIONREV""$PATCHSUFFIX" > build/pkgs/giac/package-version.txt
+$SAGE_ROOT/sage -package fix-checksum giac

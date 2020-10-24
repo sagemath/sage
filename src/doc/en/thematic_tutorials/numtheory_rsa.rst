@@ -104,19 +104,24 @@ those integers `n`, where `1 \leq n \leq 20`, such that
 `\gcd(n,20) = 1`.  The latter task can be easily accomplished with a
 little bit of Sage programming::
 
+    sage: L = []
     sage: for n in range(1, 21):
     ....:     if gcd(n, 20) == 1:
-    ....:         print n,
-    ...
-    1 3 7 9 11 13 17 19
+    ....:         L.append(n)
+    sage: L
+    [1, 3, 7, 9, 11, 13, 17, 19]
 
 The above programming statements can be saved to a text file called,
 say, ``/home/mvngu/totient.sage``, organizing it as follows to enhance
-readability. ::
+readability.
 
-    for n in xrange(1, 21):
+.. CODE-BLOCK:: python
+
+    L = []
+    for n in range(1, 21):
         if gcd(n, 20) == 1:
-            print n,
+            L.append(n)
+    L
 
 We refer to ``totient.sage`` as a Sage script, just as one would refer
 to a file containing Python code as a Python script.  We use 4 space
@@ -128,11 +133,13 @@ programming statements into Sage and, upon loading the content of the
 file, have Sage execute those statements::
 
     load("/home/mvngu/totient.sage")
-    1 3 7 9 11 13 17 19
+    [1, 3, 7, 9, 11, 13, 17, 19]
 
 From the latter list, there are 8 integers in the closed interval
 `[1, 20]` that are coprime to 20.  Without explicitly generating the
-list ::
+list
+
+.. CODE-BLOCK:: text
 
     1  3  7  9  11  13  17  19
 
@@ -175,7 +182,9 @@ After encrypting our message, the scrambled version is called
 unscrambled message via *decryption*. The following figure
 illustrates the processes of encryption and decryption.  A
 *cryptosystem* is comprised of a pair of related encryption and
-decryption processes. ::
+decryption processes.
+
+.. CODE-BLOCK:: text
 
    + ---------+   encrypt    +------------+   decrypt    +-----------+
    | plaintext| -----------> | ciphertext | -----------> | plaintext |
@@ -184,7 +193,9 @@ decryption processes. ::
 
 The following table provides a very simple method of scrambling a
 message written in English and using only upper case letters,
-excluding punctuation characters. ::
+excluding punctuation characters.
+
+.. CODE-BLOCK:: text
 
    +----------------------------------------------------+
    | A   B   C   D   E   F   G   H   I   J   K   L   M  |
@@ -376,7 +387,9 @@ Encryption and decryption
 
 Suppose we want to scramble the message ``HELLOWORLD`` using RSA
 encryption.  From the above ASCII table, our message maps to integers
-of the ASCII encodings as given below. ::
+of the ASCII encodings as given below.
+
+.. CODE-BLOCK:: text
 
     +----------------------------------------+
     | H   E   L   L   O   W   O   R   L   D  |
@@ -397,7 +410,7 @@ practice. In Sage, we can obtain an integer representation of our
 message as follows::
 
     sage: m = "HELLOWORLD"
-    sage: m = map(ord, m); m
+    sage: m = [ord(x) for x in m]; m
     [72, 69, 76, 76, 79, 87, 79, 82, 76, 68]
     sage: m = ZZ(list(reversed(m)), 100) ; m
     72697676798779827668
@@ -475,17 +488,17 @@ Acknowledgements
 Bibliography
 ============
 
-.. [CormenEtAl2001] T. H. Cormen, C. E. Leiserson, R. L. Rivest, and
+.. [CormenEtAl2001] \T. H. Cormen, C. E. Leiserson, R. L. Rivest, and
    C. Stein. *Introduction to Algorithms*. The MIT Press, USA, 2nd
    edition, 2001.
 
-.. [MenezesEtAl1996] A. J. Menezes, P. C. van Oorschot, and
+.. [MenezesEtAl1996] \A. J. Menezes, P. C. van Oorschot, and
    S. A. Vanstone. *Handbook of Applied Cryptography*. CRC Press, Boca
    Raton, FL, USA, 1996.
 
-.. [Stinson2006] D. R. Stinson. *Cryptography: Theory and Practice*.
+.. [Stinson2006] \D. R. Stinson. *Cryptography: Theory and Practice*.
    Chapman & Hall/CRC, Boca Raton, USA, 3rd edition, 2006.
 
-.. [TrappeWashington2006] W. Trappe and L. C. Washington. *Introduction
+.. [TrappeWashington2006] \W. Trappe and L. C. Washington. *Introduction
    to Cryptography with Coding Theory*. Pearson Prentice Hall, Upper
    Saddle River, New Jersey, USA, 2nd edition, 2006.

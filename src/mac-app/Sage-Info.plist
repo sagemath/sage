@@ -174,7 +174,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>org.sagemath.sage-source</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.sagemath.org/doc/reference/</string>
+			<string>http://doc.sagemath.org/html/en/reference/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -264,7 +264,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>org.sagemath.sage-worksheet</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.sagemath.org/doc/reference/sagenb/storage/filesystem_storage.html</string>
+			<string>http://doc.sagemath.org/html/en/reference/sagenb/storage/filesystem_storage.html</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -286,7 +286,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>org.sagemath.sage-package</string>
 			<key>UTTypeReferenceURL</key>
-			<string>http://www.sagemath.org/doc/developer/producing_spkgs.html</string>
+			<string>http://doc.sagemath.org/html/en/developer/producing_spkgs.html</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>

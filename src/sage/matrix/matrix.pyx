@@ -2,6 +2,14 @@
 Abstract base class for matrices
 
 For design documentation see matrix/docs.py.
+
+TESTS::
+
+    sage: from sage.matrix.matrix import Matrix
+    doctest:...: DeprecationWarning: the module sage.matrix.matrix is deprecated
+    See http://trac.sagemath.org/24096 for details.
+    sage: Matrix
+    <type 'sage.matrix.matrix2.Matrix'>
 """
 
 ################################################################################
@@ -13,7 +21,8 @@ For design documentation see matrix/docs.py.
 #                  http://www.gnu.org/licenses/
 ################################################################################
 
-from sage.ext.stdsage cimport PY_SET_TP_NEW
+from sage.misc.superseded import deprecation
+deprecation(24096, "the module sage.matrix.matrix is deprecated")
 
 def is_Matrix(x):
     """
@@ -27,10 +36,5 @@ def is_Matrix(x):
     """
     return isinstance(x, Matrix)
 
-cdef class Matrix(matrix2.Matrix):
-    pass
 
-# This is pretty nasty low level stuff. The idea is to speed up construction
-# of EuclideanDomainElements (in particular Integers) by skipping some tp_new
-# calls up the inheritance tree.
-PY_SET_TP_NEW(Matrix, matrix2.Matrix)
+globals()["Matrix"] = Matrix

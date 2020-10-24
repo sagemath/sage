@@ -1,17 +1,16 @@
 """
 Combinatorial design features that are imported by default in the interpreter namespace
 """
-from block_design import (BlockDesign)
+from sage.misc.lazy_import import lazy_import
 
-from ext_rep import (designs_from_XML, designs_from_XML_url)
+lazy_import('sage.combinat.designs.block_design', 'BlockDesign')
 
-from incidence_structures import (IncidenceStructure,
-                          IncidenceStructureFromMatrix)
+lazy_import('sage.combinat.designs.incidence_structures', 'IncidenceStructure')
 
-from incidence_structures import IncidenceStructure as Hypergraph
+lazy_import('sage.combinat.designs.incidence_structures',
+            'IncidenceStructure', as_='Hypergraph')
 
-from covering_design import (CoveringDesign,
-                             schonheim,
-                             trivial_covering_design)
+lazy_import('sage.combinat.designs.covering_design',
+            ['CoveringDesign', 'schonheim', 'trivial_covering_design'])
 
-import design_catalog as designs
+from . import design_catalog as designs

@@ -1,0 +1,24 @@
+cd src
+
+# Use newer version of config.guess and config.sub (see Trac #23710)
+cp "$SAGE_ROOT"/config/config.* .
+
+export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+sdh_configure
+sdh_make
+sdh_make_install
+
+
+set -e
+
+mkdir -p "$SAGE_LOCAL/libexec/ccache"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/cc"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/c++"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/gcc"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/g++"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/clang"
+ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/clang++"
+
+# Copy a reasonable default configuration for Sage
+# (cache size of 4G and compression enabled)
+cp -p ../ccache.conf "$SAGE_LOCAL/etc"

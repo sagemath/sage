@@ -60,7 +60,7 @@ Installation
 ============
 
 If you do not have Sage installed on a computer and just
-want to try some commands, use online at http://www.sagenb.org.
+want to try some commands, use it online at http://sagecell.sagemath.org.
 
 See the Sage Installation Guide in the documentation section of the
 main Sage webpage [SA]_ for instructions on installing Sage on your
@@ -71,12 +71,8 @@ computer. Here we merely make a few comments.
    words, although Sage uses Python, IPython, PARI, GAP, Singular,
    Maxima, NTL, GMP, and so on, you do not need to install them
    separately as they are included with the Sage distribution.
-   However, to use certain Sage features, e.g., Macaulay or KASH, you must
-   install the relevant optional package or at least have the relevant
-   programs installed on your computer already. Macaulay and KASH are
-   Sage packages (for a list of available optional packages, type
-   ``sage -optional``, or browse the "Download" page on the Sage
-   website).
+   However, to use certain Sage features, e.g., Macaulay or KASH, you
+   must have the relevant programs installed on your computer already.
 
 #. The pre-compiled binary version of Sage (found on the Sage web
    site) may be easier and quicker to install than the source code
@@ -86,14 +82,14 @@ computer. Here we merely make a few comments.
    the results of Sage computations into a LaTeX file), you will need to
    make SageTeX known to your TeX distribution. To do this, see the
    section "Make SageTeX known to TeX" in the `Sage installation guide
-   <http://www.sagemath.org/doc/>`_ (`this link
+   <http://doc.sagemath.org/html/en/>`_ (`this link
    <../installation/index.html>`_ should take you to a local copy of the
    installation guide). It's quite easy; you just need to set an
    environment variable or copy a single file to a directory that TeX
    will search.
 
    The documentation for using SageTeX is located in
-   ``$SAGE_ROOT/local/share/texmf/tex/generic/sagetex/``, where
+   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, where
    "``$SAGE_ROOT``" refers to the directory where you installed Sage --
    for example, ``/opt/sage-4.2.1``.
 
@@ -103,8 +99,8 @@ Ways to Use Sage
 You can use Sage in several ways.
 
 
--  **Notebook graphical interface:** see the section on the
-   Notebook in the reference manual and :ref:`section-notebook` below,
+-  **Notebook graphical interface:** run `sage -n jupyter`; see
+   `the Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **Interactive command line:** see :ref:`chapter-interactive_shell`,
 

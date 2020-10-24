@@ -1,0 +1,7 @@
+cd src
+
+export CXXFLAGS="-fomit-frame-pointer -O3 -Wno-sign-compare -Wno-write-strings -I$SAGE_LOCAL/include $CXXFLAGS"
+
+sdh_configure
+sdh_make
+sdh_make_install

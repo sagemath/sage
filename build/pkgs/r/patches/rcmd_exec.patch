@@ -1,0 +1,31 @@
+From 746b6908518c9725fece85270c587b5b110c08d3 Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 9/9] rcmd_exec
+
+On Cygwin some of the scripts in $R_HOME/bin can fail to be recognized
+as executable, because they do no contain a shebang line and, depending
+on the ACL settings in the Cygwin mount, may not have an executable flag
+either.  This results in the scripts not being run properly.  It's fine
+to just check that they exist.  See https://trac.sagemath.org/ticket/20655
+
+---
+ src/scripts/Rcmd.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/scripts/Rcmd.in b/src/scripts/Rcmd.in
+index 76d78d5..4b92483 100644
+--- a/src/scripts/Rcmd.in
++++ b/src/scripts/Rcmd.in
+@@ -50,7 +50,7 @@ case "${1}" in
+     exit 1
+     ;;
+   *)
+-    if test -x "${R_HOME}/bin/${1}"; then
++    if test -f "${R_HOME}/bin/${1}"; then
+       cmd="${R_HOME}/bin/${1}"
+     else
+       cmd="${1}"
+-- 
+2.16.1
+

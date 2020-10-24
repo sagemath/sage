@@ -6,11 +6,11 @@ set -e
 
 
 # determine latest version.
-GIT_VERSION="$(curl http://docs.mathjax.org/en/latest/installation.html | grep 'Current Version' | sed 's/^.*MathJax-//g' | sed 's/<.*//g')"
+GIT_VERSION="$(curl http://docs.mathjax.org/en/latest/installation.html | grep 'Current Version' | sed 's|^.*archive/||g' | sed 's/.zip".*//g')"
 echo "GIT_VERSION=$GIT_VERSION"
 
 # fetch and rename latest version.
-URL="https://github.com/mathjax/MathJax/archive/v${GIT_VERSION}-latest.tar.gz"
+URL="https://github.com/mathjax/MathJax/archive/${GIT_VERSION}.zip"
 echo "Downloading $URL"
 rm -rf src
 if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
@@ -18,7 +18,7 @@ if [ -z "$UPSTREAM_SOURCE_TARBALL" ]; then
 else
     tar xzf "$UPSTREAM_SOURCE_TARBALL"
 fi
-mv MathJax-${GIT_VERSION}-latest src
+mv MathJax-${GIT_VERSION} src
 
 # Strip mathjax according to
 # https://github.com/mathjax/MathJax-docs/wiki/Guide%3A-reducing-size-of-a-mathjax-installation
@@ -55,6 +55,6 @@ rm -rf src
 
 # update package info
 echo "${GIT_VERSION}" > 'package-version.txt'
-"$SAGE_ROOT"/sage -sh 'sage-fix-pkg-checksums'
+"$SAGE_ROOT"/sage --package fix-checksum mathjax
 
 

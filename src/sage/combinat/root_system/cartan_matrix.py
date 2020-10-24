@@ -6,11 +6,13 @@ AUTHORS:
 - Travis Scrimshaw (2012-04-22): Nicolas M. Thiery moved matrix creation to
   :class:`CartanType` to prepare :func:`cartan_matrix()` for deprecation.
 - Christian Stump, Travis Scrimshaw (2013-04-13): Created :class:`CartanMatrix`.
+- Ben Salisbury (2018-08-07): Added Borcherds-Cartan matrices.
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2012,2013 Travis Scrimshaw <tscrim at ucdavis.edu>,
-#       Copyright (C) 2013 Chrisitan Stump,
+#       Copyright (C) 2013 Christian Stump,
+#       Copyright (C) 2018 Ben Salisbury <salis1bt at cmich.edu>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -23,9 +25,10 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix import is_Matrix
+from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
@@ -35,8 +38,11 @@ from sage.rings.all import ZZ
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
 from sage.combinat.root_system.root_system import RootSystem
 from sage.sets.family import Family
+from sage.graphs.digraph import DiGraph
 
-class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
+
+class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A (generalized) Cartan matrix.
 
@@ -51,6 +57,14 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     *symmetrizable* (see :meth:`is_symmetrizable`). However following Kac, we
     do not make that assumption here.
 
+    An even, integral Borcherds--Cartan matrix is an integral matrix
+    `A = (a_{ij})_{i,j \in I}` for some countable index set `I` which satisfies
+    the following properties:
+
+    - `a_{ii} \in \{2\} \cup 2\ZZ_{<0}` for all `i`,
+    - `a_{ij} \leq 0` for all `i \neq j`,
+    - `a_{ij} = 0` if and only if `a_{ji} = 0` for all `i \neq j`.
+
     INPUT:
 
     Can be anything which is accepted by ``CartanType`` or a matrix.
@@ -59,6 +73,11 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     a matrix to explicitly state the type. Otherwise this will try to check the
     input matrix against possible standard types of Cartan matrices. To disable
     this check, use the keyword ``cartan_type_check = False``.
+
+    If one wants to initialize a Borcherds-Cartan matrix using matrix data,
+    use the keyword ``borcherds=True``. To specify the diagonal entries of
+    corresponding to a Cartan type (a Cartan matrix is treated as matrix data),
+    use ``borcherds`` with a list of the diagonal entries.
 
     EXAMPLES::
 
@@ -186,6 +205,16 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         [ 0  2 -3]
         [-1 -1  2]
 
+    Examples of Borcherds-Cartan matrices::
+
+        sage: CartanMatrix([[2,-1],[-1,-2]], borcherds=True)
+        [ 2 -1]
+        [-1 -2]
+        sage: CartanMatrix('B3', borcherds=[-4,-6,2])
+        [-4 -1  0]
+        [-1 -6 -1]
+        [ 0 -2  2]
+
     .. NOTE::
 
         Since this is a matrix, :meth:`row()` and :meth:`column()` will return
@@ -194,12 +223,12 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         :meth:`row_with_indices()` and :meth:`column_with_indices()`
         respectively.
     """
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
-    def __classcall_private__(cls, *args, **kwds):
+    def __classcall_private__(cls, data=None, index_set=None,
+                              cartan_type=None, cartan_type_check=True,
+                              borcherds=None):
         """
-        Normalize input so we can inherit from spare integer matrix.
+        Normalize input so we can inherit from sparse integer matrix.
 
         .. NOTE::
 
@@ -227,30 +256,31 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             ('a', 'b')
         """
         # Special case with 0 args and kwds has Cartan type
-        if "cartan_type" in kwds and len(args) == 0:
-            args = (CartanType(kwds["cartan_type"]),)
-        if len(args) == 0:
+        if cartan_type is not None and data is None:
+            data = CartanType(cartan_type)
+
+        if data is None:
             data = []
             n = 0
             index_set = tuple()
             cartan_type = None
             subdivisions = None
-        elif len(args) == 4 and isinstance(args[0], MatrixSpace): # For pickling
-            return typecall(cls, args[0], args[1], args[2], args[3])
-        elif isinstance(args[0], CartanMatrix):
-            return args[0]
+        elif isinstance(data, CartanMatrix):
+            if index_set is not None:
+                d = {a: index_set[i] for i,a in enumerate(data.index_set())}
+                return data.relabel(d)
+            return data
         else:
-            cartan_type = None
             dynkin_diagram = None
             subdivisions = None
 
             from sage.combinat.root_system.dynkin_diagram import DynkinDiagram_class
-            if isinstance(args[0], DynkinDiagram_class):
-                dynkin_diagram = args[0]
-                cartan_type = args[0]._cartan_type
+            if isinstance(data, DynkinDiagram_class):
+                dynkin_diagram = data
+                cartan_type = data._cartan_type
             else:
                 try:
-                    cartan_type = CartanType(args[0])
+                    cartan_type = CartanType(data)
                     dynkin_diagram = cartan_type.dynkin_diagram()
                 except (TypeError, ValueError):
                     pass
@@ -258,53 +288,124 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             if dynkin_diagram is not None:
                 n = dynkin_diagram.rank()
                 index_set = dynkin_diagram.index_set()
-                reverse = dict((index_set[i], i) for i in range(len(index_set)))
-                data = {(i, i): 2 for i in range(n)}
+                oir = dynkin_diagram.odd_isotropic_roots()
+                reverse = {a: i for i,a in enumerate(index_set)}
+                if isinstance(borcherds, (list, tuple)):
+                    if (len(borcherds) != len(index_set)
+                        and not all(val in ZZ
+                                    and (val == 2 or (val % 2 == 0 and val < 0))
+                                    for val in borcherds)):
+                        raise ValueError("the input data is not a Borcherds-Cartan matrix")
+                    data = {(i, i): val if index_set[i] not in oir else 0
+                            for i,val in enumerate(borcherds)}
+                else:
+                    data = {(i, i): 2 if index_set[i] not in oir else 0
+                            for i in range(n)}
                 for (i,j,l) in dynkin_diagram.edge_iterator():
                     data[(reverse[j], reverse[i])] = -l
             else:
-                M = matrix(args[0])
-                if not is_generalized_cartan_matrix(M):
-                    raise ValueError("the input matrix is not a generalized Cartan matrix")
+                M = matrix(data)
+                if borcherds:
+                    if not is_borcherds_cartan_matrix(M):
+                        raise ValueError("the input matrix is not a Borcherds-Cartan matrix")
+                else:
+                    if not is_generalized_cartan_matrix(M):
+                        raise ValueError("the input matrix is not a generalized Cartan matrix")
                 n = M.ncols()
-                if "cartan_type" in kwds:
-                    cartan_type = CartanType(kwds["cartan_type"])
-                elif n == 1:
-                    cartan_type = CartanType(['A', 1])
-                elif kwds.get("cartan_type_check", True):
-                    cartan_type = find_cartan_type_from_matrix(M)
                 data = M.dict()
                 subdivisions = M._subdivisions
 
-            if len(args) == 1:
-                if cartan_type is not None:
-                    index_set = tuple(cartan_type.index_set())
-                elif dynkin_diagram is None:
-                    index_set = tuple(range(n))
-            elif len(args) == 2:
-                index_set = tuple(args[1])
-                if len(index_set) != n and len(set(index_set)) != n:
-                    raise ValueError("the given index set is not valid")
+            if index_set is None:
+                index_set = tuple(range(n))
             else:
-                raise ValueError("too many arguments")
+                index_set = tuple(index_set)
 
-        mat = typecall(cls, MatrixSpace(ZZ, n, sparse=True), data, cartan_type, index_set)
+        if len(index_set) != n and len(set(index_set)) != n:
+            raise ValueError("the given index set is not valid")
+
+        # We can do the Cartan type initialization later as this is not
+        #   a unique representation
+        mat = typecall(cls, MatrixSpace(ZZ, n, sparse=True), data, False, True)
+        # FIXME: We have to initialize the CartanMatrix part separately because
+        #   of the __cinit__ of the matrix. We should get rid of this workaround
+        mat._CM_init(cartan_type, index_set, cartan_type_check)
         mat._subdivisions = subdivisions
         return mat
 
-    def __init__(self, parent, data, cartan_type, index_set):
+    def matrix_space(self, nrows=None, ncols=None, sparse=None):
+        r"""
+        Return a matrix space over the integers.
+
+        INPUT:
+
+        - ``nrows`` - number of rows
+
+        - ``ncols`` - number of columns
+
+        - ``sparse`` - (boolean) sparseness
+
+        EXAMPLES::
+
+            sage: cm = CartanMatrix(['A', 3])
+            sage: cm.matrix_space()
+            Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+            sage: cm.matrix_space(2, 2)
+            Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring
+            sage: cm[:2,1:]   # indirect doctest
+            [-1  0]
+            [ 2 -1]
         """
-        Initialize ``self``.
+        if nrows is None:
+            nrows = self.nrows()
+        if ncols is None:
+            ncols = self.ncols()
+        if sparse is None:
+            sparse = True
+
+        if nrows == self.nrows() and ncols == self.ncols() and sparse:
+            return self.parent()
+        else:
+            from sage.matrix.matrix_space import MatrixSpace
+            return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
+
+    def _CM_init(self, cartan_type, index_set, cartan_type_check):
+        """
+        Initialize ``self`` as a Cartan matrix.
 
         TESTS::
 
-            sage: C = CartanMatrix(['A',1,1])
+            sage: C = CartanMatrix(['A',1,1]) # indirect doctest
             sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])
         """
-        Matrix_integer_sparse.__init__(self, parent, data, False, False)
-        self._cartan_type = cartan_type
         self._index_set = index_set
         self.set_immutable()
+
+        if cartan_type is not None:
+            cartan_type = CartanType(cartan_type)
+        elif self.nrows() == 1:
+            cartan_type = CartanType(['A', 1])
+        elif cartan_type_check:
+            # Placeholder so we don't have to reimplement creating a
+            #   Dynkin diagram from a Cartan matrix
+            self._cartan_type = None
+            cartan_type = find_cartan_type_from_matrix(self)
+
+        self._cartan_type = cartan_type
+
+    def __reduce__(self):
+        """
+        Used for pickling.
+
+        TESTS::
+
+            sage: CM = CartanMatrix(['A',4])
+            sage: x = loads(dumps(CM))
+            sage: x._index_set
+            (1, 2, 3, 4)
+        """
+        if self._cartan_type:
+            return (CartanMatrix, (self._cartan_type,))
+        return (CartanMatrix, (self.dynkin_diagram(),))
 
     def root_system(self):
         """
@@ -388,7 +489,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         iset = self.index_set()
         # The result from is_symmetrizable needs to be scaled
         # to integer coefficients
-        from sage.rings.arith import LCM
+        from sage.arith.all import LCM
         from sage.rings.all import QQ
         scalar = LCM([QQ(x).denominator() for x in sym])
         return Family( {iset[i]: ZZ(val*scalar) for i, val in enumerate(sym)} )
@@ -450,6 +551,8 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         """
         if self._cartan_type is None:
             return self
+        if is_borcherds_cartan_matrix(self) and not is_generalized_cartan_matrix(self):
+            return self
         return self._cartan_type
 
     def subtype(self, index_set):
@@ -462,14 +565,17 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         EXAMPLES::
 
             sage: C = CartanMatrix(['F',4])
-            sage: C.subtype([1,2,3])
+            sage: S = C.subtype([1,2,3])
+            sage: S
             [ 2 -1  0]
             [-1  2 -1]
             [ 0 -2  2]
+            sage: S.index_set()
+            (1, 2, 3)
         """
         ind = self.index_set()
         I = [ind.index(i) for i in index_set]
-        return CartanMatrix(self.matrix_from_rows_and_columns(I, I))
+        return CartanMatrix(self.matrix_from_rows_and_columns(I, I), index_set)
 
     def rank(self):
         r"""
@@ -643,11 +749,11 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     def is_finite(self):
         """
         Return ``True`` if ``self`` is a finite type or ``False`` otherwise.
-        
+
         A generalized Cartan matrix is finite if the determinant of all its
-        principal submatrices (see :meth:`principal_submatrices`) is positive. 
-        Such matrices have a positive definite symmetrized matrix. Note that a 
-        finite matrix may consist of multiple blocks of Cartan matrices each 
+        principal submatrices (see :meth:`principal_submatrices`) is positive.
+        Such matrices have a positive definite symmetrized matrix. Note that a
+        finite matrix may consist of multiple blocks of Cartan matrices each
         having finite Cartan type.
 
         EXAMPLES::
@@ -665,16 +771,16 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         if self._cartan_type is None:
             if not self.is_symmetrizable():
                 return False
-            return self.symmetrized_matrix().is_positive_definite() 
+            return self.symmetrized_matrix().is_positive_definite()
         return self._cartan_type.is_finite()
 
     @cached_method
     def is_affine(self):
         """
         Return ``True`` if ``self`` is an affine type or ``False`` otherwise.
-        
-        A generalized Cartan matrix is affine if all of its indecomposable 
-        blocks are either finite (see :meth:`is_finite`) or have zero 
+
+        A generalized Cartan matrix is affine if all of its indecomposable
+        blocks are either finite (see :meth:`is_finite`) or have zero
         determinant with all proper principal minors positive.
 
         EXAMPLES::
@@ -694,26 +800,26 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
                 return False
             for b in self.indecomposable_blocks():
                 if b.det() < 0 or not all(
-                    a.det() > 0 for a in b.principal_submatrices(proper=True)): 
+                    a.det() > 0 for a in b.principal_submatrices(proper=True)):
                     return False
             return True
         return self._cartan_type.is_affine()
-    
+
     @cached_method
     def is_hyperbolic(self, compact=False):
         """
-        Return if ``True`` if ``self`` is a (compact) hyperbolic type 
+        Return if ``True`` if ``self`` is a (compact) hyperbolic type
         or ``False`` otherwise.
-        
+
         An indecomposable generalized Cartan matrix is hyperbolic if it has
         negative determinant and if any proper connected subdiagram of its
         Dynkin diagram is of finite or affine type. It is compact hyperbolic
         if any proper connected subdiagram has finite type.
-        
+
         INPUT:
 
-        - ``compact`` -- if ``True``, check if matrix is compact hyperbolic  
-        
+        - ``compact`` -- if ``True``, check if matrix is compact hyperbolic
+
         EXAMPLES::
 
             sage: M = CartanMatrix([[2,-2,0],[-2,2,-1],[0,-1,2]])
@@ -730,7 +836,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         """
         if not self.is_indefinite() or not self.is_indecomposable():
             return False
-        
+
         D = self.dynkin_diagram()
         verts = tuple(D.vertex_iterator())
         for v in verts:
@@ -741,15 +847,15 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             elif not subg.is_finite() and not subg.is_affine():
                 return False
         return True
-    
+
     @cached_method
     def is_lorentzian(self):
         """
         Return ``True`` if ``self`` is a Lorentzian type or ``False`` otherwise.
-        
+
         A generalized Cartan matrix is Lorentzian if it has negative determinant
         and exactly one negative eigenvalue.
-        
+
         EXAMPLES::
 
             sage: M = CartanMatrix([[2,-3],[-3,2]])
@@ -762,12 +868,12 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         if self.det() >= 0:
             return False
         return sum(1 for x in self.eigenvalues() if x < 0) == 1
-        
-    @cached_method        
+
+    @cached_method
     def is_indefinite(self):
         """
         Return if ``self`` is an indefinite type or ``False`` otherwise.
-        
+
         EXAMPLES::
 
            sage: M = CartanMatrix([[2,-3],[-3,2]])
@@ -778,12 +884,12 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
            False
         """
         return not self.is_finite() and not self.is_affine()
-                
+
     @cached_method
     def is_indecomposable(self):
         """
         Return if ``self`` is an indecomposable matrix or ``False`` otherwise.
-        
+
         EXAMPLES::
 
             sage: M = CartanMatrix(['A',5])
@@ -800,11 +906,11 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
     def principal_submatrices(self, proper=False):
         """
         Return a list of all principal submatrices of ``self``.
-        
+
         INPUT:
 
-        - ``proper`` -- if ``True``, return only proper submatrices 
-        
+        - ``proper`` -- if ``True``, return only proper submatrices
+
         EXAMPLES::
 
             sage: M = CartanMatrix(['A',2])
@@ -815,20 +921,20 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             ]
             sage: M.principal_submatrices(proper=True)
             [[], [2], [2]]
-            
+
         """
-        iset = range(self.ncols());
+        iset = list(range(self.ncols()))
         ret = []
         for l in powerset(iset):
             if not proper or (proper and l != iset):
                 ret.append(self.matrix_from_rows_and_columns(l,l))
         return ret
-    
+
     @cached_method
     def indecomposable_blocks(self):
         """
         Return a tuple of all indecomposable blocks of ``self``.
-        
+
         EXAMPLES::
 
             sage: M = CartanMatrix(['A',2])
@@ -840,7 +946,7 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
             sage: M = CartanMatrix([['A',2,1],['A',3,1]])
             sage: M.indecomposable_blocks()
             (
-            [ 2 -1  0 -1]            
+            [ 2 -1  0 -1]
             [-1  2 -1  0]  [ 2 -1 -1]
             [ 0 -1  2 -1]  [-1  2 -1]
             [-1  0 -1  2], [-1 -1  2]
@@ -848,6 +954,46 @@ class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
         """
         subgraphs = self.dynkin_diagram().connected_components_subgraphs()
         return tuple(CartanMatrix(subg._matrix_().rows()) for subg in subgraphs)
+
+def is_borcherds_cartan_matrix(M):
+    """
+    Return ``True`` if ``M`` is an even, integral Borcherds-Cartan matrix.
+    For a definition of such a matrix, see :class:`CartanMatrix`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.root_system.cartan_matrix import is_borcherds_cartan_matrix
+        sage: M = Matrix([[2,-1],[-1,2]])
+        sage: is_borcherds_cartan_matrix(M)
+        True
+        sage: N = Matrix([[2,-1],[-1,0]])
+        sage: is_borcherds_cartan_matrix(N)
+        False
+        sage: O = Matrix([[2,-1],[-1,-2]])
+        sage: is_borcherds_cartan_matrix(O)
+        True
+        sage: O = Matrix([[2,-1],[-1,-3]])
+        sage: is_borcherds_cartan_matrix(O)
+        False
+    """
+    if not is_Matrix(M):
+        return False
+    if not M.is_square():
+        return False
+    n = M.ncols()
+    for i in range(n):
+        if M[i,i] == 0:
+            return False
+        if M[i,i] % 2 == 1:
+            return False
+        for j in range(i+1, n):
+            if M[i,j] > 0 or M[j,i] > 0:
+                return False
+            elif M[i,j] == 0 and M[j,i] != 0:
+                return False
+            elif M[j,i] == 0 and M[i,j] != 0:
+                return False
+    return True
 
 def is_generalized_cartan_matrix(M):
     """
@@ -873,106 +1019,90 @@ def is_generalized_cartan_matrix(M):
         sage: is_generalized_cartan_matrix(M)
         True
     """
-    if not is_Matrix(M):
-        return False
-    if not M.is_square():
+    if not is_borcherds_cartan_matrix(M):
         return False
     n = M.ncols()
-    for i in xrange(n):
-        if M[i,i] != 2:
-            return False
-        for j in xrange(i+1, n):
-            if M[i,j] > 0 or M[j,i] > 0:
-                return False
-            elif M[i,j] == 0 and M[j,i] != 0:
-                return False
-            elif M[j,i] == 0 and M[i,j] != 0:
-                return False
-    return True
+    return all(M[i,i] == 2 for i in range(n))
 
 def find_cartan_type_from_matrix(CM):
-    """
-    Find a Cartan type by direct comparison of matrices given from the
-    generalized Cartan matrix ``CM`` and return ``None`` if not found.
+    r"""
+    Find a Cartan type by direct comparison of Dynkin diagrams given from
+    the generalized Cartan matrix ``CM`` and return ``None`` if not found.
 
     INPUT:
 
-    - ``CM`` -- A generalized Cartan matrix
+    - ``CM`` -- a generalized Cartan matrix
 
     EXAMPLES::
 
         sage: from sage.combinat.root_system.cartan_matrix import find_cartan_type_from_matrix
-        sage: M = matrix([[2,-1,-1], [-1,2,-1], [-1,-1,2]])
-        sage: find_cartan_type_from_matrix(M)
+        sage: CM = CartanMatrix([[2,-1,-1], [-1,2,-1], [-1,-1,2]])
+        sage: find_cartan_type_from_matrix(CM)
         ['A', 2, 1]
-        sage: M = matrix([[2,-1,0], [-1,2,-2], [0,-1,2]])
-        sage: find_cartan_type_from_matrix(M)
-        ['C', 3]
-        sage: M = matrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])
-        sage: find_cartan_type_from_matrix(M)
+        sage: CM = CartanMatrix([[2,-1,0], [-1,2,-2], [0,-1,2]])
+        sage: find_cartan_type_from_matrix(CM)
+        ['C', 3] relabelled by {1: 0, 2: 1, 3: 2}
+        sage: CM = CartanMatrix([[2,-1,-2], [-1,2,-1], [-2,-1,2]])
+        sage: find_cartan_type_from_matrix(CM)
     """
-    n = CM.ncols()
-    # Build the list to test based upon rank
-    if n == 1:
-        return CartanType(['A', 1])
-
-    test = [['A', n]]
-    if n >= 2:
-        if n == 2:
-            test += [['G',2], ['A',2,2]]
-        test += [['B',n], ['A',n-1,1]]
-    if n >= 3:
-        if n == 3:
-            test += [['G',2,1], ['D',4,3]]
-        test += [['C',n], ['BC',n-1,2], ['C',n-1,1]]
-    if n >= 4:
-        if n == 4:
-            test += [['F',4], ['G',2,1], ['D',4,3]]
-        test += [['D',n], ['B',n-1,1]]
-    if n == 5:
-        test += [['F',4,1], ['D',n-1,1]]
-    elif n == 6:
-        test.append(['E',6])
-    elif n == 7:
-        test += [['E',7], ['E',6,1]]
-    elif n == 8:
-        test += [['E',8], ['E',7,1]]
-    elif n == 9:
-        test.append(['E',8,1])
-
-    # Test every possible Cartan type and its dual
-    for x in test:
-        ct = CartanType(x)
-        if ct.cartan_matrix() == CM:
-            return ct
-        if ct == ct.dual():
+    types = []
+    for S in CM.dynkin_diagram().connected_components_subgraphs():
+        S = DiGraph(S) # We need a simple digraph here
+        n = S.num_verts()
+        # Build the list to test based upon rank
+        if n == 1:
+            types.append(CartanType(['A', 1]))
             continue
-        ct = ct.dual()
-        if ct.cartan_matrix() == CM:
-            return ct
-    return None
 
-def cartan_matrix(t):
-    """
-    Return the Cartan matrix of type `t`.
+        test = [['A', n]]
+        if n >= 2:
+            if n == 2:
+                test += [['G',2], ['A',2,2]]
+            test += [['B',n], ['A',n-1,1]]
+        if n >= 3:
+            if n == 3:
+                test.append(['G',2,1])
+            test += [['C',n], ['BC',n-1,2], ['C',n-1,1]]
+        if n >= 4:
+            if n == 4:
+                test.append(['F',4])
+            test += [['D',n], ['B',n-1,1]]
+        if n >= 5:
+            if n == 5:
+                test.append(['F',4,1])
+            test.append(['D',n-1,1])
+        if n == 6:
+            test.append(['E',6])
+        elif n == 7:
+            test += [['E',7], ['E',6,1]]
+        elif n == 8:
+            test += [['E',8], ['E',7,1]]
+        elif n == 9:
+            test.append(['E',8,1])
 
-    .. NOTE::
+        # Test every possible Cartan type and its dual
+        found = False
+        for x in test:
+            ct = CartanType(x)
+            T = DiGraph(ct.dynkin_diagram()) # We need a simple digraph here
+            iso, match = T.is_isomorphic(S, certificate=True, edge_labels=True)
+            if iso:
+                types.append(ct.relabel(match))
+                found = True
+                break
 
-        This function is deprecated in favor of
-        ``CartanMatrix(...)``, to avoid polluting the
-        global namespace.
+            if ct == ct.dual():
+                continue # self-dual, so nothing more to test
 
-    EXAMPLES::
+            ct = ct.dual()
+            T = DiGraph(ct.dynkin_diagram()) # We need a simple digraph here
+            iso, match = T.is_isomorphic(S, certificate=True, edge_labels=True)
+            if iso:
+                types.append(ct.relabel(match))
+                found = True
+                break
+        if not found:
+            return None
 
-        sage: cartan_matrix(['A', 4])
-        doctest:...: DeprecationWarning: cartan_matrix() is deprecated. Use CartanMatrix() instead
-        See http://trac.sagemath.org/14137 for details.
-        [ 2 -1  0  0]
-        [-1  2 -1  0]
-        [ 0 -1  2 -1]
-        [ 0  0 -1  2]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(14137, 'cartan_matrix() is deprecated. Use CartanMatrix() instead')
-    return CartanMatrix(t)
+    return CartanType(types)
 

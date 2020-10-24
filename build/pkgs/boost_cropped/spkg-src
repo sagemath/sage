@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -e
+
+VERSION=$(cat package-version.txt)
+SOURCE_VERSION=$(echo $VERSION | tr . _)
+SOURCE_DIR=boost_$SOURCE_VERSION
+SOURCE_TARBALL=$SOURCE_DIR.tar.bz2
+
+DEST_DIR=boost_cropped-$VERSION
+DEST_TARBALL=$DEST_DIR.tar.bz2
+
+CURDIR=$(pwd)
+TMPDIR=$(mktemp -d)
+
+cp $SOURCE_TARBALL $TMPDIR
+cd $TMPDIR
+
+tar xjf $SOURCE_TARBALL
+mkdir $DEST_DIR
+mv $SOURCE_DIR/boost $DEST_DIR
+tar cjf $DEST_TARBALL $DEST_DIR
+
+mv $DEST_TARBALL $CURDIR
+cd $CURDIR
+
+rm -Rf $TMPDIR

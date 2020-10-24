@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 """
-Ideals in Univariate Polynomial Rings.
+Ideals in Univariate Polynomial Rings
 
 AUTHORS:
 
@@ -7,21 +8,13 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#
-#   Sage: System for Algebra and Geometry Experimentation
-#
-#       Copyright (C) 2009 DavidRoe <roed@math.harvard.edu>
+#       Copyright (C) 2009 David Roe <roed@math.harvard.edu>
 #                          William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
@@ -47,7 +40,7 @@ class Ideal_1poly_field(Ideal_pid):
         return self.gen().degree()
 
     def residue_field(self, names=None, check=True):
-        """
+        r"""
         If this ideal is `P \subset F_p[t]`, returns the quotient `F_p[t]/P`.
 
         EXAMPLES::
@@ -65,3 +58,29 @@ class Ideal_1poly_field(Ideal_pid):
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(self, names, check=False)
 
+    def groebner_basis(self, algorithm=None):
+        """
+        Return a Gröbner basis for this ideal.
+
+        The Gröbner basis has 1 element, namely the generator of the
+        ideal. This trivial method exists for compatibility with
+        multi-variate polynomial rings.
+
+        INPUT:
+
+        - ``algorithm`` -- ignored
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: I = R.ideal([x^2 - 1, x^3 - 1])
+            sage: G = I.groebner_basis(); G
+            [x - 1]
+            sage: type(G)
+            <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
+            sage: list(G)
+            [x - 1]
+        """
+        gb = self.gens_reduced()
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
+        return PolynomialSequence_generic([gb], self.ring(), immutable=True)

@@ -16,7 +16,7 @@ We switch to the test backend for the remainder of this file::
     The Sage display manager using the test backend
 
     sage: dm._output_promotions
-    {<class 'sage.repl.rich_output.output_basic.OutputPlainText'>: 
+    {<class 'sage.repl.rich_output.output_basic.OutputPlainText'>:
      <class 'sage.repl.rich_output.backend_test.TestOutputPlainText'>}
     sage: dm.displayhook(1/2)
     1/2 [TestOutputPlainText]
@@ -51,7 +51,7 @@ class TestOutputPlainText(OutputPlainText):
         """
         Backend-specific subclass of the plain text output container.
 
-        Backends must not influence how the display system constucts
+        Backends must not influence how the display system constructs
         output containers, they can only control how the output
         container is displayed. In particular, we cannot override the
         constructor (only the
@@ -63,6 +63,7 @@ class TestOutputPlainText(OutputPlainText):
             sage: from sage.repl.rich_output.backend_test import TestOutputPlainText
             sage: TestOutputPlainText()
             Traceback (most recent call last):
+            ...
             AssertionError: cannot override constructor
         """
         raise AssertionError('cannot override constructor')
@@ -84,7 +85,7 @@ class TestOutputPlainText(OutputPlainText):
             sage: test_output.print_to_stdout()
             123 [TestOutputPlainText]
         """
-        print('{0} [{1}]'.format(self.text.get(), self.__class__.__name__))
+        print('{0} [{1}]'.format(self.text.get_str(), self.__class__.__name__))
 
 
 class TestObject(SageObject):
@@ -122,16 +123,16 @@ class TestObject(SageObject):
             sage: obj = TestObject()
             sage: rich_output = obj._rich_repr_(display_manager);  rich_output
             OutputPlainText container
-            sage: rich_output.text.get()
+            sage: rich_output.text.get_str()
             'called the _rich_repr_ method'
         """
         tp = display_manager.types
         if tp.OutputPlainText in display_manager.supported_output():
             return tp.OutputPlainText('called the _rich_repr_ method')
 
-        
+
 class BackendTest(BackendBase):
-    
+
     def _repr_(self):
         """
         Return the string representation
@@ -163,14 +164,14 @@ class BackendTest(BackendBase):
 
             sage: display_manager = sage.repl.rich_output.get_display_manager()
             sage: backend = display_manager._backend
-            sage: backend.supported_output()
-            set([<class 'sage.repl.rich_output.backend_test.TestOutputPlainText'>])
+            sage: list(backend.supported_output())
+            [<class 'sage.repl.rich_output.backend_test.TestOutputPlainText'>]
 
         The output of this method is used by the display manager to
         set up the actual supported outputs. Compare::
 
-            sage: display_manager.supported_output()
-            frozenset([<class 'sage.repl.rich_output.output_basic.OutputPlainText'>])
+            sage: list(display_manager.supported_output())
+            [<class 'sage.repl.rich_output.output_basic.OutputPlainText'>]
         """
         return set([TestOutputPlainText])
 

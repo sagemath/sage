@@ -1,0 +1,2 @@
+coinor-cbc
+coinor-libcbc-dev

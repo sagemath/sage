@@ -1,8 +1,12 @@
+# distutils: libraries = flint
+# distutils: depends = flint/fmpz.h
+
 from libc.stdio cimport FILE
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/fmpz.h":
+# flint/fmpz.h
+cdef extern from "flint_wrap.h":
     # Memory management
     void fmpz_init(fmpz_t)
     void fmpz_init2(fmpz_t, ulong limbs)
@@ -45,6 +49,8 @@ cdef extern from "flint/fmpz.h":
     int fmpz_fits_si(fmpz_t f)
     void fmpz_zero(fmpz_t f)
     void fmpz_one(fmpz_t f)
+    void fmpz_setbit(fmpz_t f, ulong i)
+    int fmpz_tstbit(fmpz_t f, ulong i)
 
     # Input and output
     int fmpz_read(fmpz_t)
@@ -180,3 +186,7 @@ cdef extern from "flint/fmpz.h":
     void fmpz_bin_uiui(fmpz_t, ulong, ulong)
     void fmpz_rfac_ui(fmpz_t, fmpz_t, ulong)
     void fmpz_rfac_uiui(fmpz_t, ulong, ulong)
+
+    # Random Generators
+    void fmpz_randbits(fmpz_t f, flint_rand_t state, mp_bitcnt_t bits)
+    void fmpz_randm(fmpz_t f, flint_rand_t state, const fmpz_t m)

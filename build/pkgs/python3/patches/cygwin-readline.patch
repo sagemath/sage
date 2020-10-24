@@ -1,0 +1,31 @@
+Some patches to prevent an error that would occur on Cygwin trying to call
+`ldd` on the .dll.a import library for readline, which doesn't work (we
+might consider later updating this with a call to dlltool instead, which is
+the appropriate alternative).
+
+Also adds the correct link flags for curses on Cygwin.
+
+diff --git a/setup.py b/setup.py
+index 598f581..2405f17 100644
+--- a/setup.py
++++ b/setup.py
+@@ -880,7 +880,8 @@ class PyBuildExt(build_ext):
+         if not os.path.exists(self.build_temp):
+             os.makedirs(self.build_temp)
+         # Determine if readline is already linked against curses or tinfo.
+-        if do_readline:
++        # This doesn't work properly on Cygwin
++        if do_readline and HOST_PLATFORM != 'cygwin':
+             if CROSS_COMPILING:
+                 ret = os.system("%s -d %s | grep '(NEEDED)' > %s" \
+                                 % (sysconfig.get_config_var('READELF'),
+@@ -982,6 +983,9 @@ class PyBuildExt(build_ext):
+         curses_enabled = True
+         if curses_library.startswith('ncurses'):
+             curses_libs = [curses_library]
++            if HOST_PLATFORM == 'cygwin':
++                curses_libs.append('tinfo' +
++                                   'w' if curses_library[-1] == 'w' else '')
+             self.add(Extension('_curses', ['_cursesmodule.c'],
+                                include_dirs=curses_includes,
+                                define_macros=curses_defines,

@@ -2,7 +2,7 @@
 Number-Theoretic Functions
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,12 +14,11 @@ Number-Theoretic Functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 import sage.rings.complex_field as complex_field
-from sage.functions.other import factorial, psi
 
 from sage.rings.all import (ComplexField, ZZ, RR, RDF)
 from sage.rings.complex_number import is_ComplexNumber
@@ -28,8 +27,10 @@ from sage.rings.real_mpfr import (RealField, is_RealNumber)
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 
 import sage.libs.mpmath.utils as mpmath_utils
-from sage.misc.superseded import deprecation
 from sage.combinat.combinat import bernoulli_polynomial
+
+from .gamma import psi
+from .other import factorial
 
 CC = complex_field.ComplexField()
 I = CC.gen(0)
@@ -63,6 +64,10 @@ class Function_zeta(GinacFunction):
             zeta(I)
             sage: zeta(I).n()
             0.00330022368532410 - 0.418155449141322*I
+            sage: zeta(sqrt(2))
+            zeta(sqrt(2))
+            sage: zeta(sqrt(2)).n()  # rel tol 1e-10
+            3.02073767948603
 
         It is possible to use the ``hold`` argument to prevent
         automatic evaluation::
@@ -76,12 +81,20 @@ class Function_zeta(GinacFunction):
             sage: a = zeta(2,hold=True); a.simplify()
             1/6*pi^2
 
-        Check that :trac:`15846` is resolved::
+        The Laurent expansion of `\zeta(s)` at `s=1` is
+        implemented by means of the
+        :wikipedia:`Stieltjes constants <Stieltjes_constants>`::
 
-            sage: zeta(x).series(x==1, 1)
-            1*(x - 1)^(-1) + (euler_gamma + log(2) + log(pi) + 2*zetaderiv(1, 0)) + Order(x - 1)
-            sage: zeta(x).residue(x==1)
-            1
+            sage: s = SR('s')
+            sage: zeta(s).series(s==1, 2)
+            1*(s - 1)^(-1) + euler_gamma + (-stieltjes(1))*(s - 1) + Order((s - 1)^2)
+
+        Generally, the Stieltjes constants occur in the Laurent
+        expansion of `\zeta`-type singularities::
+
+            sage: zeta(2*s/(s+1)).series(s==1, 2)
+            2*(s - 1)^(-1) + (euler_gamma + 1) + (-1/2*stieltjes(1))*(s - 1) + Order((s - 1)^2)
+
 
         TESTS::
 
@@ -90,15 +103,102 @@ class Function_zeta(GinacFunction):
             sage: a = loads(dumps(zeta(x)))
             sage: a.operator() == zeta
             True
+            sage: zeta(x)._sympy_()
+            zeta(x)
 
             sage: zeta(1)
             Infinity
             sage: zeta(x).subs(x=1)
             Infinity
+
+        Check that :trac:`19799` is resolved::
+
+            sage: zeta(pi)
+            zeta(pi)
+            sage: zeta(pi).n()  # rel tol 1e-10
+            1.17624173838258
+
+        Check that :trac:`20082` is fixed::
+
+            sage: zeta(x).series(x==pi, 2)
+            (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
+            sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
+            zeta(2*I*pi)
+
+        Check that :trac:`20102` is fixed::
+
+            sage: (zeta(x)^2).series(x==1, 1)
+            1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
+            + (euler_gamma^2 - 2*stieltjes(1)) + Order(x - 1)
+            sage: (zeta(x)^4).residue(x==1)
+            4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
+            - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
+
+        Check that the right infinities are returned (:trac:`19439`)::
+
+            sage: zeta(1.0)
+            +infinity
+            sage: zeta(SR(1.0))
+            Infinity
         """
-        GinacFunction.__init__(self, "zeta")
+        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
 
 zeta = Function_zeta()
+
+
+class Function_stieltjes(GinacFunction):
+    def __init__(self):
+        r"""
+        Stieltjes constant of index ``n``.
+
+        ``stieltjes(0)`` is identical to the Euler-Mascheroni constant
+        (:class:`sage.symbolic.constants.EulerGamma`). The Stieltjes
+        constants are used in the series expansions of `\zeta(s)`.
+
+        INPUT:
+
+        -  ``n`` - non-negative integer
+
+        EXAMPLES::
+
+            sage: _ = var('n')
+            sage: stieltjes(n)
+            stieltjes(n)
+            sage: stieltjes(0)
+            euler_gamma
+            sage: stieltjes(2)
+            stieltjes(2)
+            sage: stieltjes(int(2))
+            stieltjes(2)
+            sage: stieltjes(2).n(100)
+            -0.0096903631928723184845303860352
+            sage: RR = RealField(200)
+            sage: stieltjes(RR(2))
+            -0.0096903631928723184845303860352125293590658061013407498807014
+
+        It is possible to use the ``hold`` argument to prevent
+        automatic evaluation::
+
+            sage: stieltjes(0,hold=True)
+            stieltjes(0)
+
+            sage: latex(stieltjes(n))
+            \gamma_{n}
+            sage: a = loads(dumps(stieltjes(n)))
+            sage: a.operator() == stieltjes
+            True
+            sage: stieltjes(x)._sympy_()
+            stieltjes(x)
+
+            sage: stieltjes(x).subs(x==0)
+            euler_gamma
+        """
+        GinacFunction.__init__(self, "stieltjes", nargs=1,
+                            conversions=dict(mathematica='StieltjesGamma',
+                                sympy='stieltjes'),
+                            latex_name=r'\gamma')
+
+stieltjes = Function_stieltjes()
 
 
 class Function_HurwitzZeta(BuiltinFunction):
@@ -114,7 +214,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
                                                   sympy='zeta'),
-                                 latex_name='\zeta')
+                                 latex_name=r'\zeta')
 
     def _eval_(self, s, x):
         r"""
@@ -169,20 +269,20 @@ class Function_HurwitzZeta(BuiltinFunction):
 hurwitz_zeta_func = Function_HurwitzZeta()
 
 
-def hurwitz_zeta(s, x, prec=None, **kwargs):
+def hurwitz_zeta(s, x, **kwargs):
     r"""
     The Hurwitz zeta function `\zeta(s, x)`, where `s` and `x` are complex.
 
     The Hurwitz zeta function is one of the many zeta functions. It
-    defined as
+    is defined as
 
-    .. math::
+    .. MATH::
 
              \zeta(s, x) = \sum_{k=0}^{\infty} (k + x)^{-s}.
 
 
     When `x = 1`, this coincides with Riemann's zeta function.
-    The Dirichlet L-functions may be expressed as a linear combination
+    The Dirichlet L-functions may be expressed as linear combinations
     of Hurwitz zeta functions.
 
     EXAMPLES:
@@ -215,11 +315,6 @@ def hurwitz_zeta(s, x, prec=None, **kwargs):
 
     - :wikipedia:`Hurwitz_zeta_function`
     """
-    if prec:
-        deprecation(15095, 'the syntax hurwitz_zeta(s, x, prec) has been '
-                           'deprecated. Use hurwitz_zeta(s, x).n(digits=prec) '
-                           'instead.')
-        return hurwitz_zeta_func(s, x).n(digits=prec)
     return hurwitz_zeta_func(s, x, **kwargs)
 
 
@@ -250,6 +345,12 @@ class Function_zetaderiv(GinacFunction):
             sage: a = loads(dumps(zetaderiv(2,x)))
             sage: a.operator() == zetaderiv
             True
+
+            sage: b = RBF(3/2, 1e-10)
+            sage: zetaderiv(1, b, hold=True)
+            zetaderiv(1, [1.500000000 +/- 1.01e-10])
+            sage: zetaderiv(b, 1)
+            zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2)
 
@@ -264,6 +365,15 @@ class Function_zetaderiv(GinacFunction):
         """
         from mpmath import zeta
         return mpmath_utils.call(zeta, x, 1, n, parent=parent)
+
+    def _method_arguments(self, k, x, **args):
+        r"""
+        TESTS::
+
+            sage: zetaderiv(1, RBF(3/2, 0.0001))
+            [-3.93 +/- ...e-3]
+        """
+        return [x, k]
 
 zetaderiv = Function_zetaderiv()
 
@@ -285,7 +395,7 @@ def zeta_symmetric(s):
 
     More precisely,
 
-    .. math::
+    .. MATH::
 
                 xi(s) = \gamma(s/2 + 1) * (s-1) * \pi^{-s/2} * \zeta(s).
 
@@ -330,7 +440,7 @@ class DickmanRho(BuiltinFunction):
     Dickman's function is the continuous function satisfying the
     differential equation
 
-    .. math::
+    .. MATH::
 
          x \rho'(x) + \rho(x-1) = 0
 
@@ -338,7 +448,7 @@ class DickmanRho(BuiltinFunction):
     `0 \le x \le 1`. It is useful in estimating the frequency
     of smooth numbers as asymptotically
 
-    .. math::
+    .. MATH::
 
          \Psi(a, a^{1/s}) \sim a \rho(s)
 
@@ -509,7 +619,7 @@ class DickmanRho(BuiltinFunction):
         r"""
         Approximate using de Bruijn's formula
 
-        .. math::
+        .. MATH::
 
              \rho(x) \sim \frac{exp(-x \xi + Ei(\xi))}{\sqrt{2\pi x}\xi}
 

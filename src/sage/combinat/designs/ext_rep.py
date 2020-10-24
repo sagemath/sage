@@ -7,12 +7,7 @@ block designs. The module also provides the related I/O operations for
 reading/writing ext-rep files or data. The parsing is based on expat.
 
 This is a modified form of the module ext_rep.py (version 0.8)
-written by Peter Dobcsanyi [D2009]_ peter@designtheory.org.
-
-REFERENCES:
-
-.. [D2009] P. Dobcsanyi et al. DesignTheory.org
-   http://designtheory.org/database/
+written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 .. TODO::
 
@@ -40,14 +35,15 @@ Functions
 
 import sys
 import xml.parsers.expat
-from types import *
 import re
 import os.path
 import gzip
 import bz2
+
+from urllib.request import urlopen
+
 from sage.misc.all import tmp_filename
-import urllib2
-import sys
+
 
 XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
 DTRS_PROTOCOL   = '2.0'
@@ -475,7 +471,7 @@ def dump_to_tmpfile(s):
     """
     Utility function to dump a string to a temporary file.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.combinat.designs import ext_rep
         sage: file_loc = ext_rep.dump_to_tmpfile("boo")
@@ -536,7 +532,7 @@ def open_extrep_file(fname):
         elif ext == '.bz2':
             f = bz2.BZ2File(fname)
         else:
-            f = open(fname)
+            f = open(fname, 'rb')
     return f
 
 def open_extrep_url(url):
@@ -559,12 +555,11 @@ def open_extrep_url(url):
         sage: s = ext_rep.designs_from_XML_url("http://designtheory.org/database/v-b-k/v3-b6-k2.icgsa.txt.bz2") # optional - internet
     """
 
-    f = urllib2.urlopen(url)
+    f = urlopen(url)
 
     root, ext = os.path.splitext(url)
     if ext == '.gz':
-        # f = gzip.GzipFile(f_url)
-        raise NotImplemented
+        raise NotImplementedError
     elif ext == '.bz2':
         return bz2.decompress(f.read())
     else:
@@ -666,7 +661,7 @@ class XTree(object):
         """
 
 
-        if isinstance(node, StringType):
+        if isinstance(node, str):
             node = (node, {}, [])
         name, attributes, children = node
         self.xt_node = node
@@ -713,7 +708,7 @@ class XTree(object):
                             # need this to get an empty Xtree, for append
                             return XTree(child)
                         grandchild = children[0]
-                        if isinstance(grandchild, TupleType):
+                        if isinstance(grandchild, tuple):
                             if len(grandchild[1]) == 0 and \
                                 len(grandchild[2]) == 0:
                                 return grandchild[0]
@@ -748,14 +743,14 @@ class XTree(object):
         try:
             child = self.xt_children[i]
         except IndexError:
-            raise IndexError('{} has no index {}'.format(self.__repr__(), i))
-        if isinstance(child, TupleType):
+            raise IndexError('{!r} has no index {}'.format(self, i))
+        if isinstance(child, tuple):
             name, attributes, children = child
             if len(attributes) > 0:
                 return XTree(child)
             else:
                 grandchild = children[0]
-                if isinstance(grandchild, TupleType):
+                if isinstance(grandchild, tuple):
                     if len(grandchild[1]) == 0 and len(grandchild[2]) == 0:
                         return grandchild[0]
                     else:
@@ -874,7 +869,7 @@ class XTreeProcessor(object):
         elif name == 'designs':
             pass # self.outf.write(' <%s>\n' % name)
         if self.in_item:
-            for k, v in attrs.iteritems():
+            for k, v in attrs.items():
                 attrs[k] = _encode_attribute(v)
             new_node = (name, attrs, [])
             self.node_stack.append(new_node)
@@ -899,7 +894,7 @@ class XTreeProcessor(object):
 
         if self.in_item:
             children = self.current_node[2]
-            if len(children) > 0 and isinstance(children[0], TupleType):
+            if len(children) > 0 and isinstance(children[0], tuple):
                 if children[0][0] == 'z' or children[0][0] == 'd' \
                    or children[0][0] == 'q':
                     if children[0][0] == 'z':
@@ -994,12 +989,12 @@ class XTreeProcessor(object):
         p.StartElementHandler = self._start_element
         p.EndElementHandler = self._end_element
         p.CharacterDataHandler = self._char_data
-        p.returns_unicode = 0
 
-        if isinstance(xml_source, StringType):
+        if isinstance(xml_source, (str, bytes)):
             p.Parse(xml_source)
         else:
             p.ParseFile(xml_source)
+
 
 def designs_from_XML(fname):
     """
@@ -1065,4 +1060,3 @@ def designs_from_XML_url(url):
     proc.parse(s)
 
     return proc.list_of_designs
-

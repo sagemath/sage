@@ -1,3 +1,4 @@
-from gen import gen as pari_gen
-from pari_instance import pari
-from handle_error import PariError
+from __future__ import absolute_import
+from cypari2.gen import Gen as pari_gen
+from cypari2 import PariError
+from . import pari

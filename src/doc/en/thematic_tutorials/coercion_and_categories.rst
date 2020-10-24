@@ -104,27 +104,23 @@ it makes sense to build on top of the base class
 This base class provides a lot more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
-    ['__div__',
-     '__fraction_field',
+    ['__fraction_field',
      '__ideal_monoid',
      '__iter__',
+     '__len__',
      '__pow__',
-     '__rdiv__',
      '__rpow__',
+     '__rtruediv__',
      '__rxor__',
+     '__truediv__',
      '__xor__',
-     '_an_element',
-     '_an_element_c',
      '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_self',
      '_coerce_try',
      '_default_category',
-     '_gcd_univariate_polynomial',
      '_gens',
-     '_has_coerce_map_from',
      '_ideal_class_',
      '_latex_names',
      '_list',
@@ -132,16 +128,14 @@ This base class provides a lot more methods than a general parent::
      '_pseudo_fraction_field',
      '_random_nonzero_element',
      '_unit_ideal',
-     '_xgcd_univariate_polynomial',
      '_zero_element',
      '_zero_ideal',
      'algebraic_closure',
      'base_extend',
-     'cardinality',
      'class_group',
-     'coerce_map_from_c',
-     'coerce_map_from_impl',
      'content',
+     'derivation',
+     'derivation_module',
      'divides',
      'epsilon',
      'extension',
@@ -150,24 +144,18 @@ This base class provides a lot more methods than a general parent::
      'gcd',
      'gen',
      'gens',
-     'get_action_c',
-     'get_action_impl',
-     'has_coerce_map_from_c',
-     'has_coerce_map_from_impl',
      'ideal',
      'ideal_monoid',
      'integral_closure',
      'is_commutative',
      'is_field',
-     'is_finite',
      'is_integral_domain',
      'is_integrally_closed',
      'is_noetherian',
      'is_prime_field',
-     'is_ring',
      'is_subring',
      'krull_dimension',
-     'list',
+     'localization',
      'ngens',
      'one',
      'order',
@@ -191,7 +179,7 @@ be complemented later.
     sage: class MyFrac(UniqueRepresentation, Field):
     ....:     def __init__(self, base):
     ....:         if base not in IntegralDomains():
-    ....:             raise ValueError, "%s is no integral domain"%base
+    ....:             raise ValueError("%s is no integral domain" % base)
     ....:         Field.__init__(self, base)
     ....:     def _repr_(self):
     ....:         return "NewFrac(%s)"%repr(self.base())
@@ -220,9 +208,9 @@ This basic implementation is formed by the following steps:
 
   .. end of output
 
-  We are implementing a seperate method returning the base ring.
+  We are implementing a separate method returning the base ring.
 
-- Python uses double\--underscore methods for arithemetic methods and string
+- Python uses double\--underscore methods for arithmetic methods and string
   representations. Sage's base classes often have a default implementation,
   and it is requested to **implement SINGLE underscore methods _repr_, and
   similarly _add_, _mul_ etc.**
@@ -311,27 +299,25 @@ considerations:
   etc. **We do not override the default double underscore __add__, __mul__**,
   since otherwise, we could not use Sage's coercion model.
 
-- Comparisons can be implemented using ``_cmp_``. This automatically
-  makes the relational operators like ``==`` and ``<`` work. In order
-  to support the Python ``cmp()`` function, it is safest to define both
-  ``_cmp_`` and ``__cmp__`` (because ``__cmp__`` is not inherited if
-  other comparison operators or ``__hash__`` are defined). Of course you
-  can just do ``__cmp__ = _cmp_``.
+- Comparisons can be implemented using ``_richcmp_``.
+  This automatically makes the relational operators like
+  ``==`` and ``<`` work. Inside this method, you can use
+  the ``richcmp`` functions and related tools provided by sage.
 
-  Note that ``_cmp_`` should be provided, since otherwise comparison
-  does not work::
+  Note that ``_richcmp_`` should be provided,
+  since otherwise comparison does not work::
 
       sage: class Foo(sage.structure.element.Element):
       ....:  def __init__(self, parent, x):
       ....:      self.x = x
       ....:  def _repr_(self):
-      ....:      return "<%s>"%self.x
+      ....:      return "<%s>" % self.x
       sage: a = Foo(ZZ, 1)
       sage: b = Foo(ZZ, 2)
-      sage: cmp(a,b)
+      sage: a <= b
       Traceback (most recent call last):
       ...
-      NotImplementedError: comparison not implemented for <class '__main__.Foo'>
+      TypeError: '<=' not supported between instances of 'Foo' and 'Foo'
 
 - In the single underscore methods, we can assume that
   *both arguments belong to the same parent*.
@@ -369,9 +355,9 @@ This gives rise to the following code::
     ....:         return self.d
     ....:     def _repr_(self):
     ....:         return "(%s):(%s)"%(self.n,self.d)
-    ....:     def _cmp_(self, other):
-    ....:         return cmp(self.n*other.denominator(), other.numerator()*self.d)
-    ....:     __cmp__ = _cmp_
+    ....:     def _richcmp_(self, other, op):
+    ....:         from sage.structure.richcmp import richcmp
+    ....:         return richcmp(self.n*other.denominator(), other.numerator()*self.d, op)
     ....:     def _add_(self, other):
     ....:         C = self.__class__
     ....:         D = self.d*other.denominator()
@@ -404,15 +390,6 @@ we stay inside a single parent structure::
     sage: a-b == MyElement(P, 1, 4)
     True
 
-.. end of output
-
-We didn't implement exponentiation\---but it just works::
-
-    sage: a^3
-    (27):(64)
-
-.. end of output
-
 There is a default implementation of element tests. We can already do
 ::
 
@@ -428,7 +405,7 @@ does not even give a wrong answer, but results in an error::
     sage: 1 in P
     Traceback (most recent call last):
     ...
-    NotImplementedError
+    NotImplementedError: cannot construct elements of NewFrac(Integer Ring)
 
 .. end of output
 
@@ -468,10 +445,10 @@ Sage's category framework can differentiate the two cases::
 And indeed, ``MS2`` has *more* methods than ``MS1``::
 
     sage: import inspect
-    sage: len([s for s in dir(MS1) if inspect.ismethod(getattr(MS1,s,None))])
-    59
-    sage: len([s for s in dir(MS2) if inspect.ismethod(getattr(MS2,s,None))])
-    87
+    sage: L1 = len([s for s in dir(MS1) if inspect.ismethod(getattr(MS1,s,None))])
+    sage: L2 = len([s for s in dir(MS2) if inspect.ismethod(getattr(MS2,s,None))])
+    sage: L1 < L2
+    True
 
 This is because the class of ``MS2`` also inherits from the parent
 class for algebras::
@@ -531,7 +508,7 @@ inheritance still works, by virtue of a ``__getattr__`` method.
     It is strongly recommended to use the category framework both in Python
     and in Cython.
 
-Let us see whether there is any gain in chosing the category of quotient
+Let us see whether there is any gain in choosing the category of quotient
 fields instead of the category of fields::
 
     sage: QuotientFields().parent_class, QuotientFields().element_class
@@ -540,8 +517,11 @@ fields instead of the category of fields::
     sage: [p for p in dir(QuotientFields().parent_class) if p not in dir(Fields().parent_class)]
     []
     sage: [p for p in dir(QuotientFields().element_class) if p not in dir(Fields().element_class)]
-    ['_derivative', 'denominator', 'derivative', 'factor',
-     'numerator', 'partial_fraction_decomposition']
+    ['_derivative',
+     'denominator',
+     'derivative',
+     'numerator',
+     'partial_fraction_decomposition']
 
 .. end of output
 
@@ -555,8 +535,10 @@ methods are place-holders: There is no default implementation, but it is
     sage: from sage.misc.abstract_method import abstract_methods_of_class
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
     ['__nonzero__', 'denominator', 'numerator']
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    ['__bool__', 'denominator', 'numerator']
 
 Hence, when implementing elements of a quotient field, it is *required* to
 implement methods returning the denominator and the numerator, and a method
@@ -577,7 +559,7 @@ category::
     sage: class MyFrac(MyFrac):
     ....:     def __init__(self, base, category=None):
     ....:         if base not in IntegralDomains():
-    ....:             raise ValueError, "%s is no integral domain"%base
+    ....:             raise ValueError("%s is no integral domain" % base)
     ....:         Field.__init__(self, base, category=category or QuotientFields())
 
 When constructing instances of ``MyFrac``, their class is dynamically changed
@@ -612,7 +594,7 @@ does not work, yet::
     sage: P.sum([a, b, c])
     Traceback (most recent call last):
     ...
-    NotImplementedError
+    NotImplementedError: cannot construct elements of NewFrac(Integer Ring)
 
 .. end of output
 
@@ -663,7 +645,12 @@ This little change provides several benefits:
       sage: P.sum([a,b,c])
       (36):(16)
 
-.. end of output
+- Exponentiation now works out of the box using the multiplication
+  that we defined::
+
+    sage: a^3
+    (729):(64)
+
 
 What did happen behind the scenes to make this work?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -824,7 +811,7 @@ thus have::
     sage: P1.has_coerce_map_from(P2)
     True
     sage: P1.coerce_map_from(P2)
-    Conversion map:
+    Coercion map:
       From: Multivariate Polynomial Ring in w, v over Integer Ring
       To:   Multivariate Polynomial Ring in v, w over Rational Field
 
@@ -881,7 +868,8 @@ The four axioms requested for coercions
       rational field is a homomorphism of euclidean domains::
 
           sage: QQ.coerce_map_from(ZZ).category_for()
-          Category of euclidean domains
+          Join of Category of euclidean domains and Category of infinite sets
+          and Category of metric spaces
 
       .. end of output
 
@@ -1272,7 +1260,7 @@ functors are shuffled.
 ::
 
     sage: Compl, R = RR.construction(); Compl
-    Completion[+Infinity]
+    Completion[+Infinity, prec=53]
 
 .. end of output
 
@@ -1302,7 +1290,7 @@ When we apply ``Compl``, ``Matr`` and ``Poly`` to the ring of integers, we
 obtain::
 
     sage: (Poly*Matr*Compl)(ZZ)
-    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Real Field with 53 bits of precision
+    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
 
 .. end of output
 
@@ -1310,14 +1298,14 @@ Applying the shuffling procedure yields
 ::
 
     sage: (Poly*Matr*Fract*Poly*AlgClos*Fract*Compl)(ZZ)
-    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Fraction Field of Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
+    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Fraction Field of Univariate Polynomial Ring in x over Algebraic Field
 
 .. end of output
 
 and this is indeed equal to the pushout found by Sage::
 
     sage: pushout((Fract*Poly*AlgClos*Fract)(ZZ), (Poly*Matr*Compl)(ZZ))
-    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Fraction Field of Univariate Polynomial Ring in x over Complex Field with 53 bits of precision
+    Univariate Polynomial Ring in x over Full MatrixSpace of 3 by 3 dense matrices over Fraction Field of Univariate Polynomial Ring in x over Algebraic Field
 
 .. end of output
 
@@ -1351,6 +1339,9 @@ default implementation. Hence:
 
 - Next, we implement a new version of the "usual" fraction field functor, having the same rank, but returning our new implementation.
 - We make our new implementation the default, by virtue of a merge method.
+- Since our fraction fields accept an optional argument ``category``, we pass
+  the optional arguments to the construction functor, which will in turn use
+  it to create a fraction field.
 
 .. WARNING::
 
@@ -1362,10 +1353,12 @@ default implementation. Hence:
     sage: from sage.categories.pushout import ConstructionFunctor
     sage: class MyFracFunctor(ConstructionFunctor):
     ....:     rank = 5
-    ....:     def __init__(self):
+    ....:     def __init__(self, args=None, kwds=None):
+    ....:         self.args = args or ()
+    ....:         self.kwds = kwds or {}
     ....:         ConstructionFunctor.__init__(self, IntegralDomains(), Fields())
     ....:     def _apply_functor(self, R):
-    ....:         return MyFrac(R)
+    ....:         return MyFrac(R,*self.args,**self.kwds)
     ....:     def merge(self, other):
     ....:         if isinstance(other, (type(self), sage.categories.pushout.FractionField)):
     ....:             return self
@@ -1404,14 +1397,18 @@ We verify that our functor can really be used to construct our implementation of
 
 .. end of output
 
-There remains to let our new fraction fields know about the new construction functor:
-
+There remains to let our new fraction fields know about the new construction
+functor. The arguments that were used when creating the fraction field are
+stored as an attribute---this is a feature provided by
+:class:`~sage.structure.unique_representation.CachedRepresentation`. We pass
+all but the first of these arguments to the construction functor, such that
+the construction functor is able to reconstruct the fraction field.
 
 ::
 
     sage: class MyFrac(MyFrac):
     ....:     def construction(self):
-    ....:         return MyFracFunctor(), self.base()
+    ....:         return MyFracFunctor(self._reduction[1][1:], self._reduction[2]), self.base()
 
 
 .. end of output
@@ -1503,8 +1500,10 @@ The elements have to provide more::
 
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
     ['__nonzero__', 'denominator', 'numerator']
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    ['__bool__', 'denominator', 'numerator']
 
 .. end of output
 
@@ -1547,15 +1546,19 @@ Here are the tests that form the test suite of quotient fields::
      '_test_cardinality',
      '_test_characteristic',
      '_test_characteristic_fields',
+     '_test_construction',
      '_test_distributivity',
+     '_test_divides',
      '_test_elements',
      '_test_elements_eq_reflexive',
      '_test_elements_eq_symmetric',
      '_test_elements_eq_transitive',
      '_test_elements_neq',
      '_test_euclidean_degree',
+     '_test_fraction_field',
      '_test_gcd_vs_xgcd',
-     '_test_one', '_test_prod',
+     '_test_one',
+     '_test_prod',
      '_test_quo_rem',
      '_test_some_elements',
      '_test_zero',
@@ -1592,11 +1595,14 @@ Let us see what tests are actually performed::
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
     running ._test_characteristic_fields() . . . pass
+    running ._test_construction() . . . pass
     running ._test_distributivity() . . . pass
+    running ._test_divides() . . . pass
     running ._test_elements() . . .
       Running the test suite of self.an_element()
       running ._test_category() . . . pass
       running ._test_eq() . . . pass
+      running ._test_new() . . . pass
       running ._test_nonzero_equal() . . . pass
       running ._test_not_implemented_methods() . . . pass
       running ._test_pickling() . . . pass
@@ -1607,7 +1613,9 @@ Let us see what tests are actually performed::
     running ._test_elements_neq() . . . pass
     running ._test_eq() . . . pass
     running ._test_euclidean_degree() . . . pass
+    running ._test_fraction_field() . . . pass
     running ._test_gcd_vs_xgcd() . . . pass
+    running ._test_new() . . . pass
     running ._test_not_implemented_methods() . . . pass
     running ._test_one() . . . pass
     running ._test_pickling() . . . pass
@@ -1761,12 +1769,15 @@ interesting.
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
     running ._test_characteristic_fields() . . . pass
+    running ._test_construction() . . . pass
     running ._test_distributivity() . . . pass
+    running ._test_divides() . . . pass
     running ._test_elements() . . .
       Running the test suite of self.an_element()
       running ._test_category() . . . pass
       running ._test_eq() . . . pass
       running ._test_factorisation() . . . pass
+      running ._test_new() . . . pass
       running ._test_nonzero_equal() . . . pass
       running ._test_not_implemented_methods() . . . pass
       running ._test_pickling() . . . pass
@@ -1777,7 +1788,9 @@ interesting.
     running ._test_elements_neq() . . . pass
     running ._test_eq() . . . pass
     running ._test_euclidean_degree() . . . pass
+    running ._test_fraction_field() . . . pass
     running ._test_gcd_vs_xgcd() . . . pass
+    running ._test_new() . . . pass
     running ._test_not_implemented_methods() . . . pass
     running ._test_one() . . . pass
     running ._test_pickling() . . . pass
@@ -1853,12 +1866,9 @@ Appendix: The complete code
         # into the same parent, which is a fraction field. Hence, we
         # are allowed to use the denominator() and numerator() methods
         # on the second argument.
-        def _cmp_(self, other):
-            return cmp(self.n*other.denominator(), other.numerator()*self.d)
-
-        # Support for cmp() (in this example, we don't define __hash__
-        # so this is not strictly needed)
-        __cmp__ = _cmp_
+        def _richcmp_(self, other, op):
+            from sage.structure.richcmp import richcmp
+            return richcmp(self.n*other.denominator(), other.numerator()*self.d, op)
 
         # Arithmetic methods, single underscore. We can assume that both
         # arguments are coerced into the same parent.
@@ -1891,7 +1901,7 @@ Appendix: The complete code
         def __init__(self, base, category=None):
             # Fraction fields only exist for integral domains
             if base not in IntegralDomains():
-                raise ValueError, "%s is no integral domain"%base
+                raise ValueError("%s is no integral domain" % base)
             # Implement the category framework for the parent
             Field.__init__(self, base, category=category or QuotientFields())
 

@@ -2,16 +2,18 @@
 Stopgaps
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2012 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-########################################################################
+#*****************************************************************************
 
 import warnings
-from warnings import warn, resetwarnings
+
 
 from sage.doctest import DOCTEST_MODE
 cdef bint ENABLED = not DOCTEST_MODE
@@ -32,10 +34,8 @@ def set_state(bint mode):
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Displays something.", 123456)
         doctest:...:
-        ********************************************************************************
-        Displays something.
-        This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/123456.
-        ********************************************************************************
+        ...StopgapWarning: Displays something.
+        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/123456.
         sage: sage.misc.stopgap.set_state(False)
     """
     global ENABLED
@@ -47,6 +47,8 @@ class StopgapWarning(Warning):
     mathematically incorrect results.
     """
     pass
+
+warnings.filterwarnings('always', category=StopgapWarning)
 
 cdef set _stopgap_cache = set([])
 
@@ -65,11 +67,9 @@ def stopgap(message, int ticket_no):
         sage: import sage.misc.stopgap
         sage: sage.misc.stopgap.set_state(True)
         sage: sage.misc.stopgap.stopgap("Computation of heights on elliptic curves over number fields can return very imprecise results.", 12509)
-        doctest:...:
-        ********************************************************************************
-        Computation of heights on elliptic curves over number fields can return very imprecise results.
-        This issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/12509.
-        ********************************************************************************
+        doctest:...
+        ...StopgapWarning: Computation of heights on elliptic curves over number fields can return very imprecise results.
+        This issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/12509.
         sage: sage.misc.stopgap.stopgap("This is not printed", 12509)
         sage: sage.misc.stopgap.set_state(False)  # so rest of doctesting fine
     """
@@ -80,8 +80,7 @@ def stopgap(message, int ticket_no):
     def my_format(message, category, filename, lineno, line=None):
         return "%s:%s:\n%s\n%s\n%s\n" % (filename, lineno, "*"*80, message, "*"*80)
     warnings.formatwarning = my_format
-    resetwarnings()
-    message = message + "\nThis issue is being tracked at http://trac.sagemath.org/sage_trac/ticket/%s."%ticket_no
-    warn(StopgapWarning(message), stacklevel=2)
+    message = message + "\nThis issue is being tracked at https://trac.sagemath.org/sage_trac/ticket/%s." % ticket_no
+    warnings.warn(StopgapWarning(message), stacklevel=2)
     warnings.formatwarning = old_format
     _stopgap_cache.add(ticket_no)

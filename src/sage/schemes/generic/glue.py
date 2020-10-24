@@ -1,6 +1,7 @@
 """
 Scheme obtained by gluing two other schemes
 """
+from __future__ import absolute_import
 
 #*******************************************************************************
 #  Copyright (C) 2006 William Stein
@@ -8,8 +9,8 @@ Scheme obtained by gluing two other schemes
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
-import morphism
-import scheme
+from . import morphism
+from . import scheme
 
 class GluedScheme(scheme.Scheme):
     r"""

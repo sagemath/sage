@@ -27,21 +27,22 @@ in the module.
 
 AUTHOR:
 
-    - Andrew Hou (11/06/2009)
+- Andrew Hou (11/06/2009)
 
 """
-######################################################################
+# ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #            The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ######################################################################
 
 from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import NaN
 from sage.functions.other import sqrt
+
 
 def mean(v):
     """
@@ -52,11 +53,11 @@ def mean(v):
 
     INPUT:
 
-        - `v` -- a list of numbers
+    - `v` -- a list of numbers
 
     OUTPUT:
 
-        - a number
+    - a number
 
     EXAMPLES::
 
@@ -74,31 +75,37 @@ def mean(v):
         sage: mean(v)
         50.5
     """
-    if hasattr(v, 'mean'): return v.mean()
-    if len(v) == 0:
+    if hasattr(v, 'mean'):
+        return v.mean()
+    if not v:
         return NaN
     s = sum(v)
-    if isinstance(s, (int,long)):
+    if isinstance(s, int):
         # python integers are stupid.
-        return s/ZZ(len(v))
-    return s/len(v)
+        return s / ZZ(len(v))
+    return s / len(v)
+
 
 def mode(v):
     """
-    Return the mode of `v`.  The mode is the sorted list of the most
-    frequently occuring elements in `v`.  If `n` is the most times
-    that any element occurs in `v`, then the mode is the sorted list
-    of elements of `v` that occur `n` times.
+    Return the mode of `v`.
 
-    NOTE: The elements of `v` must be hashable and comparable.
+    The mode is the list of the most frequently occuring
+    elements in `v`. If `n` is the most times that any element occurs
+    in `v`, then the mode is the list of elements of `v` that
+    occur `n` times. The list is sorted if possible.
+
+    .. NOTE::
+
+        The elements of `v` must be hashable.
 
     INPUT:
 
-        - `v` -- a list
+    - `v` -- a list
 
     OUTPUT:
 
-        - a list
+    - a list (sorted if possible)
 
     EXAMPLES::
 
@@ -109,20 +116,28 @@ def mode(v):
         3
         sage: mode([])
         []
+
         sage: mode([1,2,3,4,5])
         [1, 2, 3, 4, 5]
         sage: mode([3,1,2,1,2,3])
         [1, 2, 3]
-        sage: mode(['sage', 4, I, 3/5, 'sage', pi])
+        sage: mode([0, 2, 7, 7, 13, 20, 2, 13])
+        [2, 7, 13]
+
+        sage: mode(['sage', 'four', 'I', 'three', 'sage', 'pi'])
         ['sage']
+
         sage: class MyClass:
-        ...     def mode(self):
-        ...         return [1]
+        ....:   def mode(self):
+        ....:       return [1]
         sage: stats.mode(MyClass())
         [1]
     """
-    if hasattr(v, 'mode'): return v.mode()
-    from operator import itemgetter
+    if hasattr(v, 'mode'):
+        return v.mode()
+
+    if not v:
+        return v
 
     freq = {}
     for i in v:
@@ -131,28 +146,32 @@ def mode(v):
         else:
             freq[i] = 1
 
-    s = sorted(freq.items(), key=itemgetter(1), reverse=True)
-    return [i[0] for i in s if i[1]==s[0][1]]
+    n = max(freq.values())
+    try:
+        return sorted(u for u, f in freq.items() if f == n)
+    except TypeError:
+        return [u for u, f in freq.items() if f == n]
+
 
 def std(v, bias=False):
     """
-    Returns the standard deviation of the elements of `v`
+    Return the standard deviation of the elements of `v`.
 
     We define the standard deviation of the empty list to be NaN,
     following the convention of MATLAB, Scipy, and R.
 
     INPUT:
 
-        - `v` -- a list of numbers
+    - `v` -- a list of numbers
 
-        - ``bias`` -- bool (default: False); if False, divide by
-                      len(v) - 1 instead of len(v)
-                      to give a less biased estimator (sample) for the
-                      standard deviation.
+    - ``bias`` -- bool (default: False); if False, divide by
+                  len(v) - 1 instead of len(v)
+                  to give a less biased estimator (sample) for the
+                  standard deviation.
 
     OUTPUT:
 
-        - a number
+    - a number
 
     EXAMPLES::
 
@@ -161,11 +180,12 @@ def std(v, bias=False):
         sage: std([1..6], bias=False)
         sqrt(7/2)
         sage: std([e, pi])
-        sqrt(1/2)*sqrt((pi - e)^2)
+        sqrt(1/2)*abs(pi - e)
         sage: std([])
         NaN
         sage: std([I, sqrt(2), 3/5])
-        sqrt(1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2 + 1/450*(5*sqrt(2) + 5*I - 6)^2)
+        1/15*sqrt(1/2)*sqrt((10*sqrt(2) - 5*I - 3)^2
+        + (5*sqrt(2) - 10*I + 3)^2 + (5*sqrt(2) + 5*I - 6)^2)
         sage: std([RIF(1.0103, 1.0103), RIF(2)])
         0.6998235813403261?
         sage: import numpy
@@ -175,49 +195,54 @@ def std(v, bias=False):
         sage: x = finance.TimeSeries([1..100])
         sage: std(x)
         29.011491975882016
-    """
 
+    TESTS::
+
+        sage: data = [random() for i in [1 .. 20]]
+        sage: std(data)  # random
+        0.29487771726609185
+    """
     # NOTE: in R bias = False by default, and in Scipy bias=True by
     # default, and R is more popular.
 
-    if hasattr(v, 'standard_deviation'): return v.standard_deviation(bias=bias)
+    if hasattr(v, 'standard_deviation'):
+        return v.standard_deviation(bias=bias)
 
     import numpy
 
-    x = 0
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
-        if bias == True:
+        if bias:
             return v.std()
-        elif bias == False:
+        else:
             return v.std(ddof=1)
 
-    if len(v) == 0:
+    if not v:
         # standard deviation of empty set defined as NaN
         return NaN
 
     return sqrt(variance(v, bias=bias))
 
+
 def variance(v, bias=False):
     """
-    Returns the variance of the elements of `v`
+    Return the variance of the elements of `v`.
 
     We define the variance of the empty list to be NaN,
     following the convention of MATLAB, Scipy, and R.
 
     INPUT:
 
-        - `v` -- a list of numbers
+    - `v` -- a list of numbers
 
-        - ``bias`` -- bool (default: False); if False, divide by
-                      len(v) - 1 instead of len(v)
-                      to give a less biased estimator (sample) for the
-                      standard deviation.
+    - ``bias`` -- bool (default: False); if False, divide by
+                  len(v) - 1 instead of len(v)
+                  to give a less biased estimator (sample) for the
+                  standard deviation.
 
     OUTPUT:
 
-        - a number
-
+    - a number
 
     EXAMPLES::
 
@@ -230,7 +255,8 @@ def variance(v, bias=False):
         sage: variance([])
         NaN
         sage: variance([I, sqrt(2), 3/5])
-        1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2 + 1/450*(5*sqrt(2) + 5*I - 6)^2
+        1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2
+        + 1/450*(5*sqrt(2) + 5*I - 6)^2
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
         sage: import numpy
@@ -243,44 +269,44 @@ def variance(v, bias=False):
         sage: variance(x, bias=True)
         833.25
         sage: class MyClass:
-        ...     def variance(self, bias = False):
-        ...        return 1
+        ....:   def variance(self, bias = False):
+        ....:      return 1
         sage: stats.variance(MyClass())
         1
         sage: class SillyPythonList:
-        ...     def __init__(self):
-        ...         self.__list = [2L,4L]
-        ...     def __len__(self):
-        ...         return len(self.__list)
-        ...     def __iter__(self):
-        ...         return self.__list.__iter__()
-        ...     def mean(self):
-        ...         return 3L
+        ....:   def __init__(self):
+        ....:       self.__list = [2, 4]
+        ....:   def __len__(self):
+        ....:       return len(self.__list)
+        ....:   def __iter__(self):
+        ....:       return self.__list.__iter__()
+        ....:   def mean(self):
+        ....:       return 3
         sage: R = SillyPythonList()
         sage: variance(R)
         2
         sage: variance(R, bias=True)
         1
 
-
     TESTS:
 
-    The performance issue from #10019 is solved::
+    The performance issue from :trac:`10019` is solved::
 
         sage: variance([1] * 2^18)
         0
     """
-    if hasattr(v, 'variance'): return v.variance(bias=bias)
+    if hasattr(v, 'variance'):
+        return v.variance(bias=bias)
     import numpy
 
     x = 0
     if isinstance(v, numpy.ndarray):
         # accounts for numpy arrays
-        if bias == True:
+        if bias:
             return v.var()
-        elif bias == False:
+        else:
             return v.var(ddof=1)
-    if len(v) == 0:
+    if not v:
         # variance of empty set defined as NaN
         return NaN
 
@@ -289,14 +315,14 @@ def variance(v, bias=False):
         x += (vi - mu)**2
     if bias:
         # population variance
-        if isinstance(x, (int,long)):
-            return x/ZZ(len(v))
-        return x/len(v)
+        if isinstance(x, int):
+            return x / ZZ(len(v))
+        return x / len(v)
     else:
         # sample variance
-        if isinstance(x, (int,long)):
-            return x/ZZ(len(v)-1)
-        return x/(len(v)-1)
+        if isinstance(x, int):
+            return x / ZZ(len(v)-1)
+        return x / (len(v)-1)
 
 
 def median(v):
@@ -310,11 +336,11 @@ def median(v):
 
     INPUT:
 
-        - `v` -- a list
+    - `v` -- a list
 
     OUTPUT:
 
-        - median element of `v`
+    - median element of `v`
 
     EXAMPLES::
 
@@ -327,27 +353,29 @@ def median(v):
         sage: median([])
         NaN
         sage: class MyClass:
-        ...      def median(self):
-        ...         return 1
+        ....:    def median(self):
+        ....:       return 1
         sage: stats.median(MyClass())
         1
     """
-    if hasattr(v, 'median'): return v.median()
+    if hasattr(v, 'median'):
+        return v.median()
 
-    if len(v) == 0:
+    if not v:
         # Median of empty set defined as NaN
         return NaN
     values = sorted(v)
-    if len(values) % 2 == 1:
+    if len(values) % 2:
         return values[((len(values))+1)//2-1]
     else:
         lower = values[(len(values)+1)//2-1]
         upper = values[len(values)//2]
-        return (lower + upper)/ZZ(2)
+        return (lower + upper) / ZZ(2)
+
 
 def moving_average(v, n):
     """
-    Provides the moving average of a list `v`
+    Return the moving average of a list `v`.
 
     The moving average of a list is often used to smooth out noisy data.
 
@@ -355,13 +383,13 @@ def moving_average(v, n):
 
     INPUT:
 
-        - `v` -- a list
+    - `v` -- a list
 
-        - `n` -- the number of values used in computing each average.
+    - `n` -- the number of values used in computing each average.
 
     OUTPUT:
 
-        - a list of length ``len(v)-n+1``, since we do not fabric any values
+    - a list of length ``len(v)-n+1``, since we do not fabric any values
 
     EXAMPLES::
 
@@ -372,7 +400,8 @@ def moving_average(v, n):
         sage: moving_average([], 1)
         []
         sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)
-        [1/2*pi + 1/2*e, 1/2*e + 1/2*I, 1/2*sqrt(2) + 1/2*I, 1/2*sqrt(2) + 3/10]
+        [1/2*pi + 1/2*e, 1/2*e + 1/2*I, 1/2*sqrt(2) + 1/2*I,
+         1/2*sqrt(2) + 3/10]
 
     We check if the input is a time series, and if so use the
     optimized ``simple_moving_average`` method, but with (slightly
@@ -386,20 +415,20 @@ def moving_average(v, n):
         [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
 
     """
-    if len(v) == 0:
+    if not v:
         return v
     from sage.finance.time_series import TimeSeries
     if isinstance(v, TimeSeries):
-        return v.simple_moving_average(n)[n-1:]
+        return v.simple_moving_average(n)[n - 1:]
     n = int(n)
     if n <= 0:
         raise ValueError("n must be positive")
     nn = ZZ(n)
     s = sum(v[:n])
-    ans = [s/nn]
-    for i in range(n,len(v)):
+    ans = [s / nn]
+    for i in range(n, len(v)):
         # add in the i-th value in v to our running sum,
         # and remove the value n places back.
-        s += v[i] - v[i-n]
-        ans.append(s/nn)
+        s += v[i] - v[i - n]
+        ans.append(s / nn)
     return ans

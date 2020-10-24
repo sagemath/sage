@@ -6,6 +6,7 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
+from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -16,15 +17,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.all import ZZ, infinity
 
 from sage.rings.ring import CommutativeAlgebra
 from sage.categories.all import CommutativeAlgebras
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
 
-from hecke_triangle_groups import HeckeTriangleGroup
-from abstract_ring import FormsRing_abstract
+from .hecke_triangle_groups import HeckeTriangleGroup
+from .abstract_ring import FormsRing_abstract
 
 
 def canonical_parameters(group, base_ring, red_hom, n=None):
@@ -108,14 +108,16 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, U
             sage: MR.analytic_type()
             quasi meromorphic modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
 
             sage: QuasiMeromorphicModularFormsRing(n=infinity)
             QuasiMeromorphicModularFormsRing(n=+Infinity) over Integer Ring
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "mero"])
 
 class QuasiWeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -169,11 +171,13 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRe
             sage: MR.analytic_type()
             quasi weakly holomorphic modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
+            Category of commutative algebras over Complex Field with 53 bits of precision
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "weak"])
 
 class QuasiModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -227,11 +231,13 @@ class QuasiModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepres
             sage: MR.analytic_type()
             quasi modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "holo"])
 
 class QuasiCuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -285,11 +291,13 @@ class QuasiCuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresent
             sage: MR.analytic_type()
             quasi cuspidal
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["quasi", "cusp"])
 
 class MeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -343,11 +351,13 @@ class MeromorphicModularFormsRing(FormsRing_abstract, CommutativeAlgebra, Unique
             sage: MR.analytic_type()
             meromorphic modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["mero"])
 
 class WeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -401,11 +411,13 @@ class WeakModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueReprese
             sage: MR.analytic_type()
             weakly holomorphic modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["weak"])
 
 class ModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -458,11 +470,13 @@ class ModularFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentat
             sage: MR.analytic_type()
             modular
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Integer Ring
+            Category of commutative algebras over Integer Ring
+            sage: MR in MR.category()
+            True
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["holo"])
 
 class CuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation):
@@ -516,12 +530,14 @@ class CuspFormsRing(FormsRing_abstract, CommutativeAlgebra, UniqueRepresentation
             sage: MR.analytic_type()
             cuspidal
             sage: MR.category()
-            Category of commutative algebras over Fraction Field of Univariate Polynomial Ring in d over Complex Field with 53 bits of precision
+            Category of commutative algebras over Complex Field with 53 bits of precision
+            sage: MR in MR.category()
+            True
 
             sage: CuspFormsRing(n=infinity, base_ring=CC, red_hom=True)
             CuspFormsRing(n=+Infinity) over Complex Field with 53 bits of precision
         """
 
         FormsRing_abstract.__init__(self, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
-        CommutativeAlgebra.__init__(self, base_ring=self.coeff_ring(), category=CommutativeAlgebras(self.coeff_ring()))
+        CommutativeAlgebra.__init__(self, base_ring=base_ring, category=CommutativeAlgebras(base_ring))
         self._analytic_type = self.AT(["cusp"])

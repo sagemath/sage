@@ -1,0 +1,9 @@
+echo "Installing the Jupyter Kernel for the R-Project"
+
+R --vanilla <<EOF
+chooseCRANmirror(ind=1)
+install.packages('devtools')
+devtools::install_github('IRkernel/IRkernel')
+IRkernel::installspec(user = FALSE, prefix = "$SAGE_LOCAL")
+EOF
+

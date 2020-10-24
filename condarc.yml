@@ -1,0 +1,6 @@
+# For the environment.yml to reliably use the conda-forge packages,
+# need to set this option.  See https://github.com/conda-forge/sagelib-feedstock/issues/87
+channel_priority: strict
+channels:
+  - conda-forge
+  - defaults

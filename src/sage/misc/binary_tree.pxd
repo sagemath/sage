@@ -1,5 +1,3 @@
-include 'sage/ext/python.pxi'
-
 cdef struct binary_tree_node:
     int key
     binary_tree_node *left

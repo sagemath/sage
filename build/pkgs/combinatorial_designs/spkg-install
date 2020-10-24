@@ -1,4 +1,0 @@
-#!/bin/sh
-
-mkdir -p "$SAGE_SHARE"/combinatorial_designs
-mv src/* "$SAGE_SHARE"/combinatorial_designs

@@ -1,4 +1,4 @@
-__doc__ = r"""
+r"""
 Symmetric Functions
 ===================
 
@@ -13,10 +13,14 @@ Symmetric Functions
 - :ref:`sage.combinat.sf.elementary`
 - :ref:`sage.combinat.sf.homogeneous`
 - :ref:`sage.combinat.sf.powersum`
+- :ref:`sage.combinat.sf.character`
+- :ref:`sage.combinat.sf.orthogonal`
+- :ref:`sage.combinat.sf.symplectic`
 - :ref:`sage.combinat.sf.dual`
 - :ref:`sage.combinat.sf.orthotriang`
 - :ref:`sage.combinat.sf.kfpoly`
 - :ref:`sage.combinat.sf.hall_littlewood`
+- :ref:`sage.combinat.sf.hecke`
 - :ref:`sage.combinat.sf.jack`
 - :ref:`k-Schur Functions <sage.combinat.sf.new_kschur>`
 - :ref:`sage.combinat.sf.k_dual`

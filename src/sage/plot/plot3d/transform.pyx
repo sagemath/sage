@@ -233,8 +233,7 @@ def rotate_arbitrary(v, double theta):
         And simplify every single entry (which is more effective that simplify
         the whole matrix like above)::
 
-            sage: m = m.parent()([x.simplify_full() for x in m._list()])
-            sage: m      # random output - remove this in trac #9880
+            sage: m.parent()([x.simplify_full() for x in m._list()])  # long time; random
             [                                       -(cos(theta) - 1)*x^2 + cos(theta)              -(cos(theta) - 1)*sqrt(-x^2 - z^2 + 1)*x + sin(theta)*abs(z)      -((cos(theta) - 1)*x*z^2 + sqrt(-x^2 - z^2 + 1)*sin(theta)*abs(z))/z]
             [             -(cos(theta) - 1)*sqrt(-x^2 - z^2 + 1)*x - sin(theta)*abs(z)                           (cos(theta) - 1)*x^2 + (cos(theta) - 1)*z^2 + 1 -((cos(theta) - 1)*sqrt(-x^2 - z^2 + 1)*z*abs(z) - x*z*sin(theta))/abs(z)]
             [     -((cos(theta) - 1)*x*z^2 - sqrt(-x^2 - z^2 + 1)*sin(theta)*abs(z))/z -((cos(theta) - 1)*sqrt(-x^2 - z^2 + 1)*z*abs(z) + x*z*sin(theta))/abs(z)                                        -(cos(theta) - 1)*z^2 + cos(theta)]

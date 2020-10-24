@@ -10,38 +10,41 @@ Cython were fixed.  Probably all this code should be moved into the
 relevant classes and this file deleted.
 """
 
-include "sage/ext/interrupt.pxi"
-include "sage/ext/cdefs.pxi"
+from cysignals.signals cimport sig_check
 
 from sage.ext.mod_int cimport *
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
 from sage.libs.mpfr cimport *
-from sage.libs.gmp.rational_reconstruction cimport mpq_rational_reconstruction
 
-include 'sage/modules/binary_search.pxi'
-include 'sage/modules/vector_integer_sparse_h.pxi'
-include 'sage/modules/vector_integer_sparse_c.pxi'
-include 'sage/modules/vector_rational_sparse_h.pxi'
-include 'sage/modules/vector_rational_sparse_c.pxi'
-include 'sage/modules/vector_modn_sparse_h.pxi'
-include 'sage/modules/vector_modn_sparse_c.pxi'
+from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
+from sage.libs.flint.fmpq cimport fmpq_set_mpq, fmpq_canonicalise
+from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry_num, fmpq_mat_entry_den, fmpq_mat_entry
 
-from matrix0 cimport Matrix
-from matrix_integer_dense cimport Matrix_integer_dense
-from matrix_integer_sparse cimport Matrix_integer_sparse
-from matrix_rational_dense cimport Matrix_rational_dense
-from matrix_rational_sparse cimport Matrix_rational_sparse
+from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
+
+from sage.data_structures.binary_search cimport *
+from sage.modules.vector_integer_sparse cimport *
+from sage.modules.vector_rational_sparse cimport *
+from sage.modules.vector_modn_sparse cimport *
+
+from .matrix0 cimport Matrix
+from .matrix_integer_dense cimport Matrix_integer_dense
+from .matrix_integer_sparse cimport Matrix_integer_sparse
+from .matrix_rational_dense cimport Matrix_rational_dense
+from .matrix_rational_sparse cimport Matrix_rational_sparse
 
 from sage.rings.integer_ring   import ZZ
 from sage.rings.rational_field import QQ
 
 from sage.rings.integer cimport Integer
-from sage.rings.arith import previous_prime, CRT_basis
+from sage.arith.all import previous_prime, CRT_basis
 
 from sage.rings.real_mpfr import  is_RealField
 from sage.rings.real_mpfr cimport RealNumber
 
 
-from sage.misc.misc import verbose, get_verbose
+from sage.misc.verbose import verbose, get_verbose
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
     """
@@ -55,7 +58,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
         A -- matrix
         N -- an integer
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: B = ((matrix(ZZ, 3,4, [1,2,3,-4,7,2,18,3,4,3,4,5])/3)%500).change_ring(ZZ)
         sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(B, 500)
@@ -63,9 +66,9 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
         [ 7/3  2/3    6    1]
         [ 4/3    1  4/3  5/3]
 
-    TEST:
+    TESTS:
 
-    Check that ticket #9345 is fixed::
+    Check that :trac:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3)
         sage: sage.matrix.misc.matrix_integer_dense_rational_reconstruction(A, 0)
@@ -73,64 +76,64 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
         ...
         ZeroDivisionError: The modulus cannot be zero
     """
-    if not N.__nonzero__():
+    if not N:
         raise ZeroDivisionError("The modulus cannot be zero")
     cdef Matrix_rational_dense R
     R = Matrix_rational_dense.__new__(Matrix_rational_dense,
                                       A.parent().change_ring(QQ), 0,0,0)
 
-    cdef mpz_t a, bnd, other_bnd, one, denom, tmp
+    cdef mpz_t a, bnd, other_bnd, denom, tmp
+    cdef mpq_t qtmp
     cdef Integer _bnd
     cdef Py_ssize_t i, j
     cdef int do_it
-    import math
 
-    sig_on()
-    try:
-        mpz_init_set_si(denom, 1)
-        mpz_init(a)
-        mpz_init(tmp)
-        mpz_init_set_si(one, 1)
-        mpz_init(other_bnd)
+    mpz_init_set_si(denom, 1)
+    mpz_init(a)
+    mpz_init(tmp)
+    mpz_init(other_bnd)
+    mpq_init(qtmp)
 
-        _bnd = (N//2).isqrt()
-        mpz_init_set(bnd, _bnd.value)
-        mpz_sub(other_bnd, N.value, bnd)
+    _bnd = (N//2).isqrt()
+    mpz_init_set(bnd, _bnd.value)
+    mpz_sub(other_bnd, N.value, bnd)
 
-        for i from 0 <= i < A._nrows:
-            for j from 0 <= j < A._ncols:
-                A.get_unsafe_mpz(i,j,a)
-                if mpz_cmp(denom, one) != 0:
-                    mpz_mul(a, a, denom)
-                mpz_fdiv_r(a, a, N.value)
-                do_it = 0
-                if mpz_cmp(a, bnd) <= 0:
-                    do_it = 1
-                elif mpz_cmp(a, other_bnd) >= 0:
-                    mpz_sub(a, a, N.value)
-                    do_it = 1
-                if do_it:
-                    mpz_set(mpq_numref(R._matrix[i][j]), a)
-                    if mpz_cmp(denom, one) != 0:
-                        mpz_set(mpq_denref(R._matrix[i][j]), denom)
-                        mpq_canonicalize(R._matrix[i][j])
-                    else:
-                        mpz_set_si(mpq_denref(R._matrix[i][j]), 1)
+    for i in range(A._nrows):
+        for j in range(A._ncols):
+            sig_check()
+            A.get_unsafe_mpz(i, j, a)
+            if mpz_cmp_ui(denom, 1) != 0:
+                mpz_mul(a, a, denom)
+            mpz_fdiv_r(a, a, N.value)
+            do_it = 0
+            if mpz_cmp(a, bnd) <= 0:
+                do_it = 1
+            elif mpz_cmp(a, other_bnd) >= 0:
+                mpz_sub(a, a, N.value)
+                do_it = 1
+            if do_it:
+                fmpz_set_mpz(fmpq_mat_entry_num(R._matrix, i, j), a)
+                if mpz_cmp_ui(denom, 1) != 0:
+                    fmpz_set_mpz(fmpq_mat_entry_den(R._matrix, i, j), denom)
+                    fmpq_canonicalise(fmpq_mat_entry(R._matrix, i, j))
                 else:
-                    # Otherwise have to do it the hard way
-                    A.get_unsafe_mpz(i,j,tmp)
-                    mpq_rational_reconstruction(R._matrix[i][j], tmp, N.value)
-                    mpz_lcm(denom, denom, mpq_denref(R._matrix[i][j]))
+                    fmpz_one(fmpq_mat_entry_den(R._matrix, i, j))
+            else:
+                # Otherwise have to do it the hard way
+                A.get_unsafe_mpz(i, j, tmp)
+                mpq_rational_reconstruction(qtmp, tmp, N.value)
+                mpz_lcm(denom, denom, mpq_denref(qtmp))
+                fmpq_set_mpq(fmpq_mat_entry(R._matrix, i, j), qtmp)
 
-        mpz_clear(denom)
-        mpz_clear(a)
-        mpz_clear(tmp)
-        mpz_clear(one)
-        mpz_clear(other_bnd)
-        mpz_clear(bnd)
-    finally:
-        sig_off()
+    mpz_clear(denom)
+    mpz_clear(a)
+    mpz_clear(tmp)
+    mpz_clear(other_bnd)
+    mpz_clear(bnd)
+    mpq_clear(qtmp)
+
     return R
+
 
 def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integer N):
     """
@@ -138,7 +141,7 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
     rational reconstruction on all entries of the matrix, viewed as
     numbers mod N.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: A = matrix(ZZ, 3, 4, [(1/3)%500, 2, 3, (-4)%500, 7, 2, 2, 3, 4, 3, 4, (5/7)%500], sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 500)
@@ -146,9 +149,9 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
         [  7   2   2   3]
         [  4   3   4 5/7]
 
-    TEST:
+    TESTS:
 
-    Check that ticket #9345 is fixed::
+    Check that :trac:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3, sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)
@@ -156,75 +159,70 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
         ...
         ZeroDivisionError: The modulus cannot be zero
     """
-    if not N.__nonzero__():
+    if not N:
         raise ZeroDivisionError("The modulus cannot be zero")
     cdef Matrix_rational_sparse R
     R = Matrix_rational_sparse.__new__(Matrix_rational_sparse,
                                       A.parent().change_ring(QQ), 0,0,0)
 
     cdef mpq_t t
-    cdef mpz_t a, bnd, other_bnd, one, denom
+    cdef mpz_t a, bnd, other_bnd, denom
     cdef Integer _bnd
     cdef Py_ssize_t i, j
     cdef int do_it
     cdef mpz_vector* A_row
     cdef mpq_vector* R_row
-    import math
 
-    sig_on()
-    try:
-        mpq_init(t)
-        mpz_init_set_si(denom, 1)
-        mpz_init(a)
-        mpz_init_set_si(one, 1)
-        mpz_init(other_bnd)
+    mpq_init(t)
+    mpz_init_set_si(denom, 1)
+    mpz_init(a)
+    mpz_init(other_bnd)
 
-        _bnd = (N//2).isqrt()
-        mpz_init_set(bnd, _bnd.value)
-        mpz_sub(other_bnd, N.value, bnd)
+    _bnd = (N//2).isqrt()
+    mpz_init_set(bnd, _bnd.value)
+    mpz_sub(other_bnd, N.value, bnd)
 
-        for i from 0 <= i < A._nrows:
-            A_row = &A._matrix[i]
-            R_row = &R._matrix[i]
-            reallocate_mpq_vector(R_row, A_row.num_nonzero)
-            R_row.num_nonzero = A_row.num_nonzero
-            R_row.degree = A_row.degree
-            for j from 0 <= j < A_row.num_nonzero:
-                mpz_set(a, A_row.entries[j])
-                if mpz_cmp(denom, one) != 0:
-                    mpz_mul(a, a, denom)
-                mpz_fdiv_r(a, a, N.value)
-                do_it = 0
-                if mpz_cmp(a, bnd) <= 0:
-                    do_it = 1
-                elif mpz_cmp(a, other_bnd) >= 0:
-                    mpz_sub(a, a, N.value)
-                    do_it = 1
-                if do_it:
-                    mpz_set(mpq_numref(t), a)
-                    if mpz_cmp(denom, one) != 0:
-                        mpz_set(mpq_denref(t), denom)
-                        mpq_canonicalize(t)
-                    else:
-                        mpz_set_si(mpq_denref(t), 1)
-                    mpq_set(R_row.entries[j], t)
-                    R_row.positions[j] = A_row.positions[j]
+    for i in range(A._nrows):
+        sig_check()
+        A_row = &A._matrix[i]
+        R_row = &R._matrix[i]
+        reallocate_mpq_vector(R_row, A_row.num_nonzero)
+        R_row.num_nonzero = A_row.num_nonzero
+        R_row.degree = A_row.degree
+        for j in range(A_row.num_nonzero):
+            sig_check()
+            mpz_set(a, A_row.entries[j])
+            if mpz_cmp_ui(denom, 1) != 0:
+                mpz_mul(a, a, denom)
+            mpz_fdiv_r(a, a, N.value)
+            do_it = 0
+            if mpz_cmp(a, bnd) <= 0:
+                do_it = 1
+            elif mpz_cmp(a, other_bnd) >= 0:
+                mpz_sub(a, a, N.value)
+                do_it = 1
+            if do_it:
+                mpz_set(mpq_numref(t), a)
+                if mpz_cmp_ui(denom, 1) != 0:
+                    mpz_set(mpq_denref(t), denom)
+                    mpq_canonicalize(t)
                 else:
-                    # Otherwise have to do it the hard way
-                    mpq_rational_reconstruction(t, A_row.entries[j], N.value)
-                    mpq_set(R_row.entries[j], t)
-                    R_row.positions[j] = A_row.positions[j]
-                    mpz_lcm(denom, denom, mpq_denref(t))
+                    mpz_set_si(mpq_denref(t), 1)
+                mpq_set(R_row.entries[j], t)
+                R_row.positions[j] = A_row.positions[j]
+            else:
+                # Otherwise have to do it the hard way
+                mpq_rational_reconstruction(t, A_row.entries[j], N.value)
+                mpq_set(R_row.entries[j], t)
+                R_row.positions[j] = A_row.positions[j]
+                mpz_lcm(denom, denom, mpq_denref(t))
 
-        mpq_clear(t)
+    mpq_clear(t)
+    mpz_clear(denom)
+    mpz_clear(a)
+    mpz_clear(other_bnd)
+    mpz_clear(bnd)
 
-        mpz_clear(denom)
-        mpz_clear(a)
-        mpz_clear(one)
-        mpz_clear(other_bnd)
-        mpz_clear(bnd)
-    finally:
-        sig_off()
     return R
 
 
@@ -240,6 +238,9 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     - height_guess -- integer or None
     - proof -- boolean or None (default: None, see proof.linear_algebra or
       sage.structure.proof). Note that the global Sage default is proof=True
+
+    OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
+    positions.
 
     ALGORITHM:
 
@@ -279,25 +280,34 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         where H denotes the height.   If this fails, do step 4 with
         a few more primes.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: A = matrix(QQ, 3, 7, [1..21])
-        sage: sage.matrix.misc.matrix_rational_echelon_form_multimodular(A)
+        sage: from sage.matrix.misc import matrix_rational_echelon_form_multimodular
+        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)
+        sage: E
         [ 1  0 -1 -2 -3 -4 -5]
         [ 0  1  2  3  4  5  6]
         [ 0  0  0  0  0  0  0]
+        sage: pivots
+        (0, 1)
 
         sage: A = matrix(QQ, 3, 4, [0,0] + [1..9] + [-1/2^20])
-        sage: sage.matrix.misc.matrix_rational_echelon_form_multimodular(A)
+        sage: E, pivots = matrix_rational_echelon_form_multimodular(A)
+        sage: E
         [                1                 0                 0 -10485761/1048576]
         [                0                 1                 0  27262979/4194304]
         [                0                 0                 1                 2]
+        sage: pivots
+        (0, 1, 2)
+
         sage: A.echelon_form()
         [                1                 0                 0 -10485761/1048576]
         [                0                 1                 0  27262979/4194304]
         [                0                 0                 1                 2]
+        sage: A.pivots()
+        (0, 1, 2)
     """
-
     if proof is None:
         from sage.structure.proof.proof import get_flag
         proof = get_flag(proof, "linear_algebra")
@@ -305,10 +315,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     verbose("Multimodular echelon algorithm on %s x %s matrix"%(self._nrows, self._ncols), caller_name="multimod echelon")
     cdef Matrix E
     if self._nrows == 0 or self._ncols == 0:
-        self.cache('in_echelon_form', True)
-        self.cache('echelon_form', self)
-        self.cache('pivots', ())
-        return self
+        return self, ()
 
     B, _ = self._clear_denom()
 
@@ -350,17 +357,15 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             t = verbose("time to put reduced matrix in echelon form:",t, level=2, caller_name="multimod echelon")
 
             # a worthwhile check / shortcut.
-            if self._nrows == self._ncols and len(A.pivots()) == self._nrows:
-                verbose("done: the echelon form mod p is the identity matrix", caller_name="multimod echelon")
-                E = self.parent().identity_matrix()
-                E.cache('pivots', tuple(range(self._nrows)))
-                E.cache('in_echelon_form', True)
-                self.cache('in_echelon_form', True)
-                self.cache('echelon_form', E)
-                self.cache('pivots', tuple(range(self._nrows)))
-                return E
+            if self._nrows >= self._ncols and self._nrows == len(A.pivots()):
+                verbose("done: the echelon form mod p is the identity matrix and possibly some 0 rows", caller_name="multimod echelon")
+                E = self.parent()(0)
+                one = self.base_ring().one()
+                for i in range(self._nrows):
+                    E.set_unsafe(i, i, one)
+                return E, tuple(range(self._nrows))
 
-            c = cmp_pivots(best_pivots, list(A.pivots()))
+            c = cmp_pivots(best_pivots, A.pivots())
             if c <= 0:
                 best_pivots = A.pivots()
                 X.append(A)
@@ -376,7 +381,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         prod = 1
         t = verbose("now comparing pivots and dropping any bad ones", level=2, t=t, caller_name="multimod echelon")
         for i in range(len(X)):
-            if cmp_pivots(best_pivots, list(X[i].pivots())) <= 0:
+            if cmp_pivots(best_pivots, X[i].pivots()) <= 0:
                 p = X[i].base_ring().order()
                 if p not in lifts:
                     t0 = verbose("Lifting a good matrix", level=2, caller_name = "multimod echelon")
@@ -387,7 +392,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
                 prod = prod * X[i].base_ring().order()
         verbose("finished comparing pivots", level=2, t=t, caller_name="multimod echelon")
         try:
-            if len(Y) == 0:
+            if not Y:
                 raise ValueError("not enough primes")
             t = verbose("start crt linear combination", level=2, caller_name="multimod echelon")
             a = CRT_basis([w[1] for w in Y])
@@ -414,7 +419,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             verbose("Not checking validity of result (since proof=False).", level=2, caller_name="multimod echelon")
             break
         d   = E.denominator()
-        hdE = long((d*E).height())
+        hdE = int((d*E).height())
         if hdE * self.ncols() * height < prod:
             verbose("Validity of result checked.", level=2, caller_name="multimod echelon")
             break
@@ -422,15 +427,10 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         M = prod * p*p*p
     #end while
     verbose("total time",tm, level=2, caller_name="multimod echelon")
-    best_pivots = tuple(best_pivots)
-    self.cache('pivots', best_pivots)
-    E.cache('pivots', best_pivots)
-    return E
+    return E, tuple(best_pivots)
 
 
-###########################
-
-def cmp_pivots(x,y):
+def cmp_pivots(x, y):
     """
     Compare two sequences of pivot columns.
 
@@ -442,7 +442,7 @@ def cmp_pivots(x,y):
 
     INPUT:
 
-    - x, y -- list of integers
+    - x, y -- lists or tuples of integers
 
     EXAMPLES:
 
@@ -459,6 +459,8 @@ def cmp_pivots(x,y):
         sage: sage.matrix.misc.cmp_pivots([1,2,3], [1,2,4])
         1
     """
+    x = tuple(x)
+    y = tuple(y)
     if len(x) < len(y):
         return -1
     if len(x) > len(y):
@@ -471,12 +473,6 @@ def cmp_pivots(x,y):
         return -1
 
 
-
-#######################################
-
-
-
-#######################################
 def hadamard_row_bound_mpfr(Matrix A):
     """
     Given a matrix A with entries that coerce to RR, compute the row
@@ -524,21 +520,21 @@ def hadamard_row_bound_mpfr(Matrix A):
     mpfr_init(s)
     mpfr_init(d)
     mpfr_init(pr)
-    mpfr_set_si(d, 0, GMP_RNDU)
+    mpfr_set_si(d, 0, MPFR_RNDU)
 
-    for i from 0 <= i < A._nrows:
-        mpfr_set_si(s, 0, GMP_RNDU)
-        for j from 0 <= j < A._ncols:
+    for i in range(A._nrows):
+        mpfr_set_si(s, 0, MPFR_RNDU)
+        for j in range(A._ncols):
+            sig_check()
             a = A.get_unsafe(i, j)
-            mpfr_mul(pr, a.value, a.value, GMP_RNDU)
-            mpfr_add(s, s, pr, GMP_RNDU)
-        mpfr_log10(s, s, GMP_RNDU)
-        mpfr_add(d, d, s, GMP_RNDU)
+            mpfr_mul(pr, a.value, a.value, MPFR_RNDU)
+            mpfr_add(s, s, pr, MPFR_RNDU)
+        mpfr_log10(s, s, MPFR_RNDU)
+        mpfr_add(d, d, s, MPFR_RNDU)
     b = a._new()
-    mpfr_set(b.value, d, GMP_RNDU)
+    mpfr_set(b.value, d, MPFR_RNDU)
     b /= 2
     mpfr_clear(s)
     mpfr_clear(d)
     mpfr_clear(pr)
     return b.ceil()
-

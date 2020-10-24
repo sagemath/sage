@@ -1,0 +1,98 @@
+//////////////////////////////////////////////////////////////////////////////
+version="version core.lib 1.0 March 2016";
+category="Commutative Algebra";
+info="LIBRARY: core.lib  Core commutative algebra algorithms
+AUTHORS: Kwankyu Lee, ekwankyu@gmail.com
+
+This library provides core algorithms for function fields in Sage.
+
+PROCEDURES:
+core_normalize(I,[...]): Normalization of an affine ring over a prime finite
+       field. The code is excerpted from the normalP procedure in standard
+       Singular library normal.lib. As noted there, this procedure uses the
+       Leonard-Pellikaan-Singh-Swanson algorithm cf.  [A. K. Singh, I.
+       Swanson: An algorithm for computing the integral closure,
+       arXiv:0901.0871]
+";
+//////////////////////////////////////////////////////////////////////////////
+
+proc core_normalize(ideal id)
+"USAGE: core_normalize(id) where id is a prime ideal of the basering R.
+ASSUME: The ground field of R must be a prime finite field.
+RETURN: Ideal l of R. If l=[l1,l2,...,lr], then l1/lr,l2/lr,...,1 are the module
+generators of the integral closure of the ring R/id in its quotient field.
+"
+{
+    def R = basering;
+    int n, p = nvars(R), char(R);
+
+    int ii;
+
+    if( size(id) == 0 ) { // id is a zero ideal. Then R=R/id is a UFD.
+        ideal U = 1;
+        return(U);
+    }
+
+    list mstdid = mstd(id);
+    ideal J = mstdid[1]; // standard basis of the ideal id
+    ideal I = mstdid[2]; // generating set of the ideal id
+    int h = n - dim(J); // codimension of V(I), I is a prime ideal
+
+    // compute the ideal of the singular locus
+    qring Q = J; // pass to quotient ring
+    ideal I = imap(R,I);
+    ideal J = imap(R,J);
+
+    ideal M = minor(jacob(I),h,std(J)); // keep only minors not zero modulo J
+    M = std(M);
+
+    // choose "shortest" nonzerodivisor of the ideal
+    ideal D = M[1];
+    for( ii = 2; ii <= size(M); ii++ ) {
+        if( size(M[ii]) < size(D[1]) ) {
+            D = M[ii];
+        }
+    }
+
+    // start p-th power algorithm
+    ideal F = var(1)^p;
+    for( ii = 2; ii <= n; ii++ ) {
+        F = F,var(ii)^p;
+    }
+
+    ideal Dp = D^(p-1);
+    ideal U = 1;
+    ideal K,L;
+    map phi = Q,F; // p-th power map from Q to Q
+
+    list LK;
+    while(1) {
+        L = U*Dp + I;
+        K = preimage(Q,phi,L);
+        K = intersect(U,K);
+        LK = mstd(K);
+        K = LK[2]; // new U
+
+        if( size(reduce(U,LK[1])) == 0 ) { // new U equals U
+            U = reduce(U,std(D)),D; // denominator comes last
+            U = simplify(U,6); // remove zero and repetitive generators
+            poly gg = gcd(U[1],U[size(U)]);
+            for( ii = 2; ii < size(U); ii++ ) {
+                gg = gcd(gg,U[ii]);
+            }
+            for( ii = 1; ii <= size(U); ii++ ) {
+                U[ii] = U[ii] / gg;
+            }
+            setring R;
+            ideal U = imap(Q,U);
+            return(U);
+        }
+        U = K;
+    }
+}
+example
+{ "EXAMPLE:"; echo = 2;
+   ring r = 11,(x,y,z),wp(2,1,2);
+   ideal id = x*(z3 - xy4 + x2);
+   ideal c = core_normalize(id);
+}

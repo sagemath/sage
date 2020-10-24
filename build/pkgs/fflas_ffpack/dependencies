@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(GIVARO) $(INST)/$(GSL) $(INST)/$(ATLAS)
+$(MP_LIBRARY) givaro gsl $(BLAS) | pkgconf
 
 ----------
 All lines of this file are ignored except the first.

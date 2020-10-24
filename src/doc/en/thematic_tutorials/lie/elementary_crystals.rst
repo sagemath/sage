@@ -88,10 +88,11 @@ The crystal `C \otimes T_\mu` is useful when finding subcrystals inside
 irreducible highest weight crystals `B(\lambda)` where `\lambda` is larger than
 `\mu` in the lexicographic order.  For example::
 
-    sage: La = RootSystem("C2").weight_lattice().fundamental_weights()
-    sage: h = RootSystem("C2").weight_lattice().simple_coroots()
-    sage: T = crystals.elementary.T("C2",2*La[1])
-    sage: C = crystals.elementary.Component("C2")
+    sage: P = RootSystem("C2").weight_lattice()
+    sage: La = P.fundamental_weights()
+    sage: h = P.simple_coroots()
+    sage: T = crystals.elementary.T("C2", 2*La[1])
+    sage: C = crystals.elementary.Component(P)
     sage: B = crystals.TensorProduct(C,T)
     sage: b = B(C[0],T[0])
     sage: for i in B.index_set(): print(b.epsilon(i))
@@ -170,7 +171,7 @@ For `i` an element of the index set of type `X`, the crystal `B_i` of type
 
     B_i = \{ b_i(m) : m \in \ZZ \},
 
-where the crystal stucture is given by `\mathrm{wt}\bigl(b_i(m)\bigr) =
+where the crystal structure is given by `\mathrm{wt}\bigl(b_i(m)\bigr) =
 m\alpha_i` and
 
 .. MATH::
@@ -199,8 +200,8 @@ example::
 
     sage: B = crystals.elementary.Elementary("A2",1)
     sage: S = B.subcrystal(max_depth=4, generators=[B(0)])
-    sage: [s for s in S]
-    [0, 1, -1, 2, -2, 3, -3, -4, 4]
+    sage: sorted(s for s in S)
+    [-4, -3, -2, -1, 0, 1, 2, 3, 4]
     sage: G = B.digraph(subset=S)
     sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
 

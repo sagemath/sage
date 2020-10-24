@@ -105,7 +105,7 @@ class XYPairsFactory(SetFactory):
                 return Pairs_Y(y, policy)
         return AllPairs(policy)
 
-    def add_constraints(self, cons, (args, opts)):
+    def add_constraints(self, cons, args_opts):
         r"""
         Add constraints to the set ``cons`` as per
         :meth:`SetFactory.add_constraints<.set_factories.SetFactory.add_constraints>`.
@@ -125,6 +125,8 @@ class XYPairsFactory(SetFactory):
             sage: XYPairs.add_constraints((), ((2,), {'y':3}))
             (2, 3)
         """
+        args, opts = args_opts
+
         res = list(cons)
         res += [None] * (2 - len(res))
 
@@ -211,7 +213,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
     It is constructed as the disjoint union
     (:class:`DisjointUnionEnumeratedSets`) of :class:`Pairs_Y` parents:
 
-    .. math::
+    .. MATH::
 
         S := \bigcup_{i = 0,1,..., 4} S^y
 
@@ -377,7 +379,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
     It is constructed as the disjoint union
     (:class:`DisjointUnionEnumeratedSets`) of :class:`SingletonPair` parents:
 
-    .. math::
+    .. MATH::
 
         S^y := \bigcup_{i = 0,1,..., 4} S_i^y
 

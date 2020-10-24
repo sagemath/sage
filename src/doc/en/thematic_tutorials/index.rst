@@ -2,6 +2,8 @@
 .. Aug 21 20:15:55 2008. You can adapt this file completely to your
 .. liking, but it should at least contain the root `toctree` directive.
 
+.. _thematic-tutorials:
+
 Welcome to the Sage Thematic Tutorials!
 =======================================
 
@@ -28,9 +30,7 @@ This documentation is licensed under a `Creative Commons Attribution-Share Alike
 Introduction to Sage
 --------------------
 
-* `Logging on to a Sage Server and Creating a Worksheet (PREP) <../prep/Logging-On.html>`_
 * `Introductory Sage Tutorial (PREP) <../prep/Intro-Tutorial.html>`_
-* :ref:`tutorial-notebook-and-help-long`
 * `Sage's main tutorial <../tutorial/>`_
 
 .. _programming_design:
@@ -44,18 +44,20 @@ Introduction to Python
 * :ref:`tutorial-objects-and-classes`
 * :ref:`functional_programming`
 
-Calculus and plotting
+Calculus and Plotting
 ---------------------
 
 * `Tutorial: Symbolics and Plotting (PREP) <../prep/Symbolics-and-Basic-Plotting.html>`_
 * `Tutorial: Calculus (PREP) <../prep/Calculus.html>`_
 * `Tutorial: Advanced-2D Plotting (PREP) <../prep/Advanced-2DPlotting.html>`_
+* :ref:`vector_calculus`
 
 Algebra
 -------
 
 * :ref:`group_theory`
 * :ref:`lie`
+* :ref:`sage.modules.tutorial_free_modules`
 
 Number Theory
 -------------
@@ -70,14 +72,14 @@ Number Theory
 Geometry
 --------
 
-* :ref:`polytutorial`
-* :ref:`polytikz`
+* :ref:`geometry`
 
 Combinatorics
 -------------
 
 * :ref:`sage.combinat.tutorial`
 * :ref:`coding_theory`
+* :ref:`structures_in_coding_theory`
 
 Algebraic Combinatorics
 -----------------------
@@ -88,21 +90,21 @@ Algebraic Combinatorics
 * :ref:`sage.combinat.root_system.plot`
 * :ref:`abelian_sandpile_model`
 
-Parents/Elements, Categories and algebraic structures
+Parents/Elements, Categories and Algebraic Structures
 -----------------------------------------------------
 
 * :ref:`coercion_and_categories`
 * :ref:`sage.categories.primer`
 * :ref:`sage.categories.tutorial`
+* :ref:`tutorial-implementing-algebraic-structures`
 
-
-Numerical computations
+Numerical Computations
 ----------------------
 
 * :ref:`numerical_computing`
 * :ref:`linear_programming`
 
-Advanced programming
+Advanced Programming
 --------------------
 
 * :ref:`cython_interface`
@@ -117,7 +119,7 @@ Advanced programming
 Documentation
 =============
 
-* :ref:`sws2srt`
+* :ref:`sws2rst`
 
 .. Sage development
 .. ----------------

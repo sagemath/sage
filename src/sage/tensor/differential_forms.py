@@ -20,7 +20,7 @@ REFERENCES:
   and applications.  Springer-Verlag 1988, texts in Applied Mathematical
   Sciences, volume 75, 2nd edition.
 
-- http://en.wikipedia.org/wiki/Differential_form
+- :wikipedia:`Differential_form`
 
 """
 
@@ -38,7 +38,6 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 
 from sage.rings.ring import Algebra
 from sage.tensor.coordinate_patch import CoordinatePatch
@@ -59,14 +58,22 @@ class DifferentialForms(Algebra):
 
         sage: p, q = var('p, q')
         sage: U = CoordinatePatch((p, q)); U
+        doctest:...: DeprecationWarning: Use Manifold instead.
+        See http://trac.sagemath.org/24444 for details.
         Open subset of R^2 with coordinates p, q
         sage: F = DifferentialForms(U); F
+        doctest:...:  DeprecationWarning: For the set of differential forms of
+         degree p, use U.diff_form_module(p), where U is the base manifold
+         (type U.diff_form_module? for details).
+        See http://trac.sagemath.org/24444 for details.
         Algebra of differential forms in the variables p, q
 
     If no coordinate patch is supplied, a default one (using the variables
     x, y, z) will be used::
 
         sage: F = DifferentialForms(); F
+        doctest:...: DeprecationWarning: Use Manifold instead.
+        See http://trac.sagemath.org/24444 for details.
         Algebra of differential forms in the variables x, y, z
 
     """
@@ -76,11 +83,13 @@ class DifferentialForms(Algebra):
     def __init__(self, coordinate_patch = None):
         """
         Construct the algebra of differential forms on a given coordinate patch.
+
         See ``DifferentialForms`` for details.
 
         INPUT:
 
         - ``coordinate_patch`` -- Coordinate patch where the algebra lives.
+
         If no coordinate patch is given, a default coordinate patch with
         coordinates (x, y, z) is used.
 
@@ -88,15 +97,23 @@ class DifferentialForms(Algebra):
 
             sage: p, q = var('p, q')
             sage: U = CoordinatePatch((p, q)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^2 with coordinates p, q
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables p, q
-
         """
-
         from sage.categories.graded_algebras_with_basis \
             import GradedAlgebrasWithBasis
         from sage.structure.parent_gens import ParentWithGens
+        from sage.misc.superseded import deprecation
+        deprecation(24444, 'For the set of differential forms of degree p, ' +
+                    'use U.diff_form_module(p), where U is the base ' +
+                    'manifold (type U.diff_form_module? for details).')
 
         if not coordinate_patch:
             x, y, z = var('x, y, z')
@@ -118,8 +135,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: p, q = var('p, q')
             sage: V = CoordinatePatch((p, q)); V
@@ -148,8 +171,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: p, q = var('p, q')
             sage: V = CoordinatePatch((p, q)); V
@@ -159,10 +188,7 @@ class DifferentialForms(Algebra):
             sage: F != G
             True
         """
-
-        return not self.__eq__(other)
-
-
+        return not self == other
 
     def ngens(self):
         """
@@ -172,8 +198,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F.ngens()
             3
@@ -195,10 +227,19 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F.gen(0)
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             dx
             sage: F.gen(1)
             dy
@@ -210,7 +251,6 @@ class DifferentialForms(Algebra):
         form = DifferentialForm(self, 0, self._patch.coordinate(i))
         return form.diff()
 
-
     def gens(self):
         """
         Return a list of the generators of ``self``.
@@ -219,16 +259,19 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F.gens()
             (dx, dy, dz)
-
         """
-
-        return tuple(self.gen(n) for n in xrange(0, self._patch.dim()))
-
+        return tuple(self.gen(n) for n in range(self._patch.dim()))
 
     def base_space(self):
         """
@@ -238,8 +281,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F.base_space()
             Open subset of R^3 with coordinates x, y, z
@@ -256,9 +305,18 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z))
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F(sin(x*y))    # indirect doctest
+            doctest:...: DeprecationWarning: Use U.diff_form(degree) instead,
+             where U is the base manifold (type U.diff_form? for details).
+            See http://trac.sagemath.org/24444 for details.
             sin(x*y)
 
         """
@@ -279,8 +337,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, p, q = var('x, y, p, q')
             sage: U = CoordinatePatch((x, y)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^2 with coordinates x, y
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y
             sage: x in F
             True
@@ -317,6 +381,10 @@ class DifferentialForms(Algebra):
         EXAMPLES::
 
             sage: F = DifferentialForms(); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F._coerce_map_from_(SR)
             True
@@ -339,8 +407,14 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: F._repr_()
             'Algebra of differential forms in the variables x, y, z'
@@ -358,13 +432,18 @@ class DifferentialForms(Algebra):
 
             sage: x, y, z = var('x, y, z')
             sage: U = CoordinatePatch((x, y, z)); U
+            doctest:...: DeprecationWarning: Use Manifold instead.
+            See http://trac.sagemath.org/24444 for details.
             Open subset of R^3 with coordinates x, y, z
             sage: F = DifferentialForms(U); F
+            doctest:...:  DeprecationWarning: For the set of differential forms of
+             degree p, use U.diff_form_module(p), where U is the base manifold
+             (type U.diff_form_module? for details).
+            See http://trac.sagemath.org/24444 for details.
             Algebra of differential forms in the variables x, y, z
             sage: latex(F)
             \Omega^\ast(\mathbb{\RR}^3)
             sage: latex(F) == F._latex_()
             True
         """
-
-        return "\\Omega^\\ast(\mathbb{\\RR}^%s)" % self._patch.dim()
+        return "\\Omega^\\ast(\\mathbb{\\RR}^%s)" % self._patch.dim()

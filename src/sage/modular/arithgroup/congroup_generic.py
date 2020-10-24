@@ -9,7 +9,6 @@ AUTHORS:
 - William Stein
 - David Loeffler (2009, 10) -- modifications to work with more general arithmetic subgroups
 """
-
 ################################################################################
 #
 #       Copyright (C) 2004, 2006 William Stein <wstein@gmail.com>
@@ -18,17 +17,18 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
+from __future__ import absolute_import
 
 from sage.rings.all import QQ, ZZ, Zmod
-from sage.rings.arith import gcd
+from sage.arith.all import gcd
 from sage.sets.set import Set
 from sage.groups.matrix_gps.all import MatrixGroup
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.misc_c import prod
-from arithgroup_generic import ArithmeticSubgroup
+from .arithgroup_generic import ArithmeticSubgroup
 
 
 def CongruenceSubgroup_constructor(*args):
@@ -101,17 +101,18 @@ def CongruenceSubgroup_constructor(*args):
     if not hasattr(R, "cover_ring") or R.cover_ring() != ZZ:
         raise TypeError("Ring of definition must be Z / NZ for some N")
 
-    if not all([x.matrix().det() == 1 for x in G.gens()]):
+    if not all(x.matrix().det() == 1 for x in G.gens()):
         raise ValueError("Group must be contained in SL(2, Z / N)")
     GG = _minimize_level(G)
     if GG in ZZ:
-        from all import Gamma
+        from .all import Gamma
         return Gamma(GG)
     else:
         return CongruenceSubgroupFromGroup(GG)
 
+
 def is_CongruenceSubgroup(x):
-    """
+    r"""
     Return True if x is of type CongruenceSubgroup.
 
     Note that this may be False even if `x` really is a congruence subgroup --
@@ -139,6 +140,7 @@ def is_CongruenceSubgroup(x):
     """
     return isinstance(x, CongruenceSubgroupBase)
 
+
 class CongruenceSubgroupBase(ArithmeticSubgroup):
 
     def __init__(self, level):
@@ -160,7 +162,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         r"""
         Return an element of self (mainly for use by the test suite).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma(3).an_element() # indirect doctest
             [-2 -3]
@@ -173,7 +175,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         r"""
         Return True, since this is a congruence subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: Gamma0(7).is_congruence()
             True
@@ -198,9 +200,11 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         """
         return self.__level
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         r"""
-        EXAMPLE::
+        Check that ``self`` is equal to ``other``.
+
+        EXAMPLES::
 
             sage: CongruenceSubgroup(3,[ [1,1,0,1] ]) == Gamma1(3)
             True
@@ -217,23 +221,52 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
         # Note that lazy_import doesn't work here, because it doesn't play
         # nicely with isinstance().
         if not isinstance(other, ArithmeticSubgroup):
-            return cmp(type(self), type(other))
+            return False
 
         elif is_CongruenceSubgroup(other):
-            t = cmp(self.level(), other.level())
-            if t: return t
-            if self.level() == 1: return 0 # shouldn't come up except with pickling/unpickling
-            t = cmp(self.index(), other.index())
-            if t: return t
-            return cmp(self.image_mod_n(),other.image_mod_n())
+            if self.level() == other.level() == 1:
+                return True
+                # shouldn't come up except with pickling/unpickling
+            return (self.level() == other.level() and
+                    self.index() == other.index() and
+                    self.image_mod_n() == other.image_mod_n())
 
         from sage.modular.arithgroup.arithgroup_perm import ArithmeticSubgroup_Permutation_class
         if isinstance(other, ArithmeticSubgroup_Permutation_class):
-            return cmp(self.as_permutation_group(), other)
+            return self.as_permutation_group() == other
 
         else:
             # we shouldn't ever get here
             raise NotImplementedError
+
+    def __ne__(self, other):
+        """
+        Check that ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: CongruenceSubgroup(3,[ [1,1,0,1] ]) != Gamma1(3)
+            False
+            sage: CongruenceSubgroup(3,[ [1,1,0,1] ]) != Gamma(3)
+            True
+            sage: CongruenceSubgroup(3,[ [1,1,0,1] ]) != QQ
+            True
+        """
+        return not (self == other)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: hash(CongruenceSubgroup(3,[ [1,1,0,1] ])) == hash(Gamma1(3))
+            True
+            sage: hash(CongruenceSubgroup(3,[ [1,1,0,1] ])) == hash(Gamma(3))
+            False
+        """
+        return hash((self.level(), self.index()))
+
 
 class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
     r"""
@@ -278,7 +311,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         r"""
         Data defining self (for pickling).
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = CongruenceSubgroup(5, [[0,-1,1,0]])
             sage: G.__reduce__()
@@ -294,7 +327,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         r"""
         Test whether ``[a,b;c,d]`` is an element of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = MatrixGroup([matrix(Zmod(2), 2, [1,1,1,0])])
             sage: H = sage.modular.arithgroup.congroup_generic.CongruenceSubgroupFromGroup(G)
@@ -319,13 +352,17 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
             sage: H([1,2,0,1]).parent()
             Modular Group SL(2,Z)
         """
-        return ([a,b,c,d] in self.image_mod_n())
+        try:
+            self.image_mod_n()([a, b, c, d])
+        except (TypeError, ValueError):
+            return False
+        return True
 
     def to_even_subgroup(self):
         r"""
         Return the smallest even subgroup of `SL(2, \ZZ)` containing self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = Gamma(3)
             sage: G.to_even_subgroup()
@@ -346,7 +383,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         r"""
         String representation of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroupFromGroup(MatrixGroup([matrix(Zmod(2), 2, [1,1,1,0])]))._repr_()
             'Congruence subgroup of SL(2,Z) of level 2, preimage of:\n Matrix group over Ring of integers modulo 2 with 1 generators (\n[1 1]\n[1 0]\n)'
@@ -359,7 +396,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         the index in `SL(2, \ZZ / N\ZZ)` of the image of this group modulo
         `\Gamma(N)`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroupFromGroup(MatrixGroup([matrix(Zmod(2), 2, [1,1,1,0])])).index()
             2
@@ -370,7 +407,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         r"""
         Return the subgroup of `SL(2, \ZZ / N\ZZ)` of which this is the preimage, where `N` is the level of self.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = MatrixGroup([matrix(Zmod(2), 2, [1,1,1,0])])
             sage: H = sage.modular.arithgroup.congroup_generic.CongruenceSubgroupFromGroup(G); H.image_mod_n()
@@ -396,7 +433,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         r"""
         Raise an error: all derived subclasses should override this function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5).image_mod_n()
             Traceback (most recent call last):
@@ -409,7 +446,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         r"""
         Bypass the init function of the CongruenceSubgroupFromGroup class.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5) # indirect doctest
             Generic congruence subgroup of level 5
@@ -497,10 +534,10 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
             sage: G._new_group_from_level(100)
             Congruence Subgroup Gamma_H(100) with H generated by [7, 57]
         """
-        from congroup_gamma0 import is_Gamma0
-        from congroup_gamma1 import is_Gamma1
-        from congroup_gammaH import is_GammaH
-        from all import Gamma0, Gamma1, GammaH
+        from .congroup_gamma0 import is_Gamma0
+        from .congroup_gamma1 import is_Gamma1
+        from .congroup_gammaH import is_GammaH
+        from .all import Gamma0, Gamma1, GammaH
         N = self.level()
         if (level%N) and (N%level):
             raise ValueError("one level must divide the other")
@@ -530,7 +567,7 @@ def _minimize_level(G):
     returns an integer `N`, representing the trivial subgroup of `SL(2, \ZZ /
     N\ZZ)`.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: M = MatrixSpace(Zmod(9), 2, 2)
         sage: G = MatrixGroup([M(x) for x in [[1,1,0,1],[1,3,0,1],[1,0,3,1],[4,0,0,7]]]); G
@@ -551,7 +588,7 @@ def _minimize_level(G):
         sage: sage.modular.arithgroup.congroup_generic._minimize_level(G)
         3
     """
-    from congroup_gamma import Gamma_constructor as Gamma
+    from .congroup_gamma import Gamma_constructor as Gamma
     Glist = list(G)
     N = G.base_ring().characteristic()
     i = Gamma(N).index()
@@ -568,8 +605,8 @@ def _minimize_level(G):
 
     # now sanitize the generators (remove duplicates and copies of the identity)
     new_gens = [x.matrix() for x in G.gens() if x.matrix() != 1]
-    all([x.set_immutable() for x in new_gens])
+    all(x.set_immutable() for x in new_gens)
     new_gens = list(Set(new_gens))
-    if new_gens == []:
+    if not new_gens:
         return ZZ(N)
     return MatrixGroup(new_gens)

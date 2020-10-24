@@ -7,7 +7,8 @@ Preliminaries
 What is coercion all about?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*The primary goal of coercion is to be able to transparently do arithmetic, comparisons, etc. between elements of distinct sets.*
+*The primary goal of coercion is to be able to transparently do arithmetic,
+comparisons, etc. between elements of distinct sets.*
 
 As a concrete example, when one writes `1 + 1/2` one wants to perform
 arithmetic on the operands as rational numbers, despite the left being
@@ -35,7 +36,7 @@ nonsense. Here are some examples::
     sage: GF(5)(1) + CC(I)
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Finite Field of size 5' and 'Complex Field with 53 bits of precision'
+    TypeError: unsupported operand parent(s) for +: 'Finite Field of size 5' and 'Complex Field with 53 bits of precision'
 
 Parents and Elements
 ~~~~~~~~~~~~~~~~~~~~
@@ -59,12 +60,12 @@ either parents or have a parent. Typically whenever one sees the word
     x^sin(x)
     sage: R.<t> = Qp(5)[]
     sage: f = t^3-5; f
-    (1 + O(5^20))*t^3 + (4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11 + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18 + 4*5^19 + 4*5^20 + O(5^21))
+    (1 + O(5^20))*t^3 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11 + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18 + 4*5^19 + 4*5^20 + O(5^21)
     sage: parent(f)
     Univariate Polynomial Ring in t over 5-adic Field with capped relative precision 20
-    sage: f = EllipticCurve('37a').lseries().taylor_series(10); f
-    0.990010459847588 + 0.0191338632530789*z - 0.0197489006172923*z^2 + 0.0137240085327618*z^3 - 0.00703880791607153*z^4 + 0.00280906165766519*z^5 + O(z^6)           # 32-bit
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442707*z^4 + (3.20363155418419e-6)*z^5 + O(z^6)  # 64-bit
+    sage: f = EllipticCurve('37a').lseries().taylor_series(10); f  # abs tol 1e-14
+    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418421e-6)*z^5 + O(z^6)  # 32-bit
+    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418427e-6)*z^5 + O(z^6)  # 64-bit
     sage: parent(f)
     Power Series Ring in z over Complex Field with 53 bits of precision
 
@@ -83,15 +84,15 @@ There is an important distinction between Parents and types::
     sage: parent(a) == parent(b)
     False
 
-However, non-Sage objects don't really have parents, but we still want
+However, non-Sage objects do not really have parents, but we still want
 to be able to reason with them, so their type is used instead::
 
     sage: a = int(10)
     sage: parent(a)
-    <type 'int'>
+    <... 'int'>
 
 In fact, under the hood, a special kind of parent "The set of all
-Python objects of type T" is used in these cases.
+Python objects of class T" is used in these cases.
 
 Note that parents are **not** always as tight as possible.
 
@@ -209,8 +210,8 @@ be obtained and queried.
 
     sage: parent(1 + 1/2)
     Rational Field
-    sage: cm = sage.structure.element.get_coercion_model(); cm
-    <sage.structure.coerce.CoercionModel_cache_maps object at ...>
+    sage: cm = coercion_model; cm
+    <sage.structure.coerce.CoercionModel object at ...>
     sage: cm.explain(ZZ, QQ)
     Coercion on left operand via
        Natural morphism:
@@ -222,11 +223,11 @@ be obtained and queried.
 
     sage: cm.explain(ZZ['x','y'], QQ['x'])
     Coercion on left operand via
-       Conversion map:
+       Coercion map:
          From: Multivariate Polynomial Ring in x, y over Integer Ring
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Coercion on right operand via
-       Conversion map:
+       Coercion map:
          From: Univariate Polynomial Ring in x over Rational Field
          To:   Multivariate Polynomial Ring in x, y over Rational Field
     Arithmetic performed after coercions.
@@ -257,7 +258,7 @@ discovered between steps 1 and 2 above.
     Result lives in Univariate Polynomial Ring in x over Integer Ring
     Univariate Polynomial Ring in x over Integer Ring
 
-    sage: cm.explain(ZZ['x'], ZZ, operator.div)
+    sage: cm.explain(ZZ['x'], ZZ, operator.truediv)
     Action discovered.
        Right inverse action by Rational Field on Univariate Polynomial Ring in x over Integer Ring
        with precomposition on right by Natural morphism:
@@ -277,19 +278,19 @@ copy should be used instead (unless one knows what one is doing)::
     sage: QQ._internal_coerce_map_from(int)
     (map internal to coercion system -- copy before use)
     Native morphism:
-      From: Set of Python objects of type 'int'
+      From: Set of Python objects of class 'int'
       To:   Rational Field
     sage: copy(QQ._internal_coerce_map_from(int))
     Native morphism:
-     From: Set of Python objects of type 'int'
-     To:   Rational Field
+      From: Set of Python objects of class 'int'
+      To:   Rational Field
 
 Note that the user-visible method (without underscore) automates this copy::
 
     sage: copy(QQ.coerce_map_from(int))
     Native morphism:
-     From: Set of Python objects of type 'int'
-     To:   Rational Field
+      From: Set of Python objects of class 'int'
+      To:   Rational Field
 
 ::
 
@@ -326,7 +327,7 @@ Methods to implement
   ``R._element_constructor_`` will be created) or an actual
   :class:`Morphism` object with S as the domain and R as the codomain.
 
-* Actions for Parents: ``_get_action_`` or ``_rmul_``, ``_lmul_``, ``_r_action_``, ``_l_action_``
+* Actions for Parents: ``_get_action_`` or ``_rmul_``, ``_lmul_``, ``_act_on_``, ``_acted_upon_``
 
   Suppose one wants R to act on S. Some examples of this could be
   `R = \QQ`, `S = \QQ[x]` or `R = {\rm Gal}(S/\QQ)`
@@ -335,25 +336,30 @@ Methods to implement
   * If `R` is the base of `S` (as in the first example), simply
     implement ``_rmul_`` and/or ``_lmul_`` on the Elements of `S`.
     In this case ``r * s`` gets handled as ``s._rmul_(r)`` and
-    ``s * r`` as ``s._lmul_(r)``.  The argument to ``_rmul_``
+    ``s * r`` as ``s._lmul_(r)``. The argument to ``_rmul_``
     and ``_lmul_`` are *guaranteed* to be Elements of the base of
     `S` (with coercion happening beforehand if necessary).
 
-  * If `R` acts on `S`, one can alternatively define the methods
-    ``_r_action_`` and/or ``_l_action_`` on the Elements of `R`.
-    There is no constraint on the type or parents of objects passed to
-    these methods; raise a ``TypeError`` or ``ValueError`` if the
-    wrong kind of object is passed in to indicate the action is not
+  * If `R` acts on `S`, one can define the methods
+    ``_act_on_`` on Elements of `R` or ``_acted_upon_`` on Elements of `S`. In
+    this case ``r * s`` gets handled as ``r._act_on_(s, True)`` or
+    ``s._acted_upon_(r, False)`` and ``s * r`` as ``r._act_on_(s, False)`` or
+    ``s._acted_upon_(r, True)``. There is no constraint on the type or parents
+    of objects passed to these methods; raise a ``TypeError`` or ``ValueError``
+    if the wrong kind of object is passed in to indicate the action is not
     appropriate here.
 
   * If either `R` acts on `S` *or* `S` acts on `R`, one may implement
     ``R._get_action_`` to return an actual
-    :class:`~sage.categories.action.Action` object to be used.  This
-    is how non-multiplicative actions must be implemented, and is the
-    most powerful (and completed) way to do things.
+    :class:`~sage.categories.action.Action` object to be used. This is how
+    non-multiplicative actions must be implemented, and is the most powerful
+    and complete way to do things.
 
-* Element conversion/construction for Parents: use
-  ``_element_constructor_`` **not** ``__call__``
+  It should be noted that for the first way to work, elements of `S` are
+  required to be ModuleElements. This requirement is likely to be lifted in the
+  future.
+
+* Element conversion/construction for Parents: use ``_element_constructor_`` **not** ``__call__``
 
   The :meth:`Parent.__call__` method dispatches to
   ``_element_constructor_``. When someone writes ``R(x, ...)``, this is
@@ -476,7 +482,7 @@ That's all there is to it. Now we can test it out:
     sage: R.coerce(1/4)
     Traceback (click to the left for traceback)
     ...
-    TypeError: no cannonical coercion from Rational Field to Integer Ring localized at [2]
+    TypeError: no canonical coercion from Rational Field to Integer Ring localized at [2]
 
     sage: R(1/2) + R(3/4)
     LocalElt(5/4)
@@ -487,7 +493,7 @@ That's all there is to it. Now we can test it out:
     sage: R(1/2) + 1/7
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for '+': 'Integer Ring localized at [2]' and 'Rational Field'
+    TypeError: unsupported operand parent(s) for +: 'Integer Ring localized at [2]' and 'Rational Field'
     sage: R(3/4) * 7
     LocalElt(21/4)
 
@@ -589,9 +595,8 @@ Provided Methods
 
 * ``get_action``
 
-  This will unwind all the
-  ``_rmul_, _lmul_, _r_action_, _l_action_, ...`` methods to provide
-  an actual ``Action`` object, if one exists.
+  This will unwind all the ``_get_action_, _rmul_, _lmul_, _act_on_, _acted_upon_, ...``
+  methods to provide an actual ``Action`` object, if one exists.
 
 
 Discovering new parents
@@ -608,13 +613,13 @@ These are accessed via the :meth:`construction` method, which returns a
     sage: CC.construction()
     (AlgebraicClosureFunctor, Real Field with 53 bits of precision)
     sage: RR.construction()
-    (Completion[+Infinity], Rational Field)
+    (Completion[+Infinity, prec=53], Rational Field)
     sage: QQ.construction()
     (FractionField, Integer Ring)
     sage: ZZ.construction()  # None
 
-    sage: Qp(5).construction()
-    (Completion[5], Rational Field)
+    sage: Zp(5).construction()
+    (Completion[5, prec=20], Integer Ring)
     sage: QQ.completion(5, 100, {})
     5-adic Field with capped relative precision 100
     sage: c, R = RR.construction()
@@ -626,12 +631,12 @@ These are accessed via the :meth:`construction` method, which returns a
 
     sage: sage.categories.pushout.construction_tower(Frac(CDF['x']))
     [(None,
-     Fraction Field of Univariate Polynomial Ring in x over Complex Double Field),
-    (FractionField, Univariate Polynomial Ring in x over Complex Double Field),
-    (Poly[x], Complex Double Field),
-    (AlgebraicClosureFunctor, Real Double Field),
-    (Completion[+Infinity], Rational Field),
-    (FractionField, Integer Ring)]
+      Fraction Field of Univariate Polynomial Ring in x over Complex Double Field),
+     (FractionField, Univariate Polynomial Ring in x over Complex Double Field),
+     (Poly[x], Complex Double Field),
+     (AlgebraicClosureFunctor, Real Double Field),
+     (Completion[+Infinity, prec=53], Rational Field),
+     (FractionField, Integer Ring)]
 
 Given Parents R and S, such that there is no coercion either from R to
 S or from S to R, one can find a common Z with coercions

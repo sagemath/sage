@@ -1,3 +1,5 @@
+# distutils: libraries = ecm
+# distutils: extra_link_args = LINUX_NOEXECSTACK
 r"""
 The Elliptic Curve Method for Integer Factorization (ECM)
 
@@ -17,29 +19,35 @@ EXAMPLES::
 
     sage: from sage.libs.libecm import ecmfactor
     sage: result = ecmfactor(999, 0.00)
-    sage: result[0] and (result[1] in [27, 37, 999])
+    sage: result[0]
+    True
+    sage: result[1] in [3, 9, 27, 37, 111, 333, 999] or result[1]
     True
     sage: result = ecmfactor(999, 0.00, verbose=True)
     Performing one curve with B1=0
     Found factor in step 1: ...
-    sage: result[0] and (result[1] in [27, 37, 999])
+    sage: result[0]
+    True
+    sage: result[1] in [3, 9, 27, 37, 111, 333, 999] or result[1]
     True
     sage: ecmfactor(2^128+1,1000,sigma=227140902)
     (True, 5704689200685129054721, 227140902)
 """
+
 #*****************************************************************************
 #       Copyright (C) 2008 Robert Miller
 #       Copyright (C) 2012 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  as published by the Free Software Foundation; either version 2 of
-#  the License, or (at your option) any later version.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/cdefs.pxi'
-include 'sage/ext/interrupt.pxi'
+from cysignals.signals cimport sig_on, sig_off
 
+from sage.libs.gmp.mpz cimport *
 from sage.rings.integer cimport Integer
 
 cdef extern from "ecm.h":
@@ -160,7 +168,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
         raise ValueError("Input number (%s) must be positive"%number)
 
     if verbose:
-        print "Performing one curve with B1=%1.0f"%B1
+        print("Performing one curve with B1=%1.0f" % B1)
 
     sig_on()
     mpz_init(n)
@@ -182,11 +190,11 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     if res > 0:
         if verbose:
-            print "Found factor in step %d: %d"%(res,sage_int_f)
+            print("Found factor in step %d: %d" % (res,sage_int_f))
         return (True, sage_int_f, sage_int_sigma)
     elif res == ECM_NO_FACTOR_FOUND:
         if verbose:
-            print "Found no factor."
+            print("Found no factor.")
         return (False, None)
     else:
         raise RuntimeError( "ECM lib error" )

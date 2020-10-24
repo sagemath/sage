@@ -3,24 +3,23 @@ r"""
 SageMath version and banner info
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
+import sys
 
-from sage.env import SAGE_VERSION, SAGE_DATE, SAGE_SRC
+from sage.env import (SAGE_VERSION, SAGE_VERSION_BANNER, SAGE_BANNER)
 
-def version(clone = False):
+
+def version():
     """
     Return the version of Sage.
-
-    INPUT:
-
-    nothing
 
     OUTPUT:
 
@@ -29,78 +28,90 @@ def version(clone = False):
     EXAMPLES::
 
        sage: version()
-       'SageMath Version ..., Release Date: ...'
-       sage: version(clone=True)
-       ('SageMath Version ..., Release Date: ...',
-        'Mercurial clone branch: ...')
+       'SageMath version ..., Release Date: ...'
     """
-    import os
-    branch = os.popen("ls -l "+SAGE_SRC).read().split()[-1][5:]
-    v = 'SageMath Version %s, Release Date: %s'%(SAGE_VERSION, SAGE_DATE)
-    if clone:
-        return v,"Mercurial clone branch: %s"%branch
-    return v
+    return SAGE_VERSION_BANNER
 
 
-def banner_text():
+def banner_text(full=True):
     """
     Text for the Sage banner.
 
     INPUT:
 
-    None
+    - ``full`` -- boolean (optional, default=``True``)
 
     OUTPUT:
 
     A string containing the banner message.
 
+    If option full is ``False``, a simplified plain ASCII banner is
+    displayed; if ``True`` the full banner with box art is displayed.
+
     EXAMPLES::
 
-        sage: print sage.misc.banner.banner_text()
+        sage: print(sage.misc.banner.banner_text(full=True))
         ┌────────────────────────────────────────────────────────────────────┐
-        │ SageMath Version ...
+        │ SageMath version ...
+        sage: print(sage.misc.banner.banner_text(full=False))
+        SageMath version ..., Release Date: ...
     """
-    bars = u"─"*68
-    s = u'┌' + bars + u'┐'
-    s += u"\n│ %-66s │\n" % version()
-    s += u"│ %-66s │\n" % 'Type "notebook()" for the browser-based notebook interface.'
-    s += u"│ %-66s │\n" % 'Type "help()" for help.'
-    #s += u"│ %-66s │\n" % 'Distributed under the GNU General Public License V2.'
-    s += u'└' + bars + u'┘'
+    if not full:
+        return version()
+
+    bars = u"─" * 68
+    s = []
+    a = s.append
+    a(u'┌' + bars + u'┐')
+    a(u"\n│ %-66s │\n" % version())
+    python_version = sys.version_info[:3]
+    a(u"│ %-66s │\n" % 'Using Python {}.{}.{}. Type "help()" for help.'.format(*python_version))
+    a(u'└' + bars + u'┘')
     pre = version_dict()['prerelease']
     if pre:
         red_in = '\033[31m'
         red_out = '\033[0m'
         bars2 = bars.replace(u'─', u'━')
-        s += '\n'
-        s += red_in + u'┏' + bars2 + u'┓' + '\n'
-        s += u"┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.'
-        s += u'┗' + bars2 + u'┛' + red_out
-    return s.encode('utf8')
+        a('\n')
+        a(red_in + u'┏' + bars2 + u'┓' + '\n')
+        a(u"┃ %-66s ┃\n" % 'Warning: this is a prerelease version, and it may be unstable.')
+        a(u'┗' + bars2 + u'┛' + red_out)
+    return u''.join(s)
 
 
 def banner():
     """
     Print the Sage banner.
 
-    INPUT:
+    OUTPUT: None
 
-    None
-
-    OUTPUT:
-
-    None
+    If the environment variable ``SAGE_BANNER`` is set to ``no``, no
+    banner is displayed. If ``SAGE_BANNER`` is set to ``bare``, a
+    simplified plain ASCII banner is displayed. Otherwise, the full
+    banner with box art is displayed.
 
     EXAMPLES::
 
+        sage: import sage.misc.banner; sage.misc.banner.SAGE_BANNER = ''
         sage: banner()
         ┌────────────────────────────────────────────────────────────────────┐
-        │ SageMath Version ..., Release Date: ...
-        │ Type "notebook()" for the browser-based notebook interface.        │
-        │ Type "help()" for help.                                            │
+        │ SageMath version ..., Release Date: ...                            │
+        │ Using Python .... Type "help()" for help.                          │
         ...
     """
-    print(banner_text())
+    typ = SAGE_BANNER.lower()
+
+    if typ == "no":
+        return
+
+    if typ != "bare":
+        try:
+            print(banner_text(full=True))
+            return
+        except UnicodeEncodeError:
+            pass
+
+    print(banner_text(full=False))
 
 
 def version_dict():
@@ -142,7 +153,7 @@ def version_dict():
     EXAMPLES::
 
         sage: from sage.misc.banner import version_dict
-        sage: print "SageMath major version is %s" % version_dict()['major']
+        sage: print("SageMath major version is %s" % version_dict()['major'])
         SageMath major version is ...
         sage: version_dict()['major'] == int(sage.version.version.split('.')[0])
         True
@@ -154,7 +165,7 @@ def version_dict():
     dict['tiny'] = 0
     dict['prerelease'] = False
     try:
-        dummy = int(v[-1])
+        int(v[-1])
     except ValueError:  # when last entry is not an integer
         dict['prerelease'] = True
     if (len(v) == 3 and not dict['prerelease']) or len(v) > 3:
@@ -165,6 +176,7 @@ def version_dict():
     except (ValueError, IndexError):
         pass
     return dict
+
 
 def require_version(major, minor=0, tiny=0, prerelease=False,
                     print_message=False):
@@ -219,7 +231,7 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
         return True
     else:
         if print_message:
-            print("This code requires at least version {} of SageMath to run correctly.". 
+            print("This code requires at least version {} of SageMath to run correctly.".
                    format(major + 0.1 * minor + 0.01 * tiny))
             print("You are running version {}.".format(SAGE_VERSION))
         return False

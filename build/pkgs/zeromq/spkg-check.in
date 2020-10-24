@@ -1,0 +1,9 @@
+if [ "$UNAME" = "Darwin" ]; then
+    # Need to increase maximum allowed file handles for testsuite
+    ulimit -n 1200
+fi
+
+# trac 22837: do not run self-tests in parallel.
+cd src
+$MAKE -j1 check
+

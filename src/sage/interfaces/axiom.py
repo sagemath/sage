@@ -1,15 +1,15 @@
 r"""
 Interface to Axiom
 
-TODO:
+.. TODO::
 
-- Evaluation using a file is not done. Any input line with more than a
-  few thousand characters would hang the system, so currently it
-  automatically raises an exception.
+    - Evaluation using a file is not done. Any input line with more than a
+      few thousand characters would hang the system, so currently it
+      automatically raises an exception.
 
-- All completions of a given command.
+    - All completions of a given command.
 
-- Interactive help.
+    - Interactive help.
 
 Axiom is a free GPL-compatible (modified BSD license) general
 purpose computer algebra system whose development started in 1973
@@ -103,7 +103,7 @@ Axiom would print out.
 
 ::
 
-    sage: print axiom.eval('factor(x^5 - y^5)')   #optional - axiom
+    sage: print(axiom.eval('factor(x^5 - y^5)'))   # optional - axiom
                4      3    2 2    3     4
     - (y - x)(y  + x y  + x y  + x y + x )
     Type: Factored Polynomial Integer
@@ -144,7 +144,9 @@ following sum but with a much bigger range, and hit control-C.
          +-+
       29\|2  + 41
 
-TESTS: We check to make sure the subst method works with keyword
+TESTS:
+
+We check to make sure the subst method works with keyword
 arguments.
 
 ::
@@ -171,17 +173,21 @@ Python floats.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
+from __future__ import print_function, absolute_import
 
 import os
 import re
 
-from expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.misc.all import verbose
+from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE
 from pexpect import EOF
 from sage.misc.multireplace import multiple_replace
+from sage.interfaces.tab_completion import ExtraTabCompletion
+from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
+
 
 # The Axiom commands ")what thing det" ")show Matrix" and ")display
 # op det" commands, gives a list of all identifiers that begin in
@@ -189,7 +195,7 @@ from sage.misc.multireplace import multiple_replace
 # axiom has a lot a lot of ways for getting documentation from the
 # system -- this could also be useful.
 
-class PanAxiom(Expect):
+class PanAxiom(ExtraTabCompletion, Expect):
     """
     Interface to a PanAxiom interpreter.
     """
@@ -207,12 +213,11 @@ class PanAxiom(Expect):
         """
         eval_using_file_cutoff = 200
         self.__eval_using_file_cutoff = eval_using_file_cutoff
-        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj'%(DOT_SAGE, name)
+        self._COMMANDS_CACHE = '%s/%s_commandlist_cache.sobj' % (DOT_SAGE, name)
         Expect.__init__(self,
                         name = name,
-                        prompt = '\([0-9]+\) -> ',
+                        prompt = r'\([0-9]+\) -> ',
                         command = command,
-                        maxread = 10,
                         script_subdirectory = script_subdirectory,
                         server=server,
                         server_tmpdir=server_tmpdir,
@@ -257,7 +262,7 @@ class PanAxiom(Expect):
 
             sage: filename = tmp_filename(ext='.input')
             sage: f = open(filename, 'w')
-            sage: f.write('xx := 22;\n')
+            sage: _ = f.write('xx := 22;\n')
             sage: f.close()
             sage: axiom.read(filename)    # optional - axiom
             sage: axiom.get('xx')         # optional - axiom
@@ -316,14 +321,14 @@ class PanAxiom(Expect):
         return s
 
 
-    def trait_names(self, verbose=True, use_disk_cache=True):
+    def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
         Returns a list of all the commands defined in Axiom and optionally
         (per default) store them to disk.
 
         EXAMPLES::
 
-            sage: c = axiom.trait_names(use_disk_cache=False, verbose=False) #optional - axiom
+            sage: c = axiom._tab_completion(use_disk_cache=False, verbose=False) #optional - axiom
             sage: len(c) > 100  #optional - axiom
             True
             sage: 'factor' in c  #optional - axiom
@@ -338,19 +343,19 @@ class PanAxiom(Expect):
             True
         """
         try:
-            return self.__trait_names
+            return self.__tab_completion
         except AttributeError:
             import sage.misc.persist
             if use_disk_cache:
                 try:
-                    self.__trait_names = sage.misc.persist.load(self._COMMANDS_CACHE)
-                    return self.__trait_names
+                    self.__tab_completion = sage.misc.persist.load(self._COMMANDS_CACHE)
+                    return self.__tab_completion
                 except IOError:
                     pass
             if verbose:
-                print "\nBuilding %s command completion list (this takes"%(self)
-                print "a few seconds only the first time you do it)."
-                print "To force rebuild later, delete %s."%self._COMMANDS_CACHE
+                print("\nBuilding %s command completion list (this takes" % self)
+                print("a few seconds only the first time you do it).")
+                print("To force rebuild later, delete %s." % self._COMMANDS_CACHE)
             v = self._commands()
 
             #Process we now need process the commands to strip out things which
@@ -363,7 +368,7 @@ class PanAxiom(Expect):
             names += [x[:-1]+"_q" for x in v if x.endswith("?")]
             names += [x[:-1]+"_e" for x in v if x.endswith("!")]
 
-            self.__trait_names = names
+            self.__tab_completion = names
             if len(v) > 200:
                 # Axiom is actually installed.
                 sage.misc.persist.save(v, self._COMMANDS_CACHE)
@@ -377,10 +382,6 @@ class PanAxiom(Expect):
 
             sage: axiom.set('xx', '2')    #optional - axiom
             sage: axiom.get('xx')         #optional - axiom
-            '2'
-
-            sage: fricas.set('xx', '2')    #optional - fricas
-            sage: fricas.get('xx')         #optional - fricas
             '2'
 
         """
@@ -416,10 +417,11 @@ class PanAxiom(Expect):
         """
         EXAMPLES::
 
-            sage: print axiom._eval_line('2+2')  #optional - axiom
+            sage: print(axiom._eval_line('2+2'))  # optional - axiom
               4
                                                        Type: PositiveInteger
         """
+        from sage.misc.verbose import verbose
         if not wait_for_prompt:
             return Expect._eval_line(self, line)
         line = line.rstrip().rstrip(';')
@@ -435,7 +437,7 @@ class PanAxiom(Expect):
         try:
             E = self._expect
             # debug
-            self._synchronize(cmd='1+%s\n')
+            # self._synchronize(cmd='1+%s\n')
             verbose("in = '%s'"%line,level=3)
             E.sendline(line)
             self._expect.expect(self._prompt)
@@ -463,15 +465,14 @@ class PanAxiom(Expect):
         i = 0
         for line in outs:
             line = line.rstrip()
-            # print "'%s'"%line
             if line[:4] == '   (':
                 i = line.find('(')
-                i += line[i:].find(')')
-                if line[i+1:] == "":
+                i += line[i:].find(')')+1
+                if line[i:] == "":
                     i = 0
                     outs = outs[1:]
                 break;
-        out = "\n".join(line[i+1:] for line in outs[1:])
+        out = "\n".join(line[i:] for line in outs[1:])
         return out
 
     # define relational operators
@@ -481,8 +482,6 @@ class PanAxiom(Expect):
         EXAMPLES::
 
             sage: a = axiom(x==6); a    #optional axiom
-            x= 6
-            sage: a = fricas(x==6); a   #optional fricas
             x= 6
         """
         return "="
@@ -508,9 +507,9 @@ class Axiom(PanAxiom):
         EXAMPLES::
 
             sage: axiom._function_class()
-            <class 'sage.interfaces.axiom.AxiomExpectFunction'>
+            <class 'sage.interfaces.axiom.PanAxiomExpectFunction'>
             sage: type(axiom.gcd)
-            <class 'sage.interfaces.axiom.AxiomExpectFunction'>
+            <class 'sage.interfaces.axiom.PanAxiomExpectFunction'>
         """
         return AxiomExpectFunction
 
@@ -519,9 +518,9 @@ class Axiom(PanAxiom):
         EXAMPLES::
 
             sage: axiom._object_class()
-            <class 'sage.interfaces.axiom.AxiomElement'>
+            <class 'sage.interfaces.axiom.PanAxiomElement'>
             sage: type(axiom(2)) #optional - axiom
-            <class 'sage.interfaces.axiom.AxiomElement'>
+            <class 'sage.interfaces.axiom.PanAxiomElement'>
         """
         return AxiomElement
 
@@ -532,9 +531,9 @@ class Axiom(PanAxiom):
         EXAMPLES::
 
             sage: axiom._function_element_class()
-            <class 'sage.interfaces.axiom.AxiomFunctionElement'>
+            <class 'sage.interfaces.axiom.PanAxiomFunctionElement'>
             sage: type(axiom(2).gcd) #optional - axiom
-            <class 'sage.interfaces.axiom.AxiomFunctionElement'>
+            <class 'sage.interfaces.axiom.PanAxiomFunctionElement'>
         """
         return AxiomFunctionElement
 
@@ -556,6 +555,8 @@ class Axiom(PanAxiom):
         """
         axiom_console()
 
+
+@instancedoc
 class PanAxiomElement(ExpectElement):
     def __call__(self, x):
         """
@@ -569,7 +570,7 @@ class PanAxiomElement(ExpectElement):
         P = self.parent()
         return P('%s(%s)'%(self.name(), x))
 
-    def __cmp__(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -604,18 +605,13 @@ class PanAxiomElement(ExpectElement):
         """
         P = self.parent()
         if 'true' in P.eval("(%s = %s) :: Boolean"%(self.name(),other.name())):
-            return 0
+            return rich_to_bool(op, 0)
         elif 'true' in P.eval("(%s < %s) :: Boolean"%(self.name(), other.name())):
-            return -1
+            return rich_to_bool(op, -1)
         elif 'true' in P.eval("(%s > %s) :: Boolean"%(self.name(),other.name())):
-            return 1
+            return rich_to_bool(op, 1)
 
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparable in interfaced system.
-        if (hash(self) < hash(other)):
-            return -1
-        else:
-            return 1
+        return NotImplemented
 
     def type(self):
         """
@@ -692,14 +688,6 @@ class PanAxiomElement(ExpectElement):
             sage: _.type()        #optional - axiom
             Tuple PositiveInteger
 
-            sage: two = fricas(2)  #optional - fricas
-            sage: two.comma(3)     #optional - fricas
-            [2,3]
-            sage: two.comma(3,4)   #optional - fricas
-            [2,3,4]
-            sage: _.type()         #optional - fricas
-            Tuple(PositiveInteger)
-
         """
         P = self._check_valid()
         args = list(args)
@@ -717,9 +705,6 @@ class PanAxiomElement(ExpectElement):
             sage: latex(a)       #optional - axiom
             \frac{1}{2}
 
-            sage: a = fricas(1/2) #optional - fricas
-            sage: latex(a)        #optional - fricas
-            1 \over 2
         """
         self._check_valid()
         P = self.parent()
@@ -750,15 +735,6 @@ class PanAxiomElement(ExpectElement):
             sage: _.type()                     #optional - axiom
             DoubleFloat
 
-        ::
-
-            sage: a = fricas(1.2); a            #optional - fricas
-            1.2
-            sage: a.as_type(fricas.DoubleFloat) #optional - fricas
-            1.2
-            sage: _.type()                      #optional - fricas
-            DoubleFloat
-
         """
         P = self._check_valid()
         type = P(type)
@@ -777,9 +753,6 @@ class PanAxiomElement(ExpectElement):
             sage: a.unparsed_input_form() #optional - axiom
             'x*x+1'
 
-            sage: a = fricas(x^2+1)       #optional - fricas
-            sage: a.unparsed_input_form() #optional - fricas
-            'x^2+1'
         """
         P = self._check_valid()
         s = P.eval('unparse(%s::InputForm)'%self._name)
@@ -813,9 +786,6 @@ class PanAxiomElement(ExpectElement):
             Rational Field
 
             sage: gp(axiom(1/2))    #optional - axiom
-            1/2
-
-            sage: fricas(1/2).sage() #optional - fricas
             1/2
 
         DoubleFloat's in Axiom are converted to be in RDF in Sage.
@@ -875,17 +845,26 @@ class PanAxiomElement(ExpectElement):
         elif type == "DoubleFloat":
             from sage.rings.all import RDF
             return RDF(repr(self))
+        elif type in ["PositiveInteger", "Integer"]:
+            from sage.rings.all import ZZ
+            return ZZ(repr(self))
         elif type.startswith('Polynomial'):
             from sage.rings.all import PolynomialRing
             base_ring = P(type.lstrip('Polynomial '))._sage_domain()
             vars = str(self.variables())[1:-1]
             R = PolynomialRing(base_ring, vars)
             return R(self.unparsed_input_form())
+        elif type.startswith('Fraction'):
+            return self.numer().sage()/self.denom().sage()
 
-        #If all else fails, try using the unparsed input form
+         #If all else fails, try using the unparsed input form
         try:
             import sage.misc.sage_eval
-            return sage.misc.sage_eval.sage_eval(self.unparsed_input_form())
+            vars=sage.symbolic.ring.var(str(self.variables())[1:-1])
+            if isinstance(vars,tuple):
+                return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(x):x for x in vars})
+            else:
+                return sage.misc.sage_eval.sage_eval(self.unparsed_input_form(), locals={str(vars):vars})
         except Exception:
             raise NotImplementedError
 
@@ -899,19 +878,12 @@ class PanAxiomElement(ExpectElement):
 
             sage: axiom('Integer').sage()  #optional - axiom
             Integer Ring
-            sage: fricas('Integer').sage() #optional - fricas
-            Integer Ring
 
             sage: axiom('Fraction Integer').sage()  #optional - axiom
-            Rational Field
-            sage: fricas('Fraction Integer').sage() #optional - fricas
             Rational Field
 
             sage: axiom('DoubleFloat').sage()  #optional - axiom
             Real Double Field
-            sage: fricas('DoubleFloat').sage() #optional - fricas
-            Real Double Field
-
         """
         P = self._check_valid()
         name = str(self)
@@ -927,10 +899,10 @@ class PanAxiomElement(ExpectElement):
         raise NotImplementedError
 
 
+AxiomElement = PanAxiomElement
 
-class AxiomElement(PanAxiomElement):
-    pass
 
+@instancedoc
 class PanAxiomFunctionElement(FunctionElement):
     def __init__(self, object, name):
         """
@@ -950,9 +922,10 @@ class PanAxiomFunctionElement(FunctionElement):
             name = name[:-2] + "!"
         FunctionElement.__init__(self, object, name)
 
-class AxiomFunctionElement(PanAxiomFunctionElement):
-    pass
+AxiomFunctionElement = PanAxiomFunctionElement
 
+
+@instancedoc
 class PanAxiomExpectFunction(ExpectFunction):
     def __init__(self, parent, name):
         """
@@ -969,8 +942,8 @@ class PanAxiomExpectFunction(ExpectFunction):
             name = name[:-2] + "!"
         ExpectFunction.__init__(self, parent, name)
 
-class AxiomExpectFunction(PanAxiomExpectFunction):
-    pass
+AxiomExpectFunction = PanAxiomExpectFunction
+
 
 def is_AxiomElement(x):
     """
@@ -1019,5 +992,8 @@ def axiom_console():
         -----------------------------------------------------------------------------
 
     """
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%axiom magics instead.')
     os.system('axiom -nox')
 

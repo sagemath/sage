@@ -1,4 +1,4 @@
-"""
+r"""
 Double Description for Arbitrary Polyhedra
 
 This module is part of the python backend for polyhedra. It uses the
@@ -41,15 +41,16 @@ following are the inequalities and equations::
     [-----]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
@@ -160,7 +161,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         - ``dim`` -- integer. The ambient space dimension.
 
-        - ``inequalities`` -- list of inequalities. Each inequalitiy
+        - ``inequalities`` -- list of inequalities. Each inequality
           is given as constant term, ``dim`` coefficients.
 
         - ``equations`` -- list of equations. Same notation as for
@@ -195,12 +196,16 @@ class Hrep2Vrep(PivotedInequalities):
             [0||0 1]
             sage: Hrep2Vrep(QQ, 2, [(-1,0,0)], [])   # empty
             []
-            sage: Hrep2Vrep(QQ, 2, [], [])   # empty
-            []
+            sage: Hrep2Vrep(QQ, 2, [], [])   # universe
+            [0||1 0]
+            [0||0 1]
         """
         super(Hrep2Vrep, self).__init__(base_ring, dim)
         inequalities = [list(x) for x in inequalities]
         equations = [list(x) for x in equations]
+        if not inequalities and not equations:
+            # Adding a trivial inequality, so that the ambient dimension is passed to the algorithm.
+            inequalities = [[self.base_ring.one()] + [self.base_ring.zero()] * self.dim]
         A = self._init_Vrep(inequalities, equations)
         DD = Algorithm(A).run()
         self._extract_Vrep(DD)
@@ -232,7 +237,7 @@ class Hrep2Vrep(PivotedInequalities):
         return self._pivot_inequalities(A)
 
     def _split_linear_subspace(self):
-        """
+        r"""
         Split the linear subspace in a generator with `x_0\not=0` and the
         remaining generators with `x_0=0`.
 
@@ -371,9 +376,9 @@ class Hrep2Vrep(PivotedInequalities):
            (len(self.vertices) != P.n_vertices()) or \
            (len(self.rays) != P.n_rays()) or \
            (len(self.lines) != P.n_lines()):
-            print 'incorrect!',
-            print Q.Vrepresentation()
-            print P.Hrepresentation()
+            print('incorrect!', end="")
+            print(Q.Vrepresentation())
+            print(P.Hrepresentation())
 
 
 class Vrep2Hrep(PivotedInequalities):
@@ -441,9 +446,17 @@ class Vrep2Hrep(PivotedInequalities):
         super(Vrep2Hrep, self).__init__(base_ring, dim)
         if rays or lines:
             assert len(vertices) > 0
-        A = self._init_Vrep(vertices, rays, lines)
-        DD = Algorithm(A).run()
-        self._extract_Hrep(DD)
+        if not vertices and not rays and not lines:
+            # The algorithm does not work, as the ambient dimension cannot be passed.
+            # Manually setting a single equality in this case.
+            one = self.base_ring.one()
+            zero = self.base_ring.zero()
+            self.equations = [[one] + [zero]*self.dim]
+            self.inequalities = []
+        else:
+            A = self._init_Vrep(vertices, rays, lines)
+            DD = Algorithm(A).run()
+            self._extract_Hrep(DD)
         if VERIFY_RESULT:
             self.verify(vertices, rays, lines)
 
@@ -504,7 +517,7 @@ class Vrep2Hrep(PivotedInequalities):
         self.equations = self._linear_subspace.matrix().rows()
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation.
 
         OUTPUT:
@@ -552,10 +565,9 @@ class Vrep2Hrep(PivotedInequalities):
             return
         P = Polyhedron(vertices=vertices, rays=rays, lines=lines,
                        base_ring=QQ, ambient_dim=self.dim)
-        trivial = [self.base_ring.one()] + [self.base_ring.zero()] * self.dim   # always true equation
-        Q = Polyhedron(ieqs=self.inequalities + [trivial], eqns=self.equations,
+        Q = Polyhedron(ieqs=self.inequalities, eqns=self.equations,
                        base_ring=QQ, ambient_dim=self.dim)
         if not P == Q:
-            print 'incorrect!', P, Q
-            print Q.Vrepresentation()
-            print P.Hrepresentation()
+            print('incorrect!', P, Q)
+            print(Q.Vrepresentation())
+            print(P.Hrepresentation())

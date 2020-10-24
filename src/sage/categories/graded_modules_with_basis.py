@@ -11,6 +11,7 @@ Graded modules with basis
 
 from sage.categories.graded_modules import GradedModulesCategory
 
+
 class GradedModulesWithBasis(GradedModulesCategory):
     """
     The category of graded modules with a distinguished basis.
@@ -20,8 +21,8 @@ class GradedModulesWithBasis(GradedModulesCategory):
         sage: C = GradedModulesWithBasis(ZZ); C
         Category of graded modules with basis over Integer Ring
         sage: sorted(C.super_categories(), key=str)
-        [Category of graded modules over Integer Ring,
-         Category of modules with basis over Integer Ring]
+        [Category of filtered modules with basis over Integer Ring,
+         Category of graded modules over Integer Ring]
         sage: C is ModulesWithBasis(ZZ).Graded()
         True
 
@@ -30,164 +31,67 @@ class GradedModulesWithBasis(GradedModulesCategory):
         sage: TestSuite(C).run()
     """
     class ParentMethods:
+        def degree_negation(self, element):
+            r"""
+            Return the image of ``element`` under the degree negation
+            automorphism of the graded module ``self``.
 
-        # TODO: which syntax do we prefer?
-        # A.basis(degree = 3)
-        # A.basis().subset(degree=3)
-
-        # This is related to the following design question:
-        # If F = (f_i)_{i\in I} is a family, should ``F.subset(degree = 3)``
-        # be the elements of F of degree 3 or those whose index is of degree 3?
-
-        def basis(self, d=None):
-            """
-            Returns the basis for (an homogeneous component of) this graded module
+            The degree negation is the module automorphism which scales
+            every homogeneous element of degree `k` by `(-1)^k` (for all
+            `k`). This assumes that the module ``self`` is `\ZZ`-graded.
 
             INPUT:
 
-            - `d` -- non negative integer or ``None``, optional (default: ``None``)
-
-            If `d` is None, returns a basis of the module.
-            Otherwise, returns the basis of the homogeneous component of degree `d`.
+            - ``element`` -- element of the module ``self``
 
             EXAMPLES::
 
-                sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: A.basis(4)
-                Lazy family (Term map from Partitions to An example of a graded module with basis: the free module on partitions over Integer Ring(i))_{i in Partitions of the integer 4}
+                sage: E.<a,b> = ExteriorAlgebra(QQ)
+                sage: E.degree_negation((1 + a) * (1 + b))
+                a*b - a - b + 1
+                sage: E.degree_negation(E.zero())
+                0
 
-            Without arguments, the full basis is returned::
-
-                sage: A.basis()
-                Lazy family (Term map from Partitions to An example of a graded module with basis: the free module on partitions over Integer Ring(i))_{i in Partitions}
-                sage: A.basis()
-                Lazy family (Term map from Partitions to An example of a graded module with basis: the free module on partitions over Integer Ring(i))_{i in Partitions}
+                sage: P = GradedModulesWithBasis(ZZ).example(); P
+                An example of a graded module with basis: the free module on partitions over Integer Ring
+                sage: pbp = lambda x: P.basis()[Partition(list(x))]
+                sage: p = pbp([3,1]) - 2 * pbp([2]) + 4 * pbp([1])
+                sage: P.degree_negation(p)
+                -4*P[1] - 2*P[2] + P[3, 1]
             """
-            from sage.sets.family import Family
-            if d is None:
-                return Family(self._indices, self.monomial)
-            else:
-                return Family(self._indices.subset(size=d), self.monomial)
+            base_one = self.base_ring().one()
+            base_minusone = - base_one
+            diag = lambda x: (base_one if self.degree_on_basis(x) % 2 == 0
+                              else base_minusone)
+            return self.sum_of_terms([(key, diag(key) * value)
+                                      for key, value in
+                                      element.monomial_coefficients(copy=False).items()])
 
     class ElementMethods:
+        def degree_negation(self):
+            r"""
+            Return the image of ``self`` under the degree negation
+            automorphism of the graded module to which ``self`` belongs.
 
-        def is_homogeneous(self):
-            """
-            Return whether this element is homogeneous.
-
-            EXAMPLES::
-
-                sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: x=A(Partition((3,2,1)))
-                sage: y=A(Partition((4,4,1)))
-                sage: z=A(Partition((2,2,2)))
-                sage: (3*x).is_homogeneous()
-                True
-                sage: (x - y).is_homogeneous()
-                False
-                sage: (x+2*z).is_homogeneous()
-                True
-            """
-            degree_on_basis = self.parent().degree_on_basis
-            degree = None
-            for m in self.support():
-                if degree is None:
-                    degree = degree_on_basis(m)
-                else:
-                    if degree != degree_on_basis(m):
-                        return False
-            return True
-
-        def degree(self):
-            """
-            The degree of this element in the graded module.
-
-            .. note::
-
-                This raises an error if the element is not homogeneous.
-                Another implementation option would be to return the
-                maximum of the degrees of the homogeneous summands.
+            The degree negation is the module automorphism which scales
+            every homogeneous element of degree `k` by `(-1)^k` (for all
+            `k`). This assumes that the module to which ``self`` belongs
+            (that is, the module ``self.parent()``) is `\ZZ`-graded.
 
             EXAMPLES::
 
-                sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: x = A(Partition((3,2,1)))
-                sage: y = A(Partition((4,4,1)))
-                sage: z = A(Partition((2,2,2)))
-                sage: x.degree()
-                6
-                sage: (x + 2*z).degree()
-                6
-                sage: (y - x).degree()
-                Traceback (most recent call last):
-                ...
-                ValueError: Element is not homogeneous.
-            """
-            if not self.support():
-                raise ValueError("The zero element does not have a well-defined degree.")
-            if self.is_homogeneous():
-                return self.parent().degree_on_basis(self.leading_support())
-            else:
-                raise ValueError("Element is not homogeneous.")
-
-        def homogeneous_component(self, n):
-            """
-            Return the homogeneous component of degree ``n`` of this
-            element.
-
-            EXAMPLES::
-
-                sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: x = A.an_element(); x
-                2*P[] + 2*P[1] + 3*P[2]
-                sage: x.homogeneous_component(-1)
-                0
-                sage: x.homogeneous_component(0)
-                2*P[]
-                sage: x.homogeneous_component(1)
-                2*P[1]
-                sage: x.homogeneous_component(2)
-                3*P[2]
-                sage: x.homogeneous_component(3)
+                sage: E.<a,b> = ExteriorAlgebra(QQ)
+                sage: ((1 + a) * (1 + b)).degree_negation()
+                a*b - a - b + 1
+                sage: E.zero().degree_negation()
                 0
 
-            TESTS:
-
-            Check that this really return ``A.zero()`` and not a plain ``0``::
-
-                sage: x.homogeneous_component(3).parent() is A
-                True
+                sage: P = GradedModulesWithBasis(ZZ).example(); P
+                An example of a graded module with basis: the free module on partitions over Integer Ring
+                sage: pbp = lambda x: P.basis()[Partition(list(x))]
+                sage: p = pbp([3,1]) - 2 * pbp([2]) + 4 * pbp([1])
+                sage: p.degree_negation()
+                -4*P[1] - 2*P[2] + P[3, 1]
             """
-            degree_on_basis = self.parent().degree_on_basis
-            return self.parent().sum_of_terms((i, c)
-                                              for (i, c) in self
-                                              if degree_on_basis(i) == n)
+            return self.parent().degree_negation(self)
 
-        def truncate(self, n):
-            """
-            Return the sum of the homogeneous components of degree ``< n`` of this element
-
-            EXAMPLES::
-
-                sage: A = GradedModulesWithBasis(ZZ).example()
-                sage: x = A.an_element(); x
-                2*P[] + 2*P[1] + 3*P[2]
-                sage: x.truncate(0)
-                0
-                sage: x.truncate(1)
-                2*P[]
-                sage: x.truncate(2)
-                2*P[] + 2*P[1]
-                sage: x.truncate(3)
-                2*P[] + 2*P[1] + 3*P[2]
-
-            TESTS:
-
-            Check that this really return ``A.zero()`` and not a plain ``0``::
-
-                sage: x.truncate(0).parent() is A
-                True
-            """
-            degree_on_basis = self.parent().degree_on_basis
-            return self.parent().sum_of_terms((i, c) for (i, c) in self
-                                              if degree_on_basis(i) < n)

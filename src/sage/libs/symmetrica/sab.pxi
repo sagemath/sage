@@ -37,7 +37,7 @@ def dimension_symmetrization_symmetrica(n, part):
 
 def bdg_symmetrica(part, perm):
     """
-    Calculates the irreduzible matrix representation
+    Calculates the irreducible matrix representation
     D^part(perm), whose entries are of integral numbers.
 
     REFERENCE: H. Boerner:
@@ -65,8 +65,7 @@ def bdg_symmetrica(part, perm):
 
 def sdg_symmetrica(part, perm):
     """
-
-    Calculates the irreduzible matrix representation
+    Calculates the irreducible matrix representation
     D^part(perm), which consists of rational numbers.
 
     REFERENCE: G. James/ A. Kerber:
@@ -97,7 +96,7 @@ def sdg_symmetrica(part, perm):
 
 def odg_symmetrica(part, perm):
     """
-    Calculates the irreduzible matrix representation
+    Calculates the irreducible matrix representation
     D^part(perm), which consists of real numbers.
 
     REFERENCE: G. James/ A. Kerber:

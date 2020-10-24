@@ -1,6 +1,7 @@
 """
 Characteristic Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,11 +16,11 @@ Characteristic Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from generating_series import factorial_stream
-from structure import GenericSpeciesStructure
-from set_species import SetSpecies
-from sage.misc.cachefunc import cached_function
+
+from .species import GenericCombinatorialSpecies
+from .generating_series import factorial_stream
+from .structure import GenericSpeciesStructure
+from .set_species import SetSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
 class CharacteristicSpeciesStructure(GenericSpeciesStructure):
@@ -55,7 +56,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
             {'a', 'b', 'c'}
         """
         P = self.parent()
-        rng = range(1, P._n+1)
+        rng = list(range(1, P._n + 1))
         return CharacteristicSpeciesStructure(P, self._labels, rng)
 
 
@@ -96,10 +97,10 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
 class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def __init__(self, n, min=None, max=None, weight=None):
         """
-        Returns the characteristic species of order `n`.
+        Return the characteristic species of order `n`.
 
-        This species has exactly one structure on a set of of size `n`
-        and no structures of on sets of any other size.
+        This species has exactly one structure on a set of size `n`
+        and no structures on sets of any other size.
 
         EXAMPLES::
 

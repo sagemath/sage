@@ -1,8 +1,8 @@
 Bug in glibc-2.18: https://sourceware.org/bugzilla/show_bug.cgi?id=15917
 
 
---- a/tune/sysinfo/masrch.c
-+++ b/tune/sysinfo/masrch.c
+--- a/ATLAS/tune/sysinfo/masrch.c
++++ b/ATLAS/tune/sysinfo/masrch.c
 @@ -1,6 +1,7 @@
  #include <stdio.h>
  #include <stdlib.h>

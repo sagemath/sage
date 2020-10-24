@@ -30,7 +30,7 @@ explicit calls to Maxima or other systems.
     sage: # (YES) Evaluate  e^(Pi*Sqrt(163)) to 50 decimal digits
     sage: a = e^(pi*sqrt(163)); a
     e^(sqrt(163)*pi)
-    sage: print RealField(150)(a)
+    sage: RealField(150)(a)
     2.6253741264076874399999999999925007259719820e17
 
 ::
@@ -43,9 +43,9 @@ explicit calls to Maxima or other systems.
 
     sage: # (YES) Obtain period of decimal fraction 1/7=0.(142857).
     sage: a = 1/7
-    sage: print a
+    sage: a
     1/7
-    sage: print a.period()
+    sage: a.period()
     6
 
 ::
@@ -62,9 +62,9 @@ explicit calls to Maxima or other systems.
     sage: # note the equality only holds for one choice of sign,
     sage: # but Maxima always chooses the "positive" one
     sage: a = sqrt(2*sqrt(3) + 4); b = 1 + sqrt(3)
-    sage: print float(a-b)
+    sage: float(a-b)
     0.0
-    sage: print bool(a == b)
+    sage: bool(a == b)
     True
     sage: # We can, of course, do this in a quadratic field
     sage: k.<sqrt3> = QuadraticField(3)
@@ -204,7 +204,7 @@ explicit calls to Maxima or other systems.
     sage: var('x,y,z')
     (x, y, z)
     sage: assume(x>=y, y>=z,z>=x)
-    sage: print bool(x==z)
+    sage: bool(x==z)
     True
 
 ::
@@ -212,12 +212,12 @@ explicit calls to Maxima or other systems.
     sage: # (YES) Assuming x>y, y>0, deduce 2*x^2>2*y^2.
     sage: forget()
     sage: assume(x>y, y>0)
-    sage: print list(sorted(assumptions()))
+    sage: sorted(assumptions())
     [x > y, y > 0]
-    sage: print bool(2*x^2 > 2*y^2)
+    sage: bool(2*x^2 > 2*y^2)
     True
     sage: forget()
-    sage: print assumptions()
+    sage: assumptions()
     []
 
 ::
@@ -226,7 +226,7 @@ explicit calls to Maxima or other systems.
     sage: # Maxima doesn't solve inequalities
     sage: # (but some Maxima packages do):
     sage: eqn = abs(x-1) > 2
-    sage: print eqn
+    sage: eqn
                                     abs(x - 1) > 2
 
 ::
@@ -243,7 +243,7 @@ explicit calls to Maxima or other systems.
     sage: f = cos(3*x)/cos(x)
     sage: g = cos(x)^2 - 3*sin(x)^2
     sage: h = f-g
-    sage: print h.trig_simplify()
+    sage: h.trig_simplify()
                                            0
 
 ::
@@ -252,7 +252,7 @@ explicit calls to Maxima or other systems.
     sage: f = cos(3*x)/cos(x)
     sage: g = 2*cos(2*x) - 1
     sage: h = f-g
-    sage: print h.trig_simplify()
+    sage: h.trig_simplify()
                                            0
 
 ::
@@ -282,7 +282,7 @@ explicit calls to Maxima or other systems.
     True
     sage: float(a)
     1.1368683772...e-13
-    sage: print 13*7691
+    sage: 13*7691
     99983
 
 ::
@@ -298,7 +298,7 @@ explicit calls to Maxima or other systems.
     sage: reset('x')
     sage: k.<b> = NumberField(x^3-2)
     sage: a = (b  + b^2)^3 - 6*(b  + b^2) - 6
-    sage: print a
+    sage: a
     0
 
 ::
@@ -364,9 +364,9 @@ explicit calls to Maxima or other systems.
     sage: a = tan(z); a
     tan(z)
     sage: a.real()
-    tan(real_part(z))/(tan(imag_part(z))^2*tan(real_part(z))^2 + 1)
+    sin(2*real_part(z))/(cos(2*real_part(z)) + cosh(2*imag_part(z)))
     sage: a.imag()
-    tanh(imag_part(z))/(tan(imag_part(z))^2*tan(real_part(z))^2 + 1)
+    sinh(2*imag_part(z))/(cos(2*real_part(z)) + cosh(2*imag_part(z)))
 
 
 ::
@@ -440,7 +440,7 @@ explicit calls to Maxima or other systems.
     sage: R.<a,b> = QQ[]
     sage: m = matrix(2,2,[a,b,  1, a*b])
     sage: zz = m^(-1)
-    sage: print zz
+    sage: zz
     [     a/(a^2 - 1)   (-1)/(a^2 - 1)]
     [(-1)/(a^2*b - b)    a/(a^2*b - b)]
 
@@ -450,7 +450,7 @@ explicit calls to Maxima or other systems.
     sage: var('a,b,c,d')
     (a, b, c, d)
     sage: m = matrix(SR, 4, 4, [[z^i for i in range(4)] for z in [a,b,c,d]])
-    sage: print m
+    sage: m
     [  1   a a^2 a^3]
     [  1   b b^2 b^3]
     [  1   c c^2 c^3]
@@ -465,15 +465,15 @@ explicit calls to Maxima or other systems.
     sage: # Do it instead in a multivariate ring
     sage: R.<a,b,c,d> = QQ[]
     sage: m = matrix(R, 4, 4, [[z^i for i in range(4)] for z in [a,b,c,d]])
-    sage: print m
+    sage: m
     [  1   a a^2 a^3]
     [  1   b b^2 b^3]
     [  1   c c^2 c^3]
     [  1   d d^2 d^3]
     sage: d = m.determinant()
-    sage: print d
+    sage: d
     a^3*b^2*c - a^2*b^3*c - a^3*b*c^2 + a*b^3*c^2 + a^2*b*c^3 - a*b^2*c^3 - a^3*b^2*d + a^2*b^3*d + a^3*c^2*d - b^3*c^2*d - a^2*c^3*d + b^2*c^3*d + a^3*b*d^2 - a*b^3*d^2 - a^3*c*d^2 + b^3*c*d^2 + a*c^3*d^2 - b*c^3*d^2 - a^2*b*d^3 + a*b^2*d^3 + a^2*c*d^3 - b^2*c*d^3 - a*c^2*d^3 + b*c^2*d^3
-    sage: print d.factor()
+    sage: d.factor()
     (-1) * (c - d) * (-b + c) * (b - d) * (-a + c) * (-a + b) * (a - d)
 
 ::
@@ -508,7 +508,13 @@ explicit calls to Maxima or other systems.
     sage: # (OK-ish) D(x)Abs(x)
     sage: #    Verify(D(x) Abs(x), Sign(x));
     sage: diff(abs(x))
+    1/2*(x + conjugate(x))/abs(x)
+    sage: _.simplify_full()
     x/abs(x)
+    sage: _ = var('x', domain='real')
+    sage: diff(abs(x))
+    x/abs(x)
+    sage: forget()
 
 ::
 
@@ -526,7 +532,7 @@ explicit calls to Maxima or other systems.
     sage: #      Verify(Simplify(Integrate(x)
     sage: #        if(x<0) (-x) else x),
     sage: #        Simplify(if(x<0) (-x^2/2) else x^2/2));
-    sage: f = piecewise([ [[-10,0], -x], [[0,10], x]])
+    sage: f = piecewise([ ((-10,0), -x), ((0,10), x)])
     sage: f.integral(definite=True)
     100
 
@@ -583,7 +589,7 @@ explicit calls to Maxima or other systems.
     sage: g = f.taylor(y, 0, 10)
     sage: h = g.power_series(QQ)
     sage: k = (h - 1).reverse()
-    sage: print k
+    sage: k
     y + 1/2*y^2 + 2/3*y^3 + y^4 + 17/10*y^5 + 37/12*y^6 + 41/7*y^7 + 23/2*y^8 + 1667/72*y^9 + 3803/80*y^10 + O(y^11)
 
 ::
@@ -629,14 +635,14 @@ explicit calls to Maxima or other systems.
 ::
 
     sage: # (YES) Verify that True And False=False.
-    sage: (True and False) == False
+    sage: (True and False) is False
     True
 
 ::
 
     sage: # (YES) Prove x Or Not x.
     sage: for x in [True, False]:
-    ...    print x or (not x)
+    ....:    print(x or (not x))
     True
     True
 
@@ -644,8 +650,8 @@ explicit calls to Maxima or other systems.
 
     sage: # (YES) Prove x Or y Or x And y=>x Or y.
     sage: for x in [True, False]:
-    ...   for y in [True, False]:
-    ...       if x or y or x and y:
-    ...           if not (x or y):
-    ...              print "failed!"
+    ....:   for y in [True, False]:
+    ....:       if x or y or x and y:
+    ....:           if not (x or y):
+    ....:              print("failed!")
 """

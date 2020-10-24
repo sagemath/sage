@@ -103,6 +103,7 @@ EXAMPLES::
     sage: a.plot(hyperplane_labels=True,label_colors=['red','green','black'])
     Graphics3d Object
 """
+from __future__ import print_function
 
 from copy import copy
 from colorsys import hsv_to_rgb
@@ -154,7 +155,7 @@ def plot(hyperplane_arrangement, **kwds):
         raise NotImplementedError('must be a field of characteristic 0')
     elif dim == 4:
         if not hyperplane_arrangement.is_essential():
-            print 'Displaying the essentialization.'
+            print('Displaying the essentialization.')
             hyperplane_arrangement = hyperplane_arrangement.essentialization()
     elif dim not in [1,2,3]: # revise to handle 4d
         return # silently
@@ -263,21 +264,21 @@ def plot(hyperplane_arrangement, **kwds):
             newk['opacity'] = hyperplane_opacities[i]
         if dim == 1:
             newk['point_size'] = point_sizes[i]
-        if dim in [1,2] and hyperplane_legend != False: # more options than T/F
+        if dim in [1,2] and hyperplane_legend: # more options than T/F
             newk['legend_label'] = legend_labels[i]
         if ranges_set:
             newk['ranges'] = ranges[i]
         p += plot_hyperplane(hyperplane_arrangement[i], rgbcolor=hyp_colors[i], **newk)
     if dim == 1:
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
     elif dim == 2:
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             p.legend(True)
         return p
     else: # dim==3
-        if hyperplane_legend != False: # there are more options than T/F
+        if hyperplane_legend: # there are more options than T/F
             return p, legend3d
         else:
             return p
@@ -362,14 +363,14 @@ def plot_hyperplane(hyperplane, **kwds):
         sage: e.plot(ranges=[[-1,1],[0,8]], label_offset=(2,2,1), aspect_ratio=1)
         Graphics3d Object
     """
-    if hyperplane.base_ring().characteristic() != 0:
+    if hyperplane.base_ring().characteristic():
         raise NotImplementedError('base field must have characteristic zero')
     elif hyperplane.dimension() not in [0, 1, 2]: # dimension of hyperplane, not ambient space
         raise ValueError('can only plot hyperplanes in dimensions 1, 2, 3')
     # handle extra keywords
     if 'hyperplane_label' in kwds:
         hyp_label = kwds.pop('hyperplane_label')
-        if hyp_label == False:
+        if not hyp_label:
             has_hyp_label = False
         else:
             has_hyp_label = True
@@ -377,7 +378,7 @@ def plot_hyperplane(hyperplane, **kwds):
         hyp_label = True
         has_hyp_label = True
     if has_hyp_label:
-        if hyp_label == True: # then label hyperplane with its equation
+        if hyp_label: # then label hyperplane with its equation
             if hyperplane.dimension() == 2: # jmol does not like latex
                 label = hyperplane._repr_linear(include_zero=False)
             else:
@@ -423,54 +424,47 @@ def plot_hyperplane(hyperplane, **kwds):
     elif hyperplane.dimension() == 1: # a line in the plane
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
-        x, y = hyperplane.A()
-        d = hyperplane.b()
         t = SR.var('t')
         if ranges_set:
-            if type(ranges) in [list,tuple]:
+            if isinstance(ranges, (list, tuple)):
                 t0, t1 = ranges
             else:  # ranges should be a single positive number
                 t0, t1 = -ranges, ranges
         else: # default
             t0, t1 = -3, 3
-        p = parametric_plot(pnt+t*w[0], (t,t0,t1), **kwds)
+        p = parametric_plot(pnt + t * w[0], (t, t0, t1), **kwds)
         if has_hyp_label:
             if has_offset:
                 b0, b1 = label_offset
             else:
                 b0, b1 = 0, 0.2
-            label = text(label,(pnt[0]+b0,pnt[1]+b1),
+            label = text(label,(pnt[0] + b0, pnt[1] + b1),
                     color=label_color,fontsize=label_fontsize)
             p += label
     elif hyperplane.dimension() == 2: # a plane in 3-space
         pnt = hyperplane.point()
         w = hyperplane.linear_part().matrix()
-        a, b, c = hyperplane.A()
-        d = hyperplane.b()
-        s,t = SR.var('s t')
+        s, t = SR.var('s t')
         if ranges_set:
-            if type(ranges) in [list,tuple]:
+            if isinstance(ranges, (list, tuple)):
                 s0, s1 = ranges[0]
                 t0, t1 = ranges[1]
-            else: # ranges should be a single positive integers
+            else:  # ranges should be a single positive integers
                 s0, s1 = -ranges, ranges
                 t0, t1 = -ranges, ranges
-        else: # default
+        else:  # default
             s0, s1 = -3, 3
             t0, t1 = -3, 3
-        p = parametric_plot3d(pnt+s*w[0]+t*w[1],(s,s0,s1),(t,t0,t1),**kwds)
+        p = parametric_plot3d(pnt+s*w[0]+t*w[1], (s,s0,s1), (t,t0,t1), **kwds)
         if has_hyp_label: 
             if has_offset:
                 b0, b1, b2 = label_offset
             else:
                 b0, b1, b2 = 0, 0, 0
-            label = text3d(label,(pnt[0]+b0,pnt[1]+b1,pnt[2]+b2),
-                    color=label_color,fontsize=label_fontsize)
+            label = text3d(label,(pnt[0]+b0, pnt[1]+b1, pnt[2]+b2),
+                    color=label_color, fontsize=label_fontsize)
             p += label
     return p
-
-
-
 
 
 def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
@@ -495,18 +489,18 @@ def legend_3d(hyperplane_arrangement, hyperplane_colors, length):
 
         sage: a = hyperplane_arrangements.semiorder(3)
         sage: from sage.geometry.hyperplane_arrangement.plot import legend_3d
-        sage: legend_3d(a, colors.values()[:6],length='long')
+        sage: legend_3d(a, list(colors.values())[:6],length='long')
         Graphics object consisting of 6 graphics primitives
 
         sage: b = hyperplane_arrangements.semiorder(4)
         sage: c = b.essentialization()
-        sage: legend_3d(c, colors.values()[:12], length='long')
+        sage: legend_3d(c, list(colors.values())[:12], length='long')
         Graphics object consisting of 12 graphics primitives
 
-        sage: legend_3d(c, colors.values()[:12], length='short')
+        sage: legend_3d(c, list(colors.values())[:12], length='short')
         Graphics object consisting of 12 graphics primitives
 
-        sage: p = legend_3d(c, colors.values()[:12], length='short')
+        sage: p = legend_3d(c, list(colors.values())[:12], length='short')
         sage: p.set_legend_options(ncol=4)
         sage: type(p)
         <class 'sage.plot.graphics.Graphics'>

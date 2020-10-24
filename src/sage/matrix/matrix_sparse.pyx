@@ -2,25 +2,27 @@ r"""
 Base class for sparse matrices
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
-cimport matrix
-cimport matrix0
-from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
-from sage.rings.ring import is_Ring
-from sage.misc.misc import verbose
+from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 
-include 'sage/ext/stdsage.pxi'
-include 'sage/ext/python.pxi'
-include 'sage/ext/interrupt.pxi'
+cimport sage.matrix.matrix as matrix
+cimport sage.matrix.matrix0 as matrix0
+from sage.structure.element cimport Element, RingElement, ModuleElement, Vector
+from sage.structure.richcmp cimport richcmp_item, rich_to_bool
+from sage.rings.ring import is_Ring
+from sage.misc.verbose import verbose
+
+from cpython cimport *
+from cpython.object cimport Py_EQ, Py_NE
 
 import sage.matrix.matrix_space
 
@@ -38,8 +40,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         Return the matrix obtained by coercing the entries of this matrix
         into the given ring.
 
-        Always returns a copy (unless self is immutable, in which case
-        returns self).
+        Always returns a copy (unless ``self`` is immutable, in which case
+        returns ``self``).
 
         EXAMPLES::
 
@@ -62,7 +64,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [-------------------------------------]
         """
         if not is_Ring(ring):
-            raise TypeError, "input must be a ring"
+            raise TypeError("input must be a ring")
         if ring is self._base_ring:
             if self._is_immutable:
                 return self
@@ -100,26 +102,31 @@ cdef class Matrix_sparse(matrix.Matrix):
             A.subdivide(*self.subdivisions())
         return A
 
-    def __hash__(self):
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cdef long _hash_(self) except -1:
         """
         Return the hash of this matrix.
 
-        Equal matrices should have equal hashes, even if one is sparse and
-        the other is dense.
+        Equal matrices should have equal hashes, even if one is sparse
+        and the other is dense. We also ensure that zero matrices hash
+        to zero and that scalar matrices have the same hash as the
+        scalar.
 
         EXAMPLES::
 
             sage: m = matrix(2, range(6), sparse=True)
             sage: m.set_immutable()
             sage: hash(m)
-            5
+            -154991009345361003  # 64-bit
+            -2003358827          # 32-bit
 
         The sparse and dense hashes should agree::
 
             sage: d = m.dense_matrix()
             sage: d.set_immutable()
-            sage: hash(d)
-            5
+            sage: hash(d) == hash(m)
+            True
 
         ::
 
@@ -132,31 +139,34 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: B = A.__copy__(); B.set_immutable()
             sage: hash(A) == hash(B)
             True
+
+        TESTS::
+
+            sage: R.<x> = ZZ[]
+            sage: M = matrix(R, 10, 20, sparse=True); M.set_immutable()
+            sage: hash(M)
+            0
+            sage: M = matrix(R, 10, 10, x, sparse=True); M.set_immutable()
+            sage: hash(M) == hash(x)
+            True
         """
-        return self._hash()
+        cdef dict D = self._dict()
+        cdef long C[5]
+        self.get_hash_constants(C)
 
-    cdef long _hash(self) except -1:
-        x = self.fetch('hash')
-        if not x is None: return x
+        cdef long h = 0, k, l
+        cdef Py_ssize_t i, j
+        for ij, x in D.iteritems():
+            sig_check()
+            i = (<tuple>ij)[0]
+            j = (<tuple>ij)[1]
+            k = C[0] if i == 0 else C[1] + C[2] * i
+            l = C[3] * (i - j) * (i ^ j)
+            h += (k ^ l) * hash(x)
+        h *= C[4]
 
-        if not self._is_immutable:
-            raise TypeError, "mutable matrices are unhashable"
-
-        v = self._dict()
-        cdef long i, h
-        h = 0
-        for ij, x in v.iteritems():
-            # The following complicated line is the Python/C API optimized version
-            # of the following:
-            #           i = ij[0]*self._ncols + ij[1]
-
-            i = PyInt_AS_LONG(<object>PyTuple_GET_ITEM(ij,0)) * self._ncols + \
-                PyInt_AS_LONG(<object>PyTuple_GET_ITEM(ij,1))
-
-            h = h ^ (i*PyObject_Hash(x))
-        if h == -1: h = -2
-
-        self.cache('hash', h)
+        if h == -1:
+            return -2
         return h
 
     def _multiply_classical(Matrix_sparse left, Matrix_sparse right):
@@ -167,49 +177,52 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: type(A)
             <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
-            sage: A*B
+            sage: A * B
             [2 2]
             [2 2]
+            sage: B * A
+            [-2  3]
+            [-4  6]
         """
         cdef Py_ssize_t row, col, row_start, k1, k2, len_left, len_right, a, b
-        left_nonzero = left.nonzero_positions(copy=False, column_order=False)
-        right_nonzero = right.nonzero_positions(copy=False, column_order=True)
+        cdef list left_nonzero = <list> left.nonzero_positions(copy=False, column_order=False)
+        cdef list right_nonzero = <list> right.nonzero_positions(copy=False, column_order=True)
         len_left = len(left_nonzero)
         len_right = len(right_nonzero)
 
-        e = {}
+        cdef dict e = {}
         k1 = 0
-        sig_on()
         while k1 < len_left:
             row_start = k1
             row = get_ij(left_nonzero, row_start, 0)
             k2 = 0
             while k2 < len_right:
+                sig_check()
                 col = get_ij(right_nonzero, k2, 1)
-                sum = None
+                s = None
                 k1 = row_start
-                while k1 < len_left and get_ij(left_nonzero,k1,0) == row and \
-                          k2 < len_right and get_ij(right_nonzero,k2,1) == col:
-                    a = get_ij(left_nonzero, k1,1)
-                    b = get_ij(right_nonzero,k2,0)
+                while (k1 < len_left and get_ij(left_nonzero,k1,0) == row
+                       and k2 < len_right and get_ij(right_nonzero,k2,1) == col):
+                    sig_check()
+                    a = get_ij(left_nonzero, k1, 1)
+                    b = get_ij(right_nonzero, k2, 0)
                     if a == b:
-                        if sum is None:
-                            sum = left.get_unsafe(row,a)*right.get_unsafe(a,col)
+                        if s is None:
+                            s = left.get_unsafe(row,a) * right.get_unsafe(a,col)
                         else:
-                            sum = sum + left.get_unsafe(row,a)*right.get_unsafe(a,col)
-                        k1 = k1 + 1
-                        k2 = k2 + 1
+                            s += left.get_unsafe(row,a) * right.get_unsafe(a,col)
+                        k1 += 1
+                        k2 += 1
                     elif a < b:
-                        k1 = k1 + 1
+                        k1 += 1
                     else:
-                        k2 = k2 + 1
-                if not sum is None:
-                    e[row, col] = sum
-                while k2 < len_right and get_ij(right_nonzero,k2,1) == col:
-                    k2 = k2 + 1
-            while k1 < len_left and get_ij(left_nonzero,k1,0) == row:
-                k1 = k1 + 1
-        sig_off()
+                        k2 += 1
+                if s is not None:
+                    e[row, col] = s
+                while k2 < len_right and get_ij(right_nonzero, k2, 1) == col:
+                    k2 += 1
+            while k1 < len_left and get_ij(left_nonzero, k1, 0) == row:
+                k1 += 1
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
@@ -238,14 +251,9 @@ cdef class Matrix_sparse(matrix.Matrix):
         right_nonzero = right.nonzero_positions(copy=False, column_order=True)
         len_left = len(left_nonzero)
         len_right = len(right_nonzero)
-        next_row = <Py_ssize_t *> sage_malloc(sizeof(Py_ssize_t) * left._nrows)
-        next_col = <Py_ssize_t *> sage_malloc(sizeof(Py_ssize_t) * right._ncols)
-        if next_row == NULL or next_col == NULL:
-            if next_row != NULL: sage_free(next_row)
-            sig_off()
-            raise MemoryError, "out of memory multiplying a matrix"
+        next_row = <Py_ssize_t *>check_allocarray(left._nrows, sizeof(Py_ssize_t))
+        next_col = <Py_ssize_t *>check_allocarray(right._ncols, sizeof(Py_ssize_t))
 
-        sig_on()
         i = len_left - 1
         for row from left._nrows > row >= 0:
             next_row[row] = i + 1
@@ -264,10 +272,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             row = get_ij(left_nonzero, row_start, 0)
             k2 = 0
             while k2 < len_right:
+                sig_check()
                 col = get_ij(right_nonzero, k2, 1)
                 sum = None
                 k1 = row_start
                 while k1 < next_row[row] and k2 < next_col[col]:
+                    sig_check()
                     a = get_ij(left_nonzero, k1,1)
                     b = get_ij(right_nonzero,k2,0)
                     if a == b:
@@ -281,32 +291,32 @@ cdef class Matrix_sparse(matrix.Matrix):
                         k1 = k1 + 1
                     else:
                         k2 = k2 + 1
-                if not sum is None:
+                if sum is not None:
                     e[row, col] = sum
                 k2 = next_col[col]
             k1 = next_row[row]
 
-        sage_free(next_row)
-        sage_free(next_col)
-        sig_off()
+        sig_free(next_row)
+        sig_free(next_col)
 
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
-    cpdef ModuleElement _lmul_(self, RingElement right):
+    cpdef _lmul_(self, Element right):
         """
         Left scalar multiplication. Internal usage only.
 
         INPUT:
 
-            - `right` -- a ring element which must already be in the basering of self (no coercion done here).
+        - `right` -- a ring element which must already be in the basering
+          of ``self`` (no coercion done here).
 
         OUTPUT:
 
-            - the matrix self*right
+        the matrix ``self * right``
 
         EXAMPLES::
 
-            sage: M=Matrix(QQ,3,6,xrange(18),sparse=true); M
+            sage: M = Matrix(QQ, 3, 6, range(18), sparse=true); M
             [ 0  1  2  3  4  5]
             [ 6  7  8  9 10 11]
             [12 13 14 15 16 17]
@@ -323,13 +333,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             [ 3/2  7/4    2  9/4  5/2 11/4]
             [   3 13/4  7/2 15/4    4 17/4]
 
-        Really Large Example you wouldn't want to do with normal matrices::
+        Really Large Example you would not want to do with normal matrices::
 
-            sage: M=MatrixSpace(QQ, 100000, 1000000, sparse=True)
-            sage: m=M.random_element(density=1/100000000)
-            sage: m==(97/42)*(42/97*m)
+            sage: M = MatrixSpace(QQ, 100000, 1000000, sparse=True)
+            sage: m = M.random_element(density=1/100000000)
+            sage: m == (97/42)*(42/97*m)
             True
-
         """
         cdef Py_ssize_t k, r, c
         cdef Matrix_sparse M
@@ -359,29 +368,56 @@ cdef class Matrix_sparse(matrix.Matrix):
             for ij, x in data.iteritems():
                 self.set_unsafe(ij[0], ij[1], x)
         else:
-            raise RuntimeError("unknown matrix version (=%s)"%version)
+            raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef int _cmp_(self, Element right) except -2:
-        return cmp(self._dict(), right._dict())
+    cpdef _richcmp_(self, right, int op):
+        """
+        Rich comparison.
+
+        EXAMPLES::
+
+            sage: M = matrix({(5,5): 2})
+            sage: Mp = matrix({(5,5): 7, (3,1):-2})
+            sage: M > Mp
+            True
+            sage: M == M.transpose()
+            True
+            sage: M != Mp
+            True
+        """
+        other = <Matrix_sparse>right
+        if op == Py_EQ:
+            return self._dict() == other._dict()
+        if op == Py_NE:
+            return self._dict() != other._dict()
+        cdef Py_ssize_t i, j
+        # Parents are equal, so dimensions of self and other are equal
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                lij = self.get_unsafe(i, j)
+                rij = other.get_unsafe(i, j)
+                r = richcmp_item(lij, rij, op)
+                if r is not NotImplemented:
+                    return bool(r)
+        # Matrices are equal
+        return rich_to_bool(op, 0)
 
     def transpose(self):
         """
-        Returns the transpose of self, without changing self.
+        Return the transpose of ``self``, without changing ``self``.
 
         EXAMPLES: We create a matrix, compute its transpose, and note that
         the original matrix is not changed.
 
         ::
 
-            sage: M = MatrixSpace(QQ,  2, sparse=True)
-            sage: A = M([1,2,3,4])
-            sage: B = A.transpose()
-            sage: print B
-            [1 3]
-            [2 4]
-            sage: print A
+            sage: M = MatrixSpace(QQ, 2, sparse=True)
+            sage: A = M([1,2,3,4]); A
             [1 2]
             [3 4]
+            sage: B = A.transpose(); B
+            [1 3]
+            [2 4]
 
         ``.T`` is a convenient shortcut for the transpose::
 
@@ -389,6 +425,7 @@ cdef class Matrix_sparse(matrix.Matrix):
            [1 3]
            [2 4]
 
+        .. SEEALSO:: :meth:`antitranspose`
         """
         cdef Matrix_sparse A
         A = self.new_matrix(self._ncols, self._nrows)
@@ -405,6 +442,23 @@ cdef class Matrix_sparse(matrix.Matrix):
         return A
 
     def antitranspose(self):
+        """
+        Return the antitranspose of ``self``, without changing ``self``.
+
+        This is the mirror image along the other diagonal.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(QQ, 2, sparse=True)
+            sage: A = M([1,2,3,4]); A
+            [1 2]
+            [3 4]
+            sage: A.antitranspose()
+            [4 2]
+            [3 1]
+
+        .. SEEALSO:: :meth:`transpose`
+        """
         cdef Matrix_sparse A
         A = self.new_matrix(self._ncols, self._nrows)
 
@@ -420,14 +474,60 @@ cdef class Matrix_sparse(matrix.Matrix):
                             list(reversed([self._nrows - t for t in row_divs])))
         return A
 
+
+    def _reverse_unsafe(self):
+        r"""
+        TESTS::
+
+            sage: m = matrix(QQ, 3, 3, {(2,2): 1}, sparse=True)
+            sage: m._reverse_unsafe()
+            sage: m
+            [1 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: m = matrix(QQ, 3, 3, {(2,2): 1, (0,0):2}, sparse=True)
+            sage: m._reverse_unsafe()
+            sage: m
+            [1 0 0]
+            [0 0 0]
+            [0 0 2]
+            sage: m = matrix(QQ, 3, 3, {(1,2): 1}, sparse=True)
+            sage: m._reverse_unsafe()
+            sage: m
+            [0 0 0]
+            [1 0 0]
+            [0 0 0]
+            sage: m = matrix(QQ, 3, 3, {(1,1): 1}, sparse=True)
+            sage: m._reverse_unsafe()
+            sage: m
+            [0 0 0]
+            [0 1 0]
+            [0 0 0]
+        """
+        cdef Py_ssize_t i, j, ii, jj
+        for i,j in self.nonzero_positions(copy=False):
+            ii = self._nrows - i - 1
+            jj = self._ncols - j - 1
+            if (i > ii or (i == ii and j >= jj)) and self.get_unsafe(ii, jj):
+                # already swapped
+                continue
+
+            e1 = self.get_unsafe(i, j)
+            e2 = self.get_unsafe(ii, jj)
+            self.set_unsafe(i, j, e2)
+            self.set_unsafe(ii, jj, e1)
+
     def charpoly(self, var='x', **kwds):
         """
         Return the characteristic polynomial of this matrix.
 
-        Note - the generic sparse charpoly implementation in Sage is to
-        just compute the charpoly of the corresponding dense matrix, so
-        this could use a lot of memory. In particular, for this matrix, the
-        charpoly will be computed using a dense algorithm.
+        .. NOTE::
+
+            the generic sparse charpoly implementation in Sage is to
+            just compute the charpoly of the corresponding dense
+            matrix, so this could use a lot of memory. In particular,
+            for this matrix, the charpoly will be computed using a
+            dense algorithm.
 
         EXAMPLES::
 
@@ -474,7 +574,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def _elementwise_product(self, right):
         r"""
-        Returns the elementwise product of two sparse
+        Return the elementwise product of two sparse
         matrices with identical base rings.
 
         This routine assumes that ``self`` and ``right``
@@ -485,12 +585,12 @@ cdef class Matrix_sparse(matrix.Matrix):
         raised.
 
         This routine is meant to be called from the
-        meth:`~sage.matrix.matrix2.Matrix.elementwise_product`
+        :meth:`~sage.matrix.matrix2.Matrix.elementwise_product`
         method, which will ensure that this routine receives
         proper input.  More thorough documentation is provided
         there.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: A = matrix(ZZ, 2, range(6), sparse=True)
             sage: B = matrix(ZZ, 2, [1,0,2,0,3,0], sparse=True)
@@ -520,19 +620,17 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def apply_morphism(self, phi):
         """
-        Apply the morphism phi to the coefficients of this sparse matrix.
+        Apply the morphism ``phi`` to the coefficients of this sparse matrix.
 
-        The resulting matrix is over the codomain of phi.
+        The resulting matrix is over the codomain of ``phi``.
 
         INPUT:
 
+        - ``phi`` -- a morphism, so ``phi`` is callable and
+           ``phi.domain()`` and ``phi.codomain()`` are defined. The
+           codomain must be a ring.
 
-        -  ``phi`` - a morphism, so phi is callable and
-           phi.domain() and phi.codomain() are defined. The codomain must be a
-           ring.
-
-
-        OUTPUT: a matrix over the codomain of phi
+        OUTPUT: a matrix over the codomain of ``phi``
 
         EXAMPLES::
 
@@ -547,26 +645,27 @@ cdef class Matrix_sparse(matrix.Matrix):
         """
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
-                   self._ncols, sparse=True)
-        return M(dict([(ij,phi(z)) for ij,z in self.dict().iteritems()]))
+                                                 self._ncols, sparse=True)
+        return M({ij: phi(z) for ij, z in self.dict().iteritems()})
 
     def apply_map(self, phi, R=None, sparse=True):
-        """
-        Apply the given map phi (an arbitrary Python function or callable
-        object) to this matrix. If R is not given, automatically determine
-        the base ring of the resulting matrix.
+        r"""
+        Apply the given map ``phi`` (an arbitrary Python function or callable
+        object) to this matrix.
+
+        If ``R`` is not given, automatically determine the base ring
+        of the resulting matrix.
 
         INPUT:
-            sparse -- False to make the output a dense matrix; default True
 
+        - ``phi`` -- arbitrary Python function or callable object
 
-        -  ``phi`` - arbitrary Python function or callable
-           object
+        -  ``R`` -- (optional) ring
 
-        -  ``R`` - (optional) ring
+        - ``sparse`` -- (optional, default ``True``) whether to return
+          a sparse or a dense matrix
 
-
-        OUTPUT: a matrix over R
+        OUTPUT: a matrix over ``R``
 
         EXAMPLES::
 
@@ -589,8 +688,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: n[1,2]
             2
 
-        If we didn't specify the codomain, the resulting matrix in the
-        above case ends up over ZZ again::
+        If we did not specify the codomain, the resulting matrix in the
+        above case ends up over `\ZZ` again::
 
             sage: n = m.apply_map(lambda x:x%3)
             sage: n.parent()
@@ -635,7 +734,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m.apply_map(lambda x: x*x, sparse=False).parent()
             Full MatrixSpace of 0 by 0 dense matrices over Integer Ring
 
-        Check that we don't unnecessarily apply phi to 0 in the sparse case::
+        Check that we do not unnecessarily apply phi to 0 in the sparse case::
 
             sage: m = matrix(QQ, 2, 2, range(1, 5), sparse=True)
             sage: m.apply_map(lambda x: 1/x)
@@ -651,6 +750,12 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m.apply_map(lambda x: x+1)
             [1|1]
             [4|1]
+
+        When applying a map to a sparse zero matrix, the codomain is determined
+        from the image of zero (:trac:`29214`)::
+
+            sage: matrix(RR, 2, 2, sparse=True).apply_map(floor).base_ring() is ZZ
+            True
         """
         if self._nrows==0 or self._ncols==0:
             if not sparse:
@@ -660,8 +765,6 @@ cdef class Matrix_sparse(matrix.Matrix):
         self_dict = self._dict()
         if len(self_dict) < self._nrows * self._ncols:
             zero_res = phi(self.base_ring()(0))
-            if zero_res.is_zero():
-                zero_res = None
         else:
             zero_res = None
         v = [(ij, phi(z)) for ij,z in self_dict.iteritems()]
@@ -671,10 +774,10 @@ cdef class Matrix_sparse(matrix.Matrix):
                 w.append(zero_res)
             w = sage.structure.sequence.Sequence(w)
             R = w.universe()
-            v = dict([(v[i][0],w[i]) for i in range(len(v))])
+            v = {v[i][0]: w[i] for i in range(len(v))}
         else:
             v = dict(v)
-        if zero_res is not None:
+        if zero_res is not None and not zero_res.is_zero():
             M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
                                                      self._ncols, sparse=sparse)
             m = M([zero_res] * (self._nrows * self._ncols))
@@ -693,10 +796,10 @@ cdef class Matrix_sparse(matrix.Matrix):
 
     def _derivative(self, var=None, R=None):
         """
-        Differentiate with respect to var by differentiating each element
-        with respect to var.
+        Differentiate with respect to ``var`` by differentiating each element
+        with respect to ``var``.
 
-        .. seealso::
+        .. SEEALSO::
 
            :meth:`derivative`
 
@@ -707,17 +810,17 @@ cdef class Matrix_sparse(matrix.Matrix):
             [    0     1]
             [  2*x 3*x^2]
         """
-        # We would just use apply_map, except that Cython doesn't
+        # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij,z in self.dict().iteritems()]
+        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
             R = w.universe()
-            v = dict([(v[i][0],w[i]) for i in range(len(v))])
+            v = {v[i][0]: w[i] for i in range(len(v))}
         else:
             v = dict(v)
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
@@ -729,8 +832,8 @@ cdef class Matrix_sparse(matrix.Matrix):
         Return the density of the matrix.
 
         By density we understand the ratio of the number of nonzero
-        positions and the self.nrows() \* self.ncols(), i.e. the number of
-        possible nonzero positions.
+        positions and the number ``self.nrows() * self.ncols()``,
+        i.e. the number of possible nonzero positions.
 
         EXAMPLES::
 
@@ -744,12 +847,11 @@ cdef class Matrix_sparse(matrix.Matrix):
         if nc == 0 or nr == 0:
             return 0
         from sage.rings.rational_field import QQ
-        d = QQ(len(self.nonzero_positions(copy=False))) / (nr*nc)
-        return d
+        return QQ(len(self.nonzero_positions(copy=False))) / (nr * nc)
 
     def matrix_from_rows_and_columns(self, rows, columns):
         """
-        Return the matrix constructed from self from the given rows and
+        Return the matrix constructed from ``self`` from the given rows and
         columns.
 
         EXAMPLES::
@@ -791,16 +893,16 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         We must pass in a list of indices::
 
-            sage: A=random_matrix(ZZ,100,density=.02,sparse=True)
+            sage: A = random_matrix(ZZ,100,density=.02,sparse=True)
             sage: A.matrix_from_rows_and_columns(1,[2,3])
             Traceback (most recent call last):
             ...
-            TypeError: rows must be a list of integers
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
+
             sage: A.matrix_from_rows_and_columns([1,2],3)
             Traceback (most recent call last):
             ...
-            TypeError: columns must be a list of integers
-
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
 
         AUTHORS:
 
@@ -810,10 +912,11 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         - Jason Grout: sparse matrix optimizations
         """
-        if not isinstance(rows, list):
-            raise TypeError, "rows must be a list of integers"
-        if not isinstance(columns, list):
-            raise TypeError, "columns must be a list of integers"
+        if not isinstance(rows, (list, tuple)):
+            rows = list(rows)
+
+        if not isinstance(columns, (list, tuple)):
+            columns = list(columns)
 
         cdef Py_ssize_t nrows, ncols,k,r,i,j
 
@@ -825,12 +928,12 @@ cdef class Matrix_sparse(matrix.Matrix):
         tmp = [el for el in columns if el >= 0 and el < self._ncols]
         columns = tmp
         if ncols != PyList_GET_SIZE(columns):
-            raise IndexError, "column index out of range"
+            raise IndexError("column index out of range")
 
         tmp = [el for el in rows if el >= 0 and el < self._nrows]
         rows = tmp
         if nrows != PyList_GET_SIZE(rows):
-            raise IndexError, "row index out of range"
+            raise IndexError("row index out of range")
 
         row_map = {}
         for new_row, old_row in enumerate(rows):
@@ -976,7 +1079,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        Verify that Trac #12689 is fixed::
+        Verify that :trac:`12689` is fixed::
 
             sage: A = identity_matrix(QQ, 2, sparse=True)
             sage: B = identity_matrix(ZZ, 2, sparse=True)
@@ -984,10 +1087,11 @@ cdef class Matrix_sparse(matrix.Matrix):
             [1 0 1 0]
             [0 1 0 1]
         """
-        if hasattr(right, '_vector_'):
-            right = right.column()
         if not isinstance(right, matrix.Matrix):
-            raise TypeError, "right must be a matrix"
+            if hasattr(right, '_vector_'):
+                right = right.column()
+            else:
+                raise TypeError("right must be a matrix")
 
         if not (self._base_ring is right.base_ring()):
             right = right.change_ring(self._base_ring)
@@ -995,7 +1099,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef Matrix_sparse other = right.sparse_matrix()
 
         if self._nrows != other._nrows:
-            raise TypeError, "number of rows must be the same"
+            raise TypeError("number of rows must be the same")
 
         cdef Matrix_sparse Z
         Z = self.new_matrix(ncols = self._ncols + other._ncols)
@@ -1007,15 +1111,15 @@ cdef class Matrix_sparse(matrix.Matrix):
             Z._subdivide_on_augment(self, other)
         return Z
 
-    cdef Vector _vector_times_matrix_(self, Vector v):
+    cdef _vector_times_matrix_(self, Vector v):
         """
-        Returns the vector times matrix product.
+        Return the vector times matrix product.
 
         INPUT:
 
-            -  ``v`` - a free module element.
+        -  ``v`` -- a free module element
 
-        OUTPUT: The vector times matrix product v*A.
+        OUTPUT: the vector times matrix product ``v*A``
 
         EXAMPLES::
 
@@ -1034,21 +1138,21 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef int i, j
         from sage.modules.free_module import FreeModule
         if self.nrows() != v.degree():
-            raise ArithmeticError, "number of rows of matrix must equal degree of vector"
+            raise ArithmeticError("number of rows of matrix must equal degree of vector")
         s = FreeModule(self.base_ring(), self.ncols(), sparse=v.is_sparse()).zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[j] += v[i] * a
         return s
 
-    cdef Vector _matrix_times_vector_(self, Vector v):
+    cdef _matrix_times_vector_(self, Vector v):
         """
-        Returns the matrix times vector product.
+        Return the matrix times vector product.
 
         INPUT:
 
-            -  ``v`` - a free module element.
+        - ``v`` -- a free module element
 
-        OUTPUT: The matrix times vector product A*v.
+        OUTPUT: the matrix times vector product ``A*v``
 
         EXAMPLES::
 
@@ -1086,7 +1190,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         cdef int i, j
         from sage.modules.free_module import FreeModule
         if self.ncols() != v.degree():
-            raise ArithmeticError, "number of columns of matrix must equal degree of vector"
+            raise ArithmeticError("number of columns of matrix must equal degree of vector")
         s = FreeModule(v.base_ring(), self.nrows(), sparse=v.is_sparse()).zero_vector()
         for (i, j), a in self._dict().iteritems():
             s[i] += a * v[j]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Shard intersection order
 
 This file builds a combinatorial version of the shard intersection
@@ -17,15 +17,20 @@ but can be easily converted from and to permutations::
     sage: Permutation(list(e0)) == p0
     True
 
+.. SEEALSO::
+
+    A general implementation for all finite Coxeter groups is available as
+    :meth:`~sage.categories.finite_coxeter_groups.FiniteCoxeterGroups.ParentMethods.shard_poset`
+
 REFERENCES:
 
-.. [Banc2011] E. E. Bancroft, *Shard Intersections and Cambrian Congruence
+.. [Banc2011] \E. E. Bancroft, *Shard Intersections and Cambrian Congruence
    Classes in Type A.*, Ph.D. Thesis, North Carolina State University. 2011.
 
-.. [Pete2013] T. Kyle Petersen, *On the shard intersection order of
+.. [Pete2013] \T. Kyle Petersen, *On the shard intersection order of
    a Coxeter group*, SIAM J. Discrete Math. 27 (2013), no. 4, 1880-1912.
 
-.. [Read2011] N. Reading, *Noncrossing partitions and the shard intersection
+.. [Read2011] \N. Reading, *Noncrossing partitions and the shard intersection
    order*, J. Algebraic Combin., 33 (2011), 483-530.
 """
 from sage.combinat.posets.posets import Poset
@@ -54,6 +59,18 @@ class ShardPosetElement(tuple):
         sage: Permutation(list(e0)) == p0
         True
     """
+    def __new__(cls, p):
+        r"""
+        Initialization of the underlying tuple
+
+        TESTS::
+
+            sage: from sage.combinat.shard_order import ShardPosetElement
+            sage: ShardPosetElement(Permutation([1,3,4,2]))
+            (1, 3, 4, 2)
+        """
+        return tuple.__new__(cls, p)
+
     def __init__(self, p):
         r"""
         INPUT:
@@ -66,8 +83,11 @@ class ShardPosetElement(tuple):
             sage: p0 = Permutation([1,3,4,2])
             sage: e0 = ShardPosetElement(p0); e0
             (1, 3, 4, 2)
+            sage: e0.dpg
+            Transitive closure of : Digraph on 3 vertices
+            sage: e0.spg
+            Digraph on 3 vertices
         """
-        tuple.__init__(self, p)
         self.runs = p.decreasing_runs(as_tuple=True)
         self.run_indices = [None] * (len(p) + 1)
         for i, bloc in enumerate(self.runs):
@@ -199,7 +219,7 @@ def shard_poset(n):
 
     .. SEEALSO::
 
-        :func:`shard_preorder_graph`
+        :func:`~sage.combinat.shard_order.shard_preorder_graph`
 
     EXAMPLES::
 
@@ -211,7 +231,7 @@ def shard_poset(n):
         q^3 - 11*q^2 + 23*q - 13
         sage: P.zeta_polynomial()
         17/3*q^3 - 6*q^2 + 4/3*q
-        sage: P.is_selfdual()
+        sage: P.is_self_dual()
         False
     """
     import operator

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Generalized Tamari lattices
 
@@ -31,8 +32,8 @@ are also available directly using the catalogue of posets, as follows::
     For more detailed information see :meth:`TamariLattice`,
     :meth:`GeneralizedTamariLattice`.
 """
-#*****************************************************************************
-#       Copyright (C) 2012 Frederic Chapoton <chapoton@math.univ-lyon1.fr>
+# ****************************************************************************
+#    Copyright (C) 2012-2018 Frédéric Chapoton <chapoton@math.unistra.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -43,10 +44,10 @@ are also available directly using the catalogue of posets, as follows::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from sage.combinat.posets.lattices import LatticePoset
-from sage.rings.arith import gcd
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
+from sage.arith.all import gcd
 
 
 def paths_in_triangle(i, j, a, b):
@@ -61,9 +62,9 @@ def paths_in_triangle(i, j, a, b):
 
     INPUT:
 
-    - `a` and `b` coprime integers with `a \geq b`
+    - `a` and `b` -- coprime integers with `a \geq b`
 
-    - `i` and `j` nonnegative integers with `1 \geq \frac{j}{b} \geq
+    - `i` and `j` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
       \frac{bi}{a} \geq 0`
 
     OUTPUT:
@@ -81,12 +82,12 @@ def paths_in_triangle(i, j, a, b):
         sage: paths_in_triangle(2,1,4,4)
         Traceback (most recent call last):
         ...
-        ValueError: The endpoint is not valid.
+        ValueError: the endpoint is not valid
         sage: paths_in_triangle(3,2,5,3)
         [(1, 0, 1, 0, 0), (1, 1, 0, 0, 0)]
     """
     if not(b >= j and j * a >= i * b and i >= 0):
-        raise ValueError("The endpoint is not valid.")
+        raise ValueError("the endpoint is not valid")
 
     if i == 0:
         return [tuple([1] * j)]
@@ -108,9 +109,9 @@ def swap(p, i, m=1):
 
     INPUT:
 
-    - `p` a Dyck path in the `(a \times b)`-rectangle
+    - ``p`` -- a Dyck path in the `(a \times b)`-rectangle
 
-    - `i` an integer between `0` and `a+b-1`
+    - ``i`` -- an integer between `0` and `a+b-1`
 
     OUTPUT:
 
@@ -119,30 +120,33 @@ def swap(p, i, m=1):
     EXAMPLES::
 
         sage: from sage.combinat.tamari_lattices import swap
-        sage: swap((1,0,1,0),1)
-        (1, 1, 0, 0)
+        sage: swap((1,0,1,0,0),1)
+        (1, 1, 0, 0, 0)
+        sage: swap((1,1,0,0,1,1,0,0,0),3)
+        (1, 1, 0, 1, 1, 0, 0, 0, 0)
+
+    TESTS::
+
         sage: swap((1,0,1,0),6)
         Traceback (most recent call last):
         ...
-        ValueError: The index is greater than the length of the path.
-        sage: swap((1,1,0,0,1,1,0,0),3)
-        (1, 1, 0, 1, 1, 0, 0, 0)
+        ValueError: the index is greater than the length of the path
         sage: swap((1,1,0,0,1,1,0,0),2)
         Traceback (most recent call last):
         ...
-        ValueError: There is no such covering move.
+        ValueError: there is no such covering move
     """
     if i >= len(p):
-        raise ValueError("The index is greater than the length of the path.")
+        raise ValueError("the index is greater than the length of the path")
     if i == len(p) - 1 or p[i + 1] == 0:
-        raise ValueError("There is no such covering move.")
+        raise ValueError("there is no such covering move")
 
     found = False
     height = 0
     j = i
     while not found and j <= len(p) - 2:
         j += 1
-        if p[j] == 1:
+        if p[j]:
             height += m
         else:
             height -= 1
@@ -155,15 +159,15 @@ def swap(p, i, m=1):
     return tuple(q)
 
 
-def GeneralizedTamariLattice(a, b, m=1):
+def GeneralizedTamariLattice(a, b, m=1, check=True):
     r"""
     Return the `(a,b)`-Tamari lattice of parameter `m`.
 
     INPUT:
 
-    - `a` and `b` coprime integers with `a \geq b`
+    - `a` and `b` -- coprime integers with `a \geq b`
 
-    - `m` a nonnegative integer such that `a \geq b \times m`
+    - `m` -- a nonnegative integer such that `a \geq b m`
 
     OUTPUT:
 
@@ -192,11 +196,11 @@ def GeneralizedTamariLattice(a, b, m=1):
         sage: GeneralizedTamariLattice(4,4)
         Traceback (most recent call last):
         ...
-        ValueError: The numbers a and b must be coprime with a>=b.
+        ValueError: the numbers a and b must be coprime with a>=b
         sage: GeneralizedTamariLattice(7,5,2)
         Traceback (most recent call last):
         ...
-        ValueError: The condition a>=b*m does not hold.
+        ValueError: the condition a>=b*m does not hold
         sage: P = GeneralizedTamariLattice(5,3);P
         Finite lattice containing 7 elements
 
@@ -207,36 +211,41 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     REFERENCES:
 
-    .. [BMFPR] M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
+    .. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
        *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
     """
     if not(gcd(a, b) == 1 and a >= b):
-        raise ValueError("The numbers a and b must be coprime with a>=b.")
+        raise ValueError("the numbers a and b must be coprime with a>=b")
     if not(a >= b * m):
-        raise ValueError("The condition a>=b*m does not hold.")
+        raise ValueError("the condition a>=b*m does not hold")
 
     def covers(p):
         return [swap(p, i, m) for i in range(len(p) - 1)
-                if p[i] == 0 and p[i + 1] == 1]
-    return LatticePoset(dict([[p, covers(p)]
-                              for p in paths_in_triangle(a, b, a, b)]))
+                if not p[i] and p[i + 1]]
+    return LatticePoset({p: covers(p)
+                         for p in paths_in_triangle(a, b, a, b)}, check=check)
 
 
-def TamariLattice(n):
+def TamariLattice(n, m=1):
     r"""
     Return the `n`-th Tamari lattice.
 
+    Using the slope parameter `m`, one can also get the `m`-Tamari lattices.
+
     INPUT:
 
-    - `n` a nonnegative integer
+    - `n` -- a nonnegative integer (the index)
+
+    - `m` -- an optional nonnegative integer (the slope, default to 1)
 
     OUTPUT:
 
-    - a finite lattice
+    a finite lattice
 
-    The elements of the lattice are
-    :func:`Dyck paths<sage.combinat.dyck_word.DyckWord>`
-    in the `(n+1 \times n)`-rectangle.
+    In the usual case, the elements of the lattice are :func:`Dyck
+    paths<sage.combinat.dyck_word.DyckWord>` in the `(n+1 \times
+    n)`-rectangle. For a general slope `m`, the elements are Dyck
+    paths in the `(m n+1 \times n)`-rectangle.
 
     See :wikipedia:`Tamari lattice<Tamari_lattice>` for mathematical
     background.
@@ -245,5 +254,132 @@ def TamariLattice(n):
 
         sage: posets.TamariLattice(3)
         Finite lattice containing 5 elements
+
+        sage: posets.TamariLattice(3, 2)
+        Finite lattice containing 12 elements
+
+    REFERENCES:
+
+    - [BMFPR]_
     """
-    return GeneralizedTamariLattice(n + 1, n, 1)
+    return GeneralizedTamariLattice(m * n + 1, n, m, check=False)
+
+
+# a variation : the Dexter meet-semilattices
+
+
+def swap_dexter(p, i):
+    r"""
+    Perform covering moves in the `(a,b)`-Dexter posets.
+
+    The letter at position `i` in `p` must be a `0`, followed by at
+    least one `1`.
+
+    INPUT:
+
+    - ``p`` -- a Dyck path in the `(a \times b)`-rectangle
+
+    - ``i`` -- an integer between `0` and `a+b-1`
+
+    OUTPUT:
+
+    - a list of Dyck paths in the `(a \times b)`-rectangle
+
+    EXAMPLES::
+
+        sage: from sage.combinat.tamari_lattices import swap_dexter
+        sage: swap_dexter((1,0,1,0,0),1)
+        [(1, 1, 0, 0, 0)]
+        sage: swap_dexter((1,1,0,0,1,1,0,0,0),3)
+        [(1, 1, 0, 1, 1, 0, 0, 0, 0), (1, 1, 1, 1, 0, 0, 0, 0, 0)]
+        sage: swap_dexter((1,1,0,1,0,0,0),2)
+        []
+
+    TESTS::
+
+        sage: swap_dexter((1,0,1,0,0),6)
+        Traceback (most recent call last):
+        ...
+        ValueError: the index is greater than the length of the path
+
+        sage: swap_dexter((1,1,0,0,1,1,0,0,0),2)
+        Traceback (most recent call last):
+        ...
+        ValueError: there is no such covering move
+    """
+    m = 1
+
+    if i >= len(p):
+        raise ValueError("the index is greater than the length of the path")
+    if i == len(p) - 1 or p[i + 1] == 0:
+        raise ValueError("there is no such covering move")
+
+    found = False
+    height = 0
+    j = i
+    while not found and j <= len(p) - 2:
+        j += 1
+        if p[j]:
+            height += m
+        else:
+            height -= 1
+        if height == 0:
+            found = True
+    if not (j == len(p) - 2 or p[j + 1]):  # forbidden moves
+        return []
+
+    resu = []
+    tp = tuple(p)
+    for deb in range(i, 0, -1):
+        if not p[deb]:
+            q = tp[:deb] + tp[i + 1: j + 1] + tp[deb: i + 1] + tp[j + 1:]
+            resu.append(q)
+        else:
+            break
+    return resu
+
+
+def DexterSemilattice(n):
+    r"""
+    Return the `n`-th Dexter meet-semilattice.
+
+    INPUT:
+
+    - ``n`` -- a nonnegative integer (the index)
+
+    OUTPUT:
+
+    a finite meet-semilattice
+
+    The elements of the semilattice are :func:`Dyck
+    paths<sage.combinat.dyck_word.DyckWord>` in the `(n+1 \times
+    n)`-rectangle.
+
+    EXAMPLES::
+
+        sage: posets.DexterSemilattice(3)
+        Finite meet-semilattice containing 5 elements
+
+        sage: P = posets.DexterSemilattice(4); P
+        Finite meet-semilattice containing 14 elements
+        sage: len(P.maximal_chains())
+        15
+        sage: len(P.maximal_elements())
+        4
+        sage: P.chain_polynomial()
+        q^5 + 19*q^4 + 47*q^3 + 42*q^2 + 14*q + 1
+
+    REFERENCES:
+
+    - [Cha18]_
+    """
+    a = n + 1
+    b = n
+
+    def covers_dexter(p):
+        data = [swap_dexter(p, i) for i in range(len(p) - 1)
+                if not p[i] and p[i + 1]]
+        return [cov for L in data for cov in L]
+    return MeetSemilattice({p: covers_dexter(p)
+                            for p in paths_in_triangle(a, b, a, b)},
+                           check=False)

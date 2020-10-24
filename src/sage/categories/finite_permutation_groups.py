@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
 r"""
 Finite Permutation Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #                     Nicolas Borie <Nicolas.Borie at u-pusd.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.magmas import Magmas
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.permutation_groups import PermutationGroups
+from sage.misc.cachefunc import cached_method
+
 
 class FinitePermutationGroups(CategoryWithAxiom):
     r"""
@@ -26,7 +28,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
     EXAMPLES::
 
         sage: C = PermutationGroups().Finite(); C
-        Category of finite permutation groups
+        Category of finite enumerated permutation groups
         sage: C.super_categories()
         [Category of permutation groups,
          Category of finite groups,
@@ -47,10 +49,12 @@ class FinitePermutationGroups(CategoryWithAxiom):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -63,6 +67,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
         running ._test_inverse() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_one() . . . pass
         running ._test_pickling() . . . pass
@@ -101,17 +106,20 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
         def cycle_index(self, parent = None):
             r"""
+            Return the *cycle index* of ``self``.
+
             INPUT:
 
              - ``self`` - a permutation group `G`
              - ``parent`` -- a free module with basis indexed by partitions,
                or behave as such, with a ``term`` and ``sum`` method
-               (default: the symmetric functions over the rational field in the p basis)
+               (default: the symmetric functions over the rational field in the `p` basis)
 
-            Returns the *cycle index* of `G`, which is a gadget counting
-            the elements of `G` by cycle type, averaged over the group:
+            The *cycle index* of a permutation group `G`
+            (:wikipedia:`Cycle_index`) is a gadget counting the
+            elements of `G` by cycle type, averaged over the group:
 
-            .. math::
+            .. MATH::
 
                 P = \frac{1}{|G|} \sum_{g\in G} p_{ \operatorname{cycle\ type}(g) }
 
@@ -133,7 +141,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 8
 
             The cycle index plays an important role in the enumeration of
-            objects modulo the action of a group (Polya enumeration), via
+            objects modulo the action of a group (Pólya enumeration), via
             the use of symmetric functions and plethysms. It is therefore
             encoded as a symmetric function, expressed in the powersum
             basis::
@@ -149,8 +157,11 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: h( P )
                 h[4]
 
-            TODO: add some simple examples of Polya enumeration, once it
-            will be easy to expand symmetric functions on any alphabet.
+            .. TODO::
+
+                Add some simple examples of Pólya enumeration, once
+                it will be easy to expand symmetric functions on any
+                alphabet.
 
             Here are the cycle indices of some permutation groups::
 
@@ -160,13 +171,20 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: 60 * AlternatingGroup(5).cycle_index()
                 p[1, 1, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 24*p[5]
 
-                sage: for G in TransitiveGroups(5):               # optional - database_gap # long time
-                ...       G.cardinality() * G.cycle_index()
+                sage: for G in TransitiveGroups(5):               # long time
+                ....:     G.cardinality() * G.cycle_index()
                 p[1, 1, 1, 1, 1] + 4*p[5]
                 p[1, 1, 1, 1, 1] + 5*p[2, 2, 1] + 4*p[5]
                 p[1, 1, 1, 1, 1] + 5*p[2, 2, 1] + 10*p[4, 1] + 4*p[5]
                 p[1, 1, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 24*p[5]
                 p[1, 1, 1, 1, 1] + 10*p[2, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 20*p[3, 2] + 30*p[4, 1] + 24*p[5]
+
+            Permutation groups with arbitrary domains are supported
+            (see :trac:`22765`)::
+
+                sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
+                sage: G.cycle_index()
+                1/3*p[1, 1, 1] + 2/3*p[3]
 
             One may specify another parent for the result::
 
@@ -177,21 +195,20 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: P.parent() is F
                 True
 
-            This parent should have a ``term`` and ``sum`` method::
+            This parent should be a module with basis indexed by partitions::
 
                 sage: CyclicPermutationGroup(6).cycle_index(parent = QQ)
                 Traceback (most recent call last):
                   ...
-                AssertionError: `parent` should be (or behave as) a free module with basis indexed by partitions
+                ValueError: `parent` should be a module with basis indexed by partitions
 
             REFERENCES:
 
-             .. [Ker1991] A. Kerber. Algebraic combinatorics via finite group actions, 2.2 p. 70.
-               BI-Wissenschaftsverlag, Mannheim, 1991.
+            - [Ke1991]_
 
             AUTHORS:
 
-             - Nicolas Borie and Nicolas M. Thiery
+            - Nicolas Borie and Nicolas M. Thiéry
 
             TESTS::
 
@@ -204,20 +221,114 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: P.cycle_index()
                 p[1]
             """
-            from sage.combinat.permutation import Permutation
+            from sage.categories.modules import Modules
             if parent is None:
                  from sage.rings.rational_field import QQ
                  from sage.combinat.sf.sf import SymmetricFunctions
                  parent = SymmetricFunctions(QQ).powersum()
-            else:
-                assert hasattr(parent, "term") and hasattr(parent, "sum"), \
-                    "`parent` should be (or behave as) a free module with basis indexed by partitions"
+            elif not parent in Modules.WithBasis:
+                raise ValueError("`parent` should be a module with basis indexed by partitions")
             base_ring = parent.base_ring()
-            # TODO: use self.conjugacy_classes() once available
-            from sage.interfaces.gap import gap
-            CC = ([Permutation(self(C.Representative())).cycle_type(), base_ring(C.Size())] for C in gap(self).ConjugacyClasses())
-            return parent.sum( parent.term( partition, coeff ) for (partition, coeff) in CC)/self.cardinality()
+            return parent.sum_of_terms([C.an_element().cycle_type(), base_ring(C.cardinality())]
+                                       for C in self.conjugacy_classes()
+                                      ) / self.cardinality()
+    
 
+        @cached_method
+        def profile_series(self, variable='z'):
+            r"""
+            Return the (finite) generating series of the (finite) profile of the group.
+
+            The profile of a permutation group G is the counting function that
+            maps each nonnegative integer n onto the number of orbits of the
+            action induced by G on the n-subsets of its domain.
+            If f is the profile of G, f(n) is thus the number of orbits of
+            n-subsets of G.
+
+            INPUT:
+
+            - ``variable`` -- a variable, or variable name as a string (default: `'z'`)
+
+            OUTPUT:
+
+            - A polynomial in ``variable`` with nonnegative integer coefficients.
+              By default, a polynomial in z over ZZ.
+
+            .. SEEALSO::
+
+                - :meth:`profile`
+
+            EXAMPLES::
+
+                sage: C8 = CyclicPermutationGroup(8)
+                sage: C8.profile_series()
+                z^8 + z^7 + 4*z^6 + 7*z^5 + 10*z^4 + 7*z^3 + 4*z^2 + z + 1
+                sage: D8 = DihedralGroup(8)
+                sage: poly_D8 = D8.profile_series()
+                sage: poly_D8
+                z^8 + z^7 + 4*z^6 + 5*z^5 + 8*z^4 + 5*z^3 + 4*z^2 + z + 1
+                sage: poly_D8.parent()
+                Univariate Polynomial Ring in z over Rational Field
+                sage: D8.profile_series(variable='y')
+                y^8 + y^7 + 4*y^6 + 5*y^5 + 8*y^4 + 5*y^3 + 4*y^2 + y + 1
+                sage: u = var('u')
+                sage: D8.profile_series(u).parent()
+                Symbolic Ring
+
+            """
+            from sage.rings.integer_ring import ZZ
+
+            if isinstance(variable, str):
+                variable = ZZ[variable].gen()
+            cycle_poly = self.cycle_index()
+            return cycle_poly.expand(2).subs(x0 = 1, x1 = variable)
+
+        profile_polynomial = profile_series
+
+        def profile(self, n, using_polya=True):
+            r"""
+            Return the value in ``n`` of the profile of the group ``self``.
+
+            Optional argument ``using_polya`` allows to change the default method.
+
+            INPUT:
+
+            - ``n`` -- a nonnegative integer
+
+            - ``using_polya`` (optional) -- a boolean: if ``True`` (default), the computation
+              uses Pólya enumeration (and all values of the profile are cached, so this
+              should be the method used in case several of them are needed);
+              if ``False``, uses the GAP interface to compute the orbit.
+
+            OUTPUT:
+
+            - A nonnegative integer that is the number of orbits of ``n``-subsets
+              under the action induced by ``self`` on the subsets of its domain
+              (i.e. the value of the profile of ``self`` in ``n``)
+
+            .. SEEALSO::
+
+                - :meth:`profile_series`
+
+            EXAMPLES::
+
+                sage: C6 = CyclicPermutationGroup(6)
+                sage: C6.profile(2)
+                3
+                sage: C6.profile(3)
+                4
+                sage: D8 = DihedralGroup(8)
+                sage: D8.profile(4, using_polya=False)
+                8
+
+            """
+
+            if using_polya:
+                return self.profile_polynomial()[n]
+            else:
+                from sage.libs.gap.libgap import libgap
+                subs_n = libgap.Combinations(list(self.domain()), n)
+                return len(libgap.Orbits(self, subs_n, libgap.OnSets))
 
     class ElementMethods:
         # TODO: put abstract_methods for

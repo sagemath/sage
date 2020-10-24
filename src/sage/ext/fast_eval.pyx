@@ -87,10 +87,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.ext.fast_callable import fast_callable, Wrapper
-
-include "stdsage.pxi"
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 cimport cython
 from cpython.ref cimport Py_INCREF
@@ -290,7 +290,7 @@ def _unpickle_FastDoubleFunc(nargs, max_height, op_list):
     self.nops = len(op_list)
     self.nargs = nargs
     self.max_height = max_height
-    self.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op) * self.nops)
+    self.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op) * self.nops)
     self.allocate_stack()
     cfunc_addresses = reverse_map(cfunc_names)
     op_enums = reverse_map(op_names)
@@ -492,7 +492,7 @@ cdef class FastDoubleFunc:
             self.nargs = param+1
             self.nops = 1
             self.max_height = 1
-            self.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op))
+            self.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op))
             self.ops[0].type = LOAD_ARG
             self.ops[0].params.n = param
 
@@ -500,7 +500,7 @@ cdef class FastDoubleFunc:
             self.nargs = 0
             self.nops = 1
             self.max_height = 1
-            self.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op))
+            self.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op))
             self.ops[0].type = PUSH_CONST
             self.ops[0].params.c = param
 
@@ -520,7 +520,7 @@ cdef class FastDoubleFunc:
                     self.py_funcs += arg.py_funcs
                 self.nargs = max(self.nargs, arg.nargs)
                 self.max_height = max(self.max_height, arg.max_height+i)
-            self.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op) * self.nops)
+            self.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op) * self.nops)
             if self.ops == NULL:
                 raise MemoryError
             i = 0
@@ -536,20 +536,17 @@ cdef class FastDoubleFunc:
         self.allocate_stack()
 
     cdef int allocate_stack(FastDoubleFunc self) except -1:
-        self.argv = <double*>sage_malloc(sizeof(double) * self.nargs)
+        self.argv = <double*>sig_malloc(sizeof(double) * self.nargs)
         if self.argv == NULL:
             raise MemoryError
-        self.stack = <double*>sage_malloc(sizeof(double) * self.max_height)
+        self.stack = <double*>sig_malloc(sizeof(double) * self.max_height)
         if self.stack == NULL:
             raise MemoryError
 
     def __dealloc__(self):
-        if self.ops:
-            sage_free(self.ops)
-        if self.stack:
-            sage_free(self.stack)
-        if self.argv:
-            sage_free(self.argv)
+        sig_free(self.ops)
+        sig_free(self.stack)
+        sig_free(self.argv)
 
     def __reduce__(self):
         """
@@ -563,7 +560,7 @@ cdef class FastDoubleFunc:
         L = [op_to_tuple(self.ops[i]) for i from 0 <= i < self.nops]
         return _unpickle_FastDoubleFunc, (self.nargs, self.max_height, L)
 
-    def __cmp__(self, other):
+    def __richcmp__(self, other, op):
         """
         Two functions are considered equal if they represent the same
         exact sequence of operations.
@@ -581,21 +578,39 @@ cdef class FastDoubleFunc:
         cdef int c, i
         cdef FastDoubleFunc left, right
         try:
-            left, right = self, other
-            c = cmp((left.nargs, left.nops, left.max_height),
-                    (right.nargs, right.nops, right.max_height))
-            if c != 0:
-                return c
+            left = <FastDoubleFunc?>self
+            right = <FastDoubleFunc?>other
+
+            lx = left.nargs
+            rx = right.nargs
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+
+            lx = left.nops
+            rx = right.nops
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+
+            lx = left.max_height
+            rx = right.max_height
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+
             for i from 0 <= i < self.nops:
-                if left.ops[i].type != right.ops[i].type:
-                    return cmp(left.ops[i].type, right.ops[i].type)
+                lx = left.ops[i].type
+                rx = right.ops[i].type
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
+
             for i from 0 <= i < self.nops:
-                c = cmp(op_to_tuple(left.ops[i]), op_to_tuple(right.ops[i]))
-                if c != 0:
-                    return c
-            return c
+                lx = op_to_tuple(left.ops[i])
+                rx = op_to_tuple(right.ops[i])
+                if lx != rx:
+                    return richcmp_not_equal(lx, rx, op)
+
+            return rich_to_bool(op, 0)
         except TypeError:
-            return cmp(type(self), type(other))
+            return NotImplemented
 
     def __call__(FastDoubleFunc self, *args):
         """
@@ -609,10 +624,14 @@ cdef class FastDoubleFunc:
             Traceback (most recent call last):
             ...
             TypeError: Wrong number of arguments (need at least 3, got 1)
-            sage: f('blah', 1, 2, 3)
+            sage: f('blah', 1, 2, 3) # py2
             Traceback (most recent call last):
             ...
             TypeError: a float is required
+            sage: f('blah', 1, 2, 3) # py3
+            Traceback (most recent call last):
+            ...
+            TypeError: must be real number, not str
         """
         if len(args) < self.nargs:
             raise TypeError("Wrong number of arguments (need at least %s, got %s)" % (self.nargs, len(args)))
@@ -767,12 +786,12 @@ cdef class FastDoubleFunc:
         """
         return binop(left, right, MUL)
 
-    def __div__(left, right):
+    def __truediv__(left, right):
         """
         EXAMPLES::
 
             sage: from sage.ext.fast_eval import fast_float_arg
-            sage: f = fast_float_arg(0) / 7
+            sage: f = fast_float_arg(0).__truediv__(7)
             sage: f(14)
             2.0
         """
@@ -904,52 +923,6 @@ cdef class FastDoubleFunc:
             2.0
         """
         return self.cfunc(&sqrt)
-
-    ###################################################################
-    #   Basic Comparison
-    ###################################################################
-
-    def _richcmp_(left, right, op):
-        """
-        Compare left and right.
-
-        EXAMPLES::
-
-            sage: from sage.ext.fast_eval import fast_float_arg
-            sage: import operator
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.lt)
-            sage: [f(i) for i in (1..3)]
-            [1.0, 0.0, 0.0]
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.le)
-            sage: [f(i) for i in (1..3)]
-            [1.0, 1.0, 0.0]
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.eq)
-            sage: [f(i) for i in (1..3)]
-            [0.0, 1.0, 0.0]
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.ne)
-            sage: [f(i) for i in (1..3)]
-            [1.0, 0.0, 1.0]
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.ge)
-            sage: [f(i) for i in (1..3)]
-            [0.0, 1.0, 1.0]
-            sage: f = fast_float_arg(0)._richcmp_(2, operator.gt)
-            sage: [f(i) for i in (1..3)]
-            [0.0, 0.0, 1.0]
-        """
-        import operator
-        if op == operator.lt:  #<
-            return binop(left, right, LT)
-        elif op == operator.eq: #==
-            return binop(left, right, EQ)
-        elif op == operator.gt: #>
-            return binop(left, right, GT)
-        elif op == operator.le: #<=
-            return binop(left, right, LE)
-        elif op == operator.ne: #!=
-            return binop(left, right, NE)
-        elif op == operator.ge: #>=
-            return binop(left, right, GE)
-
 
     ###################################################################
     #   Exponential and log
@@ -1216,7 +1189,7 @@ cdef class FastDoubleFunc:
         feval.max_height = self.max_height
         if type == DUP:
             feval.max_height += 1
-        feval.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op) * feval.nops)
+        feval.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op) * feval.nops)
         memcpy(feval.ops, self.ops, sizeof(fast_double_op) * self.nops)
         feval.ops[feval.nops - 1].type = type
         feval.py_funcs = self.py_funcs
@@ -1276,7 +1249,7 @@ cdef FastDoubleFunc binop(_left, _right, char type):
     feval.nargs = max(left.nargs, right.nargs)
     feval.nops = left.nops + right.nops + 1
     feval.max_height = max(left.max_height, right.max_height+1)
-    feval.ops = <fast_double_op *>sage_malloc(sizeof(fast_double_op) * feval.nops)
+    feval.ops = <fast_double_op *>sig_malloc(sizeof(fast_double_op) * feval.nops)
     memcpy(feval.ops, left.ops, sizeof(fast_double_op) * left.nops)
     memcpy(feval.ops + left.nops, right.ops, sizeof(fast_double_op) * right.nops)
     feval.ops[feval.nops - 1].type = type
@@ -1304,7 +1277,7 @@ def fast_float_constant(x):
     This is all that goes on under the hood::
 
         sage: fast_float_constant(pi).op_list()
-        ['push 3.14159265359']
+        ['push 3.1415926535...']
     """
     return FastDoubleFunc('const', x)
 
@@ -1415,7 +1388,8 @@ def fast_float(f, *vars, old=None, expect_one_var=False):
         if old:
             return f._fast_float_(*vars)
         else:
-            return fast_callable(f, vars=vars, domain=float, _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality=True, expect_one_var=expect_one_var)
+            return fast_callable(f, vars=vars, domain=float,
+                                 expect_one_var=expect_one_var)
     except AttributeError:
         pass
 

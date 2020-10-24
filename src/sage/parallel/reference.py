@@ -5,8 +5,10 @@ These are reference implementations of basic parallel
 primitives. These are not actually parallel, but work the same way.
 They are good for testing.
 """
+from __future__ import print_function, absolute_import
 
 from sage.misc.prandom import shuffle
+
 
 def parallel_iter(f, inputs):
     """
@@ -28,18 +30,18 @@ def parallel_iter(f, inputs):
     EXAMPLES::
 
         sage: def f(N,M=10): return N*M
-        sage: inputs = [((2,3),{}),  (tuple([]), {'N':3,'M':5}), ((2,),{})]
+        sage: inputs = [((2,3),{}),  (tuple([]), {'M':5,'N':3}), ((2,),{})]
         sage: set_random_seed(0)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):
-        ...       print a, val
-        ((2,), {}) 20
-        ((), {'M': 5, 'N': 3}) 15
-        ((2, 3), {}) 6
+        ....:     print((a, val))
+        (((2,), {}), 20)
+        (((), {'M': 5, 'N': 3}), 15)
+        (((2, 3), {}), 6)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):
-        ...       print a, val
-        ((), {'M': 5, 'N': 3}) 15
-        ((2,), {}) 20
-        ((2, 3), {}) 6
+        ....:     print((a, val))
+        (((), {'M': 5, 'N': 3}), 15)
+        (((2,), {}), 20)
+        (((2, 3), {}), 6)
     """
     v = list(inputs)
     shuffle(v)

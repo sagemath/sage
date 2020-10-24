@@ -11,17 +11,16 @@ from sage.structure.sage_object import SageObject
 class MethodDecorator(SageObject):
     def __init__(self, f):
         """
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.misc.method_decorator import MethodDecorator
             sage: class Foo:
             ....:     @MethodDecorator
             ....:     def bar(self, x):
             ....:         return x**2
-            ....:
             sage: J = Foo()
             sage: J.bar
-            <class 'sage.misc.method_decorator.MethodDecorator'>
+            <sage.misc.method_decorator.MethodDecorator object at ...>
         """
         self.f = f
         if hasattr(f, "__doc__"):
@@ -36,7 +35,7 @@ class MethodDecorator(SageObject):
         """
         Returns the source code for the wrapped function.
 
-        EXAMPLE:
+        EXAMPLES:
 
         This class is rather abstract so we showcase its features
         using one of its subclasses::
@@ -51,7 +50,7 @@ class MethodDecorator(SageObject):
 
     def __call__(self, *args, **kwds):
         """
-        EXAMPLE:
+        EXAMPLES:
 
         This class is rather abstract so we showcase its features
         using one of its subclasses::
@@ -67,7 +66,7 @@ class MethodDecorator(SageObject):
 
     def __get__(self, inst, cls=None):
         """
-        EXAMPLE:
+        EXAMPLES:
 
         This class is rather abstract so we showcase its features
         using one of its subclasses::

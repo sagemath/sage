@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -10,17 +10,12 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 # Utility functions for operating on the point_c struct.
-# These would be macros, but inline functions should do the same job.
-
-
-cdef extern from "math.h":
-    double stdmath_sqrt "sqrt" (double)
-    int isfinite(double x)
+from libc cimport math
 
 
 cdef inline bint point_c_set(point_c* res, P) except -2:
@@ -28,6 +23,9 @@ cdef inline bint point_c_set(point_c* res, P) except -2:
 
 cdef inline bint point_c_eq(point_c P, point_c Q):
     return P.x == Q.x and P.y == Q.y and P.z == Q.z
+
+cdef inline bint point_c_isfinite(point_c P):
+    return math.isfinite(P.x) and math.isfinite(P.y) and math.isfinite(P.z)
 
 cdef inline int point_c_cmp(point_c P, point_c Q):
     """
@@ -51,21 +49,21 @@ cdef inline int point_c_cmp(point_c P, point_c Q):
         return 1
 
 cdef inline void point_c_update_finite_lower_bound(point_c* res, point_c P):
-    # We use the condition "not P.x>res.x" so that the condition returns True if res.x is NaN
-    if isfinite(P.x) and not P.x>res.x:
+    # We use the condition "not P.x > res.x" so that the condition returns True if res.x is NaN
+    if math.isfinite(P.x) and not P.x > res.x:
         res.x = P.x
-    if isfinite(P.y) and not P.y>res.y:
+    if math.isfinite(P.y) and not P.y > res.y:
         res.y = P.y
-    if isfinite(P.z) and not P.z>res.z:
+    if math.isfinite(P.z) and not P.z > res.z:
         res.z = P.z
 
 cdef inline void point_c_update_finite_upper_bound(point_c* res, point_c P):
-    # We use the condition "not P.x<res.x" so that the condition returns True if res.x is NaN
-    if isfinite(P.x) and not P.x<res.x:
+    # We use the condition "not P.x < res.x" so that the condition returns True if res.x is NaN
+    if math.isfinite(P.x) and not P.x < res.x:
         res.x = P.x
-    if isfinite(P.y) and not P.y<res.y:
+    if math.isfinite(P.y) and not P.y < res.y:
         res.y = P.y
-    if isfinite(P.z) and not P.z<res.z:
+    if math.isfinite(P.z) and not P.z < res.z:
         res.z = P.z
 
 cdef inline void point_c_lower_bound(point_c* res, point_c P, point_c Q):
@@ -102,11 +100,17 @@ cdef inline void point_c_cross(point_c* res, point_c P, point_c Q):
     res.z = P.x * Q.y - P.y * Q.x
 
 cdef inline double point_c_len(point_c P):
-    return stdmath_sqrt(point_c_dot(P, P))
+    return math.sqrt(point_c_dot(P, P))
+
+cdef inline void point_c_middle(point_c* res, point_c P, point_c Q, double a):
+    cdef double b = 1 - a
+    res.x = b * P.x + a * Q.x
+    res.y = b * P.y + a * Q.y
+    res.z = b * P.z + a * Q.z
 
 cdef inline void point_c_transform(point_c* res, double* M, point_c P):
     """
-    M is a flattened 4x4 matrix, row major, representing a Euclidean Transformation.
+    M is a flattened 4x4 matrix, row major, representing an Euclidean Transformation.
     Operate on P as a point.
     """
     res.x = M[0]*P.x + M[1]*P.y + M[2]*P.z + M[3]
@@ -115,7 +119,7 @@ cdef inline void point_c_transform(point_c* res, double* M, point_c P):
 
 cdef inline void point_c_stretch(point_c* res, double* M, point_c P):
     """
-    M is a flattened 4x4 matrix, row major, representing a Euclidean Transformation.
+    M is a flattened 4x4 matrix, row major, representing an Euclidean Transformation.
     Operate on P as a vector (i.e. ignore the translation component)
     """
     res.x = M[0]*P.x + M[1]*P.y + M[2]*P.z
@@ -133,12 +137,12 @@ cdef inline double cos_face_angle(face_c F, face_c E, point_c* vlist):
     face_c_normal(&nF, F, vlist)
     face_c_normal(&nE, E, vlist)
     cdef double dot = point_c_dot(nF, nE)
-    return dot / stdmath_sqrt(point_c_dot(nF, nF)*point_c_dot(nE, nE))
+    return dot / math.sqrt(point_c_dot(nF, nF)*point_c_dot(nE, nE))
 
 cdef inline double sin_face_angle(face_c F, face_c E, point_c* vlist):
     cdef point_c nF, nE
     face_c_normal(&nF, F, vlist)
     face_c_normal(&nE, E, vlist)
     cdef double dot = point_c_dot(nF, nE)
-    return stdmath_sqrt(1-(dot*dot)/(point_c_dot(nF, nF)*point_c_dot(nE, nE)))
+    return math.sqrt(1-(dot*dot)/(point_c_dot(nF, nF)*point_c_dot(nE, nE)))
 

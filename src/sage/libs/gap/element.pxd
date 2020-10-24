@@ -1,37 +1,43 @@
-###############################################################################
-#       Copyright (C) 2012, Volker Braun <vbraun.name@gmail.com>
+#*****************************************************************************
+#       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
-#   Distributed under the terms of the GNU General Public License (GPL)
-#   as published by the Free Software Foundation; either version 2 of
-#   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
-###############################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-from util cimport *
+from .gap_includes cimport Obj, UInt
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, ModuleElement, RingElement
 
-cdef libGAP_Obj make_gap_list(sage_list) except NULL
-cdef libGAP_Obj make_gap_record(sage_dict) except NULL
-cdef libGAP_Obj make_gap_integer(sage_dict) except NULL
-cdef libGAP_Obj make_gap_string(sage_string) except NULL
+cdef Obj make_gap_list(sage_list) except NULL
+cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL
+cdef Obj make_gap_record(sage_dict) except NULL
+cdef Obj make_gap_integer(sage_dict) except NULL
+cdef Obj make_gap_string(sage_string) except NULL
 
-cdef GapElement make_any_gap_element(parent, libGAP_Obj obj)
-cdef GapElement make_GapElement(parent, libGAP_Obj obj)
-cdef GapElement_List make_GapElement_List(parent, libGAP_Obj obj)
-cdef GapElement_Record make_GapElement_Record(parent, libGAP_Obj obj)
-cdef GapElement_Integer make_GapElement_Integer(parent, libGAP_Obj obj)
-cdef GapElement_Rational make_GapElement_Rational(parent, libGAP_Obj obj)
-cdef GapElement_String make_GapElement_String(parent, libGAP_Obj obj)
-cdef GapElement_Boolean make_GapElement_Boolean(parent, libGAP_Obj obj)
-cdef GapElement_Function make_GapElement_Function(parent, libGAP_Obj obj)
+cdef GapElement make_any_gap_element(parent, Obj obj)
+cdef GapElement make_GapElement(parent, Obj obj)
+cdef GapElement_List make_GapElement_List(parent, Obj obj)
+cdef GapElement_Record make_GapElement_Record(parent, Obj obj)
+cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj)
+cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj)
+cdef GapElement_String make_GapElement_String(parent, Obj obj)
+cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj)
+cdef GapElement_Function make_GapElement_Function(parent, Obj obj)
+cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj)
 
+cdef char *capture_stdout(Obj, Obj)
+cdef char *gap_element_str(Obj)
+cdef char *gap_element_repr(Obj)
 
 
 cdef class GapElement(RingElement):
 
     # the pointer to the GAP object (memory managed by GASMAN)
-    cdef libGAP_Obj value
+    cdef Obj value
 
     # comparison
     cdef bint _compare_by_id
@@ -40,14 +46,15 @@ cdef class GapElement(RingElement):
     cpdef _set_compare_by_id(self)
     cpdef _assert_compare_by_id(self)
 
-    cdef _initialize(self, parent, libGAP_Obj obj)
+    cdef _initialize(self, parent, Obj obj)
     cpdef _type_number(self)
-    cpdef ModuleElement _add_(self, ModuleElement right)
-    cpdef ModuleElement _sub_(self, ModuleElement right)
-    cpdef RingElement _mul_(self, RingElement right)
-    cpdef RingElement _div_(self, RingElement right)
     cpdef is_bool(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
+    cpdef _mod_(self, other)
+    cpdef _pow_(self, other)
 
+    cpdef GapElement deepcopy(self, bint mut)
 
 cdef class GapElement_Integer(GapElement):
     pass
@@ -80,11 +87,11 @@ cdef class GapElement_MethodProxy(GapElement_Function):
     cdef GapElement first_argument
 
 cdef class GapElement_Record(GapElement):
-    cpdef libGAP_UInt record_name_to_index(self, bytes py_name)
+    cpdef UInt record_name_to_index(self, name)
 
 cdef class GapElement_RecordIterator(object):
     cdef GapElement_Record rec
-    cdef libGAP_UInt i
+    cdef UInt i
 
 cdef class GapElement_List(GapElement):
     pass

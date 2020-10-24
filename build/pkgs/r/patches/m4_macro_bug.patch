@@ -1,0 +1,57 @@
+From 0b4ac9b9ff60a82f57bf3852056548274cbde09d Mon Sep 17 00:00:00 2001
+From: Emmanuel Charpentier <emm.charpentier@free.fr>
+Date: Wed, 14 Mar 2018 19:30:37 +0100
+Subject: [PATCH 7/9] m4_macro_bug
+
+Fix bug in R_PCRE autoconf macro which leads to 'configure' losing '-lz'
+and/or '-lbz2' from LIBS (under certain circumstances, and only relevant
+if "system" versions of these libraries are used).  (cf. #18229)
+
+---
+ configure | 2 +-
+ m4/R.m4   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 02e210e..682b8cd 100755
+--- a/configure
++++ b/configure
+@@ -40799,7 +40799,6 @@ fi
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $r_cv_have_pcre820" >&5
+ $as_echo "$r_cv_have_pcre820" >&6; }
+-fi
+ if test "x${r_cv_have_pcre820}" != xyes; then
+   have_pcre=no
+   LIBS="${r_save_LIBS}"
+@@ -40844,6 +40843,7 @@ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $r_cv_have_pcre832" >&5
+ $as_echo "$r_cv_have_pcre832" >&6; }
+ fi
++fi
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether PCRE support suffices" >&5
+ $as_echo_n "checking whether PCRE support suffices... " >&6; }
+diff --git a/m4/R.m4 b/m4/R.m4
+index fb35a5f..67cdd07 100644
+--- a/m4/R.m4
++++ b/m4/R.m4
+@@ -3190,7 +3190,6 @@ int main() {
+ #endif
+ }
+ ]])], [r_cv_have_pcre820=yes], [r_cv_have_pcre820=no], [r_cv_have_pcre820=no])])
+-fi
+ if test "x${r_cv_have_pcre820}" != xyes; then
+   have_pcre=no
+   LIBS="${r_save_LIBS}"
+@@ -3213,6 +3212,7 @@ int main() {
+ }
+ ]])], [r_cv_have_pcre832=yes], [r_cv_have_pcre832=no], [r_cv_have_pcre832=no])])
+ fi
++fi
+ 
+ AC_MSG_CHECKING([whether PCRE support suffices])
+ if test "x${r_cv_have_pcre820}" != xyes; then
+-- 
+2.16.1
+

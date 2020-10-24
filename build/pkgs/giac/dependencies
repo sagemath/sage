@@ -1,4 +1,4 @@
-$(INST)/$(READLINE) $(INST)/$(SAGE_MP_LIBRARY) $(INST)/$(MPFR) $(INST)/$(MPFI) $(INST)/$(NTL) $(INST)/$(GSL) $(INST)/$(PARI)
+readline libpng $(MP_LIBRARY) mpfr mpfi ntl gsl pari glpk curl
 
 ----------
 All lines of this file are ignored except the first.

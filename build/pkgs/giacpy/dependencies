@@ -1,5 +1,0 @@
-$(INST)/$(CYTHON) $(INST)/$(GIAC)
-
-----------
-All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/install into SAGE_ROOT/build/Makefile.

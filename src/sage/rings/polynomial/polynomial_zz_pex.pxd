@@ -1,4 +1,4 @@
-from sage.libs.ntl.ntl_ZZ_pEX_decl cimport ZZ_pEX_c
+from sage.libs.ntl.ZZ_pEX cimport ZZ_pEX_c
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ZZ_pEContext_ptrs
 
 ctypedef ZZ_pEX_c celement

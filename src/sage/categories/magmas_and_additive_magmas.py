@@ -11,6 +11,7 @@ Magmas and Additive Magmas
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
+from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.magmas import Magmas
 
@@ -131,3 +132,16 @@ class MagmasAndAdditiveMagmas(Category_singleton):
 
     Distributive = LazyImport('sage.categories.distributive_magmas_and_additive_magmas', 'DistributiveMagmasAndAdditiveMagmas', at_startup=True)
 
+    class CartesianProducts(CartesianProductsCategory):
+        def extra_super_categories(self):
+            r"""
+            Implement the fact that this structure is stable under Cartesian
+            products.
+
+            TESTS::
+
+                sage: from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+                sage: MagmasAndAdditiveMagmas().CartesianProducts().extra_super_categories()
+                [Category of magmas and additive magmas]
+            """
+            return [MagmasAndAdditiveMagmas()]

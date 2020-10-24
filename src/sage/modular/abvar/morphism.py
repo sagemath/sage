@@ -32,6 +32,7 @@ EXAMPLES::
     [ 3  3  0 -3]
     [-3  6  3 -3]
 """
+from __future__ import absolute_import
 
 ###########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
@@ -41,15 +42,17 @@ EXAMPLES::
 
 from sage.categories.morphism import Morphism as base_Morphism
 from sage.rings.all import ZZ, QQ
-import abvar as abelian_variety
+
 import sage.modules.matrix_morphism
 import sage.matrix.matrix_space as matrix_space
 
-from finite_subgroup import TorsionPoint
+from .finite_subgroup import TorsionPoint
 
 class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
     """
-    A morphism between modular abelian varieties. EXAMPLES::
+    A morphism between modular abelian varieties.
+
+    EXAMPLES::
 
         sage: t = J0(11).hecke_operator(2)
         sage: from sage.modular.abvar.morphism import Morphism
@@ -229,7 +232,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         D = self.domain()
         V = (A.kernel().basis_matrix() * D.vector_space().basis_matrix()).row_module()
         Lambda = V.intersection(D._ambient_lattice())
-        from abvar import ModularAbelianVariety
+        from .abvar import ModularAbelianVariety
         abvar = ModularAbelianVariety(D.groups(), Lambda, D.base_ring())
 
         if Lambda.rank() == 0:
@@ -313,7 +316,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             # This R is a lattice in the ambient space for B.
             R = Lprime + M
 
-            from abvar import ModularAbelianVariety
+            from .abvar import ModularAbelianVariety
             C = ModularAbelianVariety(Q.groups(), R, Q.base_field())
 
             # We have to change the basis of the representation of A
@@ -443,8 +446,8 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t2(C)
             Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
         """
-        from abvar import is_ModularAbelianVariety
-        from finite_subgroup import FiniteSubgroup
+        from .abvar import is_ModularAbelianVariety
+        from .finite_subgroup import FiniteSubgroup
         if isinstance(X, TorsionPoint):
             return self._image_of_element(X)
         elif is_ModularAbelianVariety(X):
@@ -589,6 +592,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: J.projection(B)._image_of_abvar(J)
             Abelian subvariety of dimension 1 of J0(37)
         """
+        from .abvar import ModularAbelianVariety
         D = self.domain()
         C = self.codomain()
         if A is D:
@@ -604,7 +608,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
 
         lattice = V.intersection(C.lattice())
         base_field = C.base_field()
-        return abelian_variety.ModularAbelianVariety(C.groups(), lattice, base_field)
+        return ModularAbelianVariety(C.groups(), lattice, base_field)
 
 
 class Morphism(Morphism_abstract, sage.modules.matrix_morphism.MatrixMorphism):
@@ -737,10 +741,11 @@ class HeckeOperator(Morphism):
             sage: T2.parent()
             Endomorphism ring of Abelian variety J0(37) of dimension 2
         """
+        from .abvar import is_ModularAbelianVariety
         n = ZZ(n)
         if n <= 0:
             raise ValueError("n must be positive")
-        if not abelian_variety.is_ModularAbelianVariety(abvar):
+        if not is_ModularAbelianVariety(abvar):
             raise TypeError("abvar must be a modular abelian variety")
         self.__abvar = abvar
         self.__n = n
@@ -895,7 +900,7 @@ class HeckeOperator(Morphism):
         return self.__abvar.homology(R).hecke_operator(self.index())
 
     def matrix(self):
-        """
+        r"""
         Return the matrix of self acting on the homology
         `H_1(A, ZZ)` of this abelian variety with coefficients in
         `\ZZ`.

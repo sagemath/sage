@@ -8,6 +8,7 @@ doctests to use a different random seed; but we also want to be able
 to reproduce the problems when debugging.  This module provides a
 decorator to help write random testers that meet these goals.
 """
+from __future__ import print_function, absolute_import
 
 from functools import wraps
 
@@ -53,7 +54,7 @@ def random_testing(fn):
     fails (raises an exception).
 
     If you want a very long-running test using this setup, you should do
-    something like::
+    something like (in Python 2)::
 
         for _ in xrange(10^10): test_foo(100)
 
@@ -87,11 +88,11 @@ def random_testing(fn):
 
         sage: from sage.misc.random_testing import random_testing
         sage: def foo(verbose=False):
-        ...       'oh look, a docstring'
-        ...       n = ZZ.random_element(2^50)
-        ...       if verbose:
-        ...           print "Random value: %s" % n
-        ...       assert(n == 49681376900427)
+        ....:     'oh look, a docstring'
+        ....:     n = ZZ.random_element(2^50)
+        ....:     if verbose:
+        ....:         print("Random value: %s" % n)
+        ....:     assert(n == 49681376900427)
         sage: foo = random_testing(foo)
         sage: foo(seed=0, verbose=True)
         Random value: 49681376900427
@@ -176,7 +177,7 @@ def test_add_commutes(trials, verbose=False):
         sage: test_add_commutes(1000) # long time
     """
     from sage.rings.all import QQ
-    for _ in xrange(trials):
+    for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:
@@ -249,7 +250,7 @@ def test_add_is_mul(trials, verbose=False):
         AssertionError()
     """
     from sage.rings.all import QQ
-    for _ in xrange(trials):
+    for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:

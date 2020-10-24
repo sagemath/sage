@@ -125,10 +125,9 @@ equations:
 
 REFERENCES:
 
-- :wikipedia:`Jacobi's_elliptic_functions`
+- :wikipedia:`Jacobi%27s_elliptic_functions`
 
-.. [KhaSuk04] A. Khare and U. Sukhatme. "Cyclic Identities Involving
-   Jacobi Elliptic Functions". :arxiv:`math-ph/0201004`
+- [KS2002]_
 
 AUTHORS:
 
@@ -160,7 +159,7 @@ from sage.functions.special import elliptic_e, elliptic_kc
 from sage.libs.mpmath import utils
 from sage.misc.latex import latex
 
-HALF = QQ('1/2')
+HALF = QQ((1, 2))
 
 
 class Jacobi(BuiltinFunction):
@@ -176,6 +175,11 @@ class Jacobi(BuiltinFunction):
             sage: from sage.functions.jacobi import Jacobi
             sage: Jacobi('sn')
             jacobi_sn
+
+        TESTS::
+
+            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
+            -8.59454886300046e-73 + 1.34737147138542*I
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
                         'sc', 'cn', 'cd', 'cs']:
@@ -1136,15 +1140,9 @@ jacobi_am = JacobiAmplitude()
 
 def inverse_jacobi_f(kind, x, m):
     r"""
-    Internal function for numerical evaluation of a continous complex branch
-    of each inverse Jacobi function, as described in [Tee97]_. Only accepts
+    Internal function for numerical evaluation of a continuous complex branch
+    of each inverse Jacobi function, as described in [Tee1997]_. Only accepts
     real arguments.
-
-    REFERENCES:
-
-    .. [Tee97] Tee, Garry J. "Continuous branches of inverses of the 12 Jacobi
-       elliptic functions for real argument". 1997.
-       https://researchspace.auckland.ac.nz/bitstream/handle/2292/5042/390.pdf.
 
     TESTS::
 
@@ -1612,13 +1610,7 @@ def inverse_jacobi_f(kind, x, m):
 def jacobi_am_f(x, m):
     r"""
     Internal function for numeric evaluation of the Jacobi amplitude function
-    for real arguments. Procedure described in [Ehrhardt13]_.
-
-    REFERENCES:
-
-    .. [Ehrhardt13] Ehrhardt, Wolfgang. "The AMath and DAMath Special
-       Functions: Reference Manual and Implementation Notes, Version 1.3".
-       2013. http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
+    for real arguments. Procedure described in [Eh2013]_.
 
     TESTS::
 

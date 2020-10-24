@@ -1,0 +1,28 @@
+#!/bin/sh
+SYSTEM=$1
+if [ -z "$SYSTEM" ]; then
+   echo >&2 "usage: $0 {debian|arch|conda|pip|...} SPKGS..."
+   exit 1
+fi
+shift
+SPKGS="$*"
+#
+if [ -z "$SAGE_ROOT" ]; then
+    SAGE_ROOT=`pwd`
+fi
+case "$SYSTEM" in
+    pip)
+        SYSTEM_PACKAGES_FILE_NAME="requirements.txt"
+        STRIP_COMMENTS='sed s/#.*//;s/[[:space:]]//g;'
+        ;;
+    *)
+        SYSTEM_PACKAGES_FILE_NAME="distros/$SYSTEM.txt"
+        STRIP_COMMENTS="sed s/#.*//;"
+        ;;
+esac
+for PKG_BASE in $SPKGS; do
+    SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/build/pkgs/$PKG_BASE/$SYSTEM_PACKAGES_FILE_NAME
+    if [ -f $SYSTEM_PACKAGES_FILE ]; then
+       echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE)
+    fi
+done

@@ -7,20 +7,19 @@ Pynac's ``subs()`` methods and pass a wrapper for the substitution map
 back to Python.
 """
 
-########################################################################
+#*****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#   as published by the Free Software Foundation; either version 2 of
-#   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
-########################################################################
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-include "sage/ext/interrupt.pxi"
-include "sage/ext/python.pxi"
 
-from ginac cimport *
-from sage.symbolic.expression cimport *
+from sage.libs.pynac.pynac cimport *
+from sage.symbolic.expression cimport Expression, new_Expression_from_GEx
 
 
 cdef class SubstitutionMap(SageObject):
@@ -50,18 +49,6 @@ cdef class SubstitutionMap(SageObject):
             SubsMap
         """
         return 'SubsMap'  # GEx_to_str(&x._gobj)
-    
-    def __dealloc__(self):
-        """
-        Delete memory occupied by this substitution map
-
-        EXAMPLES::
-        
-            sage: from sage.symbolic.substitution_map import make_map
-            sage: make_map({x:x+1})
-            SubsMap
-        """
-        GExMap_destruct(&self._gmapobj)
 
 
 cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
@@ -84,7 +71,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
     """
     cdef SubstitutionMap result
     result = <SubstitutionMap>SubstitutionMap.__new__(SubstitutionMap)
-    GEx_construct_exmap(&result._gmapobj, smap)
+    result._gmapobj = smap
     return result
 
 

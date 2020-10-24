@@ -7,6 +7,8 @@ AUTHORS:
 """
 #*****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>,
+#                     2015 Stefan Kraemer <skraemer@th.physik.uni-bonn.de>
+#                     2016 Javier Honrubia <jhonrubia6@uned.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -17,16 +19,18 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
 from sage.plot.bezier_path import BezierPath
-from sage.plot.colors import to_mpl_color
-from sage.plot.misc import options, rename_keyword
+from sage.misc.decorators import options, rename_keyword
 from sage.rings.all import CC
+
 
 class HyperbolicArc(BezierPath):
     """
-    Primitive class for hyberbolic arc type. See ``hyperbolic_arc?`` for
+    Primitive class for hyperbolic arc type. See ``hyperbolic_arc?`` for
     information about plotting a hyperbolic arc in the complex plane.
 
     INPUT:
@@ -40,12 +44,16 @@ class HyperbolicArc(BezierPath):
 
          sage: from sage.plot.hyperbolic_arc import HyperbolicArc
 
-         sage: print HyperbolicArc(0, 1/2+I*sqrt(3)/2, {})
+         sage: print(HyperbolicArc(0, 1/2+I*sqrt(3)/2, {}))
          Hyperbolic arc (0.000000000000000, 0.500000000000000 + 0.866025403784439*I)
     """
 
     def __init__(self, A, B, options):
         A, B = (CC(A), CC(B))
+        if A.imag()<0:
+            raise ValueError("%s is not a valid point in the UHP model"%(A))
+        if B.imag()<0:
+            raise ValueError("%s is not a valid point in the UHP model"%(B))
         self.path = []
         self._hyperbolic_arc(A, B, True);
         BezierPath.__init__(self, self.path, options)
@@ -70,20 +78,21 @@ class HyperbolicArc(BezierPath):
         the hyperbolic arc between the complex numbers z0 and z3 in the
         hyperbolic plane.
         """
-        if (z0-z3).real() == 0:
+        z0, z3 = (CC(z0), CC(z3))
+        p = (abs(z0)*abs(z0)-abs(z3)*abs(z3))/(z0-z3).real()/2
+        r = abs(z0-p)
+
+        if abs(z3-z0)/r < 0.1:
             self.path.append([(z0.real(),z0.imag()), (z3.real(),z3.imag())])
             return
-        z0, z3 = (CC(z0), CC(z3))
+
         if z0.imag() == 0 and z3.imag() == 0:
             p = (z0.real()+z3.real())/2
-            r = abs(z0-p)
             zm = CC(p, r)
             self._hyperbolic_arc(z0, zm, first)
             self._hyperbolic_arc(zm, z3)
             return
         else:
-            p = (abs(z0)*abs(z0)-abs(z3)*abs(z3))/(z0-z3).real()/2
-            r = abs(z0-p)
             zm = ((z0+z3)/2-p)/abs((z0+z3)/2-p)*r+p
             t = (8*zm-4*(z0+z3)).imag()/3/(z3-z0).real()
             z1 = z0 + t*CC(z0.imag(), (p-z0.real()))

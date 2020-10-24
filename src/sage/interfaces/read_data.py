@@ -28,12 +28,12 @@ def read_data(f,t):
 
        sage: indata = tmp_filename()
        sage: f = open(indata, "w")
-       sage: f.write("17\n42\n")
+       sage: _ = f.write("17\n42\n")
        sage: f.close()
        sage: l = read_data(indata, ZZ); l
        [17, 42]
        sage: f = open(indata, "w")
-       sage: f.write("1.234\n5.678\n")
+       sage: _ = f.write("1.234\n5.678\n")
        sage: f.close()
        sage: l = read_data(indata, RealField(17)); l
        [1.234, 5.678]

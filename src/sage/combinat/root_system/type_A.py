@@ -9,9 +9,12 @@ Root system data for type A
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+from __future__ import absolute_import
+
 from sage.rings.all import ZZ
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
-import ambient_space
+from . import ambient_space
 
 class AmbientSpace(ambient_space.AmbientSpace):
     r"""
@@ -21,6 +24,26 @@ class AmbientSpace(ambient_space.AmbientSpace):
         sage: e = R.ambient_space(); e
         Ambient space of the Root system of type ['A', 3]
         sage: TestSuite(e).run()
+
+    By default, this ambient space uses the barycentric projection for plotting::
+
+        sage: L = RootSystem(["A",2]).ambient_space()
+        sage: e = L.basis()
+        sage: L._plot_projection(e[0])
+        (1/2, 989/1142)
+        sage: L._plot_projection(e[1])
+        (-1, 0)
+        sage: L._plot_projection(e[2])
+        (1/2, -989/1142)
+        sage: L = RootSystem(["A",3]).ambient_space()
+        sage: l = L.an_element(); l
+        (2, 2, 3, 0)
+        sage: L._plot_projection(l)
+        (0, -1121/1189, 7/3)
+
+    .. SEEALSO::
+
+        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
     """
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
@@ -145,30 +168,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         return self.sum(self.monomial(j)*k for j in range(self.n))
 
-    __doc__ += """
-    By default, this ambient space uses the barycentric projection for plotting::
-
-        sage: L = RootSystem(["A",2]).ambient_space()
-        sage: e = L.basis()
-        sage: L._plot_projection(e[0])
-        (1/2, 989/1142)
-        sage: L._plot_projection(e[1])
-        (-1, 0)
-        sage: L._plot_projection(e[2])
-        (1/2, -989/1142)
-        sage: L = RootSystem(["A",3]).ambient_space()
-        sage: l = L.an_element(); l
-        (2, 2, 3, 0)
-        sage: L._plot_projection(l)
-        (0, -1121/1189, 7/3)
-
-    .. SEEALSO::
-
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
-    """
     _plot_projection = RootLatticeRealizations.ParentMethods.__dict__['_plot_projection_barycentric']
 
-from cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
+
+from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, CartanType_simple
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
     """
     Cartan Type `A_n`
@@ -256,7 +259,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: sorted(a.edges())
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 1)]
 
-        TEST::
+        TESTS::
 
             sage: a = DynkinDiagram(['A',1])
             sage: a
@@ -266,7 +269,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             sage: a.vertices(), a.edges()
             ([1], [])
         """
-        from dynkin_diagram import DynkinDiagram_class
+        from .dynkin_diagram import DynkinDiagram_class
         n = self.n
         g = DynkinDiagram_class(self)
         for i in range(1, n):
@@ -279,7 +282,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
         EXAMPLES::
 
-            sage: print CartanType(['A',4])._latex_dynkin_diagram()
+            sage: print(CartanType(['A',4])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (6 cm,0);
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
             \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
@@ -287,9 +290,9 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             <BLANKLINE>
 
-            sage: print CartanType(['A',0])._latex_dynkin_diagram()
+            sage: print(CartanType(['A',0])._latex_dynkin_diagram())
             <BLANKLINE>
-            sage: print CartanType(['A',1])._latex_dynkin_diagram()
+            sage: print(CartanType(['A',1])._latex_dynkin_diagram())
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
             <BLANKLINE>
         """
@@ -308,20 +311,20 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
         EXAMPLES::
 
-            sage: print CartanType(['A',0]).ascii_art()
-            sage: print CartanType(['A',1]).ascii_art()
+            sage: print(CartanType(['A',0]).ascii_art())
+            sage: print(CartanType(['A',1]).ascii_art())
             O
             1
-            sage: print CartanType(['A',3]).ascii_art()
+            sage: print(CartanType(['A',3]).ascii_art())
             O---O---O
             1   2   3
-            sage: print CartanType(['A',12]).ascii_art()
+            sage: print(CartanType(['A',12]).ascii_art())
             O---O---O---O---O---O---O---O---O---O---O---O
             1   2   3   4   5   6   7   8   9   10  11  12
-            sage: print CartanType(['A',5]).ascii_art(label = lambda x: x+2)
+            sage: print(CartanType(['A',5]).ascii_art(label = lambda x: x+2))
             O---O---O---O---O
             3   4   5   6   7
-            sage: print CartanType(['A',5]).ascii_art(label = lambda x: x-2)
+            sage: print(CartanType(['A',5]).ascii_art(label = lambda x: x-2))
             O---O---O---O---O
             -1  0   1   2   3
         """
@@ -335,5 +338,5 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         return ret
 
 # For unpickling backward compatibility (Sage <= 4.1)
-from sage.structure.sage_object import register_unpickle_override
+from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)

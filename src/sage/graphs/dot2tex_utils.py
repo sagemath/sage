@@ -7,6 +7,7 @@ This file contains some utility functions for the interface with dot2tex
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 import re
 from sage.misc.latex import latex
@@ -58,8 +59,8 @@ for installation instructions.
 """
     try:
         import dot2tex
-    except ImportError as e:
-        print import_error_string
+    except ImportError:
+        print(import_error_string)
         raise # re-raise current exception
     else:
         if dot2tex.dot2tex("graph {}", format = "positions") != {}:
@@ -87,7 +88,7 @@ def quoted_str(x):
 
         sage: sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]]))
         '[1 1]\\n\\\n[0 1]\\n\\\n[0 0]'
-        sage: print sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]]))
+        sage: print(sage.graphs.dot2tex_utils.quoted_str(matrix([[1,1],[0,1],[0,0]])))
         [1 1]\n\
         [0 1]\n\
         [0 0]

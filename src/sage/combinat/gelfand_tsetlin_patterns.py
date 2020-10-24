@@ -7,15 +7,15 @@ AUTHORS:
 
 REFERENCES:
 
-.. [BBF] B. Brubaker, D. Bump, and S. Friedberg.
+.. [BBF] \B. Brubaker, D. Bump, and S. Friedberg.
    Weyl Group Multiple Dirichlet Series: Type A Combinatorial Theory.
    Ann. of Math. Stud., vol. 175, Princeton Univ. Press, New Jersey, 2011.
 
-.. [GC50] I. M. Gelfand and M. L. Cetlin.
+.. [GC50] \I. M. Gelfand and M. L. Cetlin.
    Finite-Dimensional Representations of the Group of Unimodular Matrices.
    Dokl. Akad. Nauk SSSR **71**, pp. 825--828, 1950.
 
-.. [Tok88] T. Tokuyama.
+.. [Tok88] \T. Tokuyama.
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
@@ -34,8 +34,9 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.list_clone import ClonableArray
@@ -51,7 +52,9 @@ from sage.combinat.tableau import Tableau, SemistandardTableaux
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.all import prod
 
-class GelfandTsetlinPattern(ClonableArray):
+
+class GelfandTsetlinPattern(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A Gelfand-Tsetlin (sometimes written as Gelfand-Zetlin or Gelfand-Cetlin)
     pattern.  They were originally defined in [GC50]_.
@@ -133,9 +136,7 @@ class GelfandTsetlinPattern(ClonableArray):
           3  3  3  4
     """
     # Note that the width == height, so len(gt) == len(gt[0]) except
-    #   we don't have to check if it is the emtry GT pattern
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
+    #   we don't have to check if it is the entry GT pattern
     @staticmethod
     def __classcall_private__(self, gt):
         """
@@ -188,7 +189,7 @@ class GelfandTsetlinPattern(ClonableArray):
         EXAMPLES::
 
             sage: G = GelfandTsetlinPatterns()
-            sage: print G([[3,2,1],[2,1],[1]])._repr_diagram()
+            sage: print(G([[3,2,1],[2,1],[1]])._repr_diagram())
               3     2     1
                  2     1
                     1
@@ -213,7 +214,7 @@ class GelfandTsetlinPattern(ClonableArray):
                  2     1
                     1
         """
-        print self._repr_diagram()
+        print(self._repr_diagram())
 
     def _latex_(self):
         r"""
@@ -245,7 +246,7 @@ class GelfandTsetlinPattern(ClonableArray):
 
     @combinatorial_map(name='to semistandard tableau')
     def to_tableau(self):
-        """
+        r"""
         Return ``self`` as a semistandard Young tableau.
 
         The conversion from a Gelfand-Tsetlin pattern to a semistandard Young
@@ -502,10 +503,79 @@ class GelfandTsetlinPattern(ClonableArray):
         """
         R = PolynomialRing(ZZ, name)
         t = R.gen(0)
-        if self.is_strict() == False:
-            return R(0)
+        if not self.is_strict():
+            return R.zero()
         return (t+1)**(self.number_of_special_entries()) * t**(self.number_of_boxes())
 
+    def bender_knuth_involution(self,i):
+        r"""
+        Return the image of ``self`` under the `i`-th Bender-Knuth involution.
+
+        If the triangle ``self`` has size `n` then this is defined for `0 < i < n`.
+
+        The entries of ``self`` can take values in any ordered ring. Usually,
+        this will be the integers but can also be the rationals or the real numbers.
+
+        This implements the construction of the Bender-Knuth involution using toggling
+        due to Berenstein-Kirillov.
+
+        This agrees with the Bender-Knuth involution on semistandard tableaux.
+
+        EXAMPLES::
+
+            sage: G = GelfandTsetlinPattern([[5,3,2,1,0],[4,3,2,0],[4,2,1],[3,2],[3]])
+            sage: G.bender_knuth_involution(2)
+            [[5, 3, 2, 1, 0], [4, 3, 2, 0], [4, 2, 1], [4, 1], [3]]
+
+            sage: G = GelfandTsetlinPattern([[3,2,0],[2.2,0],[2]])
+            sage: G.bender_knuth_involution(2)
+            [[3, 2, 0], [2.80000000000000, 2], [2]]
+
+        TESTS::
+
+            sage: all(all( G.bender_knuth_involution(i).to_tableau() == G.to_tableau().bender_knuth_involution(i)
+            ....:       for i in range(1,len(G)) ) for G in GelfandTsetlinPatterns(top_row=[3,3,3,0,0]))
+            True
+
+            sage: G = GelfandTsetlinPattern([[2,1,0],[1,0],[0]])
+            sage: G.bender_knuth_involution(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: must have 0 < 0 < 3
+            sage: G.bender_knuth_involution(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: must have 0 < 3 < 3
+
+        """
+        #from copy import copy
+        n = len(self)
+
+        def toggle(i,j):
+            """
+            Return the toggle of entry 'G[i][j]' in a Gelfand-Tsetlin pattern, 'G'.
+            """
+            if i == n-1:
+                return self[n-2][0]+self[n-2][1]-self[n-1][0]
+
+            if j == 0:
+                left = self[i-1][0]
+            else:
+                left = min(self[i-1][j], self[i+1][j-1])
+            if j == n-i-1:
+                right = self[i-1][j+1]
+            else:
+                right = max(self[i-1][j+1], self[i+1][j])
+
+            return left + right - self[i][j]
+
+        if not 0 < i < n:
+            raise ValueError(f"must have 0 < {i} < {n}")
+        r = n-i
+        P = self.parent()
+        data = [list(row) for row in self]
+        data[r] = [toggle(r,s) for s in range(i)]
+        return P.element_class(P, data)
 
 class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
     """
@@ -533,8 +603,8 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         sage: c = 0
         sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
         sage: for p in partitions_in_box(3,3):
-        ...      S = SemistandardTableaux(p, max_entry=3)
-        ...      c += S.cardinality()
+        ....:    S = SemistandardTableaux(p, max_entry=3)
+        ....:    c += S.cardinality()
         sage: c == G.cardinality()
         True
 
@@ -705,6 +775,37 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     Element = GelfandTsetlinPattern
 
+    def _coerce_map_from_(self, S):
+        """
+        TESTS::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: t == 0
+            False
+            sage: t == GelfandTsetlinPattern([[1]])
+            True
+
+        Check that :trac:`25919` is fixed::
+
+            sage: t = GelfandTsetlinPattern([[1]])
+            sage: u = GelfandTsetlinPatterns()[1]
+            sage: v = GelfandTsetlinPatterns(top_row=(1,))[0]
+            sage: t == u
+            True
+            sage: u == t
+            True
+            sage: t == v
+            True
+            sage: v == t
+            True
+            sage: u == v
+            True
+            sage: v == u
+            True
+        """
+        if isinstance(S, GelfandTsetlinPatternsTopRow):
+            return True
+
     def __iter__(self):
         """
         Iterate through ``self`` by using a backtracing algorithm.
@@ -715,8 +816,8 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: c = 0
             sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
             sage: for p in partitions_in_box(3,3):
-            ...      S = SemistandardTableaux(p, max_entry=3)
-            ...      c += S.cardinality()
+            ....:    S = SemistandardTableaux(p, max_entry=3)
+            ....:    c += S.cardinality()
             sage: c == len(L)
             True
             sage: G = GelfandTsetlinPatterns(3, 3, strict=True)
@@ -782,7 +883,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                             yield self.element_class(self, list(x))
                     n += 1
                 return
-            for x in xrange(self._k+1):
+            for x in range(self._k+1):
                 yield self.element_class(self, [[x]])
             n = 2
             while not self._strict or n <= self._k+1:
@@ -797,7 +898,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             return
         if self._n == 1:
             if self._k is not None:
-                for x in xrange(self._k+1):
+                for x in range(self._k+1):
                     yield self.element_class(self, [[x]])
             else:
                 k = 1
@@ -820,7 +921,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: len(L) == G.cardinality()
             True
             sage: type(L[0])
-            <type 'list'>
+            <... 'list'>
         """
         # Setup the first row
         iters = [None]*n
@@ -1017,12 +1118,21 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         ALGORITHM:
 
-        The set of Gelfand-Tsetlin patterns can partially ordered by elementwise
-        domination.  The partial order has unique maximum and minimum elements
-        that are computed by the methods ``_cftp_upper`` and ``_cftp_lower``.
-        We then run the Markov chain that randomly toggles each element up or
-        down from the past until the state reached from the upper and lower start
+        The set of Gelfand-Tsetlin patterns can partially ordered by
+        elementwise domination.  The partial order has unique maximum
+        and minimum elements that are computed by the methods
+        :meth:`_cftp_upper` and :meth:`_cftp_lower`. We then run the Markov
+        chain that randomly toggles each element up or down from the
+        past until the state reached from the upper and lower start
         points coalesce as described in [Propp1997]_.
+
+        EXAMPLES::
+
+            sage: G = GelfandTsetlinPatterns(3, 5)
+            sage: G._cftp(0)  # random
+            [[5, 3, 2], [4, 2], [3]]
+            sage: G._cftp(0) in G
+            True
         """
         from sage.misc.randstate import current_randstate
         from sage.misc.randstate import seed
@@ -1056,11 +1166,28 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: g = GelfandTsetlinPatterns(4, 5)
-            sage: g.random_element()
-            [[5, 2, 2, 1], [2, 2, 1], [2, 1], [1]]
+            sage: x = g.random_element()
+            sage: x in g
+            True
+            sage: len(x)
+            4
+            sage: all(y in range(0, 5+1) for z in x for y in z)
+            True
+            sage: x.check()
+
+        ::
+
             sage: g = GelfandTsetlinPatterns(4, 5, strict=True)
-            sage: g.random_element()
-            [[5, 4, 1, 0], [5, 2, 1], [2, 1], [2]]
+            sage: x = g.random_element()
+            sage: x in g
+            True
+            sage: len(x)
+            4
+            sage: all(y in range(0, 5+1) for z in x for y in z)
+            True
+            sage: x.check()
+            sage: x.is_strict()
+            True
         """
         if self._n is not None and self._k is not None:
             if self._strict and self._k+1 < self._n:
@@ -1129,8 +1256,8 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
             sage: [[4,3,1], [4,2], [3]] in G
             False
         """
-        # Check if the the top row matches (if applicable)
-        if tuple(gt[0]) != self._row:
+        # Check if the top row matches (if applicable)
+        if gt and tuple(gt[0]) != self._row:
             return False
         return GelfandTsetlinPatterns.__contains__(self, gt)
 
@@ -1270,11 +1397,22 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
         EXAMPLES::
 
             sage: g = GelfandTsetlinPatterns(top_row = [4, 3, 1, 1])
-            sage: g.random_element()
-            [[4, 3, 1, 1], [4, 3, 1], [4, 1], [3]]
+            sage: x = g.random_element()
+            sage: x in g
+            True
+            sage: x[0] == [4, 3, 1, 1]
+            True
+            sage: x.check()
+
             sage: g = GelfandTsetlinPatterns(top_row=[4, 3, 2, 1], strict=True)
-            sage: g.random_element()
-            [[4, 3, 2, 1], [4, 2, 1], [4, 1], [2]]
+            sage: x = g.random_element()
+            sage: x in g
+            True
+            sage: x[0] == [4, 3, 2, 1]
+            True
+            sage: x.is_strict()
+            True
+            sage: x.check()
         """
         if self._strict:
             return self._cftp(1)

@@ -1,6 +1,7 @@
 """
 Set Species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,10 +16,10 @@ Set Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from generating_series import factorial_stream, _integers_from
+
+from .species import GenericCombinatorialSpecies
+from .generating_series import factorial_stream, _integers_from
 from sage.combinat.species.structure import GenericSpeciesStructure
-from sage.misc.cachefunc import cached_function
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -44,7 +45,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: a.canonical_label()
             {'a', 'b', 'c'}
         """
-        rng = range(1, len(self._labels)+1)
+        rng = list(range(1, len(self._labels) + 1))
         return SetSpeciesStructure(self.parent(), self._labels, rng)
 
     def transport(self, perm):
@@ -177,7 +178,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              1/6*p[1, 1, 1] + 1/2*p[2, 1] + 1/3*p[3],
              1/24*p[1, 1, 1, 1] + 1/4*p[2, 1, 1] + 1/8*p[2, 2] + 1/3*p[3, 1] + 1/4*p[4]]
         """
-        from generating_series import ExponentialCycleIndexSeries
+        from .generating_series import ExponentialCycleIndexSeries
         res = ExponentialCycleIndexSeries(base_ring)
 
         if self.is_weighted():

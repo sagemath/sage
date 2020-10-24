@@ -1,0 +1,10 @@
+cd src/
+
+# Force bash as shell
+export VARPREFIX="$SAGE_LOCAL/var"
+export PREFIX="$SAGE_LOCAL"
+bash ./Configure || sdh_die "Error configuring SYMPOW"
+
+sdh_make
+
+sdh_make_install

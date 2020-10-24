@@ -1,19 +1,26 @@
+# -*- coding: utf-8 -*-
 """
 Ordered Rooted Trees
 
 AUTHORS:
 
 - Florent Hivert (2010-2011): initial revision
-- Frederic Chapoton (2010): contributed some methods
+- Frédéric Chapoton (2010): contributed some methods
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+#python 3 support
+from __future__ import division, absolute_import, print_function, unicode_literals
+
+import itertools
+
 from sage.structure.list_clone import ClonableArray, ClonableList
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -32,7 +39,8 @@ from sage.sets.family import Family
 from sage.rings.infinity import Infinity
 
 
-class OrderedTree(AbstractClonableTree, ClonableList):
+class OrderedTree(AbstractClonableTree, ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     The class of (ordered rooted) trees.
 
@@ -172,8 +180,6 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         sage: tt1.__hash__() == tt2.__hash__()
         False
     """
-    __metaclass__ = InheritComparisonClasscallMetaclass
-
     @staticmethod
     def __classcall_private__(cls, *args, **opts):
         """
@@ -228,7 +234,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
                 sage: t1
                 []
                 sage: t1.parent()
-                <type 'sage.structure.parent.Parent'>
+                <sage.structure.parent.Parent object at ...>
         """
         return OrderedTrees_all()
 
@@ -341,6 +347,117 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         """
         return self._to_binary_tree_rec()
 
+    @combinatorial_map(name="To parallelogram polyomino")
+    def to_parallelogram_polyomino(self, bijection=None):
+        r"""
+        Return a polyomino parallelogram.
+
+        INPUT:
+
+        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
+          bijection to use. Possible values are ``'Boussicault-Socci'``,
+          ``'via dyck and Delest-Viennot'``.
+
+        EXAMPLES::
+
+            sage: T = OrderedTree([[[], [[], [[]]]], [], [[[],[]]], [], []])
+            sage: T.to_parallelogram_polyomino( bijection='Boussicault-Socci' )
+            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+            sage: T = OrderedTree( [] )
+            sage: T.to_parallelogram_polyomino()
+            [[1], [1]]
+            sage: T = OrderedTree( [[]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 1], [1, 0]]
+            sage: T = OrderedTree( [[],[]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 1, 1], [1, 1, 0]]
+            sage: T = OrderedTree( [[[]]] )
+            sage: T.to_parallelogram_polyomino()
+            [[0, 0, 1], [1, 0, 0]]
+        """
+        if (bijection is None) or (bijection == 'Boussicault-Socci'):
+            return self._to_parallelogram_polyomino_Boussicault_Socci()
+        if bijection == 'via dyck and Delest-Viennot':
+            raise NotImplementedError
+        raise ValueError('unknown bijection')
+
+    def _to_parallelogram_polyomino_Boussicault_Socci(self):
+        r"""
+        Return the polyomino parallelogram using the Boussicault-Socci
+        bijection.
+
+        EXAMPLES::
+
+            sage: T = OrderedTree(
+            ....:     [[[], [[], [[]]]], [], [[[],[]]], [], []]
+            ....: )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0]]
+            sage: T = OrderedTree( [] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[1], [1]]
+            sage: T = OrderedTree( [[]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 1], [1, 0]]
+            sage: T = OrderedTree( [[],[]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 1, 1], [1, 1, 0]]
+            sage: T = OrderedTree( [[[]]] )
+            sage: T._to_parallelogram_polyomino_Boussicault_Socci()
+            [[0, 0, 1], [1, 0, 0]]
+        """
+        from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino
+        if self.node_number() == 1:
+            return ParallelogramPolyomino([[1], [1]])
+        upper_nodes = []
+        lower_nodes = []
+        w_coordinate = {}
+        w_coordinate[()] = 0
+        h_coordinate = {}
+
+        cpt = 0
+        for h in range(0, self.depth(), 2):
+            for node in self.paths_at_depth(h):
+                h_coordinate[node] = cpt
+                lower_nodes.append( node )
+                cpt += 1
+
+        cpt = 0
+        for h in range(1, self.depth(), 2):
+            for node in self.paths_at_depth(h):
+                w_coordinate[node] = cpt
+                upper_nodes.append(node)
+                cpt += 1
+
+        def W(path):
+            if path in w_coordinate:
+                return w_coordinate[path]
+            else:
+                return w_coordinate[path[:-1]]
+
+        def H(path):
+            if path in h_coordinate:
+                return h_coordinate[path]
+            else:
+                return h_coordinate[path[:-1]]
+
+        lower_path = []
+        for i in range(1, len(lower_nodes)):
+            lower_path.append(0)
+            lower_path += [1] * (W(lower_nodes[i]) - W(lower_nodes[i - 1]))
+        lower_path.append(0)
+        lower_path += [1] * (self.node_number() - len(lower_path))
+
+        upper_path = []
+        for i in range(1, len(upper_nodes)):
+            upper_path.append(1)
+            upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))
+        upper_path.append(1)
+        upper_path += [0] * (self.node_number() - len(upper_path))
+
+        return ParallelogramPolyomino([lower_path, upper_path])
+
     @combinatorial_map(name="To binary tree, right brother = right child")
     def to_binary_tree_right_branch(self):
         r"""
@@ -406,6 +523,9 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         r"""
         Return the undirected graph obtained from the tree nodes and edges.
 
+        The graph is endowed with an embedding, so that it will be displayed
+        correctly.
+
         EXAMPLES::
 
             sage: t = OrderedTree([])
@@ -415,7 +535,8 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: t.to_undirected_graph()
             Graph on 5 vertices
 
-        If the tree is labelled, we use its labelling to label the graph.
+        If the tree is labelled, we use its labelling to label the graph. This
+        will fail if the labels are not all distinct.
         Otherwise, we use the graph canonical labelling which means that
         two different trees can have the same graph.
 
@@ -424,6 +545,9 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: t = OrderedTree([[[]],[],[]])
             sage: t.canonical_labelling().to_undirected_graph()
             Graph on 5 vertices
+
+        TESTS::
+
             sage: t.canonical_labelling().to_undirected_graph() == t.to_undirected_graph()
             False
             sage: OrderedTree([[],[]]).to_undirected_graph() == OrderedTree([[[]]]).to_undirected_graph()
@@ -440,20 +564,25 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             relabel = True
         roots = [self]
         g.add_vertex(name=self.label())
-        while len(roots) != 0:
+        emb = {self.label(): []}
+        while roots:
             node = roots.pop()
+            children = reversed([child.label() for child in node])
+            emb[node.label()].extend(children)
             for child in node:
                 g.add_vertex(name=child.label())
+                emb[child.label()] = [node.label()]
                 g.add_edge(child.label(), node.label())
                 roots.append(child)
-        if(relabel):
+        g.set_embedding(emb)
+        if relabel:
             g = g.canonical_label()
         return g
 
     @combinatorial_map(name="To poset")
     def to_poset(self, root_to_leaf=False):
         r"""
-        Return the poset obtained by interpreting the tree as a hasse
+        Return the poset obtained by interpreting the tree as a Hasse
         diagram. The default orientation is from leaves to root but you can
         pass ``root_to_leaf=True`` to obtain the inverse orientation.
 
@@ -486,7 +615,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         relations = []
         elements = [self.label()]
         roots = [self]
-        while len(roots) != 0:
+        while roots:
             node = roots.pop()
             for child in node:
                 elements.append(child.label())
@@ -524,6 +653,61 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         children = [c.left_right_symmetry() for c in self]
         children.reverse()
         return OrderedTree(children)
+
+    def plot(self):
+        r"""
+        Plot the tree ``self``.
+
+        .. WARNING::
+
+            For a labelled tree, this will fail unless all labels are
+            distinct. For unlabelled trees, some arbitrary labels are chosen.
+            Use :meth:`_latex_`, ``view``,
+            :meth:`_ascii_art_` or ``pretty_print`` for more
+            faithful representations of the data of the tree.
+
+        EXAMPLES::
+
+            sage: p = OrderedTree([[[]],[],[]])
+            sage: ascii_art(p)
+              _o__
+             / / /
+            o o o
+            |
+            o
+            sage: p.plot()
+            Graphics object consisting of 10 graphics primitives
+
+        .. PLOT::
+
+            P = OrderedTree([[[]],[],[]]).plot()
+            sphinx_plot(P)
+
+        Now a labelled example::
+
+            sage: g = OrderedTree([[],[[]],[]]).canonical_labelling()
+            sage: ascii_art(g)
+              _1__
+             / / /
+            2 3 5
+              |
+              4
+            sage: g.plot()
+            Graphics object consisting of 10 graphics primitives
+
+        .. PLOT::
+
+            P = OrderedTree([[],[[]],[]]).canonical_labelling().plot()
+            sphinx_plot(P)
+        """
+        try:
+            root = self.label()
+            g = self.to_undirected_graph()
+        except AttributeError:
+            root = 1
+            g = self.canonical_labelling().to_undirected_graph()
+        return g.plot(layout='tree', tree_root=root,
+                      tree_orientation="down")
 
     def sort_key(self):
         """
@@ -607,9 +791,6 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         subtree, and then sorting the subtrees according to the value
         of the :meth:`sort_key` method.
 
-        See also :meth:`dendrog_normalize` for an alternative
-        that works for unlabelled trees.
-
         Consider the quotient map `\pi` that sends a planar rooted tree to
         the associated unordered rooted tree. Normalization is the
         composite `s \circ \pi`, where `s` is a section of `\pi`.
@@ -647,131 +828,6 @@ class OrderedTree(AbstractClonableTree, ClonableList):
                 resl[i] = resl[i].normalize()
             resl.sort(key=lambda t: t.sort_key())
 
-    def dendrog_cmp(self, other):
-        r"""
-        Return `-1` if ``self`` is smaller than ``other`` in the
-        dendrographical order; return `0` if they are equal;
-        return `1` if ``other`` is smaller.
-
-        The dendrographical order is a total order on the set of
-        unlabelled ordered rooted trees; it is defined recursively
-        as follows: An ordered rooted tree `T` with children
-        `T_1, T_2, \ldots, T_a` is smaller than an
-        ordered rooted tree `S` with children
-        `S_1, S_2, \ldots, S_b` if either `a < b` or (`a = b`
-        and there exists a `1 \leq i \leq a` such that
-        `T_1 = S_1, T_2 = S_2, \ldots, T_{i-1} = S_{i-1}` and
-        `T_i < S_i`).
-
-        INPUT:
-
-        - ``other`` -- an ordered rooted tree
-
-        OUTPUT:
-
-        - `-1`, if ``smaller < other`` with respect to the
-          dendrographical order.
-        - `0`, if ``smaller == other`` (as unlabelled ordered
-          rooted trees).
-        - `1`, if ``smaller > other`` with respect to the
-          dendrographical order.
-
-        .. NOTE::
-
-            It is possible to provide labelled trees to this
-            method; however, their labels are ignored.
-
-        EXAMPLES::
-
-            sage: OT = OrderedTree
-            sage: ta = OT([])
-            sage: tb = OT([[], [], [[], []]])
-            sage: tc = OT([[], [[], []], []])
-            sage: td = OT([[[], []], [], []])
-            sage: te = OT([[], []])
-            sage: tf = OT([[], [], []])
-            sage: tg = OT([[[], []], [[], []]])
-            sage: l = [ta, tb, tc, td, te, tf, tg]
-            sage: [l[i].dendrog_cmp(l[j]) for i in range(7) for j in range(7)]
-            [0, -1, -1, -1, -1, -1, -1,
-             1, 0, -1, -1, 1, 1, 1,
-             1, 1, 0, -1, 1, 1, 1,
-             1, 1, 1, 0, 1, 1, 1,
-             1, -1, -1, -1, 0, -1, -1,
-             1, -1, -1, -1, 1, 0, 1,
-             1, -1, -1, -1, 1, -1, 0]
-        """
-        if len(self) < len(other):
-            return -1
-        if len(self) > len(other):
-            return 1
-        for (a, b) in zip(self, other):
-            comp = a.dendrog_cmp(b)
-            if comp != 0:
-                return comp
-        return 0
-
-    @cached_method
-    def dendrog_normalize(self, inplace=False):
-        r"""
-        Return the normalized tree of the *unlabelled* ordered rooted
-        tree ``self`` with respect to the dendrographical order.
-
-        INPUT:
-
-        - ``inplace`` -- (default ``False``) boolean; if ``True``,
-          then ``self`` is modified and nothing returned; otherwise
-          the normalized tree is returned
-
-        The normalized tree of an unlabelled ordered rooted tree
-        `t` with respect to the dendrographical order is an
-        unlabelled ordered rooted tree defined recursively
-        as follows: We first replace all children of `t` by their
-        normalized trees (with respect to the dendrographical
-        order); then, we reorder these children in weakly
-        increasing order with respect to the dendrographical order
-        (:meth:`dendrog_cmp`).
-
-        This can be viewed as an alternative to :meth:`normalize`
-        for the case of unlabelled ordered rooted trees.
-
-        EXAMPLES::
-
-            sage: OT = OrderedTree
-            sage: ta = OT([[],[[]]])
-            sage: tb = OT([[[]],[]])
-            sage: ta.dendrog_normalize() == tb.dendrog_normalize()
-            True
-            sage: ta == tb
-            False
-            sage: ta.dendrog_normalize()
-            [[], [[]]]
-
-        An example with inplace normalization::
-
-            sage: OT = OrderedTree
-            sage: ta = OT([[],[[]]])
-            sage: tb = OT([[[]],[]])
-            sage: ta.dendrog_normalize(inplace=True); ta
-            [[], [[]]]
-            sage: tb.dendrog_normalize(inplace=True); tb
-            [[], [[]]]
-        """
-        def dendrog_cmp(a, b):
-            return a.dendrog_cmp(b)
-        if not inplace:
-            with self.clone() as res:
-                resl = res._get_list()
-                for i in range(len(resl)):
-                    resl[i] = resl[i].dendrog_normalize()
-                resl.sort(cmp=dendrog_cmp)
-            return res
-
-        resl = self._get_list()
-        for i in range(len(resl)):
-            resl[i] = resl[i].dendrog_normalize()
-        resl.sort(cmp=dendrog_cmp)
-
 
 # Abstract class to serve as a Factory no instance are created.
 class OrderedTrees(UniqueRepresentation, Parent):
@@ -782,7 +838,7 @@ class OrderedTrees(UniqueRepresentation, Parent):
 
     - ``size`` -- (optional) an integer
 
-    OUPUT:
+    OUTPUT:
 
     - the set of all ordered trees (of the given ``size`` if specified)
 
@@ -835,7 +891,7 @@ class OrderedTrees(UniqueRepresentation, Parent):
             sage: OrderedTrees().leaf()
             []
 
-        TEST::
+        TESTS::
 
             sage: (OrderedTrees().leaf() is
             ....:     sage.combinat.ordered_tree.OrderedTrees_all().leaf())
@@ -883,7 +939,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
 
     def _repr_(self):
         """
-        TEST::
+        TESTS::
 
             sage: OrderedTrees()   # indirect doctest
             Ordered trees
@@ -940,7 +996,6 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.composition import Compositions
-from sage.combinat.cartesian_product import CartesianProduct
 #################################################################
 # Enumerated set of binary trees of a given size
 #################################################################
@@ -1020,7 +1075,7 @@ class OrderedTrees_size(OrderedTrees):
         if self._size == 0:
             return Integer(0)
         else:
-            from combinat import catalan_number
+            from .combinat import catalan_number
             return catalan_number(self._size - 1)
 
     def random_element(self):
@@ -1043,7 +1098,7 @@ class OrderedTrees_size(OrderedTrees):
 
         TESTS::
 
-            sage: all([OrderedTrees(10).random_element() in OrderedTrees(10) for i in range(20)])
+            sage: all(OrderedTrees(10).random_element() in OrderedTrees(10) for i in range(20))
             True
         """
         if self._size == 0:
@@ -1073,7 +1128,7 @@ class OrderedTrees_size(OrderedTrees):
             return
         else:
             for c in Compositions(self._size - 1):
-                for lst in CartesianProduct(*[self.__class__(_) for _ in c]):
+                for lst in itertools.product(*[self.__class__(_) for _ in c]):
                     yield self._element_constructor_(lst)
 
     @lazy_attribute
@@ -1134,7 +1189,7 @@ class LabelledOrderedTree(AbstractLabelledClonableTree, OrderedTree):
     INPUT:
 
     - ``children`` -- a list or tuple or more generally any iterable
-                      of trees or object convertible to trees
+      of trees or object convertible to trees
     - ``label`` -- any Sage object (default: ``None``)
 
     EXAMPLES::
@@ -1184,6 +1239,8 @@ class LabelledOrderedTree(AbstractLabelledClonableTree, OrderedTree):
         return LabelledOrderedTrees()
 
     _UnLabelled = OrderedTree
+
+    __hash__ = ClonableArray.__hash__
 
     @combinatorial_map(order=2, name="Left-right symmetry")
     def left_right_symmetry(self):
@@ -1316,7 +1373,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         """
         Return the cardinality of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: LabelledOrderedTrees().cardinality()
             +Infinity
@@ -1327,7 +1384,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         """
         Return a labelled ordered tree.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: LabelledOrderedTrees().an_element()   # indirect doctest
             toto[3[], 42[3[], 3[]], 5[None[]]]

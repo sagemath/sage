@@ -45,8 +45,8 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
         g = self.cartesian_projection(0)
         h = self.cartesian_projection(1)
-        gstr = wrapper(par._prefix0, g.__repr__())
-        hstr = wrapper(par._prefix1, h.__repr__())
+        gstr = wrapper(par._prefix0, repr(g))
+        hstr = wrapper(par._prefix1, repr(h))
         if par._print_tuple:
             return "(%s, %s)"%(gstr,hstr)
 
@@ -442,6 +442,22 @@ class GroupSemidirectProduct(CartesianProduct):
 
         """
         return GroupSemidirectProduct(self.cartesian_factors()[1], self.cartesian_factors()[0], twist=self._twist, act_to_right = not self.act_to_right(), prefix0 = self._prefix1, prefix1 = self._prefix0, print_tuple = self._print_tuple, category=self._category)
+
+    def construction(self):
+        r"""
+        Return ``None``.
+
+        This overrides the construction functor inherited from ``CartesianProduct``.
+
+        EXAMPLES::
+
+            sage: def twist(x,y):
+            ....:     return y
+            sage: H = GroupSemidirectProduct(WeylGroup(['A',2],prefix="s"), WeylGroup(['A',3],prefix="t"), twist)
+            sage: H.construction()
+
+        """
+        return None
 
 GroupSemidirectProduct.Element = GroupSemidirectProductElement
 

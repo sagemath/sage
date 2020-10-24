@@ -94,7 +94,7 @@ se comporta diferentemente do Python em diversas situações.
        '3^2'
 
 -  **Divisão por inteiros:** A expressão em Python ``2/3`` não se
-   comporta da forma que um matemático esperaria. Em Python, se ``m``
+   comporta da forma que um matemático esperaria. Em Python 2, se ``m``
    e ``n`` são inteiros (int), então ``m/n`` também é um inteiro
    (int), a saber, o quociente de ``m`` dividido por ``n``. Portanto
    ``2/3=0``. Tem havido discussões na comunidade do Python para
@@ -113,7 +113,7 @@ se comporta diferentemente do Python em diversas situações.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)
+       sage: int(2)/int(3)   # py2
        0
 
 -  **Inteiros longos:** O Python possui suporte nativo para inteiros
@@ -149,7 +149,7 @@ Explore a página na web do Sage para informações para desenvolvedores;
 entre outras coisas, você pode encontrar uma lista longa de projetos
 relacionados ao Sage ordenados por prioridade e categoria. O `Guia
 para desenvolvedores do Sage
-<http://www.sagemath.org/doc/developer/>`_ (em inglês) também possui
+<http://doc.sagemath.org/html/en/developer/>`_ (em inglês) também possui
 informações úteis, e você pode também visitar o grupo de discussões
 ``sage-devel`` no Google Groups.
 
@@ -161,10 +161,10 @@ aos cálculos feitos com o Sage incluindo
 
 ::
 
-    [Sage] William A. Stein et al., Sage Mathematics Software (Version 4.3).
-           The Sage Development Team, 2009, http://www.sagemath.org.
+    [Sage] SageMath, the Sage Mathematics Software System (Version 8.7),
+           The Sage Developers, 2019, https://www.sagemath.org.
 
-na sua bibliografia (substituindo 4.3 pela versão do Sage que você
+na sua bibliografia (substituindo 8.7 pela versão do Sage que você
 está usando). Além disso, procure observar quais componentes do Sage
 você está usando em seus cálculos, por exemplo, PARI, Singular, GAP,
 Maxima, e também site esses sistemas. Se você está em dúvida sobre

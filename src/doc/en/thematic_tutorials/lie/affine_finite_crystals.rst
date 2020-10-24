@@ -1,3 +1,5 @@
+.. _AffineFinite:
+
 ======================
 Affine Finite Crystals
 ======================
@@ -494,7 +496,7 @@ classical decomposition::
     sage: K.cardinality()
     249
     sage: L = [x for x in K if x.is_highest_weight([1,2,3,4,5,6,7,8])]
-    sage: map(lambda x: x.weight(), L)
+    sage: [x.weight() for x in L]
     [-2*Lambda[0] + Lambda[8], 0]
 
 
@@ -577,7 +579,7 @@ the `R`-matrix and has been implemented in Sage::
     sage: T = crystals.TensorProduct(K,K,K)
     sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2])]
     sage: for b in hw:
-    ....:     print b, b.energy_function()
+    ....:     print("{} {}".format(b, b.energy_function()))
     [[[1]], [[1]], [[1]]] 0
     [[[1]], [[2]], [[1]]] 2
     [[[2]], [[1]], [[1]]] 1
@@ -590,8 +592,7 @@ The affine grading can be computed even for nonperfect crystals::
     sage: T = crystals.TensorProduct(K,K1)
     sage: hw = [b for b in T if all(b.epsilon(i)==0 for i in [1,2,3,4])]
     sage: for b in hw:
-    ....:     print b, b.affine_grading()
-    ....:
+    ....:     print("{} {}".format(b, b.affine_grading()))
     [[], [[1]]] 1
     [[[1, 1]], [[1]]] 2
     [[[1, 2]], [[1]]] 1

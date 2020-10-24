@@ -8,7 +8,7 @@ AUTHORS:
 Development supported by NSF award No. 0702939.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Ethan Van Andel <evlutte@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -20,8 +20,8 @@ Development supported by NSF award No. 0702939.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import numpy as np
 cimport numpy as np
@@ -54,7 +54,7 @@ def polygon_spline(pts):
 
     Polygon approximation of an circle::
 
-        sage: pts = [e^(I*t / 25) for t in xrange(25)]
+        sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: ps = polygon_spline(pts)
         sage: ps.derivative(2)
         (-0.0470303661...+0.1520363883...j)
@@ -96,7 +96,7 @@ cdef class PSpline:
 
     def value(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -129,7 +129,7 @@ cdef class PSpline:
 
     def derivative(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -185,7 +185,7 @@ def complex_cubic_spline(pts):
 
     Polygon approximation of a circle::
 
-        sage: pts = [e^(I*t / 25) for t in xrange(25)]
+        sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: cs = complex_cubic_spline(pts)
         sage: cs.derivative(2)
         (-0.0497765406583...+0.151095006434...j)
@@ -249,7 +249,7 @@ cdef class CCSpline:
 
     def value(self, double t):
         """
-        Returns the location of a given point from the parameter ``t``.
+        Return the location of a given point from the parameter ``t``.
 
         INPUT:
 
@@ -281,7 +281,7 @@ cdef class CCSpline:
 
     def derivative(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -294,9 +294,7 @@ cdef class CCSpline:
         A complex number representing the derivative at the point on the
         figure corresponding to the input ``t``.
 
-        EXAMPLES:
-
-        ::
+        EXAMPLES::
 
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: cs = complex_cubic_spline(pts)

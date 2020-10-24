@@ -22,7 +22,7 @@ Here is an example of a linear function tensored with a vector space::
 from cpython.object cimport *
 
 from sage.misc.fast_methods cimport hash_by_id
-from sage.structure.element cimport ModuleElement, RingElement
+from sage.structure.element cimport ModuleElement, Element
 from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
 
 
@@ -100,7 +100,7 @@ cdef class LinearTensor(ModuleElement):
             sage: lt[1]
             2*x_0 + 5*x_3
         """
-        f = dict([key, value.__getitem__(indices)] for key, value in self._f.items())
+        f = dict([key, value[indices]] for key, value in self._f.items())
         LF = self.parent().linear_functions()
         return LF(f)
 
@@ -115,7 +115,7 @@ cdef class LinearTensor(ModuleElement):
         elements) of the variable represented by the keys (which are
         integers). The key ``-1`` corresponds to the constant term.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram().linear_functions_parent().tensor(RDF^2)
             sage: lt = p({0:[1,2], 3:[4,5]})
@@ -126,7 +126,7 @@ cdef class LinearTensor(ModuleElement):
 
     def coefficient(self, x):
         r"""
-        Return one of the the coefficients.
+        Return one of the coefficients.
 
         INPUT:
 
@@ -139,7 +139,7 @@ cdef class LinearTensor(ModuleElement):
         A constant, that is, an element of the free module factor. The
         coefficient of ``x`` in the linear function.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: mip.<b> = MixedIntegerLinearProgram()
             sage: lt = vector([1,2]) * b[3] + vector([4,5]) * b[0] - 5;  lt
@@ -174,7 +174,7 @@ cdef class LinearTensor(ModuleElement):
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:
                 raise ValueError('x is a sum, must be a single variable')
-            i = (<LinearFunction>x)._f.keys()[0]
+            i, = (<LinearFunction>x)._f.keys()
             if (<LinearFunction>x)._f[i] != 1:
                 raise ValueError('x must have a unit coefficient')
         else:
@@ -235,8 +235,8 @@ cdef class LinearTensor(ModuleElement):
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^(2,2))
             sage: LT.an_element()  # indirect doctest
-            [1 + 5*x_2 + 7*x_5 0]
-            [0                 0]
+            [1 + 5*x_2 + 7*x_5 1 + 5*x_2 + 7*x_5]
+            [1 + 5*x_2 + 7*x_5 1 + 5*x_2 + 7*x_5]
         """
         MS = self.parent().free_module()
         assert self.parent().is_matrix_space()
@@ -261,7 +261,7 @@ cdef class LinearTensor(ModuleElement):
             s += ']'
         return s
 
-    cpdef ModuleElement _add_(self, ModuleElement b):
+    cpdef _add_(self, b):
         r"""
         Return sum.
 
@@ -273,7 +273,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -285,7 +285,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) + coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _neg_(self):
+    cpdef _neg_(self):
         r"""
         Return the negative.
 
@@ -293,7 +293,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -305,7 +305,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = -coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _sub_(self, ModuleElement b):
+    cpdef _sub_(self, b):
         r"""
         Return difference.
 
@@ -317,7 +317,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -331,9 +331,9 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 
-    cpdef ModuleElement _rmul_(self, RingElement b):
+    cpdef _lmul_(self, Element b):
         r"""
-        Return right multiplication by scalar.
+        Return multiplication by scalar.
 
         INPUT:
 
@@ -343,7 +343,7 @@ cdef class LinearTensor(ModuleElement):
 
         A :class:`LinearTensor`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.numerical.linear_functions import LinearFunctionsParent
             sage: LT = LinearFunctionsParent(RDF).tensor(RDF^2)
@@ -355,7 +355,7 @@ cdef class LinearTensor(ModuleElement):
             result[key] = b * coeff
         return self.parent()(result)
 
-    cdef _richcmp(left, right, int op):
+    def __richcmp__(left, right, int op):
         """
         Create an inequality or equality object.
 
@@ -396,15 +396,12 @@ cdef class LinearTensor(ModuleElement):
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.explain(10, lt, operator.le)
             Coercion on left operand via
-                Conversion map:
+                Coercion map:
                   From: Integer Ring
-                  To:   Tensor product of Vector space of dimension 2 over Real 
-                        Double Field and Linear functions over Real Double Field
+                  To:   Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
             Arithmetic performed after coercions.
-            Result lives in Tensor product of Vector space of dimension 2 over 
-            Real Double Field and Linear functions over Real Double Field
-            Tensor product of Vector space of dimension 2 over Real Double Field 
-            and Linear functions over Real Double Field
+            Result lives in Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
+            Tensor product of Vector space of dimension 2 over Real Double Field and Linear functions over Real Double Field
         
             sage: operator.le(10, lt)
             (10.0, 10.0) <= (1.0, 2.0)*x_0
@@ -445,38 +442,29 @@ cdef class LinearTensor(ModuleElement):
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
-            sage: f.__hash__()   # random output
+            sage: lt0 = p[0] * vector([1,2])
+            sage: hash(lt0)   # random output
             103987752
             sage: d = {}
-            sage: d[f] = 3
-        """
-        # see _cmp_() if you want to change the hash function
-        return hash_by_id(<void *> self)
+            sage: d[lt0] = 3
 
-    cpdef int _cmp_(left, Element right) except -2:
-        """
-        Implement comparison of two linear functions.
+        Since we hash by ``id()``, linear functions and constraints are
+        only considered equal for sets and dicts if they are the same
+        object::
 
-        EXAMPLES::
-
-            sage: p = MixedIntegerLinearProgram()
-            sage: f = p({2 : 5, 3 : 2})
-            sage: cmp(f, f)
-            0
-            sage: abs(cmp(f, f+0))     # since we are comparing by id()
-            1
-            sage: abs(cmp(f, f+1))
-            1
-            sage: len(set([f, f]))
-            1
-            sage: len(set([f, f+0]))
-            2
+            sage: f = p[0] * vector([1])
+            sage: g = p[0] * vector([1])
+            sage: set([f, f])
+            {((1.0))*x_0}
+            sage: set([f, g])
+            {((1.0))*x_0, ((1.0))*x_0}
             sage: len(set([f, f+1]))
             2
-        """
-        # Note: if you want to implement smarter comparison, you also
-        # need to change __hash__(). The comparison function must
-        # satisfy cmp(x,y)==0 => hash(x)==hash(y)
-        return cmp(id(left), id(right))
 
+            sage: d = {}
+            sage: d[f] = 123
+            sage: d[g] = 456
+            sage: len(list(d))
+            2
+        """
+        return hash_by_id(<void *> self)

@@ -1,0 +1,20 @@
+;; The 4-sphere.
+
+* (show-structure S4 4)
+
+
+Dimension = 0:
+
+        Vertices :  (*)
+
+Dimension = 1:
+
+Dimension = 2:
+
+Dimension = 3:
+
+Dimension = 4:
+
+        Simplex : S4
+
+                Faces : (<AbSm 2-1-0 *> <AbSm 2-1-0 *> <AbSm 2-1-0 *> <AbSm 2-1-0 *> <AbSm 2-1-0 *>)

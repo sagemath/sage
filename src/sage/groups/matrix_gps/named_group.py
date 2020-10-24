@@ -12,7 +12,7 @@ EXAMPLES::
     Special Linear Group of degree 2 over Finite Field of size 3
     sage: G.is_finite()
     True
-    sage: G.conjugacy_class_representatives()
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -40,7 +40,7 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 from sage.groups.matrix_gps.matrix_group import (
     MatrixGroup_generic, MatrixGroup_gap )
 
@@ -107,10 +107,9 @@ def normalize_args_vectorspace(*args, **kwds):
         ring = V.base_ring()
     if len(args) == 2:
         degree, ring = args
-        from sage.rings.integer import is_Integer
         try:
             ring = ZZ(ring)
-            from sage.rings.finite_rings.constructor import FiniteField
+            from sage.rings.finite_rings.finite_field_constructor import FiniteField
             var = kwds.get('var', 'a')
             ring = FiniteField(ring, var)
         except (ValueError, TypeError):
@@ -118,22 +117,99 @@ def normalize_args_vectorspace(*args, **kwds):
     return (ZZ(degree), ring)
 
 
-class NamedMatrixGroup_generic(UniqueRepresentation, MatrixGroup_generic):
+def normalize_args_invariant_form(R, d, invariant_form):
+    r"""
+    Normalize the input of a user defined invariant bilinear form
+    for orthogonal, unitary and symplectic groups.
 
-    def __init__(self, degree, base_ring, special, sage_name, latex_string):
+    Further informations and examples can be found in the defining
+    functions (:func:`GU`, :func:`SU`, :func:`Sp`, etc.) for unitary,
+    symplectic groups, etc.
+
+    INPUT:
+
+    - ``R`` -- instance of the integral domain which should become
+      the ``base_ring`` of the classical group
+
+    - ``d`` -- integer giving the dimension of the module the classical
+      group is operating on
+
+    - ``invariant_form`` --  (optional) instances being accepted by
+      the matrix-constructor that define a `d \times d` square matrix
+      over R describing the bilinear form to be kept invariant
+      by the classical group
+
+    OUTPUT:
+
+    ``None`` if ``invariant_form`` was not specified (or ``None``).
+    A matrix if the normalization was possible; otherwise an error
+    is raised.
+
+    TESTS::
+
+        sage: from sage.groups.matrix_gps.named_group import normalize_args_invariant_form
+        sage: CF3 = CyclotomicField(3)
+        sage: m = normalize_args_invariant_form(CF3, 3, (1,2,3,0,2,0,0,2,1)); m
+        [1 2 3]
+        [0 2 0]
+        [0 2 1]
+        sage: m.base_ring() == CF3
+        True
+
+        sage: normalize_args_invariant_form(ZZ, 3, (1,2,3,0,2,0,0,2))
+        Traceback (most recent call last):
+        ...
+        ValueError: sequence too short (expected length 9, got 8)
+
+        sage: normalize_args_invariant_form(QQ, 3, (1,2,3,0,2,0,0,2,0))
+        Traceback (most recent call last):
+        ...
+        ValueError: invariant_form must be non-degenerate
+
+    AUTHORS:
+
+    - Sebastian Oehms (2018-8) (see :trac:`26028`)
+    """
+    if invariant_form is None:
+        return invariant_form
+
+    from sage.matrix.constructor import matrix
+    m = matrix(R, d, d, invariant_form)
+
+    if m.is_singular():
+        raise ValueError("invariant_form must be non-degenerate")
+    return m
+
+
+class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
+
+    def __init__(self, degree, base_ring, special, sage_name, latex_string,
+                 category=None, invariant_form=None):
         """
         Base class for "named" matrix groups
 
         INPUT:
 
-        - ``degree`` -- integer. The degree (number of rows/columns of matrices).
+        - ``degree`` -- integer; the degree (number of rows/columns of
+          matrices)
 
-        - ``base_ring`` -- rinrg. The base ring of the matrices.
+        - ``base_ring`` -- ring; the base ring of the matrices
 
-        - ``special`` -- boolean. Whether the matrix group is special,
-          that is, elements have determinant one.
+        - ``special`` -- boolean; whether the matrix group is special,
+          that is, elements have determinant one
 
-        - ``latex_string`` -- string. The latex representation.
+        - ``sage_name`` -- string; the name of the group
+
+        - ``latex_string`` -- string; the latex representation
+
+        - ``category`` -- (optional) a subcategory of
+          :class:`sage.categories.groups.Groups` passed to
+          the constructor of
+          :class:`sage.groups.matrix_gps.matrix_group.MatrixGroup_generic`
+
+        - ``invariant_form`` --  (optional) square-matrix of the given
+          degree over the given base_ring describing a bilinear form
+          to be kept invariant by the group
 
         EXAMPLES::
 
@@ -141,11 +217,17 @@ class NamedMatrixGroup_generic(UniqueRepresentation, MatrixGroup_generic):
             sage: from sage.groups.matrix_gps.named_group import NamedMatrixGroup_generic
             sage: isinstance(G, NamedMatrixGroup_generic)
             True
+
+        .. SEEALSO::
+
+            See the examples for :func:`GU`, :func:`SU`, :func:`Sp`, etc.
+            as well.
         """
-        MatrixGroup_generic.__init__(self, degree, base_ring)
+        MatrixGroup_generic.__init__(self, degree, base_ring, category=category)
         self._special = special
         self._name_string = sage_name
         self._latex_string = latex_string
+        self._invariant_form = invariant_form
 
     def _an_element_(self):
         """
@@ -193,7 +275,7 @@ class NamedMatrixGroup_generic(UniqueRepresentation, MatrixGroup_generic):
         """
         return self._latex_string
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         """
         Override comparison.
 
@@ -207,28 +289,38 @@ class NamedMatrixGroup_generic(UniqueRepresentation, MatrixGroup_generic):
             sage: G = GL(2,3)
             sage: G == MatrixGroup(G.gens())
             True
+
+            sage: G = groups.matrix.GL(4,2)
+            sage: H = MatrixGroup(G.gens())
+            sage: G == H
+            True
+            sage: G != H
+            False
         """
-        return self.__cmp__(other) == 0
+        return MatrixGroup_generic.__richcmp__(self, other, op)
 
 
 class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
 
-    def __init__(self, degree, base_ring, special, sage_name, latex_string, gap_command_string):
+    def __init__(self, degree, base_ring, special, sage_name, latex_string,
+                 gap_command_string, category=None):
         """
         Base class for "named" matrix groups using LibGAP
 
         INPUT:
 
-        - ``degree`` -- integer. The degree (number of rows/columns of matrices).
+        - ``degree`` -- integer. The degree (number of rows/columns of
+          matrices).
 
-        - ``base_ring`` -- rinrg. The base ring of the matrices.
+        - ``base_ring`` -- ring. The base ring of the matrices.
 
         - ``special`` -- boolean. Whether the matrix group is special,
           that is, elements have determinant one.
 
         - ``latex_string`` -- string. The latex representation.
 
-        - ``gap_command_string`` -- string. The GAP command to construct the matrix group.
+        - ``gap_command_string`` -- string. The GAP command to construct
+          the matrix group.
 
         EXAMPLES::
 
@@ -239,9 +331,9 @@ class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
         """
         from sage.libs.gap.libgap import libgap
         group = libgap.eval(gap_command_string)
-        MatrixGroup_gap.__init__(self, degree, base_ring, group)
+        MatrixGroup_gap.__init__(self, degree, base_ring, group,
+                                 category=category)
         self._special = special
         self._gap_string = gap_command_string
         self._name_string = sage_name
         self._latex_string = latex_string
-

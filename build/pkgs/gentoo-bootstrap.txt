@@ -1,0 +1,3 @@
+sys-devel/autoconf
+sys-devel/automake
+sys-devel/libtool

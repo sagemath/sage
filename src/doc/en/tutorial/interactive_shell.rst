@@ -10,14 +10,12 @@ ready to use from the command prompt. Further customization is
 possible by editing the ``$SAGE_ROOT/ipythonrc`` file. Upon starting
 Sage, you get output similar to the following:
 
-.. skip
+.. CODE-BLOCK:: text
 
-::
-
-    ----------------------------------------------------------------------
-    | SAGE Version 3.1.1, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
 
     sage:
@@ -55,7 +53,7 @@ caching. All input is saved and can be retrieved as variables (besides
 the usual arrow key recall). The following GLOBAL variables always
 exist (so don't overwrite them!)":
 
-::
+.. CODE-BLOCK:: text
 
       _:  previous input (interactive shell and notebook)
       __: next previous input (interactive shell only)
@@ -171,13 +169,13 @@ file).
 
 .. skip
 
-::
+.. CODE-BLOCK:: shell-session
 
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
@@ -193,10 +191,10 @@ file).
     sage:
     Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
     Loading log file <setup> one line at a time...
@@ -419,7 +417,9 @@ commands" in IPython:
   ``export EDITOR=/usr/bin/vim`` or something similar in the
   appropriate place, like a ``.profile`` file).  From the Sage prompt,
   executing ``%edit`` will open up the named editor.  Then within the
-  editor you can define a function::
+  editor you can define a function:
+
+  .. CODE-BLOCK:: python
 
     def some_function(n):
         return n**2 + 3*n + 2
@@ -496,7 +496,7 @@ execution stack. For example,
 For a list of commands in the debugger, type ``?`` at the ``ipdb>``
 prompt:
 
-::
+.. CODE-BLOCK:: text
 
     ipdb> ?
 
@@ -945,90 +945,3 @@ Each saved variable is again available. Moreover, the variable
     sage: a
     389
 
-
-
-.. _section-notebook:
-
-The Notebook Interface
-======================
-
-The Sage notebook is run by typing
-
-.. skip
-
-::
-
-    sage: notebook()
-
-on the command line of Sage. This starts the Sage notebook and
-opens your default web browser to view it. The server's state files
-are stored in ``$HOME/.sage/sage\_notebook``.
-
-Other options include:
-
-.. skip
-
-::
-
-    sage: notebook("directory")
-
-which starts a new notebook server using files in the given
-directory, instead of the default directory
-``$HOME/.sage/sage_notebook``. This can be useful if you want to
-have a collection of worksheets associated with a specific project,
-or run several separate notebook servers at the same time.
-
-When you start the notebook, it first creates the following files
-in ``$HOME/.sage/sage_notebook``:
-
-::
-
-    nb.sobj       (the notebook SAGE object file)
-    objects/      (a directory containing SAGE objects)
-    worksheets/   (a directory containing SAGE worksheets).
-
-After creating the above files, the notebook starts a web server.
-
-A "notebook" is a collection of user accounts, each of which can
-have any number of worksheets. When you create a new worksheet, the
-data that defines it is stored in the ``worksheets/username/number``
-directories. In each such directory there is a plain text file
-``worksheet.txt`` - if anything ever happens to your worksheets, or Sage,
-or whatever, that human-readable file contains everything needed to
-reconstruct your worksheet.
-
-From within Sage, type ``notebook?`` for much more about how to start a
-notebook server.
-
-The following diagram illustrates the architecture of the Sage
-Notebook:
-
-::
-
-    ----------------------
-    |                    |
-    |                    |
-    |   firefox/safari   |
-    |                    |
-    |     javascript     |
-    |      program       |
-    |                    |
-    |                    |
-    ----------------------
-          |      ^
-          | AJAX |
-          V      |
-    ----------------------
-    |                    |
-    |       sage         |                SAGE process 1
-    |       web          | ------------>  SAGE process 2    (Python processes)
-    |      server        |   pexpect      SAGE process 3
-    |                    |                    .
-    |                    |                    .
-    ----------------------                    .
-
-For help on a Sage command, ``cmd``, in the notebook browser box,
-type ``cmd?`` and now hit ``<esc>`` (not ``<shift-enter>``).
-
-For help on the keyboard shortcuts available in the notebook
-interface, click on the ``Help`` link.

@@ -12,8 +12,6 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.infinity import infinity
-from sage.rings.rational_field import QQ
 
 
 class WeylGroups(Category_singleton):
@@ -78,6 +76,19 @@ class WeylGroups(Category_singleton):
     Finite = LazyImport('sage.categories.finite_weyl_groups', 'FiniteWeylGroups')
 
     class ParentMethods:
+        def coxeter_matrix(self):
+            """
+            Return the Coxeter matrix associated to ``self``.
+
+            EXAMPLES::
+
+                sage: G = WeylGroup(['A',3])
+                sage: G.coxeter_matrix()
+                [1 3 2]
+                [3 1 3]
+                [2 3 1]
+            """
+            return self.cartan_type().coxeter_matrix()
 
         def pieri_factors(self, *args, **keywords):
             r"""
@@ -105,9 +116,27 @@ class WeylGroups(Category_singleton):
 
                 sage: W = WeylGroup(['B',3])
                 sage: PF = W.pieri_factors()
-                sage: [w.reduced_word() for w in PF]
-                [[1, 2, 3, 2, 1], [1, 2, 3, 2], [2, 3, 2], [2, 3], [3, 1, 2, 1], [1, 2, 1], [2], [1, 2], [1], [], [2, 1], [3, 2, 1], [3, 1], [2, 3, 2, 1], [3], [3, 2], [1, 2, 3], [1, 2, 3, 1], [3, 1, 2], [2, 3, 1]]
-
+                sage: sorted([w.reduced_word() for w in PF])
+                [[],
+                 [1],
+                 [1, 2],
+                 [1, 2, 1],
+                 [1, 2, 3],
+                 [1, 2, 3, 1],
+                 [1, 2, 3, 2],
+                 [1, 2, 3, 2, 1],
+                 [2],
+                 [2, 1],
+                 [2, 3],
+                 [2, 3, 1],
+                 [2, 3, 2],
+                 [2, 3, 2, 1],
+                 [3],
+                 [3, 1],
+                 [3, 1, 2],
+                 [3, 1, 2, 1],
+                 [3, 2],
+                 [3, 2, 1]]
                 sage: W = WeylGroup(['C',4,1])
                 sage: PF = W.pieri_factors()
                 sage: W.from_reduced_word([3,2,0]) in PF
@@ -116,21 +145,25 @@ class WeylGroups(Category_singleton):
             # Do not remove this line which makes sure the pieri factor
             # code is properly inserted inside the Cartan Types
             import sage.combinat.root_system.pieri_factors
+            assert sage.combinat.root_system.pieri_factors
             ct = self.cartan_type()
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
             raise NotImplementedError("Pieri factors for type {}".format(ct))
 
         @cached_method
-        def quantum_bruhat_graph(self, index_set = ()):
+        def quantum_bruhat_graph(self, index_set=()):
             r"""
-            Returns the quantum Bruhat graph of the quotient of the Weyl group by a parabolic subgroup `W_J`.
+            Return the quantum Bruhat graph of the quotient of the Weyl
+            group by a parabolic subgroup `W_J`.
 
             INPUT:
 
-            - ``index_set`` -- a tuple `J` of nodes of the Dynkin diagram (default: ())
+            - ``index_set`` -- (default: ()) a tuple `J` of nodes of
+              the Dynkin diagram
 
-            By default, the value for ``index_set`` indicates that the subgroup is trivial and the quotient is the full Weyl group.
+            By default, the value for ``index_set`` indicates that the
+            subgroup is trivial and the quotient is the full Weyl group.
 
             EXAMPLES::
 
@@ -141,22 +174,72 @@ class WeylGroups(Category_singleton):
                 sage: g.vertices()
                 [s2*s3*s1*s2, s3*s1*s2, s1*s2, s3*s2, s2, 1]
                 sage: g.edges()
-                [(s2*s3*s1*s2, s2, alpha[2]), (s3*s1*s2, s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3]),
-                (s3*s1*s2, 1, alpha[2]), (s1*s2, s3*s1*s2, alpha[2] + alpha[3]),
-                (s3*s2, s3*s1*s2, alpha[1] + alpha[2]), (s2, s1*s2, alpha[1] + alpha[2]),
-                (s2, s3*s2, alpha[2] + alpha[3]), (1, s2, alpha[2])]
+                [(s2*s3*s1*s2, s2, alpha[2]),
+                 (s3*s1*s2, s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3]),
+                 (s3*s1*s2, 1, alpha[2]),
+                 (s1*s2, s3*s1*s2, alpha[2] + alpha[3]),
+                 (s3*s2, s3*s1*s2, alpha[1] + alpha[2]),
+                 (s2, s1*s2, alpha[1] + alpha[2]),
+                 (s2, s3*s2, alpha[2] + alpha[3]),
+                 (1, s2, alpha[2])]
                 sage: W = WeylGroup(['A',3,1], prefix="s")
                 sage: g = W.quantum_bruhat_graph()
                 Traceback (most recent call last):
                 ...
-                ValueError: The Cartan type ['A', 3, 1] is not finite
+                ValueError: the Cartan type ['A', 3, 1] is not finite
             """
             if not self.cartan_type().is_finite():
-                raise ValueError("The Cartan type {} is not finite".format(self.cartan_type()))
+                raise ValueError("the Cartan type {} is not finite".format(self.cartan_type()))
+
+            # This is a modified form of quantum_bruhat_successors.
+            # It does not do any error checking and also is more efficient
+            #   with how it handles memory and checks by using data stored
+            #   at this function level rather than recomputing everything.
+            lattice = self.cartan_type().root_system().root_lattice()
+            NPR = lattice.nonparabolic_positive_roots(index_set)
+            NPR_sum = sum(NPR)
+            NPR_data = {}
+            double_rho = lattice.sum(lattice.positive_roots()) # = 2 * \rho
+            for alpha in NPR:
+                ref = alpha.associated_reflection()
+                alphacheck = alpha.associated_coroot()
+                NPR_data[alpha] = [self.from_reduced_word(ref), # the element
+                                   len(ref) == double_rho.scalar(alphacheck) - 1, # is_quantum
+                                   NPR_sum.scalar(alphacheck)] # the scalar
+            # We also create a temporary cache of lengths as they are
+            #   relatively expensive to compute and needed frequently
+            visited = {}
+            todo = {self.one()}
+            len_cache = {}
+            def length(x):
+                if x in len_cache:
+                    return len_cache[x]
+                len_cache[x] = x.length()
+                return len_cache[x]
+            while todo:
+                x = todo.pop()
+                w_length_plus_one = length(x) + 1
+                adj = {}
+                for alpha in NPR:
+                    elt, is_quantum, scalar = NPR_data[alpha]
+                    wr = x * elt
+                    wrc = wr.coset_representative(index_set)
+                    # coset_representative returns wr if nothing gets changed
+                    if wrc is wr and length(wrc) == w_length_plus_one:
+                        if wrc not in visited:
+                            todo.add(wrc)
+                        adj[wr] = alpha
+                    elif is_quantum and length(wrc) == w_length_plus_one - scalar:
+                        if wrc not in visited:
+                            todo.add(wrc)
+                        adj[wrc] = alpha
+                visited[x] = adj
+
             from sage.graphs.digraph import DiGraph
-            WP = [x for x in self if x==x.coset_representative(index_set)]
-            return DiGraph([[x,i[0],i[1]] for x in WP for i in x.quantum_bruhat_successors(index_set, roots = True)],
-                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set))
+            return DiGraph(visited,
+                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set),
+                           format="dict_of_dicts",
+                           data_structure="static_sparse")
 
     class ElementMethods:
 
@@ -194,7 +277,7 @@ class WeylGroups(Category_singleton):
             return self in self.parent().pieri_factors()
 
 
-        def left_pieri_factorizations(self, max_length = infinity):
+        def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
             is a Pieri factor and `v` is an element of the Weyl group.
@@ -250,6 +333,9 @@ class WeylGroups(Category_singleton):
                 sage: W.from_reduced_word([0,2,1,0]).left_pieri_factorizations().cardinality()
                 6
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             pieri_factors = self.parent().pieri_factors()
             def predicate(u):
                 return u in pieri_factors and u.length() <= max_length
@@ -257,7 +343,7 @@ class WeylGroups(Category_singleton):
             return self.binary_factorizations(predicate)
 
         @cached_in_parent_method
-        def stanley_symmetric_function_as_polynomial(self, max_length = infinity):
+        def stanley_symmetric_function_as_polynomial(self, max_length=None):
             r"""
             Returns a multivariate generating function for the number
             of factorizations of a Weyl group element into Pieri
@@ -319,8 +405,12 @@ class WeylGroups(Category_singleton):
             by taking right factors, and in particular Grassmanian
             elements.
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             W = self.parent()
             pieri_factors = W.pieri_factors()
+            from sage.rings.rational_field import QQ
             R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
@@ -389,18 +479,16 @@ class WeylGroups(Category_singleton):
 
             REFERENCES:
 
-            .. [BH1994] S. Billey, M. Haiman. *Schubert polynomials for the
-               classical groups*. J. Amer. Math. Soc., 1994.
-            .. [Lam2008] T. Lam. *Schubert polynomials for the affine
-               Grassmannian*. J. Amer. Math. Soc., 2008.
-            .. [LSS2009] T. Lam, A. Schilling, M. Shimozono. *Schubert
-               polynomials for the affine Grassmannian of the symplectic
-               group*. Mathematische Zeitschrift 264(4) (2010) 765-811
-               (:arxiv:`0710.2720`)
-            .. [Pon2010] S. Pon. *Types B and D affine Stanley symmetric
-               functions*, unpublished PhD Thesis, UC Davis, 2010.
+            - [BH1994]_
+
+            - [Lam2008]_
+
+            - [LSS2009]_
+
+            - [Pon2010]_
             """
             import sage.combinat.sf
+            from sage.rings.rational_field import QQ
             m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
@@ -551,6 +639,7 @@ class WeylGroups(Category_singleton):
             inv = self.inversions(side=side, inversion_type='roots')
             from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
             I = self.parent().cartan_type().index_set()
+            from sage.rings.rational_field import QQ
             H = HyperplaneArrangements(QQ, tuple(['a{}'.format(i) for i in I]))
             gens = H.gens()
             if not inv:
@@ -560,24 +649,26 @@ class WeylGroups(Category_singleton):
 
         def bruhat_lower_covers_coroots(self):
             r"""
-            Returns all 2-tuples (``v``, `\alpha`) where ``v`` is covered by ``self`` and `\alpha`
-            is the positive coroot such that ``self`` = ``v`` `s_\alpha` where `s_\alpha` is
+            Return all 2-tuples (``v``, `\alpha`) where ``v`` is covered
+            by ``self`` and `\alpha` is the positive coroot such that
+            ``self`` = ``v`` `s_\alpha` where `s_\alpha` is
             the reflection orthogonal to `\alpha`.
 
             ALGORITHM:
 
-            See :meth:`.bruhat_lower_covers` and :meth:`.bruhat_lower_covers_reflections` for Coxeter groups.
+            See :meth:`.bruhat_lower_covers` and
+            :meth:`.bruhat_lower_covers_reflections` for Coxeter groups.
 
             EXAMPLES::
 
                 sage: W = WeylGroup(['A',3], prefix="s")
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.bruhat_lower_covers_coroots()
-                [(s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3]), (s3*s2*s1, alphacheck[2]), (s3*s1*s2, alphacheck[1])]
-
+                [(s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3]),
+                 (s3*s2*s1, alphacheck[2]), (s3*s1*s2, alphacheck[1])]
             """
-
-            return [(x[0],x[1].reflection_to_coroot()) for x in self.bruhat_lower_covers_reflections()]
+            return [(x[0],x[1].reflection_to_coroot())
+                    for x in self.bruhat_lower_covers_reflections()]
 
         def bruhat_upper_covers_coroots(self):
             r"""
@@ -594,41 +685,52 @@ class WeylGroups(Category_singleton):
                 sage: W = WeylGroup(['A',4], prefix="s")
                 sage: w = W.from_reduced_word([3,1,2,1])
                 sage: w.bruhat_upper_covers_coroots()
-                [(s1*s2*s3*s2*s1, alphacheck[3]), (s2*s3*s1*s2*s1, alphacheck[2] + alphacheck[3]), (s3*s4*s1*s2*s1, alphacheck[4]), (s4*s3*s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3] + alphacheck[4])]
-
+                [(s1*s2*s3*s2*s1, alphacheck[3]),
+                 (s2*s3*s1*s2*s1, alphacheck[2] + alphacheck[3]),
+                 (s3*s4*s1*s2*s1, alphacheck[4]),
+                 (s4*s3*s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3] + alphacheck[4])]
             """
+            return [(x[0],x[1].reflection_to_coroot())
+                    for x in self.bruhat_upper_covers_reflections()]
 
-            return [(x[0],x[1].reflection_to_coroot()) for x in self.bruhat_upper_covers_reflections()]
-
-        def quantum_bruhat_successors(self, index_set = None, roots = False, quantum_only = False):
+        def quantum_bruhat_successors(self, index_set=None, roots=False, quantum_only=False):
             r"""
-            Returns the successors of ``self`` in the parabolic quantum Bruhat graph.
+            Return the successors of ``self`` in the quantum Bruhat graph
+            on the parabolic quotient of the Weyl group determined by the
+            subset of Dynkin nodes ``index_set``.
 
             INPUT:
 
-            - ``self`` -- a Weyl group element, which is assumed to be of minimum length in its coset with respect to the parabolic subgroup
+            - ``self`` -- a Weyl group element, which is assumed to
+              be of minimum length in its coset with respect to the
+              parabolic subgroup
 
-            - ``index_set`` -- (default: None) indicates the set of simple reflections used to generate the parabolic subgroup;
-               the default value indicates that the subgroup is the identity
+            - ``index_set`` -- (default: ``None``) indicates the set of
+              simple reflections used to generate the parabolic subgroup;
+              the default value indicates that the subgroup is the identity
 
-            - ``roots`` -- (default: False) if True, returns the list of 2-tuples (``w``, `\alpha`) where ``w`` is a
-               successor and `\alpha` is the positive root associated with the successor relation.
+            - ``roots`` -- (default: ``False``) if ``True``, returns the
+              list of 2-tuples (``w``, `\alpha`) where ``w`` is a successor
+              and `\alpha` is the positive root associated with the
+              successor relation
 
-            - ``quantum_only`` -- (default: False) if True, returns only the quantum successors
-
-            Returns the successors of ``self`` in the quantum Bruhat graph on the parabolic
-            quotient of the Weyl group determined by the subset of Dynkin nodes ``index_set``.
+            - ``quantum_only`` -- (default: ``False``) if ``True``, returns
+              only the quantum successors
 
             EXAMPLES::
 
                 sage: W = WeylGroup(['A',3], prefix="s")
                 sage: w = W.from_reduced_word([3,1,2])
                 sage: w.quantum_bruhat_successors([1], roots = True)
-                [(s3, alpha[2]), (s1*s2*s3*s2, alpha[3]), (s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3])]
+                [(s3, alpha[2]), (s1*s2*s3*s2, alpha[3]),
+                 (s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3])]
                 sage: w.quantum_bruhat_successors([1,3])
                 [1, s2*s3*s1*s2]
                 sage: w.quantum_bruhat_successors(roots = True)
-                [(s3*s1*s2*s1, alpha[1]), (s3*s1, alpha[2]), (s1*s2*s3*s2, alpha[3]), (s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3])]
+                [(s3*s1*s2*s1, alpha[1]),
+                 (s3*s1, alpha[2]),
+                 (s1*s2*s3*s2, alpha[3]),
+                 (s2*s3*s1*s2, alpha[1] + alpha[2] + alpha[3])]
                 sage: w.quantum_bruhat_successors()
                 [s3*s1*s2*s1, s3*s1, s1*s2*s3*s2, s2*s3*s1*s2]
                 sage: w.quantum_bruhat_successors(quantum_only = True)
@@ -638,11 +740,10 @@ class WeylGroups(Category_singleton):
                 Traceback (most recent call last):
                 ...
                 ValueError: s2*s3 is not of minimum length in its coset of the parabolic subgroup generated by the reflections (1, 3)
-
             """
             W = self.parent()
             if not W.cartan_type().is_finite():
-                raise ValueError("The Cartan type {} is not finite".format(W.cartan_type()))
+                raise ValueError("the Cartan type {} is not finite".format(W.cartan_type()))
             if index_set is None:
                 index_set = []
             else:

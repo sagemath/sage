@@ -53,7 +53,7 @@ spades, or clubs) and a value (2, 3, ..., 10, jack, queen, king, ace). The
 game is played with a full deck, which consists of the Cartesian product
 of the set of suits and the set of values:
 
-.. math:: \operatorname{Cards} = \operatorname{Suits} \times
+.. MATH:: \operatorname{Cards} = \operatorname{Suits} \times
           \operatorname{Values} = \{ (s, v)  \mathrel| s\in
           \operatorname{Suits} \text{ et } v \in \operatorname{Values} \}\,.
 
@@ -61,8 +61,8 @@ We construct these examples in ``Sage``::
 
     sage: Suits = Set(["Hearts", "Diamonds", "Spades", "Clubs"])
     sage: Values = Set([2, 3, 4, 5, 6, 7, 8, 9, 10,
-    ...                 "Jack", "Queen", "King", "Ace"])
-    sage: Cards = CartesianProduct(Values, Suits)
+    ....:               "Jack", "Queen", "King", "Ace"])
+    sage: Cards = cartesian_product([Values, Suits])
 
 There are `4` suits and `13` possible values, and
 therefore `4\times 13=52` cards in the poker deck::
@@ -77,21 +77,7 @@ therefore `4\times 13=52` cards in the poker deck::
 Draw a card at random::
 
     sage: Cards.random_element()                      # random
-    [6, 'Clubs']
-
-A small technical digression is necessary here. The elements of a
-Cartesian product are returned in the form of lists::
-
-    sage: type(Cards.random_element())
-    <type 'list'>
-
-A ``Python`` list not being immutable, it cannot be an element of a set, which
-would cause us a problem later. We will therefore redefine our
-Cartesian product so that its elements are represented by tuples::
-
-    sage: Cards = CartesianProduct(Values, Suits).map(tuple)
-    sage: Cards.an_element()
-    ('King', 'Hearts')
+    (6, 'Clubs')
 
 Now we can define a set of cards::
 
@@ -136,7 +122,7 @@ among the thirteen possibilities, and the choice of one of four suits.
 We will construct the set of all flushes, so as to determine how many
 there are::
 
-    sage: Flushes = CartesianProduct(Subsets(Values, 5), Suits)
+    sage: Flushes = cartesian_product([Subsets(Values, 5), Suits])
     sage: Flushes.cardinality()
     5148
 
@@ -157,7 +143,7 @@ We will now attempt a little numerical simulation. The following
 function tests whether a given hand is a flush or not::
 
     sage: def is_flush(hand):
-    ...       return len(set(suit for (val, suit) in hand)) == 1
+    ....:     return len(set(suit for (val, suit) in hand)) == 1
 
 We now draw 10000 hands at random, and count the number of flushes
 obtained (this takes about 10 seconds)::
@@ -165,11 +151,11 @@ obtained (this takes about 10 seconds)::
     sage: n = 10000
     sage: nflush = 0
     sage: for i in range(n):                            # long time
-    ...      hand = Hands.random_element()
-    ...      if is_flush(hand):
-    ...          nflush += 1
-    sage: print n, nflush                               # random
-    10000 18
+    ....:    hand = Hands.random_element()
+    ....:    if is_flush(hand):
+    ....:        nflush += 1
+    sage: n, nflush                               # random
+    (10000, 18)
 
 .. topic:: Exercises
 
@@ -236,9 +222,9 @@ gold mine of information: the `Online Encyclopedia of Integer Sequences
 author, which contains more than 190000 sequences of integers::
 
     sage: oeis([1,1,2,5,14])                            # optional -- internet
-    0: A000108: Catalan numbers: C(n) = binomial(2n,n)/(n+1) = (2n)!/(n!(n+1)!). Also called Segner numbers.
-    1: A120588: G.f. satisfies: 3*A(x) = 2 + x + A(x)^2, starting with [1,1,1].
-    2: A080937: Number of Catalan paths (nonnegative, starting and ending at 0, step +/-1) of 2*n steps with all values <= 5.
+    0: A000108: Catalan numbers: ...
+    1: ...
+    2: ...
 
 The result suggests that the trees are counted by one of the most famous
 sequences, the Catalan numbers. Looking through the references supplied
@@ -253,12 +239,12 @@ Our next goal is to recover this result using ``Sage``. Let
 `C_0=\emptyset` and `c_0=0`. The set of all trees is
 then the disjoint union of the sets `C_n`:
 
-.. math:: C=\biguplus_{n\in \mathbb N} C_n\,.
+.. MATH:: C=\biguplus_{n\in \mathbb N} C_n\,.
 
 Having named the set `C` of all trees, we can translate the
 recursive definition of trees into a set-theoretic equation:
 
-.. math:: C \quad \approx \quad  \{ \mathrm{L} \} \quad \uplus\quad C \times C\,.
+.. MATH:: C \quad \approx \quad  \{ \mathrm{L} \} \quad \uplus\quad C \times C\,.
 
 In words: a tree `t` (which is by definition in `C`) is either a
 leaf (so in `\{\mathrm{L}\}`) or a node to which two trees
@@ -268,11 +254,11 @@ product `C\times C`).
 
 The founding idea of algebraic combinatorics, introduced by Euler in
 a letter to Goldbach of 1751 to treat a similar problem , is to
-manipuate all the numbers `c_n` simultaneously, by encoding them
+manipulate all the numbers `c_n` simultaneously, by encoding them
 as coefficients in a formal power series, called the *generating
 function* of the `c_n`’s:
 
-.. math:: C(z) = \sum_{n\in \mathbb N} c_n z^n\,,
+.. MATH:: C(z) = \sum_{n\in \mathbb N} c_n z^n\,,
 
 where `z` is a formal variable (which means that we do not
 have to worry about questions of convergence). The beauty of this idea
@@ -283,13 +269,13 @@ the corresponding series (`A(z)+B(z)`,
 satisfied by `C` can be translated directly into an algebraic
 equation satisfied by `C(z)`:
 
-.. math:: C(z) = z + C(z) \cdot C(z)\,.
+.. MATH:: C(z) = z + C(z) \cdot C(z)\,.
 
 Now we can solve this equation with ``Sage``. In order to do so, we
 introduce two variables, `C` and `z`, and we define the
 equation::
 
-    sage: C, z = var('C,z');
+    sage: C, z = var('C,z')
     sage: sys = [ C == z + C*C ]
 
 There are two solutions, which happen to have closed forms::
@@ -336,7 +322,7 @@ define by a recursive equation::
 
     sage: C = L()
     sage: C._name = 'C'
-    sage: C.define( z + C * C );
+    sage: C.define( z + C * C )
 
 ::
 
@@ -353,7 +339,7 @@ At any point, one can ask for any coefficient without having to redefine
 
 We now return to the closed form of `C(z)`::
 
-    sage: z = var('z');
+    sage: z = var('z')
     sage: C = s0; C
     -1/2*sqrt(-4*z + 1) + 1/2
 
@@ -384,11 +370,11 @@ satisfies the recurrence relation
 `c_{n+1}=\frac{(4n-2)}{n+1}c_n`. Simplifying, we find that
 `c_n` is the `(n-1)`-th Catalan number:
 
-.. math:: c_n = \operatorname{Catalan}(n-1) = \frac {1}{n} \binom{2(n-1)}{n-1}\,.
+.. MATH:: c_n = \operatorname{Catalan}(n-1) = \frac {1}{n} \binom{2(n-1)}{n-1}\,.
 
 We check this::
 
-    sage: n = var('n');
+    sage: n = var('n')
     sage: c = 1/n*binomial(2*(n-1),n-1)
     sage: [c.subs(n=k) for k in range(1, 11)]
     [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862]
@@ -433,19 +419,19 @@ In the present case, `P=y^2-y+x`. We formally differentiate this
 equation with respect to `z`::
 
     sage: x, y, z = var('x, y, z')
-    sage: P = function('P', x, y)
-    sage: C = function('C', z)
+    sage: P = function('P')(x, y)
+    sage: C = function('C')(z)
     sage: equation =  P(x=z, y=C) == 0
     sage: diff(equation, z)
-    D[0](C)(z)*D[1](P)(z, C(z)) + D[0](P)(z, C(z)) == 0
+    diff(C(z), z)*D[1](P)(z, C(z)) + D[0](P)(z, C(z)) == 0
 
 or, in a more readable format,
 
-.. math:: \frac{d C(z)}{d z} \frac{\partial P}{\partial y} (z, C(z)) + \frac{\partial P}{\partial x}(z,C(z)) = 0
+.. MATH:: \frac{d C(z)}{d z} \frac{\partial P}{\partial y} (z, C(z)) + \frac{\partial P}{\partial x}(z,C(z)) = 0
 
 From this we deduce:
 
-.. math:: \frac{d C(z)}{d z} = - \frac{\frac{\partial P}{\partial x}}{\frac{\partial P}{\partial y}}(z, C(z))\,.
+.. MATH:: \frac{d C(z)}{d z} = - \frac{\frac{\partial P}{\partial x}}{\frac{\partial P}{\partial y}}(z, C(z))\,.
 
 In the case of complete binary trees, this gives::
 
@@ -496,23 +482,23 @@ We lift the result to `\QQ(x)[y]` and then substitute
 
 or, more legibly,
 
-.. math:: \frac{\partial C(z)}{\partial z} = \frac{1}{1-4z} -\frac{2}{1-4z}C(z)\,.
+.. MATH:: \frac{\partial C(z)}{\partial z} = \frac{1}{1-4z} -\frac{2}{1-4z}C(z)\,.
 
 In this simple case, we can directly deduce from this expression a
 linear differential equation with coefficients in `\QQ[z]`::
 
     sage: equadiff = diff(C,z) == fraction(x=z, y=C)
     sage: equadiff
-    D[0](C)(z) == 2*C(z)/(4*z - 1) - 1/(4*z - 1)
+    diff(C(z), z) == 2*C(z)/(4*z - 1) - 1/(4*z - 1)
     sage: equadiff = equadiff.simplify_rational()
     sage: equadiff = equadiff * equadiff.rhs().denominator()
     sage: equadiff = equadiff - equadiff.rhs()
     sage: equadiff
-    (4*z - 1)*D[0](C)(z) - 2*C(z) + 1 == 0
+    (4*z - 1)*diff(C(z), z) - 2*C(z) + 1 == 0
 
 or, more legibly,
 
-.. math:: (1-4z) \frac{\partial C(z)}{\partial z} + 2 C(z) - 1 = 0\,.
+.. MATH:: (1-4z) \frac{\partial C(z)}{\partial z} + 2 C(z) - 1 = 0\,.
 
 It is trivial to verify this equation on the closed form::
 
@@ -523,7 +509,7 @@ It is trivial to verify this equation on the closed form::
     sage: bool(equadiff.substitute_function(Cf, s0))
     True
 
-.. On veut non seulement remplacer les occurences de C(z), mais
+.. On veut non seulement remplacer les occurrences de C(z), mais
 .. aussi de C tout court (par exemple dans D[0](C)). Y-a-t'il mieux
 .. pour retrouver C à partir de C(z)?
 .. Cf. also:
@@ -542,10 +528,10 @@ the differential equation, we obtain the desired recurrence relation on
 the coefficients; in this case we recover the relation we had already
 found, based on the closed form:
 
-.. math:: c_{n+1}=\frac{(4n-2)}{n+1}c_n
+.. MATH:: c_{n+1}=\frac{(4n-2)}{n+1}c_n
 
 After fixing the correct initial conditions, it becomes possible to
-calculate the coefficents of `C(z)` recursively::
+calculate the coefficients of `C(z)` recursively::
 
     sage: def C(n): return 1 if n <= 1 else (4*n-6)/n * C(n-1)
     sage: [ C(i) for i in range(10) ]
@@ -588,7 +574,7 @@ identities (Gosper’s algorithm, Zeilberger’s algorithm, and their
 generalizations; see also :ref:`Exercise: alternating sign matrices
 <exercise-alternating-sign-matrices>`).
 
-.. todo: add link to some tutorial on summation
+.. TODO:: add link to some tutorial on summation
 
 All these techniques and their many generalizations are at the heart of
 very active topics of research: automatic combinatorics and analytic
@@ -647,7 +633,7 @@ As a shortcut, in this setting, one can also use the notation::
     {2, 4}
 
 but this should be used with care because some sets have a
-natural indexing other than by `(0,\dots)`.
+natural indexing other than by `(0, 1, \dots)`.
 
 Conversely, one can calculate the position of an object in this order::
 
@@ -668,12 +654,12 @@ calculate its cardinality (`2^{2^{2^4}}`)::
 
 which is roughly `2\cdot 10^{19728}`::
 
-    sage: n.ndigits()                         # long time
+    sage: n.ndigits()
     19729
 
 or ask for its `237102124`-th element::
 
-    sage: S.unrank(237102123)
+    sage: S.unrank(237102123) # random print output
     {{{2, 4}, {1, 4}, {}, {1, 3, 4}, {1, 2, 4}, {4}, {2, 3}, {1, 3}, {2}},
       {{1, 3}, {2, 4}, {1, 2, 4}, {}, {3, 4}}}
 
@@ -687,10 +673,15 @@ result of ``len`` be an integer of type ``int``; this could cause
 overflows, and would not permit the return of {Infinity} for infinite
 sets::
 
-    sage: len(S)
+    sage: len(S)  #py2
     Traceback (most recent call last):
     ...
     OverflowError: Python int too large to convert to C long
+
+    sage: len(S)  #py3
+    Traceback (most recent call last):
+    ...
+    OverflowError: cannot fit 'int' into an index-sized integer
 
 Partitions of integers
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -745,7 +736,7 @@ richer than simple lists::
 
 For example, they can be represented graphically by a Ferrers diagram::
 
-    sage: print p.ferrers_diagram()
+    sage: print(p.ferrers_diagram())
     ****
     **
     *
@@ -845,19 +836,22 @@ Permutations::
 
 Set partitions::
 
-    sage: C = SetPartitions([1,2,3])
-    sage: C
-    Set partitions of {1, 2, 3}
+    sage: C = SetPartitions(["a", "b", "c"])
+    sage: C # random print output
+    Set partitions of {'a', 'c', 'b'}
     sage: C.cardinality()
     5
     sage: C.list()
-    [{{1, 2, 3}}, {{1}, {2, 3}}, {{1, 3}, {2}}, {{1, 2}, {3}},
-     {{1}, {2}, {3}}]
+    [{{'a', 'b', 'c'}},
+     {{'a', 'b'}, {'c'}},
+     {{'a', 'c'}, {'b'}},
+     {{'a'}, {'b', 'c'}},
+     {{'a'}, {'b'}, {'c'}}]
 
 Partial orders on a set of `8` elements, up to isomorphism::
 
     sage: C = Posets(8); C
-    Posets containing 8 vertices
+    Posets containing 8 elements
     sage: C.cardinality()
     16999
 
@@ -876,7 +870,8 @@ there are 34 simple graphs with 5 vertices::
 
 Here are those with at most `4` edges::
 
-    sage: show(graphs(5, lambda G: G.size() <= 4))
+    sage: up_to_four_edges = list(graphs(5, lambda G: G.size() <= 4))
+    sage: pretty_print(*up_to_four_edges)
 
 .. image:: ../../media/graphs-5.png
 
@@ -900,7 +895,7 @@ structures like the dihedral groups::
     sage: G.cardinality()
     8
     sage: G.list()
-    [(), (1,4)(2,3), (1,2,3,4), (1,3)(2,4), (1,3), (2,4), (1,4,3,2), (1,2)(3,4)]
+    [(), (1,3)(2,4), (1,4,3,2), (1,2,3,4), (2,4), (1,3), (1,4)(2,3), (1,2)(3,4)]
 
 or the algebra of `2\times 2` matrices over the finite field
 `\ZZ/2\ZZ`::
@@ -951,7 +946,7 @@ Set comprehension and iterators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We will now show some of the possibilities offered by ``Python`` for
-constructing (and interating through) sets, with a notation that is
+constructing (and iterating through) sets, with a notation that is
 flexible and close to usual mathematical usage, and in particular the
 benefits this yields in combinatorics.
 
@@ -1029,7 +1024,7 @@ the iterator is constructed by ``iter(L)``. In practice, the commands
 comprehensions provide a much pleasanter syntax::
 
     sage: for s in Subsets(3):
-    ...       print s
+    ....:     print(s)
     {}
     {1}
     {2}
@@ -1054,7 +1049,7 @@ then it is passed as an argument to ``sum`` to add them up. If, on the
 other hand, the iterator is passed directly to ``sum`` (note the absence
 of square brackets)::
 
-    sage: sum( binomial(8, i) for i in xrange(9) )
+    sage: sum( binomial(8, i) for i in range(9) )
     256
 
 the function ``sum`` receives the iterator directly, and can
@@ -1066,9 +1061,9 @@ Most functions that take a list of elements as input will also accept
 an iterator (or an iterable) instead. To begin with, one can obtain the
 list (or the tuple) of elements of an iterator as follows::
 
-    sage: list(binomial(8, i) for i in xrange(9))
+    sage: list(binomial(8, i) for i in range(9))
     [1, 8, 28, 56, 70, 56, 28, 8, 1]
-    sage: tuple(binomial(8, i) for i in xrange(9))
+    sage: tuple(binomial(8, i) for i in range(9))
     (1, 8, 28, 56, 70, 56, 28, 8, 1)
 
 We now consider the functions ``all`` and ``any`` which denote
@@ -1095,7 +1090,7 @@ that, for `p<1000`, if `2^p-1` is prime, then
 
     sage: def mersenne(p): return 2^p -1
     sage: [ is_prime(p)
-    ...     for p in range(1000) if is_prime(mersenne(p)) ]
+    ....:   for p in range(1000) if is_prime(mersenne(p)) ]
     [True, True, True, True, True, True, True, True, True, True,
      True, True, True, True]
 
@@ -1107,30 +1102,29 @@ Is the converse true?
     difference in the length of the calculations::
 
         sage: all(   is_prime(mersenne(p))
-        ...          for p in range(1000) if is_prime(p)  )
+        ....:        for p in range(1000) if is_prime(p)  )
         False
         sage: all( [ is_prime(mersenne(p))
-        ...          for p in range(1000) if is_prime(p)] )
+        ....:        for p in range(1000) if is_prime(p)] )
         False
 
 We now try to find the smallest counter-example. In order to do this, we
 use the ``Sage`` function ``exists``::
 
     sage: exists( (p for p in range(1000) if is_prime(p)),
-    ...           lambda p: not is_prime(mersenne(p)) )
+    ....:         lambda p: not is_prime(mersenne(p)) )
     (True, 11)
 
-Alternatively, we could construct an interator on the counter-examples::
+Alternatively, we could construct an iterator on the counter-examples::
 
-    sage: counter_examples = \
-    ...     (p for p in range(1000)
-    ...        if is_prime(p) and not is_prime(mersenne(p)))
+    sage: counter_examples = (p for p in range(1000)
+    ....:      if is_prime(p) and not is_prime(mersenne(p)))
     sage: next(counter_examples)
     11
     sage: next(counter_examples)
     23
 
-.. topic:: Exercice
+.. topic:: Exercise
 
     What do the following commands do?
 
@@ -1138,16 +1132,16 @@ Alternatively, we could construct an interator on the counter-examples::
 
         sage: cubes = [t**3 for t in range(-999,1000)]
         sage: exists([(x,y) for x in cubes for y in cubes],  # long time (3s, 2012)
-        ...          lambda (x,y): x+y == 218)
+        ....:        lambda x_y: x_y[0] + x_y[1] == 218)
         (True, (-125, 343))
         sage: exists(((x,y) for x in cubes for y in cubes),  # long time (2s, 2012)
-        ...          lambda (x,y): x+y == 218)
+        ....:        lambda x_y: x_y[0] + x_y[1] == 218)
         (True, (-125, 343))
 
     Which of the last two is more economical in terms of time? In terms
     of memory? By how much?
 
-.. topic:: Exercice
+.. topic:: Exercise
 
     Try each of the following commands, and explain its result. If
     possible, hide the result first and try to guess it before
@@ -1181,7 +1175,7 @@ Alternatively, we could construct an interator on the counter-examples::
 
     ::
 
-        sage: for p in GL(2, 2): print p; print
+        sage: for p in GL(2, 2): print(p); print("")
         [1 0]
         [0 1]
         <BLANKLINE>
@@ -1203,7 +1197,7 @@ Alternatively, we could construct an interator on the counter-examples::
 
     ::
 
-        sage: for p in Partitions(3): print p   # not tested
+        sage: for p in Partitions(3): print(p)   # not tested
         [3]
         [2, 1]
         [1, 1, 1]
@@ -1211,7 +1205,7 @@ Alternatively, we could construct an interator on the counter-examples::
 
     ::
 
-        sage: for p in Partitions(): print p    # not tested
+        sage: for p in Partitions(): print(p)    # not tested
         []
         [1]
         [2]
@@ -1221,7 +1215,7 @@ Alternatively, we could construct an interator on the counter-examples::
 
     ::
 
-        sage: for p in Primes(): print p        # not tested
+        sage: for p in Primes(): print(p)        # not tested
         2
         3
         5
@@ -1236,8 +1230,8 @@ Alternatively, we could construct an interator on the counter-examples::
     ::
 
         sage: counter_examples = (p for p in Primes()
-        ...                      if not is_prime(mersenne(p)))
-        sage: for p in counter_examples: print p   # not tested
+        ....:                    if not is_prime(mersenne(p)))
+        sage: for p in counter_examples: print(p)   # not tested
         11
         23
         29
@@ -1255,6 +1249,9 @@ are in the ``itertools`` library, which can be imported by::
 
     sage: import itertools
 
+The behaviour of this library has changed a lot between Python 2 and
+Python 3. What follows is mostly written for Python 2.
+
 We will demonstrate some applications, taking as a starting point the
 permutations of `3`::
 
@@ -1268,44 +1265,32 @@ We can list the elements of a set by numbering them::
     [(0, [1, 2, 3]), (1, [1, 3, 2]), (2, [2, 1, 3]),
      (3, [2, 3, 1]), (4, [3, 1, 2]), (5, [3, 2, 1])]
 
-select only the elements in positions 2, 3, and 4 (analogue of
+or select only the elements in positions 2, 3, and 4 (analogue of
 ``l[1:4]``)::
 
     sage: import itertools
-    sage: list(itertools.islice(Permutations(3), 1, 4))
+    sage: list(itertools.islice(Permutations(3), int(1), int(4)))
     [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
 
-apply a function to all the elements::
+To apply a function to all the elements, one can do::
 
-    sage: list(itertools.imap(lambda z: z.cycle_type(),
-    ...                       Permutations(3)))
+    sage: list(z.cycle_type() for z in Permutations(3))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
-or select the elements satisfying a certain condition::
+and similarly to select the elements satisfying a certain condition::
 
-    sage: list(itertools.ifilter(lambda z: z.has_pattern([1,2]),
-    ...                          Permutations(3)))
+    sage: list(z for z in Permutations(3) if z.has_pattern([1,2]))
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 
-In all these situations, ``attrcall`` can be an advantageous alternative
-to creating an anonymous function::
-
-    sage: list(itertools.imap(lambda z: z.cycle_type(),
-    ...                       Permutations(3)))
-    [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
-    sage: list(itertools.imap(attrcall("cycle_type"),
-    ...                       Permutations(3)))
-    [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
-
-Implementation of new interators
+Implementation of new iterators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is easy to construct new iterators, using the keyword ``yield``
 instead of ``return`` in a function::
 
     sage: def f(n):
-    ...      for i in range(n):
-    ...          yield i
+    ....:     for i in range(n):
+    ....:         yield i
 
 After the ``yield``, execution is not halted, but only suspended, ready
 to be continued from the same point. The result of the function is
@@ -1338,12 +1323,12 @@ combinatorics, especially when combined with recursion. Here is how to
 generate all words of a given length on a given alphabet::
 
     sage: def words(alphabet,l):
-    ...      if l == 0:
-    ...          yield []
-    ...      else:
-    ...          for word in words(alphabet, l-1):
-    ...              for l in alphabet:
-    ...                  yield word + [l]
+    ....:    if l == 0:
+    ....:        yield []
+    ....:    else:
+    ....:        for word in words(alphabet, l-1):
+    ....:            for l in alphabet:
+    ....:                yield word + [l]
     sage: [ w for w in words(['a','b'], 3) ]
     [['a', 'a', 'a'], ['a', 'a', 'b'], ['a', 'b', 'a'],
      ['a', 'b', 'b'], ['b', 'a', 'a'], ['b', 'a', 'b'],
@@ -1356,7 +1341,7 @@ These words can then be counted by::
 
 Counting the words one by one is clearly not an efficient method in this
 case, since the formula `n^\ell` is also available; note,
-though, that this is not the stupidest possible approach — it does, at
+though, that this is not the stupidest possible approach - it does, at
 least, avoid constructing the entire list in memory.
 
 We now consider Dyck words, which are well-parenthesized words in the
@@ -1367,13 +1352,13 @@ Dyck word is either empty or of the form `(w_1)w_2` where
 `w_1` and `w_2` are Dyck words::
 
     sage: def dyck_words(l):
-    ...       if l==0:
-    ...           yield ''
-    ...       else:
-    ...           for k in range(l):
-    ...               for w1 in dyck_words(k):
-    ...                   for w2 in dyck_words(l-k-1):
-    ...                       yield '('+w1+')'+w2
+    ....:     if l==0:
+    ....:         yield ''
+    ....:     else:
+    ....:         for k in range(l):
+    ....:             for w1 in dyck_words(k):
+    ....:                 for w2 in dyck_words(l-k-1):
+    ....:                     yield '('+w1+')'+w2
 
 Here are all the Dyck words of length `4`::
 
@@ -1423,27 +1408,31 @@ previous section, and to construct the example of sets of cards in
 
 Consider a large Cartesian product::
 
-    sage: C = CartesianProduct(Compositions(8), Permutations(20)); C
-    Cartesian product of Compositions of 8, Standard permutations of 20
+    sage: C = cartesian_product([Compositions(8), Permutations(20)]); C
+    The Cartesian product of (Compositions of 8, Standard permutations of 20)
     sage: C.cardinality()
     311411457046609920000
 
-Clearly, it is impractical to construct the list of all the elements of
-this Cartesian product. For the moment, the contruction
-``CartesianProduct`` ignores the algebraic properties of its arguments.
-This is partially corrected in Sage 4.4.4, with the construction
-``cartesian_product``. Eventually, these two constructions will be merged
-and, in the following example, `H` will be equipped with the
-usual combinatorial operations and also its structure as a product
-group::
+Clearly, it is impractical to construct the list of all the elements of this
+Cartesian product! And, in the following example, `H` is equipped with the
+usual combinatorial operations and also its structure as a product group::
 
     sage: G = DihedralGroup(4)
     sage: H = cartesian_product([G,G])
+    sage: H in Groups()
+    True
+    sage: H.an_element()
+    ((1,3), (1,3))
+    sage: t = H([G.gen(0), G.gen(0)])
+    sage: t
+    ((1,2,3,4), (1,2,3,4))
+    sage: t*t
+    ((1,3)(2,4), (1,3)(2,4))
 
 We now construct the union of two existing disjoint sets::
 
     sage: C = DisjointUnionEnumeratedSets(
-    ...         [ Compositions(4), Permutations(3)] )
+    ....:       [ Compositions(4), Permutations(3)] )
     sage: C
     Disjoint union of Family (Compositions of 4,
     Standard permutations of 3)
@@ -1482,7 +1471,7 @@ which doesn’t prohibit iteration through its elements, though it will be
 necessary to interrupt it at some point::
 
     sage: for p in U:                # not tested
-    ...       print p
+    ....:     print(p)
     []
     [1]
     [1, 2]
@@ -1539,25 +1528,25 @@ some examples. We start with the integer vectors with sum `10`
 and length `3`, with parts bounded below by `2`,
 `4` and `2` respectively::
 
-    sage: IntegerVectors(10, 3, min_part = 2, max_part = 5,
-    ...                  inner = [2, 4, 2]).list()
+    sage: IntegerVectors(10, 3, min_part=2, max_part=5,
+    ....:                inner=[2, 4, 2]).list()
     [[4, 4, 2], [3, 5, 2], [3, 4, 3], [2, 5, 3], [2, 4, 4]]
 
 The compositions of `5` with each part at most `3`, and
 with length `2` or `3`::
 
-    sage: Compositions(5, max_part = 3,
-    ...                min_length = 2, max_length = 3).list()
+    sage: Compositions(5, max_part=3,
+    ....:              min_length=2, max_length=3).list()
     [[3, 2], [3, 1, 1], [2, 3], [2, 2, 1], [2, 1, 2], [1, 3, 1],
      [1, 2, 2], [1, 1, 3]]
 
 The strictly decreasing partitions of `5`::
 
-    sage: Partitions(5, max_slope = -1).list()
+    sage: Partitions(5, max_slope=-1).list()
     [[5], [4, 1], [3, 2]]
 
 These sets share the same underlying algorithmic structure, implemented
-in the more general – and slightly more cumbersome – class
+in the more general (and slightly more cumbersome) class
 ``IntegerListsLex``. This class models sets of vectors
 `(\ell_0,\dots,\ell_k)` of non-negative integers, with
 constraints on the sum and the length, and bounds on the parts and on
@@ -1565,16 +1554,16 @@ the consecutive differences between the parts. Here are some more
 examples::
 
     sage: IntegerListsLex(10, length=3,
-    ...                   min_part = 2, max_part = 5,
-    ...                   floor = [2, 4, 2]).list()
+    ....:                 min_part=2, max_part=5,
+    ....:                 floor=[2, 4, 2]).list()
     [[4, 4, 2], [3, 5, 2], [3, 4, 3], [2, 5, 3], [2, 4, 4]]
 
-    sage: IntegerListsLex(5, min_part = 1, max_part = 3,
-    ...                   min_length = 2, max_length = 3).list()
+    sage: IntegerListsLex(5, min_part=1, max_part=3,
+    ....:                 min_length=2, max_length=3).list()
     [[3, 2], [3, 1, 1], [2, 3], [2, 2, 1], [2, 1, 2],
      [1, 3, 1], [1, 2, 2], [1, 1, 3]]
 
-    sage: IntegerListsLex(5, min_part = 1, max_slope = -1).list()
+    sage: IntegerListsLex(5, min_part=1, max_slope=-1).list()
     [[5], [4, 1], [3, 2]]
 
     sage: list(Compositions(5, max_length=2))
@@ -1742,9 +1731,8 @@ The Fibonacci sequence is easily recognized here, hence the name::
 
     sage: oeis(L)                                       # optional -- internet
     0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
-    1: A185357: Expansion of 1/(1 - x - x^2 + x^18 - x^20).
-    2: A132636: Fib(n) mod n^3.
-
+    1: ...
+    2: ...
 
 This is an immediate consequence of the recurrence relation. One can
 also generate immediately all the Fibonacci words of a given length,
@@ -1799,7 +1787,7 @@ graph* is then an equivalence class of labelled graphs.
 In general, testing if two labelled graphs are isomorphic is expensive.
 However, the number of graphs, even unlabelled, grows very
 rapidly.  Nonetheless, it is possible to list unlabelled graphs very efficiently
-considering their number. For example, the program Nauty can list the
+considering their number. For example, the program ``Nauty`` can list the
 `12005168` simple graphs with `10` vertices in
 `20` seconds.
 
@@ -1842,7 +1830,7 @@ them, exactly the same algorithm can be used,
 selecting only the children which are planar::
 
     sage: [len(list(graphs(n, property = lambda G: G.is_planar())))
-    ...    for n in range(7)]
+    ....:  for n in range(7)]
     [1, 1, 2, 4, 11, 33, 142]
 
 In a similar fashion, one can generate any family of graphs closed
@@ -1870,10 +1858,10 @@ REFERENCES:
    clean up.
 
 .. [2]
-   Technical detail: ``xrange`` returns an iterator on
+   Technical detail: ``range`` returns an iterator on
    `\{0,\dots,8\}` while ``range`` returns the corresponding
-   list. Starting in ``Python`` 3.0, ``range`` will behave like ``xrange``, and
-   ``xrange`` will no longer be needed.
+   list. Starting in ``Python`` 3.0, ``range`` will behave like ``range``, and
+   ``range`` will no longer be needed.
 
 .. [3]
    In practice, an efficient implementation would exploit the symmetries

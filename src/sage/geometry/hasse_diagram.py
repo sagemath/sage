@@ -1,11 +1,10 @@
 """
-Hasse diagrams of finite atomic and coatomic lattices.
+Construction of finite atomic and coatomic lattices from incidences
 
-This module provides the function
-:func:`Hasse_diagram_from_incidences` for computing Hasse diagrams of
-finite atomic and coatomic lattices in the sense of partially ordered
-sets where any two elements have meet and joint. For example, the face
-lattice of a polyhedron.
+This module provides the function :func:`lattice_from_incidences` for
+computing finite atomic and coatomic lattices in the sense of
+partially ordered sets where any two elements have meet and joint. For
+example, the face lattice of a polyhedron.
 """
 
 #*****************************************************************************
@@ -15,19 +14,20 @@ lattice of a polyhedron.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
+
+from sage.graphs.digraph import DiGraph
+from sage.combinat.posets.lattices import FiniteLatticePoset
 
 
-
-
-
-
-def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
-                                  face_constructor=None,
-                                  required_atoms=None,
-                                  key = None,
-                                  **kwds):
+def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
+                            face_constructor=None,
+                            required_atoms=None,
+                            key=None,
+                            **kwds):
     r"""
-    Compute the Hasse diagram of an atomic and coatomic lattice.
+    Compute an atomic and coatomic lattice from the incidence between
+    atoms and coatoms.
 
     INPUT:
 
@@ -44,7 +44,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
       implementation will just return these two tuples as a tuple;
 
     - ``required_atoms`` -- list of atoms (default:None). Each
-      non-empty "face" requires at least on of the specified atoms
+      non-empty "face" requires at least one of the specified atoms
       present. Used to ensure that each face has a vertex.
 
     - ``key`` -- any hashable value (default: None). It is passed down
@@ -95,20 +95,20 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
 
     EXAMPLES:
 
-    Let's construct the Hasse diagram of a lattice of subsets of {0, 1, 2}.
+    Let us construct the lattice of subsets of {0, 1, 2}.
     Our atoms are {0}, {1}, and {2}, while our coatoms are {0,1}, {0,2}, and
     {1,2}. Then incidences are ::
 
         sage: atom_to_coatoms = [(0,1), (0,2), (1,2)]
         sage: coatom_to_atoms = [(0,1), (0,2), (1,2)]
 
-    and we can compute the Hasse diagram as ::
+    and we can compute the lattice as ::
 
-        sage: L = sage.geometry.cone.Hasse_diagram_from_incidences(
-        ...                       atom_to_coatoms, coatom_to_atoms)
+        sage: L = sage.geometry.cone.lattice_from_incidences(
+        ....:                     atom_to_coatoms, coatom_to_atoms)
         sage: L
-        Finite poset containing 8 elements with distinguished linear extension
-        sage: for level in L.level_sets(): print level
+        Finite lattice containing 8 elements with distinguished linear extension
+        sage: for level in L.level_sets(): print(level)
         [((), (0, 1, 2))]
         [((0,), (0, 1)), ((1,), (0, 2)), ((2,), (1, 2))]
         [((0, 1), (0,)), ((0, 2), (1,)), ((1, 2), (2,))]
@@ -118,8 +118,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
     :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.face_lattice` and
     :meth:`sage.geometry.fan.RationalPolyhedralFan._compute_cone_lattice`.
     """
-    from sage.graphs.digraph import DiGraph
-    from sage.combinat.posets.posets import FinitePoset
+
     def default_face_constructor(atoms, coatoms, **kwds):
         return (atoms, coatoms)
     if face_constructor is None:
@@ -130,7 +129,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
     C = frozenset(range(len(coatom_to_atoms)))  # All coatoms
     # Comments with numbers correspond to steps in Section 2.5 of the article
     L = DiGraph(1)       # 3: initialize L
-    faces = dict()
+    faces = {}
     atoms = frozenset()
     coatoms = C
     faces[atoms, coatoms] = 0
@@ -140,7 +139,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
         q_atoms, q_coatoms = Q.pop()    # 6: remove some q from Q
         q = faces[q_atoms, q_coatoms]
         # 7: compute H = {closure(q+atom) : atom not in atoms of q}
-        H = dict()
+        H = {}
         candidates = set(A.difference(q_atoms))
         for atom in candidates:
             coatoms = q_coatoms.intersection(atom_to_coatoms[atom])
@@ -169,7 +168,9 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 next_index += 1
                 Q.append((g_atoms, g_coatoms))  # 12
             L.add_edge(q, g)                    # 14
-    # End of algorithm, now construct a FinitePoset.
+
+    # End of algorithm, now construct a FiniteLatticePoset.
+
     # In principle, it is recommended to use Poset or in this case perhaps
     # even LatticePoset, but it seems to take several times more time
     # than the above computation, makes unnecessary copies, and crashes.
@@ -178,8 +179,8 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
     # Enumeration of graph vertices must be a linear extension of the poset
     new_order = L.topological_sort()
     # Make sure that coatoms are in the end in proper order
-    tail = [faces[atoms, frozenset([coatom])]
-            for coatom, atoms in enumerate(coatom_to_atoms)]
+    tail = [faces[atomes, frozenset([coatom])]
+            for coatom, atomes in enumerate(coatom_to_atoms)]
     tail.append(faces[A, frozenset()])
     new_order = [n for n in new_order if n not in tail] + tail
     # Make sure that atoms are in the beginning in proper order
@@ -189,7 +190,7 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 if required_atoms is None or atom in required_atoms)
     new_order = head + [n for n in new_order if n not in head]
     # "Invert" this list to a dictionary
-    labels = dict()
+    labels = {}
     for new, old in enumerate(new_order):
         labels[old] = new
     L.relabel(labels)
@@ -199,8 +200,6 @@ def Hasse_diagram_from_incidences(atom_to_coatoms, coatom_to_atoms,
         atoms, coatoms = face
         elements[labels[index]] = face_constructor(
                         tuple(sorted(atoms)), tuple(sorted(coatoms)), **kwds)
-    D = {i:f for i,f in enumerate(elements)}
+    D = {i: f for i, f in enumerate(elements)}
     L.relabel(D)
-    return FinitePoset(L, elements, key = key)
-
-
+    return FiniteLatticePoset(L, elements, key=key)

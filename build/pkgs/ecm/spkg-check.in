@@ -1,0 +1,10 @@
+# Note: Running the test suite should not involve (re)compilation,
+#       so we don't set CFLAGS et al. here.  (Their settings are
+#       stored in the Makefiles created by 'configure' anyway.)
+
+cd src
+
+$MAKE check
+# There are potential race conditions in the long check,
+# running it serially.
+$MAKE -j1 longcheck

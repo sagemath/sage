@@ -62,12 +62,12 @@ Here is how to create an Iwahori Hecke algebra (in the `T` basis)::
 If the Cartan type is affine, the generators will be numbered starting
 with ``T0`` instead of ``T1``.
 
-You may coerce a Weyl group element into the Iwahori Hecke algebra::
+You may convert a Weyl group element into the Iwahori Hecke algebra::
 
     sage: W = WeylGroup("G2",prefix="s")
     sage: [s1,s2] = W.simple_reflections()
     sage: P.<q> = LaurentPolynomialRing(QQ)
-    sage: H = IwahoriHeckeAlgebra("B3",q)
+    sage: H = IwahoriHeckeAlgebra("G2",q)
     sage: T = H.T()
     sage: T(s1*s2)
     T[1,2]

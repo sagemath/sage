@@ -7,6 +7,7 @@ Root system data for Cartan types with marked nodes
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
+from __future__ import print_function
 
 from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
@@ -146,7 +147,7 @@ class CartanType(cartan_type.CartanType_decorator):
         cartan_type.CartanType_simply_laced,
         cartan_type.CartanType_crystallographic]
 
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         EXAMPLES::
 
@@ -158,10 +159,28 @@ class CartanType(cartan_type.CartanType_decorator):
 
            sage: CartanType(['F', 4, 1]).marked_nodes([0, 2])._repr_(compact = True)
            'F4~ with nodes (0, 2) marked'
+
+            sage: D = DynkinDiagram("A2")
+            sage: D.marked_nodes([1])
+            O---O
+            1   2
+            A2 with node 1 marked
+
+            sage: CM = CartanMatrix([[2,-4],[-5,2]])
+            sage: CM.marked_nodes([1])
+            [ 2 -4]
+            [-5  2] with node 1 marked
         """
+        if not compact:
+            base = repr(self._type)
+        else:
+            try:
+                base = self._type._repr_(compact=True)
+            except TypeError:
+                base = repr(self._type)
         if len(self._marked_nodes) == 1:
-            return self._type._repr_(compact = compact)+" with node {} marked".format(self._marked_nodes[0])
-        return self._type._repr_(compact = compact)+" with nodes {} marked".format(self._marked_nodes)
+            return base + " with node {} marked".format(self._marked_nodes[0])
+        return base + " with nodes {} marked".format(self._marked_nodes)
 
     def _latex_(self):
         r"""
@@ -176,21 +195,21 @@ class CartanType(cartan_type.CartanType_decorator):
         A more compact, but potentially confusing, representation can
         be obtained using the ``latex_marked`` global option::
 
-            sage: CartanType.global_options['latex_marked'] = False
+            sage: CartanType.options['latex_marked'] = False
             sage: latex(ct)
             A_{4}
-            sage: CartanType.global_options['latex_marked'] = True
+            sage: CartanType.options['latex_marked'] = True
 
         Kac's notations are implemented::
 
-            sage: CartanType.global_options['notation'] = 'Kac'
+            sage: CartanType.options['notation'] = 'Kac'
             sage: latex(CartanType(['D',4,3]).marked_nodes([0]))
             D_4^{(3)} \text{ with node $0$ marked}
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         from sage.misc.latex import latex
         ret = self._type._latex_()
-        if self.global_options('latex_marked'):
+        if self.options('latex_marked'):
             if len(self._marked_nodes) == 1:
                 ret += " \\text{{ with node ${}$ marked}} ".format(latex(self._marked_nodes[0]))
             else:
@@ -208,10 +227,10 @@ class CartanType(cartan_type.CartanType_decorator):
             'X'
             sage: ct._ascii_art_node(3)
             'O'
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         if label in self._marked_nodes:
-            return self.global_options('marked_node_str')
+            return self.options('marked_node_str')
         return 'O'
 
     def _latex_draw_node(self, x, y, label, position="below=4pt", fill='white'):
@@ -224,10 +243,10 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: CartanType.global_options(mark_special_node='both')
+            sage: CartanType.options(mark_special_node='both')
             sage: CartanType(['A',3,1]).marked_nodes([1,3])._latex_draw_node(0, 0, 0)
             '\\draw[fill=black] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};\n'
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         ret = cartan_type.CartanType_abstract._latex_draw_node(self, x, y, label, position, fill)
         if label in self._marked_nodes:
@@ -250,7 +269,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: print CartanType(['B',2]).marked_nodes([1,2])._latex_draw_mark(1, 0)
+            sage: print(CartanType(['B',2]).marked_nodes([1,2])._latex_draw_mark(1, 0))
             \draw[shift={(1, 0)}, black, thin] (0.25cm, 0.25cm) -- (-0.25cm, -0.25cm);
             \draw[shift={(1, 0)}, black, thin] (0.25cm, -0.25cm) -- (-0.25cm, 0.25cm);
             <BLANKLINE>
@@ -265,7 +284,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: print CartanType(['A',4]).marked_nodes([1,3])._latex_dynkin_diagram()
+            sage: print(CartanType(['A',4]).marked_nodes([1,3])._latex_dynkin_diagram())
             \draw (0 cm,0) -- (6 cm,0);
             \draw[fill=white] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$1$};
             \draw[shift={(0, 0)}, black, thin] (0.25cm, 0.25cm) -- (-0.25cm, -0.25cm);
@@ -287,17 +306,17 @@ class CartanType(cartan_type.CartanType_decorator):
 
         EXAMPLES::
 
-            sage: print CartanType(["G", 2]).marked_nodes([2]).ascii_art()
+            sage: print(CartanType(["G", 2]).marked_nodes([2]).ascii_art())
               3
             O=<=X
             1   2
-            sage: print CartanType(["B", 3, 1]).marked_nodes([0, 3]).ascii_art()
+            sage: print(CartanType(["B", 3, 1]).marked_nodes([0, 3]).ascii_art())
                 X 0
                 |
                 |
             O---O=>=X
             1   2   3
-            sage: print CartanType(["F", 4, 1]).marked_nodes([0, 2]).ascii_art()
+            sage: print(CartanType(["F", 4, 1]).marked_nodes([0, 2]).ascii_art())
             X---O---X=>=O---O
             0   1   2   3   4
         """
@@ -328,7 +347,6 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: sorted(CartanType(["F", 4, 1]).relabel(lambda n: 4-n).dynkin_diagram().edges())
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 2), (2, 3, 1), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
         """
-        from copy import copy
         result = self._type.dynkin_diagram().copy()
         result._cartan_type = self
         return result
@@ -597,16 +615,16 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
         EXAMPLES::
 
-            sage: CartanType.global_options(mark_special_node='both')
-            sage: print CartanType(['A',3,1]).marked_nodes([0,1,3])._latex_draw_node(0, 0, 0)
+            sage: CartanType.options(mark_special_node='both')
+            sage: print(CartanType(['A',3,1]).marked_nodes([0,1,3])._latex_draw_node(0, 0, 0))
             \draw[fill=black] (0 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             \draw[shift={(0, 0)}, lightgray, very thick] (0.25cm, 0.25cm) -- (-0.25cm, -0.25cm);
             \draw[shift={(0, 0)}, lightgray, very thick] (0.25cm, -0.25cm) -- (-0.25cm, 0.25cm);
             <BLANKLINE>
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         mark_special = (label == self.special_node()
-                        and self.global_options('mark_special_node') in ['latex', 'both'])
+                        and self.options('mark_special_node') in ['latex', 'both'])
         if mark_special:
             fill = 'black'
         else:
@@ -628,16 +646,16 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         EXAMPLES::
 
             sage: ct = CartanType(['A',4, 1]).marked_nodes([0, 2])
-            sage: CartanType.global_options(mark_special_node='both')
+            sage: CartanType.options(mark_special_node='both')
             sage: ct._ascii_art_node(0)
             '#'
-            sage: CartanType.global_options.reset()
+            sage: CartanType.options._reset()
         """
         if label in self._marked_nodes:
             if (label == self.special_node()
-                    and self.global_options('mark_special_node') in ['printing', 'both']):
+                    and self.options('mark_special_node') in ['printing', 'both']):
                 return '#'
-            return self.global_options('marked_node_str')
+            return self.options('marked_node_str')
         return 'O'
 
     def classical(self):
@@ -696,7 +714,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         r"""
         Return the special node of the Cartan type.
 
-        .. seealso:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
 
         It is the special node of the non-marked Cartan type..
 
@@ -709,7 +727,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def is_untwisted_affine(self):
         """
-        Implements :meth:'CartanType_affine.is_untwisted_affine`.
+        Implement :meth:`CartanType_affine.is_untwisted_affine`.
 
         A marked Cartan type is untwisted affine if the original is.
 
@@ -719,4 +737,3 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             True
         """
         return self._type.is_untwisted_affine()
-

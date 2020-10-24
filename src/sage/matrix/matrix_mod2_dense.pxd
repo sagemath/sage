@@ -1,10 +1,7 @@
-# choose: dense or sparse
-
-cimport matrix_dense
-
+from .matrix_dense cimport Matrix_dense
 from sage.libs.m4ri cimport *
 
-cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):
+cdef class Matrix_mod2_dense(Matrix_dense):
     cdef mzd_t *_entries
     cdef object _one
     cdef object _zero

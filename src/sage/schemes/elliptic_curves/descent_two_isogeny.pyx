@@ -1,39 +1,43 @@
+# distutils: libraries = ratpoints
+
 r"""
-Descent on elliptic curves over `\QQ` with a 2-isogeny.
+Descent on elliptic curves over `\QQ` with a 2-isogeny
 """
 
 #*****************************************************************************
-#        Copyright (C) 2009 Robert L. Miller <rlmillster@gmail.com>
+#       Copyright (C) 2009 Robert L. Miller <rlmillster@gmail.com>
 #
-# Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  http://www.gnu.org/licenses/
 #*****************************************************************************
+
+from cysignals.memory cimport sig_malloc, sig_free
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.all import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
-from sage.rings.arith import prime_divisors
+from sage.arith.all import prime_divisors
 from sage.all import ntl
-
-include "sage/ext/stdsage.pxi"
-include "sage/ext/interrupt.pxi"
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport *
-from sage.libs.ratpoints cimport ratpoints_mpz_exists_only
 
-cdef int N_RES_CLASSES_BSD = 10
+from cypari2.paridecl cimport (GEN, cgetg, t_POL, set_gel, gel, stoi, lg,
+        evalvarn, evalsigne, Z_issquare, hyperellratpoints)
+from cypari2.stack cimport clear_stack
+from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 
-cdef unsigned long ui0 = <unsigned long>0
-cdef unsigned long ui1 = <unsigned long>1
-cdef unsigned long ui2 = <unsigned long>2
-cdef unsigned long ui3 = <unsigned long>3
-cdef unsigned long ui4 = <unsigned long>4
-cdef unsigned long ui8 = <unsigned long>8
+
+DEF N_RES_CLASSES_BSD = 10
+
 
 cdef unsigned long valuation(mpz_t a, mpz_t p):
     """
@@ -46,15 +50,16 @@ cdef unsigned long valuation(mpz_t a, mpz_t p):
     mpz_clear(aa)
     return v
 
+
 def test_valuation(a, p):
     """
     Doctest function for cdef long valuation(mpz_t, mpz_t).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_valuation as tv
         sage: for i in [1..20]:
-        ....:     print '%10s'%factor(i), tv(i,2), tv(i,3), tv(i,5)
+        ....:     print('{:>10} {} {} {}'.format(str(factor(i)), tv(i,2), tv(i,3), tv(i,5)))
                  1 0 0 0
                  2 1 0 0
                  3 0 1 0
@@ -81,6 +86,7 @@ def test_valuation(a, p):
     cdef Integer P = Integer(p)
     return valuation(A.value, P.value)
 
+
 cdef int padic_square(mpz_t a, mpz_t p):
     """
     Test if a is a p-adic square.
@@ -92,16 +98,16 @@ cdef int padic_square(mpz_t a, mpz_t p):
     if mpz_sgn(a) == 0: return 1
 
     v = valuation(a,p)
-    if v&(ui1): return 0
+    if v & 1: return 0
 
     mpz_init_set(aa,a)
     while v:
         v -= 1
         mpz_divexact(aa, aa, p)
-    if mpz_cmp_ui(p, ui2)==0:
-        result = ( mpz_fdiv_ui(aa,ui8)==ui1 )
+    if mpz_cmp_ui(p, 2)==0:
+        result = (mpz_fdiv_ui(aa, 8) == 1)
     else:
-        result = ( mpz_legendre(aa,p)==1 )
+        result = (mpz_legendre(aa, p) == 1)
     mpz_clear(aa)
     return result
 
@@ -109,13 +115,13 @@ def test_padic_square(a, p):
     """
     Doctest function for cdef int padic_square(mpz_t, unsigned long).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_padic_square as ps
         sage: for i in [1..300]:
         ....:     for p in prime_range(100):
         ....:          if not Qp(p)(i).is_square()==bool(ps(i,p)):
-        ....:              print i, p
+        ....:              print(i, p)
 
     """
     cdef Integer A = Integer(a)
@@ -149,10 +155,10 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     mpz_init_set(g_prime_of_x, x)
     mpz_mul(g_prime_of_x, a, x)
-    mpz_mul_ui(g_prime_of_x, g_prime_of_x, ui4)
-    mpz_addmul_ui(g_prime_of_x, b, ui3)
+    mpz_mul_ui(g_prime_of_x, g_prime_of_x, 4)
+    mpz_addmul_ui(g_prime_of_x, b, 3)
     mpz_mul(g_prime_of_x, g_prime_of_x, x)
-    mpz_addmul_ui(g_prime_of_x, c, ui2)
+    mpz_addmul_ui(g_prime_of_x, c, 2)
     mpz_mul(g_prime_of_x, g_prime_of_x, x)
     mpz_add(g_prime_of_x, g_prime_of_x, d)
 
@@ -195,18 +201,18 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     mpz_init_set(g_prime_of_x, x)
     mpz_mul(g_prime_of_x, a, x)
-    mpz_mul_ui(g_prime_of_x, g_prime_of_x, ui4)
-    mpz_addmul_ui(g_prime_of_x, b, ui3)
+    mpz_mul_ui(g_prime_of_x, g_prime_of_x, 4)
+    mpz_addmul_ui(g_prime_of_x, b, 3)
     mpz_mul(g_prime_of_x, g_prime_of_x, x)
-    mpz_addmul_ui(g_prime_of_x, c, ui2)
+    mpz_addmul_ui(g_prime_of_x, c, 2)
     mpz_mul(g_prime_of_x, g_prime_of_x, x)
     mpz_add(g_prime_of_x, g_prime_of_x, d)
 
     lambd = valuation(g_of_x, p)
     mpz_init_set(g_of_x_odd_part, g_of_x)
     while mpz_even_p(g_of_x_odd_part):
-        mpz_divexact_ui(g_of_x_odd_part, g_of_x_odd_part, ui2)
-    g_of_x_odd_part_mod_4 = mpz_fdiv_ui(g_of_x_odd_part, ui4)
+        mpz_divexact_ui(g_of_x_odd_part, g_of_x_odd_part, 2)
+    g_of_x_odd_part_mod_4 = mpz_fdiv_ui(g_of_x_odd_part, 4)
     if mpz_sgn(g_prime_of_x)==0:
         if lambd >= 2*nu: result = 0 # undecided
         elif lambd == 2*nu-2 and g_of_x_odd_part_mod_4==1:
@@ -216,9 +222,9 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         if lambd > 2*mu: result = +1 # soluble
         elif nu > mu:
             if lambd >= mu+nu: result = +1 # soluble
-            elif lambd+1 == mu+nu and lambd&ui1==0:
+            elif lambd+1 == mu+nu and (lambd & 1) == 0:
                 result = +1 # soluble
-            elif lambd+2 == mu+nu and lambd&ui1==0 and g_of_x_odd_part_mod_4==1:
+            elif lambd+2 == mu+nu and (lambd & 1) == 0 and g_of_x_odd_part_mod_4 == 1:
                 result = +1 # soluble
         else: # nu <= mu
             if lambd >= 2*nu: result = 0 # undecided
@@ -242,7 +248,7 @@ cdef int Zp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
     cdef unsigned long t
     cdef mpz_t s
 
-    if mpz_cmp_ui(p, ui2)==0:
+    if mpz_cmp_ui(p, 2) == 0:
         code = lemma7(a,b,c,d,e,x_k,p,k)
     else:
         code = lemma6(a,b,c,d,e,x_k,p,k)
@@ -284,16 +290,16 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     # Step 0: divide out all common p from the quartic
     v_min = valuation(a, pp)
-    if mpz_cmp_ui(b, ui0) != 0:
+    if mpz_cmp_ui(b, 0) != 0:
         v = valuation(b, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(c, ui0) != 0:
+    if mpz_cmp_ui(c, 0) != 0:
         v = valuation(c, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(d, ui0) != 0:
+    if mpz_cmp_ui(d, 0) != 0:
         v = valuation(d, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(e, ui0) != 0:
+    if mpz_cmp_ui(e, 0) != 0:
         v = valuation(e, pp)
         if v < v_min: v_min = v
     for 0 <= v < v_min:
@@ -324,7 +330,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             return 1
 
         nmod_poly_zero(f)
-        nmod_poly_set_coeff_ui(f, 0, ui1)
+        nmod_poly_set_coeff_ui(f, 0, 1)
         for i from 0 <= i < f_factzn.num:
             for j from 0 <= j < (f_factzn.exp[i]>>1):
                 nmod_poly_mul(f, f, &f_factzn.p[i])
@@ -361,7 +367,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             rr = nmod_poly_get_coeff_ui(f, 0)
             ss = rr*qq
             mpz_set(ddd,d)
-            mpz_sub_ui(ddd, ddd, ss*ui2)
+            mpz_sub_ui(ddd, ddd, ss*2)
             mpz_set(eee,e)
             mpz_sub_ui(eee, eee, ss*rr)
         elif i == 2: # g == x^2 + rr*x + ss
@@ -370,14 +376,14 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_init(tt)
             mpz_set_ui(tt, rr*qq)
             mpz_set(bbb,b)
-            mpz_submul_ui(bbb, tt, ui2)
+            mpz_submul_ui(bbb, tt, 2)
             mpz_set(ccc,c)
             mpz_submul_ui(ccc, tt, rr)
             ss = nmod_poly_get_coeff_ui(f, 0)
             mpz_set_ui(tt, ss*qq)
             mpz_set(eee,e)
             mpz_submul_ui(eee, tt, ss)
-            mpz_mul_ui(tt, tt, ui2)
+            mpz_mul_ui(tt, tt, 2)
             mpz_sub(ccc, ccc, tt)
             mpz_set(ddd,d)
             mpz_submul_ui(ddd, tt, rr)
@@ -517,16 +523,16 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     # Step 0: divide out all common p from the quartic
     v_min = valuation(a, pp)
-    if mpz_cmp_ui(b, ui0) != 0:
+    if mpz_cmp_ui(b, 0) != 0:
         v = valuation(b, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(c, ui0) != 0:
+    if mpz_cmp_ui(c, 0) != 0:
         v = valuation(c, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(d, ui0) != 0:
+    if mpz_cmp_ui(d, 0) != 0:
         v = valuation(d, pp)
         if v < v_min: v_min = v
-    if mpz_cmp_ui(e, ui0) != 0:
+    if mpz_cmp_ui(e, 0) != 0:
         v = valuation(e, pp)
         if v < v_min: v_min = v
     for 0 <= v < v_min:
@@ -607,7 +613,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_init(tt)
             mpz_mul(tt, rr, qq)
             mpz_set(bbb,b)
-            mpz_submul_ui(bbb, tt, ui2)
+            mpz_submul_ui(bbb, tt, 2)
             mpz_set(ccc,c)
             mpz_submul(ccc, tt, rr)
             A = Integer(f[0])
@@ -615,7 +621,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_mul(tt, ss, qq)
             mpz_set(eee,e)
             mpz_submul(eee, tt, ss)
-            mpz_mul_ui(tt, tt, ui2)
+            mpz_mul_ui(tt, tt, 2)
             mpz_sub(ccc, ccc, tt)
             mpz_set(ddd,d)
             mpz_submul(ddd, tt, rr)
@@ -817,7 +823,7 @@ cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
     """
     cdef mpz_t zero
     cdef int result = 0
-    mpz_init_set_ui(zero, ui0)
+    mpz_init_set_ui(zero, 0)
     if Zp_soluble_BSD(a,b,c,d,e,zero,p,0):
         result = 1
     elif Zp_soluble_BSD(e,d,c,b,a,zero,p,1):
@@ -855,7 +861,7 @@ def test_qpls(a,b,c,d,e,p):
     """
     Testing function for Qp_soluble.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_qpls as tq
         sage: tq(1,2,3,4,5,7)
@@ -893,11 +899,11 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # RR soluble:
     if mpz_sgn(a)!=1:
-        if len(real_roots(f)) == 0:
+        if not real_roots(f):
             return 0
 
     # Q2 soluble:
-    mpz_init_set_ui(mpz_2, ui2)
+    mpz_init_set_ui(mpz_2, 2)
     if not Qp_soluble(a,b,c,d,e,mpz_2):
         mpz_clear(mpz_2)
         return 0
@@ -915,16 +921,15 @@ def test_els(a,b,c,d,e):
     """
     Doctest function for cdef int everywhere_locally_soluble(mpz_t, mpz_t, mpz_t, mpz_t, mpz_t).
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.descent_two_isogeny import test_els
-        sage: from sage.libs.ratpoints import ratpoints
         sage: for _ in range(1000):
         ....:     a,b,c,d,e = randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000), randint(1,1000)
-        ....:     if len(ratpoints([e,d,c,b,a], 1000)) > 0:
+        ....:     if pari.Pol([a,b,c,d,e]).hyperellratpoints(1000, 1):
         ....:         try:
         ....:             if not test_els(a,b,c,d,e):
-        ....:                 print "This never happened", a,b,c,d,e
+        ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
 
@@ -944,13 +949,11 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
     cdef Integer a_Int, c_Int, e_Int
     cdef mpz_t c_sq_mpz, d_prime_mpz
     cdef mpz_t n_divisors, j
-    cdef mpz_t *coeffs_ratp
-
 
     mpz_init(c_sq_mpz)
     mpz_mul(c_sq_mpz, c_mpz, c_mpz)
     mpz_init_set(d_prime_mpz, c_sq_mpz)
-    mpz_submul_ui(d_prime_mpz, d_mpz, ui4)
+    mpz_submul_ui(d_prime_mpz, d_mpz, 4)
     check_negs = 0
     if mpz_sgn(d_prime_mpz) > 0:
         if mpz_sgn(c_mpz) >= 0 or mpz_cmp(c_sq_mpz, d_prime_mpz) <= 0:
@@ -960,23 +963,17 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
 
 
     # Set up coefficient array, and static variables
-    cdef mpz_t *coeffs = <mpz_t *> sage_malloc(5 * sizeof(mpz_t))
+    cdef mpz_t *coeffs = <mpz_t *> sig_malloc(5 * sizeof(mpz_t))
     for i from 0 <= i <= 4:
         mpz_init(coeffs[i])
-    mpz_set_ui(coeffs[1], ui0)     #
-    mpz_set(coeffs[2], c_mpz)      # These never change
-    mpz_set_ui(coeffs[3], ui0)     #
-
-    if not selmer_only:
-        # allocate space for ratpoints
-        coeffs_ratp = <mpz_t *> sage_malloc(5 * sizeof(mpz_t))
-        for i from 0 <= i <= 4:
-            mpz_init(coeffs_ratp[i])
+    mpz_set_ui(coeffs[1], 0)     #
+    mpz_set(coeffs[2], c_mpz)    # These never change
+    mpz_set_ui(coeffs[3], 0)     #
 
     # Get prime divisors, and put them in an mpz_t array
     # (this block, by setting check_negs, takes care of
     # local solubility over RR)
-    cdef mpz_t *p_div_d_mpz = <mpz_t *> sage_malloc((p_list_len+1) * sizeof(mpz_t))
+    cdef mpz_t *p_div_d_mpz = <mpz_t *> sig_malloc((p_list_len+1) * sizeof(mpz_t))
     n_primes = 0
     for i from 0 <= i < p_list_len:
         if mpz_divisible_p(d_mpz, p_list[i]):
@@ -987,43 +984,37 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
         mpz_init(p_div_d_mpz[n_primes])
         mpz_set_si(p_div_d_mpz[n_primes], -1)
         n_primes += 1
-    mpz_init_set_ui(n_divisors, ui1)
+    mpz_init_set_ui(n_divisors, 1)
     mpz_mul_2exp(n_divisors, n_divisors, n_primes)
-#    if verbosity > 3:
-#        print '\nDivisors of d which may lead to RR-soluble quartics:', p_div_d
 
-    mpz_init_set_ui(j, ui0)
+    mpz_init_set_ui(j, 0)
     if not selmer_only:
-        mpz_set_ui(n1, ui0)
-    mpz_set_ui(n2, ui0)
+        mpz_set_ui(n1, 0)
+    mpz_set_ui(n2, 0)
     while mpz_cmp(j, n_divisors) < 0:
-        mpz_set_ui(coeffs[4], ui1)
+        mpz_set_ui(coeffs[4], 1)
         for i from 0 <= i < n_primes:
             if mpz_tstbit(j, i):
                 mpz_mul(coeffs[4], coeffs[4], p_div_d_mpz[i])
         if verbosity > 3:
             a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
-            print '\nSquarefree divisor:', a_Int
+            print('\nSquarefree divisor:', a_Int)
         mpz_divexact(coeffs[0], d_mpz, coeffs[4])
         found_global_points = 0
         if not selmer_only:
             if verbose:
-                print "\nCalling ratpoints for small point search"
-            for i from 0 <= i <= 4:
-                mpz_set(coeffs_ratp[i], coeffs[i])
-            sig_on()
-            found_global_points = ratpoints_mpz_exists_only(coeffs_ratp, global_limit_small, 4, verbose)
-            sig_off()
+                print("\nCalling ratpoints for small point search")
+            found_global_points = ratpoints_mpz_exists_only(coeffs, 4, global_limit_small)
             if found_global_points:
                 if verbosity > 2:
                     a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
                     c_Int = Integer(0); mpz_set(c_Int.value, coeffs[2])
                     e_Int = Integer(0); mpz_set(e_Int.value, coeffs[0])
-                    print 'Found small global point, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int)
-                mpz_add_ui(n1, n1, ui1)
-                mpz_add_ui(n2, n2, ui1)
+                    print('Found small global point, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int))
+                mpz_add_ui(n1, n1, 1)
+                mpz_add_ui(n2, n2, 1)
             if verbose:
-                print "\nDone calling ratpoints for small point search"
+                print("\nDone calling ratpoints for small point search")
         if not found_global_points:
             # Test whether the quartic is everywhere locally soluble:
             els = 1
@@ -1036,35 +1027,27 @@ cdef int count(mpz_t c_mpz, mpz_t d_mpz, mpz_t *p_list, unsigned long p_list_len
                     a_Int = Integer(0); mpz_set(a_Int.value, coeffs[4])
                     c_Int = Integer(0); mpz_set(c_Int.value, coeffs[2])
                     e_Int = Integer(0); mpz_set(e_Int.value, coeffs[0])
-                    print 'ELS without small global points, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int)
-                mpz_add_ui(n2, n2, ui1)
+                    print('ELS without small global points, quartic (%d,%d,%d,%d,%d)'%(a_Int,0,c_Int,0,e_Int))
+                mpz_add_ui(n2, n2, 1)
                 if not selmer_only:
                     if verbose:
-                        print "\nCalling ratpoints for large point search"
-                    for i from 0 <= i <= 4:
-                        mpz_set(coeffs_ratp[i], coeffs[i])
-                    sig_on()
-                    found_global_points = ratpoints_mpz_exists_only(coeffs_ratp, global_limit_large, 4, verbose)
-                    sig_off()
+                        print("\nCalling ratpoints for large point search")
+                    found_global_points = ratpoints_mpz_exists_only(coeffs, 4, global_limit_large)
                     if found_global_points:
                         if verbosity > 2:
-                            print '  -- Found large global point.'
-                        mpz_add_ui(n1, n1, ui1)
+                            print('  -- Found large global point.')
+                        mpz_add_ui(n1, n1, 1)
                     if verbose:
-                        print "\nDone calling ratpoints for large point search"
-        mpz_add_ui(j, j, ui1)
-    if not selmer_only:
-        for i from 0 <= i <= 4:
-            mpz_clear(coeffs_ratp[i])
-        sage_free(coeffs_ratp)
+                        print("\nDone calling ratpoints for large point search")
+        mpz_add_ui(j, j, 1)
     mpz_clear(j)
     for i from 0 <= i < n_primes:
         mpz_clear(p_div_d_mpz[i])
-    sage_free(p_div_d_mpz)
+    sig_free(p_div_d_mpz)
     mpz_clear(n_divisors)
     for i from 0 <= i <= 4:
         mpz_clear(coeffs[i])
-    sage_free(coeffs)
+    sig_free(coeffs)
     return 0
 
 def two_descent_by_two_isogeny(E,
@@ -1152,9 +1135,9 @@ def two_descent_by_two_isogeny(E,
     cdef list x_list
     assert E.torsion_order()%2==0, 'Need rational two-torsion for isogeny descent.'
     if verbosity > 0:
-        print '\n2-isogeny'
+        print('\n2-isogeny')
         if verbosity > 1:
-            print '\nchanging coordinates'
+            print('\nchanging coordinates')
     a1 = Integer(E.a1())
     a2 = Integer(E.a2())
     a3 = Integer(E.a3())
@@ -1202,13 +1185,13 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
     cdef bint found, too_big, d_neg, d_prime_neg
     cdef n_factor_t fact
     cdef list primes
-    mpz_init_set(c_mpz, c.value)      #
-    mpz_init_set(d_mpz, d.value)      #
-    mpz_init(c_prime_mpz)             #
-    mpz_init(d_prime_mpz)             #
+    mpz_init_set(c_mpz, c.value)
+    mpz_init_set(d_mpz, d.value)
+    mpz_init(c_prime_mpz)
+    mpz_init(d_prime_mpz)
     mpz_mul_si(c_prime_mpz, c_mpz, -2)
     mpz_mul(d_prime_mpz, c_mpz, c_mpz)
-    mpz_submul_ui(d_prime_mpz, d_mpz, ui4)
+    mpz_submul_ui(d_prime_mpz, d_mpz, 4)
 
     d_neg = 0
     d_prime_neg = 0
@@ -1220,14 +1203,14 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
         mpz_neg(d_prime_mpz, d_prime_mpz)
     if mpz_fits_ulong_p(d_mpz) and mpz_fits_ulong_p(d_prime_mpz):
         # Factor very quickly using FLINT.
-        p_list_mpz = <mpz_t *> sage_malloc(20 * sizeof(mpz_t))
-        mpz_init_set_ui(p_list_mpz[0], ui2)
+        p_list_mpz = <mpz_t *> sig_malloc(20 * sizeof(mpz_t))
+        mpz_init_set_ui(p_list_mpz[0], 2)
         p_list_len = 1
         n_factor_init(&fact)
         n_factor(&fact, mpz_get_ui(d_mpz), proof)
         for i from 0 <= i < fact.num:
             p = fact.p[i]
-            if p != ui2:
+            if p != 2:
                 mpz_init_set_ui(p_list_mpz[p_list_len], p)
                 p_list_len += 1
         n_factor(&fact, mpz_get_ui(d_prime_mpz), proof)
@@ -1255,7 +1238,7 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
         P = Integer(2)
         if P not in primes: primes.append(P)
         p_list_len = len(primes)
-        p_list_mpz = <mpz_t *> sage_malloc(p_list_len * sizeof(mpz_t))
+        p_list_mpz = <mpz_t *> sig_malloc(p_list_len * sizeof(mpz_t))
         for i from 0 <= i < p_list_len:
             P = Integer(primes[i])
             mpz_init_set(p_list_mpz[i], P.value)
@@ -1267,9 +1250,9 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
     if verbosity > 1:
         c_prime = -2*c
         d_prime = c*c-4*d
-        print '\nnew curve is y^2 == x( x^2 + (%d)x + (%d) )'%(int(c),int(d))
-        print 'new isogenous curve is' + \
-               ' y^2 == x( x^2 + (%d)x + (%d) )'%(int(c_prime),int(d_prime))
+        print('\nnew curve is y^2 == x( x^2 + (%d)x + (%d) )'%(int(c),int(d)))
+        print('new isogenous curve is' +
+              ' y^2 == x( x^2 + (%d)x + (%d) )'%(int(c_prime),int(d_prime)))
 
     n1 = Integer(0); n2 = Integer(0)
     n1_prime = Integer(0); n2_prime = Integer(0)
@@ -1282,21 +1265,54 @@ def two_descent_by_two_isogeny_work(Integer c, Integer d,
 
     for i from 0 <= i < p_list_len:
         mpz_clear(p_list_mpz[i])
-    sage_free(p_list_mpz)
+    sig_free(p_list_mpz)
 
     if verbosity > 0:
-        print "\nResults:"
-        print n1, "<= #E(Q)/phi'(E'(Q)) <=", n2
-        print n1_prime, "<= #E'(Q)/phi(E(Q)) <=", n2_prime
-        print "#Sel^(phi')(E'/Q) =", n2
-        print "#Sel^(phi)(E/Q) =", n2_prime
-        print "1 <= #Sha(E'/Q)[phi'] <=", n2/n1
-        print "1 <= #Sha(E/Q)[phi] <=", n2_prime/n1_prime
-        print "1 <= #Sha(E/Q)[2], #Sha(E'/Q)[2] <=", (n2_prime/n1_prime)*(n2/n1)
+        print("\nResults:")
+        print(n1, "<= #E(Q)/phi'(E'(Q)) <=", n2)
+        print(n1_prime, "<= #E'(Q)/phi(E(Q)) <=", n2_prime)
+        print("#Sel^(phi')(E'/Q) =", n2)
+        print("#Sel^(phi)(E/Q) =", n2_prime)
+        print("1 <= #Sha(E'/Q)[phi'] <=", n2/n1)
+        print("1 <= #Sha(E/Q)[phi] <=", n2_prime/n1_prime)
+        print("1 <= #Sha(E/Q)[2], #Sha(E'/Q)[2] <=", (n2_prime/n1_prime)*(n2/n1))
         a = Integer(n1*n1_prime).log(Integer(2))
         e = Integer(n2*n2_prime).log(Integer(2))
-        print a - 2, "<= rank of E(Q) = rank of E'(Q) <=", e - 2
+        print(a - 2, "<= rank of E(Q) = rank of E'(Q) <=", e - 2)
 
     return n1, n2, n1_prime, n2_prime
 
 
+cdef bint ratpoints_mpz_exists_only(mpz_t *coeffs, long degree, long H) except -1:
+    """
+    Search for projective points on the hyperelliptic curve
+    ``y^2 = P(x)``.
+
+    INPUT:
+
+    - ``coeffs`` -- an array of length ``degree + 1`` giving the
+      coefficients of ``P``, starting with the constant coefficient
+
+    - ``degree`` -- degree of ``P``
+
+    - ``H`` -- bound on the naive height for search
+
+    OUTPUT: boolean, whether or not a projective point was found
+    """
+    sig_on()
+    cdef GEN pol = cgetg(degree + 3, t_POL)
+    pol[1] = evalvarn(0) + evalsigne(1)
+    cdef long i
+    for i in range(degree + 1):
+        set_gel(pol, i+2, _new_GEN_from_mpz_t(coeffs[i]))
+
+    # PARI checks only for affine points, so we manually check for
+    # points at infinity (of the smooth model)
+    cdef int r
+    if degree % 2 == 1 or Z_issquare(gel(pol, degree+2)):
+        r = 1
+    else:
+        R = hyperellratpoints(pol, stoi(H), 1)
+        r = (lg(R) > 1)
+    clear_stack()
+    return r

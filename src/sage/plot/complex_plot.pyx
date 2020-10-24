@@ -1,8 +1,7 @@
 """
 Complex Plots
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Robert Bradshaw <robertwb@math.washington.edu>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,30 +13,29 @@ Complex Plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # TODO: use NumPy buffers and complex fast_callable (when supported)
-
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 cimport numpy as cnumpy
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
 from sage.rings.complex_double cimport ComplexDoubleElement
-from sage.misc.misc import srange
+from sage.arith.srange import srange
 
 from libc.math cimport hypot, atan2, atan, log, sqrt
-
-cdef double PI = 4 * atan(1)
+from sage.arith.constants cimport M_PI as PI
 
 
 cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
-    cdef ComplexDoubleElement z = ComplexDoubleElement.__new__(ComplexDoubleElement)
-    z._complex.dat[0] = x
-    z._complex.dat[1] = y
+    z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
+    z._complex.real = x
+    z._complex.imag = y
     return z
+
 
 cdef inline double mag_to_lightness(double r):
     """
@@ -61,11 +59,12 @@ cdef inline double mag_to_lightness(double r):
 
         sage: from sage.plot.complex_plot import complex_to_rgb
         sage: complex_to_rgb([[0, 1, 10]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.77172568,  0.        ,  0.        ],
-                [ 1.        ,  0.22134776,  0.22134776]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.77172568, 0.        , 0.        ],
+                [1.        , 0.22134776, 0.22134776]]])
     """
     return atan(log(sqrt(r)+1)) * (4/PI) - 1
+
 
 def complex_to_rgb(z_values):
     """
@@ -82,13 +81,13 @@ def complex_to_rgb(z_values):
 
         sage: from sage.plot.complex_plot import complex_to_rgb
         sage: complex_to_rgb([[0, 1, 1000]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.77172568,  0.        ,  0.        ],
-                [ 1.        ,  0.64421177,  0.64421177]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.77172568, 0.        , 0.        ],
+                [1.        , 0.64421177, 0.64421177]]])
         sage: complex_to_rgb([[0, 1j, 1000j]])
-        array([[[ 0.        ,  0.        ,  0.        ],
-                [ 0.38586284,  0.77172568,  0.        ],
-                [ 0.82210588,  1.        ,  0.64421177]]])
+        array([[[0.        , 0.        , 0.        ],
+                [0.38586284, 0.77172568, 0.        ],
+                [0.82210588, 1.        , 0.64421177]]])
     """
     import numpy
     cdef unsigned int i, j, imax, jmax
@@ -114,7 +113,7 @@ def complex_to_rgb(z_values):
                 z = <ComplexDoubleElement>zz
             else:
                 z = CDF(zz)
-            x, y = z._complex.dat[0], z._complex.dat[1]
+            x, y = z._complex.dat
             mag = hypot(x, y)
             arg = atan2(y, x) # math module arctan has range from -pi to pi, so cut along negative x-axis
 
@@ -161,6 +160,7 @@ def complex_to_rgb(z_values):
     sig_off()
     return rgb
 
+
 class ComplexPlot(GraphicPrimitive):
     """
     The GraphicsPrimitive to display complex functions in using the domain
@@ -168,24 +168,24 @@ class ComplexPlot(GraphicPrimitive):
 
     INPUT:
 
-        - ``rgb_data`` -- An array of colored points to be plotted.
+    - ``rgb_data`` -- An array of colored points to be plotted.
 
-        - ``xrange`` -- A minimum and maximum x value for the plot.
+    - ``x_range`` -- A minimum and maximum x value for the plot.
 
-        - ``yrange`` -- A minimum and maximum y value for the plot.
+    - ``y_range`` -- A minimum and maximum y value for the plot.
 
     TESTS::
 
         sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))
     """
-    def __init__(self, rgb_data, xrange, yrange, options):
+    def __init__(self, rgb_data, x_range, y_range, options):
         """
         TESTS::
 
             sage: p = complex_plot(lambda z: z^2-1, (-2, 2), (-2, 2))
         """
-        self.xrange = xrange
-        self.yrange = yrange
+        self.x_range = x_range
+        self.y_range = y_range
         self.x_count = len(rgb_data)
         self.y_count = len(rgb_data[0])
         self.rgb_data = rgb_data
@@ -193,16 +193,19 @@ class ComplexPlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
             sage: p = complex_plot(lambda z: z, (-1, 2), (-3, 4))
             sage: sorted(p.get_minmax_data().items())
             [('xmax', 2.0), ('xmin', -1.0), ('ymax', 4.0), ('ymin', -3.0)]
+            sage: p = complex_plot(lambda z: z, (1, 2), (3, 4))
+            sage: sorted(p.get_minmax_data().items())
+            [('xmax', 2.0), ('xmin', 1.0), ('ymax', 4.0), ('ymin', 3.0)]
         """
         from sage.plot.plot import minmax_data
-        return minmax_data(self.xrange, self.yrange, dict=True)
+        return minmax_data(self.x_range, self.y_range, dict=True)
 
     def _allowed_options(self):
         """
@@ -231,16 +234,18 @@ class ComplexPlot(GraphicPrimitive):
             Graphics object consisting of 1 graphics primitive
         """
         options = self.options()
-        x0,x1 = float(self.xrange[0]), float(self.xrange[1])
-        y0,y1 = float(self.yrange[0]), float(self.yrange[1])
-        subplot.imshow(self.rgb_data, origin='lower', extent=(x0,x1,y0,y1), interpolation=options['interpolation'])
+        x0, x1 = float(self.x_range[0]), float(self.x_range[1])
+        y0, y1 = float(self.y_range[0]), float(self.y_range[1])
+        subplot.imshow(self.rgb_data, origin='lower', extent=(x0, x1, y0, y1),
+                       interpolation=options['interpolation'])
+
 
 @options(plot_points=100, interpolation='catrom')
-def complex_plot(f, xrange, yrange, **options):
+def complex_plot(f, x_range, y_range, **options):
     r"""
     ``complex_plot`` takes a complex function of one variable,
     `f(z)` and plots output of the function over the specified
-    ``xrange`` and ``yrange`` as demonstrated below. The magnitude of the
+    ``x_range`` and ``y_range`` as demonstrated below. The magnitude of the
     output is indicated by the brightness (with zero being black and
     infinity being white) while the argument is represented by the
     hue (with red being positive real, and increasing through orange,
@@ -275,20 +280,36 @@ def complex_plot(f, xrange, yrange, **options):
         sage: complex_plot(sqrt(x), (-5, 5), (-5, 5))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(complex_plot(sqrt(x), (-5, 5), (-5, 5)))
+
     ::
 
         sage: complex_plot(sin(x), (-5, 5), (-5, 5))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(complex_plot(sin(x), (-5, 5), (-5, 5)))
 
     ::
 
         sage: complex_plot(log(x), (-10, 10), (-10, 10))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(complex_plot(log(x), (-10, 10), (-10, 10)))
+
     ::
 
         sage: complex_plot(exp(x), (-10, 10), (-10, 10))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(complex_plot(exp(x), (-10, 10), (-10, 10)))
 
     A function with some nice zeros and a pole::
 
@@ -296,15 +317,28 @@ def complex_plot(f, xrange, yrange, **options):
         sage: complex_plot(f, (-3, 3), (-3, 3))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        def f(z): return z**5 + z - 1 + 1/z
+        sphinx_plot(complex_plot(f, (-3, 3), (-3, 3)))
+
     Here is the identity, useful for seeing what values map to what colors::
 
         sage: complex_plot(lambda z: z, (-3, 3), (-3, 3))
         Graphics object consisting of 1 graphics primitive
 
+    .. PLOT::
+
+        sphinx_plot(complex_plot(lambda z: z, (-3, 3), (-3, 3)))
+
     The Riemann Zeta function::
 
         sage: complex_plot(zeta, (-30,30), (-30,30))
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        sphinx_plot(complex_plot(zeta, (-30,30), (-30,30)))
 
     Extra options will get passed on to show(), as long as they are valid::
 
@@ -352,13 +386,21 @@ def complex_plot(f, xrange, yrange, **options):
         pass
 
     cdef double x, y
-    ignore, ranges = setup_for_eval_on_grid([], [xrange, yrange], options['plot_points'])
-    xrange,yrange=[r[:2] for r in ranges]
-    sig_on()
-    z_values = [[  f(new_CDF_element(x, y)) for x in srange(*ranges[0], include_endpoint=True)]
-                                            for y in srange(*ranges[1], include_endpoint=True)]
-    sig_off()
+    _, ranges = setup_for_eval_on_grid([], [x_range, y_range],
+                                       options['plot_points'])
+    x_range = ranges[0]
+    y_range = ranges[1]
+    cdef list z_values = []
+    cdef list row
+    for y in srange(*y_range, include_endpoint=True):
+        row = []
+        for x in srange(*x_range, include_endpoint=True):
+            sig_check()
+            row.append(f(new_CDF_element(x, y)))
+        z_values.append(row)
+
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options, ignore=['xmin', 'xmax']))
-    g.add_primitive(ComplexPlot(complex_to_rgb(z_values), xrange, yrange, options))
+    g.add_primitive(ComplexPlot(complex_to_rgb(z_values),
+                                x_range[:2], y_range[:2], options))
     return g

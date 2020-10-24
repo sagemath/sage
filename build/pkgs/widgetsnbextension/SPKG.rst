@@ -1,0 +1,7 @@
+widgetsnbextension
+==================
+
+Description
+-----------
+
+Interactive HTML widgets for Jupyter notebooks.

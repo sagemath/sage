@@ -1,12 +1,13 @@
 r"""
 Semigroups
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2009 Florent Hivert <florent.hivert at univ-rouen.fr>
-#                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
@@ -15,14 +16,16 @@ Semigroups
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.misc.misc_c import prod
-from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.category_with_axiom import CategoryWithAxiom, all_axioms
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.quotients import QuotientsCategory
 from sage.categories.magmas import Magmas
-from sage.structure.element import generic_power
+from sage.arith.power import generic_power
+
+
+all_axioms += ("HTrivial", "Aperiodic", "LTrivial", "RTrivial", "JTrivial")
 
 class Semigroups(CategoryWithAxiom):
     """
@@ -114,9 +117,9 @@ class Semigroups(CategoryWithAxiom):
             """
             tester = self._tester(**options)
             S = tester.some_elements()
-            from sage.combinat.cartesian_product import CartesianProduct
-            for x,y,z in tester.some_elements(CartesianProduct(S,S,S)):
-                tester.assert_((x * y) * z == x * (y * z))
+            from sage.misc.misc import some_tuples
+            for x, y, z in some_tuples(S, 3, tester._max_runs):
+                tester.assertEqual((x * y) * z, x * (y * z))
 
         @abstract_method(optional=True)
         def semigroup_generators(self):
@@ -165,6 +168,7 @@ class Semigroups(CategoryWithAxiom):
                 ...
                 AssertionError: Cannot compute an empty product in a semigroup
             """
+            from sage.misc.misc_c import prod
             assert len(args) > 0, "Cannot compute an empty product in a semigroup"
             return prod(args[1:], args[0])
 
@@ -299,8 +303,8 @@ class Semigroups(CategoryWithAxiom):
               ``side``, ``simple``, and ``elements`` options, ...
             """
             from sage.graphs.digraph import DiGraph
-            from monoids import Monoids
-            from groups import Groups
+            from .monoids import Monoids
+            from .groups import Groups
             if not side in ["left", "right", "twosided"]:
                 raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
             if elements is None:
@@ -334,7 +338,8 @@ class Semigroups(CategoryWithAxiom):
                     target not in elements):
                     return
                 if simple:
-                    result.add_edge([source, target])
+                    if source != target:
+                        result.add_edge([source, target])
                 elif side == "twosided":
                     result.add_edge([source, target, (label, side_label)])
                 else:
@@ -365,7 +370,7 @@ class Semigroups(CategoryWithAxiom):
             the semigroup, and the right Cayley graph relations
             between them, and uses the latter as an automaton.
 
-            See :class:`sage.sets.monoids.AutomaticSemigroup` for details.
+            See :class:`~sage.sets.monoids.AutomaticSemigroup` for details.
 
             EXAMPLES::
 
@@ -394,7 +399,7 @@ class Semigroups(CategoryWithAxiom):
 
             In the following example `M` is a group; however its unit
             does not coincide with that of `R`, so `M` is only a
-            subsemigroup, and we need to specify its unit explictly::
+            subsemigroup, and we need to specify its unit explicitly::
 
                 sage: M = R.subsemigroup([R(5)],
                 ....:     category=Semigroups().Finite().Subobjects() & Groups()); M
@@ -422,7 +427,7 @@ class Semigroups(CategoryWithAxiom):
 
             .. TODO::
 
-                - Fix the above failure by providing a default
+                - Fix the failure in TESTS by providing a default
                   implementation of ``__invert__`` for finite groups
                   (or even finite monoids).
                 - Provide a default implementation of ``one`` for a
@@ -433,9 +438,51 @@ class Semigroups(CategoryWithAxiom):
             return AutomaticSemigroup(generators, ambient=self, one=one,
                                       category=category)
 
+        def trivial_representation(self, base_ring=None, side="twosided"):
+            r"""
+            Return the trivial representation of ``self`` over ``base_ring``.
+
+            INPUT:
+
+            - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
+            - ``side`` -- ignored
+
+            EXAMPLES::
+
+                sage: G = groups.permutation.Dihedral(4)
+                sage: G.trivial_representation()
+                Trivial representation of Dihedral group of order 8
+                 as a permutation group over Integer Ring
+            """
+            if base_ring is None:
+                from sage.rings.all import ZZ
+                base_ring = ZZ
+            from sage.modules.with_basis.representation import TrivialRepresentation
+            return TrivialRepresentation(self, base_ring)
+
+        def regular_representation(self, base_ring=None, side="left"):
+            """
+            Return the regular representation of ``self`` over ``base_ring``.
+
+            - ``side`` -- (default: ``"left"``) whether this is the
+              ``"left"`` or ``"right"`` regular representation
+
+            EXAMPLES::
+
+                sage: G = groups.permutation.Dihedral(4)
+                sage: G.regular_representation()
+                Left Regular Representation of Dihedral group of order 8
+                 as a permutation group over Integer Ring
+            """
+            if base_ring is None:
+                from sage.rings.all import ZZ
+                base_ring = ZZ
+            from sage.modules.with_basis.representation import RegularRepresentation
+            return RegularRepresentation(self, base_ring, side)
+
     class ElementMethods:
 
-        def _pow_(self, n):
+        def _pow_int(self, n):
             """
             Return ``self`` to the `n^{th}` power.
 
@@ -452,23 +499,259 @@ class Semigroups(CategoryWithAxiom):
                 sage: x^0
                 Traceback (most recent call last):
                 ...
-                AssertionError
+                ArithmeticError: only positive powers are supported in a semigroup
 
             TESTS::
 
-                sage: x._pow_(17)
+                sage: x._pow_int(17)
                 'x'
-
             """
-            assert n > 0
+            if n <= 0:
+                raise ArithmeticError("only positive powers are supported in a semigroup")
             return generic_power(self, n)
 
-        __pow__ = _pow_
 
+    class SubcategoryMethods:
+
+        @cached_method
+        def LTrivial(self):
+            r"""
+            Return the full subcategory of the `L`-trivial objects of ``self``.
+
+            Let `S` be (multiplicative) :class:`semigroup <Semigroups>`.
+            The `L`-*preorder* `\leq_L` on `S` is defined by:
+
+            .. MATH::
+
+                x\leq_L y \qquad \Longleftrightarrow \qquad x \in Sy
+
+            The `L`-*classes* are the equivalence classes for the
+            associated equivalence relation. The semigroup `S` is
+            `L`-*trivial* if all its `L`-classes are trivial (that is
+            of cardinality `1`), or equivalently if the `L`-preorder is
+            in fact a partial order.
+
+            EXAMPLES::
+
+                sage: C = Semigroups().LTrivial(); C
+                Category of l trivial semigroups
+
+            A `L`-trivial semigroup is `H`-trivial::
+
+                sage: sorted(C.axioms())
+                ['Associative', 'HTrivial', 'LTrivial']
+
+            .. SEEALSO::
+
+                - :wikipedia:`Green%27s_relations`
+                - :class:`Semigroups.SubcategoryMethods.RTrivial`
+                - :class:`Semigroups.SubcategoryMethods.JTrivial`
+                - :class:`Semigroups.SubcategoryMethods.HTrivial`
+
+            TESTS::
+
+                sage: TestSuite(C).run()
+                sage: Rings().LTrivial.__module__
+                'sage.categories.semigroups'
+                sage: C                 # todo: not implemented
+                Category of L-trivial semigroups
+            """
+            return self._with_axiom('LTrivial')
+
+        @cached_method
+        def RTrivial(self):
+            r"""
+            Return the full subcategory of the `R`-trivial objects of ``self``.
+
+            Let `S` be (multiplicative) :class:`semigroup <Semigroups>`.
+            The `R`-*preorder* `\leq_R` on `S` is defined by:
+
+            .. MATH::
+
+                x\leq_R y \qquad \Longleftrightarrow \qquad x \in yS
+
+            The `R`-*classes* are the equivalence classes for the
+            associated equivalence relation. The semigroup `S` is
+            `R`-*trivial* if all its `R`-classes are trivial (that is
+            of cardinality `1`), or equivalently if the `R`-preorder is
+            in fact a partial order.
+
+            EXAMPLES::
+
+                sage: C = Semigroups().RTrivial(); C
+                Category of r trivial semigroups
+
+            An `R`-trivial semigroup is `H`-trivial::
+
+                sage: sorted(C.axioms())
+                ['Associative', 'HTrivial', 'RTrivial']
+
+            .. SEEALSO::
+
+                - :wikipedia:`Green%27s_relations`
+                - :class:`Semigroups.SubcategoryMethods.LTrivial`
+                - :class:`Semigroups.SubcategoryMethods.JTrivial`
+                - :class:`Semigroups.SubcategoryMethods.HTrivial`
+
+            TESTS::
+
+                sage: TestSuite(C).run()
+                sage: Rings().RTrivial.__module__
+                'sage.categories.semigroups'
+                sage: C                 # todo: not implemented
+                Category of R-trivial semigroups
+            """
+            return self._with_axiom('RTrivial')
+
+        @cached_method
+        def JTrivial(self):
+            r"""
+            Return the full subcategory of the `J`-trivial objects of ``self``.
+
+            Let `S` be (multiplicative) :class:`semigroup <Semigroups>`.
+            The `J`-*preorder* `\leq_J` on `S` is defined by:
+
+            .. MATH::
+
+                x\leq_J y \qquad \Longleftrightarrow \qquad x \in SyS
+
+            The `J`-*classes* are the equivalence classes for the
+            associated equivalence relation. The semigroup `S` is
+            `J`-*trivial* if all its `J`-classes are trivial (that is
+            of cardinality `1`), or equivalently if the `J`-preorder is
+            in fact a partial order.
+
+            EXAMPLES::
+
+                sage: C = Semigroups().JTrivial(); C
+                Category of j trivial semigroups
+
+            A semigroup is `J`-trivial if and only if it is
+            `L`-trivial and `R`-trivial::
+
+                sage: sorted(C.axioms())
+                ['Associative', 'HTrivial', 'JTrivial', 'LTrivial', 'RTrivial']
+                sage: Semigroups().LTrivial().RTrivial()
+                Category of j trivial semigroups
+
+            For a commutative semigroup, all three axioms are
+            equivalent::
+
+                sage: Semigroups().Commutative().LTrivial()
+                Category of commutative j trivial semigroups
+                sage: Semigroups().Commutative().RTrivial()
+                Category of commutative j trivial semigroups
+
+            .. SEEALSO::
+
+                - :wikipedia:`Green%27s_relations`
+                - :class:`Semigroups.SubcategoryMethods.LTrivial`
+                - :class:`Semigroups.SubcategoryMethods.RTrivial`
+                - :class:`Semigroups.SubcategoryMethods.HTrivial`
+
+            TESTS::
+
+                sage: TestSuite(C).run()
+                sage: Rings().JTrivial.__module__
+                'sage.categories.semigroups'
+                sage: C                 # todo: not implemented
+                Category of J-trivial semigroups
+            """
+            return self._with_axiom('JTrivial')
+
+        @cached_method
+        def HTrivial(self):
+            r"""
+            Return the full subcategory of the `H`-trivial objects of ``self``.
+
+            Let `S` be (multiplicative) :class:`semigroup <Semigroups>`.
+            Two elements of `S` are in the same `H`-class if they are
+            in the same `L`-class and in the same `R`-class.
+
+            The semigroup `S` is `H`-*trivial* if all its `H`-classes
+            are trivial (that is of cardinality `1`).
+
+            EXAMPLES::
+
+                sage: C = Semigroups().HTrivial(); C
+                Category of h trivial semigroups
+                sage: Semigroups().HTrivial().Finite().example()
+                NotImplemented
+
+            .. SEEALSO::
+
+                - :wikipedia:`Green%27s_relations`
+                - :class:`Semigroups.SubcategoryMethods.RTrivial`
+                - :class:`Semigroups.SubcategoryMethods.LTrivial`
+                - :class:`Semigroups.SubcategoryMethods.JTrivial`
+                - :class:`Semigroups.SubcategoryMethods.Aperiodic`
+
+            TESTS::
+
+                sage: TestSuite(C).run()
+                sage: Rings().HTrivial.__module__
+                'sage.categories.semigroups'
+                sage: C                 # todo: not implemented
+                Category of H-trivial semigroups
+            """
+            return self._with_axiom('HTrivial')
+
+        @cached_method
+        def Aperiodic(self):
+            r"""
+            Return the full subcategory of the aperiodic objects of ``self``.
+
+            A (multiplicative) :class:`semigroup <Semigroups>` `S` is
+            *aperiodic* if for any element `s\in S`, the sequence
+            `s,s^2,s^3,...` eventually stabilizes.
+
+            In terms of variety, this can be described by the equation
+            `s^\omega s = s`.
+
+            EXAMPLES::
+
+                sage: Semigroups().Aperiodic()
+                Category of aperiodic semigroups
+
+            An aperiodic semigroup is `H`-trivial::
+
+                sage: Semigroups().Aperiodic().axioms()
+                frozenset({'Aperiodic', 'Associative', 'HTrivial'})
+
+            In the finite case, the two notions coincide::
+
+                sage: Semigroups().Aperiodic().Finite() is Semigroups().HTrivial().Finite()
+                True
+
+            TESTS::
+
+                sage: C = Monoids().Aperiodic().Finite()
+                sage: TestSuite(C).run()
+
+            .. SEEALSO::
+
+                - :wikipedia:`Aperiodic_semigroup`
+                - :class:`Semigroups.SubcategoryMethods.RTrivial`
+                - :class:`Semigroups.SubcategoryMethods.LTrivial`
+                - :class:`Semigroups.SubcategoryMethods.JTrivial`
+                - :class:`Semigroups.SubcategoryMethods.Aperiodic`
+
+            TESTS::
+
+                sage: TestSuite(C).run()
+                sage: Rings().Aperiodic.__module__
+                'sage.categories.semigroups'
+            """
+            return self._with_axiom('Aperiodic')
 
     Finite = LazyImport('sage.categories.finite_semigroups', 'FiniteSemigroups', at_startup=True)
     FinitelyGeneratedAsMagma = LazyImport('sage.categories.finitely_generated_semigroups', 'FinitelyGeneratedSemigroups')
     Unital = LazyImport('sage.categories.monoids', 'Monoids', at_startup=True)
+    LTrivial = LazyImport('sage.categories.l_trivial_semigroups', 'LTrivialSemigroups')
+    RTrivial = LazyImport('sage.categories.r_trivial_semigroups', 'RTrivialSemigroups')
+    JTrivial = LazyImport('sage.categories.j_trivial_semigroups', 'JTrivialSemigroups')
+    HTrivial = LazyImport('sage.categories.h_trivial_semigroups', 'HTrivialSemigroups')
+    Aperiodic = LazyImport('sage.categories.aperiodic_semigroups', 'AperiodicSemigroups')
 
     #######################################
     class Subquotients(SubquotientsCategory):
@@ -545,7 +828,7 @@ class Semigroups(CategoryWithAxiom):
 
         def extra_super_categories(self):
             """
-            Implement the fact that a cartesian product of semigroups is a
+            Implement the fact that a Cartesian product of semigroups is a
             semigroup.
 
             EXAMPLES::
@@ -603,6 +886,57 @@ class Semigroups(CategoryWithAxiom):
                 """
                 return self.basis().keys().semigroup_generators().map(self.monomial)
 
+            # Once there will be some guarantee on the consistency between
+            # gens / monoid/group/*_generators, these methods could possibly
+            # be removed in favor of aliases gens -> xxx_generators in
+            # the Algebras.FinitelyGenerated hierachy
+            def gens(self):
+                r"""
+                Return the generators of ``self``.
+
+                EXAMPLES::
+
+                    sage: a, b = SL2Z.algebra(ZZ).gens(); a, b
+                    ([ 0 -1]
+                     [ 1  0],
+                     [1 1]
+                     [0 1])
+                    sage: 2*a + b
+                    2*[ 0 -1]
+                      [ 1  0]
+                    +
+                    [1 1]
+                    [0 1]
+                """
+                return tuple(self.monomial(g) for g in self.basis().keys().gens())
+
+            def ngens(self):
+                r"""
+                Return the number of generators of ``self``.
+
+                EXAMPLES::
+
+                    sage: SL2Z.algebra(ZZ).ngens()
+                    2
+                    sage: DihedralGroup(4).algebra(RR).ngens()
+                    2
+                """
+                return self.basis().keys().ngens()
+
+            def gen(self, i=0):
+                r"""
+                Return the ``i``-th generator of ``self``.
+
+                EXAMPLES::
+
+                    sage: A = GL(3, GF(7)).algebra(ZZ)
+                    sage: A.gen(0)
+                    [3 0 0]
+                    [0 1 0]
+                    [0 0 1]
+                """
+                return self.monomial(self.basis().keys().gen(i))
+
             def product_on_basis(self, g1, g2):
                 r"""
                 Product, on basis elements, as per
@@ -622,4 +956,43 @@ class Semigroups(CategoryWithAxiom):
                     B['ab'] + B['bdc']
                 """
                 return self.monomial(g1 * g2)
+
+            def trivial_representation(self, side="twosided"):
+                """
+                Return the trivial representation of ``self``.
+
+                INPUT:
+
+                - ``side`` -- ignored
+
+                EXAMPLES::
+
+                    sage: G = groups.permutation.Dihedral(4)
+                    sage: A = G.algebra(QQ)
+                    sage: V = A.trivial_representation()
+                    sage: V == G.trivial_representation(QQ)
+                    True
+                """
+                S = self.basis().keys()
+                return S.trivial_representation(self.base_ring())
+
+            def regular_representation(self, side="left"):
+                """
+                Return the regular representation of ``self``.
+
+                INPUT:
+
+                - ``side`` -- (default: ``"left"``) whether this is the
+                  ``"left"`` or ``"right"`` regular representation
+
+                EXAMPLES::
+
+                    sage: G = groups.permutation.Dihedral(4)
+                    sage: A = G.algebra(QQ)
+                    sage: V = A.regular_representation()
+                    sage: V == G.regular_representation(QQ)
+                    True
+                """
+                S = self.basis().keys()
+                return S.regular_representation(self.base_ring(), side)
 

@@ -1,0 +1,4644 @@
+diff --git a/psutil/__init__.py b/psutil/__init__.py
+index 6b88776..cb0f840 100644
+--- a/psutil/__init__.py
++++ b/psutil/__init__.py
+@@ -71,6 +71,7 @@ from ._common import OSX
+ from ._common import POSIX  # NOQA
+ from ._common import SUNOS
+ from ._common import WINDOWS
++from ._common import CYGWIN
+ 
+ if LINUX:
+     # This is public API and it will be retrieved from _pslinux.py
+@@ -147,6 +148,10 @@ elif SUNOS:
+     # _pssunos.py via sys.modules.
+     PROCFS_PATH = "/proc"
+ 
++elif CYGWIN:
++    PROCFS_PATH = "/proc"
++    from . import _pscygwin as _psplatform
++
+ else:  # pragma: no cover
+     raise NotImplementedError('platform %s is not supported' % sys.platform)
+ 
+@@ -174,7 +179,7 @@ __all__ = [
+     "POWER_TIME_UNKNOWN", "POWER_TIME_UNLIMITED",
+ 
+     "BSD", "FREEBSD", "LINUX", "NETBSD", "OPENBSD", "OSX", "POSIX", "SUNOS",
+-    "WINDOWS",
++    "WINDOWS", "CYGWIN",
+ 
+     # classes
+     "Process", "Popen",
+@@ -326,6 +331,13 @@ _psplatform.ZombieProcess = ZombieProcess
+ _psplatform.AccessDenied = AccessDenied
+ _psplatform.TimeoutExpired = TimeoutExpired
+ 
++# TODO: probably having these both is superfulous, and platform
++# specific modules can import these exceptions from _common
++_common.NoSuchProcess = NoSuchProcess
++_common.ZombieProcess = ZombieProcess
++_common.AccessDenied = AccessDenied
++_common.TimeoutExpired = TimeoutExpired
++
+ 
+ # =====================================================================
+ # --- Process class
+@@ -942,7 +954,7 @@ class Process(object):
+                             # (self) it means child's PID has been reused
+                             if self.create_time() <= p.create_time():
+                                 ret.append(p)
+-                    except (NoSuchProcess, ZombieProcess):
++                    except (AccessDenied, NoSuchProcess, ZombieProcess):
+                         pass
+             else:  # pragma: no cover
+                 # Windows only (faster)
+@@ -964,7 +976,7 @@ class Process(object):
+                 for p in process_iter():
+                     try:
+                         table[p.ppid()].append(p)
+-                    except (NoSuchProcess, ZombieProcess):
++                    except (AccessDenied, NoSuchProcess, ZombieProcess):
+                         pass
+             else:  # pragma: no cover
+                 for pid, ppid in ppid_map.items():
+diff --git a/psutil/_common.py b/psutil/_common.py
+index 2497226..7b48ddf 100644
+--- a/psutil/_common.py
++++ b/psutil/_common.py
+@@ -32,10 +32,14 @@ if sys.version_info >= (3, 4):
+ else:
+     enum = None
+ 
++
++PY3 = sys.version_info[0] == 3
++
++
+ __all__ = [
+     # OS constants
+     'FREEBSD', 'BSD', 'LINUX', 'NETBSD', 'OPENBSD', 'OSX', 'POSIX', 'SUNOS',
+-    'WINDOWS',
++    'WINDOWS', 'CYGWIN',
+     # connection constants
+     'CONN_CLOSE', 'CONN_CLOSE_WAIT', 'CONN_CLOSING', 'CONN_ESTABLISHED',
+     'CONN_FIN_WAIT1', 'CONN_FIN_WAIT2', 'CONN_LAST_ACK', 'CONN_LISTEN',
+@@ -72,6 +76,7 @@ OPENBSD = sys.platform.startswith("openbsd")
+ NETBSD = sys.platform.startswith("netbsd")
+ BSD = FREEBSD or OPENBSD or NETBSD
+ SUNOS = sys.platform.startswith("sunos") or sys.platform.startswith("solaris")
++CYGWIN = sys.platform.startswith("cygwin")
+ 
+ 
+ # ===================================================================
+@@ -232,6 +237,18 @@ if AF_UNIX is not None:
+ del AF_INET, AF_INET6, AF_UNIX, SOCK_STREAM, SOCK_DGRAM
+ 
+ 
++# =====================================================================
++# -- exceptions
++# =====================================================================
++
++
++# these get overwritten on "import psutil" from the __init__.py file
++NoSuchProcess = None
++ZombieProcess = None
++AccessDenied = None
++TimeoutExpired = None
++
++
+ # ===================================================================
+ # --- utils
+ # ===================================================================
+@@ -334,6 +351,10 @@ def memoize_when_activated(fun):
+     return wrapper
+ 
+ 
++def get_procfs_path():
++    return sys.modules['psutil'].PROCFS_PATH
++
++
+ def isfile_strict(path):
+     """Same as os.path.isfile() but does not swallow EACCES / EPERM
+     exceptions, see:
+@@ -349,6 +370,55 @@ def isfile_strict(path):
+         return stat.S_ISREG(st.st_mode)
+ 
+ 
++def open_binary(fname, **kwargs):
++    return open(fname, "rb", **kwargs)
++
++
++_FS_ENCODING = sys.getfilesystemencoding()
++_ENCODING_ERRORS_HANDLER = 'surrogateescape'
++
++
++# TODO: Move some of these functions to ._compat since they're more for py2/3
++# compatibility than anything else
++
++def open_text(fname, **kwargs):
++    """On Python 3 opens a file in text mode by using fs encoding and
++    a proper en/decoding errors handler.
++    On Python 2 this is just an alias for open(name, 'rt').
++    """
++    if PY3:
++        # See:
++        # https://github.com/giampaolo/psutil/issues/675
++        # https://github.com/giampaolo/psutil/pull/733
++        kwargs.setdefault('encoding', _FS_ENCODING)
++        kwargs.setdefault('errors', _ENCODING_ERRORS_HANDLER)
++    return open(fname, "rt", **kwargs)
++
++
++if PY3:
++    def decode(s):
++        return s.decode(encoding=_FS_ENCODING, errors=_ENCODING_ERRORS_HANDLER)
++else:
++    def decode(s):
++        return s
++
++
++if PY3:
++    def encode(s, encoding=_FS_ENCODING):
++        return s
++else:
++    def encode(s, encoding=_FS_ENCODING):
++        if isinstance(s, str):
++            return s
++
++        try:
++            return s.encode(encoding)
++        except UnicodeEncodeError:
++            # Filesystem codec failed, return the plain unicode
++            # string (this should never happen).
++            return s
++
++
+ def path_exists_strict(path):
+     """Same as os.path.exists() but does not swallow EACCES / EPERM
+     exceptions, see:
+@@ -447,3 +517,23 @@ def deprecated_method(replacement):
+             return getattr(self, replacement)(*args, **kwargs)
+         return inner
+     return outer
++
++
++def wrap_exceptions(fun):
++    """Decorator which translates bare OSError and IOError exceptions
++    into NoSuchProcess and AccessDenied.
++    """
++    @functools.wraps(fun)
++    def wrapper(self, *args, **kwargs):
++        try:
++            return fun(self, *args, **kwargs)
++        except EnvironmentError as err:
++            # ENOENT (no such file or directory) gets raised on open().
++            # ESRCH (no such process) can get raised on read() if
++            # process is gone in meantime.
++            if err.errno in (errno.ENOENT, errno.ESRCH):
++                raise NoSuchProcess(self.pid, self._name)
++            if err.errno in (errno.EPERM, errno.EACCES):
++                raise AccessDenied(self.pid, self._name)
++            raise
++    return wrapper
+diff --git a/psutil/_pscygwin.py b/psutil/_pscygwin.py
+new file mode 100644
+index 0000000..ffba639
+--- /dev/null
++++ b/psutil/_pscygwin.py
+@@ -0,0 +1,891 @@
++"""Cygwin platform implementation."""
++
++# TODO: Large chunks of this module are copy/pasted from the Linux module;
++# seek out further opportunities for refactoring
++
++from __future__ import division
++
++import errno
++import os
++import re
++import sys
++from collections import namedtuple
++
++from . import _common
++from . import _psposix
++from . import _psutil_cygwin as cext
++from . import _psutil_posix as cext_posix
++from ._common import conn_tmap
++from ._common import decode
++from ._common import encode
++from ._common import get_procfs_path
++from ._common import isfile_strict
++from ._common import memoize_when_activated
++from ._common import open_binary
++from ._common import open_text
++from ._common import popenfile
++from ._common import sockfam_to_enum
++from ._common import socktype_to_enum
++from ._common import usage_percent
++from ._common import wrap_exceptions
++from ._compat import PY3
++from ._compat import b
++from ._compat import lru_cache
++from ._compat import xrange
++
++if sys.version_info >= (3, 4):
++    import enum
++else:
++    enum = None
++
++__extra__all__ = ["PROCFS_PATH"]
++
++
++# =====================================================================
++# --- constants
++# =====================================================================
++
++
++if enum is None:
++    AF_LINK = -1
++else:
++    AddressFamily = enum.IntEnum('AddressFamily', {'AF_LINK': -1})
++    AF_LINK = AddressFamily.AF_LINK
++
++
++# Number of clock ticks per second
++CLOCK_TICKS = os.sysconf("SC_CLK_TCK")
++
++
++# TODO: Update me to properly reflect Cygwin-recognized process statuses
++# taken from /fs/proc/array.c
++PROC_STATUSES = {
++    "R": _common.STATUS_RUNNING,
++    "S": _common.STATUS_SLEEPING,
++    "D": _common.STATUS_DISK_SLEEP,
++    "T": _common.STATUS_STOPPED,
++    "t": _common.STATUS_TRACING_STOP,
++    "Z": _common.STATUS_ZOMBIE,
++    "X": _common.STATUS_DEAD,
++    "x": _common.STATUS_DEAD,
++    "K": _common.STATUS_WAKE_KILL,
++    "W": _common.STATUS_WAKING
++}
++
++CONN_DELETE_TCB = "DELETE_TCB"
++
++TCP_STATUSES = {
++    cext.MIB_TCP_STATE_ESTAB: _common.CONN_ESTABLISHED,
++    cext.MIB_TCP_STATE_SYN_SENT: _common.CONN_SYN_SENT,
++    cext.MIB_TCP_STATE_SYN_RCVD: _common.CONN_SYN_RECV,
++    cext.MIB_TCP_STATE_FIN_WAIT1: _common.CONN_FIN_WAIT1,
++    cext.MIB_TCP_STATE_FIN_WAIT2: _common.CONN_FIN_WAIT2,
++    cext.MIB_TCP_STATE_TIME_WAIT: _common.CONN_TIME_WAIT,
++    cext.MIB_TCP_STATE_CLOSED: _common.CONN_CLOSE,
++    cext.MIB_TCP_STATE_CLOSE_WAIT: _common.CONN_CLOSE_WAIT,
++    cext.MIB_TCP_STATE_LAST_ACK: _common.CONN_LAST_ACK,
++    cext.MIB_TCP_STATE_LISTEN: _common.CONN_LISTEN,
++    cext.MIB_TCP_STATE_CLOSING: _common.CONN_CLOSING,
++    cext.MIB_TCP_STATE_DELETE_TCB: CONN_DELETE_TCB,
++    cext.PSUTIL_CONN_NONE: _common.CONN_NONE,
++}
++
++
++ACCESS_DENIED_SET = frozenset([errno.EPERM, errno.EACCES,
++                               cext.ERROR_ACCESS_DENIED])
++
++# =====================================================================
++# -- exceptions
++# =====================================================================
++
++
++# these get overwritten on "import psutil" from the __init__.py file
++NoSuchProcess = None
++ZombieProcess = None
++AccessDenied = None
++TimeoutExpired = None
++
++
++# =====================================================================
++# --- utils
++# =====================================================================
++
++
++# TODO: Alternatively use Cygwin's API to get this, maybe?
++def cygpid_to_winpid(pid):
++    """
++    Converts Cygwin's internal PID (the one exposed by all POSIX interfaces)
++    to the associated Windows PID.
++    """
++
++    procfs_path = get_procfs_path()
++    path = '%s/%s/winpid' % (procfs_path, pid)
++    if not os.path.exists(path):
++        raise NoSuchProcess(pid)
++
++    with open_binary('%s/%s/winpid' % (procfs_path, pid)) as f:
++        return int(f.readline().strip())
++
++
++def winpid_to_cygpid(pid):
++    """
++    Converts a Windows PID to its associated Cygwin PID.
++    """
++
++    # TODO: This is quite ineffecient--Cygwin provides an API for this that we
++    # can use later
++    procfs_path = get_procfs_path()
++    for path in os.listdir(procfs_path):
++        if not path.isdigit():
++            continue
++
++        winpid_path = '%s/%s/winpid' % (procfs_path, path)
++
++        if not os.path.exists(winpid_path):
++            continue
++
++        with open_binary(winpid_path) as f:
++            winpid = int(f.readline().strip())
++            if winpid == pid:
++                return int(path)
++
++    raise NoSuchProcess(pid)
++
++
++@lru_cache(maxsize=512)
++def _win32_QueryDosDevice(s):
++    return cext.win32_QueryDosDevice(s)
++
++
++# TODO: Copied almost verbatim from the windows module, except don't
++# us os.path.join since that uses posix sep
++def convert_dos_path(s):
++    # convert paths using native DOS format like:
++    # "\Device\HarddiskVolume1\Windows\systemew\file.txt"
++    # into: "C:\Windows\systemew\file.txt"
++    if PY3 and not isinstance(s, str):
++        s = s.decode('utf8')
++    rawdrive = '\\'.join(s.split('\\')[:3])
++    driveletter = _win32_QueryDosDevice(rawdrive)
++    return '%s\\%s' % (driveletter, s[len(rawdrive):])
++
++
++# =====================================================================
++# --- named tuples
++# =====================================================================
++
++
++scputimes = namedtuple('scputimes', ['user', 'system', 'idle'])
++pmem = namedtuple('pmem', ['rss', 'vms', 'shared', 'text', 'lib', 'data',
++                           'dirty'])
++pmem = namedtuple(
++    'pmem', ['rss', 'vms',
++             'num_page_faults', 'peak_wset', 'wset', 'peak_paged_pool',
++             'paged_pool', 'peak_nonpaged_pool', 'nonpaged_pool',
++             'pagefile', 'peak_pagefile', 'private'])
++pfullmem = namedtuple('pfullmem', pmem._fields + ('uss', ))
++svmem = namedtuple('svmem', ['total', 'available', 'percent', 'used', 'free'])
++pmmap_grouped = namedtuple('pmmap_grouped', ['path', 'rss'])
++pmmap_ext = namedtuple(
++    'pmmap_ext', 'addr perms ' + ' '.join(pmmap_grouped._fields))
++ntpinfo = namedtuple(
++    'ntpinfo', ['num_handles', 'ctx_switches', 'user_time', 'kernel_time',
++                'create_time', 'num_threads', 'io_rcount', 'io_wcount',
++                'io_rbytes', 'io_wbytes'])
++
++
++# =====================================================================
++# --- system memory
++# =====================================================================
++
++
++def _get_meminfo():
++    mems = {}
++    with open_binary('%s/meminfo' % get_procfs_path()) as f:
++        for line in f:
++            fields = line.split()
++            mems[fields[0].rstrip(b':')] = int(fields[1]) * 1024
++
++    return mems
++
++
++def virtual_memory():
++    """Report virtual memory stats.
++    This implementation matches "free" and "vmstat -s" cmdline
++    utility values and procps-ng-3.3.12 source was used as a reference
++    (2016-09-18):
++    https://gitlab.com/procps-ng/procps/blob/
++        24fd2605c51fccc375ab0287cec33aa767f06718/proc/sysinfo.c
++    For reference, procps-ng-3.3.10 is the version available on Ubuntu
++    16.04.
++
++    Note about "available" memory: up until psutil 4.3 it was
++    calculated as "avail = (free + buffers + cached)". Now
++    "MemAvailable:" column (kernel 3.14) from /proc/meminfo is used as
++    it's more accurate.
++    That matches "available" column in newer versions of "free".
++    """
++    mems = _get_meminfo()
++
++    # /proc doc states that the available fields in /proc/meminfo vary
++    # by architecture and compile options, but these 3 values are also
++    # returned by sysinfo(2); as such we assume they are always there.
++    total = mems[b'MemTotal']
++    free = mems[b'MemFree']
++
++    used = total - free
++
++    # On Windows we are treating avail and free as the same
++    # TODO: Are they really though?
++    avail = free
++
++    percent = usage_percent((total - avail), total, _round=1)
++
++    return svmem(total, avail, percent, used, free)
++
++
++def swap_memory():
++    mems = _get_meminfo()
++    total = mems[b'SwapTotal']
++    free = mems[b'SwapFree']
++    used = total - free
++    percent = usage_percent(used, total, _round=1)
++    return _common.sswap(total, used, free, percent, 0, 0)
++
++
++# =====================================================================
++# --- CPUs
++# =====================================================================
++
++
++def cpu_times():
++    """Return a named tuple representing the following system-wide
++    CPU times:
++    (user, nice, system, idle, iowait, irq, softirq [steal, [guest,
++     [guest_nice]]])
++    Last 3 fields may not be available on all Linux kernel versions.
++    """
++    procfs_path = get_procfs_path()
++    with open_binary('%s/stat' % procfs_path) as f:
++        values = f.readline().split()
++    fields = values[1:2] + values[3:len(scputimes._fields) + 2]
++    fields = [float(x) / CLOCK_TICKS for x in fields]
++    return scputimes(*fields)
++
++
++def per_cpu_times():
++    """Return a list of namedtuple representing the CPU times
++    for every CPU available on the system.
++    """
++    procfs_path = get_procfs_path()
++    cpus = []
++    with open_binary('%s/stat' % procfs_path) as f:
++        # get rid of the first line which refers to system wide CPU stats
++        f.readline()
++        for line in f:
++            if line.startswith(b'cpu'):
++                values = line.split()
++                fields = values[1:2] + values[3:len(scputimes._fields) + 2]
++                fields = [float(x) / CLOCK_TICKS for x in fields]
++                entry = scputimes(*fields)
++                cpus.append(entry)
++        return cpus
++
++
++def cpu_count_logical():
++    """Return the number of logical CPUs in the system."""
++    try:
++        return os.sysconf("SC_NPROCESSORS_ONLN")
++    except ValueError:
++        # as a second fallback we try to parse /proc/cpuinfo
++        num = 0
++        with open_binary('%s/cpuinfo' % get_procfs_path()) as f:
++            for line in f:
++                if line.lower().startswith(b'processor'):
++                    num += 1
++
++        # unknown format (e.g. amrel/sparc architectures), see:
++        # https://github.com/giampaolo/psutil/issues/200
++        # try to parse /proc/stat as a last resort
++        if num == 0:
++            search = re.compile('cpu\d')
++            with open_text('%s/stat' % get_procfs_path()) as f:
++                for line in f:
++                    line = line.split(' ')[0]
++                    if search.match(line):
++                        num += 1
++
++        if num == 0:
++            # mimic os.cpu_count()
++            return None
++        return num
++
++
++def cpu_count_physical():
++    """Return the number of physical cores in the system."""
++    mapping = {}
++    current_info = {}
++    with open_binary('%s/cpuinfo' % get_procfs_path()) as f:
++        for line in f:
++            line = line.strip().lower()
++            if not line:
++                # new section
++                if (b'physical id' in current_info and
++                        b'cpu cores' in current_info):
++                    mapping[current_info[b'physical id']] = \
++                        current_info[b'cpu cores']
++                current_info = {}
++            else:
++                # ongoing section
++                if (line.startswith(b'physical id') or
++                        line.startswith(b'cpu cores')):
++                    key, value = line.split(b'\t:', 1)
++                    current_info[key] = int(value)
++
++    # mimic os.cpu_count()
++    return sum(mapping.values()) or None
++
++
++# TODO: Works mostly the same as on Linux, but softirq is not available;
++# meanwhile the Windows module supports number of system calls, but this
++# implementation does not.  There's also a question of whether we want it
++# to count Cygwin "system" calls, actual Windows system calls, or what...
++# It's a somewhat ill-defined field on Cygwin; may have to come back to it
++# TODO: Depending on what we decide to do about syscalls, this implementation
++# could be shared with the Linux implementation with some minor tweaks to the
++# latter
++def cpu_stats():
++    with open_binary('%s/stat' % get_procfs_path()) as f:
++        ctx_switches = None
++        interrupts = None
++        for line in f:
++            if line.startswith(b'ctxt'):
++                ctx_switches = int(line.split()[1])
++            elif line.startswith(b'intr'):
++                interrupts = int(line.split()[1])
++            if ctx_switches is not None and interrupts is not None:
++                break
++    syscalls = 0
++    soft_interrupts = 0
++    return _common.scpustats(
++        ctx_switches, interrupts, soft_interrupts, syscalls)
++
++
++# =====================================================================
++# --- network
++# =====================================================================
++
++
++# TODO: This might merit a little further work to get the "friendly"
++# interface names instead of interface UUIDs
++net_if_addrs = cext_posix.net_if_addrs
++
++
++def net_connections(kind, _pid=-1):
++    """Return socket connections.  If pid == -1 return system-wide
++    connections (as opposed to connections opened by one process only).
++    """
++    if kind not in conn_tmap:
++        raise ValueError("invalid %r kind argument; choose between %s"
++                         % (kind, ', '.join([repr(x) for x in conn_tmap])))
++    elif kind == 'unix':
++        raise ValueError("invalid %r kind argument; although UNIX sockets "
++                         "are supported on Cygwin it is not possible to "
++                         "enumerate the UNIX sockets opened by a process"
++                         % kind)
++
++    families, types = conn_tmap[kind]
++    if _pid > 0:
++        _pid = cygpid_to_winpid(_pid)
++
++    # Note: This lists *all* net connections on the system, not just ones by
++    # Cygwin processes; below we whittle it down just to Cygwin processes, but
++    # we might consider an extra option for showing non-Cygwin processes as
++    # well
++    rawlist = cext.net_connections(_pid, families, types)
++    ret = set()
++    for item in rawlist:
++        fd, fam, type, laddr, raddr, status, pid = item
++        status = TCP_STATUSES[status]
++        fam = sockfam_to_enum(fam)
++        type = socktype_to_enum(type)
++        if _pid == -1:
++            try:
++                pid = winpid_to_cygpid(pid)
++            except NoSuchProcess:
++                continue
++            nt = _common.sconn(fd, fam, type, laddr, raddr, status, pid)
++        else:
++            nt = _common.pconn(fd, fam, type, laddr, raddr, status)
++        ret.add(nt)
++    return list(ret)
++
++
++def net_if_stats():
++    ret = {}
++    if_stats = cext.net_if_stats()
++    # NOTE: Cygwin does some tricky things in how getifaddrs is handled
++    # which our net_if_stats does not do, such that net_if_stats does not
++    # return all the same interfaces as net_if_stats, so here we artifically
++    # limit the net_if_stats() results to just those interfaces returned by
++    # net_if_addrs
++    if_names = set(addr[0] for addr in net_if_addrs())
++    for name, items in if_stats.items():
++        if name not in if_names:
++            continue
++        name = encode(name)
++        isup, duplex, speed, mtu = items
++        if hasattr(_common, 'NicDuplex'):
++            duplex = _common.NicDuplex(duplex)
++        ret[name] = _common.snicstats(isup, duplex, speed, mtu)
++    return ret
++
++
++def net_io_counters():
++    ret = cext.net_io_counters()
++    return dict([(encode(k), v) for k, v in ret.items()])
++
++
++# =====================================================================
++# --- sensors
++# =====================================================================
++
++
++# TODO: Copied verbatim from the Windows module
++def sensors_battery():
++    """Return battery information."""
++    # For constants meaning see:
++    # https://msdn.microsoft.com/en-us/library/windows/desktop/
++    #     aa373232(v=vs.85).aspx
++    acline_status, flags, percent, secsleft = cext.sensors_battery()
++    power_plugged = acline_status == 1
++    no_battery = bool(flags & 128)
++    charging = bool(flags & 8)
++
++    if no_battery:
++        return None
++    if power_plugged or charging:
++        secsleft = _common.POWER_TIME_UNLIMITED
++    elif secsleft == -1:
++        secsleft = _common.POWER_TIME_UNKNOWN
++
++    return _common.sbattery(percent, secsleft, power_plugged)
++
++
++# =====================================================================
++# --- disks
++# =====================================================================
++
++
++disk_io_counters = cext.disk_io_counters
++
++
++disk_usage = _psposix.disk_usage
++
++
++# TODO: Copied verbatim from the Linux module; refactor
++def disk_partitions(all=False):
++    """Return mounted disk partitions as a list of namedtuples"""
++    fstypes = set()
++    with open_text("%s/filesystems" % get_procfs_path()) as f:
++        for line in f:
++            line = line.strip()
++            if not line.startswith("nodev"):
++                fstypes.add(line.strip())
++            else:
++                # ignore all lines starting with "nodev" except "nodev zfs"
++                fstype = line.split("\t")[1]
++                if fstype == "zfs":
++                    fstypes.add("zfs")
++
++    retlist = []
++    partitions = cext.disk_partitions()
++    for partition in partitions:
++        device, mountpoint, fstype, opts = partition
++        if device == 'none':
++            device = ''
++        if not all:
++            if device == '' or fstype not in fstypes:
++                continue
++        ntuple = _common.sdiskpart(device, mountpoint, fstype, opts)
++        retlist.append(ntuple)
++    return retlist
++
++
++# =====================================================================
++# --- other system functions
++# =====================================================================
++
++
++def boot_time():
++    """The system boot time expressed in seconds since the epoch."""
++    return cext.boot_time()
++
++
++# TODO: Copied verbatim from the Linux module
++def users():
++    """Return currently connected users as a list of namedtuples."""
++    retlist = []
++    rawlist = cext.users()
++    for item in rawlist:
++        user, tty, hostname, tstamp, user_process = item
++        # note: the underlying C function includes entries about
++        # system boot, run level and others.  We might want
++        # to use them in the future.
++        if not user_process:
++            continue
++        if hostname == ':0.0' or hostname == ':0':
++            hostname = 'localhost'
++        nt = _common.suser(user, tty or None, hostname, tstamp)
++        retlist.append(nt)
++    return retlist
++
++
++# =====================================================================
++# --- processes
++# =====================================================================
++
++
++def pids():
++    """Returns a list of PIDs currently running on the system."""
++    return [int(x) for x in os.listdir(b(get_procfs_path())) if x.isdigit()]
++
++
++def pid_exists(pid):
++    """Check For the existence of a unix pid."""
++    return _psposix.pid_exists(pid)
++
++
++class Process(object):
++    """Cygwin process implementation."""
++
++    __slots__ = ["pid", "_name", "_ppid", "_procfs_path", "_winpid"]
++
++    def __init__(self, pid):
++        self.pid = pid
++        self._name = None
++        self._ppid = None
++        self._procfs_path = get_procfs_path()
++        self._winpid = cygpid_to_winpid(pid)
++
++    @memoize_when_activated
++    def _parse_stat_file(self):
++        """Parse /proc/{pid}/stat file. Return a list of fields where
++        process name is in position 0.
++        Using "man proc" as a reference: where "man proc" refers to
++        position N, always subscract 2 (e.g starttime pos 22 in
++        'man proc' == pos 20 in the list returned here).
++        """
++
++        stat_filename = "%s/%s/stat" % (self._procfs_path, self.pid)
++
++        # NOTE: On Cygwin, if the stat file exists but reading it raises an
++        # EINVAL, this indicates that we are probably looking at a zombie
++        # process (this doesn't happen in all cases--seems to be a bug in
++        # Cygwin)
++        try:
++            with open_binary(stat_filename) as f:
++                data = f.read()
++        except IOError as err:
++            if (err.errno == errno.EINVAL and
++                    os.path.exists(err.filename)):
++                raise ZombieProcess(self.pid, self._name, self._ppid)
++
++            raise
++        # Process name is between parentheses. It can contain spaces and
++        # other parentheses. This is taken into account by looking for
++        # the first occurrence of "(" and the last occurence of ")".
++        rpar = data.rfind(b')')
++        name = data[data.find(b'(') + 1:rpar]
++        fields_after_name = data[rpar + 2:].split()
++        return [name] + fields_after_name
++
++    @memoize_when_activated
++    def _read_status_file(self):
++        with open_binary("%s/%s/status" % (self._procfs_path, self.pid)) as f:
++            return f.read()
++
++    @memoize_when_activated
++    def oneshot_info(self):
++        """Return multiple information about this process as a
++        raw tuple.
++        """
++        return cext.proc_info(self._winpid)
++
++    def oneshot_enter(self):
++        self._parse_stat_file.cache_activate()
++        self._read_status_file.cache_activate()
++        self.oneshot_info.cache_activate()
++
++    def oneshot_exit(self):
++        self._parse_stat_file.cache_deactivate()
++        self._read_status_file.cache_deactivate()
++        self.oneshot_info.cache_deactivate()
++
++    @wrap_exceptions
++    def name(self):
++        name = self._parse_stat_file()[0]
++        if PY3:
++            name = decode(name)
++        # XXX - gets changed later and probably needs refactoring
++        return name
++
++    def exe(self):
++        try:
++            return os.readlink("%s/%s/exe" % (self._procfs_path, self.pid))
++        except OSError as err:
++            if err.errno in (errno.ENOENT, errno.ESRCH):
++                # no such file error; might be raised also if the
++                # path actually exists for system processes with
++                # low pids (about 0-20)
++                if os.path.lexists("%s/%s" % (self._procfs_path, self.pid)):
++                    return ""
++                else:
++                    if not _psposix.pid_exists(self.pid):
++                        raise NoSuchProcess(self.pid, self._name)
++                    else:
++                        raise ZombieProcess(self.pid, self._name, self._ppid)
++            if err.errno in (errno.EPERM, errno.EACCES):
++                raise AccessDenied(self.pid, self._name)
++            raise
++
++    @wrap_exceptions
++    def cmdline(self):
++        with open_text("%s/%s/cmdline" % (self._procfs_path, self.pid)) as f:
++            data = f.read()
++        if not data:
++            # may happen in case of zombie process
++            return []
++        if data.endswith('\x00'):
++            data = data[:-1]
++        return [x for x in data.split('\x00')]
++
++    # TODO: /proc/<pid>/environ will be available in newer versions of
++    # Cygwin--do a version check and provide it if available.
++
++    @wrap_exceptions
++    def terminal(self):
++        tty_nr = int(self._parse_stat_file()[5])
++        tmap = _psposix.get_terminal_map()
++        try:
++            return tmap[tty_nr]
++        except KeyError:
++            return None
++
++    @wrap_exceptions
++    def io_counters(self):
++        try:
++            ret = cext.proc_io_counters(self._winpid)
++        except OSError as err:
++            if err.errno in ACCESS_DENIED_SET:
++                nt = ntpinfo(*self.oneshot_info())
++                ret = (nt.io_rcount, nt.io_wcount, nt.io_rbytes, nt.io_wbytes)
++            else:
++                raise
++        return _common.pio(*ret)
++
++    @wrap_exceptions
++    def cpu_times(self):
++        values = self._parse_stat_file()
++        utime = float(values[12]) / CLOCK_TICKS
++        stime = float(values[13]) / CLOCK_TICKS
++        children_utime = float(values[14]) / CLOCK_TICKS
++        children_stime = float(values[15]) / CLOCK_TICKS
++        return _common.pcputimes(utime, stime, children_utime, children_stime)
++
++    @wrap_exceptions
++    def wait(self, timeout=None):
++        try:
++            return _psposix.wait_pid(self.pid, timeout)
++        except _psposix.TimeoutExpired:
++            raise TimeoutExpired(timeout, self.pid, self._name)
++
++    @wrap_exceptions
++    def create_time(self):
++        try:
++            return cext.proc_create_time(self._winpid)
++        except OSError as err:
++            if err.errno in ACCESS_DENIED_SET:
++                return ntpinfo(*self.oneshot_info()).create_time
++            raise
++
++    def _get_raw_meminfo(self):
++        try:
++            return cext.proc_memory_info(self._winpid)
++        except OSError as err:
++            if err.errno in ACCESS_DENIED_SET:
++                # TODO: the C ext can probably be refactored in order
++                # to get this from cext.proc_info()
++                return cext.proc_memory_info_2(self._winpid)
++            raise
++
++    @wrap_exceptions
++    def memory_info(self):
++        # on Windows RSS == WorkingSetSize and VMS == PagefileUsage.
++        # Underlying C function returns fields of PROCESS_MEMORY_COUNTERS
++        # struct.
++        t = self._get_raw_meminfo()
++        rss = t[2]  # wset
++        vms = t[7]  # pagefile
++        return pmem(*(rss, vms, ) + t)
++
++    @wrap_exceptions
++    def memory_full_info(self):
++        basic_mem = self.memory_info()
++        uss = cext.proc_memory_uss(self._winpid)
++        return pfullmem(*basic_mem + (uss, ))
++
++    def memory_maps(self):
++        try:
++            raw = cext.proc_memory_maps(self._winpid)
++        except OSError as err:
++            # XXX - can't use wrap_exceptions decorator as we're
++            # returning a generator; probably needs refactoring.
++            if err.errno in ACCESS_DENIED_SET:
++                raise AccessDenied(self.pid, self._name)
++            if err.errno == errno.ESRCH:
++                raise NoSuchProcess(self.pid, self._name)
++            raise
++        else:
++            for addr, perm, path, rss in raw:
++                path = cext.winpath_to_cygpath(convert_dos_path(path))
++                addr = hex(addr)
++                yield (addr, perm, path, rss)
++
++    @wrap_exceptions
++    def cwd(self):
++        return os.readlink("%s/%s/cwd" % (self._procfs_path, self.pid))
++
++    @wrap_exceptions
++    def num_ctx_switches(self):
++        ctx_switches = ntpinfo(*self.oneshot_info()).ctx_switches
++        # only voluntary ctx switches are supported
++        return _common.pctxsw(ctx_switches, 0)
++
++    @wrap_exceptions
++    def num_threads(self):
++        return ntpinfo(*self.oneshot_info()).num_threads
++
++    @wrap_exceptions
++    def threads(self):
++        rawlist = cext.proc_threads(self._winpid)
++        retlist = []
++        for thread_id, utime, stime in rawlist:
++            ntuple = _common.pthread(thread_id, utime, stime)
++            retlist.append(ntuple)
++        return retlist
++
++    @wrap_exceptions
++    def nice_get(self):
++        # Use C implementation
++        return cext_posix.getpriority(self.pid)
++
++    @wrap_exceptions
++    def nice_set(self, value):
++        return cext_posix.setpriority(self.pid, value)
++
++    @wrap_exceptions
++    def cpu_affinity_get(self):
++        def from_bitmask(x):
++            return [i for i in xrange(64) if (1 << i) & x]
++        bitmask = cext.proc_cpu_affinity_get(self._winpid)
++        return from_bitmask(bitmask)
++
++    @wrap_exceptions
++    def cpu_affinity_set(self, value):
++        def to_bitmask(l):
++            if not l:
++                raise ValueError("invalid argument %r" % l)
++            out = 0
++            for bit in l:
++                out |= 2 ** bit
++            return out
++
++        # SetProcessAffinityMask() states that ERROR_INVALID_PARAMETER
++        # is returned for an invalid CPU but this seems not to be true,
++        # therefore we check CPUs validy beforehand.
++        allcpus = list(range(len(per_cpu_times())))
++        for cpu in value:
++            if cpu not in allcpus:
++                if not isinstance(cpu, (int, long)):
++                    raise TypeError(
++                        "invalid CPU %r; an integer is required" % cpu)
++                else:
++                    raise ValueError("invalid CPU %r" % cpu)
++
++        bitmask = to_bitmask(value)
++        try:
++            cext.proc_cpu_affinity_set(self._winpid, bitmask)
++        except OSError as exc:
++            if exc.errno == errno.EIO:
++                raise AccessDenied(self.pid, self._name)
++
++    @wrap_exceptions
++    def status(self):
++        letter = self._parse_stat_file()[1]
++        if PY3:
++            letter = letter.decode()
++        # XXX is '?' legit? (we're not supposed to return it anyway)
++        return PROC_STATUSES.get(letter, '?')
++
++    @wrap_exceptions
++    def open_files(self):
++        retlist = []
++        files = os.listdir("%s/%s/fd" % (self._procfs_path, self.pid))
++        hit_enoent = False
++        for fd in files:
++            file = "%s/%s/fd/%s" % (self._procfs_path, self.pid, fd)
++            try:
++                path = os.readlink(file)
++            except OSError as err:
++                # ENOENT == file which is gone in the meantime
++                if err.errno in (errno.ENOENT, errno.ESRCH):
++                    hit_enoent = True
++                    continue
++                elif err.errno == errno.EINVAL:
++                    # not a link
++                    continue
++                else:
++                    raise
++            else:
++                # If path is not an absolute there's no way to tell
++                # whether it's a regular file or not, so we skip it.
++                # A regular file is always supposed to be have an
++                # absolute path though.
++                if path.startswith('/') and isfile_strict(path):
++                    ntuple = popenfile(path, int(fd))
++                    retlist.append(ntuple)
++        if hit_enoent:
++            # raise NSP if the process disappeared on us
++            os.stat('%s/%s' % (self._procfs_path, self.pid))
++        return retlist
++
++    @wrap_exceptions
++    def connections(self, kind='inet'):
++        return net_connections(kind, _pid=self.pid)
++
++    @wrap_exceptions
++    def num_fds(self):
++        return len(os.listdir("%s/%s/fd" % (self._procfs_path, self.pid)))
++
++    @wrap_exceptions
++    def ppid(self):
++        return int(self._parse_stat_file()[2])
++
++    @wrap_exceptions
++    def uids(self, _uids_re=re.compile(b'Uid:\t(\d+)')):
++        # More or less the same as on Linux, but the fields are separated by
++        # spaces instead of tabs; and anyways there is no difference on Cygwin
++        # between real, effective, and saved uids.
++        # TODO: We could use the same regexp on both Linux and Cygwin by just
++        # changing the Linux regexp to treat whitespace more flexibly
++        data = self._read_status_file()
++        real = _uids_re.findall(data)[0]
++        return _common.puids(int(real), int(real), int(real))
++
++    @wrap_exceptions
++    def gids(self, _gids_re=re.compile(b'Gid:\t(\d+)')):
++        # See note in uids
++        data = self._read_status_file()
++        real = _gids_re.findall(data)[0]
++        return _common.pgids(int(real), int(real), int(real))
+diff --git a/psutil/_pslinux.py b/psutil/_pslinux.py
+index 533b548..51852b1 100644
+--- a/psutil/_pslinux.py
++++ b/psutil/_pslinux.py
+@@ -9,7 +9,6 @@ from __future__ import division
+ import base64
+ import collections
+ import errno
+-import functools
+ import glob
+ import os
+ import re
+@@ -25,9 +24,13 @@ from . import _common
+ from . import _psposix
+ from . import _psutil_linux as cext
+ from . import _psutil_posix as cext_posix
++from ._common import decode
++from ._common import get_procfs_path
+ from ._common import isfile_strict
+ from ._common import memoize
+ from ._common import memoize_when_activated
++from ._common import open_binary
++from ._common import open_text
+ from ._common import parse_environ_block
+ from ._common import NIC_DUPLEX_FULL
+ from ._common import NIC_DUPLEX_HALF
+@@ -35,6 +38,7 @@ from ._common import NIC_DUPLEX_UNKNOWN
+ from ._common import path_exists_strict
+ from ._common import supports_ipv6
+ from ._common import usage_percent
++from ._common import wrap_exceptions
+ from ._compat import b
+ from ._compat import basestring
+ from ._compat import long
+@@ -83,9 +87,7 @@ BOOT_TIME = None  # set later
+ # speedup, see: https://github.com/giampaolo/psutil/issues/708
+ BIGGER_FILE_BUFFERING = -1 if PY3 else 8192
+ LITTLE_ENDIAN = sys.byteorder == 'little'
+-if PY3:
+-    FS_ENCODING = sys.getfilesystemencoding()
+-    ENCODING_ERRORS_HANDLER = 'surrogateescape'
++
+ if enum is None:
+     AF_LINK = socket.AF_PACKET
+ else:
+@@ -186,37 +188,6 @@ pio = namedtuple('pio', ['read_count', 'write_count',
+ # =====================================================================
+ 
+ 
+-def open_binary(fname, **kwargs):
+-    return open(fname, "rb", **kwargs)
+-
+-
+-def open_text(fname, **kwargs):
+-    """On Python 3 opens a file in text mode by using fs encoding and
+-    a proper en/decoding errors handler.
+-    On Python 2 this is just an alias for open(name, 'rt').
+-    """
+-    if PY3:
+-        # See:
+-        # https://github.com/giampaolo/psutil/issues/675
+-        # https://github.com/giampaolo/psutil/pull/733
+-        kwargs.setdefault('encoding', FS_ENCODING)
+-        kwargs.setdefault('errors', ENCODING_ERRORS_HANDLER)
+-    return open(fname, "rt", **kwargs)
+-
+-
+-if PY3:
+-    def decode(s):
+-        return s.decode(encoding=FS_ENCODING, errors=ENCODING_ERRORS_HANDLER)
+-else:
+-    def decode(s):
+-        return s
+-
+-
+-def get_procfs_path():
+-    """Return updated psutil.PROCFS_PATH constant."""
+-    return sys.modules['psutil'].PROCFS_PATH
+-
+-
+ def readlink(path):
+     """Wrapper around os.readlink()."""
+     assert isinstance(path, basestring), path
+@@ -1304,26 +1275,6 @@ def pid_exists(pid):
+             return pid in pids()
+ 
+ 
+-def wrap_exceptions(fun):
+-    """Decorator which translates bare OSError and IOError exceptions
+-    into NoSuchProcess and AccessDenied.
+-    """
+-    @functools.wraps(fun)
+-    def wrapper(self, *args, **kwargs):
+-        try:
+-            return fun(self, *args, **kwargs)
+-        except EnvironmentError as err:
+-            # ENOENT (no such file or directory) gets raised on open().
+-            # ESRCH (no such process) can get raised on read() if
+-            # process is gone in meantime.
+-            if err.errno in (errno.ENOENT, errno.ESRCH):
+-                raise NoSuchProcess(self.pid, self._name)
+-            if err.errno in (errno.EPERM, errno.EACCES):
+-                raise AccessDenied(self.pid, self._name)
+-            raise
+-    return wrapper
+-
+-
+ class Process(object):
+     """Linux process implementation."""
+ 
+diff --git a/psutil/_psposix.py b/psutil/_psposix.py
+index 6ed7694..5b79a42 100644
+--- a/psutil/_psposix.py
++++ b/psutil/_psposix.py
+@@ -173,12 +173,16 @@ def get_terminal_map():
+     Used by Process.terminal()
+     """
+     ret = {}
+-    ls = glob.glob('/dev/tty*') + glob.glob('/dev/pts/*')
++    # NOTE: On Cygwin pseudo-ttys are mapped to /dev/ptyN or /dev/consN
++    ls = (glob.glob('/dev/tty*') + glob.glob('/dev/pts/*') +
++          glob.glob('/dev/pty*') + glob.glob('/dev/cons*'))
+     for name in ls:
+         assert name not in ret, name
+         try:
+             ret[os.stat(name).st_rdev] = name
+         except OSError as err:
+-            if err.errno != errno.ENOENT:
++            if err.errno not in (errno.ENOENT, errno.ENXIO):
++                # Note: ENXIO can happen in some cases on Cygwin due to a
++                # bug; see: https://cygwin.com/ml/cygwin/2017-08/msg00198.html
+                 raise
+     return ret
+diff --git a/psutil/_pssunos.py b/psutil/_pssunos.py
+index ad72de2..9269ca9 100644
+--- a/psutil/_pssunos.py
++++ b/psutil/_pssunos.py
+@@ -15,6 +15,7 @@ from . import _common
+ from . import _psposix
+ from . import _psutil_posix as cext_posix
+ from . import _psutil_sunos as cext
++from ._common import get_procfs_path
+ from ._common import isfile_strict
+ from ._common import memoize_when_activated
+ from ._common import sockfam_to_enum
+@@ -97,13 +98,15 @@ pmmap_ext = namedtuple(
+ 
+ 
+ # =====================================================================
+-# --- utils
++# --- exceptions
+ # =====================================================================
+ 
+ 
+-def get_procfs_path():
+-    """Return updated psutil.PROCFS_PATH constant."""
+-    return sys.modules['psutil'].PROCFS_PATH
++# these get overwritten on "import psutil" from the __init__.py file
++NoSuchProcess = None
++ZombieProcess = None
++AccessDenied = None
++TimeoutExpired = None
+ 
+ 
+ # =====================================================================
+diff --git a/psutil/_psutil_cygwin.c b/psutil/_psutil_cygwin.c
+new file mode 100644
+index 0000000..e2f9e94
+--- /dev/null
++++ b/psutil/_psutil_cygwin.c
+@@ -0,0 +1,2035 @@
++#define WIN32_LEAN_AND_MEAN
++
++#include <windows.h>
++#include <Psapi.h>
++#include <winsock2.h>
++#include <WinIoCtl.h>
++#include <tlhelp32.h>
++
++/* On Cygwin, mprapi.h is missing a necessary include of wincrypt.h
++ * which is needed to define some types, so we include it here since
++ * iphlpapi.h includes iprtrmib.h which in turn includes mprapi.h
++ */
++#include <wincrypt.h>
++
++/* TODO: There are some structs defined in netioapi.h that are only defined in
++ * ws2ipdef.h has been included; however, for reasons unknown to me currently,
++ * the headers included with Cygwin deliberately do not include ws2ipdef.h
++ * when compiling for Cygwin.  For now I include it manually which seems to work
++ * but it would be good to track down why this was in the first place.
++ */
++#include <ws2ipdef.h>
++#include <iphlpapi.h>
++
++#include <sys/cygwin.h>
++
++#include <Python.h>
++
++#include <mntent.h>
++#include <utmpx.h>
++
++#include "arch/windows/process_info.h"
++#include "_psutil_common.h"
++
++
++/*
++ * ============================================================================
++ * Utilities
++ * ============================================================================
++ */
++
++ // a flag for connections without an actual status
++static int PSUTIL_CONN_NONE = 128;
++#define BYTESWAP_USHORT(x) ((((USHORT)(x) << 8) | ((USHORT)(x) >> 8)) & 0xffff)
++#define _psutil_conn_decref_objs() \
++    Py_DECREF(_AF_INET); \
++    Py_DECREF(_AF_INET6);\
++    Py_DECREF(_SOCK_STREAM);\
++    Py_DECREF(_SOCK_DGRAM);
++
++
++// fix for mingw32, see
++// https://github.com/giampaolo/psutil/issues/351#c2
++typedef struct _DISK_PERFORMANCE_WIN_2008 {
++    LARGE_INTEGER BytesRead;
++    LARGE_INTEGER BytesWritten;
++    LARGE_INTEGER ReadTime;
++    LARGE_INTEGER WriteTime;
++    LARGE_INTEGER IdleTime;
++    DWORD         ReadCount;
++    DWORD         WriteCount;
++    DWORD         QueueDepth;
++    DWORD         SplitCount;
++    LARGE_INTEGER QueryTime;
++    DWORD         StorageDeviceNumber;
++    WCHAR         StorageManagerName[8];
++} DISK_PERFORMANCE_WIN_2008;
++
++/* Python wrappers for Cygwin's cygwin_conv_path API--accepts and returns
++ * Python unicode strings.  Always returns absolute paths.
++ */
++static PyObject *
++psutil_cygwin_conv_path(PyObject *self, PyObject *args,
++                        cygwin_conv_path_t what) {
++    char *from;
++    char *to;
++    ssize_t size;
++
++    if (!PyArg_ParseTuple(args, "s", &from)) {
++        return NULL;
++    }
++
++    size = cygwin_conv_path(what, from, NULL, 0);
++
++    if (size < 0) {
++        /* TODO: Better error handling */
++        return size;
++    }
++
++    to = malloc(size);
++    if (to == NULL) {
++        return NULL;
++    }
++
++    if (cygwin_conv_path(what, from, to, size)) {
++        return NULL;
++    }
++
++    /* size includes the terminal null byte */
++#if PY_MAJOR_VERSION >= 3
++    return PyUnicode_FromStringAndSize(to, size - 1);
++#else
++    return PyString_FromStringAndSize(to, size - 1);
++#endif
++}
++
++
++static PyObject *
++psutil_cygpath_to_winpath(PyObject *self, PyObject *args) {
++    return psutil_cygwin_conv_path(self, args, CCP_POSIX_TO_WIN_A);
++}
++
++
++static PyObject *
++psutil_winpath_to_cygpath(PyObject *self, PyObject *args) {
++    return psutil_cygwin_conv_path(self, args, CCP_WIN_A_TO_POSIX);
++}
++
++
++/* TODO: Copied almost verbatim (_tcscmp -> wcscmp, _stprintf_s -> snprintf,
++ * _countof -> sizeof) so consider moving this into arch/windows or something
++ */
++/*
++ Accept a filename's drive in native  format like "\Device\HarddiskVolume1\"
++ and return the corresponding drive letter (e.g. "C:\\").
++ If no match is found return an empty string.
++*/
++static PyObject *
++psutil_win32_QueryDosDevice(PyObject *self, PyObject *args) {
++    LPCTSTR   lpDevicePath;
++    TCHAR d = TEXT('A');
++    TCHAR     szBuff[5];
++
++    if (!PyArg_ParseTuple(args, "s", &lpDevicePath))
++        return NULL;
++
++    while (d <= TEXT('Z')) {
++        TCHAR szDeviceName[3] = {d, TEXT(':'), TEXT('\0')};
++        TCHAR szTarget[512] = {0};
++        if (QueryDosDevice(szDeviceName, szTarget, 511) != 0) {
++            if (wcscmp(lpDevicePath, szTarget) == 0) {
++                snprintf(szBuff, sizeof(szBuff), TEXT("%c:"), d);
++                return Py_BuildValue("s", szBuff);
++            }
++        }
++        d++;
++    }
++    return Py_BuildValue("s", "");
++}
++
++
++static ULONGLONG (*psutil_GetTickCount64)(void) = NULL;
++
++/*
++ * Return a Python float representing the system uptime expressed in seconds
++ * since the epoch.
++ */
++static PyObject *
++psutil_boot_time(PyObject *self, PyObject *args) {
++    double uptime;
++    double pt;
++    FILETIME fileTime;
++    long long ll;
++    HINSTANCE hKernel32;
++    psutil_GetTickCount64 = NULL;
++
++    GetSystemTimeAsFileTime(&fileTime);
++
++    /*
++    HUGE thanks to:
++    http://johnstewien.spaces.live.com/blog/cns!E6885DB5CEBABBC8!831.entry
++
++    This function converts the FILETIME structure to a 32-bit Unix time.
++    The Unix time is a 32-bit value for the number of seconds since
++    January 1, 1970. A FILETIME is a 64-bit for the number of
++    100-nanosecond periods since January 1, 1601. Convert by
++    subtracting the number of 100-nanosecond period betwee 01-01-1970
++    and 01-01-1601, from time_t the divide by 1e+7 to get to the same
++    base granularity.
++    */
++    ll = (((LONGLONG)(fileTime.dwHighDateTime)) << 32) \
++        + fileTime.dwLowDateTime;
++    pt = (double)(ll - 116444736000000000ull) / 1e7;
++
++    // GetTickCount64() is Windows Vista+ only. Dinamically load
++    // GetTickCount64() at runtime. We may have used
++    // "#if (_WIN32_WINNT >= 0x0600)" pre-processor but that way
++    // the produced exe/wheels cannot be used on Windows XP, see:
++    // https://github.com/giampaolo/psutil/issues/811#issuecomment-230639178
++    hKernel32 = GetModuleHandleW(L"KERNEL32");
++    psutil_GetTickCount64 = (void*)GetProcAddress(hKernel32, "GetTickCount64");
++    if (psutil_GetTickCount64 != NULL) {
++        // Windows >= Vista
++        uptime = (double)psutil_GetTickCount64() / 1000.00;
++    }
++    else {
++        // Windows XP.
++        // GetTickCount() time will wrap around to zero if the
++        // system is run continuously for 49.7 days.
++        uptime = (double)GetTickCount() / 1000.00;
++    }
++
++    return Py_BuildValue("d", floor(pt - uptime));
++}
++
++
++/* TODO: Copied verbatim from the Linux module; refactor */
++/*
++ * Return disk mounted partitions as a list of tuples including device,
++ * mount point and filesystem type
++ */
++static PyObject *
++psutil_disk_partitions(PyObject *self, PyObject *args) {
++    FILE *file = NULL;
++    struct mntent *entry;
++    PyObject *py_retlist = PyList_New(0);
++    PyObject *py_tuple = NULL;
++
++    if (py_retlist == NULL)
++        return NULL;
++
++    // MOUNTED constant comes from mntent.h and it's == '/etc/mtab'
++    Py_BEGIN_ALLOW_THREADS
++    file = setmntent(MOUNTED, "r");
++    Py_END_ALLOW_THREADS
++    if ((file == 0) || (file == NULL)) {
++        PyErr_SetFromErrnoWithFilename(PyExc_OSError, MOUNTED);
++        goto error;
++    }
++
++    while ((entry = getmntent(file))) {
++        if (entry == NULL) {
++            PyErr_Format(PyExc_RuntimeError, "getmntent() failed");
++            goto error;
++        }
++        py_tuple = Py_BuildValue("(ssss)",
++                                 entry->mnt_fsname,  // device
++                                 entry->mnt_dir,     // mount point
++                                 entry->mnt_type,    // fs type
++                                 entry->mnt_opts);   // options
++        if (! py_tuple)
++            goto error;
++        if (PyList_Append(py_retlist, py_tuple))
++            goto error;
++        Py_DECREF(py_tuple);
++    }
++    endmntent(file);
++    return py_retlist;
++
++error:
++    if (file != NULL)
++        endmntent(file);
++    Py_XDECREF(py_tuple);
++    Py_DECREF(py_retlist);
++    return NULL;
++}
++
++
++/* Copied verbatim from the Windows module
++   TODO: Refactor this later
++ */
++/*
++ * Return process CPU affinity as a bitmask
++ */
++static PyObject *
++psutil_proc_cpu_affinity_get(PyObject *self, PyObject *args) {
++    DWORD pid;
++    HANDLE hProcess;
++    DWORD_PTR proc_mask;
++    DWORD_PTR system_mask;
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++    hProcess = psutil_handle_from_pid(pid);
++    if (hProcess == NULL)
++        return NULL;
++
++    if (GetProcessAffinityMask(hProcess, &proc_mask, &system_mask) == 0) {
++        CloseHandle(hProcess);
++        return PyErr_SetFromWindowsErr(0);
++    }
++
++    CloseHandle(hProcess);
++#ifdef _WIN64
++    return Py_BuildValue("K", (unsigned long long)proc_mask);
++#else
++    return Py_BuildValue("k", (unsigned long)proc_mask);
++#endif
++}
++
++
++/*
++ * Return process memory information as a Python tuple.
++ */
++static PyObject *
++psutil_proc_memory_info(PyObject *self, PyObject *args) {
++    HANDLE hProcess;
++    DWORD pid;
++#if (_WIN32_WINNT >= 0x0501)  // Windows XP with SP2
++    PROCESS_MEMORY_COUNTERS_EX cnt;
++#else
++    PROCESS_MEMORY_COUNTERS cnt;
++#endif
++    SIZE_T private = 0;
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++
++    hProcess = psutil_handle_from_pid(pid);
++    if (NULL == hProcess)
++        return NULL;
++
++    if (! GetProcessMemoryInfo(hProcess, (PPROCESS_MEMORY_COUNTERS)&cnt,
++                               sizeof(cnt))) {
++        CloseHandle(hProcess);
++        return PyErr_SetFromWindowsErr(0);
++    }
++
++#if (_WIN32_WINNT >= 0x0501)  // Windows XP with SP2
++    private = cnt.PrivateUsage;
++#endif
++
++    CloseHandle(hProcess);
++
++    // PROCESS_MEMORY_COUNTERS values are defined as SIZE_T which on 64bits
++    // is an (unsigned long long) and on 32bits is an (unsigned int).
++    // "_WIN64" is defined if we're running a 64bit Python interpreter not
++    // exclusively if the *system* is 64bit.
++#if defined(_WIN64)
++    return Py_BuildValue(
++        "(kKKKKKKKKK)",
++        cnt.PageFaultCount,  // unsigned long
++        (unsigned long long)cnt.PeakWorkingSetSize,
++        (unsigned long long)cnt.WorkingSetSize,
++        (unsigned long long)cnt.QuotaPeakPagedPoolUsage,
++        (unsigned long long)cnt.QuotaPagedPoolUsage,
++        (unsigned long long)cnt.QuotaPeakNonPagedPoolUsage,
++        (unsigned long long)cnt.QuotaNonPagedPoolUsage,
++        (unsigned long long)cnt.PagefileUsage,
++        (unsigned long long)cnt.PeakPagefileUsage,
++        (unsigned long long)private);
++#else
++    return Py_BuildValue(
++        "(kIIIIIIIII)",
++        cnt.PageFaultCount,    // unsigned long
++        (unsigned int)cnt.PeakWorkingSetSize,
++        (unsigned int)cnt.WorkingSetSize,
++        (unsigned int)cnt.QuotaPeakPagedPoolUsage,
++        (unsigned int)cnt.QuotaPagedPoolUsage,
++        (unsigned int)cnt.QuotaPeakNonPagedPoolUsage,
++        (unsigned int)cnt.QuotaNonPagedPoolUsage,
++        (unsigned int)cnt.PagefileUsage,
++        (unsigned int)cnt.PeakPagefileUsage,
++        (unsigned int)private);
++#endif
++}
++
++
++/*
++ * Alternative implementation of the one above but bypasses ACCESS DENIED.
++ */
++static PyObject *
++psutil_proc_memory_info_2(PyObject *self, PyObject *args) {
++    DWORD pid;
++    PSYSTEM_PROCESS_INFORMATION process;
++    PVOID buffer;
++    SIZE_T private;
++    unsigned long pfault_count;
++
++#if defined(_WIN64)
++    unsigned long long m1, m2, m3, m4, m5, m6, m7, m8;
++#else
++    unsigned int m1, m2, m3, m4, m5, m6, m7, m8;
++#endif
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++    if (! psutil_get_proc_info(pid, &process, &buffer))
++        return NULL;
++
++#if (_WIN32_WINNT >= 0x0501)  // Windows XP with SP2
++    private = process->PrivatePageCount;
++#else
++    private = 0;
++#endif
++    pfault_count = process->PageFaultCount;
++
++    m1 = process->PeakWorkingSetSize;
++    m2 = process->WorkingSetSize;
++    m3 = process->QuotaPeakPagedPoolUsage;
++    m4 = process->QuotaPagedPoolUsage;
++    m5 = process->QuotaPeakNonPagedPoolUsage;
++    m6 = process->QuotaNonPagedPoolUsage;
++    m7 = process->PagefileUsage;
++    m8 = process->PeakPagefileUsage;
++
++    free(buffer);
++
++    // SYSTEM_PROCESS_INFORMATION values are defined as SIZE_T which on 64
++    // bits is an (unsigned long long) and on 32bits is an (unsigned int).
++    // "_WIN64" is defined if we're running a 64bit Python interpreter not
++    // exclusively if the *system* is 64bit.
++#if defined(_WIN64)
++    return Py_BuildValue("(kKKKKKKKKK)",
++#else
++    return Py_BuildValue("(kIIIIIIIII)",
++#endif
++        pfault_count, m1, m2, m3, m4, m5, m6, m7, m8, private);
++}
++
++
++/**
++ * Returns the USS of the process.
++ * Reference:
++ * https://dxr.mozilla.org/mozilla-central/source/xpcom/base/
++ *     nsMemoryReporterManager.cpp
++ */
++static PyObject *
++psutil_proc_memory_uss(PyObject *self, PyObject *args)
++{
++    DWORD pid;
++    HANDLE proc;
++    PSAPI_WORKING_SET_INFORMATION tmp;
++    DWORD tmp_size = sizeof(tmp);
++    size_t entries;
++    size_t private_pages;
++    size_t i;
++    DWORD info_array_size;
++    PSAPI_WORKING_SET_INFORMATION* info_array;
++    SYSTEM_INFO system_info;
++    PyObject* py_result = NULL;
++    unsigned long long total = 0;
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++
++    proc = psutil_handle_from_pid(pid);
++    if (proc == NULL)
++        return NULL;
++
++    // Determine how many entries we need.
++    memset(&tmp, 0, tmp_size);
++    if (!QueryWorkingSet(proc, &tmp, tmp_size)) {
++        // NB: QueryWorkingSet is expected to fail here due to the
++        // buffer being too small.
++        if (tmp.NumberOfEntries == 0) {
++            PyErr_SetFromWindowsErr(0);
++            goto done;
++        }
++    }
++
++    // Fudge the size in case new entries are added between calls.
++    entries = tmp.NumberOfEntries * 2;
++
++    if (!entries) {
++        goto done;
++    }
++
++    info_array_size = tmp_size + (entries * sizeof(PSAPI_WORKING_SET_BLOCK));
++    info_array = (PSAPI_WORKING_SET_INFORMATION*)malloc(info_array_size);
++    if (!info_array) {
++        PyErr_NoMemory();
++        goto done;
++    }
++
++    if (!QueryWorkingSet(proc, info_array, info_array_size)) {
++        PyErr_SetFromWindowsErr(0);
++        goto done;
++    }
++
++    entries = (size_t)info_array->NumberOfEntries;
++    private_pages = 0;
++    for (i = 0; i < entries; i++) {
++        // Count shared pages that only one process is using as private.
++        if (!info_array->WorkingSetInfo[i].Shared ||
++                info_array->WorkingSetInfo[i].ShareCount <= 1) {
++            private_pages++;
++        }
++    }
++
++    // GetSystemInfo has no return value.
++    GetSystemInfo(&system_info);
++    total = private_pages * system_info.dwPageSize;
++    py_result = Py_BuildValue("K", total);
++
++done:
++    if (proc) {
++        CloseHandle(proc);
++    }
++
++    if (info_array) {
++        free(info_array);
++    }
++
++    return py_result;
++}
++
++
++/*
++ * Set process CPU affinity
++ */
++static PyObject *
++psutil_proc_cpu_affinity_set(PyObject *self, PyObject *args) {
++    DWORD pid;
++    HANDLE hProcess;
++    DWORD dwDesiredAccess = \
++        PROCESS_QUERY_INFORMATION | PROCESS_SET_INFORMATION;
++    DWORD_PTR mask;
++
++#ifdef _WIN64
++    if (! PyArg_ParseTuple(args, "lK", &pid, &mask))
++#else
++    if (! PyArg_ParseTuple(args, "lk", &pid, &mask))
++#endif
++    {
++        return NULL;
++    }
++    hProcess = psutil_handle_from_pid_waccess(pid, dwDesiredAccess);
++    if (hProcess == NULL)
++        return NULL;
++
++    if (SetProcessAffinityMask(hProcess, mask) == 0) {
++        CloseHandle(hProcess);
++        PyErr_SetFromWindowsErr(0);
++        return NULL;
++    }
++
++    CloseHandle(hProcess);
++    Py_RETURN_NONE;
++}
++
++
++/*
++ * Return a Python float indicating the process create time expressed in
++ * seconds since the epoch.
++ */
++static PyObject *
++psutil_proc_create_time(PyObject *self, PyObject *args) {
++    long        pid;
++    long long   unix_time;
++    DWORD       exitCode;
++    HANDLE      hProcess;
++    BOOL        ret;
++    FILETIME    ftCreate, ftExit, ftKernel, ftUser;
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++
++    // special case for PIDs 0 and 4, return system boot time
++    if (0 == pid || 4 == pid)
++        return psutil_boot_time(NULL, NULL);
++
++    hProcess = psutil_handle_from_pid(pid);
++    if (hProcess == NULL) 
++        return NULL;
++
++    if (! GetProcessTimes(hProcess, &ftCreate, &ftExit, &ftKernel, &ftUser)) {
++        CloseHandle(hProcess);
++        printf("GetLastError() = %d\n", GetLastError());
++        if (GetLastError() == ERROR_ACCESS_DENIED) {
++            // usually means the process has died so we throw a
++            // NoSuchProcess here
++            return NoSuchProcess();
++        }
++        else {
++            PyErr_SetFromWindowsErr(0);
++            return NULL;
++        }
++    }
++
++    // Make sure the process is not gone as OpenProcess alone seems to be
++    // unreliable in doing so (it seems a previous call to p.wait() makes
++    // it unreliable).
++    // This check is important as creation time is used to make sure the
++    // process is still running.
++    ret = GetExitCodeProcess(hProcess, &exitCode);
++    CloseHandle(hProcess);
++    if (ret != 0) {
++        if (exitCode != STILL_ACTIVE)
++            return NoSuchProcess();
++    }
++    else {
++        // Ignore access denied as it means the process is still alive.
++        // For all other errors, we want an exception.
++        if (GetLastError() != ERROR_ACCESS_DENIED) {
++            PyErr_SetFromWindowsErr(0);
++            return NULL;
++        }
++    }
++
++    /*
++    Convert the FILETIME structure to a Unix time.
++    It's the best I could find by googling and borrowing code here and there.
++    The time returned has a precision of 1 second.
++    */
++    unix_time = ((LONGLONG)ftCreate.dwHighDateTime) << 32;
++    unix_time += ftCreate.dwLowDateTime - 116444736000000000LL;
++    unix_time /= 10000000;
++    return Py_BuildValue("d", (double)unix_time);
++}
++
++
++// TODO: Copied verbatim from the windows module
++/*
++ * Get various process information by using NtQuerySystemInformation.
++ * We use this as a fallback when faster functions fail with access
++ * denied. This is slower because it iterates over all processes.
++ * Returned tuple includes the following process info:
++ *
++ * - num_threads
++ * - ctx_switches
++ * - num_handles (fallback)
++ * - user/kernel times (fallback)
++ * - create time (fallback)
++ * - io counters (fallback)
++ */
++static PyObject *
++psutil_proc_info(PyObject *self, PyObject *args) {
++    DWORD pid;
++    PSYSTEM_PROCESS_INFORMATION process;
++    PVOID buffer;
++    ULONG num_handles;
++    ULONG i;
++    ULONG ctx_switches = 0;
++    double user_time;
++    double kernel_time;
++    long long create_time;
++    int num_threads;
++    LONGLONG io_rcount, io_wcount, io_rbytes, io_wbytes;
++
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++    if (! psutil_get_proc_info(pid, &process, &buffer))
++        return NULL;
++
++    num_handles = process->HandleCount;
++    for (i = 0; i < process->NumberOfThreads; i++) {
++        // The updated headers in mingw-w64 appear to be using an older version
++        // of this API in which the ContextSwitches member is still called
++        // Reserved3
++#if __MINGW64_VERSION_MAJOR < 7
++        // Using the copy of this struct definition included in psutil
++        ctx_switches += process->Threads[i].ContextSwitches;
++#else
++        // Using the definition from mingw-w64-w32api-headers
++        ctx_switches += process->Threads[i].Reserved3;
++#endif
++    }
++    user_time = (double)process->UserTime.HighPart * 429.4967296 + \
++                (double)process->UserTime.LowPart * 1e-7;
++    kernel_time = (double)process->KernelTime.HighPart * 429.4967296 + \
++                  (double)process->KernelTime.LowPart * 1e-7;
++    // Convert the LARGE_INTEGER union to a Unix time.
++    // It's the best I could find by googling and borrowing code here
++    // and there. The time returned has a precision of 1 second.
++    if (0 == pid || 4 == pid) {
++        // the python module will translate this into BOOT_TIME later
++        create_time = 0;
++    }
++    else {
++        create_time = ((LONGLONG)process->CreateTime.HighPart) << 32;
++        create_time += process->CreateTime.LowPart - 116444736000000000LL;
++        create_time /= 10000000;
++    }
++    num_threads = (int)process->NumberOfThreads;
++    io_rcount = process->ReadOperationCount.QuadPart;
++    io_wcount = process->WriteOperationCount.QuadPart;
++    io_rbytes = process->ReadTransferCount.QuadPart;
++    io_wbytes = process->WriteTransferCount.QuadPart;
++    free(buffer);
++
++    return Py_BuildValue(
++        "kkdddiKKKK",
++        num_handles,
++        ctx_switches,
++        user_time,
++        kernel_time,
++        (double)create_time,
++        num_threads,
++        io_rcount,
++        io_wcount,
++        io_rbytes,
++        io_wbytes
++    );
++}
++
++
++// TODO: Copied verbatim from windows module
++/*
++ * Return a Python tuple referencing process I/O counters.
++ */
++static PyObject *
++psutil_proc_io_counters(PyObject *self, PyObject *args) {
++    DWORD pid;
++    HANDLE hProcess;
++    IO_COUNTERS IoCounters;
++
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        return NULL;
++    hProcess = psutil_handle_from_pid(pid);
++    if (NULL == hProcess)
++        return NULL;
++    if (! GetProcessIoCounters(hProcess, &IoCounters)) {
++        CloseHandle(hProcess);
++        return PyErr_SetFromWindowsErr(0);
++    }
++    CloseHandle(hProcess);
++    return Py_BuildValue("(KKKK)",
++                         IoCounters.ReadOperationCount,
++                         IoCounters.WriteOperationCount,
++                         IoCounters.ReadTransferCount,
++                         IoCounters.WriteTransferCount);
++}
++
++
++static PyObject *
++psutil_proc_threads(PyObject *self, PyObject *args) {
++    HANDLE hThread;
++    THREADENTRY32 te32 = {0};
++    long pid;
++    int pid_return;
++    int rc;
++    FILETIME ftDummy, ftKernel, ftUser;
++    HANDLE hThreadSnap = NULL;
++    PyObject *py_tuple = NULL;
++    PyObject *py_retlist = PyList_New(0);
++
++    if (py_retlist == NULL)
++        return NULL;
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        goto error;
++    if (pid == 0) {
++        // raise AD instead of returning 0 as procexp is able to
++        // retrieve useful information somehow
++        AccessDenied();
++        goto error;
++    }
++
++    pid_return = psutil_pid_is_running(pid);
++    if (pid_return == 0) {
++        NoSuchProcess();
++        goto error;
++    }
++    if (pid_return == -1)
++        goto error;
++
++    hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
++    if (hThreadSnap == INVALID_HANDLE_VALUE) {
++        PyErr_SetFromWindowsErr(0);
++        goto error;
++    }
++
++    // Fill in the size of the structure before using it
++    te32.dwSize = sizeof(THREADENTRY32);
++
++    if (! Thread32First(hThreadSnap, &te32)) {
++        PyErr_SetFromWindowsErr(0);
++        goto error;
++    }
++
++    // Walk the thread snapshot to find all threads of the process.
++    // If the thread belongs to the process, increase the counter.
++    do {
++        if (te32.th32OwnerProcessID == pid) {
++            py_tuple = NULL;
++            hThread = NULL;
++            hThread = OpenThread(THREAD_QUERY_INFORMATION,
++                                 FALSE, te32.th32ThreadID);
++            if (hThread == NULL) {
++                // thread has disappeared on us
++                continue;
++            }
++
++            rc = GetThreadTimes(hThread, &ftDummy, &ftDummy, &ftKernel,
++                                &ftUser);
++            if (rc == 0) {
++                PyErr_SetFromWindowsErr(0);
++                goto error;
++            }
++
++            /*
++             * User and kernel times are represented as a FILETIME structure
++             * wich contains a 64-bit value representing the number of
++             * 100-nanosecond intervals since January 1, 1601 (UTC):
++             * http://msdn.microsoft.com/en-us/library/ms724284(VS.85).aspx
++             * To convert it into a float representing the seconds that the
++             * process has executed in user/kernel mode I borrowed the code
++             * below from Python's Modules/posixmodule.c
++             */
++            py_tuple = Py_BuildValue(
++                "kdd",
++                te32.th32ThreadID,
++                (double)(ftUser.dwHighDateTime * 429.4967296 + \
++                         ftUser.dwLowDateTime * 1e-7),
++                (double)(ftKernel.dwHighDateTime * 429.4967296 + \
++                         ftKernel.dwLowDateTime * 1e-7));
++            if (!py_tuple)
++                goto error;
++            if (PyList_Append(py_retlist, py_tuple))
++                goto error;
++            Py_DECREF(py_tuple);
++
++            CloseHandle(hThread);
++        }
++    } while (Thread32Next(hThreadSnap, &te32));
++
++    CloseHandle(hThreadSnap);
++    return py_retlist;
++
++error:
++    Py_XDECREF(py_tuple);
++    Py_DECREF(py_retlist);
++    if (hThread != NULL)
++        CloseHandle(hThread);
++    if (hThreadSnap != NULL)
++        CloseHandle(hThreadSnap);
++    return NULL;
++}
++
++
++// TODO: This is copied almost verbatim from the Linux module, but on Cygwin
++// it's necessary to use the utmpx APIs in order to access some of the extended
++// utmp fields, such as ut_tv.
++/*
++ * Return currently connected users as a list of tuples.
++ */
++static PyObject *
++psutil_users(PyObject *self, PyObject *args) {
++    struct utmpx *ut;
++    PyObject *py_retlist = PyList_New(0);
++    PyObject *py_tuple = NULL;
++    PyObject *py_user_proc = NULL;
++
++    if (py_retlist == NULL)
++        return NULL;
++    setutxent();
++    while (NULL != (ut = getutxent())) {
++        py_tuple = NULL;
++        py_user_proc = NULL;
++        if (ut->ut_type == USER_PROCESS)
++            py_user_proc = Py_True;
++        else
++            py_user_proc = Py_False;
++        py_tuple = Py_BuildValue(
++            "(sssfO)",
++            ut->ut_user,              // username
++            ut->ut_line,              // tty
++            ut->ut_host,              // hostname
++            (float)ut->ut_tv.tv_sec,  // tstamp
++            py_user_proc              // (bool) user process
++        );
++    if (! py_tuple)
++            goto error;
++        if (PyList_Append(py_retlist, py_tuple))
++            goto error;
++        Py_DECREF(py_tuple);
++    }
++    endutent();
++    return py_retlist;
++
++error:
++    Py_XDECREF(py_tuple);
++    Py_XDECREF(py_user_proc);
++    Py_DECREF(py_retlist);
++    endutent();
++    return NULL;
++}
++
++
++PIP_ADAPTER_ADDRESSES
++psutil_get_nic_addresses(int all) {
++    // allocate a 15 KB buffer to start with
++    int outBufLen = 15000;
++    DWORD dwRetVal = 0;
++    ULONG attempts = 0;
++    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
++
++    do {
++        pAddresses = (IP_ADAPTER_ADDRESSES *) malloc(outBufLen);
++        if (pAddresses == NULL) {
++            PyErr_NoMemory();
++            return NULL;
++        }
++
++        dwRetVal = GetAdaptersAddresses(
++                AF_UNSPEC,
++                all ? GAA_FLAG_INCLUDE_ALL_INTERFACES : 0,
++                NULL, pAddresses,
++                &outBufLen);
++        if (dwRetVal == ERROR_BUFFER_OVERFLOW) {
++            free(pAddresses);
++            pAddresses = NULL;
++        }
++        else {
++            break;
++        }
++
++        attempts++;
++    } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (attempts < 3));
++
++    if (dwRetVal != NO_ERROR) {
++        PyErr_SetString(PyExc_RuntimeError, "GetAdaptersAddresses() failed.");
++        return NULL;
++    }
++
++    return pAddresses;
++}
++
++
++/*
++ * Provides stats about NIC interfaces installed on the system.
++ * TODO: get 'duplex' (currently it's hard coded to '2', aka
++         'full duplex')
++ */
++
++/* TODO: This and the helper get_nic_addresses are copied *almost* verbatim
++   from the windows module.  One difference is the use of snprintf with
++   the %ls format, as opposed to using sprintf_s from MSCRT
++   The other difference is that get_nic_addresses() returns all interfaces,
++   */
++static PyObject *
++psutil_net_if_stats(PyObject *self, PyObject *args) {
++    int i;
++    DWORD dwSize = 0;
++    DWORD dwRetVal = 0;
++    MIB_IFTABLE *pIfTable;
++    MIB_IFROW *pIfRow;
++    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
++    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
++    char descr[MAX_PATH];
++    int ifname_found;
++
++    PyObject *py_nic_name = NULL;
++    PyObject *py_retdict = PyDict_New();
++    PyObject *py_ifc_info = NULL;
++    PyObject *py_is_up = NULL;
++
++    if (py_retdict == NULL)
++        return NULL;
++
++    pAddresses = psutil_get_nic_addresses(1);
++    if (pAddresses == NULL)
++        goto error;
++
++    pIfTable = (MIB_IFTABLE *) malloc(sizeof (MIB_IFTABLE));
++    if (pIfTable == NULL) {
++        PyErr_NoMemory();
++        goto error;
++    }
++    dwSize = sizeof(MIB_IFTABLE);
++    if (GetIfTable(pIfTable, &dwSize, FALSE) == ERROR_INSUFFICIENT_BUFFER) {
++        free(pIfTable);
++        pIfTable = (MIB_IFTABLE *) malloc(dwSize);
++        if (pIfTable == NULL) {
++            PyErr_NoMemory();
++            goto error;
++        }
++    }
++    // Make a second call to GetIfTable to get the actual
++    // data we want.
++    if ((dwRetVal = GetIfTable(pIfTable, &dwSize, FALSE)) != NO_ERROR) {
++        PyErr_SetString(PyExc_RuntimeError, "GetIfTable() failed");
++        goto error;
++    }
++
++    for (i = 0; i < (int) pIfTable->dwNumEntries; i++) {
++        pIfRow = (MIB_IFROW *) & pIfTable->table[i];
++
++        // GetIfTable is not able to give us NIC with "friendly names"
++        // so we determine them via GetAdapterAddresses() which
++        // provides friendly names *and* descriptions and find the
++        // ones that match.
++        ifname_found = 0;
++        pCurrAddresses = pAddresses;
++        while (pCurrAddresses) {
++            snprintf(descr, MAX_PATH, "%ls", pCurrAddresses->Description);
++            if (lstrcmp(descr, pIfRow->bDescr) == 0) {
++                py_nic_name = PyUnicode_FromWideChar(
++                    pCurrAddresses->FriendlyName,
++                    wcslen(pCurrAddresses->FriendlyName));
++                if (py_nic_name == NULL)
++                    goto error;
++                ifname_found = 1;
++                break;
++            }
++            pCurrAddresses = pCurrAddresses->Next;
++        }
++        if (ifname_found == 0) {
++            // Name not found means GetAdapterAddresses() doesn't list
++            // this NIC, only GetIfTable, meaning it's not really a NIC
++            // interface so we skip it.
++            continue;
++        }
++
++        // is up?
++        if((pIfRow->dwOperStatus == MIB_IF_OPER_STATUS_CONNECTED ||
++                pIfRow->dwOperStatus == MIB_IF_OPER_STATUS_OPERATIONAL) &&
++                pIfRow->dwAdminStatus == 1 ) {
++            py_is_up = Py_True;
++        }
++        else {
++            py_is_up = Py_False;
++        }
++        Py_INCREF(py_is_up);
++
++        py_ifc_info = Py_BuildValue(
++            "(Oikk)",
++            py_is_up,
++            2,  // there's no way to know duplex so let's assume 'full'
++            pIfRow->dwSpeed / 1000000,  // expressed in bytes, we want Mb
++            pIfRow->dwMtu
++        );
++        if (!py_ifc_info)
++            goto error;
++        if (PyDict_SetItem(py_retdict, py_nic_name, py_ifc_info))
++            goto error;
++        Py_DECREF(py_nic_name);
++        Py_DECREF(py_ifc_info);
++    }
++
++    free(pIfTable);
++    free(pAddresses);
++    return py_retdict;
++
++error:
++    Py_XDECREF(py_is_up);
++    Py_XDECREF(py_ifc_info);
++    Py_XDECREF(py_nic_name);
++    Py_DECREF(py_retdict);
++    if (pIfTable != NULL)
++        free(pIfTable);
++    if (pAddresses != NULL)
++        free(pAddresses);
++    return NULL;
++}
++
++
++/*
++ * Return a Python list of named tuples with overall network I/O information
++ */
++static PyObject *
++psutil_net_io_counters(PyObject *self, PyObject *args) {
++    DWORD dwRetVal = 0;
++
++#if (_WIN32_WINNT >= 0x0600) // Windows Vista and above
++    MIB_IF_ROW2 *pIfRow = NULL;
++#else // Windows XP
++    MIB_IFROW *pIfRow = NULL;
++#endif
++
++    PIP_ADAPTER_ADDRESSES pAddresses = NULL;
++    PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
++    PyObject *py_retdict = PyDict_New();
++    PyObject *py_nic_info = NULL;
++    PyObject *py_nic_name = NULL;
++
++    if (py_retdict == NULL)
++        return NULL;
++    pAddresses = psutil_get_nic_addresses(0);
++    if (pAddresses == NULL)
++        goto error;
++    pCurrAddresses = pAddresses;
++
++    while (pCurrAddresses) {
++        py_nic_name = NULL;
++        py_nic_info = NULL;
++
++#if (_WIN32_WINNT >= 0x0600) // Windows Vista and above
++        pIfRow = (MIB_IF_ROW2 *) malloc(sizeof(MIB_IF_ROW2));
++#else // Windows XP
++        pIfRow = (MIB_IFROW *) malloc(sizeof(MIB_IFROW));
++#endif
++
++        if (pIfRow == NULL) {
++            PyErr_NoMemory();
++            goto error;
++        }
++
++#if (_WIN32_WINNT >= 0x0600) // Windows Vista and above
++        SecureZeroMemory((PVOID)pIfRow, sizeof(MIB_IF_ROW2));
++        pIfRow->InterfaceIndex = pCurrAddresses->IfIndex;
++        dwRetVal = GetIfEntry2(pIfRow);
++#else // Windows XP
++        pIfRow->dwIndex = pCurrAddresses->IfIndex;
++        dwRetVal = GetIfEntry(pIfRow);
++#endif
++
++        if (dwRetVal != NO_ERROR) {
++            PyErr_SetString(PyExc_RuntimeError,
++                            "GetIfEntry() or GetIfEntry2() failed.");
++            goto error;
++        }
++
++#if (_WIN32_WINNT >= 0x0600) // Windows Vista and above
++        py_nic_info = Py_BuildValue("(KKKKKKKK)",
++                                    pIfRow->OutOctets,
++                                    pIfRow->InOctets,
++                                    pIfRow->OutUcastPkts,
++                                    pIfRow->InUcastPkts,
++                                    pIfRow->InErrors,
++                                    pIfRow->OutErrors,
++                                    pIfRow->InDiscards,
++                                    pIfRow->OutDiscards);
++#else // Windows XP
++        py_nic_info = Py_BuildValue("(kkkkkkkk)",
++                                    pIfRow->dwOutOctets,
++                                    pIfRow->dwInOctets,
++                                    pIfRow->dwOutUcastPkts,
++                                    pIfRow->dwInUcastPkts,
++                                    pIfRow->dwInErrors,
++                                    pIfRow->dwOutErrors,
++                                    pIfRow->dwInDiscards,
++                                    pIfRow->dwOutDiscards);
++#endif
++
++        if (!py_nic_info)
++            goto error;
++
++        py_nic_name = PyUnicode_FromWideChar(
++            pCurrAddresses->FriendlyName,
++            wcslen(pCurrAddresses->FriendlyName));
++
++        if (py_nic_name == NULL)
++            goto error;
++        if (PyDict_SetItem(py_retdict, py_nic_name, py_nic_info))
++            goto error;
++        Py_XDECREF(py_nic_name);
++        Py_XDECREF(py_nic_info);
++
++        free(pIfRow);
++        pCurrAddresses = pCurrAddresses->Next;
++    }
++
++    free(pAddresses);
++    return py_retdict;
++
++error:
++    Py_XDECREF(py_nic_name);
++    Py_XDECREF(py_nic_info);
++    Py_DECREF(py_retdict);
++    if (pAddresses != NULL)
++        free(pAddresses);
++    if (pIfRow != NULL)
++        free(pIfRow);
++    return NULL;
++}
++
++
++// TODO: Copied verbatim from the windows module, so again the usual admonition
++// about refactoring
++/*
++ * Return a Python dict of tuples for disk I/O information
++ */
++static PyObject *
++psutil_disk_io_counters(PyObject *self, PyObject *args) {
++    DISK_PERFORMANCE_WIN_2008 diskPerformance;
++    DWORD dwSize;
++    HANDLE hDevice = NULL;
++    char szDevice[MAX_PATH];
++    char szDeviceDisplay[MAX_PATH];
++    int devNum;
++    PyObject *py_retdict = PyDict_New();
++    PyObject *py_tuple = NULL;
++
++    if (py_retdict == NULL)
++        return NULL;
++    // Apparently there's no way to figure out how many times we have
++    // to iterate in order to find valid drives.
++    // Let's assume 32, which is higher than 26, the number of letters
++    // in the alphabet (from A:\ to Z:\).
++    for (devNum = 0; devNum <= 32; ++devNum) {
++        py_tuple = NULL;
++        snprintf(szDevice, MAX_PATH, "\\\\.\\PhysicalDrive%d", devNum);
++        hDevice = CreateFile(szDevice, 0, FILE_SHARE_READ | FILE_SHARE_WRITE,
++                             NULL, OPEN_EXISTING, 0, NULL);
++
++        if (hDevice == INVALID_HANDLE_VALUE)
++            continue;
++        if (DeviceIoControl(hDevice, IOCTL_DISK_PERFORMANCE, NULL, 0,
++                            &diskPerformance, sizeof(diskPerformance),
++                            &dwSize, NULL))
++        {
++            snprintf(szDeviceDisplay, MAX_PATH, "PhysicalDrive%d", devNum);
++            py_tuple = Py_BuildValue(
++                "(IILLKK)",
++                diskPerformance.ReadCount,
++                diskPerformance.WriteCount,
++                diskPerformance.BytesRead,
++                diskPerformance.BytesWritten,
++                (unsigned long long)(diskPerformance.ReadTime.QuadPart * 10) / 1000,
++                (unsigned long long)(diskPerformance.WriteTime.QuadPart * 10) / 1000);
++            if (!py_tuple)
++                goto error;
++            if (PyDict_SetItemString(py_retdict, szDeviceDisplay,
++                                     py_tuple))
++            {
++                goto error;
++            }
++            Py_XDECREF(py_tuple);
++        }
++        else {
++            // XXX we might get here with ERROR_INSUFFICIENT_BUFFER when
++            // compiling with mingw32; not sure what to do.
++            // return PyErr_SetFromWindowsErr(0);
++            ;;
++        }
++
++        CloseHandle(hDevice);
++    }
++
++    return py_retdict;
++
++error:
++    Py_XDECREF(py_tuple);
++    Py_DECREF(py_retdict);
++    if (hDevice != NULL)
++        CloseHandle(hDevice);
++    return NULL;
++}
++
++
++// TODO: _GetExtended(Tcp|Udp)Table are copied straight out of the windows
++// module, and really ought to live somewhere in arch/windows
++
++
++typedef DWORD (WINAPI * _GetExtendedTcpTable)(PVOID, PDWORD, BOOL, ULONG,
++                                              TCP_TABLE_CLASS, ULONG);
++
++
++// https://msdn.microsoft.com/library/aa365928.aspx
++static DWORD __GetExtendedTcpTable(_GetExtendedTcpTable call,
++                                   ULONG address_family,
++                                   PVOID * data, DWORD * size)
++{
++    // Due to other processes being active on the machine, it's possible
++    // that the size of the table increases between the moment where we
++    // query the size and the moment where we query the data.  Therefore, it's
++    // important to call this in a loop to retry if that happens.
++    //
++    // Also, since we may loop a theoretically unbounded number of times here,
++    // release the GIL while we're doing this.
++    DWORD error = ERROR_INSUFFICIENT_BUFFER;
++    *size = 0;
++    *data = NULL;
++    Py_BEGIN_ALLOW_THREADS;
++    error = call(NULL, size, FALSE, address_family,
++                 TCP_TABLE_OWNER_PID_ALL, 0);
++    while (error == ERROR_INSUFFICIENT_BUFFER)
++    {
++        *data = malloc(*size);
++        if (*data == NULL) {
++            error = ERROR_NOT_ENOUGH_MEMORY;
++            continue;
++        }
++        error = call(*data, size, FALSE, address_family,
++                     TCP_TABLE_OWNER_PID_ALL, 0);
++        if (error != NO_ERROR) {
++            free(*data);
++            *data = NULL;
++        }
++    }
++    Py_END_ALLOW_THREADS;
++    return error;
++}
++
++
++typedef DWORD (WINAPI * _GetExtendedUdpTable)(PVOID, PDWORD, BOOL, ULONG,
++                                              UDP_TABLE_CLASS, ULONG);
++
++
++// https://msdn.microsoft.com/library/aa365930.aspx
++static DWORD __GetExtendedUdpTable(_GetExtendedUdpTable call,
++                                   ULONG address_family,
++                                   PVOID * data, DWORD * size)
++{
++    // Due to other processes being active on the machine, it's possible
++    // that the size of the table increases between the moment where we
++    // query the size and the moment where we query the data.  Therefore, it's
++    // important to call this in a loop to retry if that happens.
++    //
++    // Also, since we may loop a theoretically unbounded number of times here,
++    // release the GIL while we're doing this.
++    DWORD error = ERROR_INSUFFICIENT_BUFFER;
++    *size = 0;
++    *data = NULL;
++    Py_BEGIN_ALLOW_THREADS;
++    error = call(NULL, size, FALSE, address_family,
++                 UDP_TABLE_OWNER_PID, 0);
++    while (error == ERROR_INSUFFICIENT_BUFFER)
++    {
++        *data = malloc(*size);
++        if (*data == NULL) {
++            error = ERROR_NOT_ENOUGH_MEMORY;
++            continue;
++        }
++        error = call(*data, size, FALSE, address_family,
++                     UDP_TABLE_OWNER_PID, 0);
++        if (error != NO_ERROR) {
++            free(*data);
++            *data = NULL;
++        }
++    }
++    Py_END_ALLOW_THREADS;
++    return error;
++}
++
++
++/*
++ * Return a list of network connections opened by a process
++ */
++static PyObject *
++psutil_net_connections(PyObject *self, PyObject *args) {
++    static long null_address[4] = { 0, 0, 0, 0 };
++    unsigned long pid;
++    typedef PSTR (NTAPI * _RtlIpv4AddressToStringA)(struct in_addr *, PSTR);
++    _RtlIpv4AddressToStringA rtlIpv4AddressToStringA;
++    typedef PSTR (NTAPI * _RtlIpv6AddressToStringA)(struct in6_addr *, PSTR);
++    _RtlIpv6AddressToStringA rtlIpv6AddressToStringA;
++    _GetExtendedTcpTable getExtendedTcpTable;
++    _GetExtendedUdpTable getExtendedUdpTable;
++    PVOID table = NULL;
++    DWORD tableSize;
++    DWORD error;
++    PMIB_TCPTABLE_OWNER_PID tcp4Table;
++    PMIB_UDPTABLE_OWNER_PID udp4Table;
++    PMIB_TCP6TABLE_OWNER_PID tcp6Table;
++    PMIB_UDP6TABLE_OWNER_PID udp6Table;
++    ULONG i;
++    CHAR addressBufferLocal[65];
++    CHAR addressBufferRemote[65];
++
++    PyObject *py_retlist;
++    PyObject *py_conn_tuple = NULL;
++    PyObject *py_af_filter = NULL;
++    PyObject *py_type_filter = NULL;
++    PyObject *py_addr_tuple_local = NULL;
++    PyObject *py_addr_tuple_remote = NULL;
++    PyObject *_AF_INET = PyLong_FromLong((long)AF_INET);
++    PyObject *_AF_INET6 = PyLong_FromLong((long)AF_INET6);
++    PyObject *_SOCK_STREAM = PyLong_FromLong((long)SOCK_STREAM);
++    PyObject *_SOCK_DGRAM = PyLong_FromLong((long)SOCK_DGRAM);
++
++    if (! PyArg_ParseTuple(args, "lOO", &pid, &py_af_filter, &py_type_filter))
++    {
++        _psutil_conn_decref_objs();
++        return NULL;
++    }
++
++    if (!PySequence_Check(py_af_filter) || !PySequence_Check(py_type_filter)) {
++        _psutil_conn_decref_objs();
++        PyErr_SetString(PyExc_TypeError, "arg 2 or 3 is not a sequence");
++        return NULL;
++    }
++
++    if (pid != -1) {
++        if (psutil_pid_is_running(pid) == 0) {
++            _psutil_conn_decref_objs();
++            return NoSuchProcess();
++        }
++    }
++
++    // Import some functions.
++    {
++        HMODULE ntdll;
++        HMODULE iphlpapi;
++
++        ntdll = LoadLibrary(TEXT("ntdll.dll"));
++        rtlIpv4AddressToStringA = (_RtlIpv4AddressToStringA)GetProcAddress(
++                                   ntdll, "RtlIpv4AddressToStringA");
++        rtlIpv6AddressToStringA = (_RtlIpv6AddressToStringA)GetProcAddress(
++                                   ntdll, "RtlIpv6AddressToStringA");
++        /* TODO: Check these two function pointers */
++
++        iphlpapi = LoadLibrary(TEXT("iphlpapi.dll"));
++        getExtendedTcpTable = (_GetExtendedTcpTable)GetProcAddress(iphlpapi,
++                              "GetExtendedTcpTable");
++        getExtendedUdpTable = (_GetExtendedUdpTable)GetProcAddress(iphlpapi,
++                              "GetExtendedUdpTable");
++        FreeLibrary(ntdll);
++        FreeLibrary(iphlpapi);
++    }
++
++    if ((getExtendedTcpTable == NULL) || (getExtendedUdpTable == NULL)) {
++        PyErr_SetString(PyExc_NotImplementedError,
++                        "feature not supported on this Windows version");
++        _psutil_conn_decref_objs();
++        return NULL;
++    }
++
++    py_retlist = PyList_New(0);
++    if (py_retlist == NULL) {
++        _psutil_conn_decref_objs();
++        return NULL;
++    }
++
++    // TCP IPv4
++
++    if ((PySequence_Contains(py_af_filter, _AF_INET) == 1) &&
++            (PySequence_Contains(py_type_filter, _SOCK_STREAM) == 1))
++    {
++        table = NULL;
++        py_conn_tuple = NULL;
++        py_addr_tuple_local = NULL;
++        py_addr_tuple_remote = NULL;
++        tableSize = 0;
++
++        error = __GetExtendedTcpTable(getExtendedTcpTable,
++                                      AF_INET, &table, &tableSize);
++        if (error == ERROR_NOT_ENOUGH_MEMORY) {
++            PyErr_NoMemory();
++            goto error;
++        }
++
++        if (error == NO_ERROR)
++        {
++            tcp4Table = table;
++
++            for (i = 0; i < tcp4Table->dwNumEntries; i++)
++            {
++                if (pid != -1) {
++                    if (tcp4Table->table[i].dwOwningPid != pid) {
++                        continue;
++                    }
++                }
++
++                if (tcp4Table->table[i].dwLocalAddr != 0 ||
++                        tcp4Table->table[i].dwLocalPort != 0)
++                {
++                    struct in_addr addr;
++
++                    addr.S_un.S_addr = tcp4Table->table[i].dwLocalAddr;
++                    rtlIpv4AddressToStringA(&addr, addressBufferLocal);
++                    py_addr_tuple_local = Py_BuildValue(
++                        "(si)",
++                        addressBufferLocal,
++                        BYTESWAP_USHORT(tcp4Table->table[i].dwLocalPort));
++                }
++                else {
++                    py_addr_tuple_local = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_local == NULL)
++                    goto error;
++
++                // On Windows <= XP, remote addr is filled even if socket
++                // is in LISTEN mode in which case we just ignore it.
++                if ((tcp4Table->table[i].dwRemoteAddr != 0 ||
++                        tcp4Table->table[i].dwRemotePort != 0) &&
++                        (tcp4Table->table[i].dwState != MIB_TCP_STATE_LISTEN))
++                {
++                    struct in_addr addr;
++
++                    addr.S_un.S_addr = tcp4Table->table[i].dwRemoteAddr;
++                    rtlIpv4AddressToStringA(&addr, addressBufferRemote);
++                    py_addr_tuple_remote = Py_BuildValue(
++                        "(si)",
++                        addressBufferRemote,
++                        BYTESWAP_USHORT(tcp4Table->table[i].dwRemotePort));
++                }
++                else
++                {
++                    py_addr_tuple_remote = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_remote == NULL)
++                    goto error;
++
++                py_conn_tuple = Py_BuildValue(
++                    "(iiiNNiI)",
++                    -1,
++                    AF_INET,
++                    SOCK_STREAM,
++                    py_addr_tuple_local,
++                    py_addr_tuple_remote,
++                    tcp4Table->table[i].dwState,
++                    tcp4Table->table[i].dwOwningPid);
++                if (!py_conn_tuple)
++                    goto error;
++                if (PyList_Append(py_retlist, py_conn_tuple))
++                    goto error;
++                Py_DECREF(py_conn_tuple);
++            }
++        }
++        else {
++            PyErr_SetFromWindowsErr(error);
++            goto error;
++        }
++
++        free(table);
++        table = NULL;
++        tableSize = 0;
++    }
++
++    // TCP IPv6
++    if ((PySequence_Contains(py_af_filter, _AF_INET6) == 1) &&
++            (PySequence_Contains(py_type_filter, _SOCK_STREAM) == 1))
++    {
++        table = NULL;
++        py_conn_tuple = NULL;
++        py_addr_tuple_local = NULL;
++        py_addr_tuple_remote = NULL;
++        tableSize = 0;
++
++        error = __GetExtendedTcpTable(getExtendedTcpTable,
++                                      AF_INET6, &table, &tableSize);
++        if (error == ERROR_NOT_ENOUGH_MEMORY) {
++            PyErr_NoMemory();
++            goto error;
++        }
++
++        if (error == NO_ERROR)
++        {
++            tcp6Table = table;
++
++            for (i = 0; i < tcp6Table->dwNumEntries; i++)
++            {
++                if (pid != -1) {
++                    if (tcp6Table->table[i].dwOwningPid != pid) {
++                        continue;
++                    }
++                }
++
++                if (memcmp(tcp6Table->table[i].ucLocalAddr, null_address, 16)
++                        != 0 || tcp6Table->table[i].dwLocalPort != 0)
++                {
++                    struct in6_addr addr;
++
++                    memcpy(&addr, tcp6Table->table[i].ucLocalAddr, 16);
++                    rtlIpv6AddressToStringA(&addr, addressBufferLocal);
++                    py_addr_tuple_local = Py_BuildValue(
++                        "(si)",
++                        addressBufferLocal,
++                        BYTESWAP_USHORT(tcp6Table->table[i].dwLocalPort));
++                }
++                else {
++                    py_addr_tuple_local = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_local == NULL)
++                    goto error;
++
++                // On Windows <= XP, remote addr is filled even if socket
++                // is in LISTEN mode in which case we just ignore it.
++                if ((memcmp(tcp6Table->table[i].ucRemoteAddr, null_address, 16)
++                        != 0 ||
++                        tcp6Table->table[i].dwRemotePort != 0) &&
++                        (tcp6Table->table[i].dwState != MIB_TCP_STATE_LISTEN))
++                {
++                    struct in6_addr addr;
++
++                    memcpy(&addr, tcp6Table->table[i].ucRemoteAddr, 16);
++                    rtlIpv6AddressToStringA(&addr, addressBufferRemote);
++                    py_addr_tuple_remote = Py_BuildValue(
++                        "(si)",
++                        addressBufferRemote,
++                        BYTESWAP_USHORT(tcp6Table->table[i].dwRemotePort));
++                }
++                else {
++                    py_addr_tuple_remote = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_remote == NULL)
++                    goto error;
++
++                py_conn_tuple = Py_BuildValue(
++                    "(iiiNNiI)",
++                    -1,
++                    AF_INET6,
++                    SOCK_STREAM,
++                    py_addr_tuple_local,
++                    py_addr_tuple_remote,
++                    tcp6Table->table[i].dwState,
++                    tcp6Table->table[i].dwOwningPid);
++                if (!py_conn_tuple)
++                    goto error;
++                if (PyList_Append(py_retlist, py_conn_tuple))
++                    goto error;
++                Py_DECREF(py_conn_tuple);
++            }
++        }
++        else {
++            PyErr_SetFromWindowsErr(error);
++            goto error;
++        }
++
++        free(table);
++        table = NULL;
++        tableSize = 0;
++    }
++
++    // UDP IPv4
++
++    if ((PySequence_Contains(py_af_filter, _AF_INET) == 1) &&
++            (PySequence_Contains(py_type_filter, _SOCK_DGRAM) == 1))
++    {
++        table = NULL;
++        py_conn_tuple = NULL;
++        py_addr_tuple_local = NULL;
++        py_addr_tuple_remote = NULL;
++        tableSize = 0;
++        error = __GetExtendedUdpTable(getExtendedUdpTable,
++                                      AF_INET, &table, &tableSize);
++        if (error == ERROR_NOT_ENOUGH_MEMORY) {
++            PyErr_NoMemory();
++            goto error;
++        }
++
++        if (error == NO_ERROR)
++        {
++            udp4Table = table;
++
++            for (i = 0; i < udp4Table->dwNumEntries; i++)
++            {
++                if (pid != -1) {
++                    if (udp4Table->table[i].dwOwningPid != pid) {
++                        continue;
++                    }
++                }
++
++                if (udp4Table->table[i].dwLocalAddr != 0 ||
++                    udp4Table->table[i].dwLocalPort != 0)
++                {
++                    struct in_addr addr;
++
++                    addr.S_un.S_addr = udp4Table->table[i].dwLocalAddr;
++                    rtlIpv4AddressToStringA(&addr, addressBufferLocal);
++                    py_addr_tuple_local = Py_BuildValue(
++                        "(si)",
++                        addressBufferLocal,
++                        BYTESWAP_USHORT(udp4Table->table[i].dwLocalPort));
++                }
++                else {
++                    py_addr_tuple_local = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_local == NULL)
++                    goto error;
++
++                py_conn_tuple = Py_BuildValue(
++                    "(iiiNNiI)",
++                    -1,
++                    AF_INET,
++                    SOCK_DGRAM,
++                    py_addr_tuple_local,
++                    PyTuple_New(0),
++                    PSUTIL_CONN_NONE,
++                    udp4Table->table[i].dwOwningPid);
++                if (!py_conn_tuple)
++                    goto error;
++                if (PyList_Append(py_retlist, py_conn_tuple))
++                    goto error;
++                Py_DECREF(py_conn_tuple);
++            }
++        }
++        else {
++            PyErr_SetFromWindowsErr(error);
++            goto error;
++        }
++
++        free(table);
++        table = NULL;
++        tableSize = 0;
++    }
++
++    // UDP IPv6
++
++    if ((PySequence_Contains(py_af_filter, _AF_INET6) == 1) &&
++            (PySequence_Contains(py_type_filter, _SOCK_DGRAM) == 1))
++    {
++        table = NULL;
++        py_conn_tuple = NULL;
++        py_addr_tuple_local = NULL;
++        py_addr_tuple_remote = NULL;
++        tableSize = 0;
++        error = __GetExtendedUdpTable(getExtendedUdpTable,
++                                      AF_INET6, &table, &tableSize);
++        if (error == ERROR_NOT_ENOUGH_MEMORY) {
++            PyErr_NoMemory();
++            goto error;
++        }
++
++        if (error == NO_ERROR)
++        {
++            udp6Table = table;
++
++            for (i = 0; i < udp6Table->dwNumEntries; i++) {
++                if (pid != -1) {
++                    if (udp6Table->table[i].dwOwningPid != pid) {
++                        continue;
++                    }
++                }
++
++                if (memcmp(udp6Table->table[i].ucLocalAddr, null_address, 16)
++                        != 0 || udp6Table->table[i].dwLocalPort != 0)
++                {
++                    struct in6_addr addr;
++
++                    memcpy(&addr, udp6Table->table[i].ucLocalAddr, 16);
++                    rtlIpv6AddressToStringA(&addr, addressBufferLocal);
++                    py_addr_tuple_local = Py_BuildValue(
++                        "(si)",
++                        addressBufferLocal,
++                        BYTESWAP_USHORT(udp6Table->table[i].dwLocalPort));
++                }
++                else {
++                    py_addr_tuple_local = PyTuple_New(0);
++                }
++
++                if (py_addr_tuple_local == NULL)
++                    goto error;
++
++                py_conn_tuple = Py_BuildValue(
++                    "(iiiNNiI)",
++                    -1,
++                    AF_INET6,
++                    SOCK_DGRAM,
++                    py_addr_tuple_local,
++                    PyTuple_New(0),
++                    PSUTIL_CONN_NONE,
++                    udp6Table->table[i].dwOwningPid);
++                if (!py_conn_tuple)
++                    goto error;
++                if (PyList_Append(py_retlist, py_conn_tuple))
++                    goto error;
++                Py_DECREF(py_conn_tuple);
++            }
++        }
++        else {
++            PyErr_SetFromWindowsErr(error);
++            goto error;
++        }
++
++        free(table);
++        table = NULL;
++        tableSize = 0;
++    }
++
++    _psutil_conn_decref_objs();
++    return py_retlist;
++
++error:
++    _psutil_conn_decref_objs();
++    Py_XDECREF(py_conn_tuple);
++    Py_XDECREF(py_addr_tuple_local);
++    Py_XDECREF(py_addr_tuple_remote);
++    Py_DECREF(py_retlist);
++    if (table != NULL)
++        free(table);
++    return NULL;
++}
++
++
++static char *get_region_protection_string(ULONG protection) {
++    switch (protection & 0xff) {
++        case PAGE_NOACCESS:
++            return "";
++        case PAGE_READONLY:
++            return "r";
++        case PAGE_READWRITE:
++            return "rw";
++        case PAGE_WRITECOPY:
++            return "wc";
++        case PAGE_EXECUTE:
++            return "x";
++        case PAGE_EXECUTE_READ:
++            return "xr";
++        case PAGE_EXECUTE_READWRITE:
++            return "xrw";
++        case PAGE_EXECUTE_WRITECOPY:
++            return "xwc";
++        default:
++            return "?";
++    }
++}
++
++
++/* TODO: Copied verbatim from the windows module; this should be refactored
++ * as well
++ */
++/*
++ * Return a list of process's memory mappings.
++ */
++static PyObject *
++psutil_proc_memory_maps(PyObject *self, PyObject *args) {
++#ifdef _WIN64
++    MEMORY_BASIC_INFORMATION64 basicInfo;
++#else
++    MEMORY_BASIC_INFORMATION basicInfo;
++#endif
++    DWORD pid;
++    HANDLE hProcess = NULL;
++    PVOID baseAddress;
++    PVOID previousAllocationBase;
++    CHAR mappedFileName[MAX_PATH];
++    SYSTEM_INFO system_info;
++    LPVOID maxAddr;
++    PyObject *py_retlist = PyList_New(0);
++    PyObject *py_tuple = NULL;
++
++    if (py_retlist == NULL)
++        return NULL;
++    if (! PyArg_ParseTuple(args, "l", &pid))
++        goto error;
++    hProcess = psutil_handle_from_pid(pid);
++    if (NULL == hProcess)
++        goto error;
++
++    GetSystemInfo(&system_info);
++    maxAddr = system_info.lpMaximumApplicationAddress;
++    baseAddress = NULL;
++    previousAllocationBase = NULL;
++
++    while (VirtualQueryEx(hProcess, baseAddress, &basicInfo,
++                          sizeof(MEMORY_BASIC_INFORMATION)))
++    {
++        py_tuple = NULL;
++        if (baseAddress > maxAddr)
++            break;
++        if (GetMappedFileNameA(hProcess, baseAddress, mappedFileName,
++                               sizeof(mappedFileName)))
++        {
++#ifdef _WIN64
++           py_tuple = Py_BuildValue(
++              "(KssI)",
++              (unsigned long long)baseAddress,
++#else
++           py_tuple = Py_BuildValue(
++              "(kssI)",
++              (unsigned long)baseAddress,
++#endif
++              get_region_protection_string(basicInfo.Protect),
++              mappedFileName,
++              basicInfo.RegionSize);
++
++            if (!py_tuple)
++                goto error;
++            if (PyList_Append(py_retlist, py_tuple))
++                goto error;
++            Py_DECREF(py_tuple);
++        }
++        previousAllocationBase = basicInfo.AllocationBase;
++        baseAddress = (PCHAR)baseAddress + basicInfo.RegionSize;
++    }
++
++    CloseHandle(hProcess);
++    return py_retlist;
++
++error:
++    Py_XDECREF(py_tuple);
++    Py_DECREF(py_retlist);
++    if (hProcess != NULL)
++        CloseHandle(hProcess);
++    return NULL;
++}
++
++
++/*
++ * Return battery usage stats.
++ */
++static PyObject *
++psutil_sensors_battery(PyObject *self, PyObject *args) {
++    SYSTEM_POWER_STATUS sps;
++
++    if (GetSystemPowerStatus(&sps) == 0) {
++        PyErr_SetFromWindowsErr(0);
++        return NULL;
++    }
++    return Py_BuildValue(
++        "iiiI",
++        sps.ACLineStatus,  // whether AC is connected: 0=no, 1=yes, 255=unknown
++        // status flag:
++        // 1, 2, 4 = high, low, critical
++        // 8 = charging
++        // 128 = no battery
++        sps.BatteryFlag,
++        sps.BatteryLifePercent,  // percent
++        sps.BatteryLifeTime  // remaining secs
++    );
++}
++
++
++/*
++ * define the psutil C module methods and initialize the module.
++ */
++static PyMethodDef
++PsutilMethods[] = {
++    {"cygpath_to_winpath", psutil_cygpath_to_winpath, METH_VARARGS,
++     "Convert a Cygwin path to a Windows path"},
++    {"winpath_to_cygpath", psutil_winpath_to_cygpath, METH_VARARGS,
++     "Convert a Windows path to a Cygwin path"},
++    {"boot_time", psutil_boot_time, METH_VARARGS,
++     "Return the system boot time expressed in seconds since the epoch."},
++    {"disk_partitions", psutil_disk_partitions, METH_VARARGS,
++     "Return disk mounted partitions as a list of tuples including "
++     "device, mount point and filesystem type"},
++    {"net_connections", psutil_net_connections, METH_VARARGS,
++     "Return system-wide connections"},
++    {"net_if_stats", psutil_net_if_stats, METH_VARARGS,
++     "Return NICs stats."},
++    {"net_io_counters", psutil_net_io_counters, METH_VARARGS,
++     "Return dict of tuples of networks I/O information."},
++    {"sensors_battery", psutil_sensors_battery, METH_VARARGS,
++     "Return battery metrics usage."},
++    {"disk_io_counters", psutil_disk_io_counters, METH_VARARGS,
++     "Return dict of tuples of disks I/O information."},
++    {"proc_memory_info", psutil_proc_memory_info, METH_VARARGS,
++     "Return a tuple of process memory information"},
++    {"proc_memory_info_2", psutil_proc_memory_info_2, METH_VARARGS,
++     "Alternate implementation"},
++    {"proc_memory_uss", psutil_proc_memory_uss, METH_VARARGS,
++     "Return the USS of the process"},
++    {"proc_cpu_affinity_get", psutil_proc_cpu_affinity_get, METH_VARARGS,
++     "Return process CPU affinity as a bitmask."},
++    {"proc_cpu_affinity_set", psutil_proc_cpu_affinity_set, METH_VARARGS,
++     "Set process CPU affinity."},
++    {"proc_io_counters", psutil_proc_io_counters, METH_VARARGS,
++     "Get process I/O counters."},
++    {"proc_threads", psutil_proc_threads, METH_VARARGS,
++     "Return process threads information as a list of tuple"},
++    {"proc_create_time", psutil_proc_create_time, METH_VARARGS,
++     "Return a float indicating the process create time expressed in "
++     "seconds since the epoch"},
++    // --- alternative pinfo interface
++    {"proc_info", psutil_proc_info, METH_VARARGS,
++     "Various process information"},
++    {"users", psutil_users, METH_VARARGS,
++     "Return currently connected users as a list of tuples"},
++    {"proc_memory_maps", psutil_proc_memory_maps, METH_VARARGS,
++     "Return a list of process's memory mappings"},
++
++    // --- windows API bindings
++    {"win32_QueryDosDevice", psutil_win32_QueryDosDevice, METH_VARARGS,
++     "QueryDosDevice binding"},
++    {NULL, NULL, 0, NULL}
++};
++
++struct module_state {
++    PyObject *error;
++};
++
++#if PY_MAJOR_VERSION >= 3
++#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
++#else
++#define GETSTATE(m) (&_state)
++#endif
++
++#if PY_MAJOR_VERSION >= 3
++
++static int
++psutil_cygwin_traverse(PyObject *m, visitproc visit, void *arg) {
++    Py_VISIT(GETSTATE(m)->error);
++    return 0;
++}
++
++static int
++psutil_cygwin_clear(PyObject *m) {
++    Py_CLEAR(GETSTATE(m)->error);
++    return 0;
++}
++
++static struct PyModuleDef moduledef = {
++    PyModuleDef_HEAD_INIT,
++    "psutil_cygwin",
++    NULL,
++    sizeof(struct module_state),
++    PsutilMethods,
++    NULL,
++    psutil_cygwin_traverse,
++    psutil_cygwin_clear,
++    NULL
++};
++
++#define INITERROR return NULL
++
++PyMODINIT_FUNC PyInit__psutil_cygwin(void)
++
++#else
++#define INITERROR return
++
++void init_psutil_cygwin(void)
++#endif
++{
++#if PY_MAJOR_VERSION >= 3
++    PyObject *module = PyModule_Create(&moduledef);
++#else
++    PyObject *module = Py_InitModule("_psutil_cygwin", PsutilMethods);
++#endif
++
++    PyModule_AddIntConstant(module, "version", PSUTIL_VERSION);
++
++    // TODO: Copied verbatim from the Windows module; there ought to be a
++    // a function implementing these constants that can be shared between
++    // the two modules...
++    // connection status constants
++    // http://msdn.microsoft.com/en-us/library/cc669305.aspx
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_CLOSED", MIB_TCP_STATE_CLOSED);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_CLOSING", MIB_TCP_STATE_CLOSING);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_CLOSE_WAIT", MIB_TCP_STATE_CLOSE_WAIT);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_LISTEN", MIB_TCP_STATE_LISTEN);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_ESTAB", MIB_TCP_STATE_ESTAB);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_SYN_SENT", MIB_TCP_STATE_SYN_SENT);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_SYN_RCVD", MIB_TCP_STATE_SYN_RCVD);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_FIN_WAIT1", MIB_TCP_STATE_FIN_WAIT1);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_FIN_WAIT2", MIB_TCP_STATE_FIN_WAIT2);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_LAST_ACK", MIB_TCP_STATE_LAST_ACK);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_TIME_WAIT", MIB_TCP_STATE_TIME_WAIT);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_TIME_WAIT", MIB_TCP_STATE_TIME_WAIT);
++    PyModule_AddIntConstant(
++        module, "MIB_TCP_STATE_DELETE_TCB", MIB_TCP_STATE_DELETE_TCB);
++    PyModule_AddIntConstant(
++        module, "PSUTIL_CONN_NONE", PSUTIL_CONN_NONE);
++
++    /* TODO: More Windows constants that are defined as module constants
++     * Used both in the cygwin module (for now) and the windows module */
++    PyModule_AddIntConstant(
++        module, "ERROR_ACCESS_DENIED", ERROR_ACCESS_DENIED);
++
++    if (module == NULL)
++        INITERROR;
++#if PY_MAJOR_VERSION >= 3
++    return module;
++#endif
++}
+diff --git a/psutil/_psutil_posix.c b/psutil/_psutil_posix.c
+index 707c55a..ce4970e 100644
+--- a/psutil/_psutil_posix.c
++++ b/psutil/_psutil_posix.c
+@@ -34,6 +34,9 @@
+ #elif defined(PSUTIL_SUNOS)
+     #include <netdb.h>
+     #include <sys/sockio.h>
++#elif defined(PSUTIL_CYGWIN)
++    #include <netdb.h>
++    #include <netinet/in.h>
+ #endif
+ 
+ 
+@@ -167,6 +170,7 @@ static PyObject*
+ psutil_net_if_addrs(PyObject* self, PyObject* args) {
+     struct ifaddrs *ifaddr, *ifa;
+     int family;
++    char *name;
+ 
+     PyObject *py_retlist = PyList_New(0);
+     PyObject *py_tuple = NULL;
+@@ -185,6 +189,14 @@ psutil_net_if_addrs(PyObject* self, PyObject* args) {
+     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+         if (!ifa->ifa_addr)
+             continue;
++#ifdef __CYGWIN__
++        // Support using the Cygwin-specific ifaddrs_hwdata struct to get
++        // the interface's "friendly name" rather than its more opaque
++        // UUID name
++        name = ((struct ifaddrs_hwdata *) (ifa->ifa_data))->ifa_frndlyname.ifrf_friendlyname;
++#else
++        name = ifa->ifa_name;
++#endif
+         family = ifa->ifa_addr->sa_family;
+         py_address = psutil_convert_ipaddr(ifa->ifa_addr, family);
+         // If the primary address can't be determined just skip it.
+@@ -218,7 +230,7 @@ psutil_net_if_addrs(PyObject* self, PyObject* args) {
+             goto error;
+         py_tuple = Py_BuildValue(
+             "(siOOOO)",
+-            ifa->ifa_name,
++            name,
+             family,
+             py_address,
+             py_netmask,
+diff --git a/psutil/_pswindows.py b/psutil/_pswindows.py
+index 0105d6c..dfa8e63 100644
+--- a/psutil/_pswindows.py
++++ b/psutil/_pswindows.py
+@@ -32,6 +32,7 @@ except ImportError as err:
+         raise
+ 
+ from ._common import conn_tmap
++from ._common import encode
+ from ._common import isfile_strict
+ from ._common import parse_environ_block
+ from ._common import sockfam_to_enum
+@@ -188,21 +189,6 @@ def convert_dos_path(s):
+     return os.path.join(driveletter, s[len(rawdrive):])
+ 
+ 
+-def py2_strencode(s, encoding=sys.getfilesystemencoding()):
+-    """Encode a string in the given encoding. Falls back on returning
+-    the string as is if it can't be encoded.
+-    """
+-    if PY3 or isinstance(s, str):
+-        return s
+-    else:
+-        try:
+-            return s.encode(encoding)
+-        except UnicodeEncodeError:
+-            # Filesystem codec failed, return the plain unicode
+-            # string (this should never happen).
+-            return s
+-
+-
+ # =====================================================================
+ # --- memory
+ # =====================================================================
+@@ -343,7 +329,7 @@ def net_if_stats():
+     """Get NIC stats (isup, duplex, speed, mtu)."""
+     ret = cext.net_if_stats()
+     for name, items in ret.items():
+-        name = py2_strencode(name)
++        name = encode(name)
+         isup, duplex, speed, mtu = items
+         if hasattr(_common, 'NicDuplex'):
+             duplex = _common.NicDuplex(duplex)
+@@ -356,7 +342,7 @@ def net_io_counters():
+     installed on the system as a dict of raw tuples.
+     """
+     ret = cext.net_io_counters()
+-    return dict([(py2_strencode(k), v) for k, v in ret.items()])
++    return dict([(encode(k), v) for k, v in ret.items()])
+ 
+ 
+ def net_if_addrs():
+@@ -364,7 +350,7 @@ def net_if_addrs():
+     ret = []
+     for items in cext.net_if_addrs():
+         items = list(items)
+-        items[0] = py2_strencode(items[0])
++        items[0] = encode(items[0])
+         ret.append(items)
+     return ret
+ 
+@@ -410,7 +396,7 @@ def users():
+     rawlist = cext.users()
+     for item in rawlist:
+         user, hostname, tstamp = item
+-        user = py2_strencode(user)
++        user = encode(user)
+         nt = _common.suser(user, None, hostname, tstamp)
+         retlist.append(nt)
+     return retlist
+@@ -669,9 +655,9 @@ class Process(object):
+             try:
+                 # Note: this will fail with AD for most PIDs owned
+                 # by another user but it's faster.
+-                return py2_strencode(os.path.basename(self.exe()))
++                return encode(os.path.basename(self.exe()))
+             except AccessDenied:
+-                return py2_strencode(cext.proc_name(self.pid))
++                return encode(cext.proc_name(self.pid))
+ 
+     @wrap_exceptions
+     def exe(self):
+@@ -683,7 +669,7 @@ class Process(object):
+         # see https://github.com/giampaolo/psutil/issues/528
+         if self.pid in (0, 4):
+             raise AccessDenied(self.pid, self._name)
+-        return py2_strencode(convert_dos_path(cext.proc_exe(self.pid)))
++        return encode(convert_dos_path(cext.proc_exe(self.pid)))
+ 
+     @wrap_exceptions
+     def cmdline(self):
+@@ -691,7 +677,7 @@ class Process(object):
+         if PY3:
+             return ret
+         else:
+-            return [py2_strencode(s) for s in ret]
++            return [encode(s) for s in ret]
+ 
+     @wrap_exceptions
+     def environ(self):
+@@ -838,7 +824,7 @@ class Process(object):
+         # return a normalized pathname since the native C function appends
+         # "\\" at the and of the path
+         path = cext.proc_cwd(self.pid)
+-        return py2_strencode(os.path.normpath(path))
++        return encode(os.path.normpath(path))
+ 
+     @wrap_exceptions
+     def open_files(self):
+@@ -854,7 +840,7 @@ class Process(object):
+             _file = convert_dos_path(_file)
+             if isfile_strict(_file):
+                 if not PY3:
+-                    _file = py2_strencode(_file)
++                    _file = encode(_file)
+                 ntuple = _common.popenfile(_file, -1)
+                 ret.add(ntuple)
+         return list(ret)
+diff --git a/psutil/arch/windows/ntextapi.h b/psutil/arch/windows/ntextapi.h
+index 1bbbf2a..0d50f5b 100644
+--- a/psutil/arch/windows/ntextapi.h
++++ b/psutil/arch/windows/ntextapi.h
+@@ -121,6 +121,7 @@ typedef enum _KTHREAD_STATE {
+ } KTHREAD_STATE, *PKTHREAD_STATE;
+ 
+ 
++#ifndef __MINGW64_VERSION_MAJOR
+ typedef enum _KWAIT_REASON {
+     Executive = 0,
+     FreePage = 1,
+@@ -168,7 +169,10 @@ typedef struct _CLIENT_ID {
+     HANDLE UniqueThread;
+ } CLIENT_ID, *PCLIENT_ID;
+ 
++#endif
+ 
++
++#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 7
+ typedef struct _SYSTEM_THREAD_INFORMATION {
+     LARGE_INTEGER KernelTime;
+     LARGE_INTEGER UserTime;
+@@ -182,6 +186,7 @@ typedef struct _SYSTEM_THREAD_INFORMATION {
+     ULONG ThreadState;
+     KWAIT_REASON WaitReason;
+ } SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
++#endif
+ 
+ 
+ typedef struct _TEB *PTEB;
+@@ -287,6 +292,7 @@ typedef NTSTATUS (NTAPI *_NtSetInformationProcess)(
+ );
+ 
+ 
++#ifndef __CYGWIN__
+ typedef enum _PROCESSINFOCLASS2 {
+     _ProcessBasicInformation,
+     ProcessQuotaLimits,
+@@ -338,4 +344,6 @@ typedef enum _PROCESSINFOCLASS2 {
+ #define ProcessImageFileName _ProcessImageFileName
+ #define ProcessBreakOnTermination _ProcessBreakOnTermination
+ 
++#endif
++
+ #endif // __NTEXTAPI_H__
+diff --git a/psutil/arch/windows/process_info.c b/psutil/arch/windows/process_info.c
+index e29f216..868f947 100644
+--- a/psutil/arch/windows/process_info.c
++++ b/psutil/arch/windows/process_info.c
+@@ -39,6 +39,8 @@ psutil_handle_from_pid_waccess(DWORD pid, DWORD dwDesiredAccess) {
+     if (hProcess == NULL) {
+         if (GetLastError() == ERROR_INVALID_PARAMETER)
+             NoSuchProcess();
++        else if (GetLastError() == ERROR_ACCESS_DENIED)
++            AccessDenied();
+         else
+             PyErr_SetFromWindowsErr(0);
+         return NULL;
+diff --git a/psutil/arch/windows/process_info.h b/psutil/arch/windows/process_info.h
+index 7c2c9c2..3275372 100644
+--- a/psutil/arch/windows/process_info.h
++++ b/psutil/arch/windows/process_info.h
+@@ -15,6 +15,9 @@
+ #define HANDLE_TO_PYNUM(handle) PyLong_FromUnsignedLong((unsigned long) handle)
+ #define PYNUM_TO_HANDLE(obj) ((HANDLE)PyLong_AsUnsignedLong(obj))
+ 
++#ifdef PSUTIL_CYGWIN
++    #include "py_error.h"
++#endif
+ 
+ DWORD* psutil_get_pids(DWORD *numberOfReturnedPIDs);
+ HANDLE psutil_handle_from_pid(DWORD pid);
+diff --git a/psutil/arch/windows/py_error.c b/psutil/arch/windows/py_error.c
+new file mode 100644
+index 0000000..c7a6bf6
+--- /dev/null
++++ b/psutil/arch/windows/py_error.c
+@@ -0,0 +1,59 @@
++#include <Python.h>
++#include <windows.h>
++
++/* TODO: This does not actually work as intended per the comment further down
++   that the OSError constructor performs the Windows error to POSIX error
++   translation, and that logic probably does not exist in Cygwin's Python */
++PyObject *PyErr_SetFromWindowsErr(int ierr)
++{
++    int len;
++    WCHAR *s_buf = NULL; /* Free via LocalFree */
++    PyObject *message;
++    PyObject *args, *v;
++    DWORD err = (DWORD)ierr;
++    if (err==0) err = GetLastError();
++    len = FormatMessageW(
++        /* Error API error */
++        FORMAT_MESSAGE_ALLOCATE_BUFFER |
++        FORMAT_MESSAGE_FROM_SYSTEM |
++        FORMAT_MESSAGE_IGNORE_INSERTS,
++        NULL,           /* no message source */
++        err,
++        MAKELANGID(LANG_NEUTRAL,
++        SUBLANG_DEFAULT), /* Default language */
++        (LPWSTR) &s_buf,
++        0,              /* size not used */
++        NULL);          /* no args */
++    if (len==0) {
++        /* Only seen this in out of mem situations */
++        message = PyUnicode_FromFormat("Windows Error 0x%x", err);
++        s_buf = NULL;
++    } else {
++        /* remove trailing cr/lf and dots */
++        while (len > 0 && (s_buf[len-1] <= L' ' || s_buf[len-1] == L'.'))
++            s_buf[--len] = L'\0';
++        message = PyUnicode_FromWideChar(s_buf, len);
++    }
++
++    if (message == NULL)
++    {
++        LocalFree(s_buf);
++        return NULL;
++    }
++
++    /* This is the constructor signature for OSError.
++       The POSIX translation will be figured out by the constructor. */
++    args = Py_BuildValue("(iO)", err, message);
++    Py_DECREF(message);
++
++    if (args != NULL) {
++        v = PyObject_Call(PyExc_OSError, args, NULL);
++        Py_DECREF(args);
++        if (v != NULL) {
++            PyErr_SetObject((PyObject *) Py_TYPE(v), v);
++            Py_DECREF(v);
++        }
++    }
++    LocalFree(s_buf);
++    return NULL;
++}
+diff --git a/psutil/arch/windows/py_error.h b/psutil/arch/windows/py_error.h
+new file mode 100644
+index 0000000..a3852b7
+--- /dev/null
++++ b/psutil/arch/windows/py_error.h
+@@ -0,0 +1,8 @@
++#ifndef __PY_ERROR_H__
++#define __PY_ERROR_H__
++
++#include <Python.h>
++
++PyObject *PyErr_SetFromWindowsErr(int);
++
++#endif
+diff --git a/psutil/tests/__init__.py b/psutil/tests/__init__.py
+index 13c4cfc..9db7235 100644
+--- a/psutil/tests/__init__.py
++++ b/psutil/tests/__init__.py
+@@ -21,6 +21,7 @@ import socket
+ import stat
+ import subprocess
+ import sys
++import sysconfig
+ import tempfile
+ import textwrap
+ import threading
+@@ -36,6 +37,7 @@ except ImportError:
+     import mock  # NOQA - requires "pip install mock"
+ 
+ import psutil
++from psutil import CYGWIN
+ from psutil import LINUX
+ from psutil import POSIX
+ from psutil import WINDOWS
+@@ -101,6 +103,12 @@ GLOBAL_TIMEOUT = 3
+ AF_INET6 = getattr(socket, "AF_INET6")
+ AF_UNIX = getattr(socket, "AF_UNIX", None)
+ PYTHON = os.path.realpath(sys.executable)
++EXE_SUFFIX = sysconfig.get_config_var('EXE') or ''
++
++if CYGWIN and EXE_SUFFIX:
++    if PYTHON.endswith(EXE_SUFFIX):
++        PYTHON = PYTHON[:-len(EXE_SUFFIX)]
++
+ DEVNULL = open(os.devnull, 'r+')
+ 
+ TESTFILE_PREFIX = '$testfn'
+@@ -182,6 +190,104 @@ class ThreadTask(threading.Thread):
+ 
+ 
+ # ===================================================================
++# --- sync primitives
++# ===================================================================
++
++
++class retry(object):
++    """A retry decorator."""
++
++    def __init__(self,
++                 exception=Exception,
++                 timeout=None,
++                 retries=None,
++                 interval=0.001,
++                 logfun=lambda s: print(s, file=sys.stderr),
++                 ):
++        if timeout and retries:
++            raise ValueError("timeout and retries args are mutually exclusive")
++        self.exception = exception
++        self.timeout = timeout
++        self.retries = retries
++        self.interval = interval
++        self.logfun = logfun
++
++    def __iter__(self):
++        if self.timeout:
++            stop_at = time.time() + self.timeout
++            while time.time() < stop_at:
++                yield
++        elif self.retries:
++            for _ in range(self.retries):
++                yield
++        else:
++            while True:
++                yield
++
++    def sleep(self):
++        if self.interval is not None:
++            time.sleep(self.interval)
++
++    def __call__(self, fun):
++        @functools.wraps(fun)
++        def wrapper(*args, **kwargs):
++            exc = None
++            for _ in self:
++                try:
++                    return fun(*args, **kwargs)
++                except self.exception as _:
++                    exc = _
++                    if self.logfun is not None:
++                        self.logfun(exc)
++                    self.sleep()
++            else:
++                if PY3:
++                    raise exc
++                else:
++                    raise
++
++        # This way the user of the decorated function can change config
++        # parameters.
++        wrapper.decorator = self
++        return wrapper
++
++
++@retry(exception=psutil.NoSuchProcess, logfun=None, timeout=GLOBAL_TIMEOUT,
++       interval=0.001)
++def wait_for_pid(pid):
++    """Wait for pid to show up in the process list then return.
++    Used in the test suite to give time the sub process to initialize.
++    """
++    psutil.Process(pid)
++    if WINDOWS:
++        # give it some more time to allow better initialization
++        time.sleep(0.01)
++
++
++@retry(exception=(EnvironmentError, AssertionError), logfun=None,
++       timeout=GLOBAL_TIMEOUT, interval=0.001)
++def wait_for_file(fname, delete_file=True, empty=False):
++    """Wait for a file to be written on disk with some content."""
++    with open(fname, "rb") as f:
++        data = f.read()
++    if not empty:
++        assert data
++    if delete_file:
++        os.remove(fname)
++    return data
++
++
++@retry(exception=AssertionError, logfun=None, timeout=GLOBAL_TIMEOUT,
++       interval=0.001)
++def call_until(fun, expr):
++    """Keep calling function for timeout secs and exit if eval()
++    expression is True.
++    """
++    ret = fun()
++    assert eval(expr)
++    return ret
++
++# ===================================================================
+ # --- subprocesses
+ # ===================================================================
+ 
+@@ -189,6 +295,7 @@ class ThreadTask(threading.Thread):
+ _subprocesses_started = set()
+ 
+ 
++@retry(exception=EnvironmentError, timeout=GLOBAL_TIMEOUT, interval=1)
+ def get_test_subprocess(cmd=None, **kwds):
+     """Return a subprocess.Popen object to use in tests.
+     By default stdout and stderr are redirected to /dev/null and the
+@@ -369,105 +476,6 @@ else:
+ 
+ 
+ # ===================================================================
+-# --- sync primitives
+-# ===================================================================
+-
+-
+-class retry(object):
+-    """A retry decorator."""
+-
+-    def __init__(self,
+-                 exception=Exception,
+-                 timeout=None,
+-                 retries=None,
+-                 interval=0.001,
+-                 logfun=lambda s: print(s, file=sys.stderr),
+-                 ):
+-        if timeout and retries:
+-            raise ValueError("timeout and retries args are mutually exclusive")
+-        self.exception = exception
+-        self.timeout = timeout
+-        self.retries = retries
+-        self.interval = interval
+-        self.logfun = logfun
+-
+-    def __iter__(self):
+-        if self.timeout:
+-            stop_at = time.time() + self.timeout
+-            while time.time() < stop_at:
+-                yield
+-        elif self.retries:
+-            for _ in range(self.retries):
+-                yield
+-        else:
+-            while True:
+-                yield
+-
+-    def sleep(self):
+-        if self.interval is not None:
+-            time.sleep(self.interval)
+-
+-    def __call__(self, fun):
+-        @functools.wraps(fun)
+-        def wrapper(*args, **kwargs):
+-            exc = None
+-            for _ in self:
+-                try:
+-                    return fun(*args, **kwargs)
+-                except self.exception as _:
+-                    exc = _
+-                    if self.logfun is not None:
+-                        self.logfun(exc)
+-                    self.sleep()
+-            else:
+-                if PY3:
+-                    raise exc
+-                else:
+-                    raise
+-
+-        # This way the user of the decorated function can change config
+-        # parameters.
+-        wrapper.decorator = self
+-        return wrapper
+-
+-
+-@retry(exception=psutil.NoSuchProcess, logfun=None, timeout=GLOBAL_TIMEOUT,
+-       interval=0.001)
+-def wait_for_pid(pid):
+-    """Wait for pid to show up in the process list then return.
+-    Used in the test suite to give time the sub process to initialize.
+-    """
+-    psutil.Process(pid)
+-    if WINDOWS:
+-        # give it some more time to allow better initialization
+-        time.sleep(0.01)
+-
+-
+-@retry(exception=(EnvironmentError, AssertionError), logfun=None,
+-       timeout=GLOBAL_TIMEOUT, interval=0.001)
+-def wait_for_file(fname, delete_file=True, empty=False):
+-    """Wait for a file to be written on disk with some content."""
+-    with open(fname, "rb") as f:
+-        data = f.read()
+-    if not empty:
+-        assert data
+-    if delete_file:
+-        os.remove(fname)
+-    return data
+-
+-
+-@retry(exception=AssertionError, logfun=None, timeout=GLOBAL_TIMEOUT,
+-       interval=0.001)
+-def call_until(fun, expr):
+-    """Keep calling function for timeout secs and exit if eval()
+-    expression is True.
+-    """
+-    ret = fun()
+-    assert eval(expr)
+-    return ret
+-
+-
+-# ===================================================================
+ # --- fs
+ # ===================================================================
+ 
+diff --git a/psutil/tests/test_misc.py b/psutil/tests/test_misc.py
+index 84215d3..1c10a71 100755
+--- a/psutil/tests/test_misc.py
++++ b/psutil/tests/test_misc.py
+@@ -19,6 +19,7 @@ import socket
+ import stat
+ import sys
+ 
++from psutil import CYGWIN
+ from psutil import LINUX
+ from psutil import NETBSD
+ from psutil import OPENBSD
+@@ -442,7 +443,8 @@ class TestScripts(unittest.TestCase):
+     def test_pmap(self):
+         self.assert_stdout('pmap.py', args=str(os.getpid()))
+ 
+-    @unittest.skipUnless(OSX or WINDOWS or LINUX, "platform not supported")
++    @unittest.skipUnless(OSX or WINDOWS or LINUX or CYGWIN,
++                         "platform not supported")
+     def test_procsmem(self):
+         self.assert_stdout('procsmem.py')
+ 
+diff --git a/psutil/tests/test_posix.py b/psutil/tests/test_posix.py
+index 16d1eb7..0b934a8 100755
+--- a/psutil/tests/test_posix.py
++++ b/psutil/tests/test_posix.py
+@@ -10,12 +10,14 @@
+ import datetime
+ import errno
+ import os
++import re
+ import subprocess
+ import sys
+ import time
+ 
+ import psutil
+ from psutil import BSD
++from psutil import CYGWIN
+ from psutil import LINUX
+ from psutil import OSX
+ from psutil import POSIX
+@@ -37,25 +39,123 @@ from psutil.tests import unittest
+ from psutil.tests import wait_for_pid
+ 
+ 
+-def ps(cmd):
+-    """Expects a ps command with a -o argument and parse the result
+-    returning only the value of interest.
+-    """
+-    if not LINUX:
+-        cmd = cmd.replace(" --no-headers ", " ")
+-    if SUNOS:
+-        cmd = cmd.replace("-o command", "-o comm")
+-        cmd = cmd.replace("-o start", "-o stime")
+-    p = subprocess.Popen(cmd, shell=1, stdout=subprocess.PIPE)
++def run(cmd):
++    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
++                         stderr=subprocess.PIPE)
+     output = p.communicate()[0].strip()
++
+     if PY3:
+         output = str(output, sys.stdout.encoding)
+-    if not LINUX:
+-        output = output.split('\n')[1].strip()
+-    try:
+-        return int(output)
+-    except ValueError:
+-        return output
++
++    return output
++
++
++def ps(fmt, pid=None):
++    """
++    Wrapper for calling the ps command with a little bit of cross-platform
++    support for a narrow range of features.
++    """
++
++    # The ps on Cygwin bears only small resemblance to the *nix ps, and
++    # probably shouldn't even be used for these tests; this tries as
++    # best as possible to emulate it as used currently by these tests
++    cmd = ['ps']
++
++    if LINUX:
++        cmd.append('--no-headers')
++
++    if pid is not None:
++        cmd.extend(['-p', str(pid)])
++    else:
++        if SUNOS:
++            cmd.append('-A')
++        elif CYGWIN:
++            cmd.append('-a')
++        else:
++            cmd.append('ax')
++
++    if SUNOS:
++        fmt_map = {'command', 'comm',
++                   'start', 'stime'}
++        fmt = fmt_map.get(fmt, fmt)
++
++    if not CYGWIN:
++        cmd.extend(['-o', fmt])
++    else:
++        cmd.append('-l')
++
++    output = run(cmd)
++
++    if LINUX:
++        output = output.splitlines()
++    else:
++        output = output.splitlines()[1:]
++
++    if CYGWIN:
++        cygwin_ps_re = re.compile(r'I?\s*(?P<pid>\d+)\s*(?P<ppid>\d+)\s*'
++                                  '(?P<pgid>\d+)\s*(?P<winpid>\d+)\s*'
++                                  '(?P<tty>[a-z0-9?]+)\s*(?P<uid>\d+)\s*'
++                                  '(?:(?P<stime>\d{2}:\d{2}:\d{2})|'
++                                  '   (?P<sdate>[A-Za-z]+\s+\d+))\s*'
++                                  '(?P<command>/.+)')
++
++        def cygwin_output(line, fmt):
++            # NOTE: Cygwin's ps is very limited in what it outputs, so we work
++            # around that by looking to various other sources for some
++            # information
++            fmt_map = {'start': 'stime'}
++            fmt = fmt_map.get(fmt, fmt)
++
++            m = cygwin_ps_re.match(line)
++            if not m:
++                return ''
++
++            if fmt in cygwin_ps_re.groupindex:
++                output = m.group(fmt)
++                if output is None:
++                    output = ''
++            elif fmt == 'rgid':
++                pid = m.group('pid')
++                output = open('/proc/{0}/gid'.format(pid)).readline().strip()
++            elif fmt == 'user':
++                # Cygwin's ps only returns UID
++                uid = m.group('uid')
++                output = run(['getent', 'passwd', uid])
++                output = output.splitlines()[0].split(':')[0]
++            elif fmt == 'rss':
++                winpid = m.group('winpid')
++                output = run(['wmic', 'process', winpid, 'get',
++                              'WorkingSetSize'])
++                output = int(output.split('\n')[-1].strip()) / 1024
++            elif fmt == 'vsz':
++                winpid = m.group('winpid')
++                output = run(['wmic', 'process', winpid, 'get',
++                              'PrivatePageCount'])
++                output = int(output.split('\n')[-1].strip()) / 1024
++            else:
++                raise ValueError('format %s not supported on Cygwin' % fmt)
++
++            return output
++
++    all_output = []
++    for line in output:
++        if CYGWIN:
++            output = cygwin_output(line, fmt)
++
++            if not output:
++                continue
++
++        try:
++            output = int(output)
++        except ValueError:
++            pass
++
++        all_output.append(output)
++
++    if pid is None:
++        return all_output
++    else:
++        return all_output[0]
+ 
+ 
+ @unittest.skipUnless(POSIX, "POSIX only")
+@@ -75,49 +175,50 @@ class TestProcess(unittest.TestCase):
+     # for ps -o arguments see: http://unixhelp.ed.ac.uk/CGI/man-cgi?ps
+ 
+     def test_ppid(self):
+-        ppid_ps = ps("ps --no-headers -o ppid -p %s" % self.pid)
++        ppid_ps = ps('ppid', self.pid)
+         ppid_psutil = psutil.Process(self.pid).ppid()
+         self.assertEqual(ppid_ps, ppid_psutil)
+ 
+     def test_uid(self):
+-        uid_ps = ps("ps --no-headers -o uid -p %s" % self.pid)
++        uid_ps = ps('uid', self.pid)
+         uid_psutil = psutil.Process(self.pid).uids().real
+         self.assertEqual(uid_ps, uid_psutil)
+ 
+     def test_gid(self):
+-        gid_ps = ps("ps --no-headers -o rgid -p %s" % self.pid)
++        gid_ps = ps('rgid', self.pid)
+         gid_psutil = psutil.Process(self.pid).gids().real
+         self.assertEqual(gid_ps, gid_psutil)
+ 
+     def test_username(self):
+-        username_ps = ps("ps --no-headers -o user -p %s" % self.pid)
++        username_ps = ps('user', self.pid)
+         username_psutil = psutil.Process(self.pid).username()
+         self.assertEqual(username_ps, username_psutil)
+ 
++    @unittest.skipIf(APPVEYOR and CYGWIN, "test not reliable on appveyor")
+     @skip_on_access_denied()
+     @retry_before_failing()
+     def test_rss_memory(self):
+         # give python interpreter some time to properly initialize
+         # so that the results are the same
+         time.sleep(0.1)
+-        rss_ps = ps("ps --no-headers -o rss -p %s" % self.pid)
++        rss_ps = ps('rss', self.pid)
+         rss_psutil = psutil.Process(self.pid).memory_info()[0] / 1024
+         self.assertEqual(rss_ps, rss_psutil)
+ 
++    @unittest.skipIf(APPVEYOR and CYGWIN, "test not reliable on appveyor")
+     @skip_on_access_denied()
+     @retry_before_failing()
+     def test_vsz_memory(self):
+         # give python interpreter some time to properly initialize
+         # so that the results are the same
+         time.sleep(0.1)
+-        vsz_ps = ps("ps --no-headers -o vsz -p %s" % self.pid)
++        vsz_ps = ps('vsz', self.pid)
+         vsz_psutil = psutil.Process(self.pid).memory_info()[1] / 1024
+         self.assertEqual(vsz_ps, vsz_psutil)
+ 
+     def test_name(self):
+         # use command + arg since "comm" keyword not supported on all platforms
+-        name_ps = ps("ps --no-headers -o command -p %s" % (
+-            self.pid)).split(' ')[0]
++        name_ps = ps('command', self.pid).split(' ')[0]
+         # remove path if there is any, from the command
+         name_ps = os.path.basename(name_ps).lower()
+         name_psutil = psutil.Process(self.pid).name().lower()
+@@ -125,7 +226,7 @@ class TestProcess(unittest.TestCase):
+ 
+     @unittest.skipIf(OSX or BSD, 'ps -o start not available')
+     def test_create_time(self):
+-        time_ps = ps("ps --no-headers -o start -p %s" % self.pid).split(' ')[0]
++        time_ps = ps('start', self.pid)
+         time_psutil = psutil.Process(self.pid).create_time()
+         time_psutil_tstamp = datetime.datetime.fromtimestamp(
+             time_psutil).strftime("%H:%M:%S")
+@@ -137,8 +238,7 @@ class TestProcess(unittest.TestCase):
+         self.assertIn(time_ps, [time_psutil_tstamp, round_time_psutil_tstamp])
+ 
+     def test_exe(self):
+-        ps_pathname = ps("ps --no-headers -o command -p %s" %
+-                         self.pid).split(' ')[0]
++        ps_pathname = ps('command', self.pid).split(' ')[0]
+         psutil_pathname = psutil.Process(self.pid).exe()
+         try:
+             self.assertEqual(ps_pathname, psutil_pathname)
+@@ -153,15 +253,27 @@ class TestProcess(unittest.TestCase):
+             self.assertEqual(ps_pathname, adjusted_ps_pathname)
+ 
+     def test_cmdline(self):
+-        ps_cmdline = ps("ps --no-headers -o command -p %s" % self.pid)
++        ps_cmdline = ps('command', self.pid)
+         psutil_cmdline = " ".join(psutil.Process(self.pid).cmdline())
+-        if SUNOS:
+-            # ps on Solaris only shows the first part of the cmdline
++        if SUNOS or CYGWIN:
++            # ps on Solaris and Cygwin only shows the first part of the cmdline
+             psutil_cmdline = psutil_cmdline.split(" ")[0]
++        if CYGWIN:
++            # resolve symlinks
++            if os.path.islink(psutil_cmdline):
++                psutil_cmdline = os.path.splitext(
++                    os.path.realpath(psutil_cmdline))[0]
+         self.assertEqual(ps_cmdline, psutil_cmdline)
+ 
++    # To be more specific, process priorities are complicated in Windows and
++    # there's no simple way, from the command line, to get the information
++    # needed to reproduce the way Cygwin maps Windows process priorties to
++    # 'nice' values (not even through Cygwin's /proc API, which only returns
++    # the "base priority" which actually is not sufficient because what we
++    # really need is the process's "priority class" which is different
++    @unittest.skipIf(CYGWIN, "this is not supported by Cygwin")
+     def test_nice(self):
+-        ps_nice = ps("ps --no-headers -o nice -p %s" % self.pid)
++        ps_nice = ps('nice', self.pid)
+         psutil_nice = psutil.Process().nice()
+         self.assertEqual(ps_nice, psutil_nice)
+ 
+@@ -220,22 +332,7 @@ class TestSystemAPIs(unittest.TestCase):
+     def test_pids(self):
+         # Note: this test might fail if the OS is starting/killing
+         # other processes in the meantime
+-        if SUNOS:
+-            cmd = ["ps", "-A", "-o", "pid"]
+-        else:
+-            cmd = ["ps", "ax", "-o", "pid"]
+-        p = get_test_subprocess(cmd, stdout=subprocess.PIPE)
+-        output = p.communicate()[0].strip()
+-        assert p.poll() == 0
+-        if PY3:
+-            output = str(output, sys.stdout.encoding)
+-        pids_ps = []
+-        for line in output.split('\n')[1:]:
+-            if line:
+-                pid = int(line.split()[0].strip())
+-                pids_ps.append(pid)
+-        # remove ps subprocess pid which is supposed to be dead in meantime
+-        pids_ps.remove(p.pid)
++        pids_ps = ps('pid')
+         pids_psutil = psutil.pids()
+         pids_ps.sort()
+         pids_psutil.sort()
+@@ -244,7 +341,8 @@ class TestSystemAPIs(unittest.TestCase):
+         if OSX and 0 not in pids_ps:
+             pids_ps.insert(0, 0)
+ 
+-        if pids_ps != pids_psutil:
++        # There will often be one more process in pids_ps for ps itself
++        if len(pids_ps) - len(pids_psutil) > 1:
+             difference = [x for x in pids_psutil if x not in pids_ps] + \
+                          [x for x in pids_ps if x not in pids_psutil]
+             self.fail("difference: " + str(difference))
+@@ -254,6 +352,11 @@ class TestSystemAPIs(unittest.TestCase):
+     @unittest.skipIf(SUNOS, "unreliable on SUNOS")
+     @unittest.skipIf(TRAVIS, "unreliable on TRAVIS")
+     def test_nic_names(self):
++        if CYGWIN:
++            # On Cygwin perform the version of this test that uses ipconfig
++            from psutil.tests.test_windows import TestSystemAPIs
++            return TestSystemAPIs._test_nic_names(self)
++
+         p = subprocess.Popen("ifconfig -a", shell=1, stdout=subprocess.PIPE)
+         output = p.communicate()[0].strip()
+         if p.returncode != 0:
+@@ -274,14 +377,23 @@ class TestSystemAPIs(unittest.TestCase):
+                      "unreliable on APPVEYOR or TRAVIS")
+     @retry_before_failing()
+     def test_users(self):
+-        out = sh("who")
+-        lines = out.split('\n')
+-        users = [x.split()[0] for x in lines]
+-        self.assertEqual(len(users), len(psutil.users()))
+-        terminals = [x.split()[1] for x in lines]
++        if CYGWIN:
++            # NOTE: For reasons I haven't been able to figure out (possibly a
++            # bug in Cygwin) `who` sometimes fails without explicitly
++            # specifying the utmp file.
++            out = sh("who /var/run/utmp")
++        else:
++            out = sh("who")
++        lines = [x.strip() for x in out.split('\n')]
++        self.assertEqual(len(lines), len(psutil.users()))
+         for u in psutil.users():
+-            self.assertTrue(u.name in users, u.name)
+-            self.assertTrue(u.terminal in terminals, u.terminal)
++            for line in lines:
++                if line.startswith(u.name):
++                    rest = line[len(u.name):].split()
++                    if u.terminal == rest[0].strip():
++                        break
++            else:
++                self.fail("couldn't find %s in who output" % u.name)
+ 
+     def test_pid_exists_let_raise(self):
+         # According to "man 2 kill" possible error values for kill
+@@ -330,6 +442,9 @@ class TestSystemAPIs(unittest.TestCase):
+ 
+         tolerance = 4 * 1024 * 1024  # 4MB
+         for part in psutil.disk_partitions(all=False):
++            if not os.path.exists(part.mountpoint):
++                continue
++
+             usage = psutil.disk_usage(part.mountpoint)
+             try:
+                 total, used, free, percent = df(part.device)
+diff --git a/psutil/tests/test_process.py b/psutil/tests/test_process.py
+index 6580fe9..434cb3a 100755
+--- a/psutil/tests/test_process.py
++++ b/psutil/tests/test_process.py
+@@ -29,6 +29,7 @@ from socket import SOCK_STREAM
+ import psutil
+ 
+ from psutil import BSD
++from psutil import CYGWIN
+ from psutil import FREEBSD
+ from psutil import LINUX
+ from psutil import NETBSD
+@@ -37,6 +38,7 @@ from psutil import OSX
+ from psutil import POSIX
+ from psutil import SUNOS
+ from psutil import WINDOWS
++from psutil._common import encode
+ from psutil._common import supports_ipv6
+ from psutil._compat import callable
+ from psutil._compat import long
+@@ -128,22 +130,30 @@ class TestProcess(unittest.TestCase):
+         self.assertFalse(psutil.pid_exists(p.pid))
+         if POSIX:
+             self.assertEqual(exit_sig, -sig)
+-            #
+-            sproc = get_test_subprocess()
+-            p = psutil.Process(sproc.pid)
+-            p.send_signal(sig)
+-            with mock.patch('psutil.os.kill',
+-                            side_effect=OSError(errno.ESRCH, "")):
+-                with self.assertRaises(psutil.NoSuchProcess):
+-                    p.send_signal(sig)
+-            #
+-            sproc = get_test_subprocess()
+-            p = psutil.Process(sproc.pid)
+-            p.send_signal(sig)
+-            with mock.patch('psutil.os.kill',
+-                            side_effect=OSError(errno.EPERM, "")):
+-                with self.assertRaises(psutil.AccessDenied):
+-                    psutil.Process().send_signal(sig)
++
++            if not CYGWIN:
++                # NOTE: This portion of the test is not reliable on Cygwin due
++                # to an apparent bug (?) in Cygwin that prevents zombie
++                # processes from remaining accessible before wait() in some
++                # cases.  See
++                # https://www.cygwin.com/ml/cygwin/2017-02/msg00187.html
++
++                sproc = get_test_subprocess()
++                p = psutil.Process(sproc.pid)
++                p.send_signal(sig)
++                with mock.patch('psutil.os.kill',
++                                side_effect=OSError(errno.ESRCH, "")):
++                    with self.assertRaises(psutil.NoSuchProcess):
++                        p.send_signal(sig)
++                #
++                sproc = get_test_subprocess()
++                p = psutil.Process(sproc.pid)
++                p.send_signal(sig)
++                with mock.patch('psutil.os.kill',
++                                side_effect=OSError(errno.EPERM, "")):
++                    with self.assertRaises(psutil.AccessDenied):
++                        psutil.Process().send_signal(sig)
++
+             # Sending a signal to process with PID 0 is not allowed as
+             # it would affect every process in the process group of
+             # the calling process (os.getpid()) instead of PID 0").
+@@ -278,10 +288,18 @@ class TestProcess(unittest.TestCase):
+         # Use os.times()[:2] as base values to compare our results
+         # using a tolerance  of +/- 0.1 seconds.
+         # It will fail if the difference between the values is > 0.1s.
+-        if (max([user_time, utime]) - min([user_time, utime])) > 0.1:
++        # On cygwin there seems to be enough overhead differece between
++        # os.times() and reading /proc/stat that the tolerance should
++        # be a bit higher
++        if CYGWIN:
++            tol = 0.2
++        else:
++            tol = 0.1
++
++        if (max([user_time, utime]) - min([user_time, utime])) > tol:
+             self.fail("expected: %s, found: %s" % (utime, user_time))
+ 
+-        if (max([kernel_time, ktime]) - min([kernel_time, ktime])) > 0.1:
++        if (max([kernel_time, ktime]) - min([kernel_time, ktime])) > tol:
+             self.fail("expected: %s, found: %s" % (ktime, kernel_time))
+ 
+     @unittest.skipUnless(hasattr(psutil.Process, "cpu_num"),
+@@ -317,7 +335,10 @@ class TestProcess(unittest.TestCase):
+         terminal = psutil.Process().terminal()
+         if sys.stdin.isatty() or sys.stdout.isatty():
+             tty = os.path.realpath(sh('tty'))
+-            self.assertEqual(terminal, tty)
++            if CYGWIN and terminal == '/dev/console':
++                self.assertTrue(tty.startswith('/dev/cons'))
++            else:
++                self.assertEqual(terminal, tty)
+         else:
+             self.assertIsNone(terminal)
+ 
+@@ -1086,7 +1107,8 @@ class TestProcess(unittest.TestCase):
+                                psutil.CONN_NONE,
+                                ("all", "inet", "inet6", "udp", "udp6"))
+ 
+-    @unittest.skipUnless(hasattr(socket, 'AF_UNIX'), 'AF_UNIX not supported')
++    @unittest.skipUnless(hasattr(socket, 'AF_UNIX') and not CYGWIN,
++                         'AF_UNIX is not supported')
+     @skip_on_access_denied(only_if=OSX)
+     def test_connections_unix(self):
+         def check(type):
+@@ -1115,6 +1137,8 @@ class TestProcess(unittest.TestCase):
+                          'socket.fromfd() not supported')
+     @unittest.skipIf(WINDOWS or SUNOS,
+                      'connection fd not available on this platform')
++    @unittest.skipIf(CYGWIN,
++                     'cannot map sockets to their fds on Cygwin')
+     def test_connection_fromfd(self):
+         with contextlib.closing(socket.socket()) as sock:
+             sock.bind(('localhost', 0))
+@@ -1191,8 +1215,10 @@ class TestProcess(unittest.TestCase):
+         for p in psutil.process_iter():
+             if p.pid == sproc.pid:
+                 continue
+-            # XXX: sometimes this fails on Windows; not sure why.
+-            self.assertNotEqual(p.ppid(), this_parent, msg=p)
++            try:
++                self.assertNotEqual(p.ppid(), this_parent, msg=p)
++            except psutil.AccessDenied:
++                pass
+ 
+     def test_children(self):
+         p = psutil.Process()
+@@ -1236,8 +1262,18 @@ class TestProcess(unittest.TestCase):
+             except psutil.Error:
+                 pass
+         # this is the one, now let's make sure there are no duplicates
+-        pid = sorted(table.items(), key=lambda x: x[1])[-1][0]
+-        p = psutil.Process(pid)
++        for pid, _ in sorted(table.items(), key=lambda x: x[1], reverse=True):
++            try:
++                # Just make sure the process can be accessed and still actually
++                # exists (or exists in the first place--e.g. there is no such
++                # process with pid=1 on Cygwin even though it is the default
++                # ppid
++                p = psutil.Process(pid)
++            except (psutil.AccessDenied, psutil.NoSuchProcess):
++                continue
++
++            break
++
+         try:
+             c = p.children(recursive=True)
+         except psutil.AccessDenied:  # windows
+@@ -1351,7 +1387,7 @@ class TestProcess(unittest.TestCase):
+         p = psutil.Process(sproc.pid)
+         p.terminate()
+         p.wait()
+-        if WINDOWS:
++        if WINDOWS or CYGWIN:
+             call_until(psutil.pids, "%s not in ret" % p.pid)
+         self.assertFalse(p.is_running())
+         # self.assertFalse(p.pid in psutil.pids(), msg="retcode = %s" %
+@@ -1394,6 +1430,8 @@ class TestProcess(unittest.TestCase):
+             except psutil.AccessDenied:
+                 if OPENBSD and name in ('threads', 'num_threads'):
+                     pass
++                elif APPVEYOR and CYGWIN and name == 'cpu_affinity':
++                    pass
+                 else:
+                     raise
+             except NotImplementedError:
+@@ -1403,7 +1441,14 @@ class TestProcess(unittest.TestCase):
+                     "NoSuchProcess exception not raised for %r, retval=%s" % (
+                         name, ret))
+ 
+-    @unittest.skipUnless(POSIX, 'POSIX only')
++    @unittest.skipUnless(POSIX and not CYGWIN, 'POSIX only')
++    # This test can't really work on Cygwin since some psutil interfaces
++    # (such as create_time, currently) rely on the Windows API, and while
++    # Cygwin does support zombie processes, the real Windows processes are
++    # already gone in that case, and the zombie "processes" only remain
++    # in Cygwin's internal process table
++    # TODO: In the future it would be nice to have cleaner handling of
++    # zombie processes on Cygwin
+     def test_zombie_process(self):
+         def succeed_or_zombie_p_exc(fun, *args, **kwargs):
+             try:
+@@ -1806,17 +1851,17 @@ class TestFetchAllProcesses(unittest.TestCase):
+     def memory_info(self, ret, proc):
+         for name in ret._fields:
+             self.assertGreaterEqual(getattr(ret, name), 0)
+-        if POSIX and ret.vms != 0:
++        if WINDOWS or CYGWIN:
++            assert ret.peak_wset >= ret.wset, ret
++            assert ret.peak_paged_pool >= ret.paged_pool, ret
++            assert ret.peak_nonpaged_pool >= ret.nonpaged_pool, ret
++            assert ret.peak_pagefile >= ret.pagefile, ret
++        elif POSIX and ret.vms != 0:
+             # VMS is always supposed to be the highest
+             for name in ret._fields:
+                 if name != 'vms':
+                     value = getattr(ret, name)
+                     assert ret.vms > value, ret
+-        elif WINDOWS:
+-            assert ret.peak_wset >= ret.wset, ret
+-            assert ret.peak_paged_pool >= ret.paged_pool, ret
+-            assert ret.peak_nonpaged_pool >= ret.nonpaged_pool, ret
+-            assert ret.peak_pagefile >= ret.pagefile, ret
+ 
+     def memory_full_info(self, ret, proc):
+         total = psutil.virtual_memory().total
+@@ -1855,6 +1900,11 @@ class TestFetchAllProcesses(unittest.TestCase):
+ 
+     def cwd(self, ret, proc):
+         if ret is not None:  # BSD may return None
++            if CYGWIN and ret == '<defunct>':
++                # This can happen on Cygwin for processes that we can't access
++                # without elevation
++                return
++
+             assert os.path.isabs(ret), ret
+             try:
+                 st = os.stat(ret)
+@@ -2025,9 +2075,7 @@ class TestUnicode(unittest.TestCase):
+     def test_proc_name(self):
+         subp = get_test_subprocess(cmd=[self.uexe])
+         if WINDOWS:
+-            # XXX: why is this like this?
+-            from psutil._pswindows import py2_strencode
+-            name = py2_strencode(psutil._psplatform.cext.proc_name(subp.pid))
++            name = encode(psutil._psplatform.cext.proc_name(subp.pid))
+         else:
+             name = psutil.Process(subp.pid).name()
+         if not OSX and TRAVIS:
+@@ -2098,6 +2146,16 @@ class TestInvalidUnicode(TestUnicode):
+         uexe = TESTFN + b"f\xc0\x80"
+         udir = TESTFN + b"d\xc0\x80"
+ 
++    # NOTE: Cygwin uses its own scheme for encoding characters in filenames
++    # that are not valid unicode codepoints (such as \x80) (specifically, it
++    # converts them to codepoints in a private use area, e.g. u+f080).  So
++    # the filename ends up being reported as the utf-8 encoding of u+f080
++    # This seems to be handled better on a problem on Python 3, however.
++    @unittest.skipIf(not PY3 and CYGWIN,
++                     "Cygwin does not treat arbitrary bytes as on POSIX")
++    def test_proc_exe(self):
++        return super(TestInvalidUnicode, self).test_proc_exe()
++
+ 
+ if __name__ == '__main__':
+     run_test_module_by_name(__file__)
+diff --git a/psutil/tests/test_system.py b/psutil/tests/test_system.py
+index 013ae8e..1daf41a 100755
+--- a/psutil/tests/test_system.py
++++ b/psutil/tests/test_system.py
+@@ -20,6 +20,7 @@ import time
+ 
+ import psutil
+ from psutil import BSD
++from psutil import CYGWIN
+ from psutil import FREEBSD
+ from psutil import LINUX
+ from psutil import NETBSD
+@@ -469,7 +470,7 @@ class TestSystemAPIs(unittest.TestCase):
+             if SUNOS:
+                 # on solaris apparently mount points can also be files
+                 assert os.path.exists(disk.mountpoint), disk
+-            else:
++            elif not CYGWIN:
+                 assert os.path.isdir(disk.mountpoint), disk
+             assert disk.fstype, disk
+ 
+@@ -477,7 +478,7 @@ class TestSystemAPIs(unittest.TestCase):
+         ls = psutil.disk_partitions(all=True)
+         self.assertTrue(ls, msg=ls)
+         for disk in psutil.disk_partitions(all=True):
+-            if not WINDOWS:
++            if not (WINDOWS or CYGWIN):
+                 try:
+                     os.stat(disk.mountpoint)
+                 except OSError as err:
+@@ -519,7 +520,7 @@ class TestSystemAPIs(unittest.TestCase):
+ 
+         from psutil._common import conn_tmap
+         for kind, groups in conn_tmap.items():
+-            if SUNOS and kind == 'unix':
++            if (SUNOS or CYGWIN) and kind == 'unix':
+                 continue
+             families, types_ = groups
+             cons = psutil.net_connections(kind)
+diff --git a/psutil/tests/test_windows.py b/psutil/tests/test_windows.py
+index 3fcc20e..ba25e28 100755
+--- a/psutil/tests/test_windows.py
++++ b/psutil/tests/test_windows.py
+@@ -68,7 +68,13 @@ def wrap_exceptions(fun):
+ @unittest.skipUnless(WINDOWS, "WINDOWS only")
+ class TestSystemAPIs(unittest.TestCase):
+ 
++    # Note: Implemented as a staticmethod for ease of sharing with test_posix
++    # for running this test on Cygwin
+     def test_nic_names(self):
++        return self._test_nic_names(self)
++
++    @staticmethod
++    def _test_nic_names(test_case):
+         p = subprocess.Popen(['ipconfig', '/all'], stdout=subprocess.PIPE)
+         out = p.communicate()[0]
+         if PY3:
+@@ -78,7 +84,7 @@ class TestSystemAPIs(unittest.TestCase):
+             if "pseudo-interface" in nic.replace(' ', '-').lower():
+                 continue
+             if nic not in out:
+-                self.fail(
++                test_case.fail(
+                     "%r nic wasn't found in 'ipconfig /all' output" % nic)
+ 
+     @unittest.skipUnless('NUMBER_OF_PROCESSORS' in os.environ,
+diff --git a/scripts/disk_usage.py b/scripts/disk_usage.py
+index 37f4da0..a0924ce 100755
+--- a/scripts/disk_usage.py
++++ b/scripts/disk_usage.py
+@@ -48,7 +48,12 @@ def main():
+                 # ENOENT, pop-up a Windows GUI error for a non-ready
+                 # partition or just hang.
+                 continue
++        if not os.path.exists(part.mountpoint):
++            # In case the mount point itself has been deleted
++            continue
++
+         usage = psutil.disk_usage(part.mountpoint)
++
+         print(templ % (
+             part.device,
+             bytes2human(usage.total),
+diff --git a/scripts/procsmem.py b/scripts/procsmem.py
+index a28794b..287a800 100755
+--- a/scripts/procsmem.py
++++ b/scripts/procsmem.py
+@@ -41,7 +41,7 @@ import sys
+ import psutil
+ 
+ 
+-if not (psutil.LINUX or psutil.OSX or psutil.WINDOWS):
++if not (psutil.LINUX or psutil.OSX or psutil.WINDOWS or psutil.CYGWIN):
+     sys.exit("platform not supported")
+ 
+ 
+diff --git a/setup.py b/setup.py
+index 47772da..bd6b5ae 100755
+--- a/setup.py
++++ b/setup.py
+@@ -26,6 +26,7 @@ HERE = os.path.abspath(os.path.dirname(__file__))
+ sys.path.insert(0, os.path.join(HERE, "psutil"))
+ 
+ from _common import BSD  # NOQA
++from _common import CYGWIN  # NOQA
+ from _common import FREEBSD  # NOQA
+ from _common import LINUX  # NOQA
+ from _common import NETBSD  # NOQA
+@@ -230,7 +231,33 @@ elif SUNOS:
+         sources=['psutil/_psutil_sunos.c'],
+         define_macros=macros,
+         libraries=['kstat', 'nsl', 'socket'])
++elif CYGWIN:
++    macros.extend([
++        ("PSUTIL_CYGWIN", 1),
++        ("PSAPI_VERSION", 1)
++    ])
++
++    # sys.getwindowsversion() is not available in Cygwin's Python
++    import re
++    winver_re = re.compile(r'CYGWIN_NT-(?P<major>\d+)\.(?P<minor>\d+)')
+ 
++    def get_winver():
++        verstr = os.uname()[0]
++        m = winver_re.search(verstr)
++        maj = int(m.group('major'))
++        min = int(m.group('minor'))
++        return '0x0%s' % ((maj * 100) + min)
++
++    macros.append(("_WIN32_WINNT", get_winver()))
++
++    ext = Extension(
++        'psutil._psutil_cygwin',
++        sources=['psutil/_psutil_cygwin.c',
++                 'psutil/_psutil_common.c',
++                 'psutil/arch/windows/py_error.c',
++                 'psutil/arch/windows/process_info.c'],
++        define_macros=macros,
++        libraries=["psapi", "iphlpapi"])
+ else:
+     sys.exit('platform %s is not supported' % sys.platform)
+ 

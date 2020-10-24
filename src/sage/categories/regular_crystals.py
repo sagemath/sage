@@ -16,13 +16,12 @@ Regular Crystals
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
+from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
-from sage.combinat.subset import Subsets
-from sage.graphs.dot2tex_utils import have_dot2tex
 
 class RegularCrystals(Category_singleton):
     r"""
@@ -59,10 +58,12 @@ class RegularCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           running ._test_stembridge_local_axioms() . . . pass
@@ -76,6 +77,7 @@ class RegularCrystals(Category_singleton):
         running ._test_enumerated_set_iter_list() . . . pass
         running ._test_eq() . . . pass
         running ._test_fast_iter() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -159,6 +161,7 @@ class RegularCrystals(Category_singleton):
 
         # TODO: this could be a method in Crystals.Algebras.ElementMethods, so that
         # one could do:
+        #
         #   sage: C = crystals.Tableaux(['A',2], shape=[2,1])
         #   sage: M = C.algebra(QQ)
         #   sage: m = M.an_element()
@@ -222,7 +225,7 @@ class RegularCrystals(Category_singleton):
             - ``reduced_word`` -- a reduced word of the Weyl group of the
               same type as the underlying crystal
             - ``only_support`` -- (default: ``True``) only include arrows
-              corresponding the the support of ``reduced_word``
+              corresponding to the support of ``reduced_word``
 
             OUTPUT:
 
@@ -234,11 +237,11 @@ class RegularCrystals(Category_singleton):
                 sage: t = T.highest_weight_vector()
                 sage: S = T.demazure_subcrystal(t, [1,2])
                 sage: list(S)
-                [[[1, 1], [2]], [[1, 1], [3]], [[1, 2], [2]],
+                [[[1, 1], [2]], [[1, 2], [2]], [[1, 1], [3]],
                  [[1, 2], [3]], [[2, 2], [3]]]
                 sage: S = T.demazure_subcrystal(t, [2,1])
                 sage: list(S)
-                [[[1, 1], [2]], [[1, 1], [3]], [[1, 2], [2]],
+                [[[1, 1], [2]], [[1, 2], [2]], [[1, 1], [3]],
                  [[1, 3], [2]], [[1, 3], [3]]]
 
             We construct an example where we don't only want the arrows
@@ -257,7 +260,7 @@ class RegularCrystals(Category_singleton):
                  ([[2, 2]], [[1, 2]], 0)]
             """
             from sage.combinat.free_module import CombinatorialFreeModule
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             C = CombinatorialFreeModule(QQ, self)
             D = self.demazure_operator(C(element), reduced_word)
             if only_support:
@@ -308,7 +311,7 @@ class RegularCrystals(Category_singleton):
             i = 0
             for x in self:
                 goodness = x._test_stembridge_local_axioms(index_set, verbose)
-                if goodness == False and not complete:
+                if not goodness and not complete:
                     tester.fail()
                 i += 1
                 if i > tester._max_runs:
@@ -337,7 +340,7 @@ class RegularCrystals(Category_singleton):
                 If the index set is not an ordered interval, we let
                 `i - 1` mean the index appearing before `i` in `I`.
 
-            This definition comes from [Assaf08]_ Section 4 (where our
+            This definition comes from [As2008]_ Section 4 (where our
             `\varphi_j(b)` and `\varepsilon_j(b)` are denoted by
             `\epsilon(b, j)` and `-\delta(b, j)`, respectively).
 
@@ -350,7 +353,7 @@ class RegularCrystals(Category_singleton):
             .. NOTE::
 
                 This dual equivalence graph is a generalization of
-                `\mathcal{G}\left(\mathcal{X}\right)` in [Assaf08]_
+                `\mathcal{G}\left(\mathcal{X}\right)` in [As2008]_
                 Section 4 except we do not require
                 `\varepsilon_i(b) = 0, 1` for all `i`.
 
@@ -375,14 +378,6 @@ class RegularCrystals(Category_singleton):
             .. SEEALSO::
 
                 :meth:`sage.combinat.partition.Partition.dual_equivalence_graph`
-
-            REFERENCES:
-
-            .. [Assaf08] Sami Assaf. *A combinatorial realization of Schur-Weyl
-               duality via crystal graphs and dual equivalence graphs*.
-               FPSAC 2008, 141-152, Discrete Math. Theor. Comput. Sci. Proc.,
-               AJ, Assoc. Discrete Math. Theor. Comput. Sci., (2008).
-               :arxiv:`0804.1587v1`
 
             EXAMPLES::
 
@@ -453,8 +448,8 @@ class RegularCrystals(Category_singleton):
                         if checker(y):
                             edges.append([x, y, i])
             from sage.graphs.all import DiGraph
-            G = DiGraph(edges)
-            G.add_vertices(X)
+            G = DiGraph([X, edges], format="vertices_and_edges", immutable=True)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex", edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
@@ -538,12 +533,9 @@ class RegularCrystals(Category_singleton):
 
             REFERENCES:
 
-            .. [L1995] Peter Littelmann, Crystal graphs and Young tableaux,
-               J. Algebra 175 (1995), no. 1, 65--87.
+            - [Li1995]_
 
-            .. [K1993] Masaki Kashiwara, The crystal base and Littelmann's
-               refined Demazure character formula,
-               Duke Math. J. 71 (1993), no. 3, 839--858.
+            - [Ka1993]_
 
             EXAMPLES::
 
@@ -552,7 +544,8 @@ class RegularCrystals(Category_singleton):
                 sage: t.demazure_operator_simple(2)
                 B[[[1, 2], [2]]] + B[[[1, 3], [2]]] + B[[[1, 3], [3]]]
                 sage: t.demazure_operator_simple(2).parent()
-                Free module generated by The crystal of tableaux of type ['A', 2] and shape(s) [[2, 1]] over Integer Ring
+                Algebra of The crystal of tableaux of type ['A', 2] and shape(s) [[2, 1]]
+                        over Integer Ring
 
                 sage: t.demazure_operator_simple(1)
                 0
@@ -560,7 +553,7 @@ class RegularCrystals(Category_singleton):
                 sage: K = crystals.KirillovReshetikhin(['A',2,1],2,1)
                 sage: t = K(rows=[[3],[2]])
                 sage: t.demazure_operator_simple(0)
-                B[[[2, 3]]] + B[[[1, 2]]]
+                B[[[1, 2]]] + B[[[2, 3]]]
 
             TESTS::
 
@@ -570,7 +563,8 @@ class RegularCrystals(Category_singleton):
                 sage: x.demazure_operator_simple(0)
                 0
                 sage: x.demazure_operator_simple(0, ring = QQ).parent()
-                Free module generated by Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1) over Rational Field
+                Algebra of Kirillov-Reshetikhin crystal of type ['A', 2, 1] with (r,s)=(1,1)
+                        over Rational Field
             """
             from sage.rings.integer_ring import ZZ
             if ring is None:
@@ -736,10 +730,7 @@ class RegularCrystals(Category_singleton):
 
             REFERENCES:
 
-            .. [S2003] John R. Stembridge, A local characterization of
-               simply-laced crystals,
-               Transactions of the American Mathematical Society, Vol. 355,
-               No. 12 (Dec., 2003), pp. 4807--4823
+            - [Ste2003]_
 
             EXAMPLES::
 
@@ -756,13 +747,15 @@ class RegularCrystals(Category_singleton):
             goodness=True
             if index_set is None: index_set=self.index_set()
 
+            from sage.combinat.subset import Subsets
+
             for (i,j) in Subsets(index_set, 2):
                 if self.e(i) is not None and self.e(j) is not None:
                     triple=self.stembridgeTriple(i,j)
                     #Test axioms P3 and P4.
                     if not triple[0]==triple[1]+triple[2] or triple[1]>0 or triple[2]>0:
                         if verbose:
-                            print 'Warning: Failed axiom P3 or P4 at vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                            print('Warning: Failed axiom P3 or P4 at vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                             goodness=False
                         else:
                             tester.fail()
@@ -770,7 +763,7 @@ class RegularCrystals(Category_singleton):
                         #check E_i E_j(x)= E_j E_i(x)
                         if self.e(i).e(j)!=self.e(j).e(i) or self.e(i).e(j).stembridgeDel_rise(j, i)!=0:
                             if verbose:
-                                print 'Warning: Failed axiom P5 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                                print('Warning: Failed axiom P5 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                                 goodness=False
                             else:
                                 tester.fail()
@@ -782,7 +775,7 @@ class RegularCrystals(Category_singleton):
                         b=y2.stembridgeDel_rise(i, j)
                         if y1!=y2 or a!=-1 or b!=-1:
                             if verbose:
-                                print 'Warning: Failed axiom P6 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i,j)
+                                print('Warning: Failed axiom P6 at: vector ', self, 'i,j=', i, j, 'Stembridge triple:', self.stembridgeTriple(i, j))
                                 goodness=False
                             else:
                                 tester.fail()
@@ -805,7 +798,7 @@ class RegularCrystals(Category_singleton):
             of weight `0` with respect to `I`; that is, we need to have
             `\varepsilon_j(b) = \varphi_j(b)` for all `j \in I`.
 
-            See [Assaf08]_. See also :meth:`dual_equivalence_graph` for
+            See [As2008]_. See also :meth:`dual_equivalence_graph` for
             a definition of `i`-elementary dual equivalence
             transformations.
 
@@ -874,8 +867,9 @@ class RegularCrystals(Category_singleton):
                         if y not in visited:
                             todo.add(y)
             from sage.graphs.graph import Graph
-            G = Graph(edges, multiedges=True)
-            G.add_vertices(visited)
+            G = Graph([visited, edges], format="vertices_and_edges",
+                      immutable=True, multiedges=True)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex", edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)

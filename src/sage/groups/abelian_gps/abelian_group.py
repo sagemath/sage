@@ -3,7 +3,7 @@ Multiplicative Abelian Groups
 
 This module lets you compute with finitely generated Abelian groups of the form
 
-.. math::
+.. MATH::
 
     G = \ZZ^r \oplus \ZZ_{k_1} \oplus \cdots \oplus \ZZ_{k_t}
 
@@ -11,7 +11,7 @@ It is customary to denote the infinite cyclic group `\ZZ` as having
 order `0`, so the data defining the Abelian group can be written as an
 integer vector
 
-.. math::
+.. MATH::
 
     \vec{k} = (0, \dots, 0, k_1, \dots, k_t)
 
@@ -33,8 +33,8 @@ index in the labelling of the generators::
     sage: G.gens()
     (g0, 1, g2)
 
-Note that this presentation is not unique, for example `\ZZ_6 = \ZZ_2
-\times \ZZ_3`. The orders of the generators
+Note that this presentation is not unique, for example
+`\ZZ_6 \cong \ZZ_2 \times \ZZ_3`. The orders of the generators
 `\vec{k}=(0,\dots,0,k_1,\dots, k_t)` has previously been called
 invariants in Sage, even though they are not necessarily the (unique)
 invariant factors of the group. You should now use
@@ -49,26 +49,26 @@ invariant factors of the group. You should now use
    sage: J.elementary_divisors()    # these are the "invariant factors"
    (2, 2, 12, 0)
    sage: for i in range(J.ngens()):
-   ...       print i, J.gen(i), J.gen(i).order()     # or use this form
-   0 f0 2
-   1 f1 +Infinity
-   2 f2 3
-   3 f3 2
-   4 f4 4
+   ....:     print((i, J.gen(i), J.gen(i).order()))     # or use this form
+   (0, f0, 2)
+   (1, f1, +Infinity)
+   (2, f2, 3)
+   (3, f3, 2)
+   (4, f4, 4)
 
 Background on invariant factors and the Smith normal form
 (according to section 4.1 of [C1]): An abelian group is a
-group A for which there exists an exact sequence
+group `A` for which there exists an exact sequence
 `\ZZ^k \rightarrow \ZZ^\ell \rightarrow A \rightarrow 1`,
 for some positive integers
 `k,\ell` with `k\leq \ell`. For example, a finite abelian group has a
 decomposition
 
-.. math::
+.. MATH::
 
     A = \langle a_1\rangle \times \dots \times  \langle a_\ell\rangle ,
 
-where `ord(a_i)=p_i^{c_i}`, for some primes `p_i` and some
+where `\mathrm{ord}(a_i)=p_i^{c_i}`, for some primes `p_i` and some
 positive integers `c_i`, `i=1,...,\ell`. GAP calls the
 list (ordered by size) of the `p_i^{c_i}` the *abelian invariants*.
 In Sage they will be called *invariants*.
@@ -86,7 +86,7 @@ The kernel of the map `\phi_B:  \ZZ^m \rightarrow B` defined by
 `\phi_B(y_1,...,y_m) = b_1^{y_1}...b_m^{y_m}`,
 for `(y_1,...,y_m)\in \ZZ^m`, is the kernel of the matrix
 
-.. math::
+.. MATH::
 
     F=
     \left(
@@ -100,14 +100,14 @@ for `(y_1,...,y_m)\in \ZZ^m`, is the kernel of the matrix
 
 regarded as a map
 `\ZZ^m\rightarrow (\ZZ/p_1^{c_1}\ZZ)\times ...\times (\ZZ/p_\ell^{c_\ell}\ZZ)`.
-In particular, `B\cong \ZZ^m/ker(F)`. If `B=A` then the
+In particular, `B\cong \ZZ^m/\ker(F)`. If `B=A` then the
 Smith normal form (SNF) of a generator matrix of
-`ker(F)` and the SNF of `M` are the same. The diagonal entries `s_i` of the
-SNF `S = diag[s_1,s_2,s_3, ... s_r,0,0,...0]`,
+`\ker(F)` and the SNF of `M` are the same. The diagonal entries `s_i` of the
+SNF `S = \mathrm{diag}[s_1,s_2,s_3, ... s_r,0,0,...0]`,
 are called *determinantal divisors* of `F`.
-where `r` is the rank. The {\it invariant factors} of  A  are:
+where `r` is the rank. The *invariant factors* of `A` are:
 
-.. math::
+.. MATH::
 
     s_1, s_2/s_1, s_3/s_2, ... s_r/s_{r-1}.
 
@@ -121,10 +121,10 @@ to the :func:`AbelianGroup` function.
 
 EXAMPLE 1:
 
-We create an abelian group in zero or more variables; the syntax T(1)
+We create an abelian group in zero or more variables; the syntax ``T(1)``
 creates the identity element even in the rank zero case::
 
-    sage: T = AbelianGroup(0,[])
+    sage: T = AbelianGroup(0, [])
     sage: T
     Trivial Abelian group
     sage: T.gens()
@@ -137,7 +137,7 @@ EXAMPLE 2:
 An Abelian group uses a multiplicative representation of elements, but
 the underlying representation is lists of integer exponents::
 
-    sage: F = AbelianGroup(5,[3,4,5,5,7],names = list("abcde"))
+    sage: F = AbelianGroup(5, [3,4,5,5,7], names = list("abcde"))
     sage: F
     Multiplicative Abelian group isomorphic to C3 x C4 x C5 x C5 x C7
     sage: (a,b,c,d,e) = F.gens()
@@ -191,30 +191,31 @@ AUTHORS:
   immutables. Rename invariants to gens_orders.
 """
 
-##########################################################################
-#  Copyright (C) 2006 William Stein <wstein@gmail.com>
-#  Copyright (C) 2006 David Joyner  <wdjoyner@gmail.com>
-#  Copyright (C) 2012 Volker Braun  <vbraun.name@gmail.com>
+#*****************************************************************************
+#       Copyright (C) 2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2006 David Joyner <wdjoyner@gmail.com>
+#       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL):
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-##########################################################################
+#*****************************************************************************
+from __future__ import print_function
 
-import six
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.infinity import infinity
-from sage.rings.arith import divisors, gcd
+from sage.arith.all import divisors, gcd, lcm
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.misc.cachefunc import cached_method
 from sage.misc.all import prod
 from sage.misc.mrange import mrange, cartesian_product_iterator
-from sage.rings.arith import lcm
 from sage.groups.group import AbelianGroup as AbelianGroupBase
 from sage.categories.groups import Groups
-
 
 # TODO: this uses perm groups - the AbelianGroupElement instance method
 # uses a different implementation.
@@ -248,7 +249,7 @@ def word_problem(words, g, verbose = False):
     (non-deterministic) algorithms for the word problem. Essentially,
     this function is a wrapper for the GAP function 'Factorization'.
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: G.<a,b,c> = AbelianGroup(3,[2,3,4]); G
         Multiplicative Abelian group isomorphic to C2 x C3 x C4
@@ -318,12 +319,11 @@ def word_problem(words, g, verbose = False):
     gap.eval(s5)
     gap.eval("x:=Factorization(H,g)")
     l3 = eval(gap.eval("L3:=ExtRepOfObj(x)"))
-    nn = gap.eval("n:=Int(Length(L3)/2)")
+    gap.eval("n:=Int(Length(L3)/2)")
     LL = eval(gap.eval("L4:=List([l..n],i->L3[2*i])"))
     if verbose:
-        #print gap.eval("x"), l3, nn, LL
         v = '*'.join(['(%s)^%s'%(words[l3[2*i]-1], LL[i]) for i in range(len(LL))])
-        print '%s = %s'%(g, v)
+        print('%s = %s' % (g, v))
     return [[words[l3[2*i]-1],LL[i]] for i in range(len(LL))]
 
 
@@ -398,7 +398,7 @@ def AbelianGroup(n, gens_orders=None, names="f"):
     - ``gens_orders`` -- a list of non-negative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
        order. This list is padded with zeros if it has length less
-       than n. The orders of the commuting generators, with `0`
+       than `n`. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
     -  ``names`` -- (optional) names of generators
@@ -492,6 +492,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         sage: Z2xZ3 is Z6
         False
         sage: Z2xZ3 == Z6
+        False
+        sage: Z2xZ3.is_isomorphic(Z6)
         True
 
         sage: F = AbelianGroup(5,[5,5,7,8,9],names = list("abcde")); F
@@ -502,7 +504,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         (2, 4, 12, 24, 120)
 
         sage: F.category()
-        Category of finite commutative groups
+        Category of finite enumerated commutative groups
 
     TESTS::
 
@@ -531,21 +533,23 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: A = AbelianGroup([3,3])
             sage: A.category()
-            Category of finite commutative groups
+            Category of finite enumerated commutative groups
             sage: A = AbelianGroup([3,0,7])
             sage: A.category()
-            Category of commutative groups
+            Category of infinite commutative groups
         """
-        assert isinstance(names, (six.string_types, tuple))
+        assert isinstance(names, (str, tuple))
         assert isinstance(generator_orders, tuple)
         assert all(isinstance(order,Integer) for order in generator_orders)
         self._gens_orders = generator_orders
-        n = ZZ(len(generator_orders))
-        names = self.normalize_names(n, names)
+        n = len(generator_orders)
+        names = normalize_names(n, names)
         self._assign_names(names)
         cat = Groups().Commutative()
         if all(order > 0 for order in generator_orders):
-            cat = cat.Finite()
+            cat = cat.Finite().Enumerated()
+        else:
+            cat = cat.Infinite()
         AbelianGroupBase.__init__(self, category=cat)
 
     def is_isomorphic(left, right):
@@ -566,33 +570,10 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G2 = AbelianGroup([2,3,4,5,1])
             sage: G1.is_isomorphic(G2)
             True
-            sage: G1 == G2    # syntactic sugar
-            True
         """
         if not is_AbelianGroup(right):
             return False
         return left.elementary_divisors() == right.elementary_divisors()
-
-    __eq__ = is_isomorphic
-
-    def __ne__(left, right):
-        """
-        Check whether ``left`` and ``right`` are not isomorphic
-
-        OUTPUT:
-
-        Boolean.
-
-        EXAMPLES::
-
-            sage: G1 = AbelianGroup([2,3,4,5])
-            sage: G2 = AbelianGroup([2,3,4,5,1])
-            sage: G1 != G2
-            False
-            sage: G1.__ne__(G2)
-            False
-        """
-        return not left.is_isomorphic(right)
 
     def is_subgroup(left, right):
         """
@@ -624,20 +605,20 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         Test whether ``right`` is a subgroup of ``left``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G.<a, b> = AbelianGroup(2)
             sage: H.<c> = AbelianGroup(1)
             sage: G >= H
             False
         """
-        return right.__le__(left)
+        return right <= left
 
     def __lt__(left, right):
         """
         Test whether ``left`` is a strict subgroup of ``right``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G.<a, b> = AbelianGroup(2)
             sage: H.<c> = AbelianGroup(1)
@@ -650,7 +631,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         Test whether ``right`` is a strict subgroup of ``left``
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G.<a, b> = AbelianGroup(2)
             sage: H.<c> = AbelianGroup(1)
@@ -674,7 +655,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         return self.elementary_divisors() == ()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True if this group is nontrivial.
 
@@ -690,10 +671,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         return not self.is_trivial()
 
+    __nonzero__ = __bool__
+
     @cached_method
     def dual_group(self, names="X", base_ring=None):
         """
-        Returns the dual group.
+        Return the dual group.
 
         INPUT:
 
@@ -705,9 +688,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         OUTPUT:
 
-        The
-        :class:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class
-        <dual abelian group>`
+        The :class:`dual abelian group <sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class>`.
 
         EXAMPLES::
 
@@ -729,15 +710,14 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: H.dual_group()
             Traceback (most recent call last):
             ...
-            ValueError: the group must be finite
+            ValueError: group must be finite
         """
         from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
         if not self.is_finite():
-            raise ValueError('the group must be finite')
+            raise ValueError('group must be finite')
         if base_ring is None:
             from sage.rings.number_field.number_field import CyclotomicField
-            from sage.rings.arith import LCM
-            base_ring = CyclotomicField(LCM(self.gens_orders()))
+            base_ring = CyclotomicField(lcm(self.gens_orders()))
         return DualAbelianGroup_class(self, names=names, base_ring=base_ring)
 
     @cached_method
@@ -753,10 +733,11 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             in a way described below). Just factor the invariants `a_i` that
             define the abelian group.  Then the biggest `d_i` is the product
             of the maximum prime powers dividing some `a_j`. In other words, the
-            largest `d_i` is the product of `p^v`, where `v = max(ord_p(a_j) \mathrm{ for all } j`).
+            largest `d_i` is the product of `p^v`, where
+            `v = \max(\mathrm{ord}_p(a_j) \text{ for all } j`).
             Now divide out all those `p^v`'s into the list of invariants `a_i`,
-            and get a new list of "smaller invariants"". Repeat the above procedure
-            on these ""smaller invariants"" to compute `d_{i-1}`, and so on.
+            and get a new list of "smaller invariants". Repeat the above procedure
+            on these "smaller invariants" to compute `d_{i-1}`, and so on.
             (Thanks to Robert Miller for communicating this algorithm.)
 
         OUTPUT:
@@ -863,8 +844,40 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: F._latex_()
             '$\\mathrm{AbelianGroup}( 10, (2, 2, 2, 2, 2, 2, 2, 2, 2, 2) )$'
         """
-        s = "$\mathrm{AbelianGroup}( %s, %s )$"%(self.ngens(), self.gens_orders())
-        return s
+        return r"$\mathrm{AbelianGroup}( %s, %s )$" % (self.ngens(),
+                                                       self.gens_orders())
+
+    @cached_method
+    def _libgap_(self):
+        r"""
+        Return a GAP group corresponding to this group.
+
+        EXAMPLES::
+
+            sage: G = AbelianGroup([2,3,9])
+            sage: libgap(G)
+            <pc group of size 54 with 3 generators>
+
+        The result is cached::
+
+            sage: libgap(G) is libgap(G)
+            True
+
+        Requires the optional ``gap_packages`` for infinite groups::
+
+            sage: G = AbelianGroup(3, [0,3,4], names="abc")
+            sage: libgap(G)   # optional - gap_packages
+            Pcp-group with orders [ 0, 3, 4 ]
+        """
+        from sage.libs.gap.libgap import libgap
+
+        if self.is_finite():
+            return libgap.AbelianGroup(self.gens_orders())
+
+        # Make sure to LoadPackage("Polycyclic") in gap
+        from sage.features.gap import GapPackage
+        GapPackage("polycyclic", spkg="gap_packages").require()
+        return libgap.AbelianPcpGroup(self.gens_orders())
 
     def _gap_init_(self):
         r"""
@@ -878,22 +891,20 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: gap(G)
             Group( [ f1, f2, f3 ] )
 
-        Only works for finite groups::
+        Requires the optional ``gap_packages`` for infinite groups::
 
-            sage: G = AbelianGroup(3,[0,3,4],names="abc"); G
+            sage: G = AbelianGroup(3,[0,3,4], names="abc"); G
             Multiplicative Abelian group isomorphic to Z x C3 x C4
-            sage: G._gap_init_()
-            Traceback (most recent call last):
-            ...
-            TypeError: abelian groups in GAP are finite, but self is infinite
+            sage: G._gap_init_()   # optional - gap_packages
+            'AbelianPcpGroup([0, 3, 4])'
         """
-        # TODO: Use the package polycyclic has AbelianPcpGroup, which can handle
-        # the infinite case but it is a GAP package not GPL'd.
-        # Use this when the group is infinite...
-        # return 'AbelianPcpGroup(%s)'%list(self.invariants())
-        if not self.is_finite():
-            raise TypeError('abelian groups in GAP are finite, but self is infinite')
-        return 'AbelianGroup(%s)'%list(self.gens_orders())
+        if self.is_finite():
+            return 'AbelianGroup(%s)'%list(self.gens_orders())
+
+        from sage.features.gap import GapPackage
+        # Make sure to LoadPackage("Polycyclic") in gap
+        GapPackage("polycyclic", spkg="gap_packages").require()
+        return 'AbelianPcpGroup(%s)'%list(self.gens_orders())
 
     def gen(self, i=0):
         """
@@ -974,7 +985,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         TESTS::
 
             sage: F = AbelianGroup(3, [2], names='abc')
-            sage: map(type, F.gens_orders())
+            sage: list(map(type, F.gens_orders()))
             [<type 'sage.rings.integer.Integer'>,
              <type 'sage.rings.integer.Integer'>,
              <type 'sage.rings.integer.Integer'>]
@@ -997,12 +1008,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: J.gens_orders()   # use this instead
             (2, 0, 3, 2, 4)
             sage: for i in range(J.ngens()):
-            ...       print i, J.gen(i), J.gen(i).order()     # or use this
-            0 f0 2
-            1 f1 +Infinity
-            2 f2 3
-            3 f3 2
-            4 f4 4
+            ....:     print((i, J.gen(i), J.gen(i).order()))     # or this
+            (0, f0, 2)
+            (1, f1, +Infinity)
+            (2, f2, 3)
+            (3, f3, 2)
+            (4, f4, 4)
 
         Use :meth:`elementary_divisors` if you are looking for an
         invariant of the group.
@@ -1022,7 +1033,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         TESTS::
 
             sage: F = AbelianGroup(3, [2], names='abc')
-            sage: map(type, F.gens_orders())
+            sage: list(map(type, F.gens_orders()))
             [<type 'sage.rings.integer.Integer'>,
              <type 'sage.rings.integer.Integer'>,
              <type 'sage.rings.integer.Integer'>]
@@ -1100,11 +1111,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G.order()
             +Infinity
         """
-        from sage.rings.all import infinity
         length = prod(self.gens_orders())
         if length == 0:
             return infinity
         return length
+
+    cardinality = order
 
     def permutation_group(self):
         r"""
@@ -1120,7 +1132,20 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: G.permutation_group()
             Permutation Group with generators [(3,4,5), (1,2)]
+
+        TESTS:
+
+        Check that :trac:`25692` is fixed::
+
+            sage: G = AbelianGroup([0])
+            sage: G.permutation_group()
+            Traceback (most recent call last):
+            ...
+            TypeError: Abelian group must be finite
         """
+        # GAP does not support infinite permutation groups
+        if not self.is_finite():
+            raise TypeError('Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(%s))'%self._gap_init_()
         return PermutationGroup(gap_group=s)
@@ -1213,7 +1238,6 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
                 raise TypeError('Subgroup generators must belong to the given group.')
         return AbelianGroup_subgroup(self, gensH, names)
 
-    @cached_method
     def list(self):
         """
         Return tuple of all elements of this group.
@@ -1231,9 +1255,29 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G.list()
             (1,)
         """
-        if not(self.is_finite()):
-           raise NotImplementedError("Group must be finite")
-        return tuple(self.__iter__())
+        if not self.is_finite():
+           raise NotImplementedError("group must be finite")
+        return tuple(iter(self))
+
+    def __len__(self):
+        """
+        Return the length of ``self``.
+
+        EXAMPLES::
+
+            sage: G = AbelianGroup(2,[2,3])
+            sage: len(G)
+            6
+            sage: G = AbelianGroup(3,[2,3,0])
+            sage: len(G)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: group must be finite
+        """
+        length = prod(self.gens_orders())
+        if length == 0:
+            raise NotImplementedError("group must be finite")
+        return int(length)
 
     def __iter__(self):
         """
@@ -1266,11 +1310,118 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         for t in mrange(invs):
             yield self(t)
 
+    def number_of_subgroups(self, order=None):
+        r"""
+        Return the number of subgroups of this group, possibly only of a
+        specific order.
+
+        INPUT:
+
+        - ``order`` -- (default: ``None``) find the number of subgroups of this
+          order; if ``None``, this defaults to counting all subgroups
+
+        ALGORITHM:
+
+        An infinite group has infinitely many subgroups. All finite subgroups of
+        any group are contained in the torsion subgroup, which for finitely
+        generated abelian group is itself finite. Hence, we can assume the
+        group is finite. A finite abelian group is isomorphic to a direct
+        product of its Sylow subgroups, and so we can reduce the problem
+        further to counting subgroups of finite abelian `p`-groups.
+
+        Assume a Sylow subgroup is a `p`-group of type `\lambda`, and using
+        :func:`~sage.combinat.q_analogues.q_subgroups_of_abelian_group`
+        sum the number of subgroups of type `\mu` in an abelian `p`-group of
+        type `\lambda` for all `\mu` contained in `\lambda`.
+
+        EXAMPLES::
+
+            sage: AbelianGroup([2,3]).number_of_subgroups()
+            4
+            sage: AbelianGroup([2,0,0,3,0]).number_of_subgroups()
+            +Infinity
+            sage: AbelianGroup([2,4,8]).number_of_subgroups()
+            81
+            sage: AbelianGroup([2,4,8]).number_of_subgroups(order=4)
+            19
+            sage: AbelianGroup([10,15,25,12]).number_of_subgroups()
+            5760
+            sage: AbelianGroup([10,15,25,12]).number_of_subgroups(order=45000)
+            1
+            sage: AbelianGroup([10,15,25,12]).number_of_subgroups(order=14)
+            0
+
+        TESTS::
+
+            sage: AbelianGroup([]).number_of_subgroups()
+            1
+            sage: AbelianGroup([1,3,1]).number_of_subgroups()
+            2
+            sage: AbelianGroup([]).number_of_subgroups(order=2)
+            0
+            sage: AbelianGroup([1,3,1]).number_of_subgroups(order=2)
+            0
+            sage: AbelianGroup([1,3,0,1]).number_of_subgroups(order=3)
+            1
+            sage: AbelianGroup([1,3,1]).number_of_subgroups(order=-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: subgroups order must be positive or None
+        """
+        if not self.is_finite():
+            if order is None:
+                return infinity
+            else:
+                # Finite order subgroups are all contained in the torsion subgroup
+                return self.torsion_subgroup().number_of_subgroups(order=order)
+
+        from itertools import chain
+        from collections import defaultdict
+        from sage.arith.misc import factor
+        from sage.combinat.q_analogues import q_subgroups_of_abelian_group
+        from sage.combinat.integer_lists import IntegerListsLex
+
+        # The group order is prod(p^e for (p,e) in primary_factors)
+        primary_factors = list(chain.from_iterable(
+                        factor(ed) for ed in self.elementary_divisors()))
+        sylow_types = defaultdict(list)
+        for p, e in primary_factors:
+            sylow_types[p].append(e)
+        subgroups_orders_kwds = dict()
+
+        if order is None:
+            for p, p_exps in sylow_types.items():
+                subgroups_orders_kwds[p] = dict(max_sum=sum(p_exps))
+        else:
+            order = Integer(order)
+            if order < 1:
+                raise ValueError('subgroups order must be positive or None')
+            if not order.divides(self.order()):
+                return Integer(0)
+            order_exps = dict(factor(order))
+
+            for p in (set(sylow_types) - set(order_exps)):
+                del sylow_types[p]
+            for p in sylow_types:
+                subgroups_orders_kwds[p] = dict(n=order_exps[p])
+
+        result = Integer(1)
+        for p, p_exps in sylow_types.items():
+            p_exps.sort(reverse=True)
+            # The sum is over all partitions mu contained in p_exps whose size
+            # is determined by subgroups_orders_kwds.
+            result *= sum(q_subgroups_of_abelian_group(p_exps, mu, q=p)
+                          for mu in IntegerListsLex(max_slope=0,
+                                                    min_part=1,
+                                                    max_length=len(p_exps),
+                                                    ceiling=p_exps,
+                                                    element_constructor=list,
+                                                    **subgroups_orders_kwds[p]))
+        return result
+
     def subgroups(self, check=False):
         r"""
         Compute all the subgroups of this abelian group (which must be finite).
-
-        TODO: This is *many orders of magnitude* slower than Magma.
 
         INPUT:
 
@@ -1290,6 +1441,13 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             homomorphism f: G -> B/H that sends a in G to the class mod H of b,
             where (a,b) is any element of C lifting a; and every subgroup C
             arises from a unique triple (G, H, f).
+
+        .. TODO::
+
+            This is *many orders of magnitude* slower than Magma.  Consider
+            using the much faster method
+            :meth:`~AbelianGroup_class.number_of_subgroups` in case you only
+            need the number of subgroups, possibly of a specific order.
 
         EXAMPLES::
 
@@ -1314,8 +1472,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
              Trivial Abelian subgroup]
         """
         if not self.is_finite():
-            raise ValueError("Group must be finite")
-        from sage.misc.misc import verbose
+            raise ValueError("group must be finite")
+        from sage.misc.verbose import verbose
 
         if self.is_trivial():
             return [self]
@@ -1336,11 +1494,11 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             verbose("invariants are: %s" % [t.order() for t in G.gens()])
             for H in divisors(x):
                 # H = the subgroup of *index* H.
-                its = [xrange(0, H, H/gcd(H, G.gen(i).order())) for i in xrange(ngens)]
+                its = [range(0, H, H/gcd(H, G.gen(i).order())) for i in range(ngens)]
                 for f in cartesian_product_iterator(its):
                     verbose("using hom from G to C_%s sending gens to %s" % (H,f))
                     new_sub = []
-                    for a in xrange(ngens):
+                    for a in range(ngens):
                         val = G.gen(a).list() + [f[a]]
                         if any(l != 0 for l in val):
                             new_sub.append(val)
@@ -1369,7 +1527,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         An error will be raised if the elements given are not linearly
         independent over QQ.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G = AbelianGroup([4,4])
             sage: G.subgroup( [ G([1,0]), G([1,2]) ])
@@ -1386,25 +1544,50 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             elt_lattice = X.submodule_with_basis(elts)
         except ValueError as e:
             # can't happen?
-            print "Vectors not LI: ", elts
+            print("Vectors not LI: {}".format(elts))
             raise e
-        rel_lattice = X.span([X.gen(i) * self.gens_orders()[i] for i in xrange(d)])
+        rel_lattice = X.span([X.gen(i) * self.gens_orders()[i] for i in range(d)])
         isect = elt_lattice.intersection(rel_lattice)
         mat = matrix([elt_lattice.coordinate_vector(x) for x in isect.gens()]).change_ring(ZZ)
         D,U,V = mat.smith_form()
-        new_basis = [(elt_lattice.linear_combination_of_basis((~V).row(i)).list(), D[i,i]) for i in xrange(U.ncols())]
+        new_basis = [(elt_lattice.linear_combination_of_basis((~V).row(i)).list(), D[i,i]) for i in range(U.ncols())]
         return self.subgroup([self([x[0][i] % self.gens_orders()[i]
-                                    for i in xrange(d)]) for x in new_basis if x[1] != 1])
+                                    for i in range(d)]) for x in new_basis if x[1] != 1])
+
+    def torsion_subgroup(self):
+        """
+        Return the torsion subgroup of this group.
+
+        EXAMPLES::
+
+            sage: G = AbelianGroup([2, 3])
+            sage: G.torsion_subgroup()
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 generated
+            by {f0, f1}
+            sage: G = AbelianGroup([2, 0, 0, 3, 0])
+            sage: G.torsion_subgroup()
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 generated
+            by {f0, f3}
+            sage: G = AbelianGroup([])
+            sage: G.torsion_subgroup()
+            Trivial Abelian subgroup
+            sage: G = AbelianGroup([0, 0])
+            sage: G.torsion_subgroup()
+            Trivial Abelian subgroup
+        """
+        torsion_generators = [g for g in self.gens() if g.order() != infinity]
+        return self.subgroup(torsion_generators)
+
 
 class AbelianGroup_subgroup(AbelianGroup_class):
     """
     Subgroup subclass of AbelianGroup_class, so instance methods are
     inherited.
 
-    TODO:
+    .. TODO::
 
-    - There should be a way to coerce an element of a subgroup
-      into the ambient group.
+        There should be a way to coerce an element of a subgroup
+        into the ambient group.
     """
     def __init__(self, ambient, gens, names="f"):
         """
@@ -1485,8 +1668,6 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         self._ambient_group = ambient
         Hgens = tuple(x for x in gens if x != ambient.one())  ## in case someone puts 1 in the list of generators
         self._gens = Hgens
-        m = len(gens)
-        ell = len(ambient.gens())
         ambient_invs = ambient.gens_orders()
         invsf = [x for x in ambient_invs if x > 0]    ## fixes the problem with
         invs0 = [x for x in ambient_invs if x == 0]   ## the infinite parts
@@ -1515,7 +1696,6 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             gap.eval(s1)
             for i in range(len(Ggens)):
                 cmd = '%s := gens[%s]'%(Ggens[i], i+1)
-                #print i,"  \n",cmd
                 gap.eval(cmd)
         s2 = "gensH:=%s"%list(Hgensf) #### remove from this the ones <--> 0 invar
         gap.eval(s2)
@@ -1526,7 +1706,6 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         # works if G is the subgroup declared as a AbelianPcpGroup
         self._abinvs = eval(gap.eval("AbelianInvariants(H)"))
         invs = self._abinvs
-        #print s3, invs
         if Hgens0 != []:
             for x in Hgens0:
                invs.append(0)
@@ -1552,7 +1731,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             return True
         elif x in self.ambient_group():
             amb_inv = self.ambient_group().gens_orders()
-            for a in xrange(len(amb_inv)):
+            for a in range(len(amb_inv)):
                 if amb_inv[a] == 0 and x.list()[a] != 0:
                     for g in self._gens:
                         if g.list()[a] == 0:
@@ -1687,7 +1866,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         Return the nth generator of this subgroup.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup(2)
             sage: A = G.subgroup([a])

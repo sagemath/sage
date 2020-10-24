@@ -1,0 +1,40 @@
+pkgconfig="$SAGE_LOCAL/bin/pkg-config"
+
+# Skip checks if we don't use the system pkg-config
+grep 'exec "$SAGE_LOCAL/bin/pkgconf" "$@"' "$pkgconfig" >/dev/null
+if [ $? -eq 0 ]; then
+    echo "Skipping the tests, since no system-wide 'pkg-config' was present"
+    echo "when 'pkgconf' got installed."
+    echo "Remember to afterwards reinstall Sage's 'pkgconf' if you later decide"
+    echo "to install a system-wide version of 'pkg-config'."
+    exit 0
+fi
+
+
+# PC files that we do not ship but are likely available (mostly GUI stuff)
+pc_files="fontconfig gtk+-3.0 harfbuzz x11"
+
+# System directories that might contain the pc files
+search_dirs="/usr/lib/pkgconfig /usr/lib64/pkgconfig /usr/share/pkgconfig"
+
+
+for dir in $search_dirs; do
+    if [ -d "$dir" ]; then
+        echo "+-- $dir found, using it for the pkg-config test."
+        for pc in $pc_files; do
+            filename="$dir/$pc.pc"
+            if [ -f "$filename" ]; then
+                echo "    +-- $pc found, using it for the pkg-config test."
+                "$pkgconfig" --exists "$pc"
+                if [ $? -ne 0 ]; then
+                    echo >&2 "Error: Our pkg-config script failed to pick up $pc"
+                    exit 1
+                fi
+            else
+                echo "    +-- $pc not found, ignoring."
+            fi
+        done
+    else
+        echo "+-- $dir not found, ignoring."
+    fi
+done

@@ -14,7 +14,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
     cpdef reduced_trace(self)
 
 cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
-    cdef object x, y, z, w, d, a, b
+    cdef object x, y, z, w
         # we will assume that our element has the representation
         # x + yi + zj + wk, where i^2 = a, j^2 = b
 

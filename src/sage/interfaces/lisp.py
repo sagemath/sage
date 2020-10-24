@@ -40,6 +40,7 @@ AUTHORS:
     -- William Stein (first version)
     -- William Stein (2007-06-20): significant improvements.
 """
+from __future__ import absolute_import
 
 ##########################################################################
 #
@@ -47,18 +48,21 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 
 import random
 
-from expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
+from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
+
 
 class Lisp(Expect):
     def __init__(self,
-                 maxread=100000, script_subdirectory=None,
+                 maxread=None, script_subdirectory=None,
                  logfile=None,
                  server=None,
                  server_tmpdir=None):
@@ -81,7 +85,6 @@ class Lisp(Expect):
                         # This is the command that starts up your program
                         command = "ecl",
 
-                        maxread = maxread,
                         server=server,
                         server_tmpdir=server_tmpdir,
                         script_subdirectory = script_subdirectory,
@@ -111,7 +114,7 @@ class Lisp(Expect):
             sage: lisp.eval('(+ 2 2)')
             '4'
 
-        TEST:
+        TESTS:
 
         Verify that it works when input == output::
 
@@ -156,7 +159,7 @@ class Lisp(Expect):
             sage: lisp.get('x')
             '2'
 
-        TEST:
+        TESTS:
 
         It must also be possible to eval the variable by name::
 
@@ -255,18 +258,6 @@ class Lisp(Expect):
             Traceback (most recent call last):
             ...
             NotImplementedError
-        """
-        raise NotImplementedError
-
-    def trait_names(self):
-        """
-        EXAMPLES::
-
-            sage: lisp.trait_names()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-
         """
         raise NotImplementedError
 
@@ -393,8 +384,11 @@ class Lisp(Expect):
         self._check_valid_function_name(function)
         return self.new("(%s %s)"%(function, ",".join([s.name() for s in args])))
 
-class LispElement(ExpectElement):
-    def __cmp__(self, other):
+
+# Inherit from RingElement to make __pow__ work
+@instancedoc
+class LispElement(RingElement, ExpectElement):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -418,13 +412,13 @@ class LispElement(ExpectElement):
             other = P(other)
 
         if P.eval('(= %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         elif P.eval('(< %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return -1
+            return rich_to_bool(op, -1)
         else:
-            return 1
+            return rich_to_bool(op, 1)
 
-    def bool(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -434,8 +428,14 @@ class LispElement(ExpectElement):
             False
             sage: bool(lisp(2))
             True
+            sage: bool(lisp('T'))
+            True
+            sage: bool(lisp('NIL'))
+            False
         """
-        return self != 0
+        return self != 0 and repr(self) != 'NIL'
+
+    __nonzero__ = __bool__
 
     def _add_(self, right):
         """
@@ -491,13 +491,15 @@ class LispElement(ExpectElement):
         """
         return RingElement.__pow__(self, n)
 
+
+@instancedoc
 class LispFunctionElement(FunctionElement):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
             sage: two = lisp(2)
-            sage: two.sin._sage_doc_()
+            sage: two.sin.__doc__
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -506,12 +508,13 @@ class LispFunctionElement(FunctionElement):
         return M.help(self._name)
 
 
+@instancedoc
 class LispFunction(ExpectFunction):
-    def _sage_doc_(self):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: lisp.sin._sage_doc_()
+            sage: lisp.sin.__doc__
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -562,4 +565,7 @@ def lisp_console():
         Type :h for Help.  Top level.
         ...
     """
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%lisp magics instead.')
     os.system('ecl')

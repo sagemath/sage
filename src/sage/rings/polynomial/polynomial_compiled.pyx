@@ -16,7 +16,7 @@ AUTHORS:
 ################################################################################
 
 from sage.misc.binary_tree cimport BinaryTree
-from sage.misc.decorators import rename_keyword
+
 
 cdef class CompiledPolynomialFunction:
     """
@@ -28,20 +28,18 @@ cdef class CompiledPolynomialFunction:
     This class is not intended to be called by a user, rather, it is
     intended to improve the performance of immutable polynomial objects.
 
-    TODO::
+    .. TODO::
 
-        [ ] Recursive calling
-        [ ] Faster casting of coefficients / argument
-        [ ] Multivariate polynomials
-        [ ] Cython implementation of Pippenger's Algorithm that doesn't
-            depend heavily upon dicts.
-        [ ] Computation of parameter sequence suggested by Pippenger
-        [ ] Univariate exponentiation can use Brauer's method to improve
-            extremely sparse polynomials of very high degree
+        - Recursive calling
+        - Faster casting of coefficients / argument
+        - Multivariate polynomials
+        - Cython implementation of Pippenger's Algorithm that doesn't
+          depend heavily upon dicts.
+        - Computation of parameter sequence suggested by Pippenger
+        - Univariate exponentiation can use Brauer's method to improve
+          extremely sparse polynomials of very high degree
     """
 
-
-    #@rename_keyword(deprecation=trac_number, method="algorithm")
     def __init__(self, coeffs, algorithm='binary'):
         """
         Compiles a polynomial into an evaluation DAG representation which
@@ -116,7 +114,7 @@ cdef class CompiledPolynomialFunction:
         self._dag = dag.nodummies()
 
     def __repr__(self):
-        return "CompiledPolynomialFunction(%s)"%(self._dag)
+        return "CompiledPolynomialFunction(%s)" % self._dag
 
     def __call__(self, x):
         return self.eval(x)
@@ -130,7 +128,7 @@ cdef class CompiledPolynomialFunction:
             return temp
         except TypeError as msg:
             self._dag.reset()
-            raise TypeError, msg
+            raise TypeError(msg)
 
     cdef object _parse_structure(CompiledPolynomialFunction self):
         """

@@ -127,8 +127,8 @@ Sage может находить собственное число и собст
 (Для того, чтобы создать пространство из матриц 3 на 4, используйте
 ``MatrixSpace(QQ,3,4)``. Если число столбцов не указано, по умолчанию
 оно будет равно числу строк (``MatrixSpace(QQ,3)`` эквивалентно
-``MatrixSpace(QQ,3,3)``.) Матричное пространство имеет базис, который
-содержится в Sage в виде списка:
+``MatrixSpace(QQ,3,3)``.) Матричное пространство снабжено его
+канонической базой:
 
 .. link
 
@@ -137,7 +137,7 @@ Sage может находить собственное число и собст
     sage: B = M.basis()
     sage: len(B)
     9
-    sage: B[1]
+    sage: B[0,1]
     [0 1 0]
     [0 0 0]
     [0 0 0]
@@ -224,4 +224,4 @@ Sage поддерживает разреженную линейную алгеб
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: __classcall__() got an unexpected keyword argument 'Sparse'
+    TypeError: __init__() got an unexpected keyword argument 'Sparse'

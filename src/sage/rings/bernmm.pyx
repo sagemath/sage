@@ -1,3 +1,8 @@
+# distutils: sources = sage/rings/bernmm/bern_modp.cpp sage/rings/bernmm/bern_modp_util.cpp sage/rings/bernmm/bern_rat.cpp
+# distutils: libraries = ntl pthread gmp
+# distutils: depends = sage/rings/bernmm/bern_modp.h sage/rings/bernmm/bern_modp_util.h sage/rings/bernmm/bern_rat.h
+# distutils: language = c++
+# distutils: define_macros = USE_THREADS=1 THREAD_STACK_SIZE=4096
 r"""
 Cython wrapper for bernmm library
 
@@ -14,8 +19,9 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/ext/cdefs.pxi"
-include "sage/ext/interrupt.pxi"
+from cysignals.signals cimport sig_on, sig_off
+
+from sage.libs.gmp.types cimport mpq_t
 
 
 cdef extern from "bernmm/bern_rat.h":
@@ -75,7 +81,7 @@ def bernmm_bern_rat(long k, int num_threads = 1):
     cdef Rational x
 
     if k < 0:
-        raise ValueError, "k must be non-negative"
+        raise ValueError("k must be non-negative")
 
     x = Rational()
     sig_on()
@@ -125,11 +131,19 @@ def bernmm_bern_modp(long p, long k):
         sage: bernmm_bern_modp(p, k)
         1972762
 
+    TESTS:
+
+    Check that bernmm works with the new NTL single precision modular
+    arithmetic from :trac:`19874`::
+
+        sage: from sage.rings.bernmm import bernmm_bern_modp
+        sage: bernmm_bern_modp(7, 128) == bernoulli(128) % 7
+        True
     """
     cdef long x
 
     if k < 0:
-        raise ValueError, "k must be non-negative"
+        raise ValueError("k must be non-negative")
 
     sig_on()
     x = bern_modp(p, k)

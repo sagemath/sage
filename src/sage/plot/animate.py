@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Animated plots
 
@@ -15,12 +16,12 @@ animated GIFs.
 For `browsers which support it`_, APNG_ can be used as another
 alternative which works without any extra dependencies.
 
-.. Warning::
+.. WARNING::
 
-    Note that ImageMagick and FFmpeg are not included with Sage, and
+    Note that ``ImageMagick`` and ``FFmpeg`` are not included with Sage, and
     must be installed by the user.  On unix systems, type ``which
     convert`` at a command prompt to see if ``convert`` (part of the
-    ImageMagick suite) is installed.  If it is, you will be given its
+    ``ImageMagick`` suite) is installed.  If it is, you will be given its
     location.  Similarly, you can check for ``ffmpeg`` with ``which
     ffmpeg``.  See the websites of ImageMagick_ or FFmpeg_ for
     installation instructions.
@@ -43,10 +44,8 @@ Animate using FFmpeg_ instead of ImageMagick::
 Animate as an APNG_::
 
     sage: a.apng()  # long time
-    doctest:...: DeprecationWarning: use tmp_filename instead
-    See http://trac.sagemath.org/17234 for details.
 
-An animated :class:`sage.plot.graphics.GraphicsArray` of rotating ellipses::
+An animated :class:`sage.plot.multigraphics.GraphicsArray` of rotating ellipses::
 
     sage: E = animate((graphics_array([[ellipse((0,0),a,b,angle=t,xmin=-3,xmax=3)+circle((0,0),3,color='blue') for a in range(1,3)] for b in range(2,4)]) for t in sxrange(0,pi/4,.15)))
     sage: str(E)    # animations produced from a generator do not have a known length
@@ -97,30 +96,33 @@ AUTHORS:
 - John Palmieri
 - Niles Johnson (2013-12): Expand to animate more graphics objects
 - Martin von Gagern (2014-12): Added APNG support
+- Joshua Campbell (2020): interactive animation via Three.js viewer
 
-.. REFERENCES (not rendered as a section, but linked inline):
+REFERENCES:
 
-.. _ImageMagick: http://www.imagemagick.org
-.. _FFmpeg: http://www.ffmpeg.org
-.. _APNG: https://wiki.mozilla.org/APNG_Specification
-.. _`browsers which support it`: http://caniuse.com/#feat=apng
+- `ImageMagick <https://www.imagemagick.org>`_
+- `FFmpeg <https://www.ffmpeg.org>`_
+- `APNG <https://wiki.mozilla.org/APNG_Specification>`_
+- `browsers which support it <https://caniuse.com/#feat=apng>`_
 
 """
 
 ############################################################################
 #  Copyright (C) 2007 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ############################################################################
+from __future__ import print_function, absolute_import
 
+import builtins
 import os
 import struct
 import zlib
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
-from sage.misc.temporary_file import tmp_dir, tmp_filename, graphics_filename
-import plot
+from sage.misc.temporary_file import tmp_dir, tmp_filename
+from . import plot
 import sage.misc.misc
 import sage.misc.viewer
 
@@ -216,8 +218,6 @@ class Animation(WithEqualityById, SageObject):
         sage: a._frames
         <generator object ...
 
-    TESTS::
-
         sage: from sage.plot.animate import Animation
         sage: hash(Animation()) # random
         140658972348064
@@ -265,11 +265,10 @@ class Animation(WithEqualityById, SageObject):
         for kwds in kwds_tuple:
             new_kwds.update(kwds)
 
-        import __builtin__
         for name in ['xmin', 'xmax', 'ymin', 'ymax']:
             values = [v for v in [kwds.get(name, None) for kwds in kwds_tuple] if v is not None]
             if values:
-                new_kwds[name] = getattr(__builtin__, name[1:])(values)
+                new_kwds[name] = getattr(builtins, name[1:])(values)
         return new_kwds
 
     def __getitem__(self, i):
@@ -475,10 +474,10 @@ class Animation(WithEqualityById, SageObject):
 
     def graphics_array(self, ncols=3):
         r"""
-        Return a :class:`sage.plot.graphics.GraphicsArray` with plots of the
+        Return a :class:`sage.plot.multigraphics.GraphicsArray` with plots of the
         frames of this animation, using the given number of columns.
         The frames must be acceptable inputs for
-        :class:`sage.plot.graphics.GraphicsArray`.
+        :class:`sage.plot.multigraphics.GraphicsArray`.
 
 
         EXAMPLES::
@@ -492,13 +491,13 @@ class Animation(WithEqualityById, SageObject):
 
         Modify the default arrangement of array::
 
-            sage: g = a.graphics_array(); print g
+            sage: g = a.graphics_array(); print(g)
             Graphics Array of size 2 x 3
             sage: g.show(figsize=[6,3])  # not tested
 
         Specify different arrangement of array and save it with a given file name::
 
-            sage: g = a.graphics_array(ncols=2); print g
+            sage: g = a.graphics_array(ncols=2); print(g)
             Graphics Array of size 2 x 2
             sage: f = tmp_filename(ext='.png')
             sage: g.save(f)
@@ -560,7 +559,7 @@ class Animation(WithEqualityById, SageObject):
             sage: td = tmp_dir()
             sage: a.gif()              # not tested
             sage: a.gif(savefile=td + 'my_animation.gif', delay=35, iterations=3)  # optional -- ImageMagick
-            sage: with open(td + 'my_animation.gif', 'rb') as f: print '\x21\xf9\x04\x08\x23\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'my_animation.gif', 'rb') as f: print(b'\x21\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.gif(savefile=td + 'my_animation.gif', show_path=True) # optional -- ImageMagick
             Animation saved to .../my_animation.gif.
@@ -577,11 +576,6 @@ class Animation(WithEqualityById, SageObject):
               packages, so please install one of them and try again.
 
               See www.imagemagick.org and www.ffmpeg.org for more information.
-
-        .. REFERENCES (not rendered as a section, but linked inline):
-
-        .. _ImageMagick: http://www.imagemagick.org
-        .. _FFmpeg: http://www.ffmpeg.org
         """
         from sage.misc.sage_ostools import have_program
         have_convert = have_program('convert')
@@ -606,7 +600,7 @@ www.ffmpeg.org, or use 'convert' to produce gifs instead."""
                 raise OSError(msg)
         else:
             if not savefile:
-                savefile = graphics_filename(ext='.gif')
+                savefile = tmp_filename(ext='.gif')
             if not savefile.endswith('.gif'):
                 savefile += '.gif'
             savefile = os.path.abspath(savefile)
@@ -618,7 +612,7 @@ www.ffmpeg.org, or use 'convert' to produce gifs instead."""
             try:
                 check_call(cmd, shell=True)
                 if show_path:
-                    print "Animation saved to file %s." % savefile
+                    print("Animation saved to file %s." % savefile)
             except (CalledProcessError, OSError):
                 msg = """
 Error: Cannot generate GIF animation.  Verify that convert
@@ -802,43 +796,43 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
     def ffmpeg(self, savefile=None, show_path=False, output_format=None,
                ffmpeg_options='', delay=None, iterations=0, pix_fmt='rgb24'):
         r"""
-        Returns a movie showing an animation composed from rendering
-        the frames in self.
+        Return a movie showing an animation composed from rendering
+        the frames in ``self``.
 
-        This method will only work if ffmpeg is installed.  See
-        http://www.ffmpeg.org for information about ffmpeg.
+        This method will only work if ``ffmpeg`` is installed.  See
+        https://www.ffmpeg.org for information about ``ffmpeg``.
 
         INPUT:
 
-        -  ``savefile`` - file that the mpeg gets saved to.
+        - ``savefile`` -- file that the mpeg gets saved to.
 
-        .. warning:
+        .. warning::
 
             This will overwrite ``savefile`` if it already exists.
 
-        - ``show_path`` - boolean (default: False); if True, print the
-          path to the saved file
+        - ``show_path`` -- boolean (default: ``False``); if ``True``,
+          print the path to the saved file
 
-        - ``output_format`` - string (default: None); format and
-          suffix to use for the video.  This may be 'mpg', 'mpeg',
-          'avi', 'gif', or any other format that ffmpeg can handle.
-          If this is None and the user specifies ``savefile`` with a
+        - ``output_format`` - string (default: ``None``); format and
+          suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
+          ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
+          If this is ``None`` and the user specifies ``savefile`` with a
           suffix, say ``savefile='animation.avi'``, try to determine the
-          format ('avi' in this case) from that file name.  If no file
-          is specified or if the suffix cannot be determined, 'mpg' is
+          format (``'avi'`` in this case) from that file name.  If no file
+          is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ''); this string is
+        - ``ffmpeg_options`` - string (default: ``''``); this string is
           passed directly to ffmpeg.
 
-        - ``delay`` - integer (default: None); delay in hundredths of a
+        - ``delay`` - integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
         - ``iterations`` - integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
-          for animated gif output and requires ffmpeg version 0.9 or
+          for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
         - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
@@ -848,7 +842,7 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
 
         If ``savefile`` is not specified: in notebook mode, display
         the animation; otherwise, save it to a default file name.  Use
-        :func:`sage.misc.misc.set_verbose` with ``level=1`` to see
+        :func:`sage.misc.verbose.set_verbose` with ``level=1`` to see
         additional output.
 
         EXAMPLES::
@@ -877,8 +871,6 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
         TESTS::
 
             sage: a.ffmpeg(output_format='gif',delay=30,iterations=5)     # optional -- ffmpeg
-            doctest:...: DeprecationWarning: use tmp_filename instead
-            See http://trac.sagemath.org/17234 for details.
         """
         if not self._have_ffmpeg():
             msg = """Error: ffmpeg does not appear to be installed. Saving an animation to
@@ -892,7 +884,7 @@ please install it and try again."""
                 else:
                     if output_format[0] != '.':
                         output_format = '.'+output_format
-                savefile = graphics_filename(ext=output_format)
+                savefile = tmp_filename(ext=output_format)
             else:
                 if output_format is None:
                     suffix = os.path.splitext(savefile)[1]
@@ -937,17 +929,17 @@ please install it and try again."""
             cmd = 'cd "%s"; sage-native-execute ffmpeg -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
             from subprocess import check_call, CalledProcessError, PIPE
             try:
-                if sage.misc.misc.get_verbose() > 0:
+                if sage.misc.verbose.get_verbose() > 0:
                     set_stderr = None
                 else:
                     set_stderr = PIPE
-                sage.misc.misc.verbose("Executing '%s'" % cmd,level=1)
-                sage.misc.misc.verbose("\n---- ffmpeg output below ----\n")
+                sage.misc.verbose.verbose("Executing '%s'" % cmd,level=1)
+                sage.misc.verbose.verbose("\n---- ffmpeg output below ----\n")
                 check_call(cmd, shell=True, stderr=set_stderr)
                 if show_path:
-                    print "Animation saved to file %s." % savefile
+                    print("Animation saved to file %s." % savefile)
             except (CalledProcessError, OSError):
-                print "Error running ffmpeg."
+                print("Error running ffmpeg.")
                 raise
 
     def apng(self, savefile=None, show_path=False, delay=20, iterations=0):
@@ -997,7 +989,7 @@ please install it and try again."""
         """
         pngdir = self.png()
         if savefile is None:
-            savefile = graphics_filename('.png')
+            savefile = tmp_filename('.png')
         with open(savefile, "wb") as out:
             apng = APngAssembler(
                 out, len(self),
@@ -1006,7 +998,7 @@ please install it and try again."""
                 png = os.path.join(pngdir, "%08d.png" % i)
                 apng.add_frame(png)
         if show_path:
-            print "Animation saved to file %s." % savefile
+            print("Animation saved to file %s." % savefile)
 
     def save(self, filename=None, show_path=False, use_ffmpeg=False, **kwds):
         r"""
@@ -1024,7 +1016,9 @@ please install it and try again."""
           files.
 
         If filename is None, then in notebook mode, display the
-        animation; otherwise, save the animation to a GIF file.  If
+        animation; otherwise, save the animation to a GIF file. If
+        filename ends in '.html', save an :meth:`interactive` version of
+        the animation to an HTML file that uses the Three.js viewer.  If
         filename ends in '.sobj', save to an sobj file.  Otherwise,
         try to determine the format from the filename extension
         ('.mpg', '.gif', '.avi', etc.).  If the format cannot be
@@ -1032,7 +1026,7 @@ please install it and try again."""
 
         For GIF files, either ffmpeg or the ImageMagick suite must be
         installed.  For other movie formats, ffmpeg must be installed.
-        An sobj file can be saved with no extra software installed.
+        sobj and HTML files can be saved with no extra software installed.
 
         EXAMPLES::
 
@@ -1048,6 +1042,9 @@ please install it and try again."""
             sage: a.save(td + 'wave0.sobj')
             sage: a.save(td + 'wave1.sobj', show_path=True)
             Animation saved to file .../wave1.sobj.
+            sage: a.save(td + 'wave0.html', online=True)
+            sage: a.save(td + 'wave1.html', show_path=True, online=True)
+            Animation saved to file .../wave1.html.
 
         TESTS:
 
@@ -1055,26 +1052,30 @@ please install it and try again."""
         GIF image (see :trac:`18176`)::
 
             sage: a.save(td + 'wave.gif')   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xf9\x04\x08\x14\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             True
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', delay=35)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xf9\x04\x08\x14\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xf9\x04\x08\x23\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', iterations=3)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print '!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00' in f.read()  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f:  # optional -- ImageMagick
+            ....:      check1 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x02\x00\x00'
+            ....:      check2 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00'
+            ....:      data = f.read()
+            ....:      print(check1 in data or check2 in data)
             True
         """
         if filename is None:
             suffix = '.gif'
         else:
             suffix = os.path.splitext(filename)[1]
-            if len(suffix) == 0:
+            if not suffix:
                 suffix = '.gif'
 
         if filename is None or suffix == '.gif':
@@ -1083,9 +1084,70 @@ please install it and try again."""
         elif suffix == '.sobj':
             SageObject.save(self, filename)
             if show_path:
-                print "Animation saved to file %s." % filename
+                print("Animation saved to file %s." % filename)
+        elif suffix == '.html':
+            self.interactive(**kwds).save(filename)
+            if show_path:
+                print("Animation saved to file %s." % filename)
         else:
             self.ffmpeg(savefile=filename, show_path=show_path, **kwds)
+
+    def interactive(self, **kwds):
+        r"""
+        Create an interactive depiction of the animation.
+
+        INPUT:
+
+        - ``**kwds`` -- any of the viewing options accepted by show() are valid
+          as keyword arguments to this function and they will behave in the same
+          way. Those that are animation-related and recognized by the Three.js
+          viewer are: ``animate``, ``animation_controls``, ``auto_play``,
+          ``delay``, and ``loop``.
+
+        OUTPUT:
+
+        A 3D graphics object which, by default, will use the Three.js viewer.
+
+        EXAMPLES::
+
+            sage: frames = [point3d((sin(x), cos(x), x)) for x in (0, pi/16, .., 2*pi)]
+            sage: animate(frames).interactive(online=True)
+            Graphics3d Object
+
+        Works with frames that are 2D or 3D graphics objects or convertible to
+        2D or 3D graphics objects via a ``plot`` or ``plot3d`` method::
+
+            sage: frames = [dodecahedron(), circle(center=(0, 0), radius=1), x^2]
+            sage: animate(frames).interactive(online=True, delay=100)
+            Graphics3d Object
+
+        .. SEEALSO::
+
+            :ref:`threejs_viewer`
+
+        """
+        from sage.plot.plot3d.base import Graphics3d, KeyframeAnimationGroup
+        # Attempt to convert frames to Graphics3d objects.
+        g3d_frames = []
+        for i, frame in enumerate(self._frames):
+            if not isinstance(frame, Graphics3d):
+                try:
+                    frame = frame.plot3d()
+                except (AttributeError, TypeError):
+                    try:
+                        frame = frame.plot().plot3d()
+                    except (AttributeError, TypeError):
+                        frame = None
+                if not isinstance(frame, Graphics3d):
+                    raise TypeError("Could not convert frame {} to Graphics3d".format(i))
+            g3d_frames.append(frame)
+        # Give preference to this method's keyword arguments over those provided
+        # to animate or the constructor.
+        kwds = dict(self._kwds, **kwds)
+        # Three.js is the only viewer that supports animation at present.
+        if 'viewer' not in kwds:
+            kwds['viewer'] = 'threejs'
+        return KeyframeAnimationGroup(g3d_frames, **kwds)
 
 
 class APngAssembler(object):
@@ -1124,15 +1186,9 @@ class APngAssembler(object):
         ....:             png = os.path.join(pngdir, "{:08d}.png".format(i))
         ....:             apng.add_frame(png, delay=10*i + 10)
         ....:     return outfile
-        ....:
         sage: assembleAPNG()  # long time
         '...png'
-
-    .. REFERENCES:
-
-    .. _APNG: https://wiki.mozilla.org/APNG_Specification
     """
-
     magic = b"\x89PNG\x0d\x0a\x1a\x0a"
     mustmatch = frozenset([b"IHDR", b"PLTE", b"bKGD", b"cHRM", b"gAMA",
                            b"pHYs", b"sBIT", b"tRNS"])
@@ -1171,8 +1227,8 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from StringIO import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 2)
             sage: fn = APngAssembler._testData("input1", True)
             sage: apng.add_frame(fn, delay=0x567, delay_denominator=0x1234)
@@ -1221,8 +1277,8 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from StringIO import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
             sage: fn = APngAssembler._testData("input1", True)
             sage: apng.set_default(fn)
@@ -1253,25 +1309,25 @@ class APngAssembler(object):
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_add_png", reads=False)
             enter _add_png('...png')
-              write _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
               call _copy() -> None
-              call _first_IHDR('\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00') -> None
-              write _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
+              call _first_IHDR(...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00') -> None
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
               call _copy() -> None
-              write _current_chunk = ('\x00\x00\x00\x07', 'tIME', '\x07\xde\x06\x1b\x0b&$', '\x1f0z\xd5')
-              write _current_chunk = ('\x00\x00\x00\x08', 'IDAT', 'img1data', '\xce\x8aI\x99')
-              call _first_IDAT('img1data') -> None
-              write _current_chunk = ('\x00\x00\x00\x00', 'IEND', '', '\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\x07', ...'tIME', ...'\x07\xde\x06\x1b\x0b&$', ...'\x1f0z\xd5')
+              write _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
+              call _first_IDAT(...'img1data') -> None
+              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
             enter _add_png('...png')
-              write _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
-              write _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
-              write _current_chunk = ('\x00\x00\x00\x04', 'IDAT', 'img2', '\x0ei\xab\x1d')
-              call _next_IDAT('img2') -> None
-              write _current_chunk = ('\x00\x00\x00\x04', 'IDAT', 'data', 'f\x94\xcbx')
-              call _next_IDAT('data') -> None
-              write _current_chunk = ('\x00\x00\x00\x00', 'IEND', '', '\xaeB`\x82')
+              write _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'img2', ...'\x0ei\xab\x1d')
+              call _next_IDAT(...'img2') -> None
+              write _current_chunk = (...'\x00\x00\x00\x04', ...'IDAT', ...'data', ...'f\x94\xcbx')
+              call _next_IDAT(...'data') -> None
+              write _current_chunk = (...'\x00\x00\x00\x00', ...'IEND', ...'', ...'\xaeB`\x82')
               write _first = False
             exit _add_png -> None
         """
@@ -1311,15 +1367,15 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from StringIO import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
-            sage: apng._seqno()
-            '\x00\x00\x00\x00'
-            sage: apng._seqno()
-            '\x00\x00\x00\x01'
-            sage: apng._seqno()
-            '\x00\x00\x00\x02'
+            sage: apng._seqno() == b'\x00\x00\x00\x00'
+            True
+            sage: apng._seqno() == b'\x00\x00\x00\x01'
+            True
+            sage: apng._seqno() == b'\x00\x00\x00\x02'
+            True
         """
         self._last_seqno += 1
         return struct.pack(">L", self._last_seqno)
@@ -1332,7 +1388,7 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_first_IHDR")
-            enter _first_IHDR('\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00')
+            enter _first_IHDR(...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00')
               write width = 3
               write height = 2
             exit _first_IHDR -> None
@@ -1349,7 +1405,7 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_first_IDAT")
-            enter _first_IDAT('img1data')
+            enter _first_IDAT(...'img1data')
               call _actl() -> None
               call _fctl() -> None
               call _copy() -> None
@@ -1367,15 +1423,15 @@ class APngAssembler(object):
 
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_next_IDAT")
-            enter _next_IDAT('img2')
+            enter _next_IDAT(...'img2')
               call _fctl() -> None
-              call _seqno() -> '\x00\x00\x00\x02'
-              call _chunk('fdAT', '\x00\x00\x00\x02img2') -> None
+              call _seqno() -> ...'\x00\x00\x00\x02'
+              call _chunk(...'fdAT', ...'\x00\x00\x00\x02img2') -> None
             exit _next_IDAT -> None
-            enter _next_IDAT('data')
+            enter _next_IDAT(...'data')
               call _fctl() -> None
-              call _seqno() -> '\x00\x00\x00\x03'
-              call _chunk('fdAT', '\x00\x00\x00\x03data') -> None
+              call _seqno() -> ...'\x00\x00\x00\x03'
+              call _chunk(...'fdAT', ...'\x00\x00\x00\x03data') -> None
             exit _next_IDAT -> None
         """
         self._fctl()
@@ -1394,16 +1450,16 @@ class APngAssembler(object):
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1("_copy")
             enter _copy()
-              read _current_chunk = ('\x00\x00\x00\r', 'IHDR', '\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', '\xb8\x1f9\xc6')
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
-              read out = <StringIO.StringIO instance at ...
+              read _current_chunk = (...'\x00\x00\x00\r', ...'IHDR', ...'\x00\x00\x00\x03\x00\x00\x00\x02\x08\x00\x00\x00\x00', ...'\xb8\x1f9\xc6')
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
+              read out = <_io.BytesIO object at ...
             exit _copy -> None
             enter _copy()
-              read _current_chunk = ('\x00\x00\x00\x04', 'gAMA', '\x00\x01\x86\xa0', '1\xe8\x96_')
+              read _current_chunk = (...'\x00\x00\x00\x04', ...'gAMA', ...'\x00\x01\x86\xa0', ...'1\xe8\x96_')
             ...
-              read _current_chunk = ('\x00\x00\x00\x08', 'IDAT', 'img1data', '\xce\x8aI\x99')
+              read _current_chunk = (...'\x00\x00\x00\x08', ...'IDAT', ...'img1data', ...'\xce\x8aI\x99')
             ...
             exit _copy -> None
         """
@@ -1422,7 +1478,7 @@ class APngAssembler(object):
               read _actl_written = False
               read num_frames = 2
               read num_plays = 0
-              call _chunk('acTL', '\x00\x00\x00\x02\x00\x00\x00\x00') -> None
+              call _chunk(...'acTL', ...'\x00\x00\x00\x02\x00\x00\x00\x00') -> None
               write _actl_written = True
             exit _actl -> None
         """
@@ -1446,8 +1502,8 @@ class APngAssembler(object):
               read height = 2
               read delay_numerator = 1383
               read delay_denominator = 4660
-              call _seqno() -> '\x00\x00\x00\x00'
-              call _chunk('fcTL', '\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x05g\x124\x01\x00') -> None
+              call _seqno() -> ...'\x00\x00\x00\x00'
+              call _chunk(...'fcTL', ...'\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x05g\x124\x01\x00') -> None
               write _fctl_written = True
             exit _fctl -> None
             enter _fctl()
@@ -1456,8 +1512,8 @@ class APngAssembler(object):
               read height = 2
               read delay_numerator = 200
               read delay_denominator = 100
-              call _seqno() -> '\x00\x00\x00\x01'
-              call _chunk('fcTL', '\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00d\x01\x00') -> None
+              call _seqno() -> ...'\x00\x00\x00\x01'
+              call _chunk(...'fcTL', ...'\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00d\x01\x00') -> None
               write _fctl_written = True
             exit _fctl -> None
             enter _fctl()
@@ -1481,14 +1537,14 @@ class APngAssembler(object):
         TESTS::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: from StringIO import StringIO
-            sage: buf = StringIO()
+            sage: from io import BytesIO
+            sage: buf = BytesIO()
             sage: apng = APngAssembler(buf, 1)
-            sage: buf.getvalue()
-            '\x89PNG\r\n\x1a\n'
-            sage: apng._chunk("abcd", "efgh")
-            sage: buf.getvalue()
-            '\x89PNG\r\n\x1a\n\x00\x00\x00\x04abcdefgh\xae\xef*P'
+            sage: buf.getvalue() == b'\x89PNG\r\n\x1a\n'
+            True
+            sage: apng._chunk(b"abcd", b"efgh")
+            sage: buf.getvalue() == b'\x89PNG\r\n\x1a\n\x00\x00\x00\x04abcdefgh\xae\xef*P'
+            True
         """
         ccrc = struct.pack(">L", zlib.crc32(ctype + cdata) & 0xffffffff)
         clen = struct.pack(">L", len(cdata))
@@ -1507,7 +1563,7 @@ class APngAssembler(object):
         even if they look like hex digits. This is used for chunk types.
         Other characters which are not hex digits are passed verbatim.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.animate import APngAssembler
             sage: h2b = APngAssembler._hex2bin
@@ -1528,12 +1584,13 @@ class APngAssembler(object):
                 b.append(int(h[:2], 16))
                 h = h[2:]
             elif h[0] == '.': # for chunk type
-                b.extend(ord(h[i]) for i in range(1,5))
+                b.extend(ord(h[i]) for i in range(1, 5))
                 h = h[5:]
             else: # for PNG magic
                 b.append(ord(h[0]))
                 h = h[1:]
-        return ''.join(map(chr,b))
+
+        return bytes(b)
 
     @classmethod
     def _testData(cls, name, asFile):
@@ -1547,11 +1604,11 @@ class APngAssembler(object):
         - ``asFile``: Whether to return a binary string of the named data
                       or the path of a file containing that data.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.plot.animate import APngAssembler
-            sage: APngAssembler._testData("input1", False)
-            '\x89PNG\r\n\x1a\n\x00...'
+            sage: APngAssembler._testData("input1", False).startswith(b'\x89PNG')
+            True
             sage: APngAssembler._testData("input2", True)
             '...png'
         """
@@ -1624,8 +1681,8 @@ class APngAssembler(object):
             sage: APngAssembler._testCase1()
         """
         from sage.doctest.fixtures import trace_method
-        from StringIO import StringIO
-        buf = StringIO()
+        from io import BytesIO
+        buf = BytesIO()
         apng = cls(buf, 2)
         if methodToTrace is not None:
             trace_method(apng, methodToTrace, **kwds)

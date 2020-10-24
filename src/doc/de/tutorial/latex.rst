@@ -241,12 +241,12 @@ in den Python Zeichenketten. ::
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
     sage: from sage.misc.latex import latex_extra_preamble
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
     sage: latex.add_macro("\\newcommand{\\foo}{bar}")
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \newcommand{\ZZ}{\Bold{Z}}
     ...
     \newcommand{\Bold}[1]{\mathbf{#1}}
@@ -270,7 +270,7 @@ Backslashes in Python. ::
     sage: latex.add_to_preamble('\\geometry{letterpaper,total={8in,10in}}')
     sage: latex.extra_preamble()
     '\\usepackage{geometry}\\geometry{letterpaper,total={8in,10in}}'
-    sage: print latex_extra_preamble()
+    sage: print(latex_extra_preamble())
     \usepackage{geometry}\geometry{letterpaper,total={8in,10in}}
     \newcommand{\ZZ}{\Bold{Z}}
     ...
@@ -466,10 +466,12 @@ bereits Teil Ihrer TeX Distribution.  Die ersten beiden sollten
 auch von http://sourceforge.net/projects/dvipng/ als Teil von
 `Ghostscript <http://www.ghostscript.com/>`_ bezogen werden können.
 
-Um kombinatorische Graphen darstellen zu können, wird eine aktuelle Version
-der PGF Bibliothek und die Dateien ``tkz-graph.sty``, ``tkz-arith.sty``
-und eventuell ``tkz-berge.sty`` benötigt, allesamt verfügbar auf der `Altermundus Seite
-<http://altermundus.com/pages/graph.html>`_.
+Um kombinatorische Graphen darstellen zu können,
+benötigt man eine aktuelle Version der PGF-Bibliothek,
+die Datei ``tkz-graph.sty`` (verfügbar
+unter https://www.ctan.org/pkg/tkz-graph), die Datei
+``tkz-arith.sty`` und vielleicht auch ``tkz-berge.sty``, beide verfügbar
+auf der Seite https://www.ctan.org/pkg/tkz-berge.
 
 Externe Programme
 =================
@@ -484,18 +486,3 @@ alle Berechnungs- oder LaTeX-Formatierungseigenschaften von Sage automatisch gen
 Als Beispiel hierfür kann in einer mathematischen Betrachtung die korrekte Reihenfolge
 von Fragen und Antworten beibehalten werden, indem sagetex dazu genutzt wird Sage die einen
 aus den anderen berechnen zu lassen. Siehe hierfür auch :ref:`sec-sagetex`
-
-tex2sws beginnt mit einem LaTeX-Dokument, aber definiert einige zusätzliche
-Umgebungen für Sage Code. Wenn es richtig genutzt wird, ist das Ergebnis ein
-Sage Arbeitsblatt mit korrekt von MathJax formatiertem Inhalt und dem dazugehörigen
-Sage Code in den Eingabezellen. Ein Lehrbuch oder Artikel kann also mit Sage Code Blöcken
-in LaTeX gesetzt werden und es kann "live" das ganze Dokument in ein Sage Arbeitsblatt überführt werden;
-unter Beibehaltung der Sage Code Blöcke und mit schön formatiertem mathematischen Text.
-Momentan in Arbeit, siehe `tex2sws @ BitBucket
-<http://bitbucket.org/rbeezer/tex2sws/>`_ .
-
-sws2tex kehrt den Prozess um, indem es mit einem Sage Arbeitsblatt beginnt, und
-es in ein legitimes LaTeX-Dokument zur weiteren Bearbeitung mit allen
-LaTeX-Werkzeugen verwandelt.
-Momentan in Arbeit, siehe `sws2tex @ BitBucket
-<http://bitbucket.org/whuss/sws2tex/>`_ .

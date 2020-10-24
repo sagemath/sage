@@ -1,6 +1,7 @@
-from c_graph cimport CGraph
-from static_sparse_graph cimport short_digraph, ushort
-from c_graph cimport CGraphBackend
+from .c_graph cimport CGraph, CGraphBackend
+from .static_sparse_graph cimport short_digraph, ushort
+from libc.stdint cimport uint64_t, uint32_t, INT32_MAX, UINT32_MAX
+from sage.data_structures.bitset cimport *
 
 cdef class StaticSparseCGraph(CGraph):
     cdef short_digraph g
@@ -16,3 +17,6 @@ cdef class StaticSparseBackend(CGraphBackend):
     cdef bint _multiedges
     cdef list _vertex_to_labels
     cdef dict _vertex_to_int
+    cdef StaticSparseCGraph _cg
+    cdef inline CGraph cg(self):
+        return <CGraph> self._cg

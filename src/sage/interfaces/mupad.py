@@ -89,24 +89,27 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #############################################################################
+from __future__ import print_function, absolute_import
 
 import os
 
-from expect import (Expect, ExpectElement, ExpectFunction,
-                    FunctionElement, AsciiArtString)
-
-
+from .expect import (Expect, ExpectElement, ExpectFunction,
+                    FunctionElement)
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.env import DOT_SAGE
+from sage.docs.instancedoc import instancedoc
 
-COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/mupad_commandlist_cache.sobj' % DOT_SAGE
 PROMPT = ">>"
 seq = 0
 
-class Mupad(Expect):
+
+class Mupad(ExtraTabCompletion, Expect):
     """
     Interface to the MuPAD interpreter.
     """
-    def __init__(self, maxread=1000, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
         """
         Create an instance of the MuPAD interpreter.
 
@@ -120,7 +123,6 @@ class Mupad(Expect):
                         prompt = PROMPT,
                         # the -U SAGE=TRUE allows for MuPAD programs to test whether they are run from Sage
                         command = "mupkern -P e -U SAGE=TRUE",
-                        maxread = maxread,
                         script_subdirectory = script_subdirectory,
                         server = server,
                         server_tmpdir = server_tmpdir,
@@ -164,7 +166,7 @@ class Mupad(Expect):
 
             sage: filename = tmp_filename()
             sage: f = open(filename, 'w')
-            sage: f.write('x := 2;\n')
+            sage: _ = f.write('x := 2;\n')
             sage: f.close()
             sage: mupad.read(filename)   # optional - MuPAD
             sage: mupad.get('x').strip() # optional - mupad
@@ -188,7 +190,7 @@ class Mupad(Expect):
 
         EXAMPLES::
 
-            sage: print mupad._install_hints()
+            sage: print(mupad._install_hints())
             <BLANKLINE>
             In order to use the MuPAD interface you need to have MuPAD installed
             ...
@@ -383,40 +385,40 @@ command-line version of MuPAD.
             v = sum([self.completions(chr(65+n)) for n in range(26)], []) + \
                 sum([self.completions(chr(97+n)) for n in range(26)], [])
         except RuntimeError:
-            print "\n"*3
-            print "*"*70
-            print "WARNING: You do not have a working version of MuPAD installed!"
-            print "*"*70
+            print("\n" * 3)
+            print("*" * 70)
+            print("WARNING: You do not have a working version of MuPAD installed!")
+            print("*" * 70)
             v = []
         v.sort()
         return v
 
-    def trait_names(self, verbose=True, use_disk_cache=True):
+    def _tab_completion(self, verbose=True, use_disk_cache=True):
         """
         EXAMPLES::
 
-            sage: names = mupad.trait_names() # optional - mupad
+            sage: names = mupad._tab_completion() # optional - mupad
             sage: len(names) > 100 # optional - mupad
             True
             sage: 'combinat' in names # optional - mupad
             True
         """
         try:
-            return self.__trait_names
+            return self.__tab_completion
         except AttributeError:
             import sage.misc.persist
             if use_disk_cache:
                 try:
-                    self.__trait_names = sage.misc.persist.load(COMMANDS_CACHE)
-                    return self.__trait_names
+                    self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
+                    return self.__tab_completion
                 except IOError:
                     pass
             if verbose:
-                print "\nBuilding MuPAD command completion list (this takes"
-                print "a few seconds only the first time you do it)."
-                print "To force rebuild later, delete %s."%COMMANDS_CACHE
+                print("\nBuilding MuPAD command completion list (this takes")
+                print("a few seconds only the first time you do it).")
+                print("To force rebuild later, delete %s." % COMMANDS_CACHE)
             v = self._commands()
-            self.__trait_names = v
+            self.__tab_completion = v
             if len(v) > 200:
                 # MuPAD is actually installed.
                 sage.misc.persist.save(v, COMMANDS_CACHE)
@@ -440,12 +442,13 @@ command-line version of MuPAD.
         return res if res != [''] else []
 
 
-class MupadFunction(ExpectFunction):
-    def _sage_doc_(self):
+@instancedoc
+class MupadFunction(ExtraTabCompletion, ExpectFunction):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: mupad.diff._sage_doc_()
+            sage: mupad.diff.__doc__
             No help on diff available
         """
         M = self._parent
@@ -462,11 +465,11 @@ class MupadFunction(ExpectFunction):
             raise AttributeError
         return MupadFunction(self._parent, self._name+"::"+attrname)
 
-    def trait_names(self):
+    def _tab_completion(self):
         """
         EXAMPLES::
 
-            sage: mupad.linalg.trait_names() # optional - mupad
+            sage: mupad.linalg._tab_completion() # optional - mupad
             ['addCol',
              'addRow',
              ...
@@ -474,16 +477,17 @@ class MupadFunction(ExpectFunction):
 
         """
         res = self._parent.completions(self._name+"::", strip=True)
-        return res if res != [] else self._parent.trait_names()
+        return res if res != [] else self._parent._tab_completion()
 
 
-class MupadFunctionElement(FunctionElement):
-    def _sage_doc_(self):
+@instancedoc
+class MupadFunctionElement(ExtraTabCompletion, FunctionElement):
+    def _instancedoc_(self):
         """
         EXAMPLES::
 
-            sage: x = mupad('x') # optional - mupad
-            sage: x.diff._sage_doc_() # optional - mupad
+            sage: x = mupad('x')  # optional - mupad
+            sage: x.diff.__doc__  # optional - mupad
             No help on diff available
 
         """
@@ -514,17 +518,17 @@ class MupadFunctionElement(FunctionElement):
         else:
             return MupadFunctionElement(self._obj, name)
 
-    def trait_names(self):
+    def _tab_completion(self):
         """
         EXAMPLES::
 
             sage: three = mupad(3) # optional - mupad
-            sage: 'list' in three.combinat.tableaux.trait_names() # optional - mupad
+            sage: 'list' in three.combinat.tableaux._tab_completion() # optional - mupad
             True
         """
         P = self._obj.parent()
         res = P.completions(self._name+"::", strip=True)
-        return res if res != [] else P.trait_names()
+        return res if res != [] else P._tab_completion()
 
 
     def __call__(self, *args):
@@ -546,7 +550,10 @@ class MupadFunctionElement(FunctionElement):
         else:
             return P.function_call(self._name, [self._obj] + list(args))
 
-class MupadElement(ExpectElement):
+
+@instancedoc
+class MupadElement(ExtraTabCompletion, ExpectElement):
+
     def __getattr__(self, attrname):
         """
         EXAMPLES::
@@ -582,29 +589,17 @@ class MupadElement(ExpectElement):
             else:
                 raise err
 
-
-    def trait_names(self):
+    def _tab_completion(self):
         """
         EXAMPLES::
 
             sage: mupad.package('"MuPAD-Combinat"')       # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions() # optional - mupad-Combinat
-            sage: 'HallLittlewood' in S.trait_names()     # optional - mupad-Combinat
+            sage: 'HallLittlewood' in S._tab_completion()     # optional - mupad-Combinat
             True
         """
         res = self.parent().completions(self.name()+"::", strip=True)
-        return res if res != [] else self.parent().trait_names()
-
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
-            sage: S = mupad.examples.SymmetricFunctions(); S # optional - mupad-Combinat
-            examples::SymmetricFunctions(Dom::ExpressionField())
-        """
-        self._check_valid()
-        return self.parent().get(self._name)
+        return res if res != [] else self.parent()._tab_completion()
 
     def _latex_(self):
         r"""
@@ -630,7 +625,7 @@ class MupadElement(ExpectElement):
             sage: len(mupad([1,2,3])) # indirect doctest # optional - mupad
             3
             sage: type(len(mupad([1,2,3])))              # optional - mupad
-            <type 'int'>
+            <... 'int'>
 
             sage: len(mupad(4))                          # optional - mupad
             1
@@ -638,7 +633,7 @@ class MupadElement(ExpectElement):
         Implementing this is necessary for using MuPAD's lists as
         standard containers::
 
-            sage: map(ZZ, list(mupad([1,2,3])))          # optional - mupad
+            sage: list(map(ZZ, list(mupad([1,2,3]))))    # optional - mupad
             [1, 2, 3]
 
             sage: [int(x) for x in mupad([1,2,3]) ]      # optional - mupad
@@ -681,6 +676,9 @@ def mupad_console():
          *----*      Licensed to:   ...
 
     """
+    from sage.repl.rich_output.display_manager import get_display_manager
+    if not get_display_manager().is_in_terminal():
+        raise RuntimeError('Can use the console only in the terminal. Try %%mupad magics instead.')
     os.system('mupkern')
 
 

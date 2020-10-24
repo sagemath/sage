@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-python
 
 import sys
-from sage.repl.preparse import preparse
 from sage.repl.load import load_cython
 from sage.misc.temporary_file import tmp_filename
 
 if len(sys.argv) > 1:
-    s = preparse(load_cython(sys.argv[1]))
+    s = load_cython(sys.argv.pop(1))
+    import sage.all
     eval(compile(s, tmp_filename(), 'exec'))

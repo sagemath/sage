@@ -1,17 +1,18 @@
 """
 Partition backtrack functions for matrices
 
-DOCTEST:
+EXAMPLES::
+
     sage: import sage.groups.perm_gps.partn_ref.refinement_matrices
 
 REFERENCE:
 
-    [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
-        Vol. 30 (1981), pp. 45-87.
+- [1] McKay, Brendan D. Practical Graph Isomorphism. Congressus Numerantium,
+  Vol. 30 (1981), pp. 45-87.
 
-    [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
-        Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
-        533-583.
+- [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
+  Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
+  533-583.
 
 """
 
@@ -26,10 +27,14 @@ REFERENCE:
 #*****************************************************************************
 
 from libc.string cimport memcmp
-include 'data_structures_pyx.pxi' # includes bitsets
 
-from sage.misc.misc import uniq
+from .data_structures cimport *
+from sage.data_structures.bitset_base cimport *
+from sage.rings.integer cimport Integer
 from sage.matrix.constructor import Matrix
+from .refinement_binary cimport NonlinearBinaryCodeStruct, refine_by_bip_degree
+from .double_coset cimport double_coset
+
 
 cdef class MatrixStruct:
 
@@ -41,24 +46,25 @@ cdef class MatrixStruct:
         cdef NonlinearBinaryCodeStruct S_temp
         self.matrix = matrix
 
-        self.symbols = uniq(self.matrix.list())
-        if 0 in self.symbols:
-            self.symbols.remove(0)
-        self.nsymbols = len(self.symbols)
+        symbols = set(self.matrix.list())
+        symbols.discard(0)
+        self.symbols = sorted(symbols)
+        self.nsymbols = len(symbols)
 
         self.symbol_structs = []
-        num_rows = <int *> sage_malloc(self.nsymbols * sizeof(int))
+        num_rows = <int *> sig_malloc(self.nsymbols * sizeof(int))
         self.temp_col_ps = PS_new(self.degree, 1)
         if num_rows is NULL or self.temp_col_ps is NULL:
-            sage_free(num_rows)
+            sig_free(num_rows)
             PS_dealloc(self.temp_col_ps)
             raise MemoryError
 
         for i from 0 <= i < self.nsymbols:
             num_rows[i] = 0
         for row in self.matrix.rows():
-            row = uniq(row.list())
-            if 0 in row: row.remove(0)
+            row = set(row.list())
+            if 0 in row:
+                row.remove(0)
             for s in row:
                 num_rows[self.symbols.index(s)] += 1
         for i from 0 <= i < self.nsymbols:
@@ -77,7 +83,7 @@ cdef class MatrixStruct:
                 bitset_set( &S_temp.words[num_rows[j]], i)
                 if row_list.count(s) == 1 or row_list.index(s) == self.degree - i - 1:
                     num_rows[j] += 1
-        sage_free(num_rows)
+        sig_free(num_rows)
         self.output = NULL
 
     def __dealloc__(self):
@@ -89,7 +95,7 @@ cdef class MatrixStruct:
         """
         Display the matrix, and associated data.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
             sage: M = MatrixStruct(Matrix(GF(5), [[0,1,1,4,4],[0,4,4,1,1]]))
@@ -106,16 +112,16 @@ cdef class MatrixStruct:
             4
 
         """
-        print self.matrix
-        print
+        print(self.matrix)
+        print("")
         cdef int i,j=0
         cdef NonlinearBinaryCodeStruct S_temp
         for S in self.symbol_structs:
             S_temp = <NonlinearBinaryCodeStruct>S
             for i from 0 <= i < S_temp.nwords:
-                print bitset_string(&S_temp.words[i])
-            print self.symbols[j]
-            print
+                print(bitset_string(&S_temp.words[i]))
+            print(self.symbols[j])
+            print("")
             j += 1
 
     def run(self, partition=None):
@@ -124,10 +130,13 @@ cdef class MatrixStruct:
         storing results to self.
 
         INPUT:
-        partition -- an optional list of lists partition of the columns.
-            default is the unit partition.
 
-        EXAMPLES:
+        partition -- an optional list of lists partition of the columns.
+
+        Default is the unit partition.
+
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -171,7 +180,10 @@ cdef class MatrixStruct:
         order and a base for which the list of generators is a strong generating
         set.
 
-        EXAMPLE: (For more examples, see self.run())
+        For more examples, see self.run().
+
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -196,7 +208,10 @@ cdef class MatrixStruct:
         """
         Returns a canonical relabeling (in list permutation format).
 
-        EXAMPLES: (For more examples, see self.run())
+        For more examples, see self.run().
+
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
 
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
@@ -213,7 +228,8 @@ cdef class MatrixStruct:
         """
         Calculate whether self is isomorphic to other.
 
-        EXAMPLES:
+        EXAMPLES::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
             sage: M = MatrixStruct(Matrix(GF(11), [[1,2,3,0,0,0],[0,0,0,1,2,3]]))
             sage: N = MatrixStruct(Matrix(GF(11), [[0,1,0,2,0,3],[1,0,2,0,3,0]]))
@@ -232,12 +248,12 @@ cdef class MatrixStruct:
             S_temp = other.symbol_structs[i]
             S_temp.first_time = 1
         part = PS_new(n, 1)
-        ordering = <int *> sage_malloc(self.degree * sizeof(int))
-        output = <int *> sage_malloc(self.degree * sizeof(int))
+        ordering = <int *> sig_malloc(self.degree * sizeof(int))
+        output = <int *> sig_malloc(self.degree * sizeof(int))
         if part is NULL or ordering is NULL or output is NULL:
             PS_dealloc(part)
-            sage_free(ordering)
-            sage_free(output)
+            sig_free(ordering)
+            sig_free(output)
             raise MemoryError
         for i from 0 <= i < self.degree:
             ordering[i] = i
@@ -245,12 +261,12 @@ cdef class MatrixStruct:
         cdef bint isomorphic = double_coset(<void *> self, <void *> other, part, ordering, self.degree, &all_matrix_children_are_equivalent, &refine_matrix, &compare_matrices, NULL, NULL, output)
 
         PS_dealloc(part)
-        sage_free(ordering)
+        sig_free(ordering)
         if isomorphic:
             output_py = [output[i] for i from 0 <= i < self.degree]
         else:
             output_py = False
-        sage_free(output)
+        sig_free(output)
         return output_py
 
 cdef int refine_matrix(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len):
@@ -277,7 +293,11 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
     for i from 0 <= i < degree:
         MM1.set_column(i, M1.column(gamma_1[i]))
         MM2.set_column(i, M2.column(gamma_2[i]))
-    return cmp(sorted(MM1.rows()), sorted(MM2.rows()))
+    rows1 = sorted(MM1.rows())
+    rows2 = sorted(MM2.rows())
+    if rows1 == rows2:
+        return 0
+    return -1 if rows1 < rows2 else 1
 
 cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S):
     return 0
@@ -316,8 +336,8 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
     from sage.misc.prandom import random, randint
     from sage.combinat.permutation import Permutations
     from sage.matrix.constructor import random_matrix, matrix
-    from sage.rings.finite_rings.constructor import FiniteField as GF
-    from sage.rings.arith import next_prime
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+    from sage.arith.all import next_prime
     cdef int h, i, j, nrows, k, num_tests = 0, num_matrices = 0
     cdef MatrixStruct M, N
     for m in range(n):
@@ -353,24 +373,21 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
             N_C = matrix(GF(nsymbols), sorted(N_C.rows()))
 
             if M_C != N_C:
-                print "M:"
-                print M.matrix.str()
-                print "perm:"
-                print perm
+                print("M:")
+                print(M.matrix.str())
+                print("perm:")
+                print(perm)
                 return
 
             isom = M.is_isomorphic(N)
             if not isom:
-                print "isom FAILURE: M:"
-                print M.matrix.str()
-                print "isom FAILURE: N:"
-                print N.matrix.str()
+                print("isom FAILURE: M:")
+                print(M.matrix.str())
+                print("isom FAILURE: N:")
+                print(N.matrix.str())
                 return
 
         num_tests += perms_per_matrix
         num_matrices += 2
-    print "All passed: %d random tests on %d matrices."%(num_tests, num_matrices)
-
-
-
-
+    print("All passed: %d random tests on %d matrices." %
+          (num_tests, num_matrices))

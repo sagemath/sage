@@ -1,10 +1,10 @@
 r"""
+Helper functions for mutation types of quivers
+
 This file contains helper functions for detecting the mutation type of
 a cluster algebra or quiver.
 
-For the compendium on the cluster algebra and quiver package see
-
-:arxiv:`1102.4844`
+For the compendium on the cluster algebra and quiver package see [MS2011]_
 
 AUTHORS:
 
@@ -12,14 +12,20 @@ AUTHORS:
 - Christian Stump
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Gregg Musiker <musiker@math.mit.edu>
 #                          Christian Stump <christian.stump@univie.ac.at>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import print_function
+
+import os
+import pickle
+
 from copy import copy
+
 from sage.misc.all import cached_function
 from sage.misc.flatten import flatten
 from sage.graphs.all import DiGraph
@@ -29,9 +35,12 @@ from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMuta
 
 def is_mutation_finite(M, nr_of_checks=None):
     r"""
-    Use a non-deterministic method by random mutations in various directions. Can result in a wrong answer.
+    Use a non-deterministic method by random mutations in various
+    directions. Can result in a wrong answer.
 
-    .. ATTENTION: This method modifies the input matrix ``M``!
+    .. WARNING::
+
+        This method modifies the input matrix ``M``!
 
     INPUT:
 
@@ -55,18 +64,28 @@ def is_mutation_finite(M, nr_of_checks=None):
         sage: M = Q.b_matrix()
         sage: is_mutation_finite(M) # random
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
+
+    Check that :trac:`19495` is fixed::
+
+        sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S
+        A seed for a cluster algebra of rank 1
+        sage: S.is_mutation_finite()
+        True
     """
     import random
-    n, m = M.ncols(), M.nrows()
+    n = M.ncols()
+    if n <= 2:
+        return True, None
     if nr_of_checks is None:
         nr_of_checks = 1000 * n
-    k = 0
+    k = random.randint(0, n - 1)
     path = []
-    for i in xrange(nr_of_checks):
-        # this test is done to avoid mutating back in the same direction
-        k_test = k
-        while k_test == k:
-            k = random.randint(0, n - 1)
+    for i in range(nr_of_checks):
+        # avoid mutating back in the same direction
+        next_k = random.randint(0, n - 2)
+        if next_k >= k:
+            next_k += 1
+        k = next_k
         M.mutate(k)
         path.append(k)
         for i, j in M.nonzero_positions():
@@ -96,7 +115,7 @@ def _triangles(dg):
         [([(1, 0), (0, 2), (2, 1)], True)]
     """
     E = dg.edges(labels=False)
-    V = dg.vertices()
+    V = list(dg)
     trians = []
     flat_trians = []
     for e in E:
@@ -161,7 +180,7 @@ def _all_induced_cycles_iter( dg ):
                 if len(cycle) > 4:
                     sg = dg.subgraph(cycle)
                     is_oriented = True
-                    V = sg.vertices()
+                    V = list(sg)
                     while is_oriented and V:
                         v = V.pop()
                         if not sg.in_degree(v) == 1:
@@ -185,7 +204,7 @@ def _false_return(s=False):
     """
 #    Uncomment these three lines for debugging purposes.
 #    if s:
-#        print 'DEBUG: error %s'%s
+#        print('DEBUG: error %s' % s)
     return 'unknown'
 
 
@@ -204,7 +223,7 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _reset_dg
         sage: dg = ClusterQuiver(['A',[2,2],1]).digraph(); dg
         Digraph on 4 vertices
-        sage: vertices = dg.vertices()
+        sage: vertices = list(dg)
         sage: dict_in_out = {}
         sage: for v in vertices: dict_in_out[v] = (dg.in_degree(v), dg.out_degree(v), dg.degree(v))
         sage: _reset_dg(dg,vertices, dict_in_out, [1])
@@ -220,8 +239,8 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
         if v in dg:
             dg.delete_vertex(v)
         else:
-            print v
-            print dg.edges()
+            print(v)
+            print(dg.edges())
         vertices.remove(v)
         del dict_in_out[v]
     for v in vertices:
@@ -289,7 +308,8 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
             # Now, tries to connect up the quiver components (keeping in mind ['D',3] - ['A',3] equivalence)
             if hope_letter == 'D' and mut_type._letter == 'A' and mut_type._rank == 3 and not mut_type._twist:
                 hope_letter = 'A'
-                if conn_vert_list: conn_verts = list( set(dg.vertices()).difference(conn_verts) )
+                if conn_vert_list:
+                    conn_verts = list(set(dg).difference(conn_verts))
             if mut_type._letter == hope_letter and not mut_type._twist and conn_vert.issubset(conn_verts):
                 if len(check_letter)>1:
                     check_twist = 1
@@ -319,7 +339,7 @@ def _connected_mutation_type(dg):
     # defining some shorthands
     n = dg.order()
     edges = dg.edges()
-    vertices = dg.vertices()
+    vertices = list(dg)
     # initializing lists of the edges with labels (2,-1) or (1,-2); (4,-1) or (1,-4); or (2,-2), respectively
     exc_labels = []
     exc_labels41 = []
@@ -471,7 +491,6 @@ def _connected_mutation_type(dg):
             if dict_in_out[label2[0]][2] == 1 or dict_in_out[label2[1]][2] == 1:
                 label1, label2 = label2, label1
             if dict_in_out[label1[0]][2] == 1:
-                v = label1[0]
                 if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
                     v1,v2 = label3[1],label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
@@ -493,7 +512,6 @@ def _connected_mutation_type(dg):
                 else:
                     return _false_return()
             elif dict_in_out[label1[1]][2] == 1:
-                v = label1[1]
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
                     v1,v2 = label2[1],label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
@@ -528,9 +546,8 @@ def _connected_mutation_type(dg):
             if dict_in_out[label2[0]][2] == 1 or dict_in_out[label2[1]][2] == 1:
                 label1, label2 = label2, label1
             if dict_in_out[label1[1]][2] == 1:
-                v = label1[0]
                 if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
-                    v1,v2 = label3[1],label2[0]
+                    v1, v2 = label3[1], label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -539,7 +556,7 @@ def _connected_mutation_type(dg):
                     else:
                         return _check_special_BC_cases( dg, n, ['CC'],[1],['A'] )
                 elif label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
-                    v1,v2 = label2[1], label3[0]
+                    v1, v2 = label2[1], label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -550,9 +567,8 @@ def _connected_mutation_type(dg):
                 else:
                     return _false_return()
             elif dict_in_out[label1[0]][2] == 1:
-                v = label1[1]
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1],label3[0],1):
-                    v1,v2 = label2[1],label3[0]
+                    v1, v2 = label2[1], label3[0]
                     _reset_dg( dg, vertices, dict_in_out, [label3[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -561,7 +577,7 @@ def _connected_mutation_type(dg):
                     else:
                         return _check_special_BC_cases( dg, n, ['BB'],[1],['A'] )
                 elif label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1],label2[0],1):
-                    v1,v2 = label3[1],label2[0]
+                    v1, v2 = label3[1], label2[0]
                     _reset_dg( dg, vertices, dict_in_out, [label2[1]] )
                     if len( set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)) ) > 0:
                         return _false_return()
@@ -780,8 +796,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     For all other types (including affine D), outputs 'unknown'
 
-    See :arxiv:`0906.0487` (by Bastian, Prellberg, Rubey, and Stump)
-    and :arxiv:`0810.4789v1` (by Vatne) for theoretical details.
+    See [BPRS2009]_ and [Vat2008]_ (by Vatne) for theoretical details.
 
     .. TODO::
 
@@ -789,7 +804,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     INPUT:
 
-    - ``ret_conn_vert`` (boolean; default:``False``). If ``True, returns 'connecting vertices', technical information that is used in the algorithm.
+    - ``ret_conn_vert`` -- boolean (default: ``False``). If ``True``,
+      returns 'connecting vertices', technical information that is
+      used in the algorithm.
 
     A brief description of the algorithm::
 
@@ -812,12 +829,12 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         sage: _connected_mutation_type_AAtildeD(Q2.digraph() )
         ['A', [2, 5], 1]
 
-        sage: Q3 = ClusterQuiver(['E',6]); Q3.mutate([5,2,1]);
+        sage: Q3 = ClusterQuiver(['E',6]); Q3.mutate([5,2,1])
         sage: _connected_mutation_type_AAtildeD(Q3.digraph(),ret_conn_vert=True)
         'unknown'
     """
     # naming the vertices
-    vertices = dg.vertices()
+    vertices = list(dg)
     n = dg.order()
 
     # Test if ClusterQuiver(dg) is of type D_n Type 1, i.e. A_{n-2} plus two leaves
@@ -836,7 +853,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 if type_tmp[0].letter() == 'A' and type_tmp[0].is_finite():
                     if v in type_tmp[1]:
                         type_tmp[1].remove(v)
-                        if n == 4: type_tmp[1].extend( dead_neighbors[:2] )
+                        if n == 4:
+                            type_tmp[1].extend(dead_neighbors[:2])
                         if ret_conn_vert:
                             return [ QuiverMutationType( ['D',n] ), type_tmp[1] ]
                         else:
@@ -1128,8 +1146,8 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         else:
             long_cycle = [ cycle, ['A',n-1,1] ]
     # if we haven't found a "long_cycle", we are in finite type A
-    if long_cycle == False:
-        long_cycle = [ [], QuiverMutationType(['A',n]) ]
+    if not long_cycle:
+        long_cycle = [[], QuiverMutationType(['A', n])]
 
     # The 'connected vertices' are now computed.
     # Attention: 0-1-2 in type A_3 has connecting vertices 0 and 2, while in type D_3 it has connecting vertex 1;
@@ -1158,7 +1176,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         cycle = [e]
         v = e[1]
         while tmp:
-            e = filter( lambda x: v in x, tmp)[0]
+            e = next(x for x in tmp if v in x)
             if v == e[0]:
                 cycle.append(e)
                 v = e[1]
@@ -1209,38 +1227,71 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
 
 @cached_function
-def load_data(n):
+def load_data(n, user=True):
     r"""
     Load a dict with keys being tuples representing exceptional
     QuiverMutationTypes, and with values being lists or sets
     containing all mutation equivalent quivers as dig6 data.
 
     We check
-     - if the data is stored by the user, and if this is not the case
-     - if the data is stored by the optional package install
+
+    - the data stored by the user (unless ``user=False`` was given)
+    - and the data installed by the optional package ``database_mutation_class``.
+
+    INPUT:
+
+    - ``user`` -- boolean (default: ``True``) whether to look at user
+      data. If not, only consider the optional package.
 
     EXAMPLES::
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import load_data
-        sage: load_data(2) # random
+        sage: load_data(2) # random - depends on the data the user has stored
         {('G', 2): [('AO', (((0, 1), (1, -3)),)), ('AO', (((0, 1), (3, -1)),))]}
+
+    TESTS:
+
+    We test data from the ``database_mutation_class`` optional package::
+
+        sage: load_data(2, user=False)      # optional - database_mutation_class
+        {('G', 2): [('AO', (((0, 1), (1, -3)),)), ('AO', (((0, 1), (3, -1)),))]}
+        sage: D = load_data(3, user=False)  # optional - database_mutation_class
+        sage: sorted(D.items())             # optional - database_mutation_class
+        [(('G', 2, -1),
+          [('BH?', (((1, 2), (1, -3)),)),
+           ('BGO', (((2, 1), (3, -1)),)),
+           ('BW?', (((0, 1), (3, -1)),)),
+           ('BP?', (((0, 1), (1, -3)),)),
+           ('BP_', (((0, 1), (1, -3)), ((2, 0), (3, -1)))),
+           ('BP_', (((0, 1), (3, -1)), ((1, 2), (1, -3)), ((2, 0), (2, -2))))]),
+         (('G', 2, 1),
+          [('BH?', (((1, 2), (3, -1)),)),
+           ('BGO', (((2, 1), (1, -3)),)),
+           ('BW?', (((0, 1), (1, -3)),)),
+           ('BP?', (((0, 1), (3, -1)),)),
+           ('BKO', (((1, 0), (3, -1)), ((2, 1), (1, -3)))),
+           ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))])]
     """
-    import os.path
-    import cPickle
     from sage.env import DOT_SAGE, SAGE_SHARE
-    relative_filename = 'cluster_algebra_quiver/mutation_classes_%s.dig6'%n
-    getfilename = lambda path: os.path.join(path,relative_filename)
+
     # we check
     # - if the data is stored by the user, and if this is not the case
     # - if the data is stored by the optional package install
-    data_dict = dict()
-    for filename in [getfilename(DOT_SAGE),getfilename(SAGE_SHARE)]:
-        if os.path.isfile(filename):
-            f = open(filename,'r')
-            data_new = cPickle.load(f)
-            f.close()
-            data_dict.update(data_new)
-    return data_dict
+    paths = [SAGE_SHARE]
+    if user:
+        paths.append(DOT_SAGE)
+    data = {}
+    for path in paths:
+        filename = os.path.join(path, 'cluster_algebra_quiver', 'mutation_classes_%s.dig6'%n)
+        try:
+            with open(filename, 'rb') as fobj:
+                data_new = pickle.load(fobj)
+        except Exception:
+            # File does not exist, corrupt pickle, wrong Python version...
+            pass
+        else:
+            data.update(data_new)
+    return data
 
 
 def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
@@ -1253,7 +1304,7 @@ def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
 
     EXAMPLES::
 
-        sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6, _dg_canonical_form
+        sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _mutation_type_from_data
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['F',4]).canonical_label().digraph()
@@ -1346,13 +1397,13 @@ def _mutation_type_test(n):
     keys = data.keys()
     for mutation_type in sorted(keys, key=str):
         mt = QuiverMutationType( mutation_type )
-        print all( ClusterQuiver(_dig6_to_digraph(dig6)).mutation_type() == mt for dig6 in data[mutation_type]), mutation_type
+        print(all( ClusterQuiver(_dig6_to_digraph(dig6)).mutation_type() == mt for dig6 in data[mutation_type]), mutation_type)
     from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import _construct_exceptional_mutation_classes
     data = _construct_exceptional_mutation_classes( n )
     keys = data.keys()
     for mutation_type in sorted(keys, key=str):
         mt = QuiverMutationType( mutation_type )
-        print all( ClusterQuiver(_dig6_to_digraph(dig6)).mutation_type() == mt for dig6 in data[mutation_type]), mutation_type
+        print(all( ClusterQuiver(_dig6_to_digraph(dig6)).mutation_type() == mt for dig6 in data[mutation_type]), mutation_type)
 
 
 def _random_tests(mt, k, mut_class=None, nr_mut=5):
@@ -1367,8 +1418,8 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
     - ``nr_mut`` (integer, default:5) the number of mutations performed before
       testing
 
-    The idea of of this random test is to start with a mutation type
-    and compute is mutation class (or have this class given). Now,
+    The idea of this random test is to start with a mutation type
+    and compute its mutation class (or have this class given). Now,
     every quiver in this mutation class is slightly changed in order
     to obtain a matrix of the same type or something very similar.
     Now, the new type is computed and checked if it stays stable for
@@ -1385,12 +1436,12 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
     import random
     if mut_class is None:
         mut_class = ClusterQuiver(mt).mutation_class(data_type='dig6')
-    print "testing " + str( mt )
+    print("testing " + str(mt))
     for dig6 in mut_class:
         M_const = _dig6_to_matrix( dig6 )
         nz = [ (i,j) for i,j in M_const.nonzero_positions() if i > j ]
         # performing k tests on the matrix M_const
-        for i in xrange(k):
+        for i in range(k):
             M = copy( M_const )
             # every pair M[i,j],M[j,i] is possibly changed
             # while the property of being skew-symmetrizable is kept
@@ -1398,47 +1449,53 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                 a,b = M[i,j],M[j,i]
                 skew_sym = False
                 while not skew_sym:
-                    ran = random.randint(1,2)
+                    ran = random.randint(1, 2)
                     if ran == 1:
-                        M[i,j], M[j,i] = -M[j,i], -M[i,j]
+                        M[i, j], M[j, i] = -M[j, i], -M[i, j]
                     elif ran == 2:
-                        ran2 = random.randint(1,8)
-                        if   ran2 == 1: c,d = 1,-1
-                        elif ran2 == 2: c,d = 1,-2
-                        elif ran2 == 3: c,d = 2,-1
-                        elif ran2 == 4: c,d = 1,-3
-                        elif ran2 == 5: c,d = 3,-1
-                        elif ran2 == 6: c,d = 2,-2
-                        elif ran2 == 7: c,d = 1,-4
-                        elif ran2 == 8: c,d = 4,-1
-                        M[i,j],M[j,i] = c,d
-                    if M.is_skew_symmetrizable( positive=True ):
+                        ran2 = random.randint(1, 8)
+                        if ran2 == 1:
+                            c, d = 1, -1
+                        elif ran2 == 2:
+                            c, d = 1, -2
+                        elif ran2 == 3:
+                            c, d = 2, -1
+                        elif ran2 == 4:
+                            c, d = 1, -3
+                        elif ran2 == 5:
+                            c, d = 3, -1
+                        elif ran2 == 6:
+                            c, d = 2, -2
+                        elif ran2 == 7:
+                            c, d = 1, -4
+                        elif ran2 == 8:
+                            c, d = 4, -1
+                        M[i, j], M[j, i] = c, d
+                    if M.is_skew_symmetrizable(positive=True):
                         skew_sym = True
                     else:
-                        M[i,j],M[j,i] = a,b
+                        M[i, j], M[j, i] = a, b
             # we now have a new matrix M
             # and a new digraph db
-            dg = _matrix_to_digraph( M )
-            mt = _connected_mutation_type( dg )
+            dg = _matrix_to_digraph(M)
+            mt = _connected_mutation_type(dg)
             mut = -1
             # we perform nr_mut many mutations
-            for i in xrange(nr_mut):
+            for k in range(nr_mut):
                 # while making sure that we do not mutate back
                 mut_tmp = mut
                 while mut == mut_tmp:
-                    mut = random.randint(0,dg.order()-1)
-                dg_new = _digraph_mutate( dg, mut, dg.order(), 0 )
-                M = _edge_list_to_matrix(dg.edges(),dg.order(),0)
-                # M_new = _edge_list_to_matrix(dg_new.edges(),dg_new.order(),0)
-                mt_new = _connected_mutation_type( dg_new )
-                if not mt == mt_new:
-                    print "FOUND ERROR!"
-                    M1 = _edge_list_to_matrix( dg.edges(), dg.order(), 0 )
-                    print M1
-                    print "has mutation type " + str( mt ) + " while it has mutation type " + str(mt_new) + " after mutating at " + str(mut) + ":"
-                    M2 = _edge_list_to_matrix( dg_new.edges(), dg.order(), 0 )
-                    print M2
-                    return dg,dg_new
+                    mut = random.randint(0, dg.order() - 1)
+                dg_new = _digraph_mutate(dg, mut)
+                mt_new = _connected_mutation_type(dg_new)
+                if mt != mt_new:
+                    print("FOUND ERROR!")
+                    print(_edge_list_to_matrix(dg.edges(),
+                                               list(range(dg.order())), []))
+                    print("has mutation type " + str(mt) + " while it has mutation type " + str(mt_new) + " after mutating at " + str(mut) + ":")
+                    print(_edge_list_to_matrix(dg_new.edges(),
+                                               list(range(dg.order())), []))
+                    return dg, dg_new
                 else:
                     dg = dg_new
 

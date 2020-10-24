@@ -1,6 +1,7 @@
 """
 Composition species
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -15,10 +16,9 @@ Composition species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from species import GenericCombinatorialSpecies
-from structure import GenericSpeciesStructure
-from partition_species import PartitionSpecies
-from sage.misc.cachefunc import cached_function
+from .species import GenericCombinatorialSpecies
+from .structure import GenericSpeciesStructure
+from .partition_species import PartitionSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
 class CompositionSpeciesStructure(GenericSpeciesStructure):
@@ -41,8 +41,8 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.structures(['a','b','c']).random_element()
-            F-structure: {{'a', 'b', 'c'}}; G-structures: [('a', 'b', 'c')]
+            sage: L.structures(['a','b','c'])[0]
+            F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),)
         """
         f, gs = self._list
         return "F-structure: %s; G-structures: %s"%(repr(f), repr(gs))
@@ -56,18 +56,29 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
             sage: L = E(C)
             sage: S = L.structures(['a','b','c']).list()
             sage: a = S[2]; a
-            F-structure: {{'a', 'c'}, {'b'}}; G-structures: [('a', 'c'), ('b')]
+            F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
             sage: a.transport(p)
-            F-structure: {{'a', 'b'}, {'c'}}; G-structures: [('a', 'c'), ('b')]
+            F-structure: {{'a', 'b'}, {'c'}}; G-structures: (('a', 'c'), ('b'))
         """
         f, gs = self._list
         pi = self._partition.transport(perm)
         f = f.change_labels(pi._list)
-        g = [g.change_labels(part) for g,part in zip(gs, pi.labels())]
+        g = [g.change_labels(part) for g,part in zip(gs, pi)]
         return self.__class__(self, self._labels, pi, f, gs)
 
     def change_labels(self, labels):
         """
+        Return a relabelled structure.
+
+        INPUT:
+
+        - ``labels``, a list of labels.
+
+        OUTPUT:
+
+        A structure with the i-th label of self replaced with the i-th
+        label of the list.
+
         EXAMPLES::
 
             sage: p = PermutationGroupElement((2,3))
@@ -75,14 +86,14 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
             sage: L = E(C)
             sage: S = L.structures(['a','b','c']).list()
             sage: a = S[2]; a
-            F-structure: {{'a', 'c'}, {'b'}}; G-structures: [('a', 'c'), ('b')]
+            F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
             sage: a.change_labels([1,2,3])
             F-structure: {{1, 3}, {2}}; G-structures: [(1, 3), (2)]
         """
         f, gs = self._list
         pi = self._partition.change_labels(labels)
-        f = f.change_labels(pi._list)
-        g = [g.change_labels(part) for g,part in zip(gs, pi.labels())]
+        f = f.change_labels(list(pi))
+        g = [g.change_labels(part) for g,part in zip(gs, pi)]
         return self.__class__(self, labels, pi, f, g)
 
 
@@ -126,12 +137,12 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
             sage: L.structures(['a','b','c']).list()
-            [F-structure: {{'a', 'b', 'c'}}; G-structures: [('a', 'b', 'c')],
-             F-structure: {{'a', 'b', 'c'}}; G-structures: [('a', 'c', 'b')],
-             F-structure: {{'a', 'c'}, {'b'}}; G-structures: [('a', 'c'), ('b')],
-             F-structure: {{'a', 'b'}, {'c'}}; G-structures: [('a', 'b'), ('c')],
-             F-structure: {{'b', 'c'}, {'a'}}; G-structures: [('b', 'c'), ('a')],
-             F-structure: {{'a'}, {'b'}, {'c'}}; G-structures: [('a'), ('b'), ('c')]]
+            [F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),),
+             F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'c', 'b'),),
+             F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b')),
+             F-structure: {{'a', 'b'}, {'c'}}; G-structures: (('a', 'b'), ('c')),
+             F-structure: {{'b', 'c'}, {'a'}}; G-structures: (('b', 'c'), ('a')),
+             F-structure: {{'a'}, {'b'}, {'c'}}; G-structures: (('a'), ('b'), ('c'))]
 
         TESTS::
 
@@ -152,16 +163,16 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: [g._list for g in gs]
             [[1, 2], [1]]
         """
-        from sage.combinat.cartesian_product import CartesianProduct
+        from itertools import product
         P = PartitionSpecies()
         for pi in P.structures(labels):
-            #The labels of the G-structures will be just be the things
-            #in labels
-            gs = CartesianProduct(*[self._G.structures(part.labels()) for part in pi])
+            # The labels of the G-structures will be just be the things
+            # in labels
+            gs = product(*[self._G.structures(part.label_subset()) for part in pi])
 
-            #The labels of the F-structure will be set objects
+            # The labels of the F-structure will be set objects
             fs = self._F.structures(list(pi))
-            for f, gg in CartesianProduct(fs, gs):
+            for f, gg in product(fs, gs):
                 yield structure_class(self, labels, pi, f, gg)
 
     def _isotypes(self, structure_class, labels):
@@ -214,7 +225,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
              p[1, 1, 1] + p[2, 1] + p[3],
              p[1, 1, 1, 1] + p[2, 1, 1] + p[2, 2] + p[3, 1] + p[4]]
 
-        Here we (indirectly) check that the the cycle index series for
+        Here we (indirectly) check that the cycle index series for
         permutations weighted by the number of cycles is correctly
         computed.
 
@@ -227,7 +238,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: S.isotype_generating_series().coefficients(5) #indirect
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
 
-        We do the same thing with set partitions weighed by the number of
+        We do the same thing with set partitions weighted by the number of
         blocks.
 
         ::

@@ -99,10 +99,10 @@ cdef class QuaternaryMatrix(LeanMatrix):
     cdef void conjugate(self)   # Not a Sage matrix operation
 
 
-cdef class IntegerMatrix(LeanMatrix):
+cdef class PlusMinusOneMatrix(LeanMatrix):
     cdef int* _entries
 
-    cdef inline get(self, long r, long c)   # Not a Sage matrix operation
+    cdef inline int get(self, long r, long c)   # Not a Sage matrix operation
     cdef inline void set(self, long r, long c, int x)   # Not a Sage matrix operation
 
     cdef inline long row_len(self, long i) except -1   # Not a Sage matrix operation

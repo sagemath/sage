@@ -1,3 +1,4 @@
+# distutils: extra_compile_args = -D_XPG6
 """
 FLINT fmpz_poly class wrapper
 
@@ -18,14 +19,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include 'sage/ext/stdsage.pxi'
-
-from sage.misc.long cimport pyobject_to_long
-
 from cpython.sequence cimport *
 
+from cysignals.memory cimport sig_free
+
+from sage.arith.long cimport pyobject_to_long
+from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.structure.sage_object cimport SageObject
 from sage.rings.integer cimport Integer
+from sage.libs.flint.fmpz_poly cimport *
 
 cdef class Fmpz_poly(SageObject):
 
@@ -51,10 +53,10 @@ cdef class Fmpz_poly(SageObject):
         cdef long c
         cdef Integer w
         if isinstance(v, str):
-            if not fmpz_poly_set_str(self.poly, v):
+            if not fmpz_poly_set_str(self.poly, str_to_bytes(v)):
                 return
             else:
-                raise ValueError, "Unable to create Fmpz_poly from that string."
+                raise ValueError("Unable to create Fmpz_poly from that string.")
         if not PySequence_Check(v):
             v = [v]
         try:
@@ -65,7 +67,7 @@ cdef class Fmpz_poly(SageObject):
                 w = Integer(v[i])
                 fmpz_poly_set_coeff_mpz(self.poly, i, w.value)
         except OverflowError:
-            raise ValueError, "No fmpz_poly_set_coeff_mpz() method."
+            raise ValueError("No fmpz_poly_set_coeff_mpz() method.")
 
     def __dealloc__(self):
         fmpz_poly_clear(self.poly)
@@ -102,7 +104,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f[200]
             0
         """
-        cdef Integer res = <Integer>PY_NEW(Integer)
+        cdef Integer res = Integer.__new__(Integer)
         fmpz_poly_get_coeff_mpz(res.value, self.poly, i)
         return res
 
@@ -117,8 +119,8 @@ cdef class Fmpz_poly(SageObject):
             8  0 0 0 0 0 0 0 1
         """
         cdef char* ss = fmpz_poly_get_str(self.poly)
-        cdef object s = ss
-        sage_free(ss)
+        cdef object s = char_to_str(ss)
+        sig_free(ss)
         return s
 
     def degree(self):
@@ -150,7 +152,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f.list()
             [2, 1, 0, -1]
         """
-        return [self[i] for i in xrange(self.degree()+1)]
+        return [self[i] for i in xrange(self.degree() + 1)]
 
     def __add__(left, right):
         """
@@ -253,7 +255,7 @@ cdef class Fmpz_poly(SageObject):
             sage: f**(3/2)
             Traceback (most recent call last):
             ...
-            TypeError: rational is not an integer
+            TypeError: unable to convert rational 3/2 to an integer
         """
         cdef long nn = pyobject_to_long(n)
         if not isinstance(self, Fmpz_poly):
@@ -276,9 +278,9 @@ cdef class Fmpz_poly(SageObject):
             3  1 2000 1998000
         """
         if exp < 0:
-            raise ValueError, "Exponent must be at least 0"
+            raise ValueError("Exponent must be at least 0")
         if n < 0:
-            raise ValueError, "Exponent must be at least 0"
+            raise ValueError("Exponent must be at least 0")
         cdef long exp_c = exp, nn = n
         cdef Fmpz_poly res = <Fmpz_poly>Fmpz_poly.__new__(Fmpz_poly)
         fmpz_poly_pow_trunc(res.poly, (<Fmpz_poly>self).poly, exp_c, nn)

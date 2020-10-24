@@ -39,6 +39,7 @@ from .output_graphics3d import (
     OutputSceneJmol,
     OutputSceneWavefront,
     OutputSceneCanvas3d,
+    OutputSceneThreejs,
 )
 
 from .output_video import (

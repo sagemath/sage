@@ -18,14 +18,17 @@ EXAMPLES::
     ]
 
 """
+from __future__ import absolute_import
 
-#########################################################################
-#       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
+#*****************************************************************************
+#       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#########################################################################
+#*****************************************************************************
 
 import weakref
 import re
@@ -34,13 +37,11 @@ import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 import sage.rings.all as rings
 
-from sage.rings.commutative_ring import is_CommutativeRing
-
-import ambient_eps
-import ambient_g0
-import ambient_g1
-import ambient_R
-import defaults
+from .ambient_eps import ModularFormsAmbient_eps
+from .ambient_g0 import ModularFormsAmbient_g0_Q
+from .ambient_g1 import ModularFormsAmbient_g1_Q, ModularFormsAmbient_gH_Q
+from . import ambient_R
+from . import defaults
 
 
 def canonical_parameters(group, level, weight, base_ring):
@@ -123,7 +124,7 @@ def canonical_parameters(group, level, weight, base_ring):
             raise ValueError("group and level do not match.")
         group = arithgroup.Gamma0(m)
 
-    if not is_CommutativeRing(base_ring):
+    if not isinstance(base_ring, rings.CommutativeRing):
         raise TypeError("base_ring (=%s) must be a commutative ring"%base_ring)
 
     # it is *very* important to include the level as part of the data
@@ -156,6 +157,7 @@ def ModularForms_clear_cache():
 def ModularForms(group  = 1,
                  weight = 2,
                  base_ring = None,
+                 eis_only=False,
                  use_cache = True,
                  prec = defaults.DEFAULT_PRECISION):
     r"""
@@ -163,16 +165,15 @@ def ModularForms(group  = 1,
 
     INPUT:
 
+    - ``group`` - A congruence subgroup or a Dirichlet character eps.
 
-    -  ``group`` - A congruence subgroup or a Dirichlet
-       character eps.
+    - ``weight`` - int, the weight, which must be an integer >= 1.
 
-    -  ``weight`` - int, the weight, which must be an
-       integer = 1.
+    - ``base_ring`` - the base ring (ignored if group is a Dirichlet character)
 
-    -  ``base_ring`` - the base ring (ignored if group is
-       a Dirichlet character)
-
+    - ``eis_only`` - if True, compute only the Eisenstein part of the space.
+      Only permitted (and only useful) in weight 1, where computing dimensions
+      of cusp form spaces is expensive.
 
     Create using the command ModularForms(group, weight, base_ring)
     where group could be either a congruence subgroup or a Dirichlet
@@ -243,18 +244,20 @@ def ModularForms(group  = 1,
         sage: m.T(2).charpoly('x')
         x^4 - 917*x^2 - 42284
 
-    This came up in a subtle bug (trac #5923)::
+    This came up in a subtle bug (:trac:`5923`)::
 
         sage: ModularForms(gp(1), gap(12))
         Modular Forms space of dimension 2 for Modular Group SL(2,Z) of weight 12 over Rational Field
 
-    This came up in another bug (related to trac #8630)::
+    This came up in another bug (related to :trac:`8630`)::
 
         sage: chi = DirichletGroup(109, CyclotomicField(3)).0
         sage: ModularForms(chi, 2, base_ring = CyclotomicField(15))
         Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 15 and degree 8
 
-    We create some weight 1 spaces. The first example works fine, since we can prove purely by Riemann surface theory that there are no weight 1 cusp forms::
+    We create some weight 1 spaces. Here modular symbol algorithms do not work.
+    In some small examples we can prove using Riemann--Roch that there are no
+    cusp forms anyway, so the entire space is Eisenstein::
 
         sage: M = ModularForms(Gamma1(11), 1); M
         Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(11) of weight 1 over Rational Field
@@ -272,22 +275,24 @@ def ModularForms(group  = 1,
         sage: M == M.eisenstein_subspace()
         True
 
-    This example doesn't work so well, because we can't calculate the cusp
-    forms; but we can still work with the Eisenstein series.
+    When this does not work (which happens as soon as the level is more than
+    about 30), we use the Hecke stability algorithm of George Schaeffer::
 
-        sage: M = ModularForms(Gamma1(57), 1); M
-        Modular Forms space of dimension (unknown) for Congruence Subgroup Gamma1(57) of weight 1 over Rational Field
-        sage: M.basis()
-        <repr(<sage.structure.sequence.Sequence_generic at 0x...>) failed: NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general>
-        sage: M.cuspidal_subspace().basis()
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: Computation of dimensions of weight 1 cusp forms spaces not implemented in general
+        sage: M = ModularForms(Gamma1(57), 1); M # long time
+        Modular Forms space of dimension 38 for Congruence Subgroup Gamma1(57) of weight 1 over Rational Field
+        sage: M.cuspidal_submodule().basis() # long time
+        [
+        q - q^4 + O(q^6),
+        q^3 - q^4 + O(q^6)
+        ]
 
-        sage: E = M.eisenstein_subspace(); E
-        Eisenstein subspace of dimension 36 of Modular Forms space of dimension (unknown) for Congruence Subgroup Gamma1(57) of weight 1 over Rational Field
+    The Eisenstein subspace in weight 1 can be computed quickly, without
+    triggering the expensive computation of the cuspidal part::
+
+        sage: E = EisensteinForms(Gamma1(59), 1); E # indirect doctest
+        Eisenstein subspace of dimension 29 of Modular Forms space for Congruence Subgroup Gamma1(59) of weight 1 over Rational Field
         sage: (E.0 + E.2).q_expansion(40)
-        1 + q^2 + 1473/2*q^36 - 1101/2*q^37 + q^38 - 373/2*q^39 + O(q^40)
+        1 + q^2 + 196*q^29 - 197*q^30 - q^31 + q^33 + q^34 + q^37 + q^38 - q^39 + O(q^40)
 
     """
     if isinstance(group, dirichlet.DirichletCharacter):
@@ -302,7 +307,11 @@ def ModularForms(group  = 1,
     else:
         level = group
 
-    key = canonical_parameters(group, level, weight, base_ring)
+    eis_only = bool(eis_only)
+    key = canonical_parameters(group, level, weight, base_ring) + (eis_only,)
+
+    if eis_only and weight != 1:
+        raise ValueError("eis_only parameter only valid in weight 1")
 
     if use_cache and key in _cache:
          M = _cache[key]()
@@ -310,21 +319,21 @@ def ModularForms(group  = 1,
              M.set_precision(prec)
              return M
 
-    (level, group, weight, base_ring) = key
+    (level, group, weight, base_ring, eis_only) = key
 
     M = None
     if arithgroup.is_Gamma0(group):
-        M = ambient_g0.ModularFormsAmbient_g0_Q(group.level(), weight)
+        M = ModularFormsAmbient_g0_Q(group.level(), weight)
         if base_ring != rings.QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
     elif arithgroup.is_Gamma1(group):
-        M = ambient_g1.ModularFormsAmbient_g1_Q(group.level(), weight)
+        M = ModularFormsAmbient_g1_Q(group.level(), weight, eis_only)
         if base_ring != rings.QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
     elif arithgroup.is_GammaH(group):
-        M = ambient_g1.ModularFormsAmbient_gH_Q(group, weight)
+        M = ModularFormsAmbient_gH_Q(group, weight, eis_only)
         if base_ring != rings.QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
@@ -340,7 +349,7 @@ def ModularForms(group  = 1,
             return ModularForms(eps.modulus(), weight, base_ring,
                                 use_cache = use_cache,
                                 prec = prec)
-        M = ambient_eps.ModularFormsAmbient_eps(eps, weight)
+        M = ModularFormsAmbient_eps(eps, weight, eis_only=eis_only)
         if base_ring != eps.base_ring():
             M = M.base_extend(base_ring) # ambient_R.ModularFormsAmbient_R(M, base_ring)
 
@@ -388,7 +397,11 @@ def EisensteinForms(group  = 1,
         sage: EisensteinForms(11,2)
         Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
     """
-    return ModularForms(group, weight, base_ring,
+    if weight==1:
+        return ModularForms(group, weight, base_ring,
+                        use_cache=use_cache, eis_only=True, prec=prec).eisenstein_submodule()
+    else:
+        return ModularForms(group, weight, base_ring,
                         use_cache=use_cache, prec=prec).eisenstein_submodule()
 
 
@@ -505,6 +518,11 @@ def parse_label(s):
         (Congruence Subgroup Gamma1(11), 0)
         sage: sage.modular.modform.constructor.parse_label('11wG1')
         (Congruence Subgroup Gamma1(11), 22)
+
+    GammaH labels should also return the group and index (:trac:`20823`)::
+
+        sage: sage.modular.modform.constructor.parse_label('389cGH[16]')
+        (Congruence Subgroup Gamma_H(389) with H generated by [16], 2)
     """
     m = re.match(r'(\d+)([a-z]+)((?:G.*)?)$', s)
     if not m:
@@ -522,9 +540,7 @@ def parse_label(s):
         if G[2] != '[' or G[-1] != ']':
             raise ValueError("Invalid congruence subgroup label: %s" % G)
         gens = [int(g.strip()) for g in G[3:-1].split(',')]
-        return arithgroup.GammaH(N, gens)
+        return arithgroup.GammaH(N, gens), index
     else:
         raise ValueError("Invalid congruence subgroup label: %s" % G)
     return G, index
-
-

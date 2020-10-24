@@ -5,7 +5,8 @@ This module implements Airy functions and their generalized derivatives. It
 supports symbolic functionality through Maxima and numeric evaluation through
 mpmath and scipy.
 
-Airy functions are solutions to the differential equation `f''(x) - x f(x) = 0`.
+Airy functions are solutions to the differential equation
+`f''(x) - x f(x) = 0`.
 
 Four global function symbols are immediately available, please see
 
@@ -35,25 +36,20 @@ Verify that the Airy functions are solutions to the differential equation::
     0
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2010 Oscar Gerardo Lazo Arjona <algebraicamente@gmail.com>
 #      Copyright (C) 2012 Douglas McNeil <dsm054@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
-from sage.structure.coerce import parent as sage_structure_coerce_parent
-from sage.functions.other import gamma
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.rational import Rational as R
-from sage.functions.special import meval
 from sage.calculus.functional import derivative
 
 
@@ -70,7 +66,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
           `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
           this gives the `n`-fold iterated integral.
 
-        .. math ::
+        .. MATH::
 
             f_0(z) = \operatorname{Ai}(z)
 
@@ -105,7 +101,8 @@ class FunctionAiryAiGeneral(BuiltinFunction):
             sage: derivative(airy_ai_general(n, x), n)
             Traceback (most recent call last):
             ...
-            NotImplementedError: cannot differentiate airy_ai in the first parameter
+            NotImplementedError: cannot differentiate airy_ai
+             in the first parameter
         """
         if diff_param == 0:
             raise NotImplementedError("cannot differentiate airy_ai in the"
@@ -160,11 +157,16 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_ai_simple
             sage: f = airy_ai_simple(x); f
             airy_ai(x)
+            sage: airy_ai_simple(x)._sympy_()
+            airyai(x)
         """
-        BuiltinFunction.__init__(self, "airy_ai",
-                                 latex_name=r'\operatorname{Ai}',
+        BuiltinFunction.__init__(self, 'airy_ai',
+                                 latex_name=r"\operatorname{Ai}",
                                  conversions=dict(mathematica='AiryAi',
-                                                  maxima='airy_ai'))
+                                                  maxima='airy_ai',
+                                                  sympy='airyai',
+                                                  fricas='airyAi',
+                                                  giac='Airy_Ai'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -190,6 +192,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             sage: airy_ai_simple(1.0 * I)
             0.331493305432141 - 0.317449858968444*I
         """
+        from .gamma import gamma
         if x == 0:
             r = ZZ(2) / 3
             return 1 / (3 ** (r) * gamma(r))
@@ -214,10 +217,10 @@ class FunctionAiryAiSimple(BuiltinFunction):
             0.006591139357460719
             sage: airy_ai_simple(I).n(algorithm='scipy')  # rel tol 1e-10
             0.33149330543214117 - 0.3174498589684438*I
-            
+
         TESTS::
 
-            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))                                          
+            sage: parent(airy_ai_simple(3).n(algorithm='scipy'))
             Real Field with 53 bits of precision
             sage: airy_ai_simple(3).n(algorithm='scipy', prec=200)
             Traceback (most recent call last):
@@ -228,16 +231,16 @@ class FunctionAiryAiSimple(BuiltinFunction):
         parent = kwargs.get('parent')
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
-                raise NotImplementedError("%s not implemented for precision > 53"%self.name())
+                raise NotImplementedError("%s not implemented for precision > 53" % self.name())
             from sage.rings.all import RR, CC
-            from sage.functions.other import real,imag
+            from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
                 y = airy(real(x))[0]
                 if parent is None:
                     return RR(y)
             else:
-                y = airy(complex(real(x),imag(x)))[0]
+                y = airy(complex(real(x), imag(x)))[0]
                 if parent is None:
                     return CC(y)
             return parent(y)
@@ -262,11 +265,15 @@ class FunctionAiryAiPrime(BuiltinFunction):
             airy_ai_prime(x)
             sage: airy_ai_prime(0)
             -1/3*3^(2/3)/gamma(1/3)
+            sage: airy_ai_prime(x)._sympy_()
+            airyaiprime(x)
         """
-        BuiltinFunction.__init__(self, "airy_ai_prime",
+        BuiltinFunction.__init__(self, 'airy_ai_prime',
                                  latex_name=r"\operatorname{Ai}'",
                                  conversions=dict(mathematica='AiryAiPrime',
-                                                  maxima='airy_dai'))
+                                                  maxima='airy_dai',
+                                                  sympy='airyaiprime',
+                                                  fricas='airyAiPrime'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -286,6 +293,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             sage: airy_ai_prime(0.0)
             -0.258819403792807
         """
+        from .gamma import gamma
         if x == 0:
             r = ZZ(1) / 3
             return -1 / (3 ** (r) * gamma(r))
@@ -307,30 +315,31 @@ class FunctionAiryAiPrime(BuiltinFunction):
             -0.00195864095020418
             sage: airy_ai_prime(I).n(algorithm='scipy')    # rel tol 1e-10
             -0.43249265984180707 + 0.09804785622924324*I
-            
+
         TESTS::
 
-            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))                                          
+            sage: parent(airy_ai_prime(3).n(algorithm='scipy'))
             Real Field with 53 bits of precision
             sage: airy_ai_prime(3).n(algorithm='scipy', prec=200)
             Traceback (most recent call last):
             ...
-            NotImplementedError: airy_ai_prime not implemented for precision > 53
+            NotImplementedError: airy_ai_prime not implemented
+             for precision > 53
         """
         algorithm = kwargs.get('algorithm', 'mpmath') or 'mpmath'
         parent = kwargs.get('parent', None)
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
-                raise NotImplementedError("%s not implemented for precision > 53"%self.name())
+                raise NotImplementedError("%s not implemented for precision > 53" % self.name())
             from sage.rings.all import RR, CC
-            from sage.functions.other import real,imag
+            from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
                 y = airy(real(x))[1]
                 if parent is None:
                     return RR(y)
             else:
-                y = airy(complex(real(x),imag(x)))[1]
+                y = airy(complex(real(x), imag(x)))[1]
                 if parent is None:
                     return CC(y)
             return parent(y)
@@ -341,6 +350,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
                                      parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
+
 
 airy_ai_general = FunctionAiryAiGeneral()
 airy_ai_simple = FunctionAiryAiSimple()
@@ -356,7 +366,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ai}(0)=\frac{1}{2^{2/3} \Gamma\left(\frac{2}{3}\right)},
 
@@ -364,7 +374,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
     Another way to define the Airy Ai function is:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Ai}(x)=\frac{1}{\pi}\int_0^\infty
         \cos\left(\frac{1}{3}t^3+xt\right) dt.
@@ -377,7 +387,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
       `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
       this gives the `n`-fold iterated integral.
 
-    .. math::
+    .. MATH::
 
         f_0(z) = \operatorname{Ai}(z)
 
@@ -445,7 +455,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         ....:  (x, -10, 5), color='red')
         Graphics object consisting of 2 graphics primitives
 
-    **References**
+    REFERENCES:
 
     - Abramowitz, Milton; Stegun, Irene A., eds. (1965), "Chapter 10"
 
@@ -457,7 +467,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         return airy_ai_simple(x, **kwds)
 
     # We take care of all other cases.
-    if not alpha in ZZ and not isinstance(alpha, Expression):
+    if alpha not in ZZ and not isinstance(alpha, Expression):
         return airy_ai_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_ai_general(alpha, x, **kwds)
@@ -493,7 +503,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
           `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
           this gives the `n`-fold iterated integral.
 
-        .. math::
+        .. MATH::
 
             f_0(z) = \operatorname{Bi}(z)
 
@@ -528,7 +538,8 @@ class FunctionAiryBiGeneral(BuiltinFunction):
             sage: derivative(airy_bi_general(n, x), n)
             Traceback (most recent call last):
             ...
-            NotImplementedError: cannot differentiate airy_bi in the first parameter
+            NotImplementedError: cannot differentiate airy_bi
+             in the first parameter
         """
         if diff_param == 0:
             raise NotImplementedError("cannot differentiate airy_bi in the"
@@ -581,11 +592,16 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_simple
             sage: f = airy_bi_simple(x); f
             airy_bi(x)
+            sage: f._sympy_()
+            airybi(x)
         """
-        BuiltinFunction.__init__(self, "airy_bi",
-                                 latex_name=r'\operatorname{Bi}',
+        BuiltinFunction.__init__(self, 'airy_bi',
+                                 latex_name=r"\operatorname{Bi}",
                                  conversions=dict(mathematica='AiryBi',
-                                                  maxima='airy_bi'))
+                                                  maxima='airy_bi',
+                                                  sympy='airybi',
+                                                  fricas='airyBi',
+                                                  giac='Airy_Bi'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -613,6 +629,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             sage: airy_bi_simple(1.0 * I)
             0.648858208330395 + 0.344958634768048*I
         """
+        from .gamma import gamma
         if x == 0:
             one_sixth = ZZ(1) / 6
             return 1 / (3 ** (one_sixth) * gamma(4 * one_sixth))
@@ -637,10 +654,10 @@ class FunctionAiryBiSimple(BuiltinFunction):
             14.037328963730136
             sage: airy_bi_simple(I).n(algorithm='scipy')  # rel tol 1e-10
             0.648858208330395 + 0.34495863476804844*I
-            
+
         TESTS::
 
-            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))                                          
+            sage: parent(airy_bi_simple(3).n(algorithm='scipy'))
             Real Field with 53 bits of precision
             sage: airy_bi_simple(3).n(algorithm='scipy', prec=200)
             Traceback (most recent call last):
@@ -651,16 +668,16 @@ class FunctionAiryBiSimple(BuiltinFunction):
         parent = kwargs.get('parent', None)
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
-                raise NotImplementedError("%s not implemented for precision > 53"%self.name())
+                raise NotImplementedError("%s not implemented for precision > 53" % self.name())
             from sage.rings.all import RR, CC
-            from sage.functions.other import real,imag
+            from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
                 y = airy(real(x))[2]
                 if parent is None:
                     return RR(y)
             else:
-                y = airy(complex(real(x),imag(x)))[2]
+                y = airy(complex(real(x), imag(x)))[2]
                 if parent is None:
                     return CC(y)
             return parent(y)
@@ -685,11 +702,15 @@ class FunctionAiryBiPrime(BuiltinFunction):
             airy_bi_prime(x)
             sage: airy_bi_prime(0)
             3^(1/6)/gamma(1/3)
+            sage: airy_bi_prime(x)._sympy_()
+            airybiprime(x)
         """
-        BuiltinFunction.__init__(self, "airy_bi_prime",
+        BuiltinFunction.__init__(self, 'airy_bi_prime',
                                  latex_name=r"\operatorname{Bi}'",
                                  conversions=dict(mathematica='AiryBiPrime',
-                                                  maxima='airy_dbi'))
+                                                  maxima='airy_dbi',
+                                                  sympy='airybiprime',
+                                                  fricas='airyBiPrime'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -709,6 +730,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             sage: airy_bi_prime(0.0)
             0.448288357353826
         """
+        from .gamma import gamma
         if x == 0:
             one_sixth = ZZ(1) / 6
             return 3 ** (one_sixth) / gamma(2 * one_sixth)
@@ -730,30 +752,31 @@ class FunctionAiryBiPrime(BuiltinFunction):
             161.92668350461398
             sage: airy_bi_prime(I).n(algorithm='scipy')  # rel tol 1e-10
             0.135026646710819 - 0.1288373867812549*I
-            
+
         TESTS::
 
-            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))                                          
+            sage: parent(airy_bi_prime(3).n(algorithm='scipy'))
             Real Field with 53 bits of precision
             sage: airy_bi_prime(3).n(algorithm='scipy', prec=200)
             Traceback (most recent call last):
             ...
-            NotImplementedError: airy_bi_prime not implemented for precision > 53
+            NotImplementedError: airy_bi_prime not implemented
+             for precision > 53
         """
         algorithm = kwargs.get('algorithm', 'mpmath') or 'mpmath'
         parent = kwargs.get('parent', None)
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
-                raise NotImplementedError("%s not implemented for precision > 53"%self.name())
+                raise NotImplementedError("%s not implemented for precision > 53" % self.name())
             from sage.rings.all import RR, CC
-            from sage.functions.other import real,imag
+            from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
                 y = airy(real(x))[3]
                 if parent is None:
                     return RR(y)
             else:
-                y = airy(complex(real(x),imag(x)))[3]
+                y = airy(complex(real(x), imag(x)))[3]
                 if parent is None:
                     return CC(y)
             return parent(y)
@@ -764,6 +787,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
                                      parent=parent)
         else:
             raise ValueError("unknown algorithm '%s'" % algorithm)
+
 
 airy_bi_general = FunctionAiryBiGeneral()
 airy_bi_simple = FunctionAiryBiSimple()
@@ -779,7 +803,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     solutions to the Airy differential equation `f''(x) - x f(x) = 0`. It is
     defined by the initial conditions:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Bi}(0)=\frac{1}{3^{1/6} \Gamma\left(\frac{2}{3}\right)},
 
@@ -787,7 +811,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
     Another way to define the Airy Bi function is:
 
-    .. math::
+    .. MATH::
 
         \operatorname{Bi}(x)=\frac{1}{\pi}\int_0^\infty
         \left[ \exp\left( xt -\frac{t^3}{3} \right)
@@ -801,7 +825,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
       `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
       this gives the `n`-fold iterated integral.
 
-    .. math ::
+    .. MATH::
 
         f_0(z) = \operatorname{Bi}(z)
 
@@ -869,7 +893,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         ....:  (x, -10, 5), color='red')
         Graphics object consisting of 2 graphics primitives
 
-    **References**
+    REFERENCES:
 
     - Abramowitz, Milton; Stegun, Irene A., eds. (1965), "Chapter 10"
 
@@ -881,7 +905,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         return airy_bi_simple(x, **kwds)
 
     # We take care of all other cases.
-    if not alpha in ZZ and not isinstance(alpha, Expression):
+    if alpha not in ZZ and not isinstance(alpha, Expression):
         return airy_bi_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_bi_general(alpha, x, **kwds)

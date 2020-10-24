@@ -1,0 +1,48 @@
+From d3d9983231e0f034e86a1e75761627eb8213b704 Mon Sep 17 00:00:00 2001
+From: fredrik <fredrik.johansson@gmail.com>
+Date: Wed, 29 Apr 2020 13:41:36 +0200
+Subject: [PATCH] handle flint incompatibilities
+
+---
+ fmpr.h        | 4 ++++
+ fmpz_extras.h | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/fmpr.h b/fmpr.h
+index 2204d72e..c6a8c342 100644
+--- a/fmpr.h
++++ b/fmpr.h
+@@ -22,7 +22,11 @@
+ #include "flint/flint.h"
+ #include "flint/fmpz.h"
+ #include "flint/fmpq.h"
++#if __FLINT_RELEASE < 20600
+ #include "flint/config.h"
++#else
++#include "flint/flint-config.h"
++#endif
+ #include "fmpz_extras.h"
+ 
+ #ifndef flint_abort
+diff --git a/fmpz_extras.h b/fmpz_extras.h
+index 4fd0538f..486e28c8 100644
+--- a/fmpz_extras.h
++++ b/fmpz_extras.h
+@@ -43,6 +43,8 @@ fmpz_add_inline(fmpz_t z, const fmpz_t x, const fmpz_t y)
+         fmpz_add(z, x, y);
+ }
+ 
++#if __FLINT_RELEASE < 20600
++
+ static __inline__ void
+ fmpz_add_si(fmpz_t z, const fmpz_t x, slong y)
+ {
+@@ -61,6 +63,8 @@ fmpz_sub_si(fmpz_t z, const fmpz_t x, slong y)
+         fmpz_add_ui(z, x, -y);
+ }
+ 
++#endif
++
+ static __inline__ void
+ fmpz_add_si_inline(fmpz_t z, const fmpz_t x, slong y)
+ {

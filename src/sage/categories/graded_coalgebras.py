@@ -9,15 +9,18 @@ Graded Coalgebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-def GradedCoalgebras(base_ring):
+from sage.categories.graded_modules import GradedModulesCategory
+from sage.categories.signed_tensor import SignedTensorProductsCategory
+from sage.misc.cachefunc import cached_method
+
+class GradedCoalgebras(GradedModulesCategory):
     """
     The category of graded coalgebras
 
     EXAMPLES::
 
         sage: C = GradedCoalgebras(QQ); C
-        Join of Category of graded modules over Rational Field
-            and Category of coalgebras over Rational Field
+        Category of graded coalgebras over Rational Field
         sage: C is Coalgebras(QQ).Graded()
         True
 
@@ -25,6 +28,37 @@ def GradedCoalgebras(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import Coalgebras
-    return Coalgebras(base_ring).Graded()
+    class SubcategoryMethods:
+        def SignedTensorProducts(self):
+            r"""
+            Return the full subcategory of objects of ``self`` constructed
+            as signed tensor products.
+
+            .. SEEALSO::
+
+                - :class:`~sage.categories.signed_tensor.SignedTensorProductsCategory`
+                - :class:`~.covariant_functorial_construction.CovariantFunctorialConstruction`
+
+            EXAMPLES::
+
+                sage: CoalgebrasWithBasis(QQ).Graded().SignedTensorProducts()
+                Category of signed tensor products of graded coalgebras with basis
+                 over Rational Field
+            """
+            return SignedTensorProductsCategory.category_of(self)
+
+    class SignedTensorProducts(SignedTensorProductsCategory):
+        @cached_method
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Coalgebras(QQ).Graded().SignedTensorProducts().extra_super_categories()
+                [Category of graded coalgebras over Rational Field]
+                sage: Coalgebras(QQ).Graded().SignedTensorProducts().super_categories()
+                [Category of graded coalgebras over Rational Field]
+
+            Meaning: a signed tensor product of coalgebras is a coalgebra
+            """
+            return [self.base_category()]
 

@@ -1,14 +1,16 @@
 """
 Local Masses and Siegel Densities
 """
-######################################################################################################
+########################################################################
 ##  Computes the local masses (rep'n densities of a form by itself) for a quadratic forms over ZZ
 ##      using the papers of Pall [PSPUM VIII (1965), pp95--105]  for p>2, and Watson [Mathematika
 ##      23, no. 1, (1976), pp 94--106] for p=2.  These formulas will also work for any local field
 ##          which is unramified at p=2.
 ##
 ##  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
-######################################################################################################
+########################################################################
+# python3
+from __future__ import division, print_function
 
 import copy
 
@@ -18,7 +20,7 @@ from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.rational_field import QQ
-from sage.rings.arith import legendre_symbol, kronecker, prime_divisors
+from sage.arith.all import legendre_symbol, kronecker, prime_divisors
 from sage.functions.all import sgn
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.misc.functional import squarefree_part
@@ -47,19 +49,18 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: Q.mass__by_Siegel_densities()
+        sage: m = Q.mass__by_Siegel_densities(); m
         1/384
-        sage: Q.mass__by_Siegel_densities() - (2^Q.dim() * factorial(Q.dim()))^(-1)
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
         0
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.mass__by_Siegel_densities()
+        sage: m = Q.mass__by_Siegel_densities(); m
         1/48
-        sage: Q.mass__by_Siegel_densities() - (2^Q.dim() * factorial(Q.dim()))^(-1)
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)
         0
-
     """
     ## Setup
     n = self.dim()
@@ -84,7 +85,7 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     #print "\n---", prod([zeta__exact(ZZ(j))  for j in range(2, 2*s+1, 2)])
     #print "gp3 = ", generic_prod
     if (n % 2 == 0):
-        generic_prod *= ZZ(1) * quadratic_L_function__exact(n/2, (-1)**(n/2) * char_d)
+        generic_prod *= quadratic_L_function__exact(n//2, ZZ(-1)**(n//2) * char_d)
         #print " NEW = ", ZZ(1) * quadratic_L_function__exact(n/2, (-1)**(n/2) * char_d)
         #print
     #print "gp4 = ", generic_prod
@@ -92,12 +93,12 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     #print "generic_prod =", generic_prod
 
     ## Determine the adjustment factors
-    adj_prod = 1
+    adj_prod = ZZ.one()
     for p in prime_divisors(2 * self.det()):
         ## Cancel out the generic factors
         p_adjustment = prod([1 - ZZ(p)**(-j)  for j in range(2, 2*s+1, 2)])
         if (n % 2 == 0):
-            p_adjustment *= ZZ(1) * (1 - kronecker((-1)**(n/2) * char_d, p) * ZZ(p)**(-n/2))
+            p_adjustment *= (1 - kronecker((-1)**(n//2) * char_d, p) * ZZ(p)**(-n//2))
             #print " EXTRA = ", ZZ(1) * (1 - kronecker((-1)**(n/2) * char_d, p) * ZZ(p)**(-n/2))
         #print "Factor to cancel the generic one:", p_adjustment
 
@@ -194,7 +195,7 @@ def Pall_mass_density_at_odd_prime(self, p):
     p_mass = prod(jordan_mass_list)
     p_mass *= 2**(s-1) * p**nu
 
-    print jordan_list, MJL, jordan_mass_list, p_mass
+    print(jordan_list, MJL, jordan_mass_list, p_mass)
 
     ## Return the result
     return p_mass
@@ -254,7 +255,7 @@ def Watson_mass_at_2(self):
     for (s,L) in Jordan_Blocks:
         n_dict[s+1] = L.dim()
         if diag_dict[s].dim() == 0:
-            m_dict[s+1] = ZZ(1)/ZZ(2) * L.dim()
+            m_dict[s+1] = ZZ.one()/ZZ(2) * L.dim()
         else:
             m_dict[s+1] = floor(ZZ(L.dim() - 1) / ZZ(2))
             #print " ==>", ZZ(L.dim() - 1) / ZZ(2), floor(ZZ(L.dim() - 1) / ZZ(2))
@@ -292,20 +293,12 @@ def Watson_mass_at_2(self):
     nu = sum([j * n_dict[j] * (ZZ(n_dict[j] + 1) / ZZ(2) + \
               sum([n_dict[r]  for r in range(j+1, s_max+2)]))  for j in range(s_min+1, s_max+2)])
     q = sum([sgn(nu_dict[j-1] * (n_dict[j] + sgn(nu_dict[j])))  for j in range(s_min+1, s_max+2)])
-    P = prod([ prod([1 - QQ(4)**(-i)  for i in range(1, m_dict[j]+1)])  for j in range(s_min+1, s_max+2)])
+    P = prod([prod([1 - QQ(4)**(-k)  for k in range(1, m_dict[j]+1)]) for j in range(s_min+1, s_max+2)])
     E = prod([ZZ(1)/ZZ(2) * (1 + eps_dict[j] * QQ(2)**(-m_dict[j]))  for j in range(s_min, s_max+3)])
-
-    #print "\nFinal Summary:"
-    #print "nu =", nu
-    #print "q = ", q
-    #print "P = ", P
-    #print "E = ", E
-
 
     ## Step 5: Compute the local mass for the prime 2.
     mass_at_2 = QQ(2)**(nu - q) * P / E
     return mass_at_2
-
 
 
 def Kitaoka_mass_at_2(self):
@@ -369,13 +362,13 @@ def Kitaoka_mass_at_2(self):
                 q += Jordan_Blocks[j][1].dim() + 1    ## When N_{j+1} is "odd", add n_j + 1
 
     ## Compute P = product of the P_j
-    P = QQ(1)
+    P = QQ.one()
     for j in range(s_min, s_max + 1):
         tmp_m = dim2_dict[j].dim() // 2
-        P *= prod([QQ(1) - QQ(4**(-k))  for j in range(1, tmp_m + 1)])
+        P *= prod(QQ.one() - QQ(4**(-k)) for k in range(1, tmp_m + 1))
 
     ## Compute the product E := prod_j (1 / E_j)
-    E = QQ(1)
+    E = QQ.one()
     for j in range(s_min - 1, s_max + 2):
         if (diag_dict[j-1].dim() == 0) and (diag_dict[j+1].dim() == 0) and \
            ((diag_dict[j].dim() != 2) or (((diag_dict[j][0,0] - diag_dict[j][1,1]) % 4) != 0)):
@@ -383,9 +376,9 @@ def Kitaoka_mass_at_2(self):
             ## Deal with the complicated case:
             tmp_m = dim2_dict[j].dim() // 2
             if dim2_dict[j].is_hyperbolic(2):
-                E *= 2 / (1 + 2**(-tmp_m))
+                E *= QQ(2) / (1 + 2**(-tmp_m))
             else:
-                E *= 2 / (1 - 2**(-tmp_m))
+                E *= QQ(2) / (1 - 2**(-tmp_m))
 
         else:
             E *= 2
@@ -398,7 +391,7 @@ def Kitaoka_mass_at_2(self):
     #print "E = ", E
 
     ## Compute the exponent w
-    w = QQ(0)
+    w = QQ.zero()
     for j in range(s_min, s_max+1):
         n_j = Jordan_Blocks[j][1].dim()
         for k in range(j+1, s_max+1):
@@ -409,7 +402,6 @@ def Kitaoka_mass_at_2(self):
     ## Step 5: Compute the local mass for the prime 2.
     mass_at_2 = (QQ(2)**(w - q)) * P * E
     return mass_at_2
-
 
 
 def mass_at_two_by_counting_mod_power(self, k):
@@ -429,7 +421,7 @@ def mass_at_two_by_counting_mod_power(self, k):
 
         a rational number
 
-    EXAMPLE::
+    EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.mass_at_two_by_counting_mod_power(1)

@@ -47,10 +47,12 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -59,6 +61,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -167,7 +170,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
         sage: S.semigroup_generators()
         Family ('a', 'b', 'c', 'd')
 
-    and with product given by contatenation::
+    and with product given by concatenation::
 
         sage: S('dab') * S('acb')
         'dabacb'
@@ -282,9 +285,6 @@ class FreeSemigroup(UniqueRepresentation, Parent):
             sage: bad in F
             True
 
-
-        TESTS::
-
             sage: S = Semigroups().Subquotients().example()
             sage: type(S._element_constructor_(17))
             <class 'sage.categories.examples.semigroups.QuotientOfLeftZeroSemigroup_with_category.element_class'>
@@ -334,10 +334,12 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_new() . . . pass
           running ._test_not_implemented_methods() . . . pass
           running ._test_pickling() . . . pass
           pass
@@ -346,6 +348,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         running ._test_elements_eq_transitive() . . . pass
         running ._test_elements_neq() . . . pass
         running ._test_eq() . . . pass
+        running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
@@ -556,10 +559,12 @@ class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
             ------------------------------------------------------------
             running ._test_cardinality() . . . pass
             running ._test_category() . . . pass
+            running ._test_construction() . . . pass
             running ._test_elements() . . .
               Running the test suite of self.an_element()
               running ._test_category() . . . pass
               running ._test_eq() . . . pass
+              running ._test_new() . . . pass
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
               pass
@@ -568,6 +573,7 @@ class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
             running ._test_elements_eq_transitive() . . . pass
             running ._test_elements_neq() . . . pass
             running ._test_eq() . . . pass
+            running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . fail
             Traceback (most recent call last):
               ...

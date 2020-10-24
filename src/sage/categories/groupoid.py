@@ -1,6 +1,7 @@
 r"""
 Groupoid
 """
+from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -11,16 +12,16 @@ Groupoid
 #******************************************************************************
 
 from sage.categories.category import CategoryWithParameters
-from sets_cat import Sets
+from .sets_cat import Sets
 
 class Groupoid(CategoryWithParameters):
     """
-    The category of groupoids, for a set (usually a group) $G$.
+    The category of groupoids, for a set (usually a group) `G`.
 
     FIXME:
 
      - Groupoid or Groupoids ?
-     - definition and link with http://en.wikipedia.org/wiki/Groupoid
+     - definition and link with :wikipedia:`Groupoid`
      - Should Groupoid inherit from Category_over_base?
 
     EXAMPLES::

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 ############################################################
 # Backwards compatible unpickling
 ############################################################
@@ -13,6 +14,6 @@ def unpickle_QuaternionAlgebra_v0(*key):
         sage: sage.algebras.quaternion_algebra.unpickle_QuaternionAlgebra_v0(*t)
         Quaternion Algebra (-5, -19) with base ring Rational Field
     """
-    from quatalg.quaternion_algebra import QuaternionAlgebra
+    from .quatalg.quaternion_algebra import QuaternionAlgebra
     return QuaternionAlgebra(*key)
 

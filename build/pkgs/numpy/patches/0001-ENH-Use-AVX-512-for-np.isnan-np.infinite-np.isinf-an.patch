@@ -1,0 +1,356 @@
+From 7bde5a589359a096be253738ed7c53330f7ff4ad Mon Sep 17 00:00:00 2001
+From: Raghuveer Devulapalli <raghuveer.devulapalli@intel.com>
+Date: Sun, 31 May 2020 09:16:33 -0700
+Subject: [PATCH 1/2] ENH: Use AVX-512 for np.isnan, np.infinite, np.isinf and
+ np.signbit (#16334)
+
+* ENH: Use AVX-512 for np.isnan, np.infinite, np.isinf and np.signbit
+
+* TST: Add tests to validate isnan, isfinite, signbit and isinf ufuncs
+
+* BENCH: Adding benchmarks for isnan, isinf, isfinite and signbit
+---
+ benchmarks/benchmarks/bench_avx.py           |   6 +-
+ numpy/core/code_generators/generate_umath.py |   8 +-
+ numpy/core/include/numpy/npy_common.h        |   7 ++
+ numpy/core/setup_common.py                   |  11 ++
+ numpy/core/src/umath/loops.c.src             |  10 +-
+ numpy/core/src/umath/loops.h.src             |   7 +-
+ numpy/core/src/umath/simd.inc.src            | 116 ++++++++++++++++++-
+ numpy/core/tests/test_umath.py               |  18 +++
+ 8 files changed, 173 insertions(+), 10 deletions(-)
+
+diff --git a/benchmarks/benchmarks/bench_avx.py b/benchmarks/benchmarks/bench_avx.py
+index 2a128b3ff..4f915f82a 100644
+--- a/benchmarks/benchmarks/bench_avx.py
++++ b/benchmarks/benchmarks/bench_avx.py
+@@ -13,7 +13,11 @@ avx_ufuncs = ['sin',
+               'rint',
+               'floor',
+               'ceil' ,
+-              'trunc']
++              'trunc',
++              'isnan',
++              'isfinite',
++              'isinf',
++              'signbit']
+ stride = [1, 2, 4]
+ dtype  = ['f', 'd']
+ 
+diff --git a/numpy/core/code_generators/generate_umath.py b/numpy/core/code_generators/generate_umath.py
+index 202912c5f..992bdc862 100644
+--- a/numpy/core/code_generators/generate_umath.py
++++ b/numpy/core/code_generators/generate_umath.py
+@@ -843,7 +843,7 @@ defdict = {
+     Ufunc(1, 1, None,
+           docstrings.get('numpy.core.umath.isnan'),
+           'PyUFunc_IsFiniteTypeResolver',
+-          TD(noobj, out='?'),
++          TD(noobj, simd=[('avx512_skx', 'fd')], out='?'),
+           ),
+ 'isnat':
+     Ufunc(1, 1, None,
+@@ -855,19 +855,19 @@ defdict = {
+     Ufunc(1, 1, None,
+           docstrings.get('numpy.core.umath.isinf'),
+           'PyUFunc_IsFiniteTypeResolver',
+-          TD(noobj, out='?'),
++          TD(noobj, simd=[('avx512_skx', 'fd')], out='?'),
+           ),
+ 'isfinite':
+     Ufunc(1, 1, None,
+           docstrings.get('numpy.core.umath.isfinite'),
+           'PyUFunc_IsFiniteTypeResolver',
+-          TD(noobj, out='?'),
++          TD(noobj, simd=[('avx512_skx', 'fd')], out='?'),
+           ),
+ 'signbit':
+     Ufunc(1, 1, None,
+           docstrings.get('numpy.core.umath.signbit'),
+           None,
+-          TD(flts, out='?'),
++          TD(flts, simd=[('avx512_skx', 'fd')], out='?'),
+           ),
+ 'copysign':
+     Ufunc(2, 1, None,
+diff --git a/numpy/core/include/numpy/npy_common.h b/numpy/core/include/numpy/npy_common.h
+index c2e755958..3cec0c6ff 100644
+--- a/numpy/core/include/numpy/npy_common.h
++++ b/numpy/core/include/numpy/npy_common.h
+@@ -64,6 +64,13 @@
+ #define NPY_GCC_TARGET_AVX512F
+ #endif
+ 
++#if defined HAVE_ATTRIBUTE_TARGET_AVX512_SKX && defined HAVE_LINK_AVX512_SKX
++#define NPY_GCC_TARGET_AVX512_SKX __attribute__((target("avx512f,avx512dq,avx512vl,avx512bw,avx512cd")))
++#elif defined HAVE_ATTRIBUTE_TARGET_AVX512_SKX_WITH_INTRINSICS
++#define NPY_GCC_TARGET_AVX512_SKX __attribute__((target("avx512f,avx512dq,avx512vl,avx512bw,avx512cd")))
++#else
++#define NPY_GCC_TARGET_AVX512_SKX
++#endif
+ /*
+  * mark an argument (starting from 1) that must not be NULL and is not checked
+  * DO NOT USE IF FUNCTION CHECKS FOR NULL!! the compiler will remove the check
+diff --git a/numpy/core/setup_common.py b/numpy/core/setup_common.py
+index 63c4a76a9..a37514eec 100644
+--- a/numpy/core/setup_common.py
++++ b/numpy/core/setup_common.py
+@@ -146,6 +146,10 @@ OPTIONAL_INTRINSICS = [("__builtin_isnan", '5.'),
+                         "stdio.h", "LINK_AVX2"),
+                        ("__asm__ volatile", '"vpaddd %zmm1, %zmm2, %zmm3"',
+                         "stdio.h", "LINK_AVX512F"),
++                       ("__asm__ volatile", '"vfpclasspd $0x40, %zmm15, %k6\\n"\
++                                             "vmovdqu8 %xmm0, %xmm1\\n"\
++                                             "vpbroadcastmb2q %k0, %xmm0\\n"',
++                        "stdio.h", "LINK_AVX512_SKX"),
+                        ("__asm__ volatile", '"xgetbv"', "stdio.h", "XGETBV"),
+                        ]
+ 
+@@ -164,6 +168,8 @@ OPTIONAL_FUNCTION_ATTRIBUTES = [('__attribute__((optimize("unroll-loops")))',
+                                  'attribute_target_avx2'),
+                                 ('__attribute__((target ("avx512f")))',
+                                  'attribute_target_avx512f'),
++                                ('__attribute__((target ("avx512f,avx512dq,avx512bw,avx512vl,avx512cd")))',
++                                 'attribute_target_avx512_skx'),
+                                 ]
+ 
+ # function attributes with intrinsics
+@@ -180,6 +186,11 @@ OPTIONAL_FUNCTION_ATTRIBUTES_WITH_INTRINSICS = [('__attribute__((target("avx2,fm
+                                 'attribute_target_avx512f_with_intrinsics',
+                                 '__m512 temp = _mm512_set1_ps(1.0)',
+                                 'immintrin.h'),
++                                ('__attribute__((target ("avx512f,avx512dq,avx512bw,avx512vl,avx512cd")))',
++                                'attribute_target_avx512_skx_with_intrinsics',
++                                '__mmask8 temp = _mm512_fpclass_pd_mask(_mm512_set1_pd(1.0), 0x01);\
++                                _mm_mask_storeu_epi8(NULL, 0xFF, _mm_broadcastmb_epi64(temp))',
++                                'immintrin.h'),
+                                 ]
+ 
+ # variable attributes tested via "int %s a" % attribute
+diff --git a/numpy/core/src/umath/loops.c.src b/numpy/core/src/umath/loops.c.src
+index a59a9acf5..dbb8dd48e 100644
+--- a/numpy/core/src/umath/loops.c.src
++++ b/numpy/core/src/umath/loops.c.src
+@@ -1863,10 +1863,15 @@ NPY_NO_EXPORT void
+  * #kind = isnan, isinf, isfinite, signbit#
+  * #func = npy_isnan, npy_isinf, npy_isfinite, npy_signbit#
+  **/
++
++/**begin repeat2
++ * #ISA  = , _avx512_skx#
++ * #isa  = simd, avx512_skx#
++ **/
+ NPY_NO_EXPORT void
+-@TYPE@_@kind@(char **args, npy_intp const *dimensions, npy_intp const *steps, void *NPY_UNUSED(func))
++@TYPE@_@kind@@ISA@(char **args, npy_intp const *dimensions, npy_intp const *steps, void *NPY_UNUSED(func))
+ {
+-    if (!run_@kind@_simd_@TYPE@(args, dimensions, steps)) {
++    if (!run_@kind@_@isa@_@TYPE@(args, dimensions, steps)) {
+         UNARY_LOOP {
+             const @type@ in1 = *(@type@ *)ip1;
+             *((npy_bool *)op1) = @func@(in1) != 0;
+@@ -1874,6 +1879,7 @@ NPY_NO_EXPORT void
+     }
+     npy_clear_floatstatus_barrier((char*)dimensions);
+ }
++/**end repeat2**/
+ /**end repeat1**/
+ 
+ NPY_NO_EXPORT void
+diff --git a/numpy/core/src/umath/loops.h.src b/numpy/core/src/umath/loops.h.src
+index 50a7ccfee..b63d442ef 100644
+--- a/numpy/core/src/umath/loops.h.src
++++ b/numpy/core/src/umath/loops.h.src
+@@ -274,8 +274,13 @@ NPY_NO_EXPORT void
+  * #kind = isnan, isinf, isfinite, signbit, copysign, nextafter, spacing#
+  * #func = npy_isnan, npy_isinf, npy_isfinite, npy_signbit, npy_copysign, nextafter, spacing#
+  **/
++
++/**begin repeat2
++ * #ISA  = , _avx512_skx#
++ **/
+ NPY_NO_EXPORT void
+-@TYPE@_@kind@(char **args, npy_intp const *dimensions, npy_intp const *steps, void *NPY_UNUSED(func));
++@TYPE@_@kind@@ISA@(char **args, npy_intp const *dimensions, npy_intp const *steps, void *NPY_UNUSED(func));
++/**end repeat2**/
+ /**end repeat1**/
+ 
+ /**begin repeat1
+diff --git a/numpy/core/src/umath/simd.inc.src b/numpy/core/src/umath/simd.inc.src
+index b28c63930..a5308d83a 100644
+--- a/numpy/core/src/umath/simd.inc.src
++++ b/numpy/core/src/umath/simd.inc.src
+@@ -1,4 +1,4 @@
+-/* -*- c -*- */
++
+ 
+ /*
+  * This file is for the definitions of simd vectorized operations.
+@@ -295,6 +295,40 @@ run_binary_avx512f_@func@_@TYPE@(char **args, npy_intp const *dimensions, npy_in
+ }
+ 
+ 
++/**end repeat1**/
++/**end repeat**/
++
++/**begin repeat
++ * #type = npy_float, npy_double, npy_longdouble#
++ * #TYPE = FLOAT, DOUBLE, LONGDOUBLE#
++ * #EXISTS = 1, 1, 0#
++ */
++
++/**begin repeat1
++ * #func = isnan, isfinite, isinf, signbit#
++ */
++
++#if defined HAVE_ATTRIBUTE_TARGET_AVX512_SKX_WITH_INTRINSICS && defined NPY_HAVE_SSE2_INTRINSICS && @EXISTS@
++static NPY_INLINE NPY_GCC_TARGET_AVX512_SKX void
++AVX512_SKX_@func@_@TYPE@(npy_bool*, @type@*, const npy_intp n, const npy_intp stride);
++#endif
++
++static NPY_INLINE int
++run_@func@_avx512_skx_@TYPE@(char **args, npy_intp const *dimensions, npy_intp const *steps)
++{
++#if defined HAVE_ATTRIBUTE_TARGET_AVX512_SKX_WITH_INTRINSICS && defined NPY_HAVE_SSE2_INTRINSICS && @EXISTS@
++    if (IS_OUTPUT_BLOCKABLE_UNARY(sizeof(npy_bool), 64)) {
++        AVX512_SKX_@func@_@TYPE@((npy_bool*)args[1], (@type@*)args[0], dimensions[0], steps[0]);
++        return 1;
++    }
++    else {
++        return 0;
++    }
++#endif
++    return 0;
++}
++
++
+ /**end repeat1**/
+ /**end repeat**/
+ 
+@@ -1973,6 +2007,84 @@ static NPY_INLINE NPY_GCC_OPT_3 NPY_GCC_TARGET_@ISA@ @vtype@d
+ #endif
+ /**end repeat**/
+ 
++/**begin repeat
++ * #type = npy_float, npy_double#
++ * #TYPE = FLOAT, DOUBLE#
++ * #num_lanes = 16, 8#
++ * #vsuffix = ps, pd#
++ * #mask = __mmask16, __mmask8#
++ * #vtype = __m512, __m512d#
++ * #scale = 4, 8#
++ * #vindextype = __m512i, __m256i#
++ * #vindexload = _mm512_loadu_si512, _mm256_loadu_si256#
++ * #episize = epi32, epi64#
++ */
++
++/**begin repeat1
++ * #func = isnan, isfinite, isinf, signbit#
++ * #IMM8 = 0x81, 0x99, 0x18, 0x04#
++ * #is_finite = 0, 1, 0, 0#
++ * #is_signbit = 0, 0, 0, 1#
++ */
++#if defined HAVE_ATTRIBUTE_TARGET_AVX512_SKX_WITH_INTRINSICS && defined NPY_HAVE_SSE2_INTRINSICS
++static NPY_INLINE NPY_GCC_TARGET_AVX512_SKX void
++AVX512_SKX_@func@_@TYPE@(npy_bool* op, @type@* ip, const npy_intp array_size, const npy_intp steps)
++{
++    const npy_intp stride_ip = steps/(npy_intp)sizeof(@type@);
++    npy_intp num_remaining_elements = array_size;
++
++    @mask@ load_mask = avx512_get_full_load_mask_@vsuffix@();
++#if @is_signbit@
++    @vtype@ signbit = _mm512_set1_@vsuffix@(-0.0);
++#endif
++
++    /*
++     * Note: while generally indices are npy_intp, we ensure that our maximum
++     * index will fit in an int32 as a precondition for this function via
++     * IS_OUTPUT_BLOCKABLE_UNARY
++     */
++
++    npy_int32 index_ip[@num_lanes@];
++    for (npy_int32 ii = 0; ii < @num_lanes@; ii++) {
++        index_ip[ii] = ii*stride_ip;
++    }
++    @vindextype@ vindex_ip = @vindexload@((@vindextype@*)&index_ip[0]);
++    @vtype@ zeros_f = _mm512_setzero_@vsuffix@();
++    __m512i ones = _mm512_set1_@episize@(1);
++
++    while (num_remaining_elements > 0) {
++        if (num_remaining_elements < @num_lanes@) {
++            load_mask = avx512_get_partial_load_mask_@vsuffix@(
++                                    num_remaining_elements, @num_lanes@);
++        }
++        @vtype@ x1;
++        if (stride_ip == 1) {
++            x1 = avx512_masked_load_@vsuffix@(load_mask, ip);
++        }
++        else {
++            x1 = avx512_masked_gather_@vsuffix@(zeros_f, ip, vindex_ip, load_mask);
++        }
++#if @is_signbit@
++        x1 = _mm512_and_@vsuffix@(x1,signbit); 
++#endif
++
++        @mask@ fpclassmask = _mm512_fpclass_@vsuffix@_mask(x1, @IMM8@);
++#if @is_finite@
++        fpclassmask = _mm512_knot(fpclassmask);
++#endif
++
++        __m128i out =_mm512_maskz_cvts@episize@_epi8(fpclassmask, ones);
++        _mm_mask_storeu_epi8(op, load_mask, out);
++
++        ip += @num_lanes@*stride_ip;
++        op += @num_lanes@;
++        num_remaining_elements -= @num_lanes@;
++    }
++}
++#endif
++/**end repeat1**/
++/**end repeat**/
++
+ /**begin repeat
+  * #type = npy_float, npy_double#
+  * #TYPE = FLOAT, DOUBLE#
+@@ -2066,8 +2178,8 @@ AVX512F_@func@_@TYPE@(char **args, npy_intp const *dimensions, npy_intp const *s
+     }
+ }
+ #endif
+-/**end repeat**/
+ /**end repeat1**/
++/**end repeat**/
+ 
+ /**begin repeat
+  * #ISA = FMA, AVX512F#
+diff --git a/numpy/core/tests/test_umath.py b/numpy/core/tests/test_umath.py
+index 7caa4c7f9..f208d375e 100644
+--- a/numpy/core/tests/test_umath.py
++++ b/numpy/core/tests/test_umath.py
+@@ -771,6 +771,24 @@ class TestSpecialFloats:
+             for dt in ['f', 'd', 'g']:
+                 assert_raises(FloatingPointError, np.reciprocal, np.array(-0.0, dtype=dt))
+ 
++class TestFPClass:
++    @pytest.mark.parametrize("stride", [-4,-2,-1,1,2,4])
++    def test_fpclass(self, stride):
++        arr_f64 = np.array([np.nan, -np.nan, np.inf, -np.inf, -1.0, 1.0, -0.0, 0.0, 2.2251e-308, -2.2251e-308], dtype='d')
++        arr_f32 = np.array([np.nan, -np.nan, np.inf, -np.inf, -1.0, 1.0, -0.0, 0.0, 1.4013e-045, -1.4013e-045], dtype='f')
++        nan     = np.array([True, True, False, False, False, False, False, False, False, False])
++        inf     = np.array([False, False, True, True, False, False, False, False, False, False])
++        sign    = np.array([False, True, False, True, True, False, True, False, False, True])
++        finite  = np.array([False, False, False, False, True, True, True, True, True, True])
++        assert_equal(np.isnan(arr_f32[::stride]), nan[::stride])
++        assert_equal(np.isnan(arr_f64[::stride]), nan[::stride])
++        assert_equal(np.isinf(arr_f32[::stride]), inf[::stride])
++        assert_equal(np.isinf(arr_f64[::stride]), inf[::stride])
++        assert_equal(np.signbit(arr_f32[::stride]), sign[::stride])
++        assert_equal(np.signbit(arr_f64[::stride]), sign[::stride])
++        assert_equal(np.isfinite(arr_f32[::stride]), finite[::stride])
++        assert_equal(np.isfinite(arr_f64[::stride]), finite[::stride])
++
+ # func : [maxulperror, low, high]
+ avx_ufuncs = {'sqrt'        :[1,  0.,   100.],
+               'absolute'    :[0, -100., 100.],
+-- 
+2.26.2
+

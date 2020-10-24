@@ -1,0 +1,26 @@
+From 656f9c88d52639af5109ca18c329bce6e0cea4da Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 5 Apr 2018 17:53:39 -0500
+Subject: [PATCH 2/3] ZIMPL cmake scripts: Put ZIMPL includes first to avoid
+ clash of idxset.h with install soplex idxset.h
+
+---
+ zimpl/src/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/zimpl/src/CMakeLists.txt b/zimpl/src/CMakeLists.txt
+index ee4dbca..a2d0865 100644
+--- a/zimpl/src/CMakeLists.txt
++++ b/zimpl/src/CMakeLists.txt
+@@ -5,7 +5,7 @@ flex_target(MMLSCAN zimpl/mmlscan.l ${CMAKE_CURRENT_BINARY_DIR}/mmlscan.c)
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
+ # for zimpl headers
+-include_directories(zimpl)
++include_directories(BEFORE zimpl)
+ 
+ set(libsources
+     zimpl/blkmem.c
+-- 
+2.11.0
+

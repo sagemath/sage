@@ -9,13 +9,16 @@ objects (or know if they can be built) with :func:`difference_matrix`::
 Functions
 ---------
 """
+from __future__ import print_function
+from __future__ import absolute_import
+
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
-from sage.rings.finite_rings.constructor import FiniteField
-from sage.rings.arith import is_prime_power, divisors
-from designs_pyx import is_difference_matrix
-from database import DM as DM_constructions
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.arith.all import is_prime_power, divisors
+from .designs_pyx import is_difference_matrix
+from .database import DM as DM_constructions
 
 @cached_function
 def find_product_decomposition(g, k, lmbda=1):
@@ -63,8 +66,8 @@ def find_product_decomposition(g, k, lmbda=1):
             g2 = g//g1
             if g1 > g2:
                 break
-            if (difference_matrix(g1,k,lmbda1,existence=True) and
-                difference_matrix(g2,k,lmbda2,existence=True)):
+            if (difference_matrix(g1,k,lmbda1,existence=True) is True and
+                difference_matrix(g2,k,lmbda2,existence=True) is True):
                 return (g1,lmbda1),(g2,lmbda2)
 
     return False
@@ -101,7 +104,7 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
         sage: G2
         Finite Field of size 7
         sage: G
-        The cartesian product of (Finite Field of size 11, Finite Field of size 7)
+        The Cartesian product of (Finite Field of size 11, Finite Field of size 7)
         sage: is_difference_matrix(M,G,6,1)
         True
     """
@@ -170,7 +173,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
         sage: for g in range(2,30):
         ....:     k_max = designs.difference_matrix(g=g,k=None,existence=True)
-        ....:     print "{:2} {}".format(g, k_max)
+        ....:     print("{:2} {}".format(g, k_max))
         ....:     _ = designs.difference_matrix(g,k_max)
          2 2
          3 3
@@ -242,7 +245,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
     # (find the max k such that there exists a DM)
     elif k is None:
         i = 2
-        while difference_matrix(g=g,k=i,lmbda=lmbda,existence=True):
+        while difference_matrix(g=g,k=i,lmbda=lmbda,existence=True) is True:
             i += 1
         return i-1
 

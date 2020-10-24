@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+system=$1
+shift
+IF_VERBOSE=:
+SUDO=
+PROMPT=
+while :
+do
+    case "$1" in
+        --verbose)
+            IF_VERBOSE=
+            ;;
+        --sudo)
+            # Whether to print sudo for package managers that need sudo for non-root users
+            SUDO="sudo "
+            ;;
+        --prompt=*)
+            PROMPT=${1#--prompt=}
+            ;;
+        --prompt)
+            PROMPT='  $ '
+            ;;
+        -*)
+            echo >&2 "$0: unknown option $1"
+            exit 1
+            ;;
+        *)
+            break
+    esac
+    shift
+done
+command=$1
+shift
+if [ -z "$system" -o -z "$command" ]; then
+    echo >&2 "usage: $0 {debian|arch|conda|...} [--verbose] [--sudo] [--prompt] {update|install|setup-build-env|remove|...} PACKAGES..."
+    exit 1
+fi
+system_packages="$*"
+shopt -s extglob
+case $system:$command in
+    homebrew*:setup-build-env)
+        $IF_VERBOSE echo "# To automatically take care of homebrew messages regarding "
+        $IF_VERBOSE echo "# keg-only packages for the current shell session:"
+        [ -n "$SAGE_ROOT" ] || SAGE_ROOT=.
+        echo "${PROMPT}source $SAGE_ROOT/.homebrew-build-env"
+        $IF_VERBOSE echo "# Add this to your shell profile if you want it to persist between shell sessions."
+        ;;
+    *:setup-build-env)
+        # Nothing needed
+        ;;
+    #
+    # Verbs handled above are our own inventions. Verbs handled below are apt-get verbs.
+    #
+    @(debian*|ubuntu*):update)
+        echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        ;;
+    @(debian*|ubuntu*):*)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        ;;
+    @(fedora*|redhat*|centos*):install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}yum install $system_packages"
+        ;;
+    gentoo*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}emerge $system_packages"
+        ;;
+    arch*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pacman -S $system_packages"
+        ;;
+
+    void*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}xbps-install $system_packages"
+        ;;
+    *conda*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}conda install $system_packages"
+        ;;
+    homebrew*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}brew install $system_packages"
+        ;;
+    slackware*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}slackpkg install $system_packages"
+        ;;
+    cygwin*:update)
+        echo "# first install apt-cyg from https://github.com/transcode-open/apt-cyg"
+        ;;
+    cygwin*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}apt-cyg install $system_packages"
+        ;;
+    freebsd*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pkg install $system_packages"
+        ;;
+    pip:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}sage -pip install $system_packages"
+        ;;
+    *:update)
+        # Nothing needed
+        ;;
+    *)
+        echo "# $command the following packages: $system_packages"
+        ;;
+esac
