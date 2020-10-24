@@ -9,16 +9,16 @@ Examples of group cycle indices
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from group_cycle_index_series import GroupCycleIndexSeriesRing
+from .group_cycle_index_series import GroupCycleIndexSeriesRing
 from sage.misc.cachefunc import cached_function
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.rational_field import RationalField
-from generating_series import _integers_from, CycleIndexSeriesRing
+from .generating_series import _integers_from, CycleIndexSeriesRing
 from sage.combinat.sf.sf import SymmetricFunctions
 
 @cached_function
 def LinearOrderWithReversalGroupCycleIndex():
-    """
+    r"""
     Returns the $\mathfrak{S}_{2}$-cycle index of the species $L$
     of linearly-ordered sets with the order-reversing action of
     $\mathfrak{S}_{2}$.

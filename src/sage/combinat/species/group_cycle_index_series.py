@@ -66,7 +66,7 @@ EXAMPLES::
 #*****************************************************************************
 from sage.rings.rational_field import RationalField
 from sage.misc.cachefunc import cached_function
-from sage.combinat.free_module import CombinatorialFreeModule,CombinatorialFreeModuleElement
+from sage.combinat.free_module import CombinatorialFreeModule
 
 @cached_function
 def GroupCycleIndexSeriesRing(G, R = RationalField()):
@@ -173,7 +173,7 @@ class GroupCycleIndexSeriesRing_class(CombinatorialFreeModule):
         """
         return "Ring of (%s)-Cycle Index Series over %s" %(self._group, self._coeff_ring)
 
-class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
+class GroupCycleIndexSeries(CombinatorialFreeModule.Element):
     """
 
     EXAMPLES::
@@ -181,7 +181,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         sage: from sage.combinat.species.group_cycle_index_series import GroupCycleIndexSeriesRing
         sage: GCISR = GroupCycleIndexSeriesRing(SymmetricGroup(4))
         sage: GCISR.an_element()
-        p[]*G[()] + p[]*G[(1,2,3,4)]
+        p[]*G[()] + p[]*G[(2,3,4)]
 
     """
 
@@ -206,7 +206,7 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
             sage: S4 = SymmetricGroup(4)
             sage: GCISR = GroupCycleIndexSeriesRing(S4)
             sage: GCISR.an_element()
-            p[]*G[()] + p[]*G[(1,2,3,4)]
+            p[]*G[()] + p[]*G[(2,3,4)]
             sage: GCISR.an_element().quotient().coefficients(4)
             [1/12*p[], 0, 0, 0]
 
@@ -217,7 +217,6 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
            http://lacim.uqam.ca/publications_pdf/24.pdf
 
         """
-
         return 1/self.parent()._group.cardinality() * sum(self.coefficients())
 
     def composition(self, y, test_constant_term_is_zero = True):
@@ -281,7 +280,6 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
 
         parent = self.parent()
         cisr = parent._cisr
-        sfa = cisr.base_ring()
         group = parent._group
 
         if test_constant_term_is_zero:
@@ -361,10 +359,9 @@ class GroupCycleIndexSeries(CombinatorialFreeModuleElement):
         .. [AGDPolya] Andrew Gainer-Dewar. "Species with an equivariant group action." Preprint, :arxiv:`1401.6202`.
 
         """
-
-        from sage.combinat.species.stream import Stream, _integers_from
+        from sage.combinat.species.stream import _integers_from
         from sage.combinat.partition import Partition, Partitions
-        from sage.rings.arith import divisors, moebius, factorial
+        from sage.arith.misc import divisors, moebius, factorial
         from sage.rings.integer import Integer
 
         assert self.parent() == y.parent()
