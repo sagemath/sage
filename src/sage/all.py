@@ -345,10 +345,6 @@ def _write_started_file():
 # Sage startup).
 set_random_seed()
 
-
-# From now on it is ok to resolve lazy imports
-sage.misc.lazy_import.finish_startup()
-
 def sage_globals():
     r"""
     Return the Sage namespace.
