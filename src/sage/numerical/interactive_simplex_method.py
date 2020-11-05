@@ -1177,13 +1177,7 @@ class InteractiveLPProblem(SageObject):
                 ieqs.append([0] + list(-n))
             elif r == ">=":
                 ieqs.append([0] + list(n))
-        if self.base_ring() is QQ:
-            R = QQ
-        else:
-            R = RDF
-            ieqs = [[R(_) for _ in ieq] for ieq in ieqs]
-            eqns = [[R(_) for _ in eqn] for eqn in eqns]
-        return Polyhedron(ieqs=ieqs, eqns=eqns, base_ring=R)
+        return Polyhedron(ieqs=ieqs, eqns=eqns)
 
     def is_bounded(self):
         r"""
