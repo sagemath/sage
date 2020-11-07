@@ -342,6 +342,23 @@ cdef inline int celement_mul(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 cdef inline int celement_div(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     raise NotImplementedError
 
+cdef inline int celement_truncate(nmod_poly_t res, nmod_poly_t a, long len, unsigned long n) except -2:
+    """
+    EXAMPLES::
+
+        sage: P.<x> = GF(7)[]
+        sage: p = 4*x^4 + 3*x^3 + 2*x^2 + x
+        sage: p.truncate(3)
+        2*x^2 + x
+
+        sage: Q.<x> = GF(32003)[]
+        sage: q = 1 + x + x^2 * Q.random_element()
+        sage: q.truncate(2)
+        x + 1
+    """
+    nmod_poly_set(res, a)
+    nmod_poly_truncate(res, len)
+
 cdef inline int celement_floordiv(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """
     EXAMPLES::

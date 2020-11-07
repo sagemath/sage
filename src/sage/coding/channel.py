@@ -501,7 +501,7 @@ class ErrorErasureChannel(Channel):
             sage: Chan = channels.ErrorErasureChannel(GF(59)^40, n_err, n_era)
             Traceback (most recent call last):
             ...
-            ValueError: The total number of errors and erasures can not exceed the dimension of the input space
+            ValueError: The total number of errors and erasures cannot exceed the dimension of the input space
         """
         if isinstance(number_errors, (Integer, int)):
             number_errors = (number_errors, number_errors)
@@ -516,7 +516,7 @@ class ErrorErasureChannel(Channel):
         output_space = cartesian_product([space, VectorSpace(GF(2), space.dimension())])
         super(ErrorErasureChannel, self).__init__(space, output_space)
         if number_errors[1] + number_erasures[1] > space.dimension():
-            raise ValueError("The total number of errors and erasures can not exceed the dimension of the input space")
+            raise ValueError("The total number of errors and erasures cannot exceed the dimension of the input space")
         self._number_errors = number_errors
         self._number_erasures = number_erasures
 

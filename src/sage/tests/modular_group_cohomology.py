@@ -17,8 +17,8 @@ characteristic 2, and comparison with stored result in a database::
     sage: H.make()                                      # optional - p_group_cohomology
     sage: CohomologyRing.set_workspace(tmp_dir())       # optional - p_group_cohomology
     sage: H0 = CohomologyRing(64,14)                    # optional - p_group_cohomology
-    sage: H == H0                                       # optional - p_group_cohomology
-    True
+    sage: H.is_isomorphic(H0)                           # optional - p_group_cohomology
+    ('1*a_2_1', '1*c_2_2', '1*c_4_4', '1*a_1_0', '1*a_1_1', '1*a_3_3')
 
 Computation of a modular cohomology ring of a prime power group in odd
 characteristic, and some algebraic constructions in the cohomology

@@ -375,11 +375,11 @@ cdef class WeakValueDictionary(dict):
         """
         Return a copy of this dictionary using copies of the keys.
 
-        NOTE:
+        .. NOTE::
 
-        The values of the dictionary are not copied, since we can not copy the
-        external strong references to the values, which are decisive for
-        garbage collection.
+            The values of the dictionary are not copied, since we
+            cannot copy the external strong references to the values,
+            which are decisive for garbage collection.
 
         EXAMPLES::
 

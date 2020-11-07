@@ -704,7 +704,7 @@ class FormsSpace_abstract(FormsRing_abstract):
                 l2 = num % n
                 l1 = ((num-l2)/n).numerator()
         else:
-            raise ValueError("Invalid or non-occuring weight k={}, ep={}!".format(k,ep))
+            raise ValueError("Invalid or non-occurring weight k={}, ep={}!".format(k,ep))
         return (l1, l2)
 
     # TODO: this only makes sense for modular forms,
@@ -2219,7 +2219,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         - ``denom_factor``    -- An integer (default: 1) whose factor might occur in
                                  the denominator of the given Laurent coefficients
-                                 (in addition to naturally occuring factors).
+                                 (in addition to naturally occurring factors).
 
         OUTPUT:
 

@@ -178,7 +178,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
 
     def __init__(self, g, kac_moody):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 

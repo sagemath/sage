@@ -907,7 +907,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         This is a multiplication method that more or less directly
         calls another attribute ``_mul_`` (single underscore). This
-        is because ``__mul__`` can not be implemented via inheritance
+        is because ``__mul__`` cannot be implemented via inheritance
         from the parent methods of the category, but ``_mul_`` can
         be inherited. This is, e.g., used when creating twosided
         ideals of matrix algebras. See :trac:`7797`.
@@ -1062,7 +1062,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             False
 
         because ``2/3`` has no exact representation in ``RIF``. Since
-        ``RIF(2/3)`` is a nontrivial interval, it can not be equal to anything
+        ``RIF(2/3)`` is a nontrivial interval, it cannot be equal to anything
         (not even itself)::
 
             sage: RIF(2/3).is_exact()
@@ -2737,7 +2737,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
             [False, False, False, False]
         """
-        from sage.rings.complex_field import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         from sage.rings.real_mpfr import mpfr_prec_min
         return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
 

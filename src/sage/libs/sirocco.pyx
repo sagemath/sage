@@ -2,6 +2,7 @@
 # distutils: libraries = sirocco
 # distutils: language = c++
 # sage_setup: distribution = sage-sirocco
+
 r"""
 Cython wrapper for sirocco library
 

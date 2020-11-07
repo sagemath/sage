@@ -398,7 +398,7 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     INPUT:
 
     - ``certificate`` (boolean) -- whether to return a certificate for
-      yes instances. This method can not return negative certificates.
+      yes instances. This method cannot return negative certificates.
 
     - ``solver`` -- (default: ``None``); Specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information

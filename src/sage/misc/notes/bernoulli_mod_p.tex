@@ -34,8 +34,20 @@ This algorithm seems closely related to the one described in ``Irregular primes 
 
 \section*{Further improvements?}
 
-Here's an interesting question, which someone (else) might want to think about someday. In the paper by Buhler et al where they do the power series inversion method, they explain how to use something called ``multisectioning'' to reduce to inversion of a series of length $p/8$ (plus a few multiplications), instead of inversion of length $p/2$ which my first piece of code does. The idea is to use some slightly more tricky series, kind of analogous to using $x^2/(\cosh x - 1)$ instead of $x/(e^x - 1)$ to remove all the even index terms, but even trickier. (That should be implemented in SAGE sometime too.) Now this *suggests* that there might be a way to improve my second algorithm to a few multiplications of length $p/8$, by rewriting the number-theoretic transform in some clever way. I haven't thought about how this might work, but I wouldn't be at all surprised if such an improvement was possible, and I bet it would be faster than their power series method.
-
-
+Here's an interesting question, which someone (else) might want to
+think about someday. In the paper by Buhler et al. where they do the
+power series inversion method, they explain how to use something
+called ``multisectioning'' to reduce to inversion of a series of
+length $p/8$ (plus a few multiplications), instead of inversion of
+length $p/2$ which my first piece of code does. The idea is to use
+some slightly more tricky series, kind of analogous to using
+$x^2/(\cosh x - 1)$ instead of $x/(e^x - 1)$ to remove all the even
+index terms, but even trickier. (That should be implemented in Sage
+sometime too.) Now this *suggests* that there might be a way to
+improve my second algorithm to a few multiplications of length $p/8$,
+by rewriting the number-theoretic transform in some clever way. I
+have not thought about how this might work, but I would not be at all
+surprised if such an improvement was possible, and I bet it would be
+faster than their power series method.
 
 \end{document}

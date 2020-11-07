@@ -74,7 +74,7 @@ class HypergraphGenerators():
           a shortcut for the corresponding min/max values.
 
         - ``max_intersection`` -- integers (default: ``None``); constraints the
-          maximum cardinality of the intersection of two sets fro the
+          maximum cardinality of the intersection of two sets from the
           hypergraphs.
 
         - ``connected`` -- boolean (default: ``False``); whether to require the

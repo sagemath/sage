@@ -1066,7 +1066,7 @@ class WordGenerator(object):
         -  ``a`` - positive integer (default: 1), the first letter occurring
            in the returned Kolakoski word.
         -  ``b`` - positive integer (default: 2), the second and last letter
-           occuring in the returned Kolakoski word.
+           occurring in the returned Kolakoski word.
 
         OUTPUT:
 

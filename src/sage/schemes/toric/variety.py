@@ -714,7 +714,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1._check_satisfies_equations(1)
             Traceback (most recent call last):
             ...
-            TypeError: 1 can not be used as coordinates!
+            TypeError: 1 cannot be used as coordinates!
             Use a list or a tuple.
             sage: P1xP1._check_satisfies_equations([1,1,1,P1xP1.fan()])
             Traceback (most recent call last):
@@ -725,7 +725,7 @@ class ToricVariety_field(AmbientSpace):
         try:
             coordinates = tuple(coordinates)
         except TypeError:
-            raise TypeError("%s can not be used as coordinates! "
+            raise TypeError("%s cannot be used as coordinates! "
                             "Use a list or a tuple." % coordinates)
         n = self.ngens()
         if len(coordinates) != n:

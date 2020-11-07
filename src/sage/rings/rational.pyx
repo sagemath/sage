@@ -3167,7 +3167,7 @@ cdef class Rational(sage.structure.element.FieldElement):
                 from sage.rings.real_mpfr import RealField
                 return RealField(prec)(self).log(m)
             else:
-                from sage.rings.complex_field import ComplexField
+                from sage.rings.complex_mpfr import ComplexField
                 return ComplexField(prec)(self).log(m)
 
         from sage.functions.log import function_log

@@ -76,20 +76,25 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
 
         EXAMPLES::
 
-        sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
-        sage: h1 = DecreasingHeckeFactorization([[3, 1], [], [3, 2]])
-        sage: h1.parent()
-        Fully commutative stable Grothendieck crystal of type A_2 associated to [1, 3, 2] with excess 1
-        sage: h2 = DecreasingHeckeFactorization(h1)
-        sage: h1 == h2
-        True
+            sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            sage: h1 = DecreasingHeckeFactorization([[3, 1], [], [3, 2]])
+            sage: h1.parent()
+            Fully commutative stable Grothendieck crystal of type A_2 associated to [1, 3, 2] with excess 1
+            sage: h2 = DecreasingHeckeFactorization(h1)
+            sage: h1 == h2
+            True
 
-        sage: h1 = DecreasingHeckeFactorization([[3, 1], [2, 1], [2, 1]])
-        sage: F = h1.parent(); F
-        Decreasing Hecke factorizations with 3 factors associated to [1, 3, 2, 1] with excess 2
-        sage: h2 = F(h1)
-        sage: h1 == h2
-        True
+            sage: h1 = DecreasingHeckeFactorization([[3, 1], [2, 1], [2, 1]])
+            sage: F = h1.parent(); F
+            Decreasing Hecke factorizations with 3 factors associated to [1, 3, 2, 1] with excess 2
+            sage: h2 = F(h1)
+            sage: h1 == h2
+            True
+
+        TESTS::
+
+            sage: DecreasingHeckeFactorization([[]])
+            ()
         """
         _check_decreasing_hecke_factorization(t)
         if isinstance(t, DecreasingHeckeFactorization):
@@ -100,7 +105,8 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
             u = t
             if parent is None:
                 if max_value is None:
-                    max_value = max(x for factor in t for x in factor)
+                    letters = [x for factor in t for x in factor]
+                    max_value = max(letters) if letters else 1
                 from sage.monoids.hecke_monoid import HeckeMonoid
                 S = SymmetricGroup(max_value+1)
                 H = HeckeMonoid(S)
@@ -1096,7 +1102,7 @@ def _list_equivalent_words(w):
                 L += [[i,"ppq=pqq"]]
             if q == r and r != p:
                 L += [[i,"pqq=ppq"]]
-        if abs(word[-2]-word[-1]) > 1:
+        if len(word) > 1 and abs(word[-2]-word[-1]) > 1:
             L += [[len(word)-2,"pq=qp"]]
         return L
 

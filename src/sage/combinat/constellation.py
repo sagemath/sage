@@ -222,7 +222,7 @@ class Constellation_class(Element):
             True
         """
         if self._mutable:
-            raise ValueError("can not hash mutable constellation")
+            raise ValueError("cannot hash mutable constellation")
         return hash(tuple(self._g))
 
     def set_immutable(self):

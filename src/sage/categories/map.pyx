@@ -1895,7 +1895,7 @@ cdef class FormalCompositeMap(Map):
             # we try the category first
             # as of 2017-06, the MRO of this class does not get patched to
             # include the category's MorphismMethods (because it is a Cython
-            # class); therefore, we can not simply call "super" but need to
+            # class); therefore, we cannot simply call "super" but need to
             # invoke the category method explicitly
             return self.getattr_from_category('is_injective')()
         except (AttributeError, NotImplementedError):
@@ -1961,7 +1961,7 @@ cdef class FormalCompositeMap(Map):
             # we try the category first
             # as of 2017-06, the MRO of this class does not get patched to
             # include the category's MorphismMethods (because it is a Cython
-            # class); therefore, we can not simply call "super" but need to
+            # class); therefore, we cannot simply call "super" but need to
             # invoke the category method explicitly
             return self.getattr_from_category('is_surjective')()
         except (AttributeError, NotImplementedError):

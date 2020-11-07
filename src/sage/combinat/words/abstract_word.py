@@ -236,22 +236,22 @@ class Word_class(SageObject):
             sage: len(Word(lambda n:n))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=+Infinity): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=+Infinity): use length method instead.
             sage: len(Word(iter('a'*200)))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=None): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=None): use length method instead.
 
         For words of unknown length::
 
             sage: len(Word(iter('a'*200), length='unknown'))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=None): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=None): use length method instead.
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method can not return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): "%L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)

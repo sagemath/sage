@@ -78,7 +78,7 @@ def merge_environment(app, env):
             for ind in docenv.all_docs:
                 newalldoc[fixpath(ind)] = docenv.all_docs[ind]
             env.all_docs.update(newalldoc)
-            # needed by env.check_consistency (sphinx.environement, line 1734)
+            # needed by env.check_consistency (sphinx.environment, line 1734)
             for ind in newalldoc:
                 # treat subdocument source as orphaned file and don't complain
                 md = env.metadata.get(ind, dict())

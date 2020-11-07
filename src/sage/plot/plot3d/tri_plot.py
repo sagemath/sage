@@ -228,7 +228,7 @@ class TrianglePlot:
 
     def str(self):
         """
-        Returns a string listing the objects in the instance of the TrianglePlot class.
+        Return a string listing the objects in the instance of the TrianglePlot class.
 
         TESTS::
 
@@ -238,7 +238,7 @@ class TrianglePlot:
             sage: len(t.str())
             68980
         """
-        return "".join([o.str() for o in self._objects])
+        return "".join(o.str() for o in self._objects)
 
     def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g = None,
                        min_depth=4, max_depth=8, num_colors = None, max_bend=.3):

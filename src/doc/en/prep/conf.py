@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # PREP Tutorials documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul  3 10:54:56 2012.
 #
@@ -14,10 +12,16 @@
 from sage.docs.conf import release
 from sage.docs.conf import *  # NOQA
 
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
 
 # General information about the project.
-project = u'PREP Tutorials'
-copyright = u'2012, Rob Beezer, Karl-Dieter Crisman, and Jason Grout'
+project = 'PREP Tutorials'
+copyright = '2012, Rob Beezer, Karl-Dieter Crisman, and Jason Grout'
 name = 'prep_tutorials'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -30,6 +34,6 @@ htmlhelp_basename = name
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name+'.tex', u'PREP Tutorials',
-   u'Rob Beezer, Karl-Dieter Crisman, and Jason Grout', 'manual'),
+  ('index', name + '.tex', 'PREP Tutorials',
+   'Rob Beezer, Karl-Dieter Crisman, and Jason Grout', 'manual'),
 ]

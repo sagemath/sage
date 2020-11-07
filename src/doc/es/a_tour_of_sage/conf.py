@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Numerical Sage documentation build configuration file, created by
 # sphinx-quickstart on Sat Dec 6 11:08:04 2008.
 #
@@ -16,8 +14,15 @@
 from sage.docs.conf import release
 from sage.docs.conf import *
 
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
+
 # General information about the project.
-project = u'Un Tour Por Sage'
+project = 'Un Tour Por Sage'
 name = 'a_tour_of_sage'
 language = 'es'
 
@@ -34,6 +39,6 @@ htmlhelp_basename = name
 # [howto/manual]).
 latex_documents = [('index',
                     name + '.tex',
-                    u'A Tour Of Sage',
-                    u'The Sage Development Team',
+                    'A Tour Of Sage',
+                    'The Sage Development Team',
                     'manual')]

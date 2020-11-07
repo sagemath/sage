@@ -889,7 +889,7 @@ class Semigroups(CategoryWithAxiom):
             # Once there will be some guarantee on the consistency between
             # gens / monoid/group/*_generators, these methods could possibly
             # be removed in favor of aliases gens -> xxx_generators in
-            # the Algebras.FinitelyGenerated hierachy
+            # the Algebras.FinitelyGenerated hierarchy
             def gens(self):
                 r"""
                 Return the generators of ``self``.

@@ -58,15 +58,15 @@ AUTHOR:
 - Jonathan Kliem (2019-05)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.superseded        import deprecated_function_alias
 
@@ -285,7 +285,7 @@ cdef class CombinatorialFace(SageObject):
         it holds that `F` contained in `G` implies ``hash(F) < hash(G)``.
 
         If the face was constructed from a :class:`sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
-        then this is the index of the occurence in the iterator.
+        then this is the index of the occurrence in the iterator.
         In dual mode this value is then deducted from the maximal value of ``size_t``.
 
         If the face was constructed from

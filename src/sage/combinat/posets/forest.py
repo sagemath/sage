@@ -19,6 +19,7 @@ AUTHORS:
 from sage.combinat.posets.posets import FinitePoset
 from sage.combinat.posets.linear_extensions import LinearExtensionsOfForest
 
+
 class ForestPoset(FinitePoset):
     r"""
     A forest poset is a poset where the underlying Hasse diagram and is
@@ -26,4 +27,3 @@ class ForestPoset(FinitePoset):
     """
     _lin_ext_type = LinearExtensionsOfForest
     _desc = 'Finite forest poset'
-

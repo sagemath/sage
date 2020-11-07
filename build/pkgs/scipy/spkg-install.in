@@ -18,6 +18,12 @@ fi
 # Make sure that the fortran objects are compiled with -fPIC
 export FFLAGS="$FFLAGS -fPIC"
 export FCFLAGS="$FCFLAGS -fPIC"
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Trac #30643
+    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
+fi
+
 if [ "$UNAME" = "CYGWIN" -a "$SAGE_DEBUG" = "yes" ]; then
     # Needed for just one or two modules when compiling in debug mode
     # Otherwise the debug symbols create too many sections in the binary

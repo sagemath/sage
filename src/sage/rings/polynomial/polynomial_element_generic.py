@@ -21,16 +21,14 @@ We test coercion in a particularly complicated situation::
     x^2 + (-z^2 - 1)*x
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.polynomial.polynomial_element import Polynomial, Polynomial_generic_dense, Polynomial_generic_dense_inexact
 from sage.structure.element import IntegralDomainElement, EuclideanDomainElement
 
@@ -101,7 +99,7 @@ class Polynomial_generic_sparse(Polynomial):
                 for n, c in x.dict().items():
                     w[n] = R(c)
                 # The following line has been added in trac ticket #9944.
-                # Apparently, the "else" case has never occured before.
+                # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, list):
             x = dict((i, c) for (i, c) in enumerate(x) if c)
@@ -1528,7 +1526,7 @@ class Polynomial_generic_sparse_cdvf(Polynomial_generic_sparse_cdv, Polynomial_g
     pass
 
 ############################################################################
-# XXX:  Ensures that the generic polynomials implemented in SAGE via PARI  #
+# XXX:  Ensures that the generic polynomials implemented in Sage via PARI  #
 # until at least until 4.5.0 unpickle correctly as polynomials implemented #
 # via FLINT.                                                               #
 from sage.misc.persist import register_unpickle_override

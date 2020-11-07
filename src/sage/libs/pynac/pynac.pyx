@@ -1337,7 +1337,7 @@ cdef py_float(n, PyObject* kwds):
         sage: py_float(1/2, {'parent':CC})
         0.500000000000000
         sage: type(py_float(1/2, {'parent':CC}))
-        <type 'sage.rings.complex_number.ComplexNumber'>
+        <type 'sage.rings.complex_mpfr.ComplexNumber'>
     """
     if kwds is not NULL:
         p = (<object>kwds)['parent']

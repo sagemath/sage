@@ -14,7 +14,7 @@ and more precisely:
     :meth:`~minimal_dominating_sets` | Return an iterator over the minimal dominating sets of a graph.
     :meth:`~is_dominating` | Check whether a set of vertices dominates a graph.
     :meth:`~is_redundant` | Check whether a set of vertices has redundant vertices (with respect to domination).
-    :meth:`~private_neighbors` | Return the private neighbors of a vertex with repect to other vertices.
+    :meth:`~private_neighbors` | Return the private neighbors of a vertex with respect to other vertices.
 
 
 EXAMPLES:
@@ -106,7 +106,7 @@ def is_redundant(G, dom, focus=None):
     Check whether ``dom`` has redundant vertices.
 
     For a graph `G` and sets `D` and `S` of vertices, we say that a vertex `v
-    \in D` is *redundant* in `S` if `v` has no private neighbor with repect to
+    \in D` is *redundant* in `S` if `v` has no private neighbor with respect to
     `D` in `S`.  In other words, there is no vertex in `S` that is dominated by
     `v` but not by `D \setminus \{v\}`.
 
@@ -168,7 +168,7 @@ def is_redundant(G, dom, focus=None):
 
 def private_neighbors(G, vertex, dom):
     r"""
-    Return the private neighbors of a vertex with repect to other vertices.
+    Return the private neighbors of a vertex with respect to other vertices.
 
     A private neighbor of a vertex `v` with respect to a vertex subset `D`
     is a closed neighbor of `v` that is not dominated by a vertex of `D
@@ -346,7 +346,7 @@ def _parent(G, dom, V_prev):
     OUTPUT:
 
     Return the list obtained from ``dom`` by iteratively removing those
-    vertices of mininum index that have no private neighbor in ``V_prev``.
+    vertices of minimum index that have no private neighbor in ``V_prev``.
 
     TESTS::
 

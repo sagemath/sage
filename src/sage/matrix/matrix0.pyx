@@ -1723,7 +1723,8 @@ cdef class Matrix(sage.structure.element.Matrix):
              100 x 100 dense matrix over Integer Ring]
 
         """
-        if self._nrows < max_rows and self._ncols < max_cols:
+        from .constructor import options
+        if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str()
         if self.is_sparse():
             s = 'sparse'
@@ -2059,7 +2060,8 @@ cdef class Matrix(sage.structure.element.Matrix):
               -0.35104242112828943    0.5084492941557279]
                -0.9541798283979341   -0.8948790563276592]
         """
-        if self._nrows < max_rows and self._ncols < max_cols:
+        from .constructor import options
+        if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(character_art=True)
         else:
             from sage.typeset.ascii_art import AsciiArt
@@ -2087,7 +2089,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: unicode_art(A)
             100 x 100 dense matrix over Integer Ring
         """
-        if self._nrows < max_rows and self._ncols < max_cols:
+        from .constructor import options
+        if self._nrows <= options.max_rows() and self._ncols <= options.max_cols():
             return self.str(unicode=True, character_art=True)
         else:
             from sage.typeset.unicode_art import UnicodeArt
@@ -5879,9 +5882,6 @@ def unpickle(cls, parent, immutability, cache, data, version):
     return A
 
 
-max_rows = 20
-max_cols = 50
-
 def set_max_rows(n):
     """
     Sets the global variable max_rows (which is used in deciding how to output a matrix).
@@ -5890,11 +5890,14 @@ def set_max_rows(n):
 
         sage: from sage.matrix.matrix0 import set_max_rows
         sage: set_max_rows(20)
+        doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
+        See https://trac.sagemath.org/30552 for details.
 
     """
-
-    global max_rows
-    max_rows = n
+    from sage.misc.superseded import deprecation
+    deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
+    from .constructor import options
+    options.max_rows = n-1
 
 def set_max_cols(n):
     """
@@ -5904,8 +5907,11 @@ def set_max_cols(n):
 
         sage: from sage.matrix.matrix0 import set_max_cols
         sage: set_max_cols(50)
+        doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
+        See https://trac.sagemath.org/30552 for details.
 
     """
-
-    global max_cols
-    max_cols = n
+    from sage.misc.superseded import deprecation
+    deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
+    from .constructor import options
+    options.max_cols = n-1

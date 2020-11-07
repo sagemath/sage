@@ -219,7 +219,7 @@ Using the standard ``C3`` algorithm fails::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 3, 3, 2.
+    ValueError: Cannot merge the items 3, 3, 2.
 
 We also get a failure when we relabel `P` according to another linear
 extension. For easy relabelling, we first need to set an appropriate
@@ -239,7 +239,7 @@ Now we play with a specific linear extension of `P`::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 2, 3, 3.
+    ValueError: Cannot merge the items 2, 3, 3.
 
 On the other hand, both the instrumented ``C3`` algorithm, and the
 controlled ``C3`` algorithm give the desired MRO::
@@ -658,7 +658,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Can not merge the items %s."%', '.join([repr(head) for head in heads]))
+            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
 cpdef identity(x):

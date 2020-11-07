@@ -7,7 +7,7 @@ from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.libs.pynac.pynac import (register_symbol, symbol_table)
 from sage.structure.all import parent as s_parent
 from sage.rings.all import Rational, ComplexField
-from sage.rings.complex_number import is_ComplexNumber
+from sage.rings.complex_mpfr import is_ComplexNumber
 from sage.functions.exp_integral import Ei
 from sage.libs.mpmath import utils as mpmath_utils
 from .log import exp

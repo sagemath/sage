@@ -799,7 +799,7 @@ cdef class Dist_vector(Dist):
                 moments = parent.approx_module(1)([moments])
             # TODO: This is not quite right if the input is an inexact zero.
             if ordp != 0 and parent.prime() == 0:
-                raise ValueError("can not specify a valuation shift for an exact ring")
+                raise ValueError("cannot specify a valuation shift for an exact ring")
 
         self._moments = moments
         self.ordp = ordp

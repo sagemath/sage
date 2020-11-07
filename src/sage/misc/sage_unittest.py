@@ -299,7 +299,7 @@ class TestSuite(object):
                 except catch_exception as e:
                     failed.append(method_name)
                     if isinstance(e, TestSuiteFailure):
-                        # The failure occured in a nested testsuite
+                        # The failure occurred in a nested testsuite
                         # which has already reported the details of
                         # that failure
                         if not tester._verbose:

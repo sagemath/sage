@@ -10,7 +10,7 @@ The ``mean`` function returns the arithmetic mean (the sum of all the members
 of a list, divided by the number of members). Further revisions may include
 the geometric and harmonic mean. The ``median`` function returns the number
 separating the higher half of a sample from the lower half. The ``mode``
-returns the most common occuring member of a sample, plus the number of times
+returns the most common occurring member of a sample, plus the number of times
 it occurs. If entries occur equally common, the smallest of a list of the most
 common  entries is returned. The ``moving_average`` is a finite impulse
 response filter, creating a series of averages using a user-defined number of
@@ -90,7 +90,7 @@ def mode(v):
     """
     Return the mode of `v`.
 
-    The mode is the list of the most frequently occuring
+    The mode is the list of the most frequently occurring
     elements in `v`. If `n` is the most times that any element occurs
     in `v`, then the mode is the list of elements of `v` that
     occur `n` times. The list is sorted if possible.

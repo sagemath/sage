@@ -987,7 +987,7 @@ cdef class MatrixArgs:
         """
         cdef list seqsparse = []
         cdef list values = []
-        cdef long maxrow = -1, maxcol = -1  # Maximum occuring value for indices
+        cdef long maxrow = -1, maxcol = -1  # Maximum occurring value for indices
         cdef long i, j
         for (i0, j0), x in self.entries.items():
             sig_check()

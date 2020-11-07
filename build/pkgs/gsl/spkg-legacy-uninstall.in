@@ -1,2 +1,0 @@
-rm -rf "$SAGE_LOCAL"/include/gsl
-rm -rf "$SAGE_LOCAL"/lib/libgsl*

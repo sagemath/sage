@@ -862,7 +862,7 @@ class DocTestController(SageObject):
             ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
             sage: DC.sort_sources()
             Sorting sources by runtime so that slower doctests are run first....
-            sage: print("\n".join([source.basename for source in DC.sources]))
+            sage: print("\n".join(source.basename for source in DC.sources))
             sage.doctest.util
             sage.doctest.test
             sage.doctest.sources

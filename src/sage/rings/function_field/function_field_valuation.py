@@ -244,7 +244,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return self.create_key_and_extra_args_from_valuation(domain, base_valuation)
         from sage.rings.ideal import is_Ideal
         if is_Ideal(prime):
-            raise NotImplementedError("a place can not be given by an ideal yet")
+            raise NotImplementedError("a place cannot be given by an ideal yet")
 
         raise NotImplementedError("argument must be a place or a pseudo-valuation on a supported subring but %r does not satisfy this for the domain %r" % (prime, domain))
 
@@ -428,7 +428,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return parent.__make_element_class__(FunctionFieldExtensionMappedValuation)(parent, valuation, to_valuation_domain, from_valuation_domain)
 
         if domain is valuation.domain():
-            # we can not just return valuation in this case
+            # we cannot just return valuation in this case
             # as this would break uniqueness and pickling
             raise ValueError("valuation must not be a valuation on domain yet but %r is a valuation on %r" % (valuation, domain))
 
@@ -577,7 +577,7 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                     return reduce(add, A, [])
                 elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
                     # subclasses should override this method and handle this case, so we never get here
-                    raise NotImplementedError("Can not compute the extensions of %r from %r to %r since the base ring changes." % (self, self.domain(), L))
+                    raise NotImplementedError("Cannot compute the extensions of %r from %r to %r since the base ring changes." % (self, self.domain(), L))
         raise NotImplementedError("extension of %r from %r to %r not implemented" % (self, K, L))
 
 
@@ -775,7 +775,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         if self(f) > 0:
             return self.residue_field().zero()
         if self(f) < 0:
-            raise ValueError("can not reduce element of negative valuation")
+            raise ValueError("cannot reduce element of negative valuation")
 
         base = self._base_valuation
 
@@ -966,7 +966,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             sage: f = (x + 1024)/(x - 1024)
 
         Here we report a small size, as the numerator and the denominator
-        independently can not be simplified much::
+        independently cannot be simplified much::
 
             sage: v._relative_size(f)
             1

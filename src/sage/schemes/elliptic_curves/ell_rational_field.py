@@ -1620,7 +1620,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``root_number`` -- (default: "compute") String or integer
 
           - ``"compute"`` -- the root number of self is computed and used to
-            (possibly) lower ther analytic rank estimate by 1.
+            (possibly) lower the analytic rank estimate by 1.
           - ``"ignore"`` -- the above step is omitted
           - ``1`` -- this value is assumed to be the root number of
             self. This is passable so that rank estimation can be done for
@@ -2129,8 +2129,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         if algorithm == 'mwrank_lib':
             verbose_verbose("using mwrank lib")
-            if self.is_integral(): E = self
-            else: E = self.integral_model()
+            E = self if self.is_integral() else self.integral_model()
             C = E.mwrank_curve()
             C.set_verbose(verbose)
             rank = Integer(C.rank())
@@ -2644,11 +2643,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         while True:
             ok, index, unsat = mw.saturate(max_prime=max_prime, odd_primes_only = odd_primes_only)
             reg = mw.regulator()
-            if ok or not repeat_until_saturated: break
+            if ok or not repeat_until_saturated:
+                break
             max_prime = arith.next_prime(max_prime + 1000)
             prec += 50
             mwrank_set_precision(prec)
-        if prec!=prec0: mwrank_set_precision(prec0)
+        if prec != prec0:
+            mwrank_set_precision(prec0)
         sat = mw.points()
         sat = [Emin(P) for P in sat]
         if not minimal:
@@ -4042,8 +4043,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             p = p.next_prime()
             # check if the formal group at the place is torsion-free
             # if so the torsion injects into the reduction
-            while not E.is_local_integral_model(p) or not E.is_good(p): p = p.next_prime()
-            bound = arith.gcd(bound,E.reduction(p).cardinality())
+            while not E.is_local_integral_model(p) or not E.is_good(p):
+                p = p.next_prime()
+            bound = arith.gcd(bound, E.reduction(p).cardinality())
             if bound == 1:
                 return bound
             k += 1
@@ -4542,7 +4544,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: isocls.matrix()
             [ 1 37]
             [37  1]
-            sage: print("\n".join([repr(E) for E in isocls.curves]))
+            sage: print("\n".join(repr(E) for E in isocls.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 8*x + 6 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 208083*x - 36621194 over Rational Field
 
@@ -4566,7 +4568,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: isocls = E.isogeny_class(); isocls.matrix()
             [  1 163]
             [163   1]
-            sage: print("\n".join([repr(C) for C in isocls.curves]))
+            sage: print("\n".join(repr(C) for C in isocls.curves))
             Elliptic Curve defined by y^2 + y = x^3 - 2174420*x + 1234136692 over Rational Field
             Elliptic Curve defined by y^2 + y = x^3 - 57772164980*x - 5344733777551611 over Rational Field
 
@@ -4591,7 +4593,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             [ 3  6  9  1 18  2]
             [ 6  3  2 18  1  9]
             [ 6  3 18  2  9  1]
-            sage: print("\n".join([repr(C) for C in isocls.curves]))
+            sage: print("\n".join(repr(C) for C in isocls.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 36*x - 70 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 - x over Rational Field
@@ -4605,7 +4607,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             [ 9 18  3  1  2  6]
             [18  9  6  2  1  3]
             [ 6  3  2  6  3  1]
-            sage: print("\n".join([repr(C) for C in isocls2.curves]))
+            sage: print("\n".join(repr(C) for C in isocls2.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 2731*x - 55146 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 171*x - 874 over Rational Field
             Elliptic Curve defined by y^2 + x*y + y = x^3 - 36*x - 70 over Rational Field
@@ -4975,8 +4977,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         if N == 990 and isogeny == 'h':
             optimal_label = '990h3'
         else:
-            optimal_label = '%s%s1'%(N,isogeny)
-        if optimal_label == label: return self
+            optimal_label = '%s%s1' % (N, isogeny)
+        if optimal_label == label:
+            return self
         return constructor.EllipticCurve(optimal_label)
 
     def isogeny_graph(self, order=None):
@@ -5986,9 +5989,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         n=r+1
         c10 = R(2 * 10**(8+7*n) * R((2/e)**(2 * n**2)) * (n+1)**(4 * n**2 + 10 * n) * log(c9)**(-2*n - 1) * misc.prod(mod_h_list))
 
-        top = Z(128) #arbitrary first upper bound
+        top = Z(128)  # arbitrary first upper bound
         bottom = Z(0)
-        log_c9=log(c9); log_c5=log(c5)
+        log_c9 = log(c9)
+        log_c5 = log(c5)
         log_r_top = log(R(r*(10**top)))
 
         while R(c10*(log_r_top+log_c9)*(log(log_r_top)+h_E+log_c9)**(n+1)) > R(c2/2 * (10**top)**2 - log_c5):

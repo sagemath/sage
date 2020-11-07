@@ -236,7 +236,7 @@ def test_del_dictitem_by_exact_value(D, value, h):
     ``value``. Of course, this only makes sense if the pairs ``(h, value)``
     corresponding to items in ``D`` are pair-wise distinct.
 
-    If a matching item can not be found, the function does nothing and
+    If a matching item cannot be found, the function does nothing and
     silently returns.
 
     TESTS:

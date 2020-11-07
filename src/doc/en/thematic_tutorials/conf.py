@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #
@@ -16,8 +14,15 @@
 from sage.docs.conf import release
 from sage.docs.conf import *
 
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
+
 # General information about the project.
-project = u"Thematic Tutorials"
+project = "Thematic Tutorials"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -30,8 +35,8 @@ htmlhelp_basename = "thematic_tutorials"
 # (source start file, target name, title, author,
 # document class [howto/manual]).
 latex_documents = [(
-        "index", "thematic_tutorials.tex", u'Thematic Tutorials',
-        u'The Sage Development Team', 'manual'),
+        "index", "thematic_tutorials.tex", 'Thematic Tutorials',
+        'The Sage Development Team', 'manual'),
 ]
 
 show_authors = True

@@ -302,18 +302,18 @@ def modular_decomposition(graph):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: print_md_tree(modular_decomposition(graphs.IcosahedralGraph()))
         PRIME
-              8
-              5
-              1
-              11
-              7
-              0
-              6
-              9
-              2
-              4
-              10
-              3
+         5
+         7
+         11
+         1
+         8
+         0
+         9
+         4
+         10
+         6
+         2
+         3
 
     The Octahedral graph is not Prime::
 
@@ -791,7 +791,7 @@ def assembly(graph, root, vertex_status, vertex_dist):
     right = root.children[source_index]
 
     while len(root.children) != 1:
-        # source_index is changed everytime a new module is formed therefore
+        # source_index is changed every time a new module is formed therefore
         # updated. left or right are also updated every time module is formed.
 
         # First series module is attempted
@@ -801,7 +801,7 @@ def assembly(graph, root, vertex_status, vertex_dist):
             left = root.children[source_index].children[0]
             continue
 
-        # If series module cant be formed, parallel is tried
+        # If series module can't be formed, parallel is tried
         result, source_index = check_parallel(graph, root, left, right,
                                                 source_index, mu, vertex_dist,
                                                 vertices_in_component)
@@ -2417,18 +2417,18 @@ def print_md_tree(root):
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: print_md_tree(modular_decomposition(graphs.IcosahedralGraph()))
         PRIME
-              8
-              5
-              1
-              11
-              7
-              0
-              6
-              9
-              2
-              4
-              10
-              3
+         5
+         7
+         11
+         1
+         8
+         0
+         9
+         4
+         10
+         6
+         2
+         3
     """
 
     def recursive_print_md_tree(root, level):

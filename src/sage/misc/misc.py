@@ -104,6 +104,7 @@ def sage_makedirs(dirname, mode=0o777):
 
 sage_makedirs(DOT_SAGE, mode=0o700)
 
+
 def try_read(obj, splitlines=False):
     r"""
     Determine if a given object is a readable file-like object and if so
@@ -635,7 +636,7 @@ def strunc(s, n=60):
 
 def newton_method_sizes(N):
     r"""
-    Returns a sequence of integers
+    Return a sequence of integers
     `1 = a_1 \leq a_2 \leq \cdots \leq a_n = N` such that
     `a_j = \lceil a_{j+1} / 2 \rceil` for all `j`.
 
@@ -1008,9 +1009,7 @@ def powerset(X):
 
     INPUT:
 
-
     -  ``X`` - an iterable
-
 
     OUTPUT: iterator of lists
 
@@ -1054,10 +1053,13 @@ def powerset(X):
     """
     yield []
     pairs = []
+    power2 = 1
     for x in X:
-        pairs.append((2**len(pairs), x))
-        for w in range(2**(len(pairs) - 1), 2**(len(pairs))):
+        pairs.append((power2, x))
+        next_power2 = power2 << 1
+        for w in range(power2, next_power2):
             yield [x for m, x in pairs if m & w]
+        power2 = next_power2
 
 
 subsets = powerset
@@ -1132,11 +1134,9 @@ def forall(S, P):
 
     INPUT:
 
-
     -  ``S`` - object (that supports enumeration)
 
     -  ``P`` - function that returns True or False
-
 
     OUTPUT:
 
@@ -1192,7 +1192,7 @@ def word_wrap(s, ncols=85):
     if ncols == 0:
         return s
     for x in s.split('\n'):
-        if len(x) == 0 or x.lstrip()[:5] == 'sage:':
+        if not x or x.lstrip()[:5] == 'sage:':
             t.append(x)
             continue
         while len(x) > ncols:
@@ -1234,7 +1234,7 @@ def pad_zeros(s, size=3):
 
 def embedded():
     """
-    Return True if this copy of Sage is running embedded in the Sage
+    Return ``True`` if this copy of Sage is running embedded in the Sage
     notebook.
 
     EXAMPLES::
@@ -1244,9 +1244,10 @@ def embedded():
     """
     return sage.server.support.EMBEDDED_MODE
 
+
 def is_in_string(line, pos):
     r"""
-    Returns True if the character at position pos in line occurs
+    Return ``True`` if the character at position ``pos`` in ``line`` occurs
     within a string.
 
     EXAMPLES::
@@ -1402,7 +1403,7 @@ def inject_variable_test(name, value, depth):
     """
     A function for testing deep calls to inject_variable
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.misc.misc import inject_variable_test
         sage: inject_variable_test("a0", 314, 0)
@@ -1418,7 +1419,6 @@ def inject_variable_test(name, value, depth):
         doctest:...: RuntimeWarning: redefining global value `a2`
         sage: a2
         271
-
     """
     if depth == 0:
         inject_variable(name, value)

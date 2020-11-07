@@ -288,7 +288,7 @@ cdef class MonoDict:
         sage: L[c] = 3
 
     The key is expected to be a unique object. Hence, the item stored for ``c``
-    can not be obtained by providing another equal string::
+    cannot be obtained by providing another equal string::
 
         sage: L[a]
         1

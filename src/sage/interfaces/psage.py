@@ -93,17 +93,21 @@ class PSage(Sage):
         self.expect().timeout = 0.25
         self.expect().delaybeforesend = 0.01
 
-    def is_locked(self):
-        with open(self.__tmp) as fobj:
-            if fobj.read() == '__locked__':
-                try:
-                    self.expect().expect(self._prompt)
-                    self.expect().expect(self._prompt)
-                except ExceptionPexpect:
-                    pass
-
-        with open(self.__tmp) as fobj:
-            return fobj.read() == '__locked__'
+    def is_locked(self) -> bool:
+        try:
+            with open(self.__tmp) as fobj:
+                if fobj.read() != '__locked__':
+                    return False
+        except FileNotFoundError:
+            # Directory may have already been deleted :trac:`30730`
+            return False
+        # looks like we are locked, but check health first
+        try:
+            self.expect().expect(self._prompt)
+            self.expect().expect(self._prompt)
+        except ExceptionPexpect:
+            return False
+        return True
 
     def __del__(self):
         """
@@ -115,15 +119,8 @@ class PSage(Sage):
         """
         try:
             files = os.listdir(self.__tmp_dir)
-        except OSError:
-            pass
-        else:
             for x in files:
-                try:
-                    os.remove(os.path.join(self.__tmp_dir, x))
-                except OSError:
-                    pass
-        try:
+                os.remove(os.path.join(self.__tmp_dir, x))
             os.removedirs(self.__tmp_dir)
         except OSError:
             pass

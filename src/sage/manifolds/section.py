@@ -1887,7 +1887,7 @@ class Section(ModuleElementWithMutability):
                     except ValueError:
                         break
                 else:
-                    # If this point is reached, no exception has occured; hence
+                    # If this point is reached, no exception has occurred; hence
                     # the result is valid and can be returned:
                     return resu
             # If this point is reached, the comparison has not been possible

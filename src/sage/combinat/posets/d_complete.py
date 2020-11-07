@@ -23,6 +23,7 @@ from collections import deque
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc_c import prod
 
+
 class DCompletePoset(FiniteJoinSemilattice):
     r"""
     A d-complete poset.
@@ -64,14 +65,14 @@ class DCompletePoset(FiniteJoinSemilattice):
         """
         hooks = {}
 
-        min_diamond = {} # Maps max of double-tailed diamond to min of double-tailed diamond
-        max_diamond = {} # Maps min of double-tailed diamond to max of double-tailed diamond
+        min_diamond = {}  # Maps max of double-tailed diamond to min of double-tailed diamond
+        max_diamond = {}  # Maps min of double-tailed diamond to max of double-tailed diamond
 
         H = self._hasse_diagram
 
-        diamonds, _ = H.diamonds() # Tuples of four elements that are diamonds
+        diamonds, _ = H.diamonds()  # Tuples of four elements that are diamonds
 
-        diamond_index = {} # Map max elmt of double tailed diamond to index of diamond
+        diamond_index = {}  # Map max elmt of double tailed diamond to index of diamond
 
         # Find all the double-tailed diamonds and map the mins and maxes
         for index, d in enumerate(diamonds):
@@ -88,7 +89,7 @@ class DCompletePoset(FiniteJoinSemilattice):
 
                 # Check if any of these make a longer double tailed diamond
                 found_diamond = False
-                for (mn, mx) in [(i,j) for i in potential_min for j in potential_max]:
+                for (mn, mx) in [(i, j) for i in potential_min for j in potential_max]:
                     if len(H.neighbors_in(mx)) != 1:
                         continue
                     if len(H.all_paths(mn, mx)) == 2:

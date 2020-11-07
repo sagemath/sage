@@ -544,7 +544,7 @@ Classes and methods
 
 from collections import deque
 from threading import Thread
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet # _generic
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 from sage.misc.lazy_attribute import lazy_attribute
 import copy
 import sys
@@ -882,7 +882,6 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-
 class RESetMapReduce(object):
     r"""
     Map-Reduce on recursively enumerated sets.
@@ -944,12 +943,18 @@ class RESetMapReduce(object):
             if hasattr(forest, 'post_process'):
                 self.post_process = forest.post_process
         else:
-            if roots is not None: self._roots = roots
-            if children is not None: self.children = children
-            if post_process is not None: self.post_process = post_process
-        if map_function is not None: self.map_function = map_function
-        if reduce_function is not None: self.reduce_function = reduce_function
-        if reduce_init is not None: self._reduce_init = reduce_init
+            if roots is not None:
+                self._roots = roots
+            if children is not None:
+                self.children = children
+            if post_process is not None:
+                self.post_process = post_process
+        if map_function is not None:
+            self.map_function = map_function
+        if reduce_function is not None:
+            self.reduce_function = reduce_function
+        if reduce_init is not None:
+            self._reduce_init = reduce_init
         self._profile = None
 
     @lazy_attribute
@@ -972,7 +977,6 @@ class RESetMapReduce(object):
             post_process=self.post_process,
             structure='forest',
             enumeration='depth')
-
 
     def roots(self):
         r"""
@@ -1043,7 +1047,7 @@ class RESetMapReduce(object):
             sage: S.reduce_function(4, 3)
             12
         """
-        return a+b
+        return a + b
 
     def post_process(self, a):
         r"""
@@ -1069,7 +1073,6 @@ class RESetMapReduce(object):
             16
         """
         return a
-
 
     _reduce_init = 0
 
@@ -1159,7 +1162,8 @@ class RESetMapReduce(object):
         logger.debug("Starting processes")
         sys.stdout.flush()
         sys.stderr.flush()
-        for w in self._workers: w.start()
+        for w in self._workers:
+            w.start()
 
     def get_results(self, timeout=None):
         r"""
@@ -1206,7 +1210,6 @@ class RESetMapReduce(object):
                 active_proc -= 1
 
         return res
-
 
     def finish(self):
         r"""
@@ -1403,7 +1406,7 @@ class RESetMapReduce(object):
 
             sage: del EX._results, EX._active_tasks, EX._done, EX._workers
         """
-        victim = random.randint(0, len(self._workers)-1)
+        victim = random.randint(0, len(self._workers) - 1)
         return self._workers[victim]
 
     def run(self,
@@ -1464,7 +1467,7 @@ class RESetMapReduce(object):
             Computation normally finished
             40320*x^8 + 5040*x^7 + 720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        self._profile=profile
+        self._profile = profile
         self.setup_workers(max_proc, reduce_locally)
         self.start_workers()
         if timeout is not None:
@@ -1518,11 +1521,12 @@ class RESetMapReduce(object):
         res = [""]  # classic trick to have a local variable shared with the
         # local function (see e.g:
         # https://stackoverflow.com/questions/2609518/python-nested-function-scopes).
+
         def pstat(name, start, end, ist):
             res[0] += ("\n" + name + " ".join(
                 "%4i" % (self._stats[i][ist]) for i in range(start, end)))
         for start in range(0, self._nprocess, blocksize):
-            end = min(start+blocksize, self._nprocess)
+            end = min(start + blocksize, self._nprocess)
             res[0] = ("#proc:     " +
                       " ".join("%4i" % (i) for i in range(start, end)))
             pstat("reqs sent: ", start, end, 0)
@@ -1589,7 +1593,7 @@ class RESetMapReduceWorker(mp.Process):
         # on the following Pipe. So there is no need to have a queue.
         self._read_task, self._write_task = mp.Pipe(duplex=False)
         self._mapred = mapred
-        self._stats  =  mp.RawArray('i', 4)
+        self._stats = mp.RawArray('i', 4)
         self._reduce_locally = reduce_locally
 
     def _thief(self):
@@ -1602,7 +1606,7 @@ class RESetMapReduceWorker(mp.Process):
 
         try:
             for ireq in iter(self._request.get, AbortError):
-                reqs +=1
+                reqs += 1
                 target = self._mapred._workers[ireq]
                 logger.debug("Got a Steal request from %s" % target.name)
                 self._mapred._signal_task_start()
@@ -1741,7 +1745,7 @@ class RESetMapReduceWorker(mp.Process):
         self._stats[0] = 0
         self._stats[3] = 0
         logger.debug("Launching thief")
-        self._thief = Thread(target = self._thief, name="Thief")
+        self._thief = Thread(target=self._thief, name="Thief")
         self._thief.start()
         self._res = reduce_init()
 
@@ -1871,7 +1875,7 @@ class RESetMPExample(RESetMapReduce):
     .. SEEALSO:: This is an example of :class:`RESetMapReduce`
 
     """
-    def __init__(self, maxl = 9):
+    def __init__(self, maxl=9):
         r"""
         TESTS::
 
@@ -1915,8 +1919,8 @@ class RESetMPExample(RESetMapReduce):
             sage: RESetMPExample().children([1,0])
             [[2, 1, 0], [1, 2, 0], [1, 0, 2]]
         """
-        return [ l[:i] + [len(l)] + l[i:]
-                 for i in range(len(l)+1) ] if len(l) < self.maxl else []
+        return [l[:i] + [len(l)] + l[i:]
+                for i in range(len(l) + 1)] if len(l) < self.maxl else []
 
     def map_function(self, l):
         r"""

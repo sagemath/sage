@@ -305,7 +305,7 @@ def make_regular_matroid_from_matroid(matroid):
         mindex, minval = min(enumerate(L), key=lambda x: len(x[1]))
 
         # if minval = 0, there is an edge not spanned by the current subgraph. Its entry is free to be scaled any way.
-        if len(minval) > 0:
+        if len(minval) > 0:  # DUBIOUS !!
             # Check the subdeterminant
             S = frozenset(L[mindex])
             rows = []
@@ -427,7 +427,7 @@ def spanning_stars(M):
     for x, y in M.dict():
         G.add_edge(x + m, y)
 
-    delta = (M.nrows()+m)**0.5
+    delta = (M.nrows() + m)**0.5
     # remove low degree vertices
     H = []
     # candidate vertices
@@ -594,7 +594,7 @@ def lift_cross_ratios(A, lift_map=None):
         entries = []
         for i in range(len(path) - 1):
             v = path[i]
-            w = path[i+1]
+            w = path[i + 1]
             if v[1] == 0:
                 entries.append((v[0], w[0]))
             else:
@@ -623,7 +623,7 @@ def lift_cross_ratios(A, lift_map=None):
                 monomial[minus_one1] = 1
 
         if cr != plus_one1 and cr not in lift_map:
-            raise ValueError("Input matrix has a cross ratio "+str(cr)+", which is not in the lift_map")
+            raise ValueError("Input matrix has a cross ratio " + str(cr) + ", which is not in the lift_map")
         # - write the entry as a product of cross ratios of A
         div = True
         for entry2 in entries:
@@ -714,7 +714,7 @@ def lift_map(target):
     if target == "sru":
         R = GF(7)
         z = ZZ['z'].gen()
-        S = NumberField(z*z-z+1, 'z')
+        S = NumberField(z * z - z + 1, 'z')
         z = S(z)
         return {R.one(): S.one(), R(3): z, R(3)**(-1): z**5}
 
@@ -725,9 +725,9 @@ def lift_map(target):
     if target == "gm":
         R = GF(19)
         t = QQ['t'].gen()
-        G = NumberField(t*t - t - 1, 't')
+        G = NumberField(t * t - t - 1, 't')
         return {R(1): G(1), R(5): G(t),
-                R(1)/R(5): G(1)/G(t), R(-5): G(-t),
+                R(1) / R(5): G(1) / G(t), R(-5): G(-t),
                 R(-5)**(-1): G(-t)**(-1), R(5)**2: G(t)**2,
                 R(5)**(-2): G(t)**(-2)}
 

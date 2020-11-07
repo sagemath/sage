@@ -94,7 +94,7 @@ ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
 RUN git init
-RUN git remote add trac git://trac.sagemath.org/sage.git
+RUN git remote add trac https://gitlab.com/sagemath/dev/tracmirror.git
 
 ################################################################################
 # Image with the build context added, i.e., the directory from which `docker   #

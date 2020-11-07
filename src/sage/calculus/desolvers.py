@@ -1054,7 +1054,8 @@ def eulers_method(f,x0,y0,h,x1,algorithm="table"):
     if algorithm=="table":
         print("%10s %20s %25s"%("x","y","h*f(x,y)"))
     n=int((1.0)*(x1-x0)/h)
-    x00=x0; y00=y0
+    x00 = x0
+    y00 = y0
     soln = [[x00,y00]]
     for i in range(n+1):
         if algorithm=="table":
@@ -1152,9 +1153,11 @@ def eulers_method_2x2(f,g, t0, x0, y0, h, t1,algorithm="table"):
     """
     if algorithm=="table":
         print("%10s %20s %25s %20s %20s"%("t", "x","h*f(t,x,y)","y", "h*g(t,x,y)"))
-    n=int((1.0)*(t1-t0)/h)
-    t00 = t0; x00 = x0; y00 = y0
-    soln = [[t00,x00,y00]]
+    n = int((1.0)*(t1-t0)/h)
+    t00 = t0
+    x00 = x0
+    y00 = y0
+    soln = [[t00, x00, y00]]
     for i in range(n+1):
         if algorithm=="table":
             print("%10r %20r %25r %20r %20r"%(t00,x00,h*f(t00,x00,y00),y00,h*g(t00,x00,y00)))
@@ -1381,26 +1384,31 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
     sol.extend([[ics[0],ics[1]]])
     sol.extend(sol_2)
 
-    if output=='list':
+    if output == 'list':
         return sol
     from sage.plot.plot import list_plot
     from sage.plot.plot_field import plot_slope_field
-    R = list_plot(sol,plotjoined=True,**kwds)
-    if output=='plot':
+    R = list_plot(sol, plotjoined=True, **kwds)
+    if output == 'plot':
         return R
-    if output=='slope_field':
-        XMIN=sol[0][0]
-        YMIN=sol[0][1]
-        XMAX=XMIN
-        YMAX=YMIN
-        for s,t in sol:
-            if s>XMAX:XMAX=s
-            if s<XMIN:XMIN=s
-            if t>YMAX:YMAX=t
-            if t<YMIN:YMIN=t
-        return plot_slope_field(de,(ivar,XMIN,XMAX),(dummy_dvar,YMIN,YMAX))+R
+    if output == 'slope_field':
+        XMIN = sol[0][0]
+        YMIN = sol[0][1]
+        XMAX = XMIN
+        YMAX = YMIN
+        for s, t in sol:
+            if s > XMAX:
+                XMAX = s
+            if s < XMIN:
+                XMIN = s
+            if t > YMAX:
+                YMAX = t
+            if t < YMIN:
+                YMIN = t
+        return plot_slope_field(de, (ivar,XMIN,XMAX), (dummy_dvar,YMIN,YMAX))+R
 
     raise ValueError("Option output should be 'list', 'plot' or 'slope_field'.")
+
 
 def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1):
     r"""
@@ -1667,13 +1675,15 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     # one-dimensional systems:
     if is_SymbolicVariable(dvars):
-        func = fast_float(des,dvars,ivar)
+        func = fast_float(des, dvars, ivar)
         if not compute_jac:
-            Dfun=None
+            Dfun = None
         else:
-            J = diff(des,dvars)
-            J = fast_float(J,dvars,ivar)
-            Dfun = lambda y,t: [J(y,t)]
+            J = diff(des, dvars)
+            J = fast_float(J, dvars, ivar)
+
+            def Dfun(y, t):
+                return [J(y, t)]
 
     # n-dimensional systems:
     else:

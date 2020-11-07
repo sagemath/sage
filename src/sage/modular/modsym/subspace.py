@@ -3,7 +3,7 @@ Subspace of ambient spaces of modular symbols
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

@@ -41,7 +41,7 @@ cdef class ntl_GF2EContext_class(object):
             sage: ntl.GF2E(2, GF(2^8,'a'))+ntl.GF2E([0,1],ctx)
             Traceback (most recent call last):
             ...
-            ValueError: You can not perform arithmetic with elements in different fields.
+            ValueError: You cannot perform arithmetic with elements in different fields.
 
             sage: n2+n1  # Mismatched moduli:  It will go BOOM!
             [1]

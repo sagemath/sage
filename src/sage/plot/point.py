@@ -124,7 +124,7 @@ class Point(GraphicPrimitive_xydata):
             options_3d['size'] = options['size']
             del options['size']
         if options.pop('faceted', False):
-            raise NotImplementedError("3D points can not be faceted.")
+            raise NotImplementedError("3D points cannot be faceted.")
         for o in ('marker', 'markeredgecolor'): # remove 2D options
             if o in options:
                 del options[o]

@@ -823,7 +823,7 @@ class FileDocTestSource(DocTestSource):
             else:
                 print("There are %s tests in %s that are shifted by %s" % (len(shortfall), self.path, dif))
                 if verbose:
-                    print("    The correct line numbers are %s" % (", ".join([str(n) for n in shortfall])))
+                    print("    The correct line numbers are %s" % (", ".join(str(n) for n in shortfall)))
                 return
         elif len(actual) < len(expected):
             print("There are %s tests in %s that are not being run" % (len(expected) - len(actual), self.path))
@@ -831,9 +831,9 @@ class FileDocTestSource(DocTestSource):
             print("There are %s unexpected tests being run in %s" % (len(actual) - len(expected), self.path))
         if verbose:
             if shortfall:
-                print("    Tests on lines %s are not run" % (", ".join([str(n) for n in shortfall])))
+                print("    Tests on lines %s are not run" % (", ".join(str(n) for n in shortfall)))
             if check_extras and extras:
-                print("    Tests on lines %s seem extraneous" % (", ".join([str(n) for n in extras])))
+                print("    Tests on lines %s seem extraneous" % (", ".join(str(n) for n in extras)))
 
 
 class SourceLanguage:

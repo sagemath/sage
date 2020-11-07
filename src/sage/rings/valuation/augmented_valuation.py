@@ -1083,6 +1083,18 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: w.lift(w.residue_ring().gen())
             (1 + O(2^10))*x
 
+        TESTS:
+
+        Verify that :trac:`30305` has been resolved::
+
+            sage: R.<T> = QQ[]
+            sage: K.<zeta> = NumberField(T^2 + T + 1)
+            sage: R.<x> = K[]
+            sage: v0 = GaussValuation(R, valuations.TrivialValuation(K))
+            sage: v = v0.augmentation(x^2 + x + 2, 1)
+            sage: v.lift(v.reduce(x)) == x
+            True
+
         """
         F = self.residue_ring().coerce(F)
 
@@ -1096,10 +1108,14 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         if self.psi().degree() > 1:
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
             from sage.rings.function_field.element import FunctionFieldElement_polymod
+            from sage.rings.number_field.number_field_element import NumberFieldElement_relative
+            from sage.all import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):
                 G = F.lift()
             elif isinstance(F, FunctionFieldElement_polymod):
                 G = F.element()
+            elif isinstance(F, NumberFieldElement_relative):
+                G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
             assert(G(self._residue_field_generator()) == F)

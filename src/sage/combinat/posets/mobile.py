@@ -9,9 +9,9 @@
 # ****************************************************************************
 
 from sage.combinat.posets.posets import Poset, FinitePoset
-from sage.combinat.posets.d_complete import DCompletePoset
 from sage.misc.lazy_attribute import lazy_attribute
 from .linear_extensions import LinearExtensionsOfMobile
+
 
 class MobilePoset(FinitePoset):
     r"""
@@ -152,7 +152,7 @@ class MobilePoset(FinitePoset):
             if len(anchor_neighbors) == 1:
                 anchor = (r, anchor_neighbors.pop())
                 break
-        return (self._vertex_to_element(anchor[0]), self._vertex_to_element(anchor[1])) if not anchor is None else None
+        return (self._vertex_to_element(anchor[0]), self._vertex_to_element(anchor[1])) if anchor is not None else None
 
     @lazy_attribute
     def _ribbon(self):
@@ -179,7 +179,7 @@ class MobilePoset(FinitePoset):
         H_un = H.to_undirected()
         max_elmts = H.sinks()
         # Compute anchor, ribbon
-        ribbon = [] # In order list of elements on zigzag
+        ribbon = []  # In order list of elements on zigzag
 
         if len(max_elmts) == 1:
             return [self._vertex_to_element(max_elmts[0])]
@@ -202,9 +202,9 @@ class MobilePoset(FinitePoset):
                 if not (H_un.is_cut_vertex(end) or H_un.degree(end) == 1):
                     traverse_ribbon = ribbon if end_count == 0 else ribbon[::-1]
                     for ind, p in enumerate(traverse_ribbon):
-                        if H_un.is_cut_edge(p, traverse_ribbon[ind+1]):
+                        if H_un.is_cut_edge(p, traverse_ribbon[ind + 1]):
                             return [self._vertex_to_element(r)
-                                    for r in G.shortest_path(ends[(end_count + 1) % 2], traverse_ribbon[ind+1])]
+                                    for r in G.shortest_path(ends[(end_count + 1) % 2], traverse_ribbon[ind + 1])]
             return [self._vertex_to_element(r) for r in ribbon]
 
         # First check path counts between ends and deg3 vertex
@@ -269,4 +269,3 @@ class MobilePoset(FinitePoset):
             True
         """
         return self._anchor
-

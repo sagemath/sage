@@ -1671,7 +1671,7 @@ cdef class LaurentSeries(AlgebraElement):
         - ``n`` -- integer
 
         - ``prec`` -- integer (optional) - precision of the result. Though, if
-          this series has finite precision, then the result can not have larger
+          this series has finite precision, then the result cannot have larger
           precision.
 
         EXAMPLES::

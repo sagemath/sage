@@ -225,7 +225,7 @@ cdef class ntl_GF2E(object):
         if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with elements in different fields.")
+            raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
         GF2E_mul(r.x, self.x, (<ntl_GF2E>other).x)
         return r
@@ -243,7 +243,7 @@ cdef class ntl_GF2E(object):
         if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with elements in different fields.")
+            raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
         GF2E_sub(r.x, self.x, (<ntl_GF2E>other).x)
         return r
@@ -261,7 +261,7 @@ cdef class ntl_GF2E(object):
         if not isinstance(other, ntl_GF2E):
             other = ntl_GF2E(other,self.c)
         elif self.c is not (<ntl_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with elements in different fields.")
+            raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
         GF2E_add(r.x, self.x, (<ntl_GF2E>other).x)
         return r
@@ -277,9 +277,9 @@ cdef class ntl_GF2E(object):
         """
         cdef ntl_GF2E r
         if not isinstance(other, ntl_GF2E):
-            other = ntl_GF2E(other,self.c)
+            other = ntl_GF2E(other, self.c)
         elif self.c is not (<ntl_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with elements in different fields.")
+            raise ValueError("You cannot perform arithmetic with elements in different fields.")
         r = self._new()
         GF2E_div(r.x, self.x, (<ntl_GF2E>other).x)
         return r

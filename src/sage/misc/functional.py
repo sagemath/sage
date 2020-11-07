@@ -1136,7 +1136,7 @@ def norm(x):
 
         - :meth:`sage.rings.complex_double.ComplexDoubleElement.norm`
 
-        - :meth:`sage.rings.complex_number.ComplexNumber.norm`
+        - :meth:`sage.rings.complex_mpfr.ComplexNumber.norm`
 
         - :meth:`sage.symbolic.expression.Expression.norm`
 
@@ -1372,7 +1372,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         1.41421356237309*I
 
         sage: type(numerical_approx(CC(1/2)))
-        <type 'sage.rings.complex_number.ComplexNumber'>
+        <type 'sage.rings.complex_mpfr.ComplexNumber'>
 
     The following tests :trac:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::

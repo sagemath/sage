@@ -18,8 +18,9 @@ from __future__ import print_function
 
 import operator as _operator
 from sage.rings.rational_field import QQ
-from sage.symbolic.all import I, SR
-from sage.functions.all import exp
+from sage.symbolic.ring import SR
+from sage.libs.pynac.pynac import I
+from sage.functions.log import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
@@ -858,7 +859,7 @@ class SympyConverter(Converter):
             sage: diff(f(x, t), x)._sympy_(), diff(f(x, t), t)._sympy_()
             (Derivative(f(x, t), x), Derivative(f(x, t), t))
 
-        Check differentiating by variables with multiple occurences
+        Check differentiating by variables with multiple occurrences
         (:trac:`28964`)::
 
             sage: f = function('f')
@@ -955,6 +956,9 @@ class FriCASConverter(InterfaceInit):
 
         - ``operator`` -- operator
 
+        Note that ``ex.operator() == operator``.
+
+
         EXAMPLES::
 
             sage: var('x,y,z')
@@ -976,19 +980,41 @@ class FriCASConverter(InterfaceInit):
 
             sage: integrate(diff(F(x), x)*sin(F(x)), x, algorithm="fricas")     # optional - fricas
             -cos(F(x))
+
+        Check that :trac:`27310` is fixed::
+
+            sage: f = function("F")
+            sage: var("y")
+            y
+            sage: ex = (diff(f(x,y), x, x, y)).subs(y=x+y); ex
+            D[0, 0, 1](F)(x, x + y)
+            sage: fricas(ex)                                                    # optional - fricas
+            F      (x,y + x)
+             ,1,1,2
+
         """
         from sage.symbolic.ring import is_SymbolicVariable
-        args = ex.operands()
+        args = ex.operands() # the arguments the derivative is evaluated at
+        params = operator.parameter_set()
+        params_set = set(params)
+        mult = ",".join(str(params.count(i)) for i in params_set)
         if (not all(is_SymbolicVariable(v) for v in args) or
             len(args) != len(set(args))):
-            raise NotImplementedError
+            # An evaluated derivative of the form f'(1) is not a
+            # symbolic variable, yet we would like to treat it like
+            # one. So, we replace the argument `1` with a temporary
+            # variable e.g. `t0` and then evaluate the derivative
+            # f'(t0) symbolically at t0=1. See trac #12796.
+            temp_args = [SR.var("t%s" % i) for i in range(len(args))]
+            f = operator.function()(*temp_args)
+            vars = ",".join(temp_args[i]._fricas_init_() for i in params_set)
+            subs = ",".join("%s = %s" % (t._fricas_init_(), a._fricas_init_())
+                            for t, a in zip(temp_args, args))
+            outstr = "eval(D(%s, [%s], [%s]), [%s])" % (f._fricas_init_(), vars, mult, subs)
         else:
             f = operator.function()(*args)
-            params = operator.parameter_set()
-            params_set = set(params)
-            vars = "[" + ",".join(args[i]._fricas_init_() for i in params_set) + "]"
-            mult = "[" + ",".join(str(params.count(i)) for i in params_set) + "]"
-            outstr = "D(%s, %s, %s)"%(f._fricas_init_(), vars, mult)
+            vars = ",".join(args[i]._fricas_init_() for i in params_set)
+            outstr = "D(%s, [%s], [%s])" % (f._fricas_init_(), vars, mult)
 
         return outstr
 

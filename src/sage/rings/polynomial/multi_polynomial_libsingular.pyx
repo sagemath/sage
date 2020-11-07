@@ -224,7 +224,7 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.complex_mpfr import is_ComplexField
 from sage.rings.real_mpfr import is_RealField
 from sage.rings.integer_ring import is_IntegerRing, ZZ
 from sage.rings.integer cimport Integer

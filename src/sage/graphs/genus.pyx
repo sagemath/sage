@@ -411,7 +411,7 @@ cdef class simple_connected_genus_backtracker:
         Compute the minimal or maximal genus of self's graph.
 
         Note, this is a remarkably naive algorithm for a very difficult problem.
-        Most interesting cases will take millenia to finish, with the exception
+        Most interesting cases will take millennia to finish, with the exception
         of graphs with max degree 3.
 
         INPUT:

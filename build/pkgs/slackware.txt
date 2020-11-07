@@ -15,3 +15,4 @@ pkg-config
 gettext-tools
 libcroco         # gettext dependency (msgfmt)
 libxml2
+cyrus-sasl

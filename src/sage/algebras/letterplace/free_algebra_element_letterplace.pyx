@@ -757,9 +757,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             True
             sage: ((x*y)^3+2*z*I.0*z+y*I.1*z-x*I.2*y).normal_form(I) == ((x*y)^3).normal_form(I)
             True
-
         """
         if self._parent != I.ring():
-            raise ValueError("Can not compute normal form wrt an ideal that does not belong to %s" % self._parent)
+            raise ValueError("Cannot compute normal form wrt an ideal that does not belong to %s" % self._parent)
         sdeg = self._poly.degree()
         return self.reduce(self._parent._reductor_(I.groebner_basis(degbound=sdeg).gens(), sdeg))

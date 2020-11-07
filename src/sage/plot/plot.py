@@ -789,7 +789,7 @@ def xydata_from_point_list(points):
         sage: xydata_from_point_list(list(zip([2,3,5,7], [11, 13, 17, 19])))
         ([2.0, 3.0, 5.0, 7.0], [11.0, 13.0, 17.0, 19.0])
     """
-    from sage.rings.complex_number import ComplexNumber
+    from sage.rings.complex_mpfr import ComplexNumber
 
     if not isinstance(points, (list, tuple)):
         points = list(points)
@@ -2788,7 +2788,7 @@ def list_plot(data, plotjoined=False, **kwargs):
 
     ``list_plot`` will plot a list of complex numbers in the obvious
     way; any numbers for which
-    :func:`CC()<sage.rings.complex_field.ComplexField>` makes sense will
+    :func:`CC()<sage.rings.complex_mpfr.ComplexField>` makes sense will
     work.
 
     ``list_plot`` also takes a list of tuples ``(x_i, y_i)`` where ``x_i``
@@ -3052,7 +3052,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # Need to catch IndexError because if data is, say, [(0, 1), (1, I)],
         # point3d() throws an IndexError on the (0,1) before it ever
         # gets to (1, I).
-        from sage.rings.complex_field import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         CC = ComplexField()
         # if we get here, we already did "list(enumerate(data))",
         # so look at z[1] in inner list

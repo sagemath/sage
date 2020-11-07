@@ -6,7 +6,7 @@ where functions that depend on the ramification of the defining polynomial are p
 
 .. NOTE::
 
-    There are no doctests in this file since the functions here can not be
+    There are no doctests in this file since the functions here cannot be
     called directly from Python. Testing of this function is necessarily
     indirect and mostly done through arithmetic black-box tests that are part
     of the test suites of the `p`-adic parents.

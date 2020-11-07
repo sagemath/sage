@@ -52,7 +52,7 @@ and check the installation of graphviz and the dot2tex spkg.
 For support, please contact <sage-combinat-devel at googlegroups.com>.
 """
     import_error_string = """
-An error occured when importing dot2tex.
+An error occurred when importing dot2tex.
 
 Please see :meth:`sage.graphs.generic_graph.GenericGraph.layout_graphviz`
 for installation instructions.

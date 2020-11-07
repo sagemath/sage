@@ -69,7 +69,7 @@ def register_sage_classes():
     from sage.rings.rational import Rational
     from sage.rings.real_mpfr import RealNumber
     from sage.rings.real_double import RealDoubleElement
-    from sage.rings.complex_number import ComplexNumber
+    from sage.rings.complex_mpfr import ComplexNumber
     from sage.rings.complex_double import ComplexDoubleElement
     from sage.rings.complex_mpc import MPComplexNumber
     from sage.rings.qqbar import AlgebraicReal, AlgebraicNumber

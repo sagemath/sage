@@ -535,7 +535,7 @@ from sage.structure.richcmp import (richcmp, richcmp_method,
                                     op_EQ, op_NE, op_GT)
 from sage.rings.real_mpfr import RR
 from sage.rings.real_mpfi import RealIntervalField, RIF, is_RealIntervalFieldElement, RealIntervalField_class
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField, is_ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
 from sage.rings.polynomial.all import PolynomialRing

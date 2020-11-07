@@ -191,15 +191,21 @@ cdef class Matrix(Matrix0):
             |     2                 2    |
             +    x  + 8 x      - 3 x  + 5+
 
+        ::
+
+            sage: y = var('y')
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
+            sage: M == fricas(M).sage()    # optional - fricas
+            True
         """
-        s = str(self.rows()).replace('(','[').replace(')',']')
+        s = ','.join('[' + ','.join(cf._fricas_init_() for cf in row) + ']'
+                     for row in self.rows())
         R = self.base_ring()
         try:
             R._fricas_()
         except TypeError:
-            return "matrix(%s)"%(s)
-
-        return "matrix(%s)$Matrix(%s)"%(s, R._fricas_init_())
+            return "matrix([%s])" % s
+        return "matrix([%s])$Matrix(%s)" % (s, R._fricas_init_())
 
     def _giac_init_(self):
         """
@@ -211,21 +217,23 @@ cdef class Matrix(Matrix0):
             sage: giac(M)
             [[0,1],[2,3]]
 
-        ::
-
             sage: M = matrix(QQ,3,[1,2,3,4/3,5/3,6/4,7,8,9])
             sage: giac(M)
             [[1,2,3],[4/3,5/3,3/2],[7,8,9]]
-
-        ::
 
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
             sage: giac(M)
             [[-9*x^2-2*x+2,x-1],[x^2+8*x,-3*x^2+5]]
+
+            sage: y = var('y')
+            sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
+            sage: giac(M).det()
+            (y^2*dilog(y)+y*sin(y)*dilog(y)-y+4)/y
         """
-        s = str(self.rows()).replace('(','[').replace(')',']')
-        return "(%s)"%(s)
+        s = ','.join('[' + ','.join(cf._giac_init_() for cf in row) + ']'
+                     for row in self.rows())
+        return "([%s])" % s
 
     def _maxima_init_(self):
         """

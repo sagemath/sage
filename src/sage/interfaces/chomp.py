@@ -195,7 +195,7 @@ class CHomP:
         try:
             data = complex._chomp_repr_()
         except AttributeError:
-            raise AttributeError("Complex can not be converted to use with CHomP.")
+            raise AttributeError("Complex cannot be converted to use with CHomP.")
 
         datafile = tmp_filename()
         with open(datafile, 'w') as f:
@@ -229,7 +229,7 @@ class CHomP:
             try:
                 sub = subcomplex._chomp_repr_()
             except AttributeError:
-                raise AttributeError("Subcomplex can not be converted to use with CHomP.")
+                raise AttributeError("Subcomplex cannot be converted to use with CHomP.")
             subfile = tmp_filename()
             with open(subfile, 'w') as f:
                 f.write(sub)

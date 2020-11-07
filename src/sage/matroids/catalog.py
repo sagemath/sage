@@ -32,15 +32,14 @@ Functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import graphs
 
 from sage.rings.all import ZZ, GF
 from sage.schemes.all import ProjectiveSpace
-from sage.symbolic.ring import SR
 
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -970,7 +969,7 @@ def PG(n, q, x=None):
         the Finite Field of size 7
     """
     if x is None:
-        x = SR.var('x')
+        x = 'x'
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P]).transpose()
@@ -1014,7 +1013,7 @@ def AG(n, q, x=None):
 
     """
     if x is None:
-        x = SR.var('x')
+        x = 'x'
     F = GF(q, x)
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in P if not list(p)[0] == 0]).transpose()

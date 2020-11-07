@@ -174,7 +174,7 @@ def list_function(x):
         6 & 7 & 8
         \end{array}\right)\right]
     """
-    return "\\left[" + ", ".join([latex(v) for v in x]) + "\\right]"
+    return "\\left[" + ", ".join(latex(v) for v in x) + "\\right]"
 
 
 def tuple_function(x, combine_all=False):
@@ -204,8 +204,8 @@ def tuple_function(x, combine_all=False):
         '\\left(1, 2\\right) 3'
     """
     if combine_all:
-        return " ".join([latex(v) for v in x])
-    return "\\left(" + ", ".join([latex(v) for v in x]) + "\\right)"
+        return " ".join(latex(v) for v in x)
+    return "\\left(" + ", ".join(latex(v) for v in x) + "\\right)"
 
 
 def bool_function(x):
@@ -344,7 +344,7 @@ def str_function(x):
 
 def dict_function(x):
     r"""
-    Returns the LaTeX code for a dictionary ``x``.
+    Return the LaTeX code for a dictionary ``x``.
 
     INPUT:
 
@@ -365,6 +365,7 @@ def dict_function(x):
                     ", ".join(r"%s : %s" % (latex(key), latex(value))
                               for key, value in x.items()),
                     r"\right\}"])
+
 
 # One can add to the latex_table in order to install latexing
 # functionality for other types.  (Suggested by Robert Kerns of Enthought.)

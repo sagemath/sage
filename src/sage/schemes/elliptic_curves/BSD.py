@@ -219,7 +219,8 @@ def heegner_index_work(E):
             except RuntimeError as err:
                 if err.args[0][-33:] == 'Generators not provably computed.':
                     dsl += 1
-                else: raise RuntimeError(err)
+                else:
+                    raise RuntimeError(err)
         J = I.is_int()
         if J[0] and J[1] > 0:
             I = J[1]
@@ -466,7 +467,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         raise NotImplementedError()
     rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens = M
     assert sha2_lower_bd <= sha2_upper_bd
-    if gens is not None: gens = BSD.curve.saturation(gens)[0]
+    if gens is not None:
+        gens = BSD.curve.saturation(gens)[0]
     if rank_lower_bd > rank_upper_bd:
         raise RuntimeError("Apparent contradiction: %d <= rank <= %d." % (rank_lower_bd, rank_upper_bd))
     BSD.two_selmer_rank = rank_upper_bd + sha2_lower_bd + BSD.two_tor_rk
@@ -520,7 +522,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             max_height = max(13,BSD.curve.quadratic_twist(D).CPS_height_bound())
             heegner_primes = -1
             while heegner_primes == -1:
-                if max_height > 21: break
+                if max_height > 21:
+                    break
                 heegner_primes, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height)
                 max_height += 1
             if isinstance(heegner_primes, list):
@@ -600,12 +603,14 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             if 2 not in BSD.primes:
                 if not s:
                     s = '2'
-                else: s = '2, '+s
+                else:
+                    s = '2, ' + s
             print('True for p not in {' + s + '} by Kolyvagin.')
         BSD.proof['finite'] = copy(BSD.primes)
         primes_to_remove = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_surjective(p) and not BSD.curve.has_additive_reduction(p):
                 if BSD.curve.has_nonsplit_multiplicative_reduction(p):
                     if BSD.rank > 0:
@@ -637,7 +642,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             BSD.primes.remove(p)
         kolyvagin_primes = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_surjective(p):
                 kolyvagin_primes.append(p)
         for p in kolyvagin_primes:
@@ -647,7 +653,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # Cha's hypothesis
     for p in BSD.primes:
-        if p == 2: continue
+        if p == 2:
+            continue
         if D_K%p != 0 and BSD.N%(p**2) != 0 and galrep.is_irreducible(p):
             if verbosity > 0:
                 print('Kolyvagin\'s bound for p = %d applies by Cha.' % p)
@@ -699,7 +706,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     # apply Kolyvagin's bound
     primes_to_remove = []
     for p in kolyvagin_primes:
-        if p == 2: continue
+        if p == 2:
+            continue
         if p not in heegner_primes:
             ord_p_bound = 0
         elif heegner_index is not None: # p must divide heegner_index
@@ -749,7 +757,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         kato_primes = BSD.Sha.bound_kato()
         primes_to_remove = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if p not in kato_primes:
                 if verbosity > 0:
                     print('Kato further implies that #Sha[%d] is trivial.' % p)
@@ -779,7 +788,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     primes_to_remove = []
     if BSD.N.is_prime():
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_reducible(p):
                 primes_to_remove.append(p)
                 if verbosity > 0:
@@ -800,7 +810,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         for D in BSD.heegner_index_upper_bound:
             M = BSD.heegner_index_upper_bound[D]
             for p in kolyvagin_primes:
-                if p not in BSD.primes or p == 3: continue
+                if p not in BSD.primes or p == 3:
+                    continue
                 if verbosity > 0:
                     print('    p = %d: Trying harder for Heegner index' % p)
                 obt = 0
@@ -846,9 +857,11 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                             BSD.primes.remove(p)
             break
         for p in kolyvagin_primes:
-            if p not in BSD.primes or p == 3: continue
+            if p not in BSD.primes or p == 3:
+                continue
             for D in BSD.curve.heegner_discriminants_list(4):
-                if D in BSD.heegner_index_upper_bound: continue
+                if D in BSD.heegner_index_upper_bound:
+                    continue
                 print('    discriminant', D)
                 if verbosity > 0:
                     print('p = %d: Trying discriminant = %d for Heegner index' % (p, D))

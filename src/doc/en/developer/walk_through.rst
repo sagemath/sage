@@ -72,7 +72,7 @@ local installation of Sage, or (to start without Sage) download it
 from github which is a public read-only mirror (=faster) of our
 internal git repository::
 
-    [user@localhost ~]$ git clone git://github.com/sagemath/sage.git
+    [user@localhost ~]$ git clone https://github.com/sagemath/sage.git
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.

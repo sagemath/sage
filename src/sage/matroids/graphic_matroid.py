@@ -188,8 +188,8 @@ class GraphicMatroid(Matroid):
         """
 
         if groundset is None:
-            #Try to construct a ground set based on the edge labels.
-            #If that fails, use range() to come up with a groundset.
+            # Try to construct a ground set based on the edge labels.
+            # If that fails, use range() to come up with a groundset.
             groundset = G.edge_labels()
 
         groundset_set = frozenset(groundset)
@@ -938,17 +938,16 @@ class GraphicMatroid(Matroid):
         else:
             raise ValueError("no circuit in independent set")
 
-        vertex_list = ([u for (u, v, l) in edge_set]
-            + [v for (u, v, l) in edge_set])
-        leaves = [(u, v, l) for (u, v, l) in edge_set if (vertex_list.count(u) == 1
-            or vertex_list.count(v) == 1)]
+        vertex_list = [u for u, v, l in edge_set] + [v for u, v, l in edge_set]
+        leaves = [(u, v, l) for (u, v, l) in edge_set
+                  if vertex_list.count(u) == 1 or vertex_list.count(v) == 1]
         while leaves:
             for leaf in leaves:
                 edge_set.remove(leaf)
                 vertex_list.remove(leaf[0])
                 vertex_list.remove(leaf[1])
-            leaves = [(u, v, l) for (u, v, l) in edge_set if (vertex_list.count(u) == 1
-                or vertex_list.count(v) == 1)]
+            leaves = [(u, v, l) for (u, v, l) in edge_set
+                      if vertex_list.count(u) == 1 or vertex_list.count(v) == 1]
 
         return frozenset([l for (u, v, l) in edge_set])
 
@@ -1839,7 +1838,7 @@ class GraphicMatroid(Matroid):
         connectivity = self.connectivity(X)
         if connectivity != 1:
             raise ValueError("the input must display a 2-separation "
-                + "that is not a 1-separation")
+                             "that is not a 1-separation")
 
         # Determine the vertices
         X_edges = self.groundset_to_edges(X)
@@ -1854,8 +1853,8 @@ class GraphicMatroid(Matroid):
         a = list(vertices)[0]
         b = list(vertices)[1]
 
-        edges = [(u, v, l) for (u, v, l) in X_edges if (
-            u in vertices or v in vertices)]
+        edges = [(u, v, l) for (u, v, l) in X_edges
+                 if u in vertices or v in vertices]
         G = self.graph()
         for (u, v, l) in edges:
             G.delete_edge(u, v, l)
@@ -2032,6 +2031,5 @@ class GraphicMatroid(Matroid):
             True
         """
         from sage.matroids.constructor import Matroid as ConstructorMatroid
-        X = [l for u,v,l in self._G.edge_iterator()]
+        X = [l for u, v, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
-

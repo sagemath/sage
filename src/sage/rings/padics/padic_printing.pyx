@@ -1018,7 +1018,7 @@ cdef class pAdicPrinter_class(SageObject):
                 elif self.max_unram_terms == 1:
                     L = ["[..., %s]"%(a[-1]) if len(a) > 1 else str(a) for a in L]
                 else:
-                    L = ["[%s,..., "%(a[0]) + ", ".join([str(b) for b in a[1-self.max_unram_terms:]]) + "]" if len(a) > 2 else str(a) for a in L]
+                    L = ["[%s,..., " % (a[0]) + ", ".join(str(b) for b in a[1-self.max_unram_terms:]) + "]" if len(a) > 2 else str(a) for a in L]
             if n > 0:
                 if self.base or self._ring().absolute_f() == 1:
                     L += ['0']*n

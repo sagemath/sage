@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-General matrix Constructor
+General matrix Constructor and display options
 """
 
 #*****************************************************************************
@@ -15,6 +15,7 @@ General matrix Constructor
 #*****************************************************************************
 
 from .args cimport MatrixArgs
+from sage.structure.global_options import GlobalOptions
 
 
 def matrix(*args, **kwds):
@@ -640,3 +641,32 @@ def matrix(*args, **kwds):
 Matrix = matrix
 
 from .special import *
+
+@matrix_method
+class options(GlobalOptions):
+    r"""
+    Global options for matrices.
+
+    @OPTIONS@
+
+    EXAMPLES::
+
+        sage: matrix.options.max_cols = 6
+        sage: matrix.options.max_rows = 3
+        sage: matrix(ZZ, 3, 6)
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        sage: matrix(ZZ, 3, 7)
+        3 x 7 dense matrix over Integer Ring...
+        sage: matrix(ZZ, 4, 6)
+        4 x 6 dense matrix over Integer Ring...
+        sage: matrix.options._reset()
+    """
+    NAME = 'Matrix'
+    max_cols = dict(default=49,
+                    description='maximum number of columns to display',
+                    checker=lambda val: val >= 0)
+    max_rows = dict(default=19,
+                    description='maximum number of rows to display',
+                    checker=lambda val: val >= 0)

@@ -194,7 +194,8 @@ cdef class SymbolicRing(CommutativeRing):
             from sage.rings.polynomial.laurent_polynomial_ring import is_LaurentPolynomialRing
 
             from sage.rings.all import (ComplexField,
-                                        RLF, CLF, AA, QQbar, InfinityRing,
+                                        RLF, CLF,
+                                        InfinityRing,
                                         UnsignedInfinityRing)
             from sage.rings.finite_rings.finite_field_base import is_FiniteField
 

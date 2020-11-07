@@ -254,7 +254,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         return ''.join([
         'Product of projective spaces ',
-        ' x '.join(['P^{0}'.format(d) for d in self._dims]),
+        ' x '.join('P^{0}'.format(d) for d in self._dims),
         ' over ',
         str(self.base_ring())])
 
@@ -279,7 +279,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         else:
             v = list(v)
         splitv = self._factors(v)
-        return '(%s)'%(" , ".join((" : ".join([str(t) for t in P])) for P in splitv))
+        return '(%s)' % (" , ".join((" : ".join(str(t) for t in P))
+                                    for P in splitv))
 
     def _latex_(self):
         r"""
@@ -291,7 +292,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
             P}_{\Bold{Z}}^3
         """
-        return '%s'%" \\times ".join([PS._latex_() for PS in self])
+        return '%s' % " \\times ".join(PS._latex_() for PS in self)
 
     def _latex_generic_point(self, v = None):
         """
@@ -309,7 +310,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         else:
             v = list(v)
         splitv = self._factors(v)
-        return '\\left(%s\\right)'%(" , ".join((" : ".join([t._latex_() for t in P])) for P in splitv))
+        return '\\left(%s\\right)' % (" , ".join((" : ".join(t._latex_() for t in P)) for P in splitv))
 
     def __getitem__(self, i):
         r"""

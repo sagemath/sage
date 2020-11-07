@@ -68,7 +68,6 @@ from . import polynomial_ring
 import sage.rings.integer_ring
 import sage.rings.rational_field
 import sage.rings.finite_rings.integer_mod_ring
-import sage.rings.complex_field
 import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
 from sage.misc.sage_eval import sage_eval
@@ -87,7 +86,7 @@ from sage.libs.all import pari, pari_gen, PariError
 
 from sage.rings.real_mpfr import RealField, is_RealField, RR
 
-from sage.rings.complex_field import is_ComplexField, ComplexField
+from sage.rings.complex_mpfr import is_ComplexField, ComplexField
 CC = ComplexField()
 
 from sage.rings.real_double import is_RealDoubleField, RDF
@@ -2788,6 +2787,21 @@ cdef class Polynomial(CommutativeAlgebraElement):
             -1
             sage: (x^3 + x - 1) % (x^2 - 1)
             2*x - 1
+
+        TESTS:
+
+        Check the problem reported at :trac:`12529` is fixed::
+
+            sage: gens = 'y a0 a1 a2 b0 b1 b2 c1 c2 d0 d1 d2 d3 d4 d5 d6 d7'.split()
+            sage: R = PolynomialRing(GF(8), 17, gens)
+            sage: R.inject_variables(verbose=False)
+            sage: A, B, C = a0 + a1*y + a2*y^2, b0 + b1*y + b2*y^2, c1*y + c2*y^2
+            sage: D = d0 + d1*y + d2*y^2 + d3*y^3 + d4*y^4 + d5*y^5 + d6*y^6 + d7*y^7
+            sage: F = D.subs({y: B})
+            sage: G = A.subs({y: F}) + C
+            sage: g = G.mod(y^8 + y)
+            sage: g.degree(y)
+            7
         """
         return self % other
 
@@ -4317,7 +4331,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         ## in this way we can move the specific logic of factoring to the
         ## self.parent().base_ring() and get rid of all the ugly
         ## is_SomeType(R) checks and get way nicer structured code
-        ## 200 lines of spagetti code is just way to much!
+        ## 200 lines of spaghetti code is just way to much!
 
         if self.degree() < 0:
             raise ArithmeticError("factorization of {!r} is not defined".format(self))
@@ -7240,6 +7254,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: f.roots(ring=QQ)
             [(3/2, 1), (1, 1), (-1, 1)]
 
+        An example where we compute the roots lying in a subring of the
+        base ring::
+
+            sage: Pols.<n> = QQ[]
+            sage: pol = (n - 1/2)^2*(n - 1)^2*(n-2)
+            sage: pol.roots(ZZ)
+            [(2, 1), (1, 2)]
+
         An example involving large numbers::
 
             sage: x = RR['x'].0
@@ -7600,8 +7622,10 @@ cdef class Polynomial(CommutativeAlgebraElement):
         and K is not, to the corresponding real field). Then we use either
         PARI or numpy as specified above.
 
-        For all other cases where K is different than L, we just use
-        .change_ring(L) and proceed as below.
+        For all other cases where K is different than L, we attempt to use
+        .change_ring(L). When that fails but L is a subring of K, we also
+        attempt to compute the roots over K and filter the ones belonging
+        to L.
 
         The next method, which is used if K is an integral domain, is to
         attempt to factor the polynomial. If this succeeds, then for every
@@ -7936,7 +7960,15 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 else:
                     return self.change_ring(L)._roots_from_factorization(F, multiplicities)
 
-            return self.change_ring(L).roots(multiplicities=multiplicities, algorithm=algorithm)
+            try:
+                self_L = self.change_ring(L)
+            except (TypeError, ValueError):
+                if L.is_exact() and L.is_subring(K):
+                    return self._roots_in_subring(L, multiplicities, algorithm)
+                else:
+                    raise
+
+            return self_L.roots(multiplicities=multiplicities, algorithm=algorithm)
 
         try:
             if K.is_integral_domain():
@@ -8013,6 +8045,44 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     else:
                         seq.append(rt)
         return seq
+
+    def _roots_in_subring(self, L, multiplicities, algorithm):
+        r"""
+        Helper method for :meth:`roots` that filters the roots belonging to
+        a subring of the base ring.
+
+        TESTS::
+
+            sage: Pols.<n> = QQ[]
+            sage: pol = (n - 1/2)^2*(n - 1)^2*(n-2)
+            sage: rts = pol.roots(ZZ, multiplicities=False); rts
+            [2, 1]
+            sage: rts[0].parent()
+            Integer Ring
+
+            sage: Pols_x.<x> = QQ[]
+            sage: Pols_xy.<y> = Pols_x[]
+            sage: ((y - 1)*(y - x))._roots_in_subring(QQ, True, None)
+            [(1, 1)]
+        """
+        K = self._parent.base_ring()
+        sec = K.coerce_map_from(L).section()
+        if sec is None:
+            raise NotImplementedError("embedding of {} into {} has no implemented section", L, K)
+        rts_K = self.roots(multiplicities=multiplicities, algorithm=algorithm)
+        if not multiplicities:
+            rts_K = [(rt, None) for rt in rts_K]
+        rts_L = []
+        for xK, mult in rts_K:
+            try:
+                xL = sec(xK)
+            except (TypeError, ValueError):
+                continue
+            rts_L.append((xL, mult))
+        if multiplicities:
+            return rts_L
+        else:
+            return [rt for (rt, _) in rts_L]
 
     def real_roots(self):
         """
@@ -9899,10 +9969,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
         r"""
         Return a `n`-th root of this polynomial.
 
-        This is computed using Newton method in the ring of power series. This
-        method works only when the base ring is an integral domain. Morever, for
-        polynomial whose coefficient of lower degree is different from 1, the
-        elements of the base ring should have a method ``nth_root`` implemented.
+        This is computed using Newton method in the ring of power
+        series. This method works only when the base ring is an
+        integral domain. Moreover, for polynomial whose coefficient of
+        lower degree is different from 1, the elements of the base
+        ring should have a method ``nth_root`` implemented.
 
         EXAMPLES::
 

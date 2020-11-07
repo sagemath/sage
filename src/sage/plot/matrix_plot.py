@@ -482,7 +482,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: matrix_plot(b)
         Traceback (most recent call last):
         ...
-        ValueError: can not convert entries to floating point numbers
+        ValueError: cannot convert entries to floating point numbers
 
     To plot the absolute value of a complex matrix, use the
     ``apply_map`` method::
@@ -572,7 +572,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
             try:
                 data = np.asarray([d for _,d in entries], dtype=float)
             except Exception:
-                raise ValueError("can not convert entries to floating point numbers")
+                raise ValueError("cannot convert entries to floating point numbers")
             positions = np.asarray([[row for (row,col),_ in entries],
                                     [col for (row,col),_ in entries]], dtype=int)
             mat = scipysparse.coo_matrix((data,positions), shape=(mat.nrows(), mat.ncols()))
@@ -592,7 +592,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     except TypeError:
         raise TypeError("mat must be a Matrix or a two dimensional array")
     except ValueError:
-        raise ValueError("can not convert entries to floating point numbers")
+        raise ValueError("cannot convert entries to floating point numbers")
 
     if len(xy_data_array.shape) < 2:
         raise TypeError("mat must be a Matrix or a two dimensional array")

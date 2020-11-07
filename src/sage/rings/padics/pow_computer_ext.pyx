@@ -67,7 +67,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX, ntl_ZZ_pX_Modulus
 from sage.rings.integer cimport Integer
 
-cdef extern from "ccobject.h":
+cdef extern from "sage/ext/ccobject.h":
      ZZ_c* Allocate_ZZ_array "Allocate_array<ZZ>"(size_t n)
      void Delete_ZZ_array "Delete_array<ZZ>"(ZZ_c* v)
      ZZ_pX_c* Allocate_ZZ_pX_array "Allocate_array<ZZ_pX>"(size_t n)

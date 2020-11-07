@@ -420,7 +420,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             ....:     assert Px_a(Lxa(poly)) == Px_a(poly)
         """
         if self.__n < 0:
-            raise ValueError("Laurent polynomial with negative valuation can not be converted to polynomial")
+            raise ValueError("Laurent polynomial with negative valuation cannot be converted to polynomial")
 
         if is_PolynomialRing(R):
             return R(self.__u) << self.__n
@@ -1490,7 +1490,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
     def variables(self):
         """
-        Return the tuple of variables occuring in this Laurent polynomial.
+        Return the tuple of variables occurring in this Laurent polynomial.
 
         EXAMPLES::
 

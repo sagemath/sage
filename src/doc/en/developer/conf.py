@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Sage Developer's Guide documentation build configuration file, created by
 # sphinx-quickstart on Sun Sep 14 01:32:19 2008.
 #
@@ -14,15 +12,22 @@
 from sage.docs.conf import release
 from sage.docs.conf import *  # NOQA
 
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
+
 # General information about the project.
-project = u"Sage Developer's Guide"
+project = "Sage Developer's Guide"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
 html_title = project + " v"+release
 name = 'developer'
 
-html_short_title = u"Developer's Guide v" + release
+html_short_title = "Developer's Guide v" + release
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -30,7 +35,7 @@ htmlhelp_basename = name
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', name+'.tex', u'Sage Developer\'s Guide',
-   u'The Sage Development Team', 'manual'),
+  ('index', name+'.tex', 'Sage Developer\'s Guide',
+   'The Sage Development Team', 'manual'),
 ]
 

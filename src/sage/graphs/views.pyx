@@ -73,6 +73,10 @@ cdef class EdgesView:
       argument and returns a value that can be used for comparisons in the
       sorting algorithm. This parameter is ignored when ``sort = False``.
 
+    - ``sort_vertices`` -- boolean (default: ``True``); whether to sort the
+      ends of the edges; not sorting the ends is faster;
+      only applicable to undirected graphs when ``sort`` is ``False``
+
     .. WARNING::
 
         Since any object may be a vertex, there is no guarantee that any two
@@ -153,6 +157,13 @@ cdef class EdgesView:
         sage: E = EdgesView(G, sort=True, key=lambda x: x[2]); E
         [(0, 2, 'A'), (1, 2, 'B'), (0, 1, 'C')]
 
+    Not sorting the ends of the vertices::
+
+        sage: G = Graph()
+        sage: G.add_edges([[1,2], [2,3], [0,3]])
+        sage: E = EdgesView(G, sort=False, sort_vertices=False); E
+        [(3, 0, None), (2, 1, None), (3, 2, None)]
+
     With a directed graph::
 
         sage: G = digraphs.DeBruijn(2, 2)
@@ -178,7 +189,7 @@ cdef class EdgesView:
         [(0, 1), (1, 2)]
 
     We can ignore the direction of the edges of a directed graph, in which case
-    we search accross edges in either direction::
+    we search across edges in either direction::
 
         sage: G = digraphs.Circuit(5)
         sage: E = EdgesView(G, vertices=[0, 1], labels=False, sort=True, ignore_direction=False); E
@@ -291,11 +302,12 @@ cdef class EdgesView:
     cdef frozenset _vertex_set
     cdef readonly bint _labels
     cdef readonly bint _ignore_direction
+    cdef bint _sort_vertices
     cdef bint _sort_edges
     cdef _sort_edges_key
 
     def __init__(self, G, vertices=None, labels=True, ignore_direction=False,
-                     sort=None, key=None):
+                     sort=None, key=None, sort_vertices=True):
         """
         Construction of this :class:`EdgesView`.
 
@@ -329,6 +341,7 @@ cdef class EdgesView:
         if not sort and key is not None:
             raise ValueError('sort keyword is not True, yet a key function is given')
         self._sort_edges_key = key
+        self._sort_vertices = sort_vertices
 
     def __len__(self):
         """
@@ -393,7 +406,10 @@ cdef class EdgesView:
             if self._ignore_direction:
                 yield from self._graph._backend.iterator_in_edges(vertices, self._labels)
         else:
-            yield from self._graph._backend.iterator_edges(vertices, self._labels)
+            if self._sort_vertices:
+                yield from self._graph._backend.iterator_edges(vertices, self._labels)
+            else:
+                yield from self._graph._backend.iterator_unsorted_edges(vertices, self._labels)
 
     def __iter__(self):
         """

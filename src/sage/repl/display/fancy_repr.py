@@ -207,8 +207,8 @@ class LargeMatrixHelpRepr(ObjectReprABC):
             return False
         if not isinstance(obj, Matrix):
             return False
-        from sage.matrix.matrix0 import max_rows, max_cols
-        if obj.nrows() < max_rows and obj.ncols() < max_cols:
+        from sage.matrix.constructor import options
+        if obj.nrows() <= options.max_rows() and obj.ncols() <= options.max_cols():
             return False
         p.text(
             repr(obj) + " (use the '.str()' method to see the entries)"

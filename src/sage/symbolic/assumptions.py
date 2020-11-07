@@ -817,10 +817,10 @@ def _forget_all():
         sin(pi*m)
     """
     global _assumptions
-    if not(_assumptions):
+    if not _assumptions:
         return
-    #maxima._eval_line('forget([%s]);'%(','.join([x._maxima_init_() for x in _assumptions])))
-    for x in list(_assumptions): # need to do this because x.forget() removes x from _assumptions
+    for x in list(_assumptions):
+        # need to do this because x.forget() removes x from _assumptions
         x.forget()
     _assumptions = dict()
 
@@ -828,11 +828,11 @@ def _forget_all():
 class assuming:
     """
     Temporarily modify assumptions.
-    
+
     Create a context manager in which temporary assumptions are added
     (or substituted) to the current assumptions set.
 
-    The set of possible assumptions and declarations  is the same as for 
+    The set of possible assumptions and declarations  is the same as for
     :func:`assume`.
 
     This can be useful in interactive mode to discover the assumptions

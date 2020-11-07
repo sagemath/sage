@@ -340,10 +340,10 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 else:
                     return NotImplemented
 
-            #def product_on_basis(self, t1, t2):
+            # def product_on_basis(self, t1, t2):
             # would be easy to implement, but without a special
             # version of module morphism, this would not take
-            # advantage of the bloc structure
+            # advantage of the block structure
 
 
     class TensorProducts(TensorProductsCategory):

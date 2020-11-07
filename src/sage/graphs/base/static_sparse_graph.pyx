@@ -88,8 +88,8 @@ Technical details
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
-* Some methods return ``bitset_t`` objets when lists could be expected. There is
-  a very useful ``bitset_list`` function for this kind of problems :-)
+* Some methods return ``bitset_t`` objects when lists could be expected. There
+  is a very useful ``bitset_list`` function for this kind of problems :-)
 
 * When the edges are labelled, most of the space taken by this graph is taken by
   edge labels. If no edge is labelled then this space is not allocated, but if
@@ -123,7 +123,7 @@ Cython functions
     ``edge_label(short_digraph g, int * edge)`` | Return the label associated with a given edge
     ``init_empty_copy(short_digraph dst, short_digraph src)`` | Allocate ``dst`` so that it can contain as many vertices and edges as ``src``.
     ``init_reverse(short_digraph dst, short_digraph src)`` | Initialize ``dst`` to a copy of ``src`` with all edges in the opposite direction.
-    ``free_short_digraph(short_digraph g)`` | Free the ressources used by ``g``
+    ``free_short_digraph(short_digraph g)`` | Free the resources used by ``g``
 
 **Connectivity**
 
@@ -168,7 +168,7 @@ Python functions
 ----------------
 
 These functions are available so that Python modules from Sage can call the
-Cython routines this module implements (as they can not directly call methods
+Cython routines this module implements (as they cannot directly call methods
 with C arguments).
 """
 
@@ -208,7 +208,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
-    If ``G`` is a ``Graph`` objet (and not a ``DiGraph``), an edge between two
+    If ``G`` is a ``Graph`` object (and not a ``DiGraph``), an edge between two
     vertices `u` and `v` is replaced by two arcs in both directions.
 
     The optional argument ``vertex_list`` is assumed to be a list of all
@@ -893,7 +893,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
 
 cdef void free_short_digraph(short_digraph g):
     """
-    Free the ressources used by ``g``
+    Free the resources used by ``g``
     """
     sig_free(g.edges)
     sig_free(g.neighbors)

@@ -97,8 +97,8 @@ from .real_mpfi import (RealIntervalField,
                        RealInterval)
 
 # Complex numbers
-from .complex_field import ComplexField
-from .complex_number import (create_ComplexNumber as ComplexNumber)
+from .complex_mpfr import ComplexField
+from .complex_mpfr import create_ComplexNumber as ComplexNumber
 Complexes = ComplexField
 from .complex_interval_field import ComplexIntervalField
 from .complex_interval import (create_ComplexIntervalFieldElement as ComplexIntervalFieldElement)

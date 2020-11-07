@@ -530,7 +530,7 @@ cdef class WordDatatype_char(WordDatatype):
         if not PyNumber_Check(exp):
             raise ValueError("the exponent must be a number or infinity")
         if mod is not None:
-            raise ValueError("a word can not be taken modulo")
+            raise ValueError("a word cannot be taken modulo")
 
         if exp == float('inf'):
             from sage.rings.infinity import Infinity
@@ -538,7 +538,7 @@ cdef class WordDatatype_char(WordDatatype):
             return self._parent.shift()(fcn, datatype='callable')
 
         if exp < 0:
-            raise ValueError("can not take negative power of a word")
+            raise ValueError("cannot take negative power of a word")
 
         cdef WordDatatype_char w = self
         cdef size_t i, rest

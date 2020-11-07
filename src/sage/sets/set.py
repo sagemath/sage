@@ -836,7 +836,7 @@ class Set_object_enumerated(Set_object):
             sage: latex(S)
             \left\{0, 1\right\}
         """
-        return '\\left\\{' + ', '.join([latex(x) for x in self.set()])  + '\\right\\}'
+        return '\\left\\{' + ', '.join(latex(x) for x in self.set())  + '\\right\\}'
 
     def _repr_(self):
         r"""

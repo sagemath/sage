@@ -940,7 +940,8 @@ class EllipticCurveCanonicalHeight:
                 dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
                 def max_f_g(s):
                     (a,b),(c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a-b; dy = c-d
+                    dx = a - b
+                    dy = c - d
                     eta = RDF(dx*dx + dy*dy).sqrt()
                     z = CDF(s.center())
                     err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
@@ -949,7 +950,7 @@ class EllipticCurveCanonicalHeight:
                 return max_f_g
             _, min_fg = min_on_disk(pair_max(f, g), tol)
             _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** (-1/QQ(3))
+            return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):

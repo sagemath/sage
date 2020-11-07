@@ -995,7 +995,7 @@ class GraphClasses(UniqueRepresentation):
         # Maximum width of a field
         MAX_LEN = 40
 
-        # Computing te max of each field with the database
+        # Computing the max of each field with the database
         for key in MAX:
             MAX[key] = len(max((str(x.get(key, "")) for x in classes_list), key=len))
 

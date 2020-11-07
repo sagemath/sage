@@ -780,7 +780,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` - (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occured.
+          ``EOFError`` occurred.
 
         TESTS::
 
@@ -882,7 +882,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occured.
+          ``EOFError`` occurred.
 
         TESTS::
 

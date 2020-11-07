@@ -160,7 +160,7 @@ We can print the S-Boxes with differential uniformity 2::
 AUTHOR:
 
 - Leo Perrin: initial collection of sboxes
-- Friedrich Wiemer (2017-05-12): refactored list for inclusion in SAGE
+- Friedrich Wiemer (2017-05-12): refactored list for inclusion in Sage
 - Lukas Stennes (2019-06-25): added NIST LWC round 1 candidates
 """
 import sys

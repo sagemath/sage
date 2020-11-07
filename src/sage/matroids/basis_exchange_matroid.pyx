@@ -28,15 +28,15 @@ pickling mechanism was implemented.
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .matroid cimport Matroid
 from .set_system cimport SetSystem

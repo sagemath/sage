@@ -3,7 +3,7 @@ Mutability Cython Implementation
 """
 ##########################################################################
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -47,7 +47,7 @@ cdef class Mutability:
 
     def is_immutable(self):
         """
-        Return ``True`` if this object is immutable (can not be changed)
+        Return ``True`` if this object is immutable (cannot be changed)
         and ``False`` if it is not.
 
         To make this object immutable use self.set_immutable().

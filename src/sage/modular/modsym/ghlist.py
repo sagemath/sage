@@ -2,7 +2,7 @@ r"""
 List of coset representatives for `\Gamma_H(N)` in `{\rm SL}_2(\ZZ)`
 """
 ###########################################################################
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

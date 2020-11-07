@@ -927,7 +927,7 @@ class GraphGenerators():
         The ``debug`` switch can be used to examine ``geng``'s reaction to the
         input in the ``options`` string.  We illustrate success.  (A failure
         will be a string beginning with ">E".)  Passing the "-q" switch to
-        ``geng`` will supress the indicator of a successful initiation, and so
+        ``geng`` will suppress the indicator of a successful initiation, and so
         the first returned value might be an empty string if ``debug`` is
         ``True``::
 

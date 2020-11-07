@@ -28,6 +28,7 @@ shopt -s extglob
 for SYSTEM in arch debian fedora cygwin homebrew; do
     SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} build/pkgs/$SYSTEM.txt))
     OPTIONAL_SYSTEM_PACKAGES=
+    RECOMMENDED_SYSTEM_PACKAGES=
     for PKG_SCRIPTS in build/pkgs/*; do
         if [ -d $PKG_SCRIPTS ]; then
             PKG_BASE=$(basename $PKG_SCRIPTS)
@@ -40,9 +41,12 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
             if [ -f $SYSTEM_PACKAGES_FILE -a -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
                PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
                if [ -n "PKG_SYSTEM_PACKAGES" ]; then
-                   case "$PKG_TYPE" in
-                       standard)
+                   case "$PKG_BASE:$PKG_TYPE" in
+                       *:standard)
                            SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                           ;;
+                       _recommended:optional)
+                           RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
                            ;;
                        *)
                            OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
@@ -53,10 +57,11 @@ for SYSTEM in arch debian fedora cygwin homebrew; do
         fi
     done
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-	echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM.txt and "$OUTPUT_DIR"/$SYSTEM-optional.txt
+        echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM\*.txt
     fi
     echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM.txt
     echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"

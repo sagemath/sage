@@ -2,7 +2,7 @@
 # that activate keg-only homebrew package installations
 
 HOMEBREW=`brew --prefix` || return 1
-for l in gettext bzip2; do
+for l in gettext bzip2 texinfo; do
     if [ -d "$HOMEBREW/opt/$l/bin" ]; then
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
     fi

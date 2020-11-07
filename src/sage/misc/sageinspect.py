@@ -2232,7 +2232,7 @@ def sage_getsourcelines(obj):
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
         sage: sage_getsourcelines(matrix)[1]
-        20
+        21
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2313,7 +2313,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(HC)
         (['    class Homsets(HomsetsCategory):\n', ...], ...)
 
-    Testing against a bug that has occured during work on :trac:`11768`::
+    Testing against a bug that has occurred during work on :trac:`11768`::
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]

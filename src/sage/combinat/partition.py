@@ -4863,12 +4863,13 @@ class Partition(CombinatorialElement):
             sage: Partition([]).k_atom(1)
             [[]]
         """
-        res = [ tableau.Tableau([]) ]
+        res = [tableau.Tableau([])]
         for i in range(len(self)):
-            res = [ x.promotion_operator( self[-i-1] ) for x in res]
+            res = (x.promotion_operator(self[-i - 1]) for x in res)
             res = sum(res, [])
-            res = [ y.catabolism_projector(Partition(self[-i-1:]).k_split(k)) for y in res]
-            res = [ i for i in res if i !=0 and i != [] ]
+            res = (y.catabolism_projector(Partition(self[-i - 1:]).k_split(k))
+                   for y in res)
+            res = [i for i in res if i]
         return res
 
     def k_split(self, k):
@@ -4897,11 +4898,11 @@ class Partition(CombinatorialElement):
         else:
             res = []
             part = list(self)
-            while part != [] and part[0]+len(part)-1 >= k:
+            while part and part[0] + len(part) - 1 >= k:
                 p = k - part[0]
-                res.append( part[:p+1] )
-                part = part[p+1:]
-            if part != []:
+                res.append(part[:p + 1])
+                part = part[p + 1:]
+            if part:
                 res.append(part)
         return res
 
@@ -7092,7 +7093,7 @@ class Partitions_parts_in(Partitions):
             return None
         elif n == 0:
             return []
-        elif parts != []:
+        elif parts:
             p = parts[0]
             q, r = n.quo_rem(p)
             if r == 0:
@@ -7101,13 +7102,12 @@ class Partitions_parts_in(Partitions):
             # largest part
             else:
                 for i, p in enumerate(parts[1:]):
-                    rest = self._findlast(n - p, parts[:i+2])
+                    rest = self._findlast(n - p, parts[:i + 2])
                     if rest is not None:
                         return [p] + rest
         # If we get to here, nothing ever worked, so there's no such
         # partitions, and we return None.
         return None
-
 
     def __iter__(self):
         """

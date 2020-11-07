@@ -723,9 +723,11 @@ def _exceptionals(E, L, patience=1000):
 
 
 def _over_numberfield(E):
-    r"""Return `E`, defined over a NumberField object. This is necessary
-    since if `E` is defined over `\QQ`, then we cannot use SAGE commands
-    available for number fields.
+    r"""
+    Return `E`, defined over a ``NumberField`` object.
+
+    This is necessary since if `E` is defined over `\QQ`, then we
+    cannot use Sage commands available for number fields.
 
     INPUT:
 
@@ -832,7 +834,8 @@ def _semistable_reducible_primes(E, verbose=False):
         sage: _semistable_reducible_primes(E)
         [2, 5, 53, 1117]
     """
-    if verbose: print("In _semistable_reducible_primes with E={}".format(E.ainvs()))
+    if verbose:
+        print("In _semistable_reducible_primes with E={}".format(E.ainvs()))
     K = E.base_field()
     d = K.degree()
 
@@ -870,25 +873,31 @@ def _semistable_reducible_primes(E, verbose=False):
     xpol = x.charpoly() if d>1 else Zx([-x,1])
     ypol = y.charpoly() if d>1 else Zx([-y,1])
 
-    if verbose: print("Finished precomp, x={} (p={}), y={} (p={})".format(x,px,y,py))
+    if verbose:
+        print("Finished precomp, x={} (p={}), y={} (p={})".format(x,px,y,py))
 
     for w in range(1 + d // 2):
-        if verbose: print("w = {}".format(w))
+        if verbose:
+            print("w = {}".format(w))
         gx = xpol.symmetric_power(w).adams_operator(12).resultant(fx12pol)
         gy = ypol.symmetric_power(w).adams_operator(12).resultant(fy12pol)
-        if verbose: print("computed gx and gy")
+        if verbose:
+            print("computed gx and gy")
 
         gxn = Integer(gx.absolute_norm()) if d > 1 else gx
         gyn = Integer(gy.absolute_norm()) if d > 1 else gy
         gxyn = gxn.gcd(gyn)
         if gxyn:
             xprimes = gxyn.prime_factors()
-            if verbose: print("adding prime factors {} of {} to {}".format(xprimes, gxyn, sorted(bad_primes)))
+            if verbose:
+                print("adding prime factors {} of {} to {}".format(xprimes, gxyn, sorted(bad_primes)))
             bad_primes.update(xprimes)
-            if verbose: print("...done, bad_primes now {}".format(sorted(bad_primes)))
+            if verbose:
+                print("...done, bad_primes now {}".format(sorted(bad_primes)))
             continue
         else:
-            if verbose: print("gx and gy both 0!")
+            if verbose:
+                print("gx and gy both 0!")
 
 
         ## It is possible that our curve has CM. ##
@@ -931,19 +940,23 @@ def _semistable_reducible_primes(E, verbose=False):
             while E.has_bad_reduction(P):
                 P = next(deg_one_primes)
 
-            if verbose: print("trying P = {}...".format(P))
+            if verbose:
+                print("trying P = {}...".format(P))
             EmodP = E.reduction(P)
             fpol = EmodP.frobenius_polynomial()
-            if verbose: print("...good reduction, frobenius poly = {}".format(fpol))
+            if verbose:
+                print("...good reduction, frobenius poly = {}".format(fpol))
             x = iso(P.gens_reduced()[0]).relative_norm()
             xpol = x.charpoly().adams_operator(12)
             div2 = Integer(xpol.resultant(fpol.adams_operator(12)) // x.norm()**12)
             if div2:
                 div = div2.isqrt()
                 assert div2==div**2
-                if verbose: print("...div = {}".format(div))
+                if verbose:
+                    print("...div = {}".format(div))
             else:
-                if verbose: print("...div = 0, continuing")
+                if verbose:
+                    print("...div = 0, continuing")
                 patience -= 1
 
         if patience == 0:
@@ -955,9 +968,11 @@ def _semistable_reducible_primes(E, verbose=False):
         # We found our divisibility constraint.
 
         xprimes = div.prime_factors()
-        if verbose: print("...adding prime factors {} of {} to {}...".format(xprimes,div, sorted(bad_primes)))
+        if verbose:
+            print("...adding prime factors {} of {} to {}...".format(xprimes,div, sorted(bad_primes)))
         bad_primes.update(xprimes)
-        if verbose: print("...done, bad_primes now {}".format(sorted(bad_primes)))
+        if verbose:
+            print("...done, bad_primes now {}".format(sorted(bad_primes)))
 
     L = sorted(bad_primes)
     return L

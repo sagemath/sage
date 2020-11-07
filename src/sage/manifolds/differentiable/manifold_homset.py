@@ -233,9 +233,9 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
     INPUT:
 
     - ``domain`` --
-      :class:`~sage.manifolds.differentiable.real_line.OpenInterval`
+      :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`
       if an open interval `I \subset \RR` (domain of the morphisms),
-      or :class:`~sage.manifolds.differentiable.real_line.RealLine`
+      or :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`
       if `I = \RR`
     - ``codomain`` --
       :class:`~sage.manifolds.differentiable.manifold.DifferentiableManifold`;
@@ -406,7 +406,7 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
             sage: TestSuite(H).run()
 
         """
-        from sage.manifolds.differentiable.real_line import OpenInterval
+        from sage.manifolds.differentiable.examples.real_line import OpenInterval
         if not isinstance(domain, OpenInterval):
             raise TypeError("{} is not an open real interval".format(domain))
         DifferentiableManifoldHomset.__init__(self, domain, codomain, name=name,
@@ -525,7 +525,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
     INPUT:
 
     - ``domain`` --
-      :class:`~sage.manifolds.differentiable.real_line.OpenInterval`
+      :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`
       open interval `I \subset \RR` with finite boundaries (domain of
       the morphisms)
     - ``codomain`` --
@@ -994,7 +994,7 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
     INPUT:
 
     - ``domain`` --
-      :class:`~sage.manifolds.differentiable.real_line.OpenInterval`
+      :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`
       open interval `I \subset \RR` with finite boundaries (domain of
       the morphisms)
     - ``codomain`` --
@@ -1459,7 +1459,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
     INPUT:
 
     - ``domain`` --
-      :class:`~sage.manifolds.differentiable.real_line.OpenInterval`
+      :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`
       open interval `I \subset \RR` with finite boundaries (domain of
       the morphisms)
     - ``codomain`` --

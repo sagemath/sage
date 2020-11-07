@@ -102,7 +102,7 @@ from sage.misc.cachefunc import cached_method
 import sage.libs.ntl.all as ntl
 import sage.interfaces.gap
 
-import sage.rings.complex_field
+import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 import sage.rings.real_mpfr
 import sage.rings.real_mpfi
@@ -3033,7 +3033,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
               Defn: a |--> 0.629960524947 + 1.09112363597*I
             ]
         """
-        CC = sage.rings.complex_field.ComplexField(prec)
+        CC = sage.rings.complex_mpfr.ComplexField(prec)
         return self.embeddings(CC)
 
     def real_embeddings(self, prec=53):
@@ -8946,7 +8946,7 @@ class NumberField_absolute(NumberField_generic):
 
         else:
             R = sage.rings.real_mpfr.RealField(prec)
-            C = sage.rings.complex_field.ComplexField(prec)
+            C = sage.rings.complex_mpfr.ComplexField(prec)
 
         ## first, find the intervals with roots, and see how much
         ## precision we need to approximate the roots
@@ -9605,7 +9605,7 @@ class NumberField_absolute(NumberField_generic):
             if P.domain() is not self:
                 raise ValueError("Domain of P (=%s) should be self (=%s) in self.hilbert_symbol" % (P, self))
             codom = P.codomain()
-            from sage.rings.complex_field import is_ComplexField
+            from sage.rings.complex_mpfr import is_ComplexField
             from sage.rings.complex_interval_field import is_ComplexIntervalField
             from sage.rings.real_mpfr import is_RealField
             from sage.rings.all import (AA, CDF, QQbar, RDF)
@@ -10937,7 +10937,7 @@ class NumberField_cyclotomic(NumberField_absolute):
             sage: phi(K.0^3 + 7)
             8.0
         """
-        CC = sage.rings.complex_field.ComplexField(prec)
+        CC = sage.rings.complex_mpfr.ComplexField(prec)
         return self.hom([CC.zeta(self._n())], check=False)
 
     def complex_embeddings(self, prec=53):
@@ -10970,7 +10970,7 @@ class NumberField_cyclotomic(NumberField_absolute):
               Defn: zeta5 |--> 0.309016994374947 - 0.951056516295154*I
             ]
         """
-        CC = sage.rings.complex_field.ComplexField(prec)
+        CC = sage.rings.complex_mpfr.ComplexField(prec)
         try:
             return self.__embeddings[CC]
         except AttributeError:

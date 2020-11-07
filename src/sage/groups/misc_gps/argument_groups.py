@@ -1827,7 +1827,7 @@ class ArgumentGroupFactory(UniqueFactory):
             True
         """
         from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_field import ComplexField_class
+        from sage.rings.complex_mpfr import ComplexField_class
         from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.integer_ring import ZZ
         from sage.misc.misc import exactly_one_is_true

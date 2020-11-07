@@ -1,10 +1,10 @@
 /*******************************************************************************
-    SAGE: Open Source Mathematical Software
+    Sage: Open Source Mathematical Software
         Copyright (C) 2008 William Stein <wstein@gmail.com>
         Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
    Distributed under the terms of the GNU General Public License (GPL),
    version 2 or any later version.  The full text of the GPL is available at:
-                   http://www.gnu.org/licenses/
+                   https://www.gnu.org/licenses/
 *******************************************************************************/
 
 #ifndef _SAGE_PYNAC_WRAP_H

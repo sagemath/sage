@@ -631,7 +631,7 @@ class Singular(ExtraTabCompletion, Expect):
         # singular.set(). Moreover, it is not done by calling a separate _eval_line.
         # In that way, the time spent by waiting for the singular prompt is reduced.
 
-        # Before #10296, it was possible that garbage collection occured inside
+        # Before #10296, it was possible that garbage collection occurred inside
         # of _eval_line. But collection of the garbage would launch another call
         # to _eval_line. The result would have been a dead lock, that could only
         # be avoided by synchronisation. Since garbage collection is now done

@@ -810,6 +810,36 @@ class OrderedSetPartition(ClonableArray,
                 out[letter] = i
         return Words()([out[letter] + 1 for letter in X])
 
+    def number_of_inversions(self):
+        r"""
+        Return the number of inversions in ``self``.
+
+        An inversion of an ordered set partition with blocks
+        `[B_1,B_2, \ldots, B_k]` is a pair of letters `i` and `j` with `i < j`
+        such that `i` is minimal in `B_m`, `j \in B_l`, and `l < m`.
+
+        REFERENCES:
+
+        - [Wilson2016]_
+
+        EXAMPLES::
+
+            sage: OrderedSetPartition([{2,5},{4,6},{1,3}]).number_of_inversions()
+            5
+            sage: OrderedSetPartition([{1,3,8},{2,4},{5,6,7}]).number_of_inversions()
+            3
+
+        TESTS::
+
+            sage: OrderedSetPartition([{1,3,8},{2,4},{5,6,7}]).number_of_inversions().parent()
+            Integer Ring
+        """
+        num_invs = 0
+        for m, part in enumerate(self):
+            i = min(part)
+            for ell in range(m):
+                num_invs += sum(1 for j in self[ell] if i < j)
+        return ZZ(num_invs)
 
 class OrderedSetPartitions(UniqueRepresentation, Parent):
     """

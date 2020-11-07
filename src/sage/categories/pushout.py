@@ -1821,7 +1821,7 @@ class VectorFunctor(ConstructionFunctor):
         Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Finite Field of size 2 (using GF2X)
     """
     rank = 10 # ranking of functor, not rank of module.
-    # This coincides with the rank of the matrix construction functor, but this is OK since they can not both be applied in any order
+    # This coincides with the rank of the matrix construction functor, but this is OK since they cannot both be applied in any order
 
     def __init__(self, n, is_sparse=False, inner_product_matrix=None):
         """
@@ -1902,10 +1902,10 @@ class VectorFunctor(ConstructionFunctor):
             sage: F(f)       # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: Can not create induced morphisms of free modules yet
+            NotImplementedError: Cannot create induced morphisms of free modules yet
         """
         # TODO: Implement this!
-        raise NotImplementedError("Can not create induced morphisms of free modules yet")
+        raise NotImplementedError("Cannot create induced morphisms of free modules yet")
 
     def __eq__(self, other):
         """
@@ -2102,9 +2102,9 @@ class SubspaceFunctor(ConstructionFunctor):
             sage: F(f)      # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: Can not create morphisms of free sub-modules yet
+            NotImplementedError: Cannot create morphisms of free sub-modules yet
         """
-        raise NotImplementedError("Can not create morphisms of free sub-modules yet")
+        raise NotImplementedError("Cannot create morphisms of free sub-modules yet")
 
     def __eq__(self, other):
         """
@@ -2164,7 +2164,7 @@ class SubspaceFunctor(ConstructionFunctor):
             return False
 
         # since comparing the basis involves constructing the pushout
-        # of the ambient module, we can not do:
+        # of the ambient module, we cannot do:
         # c = (self.basis == other.basis)
         # Instead, we only test whether there are coercions.
         L = self.basis.universe()
@@ -2686,7 +2686,7 @@ class QuotientFunctor(ConstructionFunctor):
         sage: F(QQ['x','y','z'])
         Traceback (most recent call last):
         ...
-        CoercionException: Can not apply this quotient functor to Multivariate Polynomial Ring in x, y, z over Rational Field
+        CoercionException: Cannot apply this quotient functor to Multivariate Polynomial Ring in x, y, z over Rational Field
         sage: F(QQ['y','z'])
         Traceback (most recent call last):
         ...
@@ -2788,8 +2788,8 @@ class QuotientFunctor(ConstructionFunctor):
                 I = [R.one() * t for t in I.gens()] * R
         try:
             Q = R.quo(I, names=self.names, **self.kwds)
-        except IndexError: # That may happen!
-            raise CoercionException("Can not apply this quotient functor to %s" % R)
+        except IndexError:  # That may happen!
+            raise CoercionException("Cannot apply this quotient functor to %s" % R)
         if self.as_field:
             try:
                 Q = Q.field()

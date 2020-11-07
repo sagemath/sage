@@ -34,7 +34,7 @@ extensions = ['inventory_builder',
 # documentation. It defines a 'sphinx_plot' function that displays a Sage object
 # through matplotlib, so that it will be displayed in the HTML doc
 plot_html_show_source_link = False
-plot_pre_code = """
+plot_pre_code = r"""
 # Set locale to prevent having commas in decimal numbers
 # in tachyon input (see https://trac.sagemath.org/ticket/28971)
 import locale
@@ -109,8 +109,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u""
-copyright = u"2005--{}, The Sage Development Team".format(dateutil.parser.parse(sage.version.date).year)
+project = ""
+copyright = "2005--{}, The Sage Development Team".format(dateutil.parser.parse(sage.version.date).year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -248,20 +248,19 @@ html_theme_path = [os.path.join(SAGE_DOC_SRC, 'common', 'themes')]
 # pixels large.
 html_favicon = 'favicon.ico'
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'), THEBE_DIR,
-                    'static']
+# html_static_path defined here and imported in the actual configuration file
+# conf.py read by Sphinx was the cause of subtle bugs in builders (see #30418 for
+# instance). Hence now html_common_static_path contains the common paths to static
+# files, and is combined to html_static_path in each conf.py file read by Sphinx.
+html_common_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'),
+                           THEBE_DIR, 'static']
 
 # We use MathJax to build the documentation unless the environment
 # variable SAGE_DOC_MATHJAX is set to "no" or "False".  (Note that if
 # the user does not set this variable, then the script sage-env sets
 # it to "True".)
 
-if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
-            and os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'False'):
-
+if (os.environ.get('SAGE_DOC_MATHJAX', 'no') not in ['no', 'False']):
     extensions.append('sphinx.ext.mathjax')
     mathjax_path = 'MathJax.js?config=TeX-AMS_HTML-full,../mathjax_sage.js'
 
@@ -270,13 +269,13 @@ if (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
 
     mathjax_relative = os.path.basename(MATHJAX_DIR)
 
-    # It would be really nice if sphinx would copy the entire mathjax directory,
-    # (so we could have a _static/mathjax directory), rather than the contents of the directory
+    # It would be really nice if sphinx would copy the entire mathjax
+    # directory, (so we could have a _static/mathjax directory), rather than
+    # the contents of the directory
 
-    html_static_path.append(MATHJAX_DIR)
+    html_common_static_path.append(MATHJAX_DIR)
     exclude_patterns += ['**/'+os.path.join(mathjax_relative, i)
-                         for i in ('docs', 'README*', 'test',
-                                   'unpacked', 'LICENSE')]
+                         for i in ('docs', 'README*', 'test', 'unpacked', 'LICENSE')]
 else:
      extensions.append('sphinx.ext.imgmath')
 
@@ -703,7 +702,7 @@ def debug_inf(app, message):
     if dangling_debug: app.info(message)
 
 def call_intersphinx(app, env, node, contnode):
-    """
+    r"""
     Call intersphinx and make links between Sage manuals relative.
 
     TESTS:
@@ -736,7 +735,7 @@ def call_intersphinx(app, env, node, contnode):
     return res
 
 def find_sage_dangling_links(app, env, node, contnode):
-    """
+    r"""
     Try to find dangling link in local module imports or all.py.
     """
     debug_inf(app, "==================== find_sage_dangling_links ")

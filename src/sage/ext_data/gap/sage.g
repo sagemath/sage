@@ -1,5 +1,5 @@
 #
-# SAGE support utilities to read into the GAP session.
+# Sage support utilities to read into the GAP session.
 #
 
 # Prevent loading the xgap package; we use the -p flag to GAP in order to

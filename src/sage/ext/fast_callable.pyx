@@ -303,7 +303,7 @@ AUTHOR:
 import operator
 from copy import copy
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
-from sage.rings.complex_field import ComplexField_class
+from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.all import RDF, CDF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

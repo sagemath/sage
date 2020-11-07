@@ -60,7 +60,7 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
 
 def dict_difference(self, other):
     """
-    Return a dict with all key-value pairs occuring in ``self`` but not
+    Return a dict with all key-value pairs occurring in ``self`` but not
     in ``other``.
 
     EXAMPLES::

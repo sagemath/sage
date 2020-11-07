@@ -69,7 +69,7 @@ from sage.libs.pari import pari
         
 from sage.categories.map import Map
 from sage.rings.rational_field import is_RationalField
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.complex_mpfr import is_ComplexField
 from sage.rings.qqbar import is_AlgebraicField
 from sage.rings.ring import is_Ring
 
@@ -1189,7 +1189,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             phi = lambda t : t
             CC = K
         elif is_AlgebraicField(K):
-            from sage.rings.complex_field import ComplexField
+            from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
         elif number_field.is_CyclotomicField(K) or is_RationalField(K):

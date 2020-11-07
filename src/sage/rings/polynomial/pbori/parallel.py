@@ -19,11 +19,11 @@ def to_fast_pickable(l):
     Convert a list of polynomials into a builtin Python value, which is fast pickable and compact.
 
     INPUT:
-    
+
     - a list of Boolean polynomials
-    
+
     OUTPUT:
-    
+
     It is converted to a tuple consisting of
     - codes referring to the polynomials
     - list of conversions of nodes.
@@ -108,15 +108,15 @@ def from_fast_pickable(l, r):
     The second argument is ring, in which this polynomial should be created.
 
     INPUT:
-    
+
     See OUTPUT of to_fast_pickable
 
     OUTPUT:
-    
+
     a list of Boolean polynomials
-    
+
     EXAMPLES::
-    
+
         sage: from sage.rings.polynomial.pbori.frontend import *
         sage: from sage.rings.polynomial.pbori.parallel import from_fast_pickable
         sage: r=Ring(1000)
@@ -259,19 +259,19 @@ copyreg.pickle(Ring, pickle_ring)
 
 def groebner_basis_first_finished(I, *l):
     r"""
-    
+
     INPUT:
-    
+
     - ``I`` -- ideal
     - ``l`` -- keyword dictionaries, which will be keyword arguments to groebner_basis.
-    
+
     OUTPUT:
-    
+
     - tries to compute ``groebner_basis(I, **kwd)`` for kwd in l
     - returns the result of the first terminated computation
-    
+
     EXAMPLES::
-    
+
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
         sage: r=Ring(1000)
         sage: ideal = [r.variable(1)*r.variable(2)+r.variable(2)+r.variable(1)]

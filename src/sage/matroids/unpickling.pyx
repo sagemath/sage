@@ -15,15 +15,15 @@ AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-07-01): initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
 import sage.matroids.matroid
@@ -326,12 +326,14 @@ def unpickle_plus_minus_one_matrix(version, data):
         A._entries[i] = data[2][i]
     return A
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.matroids.unpickling", "unpickle_integer_matrix", unpickle_plus_minus_one_matrix)
 
 #############################################################################
 # LinearMatroid and subclasses
 #############################################################################
+
 
 def unpickle_linear_matroid(version, data):
     """
@@ -616,6 +618,7 @@ def unpickle_minor_matroid(version, data):
 #############################################################################
 # Graphic Matroids
 #############################################################################
+
 
 def unpickle_graphic_matroid(version, data):
     """

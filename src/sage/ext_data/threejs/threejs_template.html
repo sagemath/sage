@@ -19,7 +19,17 @@
 
     #menu-content div { border-top: 1px solid black; padding: 10px; white-space: nowrap; }
 
-    #menu-content div:hover { background-color: #FEFEFE;; }
+    #menu-content div:hover { background-color: #FEFEFE; }
+
+    .dark-theme #menu-container { color: white; }
+
+    .dark-theme #menu-message { background-color: #181818; }
+
+    .dark-theme #menu-content { background-color: #181818; border-color: white; }
+
+    .dark-theme #menu-content div { border-color: white; }
+
+    .dark-theme #menu-content div:hover { background-color: #303030; }
 
 </style>
 SAGE_STYLES
@@ -29,16 +39,19 @@ SAGE_STYLES
 SAGE_SCRIPTS
 <script>
 
+    var options = SAGE_OPTIONS;
+    var animate = options.animate;
+
+    if ( options.theme === 'dark' )
+        document.body.className = 'dark-theme';
+
     var scene = new THREE.Scene();
 
     var renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setClearColor( 0xffffff, 1 );
+    renderer.setClearColor( options.theme === 'dark' ? 0 : 0xffffff, 1 );
     document.body.appendChild( renderer.domElement );
-
-    var options = SAGE_OPTIONS;
-    var animate = options.animate;
 
     var b = SAGE_BOUNDS; // bounds
 
@@ -77,7 +90,8 @@ SAGE_SCRIPTS
     box.vertices.push( new THREE.Vector3( a[0]*b[0].x, a[1]*b[0].y, a[2]*b[0].z ) );
     box.vertices.push( new THREE.Vector3( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) );
     var boxMesh = new THREE.Line( box );
-    if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, 'black' ) );
+    var boxColor = options.theme === 'dark' ? 'white' : 'black';
+    if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, boxColor ) );
 
     if ( options.axesLabels ) {
 
@@ -110,6 +124,10 @@ SAGE_SCRIPTS
 
     function addLabel( text, x, y, z, color='black', fontSize=14, fontFamily='monospace',
                        fontStyle='normal', fontWeight='normal', opacity=1 ) {
+
+        if ( options.theme === 'dark' )
+            if ( color === 'black' || color === '#000000' )
+                color = 'white';
 
         var canvas = document.createElement( 'canvas' );
         var context = canvas.getContext( '2d' );
@@ -392,7 +410,8 @@ SAGE_SCRIPTS
                 }
             }
 
-            var material = new THREE.LineBasicMaterial( { color: 'black', linewidth: 1 } );
+            var gridColor = options.theme === 'dark' ? 'white' : 'black';
+            var material = new THREE.LineBasicMaterial( { color: gridColor, linewidth: 1 } );
 
             var c = new THREE.Vector3();
             geometry.computeBoundingBox();

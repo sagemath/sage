@@ -1,1 +1,0 @@
-rm -rf "$SAGE_LOCAL"/lib/python*/site-packages/numpy

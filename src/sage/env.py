@@ -343,8 +343,7 @@ def sage_include_directories(use_sources=False):
 
         sage: import sage.env
         sage: sage.env.sage_include_directories()
-        ['.../python.../site-packages/sage/ext',
-        '.../include/python...',
+        ['.../include/python...',
         '.../python.../numpy/core/include']
 
     To check that C/C++ files are correctly found, we verify that we can
@@ -365,7 +364,6 @@ def sage_include_directories(use_sources=False):
     TOP = SAGE_SRC if use_sources else SAGE_LIB
 
     return [TOP,
-            os.path.join(TOP, 'sage', 'ext'),
             distutils.sysconfig.get_python_inc(),
             numpy.get_include()]
 

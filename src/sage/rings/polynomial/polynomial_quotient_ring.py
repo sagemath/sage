@@ -41,7 +41,7 @@ from __future__ import absolute_import, print_function
 import sage.rings.number_field.all
 from . import polynomial_element
 import sage.rings.rational_field
-import sage.rings.complex_field
+import sage.rings.complex_mpfr
 
 from sage.rings.ring import Field, IntegralDomain, CommutativeRing
 
@@ -51,7 +51,6 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.rings import Rings
 
 from sage.structure.category_object import normalize_names
 from sage.structure.factory import UniqueFactory
@@ -1021,7 +1020,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: F2.is_field()
             Traceback (most recent call last):
             ...
-            NotImplementedError: can not rewrite Univariate Quotient Polynomial Ring in xbar over 2-adic Field with capped relative precision 20 with modulus (1 + O(2^20))*x^2 + (1 + O(2^20))*x + 1 + O(2^20) as an isomorphic ring
+            NotImplementedError: cannot rewrite Univariate Quotient Polynomial Ring in xbar over 2-adic Field with capped relative precision 20 with modulus (1 + O(2^20))*x^2 + (1 + O(2^20))*x + 1 + O(2^20) as an isomorphic ring
             sage: F2.is_field(proof = False)
             False
 
@@ -1848,9 +1847,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             isomorphic_ring = self.base_ring()
 
             # With this knowledge we can refine the category of self (and of the resulting morphisms.)
-            # However, we can not just refine self to
+            # However, we cannot just refine self to
             # isomorphic_ring.category() because that category might expect an
-            # interface which we can not provide (e.g. NumberFields).
+            # interface which we cannot provide (e.g. NumberFields).
             # So we just check some important special cases here (note that
             # integral domains is already handled elsewhere.)
             from sage.categories.all import Fields
@@ -1907,7 +1906,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
                 pass # modulus is not irreducible
             else:
                 if not isomorphic_ring in NumberFields():
-                    raise NotImplementedError("can not handle extensions of number fields that do not produce number fields")
+                    raise NotImplementedError("cannot handle extensions of number fields that do not produce number fields")
                 # refine the category of self
                 if not self.is_field():
                     assert False, "self is isomorphic to a field"
@@ -1916,7 +1915,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
                 to_isomorphic_ring = self.hom([isomorphic_ring.gen()])
                 return from_isomorphic_ring, to_isomorphic_ring, isomorphic_ring
 
-        raise NotImplementedError("can not rewrite %r as an isomorphic ring"%(self,))
+        raise NotImplementedError("cannot rewrite %r as an isomorphic ring"%(self,))
 
     def _test_isomorphic_ring(self, **options):
         r"""
@@ -2238,7 +2237,7 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
             sage: [phi(k.0^2) for phi in v]
             [2.9757207403766761469671194565, -2.4088994371613850098316292196 + 1.9025410530350528612407363802*I, -2.4088994371613850098316292196 - 1.9025410530350528612407363802*I, 0.92103906697304693634806949137 - 3.0755331188457794473265418086*I, 0.92103906697304693634806949137 + 3.0755331188457794473265418086*I]
         """
-        CC = sage.rings.complex_field.ComplexField(prec)
+        CC = sage.rings.complex_mpfr.ComplexField(prec)
         v = self.modulus().roots(multiplicities=False, ring=CC)
         return [self.hom([a], check=False) for a in v]
 

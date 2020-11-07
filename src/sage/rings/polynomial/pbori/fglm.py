@@ -16,9 +16,9 @@ def fglm(I, from_ring, to_ring):
 
     It acts independent of the global ring, which is restored at the end of the
     computation.
-    
+
     TESTS::
-    
+
         sage: from sage.rings.polynomial.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: dp_asc = OrderCode.dp_asc
@@ -39,10 +39,10 @@ def fglm(I, from_ring, to_ring):
 
 def vars_real_divisors(monomial, monomial_set):
     r"""
-    Returns all elements of of monomial_set, which result multiplied by a variable in monomial.
-    
+    Return all elements of of monomial_set, which result multiplied by a variable in monomial.
+
     TESTS::
-    
+
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: dp_asc = OrderCode.dp_asc
@@ -59,12 +59,13 @@ def vars_real_divisors(monomial, monomial_set):
 
 
 def m_k_plus_one(completed_elements, variables):
-    r""" 
-    Calculates $m_{k+1}$ from the FGLM algorithm as described in Wichmanns diploma thesis
+    r"""
+    Calculate $m_{k+1}$ from the FGLM algorithm as described in Wichmanns diploma thesis
+
     It would be nice to be able to efficiently extract the smallest term of a polynomial.
-    
+
     TESTS::
-    
+
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: dp_asc = OrderCode.dp_asc

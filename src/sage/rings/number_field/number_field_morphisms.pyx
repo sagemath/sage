@@ -28,7 +28,7 @@ from sage.categories.map cimport Map
 from sage.categories.pushout import pushout
 
 from sage.rings.real_mpfr import RealField, mpfr_prec_min
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_lazy import RLF, CLF, LazyField, LazyAlgebraic
 
 

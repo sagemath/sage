@@ -535,12 +535,14 @@ class GenericCellComplex(SageObject):
             sage: cubical_complexes.KleinBottle().homology(1, base_ring=GF(2))
             Vector space of dimension 2 over Finite Field of size 2
 
-        If CHomP is installed, Sage can compute generators of homology
-        groups::
+        Sage can compute generators of homology groups::
 
             sage: S2 = simplicial_complexes.Sphere(2)
-            sage: S2.homology(dim=2, generators=True, base_ring=GF(2))  # optional - CHomP
-            (Vector space of dimension 1 over Finite Field of size 2, [(0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3)])
+            sage: S2.homology(dim=2, generators=True, base_ring=GF(2), algorithm='no_chomp')
+            [(Vector space of dimension 1 over Finite Field of size 2, (0, 1, 2) + (0, 1, 3) + (0, 2, 3) + (1, 2, 3))]
+
+        Note: the answer may be formatted differently if the optional
+        package CHomP is installed.
 
         When generators are computed, Sage returns a pair for each
         dimension: the group and the list of generators.  For
@@ -549,8 +551,15 @@ class GenericCellComplex(SageObject):
         complexes, each generator is a linear combination of cubes::
 
             sage: S2_cub = cubical_complexes.Sphere(2)
-            sage: S2_cub.homology(dim=2, generators=True)  # optional - CHomP
-            (Z, [-[[0,1] x [0,1] x [0,0]] + [[0,1] x [0,1] x [1,1]] - [[0,0] x [0,1] x [0,1]] - [[0,1] x [1,1] x [0,1]] + [[0,1] x [0,0] x [0,1]] + [[1,1] x [0,1] x [0,1]]])
+            sage: S2_cub.homology(dim=2, generators=True, algorithm='no_chomp')
+            [(Z,
+             [0,0] x [0,1] x [0,1] - [0,1] x [0,0] x [0,1] + [0,1] x [0,1] x [0,0] - [0,1] x [0,1] x [1,1] + [0,1] x [1,1] x [0,1] - [1,1] x [0,1] x [0,1])]
+
+        Similarly for simpicial sets::
+
+            sage: S = simplicial_sets.Sphere(2)
+            sage: S.homology(generators=True)
+            {0: [], 1: 0, 2: [(Z, sigma_2)]}
         """
         from sage.interfaces.chomp import have_chomp, homcubes, homsimpl
         from sage.homology.cubical_complex import CubicalComplex
@@ -604,13 +613,31 @@ class GenericCellComplex(SageObject):
             return self._homology_(dim, subcomplex=subcomplex,
                                    cohomology=cohomology, base_ring=base_ring,
                                    verbose=verbose, algorithm=algorithm,
-                                   reduced=reduced, **kwds)
+                                   reduced=reduced, generators=generators,
+                                   **kwds)
 
         C = self.chain_complex(cochain=cohomology, augmented=reduced,
                                dimensions=dims, subcomplex=subcomplex,
                                base_ring=base_ring, verbose=verbose)
         answer = C.homology(base_ring=base_ring, generators=generators,
                             verbose=verbose, algorithm=algorithm)
+
+        if generators:
+            # Try to convert chain complex information to topological
+            # chain information.
+            for i in answer:
+                H_with_gens = answer[i]
+                if H_with_gens:
+                    chains = self.n_chains(i, base_ring=base_ring)
+                    new_H = []
+                    for (H, gen) in H_with_gens:
+                        v = gen.vector(i)
+                        new_gen = chains.zero()
+                        for (coeff, chain) in zip(v, chains.gens()):
+                            new_gen += coeff * chain
+                        new_H.append((H, new_gen))
+                    answer[i] = new_H
+
         if dim is None:
             dim = range(self.dimension() + 1)
         zero = HomologyGroup(0, base_ring)

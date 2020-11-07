@@ -744,8 +744,13 @@ cdef class Polynomial_template(Polynomial):
         If the precision is higher than the degree of the polynomial then
         the polynomial itself is returned::
 
-           sage: f.truncate(10) is f
-           True
+            sage: f.truncate(10) is f
+            True
+
+        If the precision is negative, the zero polynomial is returned::
+
+            sage: f.truncate(-1)
+            0
         """
         if n >= celement_len(&self.x, (<Polynomial_template>self)._cparent):
             return self
@@ -755,16 +760,9 @@ cdef class Polynomial_template(Polynomial):
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
-
         if n <= 0:
             return r
-
-        cdef celement *gen = celement_new((<Polynomial_template>self)._cparent)
-        celement_gen(gen, 0, (<Polynomial_template>self)._cparent)
-        celement_pow(gen, gen, n, NULL, (<Polynomial_template>self)._cparent)
-
-        celement_mod(&r.x, &self.x, gen, (<Polynomial_template>self)._cparent)
-        celement_delete(gen, (<Polynomial_template>self)._cparent)
+        celement_truncate(&r.x, &self.x, n, (<Polynomial_template>self)._cparent)
         return r
 
     def _singular_(self, singular=singular_default, have_ring=False):

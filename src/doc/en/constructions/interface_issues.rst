@@ -425,12 +425,12 @@ in Sage).
 
 Here's an example using Sage's interface (located in
 sage/interfaces/octave.py) with ``octave``
-(http://www.octave.org/doc/index.html).
+(https://www.gnu.org/software/octave/doc/latest).
 
 ::
 
     sage: octave("atanh(1.1)")   ## optional - octave
-    (1.52226,-1.5708)
+    (1.52226,1.5708)
 
 Here's an example using Sage's interface to ``pari``'s special
 functions.

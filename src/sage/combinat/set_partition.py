@@ -475,6 +475,57 @@ class AbstractSetPartition(ClonableArray,
         """
         return max(len(block) for block in self)
 
+    def conjugate(self):
+        r"""
+        An involution exchanging singletons and circular adjacencies.
+
+        This method implements the definition of the conjugate of
+        a set partition defined in [Cal2005]_.
+
+        INPUT:
+
+        - ``self`` -- a set partition of an ordered set
+
+        OUTPUT:
+
+        - a set partition
+
+        EXAMPLES::
+
+            sage: SetPartition([[1,6,7],[2,8],[3,4,5]]).conjugate()
+            {{1, 4, 7}, {2, 8}, {3}, {5}, {6}}
+            sage: all(sp.conjugate().conjugate()==sp for sp in SetPartitions([1,3,5,7]))
+            True
+            sage: SetPartition([]).conjugate()
+            {}
+        """
+        def next(a, support):
+            return support[(support.index(a)+1) % len(support)]
+        def addback(S, terminals, rsupport):
+            out = list(S)
+            for a in terminals*2:
+                if a not in out and next(a, rsupport) in out:
+                    out.append(a)
+            return out
+        def pre_conjugate(sp):
+            if len(sp) <= 1:
+                return SetPartition([[a] for S in sp for a in S])
+            if sp.max_block_size() == 1:
+                return SetPartition([sp.base_set()])
+            support = sorted(a for S in sp for a in S)
+            initials = [a for S in sp for a in S if next(a,support) in S]
+            singletons = [a for S in sp for a in S if len(S) == 1]
+            if not initials and not singletons:
+                return sp
+            rho = pre_conjugate(
+                SetPartition([[a for a in S if a not in initials]
+                for S in sp if len(S)>1 and any(a not in initials for a in S)]))
+            # add back initials as singletons and singletons as terminals
+            return SetPartition([addback(S, singletons, support[::-1])
+                for S in rho]+[[a] for a in initials])
+        support = sorted(a for S in self for a in S)
+        return SetPartition([[support[-support.index(a)-1] for a in S]
+            for S in pre_conjugate(self)])
 
 class SetPartition(AbstractSetPartition,
         metaclass=InheritComparisonClasscallMetaclass):
@@ -2223,7 +2274,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         If ``n`` is not given, it is first checked whether it can be
         determined from the parent, otherwise it is the maximal
-        occuring integer in the set of rooks.
+        occurring integer in the set of rooks.
 
         INPUT:
 
@@ -2442,7 +2493,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             k = rs[i-1]
             # find k-th block which does not yet have a closer
             b = 0
-            while k > 0 or (P[b] != [] and P[b][-1] in R):
+            while k > 0 or (P[b] and P[b][-1] in R):
                 if P[b][-1] not in R:
                     k -= 1
                 b += 1

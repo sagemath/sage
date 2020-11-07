@@ -199,7 +199,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
         """
         return self._invariant_form
 
-    def _element_constructor_(self, x, check=False):
+    def _element_constructor_(self, x, check=True):
         r"""
         Construct an element from ``x`` and handle conversions.
 
@@ -227,7 +227,17 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             sage: fbar
             [4 3]
             [3 1]
-            sage: fbar == Oq(f.matrix())
+
+        Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
+
+            sage: Oq(f.matrix())
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+
+        But a matrix in the covering works::
+
+            sage: fbar == Oq(fbar.matrix())
             True
 
         TESTS::
@@ -243,16 +253,6 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
         """
         from sage.libs.gap.element import GapElement
         if not isinstance(x, GapElement):
-            try:
-                # see if x is a matrix preserving
-                # the inner product of W
-                q = self.invariant_form()
-                W = q.W()
-                if x.ncols() == W.degree():
-                    # equip x with an action
-                    x = W.orthogonal_group([x]).gen(0)
-            except (AttributeError, TypeError):
-                pass
             try:
                 # if there is an action try that
                 gen = self.invariant_form().smith_form_gens()

@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Elements of Affine Groups
 
 The class in this module is used to represent the elements of
@@ -270,6 +271,56 @@ class AffineGroupElement(MultiplicativeGroupElement):
             \\\\\n4\n\\end{array}\\right)'
         """
         return r'\vec{x}\mapsto '+self.A()._latex_()+r'\vec{x} + '+self.b().column()._latex_()
+
+    def _ascii_art_(self):
+        r"""
+        Return an ascii art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: G2 = AffineGroup(2, QQ)
+            sage: g2 = G2([[1, 1], [0, 1]], [3,4])
+            sage: ascii_art(g2)
+            x |-> [1 1] x + [3]
+                  [0 1]     [4]
+
+            sage: G3 = AffineGroup(3, QQ)
+            sage: g3 = G3([[1,1,-1], [0,1,2], [0,10,2]], [3,4,5/2])
+            sage: ascii_art(g3)
+                  [ 1  1 -1]     [  3]
+            x |-> [ 0  1  2] x + [  4]
+                  [ 0 10  2]     [5/2]
+        """
+        from sage.typeset.ascii_art import ascii_art
+        deg = self.parent().degree()
+        A = ascii_art(self._A, baseline=deg//2)
+        b = ascii_art(self._b.column(), baseline=deg//2)
+        return ascii_art("x |-> ") + A + ascii_art(" x + ") + b
+
+    def _unicode_art_(self):
+        r"""
+        Return a unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: G2 = AffineGroup(2, QQ)
+            sage: g2 = G2([[1, 1], [0, 1]], [3,4])
+            sage: unicode_art(g2)
+            x ↦ ⎛1 1⎞ x + ⎛3⎞
+                ⎝0 1⎠     ⎝4⎠
+
+            sage: G3 = AffineGroup(3, QQ)
+            sage: g3 = G3([[1,1,-1], [0,1,2], [0,10,2]], [3,4,5/2])
+            sage: unicode_art(g3)
+                ⎛ 1  1 -1⎞     ⎛  3⎞
+            x ↦ ⎜ 0  1  2⎟ x + ⎜  4⎟
+                ⎝ 0 10  2⎠     ⎝5/2⎠
+        """
+        from sage.typeset.unicode_art import unicode_art
+        deg = self.parent().degree()
+        A = unicode_art(self._A, baseline=deg//2)
+        b = unicode_art(self._b.column(), baseline=deg//2)
+        return unicode_art("x ↦ ") + A + unicode_art(" x + ") + b
 
     def _mul_(self, other):
         """

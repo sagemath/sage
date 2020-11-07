@@ -173,9 +173,11 @@ Guide](https://doc.sagemath.org/html/en/installation).
 
     - [Git] Alternatively, clone the Sage git repository:
 
-            $ git clone -c core.symlinks=true --branch master git://trac.sagemath.org/sage.git
+            $ git clone -c core.symlinks=true --branch master https://github.com/sagemath/sage.git
 
-      This will create the subdirectory `sage`.
+      This will create the subdirectory `sage`. `cd sage/` and pick the branch you need
+      by doing `git checkout` - typically you want the latest development branch, thus do
+      `git checkout develop`.
 
     - [Windows] The Sage source tree contains symbolic links, and the
       build will not work if Windows line endings rather than UNIX

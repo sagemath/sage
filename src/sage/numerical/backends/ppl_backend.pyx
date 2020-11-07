@@ -687,7 +687,7 @@ cdef class PPLBackend(GenericBackend):
         .. NOTE::
 
             This method raises ``MIPSolverException`` exceptions when
-            the solution can not be computed for any reason (none
+            the solution cannot be computed for any reason (none
             exists, or the solver was not able to find it, etc...)
 
         EXAMPLES:

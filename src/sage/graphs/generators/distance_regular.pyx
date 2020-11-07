@@ -393,7 +393,7 @@ def distance_3_doubly_truncated_Golay_code_graph():
 
     Compute the binary Golay code and truncate it twice. Compute its coset graph.
     Take a vertex and compute the set of vertices at distance 3
-    from the vertex choosen. This set constitutes the set of vertices of our
+    from the vertex chosen. This set constitutes the set of vertices of our
     distance-regular graph. Moreover we have an edge `(u,v)` if the coset graph
     contains such edge.
 
@@ -794,7 +794,7 @@ def AlternatingFormsGraph(const int n, const int q):
 
 def HermitianFormsGraph(const int n, const int r):
     r"""
-    Return the Hermitian froms graph with the given parameters.
+    Return the Hermitian forms graph with the given parameters.
 
     We build a graph whose vertices are all ``n``x``n`` Hermitian matrices
     over ``GF(r^2)``. Two  vertices are adjacent if the difference of the two
@@ -1033,7 +1033,7 @@ def GrassmannGraph(const int q, const int n, const int input_e):
 
     This builds the Grassmann graph `J_q(n,e)`. That is, for a vector
     space `V = \mathbb F(q)^n` the output is the graph on the subspaces
-    of dimension `e` where two subspaces are adjancent if their intersection
+    of dimension `e` where two subspaces are adjacent if their intersection
     has dimension `e-1`.
 
     This graph is distance-regular with classical parameters

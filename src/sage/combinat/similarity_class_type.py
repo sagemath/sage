@@ -195,7 +195,7 @@ from functools import reduce
 
 
 @cached_function
-def fq(n, q = None):
+def fq(n, q=None):
     r"""
     Return `(1-q^{-1}) (1-q^{-2}) \cdots (1-q^{-n})`.
 
@@ -399,7 +399,7 @@ class PrimarySimilarityClassType(Element,
             sage: PrimarySimilarityClassType(2, [3, 2, 1])
             [2, [3, 2, 1]]
         """
-        return "%s"%([self._deg, self._par])
+        return "%s" % ([self._deg, self._par],)
 
     def __hash__(self):
         r"""
@@ -512,7 +512,7 @@ class PrimarySimilarityClassType(Element,
         return self.degree()*centralizer_algebra_dim(self.partition())
 
     @cached_in_parent_method
-    def statistic(self, func, q = None):
+    def statistic(self, func, q=None):
         r"""
         Return `n_{\lambda}(q^d)` where `n_{\lambda}` is the value returned by
         ``func`` upon input `\lambda`, if ``self`` is `(d, \lambda)`.
@@ -790,7 +790,7 @@ class SimilarityClassType(CombinatorialElement):
 
     def as_partition_dictionary(self):
         r"""
-        Return a dictionary whose keys are the partitions of types occuring in
+        Return a dictionary whose keys are the partitions of types occurring in
         ``self`` and the value at the key `\lambda` is the partition formed by
         sorting the degrees of primary types with partition `\lambda`.
 
@@ -1597,4 +1597,3 @@ def matrix_centralizer_cardinalities_length_two(n, q = None, selftranspose = Fal
     for tau in SimilarityClassTypes(n):
         for pair in ext_orbit_centralizers(tau, q = q, selftranspose = selftranspose):
             yield (q**tau.centralizer_algebra_dim()*pair[0], tau.number_of_classes(invertible = invertible, q = q)*pair[1])
-

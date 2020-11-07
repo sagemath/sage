@@ -7,7 +7,7 @@ description = Sage: Open Source Mathematics Software: Configuration for sagelib
 long_description = file: README.rst
 license = GNU General Public License (GPL) v3 or later
 author = The Sage Developers
-author_email = https://groups.google.com/group/sage-support
+author_email = sage-support@googlegroups.com
 url = https://www.sagemath.org
 
 [options]

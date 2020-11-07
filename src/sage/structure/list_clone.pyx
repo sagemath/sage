@@ -331,7 +331,7 @@ cdef class ClonableElement(Element):
 
     cpdef bint is_immutable(self):
         """
-        Return ``True`` if ``self`` is immutable (can not be changed)
+        Return ``True`` if ``self`` is immutable (cannot be changed)
         and ``False`` if it is not.
 
         To make ``self`` immutable use ``self.set_immutable()``.
@@ -1331,7 +1331,8 @@ cdef class ClonableIntArray(ClonableElement):
             sage: IncreasingIntArrays()([1,2,3])
             [1, 2, 3]
         """
-        return '['+', '.join(["%i"%(self._list[i]) for i in range(self._len)])+']'
+        return '[' + ', '.join("%i" % self._list[i]
+                               for i in range(self._len)) + ']'
 
     def __nonzero__(self):
         """

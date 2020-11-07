@@ -1,4 +1,0 @@
-# Cleanup of previous installation
-rm -rf "${SAGE_SHARE}/jsmol/"
-rm -rf "${SAGE_SHARE}/jmol/"
-rm -f "${SAGE_LOCAL}/bin/jmol"

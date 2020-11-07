@@ -86,7 +86,7 @@ class DifferentiableCurve(DiffMap):
     Instead of declaring the parameter `t`  as a symbolic variable by means
     of ``var('t')``, it is equivalent to get it as the canonical coordinate
     of the real number line (see
-    :class:`~sage.manifolds.differentiable.real_line.RealLine`)::
+    :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`)::
 
         sage: R.<t> = RealLine()
         sage: c = M.curve({X: [sin(t), sin(2*t)/2]}, (t, 0, 2*pi), name='c') ; c

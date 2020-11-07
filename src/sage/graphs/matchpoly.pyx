@@ -86,7 +86,7 @@ def matching_polynomial(G, complement=True, name=None):
       polynomial of `G` is equal to that of `G'` minus that of `G''`.
 
       (the algorithm actually computes the *signless* matching polynomial, for
-      which the recursion is the same when one replaces the substraction by an
+      which the recursion is the same when one replaces the subtraction by an
       addition. It is then converted into the matching polynomial and returned)
 
     Depending on the value of ``complement``, Godsil's duality theorem

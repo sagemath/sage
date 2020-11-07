@@ -139,15 +139,20 @@ def pip_installed_packages():
         sage: d['beautifulsoup4']   # optional - build beautifulsoup4
         u'...'
     """
-    with open(os.devnull, 'w')  as devnull:
+    with open(os.devnull, 'w') as devnull:
         proc = subprocess.Popen(
             [sys.executable, "-m", "pip", "list", "--no-index", "--format", "json"],
             stdout=subprocess.PIPE,
             stderr=devnull,
         )
         stdout = proc.communicate()[0].decode()
-        return {package['name'].lower():package['version']
-                for package in json.loads(stdout)}
+        try:
+            return {package['name'].lower(): package['version']
+                    for package in json.loads(stdout)}
+        except json.decoder.JSONDecodeError:
+            # Something went wrong while parsing the output from pip.
+            # This may happen if pip is not correctly installed.
+            return {}
 
 def list_packages(*pkg_types, **opts):
     r"""

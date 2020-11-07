@@ -504,10 +504,10 @@ def count_rec(nexts, current, part, weight, length):
         sage: count_rec([[4], [1]], [[[4, 2, 2], [0, 0, 2, 0]], [[4, 3, 1], [0, 2, 0, 0]]], [[4, 3, 3], []], [2, 1, 1, 1], 2)
         [5]
     """
-    if current == []:
+    if not current:
         return [0]
-    if nexts != []:
-        return [sum(sum(j for j in i) for i in nexts)]
+    if nexts:
+        return [sum(j for i in nexts for j in i)]
     else:
         return [len(current)]
 
@@ -550,11 +550,11 @@ def list_rec(nexts, current, part, weight, length):
         return [[part[1],[]]]
 
     ## Test if the current nodes is not an empty node
-    if current == []:
+    if not current:
         return []
 
     ## Test if the current nodes drive us to new solutions
-    if nexts != []:
+    if nexts:
         res = []
         for i in range(len(current)):
             for j in range(len(nexts[i])):
@@ -758,8 +758,8 @@ def graph_implementation_rec(skp, weight, length, function):
     outer = skp[1]
     outer_len = len(outer)
 
-    ## Some tests in order to know if the shape and the weight are compatible.
-    if weight != [] and weight[-1] <= len(partp):
+    # Some tests in order to know if the shape and the weight are compatible.
+    if weight and weight[-1] <= len(partp):
         perms = permutation.Permutations([0]*(len(partp)-weight[-1]) + [length]*(weight[-1])).list()
     else:
         return function([], [], skp, weight, length)

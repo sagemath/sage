@@ -82,7 +82,7 @@ Integer_sage = sage.rings.integer.Integer
 
 from sage.rings.real_mpfi import RealInterval
 
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 CC = ComplexField(53)
 
 # this is a threshold for the charpoly() methods in this file
@@ -2295,12 +2295,8 @@ cdef class NumberFieldElement(FieldElement):
             sage: (1+sqrt2)^-1
             sqrt2 - 1
 
-        If the exponent is not integral, attempt this operation in the NumberField:
-
-            sage: K(2)^(1/2)
-            sqrt2
-
-        If this fails, perform this operation in the symbolic ring::
+        If the exponent is not integral, perform this operation in
+        the symbolic ring::
 
             sage: sqrt2^(1/5)
             2^(1/10)
@@ -2333,38 +2329,29 @@ cdef class NumberFieldElement(FieldElement):
         if (isinstance(base, NumberFieldElement) and
             (isinstance(exp, Integer) or type(exp) is int or exp in ZZ)):
             return generic_power(base, exp)
-
-        if (isinstance(base, NumberFieldElement) and exp in QQ):
-            qqexp = QQ(exp)
-            n = qqexp.numerator()
-            d = qqexp.denominator()
+        else:
+            cbase, cexp = canonical_coercion(base, exp)
+            if not isinstance(cbase, NumberFieldElement):
+                return cbase ** cexp
+            # Return a symbolic expression.
+            # We use the hold=True keyword argument to prevent the
+            # symbolics library from trying to simplify this expression
+            # again. This would lead to infinite loops otherwise.
+            from sage.symbolic.ring import SR
             try:
-                return base.nth_root(d)**n
-            except ValueError:
+                res = QQ(base)**QQ(exp)
+            except TypeError:
                 pass
-
-        cbase, cexp = canonical_coercion(base, exp)
-        if not isinstance(cbase, NumberFieldElement):
-            return cbase ** cexp
-        # Return a symbolic expression.
-        # We use the hold=True keyword argument to prevent the
-        # symbolics library from trying to simplify this expression
-        # again. This would lead to infinite loops otherwise.
-        from sage.symbolic.ring import SR
-        try:
-            res = QQ(base)**QQ(exp)
-        except TypeError:
-            pass
-        else:
-            if res.parent() is not SR:
-                return parent(cbase)(res)
-            return res
-        sbase = SR(base)
-        if sbase.operator() is operator.pow:
-            nbase, pexp = sbase.operands()
-            return nbase.power(pexp * exp, hold=True)
-        else:
-            return sbase.power(exp, hold=True)
+            else:
+                if res.parent() is not SR:
+                    return parent(cbase)(res)
+                return res
+            sbase = SR(base)
+            if sbase.operator() is operator.pow:
+                nbase, pexp = sbase.operands()
+                return nbase.power(pexp * exp, hold=True)
+            else:
+                return sbase.power(exp, hold=True)
 
     cdef void _reduce_c_(self):
         """
@@ -3036,6 +3023,25 @@ cdef class NumberFieldElement(FieldElement):
 
             sage: g is f.polynomial()
             False
+
+        Note that in relative number fields, this produces the polynomial of
+        the internal representation of this element::
+
+            sage: R.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - a)
+            sage: b.polynomial()
+            x
+
+        In some cases this might not be what you are looking for::
+
+            sage: K.<a> = NumberField(x^2 + x + 1)
+            sage: R.<y> = K[]
+            sage: L.<b> = K.extension(y^2 + y + 2)
+            sage: b.polynomial()
+            1/2*x^3 + 3*x - 1/2
+            sage: R(list(b))
+            y
+
         """
         from sage.rings.polynomial.polynomial_ring_constructor import _single_variate as Pol
         return Pol(QQ, var)(self._coefficients())

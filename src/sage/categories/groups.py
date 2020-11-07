@@ -186,7 +186,7 @@ class Groups(CategoryWithAxiom):
 
         def cayley_table(self, names='letters', elements=None):
             r"""
-            Returns the "multiplication" table of this multiplicative group,
+            Return the "multiplication" table of this multiplicative group,
             which is also known as the "Cayley table".
 
             .. note:: The order of the elements in the row and column

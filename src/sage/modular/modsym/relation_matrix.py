@@ -6,7 +6,7 @@ symbols classes to compute presentations of spaces in terms of generators and
 relations, using the standard methods based on Manin symbols.
 """
 # ****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

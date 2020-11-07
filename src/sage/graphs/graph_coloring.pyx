@@ -844,7 +844,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
     # We want to maximize the sum of weights on the edges
     p.set_objective(p.sum(r[fe] for fe in frozen_edges))
 
-    # Each edge being by itself a matching, its weight can not be more than 1
+    # Each edge being by itself a matching, its weight cannot be more than 1
     for fe in frozen_edges:
         p.add_constraint(r[fe] <= 1)
 
@@ -899,7 +899,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0):
     .. NOTE::
 
        This method computes a grundy coloring using at *MOST* `k` colors. If
-       this method returns a value equal to `k`, it can not be assumed that `k`
+       this method returns a value equal to `k`, it cannot be assumed that `k`
        is equal to `\Gamma(G)`. Meanwhile, if it returns any value `k' < k`,
        this is a certificate that the Grundy number of the given graph is `k'`.
 
@@ -993,7 +993,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0):
         obj = Integer(obj)
 
     except MIPSolverException:
-        raise ValueError("this graph can not be colored with k colors")
+        raise ValueError("this graph cannot be colored with k colors")
 
     if value_only:
         return obj
@@ -1047,7 +1047,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0):
     .. NOTE::
 
        This method computes a b-coloring that uses at *MOST* `k` colors. If this
-       method returns a value equal to `k`, it can not be assumed that `k` is
+       method returns a value equal to `k`, it cannot be assumed that `k` is
        equal to `\chi_b(G)`. Meanwhile, if it returns any value `k' < k`, this
        is a certificate that the Grundy number of the given graph is `k'`.
 
@@ -1180,7 +1180,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0):
         obj = Integer(obj)
 
     except MIPSolverException:
-        raise ValueError("this graph can not be colored with k colors")
+        raise ValueError("this graph cannot be colored with k colors")
 
     if value_only:
         return obj
@@ -1370,7 +1370,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
         for k in values:
             p = MixedIntegerLinearProgram(maximization=True, solver=solver)
             color = p.new_variable(binary=True)
-            # A vertex can not have two incident edges with the same color.
+            # A vertex cannot have two incident edges with the same color.
             for v in h:
                 for i in range(k):
                     p.add_constraint(p.sum(color[frozenset((u,v)),i] for u in h.neighbor_iterator(v)) <= 1)
@@ -1650,7 +1650,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False, solv
         if plus_one:
             raise RuntimeError("It looks like you have found a counterexample to a very old conjecture. Please do not loose it ! Please publish it, and send a post to sage-devel to warn us. We implore you!")
         else:
-            raise ValueError("this graph can not be colored with the given number of colors")
+            raise ValueError("this graph cannot be colored with the given number of colors")
 
     c = p.get_values(c)
 
@@ -1692,7 +1692,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0, solver=Non
     The least number of colors such that such a coloring exists for a graph `G`
     is written `\chi'_a(G)`, also called the acyclic chromatic index of `G`.
 
-    It is conjectured that this parameter can not be too different from the
+    It is conjectured that this parameter cannot be too different from the
     obvious lower bound `\Delta(G) \leq \chi'_a(G)`, `\Delta(G)` being the
     maximum degree of `G`, which is given by the first of the two constraints.
     Indeed, it is conjectured that `\Delta(G)\leq \chi'_a(G)\leq \Delta(G) + 2`.
@@ -1741,7 +1741,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0, solver=Non
 
     EXAMPLES:
 
-    The complete graph on 8 vertices can not be acyclically edge-colored with
+    The complete graph on 8 vertices cannot be acyclically edge-colored with
     less `\Delta + 1` colors, but it can be colored with `\Delta + 2 = 9`::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
@@ -1771,7 +1771,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0, solver=Non
         sage: acyclic_edge_coloring(g, k=2)
         Traceback (most recent call last):
         ...
-        ValueError: this graph can not be colored with the given number of colors
+        ValueError: this graph cannot be colored with the given number of colors
 
     The optimal coloring give us `3` classes::
 
@@ -1895,7 +1895,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0, solver=Non
                                "Please publish it, and send a post to sage-devel "
                                "to warn us. We implore you!")
         else:
-            raise ValueError("this graph can not be colored with the given number of colors")
+            raise ValueError("this graph cannot be colored with the given number of colors")
 
     c = p.get_values(c)
 

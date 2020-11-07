@@ -891,11 +891,13 @@ cdef class CoercionModel:
            maximal efficiency.
         """
         all, res = self.analyse(xp, yp, op)
-        indent = " "*4
+        indent = " " * 4
         if verbosity >= 2:
-            print("\n".join([s if isinstance(s, str) else indent+(repr(s).replace("\n", "\n"+indent)) for s in all]))
+            print("\n".join(s if isinstance(s, str)
+                            else (indent + repr(s).replace("\n", "\n" + indent))
+                            for s in all))
         elif verbosity >= 1:
-            print("\n".join([s for s in all if isinstance(s, str)]))
+            print("\n".join(s for s in all if isinstance(s, str)))
         if verbosity >= 1:
             if res is None:
                 print("Unknown result parent.")

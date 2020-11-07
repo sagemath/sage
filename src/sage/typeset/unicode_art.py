@@ -6,7 +6,7 @@ This module implements ascii art using unicode characters. It is a
 strict superset of :mod:`~sage.typeset.ascii_art`.
 """
 
-#*******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2013 Jean-Baptiste Priez <jbp@kerios.fr>,
 #                     2015 Volker Braun <vbraun.name@gmail.com>
 #
@@ -19,8 +19,8 @@ strict superset of :mod:`~sage.typeset.ascii_art`.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ******************************************************************************
 
 from sage.typeset.character_art import CharacterArt
 from sage.typeset.character_art_factory import CharacterArtFactory
@@ -65,6 +65,7 @@ class UnicodeArt(CharacterArt):
             ' \u03c0\u22c5x\n\u212f   '
         """
         return repr(self).decode("utf-8")
+
 
 _unicode_art_factory = CharacterArtFactory(
     UnicodeArt, str, '_unicode_art_',
@@ -157,12 +158,16 @@ def unicode_art(*obj, **kwds):
     return _unicode_art_factory.concatenate(obj, separator, empty_unicode_art,
                                             baseline=baseline)
 
+
 _subscript_dict = {'0': u'₀', '1': u'₁', '2': u'₂', '3': u'₃', '4': u'₄',
                    '5': u'₅', '6': u'₆', '7': u'₇', '8': u'₈', '9': u'₉',
                    '-': u'₋', '+': u'₊'}
+
+
 _superscript_dict = {'0': u'⁰', '1': u'¹', '2': u'²', '3': u'³', '4': u'⁴',
                      '5': u'⁵', '6': u'⁶', '7': u'⁷', '8': u'⁸', '9': u'⁹',
                      '-': u'⁻', '+': u'⁺', '/': u'ᐟ'}
+
 
 def unicode_superscript(x):
     r"""
@@ -178,6 +183,7 @@ def unicode_superscript(x):
     """
     return u''.join(_superscript_dict[i] for i in str(x))
 
+
 def unicode_subscript(x):
     r"""
     Return the integer ``x`` as a superscript.
@@ -191,4 +197,3 @@ def unicode_subscript(x):
         '₋₇₁₂'
     """
     return u''.join(_subscript_dict[i] for i in str(x))
-

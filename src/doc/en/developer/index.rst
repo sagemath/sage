@@ -134,6 +134,14 @@ Testing on multiple platforms
 
    portability_testing
 
+Additional development and testing tools
+----------------------------------------
+
+.. toctree::
+   :maxdepth: 3
+
+   tools
+
 Contributing to Manuals and Tutorials
 -------------------------------------
 

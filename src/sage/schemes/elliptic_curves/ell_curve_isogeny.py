@@ -453,7 +453,7 @@ def compute_codomain_kohel(E, kernel, degree):
 
             (v,w) = compute_vw_kohel_even_deg3(b2,b4,s1,s2,s3)
 
-    else: # odd degree case
+    else:  # odd degree case
 
         n = psi.degree()
 
@@ -461,15 +461,17 @@ def compute_codomain_kohel(E, kernel, degree):
         b4 = E.b4()
         b6 = E.b6()
 
-        s1 = 0; s2 = 0; s3 = 0
+        s1 = 0
+        s2 = 0
+        s3 = 0
 
-        if (1 <= n):
+        if 1 <= n:
             s1 = -kernel_list[n-1]
 
-        if (2 <= n):
+        if 2 <= n:
             s2 = kernel_list[n-2]
 
-        if (3 <= n):
+        if 3 <= n:
             s3 = -kernel_list[n-3]
 
         # initializing these allows us to calculate E2.
@@ -2442,15 +2444,17 @@ class EllipticCurveIsogeny(Morphism):
 
         psi_coeffs = psi.list()
 
-        s1 = 0; s2 = 0; s3 = 0
+        s1 = 0
+        s2 = 0
+        s3 = 0
 
-        if (1 <= n):
+        if 1 <= n:
             s1 = -psi_coeffs[n-1]
 
-        if (2 <= n):
+        if 2 <= n:
             s2 = psi_coeffs[n-2]
 
-        if (3 <= n):
+        if 3 <= n:
             s3 = -psi_coeffs[n-3]
 
         # initializing these allows us to calculate E2.
@@ -3537,8 +3541,7 @@ class EllipticCurveIsogeny(Morphism):
             sage: phi.is_injective()
             True
         """
-        if (1 < self.__degree): return False
-        return True
+        return not (1 < self.__degree)
 
     def is_surjective(self):
         r"""
@@ -4054,14 +4057,16 @@ def fill_isogeny_matrix(M):
         M0[i,i]=1
 
     def fix(d):
-        if d==0: return Infinity
+        if d == 0:
+            return Infinity
         return d
 
     def fix2(d):
-        if d==Infinity: return 0
+        if d == Infinity:
+            return 0
         return d
 
-    def pr(M1,M2):
+    def pr(M1, M2):
         return Matrix([[fix2(min([fix(M1[i,k]*M2[k,j]) for k in range(n)])) for i in range(n)] for j in range(n)])
 
     M1 = M0

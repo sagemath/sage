@@ -210,7 +210,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     - When ``tree`` is ``True``, format the result as a directed tree
 
     - When ``rooted_tree`` is ``True`` and ``tree`` is ``False``, format the
-      ouput as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
+      output as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
 
     EXAMPLES:
 

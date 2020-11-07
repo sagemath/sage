@@ -255,8 +255,7 @@ class CoordinatePatch(Parent):
             Open subset of R^3 with coordinates x, y, z
         """
         return r"Open subset of R^%s with coordinates %s" % \
-            (self.dim(), ', '.join([x._latex_() for x in self._coordinates]))
-
+            (self.dim(), ', '.join(x._latex_() for x in self._coordinates))
 
     def _latex_(self):
         r"""

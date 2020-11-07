@@ -118,7 +118,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         """
         return "Highest weight crystal of type A_%s of highest weight omega_1"%(self.n)
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     class Element(ElementWrapper):

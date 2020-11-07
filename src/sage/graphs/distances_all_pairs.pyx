@@ -2087,7 +2087,7 @@ cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
     index of `G` is then defined as [KRG1996]_ as `\sum_{uv \in
     E(G)}n_u(uv)\times n_v(uv)`.
 
-    To determine `N_u(uv)`, this method perfoms a breadth first search (BFS)
+    To determine `N_u(uv)`, this method performs a breadth first search (BFS)
     from each vertex `s \in V`. Then, each time an edge `uv` visited by the BFS
     is such that `d(s, u) < d(s, v)`, it adds 1 to `N_u(uv)`. Since this method
     assumes that the graph is undirected, the graph `sd` has both arcs `uv` and

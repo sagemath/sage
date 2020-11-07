@@ -72,7 +72,7 @@ def canonical_parameters(group, base_ring, k, ep, n=None):
     try:
         num = ZZ(num)
     except TypeError:
-        raise ValueError("Invalid or non-occuring weight k={}, ep={}!".format(k,ep))
+        raise ValueError("Invalid or non-occurring weight k={}, ep={}!".format(k,ep))
 
     return (group, base_ring, k, ep, n)
 

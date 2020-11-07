@@ -66,6 +66,49 @@ inline size_t count_atoms(const uint64_t* A, size_t face_length){
     return count;
 }
 
+
+inline int is_contained_in_one(uint64_t *face, uint64_t **faces, size_t n_faces, size_t face_length){
+    /*
+    Return whether ``face`` is contained in one of ``faces``.
+    */
+    for(size_t i = 0; i < n_faces; i++){
+        if (is_subset(face, faces[i], face_length))
+            return 1;
+    }
+    return 0;
+}
+
+inline int is_contained_in_one(uint64_t *face, uint64_t **faces, size_t n_faces, size_t face_length, size_t skip){
+    /*
+    Return whether ``face`` is contained in one of ``faces``.
+
+    Skips ``faces[skip]``.
+    */
+    return is_contained_in_one(face, faces, skip, face_length) || \
+        is_contained_in_one(face, faces+skip+1, n_faces-skip-1, face_length);
+}
+
+inline int contains_one(uint64_t *face, uint64_t **faces, size_t n_faces, size_t face_length){
+    /*
+    Return whether ``face`` contains one of ``faces``.
+    */
+    for(size_t i = 0; i < n_faces; i++){
+        if (is_subset(faces[i], face, face_length))
+            return 1;
+    }
+    return 0;
+}
+
+inline int contains_one(uint64_t *face, uint64_t **faces, size_t n_faces, size_t face_length, size_t skip){
+    /*
+    Return whether ``face`` contains one of ``faces``.
+
+    Skips ``faces[skip]``.
+    */
+    return contains_one(face, faces, skip, face_length) || \
+        contains_one(face, faces+skip+1, n_faces-skip-1, face_length);
+}
+
 size_t get_next_level(\
         uint64_t **faces, size_t n_faces, uint64_t **maybe_newfaces, \
         uint64_t **newfaces, uint64_t **visited_all, \
@@ -97,7 +140,7 @@ size_t get_next_level(\
     As we have visited all faces of ``visited_all``, we alter the algorithm
     to not revisit:
     Step 1: Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
-    Step 2: Out of thosse the inclusion-maximal ones are some of the facets.
+    Step 2: Out of those the inclusion-maximal ones are some of the facets.
             At least we obtain all of those, that we have not already visited.
             Maybe, we get some more.
     Step 3: Only keep those that we have not already visited.
@@ -117,44 +160,9 @@ size_t get_next_level(\
 
     // For each face we will Step 2 and Step 3.
     for (size_t j = 0; j < n_faces-1; j++){
-        // Step 2a:
-        for(size_t k = 0; k < j; k++){
-            // Testing if maybe_newfaces[j] is contained in different nextface.
-            if(is_subset(maybe_newfaces[j], maybe_newfaces[k],face_length)){
-                // If so, it is not inclusion-maximal and hence not of codimension 1.
-                is_not_newface[j] = 1;
-                break;
-                }
-            }
-        if (is_not_newface[j]) {
-            // No further tests needed, if it is not of codimension 1.
-            continue;
-        }
-
-        // Step 2b:
-        for(size_t k = j+1; k < n_faces-1; k++){
-            // Testing if maybe_newfaces[j] is contained in different nextface.
-            if(is_subset(maybe_newfaces[j],maybe_newfaces[k], face_length)){
-                // If so, it is not inclusion-maximal and hence not of codimension 1.
-                is_not_newface[j] = 1;
-            break;
-            }
-        }
-        if (is_not_newface[j]) {
-            // No further tests needed, if it is not of codimension 1.
-            continue;
-        }
-
-        // Step 3:
-        for (size_t k = 0; k < n_visited_all; k++){
-            // Testing if maybe_newfaces[j] is contained in one,
-            // we have already completely visited.
-            if(is_subset(maybe_newfaces[j], visited_all[k], face_length)){
-                // If so, we don't want to revisit.
-                is_not_newface[j] = 1;
-                break;
-            }
-        }
+        if (is_contained_in_one(maybe_newfaces[j], maybe_newfaces, n_faces-1, face_length, j) || \
+                is_contained_in_one(maybe_newfaces[j], visited_all, n_visited_all, face_length))
+                    is_not_newface[j] = 1;
     }
 
     // Set ``newfaces`` to point to the correct ones.

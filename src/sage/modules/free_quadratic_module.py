@@ -141,7 +141,7 @@ def FreeQuadraticModule(
     # In order to use coercion into the inner_product_ring we need to pass
     # this ring into the vector classes.
     if inner_product_ring is not None:
-        raise NotImplementedError("An inner_product_ring can not currently be defined.")
+        raise NotImplementedError("An inner_product_ring cannot currently be defined.")
 
     # We intentionally create a new matrix instead of using the given
     # inner_product_matrix. This ensures that the matrix has the correct

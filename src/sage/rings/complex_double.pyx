@@ -95,9 +95,9 @@ from sage.structure.coerce cimport is_numpy_type
 from cypari2.gen cimport Gen as pari_gen
 from cypari2.convert cimport new_gen_from_double, new_t_COMPLEX_from_double
 
-from . import complex_number
+from . import complex_mpfr
 
-from .complex_field import ComplexField
+from .complex_mpfr import ComplexField
 cdef CC = ComplexField()
 
 from .real_mpfr import RealField
@@ -352,7 +352,7 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
             return ComplexDoubleElement(x, 0)
         elif isinstance(x, complex):
             return ComplexDoubleElement(x.real, x.imag)
-        elif isinstance(x, complex_number.ComplexNumber):
+        elif isinstance(x, complex_mpfr.ComplexNumber):
             return ComplexDoubleElement(x.real(), x.imag())
         elif isinstance(x, pari_gen):
             return pari_to_cdf(x)
@@ -411,7 +411,7 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
         from .rational_field import QQ
         from .real_lazy import RLF
         from .real_mpfr import RR, RealField_class
-        from .complex_field import ComplexField_class
+        from .complex_mpfr import ComplexField_class
         if S is ZZ or S is QQ or S is RDF or S is RLF:
             return FloatToCDF(S)
         if isinstance(S, RealField_class):
@@ -430,9 +430,9 @@ cdef class ComplexDoubleField_class(sage.rings.ring.Field):
         elif RR.has_coerce_map_from(S):
             return FloatToCDF(RR) * RR._internal_coerce_map_from(S)
         elif isinstance(S, ComplexField_class) and S.prec() >= 53:
-            return complex_number.CCtoCDF(S, self)
+            return complex_mpfr.CCtoCDF(S, self)
         elif CC.has_coerce_map_from(S):
-            return complex_number.CCtoCDF(CC, self) * CC._internal_coerce_map_from(S)
+            return complex_mpfr.CCtoCDF(CC, self) * CC._internal_coerce_map_from(S)
 
     def _magma_init_(self, magma):
         r"""
@@ -1110,7 +1110,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: format(CDF(0, 0), '+#.4')
             '+0.000'
         """
-        return complex_number._format_complex_number(self._complex.real,
+        return complex_mpfr._format_complex_number(self._complex.real,
                                                      self._complex.imag,
                                                      format_spec)
 
@@ -1401,7 +1401,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
             - :func:`sage.misc.functional.norm`
 
-            - :meth:`sage.rings.complex_number.ComplexNumber.norm`
+            - :meth:`sage.rings.complex_mpfr.ComplexNumber.norm`
 
         EXAMPLES::
 

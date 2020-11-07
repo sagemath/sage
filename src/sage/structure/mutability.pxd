@@ -4,12 +4,12 @@ Mutability -- Pyrex Implementation
 
 ##########################################################################
 #
-#   SAGE: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2006 William Stein <wstein@ucsd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##########################################################################
 
 cdef class Mutability:

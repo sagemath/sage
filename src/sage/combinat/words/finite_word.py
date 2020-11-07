@@ -4909,13 +4909,13 @@ class FiniteWord_class(Word_class):
         """
         l = self.length()
         if l <= 1:
-           return []
+            return []
         Q = []
         for i in range(1, l - 1):
             return_lengths = [x.length() for x in self.return_words(self[:i])]
-            if return_lengths != []:
-               if (max(return_lengths) <= i and self[l-i:l] == self[:i]):
-                  Q.append(self[:i])
+            if return_lengths:
+                if max(return_lengths) <= i and self[l - i:l] == self[:i]:
+                    Q.append(self[:i])
         return Q
 
     def crochemore_factorization(self):

@@ -161,7 +161,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         self._assign_names(self.algebra_generators().keys())
 
     def _repr_(self):
-        """ 
+        """
         Return a string representation of ``self``.
 
         EXAMPLES::

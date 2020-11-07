@@ -176,7 +176,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
     cpdef list list(self, bint copy=True):
         """
-        Returs the list of coefficients.
+        Return the list of coefficients.
 
         EXAMPLES::
 
@@ -187,7 +187,6 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             True
             sage: P.0.list()
             [0, 1]
-
         """
         cdef Py_ssize_t i
 

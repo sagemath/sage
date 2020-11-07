@@ -1012,12 +1012,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # Get a reference to Magma version of parent.
         R = magma(self.parent())
         # Get list of coefficients.
-        v = ','.join([a._magma_init_(magma) for a in self.list()])
+        v = ','.join(a._magma_init_(magma) for a in self.list())
         return '%s![%s]' % (R.name(), v)
 
     def numpy(self, dtype=object):
         """
-        Converts self to a numpy array.
+        Convert self to a numpy array.
 
         INPUT:
 
@@ -3527,8 +3527,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def _mathematica_init_(self):
         """
-        Returns string representation of this vector as a Mathematica
-        list.
+        Return string representation of this vector as a Mathematica list.
 
         EXAMPLES::
 
@@ -3541,7 +3540,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: a._mathematica_init_()
             '{1, x, (x)^(2), Sin[x], Pi}'
         """
-        return '{' + ', '.join([x._mathematica_init_() for x in self.list()]) + '}'
+        return '{' + ', '.join(x._mathematica_init_() for x in self.list()) + '}'
 
     def nonzero_positions(self):
         """
@@ -3615,7 +3614,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.misc.latex import latex
         vector_delimiters = latex.vector_delimiters()
         s = '\\left' + vector_delimiters[0]
-        s += ',\,'.join([latex(a) for a in self.list()])
+        s += ',\,'.join(latex(a) for a in self.list())
         return s + '\\right' + vector_delimiters[1]
 
     def dense_vector(self):

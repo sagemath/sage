@@ -661,7 +661,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             ]
         """
         if self.__cr:
-            return '[\n' + ',\n'.join([repr(x) for x in self]) + '\n]'
+            return '[\n' + ',\n'.join(repr(x) for x in self) + '\n]'
         else:
             return list.__repr__(self)
 
@@ -695,12 +695,14 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             '[\n1,\n2,\n3\n]'
         """
         if self.__cr_str:
-            return '[\n' + ',\n'.join([str(x) for x in self]) + '\n]'
+            return '[\n' + ',\n'.join(str(x) for x in self) + '\n]'
         else:
             return list.__str__(self)
 
     def universe(self):
         """
+        Return the universe of the sequence.
+
         EXAMPLES::
 
             sage: Sequence([1,2/3,-2/5]).universe()

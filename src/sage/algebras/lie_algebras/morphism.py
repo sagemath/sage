@@ -259,6 +259,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         """
         return x._im_gens_(self.codomain(), self.im_gens(), base_map=self.base_map())
 
+
 class LieAlgebraHomset(Homset):
     """
     Homset between two Lie algebras.
@@ -270,7 +271,7 @@ class LieAlgebraHomset(Homset):
     """
     def __init__(self, X, Y, category=None, base=None, check=True):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 

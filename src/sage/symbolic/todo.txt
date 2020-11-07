@@ -100,18 +100,18 @@ Wall time: 0.05 s
 sage: time z = expand((u + v + a + b + c)^100)
 ^C^C^C
 ------------------------------------------------------------
-Unhandled SIGBUS: A bus error occured in SAGE.
+Unhandled SIGBUS: A bus error occurred in Sage.
 
 done * pretty serious todo -- all predefined constants in utils.cpp get made wrong:
     // TODO: BECAUSE of Floor division, this gives the wrong answer!!
-    // However, it gets called at ginac startup, so I don't yet
+    // However, it gets called at GiNaC startup, so I don't yet
     // know how to change it to make a Sage Rational. Argh.
     value = Number_T(numer) / Number_T(denom);
 
 done * wrap taylor series
 done    * power series print wrong -- no spaces around operators
 
-done * figure out how to check for true or false-ness of inequalities in ginac manual.
+done * figure out how to check for true or false-ness of inequalities in GiNaC manual.
    sage: var('x,y,z,w',ns=1); P=x.parent()
    sage: bool(P(2)== P(2))
 
@@ -143,7 +143,7 @@ For PHASE II: LATER  (Hopefully Burcin)
 done * CRASH:
 sage: f = (Mod(2,7)*x^2 + Mod(2,7))^7
 ------------------------------------------------------------
-Unhandled SIGBUS: A bus error occured in SAGE.
+Unhandled SIGBUS: A bus error occurred in Sage.
 
 It works fine with leading coefficient Mod(1,7)
 
@@ -159,13 +159,13 @@ sage: f * k(-1) * k(-1)
 (1+x)^(-1)
 
 
-* Maybe change SAGE's Ginac to make a call to a cython gcd function, then use
-singular, since singular's gcd over QQ is much better than ginac's, I think,
-and ginac *only* does GCD over QQ.  Actually, just make everything in normal.cpp
+* Maybe change Sage's GiNaC to make a call to a Cython gcd function, then use
+Singular, since Singular's gcd over QQ is much better than GiNaC's, I think,
+and GiNaC *only* does GCD over QQ.  Actually, just make everything in normal.cpp
 be implemented via Singular, probably...
 
 done * Make it so these work the same way, i.e., in second case below the Mod(1,7)
-should also reduce.  Probably in some cases ginac just doesn't bother to do
+should also reduce.  Probably in some cases GiNaC just doesn't bother to do
 the multiply because Mod(1,7) == 1 is true.
 
 sage: a.expand()*Mod(2,7)

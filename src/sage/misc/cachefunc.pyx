@@ -1445,7 +1445,7 @@ class CachedMethodPickle(object):
         of the instance (provided that it has a ``__dict__``).
         Hence, when pickling the instance, it would be attempted
         to pickle that attribute as well, but this is a problem,
-        since functions can not be pickled, currently. Therefore,
+        since functions cannot be pickled, currently. Therefore,
         we replace the actual cached method by a place holder,
         that kills itself as soon as any attribute is requested.
         Then, the original cached attribute is reinstated. But the
@@ -2248,7 +2248,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
     def __reduce__(self):
         """
-        Since functions can not be pickled, the cached method caller
+        Since functions cannot be pickled, the cached method caller
         is pickled by a :class:`CachedMethodPickle`, that replaces
         itself by an actual :class:`CachedMethodCallerNoArgs` as soon
         as it is asked to do anything.
@@ -2375,7 +2375,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
         .. NOTE::
 
-            Recall that a cached method without arguments can not cache
+            Recall that a cached method without arguments cannot cache
             the return value ``None``.
 
         EXAMPLES::
@@ -2599,7 +2599,7 @@ cdef class CachedMethod(object):
         sage: len(b.f.cache)
         1
 
-    Cached methods can not be copied like usual methods, see :trac:`12603`.
+    Cached methods cannot be copied like usual methods, see :trac:`12603`.
     Copying them can lead to very surprising results::
 
         sage: class A:
@@ -2743,7 +2743,7 @@ cdef class CachedMethod(object):
             sage: a.f()
             4
 
-        Note that we can not provide a direct test, since ``a.f`` is
+        Note that we cannot provide a direct test, since ``a.f`` is
         an instance of :class:`CachedMethodCaller`.  But during its
         initialisation, this method was called in order to provide the
         cached method caller with its cache, and, if possible, assign
@@ -3287,7 +3287,7 @@ cdef class CachedInParentMethod(CachedMethod):
         if not hasattr(P,'__cached_methods'):
             raise TypeError("The parent of this element does not allow attribute assignment\n" +
                             "    and does not descend from the Parent base class.\n" +
-                            "    Can not use CachedInParentMethod.")
+                            "    Cannot use CachedInParentMethod.")
         if P.__cached_methods is None:
             P.__cached_methods = {}
         return (<dict>P.__cached_methods).setdefault(self._cache_name, default)

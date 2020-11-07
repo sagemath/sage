@@ -6,6 +6,7 @@ TESTS::
     sage: from sage.tests.gap_packages import all_installed_packages, test_packages
     sage: pkgs = all_installed_packages(ignore_dot_gap=True)
     sage: test_packages(pkgs, only_failures=True)    # optional - gap_packages
+    ...
       Status   Package   GAP Output
     +--------+---------+------------+
 

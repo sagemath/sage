@@ -27,7 +27,7 @@ from __future__ import absolute_import
 
 from sage.rings.all import PolynomialRing
 
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.complex_mpfr import is_ComplexField
 from sage.rings.real_mpfr import is_RealField
 
 from sage.modules.free_module_element import vector

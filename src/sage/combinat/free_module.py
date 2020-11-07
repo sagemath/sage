@@ -391,7 +391,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Regression test for :trac:`10127`: ``self._indices`` needs to be
         set early enough, in case the initialization of the categories
-        use ``self.basis().keys()``. This occured on several occasions
+        use ``self.basis().keys()``. This occurred on several occasions
         in non trivial constructions. In the following example,
         :class:`AlgebrasWithBasis` constructs ``Homset(self,self)`` to
         extend by bilinearity method ``product_on_basis``, which in

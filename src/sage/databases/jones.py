@@ -50,7 +50,7 @@ List all fields in the database ramified at 101::
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

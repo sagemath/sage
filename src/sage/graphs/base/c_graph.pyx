@@ -50,6 +50,10 @@ from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ
 from cysignals.memory cimport check_allocarray, sig_free
+from sage.data_structures.bitset cimport FrozenBitset
+
+cdef extern from "Python.h":
+    int unlikely(int) nogil  # Defined by Cython
 
 cdef class CGraph:
     """
@@ -716,19 +720,7 @@ cdef class CGraph:
     # Edge Functions
     ###################################
 
-    cdef int add_arc_unsafe(self, int u, int v) except -1:
-        raise NotImplementedError()
-
-    cdef int has_arc_unsafe(self, int u, int v) except -1:
-        raise NotImplementedError()
-
     cdef int del_arc_unsafe(self, int u, int v) except -1:
-        raise NotImplementedError()
-
-    cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
-        raise NotImplementedError()
-
-    cdef int in_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
         raise NotImplementedError()
 
     cpdef add_arc(self, int u, int v):
@@ -876,46 +868,259 @@ cdef class CGraph:
         """
         self.check_vertex(u)
         self.check_vertex(v)
-        self.del_arc_unsafe(u,v)
+        self.del_arc_unsafe(u, v)
 
-    cdef adjacency_sequence_in(self, int n, int *vertices, int v, int* sequence):
-        r"""
-        Compute the adjacency sequence corresponding to a list of vertices and a
-        vertex.
+    ###################################
+    # Labeled Edge Functions
+    ###################################
 
-        This method fills the array ``sequence``, whose `i`-th element is set to
-        `1` iff ``(v, vertices[i])`` is an edge.
+    cdef int add_arc_label_unsafe(self, int u, int v, int l) except -1:
+        raise NotImplementedError()
 
-        See the function ``_test_adjacency_sequence()`` of ``dense_graph.pyx``
-        and ``sparse_graph.pyx`` for unit tests.
+    cdef int has_arc_label_unsafe(self, int u, int v, int l) except -1:
+        raise NotImplementedError()
+
+    cdef int del_arc_label_unsafe(self, int u, int v, int l) except -1:
+        raise NotImplementedError()
+
+    cdef int arc_label_unsafe(self, int u, int v) except -1:
+        raise NotImplementedError()
+
+    cdef int all_arcs_unsafe(self, int u, int v, int* arc_labels, int size) except -1:
+        raise NotImplementedError()
+
+    cpdef int arc_label(self, int u, int v):
+        """
+        Retrieves the first label found associated with ``(u, v)``.
 
         INPUT:
 
-        - ``n`` -- nonnegative integer; the maximum index in ``vertices`` up to
-          which we want to consider. If ``n = 0``, we only want to know if
-          ``(vertices[0],v)`` is an edge. If ``n = 1``, we want to know whether
-          ``(vertices[0],v)`` and ``(vertices[1],v)`` are edges.  Let ``k`` be
-          the length of ``vertices``. If ``0 <= n < k``, then we want to know if
-          ``v`` is adjacent to each of ``vertices[0], vertices[1], ...,
-          vertices[n]``. When ``n = k - 1``, then we consider all elements in
-          the list ``vertices``.
+         - ``u, v`` -- non-negative integers, must be in self
 
-        - ``vertices`` -- list of vertices
+        OUTPUT: one of
 
-        - ``v`` -- a vertex
+        - positive integer -- indicates that there is a label on ``(u, v)``.
 
-        - ``sequence`` -- ``int *``; the memory segment of length `>= n` that is
-          to be filled
+        - ``0`` -- either the arc ``(u, v)`` is unlabeled, or there is no arc at all.
 
-        .. SEEALSO::
+        EXAMPLES::
 
-            - :meth:`adjacency_sequence_out` -- Similar method for ``(v,
-            vertices[i])`` instead of ``(vertices[i], v)`` (the difference only
-            matters for digraphs)
+            sage: from sage.graphs.base.sparse_graph import SparseGraph
+            sage: G = SparseGraph(5)
+            sage: G.add_arc_label(3,4,7)
+            sage: G.arc_label(3,4)
+            7
+
+        To this function, an unlabeled arc is indistinguishable from a non-arc::
+
+            sage: G.add_arc_label(1,0)
+            sage: G.arc_label(1,0)
+            0
+            sage: G.arc_label(1,1)
+            0
+
+        This function only returns the *first* label it finds from ``u`` to ``v``::
+
+            sage: G.add_arc_label(1,2,1)
+            sage: G.add_arc_label(1,2,2)
+            sage: G.arc_label(1,2)
+            2
+
         """
-        cdef int i
-        for i in range(n):
-            sequence[i] = self.has_arc_unsafe(vertices[i], v)
+        self.check_vertex(u)
+        self.check_vertex(v)
+        return self.arc_label_unsafe(u, v)
+
+    cpdef list all_arcs(self, int u, int v):
+        """
+        Gives the labels of all arcs ``(u, v)``. An unlabeled arc is interpreted as
+        having label 0.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.base.sparse_graph import SparseGraph
+            sage: G = SparseGraph(5)
+            sage: G.add_arc_label(1,2,1)
+            sage: G.add_arc_label(1,2,2)
+            sage: G.add_arc_label(1,2,2)
+            sage: G.add_arc_label(1,2,2)
+            sage: G.add_arc_label(1,2,3)
+            sage: G.add_arc_label(1,2,3)
+            sage: G.add_arc_label(1,2,4)
+            sage: G.all_arcs(1,2)
+            [4, 3, 3, 2, 2, 2, 1]
+
+        """
+        cdef int size, num_arcs, i
+        cdef int *arc_labels
+        cdef list output
+        self.check_vertex(u)
+        self.check_vertex(v)
+        if unlikely(self.in_degrees is NULL or self.out_degrees is NULL):
+            raise ValueError("`self.in_degree` or `self.out_degree` not allocated")
+        if self.in_degrees[v] < self.out_degrees[u]:
+            size = self.in_degrees[v]
+        else:
+            size = self.out_degrees[u]
+        arc_labels = <int *>check_allocarray(size, sizeof(int))
+        num_arcs = self.all_arcs_unsafe(u, v, arc_labels, size)
+        if num_arcs == -1:
+            sig_free(arc_labels)
+            raise RuntimeError("There was an error: there seem to be more arcs than self.in_degrees or self.out_degrees indicate.")
+        output = [arc_labels[i] for i in range(num_arcs)]
+        sig_free(arc_labels)
+        return output
+
+    cpdef del_arc_label(self, int u, int v, int l):
+        """
+        Delete an arc ``(u, v)`` with label ``l``.
+
+        INPUT:
+
+         - ``u, v`` -- non-negative integers, must be in self
+
+         - ``l`` -- a positive integer label, or zero for no label
+
+        EXAMPLES::
+
+            sage: from sage.graphs.base.sparse_graph import SparseGraph
+            sage: G = SparseGraph(5)
+            sage: G.add_arc_label(0,1,0)
+            sage: G.add_arc_label(0,1,1)
+            sage: G.add_arc_label(0,1,2)
+            sage: G.add_arc_label(0,1,2)
+            sage: G.add_arc_label(0,1,3)
+            sage: G.del_arc_label(0,1,2)
+            sage: G.all_arcs(0,1)
+            [0, 3, 2, 1]
+            sage: G.del_arc_label(0,1,0)
+            sage: G.all_arcs(0,1)
+            [3, 2, 1]
+
+        """
+        self.check_vertex(u)
+        self.check_vertex(v)
+        if l < 0:
+            raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
+        self.del_arc_label_unsafe(u,v,l)
+
+    cpdef bint has_arc_label(self, int u, int v, int l):
+        """
+        Indicates whether there is an arc ``(u, v)`` with label ``l``.
+
+        INPUT:
+
+         - ``u, v`` -- non-negative integers, must be in self
+
+         - ``l`` -- a positive integer label, or zero for no label
+
+        EXAMPLES::
+
+            sage: from sage.graphs.base.sparse_graph import SparseGraph
+            sage: G = SparseGraph(5)
+            sage: G.add_arc_label(0,1,0)
+            sage: G.add_arc_label(0,1,1)
+            sage: G.add_arc_label(0,1,2)
+            sage: G.add_arc_label(0,1,2)
+            sage: G.has_arc_label(0,1,1)
+            True
+            sage: G.has_arc_label(0,1,2)
+            True
+            sage: G.has_arc_label(0,1,3)
+            False
+
+        """
+        self.check_vertex(u)
+        self.check_vertex(v)
+        if l < 0:
+            raise ValueError("Label ({0}) must be a nonnegative integer.".format(l))
+        return self.has_arc_label_unsafe(u,v,l) == 1
+
+    ###################################
+    # Neighbor Functions
+    ###################################
+
+    cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
+        """
+        Feed array ``neighbors`` with the out-neighbors of ``u``.
+
+        This function will put at most ``size`` out-neighbors of ``u`` in array
+        ``neighbors``. If ``u`` has more than ``size`` out-neighbors, ``size``
+        of them are put in array ``neighbors`` and the function returns value
+        ``-1``.  Otherwise the function returns the number of out-neighbors that
+        have been put in array ``neighbors``.
+
+        INPUT:
+
+        - ``u`` -- non-negative integer; must be in self
+
+        - ``neighbors`` -- pointer to an (allocated) integer array
+
+        - ``size`` -- the length of the array
+
+        OUTPUT:
+
+        - nonnegative integer -- the out-degree of ``u``
+
+        - ``-1`` -- indicates that the array has been filled with neighbors, but
+          there were more
+
+        """
+        cdef int num_nbrs = 0
+        cdef int l
+        cdef int v = self.next_out_neighbor_unsafe(u, -1, &l)
+        while v != -1:
+            if num_nbrs == size:
+                return -1
+            neighbors[num_nbrs] = v
+            num_nbrs += 1
+            v = self.next_out_neighbor_unsafe(u, v, &l)
+
+        return num_nbrs
+
+    cdef int in_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
+        """
+        Feed array ``neighbors`` with the in-neighbors of ``v``.
+
+        This function will put at most ``size`` in-neighbors of ``v`` in array
+        ``neighbors``. If ``v`` has more than ``size`` in-neighbors, ``size`` of
+        them are put in array ``neighbors`` and the function returns value
+        ``-1``.  Otherwise the function returns the number of in-neighbors that
+        have been put in array ``neighbors``.
+
+        INPUT:
+
+        - ``v`` -- non-negative integer; must be in self
+
+        - ``neighbors`` -- pointer to an (allocated) integer array
+
+        - ``size`` -- the length of the array
+
+        OUTPUT:
+
+        - nonnegative integer -- the in-degree of ``v``
+
+        - ``-1`` -- indicates that the array has been filled with neighbors, but
+          there were more
+
+        """
+        cdef int num_nbrs = 0
+        cdef int l
+        cdef int v = self.next_in_neighbor_unsafe(u, -1, &l)
+        while v != -1:
+            if num_nbrs == size:
+                return -1
+            neighbors[num_nbrs] = v
+            num_nbrs += 1
+            v = self.next_in_neighbor_unsafe(u, v, &l)
+
+        return num_nbrs
+
+    cdef int next_out_neighbor_unsafe(self, int u, int v, int* l) except -2:
+        raise NotImplementedError()
+
+    cdef int next_in_neighbor_unsafe(self, int v, int u, int* l) except -2:
+        raise NotImplementedError()
 
     cdef adjacency_sequence_out(self, int n, int *vertices, int v, int* sequence):
         r"""
@@ -957,37 +1162,98 @@ cdef class CGraph:
         for i in range(n):
             sequence[i] = self.has_arc_unsafe(v, vertices[i])
 
-    cpdef list all_arcs(self, int u, int v):
-        """
-        Return the labels of all arcs from ``u`` to ``v``.
+    cdef adjacency_sequence_in(self, int n, int *vertices, int v, int* sequence):
+        r"""
+        Compute the adjacency sequence corresponding to a list of vertices and a
+        vertex.
+
+        This method fills the array ``sequence``, whose `i`-th element is set to
+        `1` iff ``(v, vertices[i])`` is an edge.
+
+        See the function ``_test_adjacency_sequence()`` of ``dense_graph.pyx``
+        and ``sparse_graph.pyx`` for unit tests.
 
         INPUT:
 
-        - ``u`` -- integer; the tail of an arc
+        - ``n`` -- nonnegative integer; the maximum index in ``vertices`` up to
+          which we want to consider. If ``n = 0``, we only want to know if
+          ``(vertices[0],v)`` is an edge. If ``n = 1``, we want to know whether
+          ``(vertices[0],v)`` and ``(vertices[1],v)`` are edges.  Let ``k`` be
+          the length of ``vertices``. If ``0 <= n < k``, then we want to know if
+          ``v`` is adjacent to each of ``vertices[0], vertices[1], ...,
+          vertices[n]``. When ``n = k - 1``, then we consider all elements in
+          the list ``vertices``.
 
-        - ``v`` -- integer; the head of an arc
+        - ``vertices`` -- list of vertices
 
-        OUTPUT:
+        - ``v`` -- a vertex
 
-        - Raise ``NotImplementedError``. This method is not implemented at the
-          :class:`CGraph` level. A child class should provide a suitable
-          implementation.
+        - ``sequence`` -- ``int *``; the memory segment of length `>= n` that is
+          to be filled
 
         .. SEEALSO::
 
-            - :meth:`all_arcs <sage.graphs.base.sparse_graph.SparseGraph.all_arcs>`
-              -- ``all_arcs`` method for sparse graphs.
+            - :meth:`adjacency_sequence_out` -- Similar method for ``(v,
+            vertices[i])`` instead of ``(vertices[i], v)`` (the difference only
+            matters for digraphs)
+        """
+        cdef int i
+        for i in range(n):
+            sequence[i] = self.has_arc_unsafe(vertices[i], v)
 
-        EXAMPLES::
+    cpdef list out_neighbors(self, int u):
+        """
+        Return the list of out-neighbors of the vertex ``u``.
+
+        INPUT:
+
+        - ``u`` -- integer representing a vertex of this graph
+
+        EXAMPLES:
+
+        On the :class:`CGraph` level, this always produces an error, as there are no vertices::
 
             sage: from sage.graphs.base.c_graph import CGraph
             sage: G = CGraph()
-            sage: G.all_arcs(0, 1)
+            sage: G.out_neighbors(0)
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            LookupError: vertex (0) is not a vertex of the graph
+
+        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+
+            sage: from sage.graphs.base.dense_graph import DenseGraph
+            sage: G = DenseGraph(5)
+            sage: G.add_arc(0, 1)
+            sage: G.add_arc(1, 2)
+            sage: G.add_arc(1, 3)
+            sage: G.out_neighbors(0)
+            [1]
+            sage: G.out_neighbors(1)
+            [2, 3]
+
+            sage: from sage.graphs.base.sparse_graph import SparseGraph
+            sage: G = SparseGraph(5)
+            sage: G.add_arc(0,1)
+            sage: G.add_arc(1,2)
+            sage: G.add_arc(1,3)
+            sage: G.out_neighbors(0)
+            [1]
+            sage: G.out_neighbors(1)
+            [2, 3]
         """
-        raise NotImplementedError()
+        cdef int i, num_nbrs
+        self.check_vertex(u)
+        if not self.out_degrees[u]:
+            return []
+        cdef int size = self.out_degrees[u]
+        cdef int *neighbors = <int *>check_allocarray(size, sizeof(int))
+        if not neighbors:
+            raise MemoryError
+        num_nbrs = self.out_neighbors_unsafe(u, neighbors, size)
+        output = [neighbors[i] for i in range(num_nbrs)]
+        sig_free(neighbors)
+        return output
 
     cpdef list in_neighbors(self, int v):
         """
@@ -1054,60 +1320,6 @@ cdef class CGraph:
         sig_free(neighbors)
         return output
 
-    cpdef list out_neighbors(self, int u):
-        """
-        Return the list of out-neighbors of the vertex ``u``.
-
-        INPUT:
-
-        - ``u`` -- integer representing a vertex of this graph
-
-        EXAMPLES:
-
-        On the :class:`CGraph` level, this always produces an error, as there are no vertices::
-
-            sage: from sage.graphs.base.c_graph import CGraph
-            sage: G = CGraph()
-            sage: G.out_neighbors(0)
-            Traceback (most recent call last):
-            ...
-            LookupError: vertex (0) is not a vertex of the graph
-
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
-
-            sage: from sage.graphs.base.dense_graph import DenseGraph
-            sage: G = DenseGraph(5)
-            sage: G.add_arc(0, 1)
-            sage: G.add_arc(1, 2)
-            sage: G.add_arc(1, 3)
-            sage: G.out_neighbors(0)
-            [1]
-            sage: G.out_neighbors(1)
-            [2, 3]
-
-            sage: from sage.graphs.base.sparse_graph import SparseGraph
-            sage: G = SparseGraph(5)
-            sage: G.add_arc(0,1)
-            sage: G.add_arc(1,2)
-            sage: G.add_arc(1,3)
-            sage: G.out_neighbors(0)
-            [1]
-            sage: G.out_neighbors(1)
-            [2, 3]
-        """
-        cdef int i, num_nbrs
-        self.check_vertex(u)
-        if not self.out_degrees[u]:
-            return []
-        cdef int size = self.out_degrees[u]
-        cdef int *neighbors = <int *>check_allocarray(size, sizeof(int))
-        if not neighbors:
-            raise MemoryError
-        num_nbrs = self.out_neighbors_unsafe(u, neighbors, size)
-        output = [neighbors[i] for i in range(num_nbrs)]
-        sig_free(neighbors)
-        return output
-
 
 cdef class CGraphBackend(GenericGraphBackend):
     """
@@ -1156,7 +1368,203 @@ cdef class CGraphBackend(GenericGraphBackend):
         - :class:`DenseGraphBackend <sage.graphs.base.dense_graph.DenseGraphBackend>`
           -- backend for dense graphs.
     """
-    cdef int get_vertex(self, u) except ? -2:
+
+    ###################################
+    # Basic Access
+    ###################################
+
+    cdef CGraph cg(self):
+        r"""
+        Return the attribute ``_cg`` casted into ``CGraph``.
+        """
+        raise NotImplementedError("a derived class must return ``self._cg``")
+
+    def c_graph(self):
+        r"""
+        Return the ``._cg`` and ``._cg_rev`` attributes
+
+        .. NOTE::
+
+            The ``._cg_rev`` attribute has been removed and hence ``None`` is returned.
+
+        EXAMPLES::
+
+            sage: cg,cg_rev = graphs.PetersenGraph()._backend.c_graph()
+            sage: cg
+            <sage.graphs.base.sparse_graph.SparseGraph object at ...>
+        """
+        return (self.cg(), None)
+
+    def loops(self, new=None):
+        """
+        Check whether loops are allowed in this graph.
+
+        INPUT:
+
+        - ``new`` -- boolean (default: ``None``); to set or ``None`` to get
+
+        OUTPUT:
+
+        - If ``new=None``, return ``True`` if this graph allows self-loops or
+          ``False`` if self-loops are not allowed
+
+        - If ``new`` is a boolean, set the self-loop permission of this graph
+          according to the boolean value of ``new``
+
+        EXAMPLES::
+
+            sage: G = Graph()
+            sage: G._backend.loops()
+            False
+            sage: G._backend.loops(True)
+            sage: G._backend.loops()
+            True
+        """
+        if new is None:
+            return self._loops
+        if new:
+            self._loops = True
+        else:
+            self._loops = False
+
+    def num_edges(self, directed):
+        """
+        Return the number of edges in ``self``.
+
+        INPUT:
+
+        - ``directed`` -- boolean; whether to count ``(u, v)`` and ``(v, u)`` as
+          one or two edges
+
+        OUTPUT:
+
+        - If ``directed=True``, counts the number of directed edges in this
+          graph. Otherwise, return the size of this graph.
+
+        .. SEEALSO::
+
+            - :meth:`num_verts`
+              -- return the order of this graph.
+
+        EXAMPLES::
+
+            sage: G = Graph(graphs.PetersenGraph())
+            sage: G._backend.num_edges(False)
+            15
+
+        TESTS:
+
+        Ensure that :trac:`8395` is fixed. ::
+
+            sage: G = Graph({1:[1]}); G
+            Looped graph on 1 vertex
+            sage: G.edges(labels=False)
+            [(1, 1)]
+            sage: G.size()
+            1
+            sage: G = Graph({1:[2,2]}); G
+            Multi-graph on 2 vertices
+            sage: G.edges(labels=False)
+            [(1, 2), (1, 2)]
+            sage: G.size()
+            2
+            sage: G = Graph({1:[1,1]}); G
+            Looped multi-graph on 1 vertex
+            sage: G.edges(labels=False)
+            [(1, 1), (1, 1)]
+            sage: G.size()
+            2
+            sage: D = DiGraph({1:[1]}); D
+            Looped digraph on 1 vertex
+            sage: D.edges(labels=False)
+            [(1, 1)]
+            sage: D.size()
+            1
+            sage: D = DiGraph({1:[2,2], 2:[1,1]}); D
+            Multi-digraph on 2 vertices
+            sage: D.edges(labels=False)
+            [(1, 2), (1, 2), (2, 1), (2, 1)]
+            sage: D.size()
+            4
+            sage: D = DiGraph({1:[1,1]}); D
+            Looped multi-digraph on 1 vertex
+            sage: D.edges(labels=False)
+            [(1, 1), (1, 1)]
+            sage: D.size()
+            2
+            sage: from sage.graphs.base.sparse_graph import SparseGraphBackend
+            sage: S = SparseGraphBackend(7)
+            sage: S.num_edges(False)
+            0
+            sage: S.loops(True)
+            sage: S.add_edge(1, 1, None, directed=False)
+            sage: S.num_edges(False)
+            1
+            sage: S.multiple_edges(True)
+            sage: S.add_edge(1, 1, None, directed=False)
+            sage: S.num_edges(False)
+            2
+            sage: from sage.graphs.base.dense_graph import DenseGraphBackend
+            sage: D = DenseGraphBackend(7)
+            sage: D.num_edges(False)
+            0
+            sage: D.loops(True)
+            sage: D.add_edge(1, 1, None, directed=False)
+            sage: D.num_edges(False)
+            1
+        """
+        if directed:
+            return self.cg().num_arcs
+        else:
+            i = self.cg().num_arcs
+            k = 0
+            if self.loops(None):
+                if self.multiple_edges(None):
+                    for j in self.iterator_verts():
+                        if self.has_edge(j, j, None):
+                            k += len(self.get_edge_label(j, j))
+                else:
+                    for j in self.iterator_verts():
+                        if self.has_edge(j, j, None):
+                            k += 1
+            i = (i - k) // 2
+            return i + k
+
+    def num_verts(self):
+        """
+        Return the number of vertices in ``self``.
+
+        OUTPUT:
+
+        - The order of this graph.
+
+        .. SEEALSO::
+
+            - :meth:`num_edges`
+              -- return the number of (directed) edges in this graph.
+
+        EXAMPLES::
+
+            sage: G = Graph(graphs.PetersenGraph())
+            sage: G._backend.num_verts()
+            10
+        """
+        return self.cg().num_verts
+
+    cdef bint _delete_edge_before_adding(self):
+        """
+        Return whether we should delete edges before adding any.
+
+        This is in particular required if the backend theoretically allows
+        multiple edges but the graph should not have multiple egdes.
+        """
+        return not self._multiple_edges
+
+    ###################################
+    # Vertex Functions
+    ###################################
+
+    cdef inline int get_vertex(self, u) except ? -2:
         """
         Return an ``int`` representing the arbitrary hashable vertex ``u``
         (whether or not ``u`` is actually in the graph), or ``-1`` if a new
@@ -1210,7 +1618,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             return -1
         return u_long
 
-    cdef int get_vertex_checked(self, u) except ? -2:
+    cdef inline int get_vertex_checked(self, u) except ? -2:
         """
         As :meth:`get_vertex`, but return ``-1``,
         if ``u`` is not a vertex of the graph.
@@ -1226,7 +1634,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         Return the object represented by ``u_int``, or ``None`` if this does not
         represent a vertex.
         """
-        cdef dict vertex_labels = self.vertex_labels,
+        cdef dict vertex_labels = self.vertex_labels
 
         if u_int in vertex_labels:
             return vertex_labels[u_int]
@@ -1235,7 +1643,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         else:
             return None
 
-    cdef int check_labelled_vertex(self, u, bint reverse) except ? -1:
+    cdef inline int check_labelled_vertex(self, u, bint reverse) except ? -1:
         """
         Return an ``int`` representing the arbitrary hashable vertex ``u``, and
         update, if necessary, the translation dict and list. Add a vertex if the
@@ -1249,6 +1657,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                 bitset_add(G.active_vertices, u_int)
                 G.num_verts += 1
             return u_int
+
         u_int = bitset_first_in_complement(G.active_vertices)
         if u_int == -1:
             G.realloc(2 * G.active_vertices.size)
@@ -1283,27 +1692,298 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int v_int = self.get_vertex_checked(v)
         return v_int != -1
 
-    cdef CGraph cg(self):
-        r"""
-        Return the attribute ``_cg`` casted into ``CGraph``.
+    def add_vertex(self, name):
         """
-        raise NotImplementedError("a derived class must return ``self._cg``")
+        Add a vertex to ``self``.
 
-    def c_graph(self):
-        r"""
-        Return the ``._cg`` and ``._cg_rev`` attributes
+        INPUT:
 
-        .. NOTE::
+        - ``name`` -- the vertex to be added (must be hashable). If ``None``,
+          a new name is created.
 
-            The ``._cg_rev`` attribute has been removed and hence ``None`` is returned.
+        OUTPUT:
+
+        - If ``name = None``, the new vertex name is returned. ``None``
+          otherwise.
+
+        .. SEEALSO::
+
+            - :meth:`add_vertices` -- add a bunch of vertices of this graph
+
+            - :meth:`has_vertex` -- returns whether or not this graph has a
+              specific vertex
 
         EXAMPLES::
 
-            sage: cg,cg_rev = graphs.PetersenGraph()._backend.c_graph()
-            sage: cg
-            <sage.graphs.base.sparse_graph.SparseGraph object at ...>
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.add_vertex(10)
+            sage: D.add_vertex([])
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'list'
+
+        ::
+
+            sage: S = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: S.add_vertex(10)
+            sage: S.add_vertex([])
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'list'
         """
-        return (self.cg(), None)
+        retval = None
+        if name is None:
+            name = 0
+            while name in self.vertex_ints or (
+                name not in self.vertex_labels and
+                bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name)):
+                name += 1
+            retval = name
+
+        self.check_labelled_vertex(name, False)  # this will add the vertex
+
+        return retval
+
+    def add_vertices(self, vertices):
+        """
+        Add vertices to ``self``.
+
+        INPUT:
+
+        - ``vertices`` -- iterator of vertex labels; a new name is created, used
+          and returned in the output list for all ``None`` values in
+          ``vertices``
+
+        OUTPUT:
+
+        Generated names of new vertices if there is at least one ``None`` value
+        present in ``vertices``. ``None`` otherwise.
+
+        .. SEEALSO::
+
+            - :meth:`add_vertex` -- add a vertex to this graph
+
+        EXAMPLES::
+
+            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(1)
+            sage: D.add_vertices([1, 2, 3])
+            sage: D.add_vertices([None] * 4)
+            [4, 5, 6, 7]
+
+        ::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(0)
+            sage: G.add_vertices([0, 1])
+            sage: list(G.iterator_verts(None))
+            [0, 1]
+            sage: list(G.iterator_edges([0, 1], True))
+            []
+
+        ::
+
+            sage: import sage.graphs.base.dense_graph
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.add_vertices([10, 11, 12])
+        """
+        cdef int nones = 0
+        for v in vertices:
+            if v is not None:
+                self.add_vertex(v)
+            else:
+                nones += 1
+
+        new_names = []
+        while nones:
+            new_names.append(self.add_vertex(None))
+            nones -= 1
+
+        return new_names if new_names else None
+
+    def del_vertex(self, v):
+        """
+        Delete a vertex in ``self``, failing silently if the vertex is not
+        in the graph.
+
+        INPUT:
+
+        - ``v`` -- vertex to be deleted
+
+        .. SEEALSO::
+
+            - :meth:`del_vertices` -- delete a bunch of vertices from this graph
+
+        EXAMPLES::
+
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.del_vertex(0)
+            sage: D.has_vertex(0)
+            False
+
+        ::
+
+            sage: S = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: S.del_vertex(0)
+            sage: S.has_vertex(0)
+            False
+        """
+        if not self.has_vertex(v):
+            return
+        cdef int v_int = self.get_vertex(v)
+
+        # delete each arc incident with v and v
+        self.cg().del_vertex(v_int)
+
+        # add v to unused vertices
+        if v_int in self.vertex_labels:
+            self.vertex_ints.pop(v)
+            self.vertex_labels.pop(v_int)
+
+    def del_vertices(self, vertices):
+        """
+        Delete vertices from an iterable container.
+
+        INPUT:
+
+        - ``vertices`` -- iterator of vertex labels
+
+        OUTPUT:
+
+        - Same as for :meth:`del_vertex`.
+
+        .. SEEALSO::
+
+            - :meth:`del_vertex` -- delete a vertex of this graph
+
+        EXAMPLES::
+
+            sage: import sage.graphs.base.dense_graph
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.del_vertices([7, 8])
+            sage: D.has_vertex(7)
+            False
+            sage: D.has_vertex(6)
+            True
+
+        ::
+
+            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: D.del_vertices([1, 2, 3])
+            sage: D.has_vertex(1)
+            False
+            sage: D.has_vertex(0)
+            True
+        """
+        for v in vertices:
+            self.del_vertex(v)
+
+    def iterator_verts(self, verts=None):
+        """
+        Return an iterator over the vertices of ``self`` intersected with
+        ``verts``.
+
+        INPUT:
+
+        - ``verts`` -- an iterable container of objects (default: ``None``)
+
+        OUTPUT:
+
+        - If ``verts=None``, return an iterator over all vertices of this graph
+
+        - If ``verts`` is a single vertex of the graph, treat it as the
+          container ``[verts]``
+
+        - If ``verts`` is a iterable container of vertices, find the
+          intersection of ``verts`` with the vertex set of this graph and return
+          an iterator over the resulting intersection
+
+        .. SEEALSO::
+
+            - :meth:`iterator_nbrs`
+              -- returns an iterator over the neighbors of a vertex.
+
+        EXAMPLES::
+
+            sage: P = Graph(graphs.PetersenGraph())
+            sage: list(P._backend.iterator_verts(P))
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: list(P._backend.iterator_verts())
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: list(P._backend.iterator_verts([1, 2, 3]))
+            [1, 2, 3]
+            sage: list(P._backend.iterator_verts([1, 2, 10]))
+            [1, 2]
+        """
+        cdef size_t i
+        if verts is None:
+            for x in self.vertex_ints:
+                yield x
+            i = bitset_first(self.cg().active_vertices)
+            while i != <size_t>-1:
+                if (i not in self.vertex_labels
+                    and i not in self.vertex_ints):
+                        yield i
+                i = bitset_next(self.cg().active_vertices, i + 1)
+            return
+
+        try:
+            hash(verts)
+        except Exception:
+            pass
+        else:
+            if self.has_vertex(verts):
+                yield verts
+                return
+
+        for v in verts:
+            if self.has_vertex(v):
+                yield v
+
+    def relabel(self, perm, directed):
+        """
+        Relabel the graph according to ``perm``.
+
+        INPUT:
+
+        - ``perm`` -- anything which represents a permutation as
+          ``v --> perm[v]``, for example a dict or a list
+
+        - ``directed`` -- ignored (this is here for compatibility with other
+          backends)
+
+        EXAMPLES::
+
+            sage: G = Graph(graphs.PetersenGraph())
+            sage: G._backend.relabel(range(9,-1,-1), False)
+            sage: G.edges()
+            [(0, 2, None),
+             (0, 3, None),
+             (0, 5, None),
+             (1, 3, None),
+             (1, 4, None),
+             (1, 6, None),
+             (2, 4, None),
+             (2, 7, None),
+             (3, 8, None),
+             (4, 9, None),
+             (5, 6, None),
+             (5, 9, None),
+             (6, 7, None),
+             (7, 8, None),
+             (8, 9, None)]
+        """
+        cdef int i
+        cdef dict new_vx_ints = {}
+        cdef dict new_vx_labels = {}
+        for v in self.iterator_verts(None):
+            i = self.get_vertex(v)
+            new_vx_ints[perm[v]] = i
+            new_vx_labels[i] = perm[v]
+        self.vertex_ints = new_vx_ints
+        self.vertex_labels = new_vx_labels
+
+    ###################################
+    # Neighbor Functions
+    ###################################
 
     def degree(self, v, directed):
         """
@@ -1496,190 +2176,6 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         return self.cg().in_degrees[v_int]
 
-    def add_vertex(self, name):
-        """
-        Add a vertex to ``self``.
-
-        INPUT:
-
-        - ``name`` -- the vertex to be added (must be hashable). If ``None``,
-          a new name is created.
-
-        OUTPUT:
-
-        - If ``name = None``, the new vertex name is returned. ``None``
-          otherwise.
-
-        .. SEEALSO::
-
-            - :meth:`add_vertices` -- add a bunch of vertices of this graph
-
-            - :meth:`has_vertex` -- returns whether or not this graph has a
-              specific vertex
-
-        EXAMPLES::
-
-            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_vertex(10)
-            sage: D.add_vertex([])
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable type: 'list'
-
-        ::
-
-            sage: S = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: S.add_vertex(10)
-            sage: S.add_vertex([])
-            Traceback (most recent call last):
-            ...
-            TypeError: unhashable type: 'list'
-        """
-        retval = None
-        if name is None:
-            name = 0
-            while name in self.vertex_ints or (
-                name not in self.vertex_labels and
-                bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name)):
-                name += 1
-            retval = name
-
-        self.check_labelled_vertex(name, False)  # this will add the vertex
-
-        return retval
-
-    def add_vertices(self, vertices):
-        """
-        Add vertices to ``self``.
-
-        INPUT:
-
-        - ``vertices`` -- iterator of vertex labels; a new name is created, used
-          and returned in the output list for all ``None`` values in
-          ``vertices``
-
-        OUTPUT:
-
-        Generated names of new vertices if there is at least one ``None`` value
-        present in ``vertices``. ``None`` otherwise.
-
-        .. SEEALSO::
-
-            - :meth:`add_vertex` -- add a vertex to this graph
-
-        EXAMPLES::
-
-            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(1)
-            sage: D.add_vertices([1, 2, 3])
-            sage: D.add_vertices([None] * 4)
-            [4, 5, 6, 7]
-
-        ::
-
-            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(0)
-            sage: G.add_vertices([0, 1])
-            sage: list(G.iterator_verts(None))
-            [0, 1]
-            sage: list(G.iterator_edges([0, 1], True))
-            []
-
-        ::
-
-            sage: import sage.graphs.base.dense_graph
-            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.add_vertices([10, 11, 12])
-        """
-        cdef int nones = 0
-        for v in vertices:
-            if v is not None:
-                self.add_vertex(v)
-            else:
-                nones += 1
-
-        new_names = []
-        while nones:
-            new_names.append(self.add_vertex(None))
-            nones -= 1
-
-        return new_names if new_names else None
-
-    def del_vertex(self, v):
-        """
-        Delete a vertex in ``self``, failing silently if the vertex is not
-        in the graph.
-
-        INPUT:
-
-        - ``v`` -- vertex to be deleted
-
-        .. SEEALSO::
-
-            - :meth:`del_vertices` -- delete a bunch of vertices from this graph
-
-        EXAMPLES::
-
-            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.del_vertex(0)
-            sage: D.has_vertex(0)
-            False
-
-        ::
-
-            sage: S = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: S.del_vertex(0)
-            sage: S.has_vertex(0)
-            False
-        """
-        if not self.has_vertex(v):
-            return
-        cdef int v_int = self.get_vertex(v)
-
-        # delete each arc incident with v and v
-        self.cg().del_vertex(v_int)
-
-        # add v to unused vertices
-        if v_int in self.vertex_labels:
-            self.vertex_ints.pop(v)
-            self.vertex_labels.pop(v_int)
-
-    def del_vertices(self, vertices):
-        """
-        Delete vertices from an iterable container.
-
-        INPUT:
-
-        - ``vertices`` -- iterator of vertex labels
-
-        OUTPUT:
-
-        - Same as for :meth:`del_vertex`.
-
-        .. SEEALSO::
-
-            - :meth:`del_vertex` -- delete a vertex of this graph
-
-        EXAMPLES::
-
-            sage: import sage.graphs.base.dense_graph
-            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
-            sage: D.del_vertices([7, 8])
-            sage: D.has_vertex(7)
-            False
-            sage: D.has_vertex(6)
-            True
-
-        ::
-
-            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
-            sage: D.del_vertices([1, 2, 3])
-            sage: D.has_vertex(1)
-            False
-            sage: D.has_vertex(0)
-            True
-        """
-        for v in vertices:
-            self.del_vertex(v)
-
     def iterator_nbrs(self, v):
         """
         Return an iterator over the neighbors of ``v``.
@@ -1800,266 +2296,723 @@ cdef class CGraphBackend(GenericGraphBackend):
         for u_int in self.cg().out_neighbors(v_int):
             yield self.vertex_label(u_int)
 
-    def iterator_verts(self, verts=None):
+    ###################################
+    # Edge Functions
+    ###################################
+
+    cdef int new_edge_label(self, object l) except -1:
+        raise NotImplementedError()
+
+    def add_edges(self, object edges, bint directed):
         """
-        Return an iterator over the vertices of ``self`` intersected with
-        ``verts``.
+        Add edges from a list.
 
         INPUT:
 
-        - ``verts`` -- an iterable container of objects (default: ``None``)
+         - ``edges`` -- the edges to be added; can either be of the form
+           ``(u,v)`` or ``(u,v,l)``
 
-        OUTPUT:
-
-        - If ``verts=None``, return an iterator over all vertices of this graph
-
-        - If ``verts`` is a single vertex of the graph, treat it as the
-          container ``[verts]``
-
-        - If ``verts`` is a iterable container of vertices, find the
-          intersection of ``verts`` with the vertex set of this graph and return
-          an iterator over the resulting intersection
-
-        .. SEEALSO::
-
-            - :meth:`iterator_nbrs`
-              -- returns an iterator over the neighbors of a vertex.
+         - ``directed`` -- if False, add ``(v,u)`` as well as ``(u,v)``
 
         EXAMPLES::
 
-            sage: P = Graph(graphs.PetersenGraph())
-            sage: list(P._backend.iterator_verts(P))
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            sage: list(P._backend.iterator_verts())
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            sage: list(P._backend.iterator_verts([1, 2, 3]))
-            [1, 2, 3]
-            sage: list(P._backend.iterator_verts([1, 2, 10]))
-            [1, 2]
-        """
-        cdef size_t i
-        if verts is None:
-            for x in self.vertex_ints:
-                yield x
-            i = bitset_first(self.cg().active_vertices)
-            while i != <size_t>-1:
-                if (i not in self.vertex_labels
-                    and i not in self.vertex_ints):
-                        yield i
-                i = bitset_next(self.cg().active_vertices, i + 1)
-            return
+            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
+            sage: list(D.iterator_edges(range(9), True))
+            [(0, 1, None),
+             (2, 3, None),
+             (4, 5, None),
+             (5, 6, None)]
 
-        try:
-            hash(verts)
-        except Exception:
-            pass
+        """
+        cdef object u,v,l,e
+        for e in edges:
+            if len(e) == 3:
+                u,v,l = e
+            else:
+                u,v = e
+                l = None
+            self.add_edge(u,v,l,directed)
+
+    cpdef add_edge(self, object u, object v, object l, bint directed):
+        """
+        Add the edge ``(u,v)`` to self.
+
+        INPUT:
+
+         - ``u,v`` -- the vertices of the edge
+
+         - ``l`` -- the edge label
+
+         - ``directed`` -- if False, also add ``(v,u)``
+
+        .. NOTE::
+
+            The input ``l`` is ignored if the backend
+            does not support labels.
+
+        EXAMPLES::
+
+            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: D.add_edge(0,1,None,False)
+            sage: list(D.iterator_edges(range(9), True))
+            [(0, 1, None)]
+
+        ::
+
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.add_edge(0, 1, None, False)
+            sage: list(D.iterator_edges(range(9), True))
+            [(0, 1, None)]
+
+        TESTS::
+
+            sage: D = DiGraph(sparse=True)
+            sage: D.add_edge(0,1,2)
+            sage: D.add_edge(0,1,3)
+            sage: D.edges()
+            [(0, 1, 3)]
+
+        Check :trac:`22991` for sparse backend::
+
+            sage: G = Graph(3, sparse=True)
+            sage: G.add_edge(0,0)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot add edge from 0 to 0 in graph without loops
+            sage: G = Graph(3, sparse=True, loops=True)
+            sage: G.add_edge(0,0); G.edges()
+            [(0, 0, None)]
+
+        Check :trac:`22991` for dense backend::
+
+            sage: G = Graph(3, sparse=False)
+            sage: G.add_edge(0,0)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot add edge from 0 to 0 in graph without loops
+            sage: G = Graph(3, sparse=True, loops=True)
+            sage: G.add_edge(0, 0); G.edges()
+            [(0, 0, None)]
+
+        Remove edges correctly when multiedges are not allowed (:trac:`28077`)::
+
+            sage: D = DiGraph(multiedges=False)
+            sage: D.add_edge(1, 2, 'A')
+            sage: D.add_edge(1, 2, 'B')
+            sage: D.delete_edge(1, 2)
+            sage: D.incoming_edges(2)
+            []
+            sage: D.shortest_path(1, 2)
+            []
+        """
+        if u is None: u = self.add_vertex(None)
+        if v is None: v = self.add_vertex(None)
+
+        cdef int u_int = self.check_labelled_vertex(u, False)
+        cdef int v_int = self.check_labelled_vertex(v, False)
+
+        cdef CGraph cg = self.cg()
+
+        cdef int l_int
+        if l is None:
+            l_int = 0
         else:
-            if self.has_vertex(verts):
-                yield verts
+            l_int = self.new_edge_label(l)
+
+        if u_int == v_int and not self._loops:
+            raise ValueError(f"cannot add edge from {u!r} to {v!r} in graph without loops")
+
+        if self._delete_edge_before_adding():
+            if cg.has_arc_label(u_int, v_int, l_int):
+                return
+            else:
+                cg.del_all_arcs(u_int, v_int)
+                if not directed and self._directed and v_int != u_int:
+                    cg.del_all_arcs(v_int, u_int)
+
+        cg.add_arc_label_unsafe(u_int, v_int, l_int)
+        if not directed and self._directed and v_int != u_int:
+            cg.add_arc_label_unsafe(v_int, u_int, l_int)
+
+    def del_edge(self, object u, object v, object l, bint directed):
+        """
+        Delete edge ``(u, v, l)``.
+
+        INPUT:
+
+        - ``u, v`` -- the vertices of the edge
+
+        - ``l`` -- the edge label
+
+        - ``directed`` -- if ``False``, also delete ``(v, u, l)``
+
+        .. NOTE::
+
+            The input ``l`` is ignored if the backend
+            does not support labels.
+
+        EXAMPLES::
+
+            sage: D = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
+            sage: list(D.iterator_edges(range(9), True))
+            [(0, 1, None),
+             (2, 3, None),
+             (4, 5, None),
+             (5, 6, None)]
+            sage: D.del_edge(0,1,None,True)
+            sage: list(D.iterator_out_edges(range(9), True))
+            [(1, 0, None),
+             (2, 3, None),
+             (3, 2, None),
+             (4, 5, None),
+             (5, 4, None),
+             (5, 6, None),
+             (6, 5, None)]
+
+        ::
+
+            sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
+            sage: list(D.iterator_edges(range(9), True))
+            [(0, 1, None),
+             (2, 3, None),
+             (4, 5, None),
+             (5, 6, None)]
+            sage: D.del_edge(0, 1, None, True)
+            sage: list(D.iterator_out_edges(range(9), True))
+            [(1, 0, None),
+             (2, 3, None),
+             (3, 2, None),
+             (4, 5, None),
+             (5, 4, None),
+             (5, 6, None),
+             (6, 5, None)]
+
+        TESTS::
+
+            sage: G = Graph(sparse=True)
+            sage: G.add_edge(0,1,2)
+            sage: G.delete_edge(0,1)
+            sage: G.edges()
+            []
+
+            sage: G = Graph(multiedges=True, sparse=True)
+            sage: G.add_edge(0,1,2)
+            sage: G.add_edge(0,1,None)
+            sage: G.delete_edge(0,1)
+            sage: G.edges()
+            [(0, 1, 2)]
+
+        Do we remove loops correctly? (:trac:`12135`)::
+
+            sage: g=Graph({0:[0,0,0]}, sparse=True)
+            sage: g.edges(labels=False)
+            [(0, 0), (0, 0), (0, 0)]
+            sage: g.delete_edge(0,0); g.edges(labels=False)
+            [(0, 0), (0, 0)]
+        """
+        if not (self.has_vertex(u) and self.has_vertex(v)):
+            return
+        cdef int u_int = self.check_labelled_vertex(u, False)
+        cdef int v_int = self.check_labelled_vertex(v, False)
+
+        cdef CGraph cg = self.cg()
+
+        if l is None:
+            if cg.has_arc_label(u_int, v_int, 0):
+                l_int = 0
+            else:
+                l_int = cg.arc_label(u_int, v_int)
+        else:
+            for l_int in self.edge_labels:
+                if self.edge_labels[l_int] == l and cg.has_arc_label(u_int, v_int, l_int):
+                    break
+            else:
                 return
 
-        for v in verts:
-            if self.has_vertex(v):
-                yield v
+        cg.del_arc_label(u_int, v_int, l_int)
+        if not directed and self._directed and v_int != u_int:
+            cg.del_arc_label(v_int, u_int, l_int)
+        self.free_edge_label(l_int)
 
-    def loops(self, new=None):
+    cdef int free_edge_label(self, int l_int) except -1:
+        raise NotImplementedError()
+
+    ###################################
+    # Edge Iterators
+    ###################################
+
+    def iterator_edges(self, object vertices, bint labels):
         """
-        Check whether loops are allowed in this graph.
+        Iterate over the edges incident to a sequence of vertices.
+
+        Edges are assumed to be undirected.
+
+        .. WARNING::
+
+            This will try to sort the two ends of every edge.
 
         INPUT:
 
-        - ``new`` -- boolean (default: ``None``); to set or ``None`` to get
+        - ``vertices`` -- a list of vertex labels
 
-        OUTPUT:
-
-        - If ``new=None``, return ``True`` if this graph allows self-loops or
-          ``False`` if self-loops are not allowed
-
-        - If ``new`` is a boolean, set the self-loop permission of this graph
-          according to the boolean value of ``new``
+        - ``labels`` -- boolean, whether to return labels as well
 
         EXAMPLES::
 
-            sage: G = Graph()
-            sage: G._backend.loops()
-            False
-            sage: G._backend.loops(True)
-            sage: G._backend.loops()
-            True
-        """
-        if new is None:
-            return self._loops
-        if new:
-            self._loops = True
-        else:
-            self._loops = False
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: G.add_edge(1,2,3,False)
+            sage: list(G.iterator_edges(range(9), False))
+            [(1, 2)]
+            sage: list(G.iterator_edges(range(9), True))
+            [(1, 2, 3)]
 
-    def num_edges(self, directed):
-        """
-        Return the number of edges in ``self``.
+        TESTS::
 
-        INPUT:
-
-        - ``directed`` -- boolean; whether to count ``(u, v)`` and ``(v, u)`` as
-          one or two edges
-
-        OUTPUT:
-
-        - If ``directed=True``, counts the number of directed edges in this
-          graph. Otherwise, return the size of this graph.
-
-        .. SEEALSO::
-
-            - :meth:`num_verts`
-              -- return the order of this graph.
-
-        EXAMPLES::
-
-            sage: G = Graph(graphs.PetersenGraph())
-            sage: G._backend.num_edges(False)
-            15
-
-        TESTS:
-
-        Ensure that :trac:`8395` is fixed. ::
-
-            sage: G = Graph({1:[1]}); G
-            Looped graph on 1 vertex
-            sage: G.edges(labels=False)
-            [(1, 1)]
-            sage: G.size()
-            1
-            sage: G = Graph({1:[2,2]}); G
-            Multi-graph on 2 vertices
-            sage: G.edges(labels=False)
-            [(1, 2), (1, 2)]
-            sage: G.size()
-            2
-            sage: G = Graph({1:[1,1]}); G
-            Looped multi-graph on 1 vertex
-            sage: G.edges(labels=False)
-            [(1, 1), (1, 1)]
-            sage: G.size()
-            2
-            sage: D = DiGraph({1:[1]}); D
-            Looped digraph on 1 vertex
-            sage: D.edges(labels=False)
-            [(1, 1)]
-            sage: D.size()
-            1
-            sage: D = DiGraph({1:[2,2], 2:[1,1]}); D
-            Multi-digraph on 2 vertices
-            sage: D.edges(labels=False)
-            [(1, 2), (1, 2), (2, 1), (2, 1)]
-            sage: D.size()
-            4
-            sage: D = DiGraph({1:[1,1]}); D
-            Looped multi-digraph on 1 vertex
-            sage: D.edges(labels=False)
-            [(1, 1), (1, 1)]
-            sage: D.size()
-            2
-            sage: from sage.graphs.base.sparse_graph import SparseGraphBackend
-            sage: S = SparseGraphBackend(7)
-            sage: S.num_edges(False)
-            0
-            sage: S.loops(True)
-            sage: S.add_edge(1, 1, None, directed=False)
-            sage: S.num_edges(False)
-            1
-            sage: S.multiple_edges(True)
-            sage: S.add_edge(1, 1, None, directed=False)
-            sage: S.num_edges(False)
-            2
-            sage: from sage.graphs.base.dense_graph import DenseGraphBackend
-            sage: D = DenseGraphBackend(7)
-            sage: D.num_edges(False)
-            0
-            sage: D.loops(True)
-            sage: D.add_edge(1, 1, None, directed=False)
-            sage: D.num_edges(False)
-            1
-        """
-        if directed:
-            return self.cg().num_arcs
-        else:
-            i = self.cg().num_arcs
-            k = 0
-            if self.loops(None):
-                if self.multiple_edges(None):
-                    for j in self.iterator_verts():
-                        if self.has_edge(j, j, None):
-                            k += len(self.get_edge_label(j, j))
-                else:
-                    for j in self.iterator_verts():
-                        if self.has_edge(j, j, None):
-                            k += 1
-            i = (i - k) // 2
-            return i + k
-
-    def num_verts(self):
-        """
-        Return the number of vertices in ``self``.
-
-        OUTPUT:
-
-        - The order of this graph.
-
-        .. SEEALSO::
-
-            - :meth:`num_edges`
-              -- return the number of (directed) edges in this graph.
-
-        EXAMPLES::
-
-            sage: G = Graph(graphs.PetersenGraph())
-            sage: G._backend.num_verts()
-            10
-        """
-        return self.cg().num_verts
-
-    def relabel(self, perm, directed):
-        """
-        Relabel the graph according to ``perm``.
-
-        INPUT:
-
-        - ``perm`` -- anything which represents a permutation as
-          ``v --> perm[v]``, for example a dict or a list
-
-        - ``directed`` -- ignored (this is here for compatibility with other
-          backends)
-
-        EXAMPLES::
-
-            sage: G = Graph(graphs.PetersenGraph())
-            sage: G._backend.relabel(range(9,-1,-1), False)
-            sage: G.edges()
-            [(0, 2, None),
-             (0, 3, None),
+            sage: g = graphs.PetersenGraph()
+            sage: g.edges_incident([0,1,2])
+            [(0, 1, None),
+             (0, 4, None),
              (0, 5, None),
-             (1, 3, None),
-             (1, 4, None),
+             (1, 2, None),
              (1, 6, None),
-             (2, 4, None),
-             (2, 7, None),
-             (3, 8, None),
-             (4, 9, None),
-             (5, 6, None),
-             (5, 9, None),
-             (6, 7, None),
-             (7, 8, None),
-             (8, 9, None)]
+             (2, 3, None),
+             (2, 7, None)]
         """
+        return self._iterator_edges(vertices, labels, modus=3)
+
+    def iterator_unsorted_edges(self, object vertices, bint labels):
+        """
+        Iterate over the edges incident to a sequence of vertices.
+
+        Edges are assumed to be undirected.
+
+        This does not sort the ends of each edge.
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean, whether to return labels as well
+
+        EXAMPLES::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: G.add_edge(1,2,3,False)
+            sage: list(G.iterator_unsorted_edges(range(9), False))
+            [(2, 1)]
+            sage: list(G.iterator_unsorted_edges(range(9), True))
+            [(2, 1, 3)]
+
+        TESTS::
+
+            sage: G = Graph(sparse=True)
+            sage: G.add_edge((1,'a'))
+            sage: list(G._backend.iterator_unsorted_edges([1, 'a'],False))
+            [(1, 'a')]
+        """
+        return self._iterator_edges(vertices, labels, modus=2)
+
+    def iterator_out_edges(self, object vertices, bint labels):
+        """
+        Iterate over the outbound edges incident to a sequence of vertices.
+
+        INPUT:
+
+         - ``vertices`` -- a list of vertex labels
+
+         - ``labels`` -- boolean, whether to return labels as well
+
+        EXAMPLES::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: G.add_edge(1,2,3,True)
+            sage: list(G.iterator_out_edges([2], False))
+            []
+            sage: list(G.iterator_out_edges([1], False))
+            [(1, 2)]
+            sage: list(G.iterator_out_edges([1], True))
+            [(1, 2, 3)]
+        """
+        return self._iterator_edges(vertices, labels, modus=0)
+
+    def iterator_in_edges(self, object vertices, bint labels):
+        """
+        Iterate over the incoming edges incident to a sequence of vertices.
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean, whether to return labels as well
+
+        EXAMPLES::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(9)
+            sage: G.add_edge(1,2,3,True)
+            sage: list(G.iterator_in_edges([1], False))
+            []
+            sage: list(G.iterator_in_edges([2], False))
+            [(1, 2)]
+            sage: list(G.iterator_in_edges([2], True))
+            [(1, 2, 3)]
+        """
+        return self._iterator_edges(vertices, labels, modus=1)
+
+    def _iterator_edges(self, object vertices, const bint labels, const int modus=0):
+        """
+        Iterate over the edges incident to a sequence of vertices.
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertex labels
+
+        - ``labels`` -- boolean, whether to return labels as well
+
+        - ``modus`` -- integer representing the modus of the iterator:
+          - ``0`` -- outgoing edges
+          - ``1`` -- ingoing edges
+          - ``2`` -- unsorted edges of an undirected graph
+          - ``3`` -- sorted edges of an undirected graph
+
+        EXAMPLES::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, False)
+            sage: list(G._iterator_edges(range(9), False, 3))
+            [(1, 2)]
+            sage: list(G._iterator_edges(range(9), True, 3))
+            [(1, 2, None)]
+
+        ::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, True)
+            sage: list(G.iterator_in_edges([1], False))
+            []
+            sage: list(G.iterator_in_edges([2], False))
+            [(1, 2)]
+            sage: list(G.iterator_in_edges([2], True))
+            [(1, 2, None)]
+
+        ::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9)
+            sage: G.add_edge(1, 2, None, True)
+            sage: list(G.iterator_out_edges([2], False))
+            []
+            sage: list(G.iterator_out_edges([1], False))
+            [(1, 2)]
+            sage: list(G.iterator_out_edges([1], True))
+            [(1, 2, None)]
+        """
+        cdef object u, v, l, v_copy
+        cdef int u_int, v_int, l_int, foo
+        cdef CGraph cg = self.cg()
+        cdef list b_vertices_2, all_arc_labels
+        cdef FrozenBitset b_vertices
+        cdef bint out = modus == 0
+
+        cdef int vertices_case
+        cdef object it
+
+        if not isinstance(vertices, list):
+            # ALL edges
+            it = self.iterator_verts(None)
+            vertices_case = 0
+
+        elif not vertices:
+            return
+
+        elif len(vertices) == 1:
+            # One vertex
+            vertices_case = 1
+            v_int = -1
+
+        else:
+            # Several vertices (nonempty list)
+            vertices_case = 2
+            b_vertices_2 = [self.get_vertex_checked(v) for v in vertices]
+            try:
+                b_vertices = FrozenBitset(foo for foo in b_vertices_2 if foo >= 0)
+            except ValueError:
+                # Avoiding "Bitset must not be empty"
+                # in case none of the vertices is active.
+                return
+            it = iter(b_vertices)
+
+        while True:
+            # Think of this as a loop through ``vertices``.
+            # We pick the next vertex according to three cases.
+
+            if vertices_case == 0:
+                # ALL edges
+                try:
+                    v = next(it)
+                    v_int = self.get_vertex(v)
+                except StopIteration:
+                    return
+
+            elif vertices_case == 1:
+                # One vertex
+                if v_int != -1:
+                    # Only visit one vertex once.
+                    return
+                v = vertices[0]
+                v_int = self.get_vertex_checked(v)
+                if v_int == -1:
+                    return
+
+            else:
+                # Several vertices (nonempty list)
+                try:
+                    v_int = -1
+                    while v_int == -1:
+                        v_int = next(it)
+                    v = self.vertex_label(v_int)
+                except StopIteration:
+                    return
+
+            # WARNING
+            # If you modify this, you must keep in mind the documentation in the
+            # corresponding method in `generic_graph.py` in the method `edge_iterator`.
+            # E.g. code assumes that you can use an iterator to relabel or delete arcs.
+
+            u_int = cg._next_neighbor_unsafe(v_int, -1, out, &l_int)
+            while u_int != -1:
+                if (modus < 2 or                                            # Do not delete duplicates.
+                        vertices_case == 1 or                               # Only one vertex, so no duplicates.
+                        u_int >= v_int or                                   # We visit if u_int >= v_int ...
+                        (vertices_case == 2 and
+                            u_int < b_vertices.capacity() and
+                            not bitset_in(b_vertices._bitset, u_int))):     # ... or if u_int is not in ``vertices``.
+                    u = self.vertex_label(u_int)
+                    if labels:
+                        l = self.edge_labels[l_int] if l_int else None
+
+                    # Yield the arc/arcs.
+                    v_copy = v
+                    if _reorganize_edge(v, u, modus):
+                        u,v = v,u
+
+                    if not self._multiple_edges:
+                        if labels:
+                            yield (v, u, l)
+                        else:
+                            yield (v, u)
+                    else:
+                        if out:
+                            all_arc_labels = cg.all_arcs(v_int, u_int)
+                        else:
+                            all_arc_labels = cg.all_arcs(u_int, v_int)
+
+                        for l_int in all_arc_labels:
+                            if labels:
+                                l = self.edge_labels[l_int] if l_int else None
+                                yield (v, u, l)
+                            else:
+                                yield (v, u)
+                    v = v_copy
+
+                if unlikely(not bitset_in(self.cg().active_vertices, v_int)):
+                    raise IndexError("the vertices were modified while iterating the edges")
+
+                u_int = cg._next_neighbor_unsafe(v_int, u_int, out, &l_int)
+
+    ###################################
+    # Using Edge Iterators
+    ###################################
+
+    def subgraph_given_vertices(self, CGraphBackend other, object vertices):
+        """
+        Initialize ``other`` to be the subgraph of ``self`` with given vertices.
+
+        INPUT:
+
+        - ``other`` -- a (mutable) subclass of :class:`CGraphBackend`
+        - ``vertices`` -- a list of vertex labels
+
+        .. NOTE:
+
+            ``other`` is assumed to be the empty graph.
+
+        EXAMPLES:
+
+        Make a dense copy::
+
+            sage: G = sage.graphs.base.dense_graph.DenseGraphBackend(9, directed=True)
+            sage: G.loops(True)
+            sage: G.add_edges([[0,1], [1,2], [2,3], [3,4], [4,5], [5,6], [7,8], [3,3]], True)
+            sage: H = sage.graphs.base.dense_graph.DenseGraphBackend(0, directed=True)
+            sage: H.loops(True)
+            sage: G.subgraph_given_vertices(H, range(9))
+            sage: list(H.iterator_out_edges(list(range(9)), False)) == list(G.iterator_out_edges(list(range(9)), False))
+            True
+
+        Make a sparse copy::
+
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=True)
+            sage: H.loops(True)
+            sage: G.subgraph_given_vertices(H, range(9))
+            sage: sorted(list(H.iterator_out_edges(list(range(9)), False))) == sorted(list(G.iterator_out_edges(list(range(9)), False)))
+            True
+
+        Initialize a proper subgraph::
+
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=True)
+            sage: H.loops(True)
+            sage: G.subgraph_given_vertices(H, [2,3,4,5])
+            sage: list(H.iterator_out_edges(list(range(9)), False))
+            [(2, 3), (3, 3), (3, 4), (4, 5)]
+
+        Loops are removed, if the other graph does not allow loops::
+
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=True)
+            sage: H.loops(False)
+            sage: G.subgraph_given_vertices(H, [2,3,4,5])
+            sage: list(H.iterator_out_edges(list(range(9)), False))
+            [(2, 3), (3, 4), (4, 5)]
+
+        Multiple edges and labels are copied::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(4, directed=False)
+            sage: G.multiple_edges(True)
+            sage: G.add_edges([[0,1,'a'], [1,2,'b'], [2,3,'c'], [0,1,'d']], False)
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=False)
+            sage: H.multiple_edges(True)
+            sage: G.subgraph_given_vertices(H, [0,1,2])
+            sage: list(H.iterator_edges(list(range(4)), True))
+            [(0, 1, 'a'), (0, 1, 'd'), (1, 2, 'b')]
+
+        Multiple edges are removed, if the other graph does not allow them::
+
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=False)
+            sage: H.multiple_edges(False)
+            sage: G.subgraph_given_vertices(H, [0,1,2])
+            sage: list(H.iterator_edges(list(range(4)), True))
+            [(0, 1, 'd'), (1, 2, 'b')]
+
+        Labels are removed, if the other graph does not allow them::
+
+            sage: H = sage.graphs.base.dense_graph.DenseGraphBackend(0, directed=False)
+            sage: G.subgraph_given_vertices(H, [0,1,2])
+            sage: list(H.iterator_edges(list(range(4)), True))
+            [(0, 1, None), (1, 2, None)]
+
+        A directed subgraph of an undirected graph is taken by initializing
+        with edges in both directions::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(4, directed=True)
+            sage: G.loops(True)
+            sage: G.multiple_edges(True)
+            sage: G.add_edges([[0,1,'a'], [1,2,'b'], [2,3,'c'], [0,1,'d'], [2,2,'e']], False)
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=True)
+            sage: H.multiple_edges(True)
+            sage: H.loops(True)
+            sage: G.subgraph_given_vertices(H, [0,1,2])
+            sage: list(H.iterator_out_edges(list(range(4)), True))
+            [(0, 1, 'a'),
+             (0, 1, 'd'),
+             (1, 0, 'a'),
+             (1, 0, 'd'),
+             (1, 2, 'b'),
+             (2, 1, 'b'),
+             (2, 2, 'e')]
+
+        An undirected subgraph of a directeed graph is not defined::
+
+            sage: G = sage.graphs.base.sparse_graph.SparseGraphBackend(4, directed=True)
+            sage: G.add_edges([[0,1,'a'], [1,2,'b'], [2,3,'c']], False)
+            sage: H = sage.graphs.base.sparse_graph.SparseGraphBackend(0, directed=False)
+            sage: G.subgraph_given_vertices(H, [0,1,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot obtain an undirected subgraph of a directed graph
+        """
+        cdef object v, l
+        cdef int u_int, v_int, l_int, l_int_other, foo
+        cdef CGraph cg = self.cg()
+        cdef CGraph cg_other = other.cg()
+        cdef list b_vertices_2, all_arc_labels
+        cdef FrozenBitset b_vertices
+        cdef int n_vertices = len(vertices)
+        cdef bint loops = other.loops()
+        cdef bint multiple_edges = self.multiple_edges(None) and other.multiple_edges(None)
+
+        if self._directed and not other._directed:
+            raise ValueError("cannot obtain an undirected subgraph of a directed graph")
+
+        b_vertices_2 = [self.get_vertex_checked(v) for v in vertices]
+        try:
+            b_vertices = FrozenBitset(foo for foo in b_vertices_2 if foo >= 0)
+        except ValueError:
+            # Avoiding "Bitset must not be empty"
+            # in this case there is nothing to do
+            return
+
+
+        cdef int length = len(b_vertices)
         cdef int i
-        cdef dict new_vx_ints = {}
-        cdef dict new_vx_labels = {}
-        for v in self.iterator_verts(None):
-            i = self.get_vertex(v)
-            new_vx_ints[perm[v]] = i
-            new_vx_labels[i] = perm[v]
-        self.vertex_ints = new_vx_ints
-        self.vertex_labels = new_vx_labels
+        cdef int* vertices_translation = <int *> sig_malloc(b_vertices.capacity() * sizeof(int))
+
+        try:
+            # Add the vertices to ``other``.
+            if cg_other.active_vertices.size < length:
+                cg_other.realloc(length)
+            for j in range(n_vertices):
+                i = b_vertices_2[j]
+                if i >= 0:
+                    v = self.vertex_label(i)
+                    vertices_translation[i] = other.check_labelled_vertex(v, False)
+
+            # Iterate through the edges and add them to other.
+            for v_int in b_vertices:
+                u_int = cg.next_out_neighbor_unsafe(v_int, -1, &l_int)
+                while u_int != -1:
+                    if (u_int < b_vertices.capacity() and bitset_in(b_vertices._bitset, u_int)
+                            and (u_int >= v_int or other._directed)):
+                        # If ``other`` is directed, we should add the arcs in both directions.
+
+                        if unlikely(not loops and u_int == v_int):
+                            # Delete loops if ``other`` does not allow loops.
+                            u_int = cg.next_out_neighbor_unsafe(v_int, u_int, &l_int)
+                            continue
+
+                        if not multiple_edges:
+                            if l_int:
+                                l = self.edge_labels[l_int]
+
+                                # Will return ``0``, if ``other`` does not support edges labels.
+                                l_int_other = other.new_edge_label(l)
+                            else:
+                                l_int_other = 0
+
+                            cg_other.add_arc_label_unsafe(vertices_translation[v_int], vertices_translation[u_int], l_int_other)
+
+                        else:
+                            all_arc_labels = cg.all_arcs(v_int, u_int)
+
+                            for l_int in all_arc_labels:
+                                if l_int:
+                                    l = self.edge_labels[l_int]
+
+                                    # Will return ``0``, if ``other`` does not support edges labels.
+                                    l_int_other = other.new_edge_label(l)
+                                else:
+                                    l_int_other = 0
+
+                                cg_other.add_arc_label_unsafe(vertices_translation[v_int], vertices_translation[u_int], l_int_other)
+
+                    u_int = cg.next_out_neighbor_unsafe(v_int, u_int, &l_int)
+
+        finally:
+            sig_free(vertices_translation)
+
+    ###################################
+    # Paths
+    ###################################
 
     def shortest_path_special(self, x, y, exclude_vertices=None, exclude_edges=None, distance_flag=False):
         r"""
@@ -2419,15 +3372,15 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``y`` -- the end vertex in the shortest path from ``x`` to ``y``
 
-        - ``exclude_vertices`` -- iterable conatiner (default: ``None``);
+        - ``exclude_vertices`` -- iterable container (default: ``None``);
           iterable of vertices to exclude from the graph while calculating the
           shortest path from ``x`` to ``y``
 
-        - ``exclude_edges`` -- iterable conatiner (default: ``None``); iterable
+        - ``exclude_edges`` -- iterable container (default: ``None``); iterable
           of edges to exclude from the graph while calculating the shortest path
           from ``x`` to ``y``
 
-        - ``include_vertices`` -- iterable conatiner (default: ``None``);
+        - ``include_vertices`` -- iterable container (default: ``None``);
           iterable of vertices to consider in the graph while calculating the
           shortest path from ``x`` to ``y``
 
@@ -2954,6 +3907,10 @@ cdef class CGraphBackend(GenericGraphBackend):
         bitset_free(seen)
         return distances
 
+    ###################################
+    # Searching
+    ###################################
+
     def depth_first_search(self, v, reverse=False, ignore_direction=False):
         r"""
         Return a depth-first search from vertex ``v``.
@@ -3110,6 +4067,10 @@ cdef class CGraphBackend(GenericGraphBackend):
                                reverse=reverse,
                                ignore_direction=ignore_direction)
 
+    ###################################
+    # Connectedness
+    ###################################
+
     def is_connected(self):
         r"""
         Check whether the graph is connected.
@@ -3213,6 +4174,10 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef set ans = set(self.depth_first_search(v))
         ans.intersection_update(self.depth_first_search(v, reverse=True))
         return list(ans)
+
+    ###################################
+    # Miscellaneous
+    ###################################
 
     def is_directed_acyclic(self, certificate=False):
         r"""
@@ -3595,3 +4560,43 @@ cdef class Search_iterator:
             raise StopIteration
 
         return value
+
+
+##############################
+# Functions to simplify edge iterator.
+##############################
+
+cdef inline bint _reorganize_edge(object v, object u, const int modus):
+    """
+    Return ``True`` if ``v`` and ``u`` should be exchanged according to the modus.
+
+    INPUT:
+
+    - ``v`` -- vertex
+
+    - ``u`` -- vertex
+
+    - ``modus`` -- integer representing the modus of the iterator:
+      - ``0`` -- outgoing edges
+      - ``1`` -- ingoing edges
+      - ``3`` -- unsorted edges of an undirected graph
+      - ``4`` -- sorted edges of an undirected graph
+
+    OUTPUT: Boolean according the modus:
+
+    - ``modus == 0`` -- ``False``
+    - ``modus == 1`` -- ``True``
+    - ``modus == 2`` -- ``True
+    - ``modus == 3`` -- ``False if v <= u else True``
+    """
+    if modus == 0:
+        return False
+    if modus == 1 or modus == 2:
+        return True
+
+    try:
+        if v <= u:
+            return False
+    except TypeError:
+        pass
+    return True

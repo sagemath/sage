@@ -289,7 +289,6 @@ import operator
 
 from sage.cpython.string cimport char_to_str, bytes_to_str
 
-import sage.rings.complex_field
 import sage.rings.infinity
 
 #*****************************************************************************

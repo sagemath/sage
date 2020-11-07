@@ -261,7 +261,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
     EXAMPLES::
 
         sage: from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
-        sage: Q = QuadraticForm(ZZ,3,[1,0,0,2,1,3])
+        sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
         sage: Q.det()
         46
         sage: mass = Q.conway_mass()
@@ -274,9 +274,22 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         True
         sage: mass == sum(1/q.number_of_automorphisms() for q in g3)
         True
+
+    TESTS::
+
+        sage: from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
+        sage: Q = QuadraticForm(ZZ, 3, [1, 0, 0, 2, 1, 3])
+        sage: g = neighbor_iteration([Q],3,mass=Q.conway_mass(),max_classes=2)
+        ...
+        UserWarning: reached the maximum number of isometry classes=2. Increase the optional argument max_classes to obtain more.
+        Warning: not all classes in the genus were found
+        sage: neighbor_iteration([Q], 3, mass=Q.conway_mass(), max_neighbors=0, algorithm='random')
+        Warning: not all classes in the genus were found
+        []
     """
     p = ZZ(p)
     from sage.quadratic_forms.quadratic_form import QuadraticForm
+    from warnings import warn
     if not all(isinstance(s, QuadraticForm) for s in seeds):
         raise ValueError("seeds must be a list of quadratic forms")
     if algorithm is None:
@@ -286,9 +299,6 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
             algorithm = 'random'
         else:
             algorithm = 'orbits'
-    if mass is None:
-        # no mass bound
-        mass = max_classes
 
     if algorithm == 'orbits':
         def p_divisible_vectors(Q, max_neighbors):
@@ -317,7 +327,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
     isom_classes = []
     mass_count = QQ(0)
     n_isom_classes = ZZ(0)
-    while len(waiting_list) > 0 and mass_count < mass and  n_isom_classes < max_classes:
+    while len(waiting_list) > 0 and mass != mass_count and n_isom_classes < max_classes:
         # find all p-neighbors of Q
         Q = waiting_list.pop()
         for v in p_divisible_vectors(Q, max_neighbors):
@@ -331,16 +341,16 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
                 if verbose:
                     print(max_neighbors)
                     print(len(waiting_list))
-                if mass_count == mass and  n_isom_classes >= max_classes:
+                if mass_count == mass or n_isom_classes >= max_classes:
                     break
 
     if len(isom_classes) >= max_classes:
-        Warning("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." %max_classes)
+        warn("reached the maximum number of isometry classes=%s. Increase the optional argument max_classes to obtain more." %max_classes)
 
     if mass is not None:
-      assert mass_count <= mass
-      if mass < mass_count:
-        raise Warning("not all classes in the genus were found")
+        assert mass_count <= mass
+        if mass_count < mass:
+            print("Warning: not all classes in the genus were found")
     return isom_classes
 
 def orbits_lines_mod_p(self, p):

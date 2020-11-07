@@ -24,6 +24,9 @@ from cysignals.signals cimport sig_on, sig_str, sig_off
 from cpython.int cimport PyInt_AS_LONG
 from sage.arith.long cimport pyobject_to_long
 
+from sage.libs.arb.acb cimport acb_div_fmpz
+from sage.libs.arb.arb cimport arb_div_fmpz
+from sage.libs.arb.arb_fmpz_poly cimport _arb_fmpz_poly_evaluate_arb, _arb_fmpz_poly_evaluate_acb
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.libs.flint.fmpz cimport *
@@ -35,11 +38,13 @@ from sage.interfaces.all import singular as singular_default
 
 from cypari2.gen import Gen as pari_gen
 
+from sage.rings.complex_arb cimport ComplexBall
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
+from sage.rings.real_arb cimport RealBall
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
@@ -477,12 +482,18 @@ cdef class Polynomial_rational_flint(Polynomial):
 
             sage: t(-sys.maxsize-1r) == t(-sys.maxsize-1)
             True
+            sage: (t/3)(RealBallField(100)(1))
+            [0.33333333333333333333333333333...]
+            sage: (t/3)(ComplexBallField(10)(1+i))
+            [0.33...] + [0.33...]*I
         """
         cdef Polynomial_rational_flint f
         cdef Rational r
         cdef mpz_t tmpz
         cdef fmpz_t tmpfz
         cdef fmpq_t tmpfq
+        cdef RealBall arb_a, arb_z
+        cdef ComplexBall acb_a, acb_z
 
         if len(x) == 1:
             a = x[0]
@@ -517,6 +528,24 @@ cdef class Polynomial_rational_flint(Polynomial):
                 fmpz_clear(tmpfz)
                 sig_off()
                 return r
+            if isinstance(a, RealBall):
+                arb_a = <RealBall> a
+                arb_z = arb_a._new()
+                sig_on()
+                _arb_fmpz_poly_evaluate_arb(arb_z.value, fmpq_poly_numref(self.__poly),
+                        fmpq_poly_length(self.__poly), arb_a.value, arb_a._parent._prec)
+                arb_div_fmpz(arb_z.value, arb_z.value, fmpq_poly_denref(self.__poly), arb_a._parent._prec)
+                sig_off()
+                return arb_z
+            if isinstance(a, ComplexBall):
+                acb_a = <ComplexBall> a
+                acb_z = acb_a._new()
+                sig_on()
+                _arb_fmpz_poly_evaluate_acb(acb_z.value, fmpq_poly_numref(self.__poly),
+                        fmpq_poly_length(self.__poly), acb_a.value, acb_a._parent._prec)
+                acb_div_fmpz(acb_z.value, acb_z.value, fmpq_poly_denref(self.__poly), acb_a._parent._prec)
+                sig_off()
+                return acb_z
 
         return Polynomial.__call__(self, *x, **kwds)
 

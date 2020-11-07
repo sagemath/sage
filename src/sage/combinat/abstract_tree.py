@@ -1408,7 +1408,7 @@ class AbstractTree(object):
             raise ValueError("the width of the tree is too large")
         if self.node_number() == 1:
             return "0"
-        return "".join(["%x" % len(self)] + [u.to_hexacode() for u in self])
+        return ("%x" % len(self)) + "".join(u.to_hexacode() for u in self)
 
     def tree_factorial(self):
         r"""

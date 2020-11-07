@@ -491,6 +491,7 @@ class QuadraticForm(SageObject):
     from sage.quadratic_forms.qfsolve import solve
 
 
+
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
         EXAMPLES::

@@ -288,7 +288,7 @@ class AnalyticType(FiniteLatticePoset):
     Container for all possible analytic types of forms and/or spaces.
 
     The ``analytic type`` of forms spaces or rings describes all possible
-    occuring basic ``analytic properties`` of elements in the space/ring
+    occurring basic ``analytic properties`` of elements in the space/ring
     (or more).
 
     For ambient spaces/rings this means that all elements with those properties

@@ -33,13 +33,13 @@ def sparse_random_system(ring, number_of_polynomials,
     variables_per_polynomial, degree, random_seed=None):
     r"""
     Generates a system, which is sparse in the sense, that each polynomial
-    contains only a small subset of variables. In each variable that occurrs 
-    in a polynomial it is dense in the terms up to the given degree 
+    contains only a small subset of variables. In each variable that occurrs
+    in a polynomial it is dense in the terms up to the given degree
     (every term occurs with probability 1/2).
     The system will be satisfiable by at least one solution.
 
     TESTS::
-    
+
         sage: from sage.rings.polynomial.pbori import *
         sage: r=Ring(10)
         sage: from sage.rings.polynomial.pbori.randompoly import sparse_random_system
@@ -74,13 +74,12 @@ def sparse_random_system(ring, number_of_polynomials,
     return res
 
 
-def sparse_random_system_data_file_content(
-    number_of_variables, **kwds):
+def sparse_random_system_data_file_content(number_of_variables, **kwds):
     r"""
-    
+
     TESTS::
-    
-        
+
+
         sage: from sage.rings.polynomial.pbori import *
         sage: from sage.rings.polynomial.pbori.randompoly import sparse_random_system_data_file_content
         sage: sparse_random_system_data_file_content(10, number_of_polynomials = 5, variables_per_polynomial = 3, degree=2, random_seed=123)

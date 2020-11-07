@@ -316,6 +316,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             A = []
             z = dict()
             cls = self._object_class()
+
             def convert(y):
                 if isinstance(y, cls):
                     return y
@@ -1363,7 +1364,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
         if isinstance(key, slice):
             indices = key.indices(len(self))
-            return [ self[i] for i in range(*indices) ]
+            return [self[i] for i in range(*indices)]
         _, T = self.typeof()
         if self._name.startswith('@'):
             return P('${}[{}]'.format(self._name[1:], key))
@@ -1983,7 +1984,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
                         elif i > 0:
                             raise RuntimeError("Polymake unexpectedly {}".format(_available_polymake_answers[i]))
                 except pexpect.TIMEOUT:
-                    warnings.warn("A timeout has occured when synchronising {}.".format(self), RuntimeWarning)
+                    warnings.warn("A timeout has occurred when synchronising {}.".format(self), RuntimeWarning)
                     self._interrupt()
                 except pexpect.EOF:
                     self._crash_msg()
@@ -2177,7 +2178,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
                     if self._terminal_echo and first:
                         i = out.find("\n")
                         j = out.rfind("\r")
-                        out = out[i+1:j].replace('\r\n', '\n')
+                        out = out[i + 1:j].replace('\r\n', '\n')
                     else:
                         out = out.strip().replace('\r\n', '\n')
                     first = False
@@ -2367,7 +2368,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         self._application = app
         patterns = ["{} > ".format(app),            # 0: normal prompt
                     r"{} \([0-9]+\)> ".format(app),  # 1: continuation prompt
-                    "Please choose ".format(app),   # 2: user input expected when requesting "help"
+                    "Please choose {}".format(app),   # 2: user input expected when requesting "help"
                     "killed by signal",             # 3: what we are looking for when interrupting a computation
                     "polymake: +ERROR: +",          # 4: error
                     "polymake: +WARNING: +",        # 5: warning
@@ -2380,7 +2381,9 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         if pat:
             raise RuntimeError("When changing the application, polymake unexpectedly {}".format(_available_polymake_answers[pat]))
 
+
 Polymake = PolymakeExpect
+
 
 class PolymakeJuPyMake(PolymakeAbstract):
 

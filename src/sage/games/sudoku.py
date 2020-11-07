@@ -18,9 +18,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import print_function, absolute_import
 
 from sage.structure.sage_object import SageObject
 
@@ -476,8 +475,7 @@ class Sudoku(SageObject):
         array.append('\\end{array}')
         return ''.join(array)
 
-
-    def solve(self, algorithm = 'dlx'):
+    def solve(self, algorithm='dlx'):
         r"""
         Return a generator object for the solutions of a Sudoku puzzle.
 

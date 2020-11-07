@@ -29,7 +29,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A ``TypeError`` is raised if the input can not be converted to an integer or
+    A ``TypeError`` is raised if the input cannot be converted to an integer or
     an ``OverflowError`` is raised if it does not fit into a C long.
 
     TESTS:

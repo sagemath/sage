@@ -11,7 +11,7 @@ Library interface to Embeddable Common Lisp (ECL)
 #*****************************************************************************
 
 #This version of the library interface prefers to convert ECL integers and
-#rationals to SAGE types Integer and Rational. These parts could easily be
+#rationals to Sage types Integer and Rational. These parts could easily be
 #adapted to work with pure Python types.
 
 from libc.stdlib cimport abort
@@ -507,6 +507,7 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
     else:
         raise TypeError("Unimplemented type for python_to_ecl")
 
+
 cdef ecl_to_python(cl_object o):
     cdef cl_object s
     cdef Integer N
@@ -515,21 +516,22 @@ cdef ecl_to_python(cl_object o):
     if o == Cnil:
         return None
     elif bint_fixnump(o):
-        #SAGE specific conversion
-        #return ecl_fixint(o)
+        # Sage specific conversion
+        # return ecl_fixint(o)
         return Integer(ecl_fixint(o))
     elif bint_integerp(o):
-        #SAGE specific conversion
+        # Sage specific conversion
         N = Integer.__new__(Integer)
         N.set_from_mpz(ecl_mpz_from_bignum(o))
         return N
     elif bint_rationalp(o):
-        #SAGE specific conversion
-        #vanilla python does not have a class to represent rational numbers
-        return Rational((ecl_to_python(cl_numerator(o)),ecl_to_python(cl_denominator(o))))
+        # Sage specific conversion
+        # vanilla python does not have a class to represent rational numbers
+        return Rational((ecl_to_python(cl_numerator(o)),
+                         ecl_to_python(cl_denominator(o))))
     elif bint_floatp(o):
-        #Python conversion
-        #Since SAGE mainly uses mpfr, perhaps "double is not an appropriate return type
+        # Python conversion
+        # Since Sage mainly uses mpfr, perhaps "double is not an appropriate return type
         return ecl_to_double(o)
     elif o == Ct:
         return True

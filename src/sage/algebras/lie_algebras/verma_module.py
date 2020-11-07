@@ -812,7 +812,7 @@ class VermaModuleMorphism(Morphism):
             sage: v = Mpp.highest_weight_vector()
             sage: psi(v)
             0
-        """ 
+        """
         if not self._scalar or self.parent().singular_vector() is None:
             return self.codomain().zero()
         mc = x.monomial_coefficients(copy=False)
@@ -1321,4 +1321,3 @@ def _convert_wt_to_root(wt):
     b = b[0]  # Get the actual vector that gives the linear dependency
     # Get v as a linear combination of the simple roots
     return vector(QQ, [-x / b[0] for x in b[1:]])
-

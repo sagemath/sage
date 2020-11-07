@@ -37,7 +37,7 @@ EXAMPLES::
 
 from copy import copy
 
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.qqbar import AA, QQbar
 from sage.arith.all import sort_complex_numbers_for_display

@@ -253,7 +253,7 @@ class PadicValuationFactory(UniqueFactory):
             # v is defined on a ring whose field of fractions is L
             v = v._base_valuation._initial_approximation.change_domain(G.parent())
         else:
-            raise NotImplementedError("can not rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
+            raise NotImplementedError("cannot rewrite %r which is defined on %r as a pseudo-valuation on %r"%(v, v.domain(), G.parent()))
             
 
         assert(v.domain() is G.parent())
@@ -369,12 +369,12 @@ class PadicValuationFactory(UniqueFactory):
         elif is_PolynomialQuotientRing(R):
             from sage.categories.all import NumberFields
             if R.base_ring().fraction_field() not in NumberFields():
-                raise NotImplementedError("can not normalize quotients over %r"%(R.base_ring(),))
+                raise NotImplementedError("cannot normalize quotients over %r"%(R.base_ring(),))
             L = R.fraction_field()
             K = R.base_ring().fraction_field()
             G = R.modulus().change_ring(K)
         else:
-            raise NotImplementedError("can not normalize %r"%(R,))
+            raise NotImplementedError("cannot normalize %r" % (R,))
 
         return K, L, G
 

@@ -854,7 +854,7 @@ cdef class RealField_class(sage.rings.ring.Field):
             sage: RealField(100).complex_field()
             Complex Field with 100 bits of precision
         """
-        from sage.rings.complex_field import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         return ComplexField(self.prec())
 
     def algebraic_closure(self):
@@ -3187,7 +3187,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: parent(RR(pi)._complex_number_())
             Complex Field with 53 bits of precision
         """
-        from sage.rings.complex_field import ComplexField
+        from sage.rings.complex_mpfr import ComplexField
         return ComplexField(self.prec())(self)
 
     def _axiom_(self, axiom):

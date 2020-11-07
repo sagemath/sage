@@ -28,7 +28,7 @@ To quit Sage either press Ctrl-D or type
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 The wall time is the time that elapsed on the clock hanging from
 your wall. This is relevant, since CPU time does not track time
@@ -189,7 +189,7 @@ file).
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
     │ SageMath version 9.0, Release Date: 2020-01-01                     │
@@ -314,7 +314,7 @@ the ``cputime`` command, as illustrated below:
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds

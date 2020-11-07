@@ -245,7 +245,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(6, 5)
             O(5^5)
 
-        However, the precision can not exceed the precision of the element::
+        However, the precision cannot exceed the precision of the element::
 
             sage: a.slice(101,100)
             O(5^6)

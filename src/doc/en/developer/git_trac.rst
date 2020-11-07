@@ -139,9 +139,9 @@ If you followed the above instructions then you will have two remote
 repositories set up::
 
     [user@localhost sage]$ git remote -v
-    origin      git://github.com/sagemath/sage.git (fetch)
-    origin      git://github.com/sagemath/sage.git (push)
-    trac        git://trac.sagemath.org/sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (push)
+    trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
 The ``git@...`` part of the push url means that write access is

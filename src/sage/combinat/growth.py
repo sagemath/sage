@@ -17,7 +17,7 @@ AUTHORS:
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
       :class:`RuleBurge`
-    - implement backward rules for :class:`GrowthDiagramDomino`
+    - implement backward rules for :class:`GrowthDiagram.rules.Domino`
     - implement backward rule from [LLMSSZ2013]_, [LS2007]_
     - make semistandard extension generic
     - accommodate dual filtered graphs

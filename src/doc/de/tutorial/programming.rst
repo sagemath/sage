@@ -317,7 +317,7 @@ funktioniert es genauso.
     sage: v = [1,2,3]
     sage: v[2]
     3
-    sage: n = 2      # SAGE Integer
+    sage: n = 2      # Sage Integer
     sage: v[n]       # Perfectly OK!
     3
     sage: v[int(n)]  # Also OK.

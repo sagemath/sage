@@ -705,8 +705,6 @@ class Composition(CombinatorialElement):
             ....:                 for I in Compositions(n) )
             sage: all( test_meet(n) for n in range(1, 5) )
             True
-            sage: all( test_meet(n) for n in range(5, 9) )  # long time
-            True
 
         TESTS::
 
@@ -1191,7 +1189,7 @@ class Composition(CombinatorialElement):
             sum_outer += k - overlap
             inner.append(sum_outer + overlap)
 
-        if self != []:
+        if self:
             outer.append(self[-1] + sum_outer + overlap)
         else:
             return SkewPartition([[],[]])
@@ -1199,7 +1197,6 @@ class Composition(CombinatorialElement):
         return SkewPartition(
             [ [x for x in reversed(outer) if x != 0],
               [x for x in reversed(inner) if x != 0] ])
-
 
     def shuffle_product(self, other, overlap=False):
         r"""

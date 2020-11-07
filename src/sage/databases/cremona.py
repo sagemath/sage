@@ -51,8 +51,8 @@ from sage.misc.prandom import randint
 
 import sage.schemes.elliptic_curves.constructor as elliptic
 from .sql_db import SQLDatabase, verify_column
-from sage.misc.package import is_package_installed
 from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR, SAGE_SHARE
+from sage.features.databases import DatabaseCremona
 from sage.misc.all import walltime
 
 import re
@@ -119,7 +119,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
     from sage.env import SAGE_SHARE
     db_path = os.path.join(SAGE_SHARE,'cremona',name.replace(' ','_')+'.db')
     if os.path.exists(db_path):
-        raise RuntimeError('Please (re)move %s before building ' % db_path \
+        raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
         raise IOError("The data file is not at %s"%data_tgz)
@@ -621,6 +621,8 @@ class MiniCremonaDatabase(SQLDatabase):
          'a2': [[0, -1, 1, -7820, -263580], 0, 1],
          'a3': [[0, -1, 1, 0, 0], 0, 5]}
     """
+    _expected_skeleton = _miniCremonaSkeleton
+
     def __init__(self, name, read_only=True, build=False):
         """
         Initialize the database.
@@ -630,24 +632,22 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: c = CremonaDatabase('cremona mini')
             sage: c.name
             'cremona mini'
+            sage: c = CremonaDatabase('cremona')    # optional - database_cremona_ellcurve
+            sage: c.name                            # optional - database_cremona_ellcurve
+            'cremona'
         """
         self.name = name
-        name = name.replace(' ','_')
-        db_path = os.path.join(CREMONA_MINI_DATA_DIR, name+'.db')
+        name = name.replace(' ', '_')
+        db_path = DatabaseCremona(name=name).absolute_path()
         if build:
-            if name is None:
-                raise RuntimeError('The database must have a name.')
             if read_only:
                 raise RuntimeError('The database must not be read_only.')
-            SQLDatabase.__init__(self, db_path, read_only=read_only, \
-                    skeleton=_miniCremonaSkeleton)
+            SQLDatabase.__init__(self, db_path, read_only=read_only,
+                    skeleton=self._expected_skeleton)
             return
-        if not os.path.isfile(db_path):
-            raise ValueError("Desired database (='%s') does not " % self.name \
-                    + "exist")
         SQLDatabase.__init__(self, db_path, read_only=read_only)
-        if self.get_skeleton() != _miniCremonaSkeleton:
-            raise RuntimeError('Database at %s does ' % (self.__dblocation__) \
+        if self.get_skeleton() != self._expected_skeleton:
+            raise RuntimeError('Database at %s does '%(self.__dblocation__)
               + 'not appear to be a valid SQL Cremona database.')
 
     def __iter__(self):
@@ -750,8 +750,8 @@ class MiniCremonaDatabase(SQLDatabase):
             [[1, 0, 0, -101, 382], 1, 1]
         """
         ret = {}
-        for c in self.__connection__.cursor().execute('SELECT curve,eqn,' \
-            + 'rank,tors FROM t_curve,t_class USING(class) WHERE ' \
+        for c in self.__connection__.cursor().execute('SELECT curve,eqn,'
+            + 'rank,tors FROM t_curve,t_class USING(class) WHERE '
             + 'conductor=?', (int(N),)):
             N,iso,num = parse_cremona_label(c[0])
             ret[iso+str(num)] = [eval(c[1]), c[2], c[3]]
@@ -789,8 +789,8 @@ class MiniCremonaDatabase(SQLDatabase):
             [[1, 0, 0, -101, 382], 1, 1]
         """
         ret = {}
-        for c in self.__connection__.cursor().execute('SELECT curve,eqn,' \
-            + 'rank,tors FROM t_curve,t_class USING(class) WHERE ' \
+        for c in self.__connection__.cursor().execute('SELECT curve,eqn,'
+            + 'rank,tors FROM t_curve,t_class USING(class) WHERE '
             + 'curve=class||1 AND conductor=?',(int(N),)):
             N,iso,num = parse_cremona_label(c[0])
             ret[iso+str(num)] = [eval(c[1]),c[2],c[3]]
@@ -835,11 +835,11 @@ class MiniCremonaDatabase(SQLDatabase):
         N, iso, num = parse_cremona_label(cremona_label)
         label = str(N)+iso+str(num)
         if self.get_skeleton() == _miniCremonaSkeleton:
-            q = self.__connection__.cursor().execute("SELECT eqn,rank,tors " \
+            q = self.__connection__.cursor().execute("SELECT eqn,rank,tors "
                 + 'FROM t_curve,t_class USING(class) WHERE curve=?', (label,))
         else:
-            q = self.__connection__.cursor().execute("SELECT eqn,rank,tors," \
-                + "deg,gens,cp,om,L,reg,sha FROM t_curve,t_class " \
+            q = self.__connection__.cursor().execute("SELECT eqn,rank,tors,"
+                + "deg,gens,cp,om,L,reg,sha FROM t_curve,t_class "
                 + "USING(class) WHERE curve=?",(label,))
         try:
             c = next(q)
@@ -847,7 +847,7 @@ class MiniCremonaDatabase(SQLDatabase):
             if N < self.largest_conductor():
                 message = "There is no elliptic curve with label " + label \
                     + " in the database"
-            elif is_package_installed('database_cremona_ellcurve'):
+            elif DatabaseCremona().is_present():
                 message = "There is no elliptic curve with label " + label \
                     + " in the currently available databases"
             else:
@@ -1010,8 +1010,8 @@ class MiniCremonaDatabase(SQLDatabase):
              '14a6', '15a1', '15a2', '15a3', '15a4', '15a5', '15a6', '15a7', '15a8']
         """
         for N in conductors:
-            for c in self.__connection__.cursor().execute('SELECT curve ' \
-                + 'FROM t_curve,t_class USING(class) WHERE conductor=?', \
+            for c in self.__connection__.cursor().execute('SELECT curve '
+                + 'FROM t_curve,t_class USING(class) WHERE conductor=?',
                 (int(N),)):
                 yield self.elliptic_curve(c[0])
 
@@ -1072,7 +1072,7 @@ class MiniCremonaDatabase(SQLDatabase):
             [Elliptic Curve defined by y^2 + x*y = x^3 - 101*x + 382 over Rational Field]
         """
         conductor, iso, num = parse_cremona_label(label)
-        q = self.__connection__.cursor().execute("SELECT curve FROM t_curve " \
+        q = self.__connection__.cursor().execute("SELECT curve FROM t_curve "
             + "WHERE class=?",(str(conductor)+iso,))
         return [self.elliptic_curve(c[0]) for c in q]
 
@@ -1103,15 +1103,15 @@ class MiniCremonaDatabase(SQLDatabase):
         """
         for N in conductors:
             if N == 990:
-                for c in self.__connection__.cursor().execute('SELECT class ' \
+                for c in self.__connection__.cursor().execute('SELECT class '
                     + 'FROM t_class WHERE conductor=990'):
                     if c[0][-1] == u'h':
                         yield self.elliptic_curve(c[0]+u'3')
                     else:
                         yield self.elliptic_curve(c[0]+u'1')
                 continue
-            for c in self.__connection__.cursor().execute('SELECT curve ' \
-                + 'FROM t_curve,t_class USING(class) WHERE curve=class||1 ' \
+            for c in self.__connection__.cursor().execute('SELECT curve '
+                + 'FROM t_curve,t_class USING(class) WHERE curve=class||1 '
                 + 'AND conductor=?',(int(N),)):
                 yield self.elliptic_curve(c[0])
 
@@ -1174,7 +1174,7 @@ class MiniCremonaDatabase(SQLDatabase):
         """
         if hasattr(self, '__largest_conductor__'):
             return self.__largest_conductor__
-        q = self.__connection__.cursor().execute('SELECT conductor FROM ' \
+        q = self.__connection__.cursor().execute('SELECT conductor FROM '
             + 't_class ORDER BY conductor DESC LIMIT 1')
         self.__largest_conductor__ = next(q)[0]
         return self.__largest_conductor__
@@ -1246,18 +1246,18 @@ class MiniCremonaDatabase(SQLDatabase):
         if N == 0:
             if hasattr(self, '__number_of_curves__'):
                 return self.__number_of_curves__
-            q = self.__connection__.cursor().execute('SELECT COUNT(curve) ' \
+            q = self.__connection__.cursor().execute('SELECT COUNT(curve) '
                 + 'FROM t_curve')
             self.__number_of_curves__ = next(q)[0]
             return self.__number_of_curves__
         if i == 0:
-            q = self.__connection__.cursor().execute('SELECT COUNT(curve) ' \
-                + 'FROM t_curve,t_class USING(class) WHERE conductor=?', \
+            q = self.__connection__.cursor().execute('SELECT COUNT(curve) '
+                + 'FROM t_curve,t_class USING(class) WHERE conductor=?',
                 (int(N),))
             return next(q)[0]
         if not isinstance(i, str):
             i = cremona_letter_code(i)
-        q = self.__connection__.cursor().execute('SELECT COUNT(curve) FROM ' \
+        q = self.__connection__.cursor().execute('SELECT COUNT(curve) FROM '
             + 't_curve WHERE class=?',(str(N)+i,))
         return next(q)[0]
 
@@ -1285,11 +1285,11 @@ class MiniCremonaDatabase(SQLDatabase):
         if N == 0:
             if hasattr(self, '__number_of_isogeny_classes__'):
                 return self.__number_of_isogeny_classes__
-            q = self.__connection__.cursor().execute('SELECT COUNT(class) ' \
+            q = self.__connection__.cursor().execute('SELECT COUNT(class) '
                 + 'FROM t_class')
             self.__number_of_isogeny_classes__ = next(q)[0]
             return self.__number_of_isogeny_classes__
-        q = self.__connection__.cursor().execute('SELECT COUNT(class) FROM ' \
+        q = self.__connection__.cursor().execute('SELECT COUNT(class) FROM '
             + 't_class WHERE conductor=?',(int(N),))
         return next(q)[0]
 
@@ -1303,7 +1303,7 @@ class MiniCremonaDatabase(SQLDatabase):
             Elliptic Curve defined by y^2 + x*y  = x^3 - x^2 - 224*x + 3072 over Rational Field
         """
         N = randint(11, self.largest_conductor())
-        q = self.__connection__.cursor().execute('SELECT conductor FROM ' \
+        q = self.__connection__.cursor().execute('SELECT conductor FROM '
             + 't_class WHERE conductor>=? ORDER BY conductor',(int(N),))
         try:
             N = next(q)[0]
@@ -1341,7 +1341,7 @@ class MiniCremonaDatabase(SQLDatabase):
             raise RuntimeError("The database must not be read_only.")
 
         if not os.path.exists(ftpdata):
-            raise RuntimeError("The cremona ftpdata directory '" + ftpdata \
+            raise RuntimeError("The cremona ftpdata directory '" + ftpdata
                 + "' does not exist.")
 
         if largest_conductor:
@@ -1414,9 +1414,9 @@ class MiniCremonaDatabase(SQLDatabase):
                     num_iso_classes += 1
                 curve_data.append((cur,cls,ainvs,tor))
                 num_curves += 1
-            con.executemany('INSERT INTO t_class (conductor,class,rank) ' \
+            con.executemany('INSERT INTO t_class (conductor,class,rank) '
                 + 'VALUES (?,?,?)', class_data)
-            con.executemany('INSERT INTO t_curve (curve,class,eqn,tors) ' \
+            con.executemany('INSERT INTO t_curve (curve,class,eqn,tors) '
                 + 'VALUES (?,?,?,?)', curve_data)
             print("Committing...")
             print("num_iso_classes =", num_iso_classes)
@@ -1437,34 +1437,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
         'a2': [[0, -1, 1, -7820, -263580], 0, 1],
         'a3': [[0, -1, 1, 0, 0], 0, 5]}
     """
-    def __init__(self, name, read_only=True, build=False):
-        """
-        Initialize the database.
-
-        TESTS::
-
-            sage: c = CremonaDatabase('cremona')    # optional - database_cremona_ellcurve
-            sage: c.name                            # optional - database_cremona_ellcurve
-            'cremona'
-        """
-        self.name = name
-        name = name.replace(' ','_')
-        db_path = os.path.join(CREMONA_LARGE_DATA_DIR, name+'.db')
-        if build:
-            if name is None:
-                raise RuntimeError('The database must have a name.')
-            if read_only:
-                raise RuntimeError('The database must not be read_only.')
-            SQLDatabase.__init__(self, db_path, read_only=read_only, \
-                    skeleton=_cremonaSkeleton)
-            return
-        if not os.path.isfile(db_path):
-            raise ValueError("Desired database (='%s') does not " % self.name \
-                    + "exist")
-        SQLDatabase.__init__(self, db_path, read_only=read_only)
-        if self.get_skeleton() != _cremonaSkeleton:
-            raise RuntimeError('Database at %s does ' % (self.__dblocation__) \
-              + 'not appear to be a valid SQL Cremona database.')
+    _expected_skeleton = _cremonaSkeleton
 
     def allbsd(self, N):
         r"""
@@ -1493,8 +1466,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             [2, 3.27608135248722, 1.54910143090506, 0.236425971187952, 1.0]
         """
         ret = {}
-        for c in self.__connection__.cursor().execute('SELECT curve,cp,om,L,' \
-            + 'reg,sha FROM t_curve,t_class USING(class) WHERE conductor=?', \
+        for c in self.__connection__.cursor().execute('SELECT curve,cp,om,L,'
+            + 'reg,sha FROM t_curve,t_class USING(class) WHERE conductor=?',
             (int(N),)):
             N,iso,num = parse_cremona_label(c[0])
             ret[iso+str(num)] = list(c[1:])
@@ -1523,7 +1496,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             [[7, 2, 1]]
         """
         ret = {}
-        for c in self.__connection__.cursor().execute('SELECT curve,gens ' \
+        for c in self.__connection__.cursor().execute('SELECT curve,gens '
             + 'FROM t_curve,t_class USING(class) WHERE conductor=?',(int(N),)):
             N,iso,num = parse_cremona_label(c[0])
             ret[iso+str(num)] = eval(c[1])
@@ -1550,8 +1523,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             1640
         """
         ret = {}
-        for c in self.__connection__.cursor().execute('SELECT curve,deg FROM' \
-            + ' t_curve,t_class USING(class) WHERE curve=class||1 AND ' \
+        for c in self.__connection__.cursor().execute('SELECT curve,deg FROM'
+            + ' t_curve,t_class USING(class) WHERE curve=class||1 AND '
             + 'conductor=?', (int(N),)):
             N,iso,num = parse_cremona_label(c[0])
             ret[iso+str(num)] = c[1]
@@ -1584,7 +1557,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
                 N, iso, num, degree, primes, curve = L.split()
                 if largest_conductor and int(N) > largest_conductor: break
                 class_data.append((degree,N+iso))
-            con.executemany('UPDATE t_class SET deg=? WHERE class=?', \
+            con.executemany('UPDATE t_class SET deg=? WHERE class=?',
                 class_data)
             print("Committing...")
             self.commit()
@@ -1622,7 +1595,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
                     class_data.append((L,cls))
                 curve_data.append((cp,om,reg,eval(sha),cls+num))
             con.executemany("UPDATE t_class SET L=? WHERE class=?", class_data)
-            con.executemany("UPDATE t_curve SET cp=?,om=?,reg=?,sha=? WHERE " \
+            con.executemany("UPDATE t_curve SET cp=?,om=?,reg=?,sha=? WHERE "
                     + "curve=?", curve_data)
             print("Committing...")
             self.commit()
@@ -1656,7 +1629,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
                 if largest_conductor and int(v[0]) > largest_conductor: break
                 gens = '['+','.join(v[6:6+int(v[4])]).replace(':',',')+']'
                 curve_data.append((gens,''.join(v[:3])))
-            con.executemany("UPDATE t_curve SET gens=? WHERE curve=?", \
+            con.executemany("UPDATE t_curve SET gens=? WHERE curve=?",
                 curve_data)
             print("Committing...")
             if largest_conductor and int(v[0]) > largest_conductor: break
@@ -1674,9 +1647,6 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
     If the Cremona database in question is in the format of the mini database,
     you must set ``mini=True``, otherwise it must be set to ``False``.
 
-    If you would like other components of Sage to use this database, mark
-    ``set_global=True``.
-
     TESTS::
 
         sage: c = CremonaDatabase()
@@ -1690,22 +1660,23 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
         sage: c = CremonaDatabase('should not exist',mini=True)
         Traceback (most recent call last):
         ...
-        ValueError: Desired database (='should not exist') does not exist
+        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        '...db' not found in any of [...]
+        ...
+        Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
         sage: c = CremonaDatabase('should not exist',mini=False)
         Traceback (most recent call last):
         ...
-        ValueError: Desired database (='should not exist') does not exist
-        sage: from sage.env import SAGE_SHARE
-        sage: os.path.isfile(os.path.join(SAGE_SHARE,'cremona','should_not_exist.db'))
-        False
+        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        '...db' not found in any of [...]
+        ...
+        Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
     """
-    global _db
-    if set_global is None:
-        set_global = _db is None and name is None
-    if name is None and not set_global:
-        return _db
-    if set_global and name is None:
-        if is_package_installed('database_cremona_ellcurve'):
+    if set_global is not None:
+        from sage.misc.superseded import deprecation
+        deprecation(25825, "the set_global argument for CremonaDatabase is deprecated and ignored")
+    if name is None:
+        if DatabaseCremona().is_present():
             name = 'cremona'
         else:
             name = 'cremona mini'
@@ -1715,12 +1686,8 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
         mini = True
     if mini is None:
         raise ValueError('mini must be set as either True or False')
-    if set_global:
-        if mini:
-            _db = MiniCremonaDatabase(name)
-        else:
-            _db = LargeCremonaDatabase(name)
-        return _db
+
     if mini:
         return MiniCremonaDatabase(name)
-    return LargeCremonaDatabase(name)
+    else:
+        return LargeCremonaDatabase(name)

@@ -11,6 +11,11 @@ else
     export LDFLAGS="${LDFLAGS} -shared"
 fi
 
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Trac #30643
+    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
+fi
+
 sage-python23 ../lapack_conf.py
 
 # Make sure that the fortran objects are compiled with -fPIC

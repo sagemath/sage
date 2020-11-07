@@ -2,6 +2,7 @@
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
 # https://trac.sagemath.org/ticket/18083
+
 r"""
 Object persistence
 
@@ -591,58 +592,58 @@ _DEFAULT_PROTOCOL_VERSION = 4
 
 
 class _BaseUnpickler(pickle.Unpickler):
+    """
+    Provides the Python 3 implementation for
+    :class:`sage.misc.persist.SageUnpickler`.
+
+    This is simpler than the Python 2 case since ``pickle.Unpickler`` is
+    a modern built-in type which can be easily subclassed to provide new
+    functionality.
+
+    See the documentation for that class for tests and examples.
+    """
+
+    def __init__(self, file_obj, persistent_load=None, *, **kwargs):
+        kwargs.setdefault('encoding', 'latin1')
+        super(_BaseUnpickler, self).__init__(file_obj, **kwargs)
+        self._persistent_load = persistent_load
+
+    def persistent_load(self, pid):
         """
-        Provides the Python 3 implementation for
-        :class:`sage.misc.persist.SageUnpickler`.
+        Implement persistent loading with the ``persistent_load`` function
+        given at instantiation, if any.  Otherwise raises a
+        ``pickle.UnpicklingError`` as in the base class.
 
-        This is simpler than the Python 2 case since ``pickle.Unpickler`` is
-        a modern built-in type which can be easily subclassed to provide new
-        functionality.
-
-        See the documentation for that class for tests and examples.
+        See the documentation for :class:`sage.misc.persist.SageUnpickler`
+        for more details.
         """
 
-        def __init__(self, file_obj, persistent_load=None, *, **kwargs):
-            kwargs.setdefault('encoding', 'latin1')
-            super(_BaseUnpickler, self).__init__(file_obj, **kwargs)
-            self._persistent_load = persistent_load
+        if self._persistent_load is not None:
+            return self._persistent_load(pid)
 
-        def persistent_load(self, pid):
-            """
-            Implement persistent loading with the ``persistent_load`` function
-            given at instantiation, if any.  Otherwise raises a
-            ``pickle.UnpicklingError`` as in the base class.
+        return super(_BaseUnpickler, self).persistent_load(pid)
 
-            See the documentation for :class:`sage.misc.persist.SageUnpickler`
-            for more details.
-            """
+    def find_class(self, module, name):
+        """
+        The Unpickler uses this class to load module-level objects.
+        Contrary to the name, it is used for functions as well as classes.
 
-            if self._persistent_load is not None:
-                return self._persistent_load(pid)
+        (This is equivalent to what was previously called ``find_global``
+        which seems like a better name, albeit still somewhat misleading).
 
-            return super(_BaseUnpickler, self).persistent_load(pid)
+        This is just a thin wrapper around
+        :func:`sage.misc.persist.unpickle_global`
+        """
 
-        def find_class(self, module, name):
-            """
-            The Unpickler uses this class to load module-level objects.
-            Contrary to the name, it is used for functions as well as classes.
-
-            (This is equivalent to what was previously called ``find_global``
-            which seems like a better name, albeit still somewhat misleading).
-
-            This is just a thin wrapper around
-            :func:`sage.misc.persist.unpickle_global`
-            """
-
-            # First try using Sage's unpickle_global to go through the unpickle
-            # override system
-            try:
-                return unpickle_global(module, name)
-            except ImportError:
-                # Failing that, go through the base class's find_class to give
-                # it a try (this is necessary in particular to support
-                # fix_imports)
-                return super(_BaseUnpickler, self).find_class(module, name)
+        # First try using Sage's unpickle_global to go through the unpickle
+        # override system
+        try:
+            return unpickle_global(module, name)
+        except ImportError:
+            # Failing that, go through the base class's find_class to give
+            # it a try (this is necessary in particular to support
+            # fix_imports)
+            return super(_BaseUnpickler, self).find_class(module, name)
 
 
 class SagePickler(_BasePickler):

@@ -168,8 +168,8 @@ from cysignals.signals cimport sig_check
 
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.complex_number cimport ComplexNumber
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr cimport RealNumber, RealField
 from sage.rings.rational cimport Rational
 from sage.rings.integer cimport Integer

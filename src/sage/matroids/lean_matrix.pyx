@@ -19,7 +19,7 @@ AUTHORS:
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
@@ -27,8 +27,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from libc.string cimport memcpy, memset
 from cpython.object cimport Py_EQ, Py_NE
@@ -1338,10 +1338,10 @@ cdef class BinaryMatrix(LeanMatrix):
         bitset_complement(mask, mask)
         g = 0
         c = bitset_first(mask)
-        while c>=0:
+        while c >= 0:
             gaps[g] = c
-            g = g+1
-            c =  bitset_next(mask, c+1)
+            g = g + 1
+            c = bitset_next(mask, c + 1)
         lg = g
         bitset_complement(mask, mask)
         # copy relevant part of this matrix into A
@@ -1710,11 +1710,11 @@ cdef class TernaryMatrix(LeanMatrix):
             sage: A == TernaryMatrix(2, 2, A)._matrix_()
             True
         """
-        cdef long i, j
+        cdef int i, j
         M = sage.matrix.constructor.Matrix(GF(3), self._nrows, self._ncols)
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                    M[i, j] = self.get(i, j)
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                M[i, j] = self.get(i, j)
         return M
 
     cdef get_unsafe(self, long r, long c):
@@ -2013,10 +2013,10 @@ cdef class TernaryMatrix(LeanMatrix):
         bitset_complement(mask, mask)
         g = 0
         c = bitset_first(mask)
-        while c>=0:
+        while c >= 0:
             gaps[g] = c
-            g = g+1
-            c =  bitset_next(mask, c+1)
+            g = g + 1
+            c = bitset_next(mask, c + 1)
         lg = g
         bitset_complement(mask, mask)
         # copy relevant part of this matrix into A
@@ -2596,10 +2596,10 @@ cdef class QuaternaryMatrix(LeanMatrix):
         bitset_complement(mask, mask)
         g = 0
         c = bitset_first(mask)
-        while c>=0:
+        while c >= 0:
             gaps[g] = c
-            g = g+1
-            c =  bitset_next(mask, c+1)
+            g = g + 1
+            c = bitset_next(mask, c + 1)
         lg = g
         bitset_complement(mask, mask)
         # copy relevant part of this matrix into A

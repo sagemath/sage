@@ -35,6 +35,7 @@ git clone "$SRC" "$DST"
 
 cd "$DST"
 git remote set-url origin "$SAGE_REPO_ANONYMOUS"
+git remote set-url --push origin "$SAGE_REPO_AUTHENTICATED"
 
 # Save space
 git gc --aggressive --prune=now

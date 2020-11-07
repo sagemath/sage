@@ -1419,7 +1419,7 @@ class IntegerListsLexIter(builtins.object):
             sage: I._m_interval(1,2)
             (0, 2)
 
-        The second part is not bounded above, hence we can not
+        The second part is not bounded above, hence we cannot
         iterate lexicographically through all the elements::
 
             sage: IntegerListsLex(ceiling=[2,infinity,3], max_length=3).first()

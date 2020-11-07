@@ -425,8 +425,8 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 5],
          [1, 6, 9, 10, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5],
-         [1, 6, 9, 3, 4, 5]]
+         [1, 6, 9, 3, 4, 5],
+         [1, 6, 9, 11, 10, 5]]
         sage: G = digraphs.DeBruijn(2, 3)
         sage: for u,v in G.edges(labels=False):
         ....:     G.set_edge_label(u, v, 1)  
@@ -1012,8 +1012,8 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         [[1, 2, 3, 8, 9, 6],
          [1, 2, 3, 4, 7, 6],
          [1, 2, 3, 4, 5, 6],
-         [1, 2, 3, 8, 9, 11, 6],
-         [1, 2, 3, 8, 9, 10, 6]]
+         [1, 2, 3, 8, 9, 10, 6],
+         [1, 2, 3, 8, 9, 11, 6]]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 1),
         ....:              (1, 7, 1), (7, 8, 1), (8, 5, 1), (1, 6, 1),
@@ -1024,15 +1024,15 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 5],
          [1, 6, 9, 10, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5],
-         [1, 6, 9, 3, 4, 5]]
+         [1, 6, 9, 3, 4, 5],
+         [1, 6, 9, 11, 10, 5]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, by_weight=True))
         [[1, 7, 8, 5],
          [1, 6, 9, 5],
          [1, 6, 9, 10, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5],
-         [1, 6, 9, 3, 4, 5]]
+         [1, 6, 9, 3, 4, 5],
+         [1, 6, 9, 11, 10, 5]]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 5), (6, 3, 0), (2, 6, 6), (1, 4, 15),
         ....:              (4, 5, 1), (4, 3, 0), (7, 1, 2), (8, 7, 1)])

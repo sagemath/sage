@@ -59,7 +59,7 @@ cdef class IndependentSets:
         This implementation of the enumeration of *maximal* independent sets is
         not much faster than NetworkX', which is surprising as it is written in
         Cython. This being said, the algorithm from NetworkX appears to be
-        sligthly different from this one, and that would be a good thing to
+        slightly different from this one, and that would be a good thing to
         explore if one wants to improve the implementation.
 
         A simple generalization can also be done without too much modifications:

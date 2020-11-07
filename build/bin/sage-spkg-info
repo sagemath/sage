@@ -40,7 +40,7 @@ for system_package_file in "$PKG_DISTROS"/*.txt; do
                 echo "$system:"
                 ;;
         esac
-        echo -n "  "
+        printf "  "
         sage-print-system-package-command $system --prompt --sudo install $system_packages
     fi
 done

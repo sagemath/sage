@@ -245,7 +245,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             \left[ 1, 0, 0, 0 \right]_{\mathop{Cl}_{\QQ}\left(\mathbb{P}_{\Delta^{2}_{9}}\right)}
         """
         return r"\left[ %s \right]_{%s}" % (
-                    ", ".join([latex(e) for e in self]), latex(self.parent()))
+                    ", ".join(latex(e) for e in self), latex(self.parent()))
 
     def _repr_(self):
         r"""

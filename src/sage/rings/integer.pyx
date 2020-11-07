@@ -2860,7 +2860,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                 from sage.rings.real_mpfr import RealField
                 return RealField(prec)(self).log(m)
             else:
-                from sage.rings.complex_field import ComplexField
+                from sage.rings.complex_mpfr import ComplexField
                 return ComplexField(prec)(self).log(m)
 
         if m is None:
@@ -6228,7 +6228,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: type(5.sqrt(prec=53))
             <type 'sage.rings.real_mpfr.RealNumber'>
             sage: type((-5).sqrt(prec=53))
-            <type 'sage.rings.complex_number.ComplexNumber'>
+            <type 'sage.rings.complex_mpfr.ComplexNumber'>
             sage: type(0.sqrt(prec=53))
             <type 'sage.rings.real_mpfr.RealNumber'>
 

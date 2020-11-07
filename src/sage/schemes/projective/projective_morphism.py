@@ -77,7 +77,7 @@ from sage.calculus.functions import jacobian
 
 from sage.rings.all import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.complex_field import ComplexField_class
+from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField

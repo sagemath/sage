@@ -27,7 +27,7 @@ from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.all import CC
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

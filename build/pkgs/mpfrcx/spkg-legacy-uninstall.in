@@ -1,3 +1,0 @@
-echo "Deleting old headers"
-rm -f "$SAGE_LOCAL"/include/mpfrcx.h
-rm -f "$SAGE_LOCAL"/lib/libmpfrcx.*

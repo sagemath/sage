@@ -563,8 +563,8 @@ cdef class PointCollection(SageObject):
                     for i, coordinate in enumerate(point):
                         widths[i] = max(widths[i], len(coordinate))
                 format += ",".join("{{:>{}}}".format(width) for width in widths)
-                r = ",\n".join([format.format(head, *point)
-                                for head, point in zip(heads, r)])
+                r = ",\n".join(format.format(head, *point)
+                               for head, point in zip(heads, r))
         elif _output_format == "tuple":
             r = tuple(self)
         elif _output_format == "matrix":

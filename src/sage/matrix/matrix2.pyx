@@ -58,6 +58,10 @@ AUTHORS:
 - Samuel Lelièvre (2020-09-18): improved method ``LLL_gram`` based on a patch
   by William Stein posted at :trac:`5178`, moving the method from its initial
   location in ``sage.matrix.integer_matrix_dense``
+
+- Michael Jung (2020-10-02): added Bär-Faddeev-LeVerrier algorithm for the
+  Pfaffian
+
 """
 
 # ****************************************************************************
@@ -79,7 +83,7 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose, get_verbose
-from sage.categories.fields import Fields
+from sage.categories.all import Fields, IntegralDomains
 from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
@@ -88,7 +92,7 @@ from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.rings.real_mpfr import RealField
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.misc.derivative import multi_derivative
 from sage.arith.numerical_approx cimport digits_to_bits
@@ -1244,7 +1248,7 @@ cdef class Matrix(Matrix1):
             sage: A.permanent()
             32
 
-        A huge permanent that can not be reasonably computed with the Ryser
+        A huge permanent that cannot be reasonably computed with the Ryser
         algorithm (a `50 \times 50` band matrix with width `5`)::
 
             sage: n, w = 50, 5
@@ -2114,15 +2118,18 @@ cdef class Matrix(Matrix1):
         Return the Pfaffian of ``self``, assuming that ``self`` is an
         alternating matrix.
 
+        The result is cached.
+
         INPUT:
 
-        - ``algorithm`` -- string, the algorithm to use; currently the
-          following algorithms have been implemented:
+        - ``algorithm`` (default: ``None``) -- string, the algorithm to use;
+          currently the following algorithms have been implemented:
 
+          * ``'bfl'`` - using the Bär-Faddeev-LeVerrier algorithm
           * ``'definition'`` - using the definition given by perfect
             matchings
 
-        - ``check`` (default: ``True``) -- Boolean determining whether to
+        - ``check`` (default: ``True``) -- boolean determining whether to
           check ``self`` for alternatingness and squareness. This has to
           be set to ``False`` if ``self`` is defined over a non-discrete
           ring.
@@ -2162,24 +2169,31 @@ cdef class Matrix(Matrix1):
         `n \times n` matrix `U` and any alternating `n \times n`
         matrix `A`.
 
-        See [Knu1995]_, [DW1995]_ and [Rot2001]_, just to name three
-        sources, for further properties of Pfaffians.
+        See [Knu1995]_, [DW1995]_ and [Rot2001]_, [Baer2020]_, just to name a
+        few sources, for further properties of Pfaffians.
 
         ALGORITHM:
 
-        The current implementation uses the definition given above.
-        It checks alternatingness of the matrix ``self`` only if
-        ``check`` is ``True`` (this is important because even if ``self``
-        is alternating, a non-discrete base ring might prevent Sage
-        from being able to check this).
+        If the matrix is small, namely up to size `4 \times 4`, the naive
+        formulas are always used.
 
-        .. TODO::
+        The Bär-Faddeev-LeVerrier algorithm can be accessed using ``'bfl'``.
+        It works over any `\QQ`-algebra or ring whose fraction field is an
+        `\QQ`-algebra (see [Baer2020]_ for details). If that check fails,
+        the implementation raises an error because correct results cannot be
+        guaranteed.
 
-            Implement faster algorithms, including a division-free one.
-            Does [Rot2001]_, section 3.3 give one?
+        To access the algorithm using the above defintion, use ``'definition'``.
+        However, notice that this algorithm is usually very slow.
 
-            Check the implementation of the matchings used here for
-            performance?
+        By default, i.e. if no options are set, the implementation tries to
+        apply the BFL algorithm first. If BFL is not applicable, it uses the
+        definition by perfect matchings.
+
+        The alternatingness of the matrix ``self`` is checked only if ``check``
+        is ``True`` (this is important because even if ``self`` is alternating,
+        a non-discrete base ring might prevent Sage from being able to check
+        this).
 
         EXAMPLES:
 
@@ -2212,8 +2226,8 @@ cdef class Matrix(Matrix1):
             sage: parent(A.pfaffian())
             Integer Ring
 
-        Let us compute the Pfaffian of a generic `4 \times 4`
-        alternating matrix::
+        Let us compute the Pfaffian of a generic `4 \times 4` alternating
+        matrix::
 
             sage: R = PolynomialRing(QQ, 'x12,x13,x14,x23,x24,x34')
             sage: x12, x13, x14, x23, x24, x34 = R.gens()
@@ -2239,7 +2253,33 @@ cdef class Matrix(Matrix1):
             sage: AA = Matrix(ZZ, A)
             sage: AA.pfaffian() ** 2 == AA.det()
             True
+
+        In order to use the Bär-Faddeev-LeVerrier algorithm, the base ring
+        must have characteristic zero::
+
+            sage: A = matrix(GF(5), [(0, 3, 4, 1, 3, 4),
+            ....:                    (2, 0, 2, 0, 1, 0),
+            ....:                    (1, 3, 0, 4, 1, 0),
+            ....:                    (4, 0, 1, 0, 2, 0),
+            ....:                    (2, 4, 4, 3, 0, 0),
+            ....:                    (1, 0, 0, 0, 0, 0)])
+            sage: A.pfaffian(algorithm='bfl')
+            Traceback (most recent call last):
+            ...
+            TypeError: Bär-Faddeev-LeVerrier algorithm not applicable,
+             use another algorithm instead
+
+        In that case, the definition by perfect matchings is used instead::
+
+            sage: A.pfaffian()
+            2
+
         """
+
+        pf = self.fetch('pfaffian')  # check out cache
+        if pf is not None:
+            return pf
+
         k = self._nrows
 
         if check:
@@ -2248,15 +2288,80 @@ cdef class Matrix(Matrix1):
             if not self.is_alternating():
                 raise ValueError("self must be alternating, which includes the diagonal entries being 0")
 
+        # trivial cases:
         R = self.base_ring()
-
         if k % 2 == 1:
-            return R.zero()
+            pf = R.zero()
+            # cache the result, and return it:
+            self.cache('pfaffian', pf)
+            return pf
+        # For small matrices, you can't beat the naive formula:
+        elif k <= 4:
+            if k == 0:
+                pf = R.one()
+            elif k == 2:
+                pf = self.get_unsafe(0, 1)
+            elif k == 4:
+                pf = self.get_unsafe(0, 1) * self.get_unsafe(2, 3) \
+                     - self.get_unsafe(0, 2) * self.get_unsafe(1, 3) \
+                     + self.get_unsafe(1, 2) * self.get_unsafe(0, 3)
+            # cache the result, and return it:
+            self.cache('pfaffian', pf)
+            return pf
 
-        if k == 0:
-            return R.one()
+        # choose algorithm:
+        if algorithm is None:
+            if R in IntegralDomains():
+                F = R.fraction_field()
+            else:
+                F = R
+            if QQ.is_subring(F):
+                temp = <Matrix> self.change_ring(F)
+                pf = self._coerce_element(temp._pf_bfl())
+            else:
+                pf = self._pf_perfect_matchings()
+        else:
+            if algorithm == 'definition':
+                pf = self._pf_perfect_matchings()
+            elif algorithm == 'bfl':
+                if R in IntegralDomains():
+                    F = R.fraction_field()
+                else:
+                    F = R
+                if not QQ.is_subring(F):
+                    raise TypeError('Bär-Faddeev-LeVerrier algorithm not '
+                                    'applicable, use another algorithm instead')
+                temp = <Matrix> self.change_ring(F)
+                pf = self._coerce_element(temp._pf_bfl())
+            else:
+                raise NotImplementedError("algorithm '%s' not recognized" % algorithm)
+        # cache the result, and return it:
+        self.cache('pfaffian', pf)
+        return pf
 
-        n = k // 2
+    def _pf_perfect_matchings(self):
+        r"""
+        Computes the Pfaffian of ``self`` using the definition given by perfect
+        matchings.
+
+        OUTPUT:
+
+        - an element of the base ring of ``self`` representing the Pfaffian
+
+        EXAMPLES::
+
+            sage: A = matrix([(0, 2, -1/2, -2, 2, -1/2),
+            ....:             (-2, 0, -1, 1, -1, 3/2),
+            ....:             (1/2, 1, 0, 0, 3/2, 1),
+            ....:             (2, -1, 0, 0, 1, 5/2),
+            ....:             (-2, 1, -3/2, -1, 0, 1/2),
+            ....:             (1/2, -3/2, -1, -5/2, -1/2, 0)])
+            sage: A._pf_perfect_matchings()
+            -1/2
+
+        """
+        R = self._base_ring
+        k = self._nrows
 
         res = R.zero()
 
@@ -2276,6 +2381,65 @@ cdef class Matrix(Matrix1):
             res += sgn * prod([self.get_unsafe(edge[0], edge[1]) for edge in edges2])
 
         return res
+
+    cdef _pf_bfl(self):
+        r"""
+        Computes the Pfaffian of ``self`` using the Baer-Faddeev-LeVerrier
+        algorithm.
+        
+        .. WARNING::
+        
+            This method assumes that the base ring is an `\QQ`-algebra.
+
+        OUTPUT:
+
+        - an element (possibly coerced) originated from the base ring of 
+          ``self`` representing the Pfaffian
+
+        EXAMPLES:
+
+        Pfaffian of some matrix over the rationals using the
+        Bär-Faddeev-LeVerrier algorithm::
+
+            sage: A = matrix([(0, 2, -1/2, -2, 2, -1/2),
+            ....:             (-2, 0, -1, 1, -1, 3/2),
+            ....:             (1/2, 1, 0, 0, 3/2, 1),
+            ....:             (2, -1, 0, 0, 1, 5/2),
+            ....:             (-2, 1, -3/2, -1, 0, 1/2),
+            ....:             (1/2, -3/2, -1, -5/2, -1/2, 0)])
+            sage: A.pfaffian(algorithm='bfl')
+            -1/2
+            
+        TESTS::
+
+            sage: A = random_matrix(ZZ[x], 6)
+            sage: A = A - A.transpose()
+            sage: A.pfaffian(algorithm='bfl') == A._pf_perfect_matchings()
+            True
+
+        """
+        cdef Py_ssize_t n = self._ncols
+        cdef Py_ssize_t q = n // 2
+        cdef Py_ssize_t i, k
+
+        # apply J:
+        cdef Matrix A = <Matrix> copy(self)
+        for i in range(0, n, 2):
+            A.swap_columns_c(i, i+1)  # avoid checks
+            for k in range(n):
+                A.set_unsafe(k, i+1, -A.get_unsafe(k, i+1))
+
+        cdef Matrix M = <Matrix> copy(A)
+
+        # Baer-Faddeev-Leverrier algorithm:
+        for k in range(1, q):
+            c = -M.trace() / (2*k)
+            # add c along the diagonal
+            for i in range(n):
+                M.set_unsafe(i, i, M.get_unsafe(i, i) + c)
+            M = A * M
+        c = -M.trace() / (2*q)
+        return (-1)**q * c
 
     def apply_morphism(self, phi):
         """
@@ -2640,7 +2804,7 @@ cdef class Matrix(Matrix1):
             x^3
 
         Here is an example over a general commutative ring, that is to say,
-        as of version 4.0.2, SAGE does not even positively determine that
+        as of version 4.0.2, Sage does not even positively determine that
         ``S`` in the following example is an integral domain.  But the
         computation of the characteristic polynomial succeeds as follows::
 
@@ -2833,7 +2997,7 @@ cdef class Matrix(Matrix1):
         # drop the second index t, reducing storage requirements.
         #
         # N.B.  The documentation is still 1-based, although the code, after
-        # having been ported from Magma to SAGE, is 0-based.
+        # having been ported from Magma to Sage, is 0-based.
         #
         from sage.matrix.constructor import matrix
 
@@ -14093,7 +14257,7 @@ cdef class Matrix(Matrix1):
             return self.change_ring(sage.rings.real_mpfr.RealField(prec))
         except (TypeError, ValueError):
             # try to return a complex result
-            return self.change_ring(sage.rings.complex_field.ComplexField(prec))
+            return self.change_ring(sage.rings.complex_mpfr.ComplexField(prec))
 
     def plot(self, *args, **kwds):
         """

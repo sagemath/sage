@@ -63,7 +63,7 @@ class Polyhedron_cdd(Polyhedron_base):
         s = self._run_cdd(s, '--repall', verbose=verbose)
         self._init_from_cdd_output(s)
         if not self.base_ring().is_exact():
-            # cdd's parser can not handle the full output of --repall, so we
+            # cdd's parser cannot handle the full output of --repall, so we
             # need to extract the first block before we feed it back into cdd
             s = s.splitlines()
             s = s[:s.index('end')+1]
@@ -129,7 +129,7 @@ class Polyhedron_cdd(Polyhedron_base):
                 # cdd (reasonably) refuses to handle empty polyhedra, so we
                 # skip this check
                 return
-            # cdd's parser can not handle the full output of --repall, so we
+            # cdd's parser cannot handle the full output of --repall, so we
             # need to extract the first block before we feed it back into cdd
             s = s.splitlines()
             s = s[:s.index('end')+1]
@@ -262,7 +262,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_H_representation(intro, data):
             if '_Hrepresentation' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             self._Hrepresentation = []
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_H_to_sage_H = {}
@@ -290,7 +290,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_V_representation(intro, data):
             if '_Vrepresentation' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             self._Vrepresentation = []
             # we drop some entries in cdd's output and this changes the numbering; this dict keeps track of that
             self._cdd_V_to_sage_V = {}
@@ -348,7 +348,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_vertex_adjacency(intro, data):
             if '_V_adjacency_matrix' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             N = len(self._Vrepresentation)
             self._V_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_V_to_sage_V)
             for i, v in enumerate(self._Vrepresentation):
@@ -364,7 +364,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_facet_adjacency(intro, data):
             if '_H_adjacency_matrix' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             N = len(self._Hrepresentation)
             self._H_adjacency_matrix = parse_adjacency(intro, data, N, N, self._cdd_H_to_sage_H)
             self._H_adjacency_matrix.set_immutable()
@@ -372,7 +372,7 @@ class Polyhedron_cdd(Polyhedron_base):
 
         def parse_incidence_matrix(intro, data):
             if 'incidence_matrix' in self.__dict__:
-                raise NotImplementedError("can not replace internal representation as this breaks caching")
+                raise NotImplementedError("cannot replace internal representation as this breaks caching")
             N = len(self._Hrepresentation)
             M = len(self._Vrepresentation)
             inc_mat = parse_adjacency(intro, data, M, N, self._cdd_V_to_sage_V, self._cdd_H_to_sage_H)

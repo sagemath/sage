@@ -104,7 +104,7 @@ def import_statement_string(module, names, lazy):
             name, alias = names[0]
             if name == alias:
                 if name is None:
-                    raise ValueError("can not lazy import modules")
+                    raise ValueError("cannot lazy import modules")
                 return "lazy_import('%s', '%s')" % (module, name)
             else:
                 return "lazy_import('%s', '%s', '%s')" % (module, name, alias)

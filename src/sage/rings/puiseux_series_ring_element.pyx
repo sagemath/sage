@@ -108,7 +108,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.rings.big_oh import O
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring_element cimport LaurentSeries
 from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -188,7 +188,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         # --------------------------------------------------------
         exp_list = l.exponents()
         prec     = l.prec()
-        if prec == infinity:
+        if prec is infinity:
             d = gcd(exp_list +[e])
         else:
             d = gcd(exp_list + [e] + [prec])
@@ -700,11 +700,13 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p = x^(-7/2) + 3 + 5*x^(1/2) - 7*x**3
             sage: p.valuation()
             -7/2
+
+        TESTS::
+
+            sage: R.zero().valuation()
+            +Infinity
         """
-        val = self._l.valuation() / QQ(self._e)
-        if val == infinity:
-            return 0
-        return val
+        return self._l.valuation() / QQ(self._e)
 
     def add_bigoh(self, prec):
         r"""
@@ -735,7 +737,7 @@ cdef class PuiseuxSeries(AlgebraElement):
                 sage: p.add_bigoh(1/2)
                 x^(-1/3) + 2*x^(1/5) + O(x^(7/15))
         """
-        if prec == infinity or prec >= self.prec():
+        if prec is infinity or prec >= self.prec():
             return self
 
         l_prec = int(prec * self._e)
@@ -929,7 +931,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: q.prec()
             5
         """
-        if self._l.prec() == infinity:
+        if self._l.prec() is infinity:
             return infinity
         return self._l.prec() / self._e
 

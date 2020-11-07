@@ -3,7 +3,7 @@
 # First test for user-installable package systems, then system package systems
 if conda --version > /dev/null 2>&1; then
     if [ -z "$CONDA_DEFAULT_ENV" ]; then
-        echo >&2 -n "(ignoring conda because no environment is active) "
+        printf >&2 "(ignoring conda because no environment is active) "
     else
         echo conda
         exit

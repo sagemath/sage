@@ -113,7 +113,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
     `R`-subalgebra of the ring of power series in countably many
     variables `R[[x_1, x_2, x_3, \ldots]]`. It consists of those
     formal power series `p` which are degree-bounded (i. e., the degrees
-    of all monomials occuring with nonzero coefficient in `p` are bounded
+    of all monomials occurring with nonzero coefficient in `p` are bounded
     from above, although the bound can depend on `p`) and satisfy the
     following condition: For every tuple `(a_1, a_2, \ldots, a_m)` of
     positive integers, the coefficient of the monomial

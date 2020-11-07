@@ -1118,7 +1118,7 @@ class DiffScalarField(ScalarField):
 
         Note that ``(e_r, e_phi)`` is the orthonormal vector frame associated
         with polar coordinates (see
-        :meth:`~sage.manifolds.differentiable.euclidean.EuclideanPlane.polar_frame`);
+        :meth:`~sage.manifolds.differentiable.examples.euclidean.EuclideanPlane.polar_frame`);
         the gradient expressed in the coordinate frame is::
 
             sage: f.gradient().display(M.polar_coordinates().frame())

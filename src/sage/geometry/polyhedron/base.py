@@ -5781,7 +5781,7 @@ class Polyhedron_base(Element):
             sage: cube.stack(cube.faces(0)[0])
             Traceback (most recent call last):
             ...
-            ValueError: can not stack onto a vertex
+            ValueError: cannot stack onto a vertex
 
             sage: stacked_square_half = cube.stack(square_face,position=1/2)
             sage: stacked_square_half.f_vector()
@@ -5874,7 +5874,7 @@ class Polyhedron_base(Element):
         if not isinstance(face, PolyhedronFace):
             raise TypeError("{} should be a PolyhedronFace of {}".format(face, self))
         elif face.dim() == 0:
-            raise ValueError("can not stack onto a vertex")
+            raise ValueError("cannot stack onto a vertex")
         elif face.dim() == -1 or face.dim() == self.dim():
             raise ValueError("can only stack on proper face")
 
@@ -7136,6 +7136,13 @@ class Polyhedron_base(Element):
             sage: line = Polyhedron(lines=[[0,1]])
             sage: line.vertex_graph()
             Graph on 0 vertices
+
+        TESTS:
+
+        Check for a line segment (:trac:`30545`)::
+
+            sage: polytopes.simplex(1).graph().edges()
+            [(A vertex at (0, 1), A vertex at (1, 0), None)]
         """
         return self.combinatorial_polyhedron().vertex_graph()
 

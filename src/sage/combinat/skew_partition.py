@@ -1520,9 +1520,10 @@ class SkewPartitions(UniqueRepresentation, Parent):
                 colL_new[iCol] -= 1;
                 if colL_new[iCol] < 0:
                     raise ValueError("Incompatible row and column length : %s and %s"%(rowL, colL))
-            while colL_new != [] and colL_new[-1] == 0:
+            while colL_new and colL_new[-1] == 0:
                 colL_new.pop()
         return self.element_class(self, [resOut, [x for x in resIn if x]])
+
 
 class SkewPartitions_all(SkewPartitions):
     """

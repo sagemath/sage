@@ -68,6 +68,8 @@ install_compiled_pkg()
 for pkg in cohomolo-* crypting-* grape-* guava-* orb-*
 do
     echo "Building GAP package $pkg"
+    CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
+    export CFLAGS
     cd "$PKG_SRC_DIR/$pkg"
     ./configure "$GAP_ROOT"
     sdh_make -j1

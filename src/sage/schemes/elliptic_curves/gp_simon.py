@@ -1,9 +1,7 @@
 """
 Denis Simon's PARI scripts
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,8 +13,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+#* ***************************************************************************
 
 from sage.structure.parent_gens import localvars
 
@@ -98,7 +96,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
     # fails when K is a number field whose generator is called 'x'.
     # It also deals with relative number fields.
     E_orig = E
-    if not K is QQ:
+    if K is not QQ:
         K = K_orig.absolute_field('a')
         from_K,to_K = K.structure()
         E = E_orig.change_ring(to_K)

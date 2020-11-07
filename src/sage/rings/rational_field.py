@@ -714,8 +714,8 @@ class RationalField(Singleton, number_field_base.NumberField):
               To:   Complex Field with 20 bits of precision
               Defn: 1 |--> 1.0000
         """
-        from . import complex_field
-        CC = complex_field.ComplexField(prec)
+        from . import complex_mpfr
+        CC = complex_mpfr.ComplexField(prec)
         return self.hom([CC(1)])
 
     def residue_field(self, p, check=True):

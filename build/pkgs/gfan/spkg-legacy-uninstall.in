@@ -1,2 +1,0 @@
-echo "Removing old version of gfan (if any)..."
-rm -f "$SAGE_LOCAL"/bin/gfan*

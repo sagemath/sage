@@ -1809,7 +1809,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
     cdef MemoryAllocator mem = MemoryAllocator()
     # number of times a vertex is reached, initially 0
     cdef int* weight = <int*>mem.calloc(N, sizeof(int))
-    # has a vertex been reached, initally False
+    # has a vertex been reached, initially False
     cdef bint* reached = <bint*>mem.calloc(N, sizeof(bint))
 
     cdef int i, u, v, xi

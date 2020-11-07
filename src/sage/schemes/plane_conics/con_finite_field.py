@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
@@ -75,8 +74,8 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
         q = F.cardinality()
         return [q**i + 1 for i in range(1, n + 1)]
 
-    def has_rational_point(self, point = False, read_cache = True,
-                           algorithm = 'default'):
+    def has_rational_point(self, point=False, read_cache=True,
+                           algorithm='default'):
         r"""
         Always returns ``True`` because self has a point defined over
         its finite base field `B`.
@@ -132,7 +131,7 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
             if self._rational_point is not None:
                 return True, self._rational_point
         B = self.base_ring()
-        s, pt = self.has_singular_point(point = True)
+        s, pt = self.has_singular_point(point=True)
         if s:
             return True, pt
         while True:

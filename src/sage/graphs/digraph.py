@@ -113,7 +113,7 @@ graphs. Here is what they can do
 
     :meth:`~DiGraph.feedback_edge_set` | Compute the minimum feedback edge (arc) set of a digraph
 
-**Miscellanous:**
+**Miscellaneous:**
 
 .. csv-table::
     :class: contentstable
@@ -646,7 +646,7 @@ class DiGraph(GenericGraph):
             data_structure = 'static_sparse'
 
         # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then reencode the resulting graph
+        # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
@@ -775,9 +775,8 @@ class DiGraph(GenericGraph):
                 weighted = data.weighted()
             if data.get_pos() is not None:
                 pos = data.get_pos()
-            self.add_vertices(data.vertex_iterator())
             self.set_vertices(data.get_vertices())
-            self.add_edges(data.edge_iterator())
+            data._backend.subgraph_given_vertices(self._backend, data)
             self.name(data.name())
         elif format == 'rule':
             f = data[1]
@@ -2683,7 +2682,7 @@ class DiGraph(GenericGraph):
 
         - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
           only simple cycles are considered. A cycle is simple if the only
-          vertex occuring twice in it is the starting and ending one.
+          vertex occurring twice in it is the starting and ending one.
 
         - ``rooted`` -- boolean (default: ``False``); if set to False, then
           cycles differing only by their starting vertex are considered the same
@@ -2803,7 +2802,7 @@ class DiGraph(GenericGraph):
 
         - ``simple`` -- boolean (default: ``False``); if set to ``True``, then
           only simple cycles are considered. A cycle is simple if the only
-          vertex occuring twice in it is the starting and ending one.
+          vertex occurring twice in it is the starting and ending one.
 
         - ``rooted`` -- boolean (default: ``False``); if set to False, then
           cycles differing only by their starting vertex are considered the same
@@ -2882,7 +2881,7 @@ class DiGraph(GenericGraph):
              ['a', 'a', 'a', 'a']]
 
         One may prefer to enumerate simple cycles, i.e. cycles such that the only
-        vertex occuring twice in it is the starting and ending one (see also
+        vertex occurring twice in it is the starting and ending one (see also
         :meth:`all_simple_cycles`)::
 
             sage: it = g.all_cycles_iterator(simple=True)
@@ -3347,7 +3346,7 @@ class DiGraph(GenericGraph):
         the levels `l[j]` for `j < i`, and at least one in level `l[i-1]`
         (unless `i = 0`).
 
-        The level decomposition contains exactly the vertices not occuring in
+        The level decomposition contains exactly the vertices not occurring in
         any cycle of the graph. In particular, the graph is acyclic if and only
         if the decomposition forms a set partition of its vertices, and we
         recover the usual level set decomposition of the corresponding poset.

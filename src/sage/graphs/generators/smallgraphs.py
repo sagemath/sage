@@ -3284,7 +3284,7 @@ def KrackhardtKiteGraph():
     The Krackhardt kite graph was originally developed by David Krackhardt for
     the purpose of studying social networks (see [Kre2002]_ and
     the :wikipedia:`Krackhardt_kite_graph`). It is used to show the distinction
-    between: degree centrality, betweeness centrality, and closeness
+    between: degree centrality, betweenness centrality, and closeness
     centrality. For more information read the plotting section below in
     conjunction with the example.
 

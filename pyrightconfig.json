@@ -1,0 +1,16 @@
+{
+    "include": [
+      "src/sage/manifolds"
+    ],
+    "executionEnvironments": [
+      {
+        "root": "src"
+      }
+    ],  
+    "pythonVersion": "3.7",
+
+    "reportMissingImports": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "reportUnboundVariable": "warning",
+    "reportDuplicateImport": "error"
+}

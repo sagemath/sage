@@ -245,7 +245,8 @@ class RingClassField(SageObject):
 
         """
         if check:
-            D = ZZ(D); c = ZZ(c)
+            D = ZZ(D)
+            c = ZZ(c)
         self.__D = D
         self.__c = c
 
@@ -2672,7 +2673,9 @@ class HeegnerPointOnX0N(HeegnerPoint):
             Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7 and conductor 5 on X_0(389)
         """
         if check:
-            N = ZZ(N); D = ZZ(D); c = ZZ(c)
+            N = ZZ(N)
+            D = ZZ(D)
+            c = ZZ(c)
             if c.gcd(N) != 1:
                 raise ValueError("conductor c (=%s) must be coprime to N (=%s)" % (c, N))
             if not satisfies_weak_heegner_hypothesis(N, D):
@@ -2999,7 +3002,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         """
         if n is not None:
             n = ZZ(n)
-            if n <= 0: raise ValueError("n must be a positive integer")
+            if n <= 0:
+                raise ValueError("n must be a positive integer")
         return is_kolyvagin_conductor(N=self.level(), E=self.__E, D=self.discriminant(),
                                       r=None, n=n, c=self.conductor())
 
@@ -3427,16 +3431,14 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         """
         if f.is_irreducible():
             disc = f.discriminant()
-            (D, c) = (self.discriminant(), self.conductor())
+            D, c = self.discriminant(), self.conductor()
             for p in D.prime_divisors() + c.prime_divisors():
                 disc = disc // (p**disc.valuation(p))
-            if disc < 0: disc = -disc
+            if disc < 0:
+                disc = -disc
             return disc.is_square()
-        else:
-            for g,_ in f.factor():
-                if not self._check_poly_discriminant(g):
-                    return False
-            return True
+
+        return all(self._check_poly_discriminant(g) for g,_ in f.factor())
 
 
     def point_exact(self, prec=53, algorithm='lll', var='a', optimize=False):
@@ -3510,8 +3512,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
                 x = phi(x)
                 K = KD.change_names(names=var)
             x = K.structure()[1](x)
-        a1,a2,a3,a4,a6 = E.a_invariants()
-        R = K['Y']; Y = R.gen()
+        a1, a2, a3, a4, a6 = E.a_invariants()
+        R = K['Y']
+        Y = R.gen()
         g = Y**2 + a1*x*Y + a3*Y - (x**3 + a2*x**2 + a4*x + a6)
         F = g.factor()   # this takes a long time
         if len(F) == 1 and F[0][0] == 2:
@@ -3676,8 +3679,9 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
              X^8 + 12*X^7 + 72*X^6 + 270*X^5 + 678*X^4 + 1152*X^3 + 1269*X^2 + 810*X + 225]
         """
         v = self._numerical_approx_xy_poly(prec)
-        if prec2 is None: prec2 = max(2, prec - 20)
-        return [simplest_rational_poly(g,prec2) for g in v]
+        if prec2 is None:
+            prec2 = max(2, prec - 20)
+        return [simplest_rational_poly(g, prec2) for g in v]
 
     @cached_method
     def _square_roots_mod_2N_of_D_mod_4N(self):
@@ -3765,7 +3769,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P._good_tau_representatives()
             ([(1, 1, 2)], [((389, 185, 22), 1)])
         """
-        if self.conductor() != 1: raise NotImplementedError
+        if self.conductor() != 1:
+            raise NotImplementedError
         E = self.__E
         SDN = self._square_roots_mod_2N_of_D_mod_4N()
         beta = SDN[0]
@@ -4613,7 +4618,8 @@ class HeegnerQuatAlg(SageObject):
             sage: sage.schemes.elliptic_curves.heegner.HeegnerQuatAlg(11, 13)
             Heegner points on X_0(11) over F_13
         """
-        level = ZZ(level); ell = ZZ(ell)
+        level = ZZ(level)
+        ell = ZZ(ell)
         if not ell.is_prime():
             raise ValueError("ell must be prime")
         if level.gcd(ell) != 1:
@@ -4713,8 +4719,9 @@ class HeegnerQuatAlg(SageObject):
             sage: [D for D in [-1,-2..-100] if H.satisfies_heegner_hypothesis(D)]
             [-8, -39, -43, -51, -79, -95]
         """
-        D = ZZ(D); c = ZZ(c)
-        if gcd(c*D, self.__level*self.__ell) != 1 or gcd(c,D) != 1:
+        D = ZZ(D)
+        c = ZZ(c)
+        if (c * D).gcd(self.__level * self.__ell) != 1 or c.gcd(D) != 1:
             return False
         if not satisfies_weak_heegner_hypothesis(self.__level, D):
             return False
@@ -5027,7 +5034,8 @@ class HeegnerQuatAlg(SageObject):
         a = None
         #for b in reversed(list(F)):
         for b in list(F):
-            if not b: continue
+            if not b:
+                continue
             c = j2 + i2inv * b*b
             if c.is_square():
                 a = -c.sqrt()
@@ -5420,7 +5428,8 @@ class HeegnerQuatAlg(SageObject):
         F = c.factor()
         I = RI[r]
         for i, (p, e) in enumerate(F):
-            if e > 1: raise ValueError("c must be square free")
+            if e > 1:
+                raise ValueError("c must be square free")
             X = I.cyclic_right_subideals(p, alpha_quaternions[i])
             J_lists.append(dict(enumerate(X)))
 
@@ -6715,7 +6724,8 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
                     FK_even_tor_pts.append(sum(FK_even_tor_pts))
                 for T in FK_even_tor_pts:
                     if (z + T).is_divisible_by(2):
-                        a = 2; break
+                        a = 2
+                        break
         return a*self._adjust_heegner_index(ht/IR(reg))
 
     # Do naive search to eliminate possibility that Heegner point
@@ -6739,12 +6749,14 @@ def heegner_index(self, D,  min_p=2, prec=5, descent_second_limit=12, verbose_mw
                 FK_even_tor_pts.append(sum(FK_even_tor_pts))
             for T in FK_even_tor_pts:
                 if (z + T).is_divisible_by(2):
-                    a = 2; break
+                    a = 2
+                    break
 
     verbose("saturating")
     S, I, reg = F.saturation(P)
     verbose("done saturating")
     return a*self._adjust_heegner_index(ht/IR(reg))
+
 
 def _adjust_heegner_index(self, a):
     r"""
@@ -6988,7 +7000,8 @@ def _heegner_index_in_EK(self, D):
 
     # Iterate through reps for A/(2*A) creating vectors in (1/2)*ZZ^r
     for v in rings.GF(2)**r:
-        if not v: continue
+        if not v:
+            continue
         P = sum([basis[i] for i in range(r) if v[i]])
         for t in T:
             if (P+t).is_divisible_by(2):

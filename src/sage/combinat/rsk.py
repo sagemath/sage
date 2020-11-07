@@ -6,6 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2012-12-07): Initial version
 - Chaman Agrawal (2019-06-24): Refactoring on the Rule class
 - Matthew Lancellotti (2018): initial version of super RSK
+- Jianping Pan, Wencin Poh, Anne Schilling (2020-08-31): initial version of RuleStar
 
 Introduction
 ============
@@ -59,6 +60,7 @@ available:
   [GR2018v5sol]_.
 - Super RSK insertion (:class:`~sage.combinat.rsk.RuleSuperRSK`), a
   combination of row and column insertions defined in [Muth2019]_.
+- Star insertion (:class:`~sage.combinat.rsk.RuleStar`), defined in [MPPS2020]_.
 
 Implementing your own insertion rule
 ------------------------------------
@@ -153,6 +155,9 @@ REFERENCES:
 #       Copyright (C) 2012,2019 Travis Scrimshaw <tcscrims at gmail.com>
 #                          2019 Chaman Agrawal <chaman.ag at gmail.com>
 #                          2019 Matthew Lancellotti <mareoraft at gmail.com>
+#                          2020 Jianping Pan <jppan at math dot ucdavis dot edu>
+#                               Wencin Poh <wpoh at ucdavis dot edu>
+#                               Anne Schilling <anne at math dot ucdavis dot edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2481,6 +2486,478 @@ class RuleSuperRSK(RuleRSK):
         raise ValueError("invalid output option")
 
 
+class RuleStar(Rule):
+    r"""
+    Rule for `\star`-insertion.
+
+    The `\star`-insertion is similar to the classical RSK algorithm
+    and is defined in [MPPS2020]_. The bottom row of the increasing
+    Hecke biword is a word in the 0-Hecke monoid that is fully
+    commutative. When inserting a letter `x` into a row `R`, there
+    are three cases:
+
+    - Case 1: If `R` is empty or `x > \max(R)`, append `x` to row `R`
+      and terminate.
+
+    - Case 2: Otherwise if `x` is not in `R`, locate the smallest `y` in `R`
+      with `y > x`. Bump `y` with `x` and insert `y` into the next row.
+
+    - Case 3: Otherwise, if `x` is in `R`, locate the smallest `y` in `R` with
+      `y \leq x` and interval `[y,x]` contained in `R`. Row `R` remains
+      unchanged and `y` is to be inserted into the next row.
+
+    The `\star`-insertion returns a pair consisting a conjugate of a
+    semistandard tableau and a semistandard tableau. It is a bijection from the
+    collection of all increasing Hecke biwords whose bottom row is a fully
+    commutative word to pairs (P, Q) of tableaux of the same shape such that
+    P is conjugate semistandard, Q is semistandard and the row reading word of
+    P is fully commutative [MPPS2020]_.
+
+    EXAMPLES:
+
+    As an example of `\star`-insertion, we reproduce Example 28 in [MPPS2020]_::
+
+        sage: from sage.combinat.rsk import RuleStar
+        sage: p,q = RuleStar().forward_rule([1,1,2,2,4,4], [1,3,2,4,2,4])
+        sage: ascii_art(p, q)
+          1  2  4  1  1  2
+          1  4     2  4
+          3        4
+        sage: line1,line2 = RuleStar().backward_rule(p, q)
+        sage: line1,line2
+        ([1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4])
+        sage: RSK_inverse(p, q, output='DecreasingHeckeFactorization', insertion='Star')
+        (4, 2)()(4, 2)(3, 1)
+
+        sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+        sage: h = DecreasingHeckeFactorization([[4, 2], [], [4, 2], [3, 1]])
+        sage: RSK_inverse(*RSK(h,insertion='Star'),insertion='Star',
+        ....:             output='DecreasingHeckeFactorization')
+        (4, 2)()(4, 2)(3, 1)
+        sage: p,q = RSK(h, insertion='Star')
+        sage: ascii_art(p, q)
+        1  2  4  1  1  2
+        1  4     2  4
+        3        4
+        sage: RSK_inverse(p, q, insertion='Star')
+        [[1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4]]
+        sage: f = RSK_inverse(p, q, output='DecreasingHeckeFactorization', insertion='Star')
+        sage: f == h
+        True
+
+    .. WARNING::
+
+        When ``output`` is set to ``'DecreasingHeckeFactorization'``, the
+        inverse of `\star`-insertion of `(P,Q)` returns a decreasing
+        factorization whose number of factors is the maximum entry of `Q`::
+
+            sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            sage: h1 = DecreasingHeckeFactorization([[],[3,1],[1]]); h1
+            ()(3, 1)(1)
+            sage: P,Q = RSK(h1, insertion='Star')
+            sage: ascii_art(P, Q)
+              1  3  1  2
+              1     2
+            sage: h2 = RSK_inverse(P, Q, insertion='Star',
+            ....: output='DecreasingHeckeFactorization'); h2
+            (3, 1)(1)
+
+    TESTS:
+
+    Check that :func:`RSK` is the inverse of :func:`RSK_inverse` for various
+    outputs/inputs::
+
+        sage: from sage.combinat.partition import Partitions_n
+        sage: shapes = [shape for n in range(7) for shape in Partitions_n(n)]
+        sage: row_reading = lambda T: [x for row in reversed(T) for x in row]
+        sage: from sage.monoids.hecke_monoid import HeckeMonoid
+        sage: H = HeckeMonoid(SymmetricGroup(4+1))
+        sage: from sage.combinat import permutation
+        sage: reduce = lambda w: permutation.from_reduced_word(H.from_reduced_word(w).reduced_word())
+        sage: fc = lambda w: not reduce(w).has_pattern([3,2,1])
+        sage: FC_tabs = [T for shape in shapes
+        ....:                  for T in SemistandardTableaux(shape, max_entry=4)
+        ....:                      if fc(row_reading(T.conjugate()))]
+        sage: Checks = []
+        sage: for T in FC_tabs:
+        ....:    shape = T.shape().conjugate()
+        ....:    P = T.conjugate()
+        ....:    Checks += [all((P,Q) == tuple(RSK(*RSK_inverse(P, Q,
+        ....:               insertion='Star', output='array'),
+        ....:               insertion='Star'))
+        ....:               for Q in SemistandardTableaux(shape, max_entry=5))]
+        sage: all(Checks)
+        True
+        sage: Checks = []
+        sage: for T in FC_tabs:
+        ....:    shape = T.shape().conjugate()
+        ....:    P = T.conjugate()
+        ....:    Checks += [all((P,Q) == tuple(RSK(RSK_inverse(P, Q,
+        ....:               insertion='Star', output='DecreasingHeckeFactorization'),
+        ....:               insertion='Star'))
+        ....:               for Q in SemistandardTableaux(shape, max_entry=5))]
+        sage: all(Checks)
+        True
+        sage: Checks = []
+        sage: for T in FC_tabs:
+        ....:    shape = T.shape().conjugate()
+        ....:    P = T.conjugate()
+        ....:    for Q in StandardTableaux(shape, max_entry=5):
+        ....:        Checks += [(P,Q) == tuple(RSK(RSK_inverse(P, Q,
+        ....:                   insertion='Star', output='word'),
+        ....:                   insertion='Star'))]
+        sage: all(Checks)
+        True
+
+    Check that :func:`RSK_inverse` is the inverse of :func:`RSK` on arrays
+    and words::
+
+        sage: S = SymmetricGroup(3+1)
+        sage: from sage.combinat import permutation
+        sage: FC = [x
+        ....:       for x in S
+        ....:           if (not permutation.from_reduced_word(
+        ....:           x.reduced_word()).has_pattern([3,2,1]) and
+        ....:           x.reduced_word())]
+        sage: Triples = [(w, factors, ex)
+        ....:            for w in FC
+        ....:                for factors in range(2, 5+1)
+        ....:                    for ex in range(4)]
+        sage: Checks = []
+        sage: for t in Triples:
+        ....:     B = crystals.FullyCommutativeStableGrothendieck(*t)
+        ....:     Checks += [all(b.to_increasing_hecke_biword() ==
+        ....:                RSK_inverse(*RSK(
+        ....:                *b.to_increasing_hecke_biword(),
+        ....:                insertion='Star'), insertion='Star')
+        ....:                for b in B)]
+        sage: all(Checks)
+        True
+
+        sage: from sage.monoids.hecke_monoid import HeckeMonoid
+        sage: Checks = []
+        sage: H = HeckeMonoid(SymmetricGroup(3+1))
+        sage: reduce = lambda w: permutation.from_reduced_word(H.from_reduced_word(w).reduced_word())
+        sage: fc = lambda w: not reduce(w).has_pattern([3,2,1])
+        sage: words = [w for n in range(10) for w in Words(3, n) if fc(w)]
+        sage: all([all(w == RSK_inverse(*RSK(w, insertion='Star'),
+        ....:          insertion='Star', output='word') for w in words)])
+        True
+    """
+    def forward_rule(self, obj1, obj2=None, check_braid=True):
+        r"""
+        Return a pair of tableaux obtained by applying forward insertion
+        to the increasing Hecke biword ``[obj1, obj2]``.
+
+        INPUT:
+
+        - ``obj1, obj2`` -- can be one of the following ways to represent a
+          biword (or, equivalently, an increasing 0-Hecke factorization) that
+          is fully commutative:
+
+          - two lists ``obj1`` and ``obj2`` of equal length, to be
+            interpreted as the top row and the bottom row of the biword.
+
+          - a word ``obj1`` in an ordered alphabet, to be interpreted as
+            the bottom row of the biword (in this case, ``obj2`` is ``None``;
+            the top row of the biword is understood to be `(1,2,\ldots,n)`
+            by default).
+
+          - a DecreasingHeckeFactorization ``obj1``, the whose increasing
+            Hecke biword will be interpreted as the bottom row; the top row is
+            understood to be the indices of the factors for each letter in
+            this biword.
+
+        - ``check_braid`` -- (default: ``True``) indicator to validate that
+          input is associated to a fully commutative word in the 0-Hecke monoid,
+          validation is performed if set to ``True``; otherwise, this validation
+          is ignored.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: p,q = RuleStar().forward_rule([1,1,2,3,3], [2,3,3,1,3]); p,q
+            ([[1, 3], [2, 3], [2]], [[1, 1], [2, 3], [3]])
+            sage: p,q = RuleStar().forward_rule([2,3,3,1,3]); p,q
+            ([[1, 3], [2, 3], [2]], [[1, 2], [3, 5], [4]])
+            sage: p,q = RSK([1,1,2,3,3], [2,3,3,1,3], insertion=RSK.rules.Star); p,q
+            ([[1, 3], [2, 3], [2]], [[1, 1], [2, 3], [3]])
+
+            sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            sage: h = DecreasingHeckeFactorization([[3, 1], [3], [3, 2]])
+            sage: p,q = RSK(h, insertion=RSK.rules.Star); p,q
+            ([[1, 3], [2, 3], [2]], [[1, 1], [2, 3], [3]])
+
+        TESTS:
+
+        Empty objects::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: p,q = RuleStar().forward_rule([]); p,q
+            ([], [])
+
+            sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            sage: h = DecreasingHeckeFactorization([[],[]])
+            sage: p,q = RuleStar().forward_rule(h); p,q
+            ([], [])
+
+        Invalid inputs::
+
+            sage: p,q = RuleStar().forward_rule([1,1,2,3,3], [2,2,3,1,3])
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 1, 2, 3, 3], [2, 2, 3, 1, 3] is not an increasing factorization
+            sage: p,q = RuleStar().forward_rule([1,1,2,2,4,4], [1,3,2,4,1,3])
+            Traceback (most recent call last):
+            ...
+            ValueError: the Star insertion is not defined for non-fully commutative words
+        """
+        if obj2 is None and obj1 is not None:
+            from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            if not isinstance(obj1, DecreasingHeckeFactorization):
+                obj2 = obj1
+                obj1 = list(range(1, len(obj1)+1))
+            else:
+                h = obj1
+                obj1 = sum([[h.factors-i]*len(h.value[i]) for i in reversed(range(h.factors))],[])
+                obj2 = [i for f in h.value[::-1] for i in reversed(f)]
+        if len(obj1) != len(obj2):
+            raise ValueError(f"{obj1} and {obj2} have different number of elements")
+        for i in range(len(obj1)-1):
+            if obj1[i] > obj1[i+1] or (obj1[i] == obj1[i+1] and obj2[i] >= obj2[i+1]):
+                raise ValueError(f"{obj1}, {obj2} is not an increasing factorization")
+        if check_braid:
+            N = max(obj2)+1 if obj2 else 1
+            from sage.monoids.hecke_monoid import HeckeMonoid
+            from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+            H = HeckeMonoid(SymmetricGroup(N))
+            h = H.from_reduced_word(obj2)
+            from sage.combinat import permutation
+            p = permutation.from_reduced_word(h.reduced_word())
+            if p.has_pattern([3,2,1]):
+                raise ValueError("the Star insertion is not defined for non-fully commutative words")
+
+        p = []  # the "insertion" tableau
+        q = []  # the "recording" tableau
+        for i, j in zip(obj1, obj2):
+            for r, qr in zip(p, q):
+                j1 = self.insertion(j, r)
+                if j1 is None:
+                    r.append(j)
+                    qr.append(i)  # Values are always inserted to the right
+                    break
+                else:
+                    j = j1
+            else:
+                # We made through all of the rows of p without breaking
+                # so we need to add a new row to p and q.
+                p.append([j])
+                q.append([i])
+        from sage.combinat.tableau import Tableau, SemistandardTableau
+        p = Tableau(p)
+        q = SemistandardTableau(q)
+        return [p, q]
+
+    def backward_rule(self, p, q, output='array'):
+        r"""
+        Return the increasing Hecke biword obtained by applying reverse
+        `\star`-insertion to a pair of tableaux ``(p, q)``.
+
+        INPUT:
+
+        - ``p``, ``q`` -- two tableaux of the same shape, where ``p`` is the
+          conjugate of a semistandard tableau, whose reading word is fully
+          commutative and ``q`` is a semistandard tableau.
+
+        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+
+          - ``'array'`` -- as a two-line array (i.e. generalized permutation
+            or biword) that is an increasing Hecke biword
+          - ``'DecreasingHeckeFactorization'`` -- as a decreasing
+            factorization in the 0-Hecke monoid
+
+          and if ``q`` is standard:
+
+          - ``'word'`` -- as a (possibly non-reduced) word in the 0-Hecke
+            monoid
+
+        .. WARNING::
+
+            When output is 'DecreasingHeckeFactorization', the number of factors
+            in the output is the largest number in ``obj1``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: p,q = RuleStar().forward_rule([1,1,2,2,4,4], [1,3,2,4,2,4])
+            sage: ascii_art(p, q)
+              1  2  4  1  1  2
+              1  4     2  4
+              3        4
+            sage: line1,line2 = RuleStar().backward_rule(p, q); line1,line2
+            ([1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4])
+            sage: RuleStar().backward_rule(p, q, output = 'DecreasingHeckeFactorization')
+            (4, 2)()(4, 2)(3, 1)
+
+        TESTS:
+
+        Empty objects::
+
+            sage: RuleStar().backward_rule(Tableau([]), Tableau([]))
+            [[], []]
+            sage: RuleStar().backward_rule(Tableau([]), Tableau([]), output='word')
+            word:
+            sage: RuleStar().backward_rule(Tableau([]), Tableau([]),output='DecreasingHeckeFactorization')
+            ()
+        """
+        from sage.combinat.tableau import SemistandardTableaux
+        if p.shape() != q.shape():
+            raise ValueError("p(=%s) and q(=%s) must have the same shape" % (p, q))
+        if q not in SemistandardTableaux():
+            raise ValueError("q(=%s) must be a semistandard tableau" % q)
+        if p.conjugate() not in SemistandardTableaux():
+            raise ValueError("the conjugate of p(=%s) must be a semistandard tableau" % p.conjugate())
+
+        row_reading = [ele for row in reversed(p) for ele in row]
+        N = max(row_reading + [0]) + 1
+        from sage.monoids.hecke_monoid import HeckeMonoid
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        H = HeckeMonoid(SymmetricGroup(N))
+        h = H.from_reduced_word(row_reading)
+        from sage.combinat import permutation
+        w = permutation.from_reduced_word(h.reduced_word())
+        if w.has_pattern([3,2,1]):
+            raise ValueError(f"the row reading word of the insertion tableau {p} is not fully-commutative")
+
+        p_copy = p.to_list()
+        line1 = []
+        line2 = []
+        d = {}
+        for i, row in enumerate(q):
+            for j, val in enumerate(row):
+                if val in d:
+                    d[val][j] = i
+                else:
+                    d[val] = {j: i}
+        # d is now a double family such that for all integers k and j,
+        # d[k][j]=i means that (i, j)-th cell of q is filled with k.
+        for value, row_dict in sorted(d.items(), key=lambda x: -x[0]):
+            for j in sorted(row_dict, reverse=True):
+                i = row_dict[j]
+                x = p_copy[i].pop()  # Always the right-most entry
+                while i > 0:
+                    i -= 1
+                    row = p_copy[i]
+                    x = self.reverse_insertion(x, row)
+                line2.append(x)
+                line1.append(value)
+        return self._backward_format_output(line1[::-1],line2[::-1],output)
+
+    def insertion(self, b, r):
+        r"""
+        Insert the letter ``b`` from the second row of the biword into the row
+        ``r`` using `\star`-insertion defined in [MPPS2020]_.
+
+        The row `r` is modified in place if bumping occurs and `b` is not in
+        row `r`. The bumped-out entry, if if exists, is returned.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: RuleStar().insertion(3, [1,2,4,5])
+            4
+            sage: RuleStar().insertion(3, [1,2,3,5])
+            1
+            sage: RuleStar().insertion(6, [1,2,3,5]) is None
+            True
+        """
+        if r[-1] < b:
+            return None # append b to the end of row r
+        if b in r:
+            k = b
+            while k in r:
+                k -= 1
+            k += 1
+        else:
+            y_pos = bisect_right(r,b)
+            k = r[y_pos]
+            r[y_pos] = b
+        return k
+
+    def reverse_insertion(self, x, r):
+        """
+        Reverse bump the row ``r`` of the current insertion tableau ``p``
+        with number ``x``, provided that ``r`` is the ``i``-th row of ``p``.
+
+        The row ``r`` is modified in place. The bumped-out entry is returned.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: RuleStar().reverse_insertion(4, [1,2,3,5])
+            3
+            sage: RuleStar().reverse_insertion(1, [1,2,3,5])
+            3
+            sage: RuleStar().reverse_insertion(5, [1,2,3,5])
+            5
+        """
+        if x in r:
+            y = x
+            while y in r:
+                y += 1
+            y -= 1
+        else:
+            y_pos = bisect_left(r, x) - 1
+            y = r[y_pos]
+            r[y_pos] = x
+        x = y
+        return x
+
+    def _backward_format_output(self, obj1, obj2, output):
+        r"""
+        Return the final output of the ``RSK_inverse`` correspondence from
+        the output of the corresponding ``backward_rule``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.rsk import RuleStar
+            sage: RuleStar()._backward_format_output([1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4], 'array')
+            [[1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4]]
+            sage: RuleStar()._backward_format_output([1, 1, 2, 2, 4, 4], [1, 3, 2, 4, 2, 4], 'DecreasingHeckeFactorization')
+            (4, 2)()(4, 2)(3, 1)
+            sage: RuleStar()._backward_format_output([1, 2, 3, 4, 5, 6], [4, 2, 4, 2, 3, 1], 'word')
+            word: 424231
+        """
+        if len(obj1) != len(obj2):
+            raise ValueError(f"{obj1} and {obj2} are of different lengths")
+        if output == 'array':
+            return [obj1, obj2]
+        elif output == 'word':
+            if obj1 == list(range(1, len(obj1)+1)):
+                from sage.combinat.words.word import Word
+                return Word(obj2)
+            else:
+                raise TypeError("upper row must be standard")
+        elif output == 'DecreasingHeckeFactorization':
+            from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            obj1.reverse()
+            obj2.reverse()
+            df = []
+            for j in range(len(obj1)):
+                if j == 0:
+                    df.append([])
+                if j > 0 and obj1[j] < obj1[j-1]:
+                    for a in range(obj1[j-1]-obj1[j]):
+                        df.append([])
+                df[-1].append(obj2[j])
+            if obj1:
+                for a in range(obj1[-1]-1):
+                    df.append([])
+            # If biword is empty, return a decreasing factorization with 1 factor
+            else:
+                df.append([])
+            return DecreasingHeckeFactorization(df)
+
 class InsertionRules(object):
     r"""
     Catalog of rules for RSK-like insertion algorithms.
@@ -2491,6 +2968,7 @@ class InsertionRules(object):
     dualRSK = RuleDualRSK
     coRSK = RuleCoRSK
     superRSK = RuleSuperRSK
+    Star = RuleStar
 
 #####################################################################
 
@@ -2589,6 +3067,9 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         for strict cobiwords) (:class:`~sage.combinat.rsk.RuleCoRSK`)
       - ``RSK.rules.superRSK`` (or ``'super'``) -- Super RSK insertion (only for
         restricted super biwords) (:class:`~sage.combinat.rsk.RuleSuperRSK`)
+      - ``RSK.rules.Star`` (or ``'Star'``) -- `\star`-insertion (only for
+        fully commutative words in the 0-Hecke monoid)
+        (:class:`~sage.combinat.rsk.RuleStar`)
 
     - ``check_standard`` -- (default: ``False``) check if either of the
       resulting tableaux is a standard tableau, and if so, typecast it
@@ -2674,6 +3155,8 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
             insertion = RSK.rules.coRSK
         elif insertion == 'superRSK':
             insertion = RSK.rules.superRSK
+        elif insertion == 'Star':
+            insertion = RSK.rules.Star
         else:
             raise ValueError("invalid input")
 
@@ -2743,6 +3226,9 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         for strict cobiwords) (:class:`~sage.combinat.rsk.RuleCoRSK`)
       - ``RSK.rules.superRSK`` (or ``'super'``) -- Super RSK insertion (only for
         restricted super biwords) (:class:`~sage.combinat.rsk.RuleSuperRSK`)
+      - ``RSK.rules.Star`` (or ``'Star'``) -- `\star`-insertion (only for
+        fully commutative words in the 0-Hecke monoid)
+        (:class:`~sage.combinat.rsk.RuleStar`)
 
     For precise information about constraints on the input and
     output, see the particular :class:`~sage.combinat.rsk.Rule` class.
@@ -2871,6 +3357,8 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
             insertion = RSK.rules.coRSK
         elif insertion == 'superRSK':
             insertion = RSK.rules.superRSK
+        elif insertion == 'Star':
+            insertion = RSK.rules.Star
         else:
             raise ValueError("invalid input")
 

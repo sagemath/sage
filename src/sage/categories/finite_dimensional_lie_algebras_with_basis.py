@@ -833,8 +833,20 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  the 0-dimensional abelian Lie algebra over Rational Field
                  with basis matrix:
                 []
+            
+            If ``self`` is semisimple, then the derived subalgebra is ``self``::
+
+                sage: sl3 = LieAlgebra(QQ, cartan_type=['A',2])
+                sage: sl3.derived_subalgebra()
+                Lie algebra of ['A', 2] in the Chevalley basis
+                sage: sl3 is sl3.derived_subalgebra()
+                True
+
             """
-            return self.product_space(self)
+            if self.is_semisimple():
+                return self
+            else:
+                return self.product_space(self)
 
         @cached_method
         def derived_series(self):

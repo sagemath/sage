@@ -4,7 +4,7 @@ Splitting Algebras
 
 *Splitting algebras* have been considered by Dan Laksov, Anders Thorup,
 Torsten Ekedahl and others (see references below) in order to study
-intersection theory of Grassmann and other flag schemes. Similarily as
+intersection theory of Grassmann and other flag schemes. Similarly as
 *splitting fields* they can be considered as extensions of rings containing
 all the roots of a given monic polynomial over that ring under the
 assumption that its Galois group is the symmetric group of order equal
@@ -151,7 +151,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
         sage: Lc.<w> = LaurentPolynomialRing(ZZ)
         sage: PabLc.<u,v> = Lc[]; t = polygen(PabLc)
         sage: S.<x, y> = SplittingAlgebra(t^3 - u*t^2 + v*t - w)
-        doctest:...: UserWarning: Asuming x^3 - u*x^2 + v*x - w to have maximal
+        doctest:...: UserWarning: Assuming x^3 - u*x^2 + v*x - w to have maximal
                                   Galois group!
 
         sage: roots = S.splitting_roots(); roots
@@ -261,7 +261,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             # assuming this has been checked mathematically before
             self._set_modulus_irreducible_ = True
             if warning:
-                warn('Asuming %s to have maximal Galois group!' % (monic_polynomial))
+                warn('Assuming %s to have maximal Galois group!' % (monic_polynomial))
                 warning = False # one warning must be enough
 
         verbose("P %s defined:" % (P))
@@ -569,7 +569,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
 
     def splitting_roots(self):
         r"""
-        Return the roots of the splitted equation.
+        Return the roots of the split equation.
 
         EXAMPLES::
 
@@ -750,10 +750,10 @@ def solve_with_extension(monic_polynomial, root_names=None, var='x', flatten=Fal
         roots = create_roots(monic_polynomial, warning=warning)
 
     else:
-        # ------------------------------------------------------------------------------
-        # root calculation was possible but maybe some more roots in an apropriate
-        # extension ring can be constructed.
-        # ------------------------------------------------------------------------------
+        # ------------------------------------------------------------------
+        # root calculation was possible but maybe some more roots in
+        # an appropriate extension ring can be constructed.
+        # ------------------------------------------------------------------
         num_roots = sum(m for r, m in root_list)
         if num_roots < deg_pol:
             h = monic_polynomial.variables()[0]

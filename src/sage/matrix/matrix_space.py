@@ -325,7 +325,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
     # By now, we are dealing with sparse matrices
     if implementation is not None:
-        raise ValueError("can not choose an implementation for sparse matrices")
+        raise ValueError("cannot choose an implementation for sparse matrices")
 
     if sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and R.order() < matrix_modn_sparse.MAX_MODULUS:
         return matrix_modn_sparse.Matrix_modn_sparse

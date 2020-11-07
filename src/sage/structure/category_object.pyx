@@ -509,8 +509,8 @@ cdef class CategoryObject(SageObject):
             [0 0]
 
         """
-        #old = self._names, self._latex_names
-        # We can not assume that self *has* _latex_variable_names.
+        # old = self._names, self._latex_names
+        # We cannot assume that self *has* _latex_variable_names.
         # But there is a method that returns them and sets
         # the attribute at the same time, if needed.
         # Simon King: It is not necessarily the case that variable

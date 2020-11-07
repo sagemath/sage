@@ -1382,7 +1382,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         degree = self.effective_degree(f)
         if degree == 0:
-            raise ValueError("equivalence units can not have a minimal representative")
+            raise ValueError("equivalence units cannot have a minimal representative")
 
         e = list(self.coefficients(f))[degree]
         h = self.equivalence_reciprocal(e).map_coefficients(lambda c:_lift_to_maximal_precision(c))
@@ -1611,7 +1611,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
 class FinalInductiveValuation(InductiveValuation):
     r"""
-    Abstract base class for an inductive valuation which can not be augmented further.
+    Abstract base class for an inductive valuation which cannot be augmented further.
 
     TESTS::
 
@@ -1621,7 +1621,6 @@ class FinalInductiveValuation(InductiveValuation):
         sage: from sage.rings.valuation.inductive_valuation import FinalInductiveValuation
         sage: isinstance(w, FinalInductiveValuation)
         True
-
     """
 
 

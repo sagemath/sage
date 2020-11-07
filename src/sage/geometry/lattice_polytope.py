@@ -3521,7 +3521,7 @@ class LatticePolytopeClass(SageObject, Hashable):
         dim = self.dim()
         amb_dim = self.lattice_dim()
         if dim > 3:
-            raise ValueError("%d-dimensional polytopes can not be plotted in 3D!" % self.dim())
+            raise ValueError("%d-dimensional polytopes cannot be plotted in 3D!" % self.dim())
         elif amb_dim > 3:
             return self._sublattice_polytope.plot3d(
                 show_facets, facet_opacity, facet_color,

@@ -70,8 +70,8 @@ class SandpileExamples(object):
                 Complete, Cycle, Diamond, Fan, Grid, House, Wheel
         """
         print('Try sandpiles.FOO() where FOO is in the list:\n')
-        print("    " + ", ".join([str(i) for i in dir(sandpiles)
-                                  if i[0] != '_']))
+        print("    " + ", ".join(str(i) for i in dir(sandpiles)
+                                 if i[0] != '_'))
 
     def Complete(self, n):
         """

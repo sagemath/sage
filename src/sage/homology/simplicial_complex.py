@@ -2181,7 +2181,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def _homology_(self, dim=None, base_ring=ZZ, subcomplex=None,
                    cohomology=False, enlarge=True, algorithm='pari',
-                   verbose=False, reduced=True):
+                   verbose=False, reduced=True, generators=False):
         """
         The (reduced) homology of this simplicial complex.
 
@@ -2235,7 +2235,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         :type reduced: boolean; optional, default ``True``
 
-        Algorithm: if ``subcomplex`` is ``None``, replace it with a
+        :param generators: If ``True``, return the homology groups and
+        also generators for them.
+
+        :type reduced: boolean; optional, default ``False``
+
+        Algorithm: if ``generators`` is ``True``, directly compute the
+        chain complex, compute its homology along with its generators,
+        and then convert the chain complex generators to chains in the
+        simplicial complex.
+
+        Otherwise: if ``subcomplex`` is ``None``, replace it with a
         facet -- a contractible subcomplex of the original complex.
         Then as long as ``enlarge`` is ``True``, no matter what
         ``subcomplex`` is, replace it with a subcomplex `L` which is
@@ -2262,6 +2272,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
 
+        We need an immutable complex to compute homology generators::
+
+            sage: sphere.set_immutable()
+            sage: sphere._homology_(generators=True, algorithm='no_chomp')
+            {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
+
+        Note that the answer may be formatted differently if the
+        optional package CHomP is installed.
+
         Another way to get a two-sphere: take a two-point space and take its
         three-fold join with itself::
 
@@ -2280,6 +2299,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: U = SimplicialComplex([[0,1], [1,2], [0,2]])
             sage: T._homology_(subcomplex=U)
             {0: 0, 1: 0, 2: Z}
+
+        Generators::
+
+            sage: simplicial_complexes.Torus().homology(generators=True, algorithm='no_chomp')
+            {0: [],
+             1: [(Z, (1, 2) - (1, 6) + (2, 6)), (Z, (3, 4) - (3, 6) + (4, 6))],
+             2: [(Z,
+               (0, 1, 2) - (0, 1, 5) + (0, 2, 6) - (0, 3, 4) + (0, 3, 5) - (0, 4, 6) - (1, 2, 4) + (1, 3, 4) - (1, 3, 6) + (1, 5, 6) - (2, 3, 5) + (2, 3, 6) + (2, 4, 5) - (4, 5, 6))]}
         """
         from sage.homology.homology_group import HomologyGroup
 
@@ -2293,6 +2320,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             dims = range(low, high)
         else:
             dims = None
+
+        if generators:
+            enlarge = False
 
         if verbose:
             print("starting calculation of the homology of this")
@@ -2329,7 +2359,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
             print(" Done computing the chain complex. ")
             print("Now computing homology...")
         answer = C.homology(base_ring=base_ring, verbose=verbose,
-                            algorithm=algorithm)
+                            algorithm=algorithm, generators=generators)
+
+        if generators:
+            # Convert chain complex information to simplicial complex
+            # information.
+            for i in answer:
+                H_with_gens = answer[i]
+                if H_with_gens:
+                    chains = self.n_chains(i, base_ring=base_ring)
+                    new_H = []
+                    for (H, gen) in H_with_gens:
+                        v = gen.vector(i)
+                        new_gen = chains.zero()
+                        for (coeff, chain) in zip(v, chains.gens()):
+                            new_gen += coeff * chain
+                        new_H.append((H, new_gen))
+                    answer[i] = new_H
 
         if dim is None:
             dim = range(self.dimension() + 1)

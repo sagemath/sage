@@ -88,7 +88,6 @@ In particular,
            return SomeValue(1)
 
 
-
 .. _chapter-directory-structure:
 
 Files and Directory Structure

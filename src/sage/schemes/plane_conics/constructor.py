@@ -8,8 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
@@ -22,8 +21,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.constructor import Matrix
 from sage.modules.free_module_element import vector
@@ -50,6 +49,7 @@ from .con_finite_field import ProjectiveConic_finite_field
 from .con_number_field import ProjectiveConic_number_field
 from .con_rational_field import ProjectiveConic_rational_field
 from .con_rational_function_field import ProjectiveConic_rational_function_field
+
 
 def Conic(base_field, F=None, names=None, unique=True):
     r"""
@@ -138,7 +138,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: C.point([3,4])
         (3 : 4 : 1)
 
-        sage: a=AffineSpace(GF(13),2)
+        sage: a = AffineSpace(GF(13),2)
         sage: Conic([a([x,x^2]) for x in range(5)])
         Projective Conic Curve over Finite Field of size 13 defined by x^2 - y*z
     """
@@ -147,54 +147,55 @@ def Conic(base_field, F=None, names=None, unique=True):
             names = F
         F = base_field
         base_field = None
-    if isinstance(F, (list,tuple)):
+    if isinstance(F, (list, tuple)):
         if len(F) == 1:
             return Conic(base_field, F[0], names)
         if names is None:
             names = 'x,y,z'
         if len(F) == 5:
-            L=[]
+            L = []
             for f in F:
                 if isinstance(f, SchemeMorphism_point_affine):
-                    C = Sequence(f, universe = base_field)
+                    C = Sequence(f, universe=base_field)
                     if len(C) != 2:
-                        raise TypeError("points in F (=%s) must be planar"%F)
+                        raise TypeError("points in F (=%s) must be planar" % F)
                     C.append(1)
                 elif isinstance(f, SchemeMorphism_point_projective_field):
-                    C = Sequence(f, universe = base_field)
+                    C = Sequence(f, universe=base_field)
                 elif isinstance(f, (list, tuple)):
-                    C = Sequence(f, universe = base_field)
+                    C = Sequence(f, universe=base_field)
                     if len(C) == 2:
                         C.append(1)
                 else:
-                    raise TypeError("F (=%s) must be a sequence of planar " \
-                                      "points" % F)
+                    raise TypeError("F (=%s) must be a sequence of planar "
+                                    "points" % F)
                 if len(C) != 3:
                     raise TypeError("points in F (=%s) must be planar" % F)
                 P = C.universe()
                 if not isinstance(P, IntegralDomain):
-                    raise TypeError("coordinates of points in F (=%s) must " \
-                                     "be in an integral domain" % F)
-                L.append(Sequence([C[0]**2, C[0]*C[1], C[0]*C[2], C[1]**2,
-                                   C[1]*C[2], C[2]**2], P.fraction_field()))
-            M=Matrix(L)
+                    raise TypeError("coordinates of points in F (=%s) must "
+                                    "be in an integral domain" % F)
+                L.append(Sequence([C[0]**2, C[0] * C[1],
+                                   C[0] * C[2], C[1]**2,
+                                   C[1] * C[2], C[2]**2], P.fraction_field()))
+            M = Matrix(L)
             if unique and M.rank() != 5:
-                raise ValueError("points in F (=%s) do not define a unique " \
-                                   "conic" % F)
+                raise ValueError("points in F (=%s) do not define a unique "
+                                 "conic" % F)
             con = Conic(base_field, Sequence(M.right_kernel().gen()), names)
             con.point(F[0])
             return con
-        F = Sequence(F, universe = base_field)
+        F = Sequence(F, universe=base_field)
         base_field = F.universe().fraction_field()
         temp_ring = PolynomialRing(base_field, 3, names)
-        (x,y,z) = temp_ring.gens()
+        x, y, z = temp_ring.gens()
         if len(F) == 3:
-            return Conic(F[0]*x**2 + F[1]*y**2 + F[2]*z**2)
+            return Conic(F[0] * x**2 + F[1] * y**2 + F[2] * z**2)
         if len(F) == 6:
-            return Conic(F[0]*x**2 + F[1]*x*y + F[2]*x*z + F[3]*y**2 + \
-                         F[4]*y*z + F[5]*z**2)
-        raise TypeError("F (=%s) must be a sequence of 3 or 6" \
-                         "coefficients" % F)
+            return Conic(F[0] * x**2 + F[1] * x * y + F[2] * x * z +
+                         F[3] * y**2 + F[4] * y * z + F[5] * z**2)
+        raise TypeError("F (=%s) must be a sequence of 3 or 6"
+                        "coefficients" % F)
     if is_QuadraticForm(F):
         F = F.matrix()
     if is_Matrix(F) and F.is_square() and F.ncols() == 3:
@@ -204,8 +205,8 @@ def Conic(base_field, F=None, names=None, unique=True):
         F = vector(temp_ring.gens()) * F * vector(temp_ring.gens())
 
     if not is_MPolynomial(F):
-        raise TypeError("F (=%s) must be a three-variable polynomial or " \
-                         "a sequence of points or coefficients" % F)
+        raise TypeError("F (=%s) must be a three-variable polynomial or "
+                        "a sequence of points or coefficients" % F)
 
     if F.total_degree() != 2:
         raise TypeError("F (=%s) must have degree 2" % F)
@@ -220,15 +221,15 @@ def Conic(base_field, F=None, names=None, unique=True):
     pol_ring = PolynomialRing(base_field, 3, names)
 
     if F.parent().ngens() == 2:
-        (x,y,z) = pol_ring.gens()
-        F = pol_ring(F(x/z,y/z)*z**2)
+        x, y, z = pol_ring.gens()
+        F = pol_ring(F(x / z, y / z) * z**2)
 
     if F == 0:
         raise ValueError("F must be nonzero over base field %s" % base_field)
 
     if F.total_degree() != 2:
-        raise TypeError("F (=%s) must have degree 2 over base field %s" % \
-                          (F, base_field))
+        raise TypeError("F (=%s) must have degree 2 over base field %s" %
+                        (F, base_field))
 
     if F.parent().ngens() == 3:
         P2 = ProjectiveSpace(2, base_field, names)

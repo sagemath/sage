@@ -405,7 +405,7 @@ def line_graph(g, labels=True):
                 else:
                     elist.append(conflicts[e])
 
-            # Alls pairs of elements in elist are edges of the
+            # All pairs of elements in elist are edges of the
             # line graph
             while elist:
                 x = elist.pop()

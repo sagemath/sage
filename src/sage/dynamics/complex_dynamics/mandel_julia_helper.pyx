@@ -24,7 +24,7 @@ from sage.plot.colors import Color
 from sage.repl.image import Image
 from copy import copy
 from cysignals.signals cimport sig_check
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.functions.log import exp, log
 from sage.symbolic.constants import pi
 from sage.symbolic.relation import solve

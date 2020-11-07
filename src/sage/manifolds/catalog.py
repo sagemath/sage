@@ -7,6 +7,9 @@ The current entries to the catalog are obtained by typing
 ``manifolds.<tab>``, where ``<tab>`` indicates pressing the tab key.
 They are:
 
+- :class:`~sage.manifolds.differentiable.examples.euclidean.EuclideanSpace`: Euclidean space
+- :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`: real line
+- :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`: open interval on the real line
 - :func:`Sphere`: sphere embedded in Euclidean space
 - :func:`Torus`: torus embedded in Euclidean space
 - :func:`Minkowski`: 4-dimensional Minkowski space
@@ -26,6 +29,12 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
+
+# Lazy import from examples folders:
+from sage.misc.lazy_import import lazy_import as _lazy_import
+_lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
+_lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
+_lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
 
 def Minkowski(positive_spacelike=True, names=None):
     """
@@ -124,7 +133,7 @@ def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
     from sage.symbolic.constants import pi
     from sage.misc.misc_c import prod
     from sage.manifolds.manifold import Manifold
-    from sage.manifolds.differentiable.euclidean import EuclideanSpace
+    from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
 
     if dim is None:
         if names is None:
@@ -365,7 +374,7 @@ def Torus(R=2, r=1, names=None):
     """
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
-    from sage.manifolds.differentiable.euclidean import EuclideanSpace
+    from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
     E = EuclideanSpace(3, symbols='X Y Z')
     M = Manifold(2, 'T', ambient=E, structure="Riemannian")
     if names is None:

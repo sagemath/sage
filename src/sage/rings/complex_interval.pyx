@@ -8,7 +8,7 @@ the intervals down.
 
 AUTHORS:
 
-These authors wrote ``complex_number.pyx``:
+These authors wrote ``complex_mpfr.pyx`` (renamed from ``complex_number.pyx``)::
 
 - William Stein (2006-01-26): complete rewrite
 - Joel B. Mohler (2006-12-16): naive rewrite into pyrex
@@ -66,8 +66,8 @@ from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 from sage.structure.element cimport FieldElement, RingElement, Element, ModuleElement
 from sage.structure.parent cimport Parent
-from .complex_number cimport ComplexNumber
-from .complex_field import ComplexField
+from .complex_mpfr cimport ComplexNumber
+from .complex_mpfr import ComplexField
 from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
 from .real_mpfr cimport RealNumber, RealField

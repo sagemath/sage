@@ -1035,7 +1035,7 @@ class Graph(GenericGraph):
             data_structure = 'static_sparse'
 
         # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then reencode the resulting graph
+        # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
@@ -1182,9 +1182,8 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.add_vertices(data.vertex_iterator())
             self.set_vertices(data.get_vertices())
-            self.add_edges(data.edge_iterator(), loops=loops)
+            data._backend.subgraph_given_vertices(self._backend, data)
         elif format == 'NX':
             if convert_empty_dict_labels_to_None is not False:
                 r = lambda x: None if x=={} else x
@@ -1610,7 +1609,7 @@ class Graph(GenericGraph):
             sage: g.is_forest(certificate=True)
             (True, None)
             sage: (2*g + graphs.PetersenGraph() + g).is_forest(certificate=True)
-            (False, [62, 63, 68, 66, 61])
+            (False, [68, 66, 69, 67, 65])
         """
         connected_components = self.connected_components()
         number_of_connected_components = len(connected_components)
@@ -6295,7 +6294,7 @@ class Graph(GenericGraph):
             Sage's implementation of the enumeration of *maximal* independent
             sets is not much faster than NetworkX' (expect a 2x speedup), which
             is surprising as it is written in Cython. This being said, the
-            algorithm from NetworkX appears to be sligthly different from this
+            algorithm from NetworkX appears to be slightly different from this
             one, and that would be a good thing to explore if one wants to
             improve the implementation.
 
@@ -7139,7 +7138,7 @@ class Graph(GenericGraph):
         # Traverse() : Function that use G-T (non-tree edges) to find cycles
         #              and chains by traversing in DFS tree.
         def traverse(start, pointer):
-            # Make the firt end of non-tree edge visited
+            # Make the first end of non-tree edge visited
             traversed.add(start)
             chain = [start]
 

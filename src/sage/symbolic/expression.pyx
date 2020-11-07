@@ -307,7 +307,7 @@ from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 from inspect import isfunction
 import operator
-from . import ring
+from .ring import SR
 import sage.rings.integer
 import sage.rings.rational
 
@@ -737,12 +737,12 @@ cdef class Expression(CommutativeRingElement):
         if state[0] != 0 or len(state) != 3:
             raise ValueError("unknown state information")
         # set parent
-        self._parent = ring.SR
+        self._parent = SR
         # get variables
         cdef GExList sym_lst
         for name in state[1]:
             sym_lst.append_sym(\
-                    ex_to_symbol((<Expression>ring.SR.symbol(name))._gobj))
+                    ex_to_symbol((<Expression>SR.symbol(name))._gobj))
 
         # initialize archive
         cdef GArchive ar
@@ -1831,7 +1831,7 @@ cdef class Expression(CommutativeRingElement):
         most 7. :trac:`7508` ::
 
             sage: num_vars = 10; max_order=7
-            sage: X = var(' '.join(['x'+str(i) for i in range(num_vars)]))
+            sage: X = var(' '.join('x' + str(i) for i in range(num_vars)))
             sage: f = function('f')(*X)
             sage: hashes=set()
             sage: for length in range(1,max_order+1):  # long time (4s on sage.math, 2012)
@@ -2817,10 +2817,9 @@ cdef class Expression(CommutativeRingElement):
         """
         return is_a_infinity(self._gobj) and self._gobj.info(info_negative)
 
-
     def is_square(self):
         """
-        Returns ``True`` if ``self`` is a perfect square.
+        Return ``True`` if ``self`` is a perfect square.
 
         EXAMPLES::
 
@@ -2844,7 +2843,6 @@ cdef class Expression(CommutativeRingElement):
             raise NotImplementedError("is_square() not implemented for non numeric elements of Symbolic Ring")
 
         return obj.is_square()
-
 
     def left_hand_side(self):
         """
@@ -6611,11 +6609,11 @@ cdef class Expression(CommutativeRingElement):
 
     def low_degree(self, s):
         """
-        Return the exponent of the lowest nonpositive power of s in self.
+        Return the exponent of the lowest power of ``s`` in ``self``.
 
         OUTPUT:
 
-        An integer ``<= 0``.
+        An integer
 
         EXAMPLES::
 
@@ -6631,6 +6629,8 @@ cdef class Expression(CommutativeRingElement):
             0
             sage: (x^3+y).low_degree(x)
             0
+            sage: (x+x**2).low_degree(x)
+            1
         """
         cdef Expression ss = self.coerce_in(s)
         sig_on()
@@ -6642,11 +6642,11 @@ cdef class Expression(CommutativeRingElement):
 
     def degree(self, s):
         """
-        Return the exponent of the highest nonnegative power of s in self.
+        Return the exponent of the highest power of ``s`` in ``self``.
 
         OUTPUT:
 
-        An integer ``>= 0``.
+        An integer
 
         EXAMPLES::
 
@@ -6662,6 +6662,8 @@ cdef class Expression(CommutativeRingElement):
             1
             sage: (x^-3+y).degree(x)
             0
+            sage: (1/x+1/x**2).degree(x)
+            -1
         """
         cdef Expression ss = self.coerce_in(s)
         sig_on()
@@ -7149,8 +7151,8 @@ cdef class Expression(CommutativeRingElement):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.fraction_field import FractionField
-        nu = ring.SR(self.numerator()).polynomial(base_ring)
-        de = ring.SR(self.denominator()).polynomial(base_ring)
+        nu = SR(self.numerator()).polynomial(base_ring)
+        de = SR(self.denominator()).polynomial(base_ring)
         vars = sorted(set(nu.variables() + de.variables()), key=repr)
         R = FractionField(PolynomialRing(base_ring, vars))
         return R(self.numerator())/R(self.denominator())
@@ -7519,7 +7521,6 @@ cdef class Expression(CommutativeRingElement):
         finally:
             sig_off()
         return new_Expression_from_GEx(self._parent, x)
-
 
     def collect(Expression self, s):
         """
@@ -10441,7 +10442,7 @@ cdef class Expression(CommutativeRingElement):
             -2*sqrt(x - 1)/sqrt(x^2 - 1)
 
         With ``map=True`` each term in a sum is simplified separately
-        and thus the resuls are shorter for functions which are
+        and thus the results are shorter for functions which are
         combination of rational and nonrational functions. In the
         following example, we use this option if we want not to
         combine logarithm and the rational function into one
@@ -10483,7 +10484,7 @@ cdef class Expression(CommutativeRingElement):
         else:
             raise NotImplementedError("unknown algorithm, see the help for available algorithms")
         P = self_m.parent()
-        self_str=self_m.str()
+        self_str = self_m.str()
         if map:
             cmd = "if atom(%s) then %s(%s) else map(%s,%s)"%(self_str,maxima_method,self_str,maxima_method,self_str)
         else:
@@ -11269,7 +11270,7 @@ cdef class Expression(CommutativeRingElement):
         if dontfactor or not self.is_rational_expression():
             m = self._maxima_()
             name = m.name()
-            varstr = ','.join(['_SAGE_VAR_' + str(v) for v in dontfactor])
+            varstr = ','.join('_SAGE_VAR_' + str(v) for v in dontfactor)
             cmd = 'block([dontfactor:[%s]],factor(%s))' % (varstr, name)
             return symbolic_expression_from_maxima_string(cmd)
         sig_on()
@@ -12502,7 +12503,7 @@ cdef class Expression(CommutativeRingElement):
             CallableSymbolicExpressionRing, is_CallableSymbolicExpressionRing
         R = self._parent
         if is_CallableSymbolicExpressionRing(R):
-            f = ring.SR(self)
+            f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)
             # Definite integral with respect to a positional variable.
             if a is not None and v in R.arguments():
@@ -12512,7 +12513,7 @@ cdef class Expression(CommutativeRingElement):
                     arguments = tuple(arguments)
                     R = CallableSymbolicExpressionRing(arguments, check=False)
                 else:   # all arguments are gone
-                    R = ring.SR
+                    R = SR
             return R(integral(f, v, a, b, **kwds))
         return integral(self, *args, **kwds)
 

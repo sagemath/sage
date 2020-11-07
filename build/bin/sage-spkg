@@ -489,6 +489,7 @@ export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_SRC="$SAGE_SRC"
 export SAGE_PKG_DIR="$script_dir"
 export SAGE_SPKG_SCRIPTS="$SAGE_SPKG_SCRIPTS"
+export SAGE_SPKG_WHEELS="$SAGE_SPKG_WHEELS"
 
 export PKG_NAME="$PKG_NAME"
 export PKG_BASE="$PKG_BASE"
@@ -525,7 +526,7 @@ __EOF__
 }
 
 
-WRAPPED_SCRIPTS="build install check preinst postinst legacy-uninstall prerm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst prerm postrm"
 INSTALLED_SCRIPTS="prerm postrm"
 
 

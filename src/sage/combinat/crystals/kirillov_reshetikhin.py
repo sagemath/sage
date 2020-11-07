@@ -3768,15 +3768,13 @@ class PMDiagram(CombinatorialObject):
             sage: print(pm._repr_diagram())
         """
         t = []
-        ish = self.inner_shape() + [0]*self.n
-        msh = self.intermediate_shape() + [0]*self.n
-        osh = self.outer_shape() + [0]*self.n
+        ish = self.inner_shape() + [0] * self.n
+        msh = self.intermediate_shape() + [0] * self.n
+        osh = self.outer_shape() + [0] * self.n
         for i in range(self.n):
             t.append(['.']*ish[i]+['+']*(msh[i]-ish[i])+['-']*(osh[i]-msh[i]))
-        t = [i for i in t if i!= []]
-        if not t:
-            return ''
-        return Tableau(t)._repr_diagram()
+        t = [i for i in t if i]
+        return Tableau(t)._repr_diagram() if t else ''
 
     def pp(self):
         """

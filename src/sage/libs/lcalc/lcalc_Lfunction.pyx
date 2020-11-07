@@ -32,8 +32,8 @@ from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
 
-from sage.rings.complex_number cimport ComplexNumber
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr import ComplexField
 CCC = ComplexField()
 
 from sage.rings.real_mpfr cimport RealNumber

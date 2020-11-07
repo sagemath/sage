@@ -3439,7 +3439,7 @@ class DifferentiableManifold(TopologicalManifold):
             for more examples, including plots.
 
         """
-        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.examples.real_line import RealLine
         if not isinstance(param, (tuple, list)):
             param = (param, minus_infinity, infinity)
         elif len(param) != 3:
@@ -3560,7 +3560,7 @@ class DifferentiableManifold(TopologicalManifold):
 
         """
 
-        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.examples.real_line import RealLine
         from sage.manifolds.differentiable.manifold_homset import IntegratedCurveSet
 
         if len(curve_param) != 3:
@@ -3695,7 +3695,7 @@ class DifferentiableManifold(TopologicalManifold):
 
         """
 
-        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.examples.real_line import RealLine
         from sage.manifolds.differentiable.manifold_homset import IntegratedAutoparallelCurveSet
 
         if len(curve_param) != 3:
@@ -3816,7 +3816,7 @@ class DifferentiableManifold(TopologicalManifold):
             [-1.0907409234671228, 0.6205670379855032]
 
         """
-        from sage.manifolds.differentiable.real_line import RealLine
+        from sage.manifolds.differentiable.examples.real_line import RealLine
         from sage.manifolds.differentiable.manifold_homset import IntegratedGeodesicSet
 
         if len(curve_param) != 3:

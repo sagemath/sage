@@ -1205,8 +1205,8 @@ class CoxeterGroups(Category_singleton):
 
         def first_descent(self, side='right', index_set=None, positive=False):
             """
-            Returns the first left (resp. right) descent of self, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            Return the first left (resp. right) descent of self, as
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`.descents` for a description of the options.
 

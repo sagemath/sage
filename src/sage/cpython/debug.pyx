@@ -22,7 +22,6 @@ cdef extern from "Python.h":
 cdef extern from "sage/cpython/debugimpl.c":
     void _type_debug(PyTypeObject*)
 
-
 from .getattr cimport AttributeErrorMessage
 
 

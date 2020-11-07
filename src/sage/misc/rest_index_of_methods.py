@@ -191,7 +191,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
         # Descriptions of the method/function
         if doc:
             desc = doc.split('\n\n')[0]                             # first paragraph
-            desc = " ".join([x.strip() for x in desc.splitlines()]) # concatenate lines
+            desc = " ".join(x.strip() for x in desc.splitlines())   # concatenate lines
             desc = desc.strip()                                     # remove leading spaces
         else:
             desc = "NO DOCSTRING"

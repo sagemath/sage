@@ -1407,7 +1407,7 @@ class InfiniteWords(AbstractLanguage):
         if data.parent() is self or data.parent() == self:
             return data
         elif data.length() != Infinity:
-            raise ValueError("can not build an infinite word from a finite one")
+            raise ValueError("cannot build an infinite word from a finite one")
 
         ###########################
         # Otherwise, if self is not the parent of `data`, then we try to

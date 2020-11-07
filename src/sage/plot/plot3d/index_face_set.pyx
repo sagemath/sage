@@ -100,8 +100,7 @@ cdef inline format_json_vertex(point_c P):
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 cdef inline format_json_face(face_c face):
-    s = "[{}]".format(",".join([str(face.vertices[i])
-                                   for i from 0 <= i < face.n]))
+    s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
     return s
 
 cdef inline format_obj_vertex(point_c P):
@@ -118,7 +117,7 @@ cdef inline format_obj_face(face_c face, int off):
     elif face.n == 4:
         r = sprintf_4i(ss, "f %d %d %d %d", face.vertices[0] + off, face.vertices[1] + off, face.vertices[2] + off, face.vertices[3] + off)
     else:
-        return "f " + " ".join([str(face.vertices[i] + off) for i from 0 <= i < face.n])
+        return "f " + " ".join(str(face.vertices[i] + off) for i in range(face.n))
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
@@ -130,7 +129,7 @@ cdef inline format_obj_face_back(face_c face, int off):
     elif face.n == 4:
         r = sprintf_4i(ss, "f %d %d %d %d", face.vertices[3] + off, face.vertices[2] + off, face.vertices[1] + off, face.vertices[0] + off)
     else:
-        return "f " + " ".join([str(face.vertices[i] + off) for i from face.n > i >= 0])
+        return "f " + " ".join(str(face.vertices[i] + off) for i from face.n > i >= 0)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 cdef inline format_pmesh_vertex(point_c P):
@@ -809,14 +808,14 @@ cdef class IndexFaceSet(PrimitiveObject):
         cdef Py_ssize_t i
         vs = self.vs
         fs = self._faces
-        points = ",".join(["%r %r %r" % (vs[i].x, vs[i].y, vs[i].z)
-                           for i from 0 <= i < self.vcount])
-        coord_idx = ",-1,".join([",".join([repr(fs[i].vertices[j])
-                                           for j from 0 <= j < fs[i].n])
-                                 for i from 0 <= i < self.fcount])
+        points = ",".join("%r %r %r" % (vs[i].x, vs[i].y, vs[i].z)
+                          for i in range(self.vcount))
+        coord_idx = ",-1,".join(",".join(repr(fs[i].vertices[j])
+                                          for j in range(fs[i].n))
+                                for i in range(self.fcount))
         if not self.global_texture:
-            color_idx = ",".join(['%r %r %r' % (fs[i].color.r, fs[i].color.g, fs[i].color.b)
-                                  for i from 0 <= i < self.fcount])
+            color_idx = ",".join('%r %r %r' % (fs[i].color.r, fs[i].color.g, fs[i].color.b)
+                                 for i in range(self.fcount))
             # Note: Don't use f-strings, since Sage on Python 2 still expects
             # this to return a plain str instead of a unicode
             return dedent("""
@@ -1241,8 +1240,8 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         if transform is None:
             vertices_str = "[{}]".format(
-                ",".join([format_json_vertex(self.vs[i])
-                          for i from 0 <= i < self.vcount]))
+                ",".join(format_json_vertex(self.vs[i])
+                         for i in range(self.vcount)))
         else:
             vertices_str = "["
             for i from 0 <= i < self.vcount:
@@ -1252,8 +1251,8 @@ cdef class IndexFaceSet(PrimitiveObject):
                 vertices_str += format_json_vertex(res)
             vertices_str += "]"
 
-        faces_str = "[{}]".format(",".join([format_json_face(self._faces[i])
-                                            for i from 0 <= i < self.fcount]))
+        faces_str = "[{}]".format(",".join(format_json_face(self._faces[i])
+                                           for i in range(self.fcount)))
         opacity = float(self._extra_kwds.get('opacity', 1))
 
         if self.global_texture:
@@ -1261,11 +1260,11 @@ cdef class IndexFaceSet(PrimitiveObject):
             json = ['{{"vertices":{}, "faces":{}, "color":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
         else:
-            color_str = "[{}]".format(",".join(['"{}"'.format(
+            color_str = "[{}]".format(",".join('"{}"'.format(
                     Color(self._faces[i].color.r,
                           self._faces[i].color.g,
                           self._faces[i].color.b).html_color())
-                                            for i from 0 <= i < self.fcount]))
+                                            for i in range(self.fcount)))
             json = ['{{"vertices":{}, "faces":{}, "faceColors":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
 

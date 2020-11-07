@@ -1011,7 +1011,7 @@ def pruned_tree(T, f, s):
     - ``T`` -- a tree
 
     - ``f`` -- a rational number; the edge deletion fraction. This value must be
-      choosen in `[0..1]`.
+      chosen in `[0..1]`.
 
     - ``s`` -- a real number between 0 and 1; selection barrier for the size of
       trees
@@ -1122,7 +1122,7 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
       :meth:`~sage.graphs.generators.random.connecting_nodes` for more details.
 
     - ``f`` -- a rational number (default: ``None``); the edge deletion
-      fraction. This value must be choosen in `[0..1]`. If not specified, this
+      fraction. This value must be chosen in `[0..1]`. If not specified, this
       parameter is set to `\frac{1}{n-1}`.
       This parameter is used only when ``algorithm="pruned"``.
       See :meth:`~sage.graphs.generators.random.pruned_tree` for more details.

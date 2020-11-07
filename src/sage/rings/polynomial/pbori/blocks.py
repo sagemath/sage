@@ -151,13 +151,16 @@ class AdderBlock(AlternatingBlock):
 
 class HigherOrderBlock(object):
     r"""
-    HigherOrderBlocks are multidimensional blocks of variables, for each dimension a seperate start_index and size can be specified
+    HigherOrderBlocks are multidimensional blocks of variables.
+
+    For each dimension a separate start_index and size can be specified.
 
     var_name : variables will be called <var_name>(multiindex), where multiindex is a tuple of the size <size_tuple>
+
     size_tuple : specifies the sizes of the ranges of each component of the multi-indices
+
     start_index_tuple : the multi-indices will be of the form start_index_tuple + a, where a is a multi-index with non-negative components
     """
-
     def __init__(self, var_name, size_tuple, start_index_tuple=None,
                  reverse=False):
         if start_index_tuple is None:

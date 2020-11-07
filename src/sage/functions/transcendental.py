@@ -18,10 +18,10 @@ Number-Theoretic Functions
 # ****************************************************************************
 
 import sys
-import sage.rings.complex_field as complex_field
+import sage.rings.complex_mpfr as complex_field
 
 from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_number import is_ComplexNumber
+from sage.rings.complex_mpfr import is_ComplexNumber
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction

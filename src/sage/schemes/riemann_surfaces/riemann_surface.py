@@ -77,7 +77,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.numerical.gauss_legendre import integrate_vector
-from sage.rings.complex_field import ComplexField, CDF
+from sage.rings.complex_mpfr import ComplexField, CDF
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import number_field_elements_from_algebraics

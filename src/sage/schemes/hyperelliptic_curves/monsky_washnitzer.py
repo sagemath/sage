@@ -1876,9 +1876,9 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, CommutativeAlgebra)
             if not hasattr(self, '_curve'):
                 if self._Q.degree() == 3:
                     ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
-                    self._curve = EllipticCurve(ainvs)
+                    self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
                 else:
-                    self._curve = HyperellipticCurve(self._Q)
+                    self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
 
         else:
             raise NotImplementedError("Must be an elliptic curve or polynomial "

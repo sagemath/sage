@@ -78,7 +78,7 @@ class Monoids(CategoryWithAxiom):
         Return a free monoid on `n` generators or with the generators
         indexed by a set `I`.
 
-        A free monoid is constructed by specifing either:
+        A free monoid is constructed by specifying either:
 
         - the number of generators and/or the names of the generators
         - the indexing set for the generators
@@ -325,7 +325,7 @@ class Monoids(CategoryWithAxiom):
             Return a free abelian monoid on `n` generators or with
             the generators indexed by a set `I`.
 
-            A free monoid is constructed by specifing either:
+            A free monoid is constructed by specifying either:
 
             - the number of generators and/or the names of the generators, or
             - the indexing set for the generators.

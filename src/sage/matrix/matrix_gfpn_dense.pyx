@@ -1,5 +1,6 @@
 # distutils: libraries = mtx
 # sage_setup: distribution = sage-meataxe
+
 r"""
 Dense Matrices over `\mathbb F_q`, with `q<255`.
 
@@ -378,7 +379,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         - ``coerce`` -- ignored
 
-        - ``mutable`` -- if False, the resulting matrix can not be
+        - ``mutable`` -- if False, the resulting matrix cannot be
           changed, and it can be used as key in a Python dictionary
 
         EXAMPLES::
@@ -464,10 +465,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: Matrix_gfpn_dense.from_filename('')                          # optional: meataxe
             Traceback (most recent call last):
             ...
-            ValueError: can not construct meataxe matrix from empty filename
+            ValueError: cannot construct meataxe matrix from empty filename
         """
         if not filename:
-            raise ValueError("can not construct meataxe matrix from empty filename")
+            raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
             filename = str_to_bytes(filename, FS_ENCODING,

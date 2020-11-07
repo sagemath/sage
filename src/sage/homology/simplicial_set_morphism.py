@@ -453,7 +453,7 @@ class SimplicialSetMorphism(Morphism):
             if identity:
                 if codomain is None:
                     codomain = domain
-                elif not domain is codomain:
+                elif domain is not codomain:
                     raise TypeError("identity map is only defined for endomorphism sets")
                 self._is_identity = True
                 Morphism.__init__(self, Hom(domain, codomain, SimplicialSets()))
@@ -470,10 +470,10 @@ class SimplicialSetMorphism(Morphism):
             if identity:
                 self._is_identity = True
                 check = False
-                if not domain is codomain:
+                if domain is not codomain:
                     raise TypeError("identity map is only defined for endomorphism sets")
                 data = {}
-                for i in range(domain.dimension()+1):
+                for i in range(domain.dimension() + 1):
                     for s in domain.n_cells(i):
                         data[s] = s
             if constant is not None:

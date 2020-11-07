@@ -60,7 +60,7 @@ from sage.calculus.var import var
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RealField, RR
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.functions.log import exp
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import is_real_place, refine_embedding
@@ -1718,7 +1718,7 @@ def split_primes_large_lcm(SUK, bound):
         sage: split_primes_large_lcm(SUK, 200)
         [17, 19, 37, 53]
 
-    With a tiny bound, SAGE may ask you to increase the bound.
+    With a tiny bound, Sage may ask you to increase the bound.
 
     ::
 

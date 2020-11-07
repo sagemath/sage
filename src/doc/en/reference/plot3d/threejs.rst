@@ -58,6 +58,9 @@ Options currently supported by the viewer:
 - ``single_side`` -- (default: False) Boolean determining whether both sides of a surface material
   are rendered; set to True to reduce rendering artifacts for closed transparent surfaces
 
+- ``theme`` -- (default: 'light') the color scheme to use for the scene and user interface;
+  'light' or 'dark'
+
 - ``thickness`` -- (default: 1) numeric value for thickness of lines
 
 - ``viewpoint`` -- (default: None) list or tuple of the form [[x,y,z],angle] setting the initial

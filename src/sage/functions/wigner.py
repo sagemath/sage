@@ -23,7 +23,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from sage.rings.complex_number import ComplexNumber
+from sage.rings.complex_mpfr import ComplexNumber
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.symbolic.constants import pi

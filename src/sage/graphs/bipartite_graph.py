@@ -729,7 +729,7 @@ class BipartiteGraph(Graph):
         # delete from the graph
         Graph.delete_vertex(self, vertex)
 
-        # now remove from partition (exception already thrown for non-existant
+        # now remove from partition (exception already thrown for non-existent
         # vertex)
         if vertex in self.left:
             self.left.remove(vertex)
@@ -772,7 +772,7 @@ class BipartiteGraph(Graph):
         Graph.delete_vertices(self, vertices)
 
         # now remove vertices from partition lists (exception already thrown
-        # for non-existant vertices)
+        # for non-existent vertices)
         for vertex in vertices:
             if vertex in self.left:
                 self.left.remove(vertex)
@@ -1526,11 +1526,11 @@ class BipartiteGraph(Graph):
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels can not be used with "Hopcroft-Karp" or "Eppstein"
+            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Hopcroft-Karp')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels can not be used with "Hopcroft-Karp" or "Eppstein"
+            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Hopcroft-Karp')
             2
             sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Eppstein')
@@ -1570,7 +1570,7 @@ class BipartiteGraph(Graph):
 
         if algorithm == "Hopcroft-Karp" or algorithm == "Eppstein":
             if use_edge_labels:
-                raise ValueError('use_edge_labels can not be used with '
+                raise ValueError('use_edge_labels cannot be used with '
                                  '"Hopcroft-Karp" or "Eppstein"')
             d = []
             if self.size():

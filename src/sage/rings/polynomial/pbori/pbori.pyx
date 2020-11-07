@@ -6649,7 +6649,7 @@ cdef class GroebnerStrategy:
     def add_generator_delayed(self, BooleanPolynomial p):
         """
         Add a new generator but do not perform interreduction
-        immediatly.
+        immediately.
 
         INPUT:
 
@@ -6720,7 +6720,7 @@ cdef class GroebnerStrategy:
             [a + b]
             sage: gbs.add_as_you_wish(a + c)
 
-        Note that nothing happened immediatly but that the generator
+        Note that nothing happened immediately but that the generator
         was indeed added::
 
             sage: list(gbs)

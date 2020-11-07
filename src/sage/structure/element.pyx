@@ -2173,7 +2173,7 @@ cdef class ElementWithCachedMethod(Element):
     slower (for :class:`~sage.structure.parent.Parent`) or the cache would
     even break (for :class:`Element`).
 
-    This class should be used if you write an element class, can not provide
+    This class should be used if you write an element class, cannot provide
     it with attribute assignment, but want that it inherits a cached method
     from the category. Under these conditions, your class should inherit
     from this class rather than :class:`Element`. Then, the cache will work,
@@ -4331,7 +4331,7 @@ def coerce_binop(method):
         sage: x.test_add(CC(2))
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.complex_number.ComplexNumber' object has no attribute 'test_add'
+        AttributeError: 'sage.rings.complex_mpfr.ComplexNumber' object has no attribute 'test_add'
 
     TESTS:
 

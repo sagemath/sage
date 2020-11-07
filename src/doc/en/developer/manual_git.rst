@@ -19,7 +19,7 @@ Randall Munroe has provided a `basic overview <http://xkcd.com/1597/>`_.
 We assume that you have a copy of the Sage git repository, for example
 by running::
 
-    [user@localhost ~]$ git clone git://github.com/sagemath/sage.git
+    [user@localhost ~]$ git clone https://gitlab.com/sagemath/dev/tracmirror.git
     [user@localhost ~]$ cd sage
     [user@localhost sage]$ git checkout develop
     [user@localhost sage]$ make
@@ -43,12 +43,12 @@ The Sage trac server also holds a copy of the Sage repository, it is
 served via the ssh and git protocols. To add it as a remote repository
 to your local git repository, use these commands::
 
-    [user@localhost sage]$ git remote add trac git://trac.sagemath.org/sage.git -t master
+    [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote set-url --push trac git@trac.sagemath.org:sage.git
     [user@localhost sage]$ git remote -v
-    origin      git://github.com/sagemath/sage.git (fetch)
-    origin      git://github.com/sagemath/sage.git (push)
-    trac        git://trac.sagemath.org/sage.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
+    trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
 Instead of ``trac`` you can use any local name you want, of course. It
@@ -81,8 +81,8 @@ If you want to use ssh only, use these commands::
 
     [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote -v
-    origin      git://github.com/sagemath/sage.git (fetch)
-    origin      git://github.com/sagemath/sage.git (push)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
     trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
