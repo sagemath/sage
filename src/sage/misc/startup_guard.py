@@ -10,13 +10,13 @@ def startup():
     
     EXAMPLES::
 
-        >>> import sage.misc.startup_guard as startup_guard
-        >>> print(startup_guard.IS_STARTUP)
+        sage: import sage.misc.startup_guard as startup_guard
+        sage: print(startup_guard.IS_STARTUP)
         False
-        >>> with startup_guard.startup():
-        >>>     print(startup_guard.IS_STARTUP)
+        sage: with startup_guard.startup():
+        sage:     print(startup_guard.IS_STARTUP)
         True
-        >>> print(startup_guard.IS_STARTUP)
+        sage: print(startup_guard.IS_STARTUP)
         False
     """
     global IS_STARTUP
