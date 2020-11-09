@@ -14,7 +14,7 @@ def startup():
         sage: print(startup_guard.IS_STARTUP)
         False
         sage: with startup_guard.startup():
-        sage:     print(startup_guard.IS_STARTUP)
+        ....:     print(startup_guard.IS_STARTUP)
         True
         sage: print(startup_guard.IS_STARTUP)
         False
