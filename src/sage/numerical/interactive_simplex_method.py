@@ -304,11 +304,12 @@ def _latex_product(coefficients, variables,
     """
     entries = []
     for c, v in zip(coefficients, variables):
-        if c == 0:
+        t = latex(c)
+        if t == '0':
             entries.extend(["", ""])
             continue
         sign = "+"
-        if latex(c).strip().startswith("-"):
+        if t.strip().startswith("-"):
             sign = "-"
             c = - c
         if c == 1:
