@@ -349,7 +349,7 @@ def _write_started_file():
 set_random_seed()
 
 # From now on it is ok to resolve lazy imports
-startup_guard.__exit__()
+startup_guard.__exit__(None, None, None)
 
 def sage_globals():
     r"""
