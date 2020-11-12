@@ -109,6 +109,9 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 
 ################ end setup warnings ###############################
 
+import sage.misc.startup_guard
+startup_guard = sage.misc.startup_guard.startup()
+startup_guard.__enter__()
 
 from sage.env import SAGE_ROOT, SAGE_SRC, SAGE_DOC_SRC, SAGE_LOCAL, DOT_SAGE, SAGE_ENV
 
@@ -344,6 +347,9 @@ def _write_started_file():
 # in set_random_seed() will result in the same sequence you got at
 # Sage startup).
 set_random_seed()
+
+# From now on it is ok to resolve lazy imports
+startup_guard.__exit__()
 
 def sage_globals():
     r"""
