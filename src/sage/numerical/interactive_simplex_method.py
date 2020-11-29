@@ -312,7 +312,7 @@ def _latex_product(coefficients, variables,
         if t.strip().startswith("-"):
             sign = "-"
             c = - c
-        if c == 1:
+        if t.strip() == '1':
             t = latex(v)
         else:
             t = latex(c)
