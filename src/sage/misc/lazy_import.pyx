@@ -77,6 +77,34 @@ cdef inline obj(x):
     else:
         return x
 
+cdef list imports_resolved_at_startup = []
+
+def _get_imports_resolved_at_startup():
+    """
+    Return all lazy imports that were resolved during startup.
+    Only used for integration tests.
+
+    EXAMPLES::
+    
+        sage: from sage.misc.lazy_import import LazyImport, _get_imports_resolved_at_startup
+        sage: import sage.misc.startup_guard
+        sage: with sage.misc.startup_guard.startup():
+        ....:     flatten = LazyImport('sage.misc.flatten', 'flatten')
+        ....:     result = flatten([[1,1],[1],2]))
+        sage: _get_imports_resolved_at_startup()
+        ['flatten']
+
+    TESTS::
+        
+    No imports should be resolved during import of sage.all (which has been done globally for doctests) 
+
+        sage: from sage.misc.lazy_import import _get_imports_resolved_at_startup
+        sage: _get_imports_resolved_at_startup
+        []
+    """
+    global imports_resolved_at_startup
+    return imports_resolved_at_startup
+
 @cython.final
 cdef class LazyImport(object):
     """
@@ -158,7 +186,8 @@ cdef class LazyImport(object):
             return self._object
 
         if startup_guard.IS_STARTUP and not self._at_startup:
-            print(f"Resolving lazy import {self._name} during startup")
+            global imports_resolved_at_startup
+            imports_resolved_at_startup.append(self._name)
         elif self._at_startup and not startup_guard.IS_STARTUP:
             print(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
         try:
