@@ -85,12 +85,12 @@ def _get_imports_resolved_at_startup():
     Only used for integration tests.
 
     EXAMPLES::
-    
+
         sage: from sage.misc.lazy_import import LazyImport, _get_imports_resolved_at_startup
         sage: import sage.misc.startup_guard
         sage: with sage.misc.startup_guard.startup():
         ....:     flatten = LazyImport('sage.misc.flatten', 'flatten')
-        ....:     result = flatten([[1,1],[1],2]))
+        ....:     result = flatten([[1,1],[1],2])
         sage: _get_imports_resolved_at_startup()
         ['flatten']
 
